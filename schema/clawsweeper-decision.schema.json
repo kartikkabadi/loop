@@ -32,7 +32,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["label", "detail"],
+        "required": ["label", "detail", "file", "line", "command", "sha"],
         "properties": {
           "label": {
             "type": "string"
@@ -41,16 +41,16 @@
             "type": "string"
           },
           "file": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "line": {
-            "type": "integer"
+            "type": ["integer", "null"]
           },
           "command": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "sha": {
-            "type": "string"
+            "type": ["string", "null"]
           }
         }
       }

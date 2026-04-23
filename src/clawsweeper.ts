@@ -76,10 +76,10 @@ interface GitInfo {
 interface Evidence {
   label: string;
   detail: string;
-  file?: string;
-  line?: number;
-  command?: string;
-  sha?: string;
+  file?: string | null;
+  line?: number | null;
+  command?: string | null;
+  sha?: string | null;
 }
 
 interface Decision {
