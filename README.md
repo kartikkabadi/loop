@@ -13,18 +13,19 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: 2026-04-23T23:37:40.115Z
+Last dashboard update: 2026-04-23T23:40:23.923Z
 
-Open items in `openclaw/openclaw`: 19153
+Open items in `openclaw/openclaw`: 19154
 
-Freshly reviewed in the last 7 days: 20
+Freshly reviewed in the last 7 days: 21
 
 Todo for weekly coverage: 19133
 
-Total local review files: 20
+Total local review files: 21
 
 Recently reviewed:
 
+- #6599: Feature: Add /models test-fallback command to verify fallback chain - keep_open, kept_open, complete, 2026-04-23T23:40:05.349Z
 - #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, complete, 2026-04-23T23:36:45.835Z
 - #6615: Feature: Add denylist support for exec-approvals - keep_open, kept_open, complete, 2026-04-23T23:36:44.785Z
 - #8920: [Feature]: Better UI for configuration - keep_open, kept_open, complete, 2026-04-23T23:36:43.749Z
@@ -44,7 +45,6 @@ Recently reviewed:
 - #6633: [Feature]: Cryptographic envelope (\"brain protection\") - close, proposed_close, complete, 2026-04-23T23:23:24.738Z
 - #6792: Feature: configPatch in plugin manifest — automatic config setup on install - keep_open, kept_open, complete, 2026-04-23T23:23:20.844Z
 - #6808: [Feature]: More efficient cron job management on Web UI - keep_open, kept_open, complete, 2026-04-23T23:23:17.072Z
-- #75: Linux/Windows Clawdbot Apps - keep_open, kept_open, complete, 2026-04-23T23:22:45.911Z
 
 ## How It Works
 
