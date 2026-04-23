@@ -13,38 +13,38 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: 2026-04-23T23:40:23.923Z
+Last dashboard update: 2026-04-23T23:42:54.662Z
 
 Open items in `openclaw/openclaw`: 19154
 
-Freshly reviewed in the last 7 days: 21
+Freshly reviewed in the last 7 days: 0
 
-Todo for weekly coverage: 19133
+Todo for weekly coverage: 19154
 
 Total local review files: 21
 
 Recently reviewed:
 
-- #6599: Feature: Add /models test-fallback command to verify fallback chain - keep_open, kept_open, complete, 2026-04-23T23:40:05.349Z
-- #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, complete, 2026-04-23T23:36:45.835Z
-- #6615: Feature: Add denylist support for exec-approvals - keep_open, kept_open, complete, 2026-04-23T23:36:44.785Z
-- #8920: [Feature]: Better UI for configuration - keep_open, kept_open, complete, 2026-04-23T23:36:43.749Z
-- #7021: [Feature]: integrate PowerMem as a Memory backend (semantic recall + long‑term memory) - close, proposed_close, complete, 2026-04-23T23:36:28.365Z
-- #6717: [Feature Request] Natural language model switching in conversation - keep_open, kept_open, complete, 2026-04-23T23:35:36.928Z
-- #6722: WhatsApp: Add link preview support (generateHighQualityLinkPreview) - keep_open, kept_open, complete, 2026-04-23T23:34:02.988Z
-- #6617: [Feature]: Control UI agent reply supports inline image - keep_open, kept_open, complete, 2026-04-23T23:33:36.024Z
-- #6820: Add openai-codex/gpt-5.2 to xhigh thinking whitelist - close, proposed_close, complete, 2026-04-23T23:33:08.757Z
-- #6457: fix(telegram): register commands for group scope + preserve topic thread params - keep_open, kept_open, complete, 2026-04-23T23:24:48.965Z
-- #1691: Add option to disable prompt_cache_key for local models - close, proposed_close, complete, 2026-04-23T23:24:15.418Z
-- #1210: Images from Discord stored as base64 in session transcripts - keep_open, kept_open, complete, 2026-04-23T23:23:57.932Z
-- #6654: [Feature]: Use zerobrew instead of homebrew - keep_open, kept_open, complete, 2026-04-23T23:23:55.425Z
-- #6662: [UX] SubAgent results should display as Tool Output instead of user message - close, proposed_close, complete, 2026-04-23T23:23:53.155Z
-- #7052: Feature Request: Auto-summarize/compress context before hitting token limit to prevent brain freeze - keep_open, kept_open, complete, 2026-04-23T23:23:48.642Z
-- #2597: Context/state lost after unexpected compaction or session reset - keep_open, kept_open, complete, 2026-04-23T23:23:42.371Z
-- #6691: [Feature Request] Context-aware dynamic skill loading/unloading to reduce token cost - close, proposed_close, complete, 2026-04-23T23:23:35.778Z
-- #6633: [Feature]: Cryptographic envelope (\"brain protection\") - close, proposed_close, complete, 2026-04-23T23:23:24.738Z
-- #6792: Feature: configPatch in plugin manifest — automatic config setup on install - keep_open, kept_open, complete, 2026-04-23T23:23:20.844Z
-- #6808: [Feature]: More efficient cron job management on Web UI - keep_open, kept_open, complete, 2026-04-23T23:23:17.072Z
+- #6599: Feature: Add /models test-fallback command to verify fallback chain - keep_open, kept_open, stale_local_checkout_unverified, 2026-04-23T23:40:05.349Z
+- #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:36:45.835Z
+- #6615: Feature: Add denylist support for exec-approvals - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:36:44.785Z
+- #8920: [Feature]: Better UI for configuration - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:36:43.749Z
+- #7021: [Feature]: integrate PowerMem as a Memory backend (semantic recall + long‑term memory) - close, proposed_close, stale_local_checkout_blocked, 2026-04-23T23:36:28.365Z
+- #6717: [Feature Request] Natural language model switching in conversation - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:35:36.928Z
+- #6722: WhatsApp: Add link preview support (generateHighQualityLinkPreview) - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:34:02.988Z
+- #6617: [Feature]: Control UI agent reply supports inline image - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:33:36.024Z
+- #6820: Add openai-codex/gpt-5.2 to xhigh thinking whitelist - close, proposed_close, stale_local_checkout_blocked, 2026-04-23T23:33:08.757Z
+- #6457: fix(telegram): register commands for group scope + preserve topic thread params - keep_open, kept_open, stale_local_checkout_unverified, 2026-04-23T23:24:48.965Z
+- #1691: Add option to disable prompt_cache_key for local models - close, proposed_close, stale_local_checkout_unverified, 2026-04-23T23:24:15.418Z
+- #1210: Images from Discord stored as base64 in session transcripts - keep_open, kept_open, stale_local_checkout_unverified, 2026-04-23T23:23:57.932Z
+- #6654: [Feature]: Use zerobrew instead of homebrew - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:23:55.425Z
+- #6662: [UX] SubAgent results should display as Tool Output instead of user message - close, proposed_close, stale_local_checkout_unverified, 2026-04-23T23:23:53.155Z
+- #7052: Feature Request: Auto-summarize/compress context before hitting token limit to prevent brain freeze - keep_open, kept_open, stale_local_checkout_unverified, 2026-04-23T23:23:48.642Z
+- #2597: Context/state lost after unexpected compaction or session reset - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:23:42.371Z
+- #6691: [Feature Request] Context-aware dynamic skill loading/unloading to reduce token cost - close, proposed_close, stale_local_checkout_unverified, 2026-04-23T23:23:35.778Z
+- #6633: [Feature]: Cryptographic envelope (\"brain protection\") - close, proposed_close, stale_local_checkout_unverified, 2026-04-23T23:23:24.738Z
+- #6792: Feature: configPatch in plugin manifest — automatic config setup on install - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:23:20.844Z
+- #6808: [Feature]: More efficient cron job management on Web UI - keep_open, kept_open, stale_local_checkout_blocked, 2026-04-23T23:23:17.072Z
 
 ## How It Works
 

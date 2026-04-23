@@ -410,7 +410,7 @@ function existingReview(number: number, itemsDir: string): ExistingReview | null
     markdown,
     reviewedAt: frontMatterValue(markdown, "reviewed_at"),
     decision: frontMatterValue(markdown, "decision"),
-    reviewStatus: frontMatterValue(markdown, "review_status") ?? inferReviewStatus(markdown),
+    reviewStatus: effectiveReviewStatus(markdown),
   };
 }
 
@@ -418,10 +418,29 @@ function inferReviewStatus(markdown: string): string {
   return markdown.includes("Codex review failed") ? "failed" : "complete";
 }
 
+function hasBlockedLocalCheckoutAccess(markdown: string): boolean {
+  return /bwrap: loopback|sandbox wrapper|sandbox startup failed|sandboxed shell failed|local shell (?:access|commands|inspection).*unavailable|local shell .*blocked|local terminal commands were unavailable|could not run local shell/i.test(
+    markdown,
+  );
+}
+
+function hasVerifiedLocalCheckoutAccess(markdown: string): boolean {
+  return frontMatterValue(markdown, "local_checkout_access") === "verified";
+}
+
+function effectiveReviewStatus(markdown: string): string {
+  const status = frontMatterValue(markdown, "review_status") ?? inferReviewStatus(markdown);
+  if (status === "complete") {
+    if (hasBlockedLocalCheckoutAccess(markdown)) return "stale_local_checkout_blocked";
+    if (!hasVerifiedLocalCheckoutAccess(markdown)) return "stale_local_checkout_unverified";
+  }
+  return status;
+}
+
 function isFresh(
   review: { reviewedAt: string | undefined; reviewStatus: string | undefined } | null,
 ): boolean {
-  if (review?.reviewStatus === "failed") return false;
+  if (review?.reviewStatus !== "complete") return false;
   if (!review?.reviewedAt) return false;
   const reviewedAt = Date.parse(review.reviewedAt);
   if (!Number.isFinite(reviewedAt)) return false;
@@ -829,6 +848,7 @@ latest_release: ${options.git.latestRelease?.tagName ?? "unknown"}
 latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
 review_mode: ${options.reviewMode}
 review_status: ${options.decision.summary.startsWith("Codex review failed") ? "failed" : "complete"}
+local_checkout_access: verified
 item_snapshot_hash: ${options.snapshotHash}
 close_comment_sha256: ${options.action.closeComment ? sha256(options.action.closeComment) : "none"}
 decision: ${options.decision.decision}
@@ -977,6 +997,14 @@ function applyDecisionsCommand(args: Args): void {
     const action = frontMatterValue(markdown, "action_taken");
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
+    if (!hasVerifiedLocalCheckoutAccess(markdown)) {
+      results.push({
+        number,
+        action: "kept_open",
+        reason: "review lacks verified local checkout access",
+      });
+      continue;
+    }
     if (
       decision !== "close" ||
       confidence !== "high" ||
@@ -1065,7 +1093,7 @@ function dashboardStats(itemsDir: string): {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
     const number = Number(file.replace(/\.md$/, ""));
     const reviewedAt = frontMatterValue(markdown, "reviewed_at");
-    const reviewStatus = frontMatterValue(markdown, "review_status") ?? inferReviewStatus(markdown);
+    const reviewStatus = effectiveReviewStatus(markdown);
     if (isFresh({ reviewedAt, reviewStatus })) fresh += 1;
     recent.push({
       number,
