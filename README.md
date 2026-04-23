@@ -49,6 +49,8 @@ To close later without rerunning Codex, dispatch the workflow with `apply_existi
 
 ## Local Run
 
+Requires Node 24.
+
 ```bash
 source ~/.profile
 npm install
