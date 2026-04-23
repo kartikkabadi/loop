@@ -13,25 +13,25 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 23, 2026, 23:51 UTC
+Last dashboard update: Apr 23, 2026, 23:53 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19150 |
-| Fresh verified reviews in the last 7 days | 3 |
-| Todo for weekly coverage | 19147 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19147 |
+| Fresh verified reviews in the last 7 days | 4 |
+| Todo for weekly coverage | 19143 |
 | Local review files | 22 |
 
 Recently reviewed:
 
 | Item | Title | Decision | Action | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [#75](https://github.com/openclaw/openclaw/issues/75) | Linux/Windows Clawdbot Apps | keep_open | kept_open | complete | Apr 23, 2026, 23:53 UTC |
 | [#6662](https://github.com/openclaw/openclaw/issues/6662) | [UX] SubAgent results should display as Tool Output instead of user message | keep_open | kept_open | complete | Apr 23, 2026, 23:47 UTC |
 | [#1691](https://github.com/openclaw/openclaw/issues/1691) | Add option to disable prompt_cache_key for local models | close | proposed_close | complete | Apr 23, 2026, 23:45 UTC |
 | [#6599](https://github.com/openclaw/openclaw/issues/6599) | Feature: Add /models test-fallback command to verify fallback chain | keep_open | kept_open | complete | Apr 23, 2026, 23:45 UTC |
 | [#6946](https://github.com/openclaw/openclaw/issues/6946) | Feature: Processing indicator message for Telegram (send ⌛️ while thinking, delete on reply) | keep_open | kept_open | failed | Apr 23, 2026, 23:44 UTC |
 | [#1210](https://github.com/openclaw/openclaw/issues/1210) | Images from Discord stored as base64 in session transcripts | keep_open | kept_open | failed | Apr 23, 2026, 23:44 UTC |
-| [#75](https://github.com/openclaw/openclaw/issues/75) | Linux/Windows Clawdbot Apps | keep_open | kept_open | failed | Apr 23, 2026, 23:44 UTC |
 | [#6633](https://github.com/openclaw/openclaw/issues/6633) | [Feature]: Cryptographic envelope (\"brain protection\") | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
 | [#147](https://github.com/openclaw/openclaw/issues/147) | feat: Brabble as Clawdis node for distributed voice wake | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
 | [#6654](https://github.com/openclaw/openclaw/issues/6654) | [Feature]: Use zerobrew instead of homebrew | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
