@@ -4,6 +4,8 @@ You are reviewing one open item from `openclaw/openclaw` for conservative mainta
 
 Work in the checked-out OpenClaw repository. Inspect the current `main` code, docs, tests, and history as needed. You may use `gh` to inspect related issues/PRs if the provided GitHub context is not enough.
 
+This is a read-only review. Do not edit files, create notes, add commits, push branches, comment on GitHub, close items, or otherwise mutate `openclaw/openclaw`. Only return the JSON decision.
+
 Close only when the evidence is strong. Allowed close reasons:
 
 - `implemented_on_main`: current `main` already implements or fixes the request well enough.
