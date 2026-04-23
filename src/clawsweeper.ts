@@ -57,6 +57,7 @@ interface ExistingReview {
   markdown: string;
   reviewedAt: string | undefined;
   decision: string | undefined;
+  reviewStatus: string | undefined;
 }
 
 interface LatestRelease {
@@ -99,6 +100,13 @@ interface ItemContext {
   pullFiles?: unknown[];
   pullCommits?: unknown[];
   pullReviewComments?: unknown[];
+  counts?: {
+    comments: number;
+    timeline: number;
+    pullFiles?: number;
+    pullCommits?: number;
+    pullReviewComments?: number;
+  };
 }
 
 interface Action {
@@ -112,6 +120,7 @@ interface DashboardItem {
   reviewedAt: string | undefined;
   decision: string;
   action: string;
+  reviewStatus: string;
 }
 
 interface RepoSummary {
@@ -226,6 +235,145 @@ function itemSnapshotHash(item: Item, context: ItemContext): string {
   return sha256(stableJson({ item, context }));
 }
 
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" ? (value as Record<string, unknown>) : {};
+}
+
+function truncateText(value: unknown, maxLength: number): string {
+  if (typeof value !== "string") return "";
+  if (value.length <= maxLength) return value;
+  return `${value.slice(0, maxLength)}\n\n[truncated ${value.length - maxLength} chars]`;
+}
+
+function login(value: unknown): string | undefined {
+  const user = asRecord(value);
+  const name = user.login;
+  return typeof name === "string" ? name : undefined;
+}
+
+function labelNames(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((label) => {
+      if (typeof label === "string") return label;
+      const name = asRecord(label).name;
+      return typeof name === "string" ? name : null;
+    })
+    .filter((name): name is string => Boolean(name));
+}
+
+function compactSlice<T>(items: T[], limit: number): unknown[] {
+  if (items.length <= limit) return items as unknown[];
+  const keepStart = Math.floor(limit / 2);
+  const keepEnd = Math.max(0, limit - keepStart);
+  return [
+    ...items.slice(0, keepStart),
+    { omitted: items.length - limit, note: "middle entries omitted from prompt context" },
+    ...items.slice(items.length - keepEnd),
+  ];
+}
+
+function compactIssue(value: unknown): unknown {
+  const issue = asRecord(value);
+  return {
+    number: issue.number,
+    title: issue.title,
+    state: issue.state,
+    url: issue.html_url,
+    author: login(issue.user),
+    labels: labelNames(issue.labels),
+    createdAt: issue.created_at,
+    updatedAt: issue.updated_at,
+    closedAt: issue.closed_at,
+    body: truncateText(issue.body, 12000),
+  };
+}
+
+function compactComment(value: unknown): unknown {
+  const comment = asRecord(value);
+  return {
+    id: comment.id,
+    author: login(comment.user),
+    createdAt: comment.created_at,
+    updatedAt: comment.updated_at,
+    body: truncateText(comment.body, 6000),
+  };
+}
+
+function compactTimelineEvent(value: unknown): unknown {
+  const event = asRecord(value);
+  const sourceIssue = asRecord(asRecord(event.source).issue);
+  return {
+    id: event.id,
+    event: event.event,
+    createdAt: event.created_at,
+    actor: login(event.actor),
+    commitId: event.commit_id,
+    label: asRecord(event.label).name,
+    rename: event.rename,
+    sourceIssue:
+      Object.keys(sourceIssue).length > 0
+        ? {
+            number: sourceIssue.number,
+            title: sourceIssue.title,
+            url: sourceIssue.html_url,
+            state: sourceIssue.state,
+          }
+        : undefined,
+  };
+}
+
+function compactPullRequest(value: unknown): unknown {
+  const pull = asRecord(value);
+  const head = asRecord(pull.head);
+  const base = asRecord(pull.base);
+  return {
+    number: pull.number,
+    title: pull.title,
+    state: pull.state,
+    draft: pull.draft,
+    merged: pull.merged,
+    mergeable: pull.mergeable,
+    author: login(pull.user),
+    head: {
+      ref: head.ref,
+      sha: head.sha,
+    },
+    base: {
+      ref: base.ref,
+      sha: base.sha,
+    },
+    additions: pull.additions,
+    deletions: pull.deletions,
+    changedFiles: pull.changed_files,
+    createdAt: pull.created_at,
+    updatedAt: pull.updated_at,
+    body: truncateText(pull.body, 12000),
+  };
+}
+
+function compactPullFile(value: unknown): unknown {
+  const file = asRecord(value);
+  return {
+    filename: file.filename,
+    status: file.status,
+    additions: file.additions,
+    deletions: file.deletions,
+    changes: file.changes,
+    patch: truncateText(file.patch, 2000),
+  };
+}
+
+function compactPullCommit(value: unknown): unknown {
+  const commit = asRecord(value);
+  const commitInfo = asRecord(commit.commit);
+  return {
+    sha: commit.sha,
+    author: login(commit.author),
+    message: truncateText(commitInfo.message, 1000),
+  };
+}
+
 function ghPaged<T>(path: string): T[] {
   const pages = ghJson<unknown[]>(["api", path, "--paginate", "--slurp"]);
   if (!Array.isArray(pages)) return [];
@@ -262,10 +410,18 @@ function existingReview(number: number, itemsDir: string): ExistingReview | null
     markdown,
     reviewedAt: frontMatterValue(markdown, "reviewed_at"),
     decision: frontMatterValue(markdown, "decision"),
+    reviewStatus: frontMatterValue(markdown, "review_status") ?? inferReviewStatus(markdown),
   };
 }
 
-function isFresh(review: { reviewedAt: string | undefined } | null): boolean {
+function inferReviewStatus(markdown: string): string {
+  return markdown.includes("Codex review failed") ? "failed" : "complete";
+}
+
+function isFresh(
+  review: { reviewedAt: string | undefined; reviewStatus: string | undefined } | null,
+): boolean {
+  if (review?.reviewStatus === "failed") return false;
   if (!review?.reviewedAt) return false;
   const reviewedAt = Date.parse(review.reviewedAt);
   if (!Number.isFinite(reviewedAt)) return false;
@@ -347,18 +503,37 @@ function selectCandidates(options: {
 }
 
 function collectItemContext(item: Item): ItemContext {
+  const issue = ghJson<unknown>(["api", `repos/${TARGET_REPO}/issues/${item.number}`]);
+  const comments = ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${item.number}/comments`);
+  const timeline = ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${item.number}/timeline`);
   const context: ItemContext = {
-    issue: ghJson<unknown>(["api", `repos/${TARGET_REPO}/issues/${item.number}`]),
-    comments: ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${item.number}/comments`),
-    timeline: ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${item.number}/timeline`),
+    issue: compactIssue(issue),
+    comments: compactSlice(comments.map(compactComment), 24),
+    timeline: compactSlice(timeline.map(compactTimelineEvent), 80),
+    counts: {
+      comments: comments.length,
+      timeline: timeline.length,
+    },
   };
   if (item.kind === "pull_request") {
-    context.pullRequest = ghJson<unknown>(["api", `repos/${TARGET_REPO}/pulls/${item.number}`]);
-    context.pullFiles = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/files`);
-    context.pullCommits = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/commits`);
-    context.pullReviewComments = ghPaged<unknown>(
+    const pullRequest = ghJson<unknown>(["api", `repos/${TARGET_REPO}/pulls/${item.number}`]);
+    const pullFiles = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/files`);
+    const pullCommits = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/commits`);
+    const pullReviewComments = ghPaged<unknown>(
       `repos/${TARGET_REPO}/pulls/${item.number}/comments`,
     );
+    context.pullRequest = compactPullRequest(pullRequest);
+    context.pullFiles = compactSlice(pullFiles.map(compactPullFile), 80);
+    context.pullCommits = compactSlice(pullCommits.map(compactPullCommit), 80);
+    context.pullReviewComments = compactSlice(pullReviewComments.map(compactComment), 40);
+    context.counts = {
+      ...context.counts,
+      comments: comments.length,
+      timeline: timeline.length,
+      pullFiles: pullFiles.length,
+      pullCommits: pullCommits.length,
+      pullReviewComments: pullReviewComments.length,
+    };
   }
   return context;
 }
@@ -599,6 +774,7 @@ main_sha: ${options.git.mainSha}
 latest_release: ${options.git.latestRelease?.tagName ?? "unknown"}
 latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
 review_mode: ${options.reviewMode}
+review_status: ${options.decision.summary.startsWith("Codex review failed") ? "failed" : "complete"}
 item_snapshot_hash: ${options.snapshotHash}
 close_comment_sha256: ${options.action.closeComment ? sha256(options.action.closeComment) : "none"}
 decision: ${options.decision.decision}
@@ -651,10 +827,10 @@ ${options.action.closeComment ? options.action.closeComment : "_No close comment
 
 ## GitHub Snapshot
 
-- comments: ${options.context.comments.length}
-- timeline events: ${options.context.timeline.length}
-- PR files: ${options.context.pullFiles?.length ?? 0}
-- PR commits: ${options.context.pullCommits?.length ?? 0}
+- comments: ${options.context.counts?.comments ?? options.context.comments.length}
+- timeline events: ${options.context.counts?.timeline ?? options.context.timeline.length}
+- PR files: ${options.context.counts?.pullFiles ?? options.context.pullFiles?.length ?? 0}
+- PR commits: ${options.context.counts?.pullCommits ?? options.context.pullCommits?.length ?? 0}
 `;
 }
 
@@ -824,13 +1000,15 @@ function dashboardStats(itemsDir: string): {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
     const number = Number(file.replace(/\.md$/, ""));
     const reviewedAt = frontMatterValue(markdown, "reviewed_at");
-    if (isFresh({ reviewedAt })) fresh += 1;
+    const reviewStatus = frontMatterValue(markdown, "review_status") ?? inferReviewStatus(markdown);
+    if (isFresh({ reviewedAt, reviewStatus })) fresh += 1;
     recent.push({
       number,
       title: frontMatterValue(markdown, "title") ?? "",
       reviewedAt,
       decision: frontMatterValue(markdown, "decision") ?? "unknown",
       action: frontMatterValue(markdown, "action_taken") ?? "unknown",
+      reviewStatus,
     });
   }
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
@@ -852,7 +1030,7 @@ function updateDashboard(itemsDir = join(ROOT, "items")): void {
       .slice(0, 20)
       .map((item) => {
         const title = item.title.replace(/^"|"$/g, "");
-        return `- #${item.number}: ${title} - ${item.decision}, ${item.action}, ${item.reviewedAt ?? "unknown"}`;
+        return `- #${item.number}: ${title} - ${item.decision}, ${item.action}, ${item.reviewStatus}, ${item.reviewedAt ?? "unknown"}`;
       })
       .join("\n") || "_No reviews yet._";
   const dashboard = `## Dashboard
