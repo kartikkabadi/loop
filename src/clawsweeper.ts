@@ -871,7 +871,7 @@ function reviewCommand(args: Args): void {
   const model = stringArg(args.codex_model, "gpt-5.4");
   const reasoningEffort = stringArg(args.codex_reasoning_effort, "high");
   const serviceTier = stringArg(args.codex_service_tier, "fast");
-  const timeoutMs = numberArg(args.codex_timeout_ms, 240_000);
+  const timeoutMs = numberArg(args.codex_timeout_ms, 600_000);
   const shardIndex = numberArg(args.shard_index, 0);
   const shardCount = numberArg(args.shard_count, 1);
   const applyClosures =

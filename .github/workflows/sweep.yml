@@ -22,7 +22,7 @@ on:
       codex_timeout_ms:
         description: "Per-item Codex timeout in milliseconds"
         required: false
-        default: "240000"
+        default: "600000"
       shard_count:
         description: "Parallel shards"
         required: false
@@ -55,7 +55,7 @@ jobs:
           {
             echo "apply_closures=${{ github.event.inputs.apply_closures || 'false' }}"
             echo "batch_size=${{ github.event.inputs.batch_size || '1' }}"
-            echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '240000' }}"
+            echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '600000' }}"
           } >> "$GITHUB_OUTPUT"
       - id: shards
         env:
@@ -102,10 +102,25 @@ jobs:
           printenv OPENAI_API_KEY | codex login --with-api-key
           codex login status
 
+      - uses: actions/cache@v4
+        with:
+          path: openclaw-cache.git
+          key: openclaw-git-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            openclaw-git-${{ runner.os }}-
+
       - name: Check out OpenClaw
-        env:
-          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
-        run: gh repo clone openclaw/openclaw openclaw -- --depth=1
+        run: |
+          set -euo pipefail
+          url="https://github.com/openclaw/openclaw.git"
+          if [ -d openclaw-cache.git ]; then
+            git -C openclaw-cache.git remote set-url origin "$url"
+            git -C openclaw-cache.git fetch --prune --depth=1 origin main
+          else
+            git clone --bare --depth=1 "$url" openclaw-cache.git
+          fi
+          git clone --reference-if-able openclaw-cache.git --dissociate --depth=1 --branch main --single-branch "$url" openclaw
+          git -C openclaw rev-parse --short HEAD
 
       - name: Review shard
         working-directory: clawsweeper
@@ -159,6 +174,9 @@ jobs:
           path: artifacts
           merge-multiple: true
 
+      - name: Sync before applying artifacts
+        run: git pull --rebase
+
       - name: Apply review artifacts
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
@@ -168,7 +186,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase
           git add README.md items
           if git diff --cached --quiet; then
             echo "No review changes"
@@ -201,11 +218,13 @@ jobs:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: npm run apply-decisions -- --limit "${{ github.event.inputs.apply_limit || '20' }}"
 
+      - name: Sync before committing apply results
+        run: git pull --rebase
+
       - name: Commit apply results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase
           git add README.md items apply-report.json
           if git diff --cached --quiet; then
             echo "No apply changes"
