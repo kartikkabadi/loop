@@ -589,7 +589,7 @@ ${JSON.stringify(context, null, 2)}
 `;
 }
 
-function fallbackDecision(status: number | null, stderr: string, stdout = ""): Decision {
+function codexFailureDecision(status: number | null, stderr: string, stdout = ""): Decision {
   return {
     decision: "keep_open",
     closeReason: "none",
@@ -628,6 +628,8 @@ function runCodex(options: {
       `model_reasoning_effort="${options.reasoningEffort}"`,
       "-c",
       `service_tier="${options.serviceTier}"`,
+      "-c",
+      'forced_login_method="api"',
       "--dangerously-bypass-approvals-and-sandbox",
       "-C",
       options.openclawDir,
@@ -645,22 +647,36 @@ function runCodex(options: {
     },
   );
   if (result.status !== 0) {
-    return fallbackDecision(result.status, result.stderr, result.stdout);
+    throw new Error(
+      `Codex review failed for #${options.item.number} with exit ${
+        result.status ?? "unknown"
+      }.\n${result.stderr.slice(-6000) || result.stdout.slice(-6000) || "No output."}`,
+    );
   }
   if (!existsSync(outputPath)) {
-    return fallbackDecision(
+    const decision = codexFailureDecision(
       result.status,
       `Codex exited successfully but did not write ${outputPath}.`,
       result.stdout,
+    );
+    throw new Error(
+      `Codex review did not produce output for #${options.item.number}: ${decision.evidence
+        .map((entry) => entry.detail)
+        .join("\n")}`,
     );
   }
   try {
     return JSON.parse(readFileSync(outputPath, "utf8").trim()) as Decision;
   } catch (error) {
-    return fallbackDecision(
+    const decision = codexFailureDecision(
       result.status,
       `Codex wrote invalid JSON to ${outputPath}: ${error instanceof Error ? error.message : String(error)}`,
       result.stdout,
+    );
+    throw new Error(
+      `Codex review wrote invalid JSON for #${options.item.number}: ${decision.evidence
+        .map((entry) => entry.detail)
+        .join("\n")}`,
     );
   }
 }

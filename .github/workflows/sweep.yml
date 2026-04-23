@@ -77,6 +77,16 @@ jobs:
       - name: Install Codex
         run: npm install -g @openai/codex@latest
 
+      - name: Authenticate Codex
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
+        run: |
+          test -n "$OPENAI_API_KEY"
+          test -n "$CODEX_API_KEY"
+          printenv OPENAI_API_KEY | codex login --with-api-key
+          codex login status
+
       - name: Check out OpenClaw
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
@@ -88,6 +98,7 @@ jobs:
           CLAWSWEEPER_APPLY_CLOSURES: ${{ needs.plan.outputs.apply_closures }}
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
         run: |
           npm run review -- \
             --openclaw-dir ../openclaw \
@@ -141,12 +152,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
           git add README.md items
           if git diff --cached --quiet; then
             echo "No review changes"
           else
             git commit -m "chore: update sweep dashboard"
-            git pull --rebase
             git push
           fi
 
@@ -178,11 +189,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
           git add README.md items apply-report.json
           if git diff --cached --quiet; then
             echo "No apply changes"
           else
             git commit -m "chore: apply sweep decisions"
-            git pull --rebase
             git push
           fi
