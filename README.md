@@ -13,22 +13,26 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: 2026-04-23T23:34:22.711Z
+Last dashboard update: 2026-04-23T23:37:40.115Z
 
-Open items in `openclaw/openclaw`: 19152
+Open items in `openclaw/openclaw`: 19153
 
-Freshly reviewed in the last 7 days: 16
+Freshly reviewed in the last 7 days: 20
 
-Todo for weekly coverage: 19136
+Todo for weekly coverage: 19133
 
-Total local review files: 16
+Total local review files: 20
 
 Recently reviewed:
 
+- #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, complete, 2026-04-23T23:36:45.835Z
+- #6615: Feature: Add denylist support for exec-approvals - keep_open, kept_open, complete, 2026-04-23T23:36:44.785Z
+- #8920: [Feature]: Better UI for configuration - keep_open, kept_open, complete, 2026-04-23T23:36:43.749Z
+- #7021: [Feature]: integrate PowerMem as a Memory backend (semantic recall + long‑term memory) - close, proposed_close, complete, 2026-04-23T23:36:28.365Z
+- #6717: [Feature Request] Natural language model switching in conversation - keep_open, kept_open, complete, 2026-04-23T23:35:36.928Z
 - #6722: WhatsApp: Add link preview support (generateHighQualityLinkPreview) - keep_open, kept_open, complete, 2026-04-23T23:34:02.988Z
 - #6617: [Feature]: Control UI agent reply supports inline image - keep_open, kept_open, complete, 2026-04-23T23:33:36.024Z
 - #6820: Add openai-codex/gpt-5.2 to xhigh thinking whitelist - close, proposed_close, complete, 2026-04-23T23:33:08.757Z
-- #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, complete, 2026-04-23T23:32:27.261Z
 - #6457: fix(telegram): register commands for group scope + preserve topic thread params - keep_open, kept_open, complete, 2026-04-23T23:24:48.965Z
 - #1691: Add option to disable prompt_cache_key for local models - close, proposed_close, complete, 2026-04-23T23:24:15.418Z
 - #1210: Images from Discord stored as base64 in session transcripts - keep_open, kept_open, complete, 2026-04-23T23:23:57.932Z
