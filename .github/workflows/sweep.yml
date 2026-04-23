@@ -1,0 +1,142 @@
+name: Sweep OpenClaw Items
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Generate reviews without commenting or closing"
+        required: false
+        default: "false"
+      shard_count:
+        description: "Parallel shards; each shard reviews 4 items"
+        required: false
+        default: "32"
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: clawsweeper
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      dry_run: ${{ steps.mode.outputs.dry_run }}
+      shard_count: ${{ steps.shards.outputs.shard_count }}
+      shards: ${{ steps.shards.outputs.shards }}
+    steps:
+      - id: mode
+        run: echo "dry_run=${{ github.event.inputs.dry_run || 'false' }}" >> "$GITHUB_OUTPUT"
+      - id: shards
+        env:
+          SHARD_COUNT: ${{ github.event.inputs.shard_count || '32' }}
+        run: |
+          node -e 'const n = Math.max(1, Number(process.env.SHARD_COUNT || 32)); console.log("shard_count=" + n); console.log("shards=" + JSON.stringify([...Array(n).keys()]));' >> "$GITHUB_OUTPUT"
+
+  review:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJson(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: clawsweeper
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        working-directory: clawsweeper
+        run: npm ci
+
+      - name: Build ClawSweeper
+        working-directory: clawsweeper
+        run: npm run build
+
+      - name: Install Codex
+        run: npm install -g @openai/codex@latest
+
+      - name: Check out OpenClaw
+        env:
+          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+        run: gh repo clone openclaw/openclaw openclaw -- --depth=1
+
+      - name: Review shard
+        working-directory: clawsweeper
+        env:
+          CLAWSWEEPER_DRY_RUN: ${{ needs.plan.outputs.dry_run }}
+          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          npm run review -- \
+            --openclaw-dir ../openclaw \
+            --artifact-dir ../review-artifacts/shard-${{ matrix.shard }} \
+            --batch-size 4 \
+            --max-pages 250 \
+            --codex-model gpt-5.4 \
+            --codex-reasoning-effort high \
+            --codex-service-tier fast \
+            --shard-index ${{ matrix.shard }} \
+            --shard-count ${{ needs.plan.outputs.shard_count }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: review-shard-${{ matrix.shard }}
+          path: review-artifacts/shard-${{ matrix.shard }}
+          if-no-files-found: ignore
+
+  publish:
+    needs: review
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build ClawSweeper
+        run: npm run build
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: review-shard-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Apply review artifacts
+        env:
+          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+        run: npm run apply-artifacts -- --artifact-dir artifacts
+
+      - name: Commit dashboard and review files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md items
+          if git diff --cached --quiet; then
+            echo "No review changes"
+          else
+            git commit -m "chore: update sweep dashboard"
+            git pull --rebase
+            git push
+          fi

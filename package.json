@@ -1,0 +1,27 @@
+{
+  "name": "@openclaw/clawsweeper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsgo -p tsconfig.json",
+    "review": "node dist/clawsweeper.js review",
+    "apply-artifacts": "node dist/clawsweeper.js apply-artifacts",
+    "dashboard": "node dist/clawsweeper.js dashboard",
+    "lint": "oxlint src --tsconfig tsconfig.json",
+    "format": "oxfmt --write src package.json tsconfig.json .oxfmtrc.json schema .github/workflows",
+    "format:check": "oxfmt --check src package.json tsconfig.json .oxfmtrc.json schema .github/workflows",
+    "oxformat": "npm run format",
+    "oxformat:check": "npm run format:check",
+    "check": "npm run build && npm run lint && npm run format:check"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@typescript/native-preview": "7.0.0-dev.20260423.1",
+    "oxfmt": "^0.46.0",
+    "oxlint": "^1.61.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

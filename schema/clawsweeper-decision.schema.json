@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "closeReason",
+    "confidence",
+    "summary",
+    "evidence",
+    "risks",
+    "closeComment"
+  ],
+  "properties": {
+    "decision": {
+      "type": "string",
+      "enum": ["close", "keep_open"]
+    },
+    "closeReason": {
+      "type": "string",
+      "enum": ["implemented_on_main", "cannot_reproduce", "clawhub", "incoherent", "none"]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "detail"],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer"
+          },
+          "command": {
+            "type": "string"
+          },
+          "sha": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "closeComment": {
+      "type": "string"
+    }
+  }
+}
