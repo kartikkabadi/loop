@@ -13,7 +13,7 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: 2026-04-23T22:48:23.364Z
+Last dashboard update: 2026-04-23T22:50:38.262Z
 
 Open items in `openclaw/openclaw`: 19165
 
@@ -25,10 +25,10 @@ Total local review files: 4
 
 Recently reviewed:
 
+- #1210: Images from Discord stored as base64 in session transcripts - keep_open, kept_open, failed, 2026-04-23T22:50:05.252Z
+- #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, failed, 2026-04-23T22:49:49.185Z
+- #75: Linux/Windows Clawdbot Apps - keep_open, kept_open, failed, 2026-04-23T22:49:32.150Z
 - #1691: Add option to disable prompt_cache_key for local models - keep_open, kept_open, failed, 2026-04-23T22:46:00.019Z
-- #1210: Images from Discord stored as base64 in session transcripts - keep_open, kept_open, failed, 2026-04-23T22:45:43.814Z
-- #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, failed, 2026-04-23T22:45:27.183Z
-- #75: Linux/Windows Clawdbot Apps - keep_open, kept_open, failed, 2026-04-23T22:45:10.344Z
 
 ## How It Works
 
