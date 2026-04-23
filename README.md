@@ -13,18 +13,22 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: 2026-04-23T23:26:58.364Z
+Last dashboard update: 2026-04-23T23:34:22.711Z
 
-Open items in `openclaw/openclaw`: 19158
+Open items in `openclaw/openclaw`: 19152
 
-Freshly reviewed in the last 7 days: 12
+Freshly reviewed in the last 7 days: 16
 
-Todo for weekly coverage: 19146
+Todo for weekly coverage: 19136
 
-Total local review files: 13
+Total local review files: 16
 
 Recently reviewed:
 
+- #6722: WhatsApp: Add link preview support (generateHighQualityLinkPreview) - keep_open, kept_open, complete, 2026-04-23T23:34:02.988Z
+- #6617: [Feature]: Control UI agent reply supports inline image - keep_open, kept_open, complete, 2026-04-23T23:33:36.024Z
+- #6820: Add openai-codex/gpt-5.2 to xhigh thinking whitelist - close, proposed_close, complete, 2026-04-23T23:33:08.757Z
+- #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, complete, 2026-04-23T23:32:27.261Z
 - #6457: fix(telegram): register commands for group scope + preserve topic thread params - keep_open, kept_open, complete, 2026-04-23T23:24:48.965Z
 - #1691: Add option to disable prompt_cache_key for local models - close, proposed_close, complete, 2026-04-23T23:24:15.418Z
 - #1210: Images from Discord stored as base64 in session transcripts - keep_open, kept_open, complete, 2026-04-23T23:23:57.932Z
@@ -37,7 +41,6 @@ Recently reviewed:
 - #6792: Feature: configPatch in plugin manifest — automatic config setup on install - keep_open, kept_open, complete, 2026-04-23T23:23:20.844Z
 - #6808: [Feature]: More efficient cron job management on Web UI - keep_open, kept_open, complete, 2026-04-23T23:23:17.072Z
 - #75: Linux/Windows Clawdbot Apps - keep_open, kept_open, complete, 2026-04-23T23:22:45.911Z
-- #147: feat: Brabble as Clawdis node for distributed voice wake - keep_open, kept_open, failed, 2026-04-23T22:49:49.185Z
 
 ## How It Works
 
