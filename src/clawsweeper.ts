@@ -879,16 +879,25 @@ function reviewCommand(args: Args): void {
   for (const item of candidates) {
     const context = collectItemContext(item);
     const snapshotHash = itemSnapshotHash(item, context);
-    const decision = runCodex({
-      item,
-      context,
-      git,
-      model,
-      openclawDir,
-      reasoningEffort,
-      serviceTier,
-      workDir: join(artifactDir, "codex"),
-    });
+    let decision: Decision;
+    try {
+      decision = runCodex({
+        item,
+        context,
+        git,
+        model,
+        openclawDir,
+        reasoningEffort,
+        serviceTier,
+        workDir: join(artifactDir, "codex"),
+      });
+    } catch (error) {
+      decision = codexFailureDecision(
+        null,
+        error instanceof Error ? error.message : String(error),
+        "Per-item Codex failure; continuing with the rest of the shard.",
+      );
+    }
     const action = maybeApplyClose({ item, decision, git, applyClosures });
     writeFileSync(
       join(artifactDir, `${item.number}.md`),
