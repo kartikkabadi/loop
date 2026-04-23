@@ -15,8 +15,16 @@ on:
         description: "Maximum existing proposed items to close in apply-existing mode"
         required: false
         default: "20"
+      batch_size:
+        description: "Items per shard"
+        required: false
+        default: "1"
+      codex_timeout_ms:
+        description: "Per-item Codex timeout in milliseconds"
+        required: false
+        default: "240000"
       shard_count:
-        description: "Parallel shards; each shard reviews 4 items"
+        description: "Parallel shards"
         required: false
         default: "32"
   schedule:
@@ -37,11 +45,18 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       apply_closures: ${{ steps.mode.outputs.apply_closures }}
+      batch_size: ${{ steps.mode.outputs.batch_size }}
+      codex_timeout_ms: ${{ steps.mode.outputs.codex_timeout_ms }}
       shard_count: ${{ steps.shards.outputs.shard_count }}
       shards: ${{ steps.shards.outputs.shards }}
     steps:
       - id: mode
-        run: echo "apply_closures=${{ github.event.inputs.apply_closures || 'false' }}" >> "$GITHUB_OUTPUT"
+        run: |
+          {
+            echo "apply_closures=${{ github.event.inputs.apply_closures || 'false' }}"
+            echo "batch_size=${{ github.event.inputs.batch_size || '1' }}"
+            echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '240000' }}"
+          } >> "$GITHUB_OUTPUT"
       - id: shards
         env:
           SHARD_COUNT: ${{ github.event.inputs.shard_count || '32' }}
@@ -103,11 +118,12 @@ jobs:
           npm run review -- \
             --openclaw-dir ../openclaw \
             --artifact-dir ../review-artifacts/shard-${{ matrix.shard }} \
-            --batch-size 4 \
+            --batch-size ${{ needs.plan.outputs.batch_size }} \
             --max-pages 250 \
             --codex-model gpt-5.4 \
             --codex-reasoning-effort high \
             --codex-service-tier fast \
+            --codex-timeout-ms ${{ needs.plan.outputs.codex_timeout_ms }} \
             --shard-index ${{ matrix.shard }} \
             --shard-count ${{ needs.plan.outputs.shard_count }}
 

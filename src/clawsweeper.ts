@@ -612,6 +612,7 @@ function runCodex(options: {
   openclawDir: string;
   reasoningEffort: string;
   serviceTier: string;
+  timeoutMs: number;
   workDir: string;
 }): Decision {
   ensureDir(options.workDir);
@@ -647,8 +648,16 @@ function runCodex(options: {
       encoding: "utf8",
       env: process.env,
       input: readFileSync(promptPath, "utf8"),
+      timeout: options.timeoutMs,
     },
   );
+  if (result.error) {
+    throw new Error(
+      `Codex review failed for #${options.item.number}: ${result.error.message}\n${
+        result.stderr.slice(-6000) || result.stdout.slice(-6000) || "No output."
+      }`,
+    );
+  }
   if (result.status !== 0) {
     throw new Error(
       `Codex review failed for #${options.item.number} with exit ${
@@ -862,6 +871,7 @@ function reviewCommand(args: Args): void {
   const model = stringArg(args.codex_model, "gpt-5.4");
   const reasoningEffort = stringArg(args.codex_reasoning_effort, "high");
   const serviceTier = stringArg(args.codex_service_tier, "fast");
+  const timeoutMs = numberArg(args.codex_timeout_ms, 240_000);
   const shardIndex = numberArg(args.shard_index, 0);
   const shardCount = numberArg(args.shard_count, 1);
   const applyClosures =
@@ -892,6 +902,7 @@ function reviewCommand(args: Args): void {
         openclawDir,
         reasoningEffort,
         serviceTier,
+        timeoutMs,
         workDir: join(artifactDir, "codex"),
       });
     } catch (error) {

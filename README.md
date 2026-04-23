@@ -55,7 +55,7 @@ Requires Node 24.
 source ~/.profile
 npm install
 npm run build
-npm run review -- --openclaw-dir ../openclaw --batch-size 4 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast
+npm run review -- --openclaw-dir ../openclaw --batch-size 1 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 240000
 npm run apply-artifacts -- --artifact-dir artifacts/reviews
 ```
 
