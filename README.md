@@ -13,13 +13,13 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: 2026-04-23T22:36:49.250Z
+Last dashboard update: 2026-04-23T22:40:27.332Z
 
-Open items in `openclaw/openclaw`: 19166
+Open items in `openclaw/openclaw`: 19167
 
 Freshly reviewed in the last 7 days: 0
 
-Todo for weekly coverage: 19166
+Todo for weekly coverage: 19167
 
 Total local review files: 0
 
