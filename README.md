@@ -55,6 +55,8 @@ Each review job:
 5. Writes `items/<number>.md` with the decision, proposed close comment, and a GitHub snapshot hash.
 6. Marks high-confidence allowed close decisions as `proposed_close`.
 
+Codex runs without GitHub write tokens. The runner checks the OpenClaw checkout before and after every review and fails the item if Codex leaves any tracked or untracked change behind.
+
 Parallel workflow shards each own a different slice of the open-item list. The final job merges artifacts and updates this README so the dashboard reflects progress.
 
 To close later without rerunning Codex, dispatch the workflow with `apply_existing=true`. That mode reads existing `items/*.md`, refetches the issue/PR context, recomputes the snapshot hash, and only comments/closes if nothing changed since the proposal was written.

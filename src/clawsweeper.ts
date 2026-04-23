@@ -604,6 +604,20 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
   };
 }
 
+function codexEnv(): NodeJS.ProcessEnv {
+  const env = { ...process.env };
+  delete env.GH_TOKEN;
+  delete env.GITHUB_TOKEN;
+  delete env.OPENCLAW_GH_TOKEN;
+  return env;
+}
+
+function openclawDirtyStatus(openclawDir: string): string {
+  return run("git", ["status", "--porcelain=v1", "--untracked-files=all"], {
+    cwd: openclawDir,
+  });
+}
+
 function runCodex(options: {
   item: Item;
   context: ItemContext;
@@ -619,6 +633,12 @@ function runCodex(options: {
   const promptPath = join(options.workDir, `${options.item.number}.prompt.md`);
   const outputPath = join(options.workDir, `${options.item.number}.json`);
   writeFileSync(promptPath, promptFor(options.item, options.context, options.git), "utf8");
+  const dirtyBefore = openclawDirtyStatus(options.openclawDir);
+  if (dirtyBefore) {
+    throw new Error(
+      `OpenClaw checkout is dirty before reviewing #${options.item.number}:\n${dirtyBefore}`,
+    );
+  }
   const result = spawnSync(
     "codex",
     [
@@ -634,7 +654,7 @@ function runCodex(options: {
       "-c",
       'approval_policy="never"',
       "--sandbox",
-      "read-only",
+      "danger-full-access",
       "-C",
       options.openclawDir,
       "--output-schema",
@@ -646,11 +666,17 @@ function runCodex(options: {
     {
       cwd: options.openclawDir,
       encoding: "utf8",
-      env: process.env,
+      env: codexEnv(),
       input: readFileSync(promptPath, "utf8"),
       timeout: options.timeoutMs,
     },
   );
+  const dirtyAfter = openclawDirtyStatus(options.openclawDir);
+  if (dirtyAfter) {
+    throw new Error(
+      `Codex dirtied the OpenClaw checkout while reviewing #${options.item.number}:\n${dirtyAfter}`,
+    );
+  }
   if (result.error) {
     throw new Error(
       `Codex review failed for #${options.item.number}: ${result.error.message}\n${
