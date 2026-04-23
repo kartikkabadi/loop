@@ -9,6 +9,8 @@
     "summary",
     "evidence",
     "risks",
+    "fixedRelease",
+    "fixedSha",
     "closeComment"
   ],
   "properties": {
@@ -60,6 +62,14 @@
       "items": {
         "type": "string"
       }
+    },
+    "fixedRelease": {
+      "type": ["string", "null"],
+      "description": "Release tag/version where the issue was fixed, if known. Use null when not applicable or not known."
+    },
+    "fixedSha": {
+      "type": ["string", "null"],
+      "description": "Specific commit SHA that fixed or proves the issue is implemented, if known. Use null when not applicable or not known."
     },
     "closeComment": {
       "type": "string"

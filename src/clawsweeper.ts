@@ -89,6 +89,8 @@ interface Decision {
   summary: string;
   evidence: Evidence[];
   risks: string[];
+  fixedRelease?: string | null;
+  fixedSha?: string | null;
   closeComment: string;
 }
 
@@ -116,6 +118,7 @@ interface Action {
 
 interface DashboardItem {
   number: number;
+  kind: ItemKind;
   title: string;
   reviewedAt: string | undefined;
   decision: string;
@@ -619,6 +622,8 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
       { label: "codex stdout", detail: stdout.slice(-4000) || "No stdout." },
     ],
     risks: ["No close action taken because the review did not complete."],
+    fixedRelease: null,
+    fixedSha: null,
     closeComment: "",
   };
 }
@@ -753,15 +758,109 @@ function closeReasonText(reason: CloseReason): string {
   }
 }
 
+function repoUrl(path = ""): string {
+  return `https://github.com/${TARGET_REPO}${path}`;
+}
+
+function commitUrl(sha: string): string {
+  return repoUrl(`/commit/${sha}`);
+}
+
+function shortSha(sha: string): string {
+  return sha.slice(0, 12);
+}
+
+function releaseUrl(tag: string): string {
+  return repoUrl(`/releases/tag/${encodeURIComponent(tag)}`);
+}
+
+function itemUrl(number: number, kind: ItemKind = "issue"): string {
+  return repoUrl(`/${kind === "pull_request" ? "pull" : "issues"}/${number}`);
+}
+
+function githubPath(path: string): string {
+  return path
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+}
+
+function splitFileAndLine(
+  file: string,
+  explicitLine?: number | null,
+): { file: string; line?: number } {
+  const match = file.match(/^(.*?):(\d+)$/);
+  if (match?.[1] && match[2]) return { file: match[1], line: Number(match[2]) };
+  if (explicitLine) return { file, line: explicitLine };
+  return { file };
+}
+
+function fileUrl(file: string, sha: string, line?: number): string {
+  return repoUrl(`/blob/${sha}/${githubPath(file)}${line ? `#L${line}` : ""}`);
+}
+
+function markdownLink(label: string, url: string): string {
+  return `[${label.replaceAll("|", "\\|")}](${url})`;
+}
+
+function linkedSha(sha: string): string {
+  return markdownLink(shortSha(sha), commitUrl(sha));
+}
+
+function linkedRelease(tag: string): string {
+  return markdownLink(tag, releaseUrl(tag));
+}
+
+function formatTimestamp(iso: string | undefined): string {
+  if (!iso) return "unknown";
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "UTC",
+    timeZoneName: "short",
+  }).format(date);
+}
+
+function displayTitle(title: string): string {
+  try {
+    const parsed = JSON.parse(title) as unknown;
+    if (typeof parsed === "string") return parsed;
+  } catch {
+    // Front matter from older files may be a plain string.
+  }
+  return title.replace(/^"|"$/g, "");
+}
+
+function fixedInText(decision: Decision): string {
+  const parts: string[] = [];
+  if (decision.fixedRelease) parts.push(`release ${linkedRelease(decision.fixedRelease)}`);
+  if (decision.fixedSha) parts.push(`commit ${linkedSha(decision.fixedSha)}`);
+  return parts.length ? parts.join(", ") : "not determined";
+}
+
+function cleanCloseComment(comment: string): string {
+  return comment
+    .split("\n")
+    .filter((line) => !/^Latest release seen during review:/i.test(line.trim()))
+    .join("\n")
+    .trim();
+}
+
 function normalizeComment(decision: Decision, git: GitInfo): string {
-  const base = decision.closeComment.trim();
-  const release = git.latestRelease?.tagName
-    ? `Latest release seen during review: ${git.latestRelease.tagName}${
-        git.latestRelease.sha ? ` (${git.latestRelease.sha.slice(0, 12)})` : ""
-      }.`
-    : "Latest release could not be resolved during review.";
-  const main = `Reviewed against main ${git.mainSha.slice(0, 12)}.`;
-  return [base, "", `ClawSweeper/Codex evidence: ${main} ${release}`].filter(Boolean).join("\n");
+  const base = cleanCloseComment(decision.closeComment);
+  const main = `Reviewed against main ${linkedSha(git.mainSha)}.`;
+  const fixed = fixedInText(decision);
+  const fixedLine =
+    fixed === "not determined"
+      ? "Specific fixed release/commit was not determined by this review."
+      : `Fix evidence: ${fixed}.`;
+  return [base, "", `ClawSweeper/Codex evidence: ${main} ${fixedLine}`].filter(Boolean).join("\n");
 }
 
 function canClose(decision: Decision): boolean {
@@ -822,10 +921,15 @@ function markdownFor(options: {
     ? options.decision.evidence
         .map((entry) => {
           const bits = [`- **${entry.label}:** ${entry.detail}`];
-          if (entry.file)
-            bits.push(`  - file: \`${entry.file}${entry.line ? `:${entry.line}` : ""}\``);
+          if (entry.file) {
+            const parsed = splitFileAndLine(entry.file, entry.line);
+            const label = `${parsed.file}${parsed.line ? `:${parsed.line}` : ""}`;
+            bits.push(
+              `  - file: ${markdownLink(label, fileUrl(parsed.file, entry.sha ?? options.git.mainSha, parsed.line))}`,
+            );
+          }
           if (entry.command) bits.push(`  - command: \`${entry.command}\``);
-          if (entry.sha) bits.push(`  - sha: \`${entry.sha}\``);
+          if (entry.sha) bits.push(`  - sha: ${linkedSha(entry.sha)}`);
           return bits.join("\n");
         })
         .join("\n")
@@ -846,6 +950,8 @@ reviewed_at: ${new Date().toISOString()}
 main_sha: ${options.git.mainSha}
 latest_release: ${options.git.latestRelease?.tagName ?? "unknown"}
 latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
+fixed_release: ${options.decision.fixedRelease ?? "unknown"}
+fixed_sha: ${options.decision.fixedSha ?? "unknown"}
 review_mode: ${options.reviewMode}
 review_status: ${options.decision.summary.startsWith("Codex review failed") ? "failed" : "complete"}
 local_checkout_access: verified
@@ -857,23 +963,27 @@ confidence: ${options.decision.confidence}
 action_taken: ${options.action.actionTaken}
 ---
 
-# #${options.item.number}: ${options.item.title}
+# ${markdownLink(`#${options.item.number}: ${options.item.title}`, options.item.url)}
 
 Type: ${options.item.kind}
 
-URL: ${options.item.url}
+URL: ${markdownLink(options.item.url, options.item.url)}
 
 Author: ${options.item.author}
 
 Labels: ${labels}
 
-Updated at: ${options.item.updatedAt}
+Updated at: ${formatTimestamp(options.item.updatedAt)}
 
-Reviewed against: \`${options.git.mainSha}\`
+Reviewed against: ${linkedSha(options.git.mainSha)}
 
-Latest release: ${options.git.latestRelease?.tagName ?? "unknown"}${
-    options.git.latestRelease?.sha ? ` (\`${options.git.latestRelease.sha}\`)` : ""
-  }
+Latest release at review time: ${
+    options.git.latestRelease?.tagName
+      ? linkedRelease(options.git.latestRelease.tagName)
+      : "unknown"
+  }${options.git.latestRelease?.sha ? ` (${linkedSha(options.git.latestRelease.sha)})` : ""}
+
+Fixed in: ${fixedInText(options.decision)}
 
 ## Decision
 
@@ -1097,6 +1207,7 @@ function dashboardStats(itemsDir: string): {
     if (isFresh({ reviewedAt, reviewStatus })) fresh += 1;
     recent.push({
       number,
+      kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
       title: frontMatterValue(markdown, "title") ?? "",
       reviewedAt,
       decision: frontMatterValue(markdown, "decision") ?? "unknown",
@@ -1122,24 +1233,25 @@ function updateDashboard(itemsDir = join(ROOT, "items")): void {
     stats.recent
       .slice(0, 20)
       .map((item) => {
-        const title = item.title.replace(/^"|"$/g, "");
-        return `- #${item.number}: ${title} - ${item.decision}, ${item.action}, ${item.reviewStatus}, ${item.reviewedAt ?? "unknown"}`;
+        const title = displayTitle(item.title);
+        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title.replaceAll("|", "\\|")} | ${item.decision} | ${item.action} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
       })
-      .join("\n") || "_No reviews yet._";
+      .join("\n") || "| _None_ |  |  |  |  |  |";
   const dashboard = `## Dashboard
 
-Last dashboard update: ${new Date().toISOString()}
+Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 
-Open items in \`${TARGET_REPO}\`: ${stats.openTotal}
-
-Freshly reviewed in the last ${FRESH_DAYS} days: ${stats.fresh}
-
-Todo for weekly coverage: ${stats.todo}
-
-Total local review files: ${stats.files}
+| Metric | Count |
+| --- | ---: |
+| Open items in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.openTotal} |
+| Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
+| Todo for weekly coverage | ${stats.todo} |
+| Local review files | ${stats.files} |
 
 Recently reviewed:
 
+| Item | Title | Decision | Action | Status | Reviewed |
+| --- | --- | --- | --- | --- | --- |
 ${recent}`;
   const updated = readme.replace(
     /## Dashboard[\s\S]*?## How It Works/,
