@@ -29,16 +29,20 @@ _No reviews yet._
 
 ## How It Works
 
-The workflow runs in batches of 4. Each review job:
+The normal workflow is proposal-only. It runs in batches of 4 and never comments or closes unless `apply_closures=true` is explicitly set for a manual run.
+
+Each review job:
 
 1. Checks out this repo.
 2. Checks out a full `openclaw/openclaw` working tree.
 3. Selects the next open item by issue number, starting from `#1`.
 4. Runs Codex with `gpt-5.4`, high reasoning, and fast service tier inside the OpenClaw checkout.
-5. Writes `items/<number>.md`.
-6. Comments and closes only on a high-confidence allowed close reason.
+5. Writes `items/<number>.md` with the decision, proposed close comment, and a GitHub snapshot hash.
+6. Marks high-confidence allowed close decisions as `proposed_close`.
 
 Parallel workflow shards each own a different slice of the open-item list. The final job merges artifacts and updates this README so the dashboard reflects progress.
+
+To close later without rerunning Codex, dispatch the workflow with `apply_existing=true`. That mode reads existing `items/*.md`, refetches the issue/PR context, recomputes the snapshot hash, and only comments/closes if nothing changed since the proposal was written.
 
 ## Local Run
 
@@ -46,11 +50,18 @@ Parallel workflow shards each own a different slice of the open-item list. The f
 source ~/.profile
 npm install
 npm run build
-npm run review -- --openclaw-dir ../openclaw --batch-size 4 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast --dry-run
+npm run review -- --openclaw-dir ../openclaw --batch-size 4 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast
 npm run apply-artifacts -- --artifact-dir artifacts/reviews
 ```
 
-Remove `--dry-run` to allow comments and closes.
+Apply unchanged proposals later:
+
+```bash
+source ~/.profile
+npm run apply-decisions -- --limit 20
+```
+
+Manual review runs can set `--apply-closures` or workflow input `apply_closures=true`, but the safer path is proposal first, then `apply_existing=true`.
 
 ## Checks
 

@@ -3,10 +3,18 @@ name: Sweep OpenClaw Items
 on:
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: "Generate reviews without commenting or closing"
+      apply_closures:
+        description: "Comment and close during review when Codex gives a high-confidence allowed decision"
         required: false
         default: "false"
+      apply_existing:
+        description: "Apply existing proposed close decisions without rerunning Codex; skips items changed since review"
+        required: false
+        default: "false"
+      apply_limit:
+        description: "Maximum existing proposed items to close in apply-existing mode"
+        required: false
+        default: "20"
       shard_count:
         description: "Parallel shards; each shard reviews 4 items"
         required: false
@@ -25,14 +33,15 @@ concurrency:
 
 jobs:
   plan:
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true' }}
     runs-on: ubuntu-latest
     outputs:
-      dry_run: ${{ steps.mode.outputs.dry_run }}
+      apply_closures: ${{ steps.mode.outputs.apply_closures }}
       shard_count: ${{ steps.shards.outputs.shard_count }}
       shards: ${{ steps.shards.outputs.shards }}
     steps:
       - id: mode
-        run: echo "dry_run=${{ github.event.inputs.dry_run || 'false' }}" >> "$GITHUB_OUTPUT"
+        run: echo "apply_closures=${{ github.event.inputs.apply_closures || 'false' }}" >> "$GITHUB_OUTPUT"
       - id: shards
         env:
           SHARD_COUNT: ${{ github.event.inputs.shard_count || '32' }}
@@ -76,7 +85,7 @@ jobs:
       - name: Review shard
         working-directory: clawsweeper
         env:
-          CLAWSWEEPER_DRY_RUN: ${{ needs.plan.outputs.dry_run }}
+          CLAWSWEEPER_APPLY_CLOSURES: ${{ needs.plan.outputs.apply_closures }}
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
@@ -100,7 +109,7 @@ jobs:
 
   publish:
     needs: review
-    if: always()
+    if: ${{ always() && (github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -137,6 +146,43 @@ jobs:
             echo "No review changes"
           else
             git commit -m "chore: update sweep dashboard"
+            git pull --rebase
+            git push
+          fi
+
+  apply-existing:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build ClawSweeper
+        run: npm run build
+
+      - name: Apply unchanged proposed decisions
+        env:
+          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+        run: npm run apply-decisions -- --limit "${{ github.event.inputs.apply_limit || '20' }}"
+
+      - name: Commit apply results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md items apply-report.json
+          if git diff --cached --quiet; then
+            echo "No apply changes"
+          else
+            git commit -m "chore: apply sweep decisions"
             git pull --rebase
             git push
           fi

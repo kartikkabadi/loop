@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
   copyFileSync,
   existsSync,
@@ -15,7 +16,12 @@ type ItemKind = "issue" | "pull_request";
 type DecisionKind = "close" | "keep_open";
 type CloseReason = "implemented_on_main" | "cannot_reproduce" | "clawhub" | "incoherent" | "none";
 type Confidence = "high" | "medium" | "low";
-type ActionTaken = "closed" | "kept_open" | "dry_run_close_candidate";
+type ActionTaken =
+  | "closed"
+  | "kept_open"
+  | "proposed_close"
+  | "skipped_changed_since_review"
+  | "skipped_already_closed";
 
 interface Args {
   _: string[];
@@ -112,6 +118,12 @@ interface RepoSummary {
   open_issues_count?: number;
 }
 
+interface ApplyResult {
+  number: number;
+  action: ActionTaken;
+  reason: string;
+}
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET_REPO = "openclaw/openclaw";
 const FRESH_DAYS = 7;
@@ -192,6 +204,28 @@ function ghJsonLines<T>(args: string[]): T[] {
     .map((line) => JSON.parse(line) as T);
 }
 
+function sha256(text: string): string {
+  return createHash("sha256").update(text).digest("hex");
+}
+
+function stableJson(value: unknown): string {
+  return JSON.stringify(sortStable(value));
+}
+
+function sortStable(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortStable);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(
+    Object.entries(value)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, item]) => [key, sortStable(item)]),
+  );
+}
+
+function itemSnapshotHash(item: Item, context: ItemContext): string {
+  return sha256(stableJson({ item, context }));
+}
+
 function ghPaged<T>(path: string): T[] {
   const pages = ghJson<unknown[]>(["api", path, "--paginate", "--slurp"]);
   if (!Array.isArray(pages)) return [];
@@ -205,6 +239,18 @@ function ensureDir(path: string): void {
 function frontMatterValue(markdown: string, key: string): string | undefined {
   const match = markdown.match(new RegExp(`^${key}:\\s*(.+)$`, "m"));
   return match?.[1]?.trim().replace(/^"|"$/g, "");
+}
+
+function replaceFrontMatterValue(markdown: string, key: string, value: string): string {
+  const line = `${key}: ${value}`;
+  const pattern = new RegExp(`^${key}:\\s*.*$`, "m");
+  if (pattern.test(markdown)) return markdown.replace(pattern, line);
+  return markdown.replace(/^---\n/, `---\n${line}\n`);
+}
+
+function sectionValue(markdown: string, heading: string): string {
+  const match = markdown.match(new RegExp(`^## ${heading}\\n\\n([\\s\\S]*?)(?=\\n## |\\n?$)`, "m"));
+  return match?.[1]?.trim() ?? "";
 }
 
 function existingReview(number: number, itemsDir: string): ExistingReview | null {
@@ -244,6 +290,27 @@ function fetchOpenItemPage(page: number): Item[] {
       labels: item.labels ?? [],
     }))
     .sort((a, b) => a.number - b.number);
+}
+
+function fetchItem(number: number): { item: Item; state: string } {
+  const issue = ghJson<GitHubIssueListItem & { state?: string }>([
+    "api",
+    `repos/${TARGET_REPO}/issues/${number}`,
+    "--jq",
+    "{number,title,html_url,updated_at,state,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
+  ]);
+  return {
+    item: {
+      number: issue.number,
+      kind: issue.pull_request ? "pull_request" : "issue",
+      title: issue.title,
+      url: issue.html_url,
+      updatedAt: issue.updated_at,
+      author: issue.user?.login ?? "unknown",
+      labels: issue.labels ?? [],
+    },
+    state: issue.state ?? "unknown",
+  };
 }
 
 function fetchOpenItemCount(): number {
@@ -347,13 +414,16 @@ ${JSON.stringify(context, null, 2)}
 `;
 }
 
-function fallbackDecision(status: number | null, stderr: string): Decision {
+function fallbackDecision(status: number | null, stderr: string, stdout = ""): Decision {
   return {
     decision: "keep_open",
     closeReason: "none",
     confidence: "low",
     summary: `Codex review failed with exit ${status ?? "unknown"}.`,
-    evidence: [{ label: "codex stderr", detail: stderr.slice(-4000) || "No stderr." }],
+    evidence: [
+      { label: "codex stderr", detail: stderr.slice(-4000) || "No stderr." },
+      { label: "codex stdout", detail: stdout.slice(-4000) || "No stdout." },
+    ],
     risks: ["No close action taken because the review did not complete."],
     closeComment: "",
   };
@@ -400,9 +470,24 @@ function runCodex(options: {
     },
   );
   if (result.status !== 0) {
-    return fallbackDecision(result.status, result.stderr);
+    return fallbackDecision(result.status, result.stderr, result.stdout);
   }
-  return JSON.parse(readFileSync(outputPath, "utf8").trim()) as Decision;
+  if (!existsSync(outputPath)) {
+    return fallbackDecision(
+      result.status,
+      `Codex exited successfully but did not write ${outputPath}.`,
+      result.stdout,
+    );
+  }
+  try {
+    return JSON.parse(readFileSync(outputPath, "utf8").trim()) as Decision;
+  } catch (error) {
+    return fallbackDecision(
+      result.status,
+      `Codex wrote invalid JSON to ${outputPath}: ${error instanceof Error ? error.message : String(error)}`,
+      result.stdout,
+    );
+  }
 }
 
 function closeReasonText(reason: CloseReason): string {
@@ -431,30 +516,47 @@ function normalizeComment(decision: Decision, git: GitInfo): string {
   return [base, "", `ClawSweeper/Codex evidence: ${main} ${release}`].filter(Boolean).join("\n");
 }
 
-function maybeClose(options: {
+function canClose(decision: Decision): boolean {
+  return (
+    decision.decision === "close" &&
+    decision.confidence === "high" &&
+    ALLOWED_REASONS.has(decision.closeReason)
+  );
+}
+
+function postClose(options: {
+  number: number;
+  kind: ItemKind;
+  reason: CloseReason;
+  closeComment: string;
+}): void {
+  const commentFile = join(ROOT, ".artifacts", `comment-${options.number}.md`);
+  ensureDir(dirname(commentFile));
+  writeFileSync(commentFile, options.closeComment, "utf8");
+  gh(["issue", "comment", String(options.number), "-F", commentFile]);
+  if (options.kind === "pull_request") {
+    gh(["pr", "close", String(options.number)]);
+  } else {
+    const reason = options.reason === "implemented_on_main" ? "completed" : "not_planned";
+    gh(["issue", "close", String(options.number), "--reason", reason]);
+  }
+}
+
+function maybeApplyClose(options: {
   item: Item;
   decision: Decision;
   git: GitInfo;
-  dryRun: boolean;
+  applyClosures: boolean;
 }): Action {
-  const canClose =
-    options.decision.decision === "close" &&
-    options.decision.confidence === "high" &&
-    ALLOWED_REASONS.has(options.decision.closeReason);
-  if (!canClose) return { actionTaken: "kept_open", closeComment: "" };
+  if (!canClose(options.decision)) return { actionTaken: "kept_open", closeComment: "" };
   const closeComment = normalizeComment(options.decision, options.git);
-  if (options.dryRun) return { actionTaken: "dry_run_close_candidate", closeComment };
-  const commentFile = join(ROOT, ".artifacts", `comment-${options.item.number}.md`);
-  ensureDir(dirname(commentFile));
-  writeFileSync(commentFile, closeComment, "utf8");
-  gh(["issue", "comment", String(options.item.number), "-F", commentFile]);
-  if (options.item.kind === "pull_request") {
-    gh(["pr", "close", String(options.item.number)]);
-  } else {
-    const reason =
-      options.decision.closeReason === "implemented_on_main" ? "completed" : "not_planned";
-    gh(["issue", "close", String(options.item.number), "--reason", reason]);
-  }
+  if (!options.applyClosures) return { actionTaken: "proposed_close", closeComment };
+  postClose({
+    number: options.item.number,
+    kind: options.item.kind,
+    reason: options.decision.closeReason,
+    closeComment,
+  });
   return { actionTaken: "closed", closeComment };
 }
 
@@ -464,6 +566,8 @@ function markdownFor(options: {
   decision: Decision;
   git: GitInfo;
   action: Action;
+  reviewMode: "propose" | "apply";
+  snapshotHash: string;
 }): string {
   const labels = options.item.labels.length ? options.item.labels.join(", ") : "none";
   const evidence = options.decision.evidence.length
@@ -487,12 +591,16 @@ type: ${options.item.kind}
 title: ${JSON.stringify(options.item.title)}
 url: ${options.item.url}
 state_at_review: open
+item_updated_at: ${options.item.updatedAt}
 author: ${options.item.author}
 labels: ${JSON.stringify(options.item.labels)}
 reviewed_at: ${new Date().toISOString()}
 main_sha: ${options.git.mainSha}
 latest_release: ${options.git.latestRelease?.tagName ?? "unknown"}
 latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
+review_mode: ${options.reviewMode}
+item_snapshot_hash: ${options.snapshotHash}
+close_comment_sha256: ${options.action.closeComment ? sha256(options.action.closeComment) : "none"}
 decision: ${options.decision.decision}
 close_reason: ${options.decision.closeReason}
 confidence: ${options.decision.confidence}
@@ -561,7 +669,8 @@ function reviewCommand(args: Args): void {
   const serviceTier = stringArg(args.codex_service_tier, "fast");
   const shardIndex = numberArg(args.shard_index, 0);
   const shardCount = numberArg(args.shard_count, 1);
-  const dryRun = boolArg(args.dry_run) || process.env.CLAWSWEEPER_DRY_RUN === "true";
+  const applyClosures =
+    boolArg(args.apply_closures) || process.env.CLAWSWEEPER_APPLY_CLOSURES === "true";
   ensureDir(artifactDir);
   const git = gitInfo(openclawDir);
   const { candidates, scannedPages } = selectCandidates({
@@ -577,6 +686,7 @@ function reviewCommand(args: Args): void {
   );
   for (const item of candidates) {
     const context = collectItemContext(item);
+    const snapshotHash = itemSnapshotHash(item, context);
     const decision = runCodex({
       item,
       context,
@@ -587,13 +697,98 @@ function reviewCommand(args: Args): void {
       serviceTier,
       workDir: join(artifactDir, "codex"),
     });
-    const action = maybeClose({ item, decision, git, dryRun });
+    const action = maybeApplyClose({ item, decision, git, applyClosures });
     writeFileSync(
       join(artifactDir, `${item.number}.md`),
-      markdownFor({ item, context, decision, git, action }),
+      markdownFor({
+        item,
+        context,
+        decision,
+        git,
+        action,
+        reviewMode: applyClosures ? "apply" : "propose",
+        snapshotHash,
+      }),
       "utf8",
     );
   }
+}
+
+function applyDecisionsCommand(args: Args): void {
+  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
+  const limit = numberArg(args.limit, 20);
+  const results: ApplyResult[] = [];
+  if (!existsSync(itemsDir)) {
+    console.log("No items directory.");
+    return;
+  }
+  const files = readdirSync(itemsDir)
+    .filter((name) => /^\d+\.md$/.test(name))
+    .sort((left, right) => Number(left.replace(".md", "")) - Number(right.replace(".md", "")));
+  for (const file of files) {
+    if (results.filter((result) => result.action === "closed").length >= limit) break;
+    const path = join(itemsDir, file);
+    let markdown = readFileSync(path, "utf8");
+    const number = Number(file.replace(/\.md$/, ""));
+    const decision = frontMatterValue(markdown, "decision");
+    const confidence = frontMatterValue(markdown, "confidence");
+    const closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
+    const action = frontMatterValue(markdown, "action_taken");
+    const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
+    const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
+    if (
+      decision !== "close" ||
+      confidence !== "high" ||
+      !closeReason ||
+      !ALLOWED_REASONS.has(closeReason) ||
+      !storedHash ||
+      (action !== "proposed_close" && action !== "skipped_changed_since_review")
+    ) {
+      continue;
+    }
+    const closeComment = sectionValue(markdown, "Close Comment");
+    if (!closeComment || closeComment === "_No close comment posted._") {
+      results.push({ number, action: "kept_open", reason: "missing close comment" });
+      continue;
+    }
+    const { item, state } = fetchItem(number);
+    if (state !== "open") {
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_already_closed");
+      writeFileSync(path, markdown, "utf8");
+      results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
+      continue;
+    }
+    if (storedUpdatedAt && item.updatedAt !== storedUpdatedAt) {
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
+      markdown = replaceFrontMatterValue(markdown, "current_item_updated_at", item.updatedAt);
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "skipped_changed_since_review",
+        reason: "updated_at changed",
+      });
+      continue;
+    }
+    const currentContext = collectItemContext(item);
+    const currentHash = itemSnapshotHash(item, currentContext);
+    if (currentHash !== storedHash) {
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
+      markdown = replaceFrontMatterValue(markdown, "current_item_snapshot_hash", currentHash);
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      writeFileSync(path, markdown, "utf8");
+      results.push({ number, action: "skipped_changed_since_review", reason: "snapshot changed" });
+      continue;
+    }
+    postClose({ number, kind: item.kind, reason: closeReason, closeComment });
+    markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
+    markdown = replaceFrontMatterValue(markdown, "applied_at", new Date().toISOString());
+    writeFileSync(path, markdown, "utf8");
+    results.push({ number, action: "closed", reason: closeReasonText(closeReason) });
+  }
+  writeFileSync(join(ROOT, "apply-report.json"), JSON.stringify(results, null, 2), "utf8");
+  updateDashboard(itemsDir);
+  console.log(JSON.stringify(results, null, 2));
 }
 
 function applyArtifactsCommand(args: Args): void {
@@ -693,6 +888,7 @@ const args = parseArgs(process.argv.slice(2));
 const command = args._[0] ?? "review";
 if (command === "review") reviewCommand(args);
 else if (command === "apply-artifacts") applyArtifactsCommand(args);
+else if (command === "apply-decisions") applyDecisionsCommand(args);
 else if (command === "dashboard")
   updateDashboard(resolve(stringArg(args.items_dir, join(ROOT, "items"))));
 else if (command === "check") checkCommand();
