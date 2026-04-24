@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 15:31 UTC
+Last dashboard update: Apr 24, 2026, 15:41 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12565 |
-| Fresh reviewed issues in the last 7 days | 7041 |
-| Proposed issue closes | 3932 (55.8% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12566 |
+| Fresh reviewed issues in the last 7 days | 7164 |
+| Proposed issue closes | 3992 (55.7% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6620 |
-| Fresh reviewed PRs in the last 7 days | 3727 |
-| Proposed PR closes | 1204 (32.3% of reviewed PRs) |
-| Open items total | 19185 |
-| Reviewed files | 10768 |
+| Fresh reviewed PRs in the last 7 days | 3804 |
+| Proposed PR closes | 1223 (32.2% of reviewed PRs) |
+| Open items total | 19186 |
+| Reviewed files | 10968 |
 | Archived closed files | 11 |
-| Fresh verified reviews in the last 7 days | 10768 |
-| Proposed closes awaiting apply | 5136 (47.7% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 10968 |
+| Proposed closes awaiting apply | 5215 (47.5% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 8417 |
+| Todo for weekly coverage | 8218 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#56483](https://github.com/openclaw/openclaw/pull/56483) | ani: add Agent-Native IM channel plugin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56483.md) | complete | Apr 24, 2026, 15:24 UTC |
-| [#56444](https://github.com/openclaw/openclaw/issues/56444) | message tool: WhatsApp media sends return 'unsupported channel' error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56444.md) | complete | Apr 24, 2026, 15:23 UTC |
-| [#56428](https://github.com/openclaw/openclaw/issues/56428) | Discord channel enabled but silently ignored by gateway — not shown in status probe | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56428.md) | complete | Apr 24, 2026, 15:22 UTC |
-| [#56479](https://github.com/openclaw/openclaw/issues/56479) | msteams plugin: path-to-regexp crash on gateway 2026.3.24 + Node.js 25.8.2 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56479.md) | complete | Apr 24, 2026, 15:22 UTC |
-| [#56470](https://github.com/openclaw/openclaw/issues/56470) | [Bug]: weixin | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56470.md) | complete | Apr 24, 2026, 15:22 UTC |
-| [#56458](https://github.com/openclaw/openclaw/issues/56458) | WebChat channel: Image support | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56458.md) | complete | Apr 24, 2026, 15:22 UTC |
-| [#56469](https://github.com/openclaw/openclaw/issues/56469) | Support per-device typingIndicator configuration for Feishu channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56469.md) | complete | Apr 24, 2026, 15:21 UTC |
-| [#56437](https://github.com/openclaw/openclaw/issues/56437) | [Feature Request] Native fallbackRunbook injection in agents config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56437.md) | complete | Apr 24, 2026, 15:21 UTC |
-| [#56463](https://github.com/openclaw/openclaw/issues/56463) | Cursor ACP via gateway: 'queue owner unavailable' — works from CLI, fails through gateway plugin | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56463.md) | complete | Apr 24, 2026, 15:21 UTC |
-| [#56434](https://github.com/openclaw/openclaw/issues/56434) | Feature Request: Built-in periodic memory consolidation (daily → MEMORY.md) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56434.md) | complete | Apr 24, 2026, 15:21 UTC |
-| [#56467](https://github.com/openclaw/openclaw/issues/56467) | Implement two-strike enforcement for agents and subagents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56467.md) | complete | Apr 24, 2026, 15:21 UTC |
-| [#56485](https://github.com/openclaw/openclaw/issues/56485) | openclaw-control-ui: duplicate reflection requests and missing image attachment support | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56485.md) | complete | Apr 24, 2026, 15:21 UTC |
-| [#56417](https://github.com/openclaw/openclaw/issues/56417) | [Bug]: Issue: Image tool returns \"No media-understanding provider registered\" for configured vision models | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56417.md) | complete | Apr 24, 2026, 15:20 UTC |
-| [#56426](https://github.com/openclaw/openclaw/issues/56426) | [Bug]: plugins.allow breaks Telegram channel in OpenClaw 2026.3.24 on WSL2 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56426.md) | complete | Apr 24, 2026, 15:20 UTC |
-| [#56442](https://github.com/openclaw/openclaw/pull/56442) | feat: Add opt-in ACP parent completion notify for sessions_spawn | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56442.md) | complete | Apr 24, 2026, 15:20 UTC |
-| [#56478](https://github.com/openclaw/openclaw/issues/56478) | [Bug]: WeChat plugin fails to send messages from isolated cron sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56478.md) | complete | Apr 24, 2026, 15:20 UTC |
-| [#56418](https://github.com/openclaw/openclaw/issues/56418) | WhatsApp self-chat: outbound messages echo back as inbound in personal-number mode | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56418.md) | complete | Apr 24, 2026, 15:20 UTC |
-| [#56466](https://github.com/openclaw/openclaw/pull/56466) | fix: handle wildcard (*) in plugin API version range checks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56466.md) | complete | Apr 24, 2026, 15:20 UTC |
-| [#56453](https://github.com/openclaw/openclaw/pull/56453) | fix(agent): respect configured default agent for --to sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56453.md) | complete | Apr 24, 2026, 15:20 UTC |
-| [#56378](https://github.com/openclaw/openclaw/issues/56378) | Telegram: multi-minute silence during tool-heavy turns and compaction — operator has no visibility | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56378.md) | complete | Apr 24, 2026, 15:20 UTC |
+| [#56763](https://github.com/openclaw/openclaw/issues/56763) | [Bug]: 2026.3.28 — /v1/models and /v1/chat/completions reject gateway bearer token with 'missing scope: operator.read/write' | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56763.md) | complete | Apr 24, 2026, 15:41 UTC |
+| [#56788](https://github.com/openclaw/openclaw/issues/56788) | [Bug] Heartbeat model override ignored in v2026.3.28 - falls back to main session model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56788.md) | complete | Apr 24, 2026, 15:40 UTC |
+| [#56794](https://github.com/openclaw/openclaw/issues/56794) | Bundled channel schema overrides external plugin schema even when bundled plugin is disabled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56794.md) | complete | Apr 24, 2026, 15:40 UTC |
+| [#56766](https://github.com/openclaw/openclaw/pull/56766) | fix(slack): wake interaction system events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56766.md) | complete | Apr 24, 2026, 15:40 UTC |
+| [#56758](https://github.com/openclaw/openclaw/pull/56758) | fix(feishu): downgrade tool registration logs from info to debug (fixes #56695) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56758.md) | complete | Apr 24, 2026, 15:39 UTC |
+| [#56815](https://github.com/openclaw/openclaw/issues/56815) | memorySearch: embedding reindex fails with 'TypeError: fetch failed' after indexing ~40K chunks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56815.md) | complete | Apr 24, 2026, 15:39 UTC |
+| [#56771](https://github.com/openclaw/openclaw/issues/56771) | [Bug]: Add automatic parameter validation before tool calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56771.md) | complete | Apr 24, 2026, 15:39 UTC |
+| [#56775](https://github.com/openclaw/openclaw/issues/56775) | Bug: exec denied: allowlist miss despite correct configuration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56775.md) | complete | Apr 24, 2026, 15:39 UTC |
+| [#56691](https://github.com/openclaw/openclaw/issues/56691) | openai-codex provider drops inbound user message in agent dispatch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56691.md) | complete | Apr 24, 2026, 15:39 UTC |
+| [#56760](https://github.com/openclaw/openclaw/issues/56760) | Plugin hooks (before_agent_start, agent_end) don't fire for per-channel-peer sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56760.md) | complete | Apr 24, 2026, 15:39 UTC |
+| [#56791](https://github.com/openclaw/openclaw/pull/56791) | fix(signal): forward quote metadata to agent context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56791.md) | complete | Apr 24, 2026, 15:39 UTC |
+| [#56804](https://github.com/openclaw/openclaw/issues/56804) | Mission Control gateway heartbeat exhausts ChatGPT Plus Codex weekly quota | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56804.md) | complete | Apr 24, 2026, 15:38 UTC |
+| [#56792](https://github.com/openclaw/openclaw/pull/56792) | fix(schema-validator): report specific property name for additionalProperties errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56792.md) | complete | Apr 24, 2026, 15:38 UTC |
+| [#56783](https://github.com/openclaw/openclaw/pull/56783) | UI: cap Control UI chat history rendering by char budget | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56783.md) | complete | Apr 24, 2026, 15:38 UTC |
+| [#56759](https://github.com/openclaw/openclaw/issues/56759) | [Feature]: Provide a running status indicator. I cannot determine whether the task is currently being executed. | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56759.md) | complete | Apr 24, 2026, 15:38 UTC |
+| [#56801](https://github.com/openclaw/openclaw/issues/56801) | Recurring bug: compaction status is emitted into Telegram user-facing output and final reply is not delivered | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56801.md) | complete | Apr 24, 2026, 15:38 UTC |
+| [#56693](https://github.com/openclaw/openclaw/issues/56693) | OpenAI Codex OAuth can bind to a deactivated ChatGPT workspace when accounts have multiple workspaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56693.md) | complete | Apr 24, 2026, 15:38 UTC |
+| [#56774](https://github.com/openclaw/openclaw/issues/56774) | [Bug] Image viewer broken - Cannot find package 'sharp' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56774.md) | complete | Apr 24, 2026, 15:38 UTC |
+| [#56682](https://github.com/openclaw/openclaw/issues/56682) | [Bug]: webchat session context lost after Gateway restart (SIGUSR1) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56682.md) | complete | Apr 24, 2026, 15:38 UTC |
+| [#56778](https://github.com/openclaw/openclaw/issues/56778) | cron list: add --agent filter for multi-agent isolation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56778.md) | complete | Apr 24, 2026, 15:38 UTC |
 
 ## How It Works
 
