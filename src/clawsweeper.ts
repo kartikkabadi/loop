@@ -990,6 +990,10 @@ function fileUrl(file: string, sha: string, line?: number): string {
   return repoUrl(`/blob/${sha}/${githubPath(file)}${line ? `#L${line}` : ""}`);
 }
 
+function latestFileUrl(file: string): string {
+  return repoUrl(`/blob/main/${githubPath(file)}`);
+}
+
 function markdownLink(label: string, url: string): string {
   return `[${label.replaceAll("|", "\\|")}](${url})`;
 }
@@ -1063,17 +1067,15 @@ function linkInlineSourceRefs(value: string, sha?: string | null): string {
     (match, ref: string) => {
       const { file, line } = splitFileAndLine(ref);
       if (!isLinkableSourceRef(file)) return match;
-      return markdownLink(`\`${ref}\``, fileUrl(file, sha, line));
+      const url = file === "VISION.md" && !line ? latestFileUrl(file) : fileUrl(file, sha, line);
+      return markdownLink(`\`${ref}\``, url);
     },
   );
 }
 
 function linkPrimaryEvidenceFile(value: string, evidence: Evidence): string {
   if (evidence.file !== "VISION.md" || !evidence.sha || value.includes("VISION.md")) return value;
-  const link = markdownLink(
-    "`VISION.md`",
-    fileUrl(evidence.file, evidence.sha, evidence.line ?? undefined),
-  );
+  const link = markdownLink("`VISION.md`", latestFileUrl(evidence.file));
   const linked = value
     .replace(/\b(?:the project vision|project vision|the vision|VISION)\b/i, link)
     .replace(/^Current main says\b/, `${link} says`)
