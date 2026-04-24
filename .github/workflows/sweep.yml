@@ -41,7 +41,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: clawsweeper
+  group: clawsweeper-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && 'apply' || 'review' }}
   cancel-in-progress: false
 
 jobs:
@@ -243,7 +243,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md items
+          git add README.md items closed
           if git diff --cached --quiet; then
             echo "No review changes"
           else
@@ -284,22 +284,28 @@ jobs:
       - name: Build ClawSweeper
         run: npm run build
 
+      - name: Sync before applying decisions
+        run: git pull --rebase
+
       - name: Apply unchanged proposed decisions
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: npm run apply-decisions -- --limit "${{ github.event.inputs.apply_limit || '20' }}"
 
-      - name: Sync before committing apply results
-        run: git pull --rebase
-
       - name: Commit apply results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md items apply-report.json
+          git add README.md items closed apply-report.json
           if git diff --cached --quiet; then
             echo "No apply changes"
           else
             git commit -m "chore: apply sweep decisions"
+            for attempt in 1 2 3; do
+              if git push; then
+                exit 0
+              fi
+              git pull --rebase
+            done
             git push
           fi

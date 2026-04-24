@@ -3,12 +3,13 @@ import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   chmodSync,
-  copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
+  renameSync,
   statSync,
+  unlinkSync,
   writeFileSync,
 } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
@@ -1028,6 +1029,29 @@ function fixedInText(decision: Decision): string {
   return parts.length ? parts.join(", ") : "not determined";
 }
 
+function sentence(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  return /[.!?)]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+}
+
+function evidenceLocation(evidence: Evidence): string {
+  const parts: string[] = [];
+  if (evidence.file) {
+    const location = evidence.line ? `${evidence.file}:${evidence.line}` : evidence.file;
+    parts.push(`\`${location}\``);
+  }
+  if (evidence.sha) parts.push(`\`${shortSha(evidence.sha)}\``);
+  return parts.length ? ` (${parts.join(", ")})` : "";
+}
+
+function closeEvidenceLine(evidence: Evidence): string {
+  const label = evidence.label.trim();
+  const detail = sentence(evidence.detail);
+  const prefix = label ? `**${label}:** ` : "";
+  return `- ${prefix}${detail}${evidenceLocation(evidence)}`;
+}
+
 function cleanCloseComment(comment: string): string {
   return comment
     .split("\n")
@@ -1045,7 +1069,22 @@ function normalizeComment(decision: Decision, git: GitInfo): string {
     fixed === "not determined"
       ? "Specific fixed release/commit was not determined by this review."
       : `Fix evidence: ${fixed}.`;
-  return [base, "", `Codex evidence: ${main} ${fixedLine}`].filter(Boolean).join("\n");
+  if (base.includes("\n- ") || base.includes("\n* ")) {
+    return [base, "", `Codex evidence: ${main} ${fixedLine}`].filter(Boolean).join("\n");
+  }
+  const evidence = decision.evidence.slice(0, 6).map(closeEvidenceLine);
+  return [
+    `Closing as ${closeReasonText(decision.closeReason)} after a Codex review of current \`main\` (${shortSha(git.mainSha)}).`,
+    "",
+    sentence(decision.summary),
+    "",
+    evidence.length ? "Evidence:" : "",
+    ...evidence,
+    "",
+    `Codex evidence: ${main} ${fixedLine}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function canClose(decision: Decision): boolean {
@@ -1054,6 +1093,24 @@ function canClose(decision: Decision): boolean {
     decision.confidence === "high" &&
     ALLOWED_REASONS.has(decision.closeReason)
   );
+}
+
+function issueMatchingComment(number: number, body: string): Record<string, unknown> | undefined {
+  const comment = ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${number}/comments`).find(
+    (candidate) => asRecord(candidate).body === body,
+  );
+  return comment ? asRecord(comment) : undefined;
+}
+
+function issueCommentExists(number: number, body: string): boolean {
+  return Boolean(issueMatchingComment(number, body));
+}
+
+function commentUpdatedAt(comment: Record<string, unknown> | undefined): string | undefined {
+  const updatedAt = comment?.updated_at;
+  if (typeof updatedAt === "string") return updatedAt;
+  const createdAt = comment?.created_at;
+  return typeof createdAt === "string" ? createdAt : undefined;
 }
 
 function postClose(options: {
@@ -1065,11 +1122,13 @@ function postClose(options: {
   const commentFile = join(ROOT, ".artifacts", `comment-${options.number}.md`);
   ensureDir(dirname(commentFile));
   writeFileSync(commentFile, options.closeComment, "utf8");
-  gh(["issue", "comment", String(options.number), "-F", commentFile]);
+  if (!issueCommentExists(options.number, options.closeComment)) {
+    gh(["issue", "comment", String(options.number), "-F", commentFile]);
+  }
   if (options.kind === "pull_request") {
     gh(["pr", "close", String(options.number)]);
   } else {
-    const reason = options.reason === "implemented_on_main" ? "completed" : "not_planned";
+    const reason = options.reason === "implemented_on_main" ? "completed" : "not planned";
     gh(["issue", "close", String(options.number), "--reason", reason]);
   }
 }
@@ -1328,8 +1387,10 @@ function reviewCommand(args: Args): void {
 
 function applyDecisionsCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
+  const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
   const limit = numberArg(args.limit, 20);
   const results: ApplyResult[] = [];
+  let closedCount = 0;
   if (!existsSync(itemsDir)) {
     console.log("No items directory.");
     return;
@@ -1338,7 +1399,6 @@ function applyDecisionsCommand(args: Args): void {
     .filter((name) => /^\d+\.md$/.test(name))
     .sort((left, right) => Number(left.replace(".md", "")) - Number(right.replace(".md", "")));
   for (const file of files) {
-    if (results.filter((result) => result.action === "closed").length >= limit) break;
     const path = join(itemsDir, file);
     let markdown = readFileSync(path, "utf8");
     const number = Number(file.replace(/\.md$/, ""));
@@ -1348,6 +1408,11 @@ function applyDecisionsCommand(args: Args): void {
     const action = frontMatterValue(markdown, "action_taken");
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
+    const archiveClosed = (nextMarkdown: string): void => {
+      ensureDir(closedDir);
+      writeFileSync(path, nextMarkdown, "utf8");
+      renameSync(path, join(closedDir, file));
+    };
     if (!hasVerifiedLocalCheckoutAccess(markdown)) {
       results.push({
         number,
@@ -1372,13 +1437,17 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     const { item, state } = fetchItem(number);
+    const existingCloseComment = issueMatchingComment(number, closeComment);
+    const closeCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingCloseComment);
     if (state !== "open") {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_already_closed");
-      writeFileSync(path, markdown, "utf8");
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      archiveClosed(markdown);
       results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
       continue;
     }
-    if (storedUpdatedAt && item.updatedAt !== storedUpdatedAt) {
+    if (closedCount >= limit) break;
+    if (storedUpdatedAt && item.updatedAt !== storedUpdatedAt && !closeCommentOnlyUpdate) {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
       markdown = replaceFrontMatterValue(markdown, "current_item_updated_at", item.updatedAt);
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
@@ -1392,7 +1461,7 @@ function applyDecisionsCommand(args: Args): void {
     }
     const currentContext = collectItemContext(item);
     const currentHash = itemSnapshotHash(item, currentContext);
-    if (currentHash !== storedHash) {
+    if (currentHash !== storedHash && !closeCommentOnlyUpdate) {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
       markdown = replaceFrontMatterValue(markdown, "current_item_snapshot_hash", currentHash);
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
@@ -1403,46 +1472,66 @@ function applyDecisionsCommand(args: Args): void {
     postClose({ number, kind: item.kind, reason: closeReason, closeComment });
     markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
     markdown = replaceFrontMatterValue(markdown, "applied_at", new Date().toISOString());
-    writeFileSync(path, markdown, "utf8");
+    archiveClosed(markdown);
+    closedCount += 1;
     results.push({ number, action: "closed", reason: closeReasonText(closeReason) });
   }
   writeFileSync(join(ROOT, "apply-report.json"), JSON.stringify(results, null, 2), "utf8");
-  updateDashboard(itemsDir);
+  updateDashboard(itemsDir, closedDir);
   console.log(JSON.stringify(results, null, 2));
 }
 
 function applyArtifactsCommand(args: Args): void {
   const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts"));
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
+  const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
   ensureDir(itemsDir);
+  ensureDir(closedDir);
   if (existsSync(artifactDir)) {
     for (const entry of readdirSync(artifactDir, { recursive: true })) {
       const name = String(entry);
       if (!name.endsWith(".md")) continue;
       const source = join(artifactDir, name);
       if (!/^\d+\.md$/.test(basename(source))) continue;
-      copyFileSync(source, join(itemsDir, basename(source)));
+      const markdown = readFileSync(source, "utf8");
+      const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
+      const destinationDir =
+        action === "closed" || action === "skipped_already_closed" ? closedDir : itemsDir;
+      const stalePath = join(destinationDir === itemsDir ? closedDir : itemsDir, basename(source));
+      if (existsSync(stalePath)) unlinkSync(stalePath);
+      writeFileSync(join(destinationDir, basename(source)), markdown, "utf8");
     }
   }
-  updateDashboard(itemsDir);
+  updateDashboard(itemsDir, closedDir);
 }
 
-function dashboardStats(itemsDir: string): {
+function markdownFiles(dir: string): string[] {
+  return existsSync(dir)
+    ? readdirSync(dir)
+        .filter((name) => /^\d+\.md$/.test(name))
+        .sort((left, right) => Number(left.replace(".md", "")) - Number(right.replace(".md", "")))
+    : [];
+}
+
+function dashboardStats(
+  itemsDir: string,
+  closedDir = join(ROOT, "closed"),
+): {
   open: OpenItemCounts;
   fresh: number;
   todo: number;
   files: number;
   proposedClose: number;
   closed: number;
+  archivedFiles: number;
   failed: number;
   stale: number;
   byKind: Record<ItemKind, DashboardKindStats>;
   recent: DashboardItem[];
 } {
   const open = fetchOpenItemCounts();
-  const files = existsSync(itemsDir)
-    ? readdirSync(itemsDir).filter((name) => /^\d+\.md$/.test(name))
-    : [];
+  const files = markdownFiles(itemsDir);
+  const closedFiles = markdownFiles(closedDir);
   let fresh = 0;
   let proposedClose = 0;
   let closed = 0;
@@ -1480,6 +1569,11 @@ function dashboardStats(itemsDir: string): {
       reviewStatus,
     });
   }
+  for (const file of closedFiles) {
+    const markdown = readFileSync(join(closedDir, file), "utf8");
+    const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
+    if (action === "closed") closed += 1;
+  }
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
   return {
     open,
@@ -1488,6 +1582,7 @@ function dashboardStats(itemsDir: string): {
     files: files.length,
     proposedClose,
     closed,
+    archivedFiles: closedFiles.length,
     failed,
     stale,
     byKind,
@@ -1495,10 +1590,10 @@ function dashboardStats(itemsDir: string): {
   };
 }
 
-function updateDashboard(itemsDir = join(ROOT, "items")): void {
+function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, "closed")): void {
   const readmePath = join(ROOT, "README.md");
   const readme = readFileSync(readmePath, "utf8");
-  const stats = dashboardStats(itemsDir);
+  const stats = dashboardStats(itemsDir, closedDir);
   const recent =
     stats.recent
       .slice(0, 20)
@@ -1525,6 +1620,7 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 | Proposed PR closes | ${stats.byKind.pull_request.proposedClose} (${formatPercent(stats.byKind.pull_request.proposedClose, stats.byKind.pull_request.fresh)} of reviewed PRs) |
 | Open items total | ${stats.open.total} |
 | Reviewed files | ${stats.files} |
+| Archived closed files | ${stats.archivedFiles} |
 | Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
 | Proposed closes awaiting apply | ${stats.proposedClose} (${formatPercent(stats.proposedClose, stats.fresh)} of fresh reviews) |
 | Closed by Codex apply | ${stats.closed} |
@@ -1557,7 +1653,10 @@ else if (command === "review") reviewCommand(args);
 else if (command === "apply-artifacts") applyArtifactsCommand(args);
 else if (command === "apply-decisions") applyDecisionsCommand(args);
 else if (command === "dashboard")
-  updateDashboard(resolve(stringArg(args.items_dir, join(ROOT, "items"))));
+  updateDashboard(
+    resolve(stringArg(args.items_dir, join(ROOT, "items"))),
+    resolve(stringArg(args.closed_dir, join(ROOT, "closed"))),
+  );
 else if (command === "check") checkCommand();
 else {
   console.error(`Unknown command: ${command}`);
