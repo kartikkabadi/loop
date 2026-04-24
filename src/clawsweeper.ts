@@ -137,8 +137,28 @@ interface DashboardItem {
   reviewStatus: string;
 }
 
-interface RepoSummary {
-  open_issues_count?: number;
+interface RepoOpenCountsQuery {
+  data?: {
+    repository?: {
+      issues?: {
+        totalCount?: number;
+      };
+      pullRequests?: {
+        totalCount?: number;
+      };
+    };
+  };
+}
+
+interface OpenItemCounts {
+  issues: number;
+  pullRequests: number;
+  total: number;
+}
+
+interface DashboardKindStats {
+  fresh: number;
+  proposedClose: number;
 }
 
 interface PlanShard {
@@ -534,14 +554,35 @@ function fetchItem(number: number): { item: Item; state: string } {
   };
 }
 
-function fetchOpenItemCount(): number {
-  const summary = ghJson<RepoSummary>([
+function fetchOpenItemCounts(): OpenItemCounts {
+  const [owner, name] = TARGET_REPO.split("/");
+  if (!owner || !name) throw new Error(`Invalid target repo: ${TARGET_REPO}`);
+  const result = ghJson<RepoOpenCountsQuery>([
     "api",
-    `repos/${TARGET_REPO}`,
-    "--jq",
-    "{open_issues_count}",
+    "graphql",
+    "-f",
+    `query=query { repository(owner: "${owner}", name: "${name}") { issues(states: OPEN) { totalCount } pullRequests(states: OPEN) { totalCount } } }`,
   ]);
-  return summary.open_issues_count ?? 0;
+  const repository = result.data?.repository;
+  const issues = repository?.issues?.totalCount ?? 0;
+  const pullRequests = repository?.pullRequests?.totalCount ?? 0;
+  return {
+    issues,
+    pullRequests,
+    total: issues + pullRequests,
+  };
+}
+
+function emptyDashboardKindStats(): DashboardKindStats {
+  return {
+    fresh: 0,
+    proposedClose: 0,
+  };
+}
+
+function formatPercent(numerator: number, denominator: number): string {
+  if (denominator <= 0) return "-";
+  return `${((numerator / denominator) * 100).toFixed(1).replace(/\.0$/, "")}%`;
 }
 
 function selectCandidates(options: {
@@ -1387,7 +1428,7 @@ function applyArtifactsCommand(args: Args): void {
 }
 
 function dashboardStats(itemsDir: string): {
-  openTotal: number;
+  open: OpenItemCounts;
   fresh: number;
   todo: number;
   files: number;
@@ -1395,9 +1436,10 @@ function dashboardStats(itemsDir: string): {
   closed: number;
   failed: number;
   stale: number;
+  byKind: Record<ItemKind, DashboardKindStats>;
   recent: DashboardItem[];
 } {
-  const openTotal = fetchOpenItemCount();
+  const open = fetchOpenItemCounts();
   const files = existsSync(itemsDir)
     ? readdirSync(itemsDir).filter((name) => /^\d+\.md$/.test(name))
     : [];
@@ -1406,6 +1448,10 @@ function dashboardStats(itemsDir: string): {
   let closed = 0;
   let failed = 0;
   let stale = 0;
+  const byKind: Record<ItemKind, DashboardKindStats> = {
+    issue: emptyDashboardKindStats(),
+    pull_request: emptyDashboardKindStats(),
+  };
   const recent: DashboardItem[] = [];
   for (const file of files) {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
@@ -1414,15 +1460,19 @@ function dashboardStats(itemsDir: string): {
     const reviewStatus = effectiveReviewStatus(markdown);
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     const decision = frontMatterValue(markdown, "decision") ?? "unknown";
+    const kind = (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue";
     const freshReview = isFresh({ reviewedAt, reviewStatus });
     if (freshReview) fresh += 1;
+    if (freshReview) byKind[kind].fresh += 1;
     if (freshReview && decision === "close" && action === "proposed_close") proposedClose += 1;
+    if (freshReview && decision === "close" && action === "proposed_close")
+      byKind[kind].proposedClose += 1;
     if (action === "closed") closed += 1;
     if (reviewStatus === "failed") failed += 1;
     if (reviewStatus.startsWith("stale_")) stale += 1;
     recent.push({
       number,
-      kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
+      kind,
       title: frontMatterValue(markdown, "title") ?? "",
       reviewedAt,
       decision,
@@ -1432,14 +1482,15 @@ function dashboardStats(itemsDir: string): {
   }
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
   return {
-    openTotal,
+    open,
     fresh,
-    todo: Math.max(0, openTotal - fresh),
+    todo: Math.max(0, open.total - fresh),
     files: files.length,
     proposedClose,
     closed,
     failed,
     stale,
+    byKind,
     recent,
   };
 }
@@ -1466,11 +1517,16 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 
 | Metric | Count |
 | --- | ---: |
-| Open items in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.openTotal} |
-| Reviewed / proposed closes | ${stats.fresh} / ${stats.proposedClose} |
+| Open issues in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.open.issues} |
+| Fresh reviewed issues in the last ${FRESH_DAYS} days | ${stats.byKind.issue.fresh} |
+| Proposed issue closes | ${stats.byKind.issue.proposedClose} (${formatPercent(stats.byKind.issue.proposedClose, stats.byKind.issue.fresh)} of reviewed issues) |
+| Open PRs in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.open.pullRequests} |
+| Fresh reviewed PRs in the last ${FRESH_DAYS} days | ${stats.byKind.pull_request.fresh} |
+| Proposed PR closes | ${stats.byKind.pull_request.proposedClose} (${formatPercent(stats.byKind.pull_request.proposedClose, stats.byKind.pull_request.fresh)} of reviewed PRs) |
+| Open items total | ${stats.open.total} |
 | Reviewed files | ${stats.files} |
 | Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
-| Proposed closes awaiting apply | ${stats.proposedClose} |
+| Proposed closes awaiting apply | ${stats.proposedClose} (${formatPercent(stats.proposedClose, stats.fresh)} of fresh reviews) |
 | Closed by Codex apply | ${stats.closed} |
 | Failed or stale reviews | ${stats.failed + stats.stale} |
 | Todo for weekly coverage | ${stats.todo} |
