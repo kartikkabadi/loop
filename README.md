@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 17:30 UTC
+Last dashboard update: Apr 24, 2026, 17:45 UTC
 
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12517 |
-| Fresh reviewed issues in the last 7 days | 8096 |
-| Proposed issue closes | 4527 (55.9% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 8224 |
+| Proposed issue closes | 4597 (55.9% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6612 |
-| Fresh reviewed PRs in the last 7 days | 4231 |
-| Proposed PR closes | 1328 (31.4% of reviewed PRs) |
+| Fresh reviewed PRs in the last 7 days | 4303 |
+| Proposed PR closes | 1340 (31.1% of reviewed PRs) |
 | Open items total | 19129 |
-| Reviewed files | 12327 |
+| Reviewed files | 12527 |
 | Archived closed files | 52 |
-| Fresh verified reviews in the last 7 days | 12327 |
-| Proposed closes awaiting apply | 5855 (47.5% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 12527 |
+| Proposed closes awaiting apply | 5937 (47.4% of fresh reviews) |
 | Closed by Codex apply | 40 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 6802 |
+| Todo for weekly coverage | 6602 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#59451](https://github.com/openclaw/openclaw/issues/59451) | [Feature]: Add file-based fallback search when `node:sqlite` is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59451.md) | complete | Apr 24, 2026, 17:30 UTC |
-| [#59427](https://github.com/openclaw/openclaw/issues/59427) | Baseline Context Load: 40K tokens per message regardless of reply length | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59427.md) | complete | Apr 24, 2026, 17:29 UTC |
-| [#59413](https://github.com/openclaw/openclaw/issues/59413) | Feature Request: Per-candidate retry count for model fallback (support pool-based/proxy providers) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59413.md) | complete | Apr 24, 2026, 17:29 UTC |
-| [#59430](https://github.com/openclaw/openclaw/issues/59430) | [Bug]: Image Tool Fails | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59430.md) | complete | Apr 24, 2026, 17:28 UTC |
-| [#59460](https://github.com/openclaw/openclaw/issues/59460) | [Feature]: Graduated `tools.sessions.visibility` - add `self-sessions` level | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59460.md) | complete | Apr 24, 2026, 17:28 UTC |
-| [#59477](https://github.com/openclaw/openclaw/pull/59477) | fix(sessions_send): allow cross-agent messaging for sandboxed agents with a2a enabled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59477.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59447](https://github.com/openclaw/openclaw/pull/59447) | fix(embedded-runner): return friendly error for session JSON parse failures | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59447.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59470](https://github.com/openclaw/openclaw/issues/59470) | Bug: openclaw gateway call times out for plugin gateway methods even when the method executes successfully | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59470.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59449](https://github.com/openclaw/openclaw/issues/59449) | [Bug]: `openclaw cron <subcommand> --help` always shows parent command help instead of subcommand help | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59449.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59386](https://github.com/openclaw/openclaw/pull/59386) | iMessage: harden echo detection against control-char prefixes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59386.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59443](https://github.com/openclaw/openclaw/pull/59443) | fix(fetch-guard): skip DNS pre-flight in trusted-env-proxy mode when proxy is configured | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59443.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59422](https://github.com/openclaw/openclaw/pull/59422) | feat(feishu): add ignoreAtAll configuration option | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59422.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59361](https://github.com/openclaw/openclaw/issues/59361) | [Bug]: openclaw agent exits 0 with no output on v2026.3.31; lobster CLI unregistered as command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59361.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59456](https://github.com/openclaw/openclaw/issues/59456) | [Docs/UX]:  help text is misleading — says \"cron expressions\" only, but should also apply to  datetime strings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59456.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59346](https://github.com/openclaw/openclaw/issues/59346) | Telemetry endpoint us.i.posthog.com returns 404 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59346.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59405](https://github.com/openclaw/openclaw/issues/59405) | [Bug]: Telegram channel runtime drops exec/grep tool output for openai/gpt-5.1-codex | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59405.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59416](https://github.com/openclaw/openclaw/issues/59416) | [Bug]: Thinking level displayed inconsistently almost everywhere; XHIGH support for models should be enhanced. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59416.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59426](https://github.com/openclaw/openclaw/issues/59426) | [Feature]: OpenClaw as MCP Server (Expose Execution & Orchestration) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59426.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59472](https://github.com/openclaw/openclaw/pull/59472) | Keep channels list JSON output when usage loading fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59472.md) | complete | Apr 24, 2026, 17:27 UTC |
-| [#59414](https://github.com/openclaw/openclaw/pull/59414) | feat(doctor): add Node.js runtime info health contribution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59414.md) | complete | Apr 24, 2026, 17:27 UTC |
+| [#59770](https://github.com/openclaw/openclaw/issues/59770) | [Feishu] message tool returns 'Unknown channel: feishu' - cannot send proactive messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59770.md) | complete | Apr 24, 2026, 17:44 UTC |
+| [#59784](https://github.com/openclaw/openclaw/issues/59784) | [Bug]: Subscription quota limit (\"You've hit your limit\") classified as billing error, blocks model fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59784.md) | complete | Apr 24, 2026, 17:44 UTC |
+| [#59802](https://github.com/openclaw/openclaw/issues/59802) | [Bug]: unauthorized: gateway token missing (open the dashboard URL and paste the token in Control UI settings) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59802.md) | complete | Apr 24, 2026, 17:43 UTC |
+| [#59777](https://github.com/openclaw/openclaw/issues/59777) | 400 No connected db error when using custom model provider (purepath) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59777.md) | complete | Apr 24, 2026, 17:43 UTC |
+| [#59773](https://github.com/openclaw/openclaw/issues/59773) | Feature request: Add OAuth usage quota endpoint to session_status or new tool | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59773.md) | complete | Apr 24, 2026, 17:43 UTC |
+| [#59818](https://github.com/openclaw/openclaw/pull/59818) | fix(discord): support CJK @mention rewriting in bot-to-bot message chains | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59818.md) | complete | Apr 24, 2026, 17:43 UTC |
+| [#59771](https://github.com/openclaw/openclaw/pull/59771) | Fix Feishu streaming recovery after transient reply errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59771.md) | complete | Apr 24, 2026, 17:43 UTC |
+| [#59794](https://github.com/openclaw/openclaw/pull/59794) | docs(changelog): add Brave config migration note | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59794.md) | complete | Apr 24, 2026, 17:43 UTC |
+| [#59827](https://github.com/openclaw/openclaw/issues/59827) | [Bug]: Tool calls not executing after upgrade to 2026.4.1 - displayed as plain text instead | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59827.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59825](https://github.com/openclaw/openclaw/issues/59825) | Regression in v2026.4.1: Environment Hijacking and Orchestrator Deadlock | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59825.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59806](https://github.com/openclaw/openclaw/issues/59806) | Bug: Feishu plugin fails with 'Cannot destructure property tenant_access_token' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59806.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59705](https://github.com/openclaw/openclaw/pull/59705) | [codex] improve parallels windows smoke logging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59705.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59826](https://github.com/openclaw/openclaw/issues/59826) | [Bug] stepfun/step-3.5-flash: thinking content leaks to channel because reasoning cannot be disabled | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59826.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59782](https://github.com/openclaw/openclaw/issues/59782) | feat: Add silentErrorReplies / suppressAgentErrors support for WhatsApp channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59782.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59719](https://github.com/openclaw/openclaw/pull/59719) | fix(exec): track background exec liveness with CLI tasks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59719.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59824](https://github.com/openclaw/openclaw/issues/59824) | [Bug] MiniMax-M2.7 streaming not working - content field contains thinking tags mixed with response | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59824.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59786](https://github.com/openclaw/openclaw/issues/59786) | Feature: subcommand-level exec allowlisting | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59786.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59817](https://github.com/openclaw/openclaw/issues/59817) | Discord DMs can fork into duplicate channel sessions during channel-info/network failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59817.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59779](https://github.com/openclaw/openclaw/issues/59779) | 【4.1升级踩坑】5 Subagents Scanned GitHub — Found 4.1 is a Disaster Worse Than 3.31 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59779.md) | complete | Apr 24, 2026, 17:42 UTC |
+| [#59820](https://github.com/openclaw/openclaw/issues/59820) | [Bug]: [v2026.4.1] Discord provider hangs on first startup, requires health-monitor restart to connect | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59820.md) | complete | Apr 24, 2026, 17:42 UTC |
 
 ## How It Works
 
