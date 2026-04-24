@@ -1,10 +1,5 @@
 [
   {
-    "number": 7200,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
-  },
-  {
     "number": 7597,
     "action": "skipped_changed_since_review",
     "reason": "updated_at changed"
@@ -140,62 +135,67 @@
     "reason": "updated_at changed"
   },
   {
-    "number": 38940,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
-  },
-  {
-    "number": 38942,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
-  },
-  {
-    "number": 38943,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
-  },
-  {
-    "number": 38948,
+    "number": 38988,
     "action": "closed",
     "reason": "belongs on ClawHub"
   },
   {
-    "number": 38952,
+    "number": 38995,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 38961,
+    "number": 38997,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 38963,
+    "number": 39007,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 38971,
+    "number": 39010,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 38974,
+    "number": 39028,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 39033,
     "action": "closed",
     "reason": "belongs on ClawHub"
   },
   {
-    "number": 38980,
+    "number": 39035,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 38986,
+    "number": 39042,
+    "action": "skipped_changed_since_review",
+    "reason": "updated_at changed"
+  },
+  {
+    "number": 39057,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 38987,
+    "number": 39058,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 39066,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 39068,
     "action": "closed",
     "reason": "already implemented on main"
   }
