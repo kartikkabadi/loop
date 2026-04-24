@@ -1089,7 +1089,12 @@ function linkInlineSourceRefs(value: string, sha?: string | null): string {
 }
 
 function linkPrimaryEvidenceFile(value: string, evidence: Evidence): string {
-  if (evidence.file !== "VISION.md" || !evidence.sha || value.includes("VISION.md")) return value;
+  if (!evidence.file || !evidence.sha) return value;
+  const docsUrl = docsPageUrl(evidence.file);
+  if (docsUrl && !value.includes(docsUrl)) {
+    return `${value} Public docs: ${markdownLink(`\`${evidence.file}\``, docsUrl)}.`;
+  }
+  if (evidence.file !== "VISION.md" || value.includes("VISION.md")) return value;
   const link = markdownLink("`VISION.md`", latestFileUrl(evidence.file));
   const linked = value
     .replace(/\b(?:the project vision|project vision|the vision|VISION)\b/i, link)
