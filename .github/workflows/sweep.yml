@@ -26,7 +26,7 @@ on:
       shard_count:
         description: "Parallel shards"
         required: false
-        default: "32"
+        default: "10"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -65,9 +65,9 @@ jobs:
           } >> "$GITHUB_OUTPUT"
       - id: shards
         env:
-          SHARD_COUNT: ${{ github.event.inputs.shard_count || '32' }}
+          SHARD_COUNT: ${{ github.event.inputs.shard_count || '10' }}
         run: |
-          node -e 'const n = Math.max(1, Number(process.env.SHARD_COUNT || 32)); console.log("shard_count=" + n); console.log("shards=" + JSON.stringify([...Array(n).keys()]));' >> "$GITHUB_OUTPUT"
+          node -e 'const n = Math.max(1, Number(process.env.SHARD_COUNT || 10)); console.log("shard_count=" + n); console.log("shards=" + JSON.stringify([...Array(n).keys()]));' >> "$GITHUB_OUTPUT"
 
   review:
     needs: plan
