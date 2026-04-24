@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 06:14 UTC
+Last dashboard update: Apr 24, 2026, 06:28 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12498 |
-| Fresh reviewed issues in the last 7 days | 2263 |
-| Proposed issue closes | 1167 (51.6% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12496 |
+| Fresh reviewed issues in the last 7 days | 2377 |
+| Proposed issue closes | 1232 (51.8% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6583 |
-| Fresh reviewed PRs in the last 7 days | 923 |
-| Proposed PR closes | 298 (32.3% of reviewed PRs) |
-| Open items total | 19081 |
-| Reviewed files | 3186 |
-| Fresh verified reviews in the last 7 days | 3186 |
-| Proposed closes awaiting apply | 1465 (46% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 1009 |
+| Proposed PR closes | 325 (32.2% of reviewed PRs) |
+| Open items total | 19079 |
+| Reviewed files | 3386 |
+| Fresh verified reviews in the last 7 days | 3386 |
+| Proposed closes awaiting apply | 1557 (46% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 15895 |
+| Todo for weekly coverage | 15693 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#42200](https://github.com/openclaw/openclaw/issues/42200) | [Bug]: Slack: Streaming messages show incomplete content | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42200.md) | complete | Apr 24, 2026, 06:14 UTC |
-| [#42154](https://github.com/openclaw/openclaw/pull/42154) | fix(agents): keep sandbox allow semantics while exposing explicit plugin tools from alsoAllow. Fixes #41757 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42154.md) | complete | Apr 24, 2026, 06:14 UTC |
-| [#42146](https://github.com/openclaw/openclaw/issues/42146) | [Bug]: Hook runner repeatedly re-initializes in background (no user activity) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42146.md) | complete | Apr 24, 2026, 06:13 UTC |
-| [#42139](https://github.com/openclaw/openclaw/issues/42139) | ACP external harness on remote Mac node is unclear/broken in Discord workspace flow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42139.md) | complete | Apr 24, 2026, 06:13 UTC |
-| [#42177](https://github.com/openclaw/openclaw/issues/42177) | [Bug]: Reply with a large amount of repetitive content | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42177.md) | complete | Apr 24, 2026, 06:13 UTC |
-| [#42197](https://github.com/openclaw/openclaw/pull/42197) | feat(ui): tool name style in usage panel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42197.md) | complete | Apr 24, 2026, 06:13 UTC |
-| [#42136](https://github.com/openclaw/openclaw/pull/42136) | docs: add openclaw-feishu-custom to community plugins | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42136.md) | complete | Apr 24, 2026, 06:13 UTC |
-| [#42201](https://github.com/openclaw/openclaw/pull/42201) | fix: tolerate unknown config keys at startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42201.md) | complete | Apr 24, 2026, 06:13 UTC |
-| [#42161](https://github.com/openclaw/openclaw/pull/42161) | fix: avoid manual cron deadlock on reentrant lanes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42161.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42120](https://github.com/openclaw/openclaw/pull/42120) | Gateway: add container LAN alias for loopback (#42074) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42120.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42067](https://github.com/openclaw/openclaw/issues/42067) | [Bug]: Openclaw startup failed after install gateway service with bun runtime and setup proxy for discord | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42067.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42059](https://github.com/openclaw/openclaw/pull/42059) | fix(telegram): batch fix 13 Telegram channel bugs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42059.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42141](https://github.com/openclaw/openclaw/pull/42141) | feat(web_search): add duckduckgo as a first-class provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42141.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42112](https://github.com/openclaw/openclaw/issues/42112) | Bug: persisted orphaned toolCall poisons session replay and makes chat agent stop responding | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42112.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42167](https://github.com/openclaw/openclaw/issues/42167) | [Bug] Sidebar tree: collapse/expand toggle not working | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42167.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42178](https://github.com/openclaw/openclaw/issues/42178) | Discord: Slow DiscordMessageListener (300s+) causes WebSocket 1006 drops and gateway crash | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42178.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42191](https://github.com/openclaw/openclaw/issues/42191) | Feature Request: Support Feishu Thread Binding | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42191.md) | complete | Apr 24, 2026, 06:12 UTC |
-| [#42165](https://github.com/openclaw/openclaw/issues/42165) | [Bug]: tools.profile: \"minimal\" exposes read/write/edit unless group:fs is explicitly denied | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42165.md) | complete | Apr 24, 2026, 06:11 UTC |
-| [#42157](https://github.com/openclaw/openclaw/issues/42157) | Inbound Telegram webhook payloads lost on gateway restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42157.md) | complete | Apr 24, 2026, 06:11 UTC |
-| [#42131](https://github.com/openclaw/openclaw/pull/42131) | fix(doctor): case-insensitive safe-bin trusted dir matching on macOS/Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42131.md) | complete | Apr 24, 2026, 06:11 UTC |
+| [#42529](https://github.com/openclaw/openclaw/issues/42529) | Feature: Cron pre-flight scripts (gate enforcement before agent turn) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42529.md) | complete | Apr 24, 2026, 06:27 UTC |
+| [#42542](https://github.com/openclaw/openclaw/pull/42542) | Workspace: omit missing BOOTSTRAP.md from context report after onboarding | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42542.md) | complete | Apr 24, 2026, 06:27 UTC |
+| [#42555](https://github.com/openclaw/openclaw/pull/42555) | feat(slack): add configurable typing status messages per agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42555.md) | complete | Apr 24, 2026, 06:27 UTC |
+| [#42545](https://github.com/openclaw/openclaw/issues/42545) | Feature Request: Support Multimodal Inputs (Images/Files) in the OpenAI /v1/chat/completions Endpoint | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42545.md) | complete | Apr 24, 2026, 06:26 UTC |
+| [#42539](https://github.com/openclaw/openclaw/issues/42539) | Feature: TTS delivery mode option — separate text + voice messages on Telegram | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42539.md) | complete | Apr 24, 2026, 06:26 UTC |
+| [#42531](https://github.com/openclaw/openclaw/pull/42531) | fix(memory-lancedb): preserve dimensions for baseUrl embeddings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42531.md) | complete | Apr 24, 2026, 06:26 UTC |
+| [#42538](https://github.com/openclaw/openclaw/issues/42538) | Bug: health endpoint returns incorrect running=false for WhatsApp | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42538.md) | complete | Apr 24, 2026, 06:26 UTC |
+| [#42515](https://github.com/openclaw/openclaw/issues/42515) | [Bug]: Provider 400 error causes session deadlock — no user notification, no auto-recovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42515.md) | complete | Apr 24, 2026, 06:26 UTC |
+| [#42567](https://github.com/openclaw/openclaw/pull/42567) | fix(setup): enable named account when patching config | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42567.md) | complete | Apr 24, 2026, 06:26 UTC |
+| [#42573](https://github.com/openclaw/openclaw/issues/42573) | macOS app install/onboarding creates separate ai.openclaw.gateway LaunchAgent alongside ai.openclaw.mac | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42573.md) | complete | Apr 24, 2026, 06:26 UTC |
+| [#42550](https://github.com/openclaw/openclaw/issues/42550) | Bug: TUI displays <relevant-memories> block in assistant responses | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42550.md) | complete | Apr 24, 2026, 06:26 UTC |
+| [#42469](https://github.com/openclaw/openclaw/issues/42469) | Raw tool payloads leak into chat; fallback appears unreliable after provider errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42469.md) | complete | Apr 24, 2026, 06:25 UTC |
+| [#42495](https://github.com/openclaw/openclaw/issues/42495) | Heartbeat polls overwrite session displayName, breaking control UI session selector | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42495.md) | complete | Apr 24, 2026, 06:25 UTC |
+| [#42541](https://github.com/openclaw/openclaw/issues/42541) | Gemini OAuth token auto-refresh silently fails — bare catch {} in dispatch swallows refresh errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42541.md) | complete | Apr 24, 2026, 06:25 UTC |
+| [#42514](https://github.com/openclaw/openclaw/issues/42514) | [Bug]: AnyClaw dashboard loads on :19001 but disconnects from gateway (1006), forced ws://localhost:18789 after update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42514.md) | complete | Apr 24, 2026, 06:25 UTC |
+| [#42508](https://github.com/openclaw/openclaw/issues/42508) | Subagent skill resolution: ~ resolves to workspace root instead of home directory | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42508.md) | complete | Apr 24, 2026, 06:25 UTC |
+| [#42546](https://github.com/openclaw/openclaw/pull/42546) | fix(imessage): prevent self-echo message loop | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42546.md) | complete | Apr 24, 2026, 06:25 UTC |
+| [#42581](https://github.com/openclaw/openclaw/pull/42581) | fix: preprocess inbound audio before ACP dispatch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42581.md) | complete | Apr 24, 2026, 06:25 UTC |
+| [#42446](https://github.com/openclaw/openclaw/issues/42446) | [Bug]: Internal tool calls and file write output leaking into chat response | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42446.md) | complete | Apr 24, 2026, 06:25 UTC |
+| [#42504](https://github.com/openclaw/openclaw/issues/42504) | Control UI: upload agent avatars from Agents tab | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42504.md) | complete | Apr 24, 2026, 06:25 UTC |
 
 ## How It Works
 
