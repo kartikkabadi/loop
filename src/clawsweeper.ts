@@ -898,6 +898,7 @@ function cleanCloseComment(comment: string): string {
     .split("\n")
     .filter((line) => !/^Latest release seen during review:/i.test(line.trim()))
     .join("\n")
+    .replaceAll("ClawSweeper/Codex", "Codex")
     .trim();
 }
 
@@ -909,7 +910,7 @@ function normalizeComment(decision: Decision, git: GitInfo): string {
     fixed === "not determined"
       ? "Specific fixed release/commit was not determined by this review."
       : `Fix evidence: ${fixed}.`;
-  return [base, "", `ClawSweeper/Codex evidence: ${main} ${fixedLine}`].filter(Boolean).join("\n");
+  return [base, "", `Codex evidence: ${main} ${fixedLine}`].filter(Boolean).join("\n");
 }
 
 function canClose(decision: Decision): boolean {
@@ -1289,9 +1290,13 @@ function updateDashboard(itemsDir = join(ROOT, "items")): void {
       .slice(0, 20)
       .map((item) => {
         const title = displayTitle(item.title);
-        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${markdownLink("report", reportFileUrl(item.number))} | ${title.replaceAll("|", "\\|")} | ${item.decision} | ${item.action} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
+        const outcome = markdownLink(
+          `${item.decision} / ${item.action}`,
+          reportFileUrl(item.number),
+        );
+        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title.replaceAll("|", "\\|")} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
       })
-      .join("\n") || "| _None_ |  |  |  |  |  |  |";
+      .join("\n") || "| _None_ |  |  |  |  |";
   const dashboard = `## Dashboard
 
 Last dashboard update: ${formatTimestamp(new Date().toISOString())}
@@ -1305,8 +1310,8 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 
 Recently reviewed:
 
-| Item | Report | Title | Decision | Action | Status | Reviewed |
-| --- | --- | --- | --- | --- | --- | --- |
+| Item | Title | Outcome | Status | Reviewed |
+| --- | --- | --- | --- | --- |
 ${recent}`;
   const updated = readme.replace(
     /## Dashboard[\s\S]*?## How It Works/,
