@@ -465,6 +465,12 @@ function sectionValue(markdown: string, heading: string): string {
   return match?.[1]?.trim() ?? "";
 }
 
+function replaceSectionValue(markdown: string, heading: string, value: string): string {
+  const pattern = new RegExp(`(^## ${heading}\\n\\n)([\\s\\S]*?)(?=\\n## |\\n?$)`, "m");
+  if (pattern.test(markdown)) return markdown.replace(pattern, `$1${value.trim()}\n`);
+  return `${markdown.trimEnd()}\n\n## ${heading}\n\n${value.trim()}\n`;
+}
+
 function existingReview(number: number, itemsDir: string): ExistingReview | null {
   const path = join(itemsDir, `${number}.md`);
   if (!existsSync(path)) return null;
@@ -1029,6 +1035,16 @@ function fixedInText(decision: Decision): string {
   return parts.length ? parts.join(", ") : "not determined";
 }
 
+function fixedInReportText(markdown: string): string {
+  const parts: string[] = [];
+  const fixedRelease = frontMatterValue(markdown, "fixed_release");
+  const fixedSha = frontMatterValue(markdown, "fixed_sha");
+  if (fixedRelease && fixedRelease !== "unknown")
+    parts.push(`release ${linkedRelease(fixedRelease)}`);
+  if (fixedSha && fixedSha !== "unknown") parts.push(`commit ${linkedSha(fixedSha)}`);
+  return parts.length ? parts.join(", ") : "not determined";
+}
+
 function sentence(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "";
@@ -1059,39 +1075,118 @@ function closeEvidenceLine(evidence: Evidence): string {
   return `- ${prefix}${detail}${evidenceLocation(evidence)}`;
 }
 
-function cleanCloseComment(comment: string): string {
-  return comment
-    .split("\n")
-    .filter((line) => !/^Latest release seen during review:/i.test(line.trim()))
-    .join("\n")
-    .replaceAll("ClawSweeper/Codex", "Codex")
-    .trim();
+function closeIntro(reason: CloseReason): string {
+  switch (reason) {
+    case "implemented_on_main":
+      return "Closing this as implemented after Codex review.";
+    case "cannot_reproduce":
+      return "Closing this as not reproducible on current `main` after Codex review.";
+    case "clawhub":
+      return "Closing this as better suited for ClawHub/community plugin work after Codex review.";
+    case "incoherent":
+      return "Closing this as not actionable after Codex review.";
+    case "stale_insufficient_info":
+      return "Closing this as stale with insufficient information after Codex review.";
+    case "none":
+      return "Closing this after Codex review.";
+  }
 }
 
-function normalizeComment(decision: Decision, git: GitInfo): string {
-  const base = cleanCloseComment(decision.closeComment);
-  const main = `Reviewed against main ${linkedSha(git.mainSha)}.`;
-  const fixed = fixedInText(decision);
-  const fixedLine =
-    fixed === "not determined"
-      ? "Specific fixed release/commit was not determined by this review."
-      : `Fix evidence: ${fixed}.`;
-  if (base.includes("\n- ") || base.includes("\n* ")) {
-    return [base, "", `Codex evidence: ${main} ${fixedLine}`].filter(Boolean).join("\n");
+function closeOutro(reason: CloseReason): string {
+  switch (reason) {
+    case "implemented_on_main":
+      return "So I’m closing this as already implemented rather than keeping a duplicate issue open.";
+    case "clawhub":
+      return "So I’m closing this as a scope-fit item for the plugin/community path rather than keeping it open as an OpenClaw core request.";
+    default:
+      return "";
   }
-  const evidence = decision.evidence.slice(0, 6).map(closeEvidenceLine);
+}
+
+function reportEvidence(markdown: string): Evidence[] {
+  const evidence = sectionValue(markdown, "Evidence");
+  const entries: Evidence[] = [];
+  let current: Evidence | null = null;
+  for (const line of evidence.split("\n")) {
+    const heading = line.match(/^- \*\*(.*?):\*\*\s*(.*)$/);
+    if (heading) {
+      if (current) entries.push(current);
+      current = {
+        label: heading[1] ?? "",
+        detail: heading[2] ?? "",
+      };
+      continue;
+    }
+    if (!current) continue;
+    const file = line.match(/^\s+- file: \[([^\]]+)\]/);
+    if (file?.[1]) {
+      const location = splitFileAndLine(file[1]);
+      current.file = location.file;
+      current.line = location.line ?? null;
+      continue;
+    }
+    const sha = line.match(/^\s+- sha: \[([^\]]+)\]/);
+    if (sha?.[1]) current.sha = sha[1];
+  }
+  if (current) entries.push(current);
+  return entries;
+}
+
+function closeReviewLineFromDecision(decision: Decision, git: GitInfo): string {
+  const fixed = fixedInText(decision);
+  const parts = [`reviewed against ${linkedSha(git.mainSha)}`];
+  if (fixed !== "not determined") parts.push(`fix evidence: ${fixed}`);
+  return `Review notes: ${parts.join("; ")}.`;
+}
+
+function closeReviewLineFromReport(markdown: string): string {
+  const mainSha = frontMatterValue(markdown, "main_sha");
+  const fixed = fixedInReportText(markdown);
+  const parts: string[] = [];
+  if (mainSha && mainSha !== "unknown") parts.push(`reviewed against ${linkedSha(mainSha)}`);
+  if (fixed !== "not determined") parts.push(`fix evidence: ${fixed}`);
+  return parts.length ? `Review notes: ${parts.join("; ")}.` : "";
+}
+
+function renderCloseComment(options: {
+  reason: CloseReason;
+  summary: string;
+  evidence: Evidence[];
+  reviewLine: string;
+}): string {
+  const evidence = options.evidence.slice(0, 6).map(closeEvidenceLine);
   return [
-    `Closing as ${closeReasonText(decision.closeReason)} after a Codex review of current \`main\` (${shortSha(git.mainSha)}).`,
+    closeIntro(options.reason),
     "",
-    sentence(decision.summary),
+    sentence(options.summary),
     "",
-    evidence.length ? "Evidence:" : "",
+    evidence.length ? "What I checked:" : "",
     ...evidence,
     "",
-    `Codex evidence: ${main} ${fixedLine}`,
+    closeOutro(options.reason),
+    "",
+    options.reviewLine,
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+function renderCloseCommentFromReport(markdown: string, reason: CloseReason): string {
+  return renderCloseComment({
+    reason,
+    summary: sectionValue(markdown, "Summary"),
+    evidence: reportEvidence(markdown),
+    reviewLine: closeReviewLineFromReport(markdown),
+  });
+}
+
+function normalizeComment(decision: Decision, git: GitInfo): string {
+  return renderCloseComment({
+    reason: decision.closeReason,
+    summary: decision.summary,
+    evidence: decision.evidence,
+    reviewLine: closeReviewLineFromDecision(decision, git),
+  });
 }
 
 function canClose(decision: Decision): boolean {
@@ -1438,7 +1533,7 @@ function applyDecisionsCommand(args: Args): void {
     ) {
       continue;
     }
-    const closeComment = sectionValue(markdown, "Close Comment");
+    const closeComment = renderCloseCommentFromReport(markdown, closeReason);
     if (!closeComment || closeComment === "_No close comment posted._") {
       results.push({ number, action: "kept_open", reason: "missing close comment" });
       continue;
@@ -1477,6 +1572,8 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     postClose({ number, kind: item.kind, reason: closeReason, closeComment });
+    markdown = replaceSectionValue(markdown, "Close Comment", closeComment);
+    markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(closeComment));
     markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
     markdown = replaceFrontMatterValue(markdown, "applied_at", new Date().toISOString());
     archiveClosed(markdown);
