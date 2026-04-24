@@ -1538,6 +1538,7 @@ function applyDecisionsCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
   const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
   const limit = numberArg(args.limit, 20);
+  const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
   let closedCount = 0;
   if (!existsSync(itemsDir)) {
@@ -1628,7 +1629,7 @@ function applyDecisionsCommand(args: Args): void {
     results.push({ number, action: "closed", reason: closeReasonText(closeReason) });
   }
   writeFileSync(join(ROOT, "apply-report.json"), JSON.stringify(results, null, 2), "utf8");
-  updateDashboard(itemsDir, closedDir);
+  if (!skipDashboard) updateDashboard(itemsDir, closedDir);
   console.log(JSON.stringify(results, null, 2));
 }
 

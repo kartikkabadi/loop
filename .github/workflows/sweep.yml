@@ -248,6 +248,12 @@ jobs:
             echo "No review changes"
           else
             git commit -m "chore: update sweep dashboard"
+            for attempt in 1 2 3; do
+              if git push; then
+                exit 0
+              fi
+              git pull --rebase --autostash
+            done
             git push
           fi
 
@@ -290,7 +296,7 @@ jobs:
       - name: Apply unchanged proposed decisions
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
-        run: npm run apply-decisions -- --limit "${{ github.event.inputs.apply_limit || '20' }}"
+        run: npm run apply-decisions -- --limit "${{ github.event.inputs.apply_limit || '20' }}" --skip-dashboard
 
       - name: Commit apply results
         run: |
@@ -305,7 +311,7 @@ jobs:
               if git push; then
                 exit 0
               fi
-              git pull --rebase
+              git pull --rebase --autostash
             done
             git push
           fi
