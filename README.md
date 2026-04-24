@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 03:15 UTC
+Last dashboard update: Apr 24, 2026, 03:28 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19141 |
-| Reviewed / proposed closes | 1086 / 475 |
-| Reviewed files | 1086 |
-| Fresh verified reviews in the last 7 days | 1086 |
-| Proposed closes awaiting apply | 475 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19151 |
+| Reviewed / proposed closes | 1186 / 529 |
+| Reviewed files | 1186 |
+| Fresh verified reviews in the last 7 days | 1186 |
+| Proposed closes awaiting apply | 529 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 18055 |
+| Todo for weekly coverage | 17965 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#35532](https://github.com/openclaw/openclaw/issues/35532) | [Feature]:  Health monitor stale-socket threshold should be configurable (gateway.staleEventThresholdMinutes) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/35532.md) | complete | Apr 24, 2026, 03:15 UTC |
-| [#35675](https://github.com/openclaw/openclaw/issues/35675) | Feature: Auto-populate session label with chat/group name from messaging providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35675.md) | complete | Apr 24, 2026, 03:14 UTC |
-| [#35802](https://github.com/openclaw/openclaw/issues/35802) | [Bug] No centralized agent registry - orchestrator blind to running agents at scale | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/35802.md) | complete | Apr 24, 2026, 03:14 UTC |
-| [#35515](https://github.com/openclaw/openclaw/issues/35515) | Request: Android APK release | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35515.md) | complete | Apr 24, 2026, 03:13 UTC |
-| [#35447](https://github.com/openclaw/openclaw/issues/35447) | [Feature]:  `cron` tool: add per-agent/session isolation for job visibility and mutations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35447.md) | complete | Apr 24, 2026, 03:13 UTC |
-| [#35653](https://github.com/openclaw/openclaw/issues/35653) | [Feature]: 添加文件系统操作工具权限给AI助手 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/35653.md) | complete | Apr 24, 2026, 03:13 UTC |
-| [#35573](https://github.com/openclaw/openclaw/issues/35573) | [Feature]: Native fal.ai provider support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35573.md) | complete | Apr 24, 2026, 03:13 UTC |
-| [#35028](https://github.com/openclaw/openclaw/issues/35028) | ACP sessions: sessions_spawn(acp) produces empty sessions_history; identity reconcile fails; transcriptPath null | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35028.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35682](https://github.com/openclaw/openclaw/issues/35682) | Feature: Add session delete commands (rm/clear) without full reset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35682.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35807](https://github.com/openclaw/openclaw/issues/35807) | [Bug] Exec tool corrupts PowerShell pipeline variables on Windows - \\ stripped, -f operator broken | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35807.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35023](https://github.com/openclaw/openclaw/issues/35023) | [Bug] Sub-agent sessions fail on turn 2 when thinking is enabled — thinking blocks stripped from tool-call history replay | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/35023.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35805](https://github.com/openclaw/openclaw/issues/35805) | [Bug] No governance file drift detection - stale agent context causes silent coordination failures | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/35805.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35560](https://github.com/openclaw/openclaw/issues/35560) | Doctor injects orphan top-level keys into multi-account telegram config on every CLI command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35560.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35804](https://github.com/openclaw/openclaw/issues/35804) | [Bug] No reproducible agent onboarding - 10+ manual files, no validation, no automation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/35804.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35568](https://github.com/openclaw/openclaw/issues/35568) | Request: Retain support for the imsg iMessage integration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35568.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35735](https://github.com/openclaw/openclaw/pull/35735) | feat(sessions): add rm and clear subcommands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35735.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35152](https://github.com/openclaw/openclaw/pull/35152) | feat(doctor): detect duplicate openclaw installations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35152.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#34986](https://github.com/openclaw/openclaw/issues/34986) | [Feature]: Heartbeat pre-flight check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/34986.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35922](https://github.com/openclaw/openclaw/pull/35922) | fix(version): add more candidate paths for Homebrew installs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/35922.md) | complete | Apr 24, 2026, 03:12 UTC |
-| [#35466](https://github.com/openclaw/openclaw/issues/35466) | fix(telegram): enforce single streamed reply per turn and prevent duplicate final resend | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/35466.md) | complete | Apr 24, 2026, 03:12 UTC |
+| [#37547](https://github.com/openclaw/openclaw/pull/37547) | Guard known Whisper subtitle-credit hallucinations in audio transcripts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37547.md) | complete | Apr 24, 2026, 03:28 UTC |
+| [#37553](https://github.com/openclaw/openclaw/issues/37553) | [Feature]: How to automatically designate bot replies based on \"@\" in content in openclaw | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37553.md) | complete | Apr 24, 2026, 03:27 UTC |
+| [#37548](https://github.com/openclaw/openclaw/issues/37548) | Duplicate plugin id warning when channels.feishu and plugins.entries.feishu both exist | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37548.md) | complete | Apr 24, 2026, 03:26 UTC |
+| [#37571](https://github.com/openclaw/openclaw/issues/37571) | [Bug]: Custom anthropic-messages providers fail when proxy omits SSE event: field | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37571.md) | complete | Apr 24, 2026, 03:26 UTC |
+| [#37431](https://github.com/openclaw/openclaw/issues/37431) | [Bug]: 网关自带的web应用总是出现吐字卡住 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37431.md) | complete | Apr 24, 2026, 03:26 UTC |
+| [#37566](https://github.com/openclaw/openclaw/issues/37566) | [Bug]: TUI 不显示推送消息 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37566.md) | complete | Apr 24, 2026, 03:26 UTC |
+| [#37457](https://github.com/openclaw/openclaw/issues/37457) | [Bug]: Auto-created agent dirs ignore OPENCLAW_STATE_DIR, fallback to ~/.openclaw/agents/ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37457.md) | complete | Apr 24, 2026, 03:26 UTC |
+| [#37499](https://github.com/openclaw/openclaw/issues/37499) | Context compaction causes conversation to freeze/hang | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37499.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37545](https://github.com/openclaw/openclaw/pull/37545) | feat(feishu): add thinking panel with collapsible reasoning and tool tracking | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37545.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37549](https://github.com/openclaw/openclaw/pull/37549) | fix(logging): subsystem loggers now follow root logger rotation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37549.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37515](https://github.com/openclaw/openclaw/issues/37515) | Telegram voice notes can inject known Whisper hallucinations like \"Субтитры сделал DimaTorzok\" as trusted transcript text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37515.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37550](https://github.com/openclaw/openclaw/issues/37550) | macOS: OpenClaw.app v2026.3.2 crashes on launch (Fatal access conflict in TalkOverlayView) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37550.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37564](https://github.com/openclaw/openclaw/issues/37564) | [Bug]:  {\"subsystem\":\"gateway/channels/feishu\"} feishu[default]: dispatch complete (queuedFinal=false, replies=0) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37564.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37544](https://github.com/openclaw/openclaw/issues/37544) | Slack message tool: agent loops on message_not_found / fileId errors, burns API quota | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37544.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37494](https://github.com/openclaw/openclaw/issues/37494) | [Bug]: MAC install issue SHARP_IGNOR_GLOBAL_LIBVIPS=1 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37494.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37561](https://github.com/openclaw/openclaw/pull/37561) | fix: properly import ModelProviderConfig type | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37561.md) | complete | Apr 24, 2026, 03:25 UTC |
+| [#37507](https://github.com/openclaw/openclaw/pull/37507) | feat(plugin-sdk): export session binding types and functions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37507.md) | complete | Apr 24, 2026, 03:24 UTC |
+| [#37505](https://github.com/openclaw/openclaw/issues/37505) | Cron job timeout aborts entire model fallback chain via shared AbortController | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37505.md) | complete | Apr 24, 2026, 03:24 UTC |
+| [#37487](https://github.com/openclaw/openclaw/issues/37487) | [Feature]: Feature request: Per-agent isolated browser instances with per-profile proxy support (concurrent execution) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37487.md) | complete | Apr 24, 2026, 03:24 UTC |
+| [#37446](https://github.com/openclaw/openclaw/issues/37446) | Sub-agent timeout recovery creates duplicate API posts (idempotency gap) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37446.md) | complete | Apr 24, 2026, 03:24 UTC |
 
 ## How It Works
 
