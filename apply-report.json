@@ -330,11 +330,6 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 40750,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40758,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
@@ -355,16 +350,6 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 40770,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40778,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
     "number": 40790,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
@@ -378,11 +363,6 @@
     "number": 40799,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
-  },
-  {
-    "number": 40809,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 40811,
@@ -405,16 +385,6 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 40821,
-    "action": "closed",
-    "reason": "not actionable"
-  },
-  {
-    "number": 40822,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40834,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
@@ -430,16 +400,6 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 40842,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40845,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40849,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
@@ -448,16 +408,6 @@
     "number": 40854,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
-  },
-  {
-    "number": 40855,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40857,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 40858,
@@ -475,19 +425,9 @@
     "reason": "updated_at changed"
   },
   {
-    "number": 40870,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40871,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
-  },
-  {
-    "number": 40879,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 40884,
@@ -515,31 +455,6 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 40907,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40912,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40915,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40920,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40922,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40927,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
@@ -560,16 +475,6 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 40939,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40943,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40947,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
@@ -585,29 +490,9 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 40952,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40960,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40962,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40966,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
-  },
-  {
-    "number": 40968,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 40972,
@@ -620,24 +505,9 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 40976,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40977,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
-  },
-  {
-    "number": 40978,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40980,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
   },
   {
     "number": 40981,
@@ -648,11 +518,6 @@
     "number": 40992,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
-  },
-  {
-    "number": 41004,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 41011,
@@ -670,16 +535,6 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 41019,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41020,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41027,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
@@ -693,11 +548,6 @@
     "number": 41036,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
-  },
-  {
-    "number": 41039,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 41041,
@@ -715,34 +565,9 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41045,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41046,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41054,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
-  },
-  {
-    "number": 41060,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41075,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41084,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 41091,
@@ -765,24 +590,9 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41100,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41102,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41110,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
-  },
-  {
-    "number": 41116,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 41119,
@@ -805,39 +615,9 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41128,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41129,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41130,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41132,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 41137,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41144,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
-  },
-  {
-    "number": 41148,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 41153,
@@ -845,24 +625,9 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41162,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41167,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
-  },
-  {
-    "number": 41174,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41175,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 41179,
@@ -873,21 +638,6 @@
     "number": 41180,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
-  },
-  {
-    "number": 41181,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41186,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41188,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 41189,
@@ -915,49 +665,9 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 41202,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41203,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 41205,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41209,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
-  },
-  {
-    "number": 41211,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41212,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 41214,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 41215,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41216,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 41223,
@@ -975,16 +685,6 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 41234,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41237,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41247,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
@@ -998,5 +698,305 @@
     "number": 41250,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41251,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41258,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41260,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41273,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41276,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41277,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41280,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 41286,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41289,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41291,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41301,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41307,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41309,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41310,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41315,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41318,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41321,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41326,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41339,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41348,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41350,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41352,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41353,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41356,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41358,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41359,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41363,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41365,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41369,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41371,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41379,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41382,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41389,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41395,
+    "action": "closed",
+    "reason": "not actionable"
+  },
+  {
+    "number": 41396,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41397,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41408,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41412,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41413,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41416,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41423,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41432,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41434,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41437,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41438,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41447,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41448,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41458,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 41463,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41480,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41486,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41490,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41491,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41492,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41493,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41505,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41509,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41512,
+    "action": "closed",
+    "reason": "not actionable"
+  },
+  {
+    "number": 41514,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41515,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
