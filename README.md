@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 11:02 UTC
+Last dashboard update: Apr 24, 2026, 11:15 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12537 |
-| Fresh reviewed issues in the last 7 days | 4700 |
-| Proposed issue closes | 2592 (55.1% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6598 |
-| Fresh reviewed PRs in the last 7 days | 2479 |
-| Proposed PR closes | 853 (34.4% of reviewed PRs) |
-| Open items total | 19135 |
-| Reviewed files | 7179 |
-| Fresh verified reviews in the last 7 days | 7179 |
-| Proposed closes awaiting apply | 3445 (48% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12541 |
+| Fresh reviewed issues in the last 7 days | 4821 |
+| Proposed issue closes | 2654 (55.1% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6599 |
+| Fresh reviewed PRs in the last 7 days | 2558 |
+| Proposed PR closes | 871 (34.1% of reviewed PRs) |
+| Open items total | 19140 |
+| Reviewed files | 7379 |
+| Fresh verified reviews in the last 7 days | 7379 |
+| Proposed closes awaiting apply | 3525 (47.8% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 11956 |
+| Todo for weekly coverage | 11761 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#49815](https://github.com/openclaw/openclaw/issues/49815) | [Bug]: Browserless in same-host Docker setup fails on loopback but works via Docker-network endpoint | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49815.md) | complete | Apr 24, 2026, 11:02 UTC |
-| [#49840](https://github.com/openclaw/openclaw/pull/49840) | feat(heartbeat): add maxCostPerRun config to cap embedded run cost | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49840.md) | complete | Apr 24, 2026, 11:01 UTC |
-| [#49823](https://github.com/openclaw/openclaw/issues/49823) | Add per-run cost cap for embedded runs (maxCostPerRun) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49823.md) | complete | Apr 24, 2026, 11:01 UTC |
-| [#49797](https://github.com/openclaw/openclaw/pull/49797) | fix: preserve raw WebUI model aliases | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49797.md) | complete | Apr 24, 2026, 11:01 UTC |
-| [#49853](https://github.com/openclaw/openclaw/issues/49853) | [Bug]: [Control UI] Stop button disappears during active chat/run (2026.3.13)\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49853.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49824](https://github.com/openclaw/openclaw/issues/49824) | Bug: webchat status bar shows incorrect remaining tokens and context percentage | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49824.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49859](https://github.com/openclaw/openclaw/pull/49859) | fix(ui): include group identifier in Telegram group chat display name | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49859.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49858](https://github.com/openclaw/openclaw/issues/49858) | 🔥Enhanced LanceDB memory plugin for OpenClaw — Hybrid Retrieval (Vector + BM25), Cross-Encoder Rerank, Multi-Scope Isolation, Management CLI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49858.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49862](https://github.com/openclaw/openclaw/issues/49862) | Telegram forum: reply_to_id returns wrong content across topics | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49862.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49811](https://github.com/openclaw/openclaw/issues/49811) | [Bug] Rate limit 错误未触发快速 failover，导致 10 分钟超时阻塞 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49811.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49802](https://github.com/openclaw/openclaw/issues/49802) | Feature Request: Session lifecycle hooks (on-compact, on-session-end) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49802.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49819](https://github.com/openclaw/openclaw/pull/49819) | fix(channels): treat Feishu p2p chats as direct messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49819.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49776](https://github.com/openclaw/openclaw/issues/49776) | [Bug]: WebUI Dashboard page freezes, unresponsive after static resources load | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49776.md) | complete | Apr 24, 2026, 11:00 UTC |
-| [#49856](https://github.com/openclaw/openclaw/pull/49856) | fix: web UI chat model dropdown desync and wrong provider prefix | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49856.md) | complete | Apr 24, 2026, 10:59 UTC |
-| [#49786](https://github.com/openclaw/openclaw/issues/49786) | [Bug]: DingTalk channel browser tool SsrFBlockedError | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49786.md) | complete | Apr 24, 2026, 10:59 UTC |
-| [#49825](https://github.com/openclaw/openclaw/pull/49825) | Discord: make exec approval timeout configurable | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49825.md) | complete | Apr 24, 2026, 10:59 UTC |
-| [#49828](https://github.com/openclaw/openclaw/issues/49828) | WebChat: Sidebar agent list instead of dropdown selector | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49828.md) | complete | Apr 24, 2026, 10:59 UTC |
-| [#49763](https://github.com/openclaw/openclaw/issues/49763) | [Bug]: TUI loading spinner freezes when queuing message during active run | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49763.md) | complete | Apr 24, 2026, 10:59 UTC |
-| [#49829](https://github.com/openclaw/openclaw/issues/49829) | [Bug] Webchat Control UI model selector cannot switch to non-Anthropic models | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49829.md) | complete | Apr 24, 2026, 10:59 UTC |
-| [#49835](https://github.com/openclaw/openclaw/pull/49835) | Cn zzb | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49835.md) | complete | Apr 24, 2026, 10:59 UTC |
+| [#50176](https://github.com/openclaw/openclaw/pull/50176) | fix(agents): ignore historical replies when subscribing to embedded sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50176.md) | complete | Apr 24, 2026, 11:15 UTC |
+| [#50177](https://github.com/openclaw/openclaw/pull/50177) | fix(webchat): slash menu clipped by overflow and missing keyboard scroll | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50177.md) | complete | Apr 24, 2026, 11:14 UTC |
+| [#50178](https://github.com/openclaw/openclaw/issues/50178) | [Bug]: 400 thinking is enabled, but reasoning_content is missing in assistant tool call message at index 12 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50178.md) | complete | Apr 24, 2026, 11:14 UTC |
+| [#50159](https://github.com/openclaw/openclaw/pull/50159) | fix: add path existence check for config set command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50159.md) | complete | Apr 24, 2026, 11:14 UTC |
+| [#50157](https://github.com/openclaw/openclaw/pull/50157) | fix: change Ollama connection failure log level from warn to debug | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50157.md) | complete | Apr 24, 2026, 11:14 UTC |
+| [#50173](https://github.com/openclaw/openclaw/issues/50173) | [Bug]: memory_search tool not injected in new sessions despite plugin loaded | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/50173.md) | complete | Apr 24, 2026, 11:14 UTC |
+| [#50156](https://github.com/openclaw/openclaw/issues/50156) | Control UI shows two \"default\" model options when only one agent is configured[Bug]: | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50156.md) | complete | Apr 24, 2026, 11:14 UTC |
+| [#50145](https://github.com/openclaw/openclaw/issues/50145) | interrupt queue mode replays previous assistant reply after abort | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50145.md) | complete | Apr 24, 2026, 11:14 UTC |
+| [#50174](https://github.com/openclaw/openclaw/issues/50174) | [Bug]: Windows native: Telegram polling stalls every ~107s (UND_ERR_CONNECT_TIMEOUT) + Discord disconnect restarts while gateway stays healthy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50174.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50171](https://github.com/openclaw/openclaw/pull/50171) | fix(discord): gate exec approvals by turn source channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50171.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50190](https://github.com/openclaw/openclaw/issues/50190) | [Feature]: 对话框不能输出图片和视频，希望增加图片和视频的输出 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/50190.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50158](https://github.com/openclaw/openclaw/pull/50158) | fix: add format validation for gateway.nodes.denyCommands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50158.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50195](https://github.com/openclaw/openclaw/issues/50195) | WhatsApp: support pre-built link previews in sendMessage + batch send RPC method | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50195.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50189](https://github.com/openclaw/openclaw/pull/50189) | fix(cron): report ok status when primary delivery succeeded despite follow-up errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50189.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50199](https://github.com/openclaw/openclaw/issues/50199) | Feature Request: Add Skill Priority Configuration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50199.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50107](https://github.com/openclaw/openclaw/issues/50107) | [Bug]: NVIDIA Provider Sends Anthropic-Style Message Format to OpenAI-Compatible API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50107.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50154](https://github.com/openclaw/openclaw/issues/50154) | [Bug]: macOS LaunchAgent gateway fails to push to LAN GitLab over SSH, foreground gateway works | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50154.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50186](https://github.com/openclaw/openclaw/issues/50186) | [Feature]: Surface systemd gateway hygiene issues in doctor/status and consider safer KillMode defaults | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50186.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50193](https://github.com/openclaw/openclaw/pull/50193) | feat(ui): group model selector by provider in tree structure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50193.md) | complete | Apr 24, 2026, 11:13 UTC |
+| [#50169](https://github.com/openclaw/openclaw/issues/50169) | [Bug]: openclaw cron` command causes Gateway restart failure (lock timeout) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/50169.md) | complete | Apr 24, 2026, 11:13 UTC |
 
 ## How It Works
 
