@@ -362,6 +362,12 @@ function isOlderThanDays(isoTimestamp: string, days: number, now = Date.now()): 
   return now - timestamp > days * 24 * 60 * 60 * 1000;
 }
 
+function applyKindArg(value: string | boolean | string[] | undefined): ItemKind | "all" {
+  const kind = stringArg(value, "issue");
+  if (kind === "issue" || kind === "pull_request" || kind === "all") return kind;
+  throw new Error(`Invalid apply kind: ${kind}`);
+}
+
 function compactSlice<T>(items: T[], limit: number): unknown[] {
   if (items.length <= limit) return items as unknown[];
   const keepStart = Math.floor(limit / 2);
@@ -1588,6 +1594,7 @@ function applyDecisionsCommand(args: Args): void {
   const limit = numberArg(args.limit, 20);
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const minAgeDays = numberArg(args.min_age_days, 30);
+  const applyKind = applyKindArg(args.apply_kind);
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
   let closedCount = 0;
@@ -1610,6 +1617,7 @@ function applyDecisionsCommand(args: Args): void {
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
     const storedAuthorAssociation = frontMatterValue(markdown, "author_association");
+    const storedKind = frontMatterValue(markdown, "type") as ItemKind | undefined;
     const archiveClosed = (nextMarkdown: string): void => {
       ensureDir(closedDir);
       writeFileSync(path, nextMarkdown, "utf8");
@@ -1633,12 +1641,32 @@ function applyDecisionsCommand(args: Args): void {
     ) {
       continue;
     }
+    if (applyKind !== "all" && storedKind && storedKind !== applyKind) {
+      results.push({
+        number,
+        action: "kept_open",
+        reason: `type is ${storedKind}; apply kind is ${applyKind}`,
+      });
+      processedCount += 1;
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
     const closeComment = renderCloseCommentFromReport(markdown, closeReason);
     if (!closeComment || closeComment === "_No close comment posted._") {
       results.push({ number, action: "kept_open", reason: "missing close comment" });
       continue;
     }
     const { item, state } = fetchItem(number);
+    if (applyKind !== "all" && item.kind !== applyKind) {
+      results.push({
+        number,
+        action: "kept_open",
+        reason: `type is ${item.kind}; apply kind is ${applyKind}`,
+      });
+      processedCount += 1;
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
     if (!isOlderThanDays(item.createdAt, minAgeDays)) {
       results.push({
         number,

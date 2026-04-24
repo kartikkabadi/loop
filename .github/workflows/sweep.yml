@@ -19,6 +19,10 @@ on:
         description: "Minimum item age in days before apply-existing can close it"
         required: false
         default: "30"
+      apply_kind:
+        description: "Item kind to close in apply-existing mode: issue, pull_request, or all"
+        required: false
+        default: "issue"
       batch_size:
         description: "Items per worker job"
         required: false
@@ -303,9 +307,11 @@ jobs:
         run: |
           limit="${{ github.event.inputs.apply_limit || '20' }}"
           min_age_days="${{ github.event.inputs.apply_min_age_days || '30' }}"
+          apply_kind="${{ github.event.inputs.apply_kind || 'issue' }}"
           npm run apply-decisions -- \
             --limit "$limit" \
             --min-age-days "$min_age_days" \
+            --apply-kind "$apply_kind" \
             --processed-limit "$((limit * 2))" \
             --skip-dashboard
 
