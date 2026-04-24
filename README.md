@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 16:39 UTC
+Last dashboard update: Apr 24, 2026, 16:42 UTC
 
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12538 |
-| Fresh reviewed issues in the last 7 days | 7566 |
-| Proposed issue closes | 4228 (55.9% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 7707 |
+| Proposed issue closes | 4316 (56% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6622 |
-| Fresh reviewed PRs in the last 7 days | 3981 |
-| Proposed PR closes | 1270 (31.9% of reviewed PRs) |
+| Fresh reviewed PRs in the last 7 days | 4040 |
+| Proposed PR closes | 1281 (31.7% of reviewed PRs) |
 | Open items total | 19160 |
-| Reviewed files | 11547 |
+| Reviewed files | 11747 |
 | Archived closed files | 32 |
-| Fresh verified reviews in the last 7 days | 11547 |
-| Proposed closes awaiting apply | 5498 (47.6% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 11747 |
+| Proposed closes awaiting apply | 5597 (47.6% of fresh reviews) |
 | Closed by Codex apply | 20 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 7613 |
+| Todo for weekly coverage | 7413 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#57901](https://github.com/openclaw/openclaw/issues/57901) | Safeguard compaction ignores compaction.model config — uses session model instead | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57901.md) | complete | Apr 24, 2026, 16:28 UTC |
-| [#57908](https://github.com/openclaw/openclaw/issues/57908) | [Feature]: Allow prompt-level selection of LLM service provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57908.md) | complete | Apr 24, 2026, 16:27 UTC |
-| [#57849](https://github.com/openclaw/openclaw/pull/57849) | fix(hooks): preserve provenance field in plugin hook event messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57849.md) | complete | Apr 24, 2026, 16:27 UTC |
-| [#57900](https://github.com/openclaw/openclaw/issues/57900) | Subagent runs don't use model fallback chain on 429/rate-limit errors | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57900.md) | complete | Apr 24, 2026, 16:26 UTC |
-| [#57867](https://github.com/openclaw/openclaw/issues/57867) | [Bug] Isolated cron sessions still cannot deliver to Telegram on v2026.3.28 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57867.md) | complete | Apr 24, 2026, 16:26 UTC |
-| [#57917](https://github.com/openclaw/openclaw/issues/57917) | Control UI model switch misparses aliases like gpt-5.4 as anthropic/* | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57917.md) | complete | Apr 24, 2026, 16:26 UTC |
-| [#57821](https://github.com/openclaw/openclaw/issues/57821) | [Bug]: Cannot read properties of undefined (reading 'push') with third-party Anthropic-compatible provider returning non-standard content blocks | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57821.md) | complete | Apr 24, 2026, 16:26 UTC |
-| [#57872](https://github.com/openclaw/openclaw/issues/57872) | TypeError: Cannot read properties of undefined (reading 'padEnd') in cron table formatter | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57872.md) | complete | Apr 24, 2026, 16:25 UTC |
-| [#57918](https://github.com/openclaw/openclaw/issues/57918) | [Bug]: Announce delivery constructs malformed recipient \"group:<chatId>\" for Telegram forum topic sessions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57918.md) | complete | Apr 24, 2026, 16:25 UTC |
-| [#57925](https://github.com/openclaw/openclaw/issues/57925) | v2026.3.28: Discord extension silently skipped during gateway startup — zero channels load despite valid config | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57925.md) | complete | Apr 24, 2026, 16:25 UTC |
-| [#57906](https://github.com/openclaw/openclaw/issues/57906) | Model fallback retries primary too aggressively before moving to next fallback | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57906.md) | complete | Apr 24, 2026, 16:25 UTC |
-| [#57880](https://github.com/openclaw/openclaw/issues/57880) | Retry loop duplicates user message hundreds of times in context window on rate limit | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57880.md) | complete | Apr 24, 2026, 16:24 UTC |
-| [#57753](https://github.com/openclaw/openclaw/issues/57753) | [Bug]: anthropic-messages SSE state machine fails to reset between tool-use loop iterations — \"Unexpected event order, got message_start before receiving message_stop\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57753.md) | complete | Apr 24, 2026, 16:24 UTC |
-| [#57897](https://github.com/openclaw/openclaw/pull/57897) | fix(cron): guard against undefined values in cron table formatter | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57897.md) | complete | Apr 24, 2026, 16:24 UTC |
-| [#57853](https://github.com/openclaw/openclaw/pull/57853) | fix: handle message_start before message_stop from provider (closes #57654) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57853.md) | complete | Apr 24, 2026, 16:24 UTC |
-| [#57820](https://github.com/openclaw/openclaw/pull/57820) | test(extensions): add unit tests for speech-core, image-generation-core, and media-understanding-core | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57820.md) | complete | Apr 24, 2026, 16:24 UTC |
-| [#57916](https://github.com/openclaw/openclaw/issues/57916) | Subagent announce: swap dispatch order to queue-first when parent session is busy | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57916.md) | complete | Apr 24, 2026, 16:24 UTC |
-| [#57889](https://github.com/openclaw/openclaw/pull/57889) | fix(gateway): preserve operator scopes for token-authenticated non-local clients | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57889.md) | complete | Apr 24, 2026, 16:24 UTC |
-| [#57864](https://github.com/openclaw/openclaw/issues/57864) | Discord thread inbound worker blocks for 1800s on attachment (mp4) message | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57864.md) | complete | Apr 24, 2026, 16:24 UTC |
-| [#57826](https://github.com/openclaw/openclaw/issues/57826) | [Bug]: [Regression 2026.3.28] AI agent systematically omits required tool parameters | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57826.md) | complete | Apr 24, 2026, 16:24 UTC |
+| [#58306](https://github.com/openclaw/openclaw/issues/58306) | [Bug]: Gateway process storm: KeepAlive + ThrottleInterval=1 causes 30+ zombie processes when port isn't released before restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58306.md) | complete | Apr 24, 2026, 16:42 UTC |
+| [#58286](https://github.com/openclaw/openclaw/issues/58286) | [Bug]: Build-time plugin deps bypass lockfile, vulnerable to supply chain attacks (axios incident) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58286.md) | complete | Apr 24, 2026, 16:41 UTC |
+| [#58248](https://github.com/openclaw/openclaw/pull/58248) | add token expiry warning and auth rotate CLI (non-breaking) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58248.md) | complete | Apr 24, 2026, 16:41 UTC |
+| [#58254](https://github.com/openclaw/openclaw/issues/58254) | [Bug]: gateway fails to restart after auto-update on macOS (launchd ThrottleInterval race) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58254.md) | complete | Apr 24, 2026, 16:41 UTC |
+| [#58307](https://github.com/openclaw/openclaw/issues/58307) | Cron payload model field ignored — LiveSessionModelSwitchError overrides job-level model with agent default | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58307.md) | complete | Apr 24, 2026, 16:41 UTC |
+| [#58308](https://github.com/openclaw/openclaw/issues/58308) | Fallback mechanism incorrectly requests primary model switch instead of using fallback model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58308.md) | complete | Apr 24, 2026, 16:40 UTC |
+| [#58291](https://github.com/openclaw/openclaw/pull/58291) | fix(build): add lockfiles for bundled plugin runtime deps | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58291.md) | complete | Apr 24, 2026, 16:40 UTC |
+| [#58221](https://github.com/openclaw/openclaw/issues/58221) | [Bug]: Chrome extension browser relay unavailable on macOS 2026.3.28 — browser.request missing, port 18792 not listening, docs/CLI out of sync | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58221.md) | complete | Apr 24, 2026, 16:40 UTC |
+| [#58305](https://github.com/openclaw/openclaw/issues/58305) | Regression v2026.3.28: LiveSessionModelSwitchError when spawning subagent with different model than parent | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58305.md) | complete | Apr 24, 2026, 16:40 UTC |
+| [#58235](https://github.com/openclaw/openclaw/issues/58235) | [Bug]:  Gemini 3.1 Pro Preview via OpenAI-compatible API missing thought_signature in tool_calls | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58235.md) | complete | Apr 24, 2026, 16:40 UTC |
+| [#58255](https://github.com/openclaw/openclaw/issues/58255) | Gemini memory indexing fails with fetch failed in WSL2/OpenClaw 2026.3.28, while direct Node fetch to Gemini embeddings succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58255.md) | complete | Apr 24, 2026, 16:40 UTC |
+| [#58290](https://github.com/openclaw/openclaw/issues/58290) | Discord bot never reaches ready state — stuck at awaiting gateway readiness (v2026.3.28) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58290.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58256](https://github.com/openclaw/openclaw/issues/58256) | [Bug]: browser.server not starting after upgrade to v2026.3.28 - \"openclaw browser start\" command not found | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58256.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58304](https://github.com/openclaw/openclaw/issues/58304) | [Bug]: Cron job with non-isolated sessionTarget causes sessionId/sessionFile mismatch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58304.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58279](https://github.com/openclaw/openclaw/pull/58279) | test(sessions): add unit tests for session-key-utils | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58279.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58252](https://github.com/openclaw/openclaw/issues/58252) | QClaw Helper (GPU) process idle high CPU usage | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58252.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58187](https://github.com/openclaw/openclaw/pull/58187) | fix(config): DATABASE_URL missing warning fires 3310+ times per run causing log spam and stack overflow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58187.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58244](https://github.com/openclaw/openclaw/pull/58244) | fix(process): prune idle dynamic lanes from command queue Map to prevent memory leak | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58244.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58287](https://github.com/openclaw/openclaw/issues/58287) | Bug: Heartbeat prompt visible as user message in Control UI chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58287.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58147](https://github.com/openclaw/openclaw/issues/58147) | Control UI / WebChat: Respect agents.defaults.timeFormat for session duration display | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58147.md) | complete | Apr 24, 2026, 16:39 UTC |
 
 ## How It Works
 
