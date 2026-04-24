@@ -1080,7 +1080,7 @@ function linkInlineSourceRefs(value: string, sha?: string | null): string {
     (match, ref: string) => {
       const { file, line } = splitFileAndLine(ref);
       if (!isLinkableSourceRef(file)) return match;
-      const docsUrl = !line ? docsPageUrl(file) : null;
+      const docsUrl = docsPageUrl(file);
       const url =
         docsUrl ?? (file === "VISION.md" && !line ? latestFileUrl(file) : fileUrl(file, sha, line));
       return markdownLink(`\`${ref}\``, url);
@@ -1107,14 +1107,12 @@ function evidenceLocation(evidence: Evidence): string {
   const parts: string[] = [];
   if (evidence.file) {
     const location = evidence.line ? `${evidence.file}:${evidence.line}` : evidence.file;
-    parts.push(
-      evidence.sha
-        ? markdownLink(
-            `\`${location}\``,
-            fileUrl(evidence.file, evidence.sha, evidence.line ?? undefined),
-          )
-        : `\`${location}\``,
-    );
+    const docsUrl = docsPageUrl(evidence.file);
+    const sourceUrl = evidence.sha
+      ? fileUrl(evidence.file, evidence.sha, evidence.line ?? undefined)
+      : null;
+    const url = docsUrl ?? sourceUrl;
+    parts.push(url ? markdownLink(`\`${location}\``, url) : `\`${location}\``);
   }
   if (evidence.sha) parts.push(linkedSha(evidence.sha));
   return parts.length ? ` (${parts.join(", ")})` : "";
