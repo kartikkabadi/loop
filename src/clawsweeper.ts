@@ -1175,7 +1175,7 @@ ${options.action.closeComment ? options.action.closeComment : "_No close comment
 
 function planCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
-  const batchSize = numberArg(args.batch_size, 20);
+  const batchSize = numberArg(args.batch_size, 5);
   const maxPages = numberArg(args.max_pages, 250);
   const shardCount = numberArg(args.shard_count, 10);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
@@ -1212,7 +1212,7 @@ function reviewCommand(args: Args): void {
   const openclawDir = resolve(stringArg(args.openclaw_dir, "../openclaw"));
   const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts/reviews"));
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
-  const batchSize = numberArg(args.batch_size, 20);
+  const batchSize = numberArg(args.batch_size, 5);
   const maxPages = numberArg(args.max_pages, 250);
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);

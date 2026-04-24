@@ -18,7 +18,7 @@ on:
       batch_size:
         description: "Items per worker job"
         required: false
-        default: "20"
+        default: "5"
       codex_timeout_ms:
         description: "Per-item Codex timeout in milliseconds"
         required: false
@@ -80,7 +80,7 @@ jobs:
         run: |
           {
             echo "apply_closures=${{ github.event.inputs.apply_closures || 'false' }}"
-            echo "batch_size=${{ github.event.inputs.batch_size || '20' }}"
+            echo "batch_size=${{ github.event.inputs.batch_size || '5' }}"
             echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '600000' }}"
           } >> "$GITHUB_OUTPUT"
 
@@ -88,7 +88,7 @@ jobs:
         working-directory: clawsweeper
         env:
           SHARD_COUNT: ${{ github.event.inputs.shard_count || '10' }}
-          BATCH_SIZE: ${{ github.event.inputs.batch_size || '20' }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size || '5' }}
           ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
@@ -110,7 +110,7 @@ jobs:
           const plan = JSON.parse(fs.readFileSync("plan.json", "utf8"));
           console.log(`matrix=${JSON.stringify(plan.matrix)}`);
           console.log(`planned_count=${plan.candidates.length}`);
-          console.log(`planned_capacity=${Number(process.env.BATCH_SIZE || 20) * Number(process.env.SHARD_COUNT || 10)}`);
+          console.log(`planned_capacity=${Number(process.env.BATCH_SIZE || 5) * Number(process.env.SHARD_COUNT || 10)}`);
           console.log(`planned_shards=${plan.matrix.length}`);
           NODE
           cat plan.json
