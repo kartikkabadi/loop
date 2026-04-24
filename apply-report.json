@@ -6,13 +6,13 @@
   },
   {
     "number": 7957,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 16365,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 17101,
@@ -31,8 +31,8 @@
   },
   {
     "number": 28222,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 29670,
@@ -46,8 +46,8 @@
   },
   {
     "number": 31486,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 31708,
@@ -66,8 +66,8 @@
   },
   {
     "number": 34863,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 35023,
@@ -76,23 +76,23 @@
   },
   {
     "number": 37566,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 37571,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 37605,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 37623,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 37633,
@@ -101,23 +101,23 @@
   },
   {
     "number": 37645,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 37913,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 37983,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 38141,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 38215,
@@ -151,18 +151,18 @@
   },
   {
     "number": 39173,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39176,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39268,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39289,
@@ -186,8 +186,8 @@
   },
   {
     "number": 39491,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39501,
@@ -196,8 +196,8 @@
   },
   {
     "number": 39518,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39567,
@@ -206,18 +206,18 @@
   },
   {
     "number": 39586,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39649,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39667,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39696,
@@ -226,13 +226,13 @@
   },
   {
     "number": 39697,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39724,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39744,
@@ -251,8 +251,8 @@
   },
   {
     "number": 39928,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 39940,
@@ -261,23 +261,23 @@
   },
   {
     "number": 40015,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40069,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40077,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40239,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40273,
@@ -286,13 +286,13 @@
   },
   {
     "number": 40295,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40363,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40464,
@@ -301,43 +301,43 @@
   },
   {
     "number": 40563,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40576,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40617,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40630,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40737,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40739,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40758,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40759,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40767,
@@ -356,23 +356,23 @@
   },
   {
     "number": 40793,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40799,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40811,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40812,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40817,
@@ -381,8 +381,8 @@
   },
   {
     "number": 40818,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40834,
@@ -391,8 +391,8 @@
   },
   {
     "number": 40836,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40837,
@@ -406,8 +406,8 @@
   },
   {
     "number": 40854,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40858,
@@ -461,13 +461,13 @@
   },
   {
     "number": 40929,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40931,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40938,
@@ -501,13 +501,13 @@
   },
   {
     "number": 40975,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40977,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 40981,
@@ -531,8 +531,8 @@
   },
   {
     "number": 41014,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41027,
@@ -556,8 +556,8 @@
   },
   {
     "number": 41043,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41044,
@@ -571,8 +571,8 @@
   },
   {
     "number": 41091,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41093,
@@ -606,8 +606,8 @@
   },
   {
     "number": 41126,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41127,
@@ -616,8 +616,8 @@
   },
   {
     "number": 41144,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41153,
@@ -626,13 +626,13 @@
   },
   {
     "number": 41167,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41179,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41180,
@@ -651,23 +651,23 @@
   },
   {
     "number": 41191,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41197,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41198,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41209,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41223,
@@ -681,18 +681,18 @@
   },
   {
     "number": 41229,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41247,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41249,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41250,
@@ -701,8 +701,8 @@
   },
   {
     "number": 41251,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41260,
@@ -716,8 +716,8 @@
   },
   {
     "number": 41276,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41277,
@@ -731,13 +731,13 @@
   },
   {
     "number": 41289,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41291,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41307,
@@ -751,18 +751,18 @@
   },
   {
     "number": 41318,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41321,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41339,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41350,
@@ -771,8 +771,8 @@
   },
   {
     "number": 41353,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41359,
@@ -786,8 +786,8 @@
   },
   {
     "number": 41369,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41382,
@@ -806,8 +806,8 @@
   },
   {
     "number": 41412,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41413,
@@ -821,8 +821,8 @@
   },
   {
     "number": 41423,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41434,
@@ -876,8 +876,8 @@
   },
   {
     "number": 41570,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41580,
@@ -896,8 +896,8 @@
   },
   {
     "number": 41620,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41622,
@@ -911,8 +911,8 @@
   },
   {
     "number": 41644,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41648,
@@ -926,18 +926,18 @@
   },
   {
     "number": 41652,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41673,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41707,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41709,
@@ -956,8 +956,8 @@
   },
   {
     "number": 41752,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41756,
@@ -971,13 +971,13 @@
   },
   {
     "number": 41769,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41773,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
   },
   {
     "number": 41786,
