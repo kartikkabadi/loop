@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 16:53 UTC
+Last dashboard update: Apr 24, 2026, 16:57 UTC
 
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12526 |
-| Fresh reviewed issues in the last 7 days | 7697 |
-| Proposed issue closes | 4305 (55.9% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6613 |
-| Fresh reviewed PRs in the last 7 days | 4040 |
-| Proposed PR closes | 1281 (31.7% of reviewed PRs) |
-| Open items total | 19139 |
-| Reviewed files | 11737 |
+| Fresh reviewed issues in the last 7 days | 7834 |
+| Proposed issue closes | 4390 (56% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6614 |
+| Fresh reviewed PRs in the last 7 days | 4103 |
+| Proposed PR closes | 1295 (31.6% of reviewed PRs) |
+| Open items total | 19140 |
+| Reviewed files | 11937 |
 | Archived closed files | 42 |
-| Fresh verified reviews in the last 7 days | 11737 |
-| Proposed closes awaiting apply | 5586 (47.6% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 11937 |
+| Proposed closes awaiting apply | 5685 (47.6% of fresh reviews) |
 | Closed by Codex apply | 30 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 7402 |
+| Todo for weekly coverage | 7203 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#58306](https://github.com/openclaw/openclaw/issues/58306) | [Bug]: Gateway process storm: KeepAlive + ThrottleInterval=1 causes 30+ zombie processes when port isn't released before restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58306.md) | complete | Apr 24, 2026, 16:42 UTC |
-| [#58286](https://github.com/openclaw/openclaw/issues/58286) | [Bug]: Build-time plugin deps bypass lockfile, vulnerable to supply chain attacks (axios incident) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58286.md) | complete | Apr 24, 2026, 16:41 UTC |
-| [#58248](https://github.com/openclaw/openclaw/pull/58248) | add token expiry warning and auth rotate CLI (non-breaking) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58248.md) | complete | Apr 24, 2026, 16:41 UTC |
-| [#58254](https://github.com/openclaw/openclaw/issues/58254) | [Bug]: gateway fails to restart after auto-update on macOS (launchd ThrottleInterval race) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58254.md) | complete | Apr 24, 2026, 16:41 UTC |
-| [#58307](https://github.com/openclaw/openclaw/issues/58307) | Cron payload model field ignored — LiveSessionModelSwitchError overrides job-level model with agent default | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58307.md) | complete | Apr 24, 2026, 16:41 UTC |
-| [#58308](https://github.com/openclaw/openclaw/issues/58308) | Fallback mechanism incorrectly requests primary model switch instead of using fallback model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58308.md) | complete | Apr 24, 2026, 16:40 UTC |
-| [#58291](https://github.com/openclaw/openclaw/pull/58291) | fix(build): add lockfiles for bundled plugin runtime deps | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58291.md) | complete | Apr 24, 2026, 16:40 UTC |
-| [#58221](https://github.com/openclaw/openclaw/issues/58221) | [Bug]: Chrome extension browser relay unavailable on macOS 2026.3.28 — browser.request missing, port 18792 not listening, docs/CLI out of sync | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58221.md) | complete | Apr 24, 2026, 16:40 UTC |
-| [#58305](https://github.com/openclaw/openclaw/issues/58305) | Regression v2026.3.28: LiveSessionModelSwitchError when spawning subagent with different model than parent | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58305.md) | complete | Apr 24, 2026, 16:40 UTC |
-| [#58235](https://github.com/openclaw/openclaw/issues/58235) | [Bug]:  Gemini 3.1 Pro Preview via OpenAI-compatible API missing thought_signature in tool_calls | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58235.md) | complete | Apr 24, 2026, 16:40 UTC |
-| [#58255](https://github.com/openclaw/openclaw/issues/58255) | Gemini memory indexing fails with fetch failed in WSL2/OpenClaw 2026.3.28, while direct Node fetch to Gemini embeddings succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58255.md) | complete | Apr 24, 2026, 16:40 UTC |
-| [#58290](https://github.com/openclaw/openclaw/issues/58290) | Discord bot never reaches ready state — stuck at awaiting gateway readiness (v2026.3.28) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58290.md) | complete | Apr 24, 2026, 16:39 UTC |
-| [#58256](https://github.com/openclaw/openclaw/issues/58256) | [Bug]: browser.server not starting after upgrade to v2026.3.28 - \"openclaw browser start\" command not found | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58256.md) | complete | Apr 24, 2026, 16:39 UTC |
-| [#58304](https://github.com/openclaw/openclaw/issues/58304) | [Bug]: Cron job with non-isolated sessionTarget causes sessionId/sessionFile mismatch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58304.md) | complete | Apr 24, 2026, 16:39 UTC |
-| [#58279](https://github.com/openclaw/openclaw/pull/58279) | test(sessions): add unit tests for session-key-utils | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58279.md) | complete | Apr 24, 2026, 16:39 UTC |
-| [#58252](https://github.com/openclaw/openclaw/issues/58252) | QClaw Helper (GPU) process idle high CPU usage | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58252.md) | complete | Apr 24, 2026, 16:39 UTC |
-| [#58187](https://github.com/openclaw/openclaw/pull/58187) | fix(config): DATABASE_URL missing warning fires 3310+ times per run causing log spam and stack overflow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58187.md) | complete | Apr 24, 2026, 16:39 UTC |
-| [#58244](https://github.com/openclaw/openclaw/pull/58244) | fix(process): prune idle dynamic lanes from command queue Map to prevent memory leak | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58244.md) | complete | Apr 24, 2026, 16:39 UTC |
-| [#58287](https://github.com/openclaw/openclaw/issues/58287) | Bug: Heartbeat prompt visible as user message in Control UI chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58287.md) | complete | Apr 24, 2026, 16:39 UTC |
-| [#58147](https://github.com/openclaw/openclaw/issues/58147) | Control UI / WebChat: Respect agents.defaults.timeFormat for session duration display | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58147.md) | complete | Apr 24, 2026, 16:39 UTC |
+| [#58698](https://github.com/openclaw/openclaw/pull/58698) | feat(security): Add runtime security modules for enhanced protection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58698.md) | complete | Apr 24, 2026, 16:56 UTC |
+| [#58660](https://github.com/openclaw/openclaw/issues/58660) | openclawwechat 插件安装被误拦截 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58660.md) | complete | Apr 24, 2026, 16:56 UTC |
+| [#58711](https://github.com/openclaw/openclaw/issues/58711) | Feature request: configurable provider response timeout with user notification and auto-fallback | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58711.md) | complete | Apr 24, 2026, 16:56 UTC |
+| [#58679](https://github.com/openclaw/openclaw/pull/58679) | feat(config): add provenance tracking and explain command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58679.md) | complete | Apr 24, 2026, 16:56 UTC |
+| [#58712](https://github.com/openclaw/openclaw/issues/58712) | [Bug]: [Follow-up] memos-memory-guide skill shows disabled but works correctly - WSL path issue? | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58712.md) | complete | Apr 24, 2026, 16:56 UTC |
+| [#58674](https://github.com/openclaw/openclaw/issues/58674) | Slash model commands can be ignored when command is wrapped by metadata text | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58674.md) | complete | Apr 24, 2026, 16:56 UTC |
+| [#58684](https://github.com/openclaw/openclaw/pull/58684) | feat: guard memory writes for non-main sessions (cron/isolated/subagent) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58684.md) | complete | Apr 24, 2026, 16:56 UTC |
+| [#58654](https://github.com/openclaw/openclaw/pull/58654) | fix: strip SecretRef marker values from getApiKeyAndHeaders result (#58087) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58654.md) | complete | Apr 24, 2026, 16:56 UTC |
+| [#58696](https://github.com/openclaw/openclaw/issues/58696) | [Feature]: The search content should be supplemented with a summary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58696.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58667](https://github.com/openclaw/openclaw/pull/58667) | Feat/tool template generator | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58667.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58592](https://github.com/openclaw/openclaw/issues/58592) | Cron isolated sessions fail with LiveSessionModelSwitchError when agent primary model differs from payload.model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58592.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58657](https://github.com/openclaw/openclaw/issues/58657) | [Bug]: Codex ACP session archive self-ingestion can bloat ACP history, OOM codex-acp, and crash the host | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58657.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58702](https://github.com/openclaw/openclaw/issues/58702) | [Bug] WebChat: Message text covered by action icons after upgrade to 2026.3.31 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58702.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58687](https://github.com/openclaw/openclaw/issues/58687) | [Bug]: Security prompt is too long to approve, and clicking \"Allow All\" on the security prompt is ineffective | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58687.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58649](https://github.com/openclaw/openclaw/issues/58649) | Subagent Session Timeout and Unresponsiveness in Production Use | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58649.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58704](https://github.com/openclaw/openclaw/issues/58704) | WhatsApp bridge: assistant output can leak into user messages during /new or /reset session transition | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58704.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58648](https://github.com/openclaw/openclaw/pull/58648) | fix(agents): gate session-derived threadId on isThreadSessionKey in announce routing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58648.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58713](https://github.com/openclaw/openclaw/issues/58713) | Feature Request: Ephemeral sessions for agent-to-agent communication | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58713.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58673](https://github.com/openclaw/openclaw/pull/58673) | fix(feishu): prevent timing side-channel in webhook signature comparison | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58673.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#58646](https://github.com/openclaw/openclaw/issues/58646) | [Bug]: Remote CDP profiles (Browserbase) lose session between commands — multi-step workflows impossible | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58646.md) | complete | Apr 24, 2026, 16:55 UTC |
 
 ## How It Works
 
