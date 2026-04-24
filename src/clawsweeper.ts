@@ -138,6 +138,7 @@ interface ApplyResult {
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET_REPO = "openclaw/openclaw";
+const REPORT_REPO = "openclaw/clawsweeper";
 const FRESH_DAYS = 7;
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -611,15 +612,32 @@ ${JSON.stringify(context, null, 2)}
 `;
 }
 
+function trimMiddle(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  const edge = Math.floor((maxLength - 120) / 2);
+  return `${text.slice(0, edge)}\n\n... truncated ${text.length - edge * 2} chars ...\n\n${text.slice(-edge)}`;
+}
+
+function codexFailureReason(detail: string): string {
+  if (detail.includes("Codex dirtied the OpenClaw checkout")) return "dirty checkout";
+  if (detail.includes("did not produce output")) return "missing structured output";
+  if (detail.includes("invalid JSON")) return "invalid structured output";
+  if (detail.includes("timed out") || detail.includes("ETIMEDOUT")) return "timeout";
+  return "codex execution failed";
+}
+
 function codexFailureDecision(status: number | null, stderr: string, stdout = ""): Decision {
+  const detail = stderr || "No stderr.";
+  const reason = codexFailureReason(detail);
   return {
     decision: "keep_open",
     closeReason: "none",
     confidence: "low",
-    summary: `Codex review failed with exit ${status ?? "unknown"}.`,
+    summary: `Codex review failed: ${reason}${status === null ? "" : ` (exit ${status})`}.`,
     evidence: [
-      { label: "codex stderr", detail: stderr.slice(-4000) || "No stderr." },
-      { label: "codex stdout", detail: stdout.slice(-4000) || "No stdout." },
+      { label: "failure reason", detail: reason },
+      { label: "codex failure detail", detail: trimMiddle(detail, 4000) },
+      { label: "codex stdout", detail: trimMiddle(stdout || "No stdout.", 2000) },
     ],
     risks: ["No close action taken because the review did not complete."],
     fixedRelease: null,
@@ -762,6 +780,10 @@ function repoUrl(path = ""): string {
   return `https://github.com/${TARGET_REPO}${path}`;
 }
 
+function reportUrl(path = ""): string {
+  return `https://github.com/${REPORT_REPO}${path}`;
+}
+
 function commitUrl(sha: string): string {
   return repoUrl(`/commit/${sha}`);
 }
@@ -776,6 +798,10 @@ function releaseUrl(tag: string): string {
 
 function itemUrl(number: number, kind: ItemKind = "issue"): string {
   return repoUrl(`/${kind === "pull_request" ? "pull" : "issues"}/${number}`);
+}
+
+function reportFileUrl(number: number): string {
+  return reportUrl(`/blob/main/items/${number}.md`);
 }
 
 function githubPath(path: string): string {
@@ -1234,9 +1260,9 @@ function updateDashboard(itemsDir = join(ROOT, "items")): void {
       .slice(0, 20)
       .map((item) => {
         const title = displayTitle(item.title);
-        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title.replaceAll("|", "\\|")} | ${item.decision} | ${item.action} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
+        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${markdownLink("report", reportFileUrl(item.number))} | ${title.replaceAll("|", "\\|")} | ${item.decision} | ${item.action} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
       })
-      .join("\n") || "| _None_ |  |  |  |  |  |";
+      .join("\n") || "| _None_ |  |  |  |  |  |  |";
   const dashboard = `## Dashboard
 
 Last dashboard update: ${formatTimestamp(new Date().toISOString())}
@@ -1250,8 +1276,8 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 
 Recently reviewed:
 
-| Item | Title | Decision | Action | Status | Reviewed |
-| --- | --- | --- | --- | --- | --- |
+| Item | Report | Title | Decision | Action | Status | Reviewed |
+| --- | --- | --- | --- | --- | --- | --- |
 ${recent}`;
   const updated = readme.replace(
     /## Dashboard[\s\S]*?## How It Works/,

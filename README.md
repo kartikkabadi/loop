@@ -13,39 +13,39 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 23, 2026, 23:53 UTC
+Last dashboard update: Apr 24, 2026, 00:00 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19147 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19148 |
 | Fresh verified reviews in the last 7 days | 4 |
-| Todo for weekly coverage | 19143 |
+| Todo for weekly coverage | 19144 |
 | Local review files | 22 |
 
 Recently reviewed:
 
-| Item | Title | Decision | Action | Status | Reviewed |
-| --- | --- | --- | --- | --- | --- |
-| [#75](https://github.com/openclaw/openclaw/issues/75) | Linux/Windows Clawdbot Apps | keep_open | kept_open | complete | Apr 23, 2026, 23:53 UTC |
-| [#6662](https://github.com/openclaw/openclaw/issues/6662) | [UX] SubAgent results should display as Tool Output instead of user message | keep_open | kept_open | complete | Apr 23, 2026, 23:47 UTC |
-| [#1691](https://github.com/openclaw/openclaw/issues/1691) | Add option to disable prompt_cache_key for local models | close | proposed_close | complete | Apr 23, 2026, 23:45 UTC |
-| [#6599](https://github.com/openclaw/openclaw/issues/6599) | Feature: Add /models test-fallback command to verify fallback chain | keep_open | kept_open | complete | Apr 23, 2026, 23:45 UTC |
-| [#6946](https://github.com/openclaw/openclaw/issues/6946) | Feature: Processing indicator message for Telegram (send ⌛️ while thinking, delete on reply) | keep_open | kept_open | failed | Apr 23, 2026, 23:44 UTC |
-| [#1210](https://github.com/openclaw/openclaw/issues/1210) | Images from Discord stored as base64 in session transcripts | keep_open | kept_open | failed | Apr 23, 2026, 23:44 UTC |
-| [#6633](https://github.com/openclaw/openclaw/issues/6633) | [Feature]: Cryptographic envelope (\"brain protection\") | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
-| [#147](https://github.com/openclaw/openclaw/issues/147) | feat: Brabble as Clawdis node for distributed voice wake | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
-| [#6654](https://github.com/openclaw/openclaw/issues/6654) | [Feature]: Use zerobrew instead of homebrew | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
-| [#6808](https://github.com/openclaw/openclaw/issues/6808) | [Feature]: More efficient cron job management on Web UI | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
-| [#6615](https://github.com/openclaw/openclaw/issues/6615) | Feature: Add denylist support for exec-approvals | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:36 UTC |
-| [#8920](https://github.com/openclaw/openclaw/issues/8920) | [Feature]: Better UI for configuration | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:36 UTC |
-| [#7021](https://github.com/openclaw/openclaw/issues/7021) | [Feature]: integrate PowerMem as a Memory backend (semantic recall + long‑term memory) | close | proposed_close | stale_local_checkout_blocked | Apr 23, 2026, 23:36 UTC |
-| [#6717](https://github.com/openclaw/openclaw/issues/6717) | [Feature Request] Natural language model switching in conversation | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:35 UTC |
-| [#6722](https://github.com/openclaw/openclaw/issues/6722) | WhatsApp: Add link preview support (generateHighQualityLinkPreview) | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:34 UTC |
-| [#6617](https://github.com/openclaw/openclaw/issues/6617) | [Feature]: Control UI agent reply supports inline image | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:33 UTC |
-| [#6820](https://github.com/openclaw/openclaw/issues/6820) | Add openai-codex/gpt-5.2 to xhigh thinking whitelist | close | proposed_close | stale_local_checkout_blocked | Apr 23, 2026, 23:33 UTC |
-| [#6457](https://github.com/openclaw/openclaw/pull/6457) | fix(telegram): register commands for group scope + preserve topic thread params | keep_open | kept_open | stale_local_checkout_unverified | Apr 23, 2026, 23:24 UTC |
-| [#7052](https://github.com/openclaw/openclaw/issues/7052) | Feature Request: Auto-summarize/compress context before hitting token limit to prevent brain freeze | keep_open | kept_open | stale_local_checkout_unverified | Apr 23, 2026, 23:23 UTC |
-| [#2597](https://github.com/openclaw/openclaw/issues/2597) | Context/state lost after unexpected compaction or session reset | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:23 UTC |
+| Item | Report | Title | Decision | Action | Status | Reviewed |
+| --- | --- | --- | --- | --- | --- | --- |
+| [#75](https://github.com/openclaw/openclaw/issues/75) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/75.md) | Linux/Windows Clawdbot Apps | keep_open | kept_open | complete | Apr 23, 2026, 23:53 UTC |
+| [#6662](https://github.com/openclaw/openclaw/issues/6662) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6662.md) | [UX] SubAgent results should display as Tool Output instead of user message | keep_open | kept_open | complete | Apr 23, 2026, 23:47 UTC |
+| [#1691](https://github.com/openclaw/openclaw/issues/1691) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/1691.md) | Add option to disable prompt_cache_key for local models | close | proposed_close | complete | Apr 23, 2026, 23:45 UTC |
+| [#6599](https://github.com/openclaw/openclaw/issues/6599) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6599.md) | Feature: Add /models test-fallback command to verify fallback chain | keep_open | kept_open | complete | Apr 23, 2026, 23:45 UTC |
+| [#6946](https://github.com/openclaw/openclaw/issues/6946) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6946.md) | Feature: Processing indicator message for Telegram (send ⌛️ while thinking, delete on reply) | keep_open | kept_open | failed | Apr 23, 2026, 23:44 UTC |
+| [#1210](https://github.com/openclaw/openclaw/issues/1210) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/1210.md) | Images from Discord stored as base64 in session transcripts | keep_open | kept_open | failed | Apr 23, 2026, 23:44 UTC |
+| [#6633](https://github.com/openclaw/openclaw/issues/6633) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6633.md) | [Feature]: Cryptographic envelope (\"brain protection\") | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
+| [#147](https://github.com/openclaw/openclaw/issues/147) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/147.md) | feat: Brabble as Clawdis node for distributed voice wake | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
+| [#6654](https://github.com/openclaw/openclaw/issues/6654) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6654.md) | [Feature]: Use zerobrew instead of homebrew | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
+| [#6808](https://github.com/openclaw/openclaw/issues/6808) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6808.md) | [Feature]: More efficient cron job management on Web UI | keep_open | kept_open | failed | Apr 23, 2026, 23:43 UTC |
+| [#6615](https://github.com/openclaw/openclaw/issues/6615) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6615.md) | Feature: Add denylist support for exec-approvals | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:36 UTC |
+| [#8920](https://github.com/openclaw/openclaw/issues/8920) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/8920.md) | [Feature]: Better UI for configuration | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:36 UTC |
+| [#7021](https://github.com/openclaw/openclaw/issues/7021) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/7021.md) | [Feature]: integrate PowerMem as a Memory backend (semantic recall + long‑term memory) | close | proposed_close | stale_local_checkout_blocked | Apr 23, 2026, 23:36 UTC |
+| [#6717](https://github.com/openclaw/openclaw/issues/6717) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6717.md) | [Feature Request] Natural language model switching in conversation | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:35 UTC |
+| [#6722](https://github.com/openclaw/openclaw/issues/6722) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6722.md) | WhatsApp: Add link preview support (generateHighQualityLinkPreview) | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:34 UTC |
+| [#6617](https://github.com/openclaw/openclaw/issues/6617) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6617.md) | [Feature]: Control UI agent reply supports inline image | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:33 UTC |
+| [#6820](https://github.com/openclaw/openclaw/issues/6820) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6820.md) | Add openai-codex/gpt-5.2 to xhigh thinking whitelist | close | proposed_close | stale_local_checkout_blocked | Apr 23, 2026, 23:33 UTC |
+| [#6457](https://github.com/openclaw/openclaw/pull/6457) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6457.md) | fix(telegram): register commands for group scope + preserve topic thread params | keep_open | kept_open | stale_local_checkout_unverified | Apr 23, 2026, 23:24 UTC |
+| [#7052](https://github.com/openclaw/openclaw/issues/7052) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/7052.md) | Feature Request: Auto-summarize/compress context before hitting token limit to prevent brain freeze | keep_open | kept_open | stale_local_checkout_unverified | Apr 23, 2026, 23:23 UTC |
+| [#2597](https://github.com/openclaw/openclaw/issues/2597) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/2597.md) | Context/state lost after unexpected compaction or session reset | keep_open | kept_open | stale_local_checkout_blocked | Apr 23, 2026, 23:23 UTC |
 
 ## How It Works
 
