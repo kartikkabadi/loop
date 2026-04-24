@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 11:59 UTC
+Last dashboard update: Apr 24, 2026, 12:12 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12549 |
-| Fresh reviewed issues in the last 7 days | 5221 |
-| Proposed issue closes | 2895 (55.4% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6603 |
-| Fresh reviewed PRs in the last 7 days | 2758 |
-| Proposed PR closes | 923 (33.5% of reviewed PRs) |
-| Open items total | 19152 |
-| Reviewed files | 7979 |
-| Fresh verified reviews in the last 7 days | 7979 |
-| Proposed closes awaiting apply | 3818 (47.9% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12550 |
+| Fresh reviewed issues in the last 7 days | 5337 |
+| Proposed issue closes | 2965 (55.6% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6604 |
+| Fresh reviewed PRs in the last 7 days | 2842 |
+| Proposed PR closes | 948 (33.4% of reviewed PRs) |
+| Open items total | 19154 |
+| Reviewed files | 8179 |
+| Fresh verified reviews in the last 7 days | 8179 |
+| Proposed closes awaiting apply | 3913 (47.8% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 11173 |
+| Todo for weekly coverage | 10975 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#51132](https://github.com/openclaw/openclaw/issues/51132) | Feishu channel: Messages not sent when Reasoning mode is enabled | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51132.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51203](https://github.com/openclaw/openclaw/issues/51203) | [Feature]: Feature Request: Immutable Approval Gate (Human-in-the-Loop execution layer) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51203.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51172](https://github.com/openclaw/openclaw/pull/51172) | fix(gateway): enable device identity for loopback probes when token SecretRef is unresolved (#51016) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51172.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51199](https://github.com/openclaw/openclaw/issues/51199) | Tarball has out-of-order entries causing TAR_ENTRY_ERROR on npm install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51199.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51186](https://github.com/openclaw/openclaw/issues/51186) | BlueBubbles routed messages can run under main-agent context via /hooks/agent (plus webhook 404 and phone-format mismatch) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51186.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51175](https://github.com/openclaw/openclaw/issues/51175) | [Bug]: openai-codex OAuth fails with 403 unsupported_country_region_territory while codex-cli works | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51175.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51182](https://github.com/openclaw/openclaw/issues/51182) | Telegram message replay after gateway restart despite offset file existing (regression from #739) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51182.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51178](https://github.com/openclaw/openclaw/issues/51178) | [Feature]: Decoupling Lane Queue and Asynchronous Transformation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51178.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51189](https://github.com/openclaw/openclaw/issues/51189) | [Bug] Feishu channel agent_end event not triggered, causing auto-capture to fail | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51189.md) | complete | Apr 24, 2026, 11:58 UTC |
-| [#51166](https://github.com/openclaw/openclaw/pull/51166) | fix(sandbox): pull pre-built image from GHCR instead of plain debian:bookworm-slim | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51166.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51194](https://github.com/openclaw/openclaw/pull/51194) | fix(acpx): kill child process in runTurn finally block to prevent process leak | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51194.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51151](https://github.com/openclaw/openclaw/issues/51151) | [Bug]: CLI fails to connect to gateway despite service running and curl succeeding | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51151.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51179](https://github.com/openclaw/openclaw/pull/51179) | fix(status): show all allowFrom entries in channels --probe summary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51179.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51197](https://github.com/openclaw/openclaw/pull/51197) | fix(infra): close file handles on lock write failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51197.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51198](https://github.com/openclaw/openclaw/pull/51198) | fix(scripts): close pipes on partial RPC client init failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51198.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51143](https://github.com/openclaw/openclaw/issues/51143) | [Bug]: Multi-account Telegram: bot.on(\"message\") does not fire for group messages on non-default account | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51143.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51168](https://github.com/openclaw/openclaw/issues/51168) | [Bug]: AgentMail channel plugin — inbound WebSocket events received but handler silently fails (no auto-reply) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51168.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51149](https://github.com/openclaw/openclaw/issues/51149) | Bug: raw internal tool/runtime errors leak into chat as user-visible replies | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51149.md) | complete | Apr 24, 2026, 11:57 UTC |
-| [#51156](https://github.com/openclaw/openclaw/pull/51156) | feat(config): add enforceFinalTag option to agent defaults | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51156.md) | complete | Apr 24, 2026, 11:56 UTC |
-| [#51125](https://github.com/openclaw/openclaw/pull/51125) | fix(security): normalize Cyrillic and Greek confusable chars in boundary marker sanitization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51125.md) | complete | Apr 24, 2026, 11:56 UTC |
+| [#51556](https://github.com/openclaw/openclaw/pull/51556) | fix(pairing): propagate non-ENOENT errors in sync allowlist reader | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51556.md) | complete | Apr 24, 2026, 12:11 UTC |
+| [#51523](https://github.com/openclaw/openclaw/pull/51523) | feat(matrix): add subagent hooks for ACP room-binding | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51523.md) | complete | Apr 24, 2026, 12:11 UTC |
+| [#51513](https://github.com/openclaw/openclaw/pull/51513) | docs(channels): add connection architecture overview and transport notes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51513.md) | complete | Apr 24, 2026, 12:11 UTC |
+| [#51570](https://github.com/openclaw/openclaw/pull/51570) | Add OpenClaw User-Agent header to all outbound HTTP requests | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51570.md) | complete | Apr 24, 2026, 12:11 UTC |
+| [#51533](https://github.com/openclaw/openclaw/issues/51533) | [Bug]: onboard wizard stores env var reference as apiKey; breaks channels that don't resolve it | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51533.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51452](https://github.com/openclaw/openclaw/issues/51452) | [Bug] Persistent HTTP 401 with Valid Aliyun ModelStudio Key (Direct API Calls Work, CLI Fails) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51452.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51551](https://github.com/openclaw/openclaw/issues/51551) | Bug: Context Window shows unknown/0 despite extensive conversation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51551.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51483](https://github.com/openclaw/openclaw/issues/51483) | Feature: Support local vision model preprocessing for inbound images | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51483.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51549](https://github.com/openclaw/openclaw/issues/51549) | [Bug]: WebChat loses message queue, conversation history, and draft on browser refresh | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51549.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51511](https://github.com/openclaw/openclaw/issues/51511) | [Bug]: Bug Report: Cursor Support Assistant Hijacks Custom Agent Session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51511.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51516](https://github.com/openclaw/openclaw/issues/51516) | [Bug]: openclaw devices/* and gateway RPC fail locally with pairing/operator scope mismatch on healthy loopback gateway (2026.3.13) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51516.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51547](https://github.com/openclaw/openclaw/pull/51547) | fix(exec): default to GBK encoding on Windows (#50519) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51547.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51572](https://github.com/openclaw/openclaw/issues/51572) | Feature: fire session-memory hook on session reset/prune, not just compaction | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51572.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51565](https://github.com/openclaw/openclaw/pull/51565) | whatsapp: Allow different ack emoji for different agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51565.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51518](https://github.com/openclaw/openclaw/issues/51518) | [Feature] Allow subagent.run in agent_end hook (async spawn without request context) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51518.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51521](https://github.com/openclaw/openclaw/issues/51521) | Feature Request: Support custom reasoning language / 中文推理语言支持 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51521.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51461](https://github.com/openclaw/openclaw/issues/51461) | Feishu DM stop/停止 does not preempt active run; abort appears delayed until dispatch completes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51461.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51498](https://github.com/openclaw/openclaw/issues/51498) | [Bug]: openclaw cron list/status and openclaw health --json timeout against local gateway while scheduler still appears to run jobs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51498.md) | complete | Apr 24, 2026, 12:10 UTC |
+| [#51584](https://github.com/openclaw/openclaw/pull/51584) | fix(sandbox): fall back to static channel registry for sandbox explain channel resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51584.md) | complete | Apr 24, 2026, 12:09 UTC |
+| [#51545](https://github.com/openclaw/openclaw/issues/51545) | Bug: Sub-agent model override not working in 2026.3.13 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51545.md) | complete | Apr 24, 2026, 12:09 UTC |
 
 ## How It Works
 
