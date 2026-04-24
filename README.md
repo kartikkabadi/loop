@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 04:18 UTC
+Last dashboard update: Apr 24, 2026, 04:34 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19155 |
-| Reviewed / proposed closes | 1586 / 701 |
-| Reviewed files | 1586 |
-| Fresh verified reviews in the last 7 days | 1586 |
-| Proposed closes awaiting apply | 701 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19098 |
+| Reviewed / proposed closes | 1786 / 811 |
+| Reviewed files | 1786 |
+| Fresh verified reviews in the last 7 days | 1786 |
+| Proposed closes awaiting apply | 811 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 17569 |
+| Todo for weekly coverage | 17312 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#38789](https://github.com/openclaw/openclaw/pull/38789) | fix(agents): rebuild sandbox skill prompt paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38789.md) | complete | Apr 24, 2026, 04:18 UTC |
-| [#38792](https://github.com/openclaw/openclaw/issues/38792) | Agent loop silently stalls: no user response after API error + long tool-call chains | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38792.md) | complete | Apr 24, 2026, 04:17 UTC |
-| [#38791](https://github.com/openclaw/openclaw/issues/38791) | Cron: isolated job delivery defaults to 'none' instead of 'announce' | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38791.md) | complete | Apr 24, 2026, 04:17 UTC |
-| [#38726](https://github.com/openclaw/openclaw/issues/38726) | Feature: Show model usage (incl. local models) in OpenClaw dashboard | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38726.md) | complete | Apr 24, 2026, 04:17 UTC |
-| [#38766](https://github.com/openclaw/openclaw/pull/38766) | fix(ui): guard against undefined cron job payload in render loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38766.md) | complete | Apr 24, 2026, 04:16 UTC |
-| [#38755](https://github.com/openclaw/openclaw/issues/38755) | cron.run false failure: tool timeout at 60s while gateway later returns success | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38755.md) | complete | Apr 24, 2026, 04:16 UTC |
-| [#38790](https://github.com/openclaw/openclaw/pull/38790) | Browser: accept top-level act ref fields | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38790.md) | complete | Apr 24, 2026, 04:16 UTC |
-| [#38780](https://github.com/openclaw/openclaw/pull/38780) | feat: context-pressure-aware continuation (CONTINUE_WORK / CONTINUE_DELEGATE) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38780.md) | complete | Apr 24, 2026, 04:16 UTC |
-| [#38797](https://github.com/openclaw/openclaw/issues/38797) | [Feature]: Per-agent memory isolation for memory-lancedb plugin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38797.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38777](https://github.com/openclaw/openclaw/pull/38777) | feat(hooks): expose rate limit headers in llm_output hook | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38777.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38731](https://github.com/openclaw/openclaw/pull/38731) | Warn on high-frequency cron schedules (<30m) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38731.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38781](https://github.com/openclaw/openclaw/pull/38781) | adding system.run.prepare | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38781.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38778](https://github.com/openclaw/openclaw/issues/38778) | [Bug]: 飞书机器人@飞书机器人 场景下，被@的机器人不会回应 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38778.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38730](https://github.com/openclaw/openclaw/issues/38730) | Cron session accumulation can silently exhaust agent context window — no guardrails or warnings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38730.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38795](https://github.com/openclaw/openclaw/issues/38795) | Bug Report: imageModel 自动切换未生效 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38795.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38762](https://github.com/openclaw/openclaw/issues/38762) | browser act 的 ref 参数位置处理不一致，错误信息误导 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38762.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38729](https://github.com/openclaw/openclaw/pull/38729) | feat(thinking): register supportsXHighThinking for Anthropic provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38729.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38784](https://github.com/openclaw/openclaw/issues/38784) | [Bug]: Azure OpenAI models report 0 context tokens — supportsUsageInStreaming forcefully disabled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38784.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38764](https://github.com/openclaw/openclaw/pull/38764) | Formalize Agent-to-Agent Learning with Policy-Governed Knowledge Transfer | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38764.md) | complete | Apr 24, 2026, 04:15 UTC |
-| [#38782](https://github.com/openclaw/openclaw/issues/38782) | Bug: /new and /reset startup greeting uses wrong time-of-day | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38782.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#39222](https://github.com/openclaw/openclaw/issues/39222) | CLI can leave orphan openclaw-gateway processes on Linux/systemd when gateway.mode=local | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39222.md) | complete | Apr 24, 2026, 04:33 UTC |
+| [#39259](https://github.com/openclaw/openclaw/issues/39259) | [Feature]: add gpt 5.4 in github copilot provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39259.md) | complete | Apr 24, 2026, 04:33 UTC |
+| [#39285](https://github.com/openclaw/openclaw/issues/39285) | bug: voice-call TTS speed config uses \|\| instead of ?? (same class as #39191) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39285.md) | complete | Apr 24, 2026, 04:33 UTC |
+| [#39274](https://github.com/openclaw/openclaw/issues/39274) | Discord: MESSAGE_CREATE listener times out (80+ seconds) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39274.md) | complete | Apr 24, 2026, 04:33 UTC |
+| [#39320](https://github.com/openclaw/openclaw/pull/39320) | UI: fix agent settings save button for auto-discovered agents | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39320.md) | complete | Apr 24, 2026, 04:32 UTC |
+| [#39306](https://github.com/openclaw/openclaw/pull/39306) | fix(ui): enable Save when editing agents without existing config entries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39306.md) | complete | Apr 24, 2026, 04:32 UTC |
+| [#39269](https://github.com/openclaw/openclaw/pull/39269) | fix: batch bug fixes — routing, delivery, errors, plugins | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39269.md) | complete | Apr 24, 2026, 04:32 UTC |
+| [#39253](https://github.com/openclaw/openclaw/issues/39253) | Gemini OpenAI-compatible API regression: provider/model format sent to Google instead of bare model ID | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39253.md) | complete | Apr 24, 2026, 04:32 UTC |
+| [#39242](https://github.com/openclaw/openclaw/pull/39242) | fix(gateway): honor service marker and explicit port for stale pid cleanup | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39242.md) | complete | Apr 24, 2026, 04:32 UTC |
+| [#39303](https://github.com/openclaw/openclaw/issues/39303) | [Bug]: health-monitor stale-socket breaks webhook mode with self-signed certs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39303.md) | complete | Apr 24, 2026, 04:32 UTC |
+| [#39250](https://github.com/openclaw/openclaw/issues/39250) | [Config] Migrate legacy gateway.bind to new bind mode format | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39250.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39323](https://github.com/openclaw/openclaw/pull/39323) | feat(pairing): add owner notification on new pairing requests | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39323.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39297](https://github.com/openclaw/openclaw/issues/39297) | Feature Request: Built-in Agent Cost & Usage Analytics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39297.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39307](https://github.com/openclaw/openclaw/issues/39307) | feat: surface mid-thread context reset/compaction to users | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39307.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39156](https://github.com/openclaw/openclaw/issues/39156) | [Bug]: diagnostics-otel plugin: OTLP log export doesn't work — module isolation between gateway and plugin-sdk | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39156.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39322](https://github.com/openclaw/openclaw/pull/39322) | feat(imessage): add tapback reaction support as inbound agent events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39322.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39261](https://github.com/openclaw/openclaw/issues/39261) | Bug: Mattermost intercepts slash commands — /model, /new, /status, etc. never reach OpenClaw | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39261.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39265](https://github.com/openclaw/openclaw/issues/39265) | Feature request: compaction.suffix — inject custom text into compaction summaries | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39265.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39117](https://github.com/openclaw/openclaw/pull/39117) | fix: recover busy sessions and improve queued handling | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39117.md) | complete | Apr 24, 2026, 04:31 UTC |
+| [#39296](https://github.com/openclaw/openclaw/issues/39296) | Feature Request: Native Heartbeat Pre-Check / Gatekeeper Pattern | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39296.md) | complete | Apr 24, 2026, 04:31 UTC |
 
 ## How It Works
 
