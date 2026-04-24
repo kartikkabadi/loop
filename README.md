@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 05:06 UTC
+Last dashboard update: Apr 24, 2026, 05:18 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19103 |
-| Reviewed / proposed closes | 2186 / 988 |
-| Reviewed files | 2186 |
-| Fresh verified reviews in the last 7 days | 2186 |
-| Proposed closes awaiting apply | 988 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19104 |
+| Reviewed / proposed closes | 2386 / 1090 |
+| Reviewed files | 2386 |
+| Fresh verified reviews in the last 7 days | 2386 |
+| Proposed closes awaiting apply | 1090 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 16917 |
+| Todo for weekly coverage | 16718 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#40154](https://github.com/openclaw/openclaw/issues/40154) | [Bug]: Custom workspace skills with `~/.openclaw/workspace/skills/...` are skipped as “outside configured root” in v2026.3.7 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40154.md) | complete | Apr 24, 2026, 05:05 UTC |
-| [#40145](https://github.com/openclaw/openclaw/issues/40145) | [Bug]: Webchat sessions on 2026.3.7 expose zero tools (no web_search/exec even with tools.allow set) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40145.md) | complete | Apr 24, 2026, 05:03 UTC |
-| [#40168](https://github.com/openclaw/openclaw/issues/40168) | Agent config model shows 'not found' on gateway restart but works via /model command | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40168.md) | complete | Apr 24, 2026, 05:03 UTC |
-| [#40151](https://github.com/openclaw/openclaw/pull/40151) | fix: install bundled extension deps via postinstall hook | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40151.md) | complete | Apr 24, 2026, 05:03 UTC |
-| [#40179](https://github.com/openclaw/openclaw/issues/40179) | [Bug]: exec tool does not inherit gateway's environment variables (launchd) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40179.md) | complete | Apr 24, 2026, 05:02 UTC |
-| [#40169](https://github.com/openclaw/openclaw/issues/40169) | [Bug]: node work not good | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40169.md) | complete | Apr 24, 2026, 05:02 UTC |
-| [#40156](https://github.com/openclaw/openclaw/issues/40156) | [Bug]: v2026.3.7's docker-setup doesn't work | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40156.md) | complete | Apr 24, 2026, 05:02 UTC |
-| [#40152](https://github.com/openclaw/openclaw/issues/40152) | Google provider/model resolution: google/<model> ids not normalized (e.g. google/gemini-2.5-flash) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40152.md) | complete | Apr 24, 2026, 05:02 UTC |
-| [#40127](https://github.com/openclaw/openclaw/issues/40127) | [Feature] Control UI Login Page 改进 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40127.md) | complete | Apr 24, 2026, 05:02 UTC |
-| [#40072](https://github.com/openclaw/openclaw/issues/40072) | chore: remaining unused files and dependencies from knip scan | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40072.md) | complete | Apr 24, 2026, 05:02 UTC |
-| [#40131](https://github.com/openclaw/openclaw/issues/40131) | [Bug]: Bundled voice-call plugin (v2026.3.2) returns 200 OK on Telnyx webhooks but does not process inbound calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40131.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40174](https://github.com/openclaw/openclaw/issues/40174) | Test issue | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40174.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40183](https://github.com/openclaw/openclaw/issues/40183) | [Feature] Backend: 统一媒体路径验证逻辑，修复 symlink 工作区问题 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40183.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40155](https://github.com/openclaw/openclaw/issues/40155) | [Bug]: Telegram channel generates different results to WebUI chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40155.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40144](https://github.com/openclaw/openclaw/issues/40144) | loopDetection: toolCallHistory persists across heartbeat cycles, causing false positives | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40144.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40065](https://github.com/openclaw/openclaw/issues/40065) | Web UI default agent model editor writes to agents.list override instead of agents.defaults.model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40065.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40181](https://github.com/openclaw/openclaw/issues/40181) | LocalMediaAccessError: fs.realpath() breaks media access for symlinked agent workspaces | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40181.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40089](https://github.com/openclaw/openclaw/issues/40089) | Gateway restart (update.run) can leave service dead: bootout without bootstrap | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40089.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40129](https://github.com/openclaw/openclaw/pull/40129) | feat(plugins): add registerOutboundTransform API for outbound text transforms  | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40129.md) | complete | Apr 24, 2026, 05:01 UTC |
-| [#40081](https://github.com/openclaw/openclaw/pull/40081) | Fix ACP session init fallback and persist ACP child transcripts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40081.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40560](https://github.com/openclaw/openclaw/pull/40560) | feat(gateway): add actionable fix suggestions to config errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40560.md) | complete | Apr 24, 2026, 05:18 UTC |
+| [#40531](https://github.com/openclaw/openclaw/issues/40531) | [Bug]: Cron announce delivery to Feishu fails with \"Action send requires a target\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40531.md) | complete | Apr 24, 2026, 05:17 UTC |
+| [#40525](https://github.com/openclaw/openclaw/issues/40525) | 请求添加网页搜索/浏览功能 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40525.md) | complete | Apr 24, 2026, 05:17 UTC |
+| [#40576](https://github.com/openclaw/openclaw/issues/40576) | [Bug]:   Critical Error: \"Invalid URL\" in Chat and Terminal after recent update (v2026.3.7/8) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40576.md) | complete | Apr 24, 2026, 05:17 UTC |
+| [#40563](https://github.com/openclaw/openclaw/issues/40563) | [Bug]: Bug]: [Windows] Agent/auth lookup uses wrong state directory path (missing backslash between username and .openclaw)  Agent/auth 查找使用错误的状态目录路径（用户名与 .openclaw 之间缺少反斜杠） | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40563.md) | complete | Apr 24, 2026, 05:17 UTC |
+| [#40568](https://github.com/openclaw/openclaw/issues/40568) | [Bug]: 百炼 GLM-5 tool calling fails with \"at '/required': got null, want array\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40568.md) | complete | Apr 24, 2026, 05:17 UTC |
+| [#40585](https://github.com/openclaw/openclaw/pull/40585) | fix(ws): hard-fallback when replay boundary/tool-call pairing is invalid | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40585.md) | complete | Apr 24, 2026, 05:17 UTC |
+| [#40550](https://github.com/openclaw/openclaw/issues/40550) | [Bug] openclaw gateway stop/start fails to recover on macOS 26 — service removed but never re-registered | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40550.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40562](https://github.com/openclaw/openclaw/issues/40562) | Feature: Cross-App Control — interact with native apps (macOS/iOS) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40562.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40605](https://github.com/openclaw/openclaw/issues/40605) | [Bug]: Sub-agent completion trigger message skipped when direct delivery succeeds (group topic sessions) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40605.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40472](https://github.com/openclaw/openclaw/pull/40472) | fix(tui): refresh on external session reset and clear stale run state | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40472.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40529](https://github.com/openclaw/openclaw/issues/40529) | [Bug] \"request ended without sending any chunks\" not classified as retryable error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40529.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40535](https://github.com/openclaw/openclaw/pull/40535) | fix(exec-approvals): reject non-persistable allow-always approvals | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40535.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40536](https://github.com/openclaw/openclaw/issues/40536) | [Feature]: Per-Skill Model Override | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40536.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40546](https://github.com/openclaw/openclaw/issues/40546) | Partial landing of PR #22304 in 2026.3.7? launchd runtime shows stopped, but lifecycle-core still hint-only on not-loaded | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40546.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40547](https://github.com/openclaw/openclaw/issues/40547) | [Bug]: Exec Approval is in a mess. Indepedent multi-agent has conflicting exec permission at times | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40547.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40589](https://github.com/openclaw/openclaw/pull/40589) | Add Baidu Qianfan Coding provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40589.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40447](https://github.com/openclaw/openclaw/pull/40447) | docs: fix message send flag and claude-max-api-proxy links (#10458, #… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40447.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40580](https://github.com/openclaw/openclaw/pull/40580) | docs(zh-CN): fix Lark link format in Feishu documentation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40580.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40534](https://github.com/openclaw/openclaw/pull/40534) | fix(cron): filter reasoning/thinking payloads from announce delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40534.md) | complete | Apr 24, 2026, 05:16 UTC |
 
 ## How It Works
 
