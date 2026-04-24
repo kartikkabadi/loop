@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 05:18 UTC
+Last dashboard update: Apr 24, 2026, 05:32 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19104 |
-| Reviewed / proposed closes | 2386 / 1090 |
-| Reviewed files | 2386 |
-| Fresh verified reviews in the last 7 days | 2386 |
-| Proposed closes awaiting apply | 1090 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19098 |
+| Reviewed / proposed closes | 2586 / 1184 |
+| Reviewed files | 2586 |
+| Fresh verified reviews in the last 7 days | 2586 |
+| Proposed closes awaiting apply | 1184 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 16718 |
+| Todo for weekly coverage | 16512 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#40560](https://github.com/openclaw/openclaw/pull/40560) | feat(gateway): add actionable fix suggestions to config errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40560.md) | complete | Apr 24, 2026, 05:18 UTC |
-| [#40531](https://github.com/openclaw/openclaw/issues/40531) | [Bug]: Cron announce delivery to Feishu fails with \"Action send requires a target\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40531.md) | complete | Apr 24, 2026, 05:17 UTC |
-| [#40525](https://github.com/openclaw/openclaw/issues/40525) | 请求添加网页搜索/浏览功能 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40525.md) | complete | Apr 24, 2026, 05:17 UTC |
-| [#40576](https://github.com/openclaw/openclaw/issues/40576) | [Bug]:   Critical Error: \"Invalid URL\" in Chat and Terminal after recent update (v2026.3.7/8) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40576.md) | complete | Apr 24, 2026, 05:17 UTC |
-| [#40563](https://github.com/openclaw/openclaw/issues/40563) | [Bug]: Bug]: [Windows] Agent/auth lookup uses wrong state directory path (missing backslash between username and .openclaw)  Agent/auth 查找使用错误的状态目录路径（用户名与 .openclaw 之间缺少反斜杠） | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40563.md) | complete | Apr 24, 2026, 05:17 UTC |
-| [#40568](https://github.com/openclaw/openclaw/issues/40568) | [Bug]: 百炼 GLM-5 tool calling fails with \"at '/required': got null, want array\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40568.md) | complete | Apr 24, 2026, 05:17 UTC |
-| [#40585](https://github.com/openclaw/openclaw/pull/40585) | fix(ws): hard-fallback when replay boundary/tool-call pairing is invalid | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40585.md) | complete | Apr 24, 2026, 05:17 UTC |
-| [#40550](https://github.com/openclaw/openclaw/issues/40550) | [Bug] openclaw gateway stop/start fails to recover on macOS 26 — service removed but never re-registered | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40550.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40562](https://github.com/openclaw/openclaw/issues/40562) | Feature: Cross-App Control — interact with native apps (macOS/iOS) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40562.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40605](https://github.com/openclaw/openclaw/issues/40605) | [Bug]: Sub-agent completion trigger message skipped when direct delivery succeeds (group topic sessions) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40605.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40472](https://github.com/openclaw/openclaw/pull/40472) | fix(tui): refresh on external session reset and clear stale run state | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40472.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40529](https://github.com/openclaw/openclaw/issues/40529) | [Bug] \"request ended without sending any chunks\" not classified as retryable error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40529.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40535](https://github.com/openclaw/openclaw/pull/40535) | fix(exec-approvals): reject non-persistable allow-always approvals | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40535.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40536](https://github.com/openclaw/openclaw/issues/40536) | [Feature]: Per-Skill Model Override | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40536.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40546](https://github.com/openclaw/openclaw/issues/40546) | Partial landing of PR #22304 in 2026.3.7? launchd runtime shows stopped, but lifecycle-core still hint-only on not-loaded | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40546.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40547](https://github.com/openclaw/openclaw/issues/40547) | [Bug]: Exec Approval is in a mess. Indepedent multi-agent has conflicting exec permission at times | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40547.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40589](https://github.com/openclaw/openclaw/pull/40589) | Add Baidu Qianfan Coding provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40589.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40447](https://github.com/openclaw/openclaw/pull/40447) | docs: fix message send flag and claude-max-api-proxy links (#10458, #… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40447.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40580](https://github.com/openclaw/openclaw/pull/40580) | docs(zh-CN): fix Lark link format in Feishu documentation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40580.md) | complete | Apr 24, 2026, 05:16 UTC |
-| [#40534](https://github.com/openclaw/openclaw/pull/40534) | fix(cron): filter reasoning/thinking payloads from announce delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40534.md) | complete | Apr 24, 2026, 05:16 UTC |
+| [#40976](https://github.com/openclaw/openclaw/issues/40976) | Background exec completion may not auto-reply reliably in Telegram forum topics | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40976.md) | complete | Apr 24, 2026, 05:32 UTC |
+| [#40980](https://github.com/openclaw/openclaw/issues/40980) | [Bug]: Browser Relay extension overrides page color scheme (dark → light) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40980.md) | complete | Apr 24, 2026, 05:30 UTC |
+| [#40975](https://github.com/openclaw/openclaw/issues/40975) | [Bug]: Error: Unsafe fallback OpenClaw temp dir | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40975.md) | complete | Apr 24, 2026, 05:29 UTC |
+| [#40894](https://github.com/openclaw/openclaw/pull/40894) | Codex/fix 40880 media staging max bytes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40894.md) | complete | Apr 24, 2026, 05:29 UTC |
+| [#41014](https://github.com/openclaw/openclaw/issues/41014) | [Bug] 5-second fixed delay between pressing Enter and sending text to LLM (regression since v2026.2.26) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41014.md) | complete | Apr 24, 2026, 05:29 UTC |
+| [#40982](https://github.com/openclaw/openclaw/issues/40982) | feat: raise (or remove) 3-minute no-output watchdog cap on CLI requests | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40982.md) | complete | Apr 24, 2026, 05:29 UTC |
+| [#40899](https://github.com/openclaw/openclaw/pull/40899) | fix(discord): suppress leaked tool transcript blocks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40899.md) | complete | Apr 24, 2026, 05:29 UTC |
+| [#40960](https://github.com/openclaw/openclaw/issues/40960) | [Bug]: Chat page does not auto-refresh new messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40960.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#40991](https://github.com/openclaw/openclaw/issues/40991) | Telegram inbound video can degrade to <media:video> placeholder with no attachment and no error when getFile() fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40991.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#41025](https://github.com/openclaw/openclaw/pull/41025) | fix: render remote https/http images inline in Control UI chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41025.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#40992](https://github.com/openclaw/openclaw/pull/40992) | fix(acp): forward inbound media attachments through ACP topic binding turns | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40992.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#40952](https://github.com/openclaw/openclaw/issues/40952) | [Feature]: Slack statusReactions support (lifecycle reaction parity with Telegram/Discord) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40952.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#41019](https://github.com/openclaw/openclaw/issues/41019) | [Feature Request] Browser tool support headless mode | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41019.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#40962](https://github.com/openclaw/openclaw/issues/40962) | Google Chat channel: 'Cannot convert undefined or null to object' on typing indicator and message send | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40962.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#41013](https://github.com/openclaw/openclaw/pull/41013) | fix: strip leading <session-recap> blocks from user-visible messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41013.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#40949](https://github.com/openclaw/openclaw/pull/40949) | Fix: Telegram sendPayload oversized message crash | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40949.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#41020](https://github.com/openclaw/openclaw/issues/41020) | [Feature Request] Feishu message reactions (emoji responses) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41020.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#41004](https://github.com/openclaw/openclaw/issues/41004) | Telegram ACP mismatch: /acp spawn works in-topic, but sessions_spawn(runtime:\"acp\", thread:true) fails (child vs current placement) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41004.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#40986](https://github.com/openclaw/openclaw/issues/40986) | [Feature] Share memory between different sessions of the same agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40986.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#41027](https://github.com/openclaw/openclaw/pull/41027) | fix(discord): break resume loop on consecutive 1005 close failures | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41027.md) | complete | Apr 24, 2026, 05:28 UTC |
 
 ## How It Works
 
