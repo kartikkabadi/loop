@@ -950,34 +950,9 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41715,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 41728,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41735,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
-  },
-  {
-    "number": 41739,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41746,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41749,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
   },
   {
     "number": 41752,
@@ -990,13 +965,38 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41757,
-    "action": "closed",
-    "reason": "already implemented on main"
+    "number": 41766,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41760,
+    "number": 41769,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41773,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41778,
     "action": "closed",
     "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 41785,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 41786,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41789,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
