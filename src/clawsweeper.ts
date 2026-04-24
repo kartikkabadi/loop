@@ -1538,9 +1538,11 @@ function applyDecisionsCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
   const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
   const limit = numberArg(args.limit, 20);
+  const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
   let closedCount = 0;
+  let processedCount = 0;
   if (!existsSync(itemsDir)) {
     console.log("No items directory.");
     return;
@@ -1594,6 +1596,8 @@ function applyDecisionsCommand(args: Args): void {
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       archiveClosed(markdown);
       results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
+      processedCount += 1;
+      if (processedCount >= processedLimit) break;
       continue;
     }
     if (closedCount >= limit) break;
@@ -1607,6 +1611,8 @@ function applyDecisionsCommand(args: Args): void {
         action: "skipped_changed_since_review",
         reason: "updated_at changed",
       });
+      processedCount += 1;
+      if (processedCount >= processedLimit) break;
       continue;
     }
     const currentContext = collectItemContext(item);
@@ -1617,6 +1623,8 @@ function applyDecisionsCommand(args: Args): void {
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       writeFileSync(path, markdown, "utf8");
       results.push({ number, action: "skipped_changed_since_review", reason: "snapshot changed" });
+      processedCount += 1;
+      if (processedCount >= processedLimit) break;
       continue;
     }
     postClose({ number, kind: item.kind, reason: closeReason, closeComment });
@@ -1626,7 +1634,9 @@ function applyDecisionsCommand(args: Args): void {
     markdown = replaceFrontMatterValue(markdown, "applied_at", new Date().toISOString());
     archiveClosed(markdown);
     closedCount += 1;
+    processedCount += 1;
     results.push({ number, action: "closed", reason: closeReasonText(closeReason) });
+    if (processedCount >= processedLimit) break;
   }
   writeFileSync(join(ROOT, "apply-report.json"), JSON.stringify(results, null, 2), "utf8");
   if (!skipDashboard) updateDashboard(itemsDir, closedDir);

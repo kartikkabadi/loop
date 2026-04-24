@@ -273,7 +273,7 @@ jobs:
   apply-existing:
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -296,7 +296,12 @@ jobs:
       - name: Apply unchanged proposed decisions
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
-        run: npm run apply-decisions -- --limit "${{ github.event.inputs.apply_limit || '20' }}" --skip-dashboard
+        run: |
+          limit="${{ github.event.inputs.apply_limit || '20' }}"
+          npm run apply-decisions -- \
+            --limit "$limit" \
+            --processed-limit "$((limit * 2))" \
+            --skip-dashboard
 
       - name: Commit apply results
         run: |
