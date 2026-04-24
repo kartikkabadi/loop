@@ -36,6 +36,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
   issues: write
   pull-requests: write
 
@@ -53,6 +54,7 @@ jobs:
       codex_timeout_ms: ${{ steps.mode.outputs.codex_timeout_ms }}
       matrix: ${{ steps.select.outputs.matrix }}
       planned_count: ${{ steps.select.outputs.planned_count }}
+      planned_capacity: ${{ steps.select.outputs.planned_capacity }}
       planned_shards: ${{ steps.select.outputs.planned_shards }}
     steps:
       - uses: actions/checkout@v4
@@ -108,6 +110,7 @@ jobs:
           const plan = JSON.parse(fs.readFileSync("plan.json", "utf8"));
           console.log(`matrix=${JSON.stringify(plan.matrix)}`);
           console.log(`planned_count=${plan.candidates.length}`);
+          console.log(`planned_capacity=${Number(process.env.BATCH_SIZE || 20) * Number(process.env.SHARD_COUNT || 10)}`);
           console.log(`planned_shards=${plan.matrix.length}`);
           NODE
           cat plan.json
@@ -203,7 +206,7 @@ jobs:
           if-no-files-found: ignore
 
   publish:
-    needs: review
+    needs: [plan, review]
     if: ${{ always() && (github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true') }}
     runs-on: ubuntu-latest
     steps:
@@ -247,6 +250,19 @@ jobs:
             git commit -m "chore: update sweep dashboard"
             git push
           fi
+
+      - name: Continue sweep
+        if: ${{ success() && needs.plan.outputs.apply_closures != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || github.event.inputs.item_number == '') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run "Sweep OpenClaw Items" \
+            --ref main \
+            -f apply_closures=false \
+            -f apply_existing=false \
+            -f batch_size="${{ needs.plan.outputs.batch_size }}" \
+            -f shard_count="${{ needs.plan.outputs.planned_shards }}" \
+            -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
 
   apply-existing:
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' }}
