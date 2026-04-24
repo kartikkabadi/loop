@@ -258,7 +258,11 @@ function sleepMs(milliseconds: number): void {
 }
 
 function shouldRetryGh(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error);
+  const output =
+    typeof error === "object" && error !== null && "stderr" in error
+      ? String((error as { stderr?: unknown }).stderr ?? "")
+      : "";
+  const message = `${error instanceof Error ? error.message : String(error)}\n${output}`;
   return (
     message.includes("was submitted too quickly") ||
     message.includes("secondary rate") ||
@@ -266,7 +270,7 @@ function shouldRetryGh(error: unknown): boolean {
   );
 }
 
-function ghWithRetry(args: string[], attempts = 6): string {
+function ghWithRetry(args: string[], attempts = 12): string {
   let lastError: unknown;
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     try {
@@ -274,7 +278,9 @@ function ghWithRetry(args: string[], attempts = 6): string {
     } catch (error) {
       lastError = error;
       if (!shouldRetryGh(error) || attempt === attempts - 1) throw error;
-      sleepMs(Math.min(120_000, 5_000 * 2 ** attempt));
+      const waitMs = Math.min(600_000, 30_000 * 2 ** attempt);
+      console.error(`GitHub throttled write; retrying in ${Math.round(waitMs / 1000)}s`);
+      sleepMs(waitMs);
     }
   }
   throw lastError;
@@ -1348,13 +1354,35 @@ function postClose(options: {
   ensureDir(dirname(commentFile));
   writeFileSync(commentFile, options.closeComment, "utf8");
   if (!issueCommentExists(options.number, options.closeComment)) {
-    ghWithRetry(["issue", "comment", String(options.number), "-F", commentFile]);
+    const commentPayloadFile = join(ROOT, ".artifacts", `comment-${options.number}.json`);
+    writeFileSync(commentPayloadFile, JSON.stringify({ body: options.closeComment }), "utf8");
+    ghWithRetry([
+      "api",
+      `repos/${TARGET_REPO}/issues/${options.number}/comments`,
+      "--method",
+      "POST",
+      "--input",
+      commentPayloadFile,
+    ]);
   }
   if (options.kind === "pull_request") {
     ghWithRetry(["pr", "close", String(options.number)]);
   } else {
     const reason = options.reason === "implemented_on_main" ? "completed" : "not planned";
-    ghWithRetry(["issue", "close", String(options.number), "--reason", reason]);
+    const closePayloadFile = join(ROOT, ".artifacts", `close-${options.number}.json`);
+    writeFileSync(
+      closePayloadFile,
+      JSON.stringify({ state: "closed", state_reason: reason }),
+      "utf8",
+    );
+    ghWithRetry([
+      "api",
+      `repos/${TARGET_REPO}/issues/${options.number}`,
+      "--method",
+      "PATCH",
+      "--input",
+      closePayloadFile,
+    ]);
   }
 }
 
@@ -1623,7 +1651,7 @@ function applyDecisionsCommand(args: Args): void {
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const minAgeDays = numberArg(args.min_age_days, 0);
   const applyKind = applyKindArg(args.apply_kind);
-  const closeDelayMs = numberArg(args.close_delay_ms, 1_500);
+  const closeDelayMs = numberArg(args.close_delay_ms, 5_000);
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
   let closedCount = 0;
