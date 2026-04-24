@@ -1039,9 +1039,16 @@ function evidenceLocation(evidence: Evidence): string {
   const parts: string[] = [];
   if (evidence.file) {
     const location = evidence.line ? `${evidence.file}:${evidence.line}` : evidence.file;
-    parts.push(`\`${location}\``);
+    parts.push(
+      evidence.sha
+        ? markdownLink(
+            `\`${location}\``,
+            fileUrl(evidence.file, evidence.sha, evidence.line ?? undefined),
+          )
+        : `\`${location}\``,
+    );
   }
-  if (evidence.sha) parts.push(`\`${shortSha(evidence.sha)}\``);
+  if (evidence.sha) parts.push(linkedSha(evidence.sha));
   return parts.length ? ` (${parts.join(", ")})` : "";
 }
 
