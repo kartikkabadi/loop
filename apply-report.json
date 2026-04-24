@@ -985,17 +985,17 @@
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41791,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 41801,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 41802,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41810,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41811,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
   }
