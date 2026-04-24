@@ -5,58 +5,58 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 7297,
+    "number": 7532,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 7309,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
-  },
-  {
-    "number": 7322,
+    "number": 7533,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 7325,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
+    "number": 7597,
+    "action": "skipped_changed_since_review",
+    "reason": "updated_at changed"
   },
   {
-    "number": 7364,
+    "number": 7598,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 7414,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 7420,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 7450,
+    "number": 7618,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 7468,
+    "number": 7705,
     "action": "closed",
     "reason": "belongs on ClawHub"
   },
   {
-    "number": 7509,
+    "number": 7740,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 7743,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 7520,
+    "number": 7777,
     "action": "closed",
     "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 7783,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 7844,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
