@@ -482,15 +482,9 @@ function effectiveReviewStatus(markdown: string): string {
 }
 
 function isFresh(
-  review: {
-    reviewedAt: string | undefined;
-    reviewStatus: string | undefined;
-    reviewPolicy?: string | undefined;
-  } | null,
-  currentReviewPolicy?: string,
+  review: { reviewedAt: string | undefined; reviewStatus: string | undefined } | null,
 ): boolean {
   if (review?.reviewStatus !== "complete") return false;
-  if (currentReviewPolicy && review.reviewPolicy !== currentReviewPolicy) return false;
   if (!review?.reviewedAt) return false;
   const reviewedAt = Date.parse(review.reviewedAt);
   if (!Number.isFinite(reviewedAt)) return false;
@@ -581,7 +575,7 @@ function selectCandidates(options: {
     if (items.length === 0) break;
     for (const item of items) {
       if (item.number % options.shardCount !== options.shardIndex) continue;
-      if (isFresh(existingReview(item.number, options.itemsDir), options.reviewPolicy)) continue;
+      if (isFresh(existingReview(item.number, options.itemsDir))) continue;
       candidates.push(item);
       if (candidates.length >= options.batchSize) break;
     }
@@ -614,7 +608,7 @@ function planCandidates(options: {
     scannedPages = page;
     if (items.length === 0) break;
     for (const item of items) {
-      if (isFresh(existingReview(item.number, options.itemsDir), options.reviewPolicy)) continue;
+      if (isFresh(existingReview(item.number, options.itemsDir))) continue;
       candidates.push(item);
       if (candidates.length >= limit) break;
     }
@@ -1313,20 +1307,11 @@ function applyDecisionsCommand(args: Args): void {
     const action = frontMatterValue(markdown, "action_taken");
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
-    const storedReviewPolicy = frontMatterValue(markdown, "review_policy");
     if (!hasVerifiedLocalCheckoutAccess(markdown)) {
       results.push({
         number,
         action: "kept_open",
         reason: "review lacks verified local checkout access",
-      });
-      continue;
-    }
-    if (storedReviewPolicy !== reviewPolicyHash({})) {
-      results.push({
-        number,
-        action: "kept_open",
-        reason: "review policy changed; rerun review first",
       });
       continue;
     }
@@ -1413,7 +1398,6 @@ function dashboardStats(itemsDir: string): {
   recent: DashboardItem[];
 } {
   const openTotal = fetchOpenItemCount();
-  const currentReviewPolicy = reviewPolicyHash({});
   const files = existsSync(itemsDir)
     ? readdirSync(itemsDir).filter((name) => /^\d+\.md$/.test(name))
     : [];
@@ -1430,10 +1414,7 @@ function dashboardStats(itemsDir: string): {
     const reviewStatus = effectiveReviewStatus(markdown);
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     const decision = frontMatterValue(markdown, "decision") ?? "unknown";
-    const freshReview = isFresh(
-      { reviewedAt, reviewStatus, reviewPolicy: frontMatterValue(markdown, "review_policy") },
-      currentReviewPolicy,
-    );
+    const freshReview = isFresh({ reviewedAt, reviewStatus });
     if (freshReview) fresh += 1;
     if (freshReview && decision === "close" && action === "proposed_close") proposedClose += 1;
     if (action === "closed") closed += 1;
