@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 08:07 UTC
+Last dashboard update: Apr 24, 2026, 08:20 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12515 |
-| Fresh reviewed issues in the last 7 days | 3224 |
-| Proposed issue closes | 1725 (53.5% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6580 |
-| Fresh reviewed PRs in the last 7 days | 1562 |
-| Proposed PR closes | 520 (33.3% of reviewed PRs) |
-| Open items total | 19095 |
-| Reviewed files | 4786 |
-| Fresh verified reviews in the last 7 days | 4786 |
-| Proposed closes awaiting apply | 2245 (46.9% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12517 |
+| Fresh reviewed issues in the last 7 days | 3356 |
+| Proposed issue closes | 1800 (53.6% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6579 |
+| Fresh reviewed PRs in the last 7 days | 1630 |
+| Proposed PR closes | 547 (33.6% of reviewed PRs) |
+| Open items total | 19096 |
+| Reviewed files | 4986 |
+| Fresh verified reviews in the last 7 days | 4986 |
+| Proposed closes awaiting apply | 2347 (47.1% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 14309 |
+| Todo for weekly coverage | 14110 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#45224](https://github.com/openclaw/openclaw/issues/45224) | Unhandled Playwright assertion error in CRSession._onMessage crashes Gateway | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45224.md) | complete | Apr 24, 2026, 08:07 UTC |
-| [#45212](https://github.com/openclaw/openclaw/issues/45212) | [Feature]: Per-topic/session fixed context injection | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45212.md) | complete | Apr 24, 2026, 08:07 UTC |
-| [#45216](https://github.com/openclaw/openclaw/pull/45216) | fix(agents): handle FastAPI `detail` error payloads to prevent raw JSON leaking to chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45216.md) | complete | Apr 24, 2026, 08:06 UTC |
-| [#45221](https://github.com/openclaw/openclaw/issues/45221) | [Bug]: image tool ignores current imageModel and uses stale runtime image/fallback state | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45221.md) | complete | Apr 24, 2026, 08:06 UTC |
-| [#45202](https://github.com/openclaw/openclaw/issues/45202) | [Bug]: [Bug] Telegram Multi-Account Not Working - Only Default Bot Starts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45202.md) | complete | Apr 24, 2026, 08:06 UTC |
-| [#45187](https://github.com/openclaw/openclaw/issues/45187) | [Bug]: Chat panel can be covered by oversized empty-state SVG during render/send, and may sometimes stay stuck queued until full page reload | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45187.md) | complete | Apr 24, 2026, 08:06 UTC |
-| [#45222](https://github.com/openclaw/openclaw/issues/45222) | [Bug]: Intermittent local gateway websocket handshake failures on loopback (ws://127.0.0.1:18789) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45222.md) | complete | Apr 24, 2026, 08:06 UTC |
-| [#45179](https://github.com/openclaw/openclaw/issues/45179) | Feature: temp artifact provenance + durable-path guardrails to prevent /tmp chaos | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45179.md) | complete | Apr 24, 2026, 08:06 UTC |
-| [#45208](https://github.com/openclaw/openclaw/issues/45208) | [Feature]: Help us cross the wall! Request for proxy relay support for China 🇨🇳 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45208.md) | complete | Apr 24, 2026, 08:06 UTC |
-| [#45191](https://github.com/openclaw/openclaw/issues/45191) | ReferenceError: Cannot access 'ANTHROPIC_MODEL_ALIASES' before initialization on config load (v2026.3.12) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45191.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45227](https://github.com/openclaw/openclaw/issues/45227) | [Bug]: 422 status code (no body) with mistral | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45227.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45193](https://github.com/openclaw/openclaw/pull/45193) | fix(outbound): suppress ANNOUNCE_SKIP / REPLY_SKIP from external delivery | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45193.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45220](https://github.com/openclaw/openclaw/pull/45220) | fix: skip state migration preflight for logs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45220.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45199](https://github.com/openclaw/openclaw/issues/45199) | [Bug]: ANTHROPIC_MODEL_ALIASES ReferenceError on config load after upgrade to 2026.3.12 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45199.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45149](https://github.com/openclaw/openclaw/issues/45149) | [Bug]: Unable to trigger the CLI command in tools.media.audio.models | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45149.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45194](https://github.com/openclaw/openclaw/issues/45194) | Control UI chat page shows giant OpenClaw logo / blank pane on v2026.3.12 despite successful chat.history | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45194.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45201](https://github.com/openclaw/openclaw/issues/45201) | [Bug] Web UI: Gigantic background logo taking over the chat screen after upgrading to 2026.3.12 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45201.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45158](https://github.com/openclaw/openclaw/issues/45158) | [Bug]: 飞书多 Agent 路由问题 - 所有消息都路由到同一个 agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45158.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45209](https://github.com/openclaw/openclaw/pull/45209) | feat(feishu): add configuration toggle for Bitable tools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45209.md) | complete | Apr 24, 2026, 08:05 UTC |
-| [#45214](https://github.com/openclaw/openclaw/pull/45214) | docs: add n8n-as-code community plugin listing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45214.md) | complete | Apr 24, 2026, 08:05 UTC |
+| [#45553](https://github.com/openclaw/openclaw/issues/45553) | systemEvent cron jobs always show skipped/disabled even when enabled | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45553.md) | complete | Apr 24, 2026, 08:20 UTC |
+| [#45566](https://github.com/openclaw/openclaw/pull/45566) | docs: add bot validation marker for PR workflow test | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45566.md) | complete | Apr 24, 2026, 08:19 UTC |
+| [#45554](https://github.com/openclaw/openclaw/issues/45554) | [Bug]: switching session.dmScope back to main does not reconcile stale peer-keyed direct DM sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45554.md) | complete | Apr 24, 2026, 08:19 UTC |
+| [#45573](https://github.com/openclaw/openclaw/issues/45573) | Group chat sessions not persisted — only 1 session from 166+ messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45573.md) | complete | Apr 24, 2026, 08:19 UTC |
+| [#45594](https://github.com/openclaw/openclaw/pull/45594) | Cron: honor server_error retries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45594.md) | complete | Apr 24, 2026, 08:19 UTC |
+| [#45590](https://github.com/openclaw/openclaw/pull/45590) | fix: improve stability across gateway, cli, and channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45590.md) | complete | Apr 24, 2026, 08:19 UTC |
+| [#45540](https://github.com/openclaw/openclaw/issues/45540) | ReferenceError: Cannot access 'ANTHROPIC_MODEL_ALIASES' before initialization when using agents.defaults.model object form | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45540.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45569](https://github.com/openclaw/openclaw/issues/45569) | [Bug]: /status in the web ui needs <enter> pressed twice | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45569.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45544](https://github.com/openclaw/openclaw/issues/45544) | [Bug]: All Google Chat webhooks return 404 after 2026.3.12 update (jiti/ESM registry split) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45544.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45585](https://github.com/openclaw/openclaw/issues/45585) | Compaction corrupts thinking blocks → \"thinking blocks cannot be modified\" API error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45585.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45597](https://github.com/openclaw/openclaw/issues/45597) | [Bug]: Recurring Ollama context overflow errors - prompt too long | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45597.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45588](https://github.com/openclaw/openclaw/pull/45588) | Auto-reply: retry interim execution acknowledgements | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45588.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45583](https://github.com/openclaw/openclaw/pull/45583) | fix(hooks): handle empty hooks update --all | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45583.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45579](https://github.com/openclaw/openclaw/pull/45579) | fix(utils): preserve indentation after stripping inline directive tags | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45579.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45535](https://github.com/openclaw/openclaw/pull/45535) | fix: robust token usage normalization for OpenAI-compatible providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45535.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45500](https://github.com/openclaw/openclaw/issues/45500) | Duplicate Discord message delivery on LLM retry after partial delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45500.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45561](https://github.com/openclaw/openclaw/issues/45561) | [Feature]: Native Gemini Live API Support (gemini-2.5-flash-native-audio-preview) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45561.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45592](https://github.com/openclaw/openclaw/pull/45592) | feat(anthropic): migrate 1M context from beta to GA | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45592.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45480](https://github.com/openclaw/openclaw/issues/45480) | TDZ crash: ANTHROPIC_MODEL_ALIASES accessed before initialization during eager context window warmup | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45480.md) | complete | Apr 24, 2026, 08:18 UTC |
+| [#45558](https://github.com/openclaw/openclaw/issues/45558) | Compaction fails: thinking/redacted_thinking blocks cannot be modified | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45558.md) | complete | Apr 24, 2026, 08:18 UTC |
 
 ## How It Works
 
