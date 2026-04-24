@@ -1051,6 +1051,36 @@ function sentence(value: string): string {
   return /[.!?)]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 
+function isLinkableSourceRef(file: string): boolean {
+  if (file.includes("/")) return true;
+  return ["AGENTS.md", "CHANGELOG.md", "README.md", "VISION.md"].includes(file);
+}
+
+function linkInlineSourceRefs(value: string, sha?: string | null): string {
+  if (!sha) return value;
+  return value.replace(
+    /`([^`]+\.(?:css|js|json|jsx|md|mdx|mjs|sh|ts|tsx|yaml|yml)(?::\d+)?)`/g,
+    (match, ref: string) => {
+      const { file, line } = splitFileAndLine(ref);
+      if (!isLinkableSourceRef(file)) return match;
+      return markdownLink(`\`${ref}\``, fileUrl(file, sha, line));
+    },
+  );
+}
+
+function linkPrimaryEvidenceFile(value: string, evidence: Evidence): string {
+  if (evidence.file !== "VISION.md" || !evidence.sha || value.includes("VISION.md")) return value;
+  const link = markdownLink(
+    "`VISION.md`",
+    fileUrl(evidence.file, evidence.sha, evidence.line ?? undefined),
+  );
+  const linked = value
+    .replace(/\b(?:the project vision|project vision|the vision|VISION)\b/i, link)
+    .replace(/^Current main says\b/, `${link} says`)
+    .replace(/^The roadmap guardrails explicitly list\b/, `${link} guardrails explicitly list`);
+  return linked === value ? `${link}: ${value}` : linked;
+}
+
 function evidenceLocation(evidence: Evidence): string {
   const parts: string[] = [];
   if (evidence.file) {
@@ -1070,7 +1100,10 @@ function evidenceLocation(evidence: Evidence): string {
 
 function closeEvidenceLine(evidence: Evidence): string {
   const label = evidence.label.trim();
-  const detail = sentence(evidence.detail);
+  const detail = linkPrimaryEvidenceFile(
+    linkInlineSourceRefs(sentence(evidence.detail), evidence.sha),
+    evidence,
+  );
   const prefix = label ? `**${label}:** ` : "";
   return `- ${prefix}${detail}${evidenceLocation(evidence)}`;
 }
