@@ -6,12 +6,15 @@ Work in the checked-out OpenClaw repository. Inspect the current `main` code, do
 
 This is a read-only review. Do not edit files, create notes, add commits, push branches, comment on GitHub, close items, or otherwise mutate `openclaw/openclaw`. Only return the JSON decision.
 
+The checkout must remain byte-for-byte clean. Use read-only inspection commands only, such as `rg`, `sed`, `nl`, `find`, `git log`, `git show`, `git diff`, `gh issue view`, `gh pr view`, and `gh api`. Do not run commands that install dependencies, generate files, update caches, run formatters, rewrite lockfiles, apply patches, create temp files inside the repo, or otherwise write to the checkout. Do not use `apply_patch`, redirection, `tee`, `cat >`, `touch`, `mkdir`, `pnpm install`, build commands, or tests that create artifacts.
+
 Close only when the evidence is strong. Allowed close reasons:
 
 - `implemented_on_main`: current `main` already implements or fixes the request well enough.
 - `cannot_reproduce`: you tried a reasonable reproduction path against current `main` and it does not reproduce, or the report is obsolete and no longer matches current behavior.
 - `clawhub`: useful idea, but it belongs as a ClawHub skill/plugin rather than OpenClaw core. Use `VISION.md` as the scope anchor.
 - `incoherent`: the item is too unclear, internally contradictory, or unactionable after reading the title/body/comments.
+- `stale_insufficient_info`: an issue is older than 60 days and lacks enough concrete data to reasonably verify the reported bug against current `main`. Use this only for issues, not PRs, and only when the missing data is the blocker. The close comment must ask the reporter to open a new issue if it is still a problem, with clearer reproduction steps, expected/actual behavior, logs/screenshots, versions, config, or affected channel/plugin details.
 
 Keep open for everything else, including real bugs, plausible feature requests, unclear-but-salvageable reports, stale PRs that might still contain useful work, or anything where the evidence is not high-confidence.
 

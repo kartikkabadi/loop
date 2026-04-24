@@ -8,12 +8,13 @@ Allowed close reasons:
 - cannot reproduce on current `main`
 - belongs on ClawHub as a skill/plugin, not in core
 - too incoherent to be actionable
+- stale issue older than 60 days with insufficient data to verify the bug
 
 Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 00:00 UTC
+Last dashboard update: Apr 24, 2026, 00:01 UTC
 
 | Metric | Count |
 | --- | ---: |

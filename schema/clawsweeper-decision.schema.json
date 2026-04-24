@@ -20,7 +20,14 @@
     },
     "closeReason": {
       "type": "string",
-      "enum": ["implemented_on_main", "cannot_reproduce", "clawhub", "incoherent", "none"]
+      "enum": [
+        "implemented_on_main",
+        "cannot_reproduce",
+        "clawhub",
+        "incoherent",
+        "stale_insufficient_info",
+        "none"
+      ]
     },
     "confidence": {
       "type": "string",

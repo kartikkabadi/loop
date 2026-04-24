@@ -14,7 +14,13 @@ import { fileURLToPath } from "node:url";
 
 type ItemKind = "issue" | "pull_request";
 type DecisionKind = "close" | "keep_open";
-type CloseReason = "implemented_on_main" | "cannot_reproduce" | "clawhub" | "incoherent" | "none";
+type CloseReason =
+  | "implemented_on_main"
+  | "cannot_reproduce"
+  | "clawhub"
+  | "incoherent"
+  | "stale_insufficient_info"
+  | "none";
 type Confidence = "high" | "medium" | "low";
 type ActionTaken =
   | "closed"
@@ -36,6 +42,7 @@ interface GitHubIssueListItem {
   number: number;
   title: string;
   html_url: string;
+  created_at: string;
   updated_at: string;
   user?: GitHubUser;
   labels?: string[];
@@ -47,6 +54,7 @@ interface Item {
   kind: ItemKind;
   title: string;
   url: string;
+  createdAt: string;
   updatedAt: string;
   author: string;
   labels: string[];
@@ -145,6 +153,7 @@ const ALLOWED_REASONS = new Set<CloseReason>([
   "cannot_reproduce",
   "clawhub",
   "incoherent",
+  "stale_insufficient_info",
 ]);
 
 function parseArgs(argv: string[]): Args {
@@ -456,7 +465,7 @@ function fetchOpenItemPage(page: number): Item[] {
     "api",
     `repos/${TARGET_REPO}/issues?state=open&sort=created&direction=asc&per_page=100&page=${page}`,
     "--jq",
-    ".[] | {number,title,html_url,updated_at,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
+    ".[] | {number,title,html_url,created_at,updated_at,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
   return items
     .map((item) => ({
@@ -464,6 +473,7 @@ function fetchOpenItemPage(page: number): Item[] {
       kind: item.pull_request ? ("pull_request" as const) : ("issue" as const),
       title: item.title,
       url: item.html_url,
+      createdAt: item.created_at,
       updatedAt: item.updated_at,
       author: item.user?.login ?? "unknown",
       labels: item.labels ?? [],
@@ -476,7 +486,7 @@ function fetchItem(number: number): { item: Item; state: string } {
     "api",
     `repos/${TARGET_REPO}/issues/${number}`,
     "--jq",
-    "{number,title,html_url,updated_at,state,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
+    "{number,title,html_url,created_at,updated_at,state,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
   return {
     item: {
@@ -484,6 +494,7 @@ function fetchItem(number: number): { item: Item; state: string } {
       kind: issue.pull_request ? "pull_request" : "issue",
       title: issue.title,
       url: issue.html_url,
+      createdAt: issue.created_at,
       updatedAt: issue.updated_at,
       author: issue.user?.login ?? "unknown",
       labels: issue.labels ?? [],
@@ -601,6 +612,8 @@ function promptFor(item: Item, context: ItemContext, git: GitInfo): string {
 - Type: ${item.kind}
 - Title: ${item.title}
 - URL: ${item.url}
+- Created at: ${item.createdAt}
+- Updated at: ${item.updatedAt}
 - Current main SHA: ${git.mainSha}
 - Latest release: ${git.latestRelease?.tagName ?? "unknown"} (${git.latestRelease?.sha ?? "unknown sha"})
 
@@ -622,6 +635,7 @@ function codexFailureReason(detail: string): string {
   if (detail.includes("Codex dirtied the OpenClaw checkout")) return "dirty checkout";
   if (detail.includes("did not produce output")) return "missing structured output";
   if (detail.includes("invalid JSON")) return "invalid structured output";
+  if (detail.includes("ENOBUFS") || detail.includes("maxBuffer")) return "output buffer overflow";
   if (detail.includes("timed out") || detail.includes("ETIMEDOUT")) return "timeout";
   return "codex execution failed";
 }
@@ -710,6 +724,7 @@ function runCodex(options: {
       encoding: "utf8",
       env: codexEnv(),
       input: readFileSync(promptPath, "utf8"),
+      maxBuffer: 128 * 1024 * 1024,
       timeout: options.timeoutMs,
     },
   );
@@ -771,6 +786,8 @@ function closeReasonText(reason: CloseReason): string {
       return "belongs on ClawHub";
     case "incoherent":
       return "not actionable";
+    case "stale_insufficient_info":
+      return "stale with insufficient information";
     case "none":
       return "kept open";
   }
@@ -969,6 +986,7 @@ type: ${options.item.kind}
 title: ${JSON.stringify(options.item.title)}
 url: ${options.item.url}
 state_at_review: open
+item_created_at: ${options.item.createdAt}
 item_updated_at: ${options.item.updatedAt}
 author: ${options.item.author}
 labels: ${JSON.stringify(options.item.labels)}
@@ -998,6 +1016,8 @@ URL: ${markdownLink(options.item.url, options.item.url)}
 Author: ${options.item.author}
 
 Labels: ${labels}
+
+Created at: ${formatTimestamp(options.item.createdAt)}
 
 Updated at: ${formatTimestamp(options.item.updatedAt)}
 
