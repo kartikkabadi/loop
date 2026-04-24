@@ -30,7 +30,10 @@ type ActionTaken =
   | "kept_open"
   | "proposed_close"
   | "skipped_changed_since_review"
-  | "skipped_already_closed";
+  | "skipped_already_closed"
+  | "skipped_maintainer_authored";
+
+const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 
 interface Args {
   _: string[];
@@ -47,6 +50,7 @@ interface GitHubIssueListItem {
   html_url: string;
   created_at: string;
   updated_at: string;
+  author_association?: string;
   user?: GitHubUser;
   labels?: string[];
   pull_request?: unknown;
@@ -60,6 +64,7 @@ interface Item {
   createdAt: string;
   updatedAt: string;
   author: string;
+  authorAssociation: string;
   labels: string[];
 }
 
@@ -280,7 +285,17 @@ function sortStable(value: unknown): unknown {
 }
 
 function itemSnapshotHash(item: Item, context: ItemContext): string {
-  return sha256(stableJson({ item, context }));
+  const snapshotItem = {
+    number: item.number,
+    kind: item.kind,
+    title: item.title,
+    url: item.url,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    author: item.author,
+    labels: item.labels,
+  };
+  return sha256(stableJson({ item: snapshotItem, context }));
 }
 
 function reviewPolicyHash(options: {
@@ -326,6 +341,18 @@ function labelNames(value: unknown): string[] {
       return typeof name === "string" ? name : null;
     })
     .filter((name): name is string => Boolean(name));
+}
+
+function normalizeAuthorAssociation(value: unknown): string {
+  return typeof value === "string" && value.trim() ? value.trim().toUpperCase() : "NONE";
+}
+
+function isMaintainerAuthorAssociation(value: unknown): boolean {
+  return MAINTAINER_AUTHOR_ASSOCIATIONS.has(normalizeAuthorAssociation(value));
+}
+
+function isMaintainerAuthored(item: Pick<Item, "authorAssociation">): boolean {
+  return isMaintainerAuthorAssociation(item.authorAssociation);
 }
 
 function compactSlice<T>(items: T[], limit: number): unknown[] {
@@ -527,7 +554,7 @@ function fetchOpenItemPage(page: number): Item[] {
     "api",
     `repos/${TARGET_REPO}/issues?state=open&sort=created&direction=asc&per_page=100&page=${page}`,
     "--jq",
-    ".[] | {number,title,html_url,created_at,updated_at,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
+    ".[] | {number,title,html_url,created_at,updated_at,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
   return items
     .map((item) => ({
@@ -538,6 +565,7 @@ function fetchOpenItemPage(page: number): Item[] {
       createdAt: item.created_at,
       updatedAt: item.updated_at,
       author: item.user?.login ?? "unknown",
+      authorAssociation: normalizeAuthorAssociation(item.author_association),
       labels: item.labels ?? [],
     }))
     .sort((a, b) => a.number - b.number);
@@ -548,7 +576,7 @@ function fetchItem(number: number): { item: Item; state: string } {
     "api",
     `repos/${TARGET_REPO}/issues/${number}`,
     "--jq",
-    "{number,title,html_url,created_at,updated_at,state,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
+    "{number,title,html_url,created_at,updated_at,state,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
   return {
     item: {
@@ -559,6 +587,7 @@ function fetchItem(number: number): { item: Item; state: string } {
       createdAt: issue.created_at,
       updatedAt: issue.updated_at,
       author: issue.user?.login ?? "unknown",
+      authorAssociation: normalizeAuthorAssociation(issue.author_association),
       labels: issue.labels ?? [],
     },
     state: issue.state ?? "unknown",
@@ -609,7 +638,7 @@ function selectCandidates(options: {
   if (options.itemNumbers) {
     const candidates = options.itemNumbers.flatMap((number) => {
       const { item, state } = fetchItem(number);
-      return state === "open" ? [item] : [];
+      return state === "open" && !isMaintainerAuthored(item) ? [item] : [];
     });
     return { candidates, scannedPages: 0 };
   }
@@ -617,6 +646,7 @@ function selectCandidates(options: {
     if (options.shardIndex !== 0) return { candidates: [], scannedPages: 0 };
     const { item, state } = fetchItem(options.itemNumber);
     if (state !== "open") return { candidates: [], scannedPages: 0 };
+    if (isMaintainerAuthored(item)) return { candidates: [], scannedPages: 0 };
     return { candidates: [item], scannedPages: 0 };
   }
   const candidates: Item[] = [];
@@ -627,6 +657,7 @@ function selectCandidates(options: {
     if (items.length === 0) break;
     for (const item of items) {
       if (item.number % options.shardCount !== options.shardIndex) continue;
+      if (isMaintainerAuthored(item)) continue;
       if (isFresh(existingReview(item.number, options.itemsDir))) continue;
       candidates.push(item);
       if (candidates.length >= options.batchSize) break;
@@ -645,10 +676,11 @@ function planCandidates(options: {
 }): { shards: PlanShard[]; scannedPages: number; candidates: Item[] } {
   if (options.itemNumber) {
     const { item, state } = fetchItem(options.itemNumber);
+    const shouldReview = state === "open" && !isMaintainerAuthored(item);
     return {
-      shards: [{ shard: 0, itemNumbers: state === "open" ? [item.number] : [] }],
+      shards: [{ shard: 0, itemNumbers: shouldReview ? [item.number] : [] }],
       scannedPages: 0,
-      candidates: state === "open" ? [item] : [],
+      candidates: shouldReview ? [item] : [],
     };
   }
 
@@ -660,6 +692,7 @@ function planCandidates(options: {
     scannedPages = page;
     if (items.length === 0) break;
     for (const item of items) {
+      if (isMaintainerAuthored(item)) continue;
       if (isFresh(existingReview(item.number, options.itemsDir))) continue;
       candidates.push(item);
       if (candidates.length >= limit) break;
@@ -752,6 +785,8 @@ function promptFor(item: Item, context: ItemContext, git: GitInfo): string {
 - Type: ${item.kind}
 - Title: ${item.title}
 - URL: ${item.url}
+- Author: ${item.author}
+- Author association: ${item.authorAssociation}
 - Created at: ${item.createdAt}
 - Updated at: ${item.updatedAt}
 - Current main SHA: ${git.mainSha}
@@ -1289,6 +1324,9 @@ function maybeApplyClose(options: {
   applyClosures: boolean;
 }): Action {
   if (!canClose(options.decision)) return { actionTaken: "kept_open", closeComment: "" };
+  if (isMaintainerAuthored(options.item)) {
+    return { actionTaken: "skipped_maintainer_authored", closeComment: "" };
+  }
   const closeComment = normalizeComment(options.decision, options.git);
   if (!options.applyClosures) return { actionTaken: "proposed_close", closeComment };
   postClose({
@@ -1340,6 +1378,7 @@ state_at_review: open
 item_created_at: ${options.item.createdAt}
 item_updated_at: ${options.item.updatedAt}
 author: ${options.item.author}
+author_association: ${options.item.authorAssociation}
 labels: ${JSON.stringify(options.item.labels)}
 reviewed_at: ${new Date().toISOString()}
 main_sha: ${options.git.mainSha}
@@ -1366,6 +1405,8 @@ Type: ${options.item.kind}
 URL: ${markdownLink(options.item.url, options.item.url)}
 
 Author: ${options.item.author}
+
+Author association: ${options.item.authorAssociation}
 
 Labels: ${labels}
 
@@ -1560,6 +1601,7 @@ function applyDecisionsCommand(args: Args): void {
     const action = frontMatterValue(markdown, "action_taken");
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
+    const storedAuthorAssociation = frontMatterValue(markdown, "author_association");
     const archiveClosed = (nextMarkdown: string): void => {
       ensureDir(closedDir);
       writeFileSync(path, nextMarkdown, "utf8");
@@ -1589,6 +1631,28 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     const { item, state } = fetchItem(number);
+    const currentAuthorAssociation = normalizeAuthorAssociation(item.authorAssociation);
+    const reviewedAuthorAssociation = normalizeAuthorAssociation(storedAuthorAssociation);
+    if (
+      isMaintainerAuthorAssociation(currentAuthorAssociation) ||
+      isMaintainerAuthorAssociation(reviewedAuthorAssociation)
+    ) {
+      const authorAssociation = isMaintainerAuthorAssociation(currentAuthorAssociation)
+        ? currentAuthorAssociation
+        : reviewedAuthorAssociation;
+      markdown = replaceFrontMatterValue(markdown, "author_association", authorAssociation);
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_maintainer_authored");
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "skipped_maintainer_authored",
+        reason: `author association is ${authorAssociation}`,
+      });
+      processedCount += 1;
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
     const existingCloseComment = issueMatchingComment(number, closeComment);
     const closeCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingCloseComment);
     if (state !== "open") {
