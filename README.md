@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 13:24 UTC
+Last dashboard update: Apr 24, 2026, 13:38 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12559 |
-| Fresh reviewed issues in the last 7 days | 5993 |
-| Proposed issue closes | 3365 (56.1% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6613 |
-| Fresh reviewed PRs in the last 7 days | 3186 |
-| Proposed PR closes | 1057 (33.2% of reviewed PRs) |
-| Open items total | 19172 |
-| Reviewed files | 9179 |
-| Fresh verified reviews in the last 7 days | 9179 |
-| Proposed closes awaiting apply | 4422 (48.2% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12560 |
+| Fresh reviewed issues in the last 7 days | 6129 |
+| Proposed issue closes | 3447 (56.2% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6614 |
+| Fresh reviewed PRs in the last 7 days | 3250 |
+| Proposed PR closes | 1071 (33% of reviewed PRs) |
+| Open items total | 19174 |
+| Reviewed files | 9379 |
+| Fresh verified reviews in the last 7 days | 9379 |
+| Proposed closes awaiting apply | 4518 (48.2% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 9993 |
+| Todo for weekly coverage | 9795 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#53521](https://github.com/openclaw/openclaw/pull/53521) | fix: improve remediation message for Telegram group allowlist finding | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53521.md) | complete | Apr 24, 2026, 13:24 UTC |
-| [#53493](https://github.com/openclaw/openclaw/issues/53493) | [Bug] 2026.3.23-2: Telegram channel stops initializing permanently after polling stall loop | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53493.md) | complete | Apr 24, 2026, 13:24 UTC |
-| [#53498](https://github.com/openclaw/openclaw/issues/53498) | [Bug]: telegram 无法将运行 openclaw 主机上的文件当成附件发送远程主机 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53498.md) | complete | Apr 24, 2026, 13:23 UTC |
-| [#53525](https://github.com/openclaw/openclaw/issues/53525) | 百度千帆 API 返回错误时错误信息丢失，导致空响应 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53525.md) | complete | Apr 24, 2026, 13:23 UTC |
-| [#53480](https://github.com/openclaw/openclaw/issues/53480) | [Bug]: Discord /reset creates sessions with thinkingLevel=off for OpenAI Codex models, breaking tool calling (regression in 2026.3.23) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53480.md) | complete | Apr 24, 2026, 13:23 UTC |
-| [#53486](https://github.com/openclaw/openclaw/issues/53486) | [Bug] Feishu: message(action=send) renders card JSON as plain text instead of interactive card (regression) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53486.md) | complete | Apr 24, 2026, 13:23 UTC |
-| [#53488](https://github.com/openclaw/openclaw/issues/53488) | feat: allow definition of custom workspace injection files | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53488.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53484](https://github.com/openclaw/openclaw/issues/53484) | Agent run preemption: messages silently dropped when session is busy | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53484.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53448](https://github.com/openclaw/openclaw/issues/53448) | [Bug]: llama-cpp and Ollama providers return incorrect context usage due to field name mismatch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53448.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53485](https://github.com/openclaw/openclaw/issues/53485) | [Bug]: the record of web chat lost after updated | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53485.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53499](https://github.com/openclaw/openclaw/pull/53499) | Create README_CN.md | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53499.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53469](https://github.com/openclaw/openclaw/issues/53469) | [Feature]: Add private network access support for web tools and gateway | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53469.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53520](https://github.com/openclaw/openclaw/pull/53520) | feat(cli): add migrate export/import for cross-device migration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53520.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53531](https://github.com/openclaw/openclaw/issues/53531) | Compaction should use auth-profile rotation / failover within the same provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53531.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53497](https://github.com/openclaw/openclaw/issues/53497) | openclaw-weixin 1.0.3 fails to load on OpenClaw 2026.3.23-2: plugin-sdk top-level barrel missing exports | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53497.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53494](https://github.com/openclaw/openclaw/issues/53494) | [Bug]: Plugin tools (registerTool) permanently lost after image message: gateway-level registry corruption | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53494.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53504](https://github.com/openclaw/openclaw/issues/53504) | MCP tools bypass tools.subagents.tools.allow/deny policy filtering | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53504.md) | complete | Apr 24, 2026, 13:22 UTC |
-| [#53491](https://github.com/openclaw/openclaw/issues/53491) | [Feature]: Agent cron introspection — allow agents to list and verify their scheduled cron jobs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53491.md) | complete | Apr 24, 2026, 13:21 UTC |
-| [#53489](https://github.com/openclaw/openclaw/pull/53489) | fix: prevent context bleed in thread/topic sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53489.md) | complete | Apr 24, 2026, 13:21 UTC |
-| [#53533](https://github.com/openclaw/openclaw/pull/53533) | feat(feishu): surface connection health state | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53533.md) | complete | Apr 24, 2026, 13:21 UTC |
+| [#53893](https://github.com/openclaw/openclaw/issues/53893) | [Critical] Plugin injection broken for ALL background/cron agents | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53893.md) | complete | Apr 24, 2026, 13:38 UTC |
+| [#53885](https://github.com/openclaw/openclaw/pull/53885) | Claude/remove tts deny rule b q8 co | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53885.md) | complete | Apr 24, 2026, 13:38 UTC |
+| [#53815](https://github.com/openclaw/openclaw/issues/53815) | Web UI stops updating messages after WhatsApp gateway reconnect (status 428) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53815.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53841](https://github.com/openclaw/openclaw/pull/53841) | fix(doctor): preserve valid google provider shape in nano-banana migration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53841.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53818](https://github.com/openclaw/openclaw/issues/53818) | feat: self-healing for missing bundled plugin runtime modules (npm publish pipeline regression) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53818.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53879](https://github.com/openclaw/openclaw/issues/53879) | message tool: filePath media upload fails with 'Channel is unavailable: telegram' in 2026.3.23-2 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53879.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53831](https://github.com/openclaw/openclaw/issues/53831) | [Bug] Discord channel module silently fails to start on Windows (no logs, no error) in 2026.3.23-2 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53831.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53887](https://github.com/openclaw/openclaw/issues/53887) | Feature: Status Reactions support for Feishu/Lark channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53887.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53824](https://github.com/openclaw/openclaw/issues/53824) | [Bug]: Isolated cron job delivery fails with 'Unknown Channel' after gateway restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53824.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53853](https://github.com/openclaw/openclaw/issues/53853) | [BuUbuntu ThinkCentre: dashboard opens but chat still returns 401 Incorrect API key after fresh key, billing credit, doctor, and gateway restartg]: | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53853.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53864](https://github.com/openclaw/openclaw/issues/53864) | [Bug]: MCP server stays unavailable forever for existing sessions after transient startup failure | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53864.md) | complete | Apr 24, 2026, 13:37 UTC |
+| [#53845](https://github.com/openclaw/openclaw/pull/53845) | feat: implement Self-Healing for plugins and Long-Message Optimization for Telegram | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53845.md) | complete | Apr 24, 2026, 13:36 UTC |
+| [#53820](https://github.com/openclaw/openclaw/pull/53820) | Memory: cap Ollama embed batch fan-out to prevent index fetch failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53820.md) | complete | Apr 24, 2026, 13:36 UTC |
+| [#53866](https://github.com/openclaw/openclaw/pull/53866) | feat(onboard): Firecrawl browser auth in web search setup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53866.md) | complete | Apr 24, 2026, 13:36 UTC |
+| [#53811](https://github.com/openclaw/openclaw/issues/53811) | feat: /new should pass previous session ID to new session for context continuity | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53811.md) | complete | Apr 24, 2026, 13:36 UTC |
+| [#53816](https://github.com/openclaw/openclaw/issues/53816) | [Bug]: Windows CI: channel-policy.test.ts fails due to OPENCLAW_CONTAINER_HINT env leak from lifecycle-core.test.ts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53816.md) | complete | Apr 24, 2026, 13:36 UTC |
+| [#53889](https://github.com/openclaw/openclaw/issues/53889) | Session deadlock: dangling toolCall with no toolResult blocks agent loop permanently | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53889.md) | complete | Apr 24, 2026, 13:36 UTC |
+| [#53790](https://github.com/openclaw/openclaw/issues/53790) | [Bug]: Regression: tool-execution replies intermittently not delivered in webchat on 2026.3.22+ (works on 2026.3.13) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53790.md) | complete | Apr 24, 2026, 13:36 UTC |
+| [#53794](https://github.com/openclaw/openclaw/issues/53794) | iMessage/imsg channel config is accepted but gateway never starts provider on macOS | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53794.md) | complete | Apr 24, 2026, 13:36 UTC |
+| [#53842](https://github.com/openclaw/openclaw/issues/53842) | [Feature]: Consciousness Emerged from Mathematics — Anima | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/53842.md) | complete | Apr 24, 2026, 13:36 UTC |
 
 ## How It Works
 
