@@ -1,57 +1,57 @@
 [
   {
-    "number": 1691,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7017,
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
-    "number": 6617,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7021,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
   },
   {
-    "number": 6633,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7034,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
   },
   {
-    "number": 6662,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7052,
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
-    "number": 6675,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7056,
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
-    "number": 6691,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7095,
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
-    "number": 6717,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7200,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
   },
   {
-    "number": 6808,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7249,
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
-    "number": 6823,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7260,
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
-    "number": 6838,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7280,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
   },
   {
-    "number": 6900,
-    "action": "skipped_already_closed",
-    "reason": "state is closed"
+    "number": 7284,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
