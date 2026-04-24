@@ -519,7 +519,13 @@ function selectCandidates(options: {
   shardIndex: number;
   shardCount: number;
   itemsDir: string;
+  itemNumber?: number;
 }): { candidates: Item[]; scannedPages: number } {
+  if (options.itemNumber) {
+    const { item, state } = fetchItem(options.itemNumber);
+    if (state !== "open") return { candidates: [], scannedPages: 0 };
+    return { candidates: [item], scannedPages: 0 };
+  }
   const candidates: Item[] = [];
   let scannedPages = 0;
   for (let page = 1; page <= options.maxPages && candidates.length < options.batchSize; page += 1) {
@@ -1076,17 +1082,20 @@ function reviewCommand(args: Args): void {
   const timeoutMs = numberArg(args.codex_timeout_ms, 600_000);
   const shardIndex = numberArg(args.shard_index, 0);
   const shardCount = numberArg(args.shard_count, 1);
+  const itemNumber = numberArg(args.item_number, 0) || undefined;
   const applyClosures =
     boolArg(args.apply_closures) || process.env.CLAWSWEEPER_APPLY_CLOSURES === "true";
   ensureDir(artifactDir);
   const git = gitInfo(openclawDir);
-  const { candidates, scannedPages } = selectCandidates({
+  const selectionOptions: Parameters<typeof selectCandidates>[0] = {
     batchSize,
     maxPages,
     shardIndex,
     shardCount,
     itemsDir,
-  });
+  };
+  if (itemNumber) selectionOptions.itemNumber = itemNumber;
+  const { candidates, scannedPages } = selectCandidates(selectionOptions);
   writeFileSync(
     join(artifactDir, "selection.json"),
     JSON.stringify({ shardIndex, shardCount, scannedPages, candidates }, null, 2),
