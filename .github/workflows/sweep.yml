@@ -23,6 +23,10 @@ on:
         description: "Item kind to close in apply-existing mode: issue, pull_request, or all"
         required: false
         default: "issue"
+      apply_close_delay_ms:
+        description: "Delay after each close/comment pair to avoid GitHub secondary write throttling"
+        required: false
+        default: "1500"
       batch_size:
         description: "Items per worker job"
         required: false
@@ -308,10 +312,12 @@ jobs:
           limit="${{ github.event.inputs.apply_limit || '20' }}"
           min_age_days="${{ github.event.inputs.apply_min_age_days || '0' }}"
           apply_kind="${{ github.event.inputs.apply_kind || 'issue' }}"
+          close_delay_ms="${{ github.event.inputs.apply_close_delay_ms || '1500' }}"
           npm run apply-decisions -- \
             --limit "$limit" \
             --min-age-days "$min_age_days" \
             --apply-kind "$apply_kind" \
+            --close-delay-ms "$close_delay_ms" \
             --processed-limit "$((limit * 2))" \
             --skip-dashboard
 

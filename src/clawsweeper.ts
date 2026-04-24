@@ -252,6 +252,34 @@ function gh(args: string[]): string {
   return run("gh", ["--repo", TARGET_REPO, ...args]);
 }
 
+function sleepMs(milliseconds: number): void {
+  if (milliseconds <= 0) return;
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
+}
+
+function shouldRetryGh(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("was submitted too quickly") ||
+    message.includes("secondary rate") ||
+    message.includes("API rate limit exceeded")
+  );
+}
+
+function ghWithRetry(args: string[], attempts = 6): string {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return gh(args);
+    } catch (error) {
+      lastError = error;
+      if (!shouldRetryGh(error) || attempt === attempts - 1) throw error;
+      sleepMs(Math.min(120_000, 5_000 * 2 ** attempt));
+    }
+  }
+  throw lastError;
+}
+
 function ghJson<T>(args: string[]): T {
   const text = gh(args);
   return JSON.parse(text) as T;
@@ -1320,13 +1348,13 @@ function postClose(options: {
   ensureDir(dirname(commentFile));
   writeFileSync(commentFile, options.closeComment, "utf8");
   if (!issueCommentExists(options.number, options.closeComment)) {
-    gh(["issue", "comment", String(options.number), "-F", commentFile]);
+    ghWithRetry(["issue", "comment", String(options.number), "-F", commentFile]);
   }
   if (options.kind === "pull_request") {
-    gh(["pr", "close", String(options.number)]);
+    ghWithRetry(["pr", "close", String(options.number)]);
   } else {
     const reason = options.reason === "implemented_on_main" ? "completed" : "not planned";
-    gh(["issue", "close", String(options.number), "--reason", reason]);
+    ghWithRetry(["issue", "close", String(options.number), "--reason", reason]);
   }
 }
 
@@ -1595,6 +1623,7 @@ function applyDecisionsCommand(args: Args): void {
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const minAgeDays = numberArg(args.min_age_days, 0);
   const applyKind = applyKindArg(args.apply_kind);
+  const closeDelayMs = numberArg(args.close_delay_ms, 1_500);
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
   let closedCount = 0;
@@ -1751,6 +1780,7 @@ function applyDecisionsCommand(args: Args): void {
       }
     }
     postClose({ number, kind: item.kind, reason: closeReason, closeComment });
+    sleepMs(closeDelayMs);
     markdown = replaceSectionValue(markdown, "Close Comment", closeComment);
     markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(closeComment));
     markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
