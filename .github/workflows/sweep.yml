@@ -26,7 +26,7 @@ on:
       shard_count:
         description: "Parallel shards"
         required: false
-        default: "10"
+        default: "20"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -87,7 +87,7 @@ jobs:
       - id: select
         working-directory: clawsweeper
         env:
-          SHARD_COUNT: ${{ github.event.inputs.shard_count || '10' }}
+          SHARD_COUNT: ${{ github.event.inputs.shard_count || '20' }}
           BATCH_SIZE: ${{ github.event.inputs.batch_size || '5' }}
           ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
@@ -102,7 +102,7 @@ jobs:
             --max-pages 250 \
             --shard-count "$SHARD_COUNT" \
             --codex-model gpt-5.4 \
-            --codex-reasoning-effort high \
+            --codex-reasoning-effort medium \
             --codex-service-tier fast \
             "${item_arg[@]}" > plan.json
           node - <<'NODE' >> "$GITHUB_OUTPUT"
@@ -190,7 +190,7 @@ jobs:
             --batch-size ${{ needs.plan.outputs.batch_size }} \
             --max-pages 250 \
             --codex-model gpt-5.4 \
-            --codex-reasoning-effort high \
+            --codex-reasoning-effort medium \
             --codex-service-tier fast \
             --codex-timeout-ms ${{ needs.plan.outputs.codex_timeout_ms }} \
             --item-numbers "${{ matrix.item_numbers }}" \

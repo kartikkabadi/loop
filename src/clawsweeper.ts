@@ -157,7 +157,7 @@ const TARGET_REPO = "openclaw/openclaw";
 const REPORT_REPO = "openclaw/clawsweeper";
 const FRESH_DAYS = 7;
 const DEFAULT_CODEX_MODEL = "gpt-5.4";
-const DEFAULT_REASONING_EFFORT = "high";
+const DEFAULT_REASONING_EFFORT = "medium";
 const DEFAULT_SERVICE_TIER = "fast";
 const REVIEW_POLICY_VERSION = "2026-04-24-policy-v1";
 const ALLOWED_REASONS = new Set<CloseReason>([
@@ -1177,7 +1177,7 @@ function planCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
   const batchSize = numberArg(args.batch_size, 5);
   const maxPages = numberArg(args.max_pages, 250);
-  const shardCount = numberArg(args.shard_count, 10);
+  const shardCount = numberArg(args.shard_count, 20);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
