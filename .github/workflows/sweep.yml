@@ -318,7 +318,7 @@ jobs:
             --min-age-days "$min_age_days" \
             --apply-kind "$apply_kind" \
             --close-delay-ms "$close_delay_ms" \
-            --processed-limit "$((limit * 2))" \
+            --processed-limit "$((limit * 10))" \
             --skip-dashboard
 
       - name: Commit apply results
