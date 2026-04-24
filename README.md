@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 01:54 UTC
+Last dashboard update: Apr 24, 2026, 02:06 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19133 |
-| Reviewed / proposed closes | 386 / 172 |
-| Reviewed files | 386 |
-| Fresh verified reviews in the last 7 days | 386 |
-| Proposed closes awaiting apply | 172 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19135 |
+| Reviewed / proposed closes | 486 / 214 |
+| Reviewed files | 486 |
+| Fresh verified reviews in the last 7 days | 486 |
+| Proposed closes awaiting apply | 214 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 18747 |
+| Todo for weekly coverage | 18649 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#12377](https://github.com/openclaw/openclaw/issues/12377) | [Feature]:Provide a way to surface tool call details in channels | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/12377.md) | complete | Apr 24, 2026, 01:53 UTC |
-| [#12505](https://github.com/openclaw/openclaw/issues/12505) | [Feature Request] Unified Built-in Sandbox with Multi-Platform Support and Tiered Presets | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12505.md) | complete | Apr 24, 2026, 01:52 UTC |
-| [#12385](https://github.com/openclaw/openclaw/issues/12385) | [Feature]: Security - Context-Based Runtime Security Policy (Shield.md) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/12385.md) | complete | Apr 24, 2026, 01:52 UTC |
-| [#12436](https://github.com/openclaw/openclaw/issues/12436) | docs: Document undocumented hooks (before_agent_start, message_received, etc.) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/12436.md) | complete | Apr 24, 2026, 01:52 UTC |
-| [#12429](https://github.com/openclaw/openclaw/issues/12429) | [Feature]: Add a secure way to pair dynamically autoscaled worked nodes in K8s | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12429.md) | complete | Apr 24, 2026, 01:52 UTC |
-| [#12441](https://github.com/openclaw/openclaw/issues/12441) | [Feature] Control UI should accept gateway token from Authorization header | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12441.md) | complete | Apr 24, 2026, 01:51 UTC |
-| [#12299](https://github.com/openclaw/openclaw/issues/12299) | No programmatic access to cumulative token usage or cost data per session | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/12299.md) | complete | Apr 24, 2026, 01:51 UTC |
-| [#11946](https://github.com/openclaw/openclaw/issues/11946) | Post-Conversation Hook for Automated Knowledge Extraction | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/11946.md) | complete | Apr 24, 2026, 01:51 UTC |
-| [#12198](https://github.com/openclaw/openclaw/issues/12198) | [Feature]: Markdown validation for prompt files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12198.md) | complete | Apr 24, 2026, 01:51 UTC |
-| [#12219](https://github.com/openclaw/openclaw/issues/12219) | [Feature]: Skill Permission Manifest Standard (skill.yaml) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12219.md) | complete | Apr 24, 2026, 01:51 UTC |
-| [#12215](https://github.com/openclaw/openclaw/issues/12215) | [Feature]: Add a \"Model Ping\" or \"Health Check\" feature for all models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12215.md) | complete | Apr 24, 2026, 01:51 UTC |
-| [#12297](https://github.com/openclaw/openclaw/issues/12297) | Feature Request: sessions_kill and sessions_cleanup tools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12297.md) | complete | Apr 24, 2026, 01:51 UTC |
-| [#12252](https://github.com/openclaw/openclaw/issues/12252) | [Feature]: Feature request: we might need a better interaction way from http/https website？ | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12252.md) | complete | Apr 24, 2026, 01:50 UTC |
-| [#11955](https://github.com/openclaw/openclaw/issues/11955) | [Feature]: Memory/Context Improvements (metrics + global semantic search + conversation chaining + preload on restart) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/11955.md) | complete | Apr 24, 2026, 01:50 UTC |
-| [#12163](https://github.com/openclaw/openclaw/issues/12163) | Feature Request: Add speed parameter support for OpenAI TTS | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12163.md) | complete | Apr 24, 2026, 01:50 UTC |
-| [#12129](https://github.com/openclaw/openclaw/issues/12129) | Feature request: outbound text transform hook for channel plugins | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/12129.md) | complete | Apr 24, 2026, 01:50 UTC |
-| [#12047](https://github.com/openclaw/openclaw/issues/12047) | Feature Request: Extract text from document attachments in Telegram channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12047.md) | complete | Apr 24, 2026, 01:50 UTC |
-| [#12394](https://github.com/openclaw/openclaw/issues/12394) | [Feature]: Per-user heartbeat routing for channel-level heartbeat messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12394.md) | complete | Apr 24, 2026, 01:50 UTC |
-| [#12208](https://github.com/openclaw/openclaw/issues/12208) | All .large bubbles should have scrollable body regardless of truncation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12208.md) | complete | Apr 24, 2026, 01:50 UTC |
-| [#12412](https://github.com/openclaw/openclaw/issues/12412) | Proposal: Native Token Optimization Dashboard & Pre-configured Optimization Tiers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12412.md) | complete | Apr 24, 2026, 01:50 UTC |
+| [#13599](https://github.com/openclaw/openclaw/issues/13599) | Add detailed node pairing setup guide with examples | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13599.md) | complete | Apr 24, 2026, 02:05 UTC |
+| [#13609](https://github.com/openclaw/openclaw/issues/13609) | Add retry logic for failed cron jobs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13609.md) | complete | Apr 24, 2026, 02:05 UTC |
+| [#13593](https://github.com/openclaw/openclaw/issues/13593) | Add logging and warnings for cron job execution failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13593.md) | complete | Apr 24, 2026, 02:05 UTC |
+| [#13610](https://github.com/openclaw/openclaw/issues/13610) | Add native secrets management integration (AWS Secrets Manager, Vault, etc.) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13610.md) | complete | Apr 24, 2026, 02:05 UTC |
+| [#13616](https://github.com/openclaw/openclaw/issues/13616) | Add backup/restore utility for config, cron jobs, and session history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13616.md) | complete | Apr 24, 2026, 02:04 UTC |
+| [#13562](https://github.com/openclaw/openclaw/issues/13562) | [Feature]: Ollama Memory Search Provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13562.md) | complete | Apr 24, 2026, 02:04 UTC |
+| [#13583](https://github.com/openclaw/openclaw/issues/13583) | [Feature] Pre-response enforcement hooks (hard gates) for mandatory tool-call / policy rules | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13583.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13615](https://github.com/openclaw/openclaw/issues/13615) | Add rate limiting and throttling for external API calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13615.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13601](https://github.com/openclaw/openclaw/issues/13601) | Add persistent cron job execution history with filtering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13601.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13607](https://github.com/openclaw/openclaw/issues/13607) | Feature: global default for reasoning visiblity | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13607.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13597](https://github.com/openclaw/openclaw/issues/13597) | Add comprehensive AWS deployment guide (EC2, ECS, Lambda) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13597.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13553](https://github.com/openclaw/openclaw/issues/13553) | [Feature]: Save whatsapp/iMessage attachments to ~/clawd/temp for upload | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13553.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13587](https://github.com/openclaw/openclaw/issues/13587) | Feature Request: Native Cross-Session Prompt Logging | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13587.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13423](https://github.com/openclaw/openclaw/issues/13423) | [Bug]: [CRITICAL SECURITY] Agent Routing System Complete Failure - Communication Misdirection | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13423.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13392](https://github.com/openclaw/openclaw/issues/13392) | Feature Request: session:spawn and session:complete hook events | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13392.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13499](https://github.com/openclaw/openclaw/issues/13499) | Feature Request: Auto-spawn at context threshold | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13499.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13617](https://github.com/openclaw/openclaw/issues/13617) | Add testing framework for cron jobs and skills (dry-run mode) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13617.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13570](https://github.com/openclaw/openclaw/issues/13570) | context-pruning: forcePruneRatio to bypass TTL at high usage | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13570.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13598](https://github.com/openclaw/openclaw/issues/13598) | Add cron troubleshooting playbook to docs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13598.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#13487](https://github.com/openclaw/openclaw/issues/13487) | Discord routing: mention > reply-target > default owner (suppress default owner when targeted) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13487.md) | complete | Apr 24, 2026, 02:03 UTC |
 
 ## How It Works
 
