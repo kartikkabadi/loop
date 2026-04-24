@@ -14,24 +14,24 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 16:28 UTC
+Last dashboard update: Apr 24, 2026, 16:39 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12548 |
-| Fresh reviewed issues in the last 7 days | 7577 |
-| Proposed issue closes | 4239 (55.9% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12538 |
+| Fresh reviewed issues in the last 7 days | 7566 |
+| Proposed issue closes | 4228 (55.9% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6622 |
 | Fresh reviewed PRs in the last 7 days | 3981 |
 | Proposed PR closes | 1270 (31.9% of reviewed PRs) |
-| Open items total | 19170 |
-| Reviewed files | 11558 |
-| Archived closed files | 21 |
-| Fresh verified reviews in the last 7 days | 11558 |
-| Proposed closes awaiting apply | 5509 (47.7% of fresh reviews) |
-| Closed by Codex apply | 10 |
+| Open items total | 19160 |
+| Reviewed files | 11547 |
+| Archived closed files | 32 |
+| Fresh verified reviews in the last 7 days | 11547 |
+| Proposed closes awaiting apply | 5498 (47.6% of fresh reviews) |
+| Closed by Codex apply | 20 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 7612 |
+| Todo for weekly coverage | 7613 |
 
 Recently reviewed:
 
