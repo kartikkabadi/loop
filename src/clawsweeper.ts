@@ -463,12 +463,14 @@ function replaceFrontMatterValue(markdown: string, key: string, value: string): 
 }
 
 function sectionValue(markdown: string, heading: string): string {
-  const match = markdown.match(new RegExp(`^## ${heading}\\n\\n([\\s\\S]*?)(?=\\n## |\\n?$)`, "m"));
+  const match = markdown.match(
+    new RegExp(`(?:^|\\n)## ${heading}\\n\\n([\\s\\S]*?)(?=\\n## |\\n?$)`),
+  );
   return match?.[1]?.trim() ?? "";
 }
 
 function replaceSectionValue(markdown: string, heading: string, value: string): string {
-  const pattern = new RegExp(`(^## ${heading}\\n\\n)([\\s\\S]*?)(?=\\n## |\\n?$)`, "m");
+  const pattern = new RegExp(`((?:^|\\n)## ${heading}\\n\\n)([\\s\\S]*?)(?=\\n## |\\n?$)`);
   if (pattern.test(markdown)) return markdown.replace(pattern, `$1${value.trim()}\n`);
   return `${markdown.trimEnd()}\n\n## ${heading}\n\n${value.trim()}\n`;
 }
