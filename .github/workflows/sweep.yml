@@ -26,7 +26,7 @@ on:
       shard_count:
         description: "Parallel shards"
         required: false
-        default: "20"
+        default: "40"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -87,7 +87,7 @@ jobs:
       - id: select
         working-directory: clawsweeper
         env:
-          SHARD_COUNT: ${{ github.event.inputs.shard_count || '20' }}
+          SHARD_COUNT: ${{ github.event.inputs.shard_count || '40' }}
           BATCH_SIZE: ${{ github.event.inputs.batch_size || '5' }}
           ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
@@ -110,7 +110,7 @@ jobs:
           const plan = JSON.parse(fs.readFileSync("plan.json", "utf8"));
           console.log(`matrix=${JSON.stringify(plan.matrix)}`);
           console.log(`planned_count=${plan.candidates.length}`);
-          console.log(`planned_capacity=${Number(process.env.BATCH_SIZE || 5) * Number(process.env.SHARD_COUNT || 10)}`);
+          console.log(`planned_capacity=${Number(process.env.BATCH_SIZE || 5) * Number(process.env.SHARD_COUNT || 40)}`);
           console.log(`planned_shards=${plan.matrix.length}`);
           NODE
           cat plan.json
@@ -261,7 +261,7 @@ jobs:
             -f apply_closures=false \
             -f apply_existing=false \
             -f batch_size="${{ needs.plan.outputs.batch_size }}" \
-            -f shard_count=20 \
+            -f shard_count=40 \
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
 
   apply-existing:
