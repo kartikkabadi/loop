@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 14:08 UTC
+Last dashboard update: Apr 24, 2026, 14:23 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12568 |
-| Fresh reviewed issues in the last 7 days | 6396 |
-| Proposed issue closes | 3584 (56% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6617 |
-| Fresh reviewed PRs in the last 7 days | 3383 |
-| Proposed PR closes | 1114 (32.9% of reviewed PRs) |
-| Open items total | 19185 |
-| Reviewed files | 9779 |
-| Fresh verified reviews in the last 7 days | 9779 |
-| Proposed closes awaiting apply | 4698 (48% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12570 |
+| Fresh reviewed issues in the last 7 days | 6513 |
+| Proposed issue closes | 3642 (55.9% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6618 |
+| Fresh reviewed PRs in the last 7 days | 3466 |
+| Proposed PR closes | 1133 (32.7% of reviewed PRs) |
+| Open items total | 19188 |
+| Reviewed files | 9979 |
+| Fresh verified reviews in the last 7 days | 9979 |
+| Proposed closes awaiting apply | 4775 (47.9% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 9406 |
+| Todo for weekly coverage | 9209 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#54581](https://github.com/openclaw/openclaw/issues/54581) | [Bug]: openrouter/free writes openrouter/auto into json | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54581.md) | complete | Apr 24, 2026, 14:07 UTC |
-| [#54587](https://github.com/openclaw/openclaw/issues/54587) | Feature request: dangerouslyAllowUnsandboxedSubagentSpawn escape hatch for cross-sandbox agent orchestration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54587.md) | complete | Apr 24, 2026, 14:07 UTC |
-| [#54615](https://github.com/openclaw/openclaw/issues/54615) | [Bug]: OpenAI Codex OAuth returning 429 since March 16 — account-level block? | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54615.md) | complete | Apr 24, 2026, 14:06 UTC |
-| [#54634](https://github.com/openclaw/openclaw/issues/54634) | Update 2026.3.24 silently drops config when HOME changes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54634.md) | complete | Apr 24, 2026, 14:06 UTC |
-| [#54607](https://github.com/openclaw/openclaw/issues/54607) | [Feature]: Clarify BlueBubbles channel disablement vs plugin disablement, and document a safe local loopback-only runtime example | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54607.md) | complete | Apr 24, 2026, 14:06 UTC |
-| [#54613](https://github.com/openclaw/openclaw/issues/54613) | [WhatsApp] Group messages not received despite correct configuration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54613.md) | complete | Apr 24, 2026, 14:06 UTC |
-| [#54608](https://github.com/openclaw/openclaw/pull/54608) | fix: config path for xAI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54608.md) | complete | Apr 24, 2026, 14:06 UTC |
-| [#54599](https://github.com/openclaw/openclaw/issues/54599) | [Bug]: maybeBootstrapChannelPlugin destructively replaces plugin registry, dropping autoStart:false channels | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54599.md) | complete | Apr 24, 2026, 14:06 UTC |
-| [#54601](https://github.com/openclaw/openclaw/issues/54601) | Feature Request: Live context snapshot injection for isolated cron/subagent sessions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54601.md) | complete | Apr 24, 2026, 14:06 UTC |
-| [#54589](https://github.com/openclaw/openclaw/pull/54589) | fix(logger): re-create file logger after midnight to use correct dated log file | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54589.md) | complete | Apr 24, 2026, 14:06 UTC |
-| [#54515](https://github.com/openclaw/openclaw/issues/54515) | Published package openclaw@2026.3.23-2 contains bundled metadata/extensions still marked 2026.3.14 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54515.md) | complete | Apr 24, 2026, 14:05 UTC |
-| [#54571](https://github.com/openclaw/openclaw/issues/54571) | [Feature]: | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54571.md) | complete | Apr 24, 2026, 14:05 UTC |
-| [#54620](https://github.com/openclaw/openclaw/issues/54620) | [Bug]: Message duplication occurs in Feishu channel when conversation history grows lon | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54620.md) | complete | Apr 24, 2026, 14:05 UTC |
-| [#54593](https://github.com/openclaw/openclaw/pull/54593) | Fix getSubagentDepth for legacy subagent session keys (AI-assisted) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54593.md) | complete | Apr 24, 2026, 14:05 UTC |
-| [#54623](https://github.com/openclaw/openclaw/issues/54623) | [Bug]: Workspace bootstrap files silently truncated at 20,000 chars — agent receives incomplete context with no warning | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54623.md) | complete | Apr 24, 2026, 14:05 UTC |
-| [#54585](https://github.com/openclaw/openclaw/pull/54585) | Agents: add compaction modes (warn, error, none) with proactive conte… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54585.md) | complete | Apr 24, 2026, 14:05 UTC |
-| [#54535](https://github.com/openclaw/openclaw/issues/54535) | [Bug] openclaw browser CLI crashes Chrome 146 via Playwright connectOverCDP (EXC_BREAKPOINT/SIGTRAP) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54535.md) | complete | Apr 24, 2026, 14:05 UTC |
-| [#54621](https://github.com/openclaw/openclaw/pull/54621) | fix(xai): honor plugin webSearch apiKey for grok web_search (AI-assisted) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54621.md) | complete | Apr 24, 2026, 14:04 UTC |
-| [#54600](https://github.com/openclaw/openclaw/pull/54600) | fix: extract message string from cron agentTurn payload (#54579) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54600.md) | complete | Apr 24, 2026, 14:04 UTC |
-| [#54541](https://github.com/openclaw/openclaw/issues/54541) | [Bug]: 🚨 [SECURITY] Malicious Skill: noreplyboter/polymarket-all-in-one - Reverse Shell Backdoor (ClawHavoc Campaign) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54541.md) | complete | Apr 24, 2026, 14:04 UTC |
+| [#54949](https://github.com/openclaw/openclaw/issues/54949) | Duplicate Feishu plugin registration logs in 2026.3.24 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54949.md) | complete | Apr 24, 2026, 14:23 UTC |
+| [#54964](https://github.com/openclaw/openclaw/issues/54964) | Session enters zombie state after embedded agent init failure (deactivated_workspace) — no auto-recovery | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54964.md) | complete | Apr 24, 2026, 14:23 UTC |
+| [#54955](https://github.com/openclaw/openclaw/issues/54955) | 多渠道会话上下文共享 / Cross-channel context sharing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54955.md) | complete | Apr 24, 2026, 14:21 UTC |
+| [#54976](https://github.com/openclaw/openclaw/pull/54976) | Add Docker Compose + Ollama (qwen2.5:7b) setup for local running order | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54976.md) | complete | Apr 24, 2026, 14:21 UTC |
+| [#54921](https://github.com/openclaw/openclaw/pull/54921) | fix: Telegram and core channels not loading when plugin allowlist is enabled | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54921.md) | complete | Apr 24, 2026, 14:21 UTC |
+| [#54919](https://github.com/openclaw/openclaw/issues/54919) | [Feature]: agents.defaults.thinkingDefault config field not working | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54919.md) | complete | Apr 24, 2026, 14:21 UTC |
+| [#54934](https://github.com/openclaw/openclaw/pull/54934) | Feishu: reject empty message cards | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54934.md) | complete | Apr 24, 2026, 14:21 UTC |
+| [#54917](https://github.com/openclaw/openclaw/pull/54917) | fix: resolve gateway handshake race with withProgress spinner | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54917.md) | complete | Apr 24, 2026, 14:21 UTC |
+| [#54928](https://github.com/openclaw/openclaw/issues/54928) | Feature: support custom Exa web_search baseUrl (or fail with explicit schema/docs guidance) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54928.md) | complete | Apr 24, 2026, 14:21 UTC |
+| [#54883](https://github.com/openclaw/openclaw/issues/54883) | Telegram routed agent sessions do not honor agents.list[].model per-agent override | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54883.md) | complete | Apr 24, 2026, 14:20 UTC |
+| [#54865](https://github.com/openclaw/openclaw/issues/54865) | tools.media with LiteLLM tier aliases (e.g. model=vision) is brittle / misleading | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54865.md) | complete | Apr 24, 2026, 14:20 UTC |
+| [#54941](https://github.com/openclaw/openclaw/pull/54941) | fix(ui): include sourceChannel in exec.approval.resolve from Control UI to fix multi-channel setups | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54941.md) | complete | Apr 24, 2026, 14:20 UTC |
+| [#54874](https://github.com/openclaw/openclaw/issues/54874) | [Bug] Slow typing in webchat input with keystroke delay | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54874.md) | complete | Apr 24, 2026, 14:20 UTC |
+| [#54952](https://github.com/openclaw/openclaw/issues/54952) | Diagnostics gap: no operator-facing way to confirm which routing rule matched for Feishu group chats | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54952.md) | complete | Apr 24, 2026, 14:20 UTC |
+| [#54972](https://github.com/openclaw/openclaw/issues/54972) | Feishu: CardKit streaming cards show [Interactive Card] instead of actual content when read by other agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54972.md) | complete | Apr 24, 2026, 14:19 UTC |
+| [#54990](https://github.com/openclaw/openclaw/pull/54990) | security(54737): sanitize group metadata to prevent prompt injection | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54990.md) | complete | Apr 24, 2026, 14:19 UTC |
+| [#54986](https://github.com/openclaw/openclaw/pull/54986) | style(auto): 清理 XXX 注释 — extensions/feishu/src/bitable.ts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54986.md) | complete | Apr 24, 2026, 14:19 UTC |
+| [#54836](https://github.com/openclaw/openclaw/issues/54836) | [Bug]: WhatsApp: responses sent twice (duplicate messages) via webchat surface | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54836.md) | complete | Apr 24, 2026, 14:19 UTC |
+| [#54959](https://github.com/openclaw/openclaw/pull/54959) | docs: add OpenShell deployment guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54959.md) | complete | Apr 24, 2026, 14:19 UTC |
+| [#54983](https://github.com/openclaw/openclaw/issues/54983) | feat: Add vLLM reasoning/thinking toggle support (enable_thinking parameter) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54983.md) | complete | Apr 24, 2026, 14:19 UTC |
 
 ## How It Works
 
