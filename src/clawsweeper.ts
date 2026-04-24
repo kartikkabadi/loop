@@ -1593,7 +1593,7 @@ function applyDecisionsCommand(args: Args): void {
   const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
   const limit = numberArg(args.limit, 20);
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
-  const minAgeDays = numberArg(args.min_age_days, 30);
+  const minAgeDays = numberArg(args.min_age_days, 0);
   const applyKind = applyKindArg(args.apply_kind);
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];

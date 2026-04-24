@@ -18,7 +18,7 @@ on:
       apply_min_age_days:
         description: "Minimum item age in days before apply-existing can close it"
         required: false
-        default: "30"
+        default: "0"
       apply_kind:
         description: "Item kind to close in apply-existing mode: issue, pull_request, or all"
         required: false
@@ -306,7 +306,7 @@ jobs:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
           limit="${{ github.event.inputs.apply_limit || '20' }}"
-          min_age_days="${{ github.event.inputs.apply_min_age_days || '30' }}"
+          min_age_days="${{ github.event.inputs.apply_min_age_days || '0' }}"
           apply_kind="${{ github.event.inputs.apply_kind || 'issue' }}"
           npm run apply-decisions -- \
             --limit "$limit" \
