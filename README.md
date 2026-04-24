@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 07:11 UTC
+Last dashboard update: Apr 24, 2026, 07:25 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12508 |
-| Fresh reviewed issues in the last 7 days | 2732 |
-| Proposed issue closes | 1426 (52.2% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12507 |
+| Fresh reviewed issues in the last 7 days | 2833 |
+| Proposed issue closes | 1486 (52.5% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6582 |
-| Fresh reviewed PRs in the last 7 days | 1254 |
-| Proposed PR closes | 402 (32.1% of reviewed PRs) |
-| Open items total | 19090 |
-| Reviewed files | 3986 |
-| Fresh verified reviews in the last 7 days | 3986 |
-| Proposed closes awaiting apply | 1828 (45.9% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 1353 |
+| Proposed PR closes | 434 (32.1% of reviewed PRs) |
+| Open items total | 19089 |
+| Reviewed files | 4186 |
+| Fresh verified reviews in the last 7 days | 4186 |
+| Proposed closes awaiting apply | 1920 (45.9% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 15104 |
+| Todo for weekly coverage | 14903 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#43760](https://github.com/openclaw/openclaw/issues/43760) | Feature: separate fallback remote config for memorySearch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43760.md) | complete | Apr 24, 2026, 07:11 UTC |
-| [#43756](https://github.com/openclaw/openclaw/issues/43756) | Feature Request: Slack threadBindings with spawnAcpSessions support (parity with Discord/Telegram) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43756.md) | complete | Apr 24, 2026, 07:08 UTC |
-| [#43670](https://github.com/openclaw/openclaw/pull/43670) | fix: treat transient network errors as retryable for failover | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43670.md) | complete | Apr 24, 2026, 07:08 UTC |
-| [#43755](https://github.com/openclaw/openclaw/issues/43755) | [Bug]: Subagent result not delivered to parent session (sessions_spawn with claude) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/43755.md) | complete | Apr 24, 2026, 07:07 UTC |
-| [#43765](https://github.com/openclaw/openclaw/pull/43765) | Improve runtime recovery for heartbeat, Feishu, and exec sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43765.md) | complete | Apr 24, 2026, 07:07 UTC |
-| [#43779](https://github.com/openclaw/openclaw/issues/43779) | [Bug]: `openclaw message send --channel qqbot --target` fails with `ToolInputError: to required` | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/43779.md) | complete | Apr 24, 2026, 07:07 UTC |
-| [#43741](https://github.com/openclaw/openclaw/issues/43741) | Thinking blocks modified during compaction/session replay cause API rejection | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/43741.md) | complete | Apr 24, 2026, 07:07 UTC |
-| [#43802](https://github.com/openclaw/openclaw/issues/43802) | [Bug] Subagent completion notification loop causes excessive API calls | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/43802.md) | complete | Apr 24, 2026, 07:07 UTC |
-| [#43768](https://github.com/openclaw/openclaw/issues/43768) | [Bug]: sessions_spawn(runtime=\"subagent\") does not honor agents.defaults.subagents.model or explicit model override | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/43768.md) | complete | Apr 24, 2026, 07:07 UTC |
-| [#43747](https://github.com/openclaw/openclaw/issues/43747) | [Bug]: Memory management is in chaos | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43747.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43803](https://github.com/openclaw/openclaw/issues/43803) | [BUG] config.patch still sends SIGUSR1 for hot-reloadable paths (browser.profiles.*), bypassing reload mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43803.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43767](https://github.com/openclaw/openclaw/issues/43767) | [Bug]: Heartbeat ignores lightContext: true, loads full agent context + unbounded session history | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/43767.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43808](https://github.com/openclaw/openclaw/pull/43808) | cron: honor delivery.threadId for Telegram announce delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43808.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43774](https://github.com/openclaw/openclaw/issues/43774) | ClawHub CLI missing license acceptance flag for publish command | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/43774.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43758](https://github.com/openclaw/openclaw/issues/43758) | [Feature]: Optimize the console log: log the information when OpenClaw sends a message | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43758.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43778](https://github.com/openclaw/openclaw/issues/43778) | feat(tui): improve UX when gateway is disconnected or restarting | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43778.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43776](https://github.com/openclaw/openclaw/pull/43776) | \"dedupe\ | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43776.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43790](https://github.com/openclaw/openclaw/pull/43790) | [AI-assisted] fix(message): honor explicit agent routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43790.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43789](https://github.com/openclaw/openclaw/pull/43789) | [AI-assisted] fix(agents): compact sandbox skill paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43789.md) | complete | Apr 24, 2026, 07:06 UTC |
-| [#43804](https://github.com/openclaw/openclaw/issues/43804) | [Bug] doctor --deep says no channel security warnings while security audit --deep reports criticals | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/43804.md) | complete | Apr 24, 2026, 07:06 UTC |
+| [#44127](https://github.com/openclaw/openclaw/issues/44127) | ACP liveness probe delivered as undifferentiated user prompt — agent executes it as a command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44127.md) | complete | Apr 24, 2026, 07:24 UTC |
+| [#44168](https://github.com/openclaw/openclaw/pull/44168) | fix(agents): guard OpenAI WS first response timeouts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44168.md) | complete | Apr 24, 2026, 07:24 UTC |
+| [#44138](https://github.com/openclaw/openclaw/issues/44138) | Manual /compact command fails with 'no real conversation messages' on Discord thread sessions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44138.md) | complete | Apr 24, 2026, 07:24 UTC |
+| [#44147](https://github.com/openclaw/openclaw/issues/44147) | [Bug]: # OpenClaw 网页端无法显示问题 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44147.md) | complete | Apr 24, 2026, 07:24 UTC |
+| [#44152](https://github.com/openclaw/openclaw/pull/44152) | feat(compaction): include sessionFile in before_compaction hooks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44152.md) | complete | Apr 24, 2026, 07:24 UTC |
+| [#44136](https://github.com/openclaw/openclaw/pull/44136) | fix(copilot): respect user-configured baseUrl in token flow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44136.md) | complete | Apr 24, 2026, 07:24 UTC |
+| [#44120](https://github.com/openclaw/openclaw/pull/44120) | fix(memory): shouldSyncSessions skips sessions during full reindex | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44120.md) | complete | Apr 24, 2026, 07:24 UTC |
+| [#44171](https://github.com/openclaw/openclaw/issues/44171) | Cron one-shot at jobs can disappear without leaving run history | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44171.md) | complete | Apr 24, 2026, 07:24 UTC |
+| [#44144](https://github.com/openclaw/openclaw/pull/44144) | docs(skills): clarify model-usage portable input mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44144.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44110](https://github.com/openclaw/openclaw/issues/44110) | [Bug]: tool_choice: \"auto\" sent even when tools.allow: [] is configured | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44110.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44130](https://github.com/openclaw/openclaw/issues/44130) | [TUI] Scroll-jump / auto-scroll behavior is still disruptive in 2026.3.8 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44130.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44134](https://github.com/openclaw/openclaw/issues/44134) | [Google Antigravity Ban] Frequent Tool Schema Reloading Causes False Positive Anti-Abuse Detection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44134.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44153](https://github.com/openclaw/openclaw/issues/44153) | sessions_send from sub-agent flips parent session deliveryContext from Telegram to webchat | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44153.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44114](https://github.com/openclaw/openclaw/pull/44114) | fix(sandbox): preserve file permissions when editing via sandbox file-tool (#44077) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44114.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44143](https://github.com/openclaw/openclaw/pull/44143) | fix: serialize outbound deliveries per channel+recipient | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44143.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44166](https://github.com/openclaw/openclaw/issues/44166) | memory reindex aborts on transient embedding transport errors instead of retrying or splitting the batch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44166.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44164](https://github.com/openclaw/openclaw/pull/44164) | fix(cron): doctor reports already-normalized payload kinds as legacy | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44164.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44126](https://github.com/openclaw/openclaw/pull/44126) | feat(agents): add adaptive thinking level controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44126.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44163](https://github.com/openclaw/openclaw/pull/44163) | feat(compaction): expose summary in after_compaction hooks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44163.md) | complete | Apr 24, 2026, 07:23 UTC |
+| [#44118](https://github.com/openclaw/openclaw/pull/44118) | fix(feishu): bypass mention gate for slash commands in group chats | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44118.md) | complete | Apr 24, 2026, 07:22 UTC |
 
 ## How It Works
 
