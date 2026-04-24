@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 08:33 UTC
+Last dashboard update: Apr 24, 2026, 08:49 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12518 |
-| Fresh reviewed issues in the last 7 days | 3481 |
-| Proposed issue closes | 1874 (53.8% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6581 |
-| Fresh reviewed PRs in the last 7 days | 1705 |
-| Proposed PR closes | 572 (33.5% of reviewed PRs) |
-| Open items total | 19099 |
-| Reviewed files | 5186 |
-| Fresh verified reviews in the last 7 days | 5186 |
-| Proposed closes awaiting apply | 2446 (47.2% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12521 |
+| Fresh reviewed issues in the last 7 days | 3610 |
+| Proposed issue closes | 1961 (54.3% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6583 |
+| Fresh reviewed PRs in the last 7 days | 1776 |
+| Proposed PR closes | 609 (34.3% of reviewed PRs) |
+| Open items total | 19104 |
+| Reviewed files | 5386 |
+| Fresh verified reviews in the last 7 days | 5386 |
+| Proposed closes awaiting apply | 2570 (47.7% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 13913 |
+| Todo for weekly coverage | 13718 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#45905](https://github.com/openclaw/openclaw/issues/45905) | [Bug]: Heartbeat session shows as gray blank in Control UI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45905.md) | complete | Apr 24, 2026, 08:33 UTC |
-| [#45875](https://github.com/openclaw/openclaw/issues/45875) | [Bug] Cron Tool Parameter Validation Error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45875.md) | complete | Apr 24, 2026, 08:33 UTC |
-| [#45906](https://github.com/openclaw/openclaw/issues/45906) | [Telegram] statusReactions always shows error emoji even for successful exec commands | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45906.md) | complete | Apr 24, 2026, 08:32 UTC |
-| [#45883](https://github.com/openclaw/openclaw/issues/45883) | 更新后工具调用失败：旧模块文件hash未清理 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45883.md) | complete | Apr 24, 2026, 08:32 UTC |
-| [#45892](https://github.com/openclaw/openclaw/pull/45892) | fix: harden macOS launchd restart handoff after config-triggered gateway restarts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45892.md) | complete | Apr 24, 2026, 08:32 UTC |
-| [#45882](https://github.com/openclaw/openclaw/issues/45882) | [Bug]: MiniMax streaming not working - output displays all at once instead of streaming | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45882.md) | complete | Apr 24, 2026, 08:32 UTC |
-| [#45889](https://github.com/openclaw/openclaw/issues/45889) | browser profile=\"user\" times out on macOS even though existing-session Chrome MCP is detected and running | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45889.md) | complete | Apr 24, 2026, 08:32 UTC |
-| [#45918](https://github.com/openclaw/openclaw/issues/45918) | [Bug]: run openclaw nodes list, but get nodes list failed: Error: gateway closed (1000 normal closure): no close reason | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45918.md) | complete | Apr 24, 2026, 08:32 UTC |
-| [#45893](https://github.com/openclaw/openclaw/issues/45893) | [Bug]: Webchat UI Bug: Session Messages Display as Exclamation Mark | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45893.md) | complete | Apr 24, 2026, 08:32 UTC |
-| [#45873](https://github.com/openclaw/openclaw/issues/45873) | Subagents ignore tools.subagents.tools.allow and only receive parent/session tools | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45873.md) | complete | Apr 24, 2026, 08:32 UTC |
-| [#45903](https://github.com/openclaw/openclaw/pull/45903) | docs(cron): document NO_REPLY conditional delivery | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45903.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45925](https://github.com/openclaw/openclaw/pull/45925) | fix: keep heartbeat wakes out of cron run sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45925.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45913](https://github.com/openclaw/openclaw/pull/45913) | fix(control-ui): use actual context size instead of cumulative input … | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45913.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45917](https://github.com/openclaw/openclaw/issues/45917) | Webchat/ControlUI: Image uploads not processed since 2026.3.13 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45917.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45879](https://github.com/openclaw/openclaw/pull/45879) | feat(metabolism): add homeostatic token budget management system | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45879.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45908](https://github.com/openclaw/openclaw/issues/45908) | [Bug]: \"openclaw status\" reports gateway as \"unreachable\" when probe lacks operator.read scope (cosmetic, gateway fully functional) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45908.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45927](https://github.com/openclaw/openclaw/issues/45927) | [Feature Request] Control UI 添加语言设置选项 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45927.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45849](https://github.com/openclaw/openclaw/issues/45849) | [Bug]: DMs routed to main agent do not collapse into Main > main; Control UI creates discord:direct / telegram:direct sessions instead | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45849.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45902](https://github.com/openclaw/openclaw/pull/45902) | feat(telegram): inherit /model defaults for new Telegram threads [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/45902.md) | complete | Apr 24, 2026, 08:31 UTC |
-| [#45807](https://github.com/openclaw/openclaw/issues/45807) | [Bug]:  Control UI image attachments disappear from chat.history after AI response | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45807.md) | complete | Apr 24, 2026, 08:31 UTC |
+| [#46273](https://github.com/openclaw/openclaw/issues/46273) | [Bug] GLM-5 Image Recognition Broken After 2026.3.12 Update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46273.md) | complete | Apr 24, 2026, 08:48 UTC |
+| [#46261](https://github.com/openclaw/openclaw/issues/46261) | [Feature]: Integrate pi-multi-pass | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46261.md) | complete | Apr 24, 2026, 08:46 UTC |
+| [#46351](https://github.com/openclaw/openclaw/issues/46351) | [Feature]: Per-Agent Discord Webhook Reply Override | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46351.md) | complete | Apr 24, 2026, 08:46 UTC |
+| [#46267](https://github.com/openclaw/openclaw/issues/46267) | [Bug] Secondary Effect of Account Hijack - Multiple agents respond to single @mention | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46267.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46298](https://github.com/openclaw/openclaw/issues/46298) | sessions_yield terminates isolated cron sessions instead of waiting for next turn | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46298.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46309](https://github.com/openclaw/openclaw/issues/46309) | [Bug]: model fallback doesn't work at all. also this can break long tasks from running. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46309.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46320](https://github.com/openclaw/openclaw/pull/46320) | fix: validate parent dir realpath on Windows before new file creation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46320.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46317](https://github.com/openclaw/openclaw/issues/46317) | [Feature]: Pre prompt Rag Hook | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46317.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46254](https://github.com/openclaw/openclaw/issues/46254) | [Bug] Subagent Docker containers not auto-removed after completion, causing maxConcurrent slot exhaustion | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46254.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46342](https://github.com/openclaw/openclaw/pull/46342) | fix: add defense-in-depth sanitization to MEDIA directive parsing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46342.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46302](https://github.com/openclaw/openclaw/issues/46302) | Feature request: expose registerInternalHook / clearBootstrapSnapshot via plugin SDK for bootstrap hot-reload | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46302.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46165](https://github.com/openclaw/openclaw/pull/46165) | fix(dispatch): send fallback reply when agent produces zero responses (closes #32903) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46165.md) | complete | Apr 24, 2026, 08:45 UTC |
+| [#46326](https://github.com/openclaw/openclaw/issues/46326) | Audio transcription stopped working after update to 2026.3.12/3.13 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46326.md) | complete | Apr 24, 2026, 08:44 UTC |
+| [#46156](https://github.com/openclaw/openclaw/pull/46156) | fix: show provider/model format in /model command suggestions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46156.md) | complete | Apr 24, 2026, 08:44 UTC |
+| [#46282](https://github.com/openclaw/openclaw/issues/46282) | [Bug]: Telegram media download uses native fetch instead of proxy-aware fetch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46282.md) | complete | Apr 24, 2026, 08:44 UTC |
+| [#46258](https://github.com/openclaw/openclaw/pull/46258) | Add Telegram ack reaction timing control | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46258.md) | complete | Apr 24, 2026, 08:44 UTC |
+| [#46274](https://github.com/openclaw/openclaw/issues/46274) | [Feature]: Support WeChat Official Account (微信公众号) Integration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46274.md) | complete | Apr 24, 2026, 08:44 UTC |
+| [#46311](https://github.com/openclaw/openclaw/pull/46311) | fix: block JVM/.NET/Rust/Ansible env vars in host exec blocklist | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46311.md) | complete | Apr 24, 2026, 08:44 UTC |
+| [#46297](https://github.com/openclaw/openclaw/issues/46297) | Feature: Suppress typing indicator when message matches hold pattern | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46297.md) | complete | Apr 24, 2026, 08:44 UTC |
+| [#46268](https://github.com/openclaw/openclaw/pull/46268) | fix(feishu): preserve read tool image paths for auto-reply media | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46268.md) | complete | Apr 24, 2026, 08:44 UTC |
 
 ## How It Works
 
