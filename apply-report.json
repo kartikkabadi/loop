@@ -15,52 +15,52 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 7985,
+    "number": 8215,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 7993,
+    "number": 8231,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8000,
+    "number": 8255,
     "action": "closed",
     "reason": "belongs on ClawHub"
   },
   {
-    "number": 8033,
+    "number": 8263,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8049,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 8079,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 8089,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 8106,
+    "number": 8266,
     "action": "closed",
     "reason": "belongs on ClawHub"
   },
   {
-    "number": 8185,
+    "number": 8308,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8192,
+    "number": 8370,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8485,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8722,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8754,
     "action": "closed",
     "reason": "already implemented on main"
   }
