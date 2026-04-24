@@ -14,17 +14,18 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 00:39 UTC
+Last dashboard update: Apr 24, 2026, 00:41 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19149 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19148 |
+| Reviewed / proposed closes | 73 / 32 |
 | Reviewed files | 73 |
 | Fresh verified reviews in the last 7 days | 73 |
 | Proposed closes awaiting apply | 32 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 19076 |
+| Todo for weekly coverage | 19075 |
 
 Recently reviewed:
 

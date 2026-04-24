@@ -1480,6 +1480,7 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 | Metric | Count |
 | --- | ---: |
 | Open items in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.openTotal} |
+| Reviewed / proposed closes | ${stats.files} / ${stats.proposedClose} |
 | Reviewed files | ${stats.files} |
 | Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
 | Proposed closes awaiting apply | ${stats.proposedClose} |
