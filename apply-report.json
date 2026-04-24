@@ -15,52 +15,52 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 8215,
+    "number": 8758,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8231,
+    "number": 8761,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8255,
+    "number": 8781,
     "action": "closed",
     "reason": "belongs on ClawHub"
   },
   {
-    "number": 8263,
+    "number": 8801,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8266,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 8308,
+    "number": 8865,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8370,
+    "number": 8886,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8485,
+    "number": 8895,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8722,
+    "number": 8901,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 8754,
+    "number": 8920,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8945,
     "action": "closed",
     "reason": "already implemented on main"
   }
