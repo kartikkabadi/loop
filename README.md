@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 07:39 UTC
+Last dashboard update: Apr 24, 2026, 07:53 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12505 |
-| Fresh reviewed issues in the last 7 days | 2961 |
-| Proposed issue closes | 1558 (52.6% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6582 |
-| Fresh reviewed PRs in the last 7 days | 1425 |
-| Proposed PR closes | 464 (32.6% of reviewed PRs) |
-| Open items total | 19087 |
-| Reviewed files | 4386 |
-| Fresh verified reviews in the last 7 days | 4386 |
-| Proposed closes awaiting apply | 2022 (46.1% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12511 |
+| Fresh reviewed issues in the last 7 days | 3088 |
+| Proposed issue closes | 1638 (53% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6583 |
+| Fresh reviewed PRs in the last 7 days | 1498 |
+| Proposed PR closes | 491 (32.8% of reviewed PRs) |
+| Open items total | 19094 |
+| Reviewed files | 4586 |
+| Fresh verified reviews in the last 7 days | 4586 |
+| Proposed closes awaiting apply | 2129 (46.4% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 14701 |
+| Todo for weekly coverage | 14508 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#44527](https://github.com/openclaw/openclaw/issues/44527) | web_fetch 工具缺少 ssrfPolicy 配置，TUN 模式下被阻止 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44527.md) | complete | Apr 24, 2026, 07:38 UTC |
-| [#44529](https://github.com/openclaw/openclaw/issues/44529) | [Bug]: Gateway crashes with unhandled promise rejection when Discord API returns 503 during health-monitor bot reconnect | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44529.md) | complete | Apr 24, 2026, 07:38 UTC |
-| [#44484](https://github.com/openclaw/openclaw/issues/44484) | Agent declared tools != effective session tools: no strict inheritance mode, no visibility, no clipping reason trace | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44484.md) | complete | Apr 24, 2026, 07:38 UTC |
-| [#44528](https://github.com/openclaw/openclaw/issues/44528) | [Control UI] Internal task completion event incorrectly delivered to chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44528.md) | complete | Apr 24, 2026, 07:38 UTC |
-| [#44491](https://github.com/openclaw/openclaw/issues/44491) | Bug: Control UI 聊天记录在 session 重启后丢失 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44491.md) | complete | Apr 24, 2026, 07:38 UTC |
-| [#44507](https://github.com/openclaw/openclaw/issues/44507) | openclaw gateway restart fails to restart service (SIGTERM instead of SIGUSR1) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44507.md) | complete | Apr 24, 2026, 07:38 UTC |
-| [#44474](https://github.com/openclaw/openclaw/issues/44474) | [Feature Request] 简化配置流程 - 让 OpenClaw 更易上手 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44474.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44524](https://github.com/openclaw/openclaw/issues/44524) | [Bug]: Discord mention detection fails when mentionedUsers array is empty | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44524.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44476](https://github.com/openclaw/openclaw/pull/44476) | fix(gateway): exit 0 on EADDRINUSE when healthy OpenClaw gateway is already running | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44476.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44492](https://github.com/openclaw/openclaw/issues/44492) | [Bug]: Telegram forum topic loses ACP/OpenCode routing after heavy bound turn; topic recovers only after gateway restart and then fails again under load | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44492.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44490](https://github.com/openclaw/openclaw/issues/44490) | [Bug]: openclaw gateway restart fails to restart service (SIGTERM instead of SIGUSR1) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44490.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44477](https://github.com/openclaw/openclaw/issues/44477) | Feature: Support multiple API keys per provider as rate limit backup | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44477.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44483](https://github.com/openclaw/openclaw/issues/44483) | Slack: implicit reply-to-bot thread detection not working in channels (groupPolicy: open) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44483.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44518](https://github.com/openclaw/openclaw/pull/44518) | fix(daemon): trigger SIGUSR1 in-process restart when scheduling launchd handoff | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44518.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44472](https://github.com/openclaw/openclaw/issues/44472) | [Patch] Runtime bundle fixes for premature success bug (compact, pi-embedded, reply) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44472.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44459](https://github.com/openclaw/openclaw/issues/44459) | TTS tool on Telegram renders as audio file instead of native voice memo (sendAudio vs sendVoice) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44459.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44532](https://github.com/openclaw/openclaw/issues/44532) | [Bug]: http_request is not available in dockerized version of openclaw | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44532.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44488](https://github.com/openclaw/openclaw/issues/44488) | [Feature]: Feature Request: 优化心跳会话的显示标签 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44488.md) | complete | Apr 24, 2026, 07:37 UTC |
-| [#44486](https://github.com/openclaw/openclaw/pull/44486) | fix(gateway): honor dangerouslyDisableDeviceAuth regardless of sharedAuthOk | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44486.md) | complete | Apr 24, 2026, 07:36 UTC |
-| [#44461](https://github.com/openclaw/openclaw/issues/44461) | [Bug]:QQBot channel fails to send messages due to missing \"to\" parameter mapping | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44461.md) | complete | Apr 24, 2026, 07:36 UTC |
+| [#44854](https://github.com/openclaw/openclaw/issues/44854) | Config parse: ANTHROPIC_MODEL_ALIASES ReferenceError in applyContextPruningDefaults | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44854.md) | complete | Apr 24, 2026, 07:53 UTC |
+| [#44877](https://github.com/openclaw/openclaw/pull/44877) | Fix exec approval follow-ups for internal sessions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44877.md) | complete | Apr 24, 2026, 07:53 UTC |
+| [#44818](https://github.com/openclaw/openclaw/issues/44818) | [Bug]: .env proxy (HTTPS_PROXY) works for Gemini web search but not for Gemini memory embedding | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44818.md) | complete | Apr 24, 2026, 07:52 UTC |
+| [#44862](https://github.com/openclaw/openclaw/pull/44862) | fix(agents): use correct bootstrap files for subagents | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44862.md) | complete | Apr 24, 2026, 07:52 UTC |
+| [#44879](https://github.com/openclaw/openclaw/pull/44879) | fix: avoid TDZ on Anthropic model aliases in context pruning defaults | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44879.md) | complete | Apr 24, 2026, 07:52 UTC |
+| [#44835](https://github.com/openclaw/openclaw/issues/44835) | [Bug]: [v2026.3.12] Configuration loop: Web UI validation error 'models.0.id undefined' despite fields being filled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44835.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44848](https://github.com/openclaw/openclaw/issues/44848) | [Bug] Feishu Plugin Registered Multiple Times in CLI Output (2026.3.12) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44848.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44786](https://github.com/openclaw/openclaw/issues/44786) | [Bug]: Provider-level contextWindow config ignored — overwritten by model metadata on gateway restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44786.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44876](https://github.com/openclaw/openclaw/issues/44876) | Feature Request: Built-in safe upgrade/config-change command with backup, verification, and auto-rollback | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44876.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44872](https://github.com/openclaw/openclaw/pull/44872) | feat: add /default_model command to set default model persistently | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44872.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44801](https://github.com/openclaw/openclaw/issues/44801) | [Feature]: Design Proposal: toward a task-centric runtime for resumable work, approvals, and task-linked surfaces | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44801.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44863](https://github.com/openclaw/openclaw/pull/44863) | feat: session-level message coalescing to reduce redundant LLM calls | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44863.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44829](https://github.com/openclaw/openclaw/pull/44829) | fix(feishu): avoid post text truncation when line ends with colon | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44829.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44833](https://github.com/openclaw/openclaw/issues/44833) | [Bug]: Telegram group photo-only messages do not trigger image understanding | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44833.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44866](https://github.com/openclaw/openclaw/issues/44866) | [Bug]: Feishu DM (p2p) messages routed to webchat instead of feishu channel | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44866.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44870](https://github.com/openclaw/openclaw/issues/44870) | [Bug]: I have been unable to verify using the codex from the transfer station | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44870.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44878](https://github.com/openclaw/openclaw/pull/44878) | feat(memory): support separate fallback remote config for memorySearch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44878.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44882](https://github.com/openclaw/openclaw/issues/44882) | [BUG] 认证机制硬编码缺陷：无法手动配置Ollama / Authentication hardcoded defect: Cannot manually configure Ollama provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44882.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44881](https://github.com/openclaw/openclaw/issues/44881) | Gateway holds port after npm upgrade — new process crash-loops until openclaw gateway stop is run | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44881.md) | complete | Apr 24, 2026, 07:51 UTC |
+| [#44826](https://github.com/openclaw/openclaw/issues/44826) | Feature Request: Per-Agent Model Fallback Control | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/44826.md) | complete | Apr 24, 2026, 07:50 UTC |
 
 ## How It Works
 
