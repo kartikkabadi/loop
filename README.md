@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 21:06 UTC
+Last dashboard update: Apr 24, 2026, 21:21 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 11636 |
-| Fresh reviewed issues in the last 7 days | 8780 |
-| Proposed issue closes | 4423 (50.4% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6460 |
-| Fresh reviewed PRs in the last 7 days | 4787 |
-| Proposed PR closes | 1320 (27.6% of reviewed PRs) |
-| Open items total | 18096 |
-| Reviewed files | 13567 |
-| Archived closed files | 1101 |
-| Fresh verified reviews in the last 7 days | 13567 |
-| Proposed closes awaiting apply | 5743 (42.3% of fresh reviews) |
-| Closed by Codex apply | 811 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 11561 |
+| Fresh reviewed issues in the last 7 days | 8852 |
+| Proposed issue closes | 4418 (49.9% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6455 |
+| Fresh reviewed PRs in the last 7 days | 4855 |
+| Proposed PR closes | 1333 (27.5% of reviewed PRs) |
+| Open items total | 18016 |
+| Reviewed files | 13707 |
+| Archived closed files | 1161 |
+| Fresh verified reviews in the last 7 days | 13707 |
+| Proposed closes awaiting apply | 5751 (42% of fresh reviews) |
+| Closed by Codex apply | 871 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 4529 |
+| Todo for weekly coverage | 4309 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#63533](https://github.com/openclaw/openclaw/issues/63533) | [Feature]: Agent 无明确边界的重复工具调用导致无限循环 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63533.md) | complete | Apr 24, 2026, 21:06 UTC |
-| [#63493](https://github.com/openclaw/openclaw/issues/63493) | message tool silently drops local file paths and external URLs in the media field | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63493.md) | complete | Apr 24, 2026, 21:06 UTC |
-| [#63496](https://github.com/openclaw/openclaw/issues/63496) | WhatsApp creds.json corruption every ~30 minutes (non-atomic write) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63496.md) | complete | Apr 24, 2026, 21:05 UTC |
-| [#63516](https://github.com/openclaw/openclaw/issues/63516) | [Bug]: Telegram polling stalls intermittently causing delayed/missed message delivery and heartbeat failures | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63516.md) | complete | Apr 24, 2026, 21:05 UTC |
-| [#63486](https://github.com/openclaw/openclaw/issues/63486) | [Bug]: Matrix interaction is unresponsive. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63486.md) | complete | Apr 24, 2026, 21:05 UTC |
-| [#63526](https://github.com/openclaw/openclaw/issues/63526) | OpenClaw 2026.4.9 - Gateway memory usage abnormally high | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63526.md) | complete | Apr 24, 2026, 21:04 UTC |
-| [#63476](https://github.com/openclaw/openclaw/issues/63476) | Image Tool returns \"no image\" when called from agent session — image data lost in tool invocation pipeline | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63476.md) | complete | Apr 24, 2026, 21:04 UTC |
-| [#63518](https://github.com/openclaw/openclaw/pull/63518) | feat(plugins): add inference-guard for single-slot collision prevention | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63518.md) | complete | Apr 24, 2026, 21:04 UTC |
-| [#63538](https://github.com/openclaw/openclaw/pull/63538) | docs(browser): prefer role refs for interactive actions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63538.md) | complete | Apr 24, 2026, 21:04 UTC |
-| [#63488](https://github.com/openclaw/openclaw/issues/63488) | [Bug]: ClawTalk WebSocket disconnect starves Slack Socket Mode event loop, causing stale-socket restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63488.md) | complete | Apr 24, 2026, 21:04 UTC |
-| [#63461](https://github.com/openclaw/openclaw/issues/63461) | [Bug]: openclaw message send --media not working from CLI (WhatsApp) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63461.md) | complete | Apr 24, 2026, 21:04 UTC |
-| [#63519](https://github.com/openclaw/openclaw/pull/63519) | fix: preserve threadId in announce target sessions.list fallback | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63519.md) | complete | Apr 24, 2026, 21:04 UTC |
-| [#63420](https://github.com/openclaw/openclaw/issues/63420) | Memory log (memory/YYYY-MM-DD.md) not generated since 4.8 upgrade — embedding API required but should not be | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63420.md) | complete | Apr 24, 2026, 21:03 UTC |
-| [#63503](https://github.com/openclaw/openclaw/pull/63503) | feat(plugins): add model-switch extension for local LLM backend switching | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63503.md) | complete | Apr 24, 2026, 21:03 UTC |
-| [#63530](https://github.com/openclaw/openclaw/pull/63530) | fix: harden session store recovery and gateway selection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63530.md) | complete | Apr 24, 2026, 21:03 UTC |
-| [#63536](https://github.com/openclaw/openclaw/pull/63536) | fix(session): prefer exact key match over freshest-updatedAt match | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63536.md) | complete | Apr 24, 2026, 21:03 UTC |
-| [#63478](https://github.com/openclaw/openclaw/issues/63478) | [Bug]: QQBot session stuck in running state after subagent spawn failure/timeout | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63478.md) | complete | Apr 24, 2026, 21:03 UTC |
-| [#63489](https://github.com/openclaw/openclaw/issues/63489) | [Bug] Cron isolated session first LLM call times out in 2026.4.2 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63489.md) | complete | Apr 24, 2026, 21:03 UTC |
-| [#63421](https://github.com/openclaw/openclaw/issues/63421) | [Bug] agents.list[].workspace has no effect on bootstrap injection or file tool CWD (v2026.3.14) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63421.md) | complete | Apr 24, 2026, 21:03 UTC |
-| [#63474](https://github.com/openclaw/openclaw/pull/63474) | fix(config): strip legacy installs/plugins from channel configs before validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63474.md) | complete | Apr 24, 2026, 21:03 UTC |
+| [#63847](https://github.com/openclaw/openclaw/pull/63847) | fix(cli): load plugins for memory commands so embedding providers register | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63847.md) | complete | Apr 24, 2026, 21:21 UTC |
+| [#63813](https://github.com/openclaw/openclaw/issues/63813) | [Bug]: | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63813.md) | complete | Apr 24, 2026, 21:21 UTC |
+| [#63820](https://github.com/openclaw/openclaw/issues/63820) | Daily session reset (mode=daily) does not fire for channel sessions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63820.md) | complete | Apr 24, 2026, 21:20 UTC |
+| [#63815](https://github.com/openclaw/openclaw/issues/63815) | npm package missing qa/ assets causes completion cache failure | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63815.md) | complete | Apr 24, 2026, 21:20 UTC |
+| [#63812](https://github.com/openclaw/openclaw/issues/63812) | WebUI skill toggle triggers stale schema validation error for tools.web.search | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63812.md) | complete | Apr 24, 2026, 21:19 UTC |
+| [#63851](https://github.com/openclaw/openclaw/issues/63851) | Groq audio transcription sends JSON instead of multipart/form-data (v2026.4.9) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63851.md) | complete | Apr 24, 2026, 21:19 UTC |
+| [#63805](https://github.com/openclaw/openclaw/issues/63805) | [Bug] Isolated cron agentTurn jobs with explicit timeoutSeconds still hard-killed at ~300s despite fix in v2026.4.9 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63805.md) | complete | Apr 24, 2026, 21:19 UTC |
+| [#63787](https://github.com/openclaw/openclaw/issues/63787) | QA scenario pack path resolution fails in completion command | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63787.md) | complete | Apr 24, 2026, 21:19 UTC |
+| [#63751](https://github.com/openclaw/openclaw/issues/63751) | [Bug]: models.mode: \"replace\" does not suppress Bedrock auto-discovered models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63751.md) | complete | Apr 24, 2026, 21:19 UTC |
+| [#63811](https://github.com/openclaw/openclaw/issues/63811) | [Bug]: Telegram Plugin Auto-Restart Loop in 2026.4.9 — Bot Receives Messages But Never Responds | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63811.md) | complete | Apr 24, 2026, 21:19 UTC |
+| [#63830](https://github.com/openclaw/openclaw/issues/63830) | Plugin services registered/loaded after runtime start may never receive host service.start() | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63830.md) | complete | Apr 24, 2026, 21:19 UTC |
+| [#63826](https://github.com/openclaw/openclaw/pull/63826) | security: fix HIGH/CRITICAL vulns in skill scanner, SSRF, hook priority, and token verification | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63826.md) | complete | Apr 24, 2026, 21:19 UTC |
+| [#63773](https://github.com/openclaw/openclaw/issues/63773) | Bug: Subagent session JSONL does not record token usage (usage fields always 0) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63773.md) | complete | Apr 24, 2026, 21:18 UTC |
+| [#63848](https://github.com/openclaw/openclaw/pull/63848) | fix: pass cfg to getMemoryEmbeddingProvider in memory-search resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63848.md) | complete | Apr 24, 2026, 21:18 UTC |
+| [#63786](https://github.com/openclaw/openclaw/pull/63786) | fix: restore Copilot replay sanitization and ACP thread guards | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63786.md) | complete | Apr 24, 2026, 21:18 UTC |
+| [#63806](https://github.com/openclaw/openclaw/pull/63806) | fix(exec): expand ~ in workdir and error on invalid path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63806.md) | complete | Apr 24, 2026, 21:18 UTC |
+| [#63794](https://github.com/openclaw/openclaw/pull/63794) | fix: repair missing bin symlink after npm global update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63794.md) | complete | Apr 24, 2026, 21:18 UTC |
+| [#63845](https://github.com/openclaw/openclaw/issues/63845) | Tool granularity vs server-side aggregation — best practices for high-count skills / tools (65+)? | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63845.md) | complete | Apr 24, 2026, 21:18 UTC |
+| [#63819](https://github.com/openclaw/openclaw/issues/63819) | [Bug]: Session stuck in \"running\" status persists in v2026.4.9 — phaseBeforeAbort fix no longer sufficient | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63819.md) | complete | Apr 24, 2026, 21:18 UTC |
+| [#63784](https://github.com/openclaw/openclaw/issues/63784) | Session lock file not released after LLM idle timeout (no gateway restart) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63784.md) | complete | Apr 24, 2026, 21:18 UTC |
 
 ## How It Works
 
