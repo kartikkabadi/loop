@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 05:32 UTC
+Last dashboard update: Apr 24, 2026, 05:46 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19098 |
-| Reviewed / proposed closes | 2586 / 1184 |
-| Reviewed files | 2586 |
-| Fresh verified reviews in the last 7 days | 2586 |
-| Proposed closes awaiting apply | 1184 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19093 |
+| Reviewed / proposed closes | 2786 / 1290 |
+| Reviewed files | 2786 |
+| Fresh verified reviews in the last 7 days | 2786 |
+| Proposed closes awaiting apply | 1290 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 16512 |
+| Todo for weekly coverage | 16307 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#40976](https://github.com/openclaw/openclaw/issues/40976) | Background exec completion may not auto-reply reliably in Telegram forum topics | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40976.md) | complete | Apr 24, 2026, 05:32 UTC |
-| [#40980](https://github.com/openclaw/openclaw/issues/40980) | [Bug]: Browser Relay extension overrides page color scheme (dark → light) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40980.md) | complete | Apr 24, 2026, 05:30 UTC |
-| [#40975](https://github.com/openclaw/openclaw/issues/40975) | [Bug]: Error: Unsafe fallback OpenClaw temp dir | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40975.md) | complete | Apr 24, 2026, 05:29 UTC |
-| [#40894](https://github.com/openclaw/openclaw/pull/40894) | Codex/fix 40880 media staging max bytes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40894.md) | complete | Apr 24, 2026, 05:29 UTC |
-| [#41014](https://github.com/openclaw/openclaw/issues/41014) | [Bug] 5-second fixed delay between pressing Enter and sending text to LLM (regression since v2026.2.26) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41014.md) | complete | Apr 24, 2026, 05:29 UTC |
-| [#40982](https://github.com/openclaw/openclaw/issues/40982) | feat: raise (or remove) 3-minute no-output watchdog cap on CLI requests | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40982.md) | complete | Apr 24, 2026, 05:29 UTC |
-| [#40899](https://github.com/openclaw/openclaw/pull/40899) | fix(discord): suppress leaked tool transcript blocks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40899.md) | complete | Apr 24, 2026, 05:29 UTC |
-| [#40960](https://github.com/openclaw/openclaw/issues/40960) | [Bug]: Chat page does not auto-refresh new messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40960.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#40991](https://github.com/openclaw/openclaw/issues/40991) | Telegram inbound video can degrade to <media:video> placeholder with no attachment and no error when getFile() fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40991.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#41025](https://github.com/openclaw/openclaw/pull/41025) | fix: render remote https/http images inline in Control UI chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41025.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#40992](https://github.com/openclaw/openclaw/pull/40992) | fix(acp): forward inbound media attachments through ACP topic binding turns | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40992.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#40952](https://github.com/openclaw/openclaw/issues/40952) | [Feature]: Slack statusReactions support (lifecycle reaction parity with Telegram/Discord) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40952.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#41019](https://github.com/openclaw/openclaw/issues/41019) | [Feature Request] Browser tool support headless mode | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41019.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#40962](https://github.com/openclaw/openclaw/issues/40962) | Google Chat channel: 'Cannot convert undefined or null to object' on typing indicator and message send | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40962.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#41013](https://github.com/openclaw/openclaw/pull/41013) | fix: strip leading <session-recap> blocks from user-visible messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41013.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#40949](https://github.com/openclaw/openclaw/pull/40949) | Fix: Telegram sendPayload oversized message crash | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40949.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#41020](https://github.com/openclaw/openclaw/issues/41020) | [Feature Request] Feishu message reactions (emoji responses) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41020.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#41004](https://github.com/openclaw/openclaw/issues/41004) | Telegram ACP mismatch: /acp spawn works in-topic, but sessions_spawn(runtime:\"acp\", thread:true) fails (child vs current placement) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41004.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#40986](https://github.com/openclaw/openclaw/issues/40986) | [Feature] Share memory between different sessions of the same agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40986.md) | complete | Apr 24, 2026, 05:28 UTC |
-| [#41027](https://github.com/openclaw/openclaw/pull/41027) | fix(discord): break resume loop on consecutive 1005 close failures | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41027.md) | complete | Apr 24, 2026, 05:28 UTC |
+| [#41355](https://github.com/openclaw/openclaw/issues/41355) | Discord: ThreadStarterBody re-injected on every turn (echo contamination) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41355.md) | complete | Apr 24, 2026, 05:45 UTC |
+| [#41277](https://github.com/openclaw/openclaw/pull/41277) | fix(gateway): run before_reset hooks for sessions.reset | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41277.md) | complete | Apr 24, 2026, 05:44 UTC |
+| [#41423](https://github.com/openclaw/openclaw/issues/41423) | [Bug]: Network drop leads to cascading sessions, leads to degraded gateway state | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41423.md) | complete | Apr 24, 2026, 05:44 UTC |
+| [#41353](https://github.com/openclaw/openclaw/issues/41353) | From @Krill: `openclaw gateway restart` should attempt bootstrap when plist exists but service isn’t loaded (macOS launchd) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41353.md) | complete | Apr 24, 2026, 05:44 UTC |
+| [#41410](https://github.com/openclaw/openclaw/pull/41410) | telegram: add forum topic deletion support to message delete action | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41410.md) | complete | Apr 24, 2026, 05:43 UTC |
+| [#41394](https://github.com/openclaw/openclaw/issues/41394) | [Feature]: add config validation mode (strict vs tolerant) for different operations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41394.md) | complete | Apr 24, 2026, 05:43 UTC |
+| [#41363](https://github.com/openclaw/openclaw/issues/41363) | Native Voice Input for Control UI (ChatGPT-style) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41363.md) | complete | Apr 24, 2026, 05:43 UTC |
+| [#41369](https://github.com/openclaw/openclaw/issues/41369) | [Bug]: \"Update now\" button does not work | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41369.md) | complete | Apr 24, 2026, 05:43 UTC |
+| [#41397](https://github.com/openclaw/openclaw/issues/41397) | voice-call: initial message uses Twilio <Say> fallback instead of ElevenLabs when media stream not yet active | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41397.md) | complete | Apr 24, 2026, 05:43 UTC |
+| [#41408](https://github.com/openclaw/openclaw/pull/41408) | Retry LanceDB initialization after failures | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41408.md) | complete | Apr 24, 2026, 05:43 UTC |
+| [#41375](https://github.com/openclaw/openclaw/pull/41375) | fix(hooks): deliver internal hook replies on replyable surfaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41375.md) | complete | Apr 24, 2026, 05:43 UTC |
+| [#41372](https://github.com/openclaw/openclaw/issues/41372) | Field Report: 25 findings from 4 weeks of self-hosted production use (config crashes, CLI docs, Discord, cron) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41372.md) | complete | Apr 24, 2026, 05:42 UTC |
+| [#41389](https://github.com/openclaw/openclaw/pull/41389) | fix(memory-lancedb): clear cached rejected promise on import failure | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41389.md) | complete | Apr 24, 2026, 05:42 UTC |
+| [#41412](https://github.com/openclaw/openclaw/issues/41412) | write tool rejects symlinks with 'sandbox root' error even when sandbox: off | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41412.md) | complete | Apr 24, 2026, 05:42 UTC |
+| [#41382](https://github.com/openclaw/openclaw/pull/41382) | docs(plugins): add Memory-Munch to community plugin list | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41382.md) | complete | Apr 24, 2026, 05:42 UTC |
+| [#41434](https://github.com/openclaw/openclaw/pull/41434) | Bootstrap unloaded launchd gateway on restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41434.md) | complete | Apr 24, 2026, 05:42 UTC |
+| [#41416](https://github.com/openclaw/openclaw/pull/41416) | feat(chutes): add OAuth and API key authentication for Chutes provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41416.md) | complete | Apr 24, 2026, 05:42 UTC |
+| [#41350](https://github.com/openclaw/openclaw/pull/41350) | fix(security): detect Gemini/Grok/Kimi env-var web search keys in audit | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41350.md) | complete | Apr 24, 2026, 05:42 UTC |
+| [#41403](https://github.com/openclaw/openclaw/pull/41403) | docs: define hook surface ownership and middleware guidance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41403.md) | complete | Apr 24, 2026, 05:42 UTC |
+| [#41420](https://github.com/openclaw/openclaw/pull/41420) | fix(discord): Discord WebSocket disconnects every 10-35 minutes conti… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41420.md) | complete | Apr 24, 2026, 05:42 UTC |
 
 ## How It Works
 
