@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 19:14 UTC
+Last dashboard update: Apr 24, 2026, 19:30 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12151 |
-| Fresh reviewed issues in the last 7 days | 8765 |
-| Proposed issue closes | 4843 (55.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6600 |
-| Fresh reviewed PRs in the last 7 days | 4632 |
-| Proposed PR closes | 1420 (30.7% of reviewed PRs) |
-| Open items total | 18751 |
-| Reviewed files | 13397 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12044 |
+| Fresh reviewed issues in the last 7 days | 8921 |
+| Proposed issue closes | 4937 (55.3% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6583 |
+| Fresh reviewed PRs in the last 7 days | 4676 |
+| Proposed PR closes | 1437 (30.7% of reviewed PRs) |
+| Open items total | 18627 |
+| Reviewed files | 13597 |
 | Archived closed files | 182 |
-| Fresh verified reviews in the last 7 days | 13397 |
-| Proposed closes awaiting apply | 6263 (46.7% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 13597 |
+| Proposed closes awaiting apply | 6374 (46.9% of fresh reviews) |
 | Closed by Codex apply | 170 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 5354 |
+| Todo for weekly coverage | 5030 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#61617](https://github.com/openclaw/openclaw/issues/61617) | Bug: Cron scheduler triggers duplicate executions for the same job | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61617.md) | complete | Apr 24, 2026, 19:14 UTC |
-| [#61628](https://github.com/openclaw/openclaw/issues/61628) | [Feature]: Website interaction | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61628.md) | complete | Apr 24, 2026, 19:13 UTC |
-| [#61622](https://github.com/openclaw/openclaw/issues/61622) | [Bug]: No circuit breaker for model_cooldown — session retries indefinitely against hours-long cooldown | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61622.md) | complete | Apr 24, 2026, 19:13 UTC |
-| [#61633](https://github.com/openclaw/openclaw/issues/61633) | Fix cron isolated runs stuck in \"running\" causing unbounded session accumulation and gateway OOM crash loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61633.md) | complete | Apr 24, 2026, 19:13 UTC |
-| [#61653](https://github.com/openclaw/openclaw/issues/61653) | [Bug]: # Bug Report: exec approval 的命令哈希机制导致 allow-always 无法有效覆盖常用命令 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61653.md) | complete | Apr 24, 2026, 19:12 UTC |
-| [#61668](https://github.com/openclaw/openclaw/issues/61668) | Native reply-dispatch path lacks universal pre-send structured-output validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61668.md) | complete | Apr 24, 2026, 19:12 UTC |
-| [#61602](https://github.com/openclaw/openclaw/pull/61602) | docs: add Japanese translations and new documentation for various fea… | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61602.md) | complete | Apr 24, 2026, 19:12 UTC |
-| [#61618](https://github.com/openclaw/openclaw/pull/61618) | fix(win): re-enable native jiti loading for dist .js to prevent dual module instances | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61618.md) | complete | Apr 24, 2026, 19:12 UTC |
-| [#61667](https://github.com/openclaw/openclaw/issues/61667) | [Bug]: Exact command hashing in `exec` approvals renders `allow-always` ineffective for dynamic commands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61667.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61632](https://github.com/openclaw/openclaw/issues/61632) | iMessage channel shows as unavailable despite being enabled | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61632.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61625](https://github.com/openclaw/openclaw/pull/61625) | voice-call: make agent ID configurable instead of hardcoding main | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61625.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61659](https://github.com/openclaw/openclaw/issues/61659) | [Feature]: Distribute ready-to-use Desktop Installers (.dmg / .exe) via GitHub Releases | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61659.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61549](https://github.com/openclaw/openclaw/issues/61549) | [Bug] CLI fallback constructs MCP config path from cron task prompt string (2026.4.2) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61549.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61616](https://github.com/openclaw/openclaw/issues/61616) | [Bug]: [WSL2] Global 30-min gateway stall (:29/:59) affects Telegram + Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61616.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61606](https://github.com/openclaw/openclaw/pull/61606) | [Phase 1] 工具并发执行、Microcompact 和 Autocompact 改进 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61606.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61615](https://github.com/openclaw/openclaw/issues/61615) | AGENTS.md: outdated gateway launch mechanism docs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61615.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61623](https://github.com/openclaw/openclaw/pull/61623) | fix: clean up seqByRun entries when agent runs end | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61623.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61539](https://github.com/openclaw/openclaw/issues/61539) | bug: failed/errored ACP sessions not evicted from concurrent session count | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61539.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61532](https://github.com/openclaw/openclaw/pull/61532) | Lint: enable bundled extension linting incrementally | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61532.md) | complete | Apr 24, 2026, 19:11 UTC |
-| [#61612](https://github.com/openclaw/openclaw/pull/61612) | perf(cli): add help fast path for built-in and plugin subcommands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61612.md) | complete | Apr 24, 2026, 19:11 UTC |
+| [#62031](https://github.com/openclaw/openclaw/issues/62031) | [Bug]: Telegram channel fails to initialize after gateway restart - silent failure | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62031.md) | complete | Apr 24, 2026, 19:30 UTC |
+| [#62051](https://github.com/openclaw/openclaw/issues/62051) | v2026.4.5 regression: worker processes load all plugins, causing CPU saturation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62051.md) | complete | Apr 24, 2026, 19:29 UTC |
+| [#62017](https://github.com/openclaw/openclaw/issues/62017) | Heartbeat agent ignores its own fallback chain, uses agents.defaults.model.fallbacks instead | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62017.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#62020](https://github.com/openclaw/openclaw/issues/62020) | conversation_messages table missing parent_message_id column (gateway crashes on every message) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62020.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#62054](https://github.com/openclaw/openclaw/issues/62054) | Subagent announce silently drops results after retry exhaustion | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62054.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#61994](https://github.com/openclaw/openclaw/issues/61994) | [Feishu] Group chat session abnormally ends (status: done) causing no response to group messages, DM works fine | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61994.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#62047](https://github.com/openclaw/openclaw/issues/62047) | [Bug]: fallover loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62047.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#61993](https://github.com/openclaw/openclaw/issues/61993) | [Docs]: Document valid `models.providers.<name>.api` format options and baseUrl behavior | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61993.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#61992](https://github.com/openclaw/openclaw/issues/61992) | [Feature] Make typing indicator timeout configurable by users | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61992.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#61958](https://github.com/openclaw/openclaw/issues/61958) | CLI crashes with ERR_INTERNAL_ASSERTION at loadChannelConfigSurfaceModuleSync in v2026.4.5 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61958.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#62046](https://github.com/openclaw/openclaw/issues/62046) | Discord: intents.messageContent config key missing — Message Content Intent not requestable | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62046.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#62026](https://github.com/openclaw/openclaw/issues/62026) | [MCP] Process pool lifecycle bug: uvx minimax-coding-plan-mcp processes never cleaned up, causing memory leak (88 processes, ~6GB) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62026.md) | complete | Apr 24, 2026, 19:28 UTC |
+| [#62024](https://github.com/openclaw/openclaw/issues/62024) | [Bug]: Discord cron delivery fix — 2026-04-02 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62024.md) | complete | Apr 24, 2026, 19:27 UTC |
+| [#62036](https://github.com/openclaw/openclaw/issues/62036) | Telegram messages truncated/split incorrectly in forum topics | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62036.md) | complete | Apr 24, 2026, 19:27 UTC |
+| [#62042](https://github.com/openclaw/openclaw/issues/62042) | Slack proactive DM delivery fails while direct chat.postMessage to user ID succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62042.md) | complete | Apr 24, 2026, 19:27 UTC |
+| [#62055](https://github.com/openclaw/openclaw/issues/62055) | Windows: CLI crashes with stack overflow / heap OOM on v2026.4.5 (large ESM module graph exceeds V8 default stack) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62055.md) | complete | Apr 24, 2026, 19:27 UTC |
+| [#61997](https://github.com/openclaw/openclaw/issues/61997) | LM Studio local model timeout with Invalid type for input error | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61997.md) | complete | Apr 24, 2026, 19:27 UTC |
+| [#62049](https://github.com/openclaw/openclaw/issues/62049) | [Bug]: False-positive \"plugins.allow is empty\" warning in openclaw status (2026.4.5) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62049.md) | complete | Apr 24, 2026, 19:27 UTC |
+| [#62041](https://github.com/openclaw/openclaw/issues/62041) | Possible regression: less explicit prompt/tooling guidance may increase wrong media-send tool choice in v2026.4.5 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62041.md) | complete | Apr 24, 2026, 19:27 UTC |
+| [#62048](https://github.com/openclaw/openclaw/pull/62048) | fix: use dist/extensions for OPENCLAW_BUNDLED_PLUGINS_DIR to fix Node 24 crash | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62048.md) | complete | Apr 24, 2026, 19:27 UTC |
 
 ## How It Works
 
