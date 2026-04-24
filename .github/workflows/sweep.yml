@@ -15,6 +15,10 @@ on:
         description: "Maximum existing proposed items to close in apply-existing mode"
         required: false
         default: "20"
+      apply_min_age_days:
+        description: "Minimum item age in days before apply-existing can close it"
+        required: false
+        default: "30"
       batch_size:
         description: "Items per worker job"
         required: false
@@ -298,8 +302,10 @@ jobs:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
           limit="${{ github.event.inputs.apply_limit || '20' }}"
+          min_age_days="${{ github.event.inputs.apply_min_age_days || '30' }}"
           npm run apply-decisions -- \
             --limit "$limit" \
+            --min-age-days "$min_age_days" \
             --processed-limit "$((limit * 2))" \
             --skip-dashboard
 

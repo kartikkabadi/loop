@@ -355,6 +355,13 @@ function isMaintainerAuthored(item: Pick<Item, "authorAssociation">): boolean {
   return isMaintainerAuthorAssociation(item.authorAssociation);
 }
 
+function isOlderThanDays(isoTimestamp: string, days: number, now = Date.now()): boolean {
+  if (days <= 0) return true;
+  const timestamp = Date.parse(isoTimestamp);
+  if (!Number.isFinite(timestamp)) return false;
+  return now - timestamp > days * 24 * 60 * 60 * 1000;
+}
+
 function compactSlice<T>(items: T[], limit: number): unknown[] {
   if (items.length <= limit) return items as unknown[];
   const keepStart = Math.floor(limit / 2);
@@ -1580,6 +1587,7 @@ function applyDecisionsCommand(args: Args): void {
   const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
   const limit = numberArg(args.limit, 20);
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
+  const minAgeDays = numberArg(args.min_age_days, 30);
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
   let closedCount = 0;
@@ -1631,6 +1639,16 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     const { item, state } = fetchItem(number);
+    if (!isOlderThanDays(item.createdAt, minAgeDays)) {
+      results.push({
+        number,
+        action: "kept_open",
+        reason: `created less than or equal to ${minAgeDays} days ago`,
+      });
+      processedCount += 1;
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
     const currentAuthorAssociation = normalizeAuthorAssociation(item.authorAssociation);
     const reviewedAuthorAssociation = normalizeAuthorAssociation(storedAuthorAssociation);
     if (
