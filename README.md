@@ -14,18 +14,18 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 00:41 UTC
+Last dashboard update: Apr 24, 2026, 00:43 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19148 |
-| Reviewed / proposed closes | 73 / 32 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19149 |
+| Reviewed / proposed closes | 20 / 10 |
 | Reviewed files | 73 |
-| Fresh verified reviews in the last 7 days | 73 |
-| Proposed closes awaiting apply | 32 |
+| Fresh verified reviews in the last 7 days | 20 |
+| Proposed closes awaiting apply | 10 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 19075 |
+| Todo for weekly coverage | 19129 |
 
 Recently reviewed:
 
@@ -79,8 +79,8 @@ Requires Node 24.
 source ~/.profile
 npm install
 npm run build
-npm run plan -- --batch-size 2 --shard-count 10 --max-pages 250 --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast
-npm run review -- --openclaw-dir ../openclaw --batch-size 2 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 600000
+npm run plan -- --batch-size 20 --shard-count 10 --max-pages 250 --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast
+npm run review -- --openclaw-dir ../openclaw --batch-size 20 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 600000
 npm run apply-artifacts -- --artifact-dir artifacts/reviews
 ```
 

@@ -16,9 +16,9 @@ on:
         required: false
         default: "20"
       batch_size:
-        description: "Items per shard"
+        description: "Items per worker job"
         required: false
-        default: "2"
+        default: "20"
       codex_timeout_ms:
         description: "Per-item Codex timeout in milliseconds"
         required: false
@@ -78,7 +78,7 @@ jobs:
         run: |
           {
             echo "apply_closures=${{ github.event.inputs.apply_closures || 'false' }}"
-            echo "batch_size=${{ github.event.inputs.batch_size || '2' }}"
+            echo "batch_size=${{ github.event.inputs.batch_size || '20' }}"
             echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '600000' }}"
           } >> "$GITHUB_OUTPUT"
 
@@ -86,7 +86,7 @@ jobs:
         working-directory: clawsweeper
         env:
           SHARD_COUNT: ${{ github.event.inputs.shard_count || '10' }}
-          BATCH_SIZE: ${{ github.event.inputs.batch_size || '2' }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size || '20' }}
           ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
@@ -115,7 +115,7 @@ jobs:
   review:
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:

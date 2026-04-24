@@ -490,8 +490,7 @@ function isFresh(
   currentReviewPolicy?: string,
 ): boolean {
   if (review?.reviewStatus !== "complete") return false;
-  if (review.reviewPolicy && currentReviewPolicy && review.reviewPolicy !== currentReviewPolicy)
-    return false;
+  if (currentReviewPolicy && review.reviewPolicy !== currentReviewPolicy) return false;
   if (!review?.reviewedAt) return false;
   const reviewedAt = Date.parse(review.reviewedAt);
   if (!Number.isFinite(reviewedAt)) return false;
@@ -1176,7 +1175,7 @@ ${options.action.closeComment ? options.action.closeComment : "_No close comment
 
 function planCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
-  const batchSize = numberArg(args.batch_size, 2);
+  const batchSize = numberArg(args.batch_size, 20);
   const maxPages = numberArg(args.max_pages, 250);
   const shardCount = numberArg(args.shard_count, 10);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
@@ -1213,7 +1212,7 @@ function reviewCommand(args: Args): void {
   const openclawDir = resolve(stringArg(args.openclaw_dir, "../openclaw"));
   const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts/reviews"));
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
-  const batchSize = numberArg(args.batch_size, 4);
+  const batchSize = numberArg(args.batch_size, 20);
   const maxPages = numberArg(args.max_pages, 250);
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
@@ -1314,11 +1313,20 @@ function applyDecisionsCommand(args: Args): void {
     const action = frontMatterValue(markdown, "action_taken");
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
+    const storedReviewPolicy = frontMatterValue(markdown, "review_policy");
     if (!hasVerifiedLocalCheckoutAccess(markdown)) {
       results.push({
         number,
         action: "kept_open",
         reason: "review lacks verified local checkout access",
+      });
+      continue;
+    }
+    if (storedReviewPolicy !== reviewPolicyHash({})) {
+      results.push({
+        number,
+        action: "kept_open",
+        reason: "review policy changed; rerun review first",
       });
       continue;
     }
@@ -1422,14 +1430,12 @@ function dashboardStats(itemsDir: string): {
     const reviewStatus = effectiveReviewStatus(markdown);
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     const decision = frontMatterValue(markdown, "decision") ?? "unknown";
-    if (
-      isFresh(
-        { reviewedAt, reviewStatus, reviewPolicy: frontMatterValue(markdown, "review_policy") },
-        currentReviewPolicy,
-      )
-    )
-      fresh += 1;
-    if (decision === "close" && action === "proposed_close") proposedClose += 1;
+    const freshReview = isFresh(
+      { reviewedAt, reviewStatus, reviewPolicy: frontMatterValue(markdown, "review_policy") },
+      currentReviewPolicy,
+    );
+    if (freshReview) fresh += 1;
+    if (freshReview && decision === "close" && action === "proposed_close") proposedClose += 1;
     if (action === "closed") closed += 1;
     if (reviewStatus === "failed") failed += 1;
     if (reviewStatus.startsWith("stale_")) stale += 1;
@@ -1480,7 +1486,7 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 | Metric | Count |
 | --- | ---: |
 | Open items in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.openTotal} |
-| Reviewed / proposed closes | ${stats.files} / ${stats.proposedClose} |
+| Reviewed / proposed closes | ${stats.fresh} / ${stats.proposedClose} |
 | Reviewed files | ${stats.files} |
 | Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
 | Proposed closes awaiting apply | ${stats.proposedClose} |
