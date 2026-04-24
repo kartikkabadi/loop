@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 08:49 UTC
+Last dashboard update: Apr 24, 2026, 09:02 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12521 |
-| Fresh reviewed issues in the last 7 days | 3610 |
-| Proposed issue closes | 1961 (54.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6583 |
-| Fresh reviewed PRs in the last 7 days | 1776 |
-| Proposed PR closes | 609 (34.3% of reviewed PRs) |
-| Open items total | 19104 |
-| Reviewed files | 5386 |
-| Fresh verified reviews in the last 7 days | 5386 |
-| Proposed closes awaiting apply | 2570 (47.7% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12522 |
+| Fresh reviewed issues in the last 7 days | 3731 |
+| Proposed issue closes | 2036 (54.6% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6588 |
+| Fresh reviewed PRs in the last 7 days | 1855 |
+| Proposed PR closes | 639 (34.4% of reviewed PRs) |
+| Open items total | 19110 |
+| Reviewed files | 5586 |
+| Fresh verified reviews in the last 7 days | 5586 |
+| Proposed closes awaiting apply | 2675 (47.9% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 13718 |
+| Todo for weekly coverage | 13524 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#46273](https://github.com/openclaw/openclaw/issues/46273) | [Bug] GLM-5 Image Recognition Broken After 2026.3.12 Update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46273.md) | complete | Apr 24, 2026, 08:48 UTC |
-| [#46261](https://github.com/openclaw/openclaw/issues/46261) | [Feature]: Integrate pi-multi-pass | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46261.md) | complete | Apr 24, 2026, 08:46 UTC |
-| [#46351](https://github.com/openclaw/openclaw/issues/46351) | [Feature]: Per-Agent Discord Webhook Reply Override | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46351.md) | complete | Apr 24, 2026, 08:46 UTC |
-| [#46267](https://github.com/openclaw/openclaw/issues/46267) | [Bug] Secondary Effect of Account Hijack - Multiple agents respond to single @mention | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46267.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46298](https://github.com/openclaw/openclaw/issues/46298) | sessions_yield terminates isolated cron sessions instead of waiting for next turn | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46298.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46309](https://github.com/openclaw/openclaw/issues/46309) | [Bug]: model fallback doesn't work at all. also this can break long tasks from running. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46309.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46320](https://github.com/openclaw/openclaw/pull/46320) | fix: validate parent dir realpath on Windows before new file creation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46320.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46317](https://github.com/openclaw/openclaw/issues/46317) | [Feature]: Pre prompt Rag Hook | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46317.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46254](https://github.com/openclaw/openclaw/issues/46254) | [Bug] Subagent Docker containers not auto-removed after completion, causing maxConcurrent slot exhaustion | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46254.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46342](https://github.com/openclaw/openclaw/pull/46342) | fix: add defense-in-depth sanitization to MEDIA directive parsing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46342.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46302](https://github.com/openclaw/openclaw/issues/46302) | Feature request: expose registerInternalHook / clearBootstrapSnapshot via plugin SDK for bootstrap hot-reload | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46302.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46165](https://github.com/openclaw/openclaw/pull/46165) | fix(dispatch): send fallback reply when agent produces zero responses (closes #32903) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46165.md) | complete | Apr 24, 2026, 08:45 UTC |
-| [#46326](https://github.com/openclaw/openclaw/issues/46326) | Audio transcription stopped working after update to 2026.3.12/3.13 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46326.md) | complete | Apr 24, 2026, 08:44 UTC |
-| [#46156](https://github.com/openclaw/openclaw/pull/46156) | fix: show provider/model format in /model command suggestions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46156.md) | complete | Apr 24, 2026, 08:44 UTC |
-| [#46282](https://github.com/openclaw/openclaw/issues/46282) | [Bug]: Telegram media download uses native fetch instead of proxy-aware fetch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46282.md) | complete | Apr 24, 2026, 08:44 UTC |
-| [#46258](https://github.com/openclaw/openclaw/pull/46258) | Add Telegram ack reaction timing control | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46258.md) | complete | Apr 24, 2026, 08:44 UTC |
-| [#46274](https://github.com/openclaw/openclaw/issues/46274) | [Feature]: Support WeChat Official Account (微信公众号) Integration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46274.md) | complete | Apr 24, 2026, 08:44 UTC |
-| [#46311](https://github.com/openclaw/openclaw/pull/46311) | fix: block JVM/.NET/Rust/Ansible env vars in host exec blocklist | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46311.md) | complete | Apr 24, 2026, 08:44 UTC |
-| [#46297](https://github.com/openclaw/openclaw/issues/46297) | Feature: Suppress typing indicator when message matches hold pattern | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46297.md) | complete | Apr 24, 2026, 08:44 UTC |
-| [#46268](https://github.com/openclaw/openclaw/pull/46268) | fix(feishu): preserve read tool image paths for auto-reply media | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46268.md) | complete | Apr 24, 2026, 08:44 UTC |
+| [#46768](https://github.com/openclaw/openclaw/issues/46768) | Orchestrator sessions go idle after spawning sub-agents — no progress updates without manual ping | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46768.md) | complete | Apr 24, 2026, 09:01 UTC |
+| [#46740](https://github.com/openclaw/openclaw/pull/46740) | ACP: classify silent acpx exits as backend unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46740.md) | complete | Apr 24, 2026, 09:01 UTC |
+| [#46738](https://github.com/openclaw/openclaw/pull/46738) | fix: pass Anthropic cache control TTL through Cloudflare AI Gateway | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46738.md) | complete | Apr 24, 2026, 09:01 UTC |
+| [#46741](https://github.com/openclaw/openclaw/pull/46741) | fix: defer sessions_yield announce until concurrent tool executions settle | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46741.md) | complete | Apr 24, 2026, 09:01 UTC |
+| [#46772](https://github.com/openclaw/openclaw/issues/46772) | Doctor fabricates phantom accounts.default in multi-account Telegram config even with no top-level fields | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46772.md) | complete | Apr 24, 2026, 09:01 UTC |
+| [#46769](https://github.com/openclaw/openclaw/issues/46769) | Gateway RPC timeout causes intermittent `openclaw cron list` failures (1000 normal closure) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46769.md) | complete | Apr 24, 2026, 09:01 UTC |
+| [#46713](https://github.com/openclaw/openclaw/pull/46713) | fix(exec): fail closed for effective sandbox host | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46713.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46746](https://github.com/openclaw/openclaw/pull/46746) | fix(cron): enforce agent tool deny list at execution time | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46746.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46723](https://github.com/openclaw/openclaw/issues/46723) | Feishu: text content lost when sending image+text mixed message in group chat | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46723.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46717](https://github.com/openclaw/openclaw/issues/46717) | Gemini provider: function_response.name empty on session replay → 400 INVALID_ARGUMENT | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46717.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46765](https://github.com/openclaw/openclaw/pull/46765) | fix: map reasoning_effort minimal to low for NIM/vLLM | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46765.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46751](https://github.com/openclaw/openclaw/issues/46751) | [Feature]:Prevent clicks on occluded elements (Z-Index/Overlays) to resolve Action-State Hallucinations | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46751.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46736](https://github.com/openclaw/openclaw/issues/46736) | [Bug]: WebChat Message Injection | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46736.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46720](https://github.com/openclaw/openclaw/pull/46720) | docs(feishu): update permissions docs from official Lark guidance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46720.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46727](https://github.com/openclaw/openclaw/pull/46727) | fix(feishu): prevent duplicate streaming cards via synchronous re-entry guard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46727.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46666](https://github.com/openclaw/openclaw/pull/46666) | fix: check interactiveReplies instead of inlineButtons in Slack system prompt | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46666.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46755](https://github.com/openclaw/openclaw/pull/46755) | feat(telegram): expose apiRoot config for custom Bot API server | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46755.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46742](https://github.com/openclaw/openclaw/pull/46742) | [AI-assisted] Plugins: keep read-only loads from replacing the active runtime registry | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46742.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46748](https://github.com/openclaw/openclaw/issues/46748) | OpenClaw logs display UTC time instead of local timezone | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46748.md) | complete | Apr 24, 2026, 09:00 UTC |
+| [#46671](https://github.com/openclaw/openclaw/issues/46671) | [Bug] memory_search returns empty results in 2026.3.13 (regression from #29112 fix) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46671.md) | complete | Apr 24, 2026, 08:59 UTC |
 
 ## How It Works
 
