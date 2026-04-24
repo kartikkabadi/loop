@@ -1191,20 +1191,14 @@ function renderCloseComment(options: {
   reviewLine: string;
 }): string {
   const evidence = options.evidence.slice(0, 6).map(closeEvidenceLine);
-  return [
-    closeIntro(options.reason),
-    "",
-    sentence(options.summary),
-    "",
-    evidence.length ? "What I checked:" : "",
-    ...evidence,
-    "",
-    closeOutro(options.reason),
-    "",
-    options.reviewLine,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  const lines = [closeIntro(options.reason), "", sentence(options.summary)];
+  if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
+
+  const outro = closeOutro(options.reason);
+  if (outro) lines.push("", outro);
+  if (options.reviewLine) lines.push("", options.reviewLine);
+
+  return lines.join("\n");
 }
 
 function renderCloseCommentFromReport(markdown: string, reason: CloseReason): string {
