@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 03:39 UTC
+Last dashboard update: Apr 24, 2026, 03:52 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19148 |
-| Reviewed / proposed closes | 1286 / 569 |
-| Reviewed files | 1286 |
-| Fresh verified reviews in the last 7 days | 1286 |
-| Proposed closes awaiting apply | 569 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19152 |
+| Reviewed / proposed closes | 1386 / 615 |
+| Reviewed files | 1386 |
+| Fresh verified reviews in the last 7 days | 1386 |
+| Proposed closes awaiting apply | 615 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 17862 |
+| Todo for weekly coverage | 17766 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#37857](https://github.com/openclaw/openclaw/issues/37857) | feishu-plugin-onboard doctor --fix disables most stock plugins (OpenClaw 2026.3.2) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37857.md) | complete | Apr 24, 2026, 03:39 UTC |
-| [#37914](https://github.com/openclaw/openclaw/pull/37914) | fix(gateway): retry transient local rpc closes during startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37914.md) | complete | Apr 24, 2026, 03:39 UTC |
-| [#37930](https://github.com/openclaw/openclaw/pull/37930) | fix(cron): fsync store writes across rename/copy durability windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37930.md) | complete | Apr 24, 2026, 03:38 UTC |
-| [#37856](https://github.com/openclaw/openclaw/pull/37856) | [codex] Surface google-gemini-cli provider stalls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37856.md) | complete | Apr 24, 2026, 03:38 UTC |
-| [#37865](https://github.com/openclaw/openclaw/issues/37865) | [Bug]: TUI and web UI: streaming text does not actually stream when using tools, it only shows up when finalized | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37865.md) | complete | Apr 24, 2026, 03:38 UTC |
-| [#37898](https://github.com/openclaw/openclaw/pull/37898) | fix(discord): ignore synthetic thread starter messages in text-channel threads | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37898.md) | complete | Apr 24, 2026, 03:38 UTC |
-| [#37869](https://github.com/openclaw/openclaw/issues/37869) | [Bug] ACP/acpx session accepted but never closes the loop; no history, no announce, no stream log | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37869.md) | complete | Apr 24, 2026, 03:38 UTC |
-| [#37892](https://github.com/openclaw/openclaw/pull/37892) | fix(telegram): suppress bare Reasoning: prefix leak during Gemini streaming | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37892.md) | complete | Apr 24, 2026, 03:38 UTC |
-| [#37904](https://github.com/openclaw/openclaw/pull/37904) | fix(reply): suppress JSON/channelData NO_REPLY action payloads | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37904.md) | complete | Apr 24, 2026, 03:38 UTC |
-| [#37874](https://github.com/openclaw/openclaw/issues/37874) | TUI incorrectly tags messages with channel: telegram causing cross-delivery | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37874.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37907](https://github.com/openclaw/openclaw/issues/37907) | Mutating tool warning fires even when agent successfully recovered in the same turn | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37907.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37847](https://github.com/openclaw/openclaw/pull/37847) | feat(cron): support 'default' as special model value for runtime resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37847.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37885](https://github.com/openclaw/openclaw/pull/37885) | feat: add cron event support to Internal Hooks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37885.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37863](https://github.com/openclaw/openclaw/pull/37863) | fix(sessions): preserve idle reset timestamp in updateLastRoute | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37863.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37855](https://github.com/openclaw/openclaw/issues/37855) | [Feature]: Extend Internal Hooks to support cron lifecycle events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37855.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37846](https://github.com/openclaw/openclaw/issues/37846) | EROFS: Isolated cron session sandbox tries to write /file.lock at root (read-only), crashes before script executes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37846.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37913](https://github.com/openclaw/openclaw/issues/37913) | [Bug]: Chrome extension relay: tab not found when using remote gateway + macOS node proxy (browser.proxy) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/37913.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37813](https://github.com/openclaw/openclaw/issues/37813) | [Bug]: Unrecognised model IDs silently fall back to primary default — bypasses configured fallback chain and tool permissions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37813.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37834](https://github.com/openclaw/openclaw/issues/37834) | Session context corruption: orphaned tool_use ID causes permanent 400 loop after abort | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37834.md) | complete | Apr 24, 2026, 03:37 UTC |
-| [#37833](https://github.com/openclaw/openclaw/issues/37833) | Feature Request: `agent:turn:end` internal hook event | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37833.md) | complete | Apr 24, 2026, 03:36 UTC |
+| [#38307](https://github.com/openclaw/openclaw/issues/38307) | BlueBubbles: periodic stale-socket restarts correlate with inbound gaps (multi-account on macOS 26.3) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38307.md) | complete | Apr 24, 2026, 03:52 UTC |
+| [#38272](https://github.com/openclaw/openclaw/issues/38272) | Discord Thread Session Binding Not Working | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38272.md) | complete | Apr 24, 2026, 03:51 UTC |
+| [#38298](https://github.com/openclaw/openclaw/issues/38298) | [Bug]: Config hot-reload corrupts provider adapter state — persistent 404 until gateway restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38298.md) | complete | Apr 24, 2026, 03:51 UTC |
+| [#38309](https://github.com/openclaw/openclaw/issues/38309) | feat: support SecretRef in sandbox.docker.env | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38309.md) | complete | Apr 24, 2026, 03:51 UTC |
+| [#38291](https://github.com/openclaw/openclaw/issues/38291) | bug(gemini/replies): user-visible paths can leak raw reasoning/tagged text after tool use; cleaned final payload and stored transcript diverge | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38291.md) | complete | Apr 24, 2026, 03:51 UTC |
+| [#38274](https://github.com/openclaw/openclaw/pull/38274) | Plugins: parse version spec in update command | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38274.md) | complete | Apr 24, 2026, 03:50 UTC |
+| [#38273](https://github.com/openclaw/openclaw/issues/38273) | [Bug] Gemini 3.1-pro-preview returns \"Unknown model\" / 404 in 2026.3.2 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38273.md) | complete | Apr 24, 2026, 03:50 UTC |
+| [#38313](https://github.com/openclaw/openclaw/issues/38313) | [Feature]: Can I set multiple LLM model under Openclaw | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38313.md) | complete | Apr 24, 2026, 03:50 UTC |
+| [#38275](https://github.com/openclaw/openclaw/issues/38275) | Feature: per-topic model overrides in channels.telegram.groups.*.topics.* | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38275.md) | complete | Apr 24, 2026, 03:50 UTC |
+| [#38310](https://github.com/openclaw/openclaw/pull/38310) | feat(secrets): support SecretRef in sandbox.docker.env | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38310.md) | complete | Apr 24, 2026, 03:50 UTC |
+| [#38303](https://github.com/openclaw/openclaw/pull/38303) | fix(gateway): reduce agent timeout and add stuck session auto-recovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38303.md) | complete | Apr 24, 2026, 03:50 UTC |
+| [#38262](https://github.com/openclaw/openclaw/issues/38262) | [Bug]: session.resetByChannel does not reset Discord channel sessions (updatedAt pre-bumped before freshness check) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38262.md) | complete | Apr 24, 2026, 03:49 UTC |
+| [#38223](https://github.com/openclaw/openclaw/issues/38223) | [Bug]: WebUI displays \"No output\" for all tool results even though stdout contains data | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38223.md) | complete | Apr 24, 2026, 03:49 UTC |
+| [#38280](https://github.com/openclaw/openclaw/issues/38280) | Feature Request: Programmatic tool calling from workspace scripts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38280.md) | complete | Apr 24, 2026, 03:49 UTC |
+| [#38260](https://github.com/openclaw/openclaw/issues/38260) | [Bug]: openclaw-gateway crashes with SIGILL (invalid opcode) in libvips-cpp during webchat image-flow repro | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38260.md) | complete | Apr 24, 2026, 03:49 UTC |
+| [#38231](https://github.com/openclaw/openclaw/issues/38231) | Feature Request: Restore recursive skill scanning for better skill organization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38231.md) | complete | Apr 24, 2026, 03:49 UTC |
+| [#38268](https://github.com/openclaw/openclaw/pull/38268) | fix(sessions): updateLastRoute should not bump updatedAt | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38268.md) | complete | Apr 24, 2026, 03:49 UTC |
+| [#38228](https://github.com/openclaw/openclaw/pull/38228) | fix: extract text from array content in tool cards | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38228.md) | complete | Apr 24, 2026, 03:48 UTC |
+| [#38279](https://github.com/openclaw/openclaw/pull/38279) | fix(feishu): drop invalid media request timeout fields | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38279.md) | complete | Apr 24, 2026, 03:48 UTC |
+| [#38256](https://github.com/openclaw/openclaw/issues/38256) | [Bug]: Model ID resolution discrepancy: Documentation suggests provider/model format but NVIDIA NIM requires bare model ID | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38256.md) | complete | Apr 24, 2026, 03:48 UTC |
 
 ## How It Works
 
