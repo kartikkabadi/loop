@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 18:38 UTC
+Last dashboard update: Apr 24, 2026, 18:58 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12485 |
-| Fresh reviewed issues in the last 7 days | 8609 |
-| Proposed issue closes | 4796 (55.7% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6614 |
-| Fresh reviewed PRs in the last 7 days | 4488 |
-| Proposed PR closes | 1380 (30.7% of reviewed PRs) |
-| Open items total | 19099 |
-| Reviewed files | 13097 |
-| Archived closed files | 82 |
-| Fresh verified reviews in the last 7 days | 13097 |
-| Proposed closes awaiting apply | 6176 (47.2% of fresh reviews) |
-| Closed by Codex apply | 70 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12382 |
+| Fresh reviewed issues in the last 7 days | 8637 |
+| Proposed issue closes | 4777 (55.3% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6613 |
+| Fresh reviewed PRs in the last 7 days | 4560 |
+| Proposed PR closes | 1398 (30.7% of reviewed PRs) |
+| Open items total | 18995 |
+| Reviewed files | 13197 |
+| Archived closed files | 182 |
+| Fresh verified reviews in the last 7 days | 13197 |
+| Proposed closes awaiting apply | 6175 (46.8% of fresh reviews) |
+| Closed by Codex apply | 170 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 6002 |
+| Todo for weekly coverage | 5798 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#60933](https://github.com/openclaw/openclaw/issues/60933) | [Proposal] Prevent order-sensitive tool failures with a pre-execution logic fuse | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60933.md) | complete | Apr 24, 2026, 18:38 UTC |
-| [#60892](https://github.com/openclaw/openclaw/issues/60892) | stale_running tasks remain in ledger and cannot be cleared | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60892.md) | complete | Apr 24, 2026, 18:37 UTC |
-| [#60868](https://github.com/openclaw/openclaw/pull/60868) | Agents: detect context overflow across error cause chains | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60868.md) | complete | Apr 24, 2026, 18:37 UTC |
-| [#60861](https://github.com/openclaw/openclaw/issues/60861) | [Bug]: WorkClaw-exec工具执行卡死Bug反馈 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60861.md) | complete | Apr 24, 2026, 18:37 UTC |
-| [#60866](https://github.com/openclaw/openclaw/issues/60866) | Discord group session freezes after compaction — reacts with 👀 but never responds | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60866.md) | complete | Apr 24, 2026, 18:37 UTC |
-| [#60921](https://github.com/openclaw/openclaw/issues/60921) | [Bug] Isolated cron session delivery fails with 'Channel is required' even when delivery.channel is explicitly set | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60921.md) | complete | Apr 24, 2026, 18:37 UTC |
-| [#60885](https://github.com/openclaw/openclaw/issues/60885) | LaunchAgent: ThrottleInterval=1 causes unrecoverable gateway downtime after auto-update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60885.md) | complete | Apr 24, 2026, 18:36 UTC |
-| [#60930](https://github.com/openclaw/openclaw/issues/60930) | [Bug]: Control UI / WebChat local websocket disconnects with code=1001 during long-running tasks; reconnect recovers via chat.history instead of stable live updates | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60930.md) | complete | Apr 24, 2026, 18:36 UTC |
-| [#60893](https://github.com/openclaw/openclaw/issues/60893) | Multi-tool responses dispatched as separate messages instead of coalesced | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60893.md) | complete | Apr 24, 2026, 18:36 UTC |
-| [#60928](https://github.com/openclaw/openclaw/pull/60928) | CLI: refresh skills snapshot for agent runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60928.md) | complete | Apr 24, 2026, 18:36 UTC |
-| [#60882](https://github.com/openclaw/openclaw/pull/60882) | test: Add unit tests for config path utilities | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60882.md) | complete | Apr 24, 2026, 18:36 UTC |
-| [#60929](https://github.com/openclaw/openclaw/issues/60929) | sessions_spawn subagent fails with 1008 pairing required - never enters pending queue | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60929.md) | complete | Apr 24, 2026, 18:35 UTC |
-| [#60922](https://github.com/openclaw/openclaw/pull/60922) | feat(agents): derive fallbacks from configured model catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60922.md) | complete | Apr 24, 2026, 18:35 UTC |
-| [#60867](https://github.com/openclaw/openclaw/issues/60867) | Discord group session freezes after compaction — reacts with 👀 but never responds | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60867.md) | complete | Apr 24, 2026, 18:35 UTC |
-| [#60890](https://github.com/openclaw/openclaw/pull/60890) | fix(cron): support thread-id in cron add/edit and paged lookup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60890.md) | complete | Apr 24, 2026, 18:35 UTC |
-| [#60913](https://github.com/openclaw/openclaw/issues/60913) | Support Xiaomi mimo-v2-omni for image understanding (media-understanding provider) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60913.md) | complete | Apr 24, 2026, 18:35 UTC |
-| [#60920](https://github.com/openclaw/openclaw/issues/60920) | [Bug]: Telegram auth routing to OAuth despite API key configuration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60920.md) | complete | Apr 24, 2026, 18:35 UTC |
-| [#60917](https://github.com/openclaw/openclaw/issues/60917) | Dashboard save fails on redacted gateway.remote.token sentinel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60917.md) | complete | Apr 24, 2026, 18:35 UTC |
-| [#60934](https://github.com/openclaw/openclaw/pull/60934) | fix(auth): respect auth override by filtering profiles (token/oauth) (closes #60930) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60934.md) | complete | Apr 24, 2026, 18:35 UTC |
-| [#60821](https://github.com/openclaw/openclaw/issues/60821) | [Bug]: HTTP 400 — tools.profile=coding sends `read` tool schema without `additionalProperties: false`, rejected by OpenAI and GitHub Copilot providers | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60821.md) | complete | Apr 24, 2026, 18:35 UTC |
+| [#61252](https://github.com/openclaw/openclaw/issues/61252) | [cli-backend] Codex companion plugin hijacks session ID → FailoverError after 2 turns | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61252.md) | complete | Apr 24, 2026, 18:57 UTC |
+| [#61240](https://github.com/openclaw/openclaw/issues/61240) | [Bug]: BREW NEEDS TO BE REMOVE AS THE MAIN INSTALLER | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61240.md) | complete | Apr 24, 2026, 18:55 UTC |
+| [#61200](https://github.com/openclaw/openclaw/pull/61200) | Claude/add openclaw aave arbitrage | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61200.md) | complete | Apr 24, 2026, 18:55 UTC |
+| [#61186](https://github.com/openclaw/openclaw/issues/61186) | Cron timer tick crash: ReferenceError: fs$1 is not defined (v2026.4.2) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61186.md) | complete | Apr 24, 2026, 18:54 UTC |
+| [#61205](https://github.com/openclaw/openclaw/issues/61205) | [Feature] Telegram-first OpenAI/Codex reconnect workflow with device-auth fallback | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61205.md) | complete | Apr 24, 2026, 18:54 UTC |
+| [#61248](https://github.com/openclaw/openclaw/pull/61248) | docs: add Gemini AI Cloud free model provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61248.md) | complete | Apr 24, 2026, 18:54 UTC |
+| [#61137](https://github.com/openclaw/openclaw/issues/61137) | Intermittent JSON parse error \"Expected ',' or ']' after array element\" on arm64 (Raspberry Pi 5) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61137.md) | complete | Apr 24, 2026, 18:54 UTC |
+| [#61242](https://github.com/openclaw/openclaw/pull/61242) | Improve managed child-task flow UX for long-running tasks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61242.md) | complete | Apr 24, 2026, 18:54 UTC |
+| [#61238](https://github.com/openclaw/openclaw/issues/61238) | [Bug]: Critical Data Loss Due to Silent Daily Session Reset (No user warning, no opt-out discovery) #42100 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61238.md) | complete | Apr 24, 2026, 18:53 UTC |
+| [#61173](https://github.com/openclaw/openclaw/pull/61173) | Fix provider discovery contract drift | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61173.md) | complete | Apr 24, 2026, 18:53 UTC |
+| [#61250](https://github.com/openclaw/openclaw/issues/61250) | [Bug] WhatsApp outbound fails: \"No active WhatsApp Web listener\" despite successful CLI login | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61250.md) | complete | Apr 24, 2026, 18:53 UTC |
+| [#61219](https://github.com/openclaw/openclaw/issues/61219) | LINE channel fails to start after upgrading to v2026.4.2. Error: \"Bundled plugin public surface access blocked for line via line/runtime-api.js: no bundled plugin manifest found for line\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61219.md) | complete | Apr 24, 2026, 18:53 UTC |
+| [#61247](https://github.com/openclaw/openclaw/pull/61247) | fix(utils): add missing test coverage for sliceUtf16Safe and truncateUtf16Safe | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61247.md) | complete | Apr 24, 2026, 18:53 UTC |
+| [#61232](https://github.com/openclaw/openclaw/pull/61232) | feat(android): add always-on location access | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61232.md) | complete | Apr 24, 2026, 18:53 UTC |
+| [#61269](https://github.com/openclaw/openclaw/pull/61269) | fix(android): allow onboarding finish when operator is offline | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61269.md) | complete | Apr 24, 2026, 18:52 UTC |
+| [#61226](https://github.com/openclaw/openclaw/pull/61226) | fix(telegram): finalize the latest matching partial preview | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61226.md) | complete | Apr 24, 2026, 18:52 UTC |
+| [#61142](https://github.com/openclaw/openclaw/issues/61142) | [Bug]: Telegram photo captions arrive as [object Object] | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61142.md) | complete | Apr 24, 2026, 18:52 UTC |
+| [#61259](https://github.com/openclaw/openclaw/issues/61259) | Bundled channel plugins cause stack overflow via jiti module loading | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61259.md) | complete | Apr 24, 2026, 18:52 UTC |
+| [#61182](https://github.com/openclaw/openclaw/issues/61182) | openclaw memory search CLI hangs indefinitely | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61182.md) | complete | Apr 24, 2026, 18:52 UTC |
+| [#61249](https://github.com/openclaw/openclaw/issues/61249) | Feishu: Support native voice message bubbles (OGG/Opus) for TTS | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61249.md) | complete | Apr 24, 2026, 18:52 UTC |
 
 ## How It Works
 
