@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 04:04 UTC
+Last dashboard update: Apr 24, 2026, 04:18 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19154 |
-| Reviewed / proposed closes | 1486 / 661 |
-| Reviewed files | 1486 |
-| Fresh verified reviews in the last 7 days | 1486 |
-| Proposed closes awaiting apply | 661 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19155 |
+| Reviewed / proposed closes | 1586 / 701 |
+| Reviewed files | 1586 |
+| Fresh verified reviews in the last 7 days | 1586 |
+| Proposed closes awaiting apply | 701 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 17668 |
+| Todo for weekly coverage | 17569 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#38538](https://github.com/openclaw/openclaw/pull/38538) | feat(memory): add proxy support for Gemini embedding API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38538.md) | complete | Apr 24, 2026, 04:04 UTC |
-| [#38522](https://github.com/openclaw/openclaw/issues/38522) | Feature: Subagent barrier primitive — spawn N, await all, receive combined results | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38522.md) | complete | Apr 24, 2026, 04:04 UTC |
-| [#38520](https://github.com/openclaw/openclaw/issues/38520) | Feature: Pre-compaction agent notification, structured handoff window, and deferral mechanism | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38520.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38519](https://github.com/openclaw/openclaw/issues/38519) | Feature: Browser download capture — return downloaded files to agent context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38519.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38540](https://github.com/openclaw/openclaw/pull/38540) | fix(tui): show active run hint on Ctrl+C | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38540.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38534](https://github.com/openclaw/openclaw/pull/38534) | feat(config): add autoDiscover flag to disable Ollama auto-discovery | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38534.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38547](https://github.com/openclaw/openclaw/issues/38547) | Feature: native remote session delegation via sessions_spawn with gatewayUrl | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38547.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38544](https://github.com/openclaw/openclaw/pull/38544) | fix(plugins): suppress false-positive duplicate-id warning when user overrides bundled plugin (#38437) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38544.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38517](https://github.com/openclaw/openclaw/issues/38517) | [Bug]: 500: \"Parameters of tool web_search must only have these properties:query\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38517.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38536](https://github.com/openclaw/openclaw/pull/38536) | fix(error): sanitize provider error JSON before displaying to users | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38536.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38504](https://github.com/openclaw/openclaw/pull/38504) | fix(plugins): reorder plugin discovery to prevent duplicate warnings | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38504.md) | complete | Apr 24, 2026, 04:03 UTC |
-| [#38476](https://github.com/openclaw/openclaw/pull/38476) | fix(browser): screenshot returns file path instead of embedding base64 in context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38476.md) | complete | Apr 24, 2026, 04:02 UTC |
-| [#38487](https://github.com/openclaw/openclaw/issues/38487) | [Bug]: Discord: synthetic channel route uses sender ID as channel ID, causing Unknown Channel delivery failures | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38487.md) | complete | Apr 24, 2026, 04:02 UTC |
-| [#38554](https://github.com/openclaw/openclaw/issues/38554) | [Bug]: feishu replying with mp4 msg error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38554.md) | complete | Apr 24, 2026, 04:02 UTC |
-| [#38532](https://github.com/openclaw/openclaw/pull/38532) | fix(tools): rename web_search tool to oc_web_search to avoid provider collision | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38532.md) | complete | Apr 24, 2026, 04:02 UTC |
-| [#38507](https://github.com/openclaw/openclaw/issues/38507) | Gateway: provider server_error leaks raw JSON into user-visible chat | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38507.md) | complete | Apr 24, 2026, 04:02 UTC |
-| [#38549](https://github.com/openclaw/openclaw/pull/38549) | Add ClawNexus community plugin | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38549.md) | complete | Apr 24, 2026, 04:02 UTC |
-| [#38497](https://github.com/openclaw/openclaw/issues/38497) | 消息处理 Bug：前置策略配置块导致模型忽略用户实际内容（'吞消息'） | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38497.md) | complete | Apr 24, 2026, 04:02 UTC |
-| [#38546](https://github.com/openclaw/openclaw/issues/38546) | Title: Skills show as \"ready\" in list but \"not found\" in info, and can't be used by agent Steps to reproduce: | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38546.md) | complete | Apr 24, 2026, 04:02 UTC |
-| [#38506](https://github.com/openclaw/openclaw/pull/38506) | Add /learn and memory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38506.md) | complete | Apr 24, 2026, 04:02 UTC |
+| [#38789](https://github.com/openclaw/openclaw/pull/38789) | fix(agents): rebuild sandbox skill prompt paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38789.md) | complete | Apr 24, 2026, 04:18 UTC |
+| [#38792](https://github.com/openclaw/openclaw/issues/38792) | Agent loop silently stalls: no user response after API error + long tool-call chains | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38792.md) | complete | Apr 24, 2026, 04:17 UTC |
+| [#38791](https://github.com/openclaw/openclaw/issues/38791) | Cron: isolated job delivery defaults to 'none' instead of 'announce' | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38791.md) | complete | Apr 24, 2026, 04:17 UTC |
+| [#38726](https://github.com/openclaw/openclaw/issues/38726) | Feature: Show model usage (incl. local models) in OpenClaw dashboard | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38726.md) | complete | Apr 24, 2026, 04:17 UTC |
+| [#38766](https://github.com/openclaw/openclaw/pull/38766) | fix(ui): guard against undefined cron job payload in render loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38766.md) | complete | Apr 24, 2026, 04:16 UTC |
+| [#38755](https://github.com/openclaw/openclaw/issues/38755) | cron.run false failure: tool timeout at 60s while gateway later returns success | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38755.md) | complete | Apr 24, 2026, 04:16 UTC |
+| [#38790](https://github.com/openclaw/openclaw/pull/38790) | Browser: accept top-level act ref fields | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38790.md) | complete | Apr 24, 2026, 04:16 UTC |
+| [#38780](https://github.com/openclaw/openclaw/pull/38780) | feat: context-pressure-aware continuation (CONTINUE_WORK / CONTINUE_DELEGATE) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38780.md) | complete | Apr 24, 2026, 04:16 UTC |
+| [#38797](https://github.com/openclaw/openclaw/issues/38797) | [Feature]: Per-agent memory isolation for memory-lancedb plugin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38797.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38777](https://github.com/openclaw/openclaw/pull/38777) | feat(hooks): expose rate limit headers in llm_output hook | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38777.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38731](https://github.com/openclaw/openclaw/pull/38731) | Warn on high-frequency cron schedules (<30m) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38731.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38781](https://github.com/openclaw/openclaw/pull/38781) | adding system.run.prepare | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38781.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38778](https://github.com/openclaw/openclaw/issues/38778) | [Bug]: 飞书机器人@飞书机器人 场景下，被@的机器人不会回应 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38778.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38730](https://github.com/openclaw/openclaw/issues/38730) | Cron session accumulation can silently exhaust agent context window — no guardrails or warnings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38730.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38795](https://github.com/openclaw/openclaw/issues/38795) | Bug Report: imageModel 自动切换未生效 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38795.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38762](https://github.com/openclaw/openclaw/issues/38762) | browser act 的 ref 参数位置处理不一致，错误信息误导 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38762.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38729](https://github.com/openclaw/openclaw/pull/38729) | feat(thinking): register supportsXHighThinking for Anthropic provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38729.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38784](https://github.com/openclaw/openclaw/issues/38784) | [Bug]: Azure OpenAI models report 0 context tokens — supportsUsageInStreaming forcefully disabled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38784.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38764](https://github.com/openclaw/openclaw/pull/38764) | Formalize Agent-to-Agent Learning with Policy-Governed Knowledge Transfer | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38764.md) | complete | Apr 24, 2026, 04:15 UTC |
+| [#38782](https://github.com/openclaw/openclaw/issues/38782) | Bug: /new and /reset startup greeting uses wrong time-of-day | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/38782.md) | complete | Apr 24, 2026, 04:15 UTC |
 
 ## How It Works
 
