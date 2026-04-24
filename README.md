@@ -14,19 +14,20 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 00:14 UTC
+Last dashboard update: Apr 24, 2026, 00:20 UTC
 
 | Metric | Count |
 | --- | ---: |
 | Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19149 |
-| Fresh verified reviews in the last 7 days | 52 |
-| Todo for weekly coverage | 19097 |
+| Fresh verified reviews in the last 7 days | 53 |
+| Todo for weekly coverage | 19096 |
 | Local review files | 53 |
 
 Recently reviewed:
 
 | Item | Report | Title | Decision | Action | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- | --- |
+| [#8920](https://github.com/openclaw/openclaw/issues/8920) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/8920.md) | [Feature]: Better UI for configuration | close | proposed_close | complete | Apr 24, 2026, 00:20 UTC |
 | [#7598](https://github.com/openclaw/openclaw/issues/7598) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/7598.md) | [Feature]: Session History Backup Layer | close | proposed_close | complete | Apr 24, 2026, 00:14 UTC |
 | [#6711](https://github.com/openclaw/openclaw/issues/6711) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6711.md) | Feature request: gateway:shutdown and gateway:pre-restart hook events | keep_open | kept_open | complete | Apr 24, 2026, 00:14 UTC |
 | [#6966](https://github.com/openclaw/openclaw/issues/6966) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6966.md) | Dynamic Model Switching Based on API Rate Limits | close | proposed_close | complete | Apr 24, 2026, 00:14 UTC |
@@ -46,7 +47,6 @@ Recently reviewed:
 | [#7420](https://github.com/openclaw/openclaw/issues/7420) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/7420.md) | Feature Proposal: RLM-Style Query Delegation as Alternative to Compaction | close | proposed_close | complete | Apr 24, 2026, 00:12 UTC |
 | [#7579](https://github.com/openclaw/openclaw/issues/7579) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/7579.md) | [Feature]: Perplexity pplx‑api as a first‑class provider (Not Only Sonar) | keep_open | kept_open | complete | Apr 24, 2026, 00:12 UTC |
 | [#6946](https://github.com/openclaw/openclaw/issues/6946) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6946.md) | Feature: Processing indicator message for Telegram (send ⌛️ while thinking, delete on reply) | keep_open | kept_open | complete | Apr 24, 2026, 00:12 UTC |
-| [#6625](https://github.com/openclaw/openclaw/issues/6625) | [report](https://github.com/openclaw/clawsweeper/blob/main/items/6625.md) | Feature: Graceful sub-agent timeout (pre-timeout warning) | close | proposed_close | complete | Apr 24, 2026, 00:12 UTC |
 
 ## How It Works
 
