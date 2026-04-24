@@ -10,57 +10,57 @@
     "reason": "updated_at changed"
   },
   {
-    "number": 7855,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 7856,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 7880,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 7898,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 7916,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 7934,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 7946,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 7951,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 7952,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 7957,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
   },
   {
-    "number": 7974,
+    "number": 7985,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 7993,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8000,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 8033,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8049,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8079,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8089,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8106,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 8185,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 8192,
     "action": "closed",
     "reason": "already implemented on main"
   }
