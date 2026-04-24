@@ -980,23 +980,23 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 41778,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 41785,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
     "number": 41786,
     "action": "kept_open",
     "reason": "type is pull_request; apply kind is issue"
   },
   {
-    "number": 41789,
+    "number": 41791,
     "action": "closed",
     "reason": "already implemented on main"
+  },
+  {
+    "number": 41801,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41802,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   }
 ]
