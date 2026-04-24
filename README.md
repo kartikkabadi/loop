@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 16:57 UTC
+Last dashboard update: Apr 24, 2026, 17:15 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12526 |
-| Fresh reviewed issues in the last 7 days | 7834 |
-| Proposed issue closes | 4390 (56% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6614 |
-| Fresh reviewed PRs in the last 7 days | 4103 |
-| Proposed PR closes | 1295 (31.6% of reviewed PRs) |
-| Open items total | 19140 |
-| Reviewed files | 11937 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12528 |
+| Fresh reviewed issues in the last 7 days | 7972 |
+| Proposed issue closes | 4469 (56.1% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6613 |
+| Fresh reviewed PRs in the last 7 days | 4165 |
+| Proposed PR closes | 1311 (31.5% of reviewed PRs) |
+| Open items total | 19141 |
+| Reviewed files | 12137 |
 | Archived closed files | 42 |
-| Fresh verified reviews in the last 7 days | 11937 |
-| Proposed closes awaiting apply | 5685 (47.6% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 12137 |
+| Proposed closes awaiting apply | 5780 (47.6% of fresh reviews) |
 | Closed by Codex apply | 30 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 7203 |
+| Todo for weekly coverage | 7004 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#58698](https://github.com/openclaw/openclaw/pull/58698) | feat(security): Add runtime security modules for enhanced protection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58698.md) | complete | Apr 24, 2026, 16:56 UTC |
-| [#58660](https://github.com/openclaw/openclaw/issues/58660) | openclawwechat 插件安装被误拦截 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58660.md) | complete | Apr 24, 2026, 16:56 UTC |
-| [#58711](https://github.com/openclaw/openclaw/issues/58711) | Feature request: configurable provider response timeout with user notification and auto-fallback | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58711.md) | complete | Apr 24, 2026, 16:56 UTC |
-| [#58679](https://github.com/openclaw/openclaw/pull/58679) | feat(config): add provenance tracking and explain command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58679.md) | complete | Apr 24, 2026, 16:56 UTC |
-| [#58712](https://github.com/openclaw/openclaw/issues/58712) | [Bug]: [Follow-up] memos-memory-guide skill shows disabled but works correctly - WSL path issue? | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58712.md) | complete | Apr 24, 2026, 16:56 UTC |
-| [#58674](https://github.com/openclaw/openclaw/issues/58674) | Slash model commands can be ignored when command is wrapped by metadata text | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58674.md) | complete | Apr 24, 2026, 16:56 UTC |
-| [#58684](https://github.com/openclaw/openclaw/pull/58684) | feat: guard memory writes for non-main sessions (cron/isolated/subagent) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58684.md) | complete | Apr 24, 2026, 16:56 UTC |
-| [#58654](https://github.com/openclaw/openclaw/pull/58654) | fix: strip SecretRef marker values from getApiKeyAndHeaders result (#58087) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58654.md) | complete | Apr 24, 2026, 16:56 UTC |
-| [#58696](https://github.com/openclaw/openclaw/issues/58696) | [Feature]: The search content should be supplemented with a summary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58696.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58667](https://github.com/openclaw/openclaw/pull/58667) | Feat/tool template generator | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58667.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58592](https://github.com/openclaw/openclaw/issues/58592) | Cron isolated sessions fail with LiveSessionModelSwitchError when agent primary model differs from payload.model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58592.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58657](https://github.com/openclaw/openclaw/issues/58657) | [Bug]: Codex ACP session archive self-ingestion can bloat ACP history, OOM codex-acp, and crash the host | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58657.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58702](https://github.com/openclaw/openclaw/issues/58702) | [Bug] WebChat: Message text covered by action icons after upgrade to 2026.3.31 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58702.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58687](https://github.com/openclaw/openclaw/issues/58687) | [Bug]: Security prompt is too long to approve, and clicking \"Allow All\" on the security prompt is ineffective | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58687.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58649](https://github.com/openclaw/openclaw/issues/58649) | Subagent Session Timeout and Unresponsiveness in Production Use | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58649.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58704](https://github.com/openclaw/openclaw/issues/58704) | WhatsApp bridge: assistant output can leak into user messages during /new or /reset session transition | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58704.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58648](https://github.com/openclaw/openclaw/pull/58648) | fix(agents): gate session-derived threadId on isThreadSessionKey in announce routing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58648.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58713](https://github.com/openclaw/openclaw/issues/58713) | Feature Request: Ephemeral sessions for agent-to-agent communication | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58713.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58673](https://github.com/openclaw/openclaw/pull/58673) | fix(feishu): prevent timing side-channel in webhook signature comparison | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58673.md) | complete | Apr 24, 2026, 16:55 UTC |
-| [#58646](https://github.com/openclaw/openclaw/issues/58646) | [Bug]: Remote CDP profiles (Browserbase) lose session between commands — multi-step workflows impossible | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58646.md) | complete | Apr 24, 2026, 16:55 UTC |
+| [#59099](https://github.com/openclaw/openclaw/issues/59099) | [Bug]: Too many arguments error when running openclaw browser extension install/path | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59099.md) | complete | Apr 24, 2026, 17:14 UTC |
+| [#59102](https://github.com/openclaw/openclaw/issues/59102) | [Design Feedback] Exec approval UX breaks Telegram mobile-first experience | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59102.md) | complete | Apr 24, 2026, 17:13 UTC |
+| [#59020](https://github.com/openclaw/openclaw/pull/59020) | fix(cron): persist fresh isolated session transcript file | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59020.md) | complete | Apr 24, 2026, 17:12 UTC |
+| [#58957](https://github.com/openclaw/openclaw/issues/58957) | Model switch can fail silently when carried-over session context is too large | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58957.md) | complete | Apr 24, 2026, 17:11 UTC |
+| [#59076](https://github.com/openclaw/openclaw/issues/59076) | JSON parse error leaked to Discord when streaming tool calls with long CJK text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59076.md) | complete | Apr 24, 2026, 17:11 UTC |
+| [#59064](https://github.com/openclaw/openclaw/issues/59064) | Bug: Silent failure and fallback override when OpenAI usage limit (429) is hit | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59064.md) | complete | Apr 24, 2026, 17:10 UTC |
+| [#59104](https://github.com/openclaw/openclaw/issues/59104) | Inbound image processing hangs silently in WSL2 due to GNOME Keyring blocking | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59104.md) | complete | Apr 24, 2026, 17:10 UTC |
+| [#59024](https://github.com/openclaw/openclaw/issues/59024) | [Bug]: FailoverError — CLI timeout after 600s with no output, failover never triggers, TUI/webchat unresponsive | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59024.md) | complete | Apr 24, 2026, 17:10 UTC |
+| [#59095](https://github.com/openclaw/openclaw/issues/59095) | [Proposal] Built-in Adaptive Memory: hierarchical memory management as a core feature | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59095.md) | complete | Apr 24, 2026, 17:10 UTC |
+| [#59073](https://github.com/openclaw/openclaw/issues/59073) | memory_search falls back because qmd managed collection memory-alt-main is missing and repair does not recreate it | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59073.md) | complete | Apr 24, 2026, 17:09 UTC |
+| [#59097](https://github.com/openclaw/openclaw/issues/59097) | Bug: buffered block dispatcher splits messages at ~4000 chars, breaking non-chunked channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59097.md) | complete | Apr 24, 2026, 17:09 UTC |
+| [#59056](https://github.com/openclaw/openclaw/issues/59056) | Cron runningAtMs zombie state regression — cleared state returns after gateway restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59056.md) | complete | Apr 24, 2026, 17:09 UTC |
+| [#59083](https://github.com/openclaw/openclaw/pull/59083) | fix(media-understanding): avoid audio upload path leaks and missing-filename crashes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59083.md) | complete | Apr 24, 2026, 17:09 UTC |
+| [#59124](https://github.com/openclaw/openclaw/issues/59124) | security config option not included in openclaw configure wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59124.md) | complete | Apr 24, 2026, 17:09 UTC |
+| [#59057](https://github.com/openclaw/openclaw/pull/59057) | perf(gateway): cap delta overlap search to prevent O(n*m) freeze on repeated chars | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59057.md) | complete | Apr 24, 2026, 17:09 UTC |
+| [#59080](https://github.com/openclaw/openclaw/issues/59080) | Tool call JSON parse errors exposed to user after session compaction | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59080.md) | complete | Apr 24, 2026, 17:09 UTC |
+| [#59105](https://github.com/openclaw/openclaw/issues/59105) | Token count not displayed in TUI status bar for openai-completions API providers | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59105.md) | complete | Apr 24, 2026, 17:08 UTC |
+| [#58876](https://github.com/openclaw/openclaw/issues/58876) | [Bug] macOS WebChat screenshot shows locally but image not sent to AI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58876.md) | complete | Apr 24, 2026, 17:08 UTC |
+| [#59002](https://github.com/openclaw/openclaw/issues/59002) | Gmail hook sessions / Signal inbox notifications stop working after update to 2026.3.31 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59002.md) | complete | Apr 24, 2026, 17:08 UTC |
+| [#59082](https://github.com/openclaw/openclaw/pull/59082) | Add OpenClaw harness workflow and public contribution bundle | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59082.md) | complete | Apr 24, 2026, 17:08 UTC |
 
 ## How It Works
 
