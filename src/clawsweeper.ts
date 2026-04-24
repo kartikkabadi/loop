@@ -2,11 +2,13 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  chmodSync,
   copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
+  statSync,
   writeFileSync,
 } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
@@ -66,6 +68,7 @@ interface ExistingReview {
   reviewedAt: string | undefined;
   decision: string | undefined;
   reviewStatus: string | undefined;
+  reviewPolicy: string | undefined;
 }
 
 interface LatestRelease {
@@ -138,6 +141,11 @@ interface RepoSummary {
   open_issues_count?: number;
 }
 
+interface PlanShard {
+  shard: number;
+  itemNumbers: number[];
+}
+
 interface ApplyResult {
   number: number;
   action: ActionTaken;
@@ -148,6 +156,10 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET_REPO = "openclaw/openclaw";
 const REPORT_REPO = "openclaw/clawsweeper";
 const FRESH_DAYS = 7;
+const DEFAULT_CODEX_MODEL = "gpt-5.4";
+const DEFAULT_REASONING_EFFORT = "high";
+const DEFAULT_SERVICE_TIER = "fast";
+const REVIEW_POLICY_VERSION = "2026-04-24-policy-v1";
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
   "cannot_reproduce",
@@ -246,6 +258,24 @@ function sortStable(value: unknown): unknown {
 
 function itemSnapshotHash(item: Item, context: ItemContext): string {
   return sha256(stableJson({ item, context }));
+}
+
+function reviewPolicyHash(options: {
+  model?: string;
+  reasoningEffort?: string;
+  serviceTier?: string;
+}): string {
+  return sha256(
+    stableJson({
+      version: REVIEW_POLICY_VERSION,
+      freshDays: FRESH_DAYS,
+      model: options.model ?? DEFAULT_CODEX_MODEL,
+      reasoningEffort: options.reasoningEffort ?? DEFAULT_REASONING_EFFORT,
+      serviceTier: options.serviceTier ?? DEFAULT_SERVICE_TIER,
+      prompt: readFileSync(join(ROOT, "prompts", "review-item.md"), "utf8"),
+      schema: readFileSync(join(ROOT, "schema", "clawsweeper-decision.schema.json"), "utf8"),
+    }),
+  ).slice(0, 16);
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -424,6 +454,7 @@ function existingReview(number: number, itemsDir: string): ExistingReview | null
     reviewedAt: frontMatterValue(markdown, "reviewed_at"),
     decision: frontMatterValue(markdown, "decision"),
     reviewStatus: effectiveReviewStatus(markdown),
+    reviewPolicy: frontMatterValue(markdown, "review_policy"),
   };
 }
 
@@ -451,9 +482,16 @@ function effectiveReviewStatus(markdown: string): string {
 }
 
 function isFresh(
-  review: { reviewedAt: string | undefined; reviewStatus: string | undefined } | null,
+  review: {
+    reviewedAt: string | undefined;
+    reviewStatus: string | undefined;
+    reviewPolicy?: string | undefined;
+  } | null,
+  currentReviewPolicy?: string,
 ): boolean {
   if (review?.reviewStatus !== "complete") return false;
+  if (review.reviewPolicy && currentReviewPolicy && review.reviewPolicy !== currentReviewPolicy)
+    return false;
   if (!review?.reviewedAt) return false;
   const reviewedAt = Date.parse(review.reviewedAt);
   if (!Number.isFinite(reviewedAt)) return false;
@@ -520,8 +558,18 @@ function selectCandidates(options: {
   shardCount: number;
   itemsDir: string;
   itemNumber?: number;
+  itemNumbers?: number[];
+  reviewPolicy?: string;
 }): { candidates: Item[]; scannedPages: number } {
+  if (options.itemNumbers) {
+    const candidates = options.itemNumbers.flatMap((number) => {
+      const { item, state } = fetchItem(number);
+      return state === "open" ? [item] : [];
+    });
+    return { candidates, scannedPages: 0 };
+  }
   if (options.itemNumber) {
+    if (options.shardIndex !== 0) return { candidates: [], scannedPages: 0 };
     const { item, state } = fetchItem(options.itemNumber);
     if (state !== "open") return { candidates: [], scannedPages: 0 };
     return { candidates: [item], scannedPages: 0 };
@@ -534,12 +582,53 @@ function selectCandidates(options: {
     if (items.length === 0) break;
     for (const item of items) {
       if (item.number % options.shardCount !== options.shardIndex) continue;
-      if (isFresh(existingReview(item.number, options.itemsDir))) continue;
+      if (isFresh(existingReview(item.number, options.itemsDir), options.reviewPolicy)) continue;
       candidates.push(item);
       if (candidates.length >= options.batchSize) break;
     }
   }
   return { candidates, scannedPages };
+}
+
+function planCandidates(options: {
+  batchSize: number;
+  maxPages: number;
+  shardCount: number;
+  itemsDir: string;
+  itemNumber?: number;
+  reviewPolicy: string;
+}): { shards: PlanShard[]; scannedPages: number; candidates: Item[] } {
+  if (options.itemNumber) {
+    const { item, state } = fetchItem(options.itemNumber);
+    return {
+      shards: [{ shard: 0, itemNumbers: state === "open" ? [item.number] : [] }],
+      scannedPages: 0,
+      candidates: state === "open" ? [item] : [],
+    };
+  }
+
+  const candidates: Item[] = [];
+  let scannedPages = 0;
+  const limit = Math.max(1, options.batchSize) * Math.max(1, options.shardCount);
+  for (let page = 1; page <= options.maxPages && candidates.length < limit; page += 1) {
+    const items = fetchOpenItemPage(page);
+    scannedPages = page;
+    if (items.length === 0) break;
+    for (const item of items) {
+      if (isFresh(existingReview(item.number, options.itemsDir), options.reviewPolicy)) continue;
+      candidates.push(item);
+      if (candidates.length >= limit) break;
+    }
+  }
+
+  const shards = Array.from(
+    { length: Math.max(1, Math.min(options.shardCount, candidates.length || 1)) },
+    (_, shard) => ({ shard, itemNumbers: [] as number[] }),
+  );
+  candidates.forEach((item, index) => {
+    shards[index % shards.length]?.itemNumbers.push(item.number);
+  });
+  return { shards, scannedPages, candidates };
 }
 
 function collectItemContext(item: Item): ItemContext {
@@ -671,13 +760,25 @@ function codexEnv(): NodeJS.ProcessEnv {
   delete env.GH_TOKEN;
   delete env.GITHUB_TOKEN;
   delete env.OPENCLAW_GH_TOKEN;
+  env.GIT_OPTIONAL_LOCKS = "0";
   return env;
 }
 
 function openclawDirtyStatus(openclawDir: string): string {
   return run("git", ["status", "--porcelain=v1", "--untracked-files=all"], {
     cwd: openclawDir,
+    env: { GIT_OPTIONAL_LOCKS: "0" },
   });
+}
+
+function makeTreeReadOnly(path: string): void {
+  for (const entry of readdirSync(path, { withFileTypes: true })) {
+    const child = join(path, entry.name);
+    if (entry.isSymbolicLink()) continue;
+    if (entry.isDirectory()) makeTreeReadOnly(child);
+    else chmodSync(child, statSync(child).mode & 0o111 ? 0o555 : 0o444);
+  }
+  chmodSync(path, 0o555);
 }
 
 function runCodex(options: {
@@ -965,6 +1066,7 @@ function markdownFor(options: {
   action: Action;
   reviewMode: "propose" | "apply";
   snapshotHash: string;
+  reviewPolicy: string;
 }): string {
   const labels = options.item.labels.length ? options.item.labels.join(", ") : "none";
   const evidence = options.decision.evidence.length
@@ -1003,6 +1105,7 @@ latest_release: ${options.git.latestRelease?.tagName ?? "unknown"}
 latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
 fixed_release: ${options.decision.fixedRelease ?? "unknown"}
 fixed_sha: ${options.decision.fixedSha ?? "unknown"}
+review_policy: ${options.reviewPolicy}
 review_mode: ${options.reviewMode}
 review_status: ${options.decision.summary.startsWith("Codex review failed") ? "failed" : "complete"}
 local_checkout_access: verified
@@ -1068,7 +1171,42 @@ ${options.action.closeComment ? options.action.closeComment : "_No close comment
 - timeline events: ${options.context.counts?.timeline ?? options.context.timeline.length}
 - PR files: ${options.context.counts?.pullFiles ?? options.context.pullFiles?.length ?? 0}
 - PR commits: ${options.context.counts?.pullCommits ?? options.context.pullCommits?.length ?? 0}
-`;
+  `;
+}
+
+function planCommand(args: Args): void {
+  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
+  const batchSize = numberArg(args.batch_size, 2);
+  const maxPages = numberArg(args.max_pages, 250);
+  const shardCount = numberArg(args.shard_count, 10);
+  const itemNumber = numberArg(args.item_number, 0) || undefined;
+  const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
+  const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
+  const serviceTier = stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER);
+  const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, serviceTier });
+  const planOptions: Parameters<typeof planCandidates>[0] = {
+    batchSize,
+    maxPages,
+    shardCount,
+    itemsDir,
+    reviewPolicy,
+  };
+  if (itemNumber) planOptions.itemNumber = itemNumber;
+  const plan = planCandidates(planOptions);
+  console.log(
+    JSON.stringify(
+      {
+        ...plan,
+        reviewPolicy,
+        matrix: plan.shards.map((shard) => ({
+          shard: shard.shard,
+          item_numbers: shard.itemNumbers.join(",") || "none",
+        })),
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 function reviewCommand(args: Args): void {
@@ -1077,29 +1215,41 @@ function reviewCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
   const batchSize = numberArg(args.batch_size, 4);
   const maxPages = numberArg(args.max_pages, 250);
-  const model = stringArg(args.codex_model, "gpt-5.4");
-  const reasoningEffort = stringArg(args.codex_reasoning_effort, "high");
-  const serviceTier = stringArg(args.codex_service_tier, "fast");
+  const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
+  const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
+  const serviceTier = stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER);
   const timeoutMs = numberArg(args.codex_timeout_ms, 600_000);
   const shardIndex = numberArg(args.shard_index, 0);
   const shardCount = numberArg(args.shard_count, 1);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
+  const itemNumbers =
+    typeof args.item_numbers === "string" && args.item_numbers.trim()
+      ? args.item_numbers
+          .split(",")
+          .map((value) => Number(value.trim()))
+          .filter((value) => Number.isInteger(value) && value > 0)
+      : undefined;
+  const readonlyOpenclaw = boolArg(args.readonly_openclaw);
   const applyClosures =
     boolArg(args.apply_closures) || process.env.CLAWSWEEPER_APPLY_CLOSURES === "true";
   ensureDir(artifactDir);
   const git = gitInfo(openclawDir);
+  const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, serviceTier });
+  if (readonlyOpenclaw) makeTreeReadOnly(openclawDir);
   const selectionOptions: Parameters<typeof selectCandidates>[0] = {
     batchSize,
     maxPages,
     shardIndex,
     shardCount,
     itemsDir,
+    reviewPolicy,
   };
   if (itemNumber) selectionOptions.itemNumber = itemNumber;
+  if (itemNumbers) selectionOptions.itemNumbers = itemNumbers;
   const { candidates, scannedPages } = selectCandidates(selectionOptions);
   writeFileSync(
     join(artifactDir, "selection.json"),
-    JSON.stringify({ shardIndex, shardCount, scannedPages, candidates }, null, 2),
+    JSON.stringify({ shardIndex, shardCount, scannedPages, candidates, reviewPolicy }, null, 2),
   );
   for (const item of candidates) {
     const context = collectItemContext(item);
@@ -1135,6 +1285,7 @@ function reviewCommand(args: Args): void {
         action,
         reviewMode: applyClosures ? "apply" : "propose",
         snapshotHash,
+        reviewPolicy,
       }),
       "utf8",
     );
@@ -1247,27 +1398,48 @@ function dashboardStats(itemsDir: string): {
   fresh: number;
   todo: number;
   files: number;
+  proposedClose: number;
+  closed: number;
+  failed: number;
+  stale: number;
   recent: DashboardItem[];
 } {
   const openTotal = fetchOpenItemCount();
+  const currentReviewPolicy = reviewPolicyHash({});
   const files = existsSync(itemsDir)
     ? readdirSync(itemsDir).filter((name) => /^\d+\.md$/.test(name))
     : [];
   let fresh = 0;
+  let proposedClose = 0;
+  let closed = 0;
+  let failed = 0;
+  let stale = 0;
   const recent: DashboardItem[] = [];
   for (const file of files) {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
     const number = Number(file.replace(/\.md$/, ""));
     const reviewedAt = frontMatterValue(markdown, "reviewed_at");
     const reviewStatus = effectiveReviewStatus(markdown);
-    if (isFresh({ reviewedAt, reviewStatus })) fresh += 1;
+    const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
+    const decision = frontMatterValue(markdown, "decision") ?? "unknown";
+    if (
+      isFresh(
+        { reviewedAt, reviewStatus, reviewPolicy: frontMatterValue(markdown, "review_policy") },
+        currentReviewPolicy,
+      )
+    )
+      fresh += 1;
+    if (decision === "close" && action === "proposed_close") proposedClose += 1;
+    if (action === "closed") closed += 1;
+    if (reviewStatus === "failed") failed += 1;
+    if (reviewStatus.startsWith("stale_")) stale += 1;
     recent.push({
       number,
       kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
       title: frontMatterValue(markdown, "title") ?? "",
       reviewedAt,
-      decision: frontMatterValue(markdown, "decision") ?? "unknown",
-      action: frontMatterValue(markdown, "action_taken") ?? "unknown",
+      decision,
+      action,
       reviewStatus,
     });
   }
@@ -1277,6 +1449,10 @@ function dashboardStats(itemsDir: string): {
     fresh,
     todo: Math.max(0, openTotal - fresh),
     files: files.length,
+    proposedClose,
+    closed,
+    failed,
+    stale,
     recent,
   };
 }
@@ -1304,9 +1480,12 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 | Metric | Count |
 | --- | ---: |
 | Open items in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.openTotal} |
+| Reviewed files | ${stats.files} |
 | Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
+| Proposed closes awaiting apply | ${stats.proposedClose} |
+| Closed by Codex apply | ${stats.closed} |
+| Failed or stale reviews | ${stats.failed + stats.stale} |
 | Todo for weekly coverage | ${stats.todo} |
-| Local review files | ${stats.files} |
 
 Recently reviewed:
 
@@ -1329,7 +1508,8 @@ function checkCommand(): void {
 
 const args = parseArgs(process.argv.slice(2));
 const command = args._[0] ?? "review";
-if (command === "review") reviewCommand(args);
+if (command === "plan") planCommand(args);
+else if (command === "review") reviewCommand(args);
 else if (command === "apply-artifacts") applyArtifactsCommand(args);
 else if (command === "apply-decisions") applyDecisionsCommand(args);
 else if (command === "dashboard")

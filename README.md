@@ -14,14 +14,17 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 00:21 UTC
+Last dashboard update: Apr 24, 2026, 00:30 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19149 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19150 |
+| Reviewed files | 53 |
 | Fresh verified reviews in the last 7 days | 53 |
-| Todo for weekly coverage | 19096 |
-| Local review files | 53 |
+| Proposed closes awaiting apply | 22 |
+| Closed by Codex apply | 0 |
+| Failed or stale reviews | 0 |
+| Todo for weekly coverage | 19097 |
 
 Recently reviewed:
 
@@ -55,15 +58,15 @@ The normal workflow is proposal-only. It runs configurable parallel shards and n
 Each review job:
 
 1. Checks out this repo.
-2. Checks out a full `openclaw/openclaw` working tree.
-3. Selects the next open item by issue number, starting from `#1`.
+2. Uses a planner job that selects the next open items once, starting from `#1`, and hands explicit item-number batches to review shards.
+3. Checks out `openclaw/openclaw` at `main`, with cached git objects for faster startup.
 4. Runs Codex with `gpt-5.4`, high reasoning, fast service tier, and a 10-minute per-item timeout inside the OpenClaw checkout.
 5. Writes `items/<number>.md` with the decision, proposed close comment, and a GitHub snapshot hash.
 6. Marks high-confidence allowed close decisions as `proposed_close`.
 
-Codex runs without GitHub write tokens. The runner checks the OpenClaw checkout before and after every review and fails the item if Codex leaves any tracked or untracked change behind.
+Codex runs without GitHub write tokens. The runner checks the OpenClaw checkout before every review, makes the checkout read-only in CI, checks it again after review, and fails the item if Codex leaves any tracked or untracked change behind.
 
-Parallel workflow shards each own a different slice of the open-item list. The final job merges artifacts and updates this README so the dashboard reflects progress.
+Parallel workflow shards only receive planned item numbers. The final job merges artifacts and updates this README so the dashboard reflects progress.
 
 To close later without rerunning Codex, dispatch the workflow with `apply_existing=true`. That mode reads existing `items/*.md`, refetches the issue/PR context, recomputes the snapshot hash, and only comments/closes if nothing changed since the proposal was written.
 
@@ -75,7 +78,8 @@ Requires Node 24.
 source ~/.profile
 npm install
 npm run build
-npm run review -- --openclaw-dir ../openclaw --batch-size 1 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 600000
+npm run plan -- --batch-size 2 --shard-count 10 --max-pages 250 --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast
+npm run review -- --openclaw-dir ../openclaw --batch-size 2 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.4 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 600000
 npm run apply-artifacts -- --artifact-dir artifacts/reviews
 ```
 

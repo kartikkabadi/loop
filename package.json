@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsgo -p tsconfig.json",
+    "plan": "node dist/clawsweeper.js plan",
     "review": "node dist/clawsweeper.js review",
     "apply-artifacts": "node dist/clawsweeper.js apply-artifacts",
     "apply-decisions": "node dist/clawsweeper.js apply-decisions",

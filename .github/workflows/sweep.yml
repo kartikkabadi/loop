@@ -18,7 +18,7 @@ on:
       batch_size:
         description: "Items per shard"
         required: false
-        default: "1"
+        default: "2"
       codex_timeout_ms:
         description: "Per-item Codex timeout in milliseconds"
         required: false
@@ -51,32 +51,9 @@ jobs:
       apply_closures: ${{ steps.mode.outputs.apply_closures }}
       batch_size: ${{ steps.mode.outputs.batch_size }}
       codex_timeout_ms: ${{ steps.mode.outputs.codex_timeout_ms }}
-      item_number: ${{ steps.mode.outputs.item_number }}
-      shard_count: ${{ steps.shards.outputs.shard_count }}
-      shards: ${{ steps.shards.outputs.shards }}
-    steps:
-      - id: mode
-        run: |
-          {
-            echo "apply_closures=${{ github.event.inputs.apply_closures || 'false' }}"
-            echo "batch_size=${{ github.event.inputs.batch_size || '1' }}"
-            echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '600000' }}"
-            echo "item_number=${{ github.event.inputs.item_number || '' }}"
-          } >> "$GITHUB_OUTPUT"
-      - id: shards
-        env:
-          SHARD_COUNT: ${{ github.event.inputs.shard_count || '10' }}
-        run: |
-          node -e 'const n = Math.max(1, Number(process.env.SHARD_COUNT || 10)); console.log("shard_count=" + n); console.log("shards=" + JSON.stringify([...Array(n).keys()]));' >> "$GITHUB_OUTPUT"
-
-  review:
-    needs: plan
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: ${{ fromJson(needs.plan.outputs.shards) }}
+      matrix: ${{ steps.select.outputs.matrix }}
+      planned_count: ${{ steps.select.outputs.planned_count }}
+      planned_shards: ${{ steps.select.outputs.planned_shards }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -86,6 +63,74 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
+          cache: npm
+          cache-dependency-path: clawsweeper/package-lock.json
+
+      - name: Install dependencies
+        working-directory: clawsweeper
+        run: npm ci
+
+      - name: Build ClawSweeper
+        working-directory: clawsweeper
+        run: npm run build
+
+      - id: mode
+        run: |
+          {
+            echo "apply_closures=${{ github.event.inputs.apply_closures || 'false' }}"
+            echo "batch_size=${{ github.event.inputs.batch_size || '2' }}"
+            echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '600000' }}"
+          } >> "$GITHUB_OUTPUT"
+
+      - id: select
+        working-directory: clawsweeper
+        env:
+          SHARD_COUNT: ${{ github.event.inputs.shard_count || '10' }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size || '2' }}
+          ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
+          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          item_arg=()
+          if [ -n "$ITEM_NUMBER" ]; then
+            item_arg=(--item-number "$ITEM_NUMBER")
+          fi
+          npm run --silent plan -- \
+            --batch-size "$BATCH_SIZE" \
+            --max-pages 250 \
+            --shard-count "$SHARD_COUNT" \
+            --codex-model gpt-5.4 \
+            --codex-reasoning-effort high \
+            --codex-service-tier fast \
+            "${item_arg[@]}" > plan.json
+          node - <<'NODE' >> "$GITHUB_OUTPUT"
+          const fs = require("node:fs");
+          const plan = JSON.parse(fs.readFileSync("plan.json", "utf8"));
+          console.log(`matrix=${JSON.stringify(plan.matrix)}`);
+          console.log(`planned_count=${plan.candidates.length}`);
+          console.log(`planned_shards=${plan.matrix.length}`);
+          NODE
+          cat plan.json
+
+  review:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: clawsweeper
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: clawsweeper/package-lock.json
 
       - name: Install dependencies
         working-directory: clawsweeper
@@ -96,7 +141,7 @@ jobs:
         run: npm run build
 
       - name: Install Codex
-        run: npm install -g @openai/codex@latest
+        run: npm install -g @openai/codex@latest --prefer-offline
 
       - name: Authenticate Codex
         env:
@@ -145,9 +190,10 @@ jobs:
             --codex-reasoning-effort high \
             --codex-service-tier fast \
             --codex-timeout-ms ${{ needs.plan.outputs.codex_timeout_ms }} \
-            ${{ needs.plan.outputs.item_number && format('--item-number {0}', needs.plan.outputs.item_number) || '' }} \
+            --item-numbers "${{ matrix.item_numbers }}" \
+            --readonly-openclaw \
             --shard-index ${{ matrix.shard }} \
-            --shard-count ${{ needs.plan.outputs.shard_count }}
+            --shard-count ${{ needs.plan.outputs.planned_shards }}
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -168,6 +214,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -213,6 +260,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
