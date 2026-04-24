@@ -21,8 +21,8 @@
   },
   {
     "number": 24892,
-    "action": "skipped_changed_since_review",
-    "reason": "updated_at changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 28106,
@@ -121,13 +121,13 @@
   },
   {
     "number": 38215,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 38216,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 38810,
@@ -136,8 +136,8 @@
   },
   {
     "number": 39042,
-    "action": "skipped_changed_since_review",
-    "reason": "updated_at changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 39156,
@@ -171,18 +171,18 @@
   },
   {
     "number": 39436,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 39465,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 39487,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 39491,
@@ -191,8 +191,8 @@
   },
   {
     "number": 39501,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 39518,
@@ -201,8 +201,8 @@
   },
   {
     "number": 39567,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 39586,
@@ -256,8 +256,8 @@
   },
   {
     "number": 39940,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 40015,
@@ -280,54 +280,9 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 40266,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40267,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40270,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40272,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40273,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
-  },
-  {
-    "number": 40275,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40278,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40279,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40285,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40294,
-    "action": "closed",
-    "reason": "already implemented on main"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 40295,
@@ -335,334 +290,14 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 40298,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 40302,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40306,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40321,
-    "action": "skipped_maintainer_authored",
-    "reason": "author association is MEMBER"
-  },
-  {
-    "number": 40325,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 40329,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40333,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40334,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40336,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40340,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40343,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40348,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40362,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40363,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
   },
   {
-    "number": 40364,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40373,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40379,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40382,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 40388,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40398,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40401,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 40403,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40404,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40405,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40410,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40412,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40414,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 40415,
-    "action": "closed",
-    "reason": "not actionable"
-  },
-  {
-    "number": 40422,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 40424,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40431,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40432,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40433,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40434,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40442,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40451,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40458,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40459,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40464,
-    "action": "skipped_changed_since_review",
-    "reason": "snapshot changed"
-  },
-  {
-    "number": 40465,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40468,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 40471,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40476,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40478,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40479,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40480,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40486,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40488,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40493,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40496,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40497,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 40504,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40508,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40513,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 40514,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40515,
-    "action": "closed",
-    "reason": "not actionable"
-  },
-  {
-    "number": 40521,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40525,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40529,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40531,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40535,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40539,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 40546,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40547,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40550,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40551,
-    "action": "closed",
-    "reason": "already implemented on main"
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   },
   {
     "number": 40563,
@@ -670,59 +305,9 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 40567,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40568,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
     "number": 40576,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
-  },
-  {
-    "number": 40579,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40580,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 40586,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40587,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40604,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40605,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40606,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40609,
-    "action": "closed",
-    "reason": "not actionable"
   },
   {
     "number": 40617,
@@ -730,94 +315,9 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 40619,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40621,
-    "action": "closed",
-    "reason": "not actionable"
-  },
-  {
-    "number": 40627,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
     "number": 40630,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
-  },
-  {
-    "number": 40631,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40640,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 40659,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40672,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40691,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40692,
-    "action": "closed",
-    "reason": "cannot reproduce on current main"
-  },
-  {
-    "number": 40698,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40699,
-    "action": "skipped_maintainer_authored",
-    "reason": "author association is MEMBER"
-  },
-  {
-    "number": 40701,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40702,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40706,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40707,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40715,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 40720,
-    "action": "closed",
-    "reason": "already implemented on main"
   },
   {
     "number": 40737,
@@ -825,18 +325,678 @@
     "reason": "snapshot changed"
   },
   {
-    "number": 40738,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
     "number": 40739,
     "action": "skipped_changed_since_review",
     "reason": "snapshot changed"
   },
   {
-    "number": 40742,
+    "number": 40750,
     "action": "closed",
     "reason": "already implemented on main"
+  },
+  {
+    "number": 40758,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40759,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40767,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40769,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40770,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40778,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 40790,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40793,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40799,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40809,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40811,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40812,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40817,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40818,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40821,
+    "action": "closed",
+    "reason": "not actionable"
+  },
+  {
+    "number": 40822,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40834,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40836,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40837,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40842,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40845,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40849,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40854,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40855,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40857,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40858,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40866,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40868,
+    "action": "skipped_changed_since_review",
+    "reason": "updated_at changed"
+  },
+  {
+    "number": 40870,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40871,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40879,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40884,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40887,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40891,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40893,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40898,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40907,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40912,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40915,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40920,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40922,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40927,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40929,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40931,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40938,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40939,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40943,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40947,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40949,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40951,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40952,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40960,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40962,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40966,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40968,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40972,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40975,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40976,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40977,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 40978,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40980,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 40981,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 40992,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41004,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41011,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41012,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41014,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41019,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41020,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41027,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41034,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41036,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41039,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41041,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41043,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41044,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41045,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41046,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41054,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41060,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41075,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41084,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41091,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41093,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41095,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41098,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41100,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41102,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41110,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41116,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41119,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41121,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41126,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41127,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41128,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41129,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41130,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41132,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 41137,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41144,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41148,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41153,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41162,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41167,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41174,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41175,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41179,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41180,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41181,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41186,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41188,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41189,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41190,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41191,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41197,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41198,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41202,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41203,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 41205,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41209,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41211,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41212,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 41214,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 41215,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41216,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41223,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41228,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
+  },
+  {
+    "number": 41229,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41234,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41237,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41247,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41249,
+    "action": "skipped_changed_since_review",
+    "reason": "snapshot changed"
+  },
+  {
+    "number": 41250,
+    "action": "kept_open",
+    "reason": "type is pull_request; apply kind is issue"
   }
 ]
