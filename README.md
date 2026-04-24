@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 00:43 UTC
+Last dashboard update: Apr 24, 2026, 01:09 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19149 |
-| Reviewed / proposed closes | 20 / 10 |
-| Reviewed files | 73 |
-| Fresh verified reviews in the last 7 days | 20 |
-| Proposed closes awaiting apply | 10 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19144 |
+| Reviewed / proposed closes | 127 / 64 |
+| Reviewed files | 128 |
+| Fresh verified reviews in the last 7 days | 127 |
+| Proposed closes awaiting apply | 64 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 19129 |
+| Todo for weekly coverage | 19017 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#7450](https://github.com/openclaw/openclaw/issues/7450) | Feature: Interrupt tool execution on priority message | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7450.md) | complete | Apr 24, 2026, 00:39 UTC |
-| [#7322](https://github.com/openclaw/openclaw/issues/7322) | [Feature]: Support new openrouter/stepfun/step-3.5-flash:free model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7322.md) | complete | Apr 24, 2026, 00:37 UTC |
-| [#7403](https://github.com/openclaw/openclaw/issues/7403) | Feature: Private Mode for demos and content creation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7403.md) | complete | Apr 24, 2026, 00:37 UTC |
-| [#7297](https://github.com/openclaw/openclaw/issues/7297) | Feature: Wire up after_tool_call hook + exec auto-retry on failure | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7297.md) | complete | Apr 24, 2026, 00:37 UTC |
-| [#7284](https://github.com/openclaw/openclaw/issues/7284) | [Feature Request] Per-model tool policies for safe fallback behavior | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7284.md) | complete | Apr 24, 2026, 00:36 UTC |
-| [#7359](https://github.com/openclaw/openclaw/issues/7359) | [Slack] Agent lacks visibility into own channel messages from DM sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7359.md) | complete | Apr 24, 2026, 00:36 UTC |
-| [#7281](https://github.com/openclaw/openclaw/issues/7281) | Feature: fallbackChannel for hook mappings when primary delivery fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7281.md) | complete | Apr 24, 2026, 00:36 UTC |
-| [#7302](https://github.com/openclaw/openclaw/issues/7302) | feat(whatsapp): Add voice note waveform/duration metadata for transcription support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7302.md) | complete | Apr 24, 2026, 00:35 UTC |
-| [#7309](https://github.com/openclaw/openclaw/issues/7309) | [Feature]: Support DeepSeek API as a first-class LLM provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7309.md) | complete | Apr 24, 2026, 00:35 UTC |
-| [#7227](https://github.com/openclaw/openclaw/issues/7227) | [Security] Accessibility permissions requested for 'node' exposes all npm packages to GUI automation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7227.md) | complete | Apr 24, 2026, 00:35 UTC |
-| [#7414](https://github.com/openclaw/openclaw/issues/7414) | Feature Request: Bundle NoChat encrypted channel plugin | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7414.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#7200](https://github.com/openclaw/openclaw/issues/7200) | Feature Request: Real-time Voice Conversation Support | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7200.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#6975](https://github.com/openclaw/openclaw/issues/6975) | [Feature] Configurable reply context length for Telegram | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/6975.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#7249](https://github.com/openclaw/openclaw/issues/7249) | [Feature]: Support Claude Models via Azure service | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7249.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#6890](https://github.com/openclaw/openclaw/issues/6890) | [Feature]: Add Ralph Loop feature and add max iteration number into the agent configuration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/6890.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#7095](https://github.com/openclaw/openclaw/issues/7095) | Feature Request: Support multimodal content blocks (images) in gateway agent method | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7095.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#7034](https://github.com/openclaw/openclaw/issues/7034) | [RFC] WhatsApp Security Proxy: Process-Isolated 'Dumb Proxy' Pattern for External Channels 🦞 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7034.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#7057](https://github.com/openclaw/openclaw/issues/7057) | Flaky tests on Windows/WSL: timeouts and ENOENT in pi-tools workspace-paths & safe-bins | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7057.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#7080](https://github.com/openclaw/openclaw/issues/7080) | Feature Request: Enable Processing of WhatsApp Emotion and Poll Responses by Agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7080.md) | complete | Apr 24, 2026, 00:34 UTC |
-| [#7234](https://github.com/openclaw/openclaw/issues/7234) | Feature: Granular Discord action gates (split actions.messages into read/edit/delete) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7234.md) | complete | Apr 24, 2026, 00:33 UTC |
+| [#8185](https://github.com/openclaw/openclaw/issues/8185) | [Feature]: Memory flush on /new and /reset (pre-reset memory save) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/8185.md) | complete | Apr 24, 2026, 01:09 UTC |
+| [#7951](https://github.com/openclaw/openclaw/issues/7951) | [Feature]: Integrating ApplePay / GooglePay | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7951.md) | complete | Apr 24, 2026, 01:09 UTC |
+| [#8130](https://github.com/openclaw/openclaw/issues/8130) | Feature Request: Proactive user notification on LLM failover/API errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/8130.md) | complete | Apr 24, 2026, 01:09 UTC |
+| [#8089](https://github.com/openclaw/openclaw/issues/8089) | [Feature]: cache for ci/cd | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/8089.md) | complete | Apr 24, 2026, 01:08 UTC |
+| [#8231](https://github.com/openclaw/openclaw/issues/8231) | [Feature]: terminal-based web search | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/8231.md) | complete | Apr 24, 2026, 01:08 UTC |
+| [#8263](https://github.com/openclaw/openclaw/issues/8263) | Feature Request: Webchat User Display Name Customization | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/8263.md) | complete | Apr 24, 2026, 01:08 UTC |
+| [#7993](https://github.com/openclaw/openclaw/issues/7993) | [Feature]: Show gateway bundled skills in openclaw skills list | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7993.md) | complete | Apr 24, 2026, 01:08 UTC |
+| [#7880](https://github.com/openclaw/openclaw/issues/7880) | Add Campfire channel integration (37signals self-hosted chat) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7880.md) | complete | Apr 24, 2026, 01:08 UTC |
+| [#8147](https://github.com/openclaw/openclaw/issues/8147) | [Feature]:   Add configurable send hotkey for WebChat (Cmd+Enter instead of Enter) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/8147.md) | complete | Apr 24, 2026, 01:07 UTC |
+| [#7834](https://github.com/openclaw/openclaw/issues/7834) | Add thorough QA tests for observability ingestor | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7834.md) | complete | Apr 24, 2026, 01:07 UTC |
+| [#7959](https://github.com/openclaw/openclaw/issues/7959) | Feature: Identity file versioning / changelog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7959.md) | complete | Apr 24, 2026, 01:07 UTC |
+| [#8079](https://github.com/openclaw/openclaw/issues/8079) | [Feature Request] Add proxy configuration option for browser tool | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/8079.md) | complete | Apr 24, 2026, 01:07 UTC |
+| [#7985](https://github.com/openclaw/openclaw/issues/7985) | Feature: Support bypass-AI mode for custom commands to reduce token consumption | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7985.md) | complete | Apr 24, 2026, 01:06 UTC |
+| [#8122](https://github.com/openclaw/openclaw/issues/8122) | Feature Request: Per-group session reset configuration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/8122.md) | complete | Apr 24, 2026, 01:06 UTC |
+| [#8033](https://github.com/openclaw/openclaw/issues/8033) | Feature Request: Telegram Inline Keyboard Support | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/8033.md) | complete | Apr 24, 2026, 01:06 UTC |
+| [#8049](https://github.com/openclaw/openclaw/issues/8049) | Feature: Add exec hooks to skill metadata for automatic command preprocessing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/8049.md) | complete | Apr 24, 2026, 01:06 UTC |
+| [#8181](https://github.com/openclaw/openclaw/issues/8181) | Make local embeddings for memory search easier to set up (zero-config) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/8181.md) | complete | Apr 24, 2026, 01:06 UTC |
+| [#7856](https://github.com/openclaw/openclaw/issues/7856) | Feature requests for improving agent reliability in automated workflows | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7856.md) | complete | Apr 24, 2026, 01:06 UTC |
+| [#7707](https://github.com/openclaw/openclaw/issues/7707) | Feature Request: Memory Trust Tagging by Source | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7707.md) | complete | Apr 24, 2026, 01:06 UTC |
+| [#7909](https://github.com/openclaw/openclaw/issues/7909) | [Feature]: Add plain text copy option | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7909.md) | complete | Apr 24, 2026, 01:06 UTC |
 
 ## How It Works
 
