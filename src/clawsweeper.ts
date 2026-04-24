@@ -176,6 +176,7 @@ interface ApplyResult {
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET_REPO = "openclaw/openclaw";
 const REPORT_REPO = "openclaw/clawsweeper";
+const CLAWHUB_URL = "https://clawhub.ai/";
 const FRESH_DAYS = 7;
 const DEFAULT_CODEX_MODEL = "gpt-5.4";
 const DEFAULT_REASONING_EFFORT = "medium";
@@ -1117,7 +1118,7 @@ function closeIntro(reason: CloseReason): string {
     case "cannot_reproduce":
       return "Closing this as not reproducible on current `main` after Codex review.";
     case "clawhub":
-      return "Closing this as better suited for ClawHub/community plugin work after Codex review.";
+      return `Closing this as better suited for ${markdownLink("ClawHub", CLAWHUB_URL)}/community plugin work after Codex review.`;
     case "incoherent":
       return "Closing this as not actionable after Codex review.";
     case "stale_insufficient_info":
