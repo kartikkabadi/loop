@@ -1368,7 +1368,7 @@ function postClose(options: {
   if (options.kind === "pull_request") {
     ghWithRetry(["pr", "close", String(options.number)]);
   } else {
-    const reason = options.reason === "implemented_on_main" ? "completed" : "not planned";
+    const reason = options.reason === "implemented_on_main" ? "completed" : "not_planned";
     const closePayloadFile = join(ROOT, ".artifacts", `close-${options.number}.json`);
     writeFileSync(
       closePayloadFile,
@@ -1651,7 +1651,7 @@ function applyDecisionsCommand(args: Args): void {
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const minAgeDays = numberArg(args.min_age_days, 0);
   const applyKind = applyKindArg(args.apply_kind);
-  const closeDelayMs = numberArg(args.close_delay_ms, 5_000);
+  const closeDelayMs = numberArg(args.close_delay_ms, 15_000);
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
   let closedCount = 0;
