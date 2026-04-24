@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 10:47 UTC
+Last dashboard update: Apr 24, 2026, 11:02 UTC
 
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12537 |
-| Fresh reviewed issues in the last 7 days | 4582 |
-| Proposed issue closes | 2520 (55% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 4700 |
+| Proposed issue closes | 2592 (55.1% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6598 |
-| Fresh reviewed PRs in the last 7 days | 2401 |
-| Proposed PR closes | 821 (34.2% of reviewed PRs) |
+| Fresh reviewed PRs in the last 7 days | 2479 |
+| Proposed PR closes | 853 (34.4% of reviewed PRs) |
 | Open items total | 19135 |
-| Reviewed files | 6983 |
-| Fresh verified reviews in the last 7 days | 6983 |
-| Proposed closes awaiting apply | 3341 (47.8% of fresh reviews) |
+| Reviewed files | 7179 |
+| Fresh verified reviews in the last 7 days | 7179 |
+| Proposed closes awaiting apply | 3445 (48% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 12152 |
+| Todo for weekly coverage | 11956 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#49437](https://github.com/openclaw/openclaw/pull/49437) | fix(control-ui): show tool call arguments in sidebar | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49437.md) | complete | Apr 24, 2026, 10:47 UTC |
-| [#49352](https://github.com/openclaw/openclaw/issues/49352) | [Feature]: Tool Output summary log cut off | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49352.md) | complete | Apr 24, 2026, 10:45 UTC |
-| [#49449](https://github.com/openclaw/openclaw/issues/49449) | ： gateway status command hangs indefinitely | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49449.md) | complete | Apr 24, 2026, 10:44 UTC |
-| [#49438](https://github.com/openclaw/openclaw/issues/49438) | Bug: 模型的 Think/Reasoning 内容被错误泄露给用户 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49438.md) | complete | Apr 24, 2026, 10:43 UTC |
-| [#49394](https://github.com/openclaw/openclaw/pull/49394) | feat: improve Chinese model reliability and add AIsa provider plugin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49394.md) | complete | Apr 24, 2026, 10:43 UTC |
-| [#49405](https://github.com/openclaw/openclaw/issues/49405) | [CLI] Gateway connection fails with \"gateway closed (1000)\" in non-JSON mode (Potential race condition with `withProgress` spinner) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49405.md) | complete | Apr 24, 2026, 10:43 UTC |
-| [#49286](https://github.com/openclaw/openclaw/pull/49286) | fix(discord): treat native system messages as queued system events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49286.md) | complete | Apr 24, 2026, 10:43 UTC |
-| [#49398](https://github.com/openclaw/openclaw/issues/49398) | Sub-agent embedded run timeout does not release CommandLane, causing all subsequent webchat messages to be queued indefinitely | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49398.md) | complete | Apr 24, 2026, 10:43 UTC |
-| [#49408](https://github.com/openclaw/openclaw/issues/49408) | [Bug]: Symbolic links for skill directories under ~/.openclaw/skills/ are not consistently resolved | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49408.md) | complete | Apr 24, 2026, 10:43 UTC |
-| [#49422](https://github.com/openclaw/openclaw/pull/49422) | feat(gateway): add static file serving endpoint | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49422.md) | complete | Apr 24, 2026, 10:42 UTC |
-| [#49450](https://github.com/openclaw/openclaw/pull/49450) | ui: show tool call request arguments in sidebar | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49450.md) | complete | Apr 24, 2026, 10:42 UTC |
-| [#49412](https://github.com/openclaw/openclaw/issues/49412) | [Bug]: Feishu plugin - duplicate plugin id warning on startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49412.md) | complete | Apr 24, 2026, 10:42 UTC |
-| [#49321](https://github.com/openclaw/openclaw/issues/49321) | [Bug]: Session store lock timeout causes dropped Telegram messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49321.md) | complete | Apr 24, 2026, 10:42 UTC |
-| [#49418](https://github.com/openclaw/openclaw/issues/49418) | [Bug]: [Bug]: Windows: Missing changelog.js causes CLI failure (pi-coding-agent module) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49418.md) | complete | Apr 24, 2026, 10:42 UTC |
-| [#49440](https://github.com/openclaw/openclaw/issues/49440) | [Bug]: Fallback model does not trigger for api_error responses with non-standard message text (e.g. MiniMax 520) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49440.md) | complete | Apr 24, 2026, 10:42 UTC |
-| [#49368](https://github.com/openclaw/openclaw/pull/49368) | Revise CHANGELOG for recent updates and fixes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49368.md) | complete | Apr 24, 2026, 10:42 UTC |
-| [#49432](https://github.com/openclaw/openclaw/issues/49432) | Control UI model switcher prepends active provider to new model ID on provider change | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49432.md) | complete | Apr 24, 2026, 10:41 UTC |
-| [#49396](https://github.com/openclaw/openclaw/pull/49396) | fix(ui): use precise hourly message counts for Peak Error Hours | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49396.md) | complete | Apr 24, 2026, 10:41 UTC |
-| [#49382](https://github.com/openclaw/openclaw/issues/49382) | Allow custom agent name display in webchat control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49382.md) | complete | Apr 24, 2026, 10:41 UTC |
-| [#49457](https://github.com/openclaw/openclaw/pull/49457) | fix: suppress drain error replies to prevent chat flooding | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49457.md) | complete | Apr 24, 2026, 10:41 UTC |
+| [#49815](https://github.com/openclaw/openclaw/issues/49815) | [Bug]: Browserless in same-host Docker setup fails on loopback but works via Docker-network endpoint | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49815.md) | complete | Apr 24, 2026, 11:02 UTC |
+| [#49840](https://github.com/openclaw/openclaw/pull/49840) | feat(heartbeat): add maxCostPerRun config to cap embedded run cost | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49840.md) | complete | Apr 24, 2026, 11:01 UTC |
+| [#49823](https://github.com/openclaw/openclaw/issues/49823) | Add per-run cost cap for embedded runs (maxCostPerRun) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49823.md) | complete | Apr 24, 2026, 11:01 UTC |
+| [#49797](https://github.com/openclaw/openclaw/pull/49797) | fix: preserve raw WebUI model aliases | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49797.md) | complete | Apr 24, 2026, 11:01 UTC |
+| [#49853](https://github.com/openclaw/openclaw/issues/49853) | [Bug]: [Control UI] Stop button disappears during active chat/run (2026.3.13)\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49853.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49824](https://github.com/openclaw/openclaw/issues/49824) | Bug: webchat status bar shows incorrect remaining tokens and context percentage | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49824.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49859](https://github.com/openclaw/openclaw/pull/49859) | fix(ui): include group identifier in Telegram group chat display name | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49859.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49858](https://github.com/openclaw/openclaw/issues/49858) | 🔥Enhanced LanceDB memory plugin for OpenClaw — Hybrid Retrieval (Vector + BM25), Cross-Encoder Rerank, Multi-Scope Isolation, Management CLI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49858.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49862](https://github.com/openclaw/openclaw/issues/49862) | Telegram forum: reply_to_id returns wrong content across topics | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49862.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49811](https://github.com/openclaw/openclaw/issues/49811) | [Bug] Rate limit 错误未触发快速 failover，导致 10 分钟超时阻塞 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49811.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49802](https://github.com/openclaw/openclaw/issues/49802) | Feature Request: Session lifecycle hooks (on-compact, on-session-end) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49802.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49819](https://github.com/openclaw/openclaw/pull/49819) | fix(channels): treat Feishu p2p chats as direct messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49819.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49776](https://github.com/openclaw/openclaw/issues/49776) | [Bug]: WebUI Dashboard page freezes, unresponsive after static resources load | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49776.md) | complete | Apr 24, 2026, 11:00 UTC |
+| [#49856](https://github.com/openclaw/openclaw/pull/49856) | fix: web UI chat model dropdown desync and wrong provider prefix | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49856.md) | complete | Apr 24, 2026, 10:59 UTC |
+| [#49786](https://github.com/openclaw/openclaw/issues/49786) | [Bug]: DingTalk channel browser tool SsrFBlockedError | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49786.md) | complete | Apr 24, 2026, 10:59 UTC |
+| [#49825](https://github.com/openclaw/openclaw/pull/49825) | Discord: make exec approval timeout configurable | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49825.md) | complete | Apr 24, 2026, 10:59 UTC |
+| [#49828](https://github.com/openclaw/openclaw/issues/49828) | WebChat: Sidebar agent list instead of dropdown selector | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49828.md) | complete | Apr 24, 2026, 10:59 UTC |
+| [#49763](https://github.com/openclaw/openclaw/issues/49763) | [Bug]: TUI loading spinner freezes when queuing message during active run | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49763.md) | complete | Apr 24, 2026, 10:59 UTC |
+| [#49829](https://github.com/openclaw/openclaw/issues/49829) | [Bug] Webchat Control UI model selector cannot switch to non-Anthropic models | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49829.md) | complete | Apr 24, 2026, 10:59 UTC |
+| [#49835](https://github.com/openclaw/openclaw/pull/49835) | Cn zzb | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/49835.md) | complete | Apr 24, 2026, 10:59 UTC |
 
 ## How It Works
 
