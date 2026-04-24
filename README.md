@@ -14,48 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 14:38 UTC
+Last dashboard update: Apr 24, 2026, 14:53 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12572 |
-| Fresh reviewed issues in the last 7 days | 6670 |
-| Proposed issue closes | 3730 (55.9% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12577 |
+| Fresh reviewed issues in the last 7 days | 6792 |
+| Proposed issue closes | 3792 (55.8% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6619 |
-| Fresh reviewed PRs in the last 7 days | 3509 |
-| Proposed PR closes | 1142 (32.5% of reviewed PRs) |
-| Open items total | 19191 |
-| Reviewed files | 10179 |
-| Fresh verified reviews in the last 7 days | 10179 |
-| Proposed closes awaiting apply | 4872 (47.9% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 3587 |
+| Proposed PR closes | 1166 (32.5% of reviewed PRs) |
+| Open items total | 19196 |
+| Reviewed files | 10379 |
+| Fresh verified reviews in the last 7 days | 10379 |
+| Proposed closes awaiting apply | 4958 (47.8% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 9012 |
+| Todo for weekly coverage | 8817 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#55368](https://github.com/openclaw/openclaw/issues/55368) | [Bug]: OpenClaw openai-codex provider returns 404 terminated / 502 Bad Gateway, while direct codex exec works on the same machine | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55368.md) | complete | Apr 24, 2026, 14:38 UTC |
-| [#55390](https://github.com/openclaw/openclaw/pull/55390) | WIP feat(cli): sync local schema artifacts on startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55390.md) | complete | Apr 24, 2026, 14:37 UTC |
-| [#55366](https://github.com/openclaw/openclaw/issues/55366) | [Bug]: Hard context reset destroys in-progress task state with no recovery path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55366.md) | complete | Apr 24, 2026, 14:37 UTC |
-| [#55375](https://github.com/openclaw/openclaw/issues/55375) | [Bug]: Cron delivery rejects explicit channel: \"telegram\" with \"Unsupported channel\" after gateway restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55375.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55356](https://github.com/openclaw/openclaw/issues/55356) | Feature Request: suppressToolErrors option to hide tool failures from chat | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55356.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55395](https://github.com/openclaw/openclaw/pull/55395) | fix: centralize plugin command auth requirements | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55395.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55379](https://github.com/openclaw/openclaw/issues/55379) | [Feature]: Optional real-time API cost tracking via burn0 integration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55379.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55347](https://github.com/openclaw/openclaw/issues/55347) | Feature: Native gateway self-healing with configurable recovery workflow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55347.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55416](https://github.com/openclaw/openclaw/pull/55416) | Handle inline Ollama tool calls for Qwen | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55416.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55343](https://github.com/openclaw/openclaw/issues/55343) | [Bug]: Agent loses conversation history between sessions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55343.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55387](https://github.com/openclaw/openclaw/issues/55387) | [Bug]:Telegram startup fails with 404 (deleteWebhook / deleteMyCommands / setMyCommands) even though direct Bot API calls succeed | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55387.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55304](https://github.com/openclaw/openclaw/issues/55304) | [Bug]: Telegram channels fail to initialize silently after gateway restart in v2026.3.24 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55304.md) | complete | Apr 24, 2026, 14:36 UTC |
-| [#55396](https://github.com/openclaw/openclaw/pull/55396) | feat: add Kudosity SMS channel plugin | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55396.md) | complete | Apr 24, 2026, 14:35 UTC |
-| [#55401](https://github.com/openclaw/openclaw/issues/55401) | Feature: Per-agent plugin configuration overrides for multi-agent setups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55401.md) | complete | Apr 24, 2026, 14:35 UTC |
-| [#55372](https://github.com/openclaw/openclaw/issues/55372) | Feature request: config option to disable restart sentinel notification | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55372.md) | complete | Apr 24, 2026, 14:35 UTC |
-| [#55254](https://github.com/openclaw/openclaw/issues/55254) | [Bug]: [v2026.3.24 Bug] /new creates duplicate \"agent:main:main\" session that hijacks Feishu message routing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55254.md) | complete | Apr 24, 2026, 14:35 UTC |
-| [#55382](https://github.com/openclaw/openclaw/issues/55382) | BUG: Subagent announce-back fails with 'Outbound not configured for channel: slack' — registry mismatch in deliver path | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55382.md) | complete | Apr 24, 2026, 14:35 UTC |
-| [#55271](https://github.com/openclaw/openclaw/issues/55271) | Cron isolated + announce delivery fails: target resolved to @heartbeat instead of specified chat ID | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55271.md) | complete | Apr 24, 2026, 14:35 UTC |
-| [#55262](https://github.com/openclaw/openclaw/issues/55262) | [Feature] Add tool_call and after_tool_call Hook events for automation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55262.md) | complete | Apr 24, 2026, 14:35 UTC |
-| [#55364](https://github.com/openclaw/openclaw/issues/55364) | [Bug]: WhatsApp message send sends MP3 audio as PTT voice note, breaking Android playback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55364.md) | complete | Apr 24, 2026, 14:35 UTC |
+| [#55750](https://github.com/openclaw/openclaw/pull/55750) | fix(model-auth): resolve provider config for -plan variants | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55750.md) | complete | Apr 24, 2026, 14:52 UTC |
+| [#55767](https://github.com/openclaw/openclaw/pull/55767) | fix(hooks): reject internal session namespaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55767.md) | complete | Apr 24, 2026, 14:52 UTC |
+| [#55769](https://github.com/openclaw/openclaw/issues/55769) | Subagents return empty responses with all external providers (OpenRouter, Google) — only default MiniMax provider works | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55769.md) | complete | Apr 24, 2026, 14:52 UTC |
+| [#55763](https://github.com/openclaw/openclaw/issues/55763) | Discord WebSocket drops ~hourly with stale-socket; messages lost during reconnect window | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55763.md) | complete | Apr 24, 2026, 14:52 UTC |
+| [#55800](https://github.com/openclaw/openclaw/pull/55800) | Build: fall back on Windows symlink errors | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55800.md) | complete | Apr 24, 2026, 14:51 UTC |
+| [#55794](https://github.com/openclaw/openclaw/issues/55794) | [Bug]: WhatsApp group messages stopped routing to agent sessions (regression: March 12, 2026) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55794.md) | complete | Apr 24, 2026, 14:51 UTC |
+| [#55797](https://github.com/openclaw/openclaw/issues/55797) | [Bug]: 2026.3.24 models auth login for openai-codex triggers openclaw.json.clobbered storm in containerized pod | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55797.md) | complete | Apr 24, 2026, 14:51 UTC |
+| [#55770](https://github.com/openclaw/openclaw/pull/55770) | Add \"verbose limit\" support for configuring exec tool display truncat… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55770.md) | complete | Apr 24, 2026, 14:51 UTC |
+| [#55689](https://github.com/openclaw/openclaw/issues/55689) | [Bug]: Gateway restart fails when executed from agent context on Windows (schtasks) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55689.md) | complete | Apr 24, 2026, 14:51 UTC |
+| [#55757](https://github.com/openclaw/openclaw/pull/55757) | cli-runner: disable no-output watchdog when stdin is closed | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55757.md) | complete | Apr 24, 2026, 14:51 UTC |
+| [#55676](https://github.com/openclaw/openclaw/issues/55676) | [Feature]: ollama local model remote location | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55676.md) | complete | Apr 24, 2026, 14:51 UTC |
+| [#55747](https://github.com/openclaw/openclaw/pull/55747) | fix(hooks): rebind routed session keys to target agent | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55747.md) | complete | Apr 24, 2026, 14:50 UTC |
+| [#55735](https://github.com/openclaw/openclaw/issues/55735) | [Suggestion] The agent has no version-aware self-knowledge — it misdiagnoses intentional new behaviors as bugs after every upgrade | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55735.md) | complete | Apr 24, 2026, 14:50 UTC |
+| [#55726](https://github.com/openclaw/openclaw/pull/55726) | fix(security): include dmPolicy in exposure matrix audit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55726.md) | complete | Apr 24, 2026, 14:50 UTC |
+| [#55761](https://github.com/openclaw/openclaw/pull/55761) | fix(hooks): suppress silent shared-hook fallback while preserving error surfacing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55761.md) | complete | Apr 24, 2026, 14:50 UTC |
+| [#55786](https://github.com/openclaw/openclaw/issues/55786) | REACTION_INVALID warnings surface as failed message alerts despite suppressToolErrors=true | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55786.md) | complete | Apr 24, 2026, 14:50 UTC |
+| [#55748](https://github.com/openclaw/openclaw/pull/55748) | fix(utils): handle null/undefined in resolveUserPath | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55748.md) | complete | Apr 24, 2026, 14:50 UTC |
+| [#55799](https://github.com/openclaw/openclaw/issues/55799) | Integrate Safe Browsing checks into OpenClaw core for default web resource screening | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55799.md) | complete | Apr 24, 2026, 14:50 UTC |
+| [#55744](https://github.com/openclaw/openclaw/issues/55744) | [Bug]: Whatsapp/Telegram - Openclaw integration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55744.md) | complete | Apr 24, 2026, 14:50 UTC |
+| [#55721](https://github.com/openclaw/openclaw/issues/55721) | [Bug]:  Telegram session: intent commits but tool execution does not dispatch (invoke-first no-op), despite healthy  gateway/channel | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55721.md) | complete | Apr 24, 2026, 14:50 UTC |
 
 ## How It Works
 
