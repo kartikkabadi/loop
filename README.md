@@ -14,49 +14,49 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 18:07 UTC
+Last dashboard update: Apr 24, 2026, 18:22 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12498 |
-| Fresh reviewed issues in the last 7 days | 8345 |
-| Proposed issue closes | 4666 (55.9% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6613 |
-| Fresh reviewed PRs in the last 7 days | 4362 |
-| Proposed PR closes | 1353 (31% of reviewed PRs) |
-| Open items total | 19111 |
-| Reviewed files | 12707 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 12489 |
+| Fresh reviewed issues in the last 7 days | 8490 |
+| Proposed issue closes | 4749 (55.9% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6609 |
+| Fresh reviewed PRs in the last 7 days | 4417 |
+| Proposed PR closes | 1362 (30.8% of reviewed PRs) |
+| Open items total | 19098 |
+| Reviewed files | 12907 |
 | Archived closed files | 72 |
-| Fresh verified reviews in the last 7 days | 12707 |
-| Proposed closes awaiting apply | 6019 (47.4% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 12907 |
+| Proposed closes awaiting apply | 6111 (47.3% of fresh reviews) |
 | Closed by Codex apply | 60 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 6404 |
+| Todo for weekly coverage | 6191 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#60182](https://github.com/openclaw/openclaw/issues/60182) | OpenAI OAuth re-onboard only updates main agent auth-profiles.json, leaving non-main agents with stale auth | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60182.md) | complete | Apr 24, 2026, 18:00 UTC |
-| [#60149](https://github.com/openclaw/openclaw/issues/60149) | [Bug]: Gateway fails to start when creating new agent via wizard with Feishu account binding | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60149.md) | complete | Apr 24, 2026, 18:00 UTC |
-| [#60151](https://github.com/openclaw/openclaw/issues/60151) | [Feature] Configurable exec tool timeout upper bound in openclaw.json | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60151.md) | complete | Apr 24, 2026, 18:00 UTC |
-| [#60164](https://github.com/openclaw/openclaw/issues/60164) | CLI console.log output captured in structured log file, bypassing logging.level | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60164.md) | complete | Apr 24, 2026, 17:59 UTC |
-| [#60152](https://github.com/openclaw/openclaw/issues/60152) | Feature Request: Config-based skill disabling (skills.disabled) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60152.md) | complete | Apr 24, 2026, 17:59 UTC |
-| [#60180](https://github.com/openclaw/openclaw/issues/60180) | Gateway hangs on shutdown when Telegram API is unreachable | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60180.md) | complete | Apr 24, 2026, 17:59 UTC |
-| [#60170](https://github.com/openclaw/openclaw/pull/60170) | fix: add crash loop circuit breaker to prevent infinite restart loops | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60170.md) | complete | Apr 24, 2026, 17:59 UTC |
-| [#60154](https://github.com/openclaw/openclaw/issues/60154) | [Feature]: Per-account media inbound directory for multi-account Feishu | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60154.md) | complete | Apr 24, 2026, 17:59 UTC |
-| [#60157](https://github.com/openclaw/openclaw/pull/60157) | fix(agents): add null guards to prevent TypeError on undefined .replace() calls | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60157.md) | complete | Apr 24, 2026, 17:59 UTC |
-| [#60113](https://github.com/openclaw/openclaw/issues/60113) | TypeError: Cannot read properties of undefined (reading \"replace\") during embedded agent run (v2026.4.1) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60113.md) | complete | Apr 24, 2026, 17:59 UTC |
-| [#60105](https://github.com/openclaw/openclaw/issues/60105) | Control UI web: image attachments not received by agent | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60105.md) | complete | Apr 24, 2026, 17:59 UTC |
-| [#60174](https://github.com/openclaw/openclaw/issues/60174) | fix(providers): Claude on GitHub Copilot should default to anthropic-messages API for prompt caching | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60174.md) | complete | Apr 24, 2026, 17:58 UTC |
-| [#60101](https://github.com/openclaw/openclaw/issues/60101) | [Bug] Ollama adapter drops tool_calls when response includes thinking field | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60101.md) | complete | Apr 24, 2026, 17:58 UTC |
-| [#60082](https://github.com/openclaw/openclaw/issues/60082) | [Bug]: 异步工具执行结果无法显示在回复中 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60082.md) | complete | Apr 24, 2026, 17:58 UTC |
-| [#60088](https://github.com/openclaw/openclaw/issues/60088) | [Bug]: Telegram Channel Stops Responding After First Message | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60088.md) | complete | Apr 24, 2026, 17:58 UTC |
-| [#60143](https://github.com/openclaw/openclaw/issues/60143) | Plugin config error causes hard gateway crash instead of graceful disable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60143.md) | complete | Apr 24, 2026, 17:57 UTC |
-| [#60142](https://github.com/openclaw/openclaw/issues/60142) | Gateway crash loop: no backoff or circuit-breaker on auto-restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60142.md) | complete | Apr 24, 2026, 17:57 UTC |
-| [#60103](https://github.com/openclaw/openclaw/issues/60103) | [Feishu] Auto-normalize @mention syntax across message formats (card/text/post) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60103.md) | complete | Apr 24, 2026, 17:57 UTC |
-| [#60118](https://github.com/openclaw/openclaw/issues/60118) | [Bug]: voice-call responseModel config ignored — LiveSessionModelSwitchError overrides to global default | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60118.md) | complete | Apr 24, 2026, 17:57 UTC |
-| [#60165](https://github.com/openclaw/openclaw/issues/60165) | [功能建议] exec 工具应自动加载用户的 shell 配置文件（如 ~/.zshrc） | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60165.md) | complete | Apr 24, 2026, 17:57 UTC |
+| [#60539](https://github.com/openclaw/openclaw/issues/60539) | 建议：改进主从节点权限配置的用户体验和错误提示 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60539.md) | complete | Apr 24, 2026, 18:22 UTC |
+| [#60496](https://github.com/openclaw/openclaw/issues/60496) | Control UI: Long command outputs push approval buttons off screen | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60496.md) | complete | Apr 24, 2026, 18:21 UTC |
+| [#60512](https://github.com/openclaw/openclaw/issues/60512) | config.patch rejects compaction.model, customInstructions, postCompactionSections despite schema advertising them | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60512.md) | complete | Apr 24, 2026, 18:21 UTC |
+| [#60502](https://github.com/openclaw/openclaw/pull/60502) | feat(gateway): add A2A (Agent-to-Agent) protocol support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60502.md) | complete | Apr 24, 2026, 18:21 UTC |
+| [#60500](https://github.com/openclaw/openclaw/pull/60500) | feat(web): support PDF file uploads in web chat UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60500.md) | complete | Apr 24, 2026, 18:21 UTC |
+| [#60515](https://github.com/openclaw/openclaw/issues/60515) | Gateway crashes on transient ENETUNREACH — uncaughtException handler lacks isTransientNetworkError check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60515.md) | complete | Apr 24, 2026, 18:21 UTC |
+| [#60490](https://github.com/openclaw/openclaw/issues/60490) | [Bug]: Gateway not starting on Windows automatically (need to start manually) – Dashboard unreachable (127.0.0.1 refused to connect) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60490.md) | complete | Apr 24, 2026, 18:21 UTC |
+| [#60550](https://github.com/openclaw/openclaw/issues/60550) | Read tool path validation misses filePath and file aliases | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60550.md) | complete | Apr 24, 2026, 18:20 UTC |
+| [#60549](https://github.com/openclaw/openclaw/issues/60549) | TUI sessions lost on reconnect — gateway returns 'No session found' for existing session | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60549.md) | complete | Apr 24, 2026, 18:20 UTC |
+| [#60545](https://github.com/openclaw/openclaw/pull/60545) | fix: preserve retry intent, clean session rollover, machine-clean JSON, and one-shot sandbox teardown | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60545.md) | complete | Apr 24, 2026, 18:20 UTC |
+| [#60520](https://github.com/openclaw/openclaw/pull/60520) | fix: normalize routed reply directives and thread transport | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60520.md) | complete | Apr 24, 2026, 18:20 UTC |
+| [#60426](https://github.com/openclaw/openclaw/issues/60426) | exec approval followup dispatch fails with gateway timeout when user does not respond within approval window | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60426.md) | complete | Apr 24, 2026, 18:20 UTC |
+| [#60470](https://github.com/openclaw/openclaw/issues/60470) | UX: Improve user feedback for transient rate-limiting to prevent false-negative panic | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60470.md) | complete | Apr 24, 2026, 18:20 UTC |
+| [#60527](https://github.com/openclaw/openclaw/pull/60527) | fix: strip hostnameAllowlist from SSRF policy when validating explicit proxy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60527.md) | complete | Apr 24, 2026, 18:20 UTC |
+| [#60542](https://github.com/openclaw/openclaw/issues/60542) | BUG: Persisted main session row can become stale and diverge from transcript, wedging new input | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60542.md) | complete | Apr 24, 2026, 18:20 UTC |
+| [#60450](https://github.com/openclaw/openclaw/issues/60450) | v2026.3.28: Runaway API calls burned entire monthly budget across all providers without user action | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60450.md) | complete | Apr 24, 2026, 18:19 UTC |
+| [#60526](https://github.com/openclaw/openclaw/pull/60526) | feat: add setup-validator and plugin-integration skills | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60526.md) | complete | Apr 24, 2026, 18:19 UTC |
+| [#60510](https://github.com/openclaw/openclaw/issues/60510) | False-positive WARN: \"closed before connect\" floods logs from internal health probes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60510.md) | complete | Apr 24, 2026, 18:19 UTC |
+| [#60485](https://github.com/openclaw/openclaw/pull/60485) | fix(feishu): accept token-verified webhook challenges | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60485.md) | complete | Apr 24, 2026, 18:19 UTC |
+| [#60521](https://github.com/openclaw/openclaw/issues/60521) | allowUnsafeExternalContent flag ignored in /hooks/agent dispatch path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60521.md) | complete | Apr 24, 2026, 18:19 UTC |
 
 ## How It Works
 
