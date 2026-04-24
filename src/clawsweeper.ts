@@ -177,6 +177,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET_REPO = "openclaw/openclaw";
 const REPORT_REPO = "openclaw/clawsweeper";
 const CLAWHUB_URL = "https://clawhub.ai/";
+const DOCS_URL = "https://docs.openclaw.ai";
 const FRESH_DAYS = 7;
 const DEFAULT_CODEX_MODEL = "gpt-5.4";
 const DEFAULT_REASONING_EFFORT = "medium";
@@ -995,6 +996,15 @@ function latestFileUrl(file: string): string {
   return repoUrl(`/blob/main/${githubPath(file)}`);
 }
 
+function docsPageUrl(file: string): string | null {
+  if (!file.startsWith("docs/")) return null;
+  const page = file
+    .replace(/^docs\//, "")
+    .replace(/\/index\.mdx?$/, "")
+    .replace(/\.mdx?$/, "");
+  return `${DOCS_URL}/${page}`;
+}
+
 function markdownLink(label: string, url: string): string {
   return `[${label.replaceAll("|", "\\|")}](${url})`;
 }
@@ -1068,7 +1078,9 @@ function linkInlineSourceRefs(value: string, sha?: string | null): string {
     (match, ref: string) => {
       const { file, line } = splitFileAndLine(ref);
       if (!isLinkableSourceRef(file)) return match;
-      const url = file === "VISION.md" && !line ? latestFileUrl(file) : fileUrl(file, sha, line);
+      const docsUrl = !line ? docsPageUrl(file) : null;
+      const url =
+        docsUrl ?? (file === "VISION.md" && !line ? latestFileUrl(file) : fileUrl(file, sha, line));
       return markdownLink(`\`${ref}\``, url);
     },
   );
