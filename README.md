@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 04:50 UTC
+Last dashboard update: Apr 24, 2026, 05:06 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19100 |
-| Reviewed / proposed closes | 1986 / 889 |
-| Reviewed files | 1986 |
-| Fresh verified reviews in the last 7 days | 1986 |
-| Proposed closes awaiting apply | 889 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19103 |
+| Reviewed / proposed closes | 2186 / 988 |
+| Reviewed files | 2186 |
+| Fresh verified reviews in the last 7 days | 2186 |
+| Proposed closes awaiting apply | 988 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 17114 |
+| Todo for weekly coverage | 16917 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#39785](https://github.com/openclaw/openclaw/pull/39785) | fix(config): respect explicit input modalities override in provider model merge | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39785.md) | complete | Apr 24, 2026, 04:50 UTC |
-| [#39779](https://github.com/openclaw/openclaw/issues/39779) | Control UI: Auto-fallback from localhost to 127.0.0.1 when WebSocket connection fails | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39779.md) | complete | Apr 24, 2026, 04:49 UTC |
-| [#39692](https://github.com/openclaw/openclaw/pull/39692) | Localize control UI hardcoded strings to zh-CN | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39692.md) | complete | Apr 24, 2026, 04:48 UTC |
-| [#39748](https://github.com/openclaw/openclaw/pull/39748) | fix(nostr): validate relay URLs require WebSocket protocol (wss/ws) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39748.md) | complete | Apr 24, 2026, 04:48 UTC |
-| [#39774](https://github.com/openclaw/openclaw/pull/39774) | fix(synology-chat): preserve 0 rate limit and fallback invalid env to default | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39774.md) | complete | Apr 24, 2026, 04:48 UTC |
-| [#39694](https://github.com/openclaw/openclaw/issues/39694) | [Feature]: Session lifecycle hooks — onBeforeNew / onBeforeCompact | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39694.md) | complete | Apr 24, 2026, 04:48 UTC |
-| [#39773](https://github.com/openclaw/openclaw/pull/39773) | fix(session): correct totalTokensFresh flag for fallback path | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39773.md) | complete | Apr 24, 2026, 04:48 UTC |
-| [#39718](https://github.com/openclaw/openclaw/issues/39718) | [Bug]: Telegram streaming replies briefly show Deleted message as the quoted reply target on OpenClaw 2026.3.7 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39718.md) | complete | Apr 24, 2026, 04:47 UTC |
-| [#39772](https://github.com/openclaw/openclaw/pull/39772) | fix(telegram): apply reply_to only to first stream preview to avoid 'Deleted message' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39772.md) | complete | Apr 24, 2026, 04:47 UTC |
-| [#39676](https://github.com/openclaw/openclaw/pull/39676) | feat: add onQueued callback for user-visible feedback when messages are queued | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39676.md) | complete | Apr 24, 2026, 04:47 UTC |
-| [#39685](https://github.com/openclaw/openclaw/issues/39685) | [Feature]: Network Access Control (allowedDomains / denyDomains) — Egress Firewall | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39685.md) | complete | Apr 24, 2026, 04:47 UTC |
-| [#39780](https://github.com/openclaw/openclaw/issues/39780) | Control UI: Config upgrade/hardening suggestions should apply changes automatically with before/after diff and user acceptance, not direct users to edit files manually | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39780.md) | complete | Apr 24, 2026, 04:47 UTC |
-| [#39612](https://github.com/openclaw/openclaw/issues/39612) | Feature: Graceful error handling for LLM failures — never expose raw errors to users | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39612.md) | complete | Apr 24, 2026, 04:47 UTC |
-| [#39674](https://github.com/openclaw/openclaw/issues/39674) | [Bug]: agents.defaults.heartbeat.target的设置毫无作用 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39674.md) | complete | Apr 24, 2026, 04:47 UTC |
-| [#39697](https://github.com/openclaw/openclaw/issues/39697) | llm-task plugin missing module: pi-embedded-runner.js | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39697.md) | complete | Apr 24, 2026, 04:46 UTC |
-| [#39614](https://github.com/openclaw/openclaw/issues/39614) | [Feature]: Per-channel TTS voice — different voices for DMs, group chats, and topics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39614.md) | complete | Apr 24, 2026, 04:46 UTC |
-| [#39716](https://github.com/openclaw/openclaw/pull/39716) | fix: resolve Control UI token field mismatch between client and server | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39716.md) | complete | Apr 24, 2026, 04:46 UTC |
-| [#39714](https://github.com/openclaw/openclaw/pull/39714) | Sandbox: fix Dockerized browser bridge and tab creation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39714.md) | complete | Apr 24, 2026, 04:46 UTC |
-| [#39766](https://github.com/openclaw/openclaw/pull/39766) | fix(config): make models.providers.<id>.models optional to allow credential-only entries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39766.md) | complete | Apr 24, 2026, 04:46 UTC |
-| [#39661](https://github.com/openclaw/openclaw/issues/39661) | Feature: Discord channel-level per-user mention policy for agent replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39661.md) | complete | Apr 24, 2026, 04:46 UTC |
+| [#40154](https://github.com/openclaw/openclaw/issues/40154) | [Bug]: Custom workspace skills with `~/.openclaw/workspace/skills/...` are skipped as “outside configured root” in v2026.3.7 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40154.md) | complete | Apr 24, 2026, 05:05 UTC |
+| [#40145](https://github.com/openclaw/openclaw/issues/40145) | [Bug]: Webchat sessions on 2026.3.7 expose zero tools (no web_search/exec even with tools.allow set) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40145.md) | complete | Apr 24, 2026, 05:03 UTC |
+| [#40168](https://github.com/openclaw/openclaw/issues/40168) | Agent config model shows 'not found' on gateway restart but works via /model command | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40168.md) | complete | Apr 24, 2026, 05:03 UTC |
+| [#40151](https://github.com/openclaw/openclaw/pull/40151) | fix: install bundled extension deps via postinstall hook | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40151.md) | complete | Apr 24, 2026, 05:03 UTC |
+| [#40179](https://github.com/openclaw/openclaw/issues/40179) | [Bug]: exec tool does not inherit gateway's environment variables (launchd) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40179.md) | complete | Apr 24, 2026, 05:02 UTC |
+| [#40169](https://github.com/openclaw/openclaw/issues/40169) | [Bug]: node work not good | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40169.md) | complete | Apr 24, 2026, 05:02 UTC |
+| [#40156](https://github.com/openclaw/openclaw/issues/40156) | [Bug]: v2026.3.7's docker-setup doesn't work | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40156.md) | complete | Apr 24, 2026, 05:02 UTC |
+| [#40152](https://github.com/openclaw/openclaw/issues/40152) | Google provider/model resolution: google/<model> ids not normalized (e.g. google/gemini-2.5-flash) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40152.md) | complete | Apr 24, 2026, 05:02 UTC |
+| [#40127](https://github.com/openclaw/openclaw/issues/40127) | [Feature] Control UI Login Page 改进 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40127.md) | complete | Apr 24, 2026, 05:02 UTC |
+| [#40072](https://github.com/openclaw/openclaw/issues/40072) | chore: remaining unused files and dependencies from knip scan | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40072.md) | complete | Apr 24, 2026, 05:02 UTC |
+| [#40131](https://github.com/openclaw/openclaw/issues/40131) | [Bug]: Bundled voice-call plugin (v2026.3.2) returns 200 OK on Telnyx webhooks but does not process inbound calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40131.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40174](https://github.com/openclaw/openclaw/issues/40174) | Test issue | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40174.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40183](https://github.com/openclaw/openclaw/issues/40183) | [Feature] Backend: 统一媒体路径验证逻辑，修复 symlink 工作区问题 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40183.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40155](https://github.com/openclaw/openclaw/issues/40155) | [Bug]: Telegram channel generates different results to WebUI chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40155.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40144](https://github.com/openclaw/openclaw/issues/40144) | loopDetection: toolCallHistory persists across heartbeat cycles, causing false positives | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40144.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40065](https://github.com/openclaw/openclaw/issues/40065) | Web UI default agent model editor writes to agents.list override instead of agents.defaults.model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40065.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40181](https://github.com/openclaw/openclaw/issues/40181) | LocalMediaAccessError: fs.realpath() breaks media access for symlinked agent workspaces | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40181.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40089](https://github.com/openclaw/openclaw/issues/40089) | Gateway restart (update.run) can leave service dead: bootout without bootstrap | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40089.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40129](https://github.com/openclaw/openclaw/pull/40129) | feat(plugins): add registerOutboundTransform API for outbound text transforms  | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40129.md) | complete | Apr 24, 2026, 05:01 UTC |
+| [#40081](https://github.com/openclaw/openclaw/pull/40081) | Fix ACP session init fallback and persist ACP child transcripts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40081.md) | complete | Apr 24, 2026, 05:01 UTC |
 
 ## How It Works
 
