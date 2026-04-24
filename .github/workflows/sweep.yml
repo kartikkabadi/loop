@@ -261,7 +261,7 @@ jobs:
             -f apply_closures=false \
             -f apply_existing=false \
             -f batch_size="${{ needs.plan.outputs.batch_size }}" \
-            -f shard_count="${{ needs.plan.outputs.planned_shards }}" \
+            -f shard_count=20 \
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
 
   apply-existing:
