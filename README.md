@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 02:06 UTC
+Last dashboard update: Apr 24, 2026, 02:17 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19135 |
-| Reviewed / proposed closes | 486 / 214 |
-| Reviewed files | 486 |
-| Fresh verified reviews in the last 7 days | 486 |
-| Proposed closes awaiting apply | 214 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19132 |
+| Reviewed / proposed closes | 586 / 263 |
+| Reviewed files | 586 |
+| Fresh verified reviews in the last 7 days | 586 |
+| Proposed closes awaiting apply | 263 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 18649 |
+| Todo for weekly coverage | 18546 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#13599](https://github.com/openclaw/openclaw/issues/13599) | Add detailed node pairing setup guide with examples | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13599.md) | complete | Apr 24, 2026, 02:05 UTC |
-| [#13609](https://github.com/openclaw/openclaw/issues/13609) | Add retry logic for failed cron jobs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13609.md) | complete | Apr 24, 2026, 02:05 UTC |
-| [#13593](https://github.com/openclaw/openclaw/issues/13593) | Add logging and warnings for cron job execution failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13593.md) | complete | Apr 24, 2026, 02:05 UTC |
-| [#13610](https://github.com/openclaw/openclaw/issues/13610) | Add native secrets management integration (AWS Secrets Manager, Vault, etc.) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13610.md) | complete | Apr 24, 2026, 02:05 UTC |
-| [#13616](https://github.com/openclaw/openclaw/issues/13616) | Add backup/restore utility for config, cron jobs, and session history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13616.md) | complete | Apr 24, 2026, 02:04 UTC |
-| [#13562](https://github.com/openclaw/openclaw/issues/13562) | [Feature]: Ollama Memory Search Provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13562.md) | complete | Apr 24, 2026, 02:04 UTC |
-| [#13583](https://github.com/openclaw/openclaw/issues/13583) | [Feature] Pre-response enforcement hooks (hard gates) for mandatory tool-call / policy rules | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13583.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13615](https://github.com/openclaw/openclaw/issues/13615) | Add rate limiting and throttling for external API calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13615.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13601](https://github.com/openclaw/openclaw/issues/13601) | Add persistent cron job execution history with filtering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13601.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13607](https://github.com/openclaw/openclaw/issues/13607) | Feature: global default for reasoning visiblity | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13607.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13597](https://github.com/openclaw/openclaw/issues/13597) | Add comprehensive AWS deployment guide (EC2, ECS, Lambda) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13597.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13553](https://github.com/openclaw/openclaw/issues/13553) | [Feature]: Save whatsapp/iMessage attachments to ~/clawd/temp for upload | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13553.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13587](https://github.com/openclaw/openclaw/issues/13587) | Feature Request: Native Cross-Session Prompt Logging | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13587.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13423](https://github.com/openclaw/openclaw/issues/13423) | [Bug]: [CRITICAL SECURITY] Agent Routing System Complete Failure - Communication Misdirection | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13423.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13392](https://github.com/openclaw/openclaw/issues/13392) | Feature Request: session:spawn and session:complete hook events | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13392.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13499](https://github.com/openclaw/openclaw/issues/13499) | Feature Request: Auto-spawn at context threshold | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13499.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13617](https://github.com/openclaw/openclaw/issues/13617) | Add testing framework for cron jobs and skills (dry-run mode) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13617.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13570](https://github.com/openclaw/openclaw/issues/13570) | context-pruning: forcePruneRatio to bypass TTL at high usage | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13570.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13598](https://github.com/openclaw/openclaw/issues/13598) | Add cron troubleshooting playbook to docs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13598.md) | complete | Apr 24, 2026, 02:03 UTC |
-| [#13487](https://github.com/openclaw/openclaw/issues/13487) | Discord routing: mention > reply-target > default owner (suppress default owner when targeted) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13487.md) | complete | Apr 24, 2026, 02:03 UTC |
+| [#15098](https://github.com/openclaw/openclaw/issues/15098) | Feature Request: Custom user avatar in webchat UI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/15098.md) | complete | Apr 24, 2026, 02:17 UTC |
+| [#14804](https://github.com/openclaw/openclaw/issues/14804) | Enhancement: Add ephemeral file system support for isolated sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14804.md) | complete | Apr 24, 2026, 02:16 UTC |
+| [#14850](https://github.com/openclaw/openclaw/issues/14850) | [Feature]: Session key override on bindings (cross-channel session unification) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14850.md) | complete | Apr 24, 2026, 02:15 UTC |
+| [#15066](https://github.com/openclaw/openclaw/issues/15066) | [Feature]:  Pre hook for messages in whatsapp | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/15066.md) | complete | Apr 24, 2026, 02:15 UTC |
+| [#14785](https://github.com/openclaw/openclaw/issues/14785) | Reduce tool schema token overhead (~3,500 tok/session) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14785.md) | complete | Apr 24, 2026, 02:15 UTC |
+| [#14779](https://github.com/openclaw/openclaw/issues/14779) | Feature: Add plugin hooks for token cost management | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14779.md) | complete | Apr 24, 2026, 02:15 UTC |
+| [#14812](https://github.com/openclaw/openclaw/issues/14812) | Feature Request: Per-tool enable/disable config (tools.entries.<name>.enabled) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14812.md) | complete | Apr 24, 2026, 02:15 UTC |
+| [#15048](https://github.com/openclaw/openclaw/issues/15048) | [Feature Request] Add retention policy for isolated cron sessions | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/15048.md) | complete | Apr 24, 2026, 02:15 UTC |
+| [#15022](https://github.com/openclaw/openclaw/issues/15022) | Feature request: Coalesce interleaved text blocks into single outbound message | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/15022.md) | complete | Apr 24, 2026, 02:15 UTC |
+| [#14916](https://github.com/openclaw/openclaw/issues/14916) | Feature: summarize images on ingest to reduce context usage | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14916.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#14861](https://github.com/openclaw/openclaw/issues/14861) | Gateway boot: no observability for subsystem startup failures (gmail-watcher, hooks) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14861.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#14874](https://github.com/openclaw/openclaw/issues/14874) | [Feature]: Proposal: optional SIE verification in skill loader (warn/strict modes) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14874.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#15014](https://github.com/openclaw/openclaw/issues/15014) | [Feature]: Update Copilot provider model list to add claude-opus-4-6-fast, gpt-5.3-codex, and modernize default models | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/15014.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#14803](https://github.com/openclaw/openclaw/issues/14803) | Add browser.args config field for custom Chrome launch flags | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14803.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#14431](https://github.com/openclaw/openclaw/issues/14431) | [Feature]: Feishu inbound dedup cache lost on SIGUSR1 restart, causing duplicate message processing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14431.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#14921](https://github.com/openclaw/openclaw/issues/14921) | [Feature]: Auto-Report Subagent Costs to Parent Session | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14921.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#14965](https://github.com/openclaw/openclaw/issues/14965) | [Feature]: Formatting agent reply | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14965.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#14438](https://github.com/openclaw/openclaw/issues/14438) | [Feature]: Plugin hot-reload without container restart (jiti cache invalidation) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14438.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#14735](https://github.com/openclaw/openclaw/issues/14735) | feat: implement message:sent hook event for outbound message post-processing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14735.md) | complete | Apr 24, 2026, 02:14 UTC |
+| [#15027](https://github.com/openclaw/openclaw/issues/15027) | [Docs]: Conflicting installation guidance for Windows — Getting Started recommends PowerShell IRM, Install page recommends WSL2 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/15027.md) | complete | Apr 24, 2026, 02:14 UTC |
 
 ## How It Works
 
