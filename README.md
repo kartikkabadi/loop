@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 02:51 UTC
+Last dashboard update: Apr 24, 2026, 03:03 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19132 |
-| Reviewed / proposed closes | 886 / 396 |
-| Reviewed files | 886 |
-| Fresh verified reviews in the last 7 days | 886 |
-| Proposed closes awaiting apply | 396 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19135 |
+| Reviewed / proposed closes | 986 / 435 |
+| Reviewed files | 986 |
+| Fresh verified reviews in the last 7 days | 986 |
+| Proposed closes awaiting apply | 435 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 18246 |
+| Todo for weekly coverage | 18149 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#28230](https://github.com/openclaw/openclaw/issues/28230) | [Feature]: 1006：no reason | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/28230.md) | complete | Apr 24, 2026, 02:50 UTC |
-| [#28753](https://github.com/openclaw/openclaw/issues/28753) | [Feature]: Route approval prompts to the originating channel (Discord/Telegram/Slack) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/28753.md) | complete | Apr 24, 2026, 02:50 UTC |
-| [#28222](https://github.com/openclaw/openclaw/issues/28222) | [Bug]: Built-in diagnostics-otel plugin doesn't work | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/28222.md) | complete | Apr 24, 2026, 02:50 UTC |
-| [#28847](https://github.com/openclaw/openclaw/issues/28847) | Provider key pools + bucket-aware cooldown/backoff on 429 (Gemini projects) to prevent retry storms | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/28847.md) | complete | Apr 24, 2026, 02:50 UTC |
-| [#28797](https://github.com/openclaw/openclaw/issues/28797) | [Feature]: Tool lifecycle hooks (tool.start/tool.end/tool.progress) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/28797.md) | complete | Apr 24, 2026, 02:50 UTC |
-| [#28965](https://github.com/openclaw/openclaw/issues/28965) | [Proposal] Simplify Model Configuration: Single-Source Reconcile + Session Override Reset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/28965.md) | complete | Apr 24, 2026, 02:50 UTC |
-| [#28580](https://github.com/openclaw/openclaw/issues/28580) | [Feature]: [Channel Plugin] NapCat (OneBot v11) — China's leading QQ bot backend | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/28580.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#29012](https://github.com/openclaw/openclaw/issues/29012) | [Feature Request] Per-agent or per-channel slash command configuration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/29012.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#29054](https://github.com/openclaw/openclaw/issues/29054) | [Feature]: Add drag-and-drop image upload to chat composer | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/29054.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#27137](https://github.com/openclaw/openclaw/issues/27137) | [Feature]: RFC: Unified ingress authorization gate to address recurring per-channel auth drift | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/27137.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#28281](https://github.com/openclaw/openclaw/pull/28281) | fix: override basic-ftp and fast-xml-parser to fix security vulnerabilities | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/28281.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#29053](https://github.com/openclaw/openclaw/issues/29053) | [Feature Request] MCP Client: Native support for connecting to external MCP servers | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/29053.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#28166](https://github.com/openclaw/openclaw/pull/28166) | Diagnostics: dedupe OTEL trace context + log transport fixes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/28166.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#28913](https://github.com/openclaw/openclaw/issues/28913) | [Feature]: Source-based filtering for autoCapture | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/28913.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#29014](https://github.com/openclaw/openclaw/issues/29014) | [Feature]: [Feature Request] Smart, reliable fallback + auto-retry for overloaded errors (Anthropic 529, “The AI service is temporarily overloaded”, 503/502/504, api_error, etc.) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/29014.md) | complete | Apr 24, 2026, 02:49 UTC |
-| [#27848](https://github.com/openclaw/openclaw/issues/27848) | [Feature]: Scheduled Agent Memory Indexing for RAG-Optimized Context Retrieval | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/27848.md) | complete | Apr 24, 2026, 02:48 UTC |
-| [#28183](https://github.com/openclaw/openclaw/pull/28183) | feat: add Avian as a named LLM provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/28183.md) | complete | Apr 24, 2026, 02:48 UTC |
-| [#28814](https://github.com/openclaw/openclaw/issues/28814) | [Feature]: Default Cron Job Staggering to Avoid Rate Limits at :00 hourly time | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/28814.md) | complete | Apr 24, 2026, 02:48 UTC |
-| [#27574](https://github.com/openclaw/openclaw/issues/27574) | [Feature]: Browser Preview Panel in Dashboard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/27574.md) | complete | Apr 24, 2026, 02:48 UTC |
-| [#27925](https://github.com/openclaw/openclaw/issues/27925) | [Feature]: Context Tier Slash Commands | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/27925.md) | complete | Apr 24, 2026, 02:48 UTC |
+| [#33017](https://github.com/openclaw/openclaw/issues/33017) | [Feature]: Plugin API for Dynamic Context Pruning | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/33017.md) | complete | Apr 24, 2026, 03:02 UTC |
+| [#32932](https://github.com/openclaw/openclaw/issues/32932) | [Feature]: Suggestion for scheduled task,  WebHook URL function | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32932.md) | complete | Apr 24, 2026, 03:01 UTC |
+| [#32473](https://github.com/openclaw/openclaw/issues/32473) | [Bug]: control ui requires device identity (use HTTPS or localhost secure context) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32473.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32515](https://github.com/openclaw/openclaw/issues/32515) | Feature Request: One-click Anthropic authentication (OAuth flow) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32515.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32369](https://github.com/openclaw/openclaw/issues/32369) | [Feature]: Set models without retyping api key | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/32369.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32621](https://github.com/openclaw/openclaw/issues/32621) | Feature request: hook point inside message tool (message_sending only catches implicit replies) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32621.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32530](https://github.com/openclaw/openclaw/issues/32530) | [Feature]: Auto-discovery of agent configurations from external workspaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32530.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32603](https://github.com/openclaw/openclaw/issues/32603) | [Feature]: Set environment before /ace launch Claude Code | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/32603.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32438](https://github.com/openclaw/openclaw/issues/32438) | [Feature]: Add a formatted log file when JSON logs are hard to read and Control UI is unusable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32438.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32460](https://github.com/openclaw/openclaw/issues/32460) | [Feature]: Plugin API: emit tool:before for embedded agent native tools | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/32460.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32558](https://github.com/openclaw/openclaw/pull/32558) | MSTeams: add upload session fallback for large files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32558.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32296](https://github.com/openclaw/openclaw/issues/32296) | [Bug]: Agent replies to previous message instead of current message (session context confusion) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32296.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32607](https://github.com/openclaw/openclaw/issues/32607) | [Bug]: Moonshot CN users get 401 after onboard — models.json uses api.moonshot.ai instead of api.moonshot.cn | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/32607.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32694](https://github.com/openclaw/openclaw/issues/32694) | [Feature]: Reformate it's setting UI 🫥 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/32694.md) | complete | Apr 24, 2026, 03:00 UTC |
+| [#32638](https://github.com/openclaw/openclaw/issues/32638) | [Bug]: Groq + reasoning models fail with 400: reasoning_effort must be none or default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32638.md) | complete | Apr 24, 2026, 02:59 UTC |
+| [#32618](https://github.com/openclaw/openclaw/issues/32618) | {Feature Request] Add Feishu Mail and Calendar API Integrationure]: | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32618.md) | complete | Apr 24, 2026, 02:59 UTC |
+| [#32864](https://github.com/openclaw/openclaw/issues/32864) | 🔥🔥🔥 Enhanced LanceDB memory plugin for OpenClaw | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/32864.md) | complete | Apr 24, 2026, 02:59 UTC |
+| [#32869](https://github.com/openclaw/openclaw/issues/32869) | OpenClaw Skills官方技能库中文翻译 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32869.md) | complete | Apr 24, 2026, 02:59 UTC |
+| [#32868](https://github.com/openclaw/openclaw/issues/32868) | Block streaming: block replies not delivered before tool execution (same-channel) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/32868.md) | complete | Apr 24, 2026, 02:59 UTC |
+| [#31396](https://github.com/openclaw/openclaw/issues/31396) | [Feature]: Whenever I ask him to switch models or connect to a new model on his own, it often freezes. How can I avoid this? | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/31396.md) | complete | Apr 24, 2026, 02:59 UTC |
 
 ## How It Works
 
