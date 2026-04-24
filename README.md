@@ -14,43 +14,43 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 24, 2026, 02:28 UTC
+Last dashboard update: Apr 24, 2026, 02:40 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19131 |
-| Reviewed / proposed closes | 686 / 306 |
-| Reviewed files | 686 |
-| Fresh verified reviews in the last 7 days | 686 |
-| Proposed closes awaiting apply | 306 |
+| Open items in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 19127 |
+| Reviewed / proposed closes | 786 / 352 |
+| Reviewed files | 786 |
+| Fresh verified reviews in the last 7 days | 786 |
+| Proposed closes awaiting apply | 352 |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 18445 |
+| Todo for weekly coverage | 18341 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#18778](https://github.com/openclaw/openclaw/pull/18778) | Discord: Discord canvas! | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18778.md) | complete | Apr 24, 2026, 02:28 UTC |
-| [#18823](https://github.com/openclaw/openclaw/pull/18823) | revert(browser): remove extraArgs config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18823.md) | complete | Apr 24, 2026, 02:28 UTC |
-| [#18889](https://github.com/openclaw/openclaw/pull/18889) | feat(hooks): add agent and tool lifecycle boundaries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18889.md) | complete | Apr 24, 2026, 02:27 UTC |
-| [#18571](https://github.com/openclaw/openclaw/issues/18571) | [Feature]: Expose sessionKey/runId to outbound message hook for deterministic verification | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18571.md) | complete | Apr 24, 2026, 02:27 UTC |
-| [#18860](https://github.com/openclaw/openclaw/pull/18860) | feat(agents): expose tools and their schemas via new after_tools_resolved hook [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18860.md) | complete | Apr 24, 2026, 02:27 UTC |
-| [#17936](https://github.com/openclaw/openclaw/issues/17936) | [Security] message/sendAttachment allows local file exfiltration when sandboxRoot is unset | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/17936.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#18967](https://github.com/openclaw/openclaw/issues/18967) | [Feature]: Parent-scoped sessions_send for sub-agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18967.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#18813](https://github.com/openclaw/openclaw/issues/18813) | [Feature]: Add CI Checks to Enforce TLS Security Standards | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18813.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#18598](https://github.com/openclaw/openclaw/issues/18598) | [Bug]: macOS Sequoia: OpenClaw isolated Chrome profile cannot download CSV (chrome://downloads entry is unclickable + wrong filename) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18598.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#18920](https://github.com/openclaw/openclaw/issues/18920) | [Feature]: Implement Proper Message Dispatching in Nostr Extension | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/18920.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#18716](https://github.com/openclaw/openclaw/pull/18716) | msteams: fix DM image delivery + user target routing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/18716.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#18565](https://github.com/openclaw/openclaw/issues/18565) | [Feature]: Per-user context files for single-agent, multi-user setups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18565.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#17890](https://github.com/openclaw/openclaw/issues/17890) | [Bug]: macOS app: Skill binary detection doesn't respect `/etc/paths` or Homebrew PATH | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/17890.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#18869](https://github.com/openclaw/openclaw/issues/18869) | [Feature]: Multi-Agent Group Chat Support with Turn-Taking Protocol | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/18869.md) | complete | Apr 24, 2026, 02:26 UTC |
-| [#18223](https://github.com/openclaw/openclaw/issues/18223) | Compaction triggers session.reset which SIGKILLs in-flight exec processes (regression in 2026.2.14+) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/18223.md) | complete | Apr 24, 2026, 02:25 UTC |
-| [#18844](https://github.com/openclaw/openclaw/issues/18844) | [Feature]: GLM-5 JSON error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/18844.md) | complete | Apr 24, 2026, 02:25 UTC |
-| [#18160](https://github.com/openclaw/openclaw/issues/18160) | [Feature]: Direct Exec Mode for Cron Jobs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18160.md) | complete | Apr 24, 2026, 02:25 UTC |
-| [#18599](https://github.com/openclaw/openclaw/issues/18599) | [Feature]: Token- / Message-based History Limit per Channel | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/18599.md) | complete | Apr 24, 2026, 02:25 UTC |
-| [#18915](https://github.com/openclaw/openclaw/pull/18915) | fix(telegram): pass video width/height to sendVideo to prevent portra… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18915.md) | complete | Apr 24, 2026, 02:25 UTC |
-| [#18633](https://github.com/openclaw/openclaw/issues/18633) | [Feature]: Stuck run recovery: auto-abort after timeout (compaction stalls block all messages) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/18633.md) | complete | Apr 24, 2026, 02:25 UTC |
+| [#23906](https://github.com/openclaw/openclaw/issues/23906) | [Feature]: feat(sessions_spawn): per-spawn tool profile override | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23906.md) | complete | Apr 24, 2026, 02:40 UTC |
+| [#23096](https://github.com/openclaw/openclaw/pull/23096) | feat(secrets): add Bitwarden/Vaultwarden secret provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23096.md) | complete | Apr 24, 2026, 02:40 UTC |
+| [#23014](https://github.com/openclaw/openclaw/issues/23014) | [Feature]: Add .m2a audio format support for Telegram and media handling | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23014.md) | complete | Apr 24, 2026, 02:40 UTC |
+| [#23500](https://github.com/openclaw/openclaw/issues/23500) | [Feature]: ISSUE_WHATSAPP_PROXY | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/23500.md) | complete | Apr 24, 2026, 02:39 UTC |
+| [#22724](https://github.com/openclaw/openclaw/issues/22724) | [Feature]: Skill usage telemetry & ratings on ClawhHub | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/22724.md) | complete | Apr 24, 2026, 02:39 UTC |
+| [#23451](https://github.com/openclaw/openclaw/issues/23451) | [Feature]: Tool-level confirmation gate before execution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23451.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#23653](https://github.com/openclaw/openclaw/issues/23653) | [Feature Request] Improving Usability and \"Software-style\" Experience | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/23653.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#23208](https://github.com/openclaw/openclaw/issues/23208) | TTS tool ignores messages.tts.elevenlabs.voiceId config | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/23208.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#22073](https://github.com/openclaw/openclaw/issues/22073) | [Feature]: Build an SEO-optimized advertising website for OpenClaw | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/22073.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#22676](https://github.com/openclaw/openclaw/issues/22676) | [Bug]: Signal daemon stop() race condition on SIGUSR1 restart — orphaned processes and send failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/22676.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#22060](https://github.com/openclaw/openclaw/issues/22060) | Security: Indirect prompt injection via URL link preview metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/22060.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#22631](https://github.com/openclaw/openclaw/issues/22631) | [Feature]: Make Model Configuration Provider-Aware | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/22631.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#22927](https://github.com/openclaw/openclaw/issues/22927) | [Feature]:  Add Postgres/pgvector store driver for memorySearch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/22927.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#22438](https://github.com/openclaw/openclaw/issues/22438) | feat: Tiered bootstrap file loading for progressive context control | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/22438.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#22603](https://github.com/openclaw/openclaw/issues/22603) | [Feature]: the Gemini new models from anti-gravity are not in the model section, and I can't use the Gemini 3 models as well, so pls fix the anti-gravity models and update it to the latest. | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/22603.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#23097](https://github.com/openclaw/openclaw/issues/23097) | [Feature]: [Discord] Agent receives history_count: 0 in Threads - can't see original message or conversation history | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/23097.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#23353](https://github.com/openclaw/openclaw/issues/23353) | [Feature]: Support Anthropic native server-side tools (web_search, web_fetch, code_execution) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23353.md) | complete | Apr 24, 2026, 02:38 UTC |
+| [#23718](https://github.com/openclaw/openclaw/issues/23718) | [Feature]: Fallback chain support for heartbeat.model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23718.md) | complete | Apr 24, 2026, 02:37 UTC |
+| [#22770](https://github.com/openclaw/openclaw/issues/22770) | [Feature]: Add $EDITOR compose mode in TUI (external editor handoff) for multiline prompts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/22770.md) | complete | Apr 24, 2026, 02:37 UTC |
+| [#21844](https://github.com/openclaw/openclaw/issues/21844) | [Feature]: Discord Components v2 Interaction Handling | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/21844.md) | complete | Apr 24, 2026, 02:37 UTC |
 
 ## How It Works
 
