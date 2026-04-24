@@ -1699,7 +1699,10 @@ function applyDecisionsCommand(args: Args): void {
       if (processedCount >= processedLimit) break;
       continue;
     }
-    const existingCloseComment = issueMatchingComment(number, closeComment);
+    const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
+    const existingCloseComment = updatedSinceReview
+      ? issueMatchingComment(number, closeComment)
+      : undefined;
     const closeCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingCloseComment);
     if (state !== "open") {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_already_closed");
@@ -1711,7 +1714,7 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     if (closedCount >= limit) break;
-    if (storedUpdatedAt && item.updatedAt !== storedUpdatedAt && !closeCommentOnlyUpdate) {
+    if (updatedSinceReview && !closeCommentOnlyUpdate) {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
       markdown = replaceFrontMatterValue(markdown, "current_item_updated_at", item.updatedAt);
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
@@ -1725,17 +1728,27 @@ function applyDecisionsCommand(args: Args): void {
       if (processedCount >= processedLimit) break;
       continue;
     }
-    const currentContext = collectItemContext(item);
-    const currentHash = itemSnapshotHash(item, currentContext);
-    if (currentHash !== storedHash && !closeCommentOnlyUpdate) {
-      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
-      markdown = replaceFrontMatterValue(markdown, "current_item_snapshot_hash", currentHash);
-      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      writeFileSync(path, markdown, "utf8");
-      results.push({ number, action: "skipped_changed_since_review", reason: "snapshot changed" });
-      processedCount += 1;
-      if (processedCount >= processedLimit) break;
-      continue;
+    if (!storedUpdatedAt) {
+      const currentContext = collectItemContext(item);
+      const currentHash = itemSnapshotHash(item, currentContext);
+      if (currentHash !== storedHash && !closeCommentOnlyUpdate) {
+        markdown = replaceFrontMatterValue(
+          markdown,
+          "action_taken",
+          "skipped_changed_since_review",
+        );
+        markdown = replaceFrontMatterValue(markdown, "current_item_snapshot_hash", currentHash);
+        markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+        writeFileSync(path, markdown, "utf8");
+        results.push({
+          number,
+          action: "skipped_changed_since_review",
+          reason: "snapshot changed",
+        });
+        processedCount += 1;
+        if (processedCount >= processedLimit) break;
+        continue;
+      }
     }
     postClose({ number, kind: item.kind, reason: closeReason, closeComment });
     markdown = replaceSectionValue(markdown, "Close Comment", closeComment);
