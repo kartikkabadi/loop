@@ -2193,5 +2193,300 @@
     "number": 44863,
     "action": "closed",
     "reason": "already implemented on main"
+  },
+  {
+    "number": 42945,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 43024,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 43041,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 43106,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 43125,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 43169,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 43259,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 43347,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 43489,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 43497,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 43580,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 43693,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 43723,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 43732,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 43744,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 43777,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 43812,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 44877,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 44879,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 44893,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 44902,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 44909,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 44951,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 44961,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 44962,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 44994,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 44995,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45002,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 45014,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45019,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45039,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45063,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45071,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 45073,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45081,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45092,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 45097,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 45098,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 45105,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 45121,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 45128,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 45136,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45139,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 45140,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45176,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45193,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45204,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45214,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 45235,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 45246,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45257,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45265,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45272,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45307,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 45308,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45345,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45347,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 45354,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 45395,
+    "action": "skipped_maintainer_authored",
+    "reason": "author association is MEMBER"
   }
 ]
