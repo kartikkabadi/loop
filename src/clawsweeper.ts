@@ -1693,7 +1693,7 @@ function applyDecisionsCommand(args: Args): void {
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const minAgeDays = numberArg(args.min_age_days, 0);
   const applyKind = applyKindArg(args.apply_kind);
-  const closeDelayMs = numberArg(args.close_delay_ms, 15_000);
+  const closeDelayMs = numberArg(args.close_delay_ms, 5_000);
   const progressEvery = Math.max(1, numberArg(args.progress_every, 10));
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
