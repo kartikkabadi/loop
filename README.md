@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 06:00 UTC
+Last dashboard update: Apr 25, 2026, 06:05 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 06:00 UTC
+Updated: Apr 25, 2026, 06:05 UTC
 
 State: Apply in progress
 
-Checkpoint 5 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 250/500. Result records in checkpoint: 53.
+Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 55.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24923761277](https://github.com/openclaw/clawsweeper/actions/runs/24923761277)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9102 |
-| Fresh reviewed issues in the last 7 days | 8722 |
-| Proposed issue closes | 3355 (38.5% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6175 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9053 |
+| Fresh reviewed issues in the last 7 days | 8670 |
+| Proposed issue closes | 3300 (38.1% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6174 |
 | Fresh reviewed PRs in the last 7 days | 6206 |
 | Proposed PR closes | 1580 (25.5% of reviewed PRs) |
-| Open items total | 15277 |
-| Reviewed files | 14928 |
-| Archived closed files | 3322 |
-| Fresh verified reviews in the last 7 days | 14928 |
-| Proposed closes awaiting apply | 4935 (33.1% of fresh reviews) |
-| Closed by Codex apply | 2533 |
+| Open items total | 15227 |
+| Reviewed files | 14876 |
+| Archived closed files | 3374 |
+| Fresh verified reviews in the last 7 days | 14876 |
+| Proposed closes awaiting apply | 4880 (32.8% of fresh reviews) |
+| Closed by Codex apply | 2583 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 349 |
+| Todo for weekly coverage | 351 |
 
 Recently reviewed:
 
