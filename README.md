@@ -14,56 +14,52 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 14:50 UTC
+Last dashboard update: Apr 25, 2026, 15:31 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 15:21 UTC
+Updated: Apr 25, 2026, 15:31 UTC
 
-State: Apply throttled
+State: Apply in progress
 
-Checkpoint 5. GitHub throttled while applying close decisions. Progress: 46/50 fresh closes, 46/1000 processed records in this apply chunk. Last throttled command: `gh api repos/openclaw/openclaw/issues/63160/comments`. Retry 7/11 in 600s.
+Checkpoint 5 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 250/500. Result records in checkpoint: 50.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24933057232](https://github.com/openclaw/clawsweeper/actions/runs/24933057232)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6920 |
-| Fresh reviewed issues in the last 7 days | 6899 |
-| Proposed issue closes | 1308 (19% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4691 |
-| Fresh reviewed PRs in the last 7 days | 4624 |
-| Proposed PR closes | 267 (5.8% of reviewed PRs) |
-| Open items total | 11611 |
-| Reviewed files | 11528 |
-| Unreviewed open items | 83 |
-| Archived closed files | 7656 |
-| Fresh verified reviews in the last 7 days | 11523 |
-| Proposed closes awaiting apply | 1575 (13.7% of fresh reviews) |
-| Closed by Codex apply | 5807 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6887 |
+| Fresh reviewed issues in the last 7 days | 6862 |
+| Proposed issue closes | 1271 (18.5% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4676 |
+| Fresh reviewed PRs in the last 7 days | 4611 |
+| Proposed PR closes | 254 (5.5% of reviewed PRs) |
+| Open items total | 11563 |
+| Reviewed files | 11478 |
+| Unreviewed open items | 85 |
+| Archived closed files | 7706 |
+| Fresh verified reviews in the last 7 days | 11473 |
+| Proposed closes awaiting apply | 1525 (13.3% of fresh reviews) |
+| Closed by Codex apply | 5857 |
 | Failed or stale reviews | 5 |
-| Daily cadence coverage | 8575/8753 current (178 due, 98%) |
-| Daily PR cadence | 4529/4625 current (96 due, 97.9%) |
-| Daily new issue cadence (<30d) | 4046/4128 current (82 due, 98%) |
-| Weekly older issue cadence | 2775/2775 current (0 due, 100%) |
-| Due now by cadence | 261 |
+| Daily cadence coverage | 8290/8697 current (407 due, 95.3%) |
+| Daily PR cadence | 4401/4612 current (211 due, 95.4%) |
+| Daily new issue cadence (<30d) | 3889/4085 current (196 due, 95.2%) |
+| Weekly older issue cadence | 2781/2781 current (0 due, 100%) |
+| Due now by cadence | 492 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#55236](https://github.com/openclaw/openclaw/issues/55236) | [Bug]: Discord main replies can appear late after result is already ready, causing timing confusion | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55236.md) | complete | Apr 25, 2026, 14:44 UTC |
 | [#71613](https://github.com/openclaw/openclaw/issues/71613) | Feature: channel reload <provider> — reinitialise single channel without full gateway restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71613.md) | complete | Apr 25, 2026, 14:44 UTC |
 | [#54874](https://github.com/openclaw/openclaw/issues/54874) | [Bug] Slow typing in webchat input with keystroke delay | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54874.md) | complete | Apr 25, 2026, 14:43 UTC |
 | [#55224](https://github.com/openclaw/openclaw/issues/55224) | [Bug] Tool parameters randomly dropped in long sessions (exec/write/sessions_spawn) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55224.md) | complete | Apr 25, 2026, 14:43 UTC |
-| [#55248](https://github.com/openclaw/openclaw/issues/55248) | Bug: Subagent announce fails after compaction corrupts thinking blocks | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55248.md) | complete | Apr 25, 2026, 14:43 UTC |
 | [#55297](https://github.com/openclaw/openclaw/issues/55297) | Feature request: auto-update for skills and plugins | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55297.md) | complete | Apr 25, 2026, 14:43 UTC |
 | [#71607](https://github.com/openclaw/openclaw/issues/71607) | Cron may keep stale in-memory schedule after job expression change, causing duplicate runs (sanitized) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71607.md) | complete | Apr 25, 2026, 14:43 UTC |
 | [#71616](https://github.com/openclaw/openclaw/issues/71616) | Control UI: assistant replies not rendered until next user message is sent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71616.md) | complete | Apr 25, 2026, 14:43 UTC |
 | [#55231](https://github.com/openclaw/openclaw/issues/55231) | delivery-recovery flushes stale pending messages as batch on every restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55231.md) | complete | Apr 25, 2026, 14:43 UTC |
-| [#55243](https://github.com/openclaw/openclaw/issues/55243) | [Bug]: Agent won't do assigned task (says it will but does nothing) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55243.md) | complete | Apr 25, 2026, 14:43 UTC |
-| [#55329](https://github.com/openclaw/openclaw/issues/55329) | Feature: per-agent memory path support for self-improving and memory-automation skills | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55329.md) | complete | Apr 25, 2026, 14:42 UTC |
 | [#71615](https://github.com/openclaw/openclaw/issues/71615) | [Bug]: 2026.4.23 tool-heavy main sessions can jump from low context to near-full within 1-2 replay turns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71615.md) | complete | Apr 25, 2026, 14:42 UTC |
 | [#55409](https://github.com/openclaw/openclaw/issues/55409) | Nostr channel: WebSocket subscriptions fail with timeout/connection refused | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55409.md) | complete | Apr 25, 2026, 14:42 UTC |
 | [#55093](https://github.com/openclaw/openclaw/pull/55093) | Stabilize runtime facade builds and mark dirty local versions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55093.md) | complete | Apr 25, 2026, 14:42 UTC |
@@ -73,6 +69,10 @@ Recently reviewed:
 | [#55249](https://github.com/openclaw/openclaw/issues/55249) | Feature: Session labels / nicknames for easier identification | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55249.md) | complete | Apr 25, 2026, 14:42 UTC |
 | [#55171](https://github.com/openclaw/openclaw/pull/55171) | fix(feishu): unbind stale cross-agent conversation bindings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55171.md) | complete | Apr 25, 2026, 14:42 UTC |
 | [#54929](https://github.com/openclaw/openclaw/pull/54929) | fix(gateway): route web chat image turns through the configured image model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54929.md) | complete | Apr 25, 2026, 14:41 UTC |
+| [#54970](https://github.com/openclaw/openclaw/pull/54970) | fix: fall back to local plan when node does not support system.run.prepare | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54970.md) | complete | Apr 25, 2026, 14:41 UTC |
+| [#55266](https://github.com/openclaw/openclaw/pull/55266) | fix: respect compat.supportsStore=true for proxied OpenAI Responses API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55266.md) | complete | Apr 25, 2026, 14:41 UTC |
+| [#71620](https://github.com/openclaw/openclaw/issues/71620) | [Bug]: Generic \"An unknown error occurred\" stream errors don't trigger model fallback for   non-Anthropic providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71620.md) | complete | Apr 25, 2026, 14:41 UTC |
+| [#67128](https://github.com/openclaw/openclaw/issues/67128) | [Feature]: /usage command or session stats panel in Telegram | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67128.md) | complete | Apr 25, 2026, 14:41 UTC |
 
 ## How It Works
 
