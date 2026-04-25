@@ -21,10 +21,10 @@ Last dashboard update: Apr 25, 2026, 08:05 UTC
 
 Updated: Apr 25, 2026, 08:05 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply run finished with 500 fresh closes out of requested limit 500. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24924985336](https://github.com/openclaw/clawsweeper/actions/runs/24924985336)
+Starting apply run for up to 500 fresh all closes. Checkpoints commit every 50 fresh closes; close delay is 5000ms.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24926354430](https://github.com/openclaw/clawsweeper/actions/runs/24926354430)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
@@ -37,12 +37,17 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24924985336](https://
 | Proposed PR closes | 1118 (19% of reviewed PRs) |
 | Open items total | 14472 |
 | Reviewed files | 14628 |
+| Unreviewed open items | 62 |
 | Archived closed files | 4008 |
 | Fresh verified reviews in the last 7 days | 14628 |
 | Proposed closes awaiting apply | 4383 (30% of fresh reviews) |
 | Closed by Codex apply | 3107 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 0 |
+| Daily cadence coverage | 11181/11203 current (22 due, 99.8%) |
+| Daily PR cadence | 5633/5655 current (22 due, 99.6%) |
+| Daily new issue cadence (<30d) | 5548/5548 current (0 due, 100%) |
+| Weekly older issue cadence | 3207/3207 current (0 due, 100%) |
+| Due now by cadence | 84 |
 
 Recently reviewed:
 
