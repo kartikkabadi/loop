@@ -72,6 +72,7 @@ interface ExistingReview {
   path: string;
   markdown: string;
   reviewedAt: string | undefined;
+  itemUpdatedAt: string | undefined;
   decision: string | undefined;
   reviewStatus: string | undefined;
   reviewPolicy: string | undefined;
@@ -172,6 +173,13 @@ interface PlanShard {
   itemNumbers: number[];
 }
 
+interface DueCandidate {
+  item: Item;
+  review: ExistingReview | null;
+  priority: number;
+  reviewedAt: number;
+}
+
 interface ApplyResult {
   number: number;
   action: ActionTaken;
@@ -184,6 +192,10 @@ const REPORT_REPO = "openclaw/clawsweeper";
 const CLAWHUB_URL = "https://clawhub.ai/";
 const DOCS_URL = "https://docs.openclaw.ai";
 const FRESH_DAYS = 7;
+const DAILY_REVIEW_DAYS = 1;
+const WEEKLY_REVIEW_DAYS = 7;
+const NEW_ISSUE_DAYS = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
 const STATUS_START = "<!-- clawsweeper-status:start -->";
 const STATUS_END = "<!-- clawsweeper-status:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.4";
@@ -559,6 +571,7 @@ function existingReview(number: number, itemsDir: string): ExistingReview | null
     path,
     markdown,
     reviewedAt: frontMatterValue(markdown, "reviewed_at"),
+    itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
     decision: frontMatterValue(markdown, "decision"),
     reviewStatus: effectiveReviewStatus(markdown),
     reviewPolicy: frontMatterValue(markdown, "review_policy"),
@@ -595,7 +608,66 @@ function isFresh(
   if (!review?.reviewedAt) return false;
   const reviewedAt = Date.parse(review.reviewedAt);
   if (!Number.isFinite(reviewedAt)) return false;
-  return Date.now() - reviewedAt < FRESH_DAYS * 24 * 60 * 60 * 1000;
+  return Date.now() - reviewedAt < FRESH_DAYS * DAY_MS;
+}
+
+function reviewedAtMs(review: ExistingReview | null): number | null {
+  if (review?.reviewStatus !== "complete") return null;
+  if (!review.reviewedAt) return null;
+  const reviewedAt = Date.parse(review.reviewedAt);
+  return Number.isFinite(reviewedAt) ? reviewedAt : null;
+}
+
+function hasActivitySinceReview(item: Item, review: ExistingReview | null): boolean {
+  if (!review) return false;
+  if (review.itemUpdatedAt) return item.updatedAt !== review.itemUpdatedAt;
+  const reviewedAt = reviewedAtMs(review);
+  const updatedAt = Date.parse(item.updatedAt);
+  return reviewedAt !== null && Number.isFinite(updatedAt) && updatedAt > reviewedAt;
+}
+
+function reviewCadenceDays(item: Item, review: ExistingReview | null, now = Date.now()): number {
+  if (hasActivitySinceReview(item, review)) return DAILY_REVIEW_DAYS;
+  if (item.kind === "pull_request") return DAILY_REVIEW_DAYS;
+  const createdAt = Date.parse(item.createdAt);
+  if (Number.isFinite(createdAt) && now - createdAt < NEW_ISSUE_DAYS * DAY_MS) {
+    return DAILY_REVIEW_DAYS;
+  }
+  return WEEKLY_REVIEW_DAYS;
+}
+
+function shouldReviewItem(item: Item, review: ExistingReview | null, now = Date.now()): boolean {
+  const reviewedAt = reviewedAtMs(review);
+  if (reviewedAt === null) return true;
+  const cadenceDays = reviewCadenceDays(item, review, now);
+  return now - reviewedAt >= cadenceDays * DAY_MS;
+}
+
+function reviewPriority(item: Item, review: ExistingReview | null, now = Date.now()): number {
+  if (hasActivitySinceReview(item, review)) return 0;
+  if (item.kind === "pull_request") return 1;
+  const createdAt = Date.parse(item.createdAt);
+  if (Number.isFinite(createdAt) && now - createdAt < NEW_ISSUE_DAYS * DAY_MS) return 2;
+  return 3;
+}
+
+function dueCandidate(item: Item, itemsDir: string, now = Date.now()): DueCandidate | null {
+  const review = existingReview(item.number, itemsDir);
+  if (!shouldReviewItem(item, review, now)) return null;
+  return {
+    item,
+    review,
+    priority: reviewPriority(item, review, now),
+    reviewedAt: reviewedAtMs(review) ?? 0,
+  };
+}
+
+function compareDueCandidates(left: DueCandidate, right: DueCandidate): number {
+  return (
+    left.priority - right.priority ||
+    left.reviewedAt - right.reviewedAt ||
+    left.item.number - right.item.number
+  );
 }
 
 function fetchOpenItemPage(page: number): Item[] {
@@ -698,20 +770,24 @@ function selectCandidates(options: {
     if (isMaintainerAuthored(item)) return { candidates: [], scannedPages: 0 };
     return { candidates: [item], scannedPages: 0 };
   }
-  const candidates: Item[] = [];
+  const due: DueCandidate[] = [];
   let scannedPages = 0;
-  for (let page = 1; page <= options.maxPages && candidates.length < options.batchSize; page += 1) {
+  const now = Date.now();
+  for (let page = 1; page <= options.maxPages; page += 1) {
     const items = fetchOpenItemPage(page);
     scannedPages = page;
     if (items.length === 0) break;
     for (const item of items) {
       if (item.number % options.shardCount !== options.shardIndex) continue;
       if (isMaintainerAuthored(item)) continue;
-      if (isFresh(existingReview(item.number, options.itemsDir))) continue;
-      candidates.push(item);
-      if (candidates.length >= options.batchSize) break;
+      const candidate = dueCandidate(item, options.itemsDir, now);
+      if (candidate) due.push(candidate);
     }
   }
+  const candidates = due
+    .sort(compareDueCandidates)
+    .slice(0, options.batchSize)
+    .map(({ item }) => item);
   return { candidates, scannedPages };
 }
 
@@ -733,20 +809,24 @@ function planCandidates(options: {
     };
   }
 
-  const candidates: Item[] = [];
+  const due: DueCandidate[] = [];
   let scannedPages = 0;
   const limit = Math.max(1, options.batchSize) * Math.max(1, options.shardCount);
-  for (let page = 1; page <= options.maxPages && candidates.length < limit; page += 1) {
+  const now = Date.now();
+  for (let page = 1; page <= options.maxPages; page += 1) {
     const items = fetchOpenItemPage(page);
     scannedPages = page;
     if (items.length === 0) break;
     for (const item of items) {
       if (isMaintainerAuthored(item)) continue;
-      if (isFresh(existingReview(item.number, options.itemsDir))) continue;
-      candidates.push(item);
-      if (candidates.length >= limit) break;
+      const candidate = dueCandidate(item, options.itemsDir, now);
+      if (candidate) due.push(candidate);
     }
   }
+  const candidates = due
+    .sort(compareDueCandidates)
+    .slice(0, limit)
+    .map(({ item }) => item);
 
   const shards = Array.from(
     { length: Math.max(1, Math.min(options.shardCount, candidates.length || 1)) },
