@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 13:38 UTC
+Last dashboard update: Apr 25, 2026, 13:44 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
 Updated: Apr 25, 2026, 13:44 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24932274688](https://github.com/openclaw/clawsweeper/actions/runs/24932274688)
+Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 51.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24931927101](https://github.com/openclaw/clawsweeper/actions/runs/24931927101)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7387 |
-| Fresh reviewed issues in the last 7 days | 7358 |
-| Proposed issue closes | 1774 (24.1% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4808 |
-| Fresh reviewed PRs in the last 7 days | 4735 |
-| Proposed PR closes | 365 (7.7% of reviewed PRs) |
-| Open items total | 12195 |
-| Reviewed files | 12104 |
-| Unreviewed open items | 91 |
-| Archived closed files | 7043 |
-| Fresh verified reviews in the last 7 days | 12093 |
-| Proposed closes awaiting apply | 2139 (17.7% of fresh reviews) |
-| Closed by Codex apply | 5207 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7351 |
+| Fresh reviewed issues in the last 7 days | 7319 |
+| Proposed issue closes | 1735 (23.7% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4798 |
+| Fresh reviewed PRs in the last 7 days | 4724 |
+| Proposed PR closes | 353 (7.5% of reviewed PRs) |
+| Open items total | 12149 |
+| Reviewed files | 12054 |
+| Unreviewed open items | 95 |
+| Archived closed files | 7093 |
+| Fresh verified reviews in the last 7 days | 12043 |
+| Proposed closes awaiting apply | 2088 (17.3% of fresh reviews) |
+| Closed by Codex apply | 5257 |
 | Failed or stale reviews | 11 |
-| Daily cadence coverage | 9123/9332 current (209 due, 97.8%) |
-| Daily PR cadence | 4536/4739 current (203 due, 95.7%) |
-| Daily new issue cadence (<30d) | 4587/4593 current (6 due, 99.9%) |
+| Daily cadence coverage | 9054/9282 current (228 due, 97.5%) |
+| Daily PR cadence | 4506/4728 current (222 due, 95.3%) |
+| Daily new issue cadence (<30d) | 4548/4554 current (6 due, 99.9%) |
 | Weekly older issue cadence | 2771/2772 current (1 due, 100%) |
-| Due now by cadence | 301 |
+| Due now by cadence | 324 |
 
 Recently reviewed:
 
@@ -57,7 +57,6 @@ Recently reviewed:
 | [#71571](https://github.com/openclaw/openclaw/issues/71571) | Agent-level model field ignored during session creation — falls back to global default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71571.md) | complete | Apr 25, 2026, 12:59 UTC |
 | [#63235](https://github.com/openclaw/openclaw/issues/63235) | 功能优化 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63235.md) | complete | Apr 25, 2026, 12:59 UTC |
 | [#66360](https://github.com/openclaw/openclaw/issues/66360) | session.maintenance has no size cap for transcript .jsonl files — unbounded growth causes gateway CPU 100% | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66360.md) | complete | Apr 25, 2026, 12:59 UTC |
-| [#60570](https://github.com/openclaw/openclaw/issues/60570) | Bug: `tools.exec.host=auto` blocks agent-requested `host=node` — strict equality check prevents dynamic host switching | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60570.md) | complete | Apr 25, 2026, 12:58 UTC |
 | [#71562](https://github.com/openclaw/openclaw/issues/71562) | System attempting to JSON-parse Markdown (.md) files in workspace context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71562.md) | complete | Apr 25, 2026, 12:58 UTC |
 | [#56437](https://github.com/openclaw/openclaw/issues/56437) | [Feature Request] Native fallbackRunbook injection in agents config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56437.md) | complete | Apr 25, 2026, 12:58 UTC |
 | [#69501](https://github.com/openclaw/openclaw/issues/69501) | memory subcommands (status / index / search / promote) hang indefinitely with no output on Linux containers | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69501.md) | complete | Apr 25, 2026, 12:58 UTC |
@@ -73,6 +72,7 @@ Recently reviewed:
 | [#52276](https://github.com/openclaw/openclaw/pull/52276) | [codex] fix(dedupe): preserve route-scoped suppression context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52276.md) | complete | Apr 25, 2026, 12:57 UTC |
 | [#62531](https://github.com/openclaw/openclaw/issues/62531) | [Feature] Add option to configure wizard to add provider models without changing primary model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62531.md) | complete | Apr 25, 2026, 12:57 UTC |
 | [#63254](https://github.com/openclaw/openclaw/issues/63254) | Replay/dedup bug can redeliver prior cron and Matrix events into the same session | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63254.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#64911](https://github.com/openclaw/openclaw/issues/64911) | Gateway logs ready before websocket control plane is usable; immediate CLI RPCs can time out after restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64911.md) | complete | Apr 25, 2026, 12:57 UTC |
 
 ## How It Works
 
