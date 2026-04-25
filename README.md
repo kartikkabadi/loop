@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 04:57 UTC
+Last dashboard update: Apr 25, 2026, 05:03 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 04:57 UTC
+Updated: Apr 25, 2026, 05:03 UTC
 
 State: Apply in progress
 
-Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 52.
+Checkpoint 7 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 350/500. Result records in checkpoint: 51.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920756833](https://github.com/openclaw/clawsweeper/actions/runs/24920756833)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9490 |
-| Fresh reviewed issues in the last 7 days | 8952 |
-| Proposed issue closes | 3622 (40.5% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9441 |
+| Fresh reviewed issues in the last 7 days | 8902 |
+| Proposed issue closes | 3571 (40.1% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6220 |
 | Fresh reviewed PRs in the last 7 days | 5913 |
 | Proposed PR closes | 1518 (25.7% of reviewed PRs) |
-| Open items total | 15710 |
-| Reviewed files | 14865 |
-| Archived closed files | 2962 |
-| Fresh verified reviews in the last 7 days | 14865 |
-| Proposed closes awaiting apply | 5140 (34.6% of fresh reviews) |
-| Closed by Codex apply | 2183 |
+| Open items total | 15661 |
+| Reviewed files | 14815 |
+| Archived closed files | 3012 |
+| Fresh verified reviews in the last 7 days | 14815 |
+| Proposed closes awaiting apply | 5089 (34.4% of fresh reviews) |
+| Closed by Codex apply | 2233 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 845 |
+| Todo for weekly coverage | 846 |
 
 Recently reviewed:
 
