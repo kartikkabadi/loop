@@ -16,16 +16,16 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 22:43 UTC
+Last dashboard update: Apr 25, 2026, 22:45 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 22:43 UTC
+Updated: Apr 25, 2026, 22:45 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24942434996](https://github.com/openclaw/clawsweeper/actions/runs/24942434996)
 <!-- clawsweeper-status:end -->
 
