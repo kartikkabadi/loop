@@ -14,29 +14,32 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 01:37 UTC
+Last dashboard update: Apr 25, 2026, 01:42 UTC
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10482 |
-| Fresh reviewed issues in the last 7 days | 8125 |
-| Proposed issue closes | 3643 (44.8% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6368 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10481 |
+| Fresh reviewed issues in the last 7 days | 8128 |
+| Proposed issue closes | 3644 (44.8% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6369 |
 | Fresh reviewed PRs in the last 7 days | 4960 |
 | Proposed PR closes | 1361 (27.4% of reviewed PRs) |
 | Open items total | 16850 |
-| Reviewed files | 13085 |
+| Reviewed files | 13088 |
 | Archived closed files | 2139 |
-| Fresh verified reviews in the last 7 days | 13085 |
-| Proposed closes awaiting apply | 5004 (38.2% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 13088 |
+| Proposed closes awaiting apply | 5005 (38.2% of fresh reviews) |
 | Closed by Codex apply | 1383 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 3765 |
+| Todo for weekly coverage | 3762 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#64537](https://github.com/openclaw/openclaw/issues/64537) | OpenClaw is listed on Joy Trust Network — claim your profile | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64537.md) | complete | Apr 25, 2026, 01:41 UTC |
+| [#64526](https://github.com/openclaw/openclaw/issues/64526) | Request iOS TestFlight Access | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64526.md) | complete | Apr 25, 2026, 01:41 UTC |
+| [#64486](https://github.com/openclaw/openclaw/issues/64486) | Feature: Gate messages with unresolved future commitments rather than appending a disclaimer | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64486.md) | complete | Apr 25, 2026, 01:41 UTC |
 | [#64519](https://github.com/openclaw/openclaw/issues/64519) | [Bug]: Gateway in-process self-call WS handshake fails with token_missing on token-mode loopback | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64519.md) | complete | Apr 24, 2026, 21:49 UTC |
 | [#64524](https://github.com/openclaw/openclaw/issues/64524) | [Bug]: Gateway exits on startup when local Claude CLI auth is expired, even with remote OpenAI-compatible provider configured | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64524.md) | complete | Apr 24, 2026, 21:48 UTC |
 | [#64454](https://github.com/openclaw/openclaw/issues/64454) | [Bug]: Slack extension: subagent completion messages bypass thread routing (missing subagent_delivery_target hook) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64454.md) | complete | Apr 24, 2026, 21:48 UTC |
@@ -54,9 +57,6 @@ Recently reviewed:
 | [#64553](https://github.com/openclaw/openclaw/issues/64553) | [Bug]: WhatsApp QR code expires silently (no rotation, no freshness indicator) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64553.md) | complete | Apr 24, 2026, 21:47 UTC |
 | [#64407](https://github.com/openclaw/openclaw/issues/64407) | [Bug]: Window 2026.4.9: loopback gateway reachable, but system event/devices CLI connect fails after Qwen heartbeat config changes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64407.md) | complete | Apr 24, 2026, 21:47 UTC |
 | [#64485](https://github.com/openclaw/openclaw/pull/64485) | fix(docker): add config dir defaults to prevent broken volume mounts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64485.md) | complete | Apr 24, 2026, 21:47 UTC |
-| [#64460](https://github.com/openclaw/openclaw/issues/64460) | Community notice: Claude CLI billing discrimination — findings, workarounds, and formal complaints filed | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64460.md) | complete | Apr 24, 2026, 21:47 UTC |
-| [#64397](https://github.com/openclaw/openclaw/issues/64397) | voice-call plugin: Unable to resolve bundled plugin public surface speech-core/runtime-api.js | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64397.md) | complete | Apr 24, 2026, 21:47 UTC |
-| [#64574](https://github.com/openclaw/openclaw/issues/64574) | [Feature]: Enhanced Nextcloud Talk Support — Status Indicators & Additional Features | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64574.md) | complete | Apr 24, 2026, 21:47 UTC |
 
 ## How It Works
 
