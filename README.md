@@ -14,30 +14,30 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 22:12 UTC
+Last dashboard update: Apr 25, 2026, 22:15 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 22:12 UTC
+Updated: Apr 25, 2026, 22:15 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24941898995](https://github.com/openclaw/clawsweeper/actions/runs/24941898995)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5512 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5513 |
 | Fresh reviewed issues in the last 7 days | 5486 |
 | Proposed issue closes | 259 (4.7% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4273 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4274 |
 | Fresh reviewed PRs in the last 7 days | 4202 |
 | Proposed PR closes | 46 (1.1% of reviewed PRs) |
-| Open items total | 9785 |
+| Open items total | 9787 |
 | Reviewed files | 9688 |
-| Unreviewed open items | 97 |
+| Unreviewed open items | 99 |
 | Archived closed files | 9609 |
 | Fresh verified reviews in the last 7 days | 9688 |
 | Proposed closes awaiting apply | 305 (3.1% of fresh reviews) |
@@ -47,7 +47,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24941898995](https://
 | Daily PR cadence | 3947/4202 current (255 due, 93.9%) |
 | Daily new issue cadence (<30d) | 2421/2716 current (295 due, 89.1%) |
 | Weekly older issue cadence | 2770/2770 current (0 due, 100%) |
-| Due now by cadence | 647 |
+| Due now by cadence | 649 |
 
 Recently reviewed:
 
