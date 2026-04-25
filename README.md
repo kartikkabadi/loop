@@ -21,9 +21,9 @@ Last dashboard update: Apr 25, 2026, 08:05 UTC
 
 Updated: Apr 25, 2026, 08:05 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 10 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 500/500. Result records in checkpoint: 52.
+Apply run finished with 500 fresh closes out of requested limit 500. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24924985336](https://github.com/openclaw/clawsweeper/actions/runs/24924985336)
 <!-- clawsweeper-status:end -->
 
