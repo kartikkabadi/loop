@@ -14,65 +14,65 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 17:52 UTC
+Last dashboard update: Apr 25, 2026, 17:55 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 17:52 UTC
+Updated: Apr 25, 2026, 17:55 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 52.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24936577973](https://github.com/openclaw/clawsweeper/actions/runs/24936577973)
+Merged review artifacts for run 24936769311. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24936769311](https://github.com/openclaw/clawsweeper/actions/runs/24936769311)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6160 |
-| Fresh reviewed issues in the last 7 days | 6144 |
-| Proposed issue closes | 625 (10.2% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4518 |
-| Fresh reviewed PRs in the last 7 days | 4452 |
-| Proposed PR closes | 117 (2.6% of reviewed PRs) |
-| Open items total | 10678 |
-| Reviewed files | 10599 |
-| Unreviewed open items | 79 |
-| Archived closed files | 8641 |
-| Fresh verified reviews in the last 7 days | 10596 |
-| Proposed closes awaiting apply | 742 (7% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6139 |
+| Fresh reviewed issues in the last 7 days | 6021 |
+| Proposed issue closes | 610 (10.1% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4512 |
+| Fresh reviewed PRs in the last 7 days | 4409 |
+| Proposed PR closes | 113 (2.6% of reviewed PRs) |
+| Open items total | 10651 |
+| Reviewed files | 10575 |
+| Unreviewed open items | 76 |
+| Archived closed files | 8667 |
+| Fresh verified reviews in the last 7 days | 10430 |
+| Proposed closes awaiting apply | 723 (6.9% of fresh reviews) |
 | Closed by Codex apply | 6757 |
-| Failed or stale reviews | 3 |
-| Daily cadence coverage | 7492/7820 current (328 due, 95.8%) |
-| Daily PR cadence | 4326/4453 current (127 due, 97.1%) |
-| Daily new issue cadence (<30d) | 3166/3367 current (201 due, 94%) |
+| Failed or stale reviews | 145 |
+| Daily cadence coverage | 7490/7796 current (306 due, 96.1%) |
+| Daily PR cadence | 4319/4448 current (129 due, 97.1%) |
+| Daily new issue cadence (<30d) | 3171/3348 current (177 due, 94.7%) |
 | Weekly older issue cadence | 2779/2779 current (0 due, 100%) |
-| Due now by cadence | 407 |
+| Due now by cadence | 382 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#58505](https://github.com/openclaw/openclaw/issues/58505) | [Feature]: Allow `before_prompt_build` hook to abort LLM call and return a custom response | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58505.md) | complete | Apr 25, 2026, 17:40 UTC |
-| [#58433](https://github.com/openclaw/openclaw/issues/58433) | [Bug]: [Windows] Path character loss bug - \"system\" becomes \"ystem\" in file paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58433.md) | complete | Apr 25, 2026, 17:40 UTC |
-| [#58680](https://github.com/openclaw/openclaw/issues/58680) | Feature: Add clearThinking compat option for Z.AI Preserved Thinking | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58680.md) | complete | Apr 25, 2026, 17:40 UTC |
-| [#58574](https://github.com/openclaw/openclaw/issues/58574) | [Feature]: readable `nextAt` value for cron job | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58574.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58626](https://github.com/openclaw/openclaw/issues/58626) | 升级版本后配置文件中的插件路径未更新，导致 gateway 启动失败 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58626.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58398](https://github.com/openclaw/openclaw/issues/58398) | Adopt Claude Code's multi-layer compaction architecture | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58398.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58358](https://github.com/openclaw/openclaw/issues/58358) | [Bug]: OpenClaw mishandles message_stop for KimiCodingPlan Anthropic format (not present in v2026.3.1) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58358.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58488](https://github.com/openclaw/openclaw/issues/58488) | acpx: model forwarding to ACP agents uses Claude-specific _meta convention; breaks non-Claude harnesses (e.g. kilocode) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58488.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58443](https://github.com/openclaw/openclaw/issues/58443) | [Bug] Gateway duplicates inbound messages — same message injected multiple times into session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58443.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58452](https://github.com/openclaw/openclaw/issues/58452) | [Feature]: UI Improvement | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58452.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58407](https://github.com/openclaw/openclaw/issues/58407) | [Feature]: Inject parent channel pinned messages into Discord thread session context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58407.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58534](https://github.com/openclaw/openclaw/issues/58534) | Session management performance degrades severely with subagent usage (100%+ CPU at ~400 sessions) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58534.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58570](https://github.com/openclaw/openclaw/issues/58570) | Gateway should log warning when message is dropped due to allow: false | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58570.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58519](https://github.com/openclaw/openclaw/issues/58519) | Slack Socket Mode: event loop starvation causes pong timeouts and silent message loss | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58519.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58411](https://github.com/openclaw/openclaw/issues/58411) | sessions_spawn lacks --bind here equivalent — agent cannot bind ACP session to existing Discord thread | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58411.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58541](https://github.com/openclaw/openclaw/issues/58541) | Google Chat (G Suite Add-on) returns 401 Unauthorized — JWT verification failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58541.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58481](https://github.com/openclaw/openclaw/issues/58481) | WhatsApp WebSocket drops on WSL2 — missing TCP keepalive on underlying socket | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58481.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#71664](https://github.com/openclaw/openclaw/issues/71664) | [Bug]: Block streaming: same-channel text blocks not delivered before tool execution on WhatsApp | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71664.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58584](https://github.com/openclaw/openclaw/issues/58584) | Agent pre-flight check: verify model provider is reachable before scheduling cron jobs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58584.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58351](https://github.com/openclaw/openclaw/issues/58351) | workspaceOnly: true blocks agent from reading skill files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58351.md) | complete | Apr 25, 2026, 17:39 UTC |
+| [#59409](https://github.com/openclaw/openclaw/issues/59409) | [Bug]: Feishu plugin: Chinese filenames in attachments display as garbled (Latin-1 encoding issue) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59409.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:53 UTC |
+| [#59528](https://github.com/openclaw/openclaw/issues/59528) | [Bug]: The bundled plugins openshell does not work correctly since version 2026.03.13 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59528.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59545](https://github.com/openclaw/openclaw/issues/59545) | [Bug]: macOS app General settings rewrites ~/.openclaw/openclaw.json without user changes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59545.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59567](https://github.com/openclaw/openclaw/issues/59567) | Feature Request: Heartbeat should only fire when session is idle | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59567.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59405](https://github.com/openclaw/openclaw/issues/59405) | [Bug]: Telegram channel runtime drops exec/grep tool output for openai/gpt-5.1-codex | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59405.md) | complete | Apr 25, 2026, 17:52 UTC |
+| [#59576](https://github.com/openclaw/openclaw/issues/59576) | Mattermost: bot does not see file attachments (file_ids empty in WebSocket event) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59576.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59563](https://github.com/openclaw/openclaw/issues/59563) | [Bug] Session 数据丢失：对话中断后未持久化 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59563.md) | complete | Apr 25, 2026, 17:52 UTC |
+| [#59534](https://github.com/openclaw/openclaw/issues/59534) | [Bug]:  多龙虾协作的时候会出现上下文记忆消失的问题 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59534.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59413](https://github.com/openclaw/openclaw/issues/59413) | Feature Request: Per-candidate retry count for model fallback (support pool-based/proxy providers) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59413.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59451](https://github.com/openclaw/openclaw/issues/59451) | [Feature]: Add file-based fallback search when `node:sqlite` is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59451.md) | complete | Apr 25, 2026, 17:52 UTC |
+| [#59360](https://github.com/openclaw/openclaw/issues/59360) | Feishu card message footer causes agent name to appear at message start (Markdown definition list parsing) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59360.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59514](https://github.com/openclaw/openclaw/issues/59514) | feat: support Bearer token auth for Bedrock gateway proxies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59514.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59562](https://github.com/openclaw/openclaw/issues/59562) | Telegram: Agent messages lack paragraph breaks and CJK table misalignment | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59562.md) | complete | Apr 25, 2026, 17:52 UTC |
+| [#59125](https://github.com/openclaw/openclaw/issues/59125) | [Bug]: approvals.exec.mode accepts invalid value, approvals/subagents unreliable on main and channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59125.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59215](https://github.com/openclaw/openclaw/issues/59215) | [Bug]: exec tool cannot authenticate to gateway in loopback mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59215.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:52 UTC |
+| [#59345](https://github.com/openclaw/openclaw/issues/59345) | Control UI: subagent context badge can show historical total tokens as current context usage | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59345.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:51 UTC |
+| [#59494](https://github.com/openclaw/openclaw/issues/59494) | node-extra-ca-certs: CA bundle auto-injection only triggers for nvm, misses fnm/volta/asdf and 5 other version managers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59494.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:51 UTC |
+| [#59470](https://github.com/openclaw/openclaw/issues/59470) | Bug: openclaw gateway call times out for plugin gateway methods even when the method executes successfully | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59470.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:51 UTC |
+| [#59526](https://github.com/openclaw/openclaw/issues/59526) | Feature: allow account switching from /models buttons for GPT and Claude | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59526.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:51 UTC |
+| [#59212](https://github.com/openclaw/openclaw/issues/59212) | Usage tab: bar chart tooltip clipped on tall bars (overflow:clip on .usage-left-card) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59212.md) | stale_local_checkout_blocked | Apr 25, 2026, 17:51 UTC |
 
 ## How It Works
 
