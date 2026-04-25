@@ -14,17 +14,17 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 15:59 UTC
+Last dashboard update: Apr 25, 2026, 16:00 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 15:59 UTC
+Updated: Apr 25, 2026, 16:00 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply run finished with 500 fresh closes out of requested limit 500. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24933057232](https://github.com/openclaw/clawsweeper/actions/runs/24933057232)
+Starting apply run for up to 500 fresh all closes. Checkpoints commit every 50 fresh closes; close delay is 5000ms.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24934812741](https://github.com/openclaw/clawsweeper/actions/runs/24934812741)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
@@ -32,22 +32,22 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24933057232](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6691 |
 | Fresh reviewed issues in the last 7 days | 6674 |
 | Proposed issue closes | 1077 (16.1% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4628 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4629 |
 | Fresh reviewed PRs in the last 7 days | 4550 |
 | Proposed PR closes | 214 (4.7% of reviewed PRs) |
-| Open items total | 11319 |
-| Reviewed files | 11234 |
-| Unreviewed open items | 85 |
-| Archived closed files | 7963 |
+| Open items total | 11320 |
+| Reviewed files | 11239 |
+| Unreviewed open items | 81 |
+| Archived closed files | 7958 |
 | Fresh verified reviews in the last 7 days | 11224 |
 | Proposed closes awaiting apply | 1291 (11.5% of fresh reviews) |
 | Closed by Codex apply | 6107 |
-| Failed or stale reviews | 10 |
-| Daily cadence coverage | 8038/8451 current (413 due, 95.1%) |
-| Daily PR cadence | 4426/4556 current (130 due, 97.1%) |
-| Daily new issue cadence (<30d) | 3612/3895 current (283 due, 92.7%) |
+| Failed or stale reviews | 15 |
+| Daily cadence coverage | 8038/8456 current (418 due, 95.1%) |
+| Daily PR cadence | 4426/4558 current (132 due, 97.1%) |
+| Daily new issue cadence (<30d) | 3612/3898 current (286 due, 92.7%) |
 | Weekly older issue cadence | 2783/2783 current (0 due, 100%) |
-| Due now by cadence | 498 |
+| Due now by cadence | 499 |
 
 Recently reviewed:
 
