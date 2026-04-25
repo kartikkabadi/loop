@@ -14,65 +14,65 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 21:46 UTC
+Last dashboard update: Apr 25, 2026, 21:58 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 21:46 UTC
+Updated: Apr 25, 2026, 21:58 UTC
 
-State: Review in progress
+State: Review publish complete
 
-Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged review artifacts for run 24941372685. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24941372685](https://github.com/openclaw/clawsweeper/actions/runs/24941372685)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5514 |
-| Fresh reviewed issues in the last 7 days | 5490 |
-| Proposed issue closes | 157 (2.9% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4272 |
-| Fresh reviewed PRs in the last 7 days | 4203 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5515 |
+| Fresh reviewed issues in the last 7 days | 5489 |
+| Proposed issue closes | 207 (3.8% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4271 |
+| Fresh reviewed PRs in the last 7 days | 4202 |
 | Proposed PR closes | 46 (1.1% of reviewed PRs) |
 | Open items total | 9786 |
-| Reviewed files | 9693 |
-| Unreviewed open items | 93 |
-| Archived closed files | 9604 |
-| Fresh verified reviews in the last 7 days | 9693 |
-| Proposed closes awaiting apply | 203 (2.1% of fresh reviews) |
+| Reviewed files | 9691 |
+| Unreviewed open items | 95 |
+| Archived closed files | 9606 |
+| Fresh verified reviews in the last 7 days | 9691 |
+| Proposed closes awaiting apply | 253 (2.6% of fresh reviews) |
 | Closed by Codex apply | 7495 |
 | Failed or stale reviews | 0 |
-| Daily cadence coverage | 6395/6924 current (529 due, 92.4%) |
-| Daily PR cadence | 3956/4203 current (247 due, 94.1%) |
-| Daily new issue cadence (<30d) | 2439/2721 current (282 due, 89.6%) |
-| Weekly older issue cadence | 2769/2769 current (0 due, 100%) |
-| Due now by cadence | 622 |
+| Daily cadence coverage | 6371/6921 current (550 due, 92.1%) |
+| Daily PR cadence | 3947/4202 current (255 due, 93.9%) |
+| Daily new issue cadence (<30d) | 2424/2719 current (295 due, 89.2%) |
+| Weekly older issue cadence | 2770/2770 current (0 due, 100%) |
+| Due now by cadence | 645 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#6890](https://github.com/openclaw/openclaw/issues/6890) | [Feature]: Add Ralph Loop feature and add max iteration number into the agent configuration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/6890.md) | complete | Apr 25, 2026, 21:42 UTC |
-| [#6757](https://github.com/openclaw/openclaw/issues/6757) | Feature Request: Agent-triggered context compaction (self-compact tool) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/6757.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#6599](https://github.com/openclaw/openclaw/issues/6599) | Feature: Add /models test-fallback command to verify fallback chain | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/6599.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#7234](https://github.com/openclaw/openclaw/issues/7234) | Feature: Granular Discord action gates (split actions.messages into read/edit/delete) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7234.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#71691](https://github.com/openclaw/openclaw/issues/71691) | Session fork caused by heartbeat compaction loop losing conversation context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71691.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#6722](https://github.com/openclaw/openclaw/issues/6722) | WhatsApp: Add link preview support (generateHighQualityLinkPreview) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/6722.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#7476](https://github.com/openclaw/openclaw/issues/7476) | Feature Request: WhatsApp sticker send support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7476.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#7080](https://github.com/openclaw/openclaw/issues/7080) | Feature Request: Enable Processing of WhatsApp Emotion and Poll Responses by Agents | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7080.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#7057](https://github.com/openclaw/openclaw/issues/7057) | Flaky tests on Windows/WSL: timeouts and ENOENT in pi-tools workspace-paths & safe-bins | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7057.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#6625](https://github.com/openclaw/openclaw/issues/6625) | Feature: Graceful sub-agent timeout (pre-timeout warning) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/6625.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#6966](https://github.com/openclaw/openclaw/issues/6966) | Dynamic Model Switching Based on API Rate Limits | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/6966.md) | complete | Apr 25, 2026, 21:41 UTC |
-| [#71648](https://github.com/openclaw/openclaw/pull/71648) | fix(mcp): bound pendingClaudePermissions / pendingApprovals via TTL sweeper + close clear | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71648.md) | complete | Apr 25, 2026, 21:40 UTC |
-| [#7359](https://github.com/openclaw/openclaw/issues/7359) | [Slack] Agent lacks visibility into own channel messages from DM sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7359.md) | complete | Apr 25, 2026, 21:40 UTC |
-| [#2597](https://github.com/openclaw/openclaw/issues/2597) | Context/state lost after unexpected compaction or session reset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/2597.md) | complete | Apr 25, 2026, 21:40 UTC |
-| [#7433](https://github.com/openclaw/openclaw/issues/7433) | Improve WhatsApp/Baileys group message reliability | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7433.md) | complete | Apr 25, 2026, 21:40 UTC |
-| [#6792](https://github.com/openclaw/openclaw/issues/6792) | Feature: configPatch in plugin manifest — automatic config setup on install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/6792.md) | complete | Apr 25, 2026, 21:40 UTC |
-| [#71615](https://github.com/openclaw/openclaw/issues/71615) | [Bug]: 2026.4.23 tool-heavy main sessions can jump from low context to near-full within 1-2 replay turns | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71615.md) | complete | Apr 25, 2026, 21:40 UTC |
-| [#7403](https://github.com/openclaw/openclaw/issues/7403) | Feature: Private Mode for demos and content creation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7403.md) | complete | Apr 25, 2026, 21:40 UTC |
-| [#71495](https://github.com/openclaw/openclaw/issues/71495) | [Bug]: /subagents list returns empty in 2026.4.23 despite gateway tracking active subagents (regression from 4.22) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71495.md) | complete | Apr 25, 2026, 21:40 UTC |
-| [#7312](https://github.com/openclaw/openclaw/issues/7312) | [Feature]: Support OpenTelemetry GenAI Auto-Instrumentation (OpenLLMetry / IITM) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/7312.md) | complete | Apr 25, 2026, 21:40 UTC |
+| [#14389](https://github.com/openclaw/openclaw/issues/14389) | Feature Request: Auto-rollback on config change failure | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14389.md) | complete | Apr 25, 2026, 21:56 UTC |
+| [#13615](https://github.com/openclaw/openclaw/issues/13615) | Add rate limiting and throttling for external API calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13615.md) | complete | Apr 25, 2026, 21:56 UTC |
+| [#14076](https://github.com/openclaw/openclaw/issues/14076) | Feature request: read-only allowlist / suppress auto-reply for WhatsApp DMs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14076.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#13870](https://github.com/openclaw/openclaw/issues/13870) | Feature Request: Human-friendly device names in paired devices list | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13870.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#13616](https://github.com/openclaw/openclaw/issues/13616) | Add backup/restore utility for config, cron jobs, and session history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13616.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#14341](https://github.com/openclaw/openclaw/issues/14341) | [Feature]: Currently, the Lark plugin does not support sending images or voice messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14341.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#13621](https://github.com/openclaw/openclaw/issues/13621) | [Feature]: Browser relay cannot interact with cross-origin iframe content (e.g., Salesforce Embedded Messaging) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/13621.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#13601](https://github.com/openclaw/openclaw/issues/13601) | Add persistent cron job execution history with filtering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13601.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#15032](https://github.com/openclaw/openclaw/issues/15032) | Feature: Per-spawn tool restrictions for sub-agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/15032.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#13744](https://github.com/openclaw/openclaw/issues/13744) | Make session write lock configurable + narrow lock scope (avoid timeout=All models failed) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13744.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#14248](https://github.com/openclaw/openclaw/issues/14248) | Expose clientPingTimeout for Slack Socket Mode configuration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14248.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#14264](https://github.com/openclaw/openclaw/issues/14264) | [Feature Request] Add clawhub uninstall command for clean skill removal | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/14264.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#13736](https://github.com/openclaw/openclaw/issues/13736) | [Feature]: Support per-agent compaction settings (mode, reserveTokensFloor, memoryFlush) in agents.list[] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13736.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#14601](https://github.com/openclaw/openclaw/issues/14601) | [Feature]:  : Add MoonshotAI Kimi K2.5 (via OpenRouter) to Model Selector in onboard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14601.md) | complete | Apr 25, 2026, 21:55 UTC |
+| [#13962](https://github.com/openclaw/openclaw/issues/13962) | Feature: Per-mention model routing + context window for group mentions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13962.md) | complete | Apr 25, 2026, 21:54 UTC |
+| [#14629](https://github.com/openclaw/openclaw/issues/14629) | Output sanitizer: improve duplicate detection for same-line and partial duplicates | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14629.md) | complete | Apr 25, 2026, 21:54 UTC |
+| [#14206](https://github.com/openclaw/openclaw/issues/14206) | Add Message Rate Limiting for Feishu Channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14206.md) | complete | Apr 25, 2026, 21:54 UTC |
+| [#14861](https://github.com/openclaw/openclaw/issues/14861) | Gateway boot: no observability for subsystem startup failures (gmail-watcher, hooks) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14861.md) | complete | Apr 25, 2026, 21:54 UTC |
+| [#13948](https://github.com/openclaw/openclaw/issues/13948) | Feature Request: Action-Level Tool Deny | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13948.md) | complete | Apr 25, 2026, 21:54 UTC |
+| [#15073](https://github.com/openclaw/openclaw/issues/15073) | Feature Request: Per-agent context/workspace on model fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/15073.md) | complete | Apr 25, 2026, 21:54 UTC |
 
 ## How It Works
 
