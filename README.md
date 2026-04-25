@@ -19,11 +19,11 @@ Last dashboard update: Apr 25, 2026, 10:20 UTC
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 10:20 UTC
+Updated: Apr 25, 2026, 10:24 UTC
 
-State: Apply in progress
+State: Apply throttled
 
-Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 50.
+Checkpoint 7. GitHub throttled while applying close decisions. Progress: 28/50 fresh closes, 28/1000 processed records in this apply chunk. Last throttled command: `gh api repos/openclaw/openclaw/issues/55251/comments`. Retry 2/11 in 60s.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24928065717](https://github.com/openclaw/clawsweeper/actions/runs/24928065717)
 <!-- clawsweeper-status:end -->
 
