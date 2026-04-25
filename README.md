@@ -14,35 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 07:27 UTC
+Last dashboard update: Apr 25, 2026, 07:30 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 07:27 UTC
+Updated: Apr 25, 2026, 07:30 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24925699258](https://github.com/openclaw/clawsweeper/actions/runs/24925699258)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8845 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8844 |
 | Fresh reviewed issues in the last 7 days | 8622 |
 | Proposed issue closes | 3214 (37.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5839 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5819 |
 | Fresh reviewed PRs in the last 7 days | 6085 |
 | Proposed PR closes | 1329 (21.8% of reviewed PRs) |
-| Open items total | 14684 |
+| Open items total | 14663 |
 | Reviewed files | 14707 |
+| Unreviewed open items | 222 |
 | Archived closed files | 3792 |
 | Fresh verified reviews in the last 7 days | 14707 |
 | Proposed closes awaiting apply | 4543 (30.9% of fresh reviews) |
 | Closed by Codex apply | 2907 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 0 |
+| Daily cadence coverage | 11242/11242 current (0 due, 100%) |
+| Daily PR cadence | 5819/5819 current (0 due, 100%) |
+| Daily new issue cadence (<30d) | 5423/5423 current (0 due, 100%) |
+| Weekly older issue cadence | 3199/3199 current (0 due, 100%) |
+| Due now by cadence | 222 |
 
 Recently reviewed:
 
