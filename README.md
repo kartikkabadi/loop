@@ -14,65 +14,65 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 20:36 UTC
+Last dashboard update: Apr 25, 2026, 20:44 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 20:36 UTC
+Updated: Apr 25, 2026, 20:44 UTC
 
-State: Review in progress
+State: Review publish complete
 
-Planned 106 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged review artifacts for run 24940065700. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24940065700](https://github.com/openclaw/clawsweeper/actions/runs/24940065700)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5513 |
-| Fresh reviewed issues in the last 7 days | 5500 |
-| Proposed issue closes | 106 (1.9% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5514 |
+| Fresh reviewed issues in the last 7 days | 5502 |
+| Proposed issue closes | 126 (2.3% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4281 |
-| Fresh reviewed PRs in the last 7 days | 4215 |
-| Proposed PR closes | 30 (0.7% of reviewed PRs) |
-| Open items total | 9794 |
-| Reviewed files | 9715 |
-| Unreviewed open items | 79 |
-| Archived closed files | 9575 |
-| Fresh verified reviews in the last 7 days | 9715 |
-| Proposed closes awaiting apply | 136 (1.4% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 4219 |
+| Proposed PR closes | 31 (0.7% of reviewed PRs) |
+| Open items total | 9795 |
+| Reviewed files | 9721 |
+| Unreviewed open items | 74 |
+| Archived closed files | 9576 |
+| Fresh verified reviews in the last 7 days | 9721 |
+| Proposed closes awaiting apply | 157 (1.6% of fresh reviews) |
 | Closed by Codex apply | 7495 |
 | Failed or stale reviews | 0 |
-| Daily cadence coverage | 6783/6950 current (167 due, 97.6%) |
-| Daily PR cadence | 4149/4215 current (66 due, 98.4%) |
-| Daily new issue cadence (<30d) | 2634/2735 current (101 due, 96.3%) |
-| Weekly older issue cadence | 2765/2765 current (0 due, 100%) |
-| Due now by cadence | 246 |
+| Daily cadence coverage | 6812/6955 current (143 due, 97.9%) |
+| Daily PR cadence | 4121/4219 current (98 due, 97.7%) |
+| Daily new issue cadence (<30d) | 2691/2736 current (45 due, 98.4%) |
+| Weekly older issue cadence | 2766/2766 current (0 due, 100%) |
+| Due now by cadence | 217 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Review Runtime | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [#62182](https://github.com/openclaw/openclaw/issues/62182) | Config validation rejects `bootstrapMaxCharsPerFile` as unrecognized key (2026.4.5) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62182.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:32 UTC |
-| [#62321](https://github.com/openclaw/openclaw/issues/62321) | [Bug] OOM crash when running large parallel subagent tasks — no concurrency cap or memory pressure circuit breaker | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62321.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:32 UTC |
-| [#62317](https://github.com/openclaw/openclaw/issues/62317) | /model status shows phantom provider extracted from OpenRouter model ID prefix | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62317.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:32 UTC |
-| [#62306](https://github.com/openclaw/openclaw/issues/62306) | [Bug]: Subagent completion announce leaks internal runtime context into Control UI chat and persists it in session history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62306.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:31 UTC |
-| [#62056](https://github.com/openclaw/openclaw/issues/62056) | Feature: Expose Feishu bot added/removed events as hook events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62056.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:31 UTC |
-| [#62261](https://github.com/openclaw/openclaw/issues/62261) | [Bug]: Dev channel fails to build (preflight lint fails) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62261.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:31 UTC |
-| [#62120](https://github.com/openclaw/openclaw/issues/62120) | [Bug] openclaw-weixin login hangs before QR code appears on OpenClaw 2026.4.5 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62120.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:31 UTC |
-| [#62066](https://github.com/openclaw/openclaw/issues/62066) | Add requireMention: \"strict\" mode to disable implicit thread mention bypass | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62066.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:31 UTC |
-| [#62276](https://github.com/openclaw/openclaw/issues/62276) | [Bug]: 18789 port is in use when the startup of OpenClaw 2026.4.5, when configuring the new dreaming schedule | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62276.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:31 UTC |
-| [#62284](https://github.com/openclaw/openclaw/issues/62284) | feat: time-bounded exec approvals (approve for N minutes/hours) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62284.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:31 UTC |
-| [#62226](https://github.com/openclaw/openclaw/issues/62226) | [Bug]: TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator)) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62226.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#62140](https://github.com/openclaw/openclaw/issues/62140) | 2026.4.5 post-update recovery can leave launchd gateway token drift after config migration repair | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62140.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#61741](https://github.com/openclaw/openclaw/issues/61741) | [Bug]: Race condition in subagent/session cleanup causes late child stdout to hit cleared active run, leading to announce timeout, missing-session-entry, and orphaned child processes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61741.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#62267](https://github.com/openclaw/openclaw/issues/62267) | Performance: Slow Ollama qwen3:14b prompt ingestion in long-context OpenClaw runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62267.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#62145](https://github.com/openclaw/openclaw/issues/62145) | [Feature]: Rethink login-gate | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62145.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#62051](https://github.com/openclaw/openclaw/issues/62051) | v2026.4.5 regression: worker processes load all plugins, causing CPU saturation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62051.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#61941](https://github.com/openclaw/openclaw/issues/61941) | Gateway does not dispatch LLM hooks to plugin-registered services (opik traces never fire) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61941.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#61922](https://github.com/openclaw/openclaw/issues/61922) | 2026.4.5: `openclaw dashboard` crashes with Maximum call stack size exceeded | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61922.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#62167](https://github.com/openclaw/openclaw/issues/62167) | [Feature]: token usage widged in chat UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62167.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
-| [#62102](https://github.com/openclaw/openclaw/issues/62102) | Paperclip Gateway adapter sends unsupported 'paperclip' field in agent params | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62102.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:30 UTC |
+| [#62848](https://github.com/openclaw/openclaw/issues/62848) | [Bug] Main lane failover is too slow for provider transport failures, allowing TUI/Telegram degradation before fallback | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62848.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:43 UTC |
+| [#62735](https://github.com/openclaw/openclaw/issues/62735) | Regression: `api: \"ollama\"` rejected for custom-URL providers; no working path for `num_ctx` injection through a local proxy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62735.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:42 UTC |
+| [#62754](https://github.com/openclaw/openclaw/issues/62754) | Gateway: unhandled promise rejection from pi-agent-core Agent.processEvents after run abort/timeout | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62754.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:42 UTC |
+| [#62763](https://github.com/openclaw/openclaw/issues/62763) | openclaw doctor --fix corrupts signal multi-account config by inventing a phantom accounts.default block | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62763.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:42 UTC |
+| [#62791](https://github.com/openclaw/openclaw/issues/62791) | [Bug]: Gateway crashes on Node 24.14.0 — two distinct causes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62791.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:42 UTC |
+| [#62839](https://github.com/openclaw/openclaw/issues/62839) | [Bug]: openclaw update persists HTTP_PROXY into systemd service, breaking Feishu integration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62839.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:42 UTC |
+| [#62762](https://github.com/openclaw/openclaw/issues/62762) | Gateway 1006 closed-before-connect repro still present on 2026.4.12 after Node 24 normalization and ACP/Discord isolation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62762.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62777](https://github.com/openclaw/openclaw/issues/62777) | cron: failureAlert never fires + channel: prefix stripped in delivery path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62777.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62820](https://github.com/openclaw/openclaw/issues/62820) | [Bug]: Models generating text-based tool calls send raw XML to messaging channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62820.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62847](https://github.com/openclaw/openclaw/issues/62847) | [Bug] Main session can brick on arcee/trinity-large-thinking: repeated connection errors, TUI spam, Telegram nonresponsive until delayed fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62847.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62711](https://github.com/openclaw/openclaw/issues/62711) | [Bug]: OpenClaw cannot receive Signal messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62711.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62743](https://github.com/openclaw/openclaw/issues/62743) | [Bug]: 详细描述“始终允许”按钮故障的问题 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62743.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62851](https://github.com/openclaw/openclaw/issues/62851) | [Bug] arcee/trinity-large-thinking works as subagent but fails as main session, suggesting lane/path mismatch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62851.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62717](https://github.com/openclaw/openclaw/issues/62717) | v2026.4.2 gateway memory leak: RSS grows to 3-4GB within 1-2 hours, silent OOM crash | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62717.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62854](https://github.com/openclaw/openclaw/issues/62854) | Bug: update_plan tool causes problems on OpenAI/Codex providers in v2026.4.5 (regression vs 2026.4.2) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62854.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62692](https://github.com/openclaw/openclaw/issues/62692) | web_search tool not injected for local models (llama-server / OpenAI-compatible backends) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62692.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62842](https://github.com/openclaw/openclaw/issues/62842) | [Bug]: openclaw config command extremely slow (6-9 seconds) while other commands are fast | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62842.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62700](https://github.com/openclaw/openclaw/issues/62700) | feat(plugins): Native per-agent plugin scoping via agents.list[].plugins.allow/deny config | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62700.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:41 UTC |
+| [#62725](https://github.com/openclaw/openclaw/issues/62725) | Per-agent typingMode support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62725.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:40 UTC |
+| [#62780](https://github.com/openclaw/openclaw/issues/62780) | Feature: message:before_send hook to enable content-quality fallback gating | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62780.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:40 UTC |
 
 ## How It Works
 
