@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 05:49 UTC
+Last dashboard update: Apr 25, 2026, 05:54 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 05:49 UTC
+Updated: Apr 25, 2026, 05:54 UTC
 
 State: Apply in progress
 
-Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 52.
+Checkpoint 4 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 200/500. Result records in checkpoint: 51.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24923761277](https://github.com/openclaw/clawsweeper/actions/runs/24923761277)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9200 |
-| Fresh reviewed issues in the last 7 days | 8826 |
-| Proposed issue closes | 3459 (39.2% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6182 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9151 |
+| Fresh reviewed issues in the last 7 days | 8775 |
+| Proposed issue closes | 3408 (38.8% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6181 |
 | Fresh reviewed PRs in the last 7 days | 6009 |
 | Proposed PR closes | 1557 (25.9% of reviewed PRs) |
-| Open items total | 15382 |
-| Reviewed files | 14835 |
-| Archived closed files | 3218 |
-| Fresh verified reviews in the last 7 days | 14835 |
-| Proposed closes awaiting apply | 5016 (33.8% of fresh reviews) |
-| Closed by Codex apply | 2433 |
+| Open items total | 15332 |
+| Reviewed files | 14784 |
+| Archived closed files | 3269 |
+| Fresh verified reviews in the last 7 days | 14784 |
+| Proposed closes awaiting apply | 4965 (33.6% of fresh reviews) |
+| Closed by Codex apply | 2483 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 547 |
+| Todo for weekly coverage | 548 |
 
 Recently reviewed:
 
@@ -59,15 +59,15 @@ Recently reviewed:
 | [#40802](https://github.com/openclaw/openclaw/issues/40802) | [Bug]: Feishu channel cannot send replies after upgrading to 3.7 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40802.md) | complete | Apr 25, 2026, 05:42 UTC |
 | [#69385](https://github.com/openclaw/openclaw/pull/69385) | Extensions: add aj-router plugin for classifier-driven model selection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69385.md) | complete | Apr 25, 2026, 05:42 UTC |
 | [#69319](https://github.com/openclaw/openclaw/pull/69319) | gateway: register skills.uninstall RPC (mirror of skills.install) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69319.md) | complete | Apr 25, 2026, 05:42 UTC |
-| [#40934](https://github.com/openclaw/openclaw/issues/40934) | SECURITY: Malicious skill 'openclaw-email-bypass' in community skills repo — covert email backdoor | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40934.md) | complete | Apr 25, 2026, 05:42 UTC |
 | [#69356](https://github.com/openclaw/openclaw/pull/69356) | fix(tasks): clamp createdAt to startedAt on task creation (#69229) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69356.md) | complete | Apr 25, 2026, 05:42 UTC |
 | [#40894](https://github.com/openclaw/openclaw/pull/40894) | Codex/fix 40880 media staging max bytes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40894.md) | complete | Apr 25, 2026, 05:42 UTC |
 | [#69318](https://github.com/openclaw/openclaw/pull/69318) | github-copilot: expand default model list with Opus 4.7, 4.5, Haiku 4.5, Gemini 2.5 Pro | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69318.md) | complete | Apr 25, 2026, 05:42 UTC |
 | [#40814](https://github.com/openclaw/openclaw/pull/40814) | fix(telegram): accept @bot suffix in inline directives | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40814.md) | complete | Apr 25, 2026, 05:42 UTC |
 | [#40899](https://github.com/openclaw/openclaw/pull/40899) | fix(discord): suppress leaked tool transcript blocks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40899.md) | complete | Apr 25, 2026, 05:42 UTC |
-| [#40806](https://github.com/openclaw/openclaw/issues/40806) | [Bug]: Agent tool calls (exec, cron) are isolated and don't affect real filesystem | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40806.md) | complete | Apr 25, 2026, 05:42 UTC |
 | [#40871](https://github.com/openclaw/openclaw/pull/40871) | fix: include reset archive transcripts in usage/cost calculations | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40871.md) | complete | Apr 25, 2026, 05:41 UTC |
 | [#69305](https://github.com/openclaw/openclaw/pull/69305) | CLI: complete positional args in zsh completion | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69305.md) | complete | Apr 25, 2026, 05:41 UTC |
+| [#40866](https://github.com/openclaw/openclaw/pull/40866) | fix(telegram): clear previous draft on forceNewMessage to prevent stale drafts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40866.md) | complete | Apr 25, 2026, 05:41 UTC |
+| [#40840](https://github.com/openclaw/openclaw/issues/40840) | sessions.delete is not a guaranteed hard-kill boundary after normal agent runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40840.md) | complete | Apr 25, 2026, 05:41 UTC |
 
 ## How It Works
 
