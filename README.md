@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 02:52 UTC
+Last dashboard update: Apr 25, 2026, 02:58 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 02:52 UTC
+Updated: Apr 25, 2026, 02:58 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920836188](https://github.com/openclaw/clawsweeper/actions/runs/24920836188)
+Checkpoint 4 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 200/500. Result records in checkpoint: 52.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920206705](https://github.com/openclaw/clawsweeper/actions/runs/24920206705)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10237 |
-| Fresh reviewed issues in the last 7 days | 8522 |
-| Proposed issue closes | 3769 (44.2% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6343 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10210 |
+| Fresh reviewed issues in the last 7 days | 8470 |
+| Proposed issue closes | 3717 (43.9% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6338 |
 | Fresh reviewed PRs in the last 7 days | 5216 |
 | Proposed PR closes | 1408 (27% of reviewed PRs) |
-| Open items total | 16580 |
-| Reviewed files | 13738 |
-| Archived closed files | 2289 |
-| Fresh verified reviews in the last 7 days | 13738 |
-| Proposed closes awaiting apply | 5177 (37.7% of fresh reviews) |
-| Closed by Codex apply | 1533 |
+| Open items total | 16548 |
+| Reviewed files | 13686 |
+| Archived closed files | 2341 |
+| Fresh verified reviews in the last 7 days | 13686 |
+| Proposed closes awaiting apply | 5125 (37.4% of fresh reviews) |
+| Closed by Codex apply | 1583 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 2842 |
+| Todo for weekly coverage | 2862 |
 
 Recently reviewed:
 
