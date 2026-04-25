@@ -68,6 +68,7 @@ jobs:
   plan:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     outputs:
       apply_closures: ${{ steps.mode.outputs.apply_closures }}
       batch_size: ${{ steps.mode.outputs.batch_size }}
@@ -95,6 +96,31 @@ jobs:
       - name: Build ClawSweeper
         working-directory: clawsweeper
         run: npm run build
+
+      - name: Publish planning-started status
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true' }}
+        continue-on-error: true
+        working-directory: clawsweeper
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm run status -- \
+            --state "Planning review" \
+            --detail "Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git add README.md
+          if git diff --cached --quiet; then
+            echo "No status changes"
+          else
+            git commit -m "chore: mark sweep planning started"
+            for attempt in 1 2 3; do
+              if git push; then
+                exit 0
+              fi
+              git pull --rebase --autostash
+            done
+            git push
+          fi
 
       - id: mode
         run: |
@@ -137,6 +163,7 @@ jobs:
 
       - name: Publish planning status
         if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true' }}
+        continue-on-error: true
         working-directory: clawsweeper
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
