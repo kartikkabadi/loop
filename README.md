@@ -21,10 +21,10 @@ Last dashboard update: Apr 25, 2026, 08:43 UTC
 
 Updated: Apr 25, 2026, 08:43 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24927012474](https://github.com/openclaw/clawsweeper/actions/runs/24927012474)
+Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 53.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24926354430](https://github.com/openclaw/clawsweeper/actions/runs/24926354430)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
@@ -32,22 +32,22 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24927012474](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8812 |
 | Fresh reviewed issues in the last 7 days | 8766 |
 | Proposed issue closes | 3174 (36.2% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5348 |
-| Fresh reviewed PRs in the last 7 days | 5332 |
-| Proposed PR closes | 829 (15.5% of reviewed PRs) |
-| Open items total | 14160 |
-| Reviewed files | 14098 |
-| Unreviewed open items | 62 |
-| Archived closed files | 4953 |
-| Fresh verified reviews in the last 7 days | 14098 |
-| Proposed closes awaiting apply | 4003 (28.4% of fresh reviews) |
-| Closed by Codex apply | 3357 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5345 |
+| Fresh reviewed PRs in the last 7 days | 5282 |
+| Proposed PR closes | 776 (14.7% of reviewed PRs) |
+| Open items total | 14157 |
+| Reviewed files | 14048 |
+| Unreviewed open items | 109 |
+| Archived closed files | 5003 |
+| Fresh verified reviews in the last 7 days | 14048 |
+| Proposed closes awaiting apply | 3950 (28.1% of fresh reviews) |
+| Closed by Codex apply | 3407 |
 | Failed or stale reviews | 0 |
-| Daily cadence coverage | 10959/11034 current (75 due, 99.3%) |
-| Daily PR cadence | 5257/5332 current (75 due, 98.6%) |
-| Daily new issue cadence (<30d) | 5702/5702 current (0 due, 100%) |
-| Weekly older issue cadence | 3064/3064 current (0 due, 100%) |
-| Due now by cadence | 137 |
+| Daily cadence coverage | 10905/10983 current (78 due, 99.3%) |
+| Daily PR cadence | 5204/5282 current (78 due, 98.5%) |
+| Daily new issue cadence (<30d) | 5701/5701 current (0 due, 100%) |
+| Weekly older issue cadence | 3065/3065 current (0 due, 100%) |
+| Due now by cadence | 187 |
 
 Recently reviewed:
 
