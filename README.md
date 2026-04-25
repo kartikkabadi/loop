@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 09:57 UTC
+Last dashboard update: Apr 25, 2026, 10:03 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 09:57 UTC
+Updated: Apr 25, 2026, 10:03 UTC
 
 State: Apply in progress
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 100/500. Result records in checkpoint: 51.
+Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 51.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24928065717](https://github.com/openclaw/clawsweeper/actions/runs/24928065717)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8594 |
-| Fresh reviewed issues in the last 7 days | 8566 |
-| Proposed issue closes | 2985 (34.8% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5152 |
-| Fresh reviewed PRs in the last 7 days | 5079 |
-| Proposed PR closes | 628 (12.4% of reviewed PRs) |
-| Open items total | 13746 |
-| Reviewed files | 13662 |
-| Unreviewed open items | 84 |
-| Archived closed files | 5435 |
-| Fresh verified reviews in the last 7 days | 13645 |
-| Proposed closes awaiting apply | 3613 (26.5% of fresh reviews) |
-| Closed by Codex apply | 3707 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8560 |
+| Fresh reviewed issues in the last 7 days | 8534 |
+| Proposed issue closes | 2952 (34.6% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5130 |
+| Fresh reviewed PRs in the last 7 days | 5061 |
+| Proposed PR closes | 610 (12.1% of reviewed PRs) |
+| Open items total | 13690 |
+| Reviewed files | 13612 |
+| Unreviewed open items | 78 |
+| Archived closed files | 5485 |
+| Fresh verified reviews in the last 7 days | 13595 |
+| Proposed closes awaiting apply | 3562 (26.2% of fresh reviews) |
+| Closed by Codex apply | 3757 |
 | Failed or stale reviews | 17 |
-| Daily cadence coverage | 10623/10753 current (130 due, 98.8%) |
-| Daily PR cadence | 4966/5083 current (117 due, 97.7%) |
+| Daily cadence coverage | 10595/10735 current (140 due, 98.7%) |
+| Daily PR cadence | 4938/5065 current (127 due, 97.5%) |
 | Daily new issue cadence (<30d) | 5657/5670 current (13 due, 99.8%) |
-| Weekly older issue cadence | 2909/2909 current (0 due, 100%) |
-| Due now by cadence | 214 |
+| Weekly older issue cadence | 2877/2877 current (0 due, 100%) |
+| Due now by cadence | 218 |
 
 Recently reviewed:
 
@@ -61,7 +61,6 @@ Recently reviewed:
 | [#47706](https://github.com/openclaw/openclaw/pull/47706) | feat: adaptive resource limits for ARM/low-memory devices | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47706.md) | complete | Apr 25, 2026, 09:51 UTC |
 | [#71492](https://github.com/openclaw/openclaw/issues/71492) | [Bug]: Terminal flickering on Windows due to Bonjour arp -a polling (missing windowsHide) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71492.md) | complete | Apr 25, 2026, 09:51 UTC |
 | [#63444](https://github.com/openclaw/openclaw/issues/63444) | Bug: openclaw memory status fails when memorySearch.provider is bedrock | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63444.md) | complete | Apr 25, 2026, 09:51 UTC |
-| [#47615](https://github.com/openclaw/openclaw/pull/47615) | feishu: respect NO_PROXY for WebSocket connections | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/47615.md) | complete | Apr 25, 2026, 09:51 UTC |
 | [#54983](https://github.com/openclaw/openclaw/issues/54983) | feat: Add vLLM reasoning/thinking toggle support (enable_thinking parameter) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54983.md) | complete | Apr 25, 2026, 09:51 UTC |
 | [#47743](https://github.com/openclaw/openclaw/pull/47743) | feat(plugins): add trust tier classification for plugin security model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47743.md) | complete | Apr 25, 2026, 09:50 UTC |
 | [#71494](https://github.com/openclaw/openclaw/issues/71494) | gateway status dashboard URL uses http when TLS is enabled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71494.md) | complete | Apr 25, 2026, 09:50 UTC |
@@ -73,6 +72,7 @@ Recently reviewed:
 | [#71210](https://github.com/openclaw/openclaw/issues/71210) | [Bug]: openclaw memory status fails with 'Unknown memory embedding provider: local' | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71210.md) | complete | Apr 25, 2026, 09:50 UTC |
 | [#47582](https://github.com/openclaw/openclaw/pull/47582) | fix(ui-cron): keep new-job form in normal flow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47582.md) | complete | Apr 25, 2026, 09:50 UTC |
 | [#47604](https://github.com/openclaw/openclaw/pull/47604) | feat(android): add Wear OS app MVP | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47604.md) | complete | Apr 25, 2026, 09:50 UTC |
+| [#47491](https://github.com/openclaw/openclaw/pull/47491) | fix: preserve agent context in plugin hooks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47491.md) | complete | Apr 25, 2026, 09:50 UTC |
 
 ## How It Works
 
