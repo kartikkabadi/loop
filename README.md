@@ -19,12 +19,12 @@ Last dashboard update: Apr 25, 2026, 16:57 UTC
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 16:57 UTC
+Updated: Apr 25, 2026, 16:35 UTC
 
 State: Review publish complete
 
-Merged review artifacts for run 24935703622. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24935703622](https://github.com/openclaw/clawsweeper/actions/runs/24935703622)
+Checkpoint 5. GitHub throttled while applying close decisions. Progress: 46/50 fresh closes, 46/1000 processed records in this apply chunk. Last throttled command: `gh api repos/openclaw/openclaw/issues/65022/comments`. Retry 5/11 in 480s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24934812741](https://github.com/openclaw/clawsweeper/actions/runs/24934812741)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
