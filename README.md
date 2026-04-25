@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 05:37 UTC
+Last dashboard update: Apr 25, 2026, 05:40 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 05:37 UTC
+Updated: Apr 25, 2026, 05:40 UTC
 
 State: Apply in progress
 
-Starting apply run for up to 500 fresh issue closes. Checkpoints commit every 50 fresh closes; close delay is 5000ms.
+Checkpoint 1 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 50/500. Result records in checkpoint: 51.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24923761277](https://github.com/openclaw/clawsweeper/actions/runs/24923761277)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9304 |
-| Fresh reviewed issues in the last 7 days | 8980 |
-| Proposed issue closes | 3594 (40% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6196 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9277 |
+| Fresh reviewed issues in the last 7 days | 8929 |
+| Proposed issue closes | 3543 (39.7% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6188 |
 | Fresh reviewed PRs in the last 7 days | 5983 |
 | Proposed PR closes | 1545 (25.8% of reviewed PRs) |
-| Open items total | 15500 |
-| Reviewed files | 14963 |
-| Archived closed files | 3064 |
-| Fresh verified reviews in the last 7 days | 14963 |
-| Proposed closes awaiting apply | 5139 (34.3% of fresh reviews) |
-| Closed by Codex apply | 2283 |
+| Open items total | 15465 |
+| Reviewed files | 14912 |
+| Archived closed files | 3115 |
+| Fresh verified reviews in the last 7 days | 14912 |
+| Proposed closes awaiting apply | 5088 (34.1% of fresh reviews) |
+| Closed by Codex apply | 2333 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 537 |
+| Todo for weekly coverage | 553 |
 
 Recently reviewed:
 
@@ -59,15 +59,15 @@ Recently reviewed:
 | [#40269](https://github.com/openclaw/openclaw/issues/40269) | Gateway leaks internal API error to chat when compaction encounters thinking blocks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40269.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40268](https://github.com/openclaw/openclaw/issues/40268) | Gateway crashes on unknown config keys — .strict() should be .strip() on read path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40268.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40311](https://github.com/openclaw/openclaw/pull/40311) | feat(web-search): expose Brave Goggles for custom search filtering and ranking | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40311.md) | complete | Apr 25, 2026, 05:29 UTC |
-| [#40326](https://github.com/openclaw/openclaw/issues/40326) | Gateway crash - Doctor warnings being parsed as JSON | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40326.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40238](https://github.com/openclaw/openclaw/pull/40238) | Respect skill tool policy in inline command dispatch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40238.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40287](https://github.com/openclaw/openclaw/pull/40287) | feat(slack): handle file_shared events and large file upload fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40287.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40253](https://github.com/openclaw/openclaw/pull/40253) | fix(telegram): mirror inbound user messages to WebChat (#36640) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40253.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40423](https://github.com/openclaw/openclaw/pull/40423) | feat(runtime): expose agent and session env markers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40423.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40052](https://github.com/openclaw/openclaw/pull/40052) | fix(ui): save default agent model changes to defaults config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40052.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40330](https://github.com/openclaw/openclaw/pull/40330) | fix(telegram): coalesce DM streaming into single message in partial mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40330.md) | complete | Apr 25, 2026, 05:29 UTC |
-| [#40162](https://github.com/openclaw/openclaw/issues/40162) | [Bug]: WARNING: Plugin \"feishu\" contains dangerous code patterns | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40162.md) | complete | Apr 25, 2026, 05:29 UTC |
 | [#40355](https://github.com/openclaw/openclaw/pull/40355) | fix(config): warn when configured model primary is not in catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40355.md) | complete | Apr 25, 2026, 05:29 UTC |
+| [#40241](https://github.com/openclaw/openclaw/pull/40241) | feat: add Microsoft Clarity analytics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40241.md) | complete | Apr 25, 2026, 05:29 UTC |
+| [#40140](https://github.com/openclaw/openclaw/issues/40140) | Session lane blocking: long tool chains delay all other channel messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40140.md) | complete | Apr 25, 2026, 05:29 UTC |
 
 ## How It Works
 
