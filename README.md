@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 16:17 UTC
+Last dashboard update: Apr 25, 2026, 16:23 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 16:17 UTC
+Updated: Apr 25, 2026, 16:23 UTC
 
 State: Apply in progress
 
-Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 51.
+Checkpoint 4 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 200/500. Result records in checkpoint: 50.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24934812741](https://github.com/openclaw/clawsweeper/actions/runs/24934812741)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6567 |
-| Fresh reviewed issues in the last 7 days | 6554 |
-| Proposed issue closes | 1014 (15.5% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4607 |
-| Fresh reviewed PRs in the last 7 days | 4537 |
-| Proposed PR closes | 194 (4.3% of reviewed PRs) |
-| Open items total | 11174 |
-| Reviewed files | 11095 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6521 |
+| Fresh reviewed issues in the last 7 days | 6508 |
+| Proposed issue closes | 968 (14.9% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4603 |
+| Fresh reviewed PRs in the last 7 days | 4533 |
+| Proposed PR closes | 190 (4.2% of reviewed PRs) |
+| Open items total | 11124 |
+| Reviewed files | 11045 |
 | Unreviewed open items | 79 |
-| Archived closed files | 8112 |
-| Fresh verified reviews in the last 7 days | 11091 |
-| Proposed closes awaiting apply | 1208 (10.9% of fresh reviews) |
-| Closed by Codex apply | 6257 |
+| Archived closed files | 8162 |
+| Fresh verified reviews in the last 7 days | 11041 |
+| Proposed closes awaiting apply | 1158 (10.5% of fresh reviews) |
+| Closed by Codex apply | 6307 |
 | Failed or stale reviews | 4 |
-| Daily cadence coverage | 8155/8311 current (156 due, 98.1%) |
-| Daily PR cadence | 4443/4539 current (96 due, 97.9%) |
-| Daily new issue cadence (<30d) | 3712/3772 current (60 due, 98.4%) |
-| Weekly older issue cadence | 2784/2784 current (0 due, 100%) |
-| Due now by cadence | 235 |
+| Daily cadence coverage | 8045/8263 current (218 due, 97.4%) |
+| Daily PR cadence | 4414/4535 current (121 due, 97.3%) |
+| Daily new issue cadence (<30d) | 3631/3728 current (97 due, 97.4%) |
+| Weekly older issue cadence | 2782/2782 current (0 due, 100%) |
+| Due now by cadence | 297 |
 
 Recently reviewed:
 
@@ -58,7 +58,6 @@ Recently reviewed:
 | [#56881](https://github.com/openclaw/openclaw/issues/56881) | Regression after 2026.3.28: sessionStrategy behavior changed, ws-stream 500 fallback, slower Discord interaction handling | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56881.md) | complete | Apr 25, 2026, 16:14 UTC |
 | [#57142](https://github.com/openclaw/openclaw/issues/57142) | Webchat: autocomplete/suggestions for custom terms in chat input | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57142.md) | complete | Apr 25, 2026, 16:14 UTC |
 | [#56951](https://github.com/openclaw/openclaw/issues/56951) | Slack inline buttons should be enabled by default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56951.md) | complete | Apr 25, 2026, 16:14 UTC |
-| [#57212](https://github.com/openclaw/openclaw/issues/57212) | Discord voice: audio receive pipeline silent — no STT, no decrypt errors, no speaking events | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57212.md) | complete | Apr 25, 2026, 16:14 UTC |
 | [#57141](https://github.com/openclaw/openclaw/issues/57141) | [Bug]: Telegram DM topic ACP bind fails on next message with missing ACP metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57141.md) | complete | Apr 25, 2026, 16:14 UTC |
 | [#56968](https://github.com/openclaw/openclaw/issues/56968) | Bug: status shows 'Memory enabled · unavailable' for third-party memory plugins (memory-lancedb-pro) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56968.md) | complete | Apr 25, 2026, 16:14 UTC |
 | [#57031](https://github.com/openclaw/openclaw/issues/57031) | fix: QueuedFileWriter silently swallows all write errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57031.md) | complete | Apr 25, 2026, 16:14 UTC |
@@ -68,11 +67,12 @@ Recently reviewed:
 | [#57091](https://github.com/openclaw/openclaw/issues/57091) | [Feature]: Improve Workspace Skill Loading: Add Frontmatter Parsing Error Visibility and Validation for SKILL.md | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57091.md) | complete | Apr 25, 2026, 16:14 UTC |
 | [#57110](https://github.com/openclaw/openclaw/issues/57110) | Tailscale serve mode lacks optional secondary authentication | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57110.md) | complete | Apr 25, 2026, 16:14 UTC |
 | [#57225](https://github.com/openclaw/openclaw/issues/57225) | [Bug]: Discord multi-segment responses arrive out of order when interleaved with tool calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57225.md) | complete | Apr 25, 2026, 16:13 UTC |
-| [#57068](https://github.com/openclaw/openclaw/issues/57068) | Agent overview: primary model selection does not save (reverts to 'Not set' after Refresh) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/57068.md) | complete | Apr 25, 2026, 16:13 UTC |
 | [#57019](https://github.com/openclaw/openclaw/issues/57019) | fix: session write lock race — async release can delete newly-acquired lock | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57019.md) | complete | Apr 25, 2026, 16:13 UTC |
 | [#57139](https://github.com/openclaw/openclaw/issues/57139) | sessions_history should support reading archived/reset sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57139.md) | complete | Apr 25, 2026, 16:13 UTC |
 | [#56638](https://github.com/openclaw/openclaw/issues/56638) | Agent tool surface missing media/audio delivery tool since 2026.3.x | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56638.md) | complete | Apr 25, 2026, 16:13 UTC |
 | [#57174](https://github.com/openclaw/openclaw/issues/57174) | Feature: Per-agent compaction configuration (thresholds, mode, reserveTokens) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57174.md) | complete | Apr 25, 2026, 16:13 UTC |
+| [#56818](https://github.com/openclaw/openclaw/issues/56818) | [Bug] Feishu card action callback causes streaming reply to fail with Invalid open_message_id | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56818.md) | complete | Apr 25, 2026, 16:13 UTC |
+| [#57169](https://github.com/openclaw/openclaw/issues/57169) | [Bug]: macOS node advertises screen capability but runtime blocks screen.record via platform allowlist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57169.md) | complete | Apr 25, 2026, 16:13 UTC |
 
 ## How It Works
 
