@@ -23,7 +23,7 @@ Updated: Apr 25, 2026, 19:36 UTC
 
 State: Apply in progress
 
-Checkpoint 8 finished. Fresh closes in checkpoint: 40. Total fresh closes in this run: 390/500. Result records in checkpoint: 48.
+Checkpoint 9 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 390/500. Result records in checkpoint: 0.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24937779720](https://github.com/openclaw/clawsweeper/actions/runs/24937779720)
 <!-- clawsweeper-status:end -->
 
