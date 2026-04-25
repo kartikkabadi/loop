@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 11:33 UTC
+Last dashboard update: Apr 25, 2026, 11:35 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 11:33 UTC
+Updated: Apr 25, 2026, 11:35 UTC
 
-State: Apply in progress
+State: Review in progress
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 100/500. Result records in checkpoint: 50.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24929701589](https://github.com/openclaw/clawsweeper/actions/runs/24929701589)
+Planned 156 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24929919345](https://github.com/openclaw/clawsweeper/actions/runs/24929919345)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8210 |
-| Fresh reviewed issues in the last 7 days | 8202 |
-| Proposed issue closes | 2617 (31.9% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4989 |
-| Fresh reviewed PRs in the last 7 days | 4929 |
-| Proposed PR closes | 521 (10.6% of reviewed PRs) |
-| Open items total | 13199 |
-| Reviewed files | 13131 |
-| Unreviewed open items | 68 |
-| Archived closed files | 5984 |
-| Fresh verified reviews in the last 7 days | 13131 |
-| Proposed closes awaiting apply | 3138 (23.9% of fresh reviews) |
-| Closed by Codex apply | 4207 |
-| Failed or stale reviews | 0 |
-| Daily cadence coverage | 10185/10359 current (174 due, 98.3%) |
-| Daily PR cadence | 4755/4929 current (174 due, 96.5%) |
-| Daily new issue cadence (<30d) | 5430/5430 current (0 due, 100%) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8195 |
+| Fresh reviewed issues in the last 7 days | 8179 |
+| Proposed issue closes | 2605 (31.8% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4978 |
+| Fresh reviewed PRs in the last 7 days | 4910 |
+| Proposed PR closes | 512 (10.4% of reviewed PRs) |
+| Open items total | 13173 |
+| Reviewed files | 13090 |
+| Unreviewed open items | 83 |
+| Archived closed files | 6025 |
+| Fresh verified reviews in the last 7 days | 13089 |
+| Proposed closes awaiting apply | 3117 (23.8% of fresh reviews) |
+| Closed by Codex apply | 4157 |
+| Failed or stale reviews | 1 |
+| Daily cadence coverage | 10139/10318 current (179 due, 98.3%) |
+| Daily PR cadence | 4732/4910 current (178 due, 96.4%) |
+| Daily new issue cadence (<30d) | 5407/5408 current (1 due, 100%) |
 | Weekly older issue cadence | 2772/2772 current (0 due, 100%) |
-| Due now by cadence | 242 |
+| Due now by cadence | 262 |
 
 Recently reviewed:
 
@@ -70,9 +70,9 @@ Recently reviewed:
 | [#49366](https://github.com/openclaw/openclaw/pull/49366) | fix(gateway): avoid persisting service env secrets [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49366.md) | complete | Apr 25, 2026, 10:54 UTC |
 | [#49394](https://github.com/openclaw/openclaw/pull/49394) | feat: improve Chinese model reliability and add AIsa provider plugin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49394.md) | complete | Apr 25, 2026, 10:54 UTC |
 | [#64585](https://github.com/openclaw/openclaw/issues/64585) | Auto-recover stuck gateway sessions after restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64585.md) | complete | Apr 25, 2026, 10:54 UTC |
-| [#49198](https://github.com/openclaw/openclaw/pull/49198) | Fix/dist-runtime skill copy instead of symlink | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49198.md) | complete | Apr 25, 2026, 10:54 UTC |
 | [#49333](https://github.com/openclaw/openclaw/pull/49333) | Add OpenClaw audit and contribution planning docs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49333.md) | complete | Apr 25, 2026, 10:54 UTC |
 | [#62562](https://github.com/openclaw/openclaw/issues/62562) | sessions_spawn returns modelApplied:true while running stale resumed model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62562.md) | complete | Apr 25, 2026, 10:54 UTC |
+| [#58243](https://github.com/openclaw/openclaw/issues/58243) | Enhanced Telegram Multi-Bot Support | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58243.md) | complete | Apr 25, 2026, 10:54 UTC |
 
 ## How It Works
 
