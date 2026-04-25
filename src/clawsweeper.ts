@@ -164,8 +164,25 @@ interface OpenItemCounts {
 }
 
 interface DashboardKindStats {
+  total: number;
   fresh: number;
   proposedClose: number;
+}
+
+interface DashboardCadenceBucket {
+  total: number;
+  current: number;
+  proposedClose: number;
+}
+
+interface DashboardCadenceStats {
+  dailyPullRequests: DashboardCadenceBucket;
+  dailyNewIssues: DashboardCadenceBucket;
+  weeklyOlderIssues: DashboardCadenceBucket;
+  daily: DashboardCadenceBucket;
+  weekly: DashboardCadenceBucket;
+  unreviewedOpen: number;
+  due: number;
 }
 
 interface PlanShard {
@@ -611,6 +628,19 @@ function isFresh(
   return Date.now() - reviewedAt < FRESH_DAYS * DAY_MS;
 }
 
+function isCurrentForCadence(options: {
+  reviewedAt: string | undefined;
+  reviewStatus: string | undefined;
+  cadenceDays: number;
+  now: number;
+}): boolean {
+  if (options.reviewStatus !== "complete") return false;
+  if (!options.reviewedAt) return false;
+  const reviewedAt = Date.parse(options.reviewedAt);
+  if (!Number.isFinite(reviewedAt)) return false;
+  return options.now - reviewedAt < options.cadenceDays * DAY_MS;
+}
+
 function reviewedAtMs(review: ExistingReview | null): number | null {
   if (review?.reviewStatus !== "complete") return null;
   if (!review.reviewedAt) return null;
@@ -736,14 +766,49 @@ function fetchOpenItemCounts(): OpenItemCounts {
 
 function emptyDashboardKindStats(): DashboardKindStats {
   return {
+    total: 0,
     fresh: 0,
     proposedClose: 0,
+  };
+}
+
+function emptyDashboardCadenceBucket(): DashboardCadenceBucket {
+  return {
+    total: 0,
+    current: 0,
+    proposedClose: 0,
+  };
+}
+
+function addDashboardCadenceBucket(
+  target: DashboardCadenceBucket,
+  source: DashboardCadenceBucket,
+): void {
+  target.total += source.total;
+  target.current += source.current;
+  target.proposedClose += source.proposedClose;
+}
+
+function capDashboardCadenceBucket(
+  bucket: DashboardCadenceBucket,
+  totalLimit: number,
+): DashboardCadenceBucket {
+  const total = Math.min(bucket.total, totalLimit);
+  return {
+    total,
+    current: Math.min(bucket.current, total),
+    proposedClose: Math.min(bucket.proposedClose, total),
   };
 }
 
 function formatPercent(numerator: number, denominator: number): string {
   if (denominator <= 0) return "-";
   return `${((numerator / denominator) * 100).toFixed(1).replace(/\.0$/, "")}%`;
+}
+
+function formatCadenceBucket(bucket: DashboardCadenceBucket): string {
+  const due = bucket.total - bucket.current;
+  return `${bucket.current}/${bucket.total} current (${due} due, ${formatPercent(bucket.current, bucket.total)})`;
 }
 
 function selectCandidates(options: {
@@ -2024,6 +2089,26 @@ function markdownFiles(dir: string): string[] {
     : [];
 }
 
+function cadenceBucketForReview(
+  markdown: string,
+  now: number,
+): {
+  bucket: "dailyPullRequests" | "dailyNewIssues" | "weeklyOlderIssues";
+  cadenceDays: number;
+} {
+  const kind = (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue";
+  if (kind === "pull_request") {
+    return { bucket: "dailyPullRequests", cadenceDays: DAILY_REVIEW_DAYS };
+  }
+
+  const createdAt = Date.parse(frontMatterValue(markdown, "item_created_at") ?? "");
+  if (Number.isFinite(createdAt) && now - createdAt < NEW_ISSUE_DAYS * DAY_MS) {
+    return { bucket: "dailyNewIssues", cadenceDays: DAILY_REVIEW_DAYS };
+  }
+
+  return { bucket: "weeklyOlderIssues", cadenceDays: WEEKLY_REVIEW_DAYS };
+}
+
 function dashboardStats(
   itemsDir: string,
   closedDir = join(ROOT, "closed"),
@@ -2038,11 +2123,13 @@ function dashboardStats(
   failed: number;
   stale: number;
   byKind: Record<ItemKind, DashboardKindStats>;
+  cadence: DashboardCadenceStats;
   recent: DashboardItem[];
 } {
   const open = fetchOpenItemCounts();
   const files = markdownFiles(itemsDir);
   const closedFiles = markdownFiles(closedDir);
+  const now = Date.now();
   let fresh = 0;
   let proposedClose = 0;
   let closed = 0;
@@ -2052,6 +2139,9 @@ function dashboardStats(
     issue: emptyDashboardKindStats(),
     pull_request: emptyDashboardKindStats(),
   };
+  const dailyPullRequests = emptyDashboardCadenceBucket();
+  const dailyNewIssues = emptyDashboardCadenceBucket();
+  const weeklyOlderIssues = emptyDashboardCadenceBucket();
   const recent: DashboardItem[] = [];
   for (const file of files) {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
@@ -2062,6 +2152,7 @@ function dashboardStats(
     const decision = frontMatterValue(markdown, "decision") ?? "unknown";
     const kind = (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue";
     const freshReview = isFresh({ reviewedAt, reviewStatus });
+    byKind[kind].total += 1;
     if (freshReview) fresh += 1;
     if (freshReview) byKind[kind].fresh += 1;
     if (freshReview && decision === "close" && action === "proposed_close") proposedClose += 1;
@@ -2070,6 +2161,18 @@ function dashboardStats(
     if (action === "closed") closed += 1;
     if (reviewStatus === "failed") failed += 1;
     if (reviewStatus.startsWith("stale_")) stale += 1;
+    const cadence = cadenceBucketForReview(markdown, now);
+    const cadenceBucket =
+      cadence.bucket === "dailyPullRequests"
+        ? dailyPullRequests
+        : cadence.bucket === "dailyNewIssues"
+          ? dailyNewIssues
+          : weeklyOlderIssues;
+    cadenceBucket.total += 1;
+    if (isCurrentForCadence({ reviewedAt, reviewStatus, cadenceDays: cadence.cadenceDays, now })) {
+      cadenceBucket.current += 1;
+    }
+    if (decision === "close" && action === "proposed_close") cadenceBucket.proposedClose += 1;
     recent.push({
       number,
       kind,
@@ -2086,10 +2189,20 @@ function dashboardStats(
     if (action === "closed") closed += 1;
   }
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
+  const daily = emptyDashboardCadenceBucket();
+  const cappedDailyPullRequests = capDashboardCadenceBucket(dailyPullRequests, open.pullRequests);
+  addDashboardCadenceBucket(daily, cappedDailyPullRequests);
+  addDashboardCadenceBucket(daily, dailyNewIssues);
+  const weekly = emptyDashboardCadenceBucket();
+  addDashboardCadenceBucket(weekly, weeklyOlderIssues);
+  const unreviewedOpen =
+    Math.max(0, open.issues - byKind.issue.total) +
+    Math.max(0, open.pullRequests - byKind.pull_request.total);
+  const cadenceDue = daily.total - daily.current + (weekly.total - weekly.current) + unreviewedOpen;
   return {
     open,
     fresh,
-    todo: Math.max(0, open.total - fresh),
+    todo: cadenceDue,
     files: files.length,
     proposedClose,
     closed,
@@ -2097,6 +2210,15 @@ function dashboardStats(
     failed,
     stale,
     byKind,
+    cadence: {
+      dailyPullRequests: cappedDailyPullRequests,
+      dailyNewIssues,
+      weeklyOlderIssues,
+      daily,
+      weekly,
+      unreviewedOpen,
+      due: cadenceDue,
+    },
     recent,
   };
 }
@@ -2134,12 +2256,17 @@ ${status}
 | Proposed PR closes | ${stats.byKind.pull_request.proposedClose} (${formatPercent(stats.byKind.pull_request.proposedClose, stats.byKind.pull_request.fresh)} of reviewed PRs) |
 | Open items total | ${stats.open.total} |
 | Reviewed files | ${stats.files} |
+| Unreviewed open items | ${stats.cadence.unreviewedOpen} |
 | Archived closed files | ${stats.archivedFiles} |
 | Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
 | Proposed closes awaiting apply | ${stats.proposedClose} (${formatPercent(stats.proposedClose, stats.fresh)} of fresh reviews) |
 | Closed by Codex apply | ${stats.closed} |
 | Failed or stale reviews | ${stats.failed + stats.stale} |
-| Todo for weekly coverage | ${stats.todo} |
+| Daily cadence coverage | ${formatCadenceBucket(stats.cadence.daily)} |
+| Daily PR cadence | ${formatCadenceBucket(stats.cadence.dailyPullRequests)} |
+| Daily new issue cadence (<${NEW_ISSUE_DAYS}d) | ${formatCadenceBucket(stats.cadence.dailyNewIssues)} |
+| Weekly older issue cadence | ${formatCadenceBucket(stats.cadence.weekly)} |
+| Due now by cadence | ${stats.cadence.due} |
 
 Recently reviewed:
 

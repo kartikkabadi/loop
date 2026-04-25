@@ -14,7 +14,7 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 07:18 UTC
+Last dashboard update: Apr 25, 2026, 07:22 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
@@ -29,20 +29,25 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24924985336](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8847 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8845 |
 | Fresh reviewed issues in the last 7 days | 8562 |
 | Proposed issue closes | 3193 (37.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5907 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5874 |
 | Fresh reviewed PRs in the last 7 days | 6171 |
 | Proposed PR closes | 1404 (22.8% of reviewed PRs) |
-| Open items total | 14754 |
+| Open items total | 14719 |
 | Reviewed files | 14733 |
+| Unreviewed open items | 283 |
 | Archived closed files | 3705 |
 | Fresh verified reviews in the last 7 days | 14733 |
 | Proposed closes awaiting apply | 4597 (31.2% of fresh reviews) |
 | Closed by Codex apply | 2862 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 21 |
+| Daily cadence coverage | 11218/11237 current (19 due, 99.8%) |
+| Daily PR cadence | 5855/5874 current (19 due, 99.7%) |
+| Daily new issue cadence (<30d) | 5363/5363 current (0 due, 100%) |
+| Weekly older issue cadence | 3199/3199 current (0 due, 100%) |
+| Due now by cadence | 302 |
 
 Recently reviewed:
 
@@ -84,7 +89,7 @@ Each review job:
 
 Codex runs without GitHub write tokens. The runner checks the OpenClaw checkout before every review, makes the checkout read-only in CI, checks it again after review, and fails the item if Codex leaves any tracked or untracked change behind.
 
-Parallel workflow shards only receive planned item numbers. The planner posts a best-effort workflow status note to this README before shards start, each shard emits `[review]` progress lines, and the final job merges artifacts and updates the dashboard. Review jobs time out after 75 minutes so one stuck shard cannot hold the review concurrency group indefinitely. If the planner filled the current worker capacity, the publish job dispatches the next proposal-only sweep automatically. Review cadence is daily for items with activity since the last stored snapshot, all PRs, and issues younger than 30 days. Older inactive issues are reviewed weekly. When more items are due than fit in a run, the planner prioritizes active items first, then PRs, then new issues, then older weekly reviews.
+Parallel workflow shards only receive planned item numbers. The planner posts a best-effort workflow status note to this README before shards start, each shard emits `[review]` progress lines, and the final job merges artifacts and updates the dashboard. Review jobs time out after 75 minutes so one stuck shard cannot hold the review concurrency group indefinitely. If the planner filled the current worker capacity, the publish job dispatches the next proposal-only sweep automatically. Review cadence is daily for items with activity since the last stored snapshot, all PRs, and issues younger than 30 days. Older inactive issues are reviewed weekly. When more items are due than fit in a run, the planner prioritizes active items first, then PRs, then new issues, then older weekly reviews. The dashboard reports local cadence coverage for daily PRs, daily new issues, and weekly older issues; activity-based promotion is applied by the planner while scanning GitHub snapshots.
 
 To close later without rerunning Codex, dispatch the workflow with `apply_existing=true`. That mode reads existing `items/*.md`, refetches the issue/PR context, recomputes the snapshot hash, and only comments/closes if nothing changed since the proposal was written. Successfully closed or already-closed items move to `closed/<number>.md`; `items/` stays focused on open items that still need tracking. Apply runs update the dashboard when each checkpoint commits, cap total processed items separately from fresh closes, leave enough scan room to skip changed or already-closed records while still reaching fresh closures, and emit `[apply]` progress lines during long close batches. Apply mode also posts best-effort start/checkpoint/finish notes to the dashboard. Apply mode defaults to `apply_min_age_days=0`, `apply_kind=issue`, a 5-second close delay, 50 fresh closes per checkpoint commit, and long retry backoff for GitHub secondary write throttling, so issue cleanup can apply high-confidence closes regardless of age while PRs remain excluded. If an apply run reaches its requested close limit, it queues another apply run with the same settings.
 
