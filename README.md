@@ -14,30 +14,30 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 22:27 UTC
+Last dashboard update: Apr 25, 2026, 22:30 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 22:27 UTC
+Updated: Apr 25, 2026, 22:30 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24942165093](https://github.com/openclaw/clawsweeper/actions/runs/24942165093)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5515 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5517 |
 | Fresh reviewed issues in the last 7 days | 5484 |
 | Proposed issue closes | 319 (5.8% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4275 |
 | Fresh reviewed PRs in the last 7 days | 4201 |
 | Proposed PR closes | 47 (1.1% of reviewed PRs) |
-| Open items total | 9790 |
+| Open items total | 9792 |
 | Reviewed files | 9685 |
-| Unreviewed open items | 105 |
+| Unreviewed open items | 107 |
 | Archived closed files | 9612 |
 | Fresh verified reviews in the last 7 days | 9685 |
 | Proposed closes awaiting apply | 366 (3.8% of fresh reviews) |
@@ -47,7 +47,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24942165093](https://
 | Daily PR cadence | 3946/4201 current (255 due, 93.9%) |
 | Daily new issue cadence (<30d) | 2419/2714 current (295 due, 89.1%) |
 | Weekly older issue cadence | 2770/2770 current (0 due, 100%) |
-| Due now by cadence | 655 |
+| Due now by cadence | 657 |
 
 Recently reviewed:
 
