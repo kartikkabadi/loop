@@ -7,6 +7,8 @@ Allowed close reasons:
 - already implemented on `main`
 - cannot reproduce on current `main`
 - belongs on ClawHub as a skill/plugin, not in core
+- duplicate or superseded by a canonical issue/PR
+- concrete but not actionable in this source repo
 - too incoherent to be actionable
 - stale issue older than 60 days with insufficient data to verify the bug
 
@@ -83,7 +85,7 @@ Each review job:
 1. Checks out this repo.
 2. Uses a planner job that scans open items, prioritizes due activity, and hands explicit item-number batches to review shards.
 3. Checks out `openclaw/openclaw` at `main`, with cached git objects for faster startup.
-4. Pre-hydrates compact related issue/PR context referenced from the item body, comments, timeline, or PR review comments.
+4. Pre-hydrates compact related issue/PR context referenced from the item body, comments, timeline, or PR review comments, plus a small best-effort local title search over existing reports for likely duplicates/superseded work.
 5. Runs Codex with `gpt-5.5`, high reasoning, fast service tier, and a 10-minute per-item timeout inside the OpenClaw checkout.
 6. Writes `items/<number>.md` with the decision, proposed close comment, review runtime (`review_model`, `review_reasoning_effort`, sandbox, service tier), and a GitHub snapshot hash.
 7. Marks high-confidence allowed close decisions as `proposed_close`.

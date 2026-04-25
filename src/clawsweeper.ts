@@ -22,6 +22,7 @@ type CloseReason =
   | "cannot_reproduce"
   | "clawhub"
   | "duplicate_or_superseded"
+  | "not_actionable_in_repo"
   | "incoherent"
   | "stale_insufficient_info"
   | "none";
@@ -132,6 +133,20 @@ interface ItemContext {
     pullCommits?: number;
     pullReviewComments?: number;
   };
+}
+
+interface LocalRelatedTitleEntry {
+  number: number;
+  kind: ItemKind | undefined;
+  title: string;
+  url: string | undefined;
+  location: AuditRecordLocation;
+  path: string;
+  decision: string | undefined;
+  closeReason: string | undefined;
+  action: string | undefined;
+  reviewStatus: string;
+  summary: string;
 }
 
 interface Action {
@@ -296,13 +311,14 @@ const STATUS_END = "<!-- clawsweeper-status:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
-const REVIEW_POLICY_VERSION = "2026-04-25-policy-v3";
+const REVIEW_POLICY_VERSION = "2026-04-25-policy-v4";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
   "cannot_reproduce",
   "clawhub",
   "duplicate_or_superseded",
+  "not_actionable_in_repo",
   "incoherent",
   "stale_insufficient_info",
 ]);
@@ -653,6 +669,12 @@ function requireStringArray(value: unknown, path: string): string[] {
   return value.map((entry, index) => requireString(entry, `${path}[${index}]`));
 }
 
+function isEnvironmentAccessCaveat(value: string): boolean {
+  return /(?:GH_TOKEN|GITHUB_TOKEN|OPENCLAW_GH_TOKEN|authenticated gh|gh (?:was |is )?unavailable|unauthenticated gh|shallow clone|GitHub auth(?:entication)? (?:was |is )?unavailable|could not use authenticated GitHub)/i.test(
+    value,
+  );
+}
+
 function parseEvidence(value: unknown, path: string): Evidence {
   const record = requireRecord(value, path);
   rejectUnexpectedKeys(record, EVIDENCE_SCHEMA_KEYS, path);
@@ -685,7 +707,9 @@ export function parseDecision(value: unknown): Decision {
     confidence: requireEnum(record.confidence, CONFIDENCES, "decision.confidence"),
     summary: requireString(record.summary, "decision.summary"),
     evidence,
-    risks: requireStringArray(record.risks, "decision.risks"),
+    risks: requireStringArray(record.risks, "decision.risks").filter(
+      (risk) => !isEnvironmentAccessCaveat(risk),
+    ),
     fixedRelease: requireNullableString(record.fixedRelease, "decision.fixedRelease"),
     fixedSha: requireNullableString(record.fixedSha, "decision.fixedSha"),
     closeComment: requireString(record.closeComment, "decision.closeComment"),
@@ -938,6 +962,125 @@ function compactRelatedItem(number: number, mentionedIn: string[]): unknown | nu
   }
 }
 
+const RELATED_TITLE_STOP_WORDS = new Set([
+  "about",
+  "after",
+  "allow",
+  "already",
+  "also",
+  "and",
+  "are",
+  "because",
+  "being",
+  "bug",
+  "cannot",
+  "claw",
+  "clawhub",
+  "claws",
+  "codex",
+  "does",
+  "doesn",
+  "don",
+  "error",
+  "fails",
+  "feat",
+  "feature",
+  "fix",
+  "for",
+  "from",
+  "has",
+  "have",
+  "into",
+  "issue",
+  "main",
+  "not",
+  "openclaw",
+  "pr",
+  "request",
+  "should",
+  "that",
+  "the",
+  "this",
+  "through",
+  "using",
+  "when",
+  "with",
+  "without",
+]);
+
+let localRelatedTitleIndexCache: LocalRelatedTitleEntry[] | null = null;
+
+export function relatedTitleSearchTerms(title: string, limit = 6): string[] {
+  const seen = new Set<string>();
+  return (
+    title
+      .toLowerCase()
+      .match(/[a-z0-9][a-z0-9_-]{2,}/g)
+      ?.filter((term) => {
+        const normalized = term.replace(/^_+|_+$/g, "");
+        if (RELATED_TITLE_STOP_WORDS.has(normalized)) return false;
+        if (/^\d+$/.test(normalized)) return false;
+        if (seen.has(normalized)) return false;
+        seen.add(normalized);
+        return true;
+      })
+      .slice(0, limit) ?? []
+  );
+}
+
+function localRelatedTitleIndex(): LocalRelatedTitleEntry[] {
+  if (localRelatedTitleIndexCache) return localRelatedTitleIndexCache;
+  const entries: LocalRelatedTitleEntry[] = [];
+  for (const [location, dir] of [
+    ["items", join(ROOT, "items")],
+    ["closed", join(ROOT, "closed")],
+  ] as const) {
+    for (const file of markdownFiles(dir)) {
+      const path = join(dir, file);
+      const markdown = readFileSync(path, "utf8");
+      entries.push({
+        number: numberForMarkdownFile(file),
+        kind: frontMatterValue(markdown, "type") as ItemKind | undefined,
+        title: displayTitle(frontMatterValue(markdown, "title") ?? ""),
+        url: frontMatterValue(markdown, "url"),
+        location,
+        path: repoRelativePath(path),
+        decision: frontMatterValue(markdown, "decision"),
+        closeReason: frontMatterValue(markdown, "close_reason"),
+        action: frontMatterValue(markdown, "action_taken"),
+        reviewStatus: effectiveReviewStatus(markdown),
+        summary: sectionValue(markdown, "Summary"),
+      });
+    }
+  }
+  localRelatedTitleIndexCache = entries;
+  return entries;
+}
+
+function compactRelatedSearchItems(item: Item, mentioned: Set<number>): unknown[] {
+  const terms = relatedTitleSearchTerms(item.title);
+  if (terms.length < 2) return [];
+  const seen = new Set<number>([item.number, ...mentioned]);
+  return localRelatedTitleIndex()
+    .flatMap((entry) => {
+      if (seen.has(entry.number)) return [];
+      const candidateTerms = new Set(relatedTitleSearchTerms(entry.title, 12));
+      const overlap = terms.filter((term) => candidateTerms.has(term)).length;
+      if (overlap < 2) return [];
+      return [{ entry, overlap }];
+    })
+    .sort((left, right) => right.overlap - left.overlap || left.entry.number - right.entry.number)
+    .slice(0, 5)
+    .map(({ entry, overlap }) => ({
+      mentionedIn: ["local title search"],
+      titleSearchOverlap: overlap,
+      localReport: {
+        ...entry,
+        reportUrl: reportUrl(`/blob/main/${entry.path}`),
+      },
+    }));
+}
+
 function relatedItemsContext(options: {
   item: Item;
   issue: unknown;
@@ -947,11 +1090,13 @@ function relatedItemsContext(options: {
   pullReviewComments?: unknown[];
 }): unknown[] {
   const mentions = collectRelatedMentions(options);
-  return [...mentions.entries()]
+  const explicitRelated = [...mentions.entries()]
     .sort(([left], [right]) => left - right)
     .slice(0, 10)
     .map(([number, mentionedIn]) => compactRelatedItem(number, mentionedIn))
     .filter((entry) => entry !== null);
+  const searchedRelated = compactRelatedSearchItems(options.item, new Set(mentions.keys()));
+  return [...explicitRelated, ...searchedRelated].slice(0, 12);
 }
 
 function compactPullFile(value: unknown): unknown {
@@ -1693,6 +1838,8 @@ function closeReasonText(reason: CloseReason): string {
       return "belongs on ClawHub";
     case "duplicate_or_superseded":
       return "duplicate or superseded";
+    case "not_actionable_in_repo":
+      return "not actionable in this repository";
     case "incoherent":
       return "not actionable";
     case "stale_insufficient_info":
@@ -1921,6 +2068,8 @@ function closeIntro(reason: CloseReason): string {
       return `Closing this as better suited for ${markdownLink("ClawHub", CLAWHUB_URL)}/community plugin work after Codex review.`;
     case "duplicate_or_superseded":
       return "Closing this as duplicate or superseded after Codex review.";
+    case "not_actionable_in_repo":
+      return "Closing this as not actionable in this repository after Codex review.";
     case "incoherent":
       return "Closing this as not actionable after Codex review.";
     case "stale_insufficient_info":
@@ -1938,6 +2087,8 @@ function closeOutro(reason: CloseReason): string {
       return "So I’m closing this as a scope-fit item for the plugin/community path rather than keeping it open as an OpenClaw core request.";
     case "duplicate_or_superseded":
       return "So I’m closing this here and keeping the remaining discussion on the canonical linked item.";
+    case "not_actionable_in_repo":
+      return "So I’m closing this as outside the OpenClaw source repository rather than keeping it open as core work.";
     default:
       return "";
   }

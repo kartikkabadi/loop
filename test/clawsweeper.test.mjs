@@ -7,6 +7,7 @@ import {
   isProtectedItem,
   parseDecision,
   protectedLabels,
+  relatedTitleSearchTerms,
   reviewActionForDecision,
   shouldReviewItem,
   shouldRetryGh,
@@ -190,6 +191,30 @@ test("duplicate or superseded closes are allowed with evidence and comment", () 
   assert.match(action.closeComment, /duplicate or superseded/);
 });
 
+test("not-actionable-in-repo closes are allowed with evidence and comment", () => {
+  const action = reviewActionForDecision({
+    item: item(),
+    decision: closeDecision({
+      closeReason: "not_actionable_in_repo",
+      evidence: [
+        {
+          label: "external administration",
+          detail: "The request is for GitHub project settings, not OpenClaw source code.",
+          file: null,
+          line: null,
+          command: "provided GitHub issue context",
+          sha: null,
+        },
+      ],
+      closeComment:
+        "Closing this as not actionable in this repository after Codex review.\n\n- External administration: GitHub project settings are outside OpenClaw source code.",
+    }),
+    git,
+  });
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(action.closeComment, /not actionable in this repository/);
+});
+
 test("decision parser enforces required schema-shaped evidence", () => {
   assert.equal(parseDecision(closeDecision()).decision, "close");
   assert.throws(
@@ -199,6 +224,27 @@ test("decision parser enforces required schema-shaped evidence", () => {
         evidence: [{ label: "partial", detail: "missing nullable fields" }],
       }),
     /decision\.evidence\[0\]\.file/,
+  );
+});
+
+test("review parser strips environment access caveats from risks", () => {
+  const parsed = parseDecision(
+    closeDecision({
+      risks: [
+        "GH_TOKEN was unavailable, so authenticated gh could not be used.",
+        "A real product uncertainty remains.",
+      ],
+    }),
+  );
+  assert.deepEqual(parsed.risks, ["A real product uncertainty remains."]);
+});
+
+test("related title search terms keep issue-specific words", () => {
+  assert.deepEqual(
+    relatedTitleSearchTerms(
+      "Feature: message:before_send hook to enable content-quality fallback gating",
+    ),
+    ["message", "before_send", "hook", "enable", "content-quality", "fallback"],
   );
 });
 test("audit detects live/local state drift and unsafe proposed records", () => {

@@ -25,6 +25,7 @@
         "cannot_reproduce",
         "clawhub",
         "duplicate_or_superseded",
+        "not_actionable_in_repo",
         "incoherent",
         "stale_insufficient_info",
         "none"
