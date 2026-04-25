@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 14:14 UTC
+Last dashboard update: Apr 25, 2026, 14:20 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 14:14 UTC
+Updated: Apr 25, 2026, 14:20 UTC
 
 State: Apply in progress
 
-Checkpoint 8 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 400/500. Result records in checkpoint: 51.
+Checkpoint 9 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 450/500. Result records in checkpoint: 50.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24931927101](https://github.com/openclaw/clawsweeper/actions/runs/24931927101)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7164 |
-| Fresh reviewed issues in the last 7 days | 7144 |
-| Proposed issue closes | 1554 (21.8% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4741 |
-| Fresh reviewed PRs in the last 7 days | 4676 |
-| Proposed PR closes | 311 (6.7% of reviewed PRs) |
-| Open items total | 11905 |
-| Reviewed files | 11826 |
-| Unreviewed open items | 79 |
-| Archived closed files | 7348 |
-| Fresh verified reviews in the last 7 days | 11820 |
-| Proposed closes awaiting apply | 1865 (15.8% of fresh reviews) |
-| Closed by Codex apply | 5507 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7124 |
+| Fresh reviewed issues in the last 7 days | 7102 |
+| Proposed issue closes | 1512 (21.3% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4733 |
+| Fresh reviewed PRs in the last 7 days | 4668 |
+| Proposed PR closes | 303 (6.5% of reviewed PRs) |
+| Open items total | 11857 |
+| Reviewed files | 11776 |
+| Unreviewed open items | 81 |
+| Archived closed files | 7398 |
+| Fresh verified reviews in the last 7 days | 11770 |
+| Proposed closes awaiting apply | 1815 (15.4% of fresh reviews) |
+| Closed by Codex apply | 5557 |
 | Failed or stale reviews | 6 |
-| Daily cadence coverage | 8960/9053 current (93 due, 99%) |
-| Daily PR cadence | 4588/4677 current (89 due, 98.1%) |
-| Daily new issue cadence (<30d) | 4372/4376 current (4 due, 99.9%) |
-| Weekly older issue cadence | 2772/2773 current (1 due, 100%) |
-| Due now by cadence | 173 |
+| Daily cadence coverage | 8880/9004 current (124 due, 98.6%) |
+| Daily PR cadence | 4549/4669 current (120 due, 97.4%) |
+| Daily new issue cadence (<30d) | 4331/4335 current (4 due, 99.9%) |
+| Weekly older issue cadence | 2771/2772 current (1 due, 100%) |
+| Due now by cadence | 206 |
 
 Recently reviewed:
 
@@ -70,9 +70,9 @@ Recently reviewed:
 | [#54326](https://github.com/openclaw/openclaw/pull/54326) | fix(agents): allowlist streaming usage for proven endpoints | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54326.md) | complete | Apr 25, 2026, 14:07 UTC |
 | [#66130](https://github.com/openclaw/openclaw/issues/66130) | [Bug]: Gateway drain blocks ALL channels for 5+ minutes when config change requires restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66130.md) | complete | Apr 25, 2026, 14:07 UTC |
 | [#70127](https://github.com/openclaw/openclaw/issues/70127) | [Bug]: msteams search action fails — $search not supported on /chats/messages with Application permissions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70127.md) | complete | Apr 25, 2026, 14:07 UTC |
-| [#61947](https://github.com/openclaw/openclaw/issues/61947) | Bug: agent.wait timeout causes unhandled promise rejection and crashes gateway | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61947.md) | complete | Apr 25, 2026, 14:07 UTC |
 | [#68660](https://github.com/openclaw/openclaw/issues/68660) | Gateway spawns duplicate MCP instances on a recurring cadence; old instances never terminated (task leak → EAGAIN) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68660.md) | complete | Apr 25, 2026, 14:07 UTC |
-| [#54395](https://github.com/openclaw/openclaw/pull/54395) | Add scripts to build multiarch container image | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/54395.md) | complete | Apr 25, 2026, 14:07 UTC |
+| [#71606](https://github.com/openclaw/openclaw/issues/71606) | [Feature]: keep each cron run in its own Telegram forum topic | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71606.md) | complete | Apr 25, 2026, 14:07 UTC |
+| [#54392](https://github.com/openclaw/openclaw/pull/54392) | fix: clamp compaction max_tokens to model output limit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54392.md) | complete | Apr 25, 2026, 14:06 UTC |
 
 ## How It Works
 
