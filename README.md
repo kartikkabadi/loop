@@ -14,28 +14,28 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 08:27 UTC
+Last dashboard update: Apr 25, 2026, 08:29 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 08:28 UTC
+Updated: Apr 25, 2026, 08:29 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24926747847](https://github.com/openclaw/clawsweeper/actions/runs/24926747847)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8818 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8814 |
 | Fresh reviewed issues in the last 7 days | 9013 |
 | Proposed issue closes | 3361 (37.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5477 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5459 |
 | Fresh reviewed PRs in the last 7 days | 5720 |
 | Proposed PR closes | 965 (16.9% of reviewed PRs) |
-| Open items total | 14295 |
+| Open items total | 14273 |
 | Reviewed files | 14733 |
 | Unreviewed open items | 0 |
 | Archived closed files | 4167 |
@@ -43,8 +43,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24926747847](https://
 | Proposed closes awaiting apply | 4326 (29.4% of fresh reviews) |
 | Closed by Codex apply | 3257 |
 | Failed or stale reviews | 0 |
-| Daily cadence coverage | 11280/11280 current (0 due, 100%) |
-| Daily PR cadence | 5477/5477 current (0 due, 100%) |
+| Daily cadence coverage | 11262/11262 current (0 due, 100%) |
+| Daily PR cadence | 5459/5459 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 5803/5803 current (0 due, 100%) |
 | Weekly older issue cadence | 3210/3210 current (0 due, 100%) |
 | Due now by cadence | 0 |
