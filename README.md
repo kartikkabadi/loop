@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 21:43 UTC
+Last dashboard update: Apr 25, 2026, 21:46 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 21:44 UTC
+Updated: Apr 25, 2026, 21:46 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24941372685](https://github.com/openclaw/clawsweeper/actions/runs/24941372685)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5512 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5514 |
 | Fresh reviewed issues in the last 7 days | 5490 |
 | Proposed issue closes | 157 (2.9% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4272 |
 | Fresh reviewed PRs in the last 7 days | 4203 |
 | Proposed PR closes | 46 (1.1% of reviewed PRs) |
-| Open items total | 9784 |
+| Open items total | 9786 |
 | Reviewed files | 9693 |
-| Unreviewed open items | 91 |
+| Unreviewed open items | 93 |
 | Archived closed files | 9604 |
 | Fresh verified reviews in the last 7 days | 9693 |
 | Proposed closes awaiting apply | 203 (2.1% of fresh reviews) |
 | Closed by Codex apply | 7495 |
 | Failed or stale reviews | 0 |
-| Daily cadence coverage | 6417/6924 current (507 due, 92.7%) |
-| Daily PR cadence | 3961/4203 current (242 due, 94.2%) |
-| Daily new issue cadence (<30d) | 2456/2721 current (265 due, 90.3%) |
+| Daily cadence coverage | 6395/6924 current (529 due, 92.4%) |
+| Daily PR cadence | 3956/4203 current (247 due, 94.1%) |
+| Daily new issue cadence (<30d) | 2439/2721 current (282 due, 89.6%) |
 | Weekly older issue cadence | 2769/2769 current (0 due, 100%) |
-| Due now by cadence | 598 |
+| Due now by cadence | 622 |
 
 Recently reviewed:
 
