@@ -14,60 +14,60 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 02:16 UTC
+Last dashboard update: Apr 25, 2026, 02:22 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 02:16 UTC
+Updated: Apr 25, 2026, 02:22 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 50/500. Result records in checkpoint: 50.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920206705](https://github.com/openclaw/clawsweeper/actions/runs/24920206705)
+Merged review artifacts for run 24920005266. Dashboard reflects the latest files and proposed closes from completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920005266](https://github.com/openclaw/clawsweeper/actions/runs/24920005266)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10419 |
-| Fresh reviewed issues in the last 7 days | 8211 |
-| Proposed issue closes | 3660 (44.6% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6365 |
-| Fresh reviewed PRs in the last 7 days | 5027 |
-| Proposed PR closes | 1370 (27.3% of reviewed PRs) |
-| Open items total | 16784 |
-| Reviewed files | 13238 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10395 |
+| Fresh reviewed issues in the last 7 days | 8350 |
+| Proposed issue closes | 3735 (44.7% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6361 |
+| Fresh reviewed PRs in the last 7 days | 5088 |
+| Proposed PR closes | 1383 (27.2% of reviewed PRs) |
+| Open items total | 16756 |
+| Reviewed files | 13438 |
 | Archived closed files | 2189 |
-| Fresh verified reviews in the last 7 days | 13238 |
-| Proposed closes awaiting apply | 5030 (38% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 13438 |
+| Proposed closes awaiting apply | 5118 (38.1% of fresh reviews) |
 | Closed by Codex apply | 1433 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 3546 |
+| Todo for weekly coverage | 3318 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#64819](https://github.com/openclaw/openclaw/pull/64819) | feat(cli): add --spawn flag for isolated subagent sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64819.md) | complete | Apr 25, 2026, 02:04 UTC |
-| [#64840](https://github.com/openclaw/openclaw/issues/64840) | Model fallback not triggered on HTTP 400 model_not_supported error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64840.md) | complete | Apr 25, 2026, 02:04 UTC |
-| [#64826](https://github.com/openclaw/openclaw/issues/64826) | Feature Request: Model switching via inline keyword prefix in CLI/TUI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64826.md) | complete | Apr 25, 2026, 02:03 UTC |
-| [#64814](https://github.com/openclaw/openclaw/issues/64814) | [Bug]: api.pluginConfig is null in extension plugin register() despite config being set in openclaw.json | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64814.md) | complete | Apr 25, 2026, 02:03 UTC |
-| [#64857](https://github.com/openclaw/openclaw/pull/64857) | daemon: recover launch agent restart + prefer restart wake path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64857.md) | complete | Apr 25, 2026, 02:03 UTC |
-| [#64852](https://github.com/openclaw/openclaw/issues/64852) | [Bug]: google-vertex OAuth/service-account auth works on 2026.4.9, fails on 2026.4.10 with 401 CREDENTIALS_MISSING | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64852.md) | complete | Apr 25, 2026, 02:03 UTC |
-| [#64810](https://github.com/openclaw/openclaw/issues/64810) | [Bug]: Heartbeat / async system events can interrupt and effectively swallow in-progress replies in Telegram topic sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64810.md) | complete | Apr 25, 2026, 02:03 UTC |
-| [#64866](https://github.com/openclaw/openclaw/issues/64866) | [Bug] minimax-portal OAuth login VLM image understanding not working despite having coding-plan-vlm quota | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64866.md) | complete | Apr 25, 2026, 02:03 UTC |
-| [#64854](https://github.com/openclaw/openclaw/issues/64854) | Feature request: per-model request timeout so fallback chain triggers on hangs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64854.md) | complete | Apr 25, 2026, 02:03 UTC |
-| [#64836](https://github.com/openclaw/openclaw/issues/64836) | Auth config lost after upgrading openclaw via npm | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64836.md) | complete | Apr 25, 2026, 02:03 UTC |
-| [#64850](https://github.com/openclaw/openclaw/issues/64850) | [Bug] :2026.4.10: ACP runtime backend unavailable persists — qwen-code agent cannot spawn | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64850.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64830](https://github.com/openclaw/openclaw/issues/64830) | [Feature] Web UI new session should respect agents.defaults.thinkingDefault and agents.defaults.reasoningDefault | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64830.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64806](https://github.com/openclaw/openclaw/issues/64806) | Config change auto-restart should be optional/configurable | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64806.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64757](https://github.com/openclaw/openclaw/issues/64757) | Dreaming System writes GBK-encoded JSON into UTF-8 memory files causing garbled content | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64757.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64818](https://github.com/openclaw/openclaw/issues/64818) | openclaw update: tracked src/canvas-host/a2ui/.bundle.hash breaks preflight bisect walkback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64818.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64825](https://github.com/openclaw/openclaw/issues/64825) | TUI stuck on 'streaming' indicator after run completes — finalizeRun() doesn't transition UI when wasActiveRun is false | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64825.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64776](https://github.com/openclaw/openclaw/issues/64776) | sqlite-vec extension not loaded during gateway runtime memory sync | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64776.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64816](https://github.com/openclaw/openclaw/issues/64816) | Plugin-bundled skill visible to CLI but not surfaced to agent available_skills in live session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64816.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64803](https://github.com/openclaw/openclaw/issues/64803) | Discord voice messages not recognized as audio (content_type missing or incorrect) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64803.md) | complete | Apr 25, 2026, 02:02 UTC |
-| [#64792](https://github.com/openclaw/openclaw/issues/64792) | [Feature] Adaptive reasoning — auto-escalate thinking level on repeated failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64792.md) | complete | Apr 25, 2026, 02:02 UTC |
+| [#65195](https://github.com/openclaw/openclaw/issues/65195) | exec/runtime cannot reach LAN host on macOS while interactive shell can | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65195.md) | complete | Apr 25, 2026, 02:21 UTC |
+| [#65165](https://github.com/openclaw/openclaw/issues/65165) | [Bug]:  图片上传失败：模型不支持图片，但配置了 input: [\"text\", \"image\"] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65165.md) | complete | Apr 25, 2026, 02:21 UTC |
+| [#65188](https://github.com/openclaw/openclaw/pull/65188) | fix(ui): prevent iOS Safari auto-zoom on chat input and form fields (#64651) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65188.md) | complete | Apr 25, 2026, 02:20 UTC |
+| [#65177](https://github.com/openclaw/openclaw/issues/65177) | [Bug]: openclaw doctor --fix does not migrate Feishu botName to name after upgrade to 2026.4.11 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65177.md) | complete | Apr 25, 2026, 02:20 UTC |
+| [#65192](https://github.com/openclaw/openclaw/issues/65192) | [Bug]:  too many dream sessions have led to accumulation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65192.md) | complete | Apr 25, 2026, 02:20 UTC |
+| [#65186](https://github.com/openclaw/openclaw/pull/65186) | feat: add <example> trigger mechanism for Skills | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65186.md) | complete | Apr 25, 2026, 02:20 UTC |
+| [#65137](https://github.com/openclaw/openclaw/pull/65137) | fix: [Bug]: tools.exec.security: full does not enable inline Python execution (strictInlineEval still blocks) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65137.md) | complete | Apr 25, 2026, 02:20 UTC |
+| [#65194](https://github.com/openclaw/openclaw/pull/65194) | fix(imessage): avoid duplicate default monitor startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65194.md) | complete | Apr 25, 2026, 02:19 UTC |
+| [#65156](https://github.com/openclaw/openclaw/issues/65156) | [Bug] Memory vector search broken in v4.11 — sqlite-vec loads but registers no functions (SQLite ABI mismatch) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65156.md) | complete | Apr 25, 2026, 02:19 UTC |
+| [#65185](https://github.com/openclaw/openclaw/pull/65185) | fix(ios): allow plaintext ws:// for LAN/Tailscale hosts; prefer password over bootstrap token (#47887) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65185.md) | complete | Apr 25, 2026, 02:19 UTC |
+| [#65191](https://github.com/openclaw/openclaw/issues/65191) | Bug: Plugin initialization fails due to config not loaded before plugin starts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65191.md) | complete | Apr 25, 2026, 02:19 UTC |
+| [#65105](https://github.com/openclaw/openclaw/issues/65105) | Update 2026.4.9 → 4.11 silently wipes channels.discord config and agents.list from openclaw.json | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65105.md) | complete | Apr 25, 2026, 02:18 UTC |
+| [#65158](https://github.com/openclaw/openclaw/issues/65158) | [Feature Request] Cross-channel message synchronization | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65158.md) | complete | Apr 25, 2026, 02:18 UTC |
+| [#65201](https://github.com/openclaw/openclaw/issues/65201) | doctor false positive warning on Gateway auth token handled in secrets | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65201.md) | complete | Apr 25, 2026, 02:18 UTC |
+| [#65198](https://github.com/openclaw/openclaw/pull/65198) | test: cover string-backed non-streaming assistant replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65198.md) | complete | Apr 25, 2026, 02:18 UTC |
+| [#65131](https://github.com/openclaw/openclaw/issues/65131) | Feature Request: Option to hide system messages from Control UI chat window | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65131.md) | complete | Apr 25, 2026, 02:18 UTC |
+| [#65199](https://github.com/openclaw/openclaw/pull/65199) | fix(ui): humanize cron expressions in dreaming phase and cron job displays | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65199.md) | complete | Apr 25, 2026, 02:18 UTC |
+| [#65136](https://github.com/openclaw/openclaw/issues/65136) | Task state not reconciled on gateway restart — stale running tasks accumulate | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65136.md) | complete | Apr 25, 2026, 02:18 UTC |
+| [#65062](https://github.com/openclaw/openclaw/issues/65062) | Gateway high CPU caused by two runtime bugs: malformed QMD startup collections and unrelated extension plugins loaded during provider normalization | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65062.md) | complete | Apr 25, 2026, 02:18 UTC |
+| [#65189](https://github.com/openclaw/openclaw/issues/65189) | OpenViking 记忆引擎的上下文块泄露到了 UI 层 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65189.md) | complete | Apr 25, 2026, 02:18 UTC |
 
 ## How It Works
 
