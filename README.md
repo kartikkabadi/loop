@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 18:10 UTC
+Last dashboard update: Apr 25, 2026, 18:13 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 18:10 UTC
+Updated: Apr 25, 2026, 18:13 UTC
 
-State: Apply in progress
+State: Review in progress
 
-Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 50.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24936577973](https://github.com/openclaw/clawsweeper/actions/runs/24936577973)
+Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24937300186](https://github.com/openclaw/clawsweeper/actions/runs/24937300186)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6032 |
-| Fresh reviewed issues in the last 7 days | 5942 |
-| Proposed issue closes | 508 (8.5% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4489 |
-| Fresh reviewed PRs in the last 7 days | 4370 |
-| Proposed PR closes | 92 (2.1% of reviewed PRs) |
-| Open items total | 10521 |
-| Reviewed files | 10448 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6013 |
+| Fresh reviewed issues in the last 7 days | 5927 |
+| Proposed issue closes | 494 (8.3% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4482 |
+| Fresh reviewed PRs in the last 7 days | 4362 |
+| Proposed PR closes | 87 (2% of reviewed PRs) |
+| Open items total | 10495 |
+| Reviewed files | 10422 |
 | Unreviewed open items | 73 |
-| Archived closed files | 8799 |
-| Fresh verified reviews in the last 7 days | 10312 |
-| Proposed closes awaiting apply | 600 (5.8% of fresh reviews) |
+| Archived closed files | 8825 |
+| Fresh verified reviews in the last 7 days | 10289 |
+| Proposed closes awaiting apply | 581 (5.6% of fresh reviews) |
 | Closed by Codex apply | 6907 |
-| Failed or stale reviews | 136 |
-| Daily cadence coverage | 7393/7669 current (276 due, 96.4%) |
-| Daily PR cadence | 4303/4425 current (122 due, 97.2%) |
-| Daily new issue cadence (<30d) | 3090/3244 current (154 due, 95.3%) |
+| Failed or stale reviews | 133 |
+| Daily cadence coverage | 7343/7643 current (300 due, 96.1%) |
+| Daily PR cadence | 4285/4418 current (133 due, 97%) |
+| Daily new issue cadence (<30d) | 3058/3225 current (167 due, 94.8%) |
 | Weekly older issue cadence | 2779/2779 current (0 due, 100%) |
-| Due now by cadence | 349 |
+| Due now by cadence | 373 |
 
 Recently reviewed:
 
@@ -66,13 +66,13 @@ Recently reviewed:
 | [#59337](https://github.com/openclaw/openclaw/issues/59337) | [Feature]: Openclaw nodes run function hopes to be restored | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59337.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:06 UTC |
 | [#59427](https://github.com/openclaw/openclaw/issues/59427) | Baseline Context Load: 40K tokens per message regardless of reply length | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59427.md) | complete | Apr 25, 2026, 18:06 UTC |
 | [#59287](https://github.com/openclaw/openclaw/issues/59287) | [Bug]: openclaw health --json reports telegram.running=false while probe succeeds and status --deep shows Telegram OK | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59287.md) | complete | Apr 25, 2026, 18:06 UTC |
-| [#59664](https://github.com/openclaw/openclaw/issues/59664) | [Docs]: Slack exec approvals require undocumented channels.slack.execApprovals config | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59664.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:06 UTC |
 | [#59360](https://github.com/openclaw/openclaw/issues/59360) | Feishu card message footer causes agent name to appear at message start (Markdown definition list parsing) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59360.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:06 UTC |
 | [#59744](https://github.com/openclaw/openclaw/issues/59744) | Discord inbound attachments lose original filename (saved as UUID) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59744.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:06 UTC |
 | [#59601](https://github.com/openclaw/openclaw/issues/59601) | [Bug]: docker images lack of permission to run npm install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59601.md) | complete | Apr 25, 2026, 18:06 UTC |
 | [#59526](https://github.com/openclaw/openclaw/issues/59526) | Feature: allow account switching from /models buttons for GPT and Claude | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59526.md) | complete | Apr 25, 2026, 18:06 UTC |
 | [#66940](https://github.com/openclaw/openclaw/issues/66940) | MCP streamable-http: missing Accept header causes connection failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66940.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:06 UTC |
 | [#59703](https://github.com/openclaw/openclaw/issues/59703) | Cron/heartbeat deliveries duplicated 2-6x per trigger | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59703.md) | complete | Apr 25, 2026, 18:05 UTC |
+| [#59613](https://github.com/openclaw/openclaw/issues/59613) | [Bug]: sandbox container lack of permission to read write files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59613.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:05 UTC |
 
 ## How It Works
 
