@@ -14,65 +14,65 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 19:49 UTC
+Last dashboard update: Apr 25, 2026, 19:51 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 19:49 UTC
+Updated: Apr 25, 2026, 19:51 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24939211295](https://github.com/openclaw/clawsweeper/actions/runs/24939211295)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5523 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5524 |
 | Fresh reviewed issues in the last 7 days | 5412 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4346 |
-| Fresh reviewed PRs in the last 7 days | 4282 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4342 |
+| Fresh reviewed PRs in the last 7 days | 4277 |
 | Proposed PR closes | 13 (0.3% of reviewed PRs) |
-| Open items total | 9869 |
-| Reviewed files | 9780 |
-| Unreviewed open items | 89 |
-| Archived closed files | 9479 |
-| Fresh verified reviews in the last 7 days | 9694 |
+| Open items total | 9866 |
+| Reviewed files | 9775 |
+| Unreviewed open items | 91 |
+| Archived closed files | 9484 |
+| Fresh verified reviews in the last 7 days | 9689 |
 | Proposed closes awaiting apply | 13 (0.1% of fresh reviews) |
 | Closed by Codex apply | 7495 |
 | Failed or stale reviews | 86 |
-| Daily cadence coverage | 6436/7011 current (575 due, 91.8%) |
-| Daily PR cadence | 4141/4283 current (142 due, 96.7%) |
-| Daily new issue cadence (<30d) | 2295/2728 current (433 due, 84.1%) |
+| Daily cadence coverage | 6414/7006 current (592 due, 91.6%) |
+| Daily PR cadence | 4127/4278 current (151 due, 96.5%) |
+| Daily new issue cadence (<30d) | 2287/2728 current (441 due, 83.8%) |
 | Weekly older issue cadence | 2769/2769 current (0 due, 100%) |
-| Due now by cadence | 664 |
+| Due now by cadence | 683 |
 
 Recently reviewed:
 
-| Item | Title | Outcome | Status | Reviewed |
-| --- | --- | --- | --- | --- |
-| [#61413](https://github.com/openclaw/openclaw/pull/61413) | fix: web_search fails with transparent proxies when no proxy env vars are set | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61413.md) | complete | Apr 25, 2026, 19:47 UTC |
-| [#61105](https://github.com/openclaw/openclaw/pull/61105) | fix(config): apply tools.exec.pathPrepend to process.env.PATH at startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61105.md) | complete | Apr 25, 2026, 19:46 UTC |
-| [#61345](https://github.com/openclaw/openclaw/pull/61345) | Control UI: keep slow reconnects out of the login gate | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61345.md) | complete | Apr 25, 2026, 19:46 UTC |
-| [#60844](https://github.com/openclaw/openclaw/pull/60844) | Heartbeat: isolate session runs by default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60844.md) | complete | Apr 25, 2026, 19:46 UTC |
-| [#60508](https://github.com/openclaw/openclaw/pull/60508) | test: add coverage for Ollama thinking + tool_calls streaming | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60508.md) | complete | Apr 25, 2026, 19:45 UTC |
-| [#61331](https://github.com/openclaw/openclaw/pull/61331) | docs(zh-CN): encode Control UI gatewayUrl examples | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61331.md) | complete | Apr 25, 2026, 19:45 UTC |
-| [#61396](https://github.com/openclaw/openclaw/pull/61396) | fix(i18n): add device/node pairing terms to zh-CN glossary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61396.md) | complete | Apr 25, 2026, 19:45 UTC |
-| [#61335](https://github.com/openclaw/openclaw/pull/61335) | fix(usage): handle Daylight saving time (DST) hour boundaries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61335.md) | complete | Apr 25, 2026, 19:45 UTC |
-| [#61016](https://github.com/openclaw/openclaw/pull/61016) | fix(media): anchor sanitizeMimeType regex and make case-insensitive per RFC 2045 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61016.md) | complete | Apr 25, 2026, 19:45 UTC |
-| [#61374](https://github.com/openclaw/openclaw/pull/61374) | fix(slack): wake sessions for interactive block actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61374.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#61151](https://github.com/openclaw/openclaw/pull/61151) | fix(agents): drop partialJson streaming artifacts from session history repair | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61151.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#59798](https://github.com/openclaw/openclaw/pull/59798) | fix(acp): avoid locally caught exception on turn failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59798.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#61092](https://github.com/openclaw/openclaw/pull/61092) | UI: localize skills hardcoded labels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61092.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#61473](https://github.com/openclaw/openclaw/pull/61473) | fix(discord): persist model picker override fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61473.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#61245](https://github.com/openclaw/openclaw/pull/61245) | fix(docker): exclude CI, docs metadata, and test files from build con… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61245.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#61247](https://github.com/openclaw/openclaw/pull/61247) | fix(utils): add missing test coverage for sliceUtf16Safe and truncateUtf16Safe | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61247.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#61130](https://github.com/openclaw/openclaw/pull/61130) | UI: localize command palette labels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61130.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#60718](https://github.com/openclaw/openclaw/pull/60718) | fix: resolve startedAt timestamp inversion in task registry | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60718.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#61075](https://github.com/openclaw/openclaw/pull/61075) | fix:add abort messages mostly in other languages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61075.md) | complete | Apr 25, 2026, 19:44 UTC |
-| [#61422](https://github.com/openclaw/openclaw/pull/61422) | fix: move context files after cache boundary to prevent invalidation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61422.md) | complete | Apr 25, 2026, 19:44 UTC |
+| Item | Title | Outcome | Status | Review Runtime | Reviewed |
+| --- | --- | --- | --- | --- | --- |
+| [#61413](https://github.com/openclaw/openclaw/pull/61413) | fix: web_search fails with transparent proxies when no proxy env vars are set | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61413.md) | complete | unknown | Apr 25, 2026, 19:47 UTC |
+| [#61105](https://github.com/openclaw/openclaw/pull/61105) | fix(config): apply tools.exec.pathPrepend to process.env.PATH at startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61105.md) | complete | unknown | Apr 25, 2026, 19:46 UTC |
+| [#61345](https://github.com/openclaw/openclaw/pull/61345) | Control UI: keep slow reconnects out of the login gate | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61345.md) | complete | unknown | Apr 25, 2026, 19:46 UTC |
+| [#60844](https://github.com/openclaw/openclaw/pull/60844) | Heartbeat: isolate session runs by default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60844.md) | complete | unknown | Apr 25, 2026, 19:46 UTC |
+| [#60508](https://github.com/openclaw/openclaw/pull/60508) | test: add coverage for Ollama thinking + tool_calls streaming | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60508.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
+| [#61331](https://github.com/openclaw/openclaw/pull/61331) | docs(zh-CN): encode Control UI gatewayUrl examples | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61331.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
+| [#61396](https://github.com/openclaw/openclaw/pull/61396) | fix(i18n): add device/node pairing terms to zh-CN glossary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61396.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
+| [#61335](https://github.com/openclaw/openclaw/pull/61335) | fix(usage): handle Daylight saving time (DST) hour boundaries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61335.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
+| [#61016](https://github.com/openclaw/openclaw/pull/61016) | fix(media): anchor sanitizeMimeType regex and make case-insensitive per RFC 2045 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61016.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
+| [#61374](https://github.com/openclaw/openclaw/pull/61374) | fix(slack): wake sessions for interactive block actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61374.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#61151](https://github.com/openclaw/openclaw/pull/61151) | fix(agents): drop partialJson streaming artifacts from session history repair | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61151.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#59798](https://github.com/openclaw/openclaw/pull/59798) | fix(acp): avoid locally caught exception on turn failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59798.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#61092](https://github.com/openclaw/openclaw/pull/61092) | UI: localize skills hardcoded labels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61092.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#61473](https://github.com/openclaw/openclaw/pull/61473) | fix(discord): persist model picker override fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61473.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#61245](https://github.com/openclaw/openclaw/pull/61245) | fix(docker): exclude CI, docs metadata, and test files from build con… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61245.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#61247](https://github.com/openclaw/openclaw/pull/61247) | fix(utils): add missing test coverage for sliceUtf16Safe and truncateUtf16Safe | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61247.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#61130](https://github.com/openclaw/openclaw/pull/61130) | UI: localize command palette labels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61130.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#60718](https://github.com/openclaw/openclaw/pull/60718) | fix: resolve startedAt timestamp inversion in task registry | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60718.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#61075](https://github.com/openclaw/openclaw/pull/61075) | fix:add abort messages mostly in other languages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61075.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#61422](https://github.com/openclaw/openclaw/pull/61422) | fix: move context files after cache boundary to prevent invalidation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61422.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
 
 ## How It Works
 
