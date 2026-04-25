@@ -151,8 +151,6 @@ interface DashboardItem {
   kind: ItemKind;
   title: string;
   reviewedAt: string | undefined;
-  reviewModel: string | undefined;
-  reviewReasoningEffort: string | undefined;
   decision: string;
   action: string;
   reviewStatus: string;
@@ -1007,28 +1005,49 @@ function reviewCadenceDays(item: Item, review: ExistingReview | null, now = Date
   return WEEKLY_REVIEW_DAYS;
 }
 
-function shouldReviewItem(item: Item, review: ExistingReview | null, now = Date.now()): boolean {
+function hasReviewPolicyMismatch(review: ExistingReview | null, reviewPolicy?: string): boolean {
+  return Boolean(review && reviewPolicy && review.reviewPolicy !== reviewPolicy);
+}
+
+export function shouldReviewItem(
+  item: Item,
+  review: ExistingReview | null,
+  now = Date.now(),
+  reviewPolicy?: string,
+): boolean {
+  if (hasReviewPolicyMismatch(review, reviewPolicy)) return true;
   const reviewedAt = reviewedAtMs(review);
   if (reviewedAt === null) return true;
   const cadenceDays = reviewCadenceDays(item, review, now);
   return now - reviewedAt >= cadenceDays * DAY_MS;
 }
 
-function reviewPriority(item: Item, review: ExistingReview | null, now = Date.now()): number {
+function reviewPriority(
+  item: Item,
+  review: ExistingReview | null,
+  now = Date.now(),
+  reviewPolicy?: string,
+): number {
   if (hasActivitySinceReview(item, review)) return 0;
-  if (item.kind === "pull_request") return 1;
+  if (hasReviewPolicyMismatch(review, reviewPolicy)) return 1;
+  if (item.kind === "pull_request") return 2;
   const createdAt = Date.parse(item.createdAt);
-  if (Number.isFinite(createdAt) && now - createdAt < NEW_ISSUE_DAYS * DAY_MS) return 2;
-  return 3;
+  if (Number.isFinite(createdAt) && now - createdAt < NEW_ISSUE_DAYS * DAY_MS) return 3;
+  return 4;
 }
 
-function dueCandidate(item: Item, itemsDir: string, now = Date.now()): DueCandidate | null {
+function dueCandidate(
+  item: Item,
+  itemsDir: string,
+  now = Date.now(),
+  reviewPolicy?: string,
+): DueCandidate | null {
   const review = existingReview(item.number, itemsDir);
-  if (!shouldReviewItem(item, review, now)) return null;
+  if (!shouldReviewItem(item, review, now, reviewPolicy)) return null;
   return {
     item,
     review,
-    priority: reviewPriority(item, review, now),
+    priority: reviewPriority(item, review, now, reviewPolicy),
     reviewedAt: reviewedAtMs(review) ?? 0,
   };
 }
@@ -1200,7 +1219,7 @@ function selectCandidates(options: {
     for (const item of items) {
       if (item.number % options.shardCount !== options.shardIndex) continue;
       if (!shouldPlanItem(item)) continue;
-      const candidate = dueCandidate(item, options.itemsDir, now);
+      const candidate = dueCandidate(item, options.itemsDir, now, options.reviewPolicy);
       if (candidate) due.push(candidate);
     }
   }
@@ -1239,7 +1258,7 @@ function planCandidates(options: {
     if (items.length === 0) break;
     for (const item of items) {
       if (!shouldPlanItem(item)) continue;
-      const candidate = dueCandidate(item, options.itemsDir, now);
+      const candidate = dueCandidate(item, options.itemsDir, now, options.reviewPolicy);
       if (candidate) due.push(candidate);
     }
   }
@@ -2210,7 +2229,7 @@ function planCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
   const batchSize = numberArg(args.batch_size, 5);
   const maxPages = numberArg(args.max_pages, 250);
-  const shardCount = numberArg(args.shard_count, 40);
+  const shardCount = numberArg(args.shard_count, 50);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
@@ -2814,8 +2833,6 @@ function dashboardStats(
       kind,
       title: frontMatterValue(markdown, "title") ?? "",
       reviewedAt,
-      reviewModel: frontMatterValue(markdown, "review_model"),
-      reviewReasoningEffort: frontMatterValue(markdown, "review_reasoning_effort"),
       decision,
       action,
       reviewStatus,
@@ -2875,14 +2892,9 @@ function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, 
           `${item.decision} / ${item.action}`,
           reportFileUrl(item.number),
         );
-        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title.replaceAll("|", "\\|")} | ${outcome} | ${item.reviewStatus} | ${
-          runtimeReviewText({
-            model: item.reviewModel,
-            reasoningEffort: item.reviewReasoningEffort,
-          }) || "unknown"
-        } | ${formatTimestamp(item.reviewedAt)} |`;
+        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title.replaceAll("|", "\\|")} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
       })
-      .join("\n") || "| _None_ |  |  |  |  |  |";
+      .join("\n") || "| _None_ |  |  |  |  |";
   const dashboard = `## Dashboard
 
 Last dashboard update: ${formatTimestamp(new Date().toISOString())}
@@ -2913,8 +2925,8 @@ ${status}
 
 Recently reviewed:
 
-| Item | Title | Outcome | Status | Review Runtime | Reviewed |
-| --- | --- | --- | --- | --- | --- |
+| Item | Title | Outcome | Status | Reviewed |
+| --- | --- | --- | --- | --- |
 ${recent}`;
   const updated = readme.replace(
     /## Dashboard[\s\S]*?## How It Works/,

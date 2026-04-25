@@ -6,6 +6,7 @@ import {
   parseDecision,
   protectedLabels,
   reviewActionForDecision,
+  shouldReviewItem,
   shouldPlanItem,
   validateCloseDecision,
 } from "../dist/clawsweeper.js";
@@ -88,6 +89,23 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /Closing this as implemented/);
   assert.match(action.closeComment, /Codex Review notes: model gpt-5\.5, reasoning high;/);
+});
+
+test("review policy changes force fresh complete reports back into planning", () => {
+  const reviewedAt = new Date().toISOString();
+  const review = {
+    path: "items/123.md",
+    markdown: "",
+    reviewedAt,
+    itemUpdatedAt: "2026-01-01T00:00:00Z",
+    decision: "keep_open",
+    reviewStatus: "complete",
+    reviewPolicy: "old-policy",
+  };
+  const now = Date.parse(reviewedAt) + 60_000;
+
+  assert.equal(shouldReviewItem(item(), review, now, "new-policy"), true);
+  assert.equal(shouldReviewItem(item(), review, now, "old-policy"), false);
 });
 
 test("invalid close semantics are rejected", () => {
