@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 09:31 UTC
+Last dashboard update: Apr 25, 2026, 09:37 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
 Updated: Apr 25, 2026, 09:37 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24927946998](https://github.com/openclaw/clawsweeper/actions/runs/24927946998)
+Checkpoint 9 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 450/500. Result records in checkpoint: 51.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24926354430](https://github.com/openclaw/clawsweeper/actions/runs/24926354430)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8777 |
-| Fresh reviewed issues in the last 7 days | 8793 |
-| Proposed issue closes | 3183 (36.2% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5226 |
-| Fresh reviewed PRs in the last 7 days | 5153 |
-| Proposed PR closes | 682 (13.2% of reviewed PRs) |
-| Open items total | 14003 |
-| Reviewed files | 13959 |
-| Unreviewed open items | 67 |
-| Archived closed files | 5123 |
-| Fresh verified reviews in the last 7 days | 13946 |
-| Proposed closes awaiting apply | 3865 (27.7% of fresh reviews) |
-| Closed by Codex apply | 3507 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8739 |
+| Fresh reviewed issues in the last 7 days | 8763 |
+| Proposed issue closes | 3152 (36% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5191 |
+| Fresh reviewed PRs in the last 7 days | 5133 |
+| Proposed PR closes | 662 (12.9% of reviewed PRs) |
+| Open items total | 13930 |
+| Reviewed files | 13909 |
+| Unreviewed open items | 52 |
+| Archived closed files | 5173 |
+| Fresh verified reviews in the last 7 days | 13896 |
+| Proposed closes awaiting apply | 3814 (27.4% of fresh reviews) |
+| Closed by Codex apply | 3557 |
 | Failed or stale reviews | 13 |
-| Daily cadence coverage | 10703/10885 current (182 due, 98.3%) |
-| Daily PR cadence | 4983/5159 current (176 due, 96.6%) |
-| Daily new issue cadence (<30d) | 5720/5726 current (6 due, 99.9%) |
-| Weekly older issue cadence | 3073/3074 current (1 due, 100%) |
-| Due now by cadence | 250 |
+| Daily cadence coverage | 10669/10864 current (195 due, 98.2%) |
+| Daily PR cadence | 4950/5139 current (189 due, 96.3%) |
+| Daily new issue cadence (<30d) | 5719/5725 current (6 due, 99.9%) |
+| Weekly older issue cadence | 3044/3045 current (1 due, 100%) |
+| Due now by cadence | 248 |
 
 Recently reviewed:
 
@@ -65,7 +65,6 @@ Recently reviewed:
 | [#71424](https://github.com/openclaw/openclaw/issues/71424) | [Bug]: npm install -g openclaw shows deprecated warning for node-domexception | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71424.md) | complete | Apr 25, 2026, 08:52 UTC |
 | [#71475](https://github.com/openclaw/openclaw/issues/71475) | Regression: Telegram topic leaks raw tool_uses JSON before final answer on 2026.4.23 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71475.md) | complete | Apr 25, 2026, 08:52 UTC |
 | [#71443](https://github.com/openclaw/openclaw/issues/71443) | Integration: AIP Agent Guard -- skill signing, capability manifests, and audit for OpenClaw | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71443.md) | complete | Apr 25, 2026, 08:52 UTC |
-| [#46193](https://github.com/openclaw/openclaw/pull/46193) | fix: add per-attempt timeout to prevent model fallback starvation (closes #41642) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46193.md) | complete | Apr 25, 2026, 08:52 UTC |
 | [#70578](https://github.com/openclaw/openclaw/issues/70578) | Silent config data loss: Zod `.strict()` strips unknown top-level fields on round-trip | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70578.md) | complete | Apr 25, 2026, 08:52 UTC |
 | [#71484](https://github.com/openclaw/openclaw/issues/71484) | [Bug]: `bundled-deps installer omits the host openclaw package; Discord channel and 7 other extensions break with `Cannot find package 'openclaw' | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71484.md) | complete | Apr 25, 2026, 08:52 UTC |
 | [#46275](https://github.com/openclaw/openclaw/pull/46275) | fix(ui): stabilize agent primary model selection on switch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46275.md) | complete | Apr 25, 2026, 08:52 UTC |
@@ -73,6 +72,7 @@ Recently reviewed:
 | [#71485](https://github.com/openclaw/openclaw/issues/71485) | Feishu card renderMode shows unwanted `main` header/title and there is no config to disable it | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71485.md) | complete | Apr 25, 2026, 08:52 UTC |
 | [#71389](https://github.com/openclaw/openclaw/issues/71389) | SIGILL crash when sharp loads on non-AVX CPUs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71389.md) | complete | Apr 25, 2026, 08:52 UTC |
 | [#71398](https://github.com/openclaw/openclaw/issues/71398) | QQ Bot channel fails with 'invalid appid or secret' after upgrade to v2026.4.23 when using secretref | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71398.md) | complete | Apr 25, 2026, 08:52 UTC |
+| [#71432](https://github.com/openclaw/openclaw/issues/71432) | Feature Request: Multi-Agent Group Chat Collaboration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71432.md) | complete | Apr 25, 2026, 08:52 UTC |
 
 ## How It Works
 
