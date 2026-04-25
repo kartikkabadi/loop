@@ -3,11 +3,13 @@ import test from "node:test";
 
 import {
   auditFromSnapshot,
+  ghRetryKind,
   isProtectedItem,
   parseDecision,
   protectedLabels,
   reviewActionForDecision,
   shouldReviewItem,
+  shouldRetryGh,
   shouldPlanItem,
   validateCloseDecision,
 } from "../dist/clawsweeper.js";
@@ -199,7 +201,6 @@ test("decision parser enforces required schema-shaped evidence", () => {
     /decision\.evidence\[0\]\.file/,
   );
 });
-
 test("audit detects live/local state drift and unsafe proposed records", () => {
   const result = auditFromSnapshot({
     openItems: [
@@ -251,4 +252,36 @@ test("audit defers stale item drift until the open scan is complete", () => {
   assert.equal(result.scan.complete, false);
   assert.equal(result.counts.staleItemRecords, 0);
   assert.deepEqual(result.findings.staleItemRecords, []);
+});
+
+test("GitHub retry classifier distinguishes throttle and transient failures", () => {
+  const throttled = new Error("API rate limit exceeded for user ID 1");
+  assert.equal(ghRetryKind(throttled), "throttle");
+  assert.equal(shouldRetryGh(throttled), true);
+
+  const eof = Object.assign(new Error("Command failed: gh api repos/openclaw/openclaw/issues"), {
+    stderr: 'Get "https://api.github.com/repos/openclaw/openclaw/issues?page=54": unexpected EOF\n',
+  });
+  assert.equal(ghRetryKind(eof), "transient");
+  assert.equal(shouldRetryGh(eof), true);
+
+  const connectionReset = new Error(
+    "Post https://api.github.com/graphql: read: connection reset by peer",
+  );
+  assert.equal(ghRetryKind(connectionReset), "transient");
+
+  const badGateway = Object.assign(new Error("gh: HTTP 502: Bad Gateway"), { stderr: "" });
+  assert.equal(ghRetryKind(badGateway), "transient");
+
+  const authFailure = Object.assign(new Error("gh: HTTP 401: Bad credentials"), {
+    stderr: "Bad credentials",
+  });
+  assert.equal(ghRetryKind(authFailure), "none");
+  assert.equal(shouldRetryGh(authFailure), false);
+
+  const authFailureForIssue502 = Object.assign(
+    new Error("Command failed: gh api repos/openclaw/openclaw/issues/502/comments"),
+    { stderr: "gh: HTTP 401: Bad credentials" },
+  );
+  assert.equal(ghRetryKind(authFailureForIssue502), "none");
 });
