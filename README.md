@@ -14,65 +14,65 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 19:51 UTC
+Last dashboard update: Apr 25, 2026, 20:04 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 19:51 UTC
+Updated: Apr 25, 2026, 20:04 UTC
 
-State: Review in progress
+State: Review publish complete
 
-Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged review artifacts for run 24939211295. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24939211295](https://github.com/openclaw/clawsweeper/actions/runs/24939211295)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5524 |
-| Fresh reviewed issues in the last 7 days | 5412 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4342 |
-| Fresh reviewed PRs in the last 7 days | 4277 |
-| Proposed PR closes | 13 (0.3% of reviewed PRs) |
-| Open items total | 9866 |
-| Reviewed files | 9775 |
-| Unreviewed open items | 91 |
-| Archived closed files | 9484 |
-| Fresh verified reviews in the last 7 days | 9689 |
-| Proposed closes awaiting apply | 13 (0.1% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5512 |
+| Fresh reviewed issues in the last 7 days | 5493 |
+| Proposed issue closes | 22 (0.4% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4317 |
+| Fresh reviewed PRs in the last 7 days | 4253 |
+| Proposed PR closes | 23 (0.5% of reviewed PRs) |
+| Open items total | 9829 |
+| Reviewed files | 9746 |
+| Unreviewed open items | 83 |
+| Archived closed files | 9529 |
+| Fresh verified reviews in the last 7 days | 9746 |
+| Proposed closes awaiting apply | 45 (0.5% of fresh reviews) |
 | Closed by Codex apply | 7495 |
-| Failed or stale reviews | 86 |
-| Daily cadence coverage | 6414/7006 current (592 due, 91.6%) |
-| Daily PR cadence | 4127/4278 current (151 due, 96.5%) |
-| Daily new issue cadence (<30d) | 2287/2728 current (441 due, 83.8%) |
-| Weekly older issue cadence | 2769/2769 current (0 due, 100%) |
-| Due now by cadence | 683 |
+| Failed or stale reviews | 0 |
+| Daily cadence coverage | 6541/6980 current (439 due, 93.7%) |
+| Daily PR cadence | 4170/4253 current (83 due, 98%) |
+| Daily new issue cadence (<30d) | 2371/2727 current (356 due, 86.9%) |
+| Weekly older issue cadence | 2766/2766 current (0 due, 100%) |
+| Due now by cadence | 522 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Review Runtime | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [#61413](https://github.com/openclaw/openclaw/pull/61413) | fix: web_search fails with transparent proxies when no proxy env vars are set | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61413.md) | complete | unknown | Apr 25, 2026, 19:47 UTC |
-| [#61105](https://github.com/openclaw/openclaw/pull/61105) | fix(config): apply tools.exec.pathPrepend to process.env.PATH at startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61105.md) | complete | unknown | Apr 25, 2026, 19:46 UTC |
-| [#61345](https://github.com/openclaw/openclaw/pull/61345) | Control UI: keep slow reconnects out of the login gate | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61345.md) | complete | unknown | Apr 25, 2026, 19:46 UTC |
-| [#60844](https://github.com/openclaw/openclaw/pull/60844) | Heartbeat: isolate session runs by default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60844.md) | complete | unknown | Apr 25, 2026, 19:46 UTC |
-| [#60508](https://github.com/openclaw/openclaw/pull/60508) | test: add coverage for Ollama thinking + tool_calls streaming | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60508.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
-| [#61331](https://github.com/openclaw/openclaw/pull/61331) | docs(zh-CN): encode Control UI gatewayUrl examples | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61331.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
-| [#61396](https://github.com/openclaw/openclaw/pull/61396) | fix(i18n): add device/node pairing terms to zh-CN glossary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61396.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
-| [#61335](https://github.com/openclaw/openclaw/pull/61335) | fix(usage): handle Daylight saving time (DST) hour boundaries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61335.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
-| [#61016](https://github.com/openclaw/openclaw/pull/61016) | fix(media): anchor sanitizeMimeType regex and make case-insensitive per RFC 2045 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61016.md) | complete | unknown | Apr 25, 2026, 19:45 UTC |
-| [#61374](https://github.com/openclaw/openclaw/pull/61374) | fix(slack): wake sessions for interactive block actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61374.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#61151](https://github.com/openclaw/openclaw/pull/61151) | fix(agents): drop partialJson streaming artifacts from session history repair | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61151.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#59798](https://github.com/openclaw/openclaw/pull/59798) | fix(acp): avoid locally caught exception on turn failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59798.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#61092](https://github.com/openclaw/openclaw/pull/61092) | UI: localize skills hardcoded labels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61092.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#61473](https://github.com/openclaw/openclaw/pull/61473) | fix(discord): persist model picker override fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61473.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#61245](https://github.com/openclaw/openclaw/pull/61245) | fix(docker): exclude CI, docs metadata, and test files from build con… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61245.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#61247](https://github.com/openclaw/openclaw/pull/61247) | fix(utils): add missing test coverage for sliceUtf16Safe and truncateUtf16Safe | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61247.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#61130](https://github.com/openclaw/openclaw/pull/61130) | UI: localize command palette labels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61130.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#60718](https://github.com/openclaw/openclaw/pull/60718) | fix: resolve startedAt timestamp inversion in task registry | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60718.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#61075](https://github.com/openclaw/openclaw/pull/61075) | fix:add abort messages mostly in other languages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61075.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
-| [#61422](https://github.com/openclaw/openclaw/pull/61422) | fix: move context files after cache boundary to prevent invalidation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61422.md) | complete | unknown | Apr 25, 2026, 19:44 UTC |
+| [#71726](https://github.com/openclaw/openclaw/issues/71726) | [Bug]: Isolated cron task summaries routed to Telegram despite notify: silent | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71726.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:02 UTC |
+| [#60131](https://github.com/openclaw/openclaw/issues/60131) | [Feature]: Make TTS directive parsing honor explicit provider selection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60131.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:02 UTC |
+| [#71715](https://github.com/openclaw/openclaw/issues/71715) | WhatsApp: XML tool-tag sanitizer regression in 2026.4.23 + missing exposeErrorText/silentErrorReplies parity | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71715.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:02 UTC |
+| [#70036](https://github.com/openclaw/openclaw/issues/70036) | [Feature]: Zero-Lag Global Rule Sync: Forcing Instant Admin Updates Across All Sessions via userContent Injection | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70036.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:01 UTC |
+| [#60190](https://github.com/openclaw/openclaw/issues/60190) | [Feature]: support delayed aggregation for multi-part user inputs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60190.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:01 UTC |
+| [#60111](https://github.com/openclaw/openclaw/issues/60111) | [Bug]: `generic_repeat` loop detector never escalates to blocking — `criticalThreshold` has no effect | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60111.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:01 UTC |
+| [#71729](https://github.com/openclaw/openclaw/issues/71729) | Control UI CSP blocks blob: avatar URLs generated by avatar fetch path | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71729.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#60083](https://github.com/openclaw/openclaw/issues/60083) | Cron startup catch-up fires duplicate when previous run was itself a late catch-up | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60083.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#71730](https://github.com/openclaw/openclaw/issues/71730) | [Bug]: update 4.24 - Failed to install bundled plugin runtime deps: Error: npm error code EACCES - TONS of missing npm packages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71730.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#71689](https://github.com/openclaw/openclaw/issues/71689) | Bug: tasks registry restore fails on malformed SQLite image | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71689.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#60177](https://github.com/openclaw/openclaw/issues/60177) | [Bug]: memory-lancedb-pro loaded and working, but doctor/status reports no active memory plugin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60177.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#71712](https://github.com/openclaw/openclaw/issues/71712) | [RFC] Agent-facing scheduling API with non-forgeable provenance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71712.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#60237](https://github.com/openclaw/openclaw/issues/60237) | [Feature]: Add threadPromptGuideline for customizable auto-generated Discord thread titles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60237.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#59942](https://github.com/openclaw/openclaw/issues/59942) | status/doctor reports memory unavailable while memory-lancedb-pro appears registered at runtime | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59942.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#59905](https://github.com/openclaw/openclaw/issues/59905) | [Bug]: Intermittent execution mismatch after update: main agent acknowledges actions but does not execute (often after browser/CDP contention) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59905.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#60143](https://github.com/openclaw/openclaw/issues/60143) | Plugin config error causes hard gateway crash instead of graceful disable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60143.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#71711](https://github.com/openclaw/openclaw/issues/71711) | [Feature] activeUntil / expiresAt for recurring cron jobs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71711.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 20:00 UTC |
+| [#68449](https://github.com/openclaw/openclaw/issues/68449) | [Bug]: Dreaming plugin: stopword list too narrow and no filter for cron-triggered sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68449.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 19:59 UTC |
+| [#59945](https://github.com/openclaw/openclaw/issues/59945) | Slack socket mode fails with \"reserved redaction sentinel\" error despite valid tokens — infinite restart loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59945.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 19:59 UTC |
+| [#60078](https://github.com/openclaw/openclaw/issues/60078) | [Bug]: Announce delivery ignores modelByChannel, always uses agent default model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60078.md) | complete | model gpt-5.5, reasoning high | Apr 25, 2026, 19:59 UTC |
 
 ## How It Works
 
