@@ -31,6 +31,10 @@ on:
         description: "Log apply progress every N processed records, plus every close"
         required: false
         default: "10"
+      apply_checkpoint_size:
+        description: "Fresh closes per checkpoint commit in apply-existing mode"
+        required: false
+        default: "50"
       batch_size:
         description: "Items per worker job"
         required: false
@@ -309,7 +313,7 @@ jobs:
       - name: Sync before applying decisions
         run: git pull --rebase
 
-      - name: Apply unchanged proposed decisions
+      - name: Apply unchanged proposed decisions with checkpoints
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
@@ -318,13 +322,66 @@ jobs:
           apply_kind="${{ github.event.inputs.apply_kind || 'issue' }}"
           close_delay_ms="${{ github.event.inputs.apply_close_delay_ms || '15000' }}"
           progress_every="${{ github.event.inputs.apply_progress_every || '10' }}"
-          npm run apply-decisions -- \
-            --limit "$limit" \
-            --min-age-days "$min_age_days" \
-            --apply-kind "$apply_kind" \
-            --close-delay-ms "$close_delay_ms" \
-            --progress-every "$progress_every" \
-            --processed-limit "$((limit * 10))"
+          checkpoint_size="${{ github.event.inputs.apply_checkpoint_size || '50' }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p .artifacts/apply-reports
+          closed_total=0
+          checkpoint=0
+          while [ "$closed_total" -lt "$limit" ]; do
+            remaining=$((limit - closed_total))
+            chunk_limit="$checkpoint_size"
+            if [ "$remaining" -lt "$chunk_limit" ]; then
+              chunk_limit="$remaining"
+            fi
+            checkpoint=$((checkpoint + 1))
+            echo "::group::Apply checkpoint $checkpoint"
+            echo "Applying up to $chunk_limit fresh closes; $closed_total/$limit already closed in this run"
+            npm run apply-decisions -- \
+              --limit "$chunk_limit" \
+              --min-age-days "$min_age_days" \
+              --apply-kind "$apply_kind" \
+              --close-delay-ms "$close_delay_ms" \
+              --progress-every "$progress_every" \
+              --processed-limit "$((chunk_limit * 20))"
+            cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
+            node - <<'NODE'
+            const fs = require("node:fs");
+            const path = require("node:path");
+            const dir = ".artifacts/apply-reports";
+            const files = fs.readdirSync(dir)
+              .filter((name) => /^apply-report-\d+\.json$/.test(name))
+              .sort((left, right) => Number(left.match(/\d+/)[0]) - Number(right.match(/\d+/)[0]));
+            const combined = files.flatMap((file) => JSON.parse(fs.readFileSync(path.join(dir, file), "utf8")));
+            fs.writeFileSync("apply-report.json", `${JSON.stringify(combined, null, 2)}\n`);
+            NODE
+            closed_in_chunk="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.filter((x)=>x.action==="closed").length)' "$checkpoint")"
+            result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
+            closed_total=$((closed_total + closed_in_chunk))
+            echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
+            git add README.md items closed apply-report.json
+            if git diff --cached --quiet; then
+              echo "No apply changes in checkpoint $checkpoint"
+            else
+              git commit -m "chore: apply sweep decisions checkpoint $checkpoint"
+              for attempt in 1 2 3; do
+                if git push; then
+                  break
+                fi
+                git pull --rebase --autostash
+              done
+              git push
+            fi
+            echo "::endgroup::"
+            if [ "$result_count" -eq 0 ]; then
+              echo "No more applicable proposed closes found."
+              break
+            fi
+            if [ "$closed_in_chunk" -eq 0 ]; then
+              echo "Checkpoint made no fresh closes; stopping to avoid a retry loop."
+              break
+            fi
+          done
 
       - name: Commit apply results
         run: |
@@ -332,7 +389,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md items closed apply-report.json
           if git diff --cached --quiet; then
-            echo "No apply changes"
+            echo "No remaining apply changes"
           else
             git commit -m "chore: apply sweep decisions"
             for attempt in 1 2 3; do

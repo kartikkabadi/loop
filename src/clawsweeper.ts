@@ -1715,19 +1715,11 @@ function applyDecisionsCommand(args: Args): void {
       !closeReason ||
       !ALLOWED_REASONS.has(closeReason) ||
       !storedHash ||
-      (action !== "proposed_close" && action !== "skipped_changed_since_review")
+      action !== "proposed_close"
     ) {
       continue;
     }
     if (applyKind !== "all" && storedKind && storedKind !== applyKind) {
-      results.push({
-        number,
-        action: "kept_open",
-        reason: `type is ${storedKind}; apply kind is ${applyKind}`,
-      });
-      processedCount += 1;
-      maybeLogProgress(`skipped #${number}: type is ${storedKind}`);
-      if (processedCount >= processedLimit) break;
       continue;
     }
     const closeComment = renderCloseCommentFromReport(markdown, closeReason);
