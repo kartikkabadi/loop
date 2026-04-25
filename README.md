@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 08:43 UTC
+Last dashboard update: Apr 25, 2026, 08:47 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 08:43 UTC
+Updated: Apr 25, 2026, 08:47 UTC
 
-State: Apply in progress
+State: Review in progress
 
-Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 53.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24926354430](https://github.com/openclaw/clawsweeper/actions/runs/24926354430)
+Planned 100 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24927012474](https://github.com/openclaw/clawsweeper/actions/runs/24927012474)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8812 |
-| Fresh reviewed issues in the last 7 days | 8766 |
-| Proposed issue closes | 3174 (36.2% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5345 |
-| Fresh reviewed PRs in the last 7 days | 5282 |
-| Proposed PR closes | 776 (14.7% of reviewed PRs) |
-| Open items total | 14157 |
-| Reviewed files | 14048 |
-| Unreviewed open items | 109 |
-| Archived closed files | 5003 |
-| Fresh verified reviews in the last 7 days | 14048 |
-| Proposed closes awaiting apply | 3950 (28.1% of fresh reviews) |
-| Closed by Codex apply | 3407 |
-| Failed or stale reviews | 0 |
-| Daily cadence coverage | 10905/10983 current (78 due, 99.3%) |
-| Daily PR cadence | 5204/5282 current (78 due, 98.5%) |
-| Daily new issue cadence (<30d) | 5701/5701 current (0 due, 100%) |
-| Weekly older issue cadence | 3065/3065 current (0 due, 100%) |
-| Due now by cadence | 187 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8811 |
+| Fresh reviewed issues in the last 7 days | 8754 |
+| Proposed issue closes | 3168 (36.2% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5299 |
+| Fresh reviewed PRs in the last 7 days | 5236 |
+| Proposed PR closes | 756 (14.4% of reviewed PRs) |
+| Open items total | 14110 |
+| Reviewed files | 14007 |
+| Unreviewed open items | 103 |
+| Archived closed files | 5044 |
+| Fresh verified reviews in the last 7 days | 13990 |
+| Proposed closes awaiting apply | 3924 (28% of fresh reviews) |
+| Closed by Codex apply | 3357 |
+| Failed or stale reviews | 17 |
+| Daily cadence coverage | 10843/10939 current (96 due, 99.1%) |
+| Daily PR cadence | 5154/5240 current (86 due, 98.4%) |
+| Daily new issue cadence (<30d) | 5689/5699 current (10 due, 99.8%) |
+| Weekly older issue cadence | 3065/3068 current (3 due, 99.9%) |
+| Due now by cadence | 202 |
 
 Recently reviewed:
 
@@ -61,7 +61,6 @@ Recently reviewed:
 | [#71133](https://github.com/openclaw/openclaw/issues/71133) | memory-core: narrative session cleanup fails with missing scope: operator.admin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71133.md) | complete | Apr 25, 2026, 08:41 UTC |
 | [#71335](https://github.com/openclaw/openclaw/issues/71335) | Feature: sync.watch should default to false in gateway mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71335.md) | complete | Apr 25, 2026, 08:41 UTC |
 | [#71330](https://github.com/openclaw/openclaw/issues/71330) | Feature: Configurable memory promotion target file | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71330.md) | complete | Apr 25, 2026, 08:41 UTC |
-| [#71210](https://github.com/openclaw/openclaw/issues/71210) | [Bug]: openclaw memory status fails with 'Unknown memory embedding provider: local' | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71210.md) | complete | Apr 25, 2026, 08:40 UTC |
 | [#71348](https://github.com/openclaw/openclaw/issues/71348) | [BUG] Node.js v24 compile cache causes ERR_MODULE_NOT_FOUND after package update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71348.md) | complete | Apr 25, 2026, 08:40 UTC |
 | [#71295](https://github.com/openclaw/openclaw/issues/71295) | v2026.4.23 stable release published with zero macOS assets | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71295.md) | complete | Apr 25, 2026, 08:40 UTC |
 | [#71258](https://github.com/openclaw/openclaw/issues/71258) | [Guide] nginx reverse proxy + internal TLS + token auth — fully working self-hosted config | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71258.md) | complete | Apr 25, 2026, 08:40 UTC |
@@ -73,6 +72,7 @@ Recently reviewed:
 | [#71058](https://github.com/openclaw/openclaw/issues/71058) | [Feature]: Support for multiple Azure/Teams bots on a single Openclaw Gateway | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71058.md) | complete | Apr 25, 2026, 08:39 UTC |
 | [#71059](https://github.com/openclaw/openclaw/issues/71059) | [Bug]: Gateway restart strips channel credentials during config hydration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71059.md) | complete | Apr 25, 2026, 08:39 UTC |
 | [#71166](https://github.com/openclaw/openclaw/issues/71166) | [Feature]: [IMP] true read-only mode for whatsapp (no outbound messages) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71166.md) | complete | Apr 25, 2026, 08:39 UTC |
+| [#71065](https://github.com/openclaw/openclaw/issues/71065) | [Bug]: 2026.4.22 regression: heartbeat embedded runs with xiaomi/mimo-v2-pro abort with TypeError reading 'input' | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71065.md) | complete | Apr 25, 2026, 08:39 UTC |
 
 ## How It Works
 
