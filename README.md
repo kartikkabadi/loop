@@ -14,47 +14,46 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 18:48 UTC
+Last dashboard update: Apr 25, 2026, 19:09 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 18:56 UTC
+Updated: Apr 25, 2026, 19:09 UTC
 
-State: Apply throttled
+State: Apply in progress
 
-Checkpoint 3. GitHub throttled while applying close decisions. Progress: 10/50 fresh closes, 11/1000 processed records in this apply chunk. Last throttled command: `gh api repos/openclaw/openclaw/issues/69162`. Retry 5/11 in 480s.
+Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 51.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24937779720](https://github.com/openclaw/clawsweeper/actions/runs/24937779720)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5781 |
-| Fresh reviewed issues in the last 7 days | 5679 |
-| Proposed issue closes | 259 (4.6% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4450 |
-| Fresh reviewed PRs in the last 7 days | 4295 |
-| Proposed PR closes | 44 (1% of reviewed PRs) |
-| Open items total | 10231 |
-| Reviewed files | 10146 |
-| Unreviewed open items | 85 |
-| Archived closed files | 9106 |
-| Fresh verified reviews in the last 7 days | 9974 |
-| Proposed closes awaiting apply | 303 (3% of fresh reviews) |
-| Closed by Codex apply | 7205 |
-| Failed or stale reviews | 172 |
-| Daily cadence coverage | 6919/7367 current (448 due, 93.9%) |
-| Daily PR cadence | 4180/4381 current (201 due, 95.4%) |
-| Daily new issue cadence (<30d) | 2739/2986 current (247 due, 91.7%) |
-| Weekly older issue cadence | 2779/2779 current (0 due, 100%) |
-| Due now by cadence | 533 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5742 |
+| Fresh reviewed issues in the last 7 days | 5641 |
+| Proposed issue closes | 220 (3.9% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4429 |
+| Fresh reviewed PRs in the last 7 days | 4286 |
+| Proposed PR closes | 35 (0.8% of reviewed PRs) |
+| Open items total | 10171 |
+| Reviewed files | 10096 |
+| Unreviewed open items | 75 |
+| Archived closed files | 9156 |
+| Fresh verified reviews in the last 7 days | 9927 |
+| Proposed closes awaiting apply | 255 (2.6% of fresh reviews) |
+| Closed by Codex apply | 7255 |
+| Failed or stale reviews | 169 |
+| Daily cadence coverage | 6739/7316 current (577 due, 92.1%) |
+| Daily PR cadence | 4108/4370 current (262 due, 94%) |
+| Daily new issue cadence (<30d) | 2631/2946 current (315 due, 89.3%) |
+| Weekly older issue cadence | 2780/2780 current (0 due, 100%) |
+| Due now by cadence | 652 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
 | [#59868](https://github.com/openclaw/openclaw/issues/59868) | edit tool shows false positive error when oldText match fails after file was already fixed | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59868.md) | complete | Apr 25, 2026, 18:42 UTC |
-| [#59910](https://github.com/openclaw/openclaw/issues/59910) | Inbound images from Slack exceed Anthropic 5MB base64 limit (no auto-resize) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59910.md) | complete | Apr 25, 2026, 18:41 UTC |
 | [#59307](https://github.com/openclaw/openclaw/issues/59307) | Regression 2026.3.31: embedded agent calls read tool without path during heartbeat polls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59307.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:40 UTC |
 | [#59913](https://github.com/openclaw/openclaw/issues/59913) | OpenAI compat gateway images bypass sanitization/resize, hit Anthropic 5MB limit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59913.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:40 UTC |
 | [#59545](https://github.com/openclaw/openclaw/issues/59545) | [Bug]: macOS app General settings rewrites ~/.openclaw/openclaw.json without user changes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59545.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:40 UTC |
@@ -73,6 +72,7 @@ Recently reviewed:
 | [#59888](https://github.com/openclaw/openclaw/issues/59888) | [Bug]: WhatsApp web-auto-reply dispatches stale/cached reply to subsequent inbound message (5ms response, no LLM call) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59888.md) | complete | Apr 25, 2026, 18:39 UTC |
 | [#59871](https://github.com/openclaw/openclaw/issues/59871) | [Bug]: [Bug] TUI renders internal command envelopes to operator; async completion events inject verbose agent instructions into session transcript | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59871.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
 | [#59509](https://github.com/openclaw/openclaw/issues/59509) | feat: support per-model location override for google-vertex provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59509.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
+| [#59817](https://github.com/openclaw/openclaw/issues/59817) | Discord DMs can fork into duplicate channel sessions during channel-info/network failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59817.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
 
 ## How It Works
 
