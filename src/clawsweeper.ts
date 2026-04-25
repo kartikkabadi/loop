@@ -184,6 +184,8 @@ const REPORT_REPO = "openclaw/clawsweeper";
 const CLAWHUB_URL = "https://clawhub.ai/";
 const DOCS_URL = "https://docs.openclaw.ai";
 const FRESH_DAYS = 7;
+const STATUS_START = "<!-- clawsweeper-status:start -->";
+const STATUS_END = "<!-- clawsweeper-status:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.4";
 const DEFAULT_REASONING_EFFORT = "medium";
 const DEFAULT_SERVICE_TIER = "fast";
@@ -1117,6 +1119,32 @@ function formatTimestamp(iso: string | undefined): string {
   }).format(date);
 }
 
+function workflowStatusBlock(options?: {
+  state?: string;
+  detail?: string;
+  runUrl?: string;
+  updatedAt?: string;
+}): string {
+  const updatedAt = formatTimestamp(options?.updatedAt ?? new Date().toISOString());
+  const state = options?.state ?? "Idle";
+  const detail = options?.detail ?? "No workflow status has been published yet.";
+  const runLine = options?.runUrl ? `\nRun: ${markdownLink(options.runUrl, options.runUrl)}` : "";
+  return `${STATUS_START}
+### Workflow Status
+
+Updated: ${updatedAt}
+
+State: ${state}
+
+${detail}${runLine}
+${STATUS_END}`;
+}
+
+function currentWorkflowStatusBlock(readme: string): string {
+  const pattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
+  return readme.match(pattern)?.[0] ?? workflowStatusBlock();
+}
+
 function displayTitle(title: string): string {
   try {
     const parsed = JSON.parse(title) as unknown;
@@ -1599,11 +1627,18 @@ function reviewCommand(args: Args): void {
   if (itemNumber) selectionOptions.itemNumber = itemNumber;
   if (itemNumbers) selectionOptions.itemNumbers = itemNumbers;
   const { candidates, scannedPages } = selectCandidates(selectionOptions);
+  console.error(
+    `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} selected=${candidates.length} scanned_pages=${scannedPages}`,
+  );
   writeFileSync(
     join(artifactDir, "selection.json"),
     JSON.stringify({ shardIndex, shardCount, scannedPages, candidates, reviewPolicy }, null, 2),
   );
+  let completed = 0;
   for (const item of candidates) {
+    console.error(
+      `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start #${item.number} (${completed + 1}/${candidates.length})`,
+    );
     const context = collectItemContext(item);
     const snapshotHash = itemSnapshotHash(item, context);
     let decision: Decision;
@@ -1641,7 +1676,14 @@ function reviewCommand(args: Args): void {
       }),
       "utf8",
     );
+    completed += 1;
+    console.error(
+      `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} done #${item.number} (${completed}/${candidates.length}) decision=${decision.decision} confidence=${decision.confidence} action=${action.actionTaken}`,
+    );
   }
+  console.error(
+    `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} complete reviewed=${completed}`,
+  );
 }
 
 function applyDecisionsCommand(args: Args): void {
@@ -1960,6 +2002,7 @@ function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, 
   const readmePath = join(ROOT, "README.md");
   const readme = readFileSync(readmePath, "utf8");
   const stats = dashboardStats(itemsDir, closedDir);
+  const status = currentWorkflowStatusBlock(readme);
   const recent =
     stats.recent
       .slice(0, 20)
@@ -1975,6 +2018,8 @@ function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, 
   const dashboard = `## Dashboard
 
 Last dashboard update: ${formatTimestamp(new Date().toISOString())}
+
+${status}
 
 | Metric | Count |
 | --- | ---: |
@@ -2005,6 +2050,20 @@ ${recent}`;
   writeFileSync(readmePath, updated, "utf8");
 }
 
+function statusCommand(args: Args): void {
+  const readmePath = join(ROOT, "README.md");
+  const readme = readFileSync(readmePath, "utf8");
+  const state = stringArg(args.state, "Working");
+  const detail = stringArg(args.detail, "Workflow is running.");
+  const runUrl = stringArg(args.run_url, "");
+  const block = workflowStatusBlock(runUrl ? { state, detail, runUrl } : { state, detail });
+  const pattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
+  const updated = pattern.test(readme)
+    ? readme.replace(pattern, block)
+    : readme.replace(/Last dashboard update: .+/, `$&\n\n${block}`);
+  writeFileSync(readmePath, updated, "utf8");
+}
+
 function checkCommand(): void {
   JSON.parse(readFileSync(join(ROOT, "schema", "clawsweeper-decision.schema.json"), "utf8"));
   if (!existsSync(join(ROOT, ".github", "workflows", "sweep.yml")))
@@ -2023,6 +2082,7 @@ else if (command === "dashboard")
     resolve(stringArg(args.items_dir, join(ROOT, "items"))),
     resolve(stringArg(args.closed_dir, join(ROOT, "closed"))),
   );
+else if (command === "status") statusCommand(args);
 else if (command === "check") checkCommand();
 else {
   console.error(`Unknown command: ${command}`);

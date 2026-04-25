@@ -135,10 +135,35 @@ jobs:
           NODE
           cat plan.json
 
+      - name: Publish planning status
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true' }}
+        working-directory: clawsweeper
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm run dashboard
+          npm run status -- \
+            --state "Review in progress" \
+            --detail "Planned ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git add README.md
+          if git diff --cached --quiet; then
+            echo "No status changes"
+          else
+            git commit -m "chore: mark sweep review in progress"
+            for attempt in 1 2 3; do
+              if git push; then
+                exit 0
+              fi
+              git pull --rebase --autostash
+            done
+            git push
+          fi
+
   review:
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 75
     strategy:
       fail-fast: false
       matrix:
@@ -257,7 +282,12 @@ jobs:
       - name: Apply review artifacts
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
-        run: npm run apply-artifacts -- --artifact-dir artifacts
+        run: |
+          npm run apply-artifacts -- --artifact-dir artifacts
+          npm run status -- \
+            --state "Review publish complete" \
+            --detail "Merged review artifacts for run ${{ github.run_id }}. Dashboard reflects the latest files and proposed closes from completed shards." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Commit dashboard and review files
         run: |
@@ -326,6 +356,28 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p .artifacts/apply-reports
+          publish_changes() {
+            message="$1"
+            git add README.md items closed apply-report.json
+            if git diff --cached --quiet; then
+              echo "No changes for: $message"
+              return 0
+            fi
+            git commit -m "$message"
+            for attempt in 1 2 3; do
+              if git push; then
+                return 0
+              fi
+              git pull --rebase --autostash
+            done
+            git push
+          }
+          npm run dashboard
+          npm run status -- \
+            --state "Apply in progress" \
+            --detail "Starting apply run for up to $limit fresh $apply_kind closes. Checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          publish_changes "chore: mark sweep apply in progress"
           closed_total=0
           checkpoint=0
           while [ "$closed_total" -lt "$limit" ]; do
@@ -359,19 +411,11 @@ jobs:
             result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
             closed_total=$((closed_total + closed_in_chunk))
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
-            git add README.md items closed apply-report.json
-            if git diff --cached --quiet; then
-              echo "No apply changes in checkpoint $checkpoint"
-            else
-              git commit -m "chore: apply sweep decisions checkpoint $checkpoint"
-              for attempt in 1 2 3; do
-                if git push; then
-                  break
-                fi
-                git pull --rebase --autostash
-              done
-              git push
-            fi
+            npm run status -- \
+              --state "Apply in progress" \
+              --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count." \
+              --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            publish_changes "chore: apply sweep decisions checkpoint $checkpoint"
             echo "::endgroup::"
             if [ "$result_count" -eq 0 ]; then
               echo "No more applicable proposed closes found."
@@ -382,6 +426,12 @@ jobs:
               break
             fi
           done
+          npm run dashboard
+          npm run status -- \
+            --state "Apply finished" \
+            --detail "Apply run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          publish_changes "chore: mark sweep apply finished"
 
       - name: Commit apply results
         run: |
