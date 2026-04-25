@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 19:20 UTC
+Last dashboard update: Apr 25, 2026, 19:26 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 19:20 UTC
+Updated: Apr 25, 2026, 19:26 UTC
 
 State: Apply in progress
 
-Checkpoint 5 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 250/500. Result records in checkpoint: 51.
+Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 53.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24937779720](https://github.com/openclaw/clawsweeper/actions/runs/24937779720)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5651 |
-| Fresh reviewed issues in the last 7 days | 5556 |
-| Proposed issue closes | 135 (2.4% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4406 |
-| Fresh reviewed PRs in the last 7 days | 4271 |
-| Proposed PR closes | 18 (0.4% of reviewed PRs) |
-| Open items total | 10057 |
-| Reviewed files | 9996 |
-| Unreviewed open items | 61 |
-| Archived closed files | 9256 |
-| Fresh verified reviews in the last 7 days | 9827 |
-| Proposed closes awaiting apply | 153 (1.6% of fresh reviews) |
-| Closed by Codex apply | 7355 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5607 |
+| Fresh reviewed issues in the last 7 days | 5511 |
+| Proposed issue closes | 89 (1.6% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4389 |
+| Fresh reviewed PRs in the last 7 days | 4266 |
+| Proposed PR closes | 11 (0.3% of reviewed PRs) |
+| Open items total | 9996 |
+| Reviewed files | 9946 |
+| Unreviewed open items | 50 |
+| Archived closed files | 9306 |
+| Fresh verified reviews in the last 7 days | 9777 |
+| Proposed closes awaiting apply | 100 (1% of fresh reviews) |
+| Closed by Codex apply | 7405 |
 | Failed or stale reviews | 169 |
-| Daily cadence coverage | 6595/7216 current (621 due, 91.4%) |
-| Daily PR cadence | 4078/4355 current (277 due, 93.6%) |
-| Daily new issue cadence (<30d) | 2517/2861 current (344 due, 88%) |
+| Daily cadence coverage | 6494/7166 current (672 due, 90.6%) |
+| Daily PR cadence | 4055/4350 current (295 due, 93.2%) |
+| Daily new issue cadence (<30d) | 2439/2816 current (377 due, 86.6%) |
 | Weekly older issue cadence | 2780/2780 current (0 due, 100%) |
-| Due now by cadence | 682 |
+| Due now by cadence | 722 |
 
 Recently reviewed:
 
