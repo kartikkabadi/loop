@@ -19,12 +19,12 @@ Last dashboard update: Apr 25, 2026, 14:28 UTC
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 14:28 UTC
+Updated: Apr 25, 2026, 14:33 UTC
 
-State: Apply in progress
+State: Planning review
 
-Starting apply run for up to 500 fresh all closes. Checkpoints commit every 50 fresh closes; close delay is 5000ms.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24933057232](https://github.com/openclaw/clawsweeper/actions/runs/24933057232)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24933176396](https://github.com/openclaw/clawsweeper/actions/runs/24933176396)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
