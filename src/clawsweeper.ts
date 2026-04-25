@@ -1821,6 +1821,29 @@ function applyDecisionsCommand(args: Args): void {
       : undefined;
     const closeCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingCloseComment);
     if (state !== "open") {
+      const matchingCloseComment =
+        existingCloseComment ?? issueMatchingComment(number, closeComment);
+      if (matchingCloseComment) {
+        markdown = replaceSectionValue(markdown, "Close Comment", closeComment);
+        markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(closeComment));
+        markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
+        markdown = replaceFrontMatterValue(
+          markdown,
+          "applied_at",
+          commentUpdatedAt(matchingCloseComment) ?? new Date().toISOString(),
+        );
+        archiveClosed(markdown);
+        closedCount += 1;
+        processedCount += 1;
+        results.push({
+          number,
+          action: "closed",
+          reason: `${closeReasonText(closeReason)}; matching ClawSweeper close comment already exists`,
+        });
+        maybeLogProgress(`archived #${number}: already ${state} with matching close comment`);
+        if (processedCount >= processedLimit || closedCount >= limit) break;
+        continue;
+      }
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_already_closed");
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       archiveClosed(markdown);

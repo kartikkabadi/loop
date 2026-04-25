@@ -387,7 +387,8 @@ jobs:
           mkdir -p .artifacts/apply-reports
           publish_changes() {
             message="$1"
-            git add README.md items closed apply-report.json
+            shift
+            git add "$@"
             if git diff --cached --quiet; then
               echo "No changes for: $message"
               return 0
@@ -397,16 +398,26 @@ jobs:
               if git push; then
                 return 0
               fi
-              git pull --rebase --autostash
+              if ! git pull --rebase --autostash; then
+                git rebase --abort || true
+                return 1
+              fi
             done
             git push
+          }
+          publish_readme_status() {
+            message="$1"
+            if ! publish_changes "$message" README.md; then
+              echo "Best-effort README status update failed: $message"
+              git restore README.md || true
+            fi
           }
           npm run dashboard
           npm run status -- \
             --state "Apply in progress" \
             --detail "Starting apply run for up to $limit fresh $apply_kind closes. Checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          publish_changes "chore: mark sweep apply in progress"
+          publish_readme_status "chore: mark sweep apply in progress"
           closed_total=0
           checkpoint=0
           while [ "$closed_total" -lt "$limit" ]; do
@@ -431,11 +442,13 @@ jobs:
             result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
             closed_total=$((closed_total + closed_in_chunk))
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
+            publish_changes "chore: apply sweep decisions checkpoint $checkpoint" items closed apply-report.json
+            npm run dashboard
             npm run status -- \
               --state "Apply in progress" \
               --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            publish_changes "chore: apply sweep decisions checkpoint $checkpoint"
+            publish_readme_status "chore: update sweep apply checkpoint $checkpoint status"
             echo "::endgroup::"
             if [ "$result_count" -eq 0 ]; then
               echo "No more applicable proposed closes found."
@@ -451,7 +464,7 @@ jobs:
             --state "Apply finished" \
             --detail "Apply run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          publish_changes "chore: mark sweep apply finished"
+          publish_readme_status "chore: mark sweep apply finished"
 
       - name: Commit apply results
         run: |
