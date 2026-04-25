@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 17:46 UTC
+Last dashboard update: Apr 25, 2026, 17:52 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 17:46 UTC
+Updated: Apr 25, 2026, 17:52 UTC
 
 State: Apply in progress
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 100/500. Result records in checkpoint: 50.
+Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 52.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24936577973](https://github.com/openclaw/clawsweeper/actions/runs/24936577973)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6194 |
-| Fresh reviewed issues in the last 7 days | 6182 |
-| Proposed issue closes | 664 (10.7% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4531 |
-| Fresh reviewed PRs in the last 7 days | 4464 |
-| Proposed PR closes | 130 (2.9% of reviewed PRs) |
-| Open items total | 10725 |
-| Reviewed files | 10649 |
-| Unreviewed open items | 76 |
-| Archived closed files | 8591 |
-| Fresh verified reviews in the last 7 days | 10646 |
-| Proposed closes awaiting apply | 794 (7.5% of fresh reviews) |
-| Closed by Codex apply | 6707 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6160 |
+| Fresh reviewed issues in the last 7 days | 6144 |
+| Proposed issue closes | 625 (10.2% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4518 |
+| Fresh reviewed PRs in the last 7 days | 4452 |
+| Proposed PR closes | 117 (2.6% of reviewed PRs) |
+| Open items total | 10678 |
+| Reviewed files | 10599 |
+| Unreviewed open items | 79 |
+| Archived closed files | 8641 |
+| Fresh verified reviews in the last 7 days | 10596 |
+| Proposed closes awaiting apply | 742 (7% of fresh reviews) |
+| Closed by Codex apply | 6757 |
 | Failed or stale reviews | 3 |
-| Daily cadence coverage | 7578/7870 current (292 due, 96.3%) |
-| Daily PR cadence | 4355/4465 current (110 due, 97.5%) |
-| Daily new issue cadence (<30d) | 3223/3405 current (182 due, 94.7%) |
+| Daily cadence coverage | 7492/7820 current (328 due, 95.8%) |
+| Daily PR cadence | 4326/4453 current (127 due, 97.1%) |
+| Daily new issue cadence (<30d) | 3166/3367 current (201 due, 94%) |
 | Weekly older issue cadence | 2779/2779 current (0 due, 100%) |
-| Due now by cadence | 368 |
+| Due now by cadence | 407 |
 
 Recently reviewed:
 
@@ -55,17 +55,12 @@ Recently reviewed:
 | --- | --- | --- | --- | --- |
 | [#58505](https://github.com/openclaw/openclaw/issues/58505) | [Feature]: Allow `before_prompt_build` hook to abort LLM call and return a custom response | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58505.md) | complete | Apr 25, 2026, 17:40 UTC |
 | [#58433](https://github.com/openclaw/openclaw/issues/58433) | [Bug]: [Windows] Path character loss bug - \"system\" becomes \"ystem\" in file paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58433.md) | complete | Apr 25, 2026, 17:40 UTC |
-| [#58704](https://github.com/openclaw/openclaw/issues/58704) | WhatsApp bridge: assistant output can leak into user messages during /new or /reset session transition | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58704.md) | complete | Apr 25, 2026, 17:40 UTC |
 | [#58680](https://github.com/openclaw/openclaw/issues/58680) | Feature: Add clearThinking compat option for Z.AI Preserved Thinking | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58680.md) | complete | Apr 25, 2026, 17:40 UTC |
-| [#58355](https://github.com/openclaw/openclaw/issues/58355) | [Bug]: Failed to set model: GatewayRequestError: model not allowed: ollama/qwen3.5:35b-a3b-coding-nvfp4 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58355.md) | complete | Apr 25, 2026, 17:40 UTC |
-| [#58402](https://github.com/openclaw/openclaw/issues/58402) | [Bug]: message tool \"Operation aborted\" false negative + WhatsApp reconnect storm + xai-auth log spam | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58402.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58574](https://github.com/openclaw/openclaw/issues/58574) | [Feature]: readable `nextAt` value for cron job | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58574.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58626](https://github.com/openclaw/openclaw/issues/58626) | 升级版本后配置文件中的插件路径未更新，导致 gateway 启动失败 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58626.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58470](https://github.com/openclaw/openclaw/issues/58470) | Gateway startup doesn't clear stale 'running' status in sessions.json | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58470.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58398](https://github.com/openclaw/openclaw/issues/58398) | Adopt Claude Code's multi-layer compaction architecture | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58398.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58358](https://github.com/openclaw/openclaw/issues/58358) | [Bug]: OpenClaw mishandles message_stop for KimiCodingPlan Anthropic format (not present in v2026.3.1) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58358.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58488](https://github.com/openclaw/openclaw/issues/58488) | acpx: model forwarding to ACP agents uses Claude-specific _meta convention; breaks non-Claude harnesses (e.g. kilocode) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58488.md) | complete | Apr 25, 2026, 17:39 UTC |
-| [#58377](https://github.com/openclaw/openclaw/issues/58377) | cron: LiveSessionModelSwitchError treated as transient failure — triggers retry loop and Sonnet budget leak | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58377.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58443](https://github.com/openclaw/openclaw/issues/58443) | [Bug] Gateway duplicates inbound messages — same message injected multiple times into session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58443.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58452](https://github.com/openclaw/openclaw/issues/58452) | [Feature]: UI Improvement | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58452.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58407](https://github.com/openclaw/openclaw/issues/58407) | [Feature]: Inject parent channel pinned messages into Discord thread session context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58407.md) | complete | Apr 25, 2026, 17:39 UTC |
@@ -73,6 +68,11 @@ Recently reviewed:
 | [#58570](https://github.com/openclaw/openclaw/issues/58570) | Gateway should log warning when message is dropped due to allow: false | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58570.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58519](https://github.com/openclaw/openclaw/issues/58519) | Slack Socket Mode: event loop starvation causes pong timeouts and silent message loss | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58519.md) | complete | Apr 25, 2026, 17:39 UTC |
 | [#58411](https://github.com/openclaw/openclaw/issues/58411) | sessions_spawn lacks --bind here equivalent — agent cannot bind ACP session to existing Discord thread | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58411.md) | complete | Apr 25, 2026, 17:39 UTC |
+| [#58541](https://github.com/openclaw/openclaw/issues/58541) | Google Chat (G Suite Add-on) returns 401 Unauthorized — JWT verification failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58541.md) | complete | Apr 25, 2026, 17:39 UTC |
+| [#58481](https://github.com/openclaw/openclaw/issues/58481) | WhatsApp WebSocket drops on WSL2 — missing TCP keepalive on underlying socket | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58481.md) | complete | Apr 25, 2026, 17:39 UTC |
+| [#71664](https://github.com/openclaw/openclaw/issues/71664) | [Bug]: Block streaming: same-channel text blocks not delivered before tool execution on WhatsApp | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71664.md) | complete | Apr 25, 2026, 17:39 UTC |
+| [#58584](https://github.com/openclaw/openclaw/issues/58584) | Agent pre-flight check: verify model provider is reachable before scheduling cron jobs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58584.md) | complete | Apr 25, 2026, 17:39 UTC |
+| [#58351](https://github.com/openclaw/openclaw/issues/58351) | workspaceOnly: true blocks agent from reading skill files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58351.md) | complete | Apr 25, 2026, 17:39 UTC |
 
 ## How It Works
 
