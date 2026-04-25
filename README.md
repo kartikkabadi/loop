@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 07:05 UTC
+Last dashboard update: Apr 25, 2026, 07:12 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 07:05 UTC
+Updated: Apr 25, 2026, 07:12 UTC
 
 State: Apply in progress
 
-Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 56.
+Checkpoint 4 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 200/500. Result records in checkpoint: 78.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24924985336](https://github.com/openclaw/clawsweeper/actions/runs/24924985336)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8856 |
-| Fresh reviewed issues in the last 7 days | 8563 |
-| Proposed issue closes | 3194 (37.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6009 |
-| Fresh reviewed PRs in the last 7 days | 6258 |
-| Proposed PR closes | 1480 (23.6% of reviewed PRs) |
-| Open items total | 14865 |
-| Reviewed files | 14821 |
-| Archived closed files | 3617 |
-| Fresh verified reviews in the last 7 days | 14821 |
-| Proposed closes awaiting apply | 4674 (31.5% of fresh reviews) |
-| Closed by Codex apply | 2807 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8852 |
+| Fresh reviewed issues in the last 7 days | 8562 |
+| Proposed issue closes | 3193 (37.3% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5959 |
+| Fresh reviewed PRs in the last 7 days | 6181 |
+| Proposed PR closes | 1403 (22.7% of reviewed PRs) |
+| Open items total | 14811 |
+| Reviewed files | 14743 |
+| Archived closed files | 3695 |
+| Fresh verified reviews in the last 7 days | 14743 |
+| Proposed closes awaiting apply | 4596 (31.2% of fresh reviews) |
+| Closed by Codex apply | 2857 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 44 |
+| Todo for weekly coverage | 68 |
 
 Recently reviewed:
 
@@ -66,8 +66,8 @@ Recently reviewed:
 | [#41931](https://github.com/openclaw/openclaw/pull/41931) | fix(install.ps1): avoid exiting the host PowerShell session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41931.md) | complete | Apr 25, 2026, 06:58 UTC |
 | [#42007](https://github.com/openclaw/openclaw/pull/42007) | feat(feishu): add mentionTriggers support for text-based keyword triggers in groups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42007.md) | complete | Apr 25, 2026, 06:58 UTC |
 | [#41991](https://github.com/openclaw/openclaw/pull/41991) | fix(gemini-cli-auth): show detailed credential extraction failure reasons | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41991.md) | complete | Apr 25, 2026, 06:58 UTC |
-| [#42002](https://github.com/openclaw/openclaw/pull/42002) | fix(imessage): strip inline reply tags from outbound text | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42002.md) | complete | Apr 25, 2026, 06:58 UTC |
 | [#41882](https://github.com/openclaw/openclaw/pull/41882) | fix(discord): honor steer mode in inbound worker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41882.md) | complete | Apr 25, 2026, 06:58 UTC |
+| [#41957](https://github.com/openclaw/openclaw/pull/41957) | fix(auto-reply): split typing-timeout stability fix from #41883 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41957.md) | complete | Apr 25, 2026, 06:58 UTC |
 
 ## How It Works
 
