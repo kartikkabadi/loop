@@ -379,6 +379,10 @@ jobs:
       - name: Apply unchanged proposed decisions with checkpoints
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          CLAWSWEEPER_PUBLISH_THROTTLE_STATUS: "true"
+          CLAWSWEEPER_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CLAWSWEEPER_THROTTLE_STATUS_MIN_WAIT_MS: "60000"
+          CLAWSWEEPER_THROTTLE_STATUS_MIN_INTERVAL_MS: "120000"
         run: |
           limit="${{ github.event.inputs.apply_limit || '20' }}"
           min_age_days="${{ github.event.inputs.apply_min_age_days || '0' }}"
@@ -458,7 +462,7 @@ jobs:
             checkpoint=$((checkpoint + 1))
             echo "::group::Apply checkpoint $checkpoint"
             echo "Applying up to $chunk_limit fresh closes; $closed_total/$limit already closed in this run"
-            npm run apply-decisions -- \
+            CLAWSWEEPER_APPLY_CHECKPOINT="$checkpoint" npm run apply-decisions -- \
               --limit "$chunk_limit" \
               --min-age-days "$min_age_days" \
               --apply-kind "$apply_kind" \

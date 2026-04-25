@@ -296,6 +296,9 @@ function sleepMs(milliseconds: number): void {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
 }
 
+let lastThrottleHeartbeatAt = 0;
+let throttleHeartbeatContext: (() => string) | null = null;
+
 function shouldRetryGh(error: unknown): boolean {
   const output =
     typeof error === "object" && error !== null && "stderr" in error
@@ -309,6 +312,75 @@ function shouldRetryGh(error: unknown): boolean {
   );
 }
 
+function summarizeGhArgs(args: string[]): string {
+  if (args[0] === "api" && args[1]) return `gh api ${args[1]}`;
+  return `gh ${args.slice(0, 3).join(" ")}`;
+}
+
+function maybePublishThrottleHeartbeat(options: {
+  args: string[];
+  attempt: number;
+  attempts: number;
+  waitMs: number;
+}): void {
+  if (process.env.CLAWSWEEPER_PUBLISH_THROTTLE_STATUS !== "true") return;
+  const minWaitMs = Number(process.env.CLAWSWEEPER_THROTTLE_STATUS_MIN_WAIT_MS ?? 60_000);
+  if (options.waitMs < minWaitMs) return;
+  const minIntervalMs = Number(process.env.CLAWSWEEPER_THROTTLE_STATUS_MIN_INTERVAL_MS ?? 120_000);
+  const now = Date.now();
+  if (now - lastThrottleHeartbeatAt < minIntervalMs) return;
+  lastThrottleHeartbeatAt = now;
+
+  try {
+    const readmePath = join(ROOT, "README.md");
+    if (!existsSync(readmePath)) return;
+    const context = throttleHeartbeatContext?.();
+    const checkpoint = process.env.CLAWSWEEPER_APPLY_CHECKPOINT;
+    const checkpointText = checkpoint ? `Checkpoint ${checkpoint}. ` : "";
+    const detail = [
+      `${checkpointText}GitHub throttled while applying close decisions.`,
+      context,
+      `Last throttled command: \`${summarizeGhArgs(options.args)}\`.`,
+      `Retry ${options.attempt + 1}/${Math.max(1, options.attempts - 1)} in ${Math.round(options.waitMs / 1000)}s.`,
+    ]
+      .filter(Boolean)
+      .join(" ");
+    const statusOptions: {
+      state: string;
+      detail: string;
+      runUrl?: string;
+    } = {
+      state: "Apply throttled",
+      detail,
+    };
+    if (process.env.CLAWSWEEPER_RUN_URL) {
+      statusOptions.runUrl = process.env.CLAWSWEEPER_RUN_URL;
+    }
+    const block = workflowStatusBlock(statusOptions);
+    const readme = readFileSync(readmePath, "utf8");
+    const pattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
+    const updated = pattern.test(readme)
+      ? readme.replace(pattern, block)
+      : readme.replace(/Last dashboard update: .+/, `$&\n\n${block}`);
+    writeFileSync(readmePath, updated, "utf8");
+    run("git", ["add", "README.md"]);
+    const diff = spawnSync("git", ["diff", "--cached", "--quiet"], { cwd: ROOT });
+    if (diff.status === 0) return;
+    run("git", ["commit", "-m", "chore: update sweep apply throttle status"]);
+    try {
+      run("git", ["push"]);
+    } catch (error) {
+      console.error(
+        `Best-effort throttle status push failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  } catch (error) {
+    console.error(
+      `Best-effort throttle status update failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
 function ghWithRetry(args: string[], attempts = 12): string {
   let lastError: unknown;
   for (let attempt = 0; attempt < attempts; attempt += 1) {
@@ -319,6 +391,7 @@ function ghWithRetry(args: string[], attempts = 12): string {
       if (!shouldRetryGh(error) || attempt === attempts - 1) throw error;
       const waitMs = Math.min(600_000, 30_000 * 2 ** attempt);
       console.error(`GitHub throttled; retrying in ${Math.round(waitMs / 1000)}s`);
+      maybePublishThrottleHeartbeat({ args, attempt, attempts, waitMs });
       sleepMs(waitMs);
     }
   }
@@ -1867,6 +1940,8 @@ function applyDecisionsCommand(args: Args): void {
   const results: ApplyResult[] = [];
   let closedCount = 0;
   let processedCount = 0;
+  throttleHeartbeatContext = () =>
+    `Progress: ${closedCount}/${limit} fresh closes, ${processedCount}/${processedLimit} processed records in this apply chunk.`;
   const logProgress = (message: string): void => {
     const counts = results.reduce<Record<string, number>>((accumulator, result) => {
       accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
