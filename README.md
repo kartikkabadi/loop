@@ -14,17 +14,17 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 01:53 UTC
+Last dashboard update: Apr 25, 2026, 01:55 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 01:53 UTC
+Updated: Apr 25, 2026, 01:55 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24919738747](https://github.com/openclaw/clawsweeper/actions/runs/24919738747)
+Starting apply run for up to 500 fresh issue closes. Checkpoints commit every 50 fresh closes; close delay is 15000ms.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24919812480](https://github.com/openclaw/clawsweeper/actions/runs/24919812480)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
