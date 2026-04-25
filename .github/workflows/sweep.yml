@@ -465,6 +465,15 @@ jobs:
             --detail "Apply run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           publish_readme_status "chore: mark sweep apply finished"
+          {
+            echo "APPLY_CLOSED_TOTAL=$closed_total"
+            echo "APPLY_LIMIT=$limit"
+            echo "APPLY_MIN_AGE_DAYS=$min_age_days"
+            echo "APPLY_KIND=$apply_kind"
+            echo "APPLY_CLOSE_DELAY_MS=$close_delay_ms"
+            echo "APPLY_PROGRESS_EVERY=$progress_every"
+            echo "APPLY_CHECKPOINT_SIZE=$checkpoint_size"
+          } >> "$GITHUB_ENV"
 
       - name: Commit apply results
         run: |
@@ -483,3 +492,24 @@ jobs:
             done
             git push
           fi
+
+      - name: Continue apply sweep
+        if: ${{ success() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${APPLY_CLOSED_TOTAL:-0}" -lt "${APPLY_LIMIT:-0}" ]; then
+            echo "Apply closed ${APPLY_CLOSED_TOTAL:-0}/${APPLY_LIMIT:-0}; not queueing another apply run."
+            exit 0
+          fi
+
+          echo "Apply reached requested limit; queueing another apply run."
+          gh workflow run "Sweep OpenClaw Items" \
+            --ref main \
+            -f apply_existing=true \
+            -f apply_limit="$APPLY_LIMIT" \
+            -f apply_min_age_days="$APPLY_MIN_AGE_DAYS" \
+            -f apply_kind="$APPLY_KIND" \
+            -f apply_close_delay_ms="$APPLY_CLOSE_DELAY_MS" \
+            -f apply_progress_every="$APPLY_PROGRESS_EVERY" \
+            -f apply_checkpoint_size="$APPLY_CHECKPOINT_SIZE"
