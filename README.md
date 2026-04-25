@@ -14,65 +14,65 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 12:42 UTC
+Last dashboard update: Apr 25, 2026, 12:47 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 12:42 UTC
+Updated: Apr 25, 2026, 12:47 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 51.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24930782854](https://github.com/openclaw/clawsweeper/actions/runs/24930782854)
+Merged review artifacts for run 24930982848. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24930982848](https://github.com/openclaw/clawsweeper/actions/runs/24930982848)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7742 |
-| Fresh reviewed issues in the last 7 days | 7702 |
-| Proposed issue closes | 2136 (27.7% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4888 |
-| Fresh reviewed PRs in the last 7 days | 4808 |
-| Proposed PR closes | 428 (8.9% of reviewed PRs) |
-| Open items total | 12630 |
-| Reviewed files | 12532 |
-| Unreviewed open items | 98 |
-| Archived closed files | 6596 |
-| Fresh verified reviews in the last 7 days | 12510 |
-| Proposed closes awaiting apply | 2564 (20.5% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7699 |
+| Fresh reviewed issues in the last 7 days | 7658 |
+| Proposed issue closes | 2096 (27.4% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4880 |
+| Fresh reviewed PRs in the last 7 days | 4812 |
+| Proposed PR closes | 441 (9.2% of reviewed PRs) |
+| Open items total | 12579 |
+| Reviewed files | 12494 |
+| Unreviewed open items | 85 |
+| Archived closed files | 6640 |
+| Fresh verified reviews in the last 7 days | 12470 |
+| Proposed closes awaiting apply | 2537 (20.3% of fresh reviews) |
 | Closed by Codex apply | 4757 |
-| Failed or stale reviews | 22 |
-| Daily cadence coverage | 9452/9759 current (307 due, 96.9%) |
-| Daily PR cadence | 4523/4814 current (291 due, 94%) |
-| Daily new issue cadence (<30d) | 4929/4945 current (16 due, 99.7%) |
-| Weekly older issue cadence | 2773/2773 current (0 due, 100%) |
-| Due now by cadence | 405 |
+| Failed or stale reviews | 24 |
+| Daily cadence coverage | 9578/9722 current (144 due, 98.5%) |
+| Daily PR cadence | 4692/4815 current (123 due, 97.4%) |
+| Daily new issue cadence (<30d) | 4886/4907 current (21 due, 99.6%) |
+| Weekly older issue cadence | 2772/2772 current (0 due, 100%) |
+| Due now by cadence | 229 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#50515](https://github.com/openclaw/openclaw/pull/50515) | security: sanitize control characters in channel error logging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50515.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50267](https://github.com/openclaw/openclaw/pull/50267) | fix: add provider attribution headers to image tool for OpenRouter free tier | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50267.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#71555](https://github.com/openclaw/openclaw/issues/71555) | [Bug]: Large session JSONL can crash gateway during embedded context rebuild; SessionManager.open() loads file twice | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71555.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50276](https://github.com/openclaw/openclaw/pull/50276) | fix(slack): support [[reply_to_current]] thread replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50276.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50381](https://github.com/openclaw/openclaw/pull/50381) | CLI: add LLM log source with pretty trace output | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50381.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#71556](https://github.com/openclaw/openclaw/issues/71556) | [Bug]: zai provider: thinking/reasoning parameter never sent to API — affects all endpoints | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71556.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50338](https://github.com/openclaw/openclaw/pull/50338) | fix(telegram): preserve default replyToId when replyToMode is all | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50338.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50522](https://github.com/openclaw/openclaw/pull/50522) | fix(discord): only include ThreadStarterBody for new sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50522.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50463](https://github.com/openclaw/openclaw/pull/50463) | fix(agents): hint when unknown tools are skills | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50463.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50516](https://github.com/openclaw/openclaw/pull/50516) | security: use crypto.timingSafeEqual for Nextcloud Talk webhook signatures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50516.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#71546](https://github.com/openclaw/openclaw/issues/71546) | Discord ingest lag of 100–400 s on stable connection persists after PR #68159 / 2026.4.1 reconnect-ownership change | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71546.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#71551](https://github.com/openclaw/openclaw/issues/71551) | [Bug]: Custom avatar image returns 401 Unauthorized in Control UI after v2026.4.23 update | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71551.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50357](https://github.com/openclaw/openclaw/pull/50357) | docs(feishu): clarify feishu_doc create action does not support content parameter | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50357.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50429](https://github.com/openclaw/openclaw/pull/50429) | fix(feishu): fall back to plain text when card delivery fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50429.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50425](https://github.com/openclaw/openclaw/pull/50425) | fix: strip reasoning blocks from sessions_history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50425.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50507](https://github.com/openclaw/openclaw/pull/50507) | feat(whatsapp): support native location messages via message tool | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50507.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50359](https://github.com/openclaw/openclaw/pull/50359) | Fix embedded read-image media fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50359.md) | complete | Apr 25, 2026, 11:42 UTC |
-| [#50278](https://github.com/openclaw/openclaw/pull/50278) | fix: exclude Markdown image syntax from bash bang detection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50278.md) | complete | Apr 25, 2026, 11:41 UTC |
-| [#50483](https://github.com/openclaw/openclaw/pull/50483) | fix(ios): stabilize chat streaming layout and session flow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50483.md) | complete | Apr 25, 2026, 11:41 UTC |
-| [#50394](https://github.com/openclaw/openclaw/pull/50394) | fix(feishu): stop treating @all as a direct bot mention in group chats | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50394.md) | complete | Apr 25, 2026, 11:41 UTC |
+| [#51858](https://github.com/openclaw/openclaw/pull/51858) | Modified sentence on codex reviews in CONTRIBUTING.md | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51858.md) | complete | Apr 25, 2026, 12:45 UTC |
+| [#51548](https://github.com/openclaw/openclaw/pull/51548) | test(config): add regression test for telegram topic agentId (#50574) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51548.md) | complete | Apr 25, 2026, 12:45 UTC |
+| [#51673](https://github.com/openclaw/openclaw/pull/51673) | fix(core): preserve totalTokens on zero usage reports (Consolidated v2) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51673.md) | complete | Apr 25, 2026, 12:45 UTC |
+| [#51556](https://github.com/openclaw/openclaw/pull/51556) | fix(pairing): propagate non-ENOENT errors in sync allowlist reader | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51556.md) | complete | Apr 25, 2026, 12:45 UTC |
+| [#51546](https://github.com/openclaw/openclaw/pull/51546) | UI: add progressive disclosure for long markdown messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51546.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51701](https://github.com/openclaw/openclaw/pull/51701) | fix(agents): avoid stale CLI session resume after /new | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51701.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51471](https://github.com/openclaw/openclaw/pull/51471) | Refresh skill prompts inside sandbox workspaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51471.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51581](https://github.com/openclaw/openclaw/pull/51581) | feat(cron): add --thread-id flag to cron create/edit for Telegram forum topics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51581.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51448](https://github.com/openclaw/openclaw/pull/51448) | fix(agent): forward configured tool choice into stream params | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51448.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51547](https://github.com/openclaw/openclaw/pull/51547) | fix(exec): default to GBK encoding on Windows (#50519) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51547.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51623](https://github.com/openclaw/openclaw/pull/51623) | fix: persist pending followup queues across gateway restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51623.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51603](https://github.com/openclaw/openclaw/pull/51603) | feat(config): add llm shorthand config key for custom model providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51603.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51668](https://github.com/openclaw/openclaw/pull/51668) | feat(outbound): gateway-layer secret sanitization with named reference handles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51668.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51584](https://github.com/openclaw/openclaw/pull/51584) | fix(sandbox): fall back to static channel registry for sandbox explain channel resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51584.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51653](https://github.com/openclaw/openclaw/pull/51653) | fix(outbound): strip inbound metadata in normalizeReplyPayloadsForDelivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51653.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51513](https://github.com/openclaw/openclaw/pull/51513) | docs(channels): add connection architecture overview and transport notes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51513.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51339](https://github.com/openclaw/openclaw/pull/51339) | fix(gateway): block mode=none auth with tailscale serve remote exposure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51339.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51166](https://github.com/openclaw/openclaw/pull/51166) | fix(sandbox): pull pre-built image from GHCR instead of plain debian:bookworm-slim | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51166.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51706](https://github.com/openclaw/openclaw/pull/51706) | Agents: show runtime model in session status | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51706.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51672](https://github.com/openclaw/openclaw/pull/51672) | ci: add missing extension and channel labels to labeler.yml | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51672.md) | complete | Apr 25, 2026, 12:44 UTC |
 
 ## How It Works
 
