@@ -14,40 +14,40 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 11:19 UTC
+Last dashboard update: Apr 25, 2026, 11:21 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 11:19 UTC
+Updated: Apr 25, 2026, 11:21 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply run finished with 500 fresh closes out of requested limit 500. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24928065717](https://github.com/openclaw/clawsweeper/actions/runs/24928065717)
+Starting apply run for up to 500 fresh all closes. Checkpoints commit every 50 fresh closes; close delay is 5000ms.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24929701589](https://github.com/openclaw/clawsweeper/actions/runs/24929701589)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8294 |
-| Fresh reviewed issues in the last 7 days | 8288 |
-| Proposed issue closes | 2700 (32.6% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8292 |
+| Fresh reviewed issues in the last 7 days | 8281 |
+| Proposed issue closes | 2696 (32.6% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5020 |
-| Fresh reviewed PRs in the last 7 days | 4961 |
-| Proposed PR closes | 544 (11% of reviewed PRs) |
-| Open items total | 13314 |
-| Reviewed files | 13249 |
-| Unreviewed open items | 65 |
-| Archived closed files | 5866 |
-| Fresh verified reviews in the last 7 days | 13249 |
-| Proposed closes awaiting apply | 3244 (24.5% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 4950 |
+| Proposed PR closes | 543 (11% of reviewed PRs) |
+| Open items total | 13312 |
+| Reviewed files | 13231 |
+| Unreviewed open items | 81 |
+| Archived closed files | 5884 |
+| Fresh verified reviews in the last 7 days | 13231 |
+| Proposed closes awaiting apply | 3239 (24.5% of fresh reviews) |
 | Closed by Codex apply | 4107 |
 | Failed or stale reviews | 0 |
-| Daily cadence coverage | 10336/10477 current (141 due, 98.7%) |
-| Daily PR cadence | 4820/4961 current (141 due, 97.2%) |
-| Daily new issue cadence (<30d) | 5516/5516 current (0 due, 100%) |
+| Daily cadence coverage | 10311/10459 current (148 due, 98.6%) |
+| Daily PR cadence | 4802/4950 current (148 due, 97%) |
+| Daily new issue cadence (<30d) | 5509/5509 current (0 due, 100%) |
 | Weekly older issue cadence | 2772/2772 current (0 due, 100%) |
-| Due now by cadence | 206 |
+| Due now by cadence | 229 |
 
 Recently reviewed:
 
@@ -61,7 +61,6 @@ Recently reviewed:
 | [#71525](https://github.com/openclaw/openclaw/issues/71525) | Telegram channel: messages truncated mid-word when default \"partial\" streaming finaliser doesn't fire | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71525.md) | complete | Apr 25, 2026, 10:55 UTC |
 | [#71532](https://github.com/openclaw/openclaw/issues/71532) | WebChat: Drag-and-drop file upload not received by agent | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71532.md) | complete | Apr 25, 2026, 10:55 UTC |
 | [#66368](https://github.com/openclaw/openclaw/issues/66368) | CLI commands hang on first invocation (qclaw-plugin synchronous initialization blocks Gateway) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66368.md) | complete | Apr 25, 2026, 10:55 UTC |
-| [#71526](https://github.com/openclaw/openclaw/issues/71526) | [Bug]: Azure gpt-image-2 deployment works in SDK/UI but OpenClaw image_generate returns model does not exist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71526.md) | complete | Apr 25, 2026, 10:55 UTC |
 | [#71531](https://github.com/openclaw/openclaw/issues/71531) | RFE: expose Slack channel log level via openclaw.json (e.g., channels.slack.logLevel) so operators can suppress designed-and-benign socket-mode noise | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71531.md) | complete | Apr 25, 2026, 10:55 UTC |
 | [#65428](https://github.com/openclaw/openclaw/issues/65428) | [Bug]: resolveCliAuthEpoch() in cli-runner-DYmrT_Nx.js hashes accessToken + refreshToken + expiresAt from ~/.claude/.credentials.json | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65428.md) | complete | Apr 25, 2026, 10:55 UTC |
 | [#71533](https://github.com/openclaw/openclaw/issues/71533) | RFE: expose WhatsApp/Baileys channel log level via openclaw.json (e.g., channels.whatsapp.logLevel) to suppress designed-and-benign reconnect lifecycle logs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71533.md) | complete | Apr 25, 2026, 10:55 UTC |
@@ -73,6 +72,7 @@ Recently reviewed:
 | [#64585](https://github.com/openclaw/openclaw/issues/64585) | Auto-recover stuck gateway sessions after restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64585.md) | complete | Apr 25, 2026, 10:54 UTC |
 | [#49198](https://github.com/openclaw/openclaw/pull/49198) | Fix/dist-runtime skill copy instead of symlink | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49198.md) | complete | Apr 25, 2026, 10:54 UTC |
 | [#49333](https://github.com/openclaw/openclaw/pull/49333) | Add OpenClaw audit and contribution planning docs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49333.md) | complete | Apr 25, 2026, 10:54 UTC |
+| [#62562](https://github.com/openclaw/openclaw/issues/62562) | sessions_spawn returns modelApplied:true while running stale resumed model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62562.md) | complete | Apr 25, 2026, 10:54 UTC |
 
 ## How It Works
 
