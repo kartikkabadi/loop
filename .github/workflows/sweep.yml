@@ -27,6 +27,10 @@ on:
         description: "Delay after each close/comment pair to avoid GitHub secondary write throttling"
         required: false
         default: "15000"
+      apply_progress_every:
+        description: "Log apply progress every N processed records, plus every close"
+        required: false
+        default: "10"
       batch_size:
         description: "Items per worker job"
         required: false
@@ -313,11 +317,13 @@ jobs:
           min_age_days="${{ github.event.inputs.apply_min_age_days || '0' }}"
           apply_kind="${{ github.event.inputs.apply_kind || 'issue' }}"
           close_delay_ms="${{ github.event.inputs.apply_close_delay_ms || '15000' }}"
+          progress_every="${{ github.event.inputs.apply_progress_every || '10' }}"
           npm run apply-decisions -- \
             --limit "$limit" \
             --min-age-days "$min_age_days" \
             --apply-kind "$apply_kind" \
             --close-delay-ms "$close_delay_ms" \
+            --progress-every "$progress_every" \
             --processed-limit "$((limit * 10))"
 
       - name: Commit apply results

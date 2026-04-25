@@ -1652,10 +1652,28 @@ function applyDecisionsCommand(args: Args): void {
   const minAgeDays = numberArg(args.min_age_days, 0);
   const applyKind = applyKindArg(args.apply_kind);
   const closeDelayMs = numberArg(args.close_delay_ms, 15_000);
+  const progressEvery = Math.max(1, numberArg(args.progress_every, 10));
   const skipDashboard = boolArg(args.skip_dashboard);
   const results: ApplyResult[] = [];
   let closedCount = 0;
   let processedCount = 0;
+  const logProgress = (message: string): void => {
+    const counts = results.reduce<Record<string, number>>((accumulator, result) => {
+      accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
+      return accumulator;
+    }, {});
+    console.error(
+      [
+        `[apply] ${new Date().toISOString()} ${message}`,
+        `closed=${closedCount}/${limit}`,
+        `processed=${processedCount}/${processedLimit}`,
+        `counts=${JSON.stringify(counts)}`,
+      ].join(" "),
+    );
+  };
+  const maybeLogProgress = (message: string): void => {
+    if (processedCount % progressEvery === 0) logProgress(message);
+  };
   if (!existsSync(itemsDir)) {
     console.log("No items directory.");
     return;
@@ -1663,6 +1681,9 @@ function applyDecisionsCommand(args: Args): void {
   const files = readdirSync(itemsDir)
     .filter((name) => /^\d+\.md$/.test(name))
     .sort((left, right) => Number(left.replace(".md", "")) - Number(right.replace(".md", "")));
+  logProgress(
+    `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs}`,
+  );
   for (const file of files) {
     const path = join(itemsDir, file);
     let markdown = readFileSync(path, "utf8");
@@ -1705,6 +1726,7 @@ function applyDecisionsCommand(args: Args): void {
         reason: `type is ${storedKind}; apply kind is ${applyKind}`,
       });
       processedCount += 1;
+      maybeLogProgress(`skipped #${number}: type is ${storedKind}`);
       if (processedCount >= processedLimit) break;
       continue;
     }
@@ -1721,6 +1743,7 @@ function applyDecisionsCommand(args: Args): void {
         reason: `type is ${item.kind}; apply kind is ${applyKind}`,
       });
       processedCount += 1;
+      maybeLogProgress(`skipped #${number}: type is ${item.kind}`);
       if (processedCount >= processedLimit) break;
       continue;
     }
@@ -1731,6 +1754,7 @@ function applyDecisionsCommand(args: Args): void {
         reason: `created less than or equal to ${minAgeDays} days ago`,
       });
       processedCount += 1;
+      maybeLogProgress(`skipped #${number}: too new`);
       if (processedCount >= processedLimit) break;
       continue;
     }
@@ -1753,6 +1777,7 @@ function applyDecisionsCommand(args: Args): void {
         reason: `author association is ${authorAssociation}`,
       });
       processedCount += 1;
+      maybeLogProgress(`skipped #${number}: maintainer authored`);
       if (processedCount >= processedLimit) break;
       continue;
     }
@@ -1767,6 +1792,7 @@ function applyDecisionsCommand(args: Args): void {
       archiveClosed(markdown);
       results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
       processedCount += 1;
+      maybeLogProgress(`archived #${number}: already ${state}`);
       if (processedCount >= processedLimit) break;
       continue;
     }
@@ -1782,6 +1808,7 @@ function applyDecisionsCommand(args: Args): void {
         reason: "updated_at changed",
       });
       processedCount += 1;
+      maybeLogProgress(`skipped #${number}: changed since review`);
       if (processedCount >= processedLimit) break;
       continue;
     }
@@ -1803,10 +1830,12 @@ function applyDecisionsCommand(args: Args): void {
           reason: "snapshot changed",
         });
         processedCount += 1;
+        maybeLogProgress(`skipped #${number}: snapshot changed`);
         if (processedCount >= processedLimit) break;
         continue;
       }
     }
+    logProgress(`closing #${number}`);
     postClose({ number, kind: item.kind, reason: closeReason, closeComment });
     sleepMs(closeDelayMs);
     markdown = replaceSectionValue(markdown, "Close Comment", closeComment);
@@ -1817,10 +1846,12 @@ function applyDecisionsCommand(args: Args): void {
     closedCount += 1;
     processedCount += 1;
     results.push({ number, action: "closed", reason: closeReasonText(closeReason) });
+    logProgress(`closed #${number}`);
     if (processedCount >= processedLimit) break;
   }
   writeFileSync(join(ROOT, "apply-report.json"), JSON.stringify(results, null, 2), "utf8");
   if (!skipDashboard) updateDashboard(itemsDir, closedDir);
+  logProgress("finished apply");
   console.log(JSON.stringify(results, null, 2));
 }
 
