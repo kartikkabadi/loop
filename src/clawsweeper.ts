@@ -1707,7 +1707,7 @@ function closeReviewLineFromDecision(decision: Decision, git: GitInfo): string {
   const fixed = fixedInText(decision);
   const parts = [`reviewed against ${linkedSha(git.mainSha)}`];
   if (fixed !== "not determined") parts.push(`fix evidence: ${fixed}`);
-  return `Review notes: ${parts.join("; ")}.`;
+  return `Codex Review notes: ${parts.join("; ")}.`;
 }
 
 function closeReviewLineFromReport(markdown: string): string {
@@ -1716,7 +1716,7 @@ function closeReviewLineFromReport(markdown: string): string {
   const parts: string[] = [];
   if (mainSha && mainSha !== "unknown") parts.push(`reviewed against ${linkedSha(mainSha)}`);
   if (fixed !== "not determined") parts.push(`fix evidence: ${fixed}`);
-  return parts.length ? `Review notes: ${parts.join("; ")}.` : "";
+  return parts.length ? `Codex Review notes: ${parts.join("; ")}.` : "";
 }
 
 function renderCloseComment(options: {
