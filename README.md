@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 03:06 UTC
+Last dashboard update: Apr 25, 2026, 03:12 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 03:06 UTC
+Updated: Apr 25, 2026, 03:12 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24921087124](https://github.com/openclaw/clawsweeper/actions/runs/24921087124)
+Checkpoint 5 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 250/500. Result records in checkpoint: 50.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920206705](https://github.com/openclaw/clawsweeper/actions/runs/24920206705)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10165 |
-| Fresh reviewed issues in the last 7 days | 8592 |
-| Proposed issue closes | 3786 (44.1% of reviewed issues) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10138 |
+| Fresh reviewed issues in the last 7 days | 8542 |
+| Proposed issue closes | 3736 (43.7% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6337 |
 | Fresh reviewed PRs in the last 7 days | 5294 |
 | Proposed PR closes | 1429 (27% of reviewed PRs) |
-| Open items total | 16502 |
-| Reviewed files | 13886 |
-| Archived closed files | 2341 |
-| Fresh verified reviews in the last 7 days | 13886 |
-| Proposed closes awaiting apply | 5215 (37.6% of fresh reviews) |
-| Closed by Codex apply | 1583 |
+| Open items total | 16475 |
+| Reviewed files | 13836 |
+| Archived closed files | 2391 |
+| Fresh verified reviews in the last 7 days | 13836 |
+| Proposed closes awaiting apply | 5165 (37.3% of fresh reviews) |
+| Closed by Codex apply | 1633 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 2616 |
+| Todo for weekly coverage | 2639 |
 
 Recently reviewed:
 
