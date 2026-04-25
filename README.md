@@ -14,47 +14,46 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 12:48 UTC
+Last dashboard update: Apr 25, 2026, 12:51 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 12:48 UTC
+Updated: Apr 25, 2026, 12:51 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 127 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24931256467](https://github.com/openclaw/clawsweeper/actions/runs/24931256467)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7696 |
-| Fresh reviewed issues in the last 7 days | 7652 |
-| Proposed issue closes | 2089 (27.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4879 |
-| Fresh reviewed PRs in the last 7 days | 4810 |
-| Proposed PR closes | 438 (9.1% of reviewed PRs) |
-| Open items total | 12575 |
-| Reviewed files | 12486 |
-| Unreviewed open items | 89 |
-| Archived closed files | 6648 |
-| Fresh verified reviews in the last 7 days | 12462 |
-| Proposed closes awaiting apply | 2527 (20.3% of fresh reviews) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7688 |
+| Fresh reviewed issues in the last 7 days | 7644 |
+| Proposed issue closes | 2086 (27.3% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4863 |
+| Fresh reviewed PRs in the last 7 days | 4791 |
+| Proposed PR closes | 421 (8.8% of reviewed PRs) |
+| Open items total | 12551 |
+| Reviewed files | 12467 |
+| Unreviewed open items | 84 |
+| Archived closed files | 6667 |
+| Fresh verified reviews in the last 7 days | 12435 |
+| Proposed closes awaiting apply | 2507 (20.2% of fresh reviews) |
 | Closed by Codex apply | 4807 |
-| Failed or stale reviews | 24 |
-| Daily cadence coverage | 9568/9714 current (146 due, 98.5%) |
-| Daily PR cadence | 4688/4813 current (125 due, 97.4%) |
-| Daily new issue cadence (<30d) | 4880/4901 current (21 due, 99.6%) |
-| Weekly older issue cadence | 2772/2772 current (0 due, 100%) |
-| Due now by cadence | 235 |
+| Failed or stale reviews | 32 |
+| Daily cadence coverage | 9530/9698 current (168 due, 98.3%) |
+| Daily PR cadence | 4654/4797 current (143 due, 97%) |
+| Daily new issue cadence (<30d) | 4876/4901 current (25 due, 99.5%) |
+| Weekly older issue cadence | 2768/2769 current (1 due, 100%) |
+| Due now by cadence | 253 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
 | [#51858](https://github.com/openclaw/openclaw/pull/51858) | Modified sentence on codex reviews in CONTRIBUTING.md | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51858.md) | complete | Apr 25, 2026, 12:45 UTC |
-| [#51548](https://github.com/openclaw/openclaw/pull/51548) | test(config): add regression test for telegram topic agentId (#50574) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/51548.md) | complete | Apr 25, 2026, 12:45 UTC |
 | [#51673](https://github.com/openclaw/openclaw/pull/51673) | fix(core): preserve totalTokens on zero usage reports (Consolidated v2) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51673.md) | complete | Apr 25, 2026, 12:45 UTC |
 | [#51556](https://github.com/openclaw/openclaw/pull/51556) | fix(pairing): propagate non-ENOENT errors in sync allowlist reader | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51556.md) | complete | Apr 25, 2026, 12:45 UTC |
 | [#51546](https://github.com/openclaw/openclaw/pull/51546) | UI: add progressive disclosure for long markdown messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51546.md) | complete | Apr 25, 2026, 12:44 UTC |
@@ -73,6 +72,7 @@ Recently reviewed:
 | [#51166](https://github.com/openclaw/openclaw/pull/51166) | fix(sandbox): pull pre-built image from GHCR instead of plain debian:bookworm-slim | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51166.md) | complete | Apr 25, 2026, 12:44 UTC |
 | [#51706](https://github.com/openclaw/openclaw/pull/51706) | Agents: show runtime model in session status | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51706.md) | complete | Apr 25, 2026, 12:44 UTC |
 | [#51672](https://github.com/openclaw/openclaw/pull/51672) | ci: add missing extension and channel labels to labeler.yml | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51672.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#51515](https://github.com/openclaw/openclaw/pull/51515) | fix(health): bound gateway health snapshots and normalize legacy cron | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51515.md) | complete | Apr 25, 2026, 12:44 UTC |
 
 ## How It Works
 
