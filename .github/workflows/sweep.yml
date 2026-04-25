@@ -426,16 +426,7 @@ jobs:
               --progress-every "$progress_every" \
               --processed-limit "$((chunk_limit * 20))"
             cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
-            node - <<'NODE'
-            const fs = require("node:fs");
-            const path = require("node:path");
-            const dir = ".artifacts/apply-reports";
-            const files = fs.readdirSync(dir)
-              .filter((name) => /^apply-report-\d+\.json$/.test(name))
-              .sort((left, right) => Number(left.match(/\d+/)[0]) - Number(right.match(/\d+/)[0]));
-            const combined = files.flatMap((file) => JSON.parse(fs.readFileSync(path.join(dir, file), "utf8")));
-            fs.writeFileSync("apply-report.json", `${JSON.stringify(combined, null, 2)}\n`);
-            NODE
+            node -e 'const fs=require("node:fs"); const path=require("node:path"); const dir=".artifacts/apply-reports"; const files=fs.readdirSync(dir).filter((name)=>/^apply-report-\d+\.json$/.test(name)).sort((left,right)=>Number(left.match(/\d+/)[0])-Number(right.match(/\d+/)[0])); const combined=files.flatMap((file)=>JSON.parse(fs.readFileSync(path.join(dir,file),"utf8"))); fs.writeFileSync("apply-report.json", `${JSON.stringify(combined,null,2)}\n`);'
             closed_in_chunk="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.filter((x)=>x.action==="closed").length)' "$checkpoint")"
             result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
             closed_total=$((closed_total + closed_in_chunk))
