@@ -21,6 +21,7 @@ type CloseReason =
   | "implemented_on_main"
   | "cannot_reproduce"
   | "clawhub"
+  | "duplicate_or_superseded"
   | "incoherent"
   | "stale_insufficient_info"
   | "none";
@@ -118,6 +119,7 @@ interface ItemContext {
   issue: unknown;
   comments: unknown[];
   timeline: unknown[];
+  relatedItems?: unknown[];
   pullRequest?: unknown;
   pullFiles?: unknown[];
   pullCommits?: unknown[];
@@ -125,6 +127,7 @@ interface ItemContext {
   counts?: {
     comments: number;
     timeline: number;
+    relatedItems?: number;
     pullFiles?: number;
     pullCommits?: number;
     pullReviewComments?: number;
@@ -228,12 +231,13 @@ const STATUS_END = "<!-- clawsweeper-status:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "medium";
 const DEFAULT_SERVICE_TIER = "fast";
-const REVIEW_POLICY_VERSION = "2026-04-25-policy-v2";
+const REVIEW_POLICY_VERSION = "2026-04-25-policy-v3";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
   "cannot_reproduce",
   "clawhub",
+  "duplicate_or_superseded",
   "incoherent",
   "stale_insufficient_info",
 ]);
@@ -476,6 +480,7 @@ function itemSnapshotHash(item: Item, context: ItemContext): string {
 function reviewPolicyHash(options: {
   model?: string;
   reasoningEffort?: string;
+  sandboxMode?: string;
   serviceTier?: string;
 }): string {
   return sha256(
@@ -484,6 +489,7 @@ function reviewPolicyHash(options: {
       freshDays: FRESH_DAYS,
       model: options.model ?? DEFAULT_CODEX_MODEL,
       reasoningEffort: options.reasoningEffort ?? DEFAULT_REASONING_EFFORT,
+      sandboxMode: options.sandboxMode ?? "read-only",
       serviceTier: options.serviceTier ?? DEFAULT_SERVICE_TIER,
       prompt: readFileSync(join(ROOT, "prompts", "review-item.md"), "utf8"),
       schema: readFileSync(join(ROOT, "schema", "clawsweeper-decision.schema.json"), "utf8"),
@@ -662,7 +668,9 @@ function compactIssue(value: unknown): unknown {
     state: issue.state,
     url: issue.html_url,
     author: login(issue.user),
+    authorAssociation: normalizeAuthorAssociation(issue.author_association),
     labels: labelNames(issue.labels),
+    comments: issue.comments,
     createdAt: issue.created_at,
     updatedAt: issue.updated_at,
     closedAt: issue.closed_at,
@@ -675,6 +683,7 @@ function compactComment(value: unknown): unknown {
   return {
     id: comment.id,
     author: login(comment.user),
+    url: comment.html_url,
     createdAt: comment.created_at,
     updatedAt: comment.updated_at,
     body: truncateText(comment.body, 6000),
@@ -714,6 +723,7 @@ function compactPullRequest(value: unknown): unknown {
     state: pull.state,
     draft: pull.draft,
     merged: pull.merged,
+    mergedAt: pull.merged_at,
     mergeable: pull.mergeable,
     author: login(pull.user),
     head: {
@@ -731,6 +741,101 @@ function compactPullRequest(value: unknown): unknown {
     updatedAt: pull.updated_at,
     body: truncateText(pull.body, 12000),
   };
+}
+
+function collectRelatedMentions(options: {
+  item: Item;
+  issue: unknown;
+  comments: unknown[];
+  timeline: unknown[];
+  pullRequest?: unknown;
+  pullReviewComments?: unknown[];
+}): Map<number, string[]> {
+  const mentions = new Map<number, string[]>();
+  const add = (number: number, source: string): void => {
+    if (!Number.isInteger(number) || number <= 0 || number === options.item.number) return;
+    const current = mentions.get(number) ?? [];
+    if (!current.includes(source)) current.push(source);
+    mentions.set(number, current);
+  };
+  const scanText = (value: unknown, source: string): void => {
+    if (typeof value !== "string" || !value.trim()) return;
+    const linked = value.matchAll(
+      /github\.com\/openclaw\/openclaw\/(?:issues|pull)\/(\d+)|(?<![\w/])#(\d+)\b/g,
+    );
+    for (const match of linked) add(Number(match[1] ?? match[2]), source);
+  };
+
+  const issue = asRecord(options.issue);
+  scanText(issue.body, "item body");
+
+  options.comments.forEach((comment, index) => {
+    scanText(asRecord(comment).body, `comment ${index + 1}`);
+  });
+
+  options.pullReviewComments?.forEach((comment, index) => {
+    scanText(asRecord(comment).body, `pull review comment ${index + 1}`);
+  });
+
+  if (options.pullRequest) {
+    scanText(asRecord(options.pullRequest).body, "pull request body");
+  }
+
+  options.timeline.forEach((event, index) => {
+    const record = asRecord(event);
+    scanText(record.body, `timeline ${index + 1}`);
+    const sourceIssue = asRecord(asRecord(record.source).issue);
+    const number = sourceIssue.number;
+    if (typeof number === "number") add(number, `timeline ${index + 1} source issue`);
+  });
+
+  return mentions;
+}
+
+function compactRelatedItem(number: number, mentionedIn: string[]): unknown | null {
+  try {
+    const issue = ghJson<unknown>(["api", `repos/${TARGET_REPO}/issues/${number}`]);
+    const issueRecord = asRecord(issue);
+    const related: Record<string, unknown> = {
+      mentionedIn: mentionedIn.slice(0, 6),
+      issue: compactIssue(issue),
+      commentCount: issueRecord.comments,
+    };
+
+    if (issueRecord.pull_request) {
+      try {
+        related.pullRequest = compactPullRequest(
+          ghJson<unknown>(["api", `repos/${TARGET_REPO}/pulls/${number}`]),
+        );
+      } catch (error) {
+        related.pullRequestError = error instanceof Error ? error.message : String(error);
+      }
+    }
+
+    return related;
+  } catch (error) {
+    return {
+      number,
+      mentionedIn: mentionedIn.slice(0, 6),
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+function relatedItemsContext(options: {
+  item: Item;
+  issue: unknown;
+  comments: unknown[];
+  timeline: unknown[];
+  pullRequest?: unknown;
+  pullReviewComments?: unknown[];
+}): unknown[] {
+  const mentions = collectRelatedMentions(options);
+  return [...mentions.entries()]
+    .sort(([left], [right]) => left - right)
+    .slice(0, 10)
+    .map(([number, mentionedIn]) => compactRelatedItem(number, mentionedIn))
+    .filter((entry) => entry !== null);
 }
 
 function compactPullFile(value: unknown): unknown {
@@ -1157,13 +1262,13 @@ function collectItemContext(item: Item): ItemContext {
       timeline: timeline.length,
     },
   };
+  let pullRequest: unknown | undefined;
+  let pullReviewComments: unknown[] | undefined;
   if (item.kind === "pull_request") {
-    const pullRequest = ghJson<unknown>(["api", `repos/${TARGET_REPO}/pulls/${item.number}`]);
+    pullRequest = ghJson<unknown>(["api", `repos/${TARGET_REPO}/pulls/${item.number}`]);
     const pullFiles = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/files`);
     const pullCommits = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/commits`);
-    const pullReviewComments = ghPaged<unknown>(
-      `repos/${TARGET_REPO}/pulls/${item.number}/comments`,
-    );
+    pullReviewComments = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/comments`);
     context.pullRequest = compactPullRequest(pullRequest);
     context.pullFiles = compactSlice(pullFiles.map(compactPullFile), 80);
     context.pullCommits = compactSlice(pullCommits.map(compactPullCommit), 80);
@@ -1176,6 +1281,28 @@ function collectItemContext(item: Item): ItemContext {
       pullCommits: pullCommits.length,
       pullReviewComments: pullReviewComments.length,
     };
+  }
+  const relatedOptions: Parameters<typeof relatedItemsContext>[0] = {
+    item,
+    issue,
+    comments,
+    timeline,
+  };
+  if (pullRequest) relatedOptions.pullRequest = pullRequest;
+  if (pullReviewComments) relatedOptions.pullReviewComments = pullReviewComments;
+  const relatedItems = relatedItemsContext(relatedOptions);
+  if (relatedItems.length) {
+    context.relatedItems = relatedItems;
+    const counts: NonNullable<ItemContext["counts"]> = {
+      comments: context.counts?.comments ?? comments.length,
+      timeline: context.counts?.timeline ?? timeline.length,
+      relatedItems: relatedItems.length,
+    };
+    if (context.counts?.pullFiles !== undefined) counts.pullFiles = context.counts.pullFiles;
+    if (context.counts?.pullCommits !== undefined) counts.pullCommits = context.counts.pullCommits;
+    if (context.counts?.pullReviewComments !== undefined)
+      counts.pullReviewComments = context.counts.pullReviewComments;
+    context.counts = counts;
   }
   return context;
 }
@@ -1305,6 +1432,7 @@ function runCodex(options: {
   model: string;
   openclawDir: string;
   reasoningEffort: string;
+  sandboxMode: string;
   serviceTier: string;
   timeoutMs: number;
   workDir: string;
@@ -1333,14 +1461,14 @@ function runCodex(options: {
       'forced_login_method="api"',
       "-c",
       'approval_policy="never"',
-      "--sandbox",
-      "read-only",
       "-C",
       options.openclawDir,
       "--output-schema",
       join(ROOT, "schema", "clawsweeper-decision.schema.json"),
       "--output-last-message",
       outputPath,
+      "--sandbox",
+      options.sandboxMode,
       "-",
     ],
     {
@@ -1410,6 +1538,8 @@ function closeReasonText(reason: CloseReason): string {
       return "cannot reproduce on current main";
     case "clawhub":
       return "belongs on ClawHub";
+    case "duplicate_or_superseded":
+      return "duplicate or superseded";
     case "incoherent":
       return "not actionable";
     case "stale_insufficient_info":
@@ -1636,6 +1766,8 @@ function closeIntro(reason: CloseReason): string {
       return "Closing this as not reproducible on current `main` after Codex review.";
     case "clawhub":
       return `Closing this as better suited for ${markdownLink("ClawHub", CLAWHUB_URL)}/community plugin work after Codex review.`;
+    case "duplicate_or_superseded":
+      return "Closing this as duplicate or superseded after Codex review.";
     case "incoherent":
       return "Closing this as not actionable after Codex review.";
     case "stale_insufficient_info":
@@ -1651,6 +1783,8 @@ function closeOutro(reason: CloseReason): string {
       return "So I’m closing this as already implemented rather than keeping a duplicate issue open.";
     case "clawhub":
       return "So I’m closing this as a scope-fit item for the plugin/community path rather than keeping it open as an OpenClaw core request.";
+    case "duplicate_or_superseded":
+      return "So I’m closing this here and keeping the remaining discussion on the canonical linked item.";
     default:
       return "";
   }
@@ -2020,6 +2154,7 @@ ${options.action.closeComment ? options.action.closeComment : "_No close comment
 
 - comments: ${options.context.counts?.comments ?? options.context.comments.length}
 - timeline events: ${options.context.counts?.timeline ?? options.context.timeline.length}
+- related items: ${options.context.counts?.relatedItems ?? options.context.relatedItems?.length ?? 0}
 - PR files: ${options.context.counts?.pullFiles ?? options.context.pullFiles?.length ?? 0}
 - PR commits: ${options.context.counts?.pullCommits ?? options.context.pullCommits?.length ?? 0}
   `;
@@ -2033,8 +2168,9 @@ function planCommand(args: Args): void {
   const itemNumber = numberArg(args.item_number, 0) || undefined;
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
+  const sandboxMode = stringArg(args.codex_sandbox, "read-only");
   const serviceTier = stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER);
-  const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, serviceTier });
+  const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, sandboxMode, serviceTier });
   const planOptions: Parameters<typeof planCandidates>[0] = {
     batchSize,
     maxPages,
@@ -2068,6 +2204,7 @@ function reviewCommand(args: Args): void {
   const maxPages = numberArg(args.max_pages, 250);
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
+  const sandboxMode = stringArg(args.codex_sandbox, "read-only");
   const serviceTier = stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER);
   const timeoutMs = numberArg(args.codex_timeout_ms, 600_000);
   const shardIndex = numberArg(args.shard_index, 0);
@@ -2088,7 +2225,7 @@ function reviewCommand(args: Args): void {
   }
   ensureDir(artifactDir);
   const git = gitInfo(openclawDir);
-  const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, serviceTier });
+  const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, sandboxMode, serviceTier });
   if (readonlyOpenclaw) makeTreeReadOnly(openclawDir);
   const selectionOptions: Parameters<typeof selectCandidates>[0] = {
     batchSize,
@@ -2124,6 +2261,7 @@ function reviewCommand(args: Args): void {
         model,
         openclawDir,
         reasoningEffort,
+        sandboxMode,
         serviceTier,
         timeoutMs,
         workDir: join(artifactDir, "codex"),

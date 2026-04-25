@@ -2,9 +2,9 @@
 
 You are reviewing one open item from `openclaw/openclaw` for conservative maintainer cleanup.
 
-Work in the checked-out OpenClaw repository. Inspect the current `main` code, docs, tests, and history as needed. You may use `gh` to inspect related issues/PRs if the provided GitHub context is not enough.
+Work in the checked-out OpenClaw repository. Inspect the current `main` code, docs, tests, and history as needed. The provided GitHub context includes compact related issue/PR data extracted before the review. You may use unauthenticated `gh` only if it works; do not lower confidence just because authenticated `gh` is unavailable.
 
-Treat the issue/PR discussion as evidence, not just background. Read the provided comments and timeline before deciding. If commenters already linked a related plugin, extension, workaround, reproduction, prior PR, or external implementation, reflect that positively in the summary/evidence when it affects the decision. For `clawhub` closes, explicitly mention and link an already-posted plugin/extension when one exists, while still explaining why the OpenClaw core item can close.
+Treat the issue/PR discussion as evidence, not just background. Read the provided comments, timeline, and related item context before deciding. If commenters already linked a related plugin, extension, workaround, reproduction, prior PR, or external implementation, reflect that positively in the summary/evidence when it affects the decision. For `clawhub` closes, explicitly mention and link an already-posted plugin/extension when one exists, while still explaining why the OpenClaw core item can close.
 
 This is a read-only review. Do not edit files, create notes, add commits, push branches, comment on GitHub, close items, or otherwise mutate `openclaw/openclaw`. Only return the JSON decision.
 
@@ -14,11 +14,14 @@ Close only when the evidence is strong. Allowed close reasons:
 
 - `implemented_on_main`: current `main` already implements or fixes the request well enough.
 - `cannot_reproduce`: you tried a reasonable reproduction path against current `main` and it does not reproduce, or the report is obsolete and no longer matches current behavior.
-- `clawhub`: useful idea, but it belongs as a ClawHub skill/plugin rather than OpenClaw core. Use `VISION.md` as the scope anchor.
+- `clawhub`: useful idea, but it belongs as a ClawHub skill/plugin rather than OpenClaw core. Use `VISION.md` as the scope anchor. Prefer this when the requested capability is optional, can be built with current skill/MCP/plugin surfaces, has no missing core extension API, and has no protected maintainer signal. Keep open when the right answer is to extend the plugin API first.
+- `duplicate_or_superseded`: another issue/PR already tracks the same remaining work, or the linked discussion/PR clearly supersedes this item. Link the canonical item and explain whether it is open or closed/merged.
 - `incoherent`: the item is too unclear, internally contradictory, or unactionable after reading the title/body/comments.
 - `stale_insufficient_info`: an issue is older than 60 days and lacks enough concrete data to reasonably verify the reported bug against current `main`. Use this only for issues, not PRs, and only when the missing data is the blocker. The close comment must ask the reporter to open a new issue if it is still a problem, with clearer reproduction steps, expected/actual behavior, logs/screenshots, versions, config, or affected channel/plugin details.
 
-Keep open for everything else, including real bugs, plausible feature requests, unclear-but-salvageable reports, stale PRs that might still contain useful work, or anything where the evidence is not high-confidence.
+Close as implemented when current `main` solves the observable user problem well enough, even if it did not use the exact workflow, file split, or field names proposed in the item. Keep open when a meaningful requested capability remains missing.
+
+Keep open for everything else, including real bugs, unclear-but-salvageable reports, stale PRs that might still contain useful work, optional features that require a new core/plugin API first, or anything where the evidence is not high-confidence.
 
 Keep open any item whose GitHub author association is `OWNER`, `MEMBER`, or `COLLABORATOR`. Maintainer-authored issues/PRs must not be auto-closed by this workflow; they need explicit maintainer judgment.
 

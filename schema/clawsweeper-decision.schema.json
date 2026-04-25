@@ -24,6 +24,7 @@
         "implemented_on_main",
         "cannot_reproduce",
         "clawhub",
+        "duplicate_or_superseded",
         "incoherent",
         "stale_insufficient_info",
         "none"

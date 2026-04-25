@@ -122,6 +122,30 @@ test("invalid close semantics are rejected", () => {
   assert.equal(missingSource.actionTaken, "skipped_invalid_decision");
 });
 
+test("duplicate or superseded closes are allowed with evidence and comment", () => {
+  const action = reviewActionForDecision({
+    item: item(),
+    decision: closeDecision({
+      closeReason: "duplicate_or_superseded",
+      evidence: [
+        {
+          label: "canonical issue",
+          detail: "Issue #456 tracks the same remaining work.",
+          file: null,
+          line: null,
+          command: "provided GitHub related item context",
+          sha: null,
+        },
+      ],
+      closeComment:
+        "Closing this as duplicate or superseded after Codex review.\n\n- Canonical issue: #456 tracks the same remaining work.",
+    }),
+    git,
+  });
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(action.closeComment, /duplicate or superseded/);
+});
+
 test("decision parser enforces required schema-shaped evidence", () => {
   assert.equal(parseDecision(closeDecision()).decision, "close");
   assert.throws(

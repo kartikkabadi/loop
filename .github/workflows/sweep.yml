@@ -150,6 +150,7 @@ jobs:
             --shard-count "$SHARD_COUNT" \
             --codex-model gpt-5.5 \
             --codex-reasoning-effort medium \
+            --codex-sandbox danger-full-access \
             --codex-service-tier fast \
             "${item_arg[@]}" > plan.json
           node - <<'NODE' >> "$GITHUB_OUTPUT"
@@ -271,6 +272,7 @@ jobs:
             --max-pages 250 \
             --codex-model gpt-5.5 \
             --codex-reasoning-effort medium \
+            --codex-sandbox danger-full-access \
             --codex-service-tier fast \
             --codex-timeout-ms ${{ needs.plan.outputs.codex_timeout_ms }} \
             --item-numbers "${{ matrix.item_numbers }}" \
