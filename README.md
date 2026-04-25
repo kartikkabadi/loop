@@ -14,65 +14,65 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 18:42 UTC
+Last dashboard update: Apr 25, 2026, 18:44 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 18:42 UTC
+Updated: Apr 25, 2026, 18:44 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 50/500. Result records in checkpoint: 51.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24937779720](https://github.com/openclaw/clawsweeper/actions/runs/24937779720)
+Merged review artifacts for run 24937711941. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24937711941](https://github.com/openclaw/clawsweeper/actions/runs/24937711941)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5820 |
-| Fresh reviewed issues in the last 7 days | 5705 |
-| Proposed issue closes | 300 (5.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4458 |
-| Fresh reviewed PRs in the last 7 days | 4338 |
-| Proposed PR closes | 55 (1.3% of reviewed PRs) |
-| Open items total | 10278 |
-| Reviewed files | 10198 |
-| Unreviewed open items | 80 |
-| Archived closed files | 9052 |
-| Fresh verified reviews in the last 7 days | 10043 |
-| Proposed closes awaiting apply | 355 (3.5% of fresh reviews) |
-| Closed by Codex apply | 7157 |
-| Failed or stale reviews | 155 |
-| Daily cadence coverage | 6963/7419 current (456 due, 93.9%) |
-| Daily PR cadence | 4182/4390 current (208 due, 95.3%) |
-| Daily new issue cadence (<30d) | 2781/3029 current (248 due, 91.8%) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5809 |
+| Fresh reviewed issues in the last 7 days | 5711 |
+| Proposed issue closes | 293 (5.1% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4454 |
+| Fresh reviewed PRs in the last 7 days | 4301 |
+| Proposed PR closes | 52 (1.2% of reviewed PRs) |
+| Open items total | 10263 |
+| Reviewed files | 10182 |
+| Unreviewed open items | 81 |
+| Archived closed files | 9070 |
+| Fresh verified reviews in the last 7 days | 10012 |
+| Proposed closes awaiting apply | 345 (3.4% of fresh reviews) |
+| Closed by Codex apply | 7155 |
+| Failed or stale reviews | 170 |
+| Daily cadence coverage | 6992/7403 current (411 due, 94.4%) |
+| Daily PR cadence | 4206/4386 current (180 due, 95.9%) |
+| Daily new issue cadence (<30d) | 2786/3017 current (231 due, 92.3%) |
 | Weekly older issue cadence | 2779/2779 current (0 due, 100%) |
-| Due now by cadence | 536 |
+| Due now by cadence | 492 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#59973](https://github.com/openclaw/openclaw/issues/59973) | iMessage DM echo: corrupted prefix breaks text-based dedup (v2026.3.31+) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59973.md) | complete | Apr 25, 2026, 18:29 UTC |
-| [#59735](https://github.com/openclaw/openclaw/issues/59735) | Docker: Automate base image digest updates and add stale image alerts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59735.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:27 UTC |
-| [#59307](https://github.com/openclaw/openclaw/issues/59307) | Regression 2026.3.31: embedded agent calls read tool without path during heartbeat polls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59307.md) | failed | Apr 25, 2026, 18:26 UTC |
-| [#59876](https://github.com/openclaw/openclaw/issues/59876) | [Feature]: Include retry/reset time in rate limit error messages | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/items/59876.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:22 UTC |
-| [#60000](https://github.com/openclaw/openclaw/issues/60000) | [Bug]: control-ui writes exec approval entries with unsupported `source` field, causing repeated INVALID_REQUEST errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60000.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:21 UTC |
-| [#59909](https://github.com/openclaw/openclaw/issues/59909) | Add TUI footer display configuration options | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59909.md) | complete | Apr 25, 2026, 18:21 UTC |
-| [#59753](https://github.com/openclaw/openclaw/issues/59753) | [Bug]: 飞书无限重连Feishu WebSocket reconnect loop never stops — gateway becomes unresponsive without manual restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59753.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#59545](https://github.com/openclaw/openclaw/issues/59545) | [Bug]: macOS app General settings rewrites ~/.openclaw/openclaw.json without user changes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59545.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#59758](https://github.com/openclaw/openclaw/issues/59758) | Mattermost DM replies go to new Thread instead of main channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59758.md) | complete | Apr 25, 2026, 18:20 UTC |
-| [#59881](https://github.com/openclaw/openclaw/issues/59881) | Plugin hook ctx.channelId returns provider name instead of actual channel ID | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59881.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#59970](https://github.com/openclaw/openclaw/issues/59970) | Proposal: reply-first chat behavior, retrieval guardrails, and result-oriented sub-agent reporting | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59970.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#59888](https://github.com/openclaw/openclaw/issues/59888) | [Bug]: WhatsApp web-auto-reply dispatches stale/cached reply to subsequent inbound message (5ms response, no LLM call) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59888.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#60083](https://github.com/openclaw/openclaw/issues/60083) | Cron startup catch-up fires duplicate when previous run was itself a late catch-up | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60083.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#60087](https://github.com/openclaw/openclaw/issues/60087) | [Bug]: Gateway killed on every `exec` tool invocation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60087.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#59945](https://github.com/openclaw/openclaw/issues/59945) | Slack socket mode fails with \"reserved redaction sentinel\" error despite valid tokens — infinite restart loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59945.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#59966](https://github.com/openclaw/openclaw/issues/59966) | Hardcoded 120s timeout in channel layer overrides configurable timeoutSeconds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59966.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:20 UTC |
-| [#59728](https://github.com/openclaw/openclaw/issues/59728) | Scripts: Organize 150+ files in scripts/ directory by function with README index | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59728.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:19 UTC |
-| [#59878](https://github.com/openclaw/openclaw/issues/59878) | Session lane stuck in 'running' after run dies — sessions.abort + gateway restart fail to clear stale state | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59878.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:19 UTC |
-| [#59868](https://github.com/openclaw/openclaw/issues/59868) | edit tool shows false positive error when oldText match fails after file was already fixed | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59868.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:19 UTC |
-| [#60034](https://github.com/openclaw/openclaw/issues/60034) | [Feature]: `session-memory` hook does not comply with AGENTS.md workspace directory convention | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60034.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:19 UTC |
+| [#59868](https://github.com/openclaw/openclaw/issues/59868) | edit tool shows false positive error when oldText match fails after file was already fixed | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59868.md) | complete | Apr 25, 2026, 18:42 UTC |
+| [#59910](https://github.com/openclaw/openclaw/issues/59910) | Inbound images from Slack exceed Anthropic 5MB base64 limit (no auto-resize) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59910.md) | complete | Apr 25, 2026, 18:41 UTC |
+| [#59307](https://github.com/openclaw/openclaw/issues/59307) | Regression 2026.3.31: embedded agent calls read tool without path during heartbeat polls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59307.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:40 UTC |
+| [#59913](https://github.com/openclaw/openclaw/issues/59913) | OpenAI compat gateway images bypass sanitization/resize, hit Anthropic 5MB limit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59913.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:40 UTC |
+| [#59545](https://github.com/openclaw/openclaw/issues/59545) | [Bug]: macOS app General settings rewrites ~/.openclaw/openclaw.json without user changes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59545.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:40 UTC |
+| [#59784](https://github.com/openclaw/openclaw/issues/59784) | [Bug]: Subscription quota limit (\"You've hit your limit\") classified as billing error, blocks model fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59784.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:40 UTC |
+| [#59872](https://github.com/openclaw/openclaw/issues/59872) | Agent repeatedly uses web_fetch for Twitter/X URLs despite documented alternatives — needs tool-level domain routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59872.md) | complete | Apr 25, 2026, 18:39 UTC |
+| [#60661](https://github.com/openclaw/openclaw/pull/60661) | Keep gateway CLI timeout client-side after accepted runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60661.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
+| [#59576](https://github.com/openclaw/openclaw/issues/59576) | Mattermost: bot does not see file attachments (file_ids empty in WebSocket event) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59576.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
+| [#59514](https://github.com/openclaw/openclaw/issues/59514) | feat: support Bearer token auth for Bedrock gateway proxies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59514.md) | complete | Apr 25, 2026, 18:39 UTC |
+| [#59361](https://github.com/openclaw/openclaw/issues/59361) | [Bug]: openclaw agent exits 0 with no output on v2026.3.31; lobster CLI unregistered as command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59361.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
+| [#59744](https://github.com/openclaw/openclaw/issues/59744) | Discord inbound attachments lose original filename (saved as UUID) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59744.md) | complete | Apr 25, 2026, 18:39 UTC |
+| [#59788](https://github.com/openclaw/openclaw/issues/59788) | [Feature]: Start and persist routed agent sessions from outbound WhatsApp sends | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59788.md) | complete | Apr 25, 2026, 18:39 UTC |
+| [#59806](https://github.com/openclaw/openclaw/issues/59806) | Bug: Feishu plugin fails with 'Cannot destructure property tenant_access_token' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59806.md) | complete | Apr 25, 2026, 18:39 UTC |
+| [#59881](https://github.com/openclaw/openclaw/issues/59881) | Plugin hook ctx.channelId returns provider name instead of actual channel ID | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59881.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
+| [#59727](https://github.com/openclaw/openclaw/issues/59727) | CI/CD: Refactor complex workflow matrices into reusable workflows and JSON configs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59727.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
+| [#59730](https://github.com/openclaw/openclaw/issues/59730) | Testing: Consolidate multiple Vitest config files into unified configuration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59730.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
+| [#59888](https://github.com/openclaw/openclaw/issues/59888) | [Bug]: WhatsApp web-auto-reply dispatches stale/cached reply to subsequent inbound message (5ms response, no LLM call) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59888.md) | complete | Apr 25, 2026, 18:39 UTC |
+| [#59871](https://github.com/openclaw/openclaw/issues/59871) | [Bug]: [Bug] TUI renders internal command envelopes to operator; async completion events inject verbose agent instructions into session transcript | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59871.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
+| [#59509](https://github.com/openclaw/openclaw/issues/59509) | feat: support per-model location override for google-vertex provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59509.md) | stale_local_checkout_blocked | Apr 25, 2026, 18:39 UTC |
 
 ## How It Works
 
