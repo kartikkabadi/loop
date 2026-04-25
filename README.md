@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 04:46 UTC
+Last dashboard update: Apr 25, 2026, 04:51 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 04:46 UTC
+Updated: Apr 25, 2026, 04:51 UTC
 
 State: Apply in progress
 
-Checkpoint 4 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 200/500. Result records in checkpoint: 54.
+Checkpoint 5 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 250/500. Result records in checkpoint: 51.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920756833](https://github.com/openclaw/clawsweeper/actions/runs/24920756833)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9590 |
-| Fresh reviewed issues in the last 7 days | 8955 |
-| Proposed issue closes | 3687 (41.2% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6232 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9540 |
+| Fresh reviewed issues in the last 7 days | 8904 |
+| Proposed issue closes | 3636 (40.8% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6227 |
 | Fresh reviewed PRs in the last 7 days | 5813 |
 | Proposed PR closes | 1506 (25.9% of reviewed PRs) |
-| Open items total | 15822 |
-| Reviewed files | 14768 |
-| Archived closed files | 2859 |
-| Fresh verified reviews in the last 7 days | 14768 |
-| Proposed closes awaiting apply | 5193 (35.2% of fresh reviews) |
-| Closed by Codex apply | 2083 |
+| Open items total | 15767 |
+| Reviewed files | 14717 |
+| Archived closed files | 2910 |
+| Fresh verified reviews in the last 7 days | 14717 |
+| Proposed closes awaiting apply | 5142 (34.9% of fresh reviews) |
+| Closed by Codex apply | 2133 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 1054 |
+| Todo for weekly coverage | 1050 |
 
 Recently reviewed:
 
