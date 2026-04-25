@@ -14,60 +14,60 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 07:03 UTC
+Last dashboard update: Apr 25, 2026, 07:05 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 07:03 UTC
+Updated: Apr 25, 2026, 07:05 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24925241718](https://github.com/openclaw/clawsweeper/actions/runs/24925241718)
+Checkpoint 3 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 150/500. Result records in checkpoint: 56.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24924985336](https://github.com/openclaw/clawsweeper/actions/runs/24924985336)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8857 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8856 |
 | Fresh reviewed issues in the last 7 days | 8563 |
 | Proposed issue closes | 3194 (37.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6023 |
-| Fresh reviewed PRs in the last 7 days | 6314 |
-| Proposed PR closes | 1532 (24.3% of reviewed PRs) |
-| Open items total | 14880 |
-| Reviewed files | 14877 |
-| Archived closed files | 3561 |
-| Fresh verified reviews in the last 7 days | 14877 |
-| Proposed closes awaiting apply | 4726 (31.8% of fresh reviews) |
-| Closed by Codex apply | 2757 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6009 |
+| Fresh reviewed PRs in the last 7 days | 6258 |
+| Proposed PR closes | 1480 (23.6% of reviewed PRs) |
+| Open items total | 14865 |
+| Reviewed files | 14821 |
+| Archived closed files | 3617 |
+| Fresh verified reviews in the last 7 days | 14821 |
+| Proposed closes awaiting apply | 4674 (31.5% of fresh reviews) |
+| Closed by Codex apply | 2807 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 3 |
+| Todo for weekly coverage | 44 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
 | [#41983](https://github.com/openclaw/openclaw/pull/41983) | fix(gateway): isolate control-plane write rate limits by connection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41983.md) | complete | Apr 25, 2026, 07:00 UTC |
-| [#42022](https://github.com/openclaw/openclaw/pull/42022) | Fix Codex OAuth proxy dispatcher handling | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42022.md) | complete | Apr 25, 2026, 07:00 UTC |
 | [#41866](https://github.com/openclaw/openclaw/pull/41866) | fix(agents): strip leaked to=... JSON tool-call prefixes in user-faci… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41866.md) | complete | Apr 25, 2026, 07:00 UTC |
 | [#41854](https://github.com/openclaw/openclaw/pull/41854) | feat: add groq provider support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41854.md) | complete | Apr 25, 2026, 07:00 UTC |
 | [#42027](https://github.com/openclaw/openclaw/pull/42027) | fix: resolve exec PATH fallback, layered browser diagnostics, and cron force-run deadlock | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42027.md) | complete | Apr 25, 2026, 06:59 UTC |
 | [#41964](https://github.com/openclaw/openclaw/pull/41964) | fix(tui): render external-channel session messages live | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41964.md) | complete | Apr 25, 2026, 06:59 UTC |
 | [#41834](https://github.com/openclaw/openclaw/pull/41834) | feat: add Mistral as web_search provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41834.md) | complete | Apr 25, 2026, 06:59 UTC |
-| [#41864](https://github.com/openclaw/openclaw/pull/41864) | feat: add generative-hmi-custom-ui skill | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41864.md) | complete | Apr 25, 2026, 06:59 UTC |
 | [#41943](https://github.com/openclaw/openclaw/pull/41943) | fix(feishu): add HTTPS_PROXY support for Axios HTTP requests | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41943.md) | complete | Apr 25, 2026, 06:59 UTC |
 | [#41929](https://github.com/openclaw/openclaw/pull/41929) | test(doctor): cover multi-account Telegram tokenFile summary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41929.md) | complete | Apr 25, 2026, 06:59 UTC |
 | [#41936](https://github.com/openclaw/openclaw/pull/41936) | feat(models): support provider connect timeout | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41936.md) | complete | Apr 25, 2026, 06:59 UTC |
 | [#41892](https://github.com/openclaw/openclaw/pull/41892) | feat(control-ui): add cron calendar timeline view | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41892.md) | complete | Apr 25, 2026, 06:58 UTC |
-| [#41941](https://github.com/openclaw/openclaw/pull/41941) | fix(gateway):TUI Model Display Not Updating After session_status Switch | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41941.md) | complete | Apr 25, 2026, 06:58 UTC |
-| [#41810](https://github.com/openclaw/openclaw/pull/41810) | feat: add configurable FTS5 tokenizer for CJK text support | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41810.md) | complete | Apr 25, 2026, 06:58 UTC |
 | [#41897](https://github.com/openclaw/openclaw/pull/41897) | fix(web-fetch): cap error detail for access-denied responses (401/403/407/451) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41897.md) | complete | Apr 25, 2026, 06:58 UTC |
-| [#41816](https://github.com/openclaw/openclaw/pull/41816) | plugins: preserve config includes on install writes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41816.md) | complete | Apr 25, 2026, 06:58 UTC |
 | [#41809](https://github.com/openclaw/openclaw/pull/41809) | feat(config): add agents.defaults.reasoningDefault config key | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41809.md) | complete | Apr 25, 2026, 06:58 UTC |
 | [#41956](https://github.com/openclaw/openclaw/pull/41956) | fix(telegram): split watchdog stability fixes from #41883 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41956.md) | complete | Apr 25, 2026, 06:58 UTC |
 | [#41803](https://github.com/openclaw/openclaw/pull/41803) | fix(agents): suppress unrecognized errors from user surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41803.md) | complete | Apr 25, 2026, 06:58 UTC |
-| [#41565](https://github.com/openclaw/openclaw/pull/41565) | feat(cards): add shared adaptive card rendering for all channels | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41565.md) | complete | Apr 25, 2026, 06:58 UTC |
+| [#41955](https://github.com/openclaw/openclaw/pull/41955) | fix(control-ui): show all configured agents in webchat session dropdown | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41955.md) | complete | Apr 25, 2026, 06:58 UTC |
+| [#41931](https://github.com/openclaw/openclaw/pull/41931) | fix(install.ps1): avoid exiting the host PowerShell session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41931.md) | complete | Apr 25, 2026, 06:58 UTC |
+| [#42007](https://github.com/openclaw/openclaw/pull/42007) | feat(feishu): add mentionTriggers support for text-based keyword triggers in groups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42007.md) | complete | Apr 25, 2026, 06:58 UTC |
+| [#41991](https://github.com/openclaw/openclaw/pull/41991) | fix(gemini-cli-auth): show detailed credential extraction failure reasons | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41991.md) | complete | Apr 25, 2026, 06:58 UTC |
+| [#42002](https://github.com/openclaw/openclaw/pull/42002) | fix(imessage): strip inline reply tags from outbound text | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42002.md) | complete | Apr 25, 2026, 06:58 UTC |
+| [#41882](https://github.com/openclaw/openclaw/pull/41882) | fix(discord): honor steer mode in inbound worker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41882.md) | complete | Apr 25, 2026, 06:58 UTC |
 
 ## How It Works
 
