@@ -31,6 +31,7 @@ type ActionTaken =
   | "closed"
   | "kept_open"
   | "proposed_close"
+  | "review_comment_synced"
   | "skipped_changed_since_review"
   | "skipped_already_closed"
   | "skipped_maintainer_authored"
@@ -111,6 +112,7 @@ interface Decision {
   summary: string;
   evidence: Evidence[];
   risks: string[];
+  bestSolution: string;
   fixedRelease?: string | null;
   fixedSha?: string | null;
   closeComment: string;
@@ -203,9 +205,11 @@ interface DashboardCadenceBucket {
 }
 
 interface DashboardCadenceStats {
+  hourlyHotItems: DashboardCadenceBucket;
   dailyPullRequests: DashboardCadenceBucket;
   dailyNewIssues: DashboardCadenceBucket;
   weeklyOlderIssues: DashboardCadenceBucket;
+  hourly: DashboardCadenceBucket;
   daily: DashboardCadenceBucket;
   weekly: DashboardCadenceBucket;
   unreviewedOpen: number;
@@ -302,16 +306,19 @@ const REPORT_REPO = "openclaw/clawsweeper";
 const CLAWHUB_URL = "https://clawhub.ai/";
 const DOCS_URL = "https://docs.openclaw.ai";
 const FRESH_DAYS = 7;
+const HOT_REVIEW_DAYS = 7;
+const RECENT_ISSUE_DAYS = 30;
+const HOURLY_REVIEW_MS = 60 * 60 * 1000;
 const DAILY_REVIEW_DAYS = 1;
 const WEEKLY_REVIEW_DAYS = 7;
-const NEW_ISSUE_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const STATUS_START = "<!-- clawsweeper-status:start -->";
 const STATUS_END = "<!-- clawsweeper-status:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
-const REVIEW_POLICY_VERSION = "2026-04-25-policy-v4";
+const REVIEW_POLICY_VERSION = "2026-04-26-policy-v5";
+const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -332,6 +339,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "summary",
   "evidence",
   "risks",
+  "bestSolution",
   "fixedRelease",
   "fixedSha",
   "closeComment",
@@ -710,6 +718,7 @@ export function parseDecision(value: unknown): Decision {
     risks: requireStringArray(record.risks, "decision.risks").filter(
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
+    bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
     fixedRelease: requireNullableString(record.fixedRelease, "decision.fixedRelease"),
     fixedSha: requireNullableString(record.fixedSha, "decision.fixedSha"),
     closeComment: requireString(record.closeComment, "decision.closeComment"),
@@ -1224,14 +1233,14 @@ function isFresh(
 function isCurrentForCadence(options: {
   reviewedAt: string | undefined;
   reviewStatus: string | undefined;
-  cadenceDays: number;
+  cadenceMs: number;
   now: number;
 }): boolean {
   if (options.reviewStatus !== "complete") return false;
   if (!options.reviewedAt) return false;
   const reviewedAt = Date.parse(options.reviewedAt);
   if (!Number.isFinite(reviewedAt)) return false;
-  return options.now - reviewedAt < options.cadenceDays * DAY_MS;
+  return options.now - reviewedAt < options.cadenceMs;
 }
 
 function reviewedAtMs(review: ExistingReview | null): number | null {
@@ -1249,14 +1258,24 @@ function hasActivitySinceReview(item: Item, review: ExistingReview | null): bool
   return reviewedAt !== null && Number.isFinite(updatedAt) && updatedAt > reviewedAt;
 }
 
-function reviewCadenceDays(item: Item, review: ExistingReview | null, now = Date.now()): number {
-  if (hasActivitySinceReview(item, review)) return DAILY_REVIEW_DAYS;
-  if (item.kind === "pull_request") return DAILY_REVIEW_DAYS;
+function isCreatedWithinDays(
+  item: Pick<Item, "createdAt">,
+  days: number,
+  now = Date.now(),
+): boolean {
   const createdAt = Date.parse(item.createdAt);
-  if (Number.isFinite(createdAt) && now - createdAt < NEW_ISSUE_DAYS * DAY_MS) {
-    return DAILY_REVIEW_DAYS;
+  return Number.isFinite(createdAt) && now - createdAt < days * DAY_MS;
+}
+
+function reviewCadenceMs(item: Item, review: ExistingReview | null, now = Date.now()): number {
+  if (hasActivitySinceReview(item, review)) return HOURLY_REVIEW_MS;
+  if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now)) return HOURLY_REVIEW_MS;
+  if (item.kind === "pull_request") return DAILY_REVIEW_DAYS * DAY_MS;
+  const createdAt = Date.parse(item.createdAt);
+  if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) {
+    return DAILY_REVIEW_DAYS * DAY_MS;
   }
-  return WEEKLY_REVIEW_DAYS;
+  return WEEKLY_REVIEW_DAYS * DAY_MS;
 }
 
 function hasReviewPolicyMismatch(review: ExistingReview | null, reviewPolicy?: string): boolean {
@@ -1272,8 +1291,7 @@ export function shouldReviewItem(
   if (hasReviewPolicyMismatch(review, reviewPolicy)) return true;
   const reviewedAt = reviewedAtMs(review);
   if (reviewedAt === null) return true;
-  const cadenceDays = reviewCadenceDays(item, review, now);
-  return now - reviewedAt >= cadenceDays * DAY_MS;
+  return now - reviewedAt >= reviewCadenceMs(item, review, now);
 }
 
 function reviewPriority(
@@ -1284,10 +1302,11 @@ function reviewPriority(
 ): number {
   if (hasActivitySinceReview(item, review)) return 0;
   if (hasReviewPolicyMismatch(review, reviewPolicy)) return 1;
-  if (item.kind === "pull_request") return 2;
+  if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now)) return 2;
+  if (item.kind === "pull_request") return 3;
   const createdAt = Date.parse(item.createdAt);
-  if (Number.isFinite(createdAt) && now - createdAt < NEW_ISSUE_DAYS * DAY_MS) return 3;
-  return 4;
+  if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) return 4;
+  return 5;
 }
 
 function dueCandidate(
@@ -1689,6 +1708,7 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
       evidenceEntry({ label: "codex stdout", detail: trimMiddle(stdout || "No stdout.", 2000) }),
     ],
     risks: ["No close action taken because the review did not complete."],
+    bestSolution: "Retry the Codex review after fixing the execution failure.",
     fixedRelease: null,
     fixedSha: null,
     closeComment: "",
@@ -2061,21 +2081,21 @@ function closeEvidenceLine(evidence: Evidence): string {
 function closeIntro(reason: CloseReason): string {
   switch (reason) {
     case "implemented_on_main":
-      return "Closing this as implemented after Codex review.";
+      return "Closing this as implemented after Codex automated review.";
     case "cannot_reproduce":
-      return "Closing this as not reproducible on current `main` after Codex review.";
+      return "Closing this as not reproducible on current `main` after Codex automated review.";
     case "clawhub":
-      return `Closing this as better suited for ${markdownLink("ClawHub", CLAWHUB_URL)}/community plugin work after Codex review.`;
+      return `Closing this as better suited for ${markdownLink("ClawHub", CLAWHUB_URL)}/community plugin work after Codex automated review.`;
     case "duplicate_or_superseded":
-      return "Closing this as duplicate or superseded after Codex review.";
+      return "Closing this as duplicate or superseded after Codex automated review.";
     case "not_actionable_in_repo":
-      return "Closing this as not actionable in this repository after Codex review.";
+      return "Closing this as not actionable in this repository after Codex automated review.";
     case "incoherent":
-      return "Closing this as not actionable after Codex review.";
+      return "Closing this as not actionable after Codex automated review.";
     case "stale_insufficient_info":
-      return "Closing this as stale with insufficient information after Codex review.";
+      return "Closing this as stale with insufficient information after Codex automated review.";
     case "none":
-      return "Closing this after Codex review.";
+      return "Closing this after Codex automated review.";
   }
 }
 
@@ -2135,6 +2155,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     summary: sectionValue(markdown, "Summary"),
     evidence: reportEvidence(markdown),
     risks: [],
+    bestSolution: sectionValue(markdown, "Best Possible Solution"),
     fixedRelease: fixedRelease && fixedRelease !== "unknown" ? fixedRelease : null,
     fixedSha: fixedSha && fixedSha !== "unknown" ? fixedSha : null,
     closeComment: sectionValue(markdown, "Close Comment"),
@@ -2185,11 +2206,14 @@ function closeReviewLineFromReport(markdown: string): string {
 function renderCloseComment(options: {
   reason: CloseReason;
   summary: string;
+  bestSolution?: string;
   evidence: Evidence[];
   reviewLine: string;
 }): string {
   const evidence = options.evidence.slice(0, 6).map(closeEvidenceLine);
   const lines = [closeIntro(options.reason), "", sentence(options.summary)];
+  const bestSolution = options.bestSolution?.trim();
+  if (bestSolution) lines.push("", "Best possible solution:", "", sentence(bestSolution));
   if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
 
   const outro = closeOutro(options.reason);
@@ -2203,6 +2227,7 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
   return renderCloseComment({
     reason,
     summary: sectionValue(markdown, "Summary"),
+    bestSolution: sectionValue(markdown, "Best Possible Solution"),
     evidence: reportEvidence(markdown),
     reviewLine: closeReviewLineFromReport(markdown),
   });
@@ -2216,9 +2241,41 @@ function normalizeComment(
   return renderCloseComment({
     reason: decision.closeReason,
     summary: decision.summary,
+    bestSolution: decision.bestSolution,
     evidence: decision.evidence,
     reviewLine: closeReviewLineFromDecision(decision, git, runtime),
   });
+}
+
+function renderKeepOpenCommentFromReport(markdown: string): string {
+  const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
+  const summary = sectionValue(markdown, "Summary");
+  const bestSolution = sectionValue(markdown, "Best Possible Solution");
+  const risks = sectionValue(markdown, "Risks / Open Questions");
+  const lines = [
+    "Codex automated review: keeping this open.",
+    "",
+    sentence(summary),
+    "",
+    "Best possible solution:",
+    "",
+    sentence(
+      bestSolution ||
+        "Continue tracking this item until the missing behavior is implemented or a maintainer decides the product direction.",
+    ),
+  ];
+  if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
+  if (risks && risks !== "- none") lines.push("", "Remaining risk / open question:", "", risks);
+  const reviewLine = closeReviewLineFromReport(markdown);
+  if (reviewLine) lines.push("", reviewLine);
+  return lines.join("\n");
+}
+
+function renderReviewCommentFromReport(markdown: string, reason: CloseReason): string {
+  const decision = frontMatterValue(markdown, "decision");
+  if (decision === "close" && reason !== "none")
+    return renderCloseCommentFromReport(markdown, reason);
+  return renderKeepOpenCommentFromReport(markdown);
 }
 
 function hasUsableCloseComment(closeComment: string): boolean {
@@ -2298,15 +2355,46 @@ export function validateCloseDecision(
   return { ok: true };
 }
 
-function issueMatchingComment(number: number, body: string): Record<string, unknown> | undefined {
-  const comment = ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${number}/comments`).find(
-    (candidate) => asRecord(candidate).body === body,
-  );
-  return comment ? asRecord(comment) : undefined;
+function reviewCommentMarker(number: number): string {
+  return `${REVIEW_COMMENT_MARKER_PREFIX} item=${number} -->`;
 }
 
-function issueCommentExists(number: number, body: string): boolean {
-  return Boolean(issueMatchingComment(number, body));
+function markedReviewCommentBody(number: number, body: string): string {
+  return body.includes(reviewCommentMarker(number))
+    ? body
+    : `${body.trimEnd()}\n\n${reviewCommentMarker(number)}`;
+}
+
+export function isCodexReviewCommentBody(body: string): boolean {
+  return (
+    body.includes("Codex Review notes:") ||
+    body.includes("Codex automated review:") ||
+    body.includes("after Codex review.") ||
+    body.includes("after Codex automated review.")
+  );
+}
+
+function issueReviewComment(
+  number: number,
+  fallbackBodies: readonly string[] = [],
+): Record<string, unknown> | undefined {
+  const marker = reviewCommentMarker(number);
+  const comments = ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${number}/comments`).map(asRecord);
+  const marked = comments.find((candidate) => {
+    const body = candidate.body;
+    return typeof body === "string" && body.includes(marker);
+  });
+  if (marked) return marked;
+  const exactBodies = new Set(fallbackBodies.map((body) => body.trim()).filter(Boolean));
+  const exact = comments.find((candidate) => {
+    const body = candidate.body;
+    return typeof body === "string" && exactBodies.has(body.trim());
+  });
+  if (exact) return exact;
+  return comments.find((candidate) => {
+    const body = candidate.body;
+    return typeof body === "string" && isCodexReviewCommentBody(body);
+  });
 }
 
 function commentUpdatedAt(comment: Record<string, unknown> | undefined): string | undefined {
@@ -2316,27 +2404,70 @@ function commentUpdatedAt(comment: Record<string, unknown> | undefined): string 
   return typeof createdAt === "string" ? createdAt : undefined;
 }
 
-function postClose(options: {
-  number: number;
-  kind: ItemKind;
-  reason: CloseReason;
-  closeComment: string;
-}): void {
-  const commentFile = join(ROOT, ".artifacts", `comment-${options.number}.md`);
+function commentId(comment: Record<string, unknown> | undefined): number | null {
+  const id = comment?.id;
+  return typeof id === "number" && Number.isInteger(id) ? id : null;
+}
+
+function commentUrl(comment: Record<string, unknown> | undefined): string | null {
+  const url = comment?.html_url;
+  return typeof url === "string" ? url : null;
+}
+
+function updateReviewCommentMetadata(
+  markdown: string,
+  comment: Record<string, unknown> | undefined,
+  body: string,
+): string {
+  let next = replaceFrontMatterValue(markdown, "review_comment_sha256", sha256(body));
+  const id = commentId(comment);
+  const url = commentUrl(comment);
+  if (id !== null) next = replaceFrontMatterValue(next, "review_comment_id", String(id));
+  if (url) next = replaceFrontMatterValue(next, "review_comment_url", url);
+  next = replaceFrontMatterValue(next, "review_comment_synced_at", new Date().toISOString());
+  return next;
+}
+
+function writeCommentPayload(number: number, body: string): string {
+  const commentFile = join(ROOT, ".artifacts", `comment-${number}.md`);
   ensureDir(dirname(commentFile));
-  writeFileSync(commentFile, options.closeComment, "utf8");
-  if (!issueCommentExists(options.number, options.closeComment)) {
-    const commentPayloadFile = join(ROOT, ".artifacts", `comment-${options.number}.json`);
-    writeFileSync(commentPayloadFile, JSON.stringify({ body: options.closeComment }), "utf8");
+  writeFileSync(commentFile, body, "utf8");
+  const commentPayloadFile = join(ROOT, ".artifacts", `comment-${number}.json`);
+  writeFileSync(commentPayloadFile, JSON.stringify({ body }), "utf8");
+  return commentPayloadFile;
+}
+
+function upsertReviewComment(
+  number: number,
+  body: string,
+  existing = issueReviewComment(number, [body]),
+): Record<string, unknown> | undefined {
+  const markedBody = markedReviewCommentBody(number, body);
+  const id = commentId(existing);
+  const payload = writeCommentPayload(number, markedBody);
+  if (id !== null) {
     ghWithRetry([
       "api",
-      `repos/${TARGET_REPO}/issues/${options.number}/comments`,
+      `repos/${TARGET_REPO}/issues/comments/${id}`,
+      "--method",
+      "PATCH",
+      "--input",
+      payload,
+    ]);
+  } else {
+    ghWithRetry([
+      "api",
+      `repos/${TARGET_REPO}/issues/${number}/comments`,
       "--method",
       "POST",
       "--input",
-      commentPayloadFile,
+      payload,
     ]);
   }
+  return issueReviewComment(number, [markedBody]);
+}
+
+function closeItem(options: { number: number; kind: ItemKind; reason: CloseReason }): void {
   if (options.kind === "pull_request") {
     ghWithRetry(["pr", "close", String(options.number)]);
   } else {
@@ -2406,6 +2537,7 @@ function markdownFor(options: {
   const risks = options.decision.risks.length
     ? options.decision.risks.map((risk) => `- ${risk}`).join("\n")
     : "- none";
+  const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
   return `---
 number: ${options.item.number}
 type: ${options.item.kind}
@@ -2433,6 +2565,9 @@ review_status: ${options.decision.summary.startsWith("Codex review failed") ? "f
 local_checkout_access: verified
 item_snapshot_hash: ${options.snapshotHash}
 close_comment_sha256: ${options.action.closeComment ? sha256(options.action.closeComment) : "none"}
+review_comment_sha256: none
+review_comment_id: unknown
+review_comment_url: unknown
 decision: ${options.decision.decision}
 close_reason: ${options.decision.closeReason}
 confidence: ${options.decision.confidence}
@@ -2478,6 +2613,10 @@ Action taken: ${options.action.actionTaken}
 ## Summary
 
 ${options.decision.summary}
+
+## Best Possible Solution
+
+${bestSolution}
 
 ## Evidence
 
@@ -2694,8 +2833,6 @@ function applyDecisionsCommand(args: Args): void {
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
     const storedAuthorAssociation = frontMatterValue(markdown, "author_association");
-    const storedKind = frontMatterValue(markdown, "type") as ItemKind | undefined;
-    const storedLabels = frontMatterStringArray(markdown, "labels");
     const archiveClosed = (nextMarkdown: string): void => {
       ensureDir(closedDir);
       writeFileSync(path, nextMarkdown, "utf8");
@@ -2718,34 +2855,156 @@ function applyDecisionsCommand(args: Args): void {
       });
       continue;
     }
-    if (
-      decision !== "close" ||
-      confidence !== "high" ||
-      !closeReason ||
-      !ALLOWED_REASONS.has(closeReason) ||
-      !storedHash ||
-      action !== "proposed_close"
-    ) {
+    if (!storedHash || (action !== "proposed_close" && action !== "kept_open")) {
       continue;
     }
-    if (applyKind !== "all" && storedKind && storedKind !== applyKind) {
+    const isCloseProposal =
+      decision === "close" &&
+      confidence === "high" &&
+      Boolean(closeReason && ALLOWED_REASONS.has(closeReason)) &&
+      action === "proposed_close";
+    if (decision === "close" && !isCloseProposal) {
       continue;
     }
-    if (protectedLabels(storedLabels).length) {
-      if (markApplySkipped("skipped_protected_label", protectedLabelReason(storedLabels))) break;
-      continue;
-    }
-    const reportValidation = validateCloseDecision(
-      { kind: storedKind ?? "issue", labels: storedLabels },
-      reportDecision(markdown, closeReason),
-    );
-    if (!reportValidation.ok && reportValidation.actionTaken !== "kept_open") {
-      if (markApplySkipped(reportValidation.actionTaken, reportValidation.reason)) break;
-      continue;
-    }
-    const closeComment = renderCloseCommentFromReport(markdown, closeReason);
     const { item, state } = fetchItem(number);
     markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    const reviewComment = renderReviewCommentFromReport(markdown, closeReason ?? "none");
+    const existingReviewComment = issueReviewComment(number, [
+      reviewComment,
+      sectionValue(markdown, "Close Comment"),
+    ]);
+    const markedReviewComment = markedReviewCommentBody(number, reviewComment);
+    if (isProtectedItem(item)) {
+      if (isCloseProposal) {
+        if (markApplySkipped("skipped_protected_label", protectedLabelReason(item.labels))) break;
+      } else {
+        results.push({ number, action: "kept_open", reason: protectedLabelReason(item.labels) });
+        processedCount += 1;
+        maybeLogProgress(`skipped #${number}: protected label`);
+        if (processedCount >= processedLimit) break;
+      }
+      continue;
+    }
+    const currentAuthorAssociation = normalizeAuthorAssociation(item.authorAssociation);
+    const reviewedAuthorAssociation = normalizeAuthorAssociation(storedAuthorAssociation);
+    if (
+      isMaintainerAuthorAssociation(currentAuthorAssociation) ||
+      isMaintainerAuthorAssociation(reviewedAuthorAssociation)
+    ) {
+      const authorAssociation = isMaintainerAuthorAssociation(currentAuthorAssociation)
+        ? currentAuthorAssociation
+        : reviewedAuthorAssociation;
+      if (isCloseProposal) {
+        markdown = replaceFrontMatterValue(markdown, "author_association", authorAssociation);
+        markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_maintainer_authored");
+        markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+        writeFileSync(path, markdown, "utf8");
+      }
+      results.push({
+        number,
+        action: isCloseProposal ? "skipped_maintainer_authored" : "kept_open",
+        reason: `author association is ${authorAssociation}`,
+      });
+      processedCount += 1;
+      maybeLogProgress(`skipped #${number}: maintainer authored`);
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
+    const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
+    const reviewCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingReviewComment);
+    if (state !== "open") {
+      if (existingReviewComment) {
+        markdown = updateReviewCommentMetadata(
+          markdown,
+          existingReviewComment,
+          markedReviewComment,
+        );
+        markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
+        markdown = replaceFrontMatterValue(
+          markdown,
+          "applied_at",
+          commentUpdatedAt(existingReviewComment) ?? new Date().toISOString(),
+        );
+        archiveClosed(markdown);
+        closedCount += 1;
+        processedCount += 1;
+        results.push({
+          number,
+          action: "closed",
+          reason: "matching ClawSweeper review comment already exists",
+        });
+        maybeLogProgress(`archived #${number}: already ${state} with matching review comment`);
+        if (processedCount >= processedLimit || closedCount >= limit) break;
+        continue;
+      }
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_already_closed");
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      archiveClosed(markdown);
+      results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
+      processedCount += 1;
+      maybeLogProgress(`archived #${number}: already ${state}`);
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
+    if (updatedSinceReview && !reviewCommentOnlyUpdate) {
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
+      markdown = replaceFrontMatterValue(markdown, "current_item_updated_at", item.updatedAt);
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "skipped_changed_since_review",
+        reason: "updated_at changed",
+      });
+      processedCount += 1;
+      maybeLogProgress(`skipped #${number}: changed since review`);
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
+    if (!storedUpdatedAt) {
+      const currentContext = collectItemContext(item);
+      const currentHash = itemSnapshotHash(item, currentContext);
+      if (currentHash !== storedHash && !reviewCommentOnlyUpdate) {
+        markdown = replaceFrontMatterValue(
+          markdown,
+          "action_taken",
+          "skipped_changed_since_review",
+        );
+        markdown = replaceFrontMatterValue(markdown, "current_item_snapshot_hash", currentHash);
+        markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+        writeFileSync(path, markdown, "utf8");
+        results.push({
+          number,
+          action: "skipped_changed_since_review",
+          reason: "snapshot changed",
+        });
+        processedCount += 1;
+        maybeLogProgress(`skipped #${number}: snapshot changed`);
+        if (processedCount >= processedLimit) break;
+        continue;
+      }
+    }
+    if (
+      frontMatterValue(markdown, "review_comment_sha256") !== sha256(markedReviewComment) ||
+      !existingReviewComment ||
+      frontMatterValue(markdown, "review_comment_id") === "unknown"
+    ) {
+      const syncedComment = upsertReviewComment(number, reviewComment, existingReviewComment);
+      markdown = updateReviewCommentMetadata(markdown, syncedComment, markedReviewComment);
+      writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "review_comment_synced",
+        reason: "updated durable Codex review comment",
+      });
+      processedCount += 1;
+      maybeLogProgress(`synced review comment #${number}`);
+      if (processedCount >= processedLimit) break;
+    }
+    if (!isCloseProposal || !closeReason) {
+      continue;
+    }
+    if (closedCount >= limit) break;
     if (applyKind !== "all" && item.kind !== applyKind) {
       results.push({
         number,
@@ -2755,10 +3014,6 @@ function applyDecisionsCommand(args: Args): void {
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: type is ${item.kind}`);
       if (processedCount >= processedLimit) break;
-      continue;
-    }
-    if (isProtectedItem(item)) {
-      if (markApplySkipped("skipped_protected_label", protectedLabelReason(item.labels))) break;
       continue;
     }
     const currentReportValidation = validateCloseDecision(
@@ -2781,111 +3036,11 @@ function applyDecisionsCommand(args: Args): void {
       if (processedCount >= processedLimit) break;
       continue;
     }
-    const currentAuthorAssociation = normalizeAuthorAssociation(item.authorAssociation);
-    const reviewedAuthorAssociation = normalizeAuthorAssociation(storedAuthorAssociation);
-    if (
-      isMaintainerAuthorAssociation(currentAuthorAssociation) ||
-      isMaintainerAuthorAssociation(reviewedAuthorAssociation)
-    ) {
-      const authorAssociation = isMaintainerAuthorAssociation(currentAuthorAssociation)
-        ? currentAuthorAssociation
-        : reviewedAuthorAssociation;
-      markdown = replaceFrontMatterValue(markdown, "author_association", authorAssociation);
-      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_maintainer_authored");
-      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      writeFileSync(path, markdown, "utf8");
-      results.push({
-        number,
-        action: "skipped_maintainer_authored",
-        reason: `author association is ${authorAssociation}`,
-      });
-      processedCount += 1;
-      maybeLogProgress(`skipped #${number}: maintainer authored`);
-      if (processedCount >= processedLimit) break;
-      continue;
-    }
-    const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
-    const existingCloseComment = updatedSinceReview
-      ? issueMatchingComment(number, closeComment)
-      : undefined;
-    const closeCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingCloseComment);
-    if (state !== "open") {
-      const matchingCloseComment =
-        existingCloseComment ?? issueMatchingComment(number, closeComment);
-      if (matchingCloseComment) {
-        markdown = replaceSectionValue(markdown, "Close Comment", closeComment);
-        markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(closeComment));
-        markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
-        markdown = replaceFrontMatterValue(
-          markdown,
-          "applied_at",
-          commentUpdatedAt(matchingCloseComment) ?? new Date().toISOString(),
-        );
-        archiveClosed(markdown);
-        closedCount += 1;
-        processedCount += 1;
-        results.push({
-          number,
-          action: "closed",
-          reason: `${closeReasonText(closeReason)}; matching ClawSweeper close comment already exists`,
-        });
-        maybeLogProgress(`archived #${number}: already ${state} with matching close comment`);
-        if (processedCount >= processedLimit || closedCount >= limit) break;
-        continue;
-      }
-      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_already_closed");
-      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      archiveClosed(markdown);
-      results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
-      processedCount += 1;
-      maybeLogProgress(`archived #${number}: already ${state}`);
-      if (processedCount >= processedLimit) break;
-      continue;
-    }
-    if (closedCount >= limit) break;
-    if (updatedSinceReview && !closeCommentOnlyUpdate) {
-      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
-      markdown = replaceFrontMatterValue(markdown, "current_item_updated_at", item.updatedAt);
-      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      writeFileSync(path, markdown, "utf8");
-      results.push({
-        number,
-        action: "skipped_changed_since_review",
-        reason: "updated_at changed",
-      });
-      processedCount += 1;
-      maybeLogProgress(`skipped #${number}: changed since review`);
-      if (processedCount >= processedLimit) break;
-      continue;
-    }
-    if (!storedUpdatedAt) {
-      const currentContext = collectItemContext(item);
-      const currentHash = itemSnapshotHash(item, currentContext);
-      if (currentHash !== storedHash && !closeCommentOnlyUpdate) {
-        markdown = replaceFrontMatterValue(
-          markdown,
-          "action_taken",
-          "skipped_changed_since_review",
-        );
-        markdown = replaceFrontMatterValue(markdown, "current_item_snapshot_hash", currentHash);
-        markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-        writeFileSync(path, markdown, "utf8");
-        results.push({
-          number,
-          action: "skipped_changed_since_review",
-          reason: "snapshot changed",
-        });
-        processedCount += 1;
-        maybeLogProgress(`skipped #${number}: snapshot changed`);
-        if (processedCount >= processedLimit) break;
-        continue;
-      }
-    }
     logProgress(`closing #${number}`);
-    postClose({ number, kind: item.kind, reason: closeReason, closeComment });
+    closeItem({ number, kind: item.kind, reason: closeReason });
     sleepMs(closeDelayMs);
-    markdown = replaceSectionValue(markdown, "Close Comment", closeComment);
-    markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(closeComment));
+    markdown = replaceSectionValue(markdown, "Close Comment", reviewComment);
+    markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(reviewComment));
     markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
     markdown = replaceFrontMatterValue(markdown, "applied_at", new Date().toISOString());
     archiveClosed(markdown);
@@ -3206,20 +3361,23 @@ function cadenceBucketForReview(
   markdown: string,
   now: number,
 ): {
-  bucket: "dailyPullRequests" | "dailyNewIssues" | "weeklyOlderIssues";
-  cadenceDays: number;
+  bucket: "hourlyHotItems" | "dailyPullRequests" | "dailyNewIssues" | "weeklyOlderIssues";
+  cadenceMs: number;
 } {
   const kind = (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue";
-  if (kind === "pull_request") {
-    return { bucket: "dailyPullRequests", cadenceDays: DAILY_REVIEW_DAYS };
-  }
-
   const createdAt = Date.parse(frontMatterValue(markdown, "item_created_at") ?? "");
-  if (Number.isFinite(createdAt) && now - createdAt < NEW_ISSUE_DAYS * DAY_MS) {
-    return { bucket: "dailyNewIssues", cadenceDays: DAILY_REVIEW_DAYS };
+  if (Number.isFinite(createdAt) && now - createdAt < HOT_REVIEW_DAYS * DAY_MS) {
+    return { bucket: "hourlyHotItems", cadenceMs: HOURLY_REVIEW_MS };
+  }
+  if (kind === "pull_request") {
+    return { bucket: "dailyPullRequests", cadenceMs: DAILY_REVIEW_DAYS * DAY_MS };
   }
 
-  return { bucket: "weeklyOlderIssues", cadenceDays: WEEKLY_REVIEW_DAYS };
+  if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) {
+    return { bucket: "dailyNewIssues", cadenceMs: DAILY_REVIEW_DAYS * DAY_MS };
+  }
+
+  return { bucket: "weeklyOlderIssues", cadenceMs: WEEKLY_REVIEW_DAYS * DAY_MS };
 }
 
 function dashboardStats(
@@ -3252,6 +3410,7 @@ function dashboardStats(
     issue: emptyDashboardKindStats(),
     pull_request: emptyDashboardKindStats(),
   };
+  const hourlyHotItems = emptyDashboardCadenceBucket();
   const dailyPullRequests = emptyDashboardCadenceBucket();
   const dailyNewIssues = emptyDashboardCadenceBucket();
   const weeklyOlderIssues = emptyDashboardCadenceBucket();
@@ -3276,13 +3435,15 @@ function dashboardStats(
     if (reviewStatus.startsWith("stale_")) stale += 1;
     const cadence = cadenceBucketForReview(markdown, now);
     const cadenceBucket =
-      cadence.bucket === "dailyPullRequests"
-        ? dailyPullRequests
-        : cadence.bucket === "dailyNewIssues"
-          ? dailyNewIssues
-          : weeklyOlderIssues;
+      cadence.bucket === "hourlyHotItems"
+        ? hourlyHotItems
+        : cadence.bucket === "dailyPullRequests"
+          ? dailyPullRequests
+          : cadence.bucket === "dailyNewIssues"
+            ? dailyNewIssues
+            : weeklyOlderIssues;
     cadenceBucket.total += 1;
-    if (isCurrentForCadence({ reviewedAt, reviewStatus, cadenceDays: cadence.cadenceDays, now })) {
+    if (isCurrentForCadence({ reviewedAt, reviewStatus, cadenceMs: cadence.cadenceMs, now })) {
       cadenceBucket.current += 1;
     }
     if (decision === "close" && action === "proposed_close") cadenceBucket.proposedClose += 1;
@@ -3302,6 +3463,8 @@ function dashboardStats(
     if (action === "closed") closed += 1;
   }
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
+  const hourly = emptyDashboardCadenceBucket();
+  addDashboardCadenceBucket(hourly, hourlyHotItems);
   const daily = emptyDashboardCadenceBucket();
   const cappedDailyPullRequests = capDashboardCadenceBucket(dailyPullRequests, open.pullRequests);
   addDashboardCadenceBucket(daily, cappedDailyPullRequests);
@@ -3311,7 +3474,12 @@ function dashboardStats(
   const unreviewedOpen =
     Math.max(0, open.issues - byKind.issue.total) +
     Math.max(0, open.pullRequests - byKind.pull_request.total);
-  const cadenceDue = daily.total - daily.current + (weekly.total - weekly.current) + unreviewedOpen;
+  const cadenceDue =
+    hourly.total -
+    hourly.current +
+    (daily.total - daily.current) +
+    (weekly.total - weekly.current) +
+    unreviewedOpen;
   return {
     open,
     fresh,
@@ -3324,9 +3492,11 @@ function dashboardStats(
     stale,
     byKind,
     cadence: {
+      hourlyHotItems,
       dailyPullRequests: cappedDailyPullRequests,
       dailyNewIssues,
       weeklyOlderIssues,
+      hourly,
       daily,
       weekly,
       unreviewedOpen,
@@ -3375,9 +3545,11 @@ ${status}
 | Proposed closes awaiting apply | ${stats.proposedClose} (${formatPercent(stats.proposedClose, stats.fresh)} of fresh reviews) |
 | Closed by Codex apply | ${stats.closed} |
 | Failed or stale reviews | ${stats.failed + stats.stale} |
+| Hourly cadence coverage | ${formatCadenceBucket(stats.cadence.hourly)} |
+| Hourly hot item cadence (<${HOT_REVIEW_DAYS}d) | ${formatCadenceBucket(stats.cadence.hourlyHotItems)} |
 | Daily cadence coverage | ${formatCadenceBucket(stats.cadence.daily)} |
 | Daily PR cadence | ${formatCadenceBucket(stats.cadence.dailyPullRequests)} |
-| Daily new issue cadence (<${NEW_ISSUE_DAYS}d) | ${formatCadenceBucket(stats.cadence.dailyNewIssues)} |
+| Daily new issue cadence (<${RECENT_ISSUE_DAYS}d) | ${formatCadenceBucket(stats.cadence.dailyNewIssues)} |
 | Weekly older issue cadence | ${formatCadenceBucket(stats.cadence.weekly)} |
 | Due now by cadence | ${stats.cadence.due} |
 

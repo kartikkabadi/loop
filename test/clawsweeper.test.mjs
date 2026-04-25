@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   auditFromSnapshot,
   ghRetryKind,
+  isCodexReviewCommentBody,
   isProtectedItem,
   parseDecision,
   protectedLabels,
@@ -47,6 +48,7 @@ function closeDecision(overrides = {}) {
       },
     ],
     risks: [],
+    bestSolution: "Keep the implementation as-is.",
     fixedRelease: null,
     fixedSha: "abcdef1234567890",
     closeComment: "Closing this as implemented after Codex review.\n\n- Evidence.",
@@ -127,6 +129,69 @@ test("review policy changes force fresh complete reports back into planning", ()
 
   assert.equal(shouldReviewItem(item(), review, now, "new-policy"), true);
   assert.equal(shouldReviewItem(item(), review, now, "old-policy"), false);
+});
+
+test("hot new items review hourly before falling back to daily or weekly cadence", () => {
+  const now = Date.parse("2026-04-26T12:00:00Z");
+  const review = (reviewedAt, itemUpdatedAt) => ({
+    path: "items/123.md",
+    markdown: "",
+    reviewedAt,
+    itemUpdatedAt,
+    decision: "keep_open",
+    reviewStatus: "complete",
+    reviewPolicy: "current",
+  });
+
+  assert.equal(
+    shouldReviewItem(
+      item({
+        createdAt: "2026-04-24T00:00:00Z",
+        updatedAt: "2026-04-24T00:00:00Z",
+      }),
+      review("2026-04-26T10:00:00Z", "2026-04-24T00:00:00Z"),
+      now,
+      "current",
+    ),
+    true,
+  );
+  assert.equal(
+    shouldReviewItem(
+      item({
+        createdAt: "2026-04-24T00:00:00Z",
+        updatedAt: "2026-04-24T00:00:00Z",
+      }),
+      review("2026-04-26T11:45:00Z", "2026-04-24T00:00:00Z"),
+      now,
+      "current",
+    ),
+    false,
+  );
+  assert.equal(
+    shouldReviewItem(
+      item({
+        createdAt: "2026-03-01T00:00:00Z",
+        updatedAt: "2026-03-01T00:00:00Z",
+      }),
+      review("2026-04-24T12:00:00Z", "2026-03-01T00:00:00Z"),
+      now,
+      "current",
+    ),
+    false,
+  );
+  assert.equal(
+    shouldReviewItem(
+      item({
+        kind: "pull_request",
+        createdAt: "2026-03-01T00:00:00Z",
+        updatedAt: "2026-03-01T00:00:00Z",
+      }),
+      review("2026-04-25T10:00:00Z", "2026-03-01T00:00:00Z"),
+      now,
+      "current",
+    ),
+    true,
+  );
 });
 
 test("invalid close semantics are rejected", () => {
@@ -213,6 +278,22 @@ test("not-actionable-in-repo closes are allowed with evidence and comment", () =
   });
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /not actionable in this repository/);
+});
+
+test("comment matcher recognizes old and new Codex review comments", () => {
+  assert.equal(
+    isCodexReviewCommentBody(
+      "Closing this as implemented after Codex review.\n\nCodex Review notes: reviewed against abc.",
+    ),
+    true,
+  );
+  assert.equal(
+    isCodexReviewCommentBody(
+      "Codex automated review: keeping this open.\n\nBest possible solution:\n\nShip it.",
+    ),
+    true,
+  );
+  assert.equal(isCodexReviewCommentBody("Thanks for the report, I can reproduce this."), false);
 });
 
 test("decision parser enforces required schema-shaped evidence", () => {

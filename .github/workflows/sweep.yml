@@ -53,6 +53,7 @@ on:
         default: ""
   schedule:
     - cron: "17 * * * *"
+    - cron: "37 * * * *"
 
 permissions:
   contents: write
@@ -61,12 +62,12 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: clawsweeper-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && 'apply' || 'review' }}
+  group: ${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) && 'clawsweeper-apply' || 'clawsweeper-review' }}
   cancel-in-progress: false
 
 jobs:
   plan:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true' }}
+    if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -98,7 +99,7 @@ jobs:
         run: npm run build
 
       - name: Publish planning-started status
-        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true' }}
+        if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) }}
         continue-on-error: true
         working-directory: clawsweeper
         run: |
@@ -113,7 +114,7 @@ jobs:
             echo "No status changes"
           else
             git commit -m "chore: mark sweep planning started"
-            for attempt in 1 2 3; do
+            for _attempt in 1 2 3; do
               if git push; then
                 exit 0
               fi
@@ -183,7 +184,7 @@ jobs:
             echo "No status changes"
           else
             git commit -m "chore: mark sweep review in progress"
-            for attempt in 1 2 3; do
+            for _attempt in 1 2 3; do
               if git push; then
                 exit 0
               fi
@@ -290,7 +291,7 @@ jobs:
 
   publish:
     needs: [plan, review]
-    if: ${{ always() && (github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true') }}
+    if: ${{ always() && !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -336,7 +337,7 @@ jobs:
             echo "No review changes"
           else
             git commit -m "chore: update sweep dashboard"
-            for attempt in 1 2 3; do
+            for _attempt in 1 2 3; do
               if git push; then
                 exit 0
               fi
@@ -360,7 +361,7 @@ jobs:
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
 
   apply-existing:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *') }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -390,12 +391,12 @@ jobs:
           CLAWSWEEPER_THROTTLE_STATUS_MIN_WAIT_MS: "60000"
           CLAWSWEEPER_THROTTLE_STATUS_MIN_INTERVAL_MS: "120000"
         run: |
-          limit="${{ github.event.inputs.apply_limit || '20' }}"
-          min_age_days="${{ github.event.inputs.apply_min_age_days || '0' }}"
-          apply_kind="${{ github.event.inputs.apply_kind || 'issue' }}"
-          close_delay_ms="${{ github.event.inputs.apply_close_delay_ms || '5000' }}"
-          progress_every="${{ github.event.inputs.apply_progress_every || '10' }}"
-          checkpoint_size="${{ github.event.inputs.apply_checkpoint_size || '50' }}"
+          limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_limit || '20' }}"
+          min_age_days="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_min_age_days || '0' }}"
+          apply_kind="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_kind || 'issue' }}"
+          close_delay_ms="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_delay_ms || '5000' }}"
+          progress_every="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_progress_every || '10' }}"
+          checkpoint_size="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_checkpoint_size || '50' }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p .artifacts/apply-reports
@@ -429,7 +430,7 @@ jobs:
               return 0
             fi
             git commit -m "$message"
-            for attempt in 1 2 3; do
+            for _attempt in 1 2 3; do
               if git push; then
                 return 0
               fi
@@ -451,7 +452,7 @@ jobs:
           npm run dashboard
           npm run status -- \
             --state "Apply in progress" \
-            --detail "Starting apply run for up to $limit fresh $apply_kind closes. Checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms." \
+            --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Existing Codex automated review comments are updated in place; checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           if ! publish_changes "chore: mark sweep apply in progress" README.md items closed; then
             echo "Best-effort apply start status update failed"
@@ -476,6 +477,7 @@ jobs:
               --progress-every "$progress_every" \
               --processed-limit "$((chunk_limit * 20))"
             cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
+            # shellcheck disable=SC2016
             node -e 'const fs=require("node:fs"); const path=require("node:path"); const dir=".artifacts/apply-reports"; const files=fs.readdirSync(dir).filter((name)=>/^apply-report-\d+\.json$/.test(name)).sort((left,right)=>Number(left.match(/\d+/)[0])-Number(right.match(/\d+/)[0])); const combined=files.flatMap((file)=>JSON.parse(fs.readFileSync(path.join(dir,file),"utf8"))); fs.writeFileSync("apply-report.json", `${JSON.stringify(combined,null,2)}\n`);'
             closed_in_chunk="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.filter((x)=>x.action==="closed").length)' "$checkpoint")"
             result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
@@ -485,7 +487,7 @@ jobs:
             npm run dashboard
             npm run status -- \
               --state "Apply in progress" \
-              --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count." \
+              --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count, including durable review comment syncs." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             publish_readme_status "chore: update sweep apply checkpoint $checkpoint status"
             echo "::endgroup::"
@@ -501,7 +503,7 @@ jobs:
           npm run dashboard
           npm run status -- \
             --state "Apply finished" \
-            --detail "Apply run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
+            --detail "Apply/comment-sync run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           publish_readme_status "chore: mark sweep apply finished"
           {
@@ -523,7 +525,7 @@ jobs:
             echo "No remaining apply changes"
           else
             git commit -m "chore: apply sweep decisions"
-            for attempt in 1 2 3; do
+            for _attempt in 1 2 3; do
               if git push; then
                 exit 0
               fi

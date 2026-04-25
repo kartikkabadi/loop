@@ -9,6 +9,7 @@
     "summary",
     "evidence",
     "risks",
+    "bestSolution",
     "fixedRelease",
     "fixedSha",
     "closeComment"
@@ -71,6 +72,10 @@
       "items": {
         "type": "string"
       }
+    },
+    "bestSolution": {
+      "type": "string",
+      "description": "The best possible product/code/docs direction for this item, whether the item should close or stay open."
     },
     "fixedRelease": {
       "type": ["string", "null"],

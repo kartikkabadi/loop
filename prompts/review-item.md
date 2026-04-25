@@ -10,6 +10,18 @@ This is a read-only review. Do not edit files, create notes, add commits, push b
 
 The checkout must remain byte-for-byte clean. Use read-only inspection commands only, such as `rg`, `sed`, `nl`, `find`, `git log`, `git show`, `git diff`, `gh issue view`, `gh pr view`, and `gh api`. Do not run commands that install dependencies, generate files, update caches, run formatters, rewrite lockfiles, apply patches, create temp files inside the repo, or otherwise write to the checkout. Do not use `apply_patch`, redirection, `tee`, `cat >`, `touch`, `mkdir`, `pnpm install`, build commands, or tests that create artifacts.
 
+Review deeply before closing. High confidence means you read enough current code, docs, tests, comments, related reports, and git history to understand the real product boundary. Do not decide from the issue title, one exact `rg` hit, or one nearby file. Search for synonyms and old names from the issue, then inspect the implementation, call sites, tests/docs, and relevant history around the matching surface. Prefer several independent checks over a single brittle match. If the item is a PR, inspect the PR body/diff/files/comments plus current `main` behavior before deciding whether the work is obsolete or still useful.
+
+Use reason-specific anchors:
+
+- For `implemented_on_main`, verify the current behavior in source and, when relevant, tests/docs/release history. Cite the implementation file and commit SHA; add release evidence when you can determine it.
+- For `clawhub`, inspect `VISION.md` and the relevant plugin/skill/MCP/channel/provider docs or APIs, then confirm the request can be satisfied outside core without a missing extension API.
+- For `duplicate_or_superseded`, read the canonical related report/PR from the provided context or `gh`, and explain whether it is open, closed, merged, or already shipped.
+- For `not_actionable_in_repo`, read enough discussion/context to confirm the action belongs to repo/project administration, third-party setup, external ownership, or historical cleanup rather than OpenClaw code/docs.
+- For `stale_insufficient_info`, confirm the missing reproduction data is the blocker after checking current code/docs for an obvious known fix or active path.
+
+If you cannot point to concrete code/docs/history/related-item evidence for the close reason, keep the item open. It is better to leave a possibly-closeable item open than to close from a shallow read.
+
 Close only when the evidence is strong. Allowed close reasons:
 
 - `implemented_on_main`: current `main` already implements or fixes the request well enough.
@@ -31,3 +43,5 @@ Keep open any item with a protected label: `security`, `beta-blocker`, `release-
 When citing docs in the close comment, link the public `docs.openclaw.ai` page rather than the internal `docs/*.md` GitHub file whenever a public page exists. The docs site publishes the same content and is the user-facing target. Keep `file`, `line`, and `sha` populated in the structured `evidence` object for auditability, but the prose/comment should prefer links like `https://docs.openclaw.ai/plugins/building-plugins` over `https://github.com/openclaw/openclaw/blob/.../docs/plugins/building-plugins.md`.
 
 Return JSON only, matching the output schema. If you choose `close`, set `confidence` to `high`, include at least one evidence entry, and write a friendly maintainer comment in `closeComment`. Format it as readable Markdown: a short opening sentence, a blank line, then concise evidence bullets. Do not write one long paragraph. The comment should explain the specific reason, mention that this was a Codex review, acknowledge useful prior discussion/comment links when relevant, and include concrete evidence such as file paths, release version, or commit SHA when available. For implemented-on-main decisions, include source-backed evidence with `file` and `sha`, set `fixedRelease` to the release tag/version that shipped the fix if you can determine it from changelog, appcast, tags, PRs, or release notes; otherwise set it to `null`. Set `fixedSha` to the specific commit SHA that fixed or best proves the implementation if you can determine it; otherwise set it to `null`. Do not invent release facts.
+
+Always fill `bestSolution`. For close decisions, describe the best current outcome: usually keep the shipped implementation, follow the canonical linked item, move the work to ClawHub/plugin API discussion, or leave external administration outside this repository. For keep-open decisions, describe the best possible implementation or product/docs path in concrete maintainer terms: what should change, where it likely belongs, what evidence still needs reproduction, or which plugin/API extension would make the request feasible. Make it useful for a visible Codex automated review comment.
