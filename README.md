@@ -14,50 +14,48 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 15:48 UTC
+Last dashboard update: Apr 25, 2026, 15:53 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 15:48 UTC
+Updated: Apr 25, 2026, 15:53 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24934560578](https://github.com/openclaw/clawsweeper/actions/runs/24934560578)
+Checkpoint 9 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 450/500. Result records in checkpoint: 51.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24933057232](https://github.com/openclaw/clawsweeper/actions/runs/24933057232)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6764 |
-| Fresh reviewed issues in the last 7 days | 6748 |
-| Proposed issue closes | 1152 (17.1% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4647 |
-| Fresh reviewed PRs in the last 7 days | 4576 |
-| Proposed PR closes | 241 (5.3% of reviewed PRs) |
-| Open items total | 11411 |
-| Reviewed files | 11334 |
-| Unreviewed open items | 77 |
-| Archived closed files | 7863 |
-| Fresh verified reviews in the last 7 days | 11324 |
-| Proposed closes awaiting apply | 1393 (12.3% of fresh reviews) |
-| Closed by Codex apply | 5957 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6733 |
+| Fresh reviewed issues in the last 7 days | 6716 |
+| Proposed issue closes | 1119 (16.7% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4634 |
+| Fresh reviewed PRs in the last 7 days | 4558 |
+| Proposed PR closes | 222 (4.9% of reviewed PRs) |
+| Open items total | 11367 |
+| Reviewed files | 11284 |
+| Unreviewed open items | 83 |
+| Archived closed files | 7913 |
+| Fresh verified reviews in the last 7 days | 11274 |
+| Proposed closes awaiting apply | 1341 (11.9% of fresh reviews) |
+| Closed by Codex apply | 6057 |
 | Failed or stale reviews | 10 |
-| Daily cadence coverage | 8187/8552 current (365 due, 95.7%) |
-| Daily PR cadence | 4471/4582 current (111 due, 97.6%) |
-| Daily new issue cadence (<30d) | 3716/3970 current (254 due, 93.6%) |
-| Weekly older issue cadence | 2782/2782 current (0 due, 100%) |
-| Due now by cadence | 442 |
+| Daily cadence coverage | 8096/8501 current (405 due, 95.2%) |
+| Daily PR cadence | 4440/4564 current (124 due, 97.3%) |
+| Daily new issue cadence (<30d) | 3656/3937 current (281 due, 92.9%) |
+| Weekly older issue cadence | 2783/2783 current (0 due, 100%) |
+| Due now by cadence | 488 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
 | [#64855](https://github.com/openclaw/openclaw/issues/64855) | [Feature Request] Context Router: Selective Context Injection Based on Conversation Type | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64855.md) | complete | Apr 25, 2026, 15:43 UTC |
-| [#55298](https://github.com/openclaw/openclaw/issues/55298) | [Bug]: pm2 reload --update-env does not apply updated ecosystem config changes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/55298.md) | complete | Apr 25, 2026, 15:43 UTC |
 | [#71629](https://github.com/openclaw/openclaw/issues/71629) | [Bug]: active-memory timeoutMs does not behave as a hard deadline for embedded run | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71629.md) | complete | Apr 25, 2026, 15:43 UTC |
 | [#66497](https://github.com/openclaw/openclaw/issues/66497) | WebSocket delta corruption with inline directive tags | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66497.md) | complete | Apr 25, 2026, 15:43 UTC |
-| [#56445](https://github.com/openclaw/openclaw/pull/56445) | fix(agents): webchat-aware exec approval follow-up and pending copy | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56445.md) | complete | Apr 25, 2026, 15:43 UTC |
 | [#55269](https://github.com/openclaw/openclaw/issues/55269) | [Feature]: allow command exec to specify shell profile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55269.md) | complete | Apr 25, 2026, 15:43 UTC |
 | [#71628](https://github.com/openclaw/openclaw/issues/71628) | Bug: DeepSeek V4 reasoning_content not replayed when proxied through Venice — 400 error on multi-turn with tool calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71628.md) | complete | Apr 25, 2026, 15:43 UTC |
 | [#67974](https://github.com/openclaw/openclaw/issues/67974) | [Bug] Config hot-reload loses Feishu account credentials | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/67974.md) | complete | Apr 25, 2026, 15:43 UTC |
@@ -73,6 +71,8 @@ Recently reviewed:
 | [#71631](https://github.com/openclaw/openclaw/issues/71631) | [Feature]: Improve gateway configuration and Web UI chat responsiveness | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71631.md) | complete | Apr 25, 2026, 15:42 UTC |
 | [#56497](https://github.com/openclaw/openclaw/pull/56497) | feat(extension): support session cache for volcengine | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56497.md) | complete | Apr 25, 2026, 15:42 UTC |
 | [#56283](https://github.com/openclaw/openclaw/pull/56283) | feat(outbound): strip markdown for plain-text channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56283.md) | complete | Apr 25, 2026, 15:42 UTC |
+| [#56538](https://github.com/openclaw/openclaw/pull/56538) | fix: use TextDecoder for proper GBK encoding support on Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56538.md) | complete | Apr 25, 2026, 15:42 UTC |
+| [#55253](https://github.com/openclaw/openclaw/issues/55253) | Plugin crash loop causes session zombie state — need circuit breaker + auto-recovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55253.md) | complete | Apr 25, 2026, 15:42 UTC |
 
 ## How It Works
 
