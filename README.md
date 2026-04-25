@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 07:16 UTC
+Last dashboard update: Apr 25, 2026, 07:18 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 07:16 UTC
+Updated: Apr 25, 2026, 07:18 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 200 items across 40 shards. Capacity is 200 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24925476754](https://github.com/openclaw/clawsweeper/actions/runs/24925476754)
+Checkpoint 5 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 250/500. Result records in checkpoint: 55.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24924985336](https://github.com/openclaw/clawsweeper/actions/runs/24924985336)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8848 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8847 |
 | Fresh reviewed issues in the last 7 days | 8562 |
 | Proposed issue closes | 3193 (37.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5917 |
-| Fresh reviewed PRs in the last 7 days | 6226 |
-| Proposed PR closes | 1457 (23.4% of reviewed PRs) |
-| Open items total | 14765 |
-| Reviewed files | 14788 |
-| Archived closed files | 3650 |
-| Fresh verified reviews in the last 7 days | 14788 |
-| Proposed closes awaiting apply | 4650 (31.4% of fresh reviews) |
-| Closed by Codex apply | 2812 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5907 |
+| Fresh reviewed PRs in the last 7 days | 6171 |
+| Proposed PR closes | 1404 (22.8% of reviewed PRs) |
+| Open items total | 14754 |
+| Reviewed files | 14733 |
+| Archived closed files | 3705 |
+| Fresh verified reviews in the last 7 days | 14733 |
+| Proposed closes awaiting apply | 4597 (31.2% of fresh reviews) |
+| Closed by Codex apply | 2862 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 0 |
+| Todo for weekly coverage | 21 |
 
 Recently reviewed:
 
@@ -50,13 +50,10 @@ Recently reviewed:
 | --- | --- | --- | --- | --- |
 | [#42853](https://github.com/openclaw/openclaw/pull/42853) | feat(daemon): auto-detect Node.js heap limit; add gateway.nodeMaxOldSpaceMb config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42853.md) | complete | Apr 25, 2026, 07:13 UTC |
 | [#42895](https://github.com/openclaw/openclaw/pull/42895) | fix(infra): derive home directory from PREFIX on Android/Termux | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42895.md) | complete | Apr 25, 2026, 07:13 UTC |
-| [#42995](https://github.com/openclaw/openclaw/pull/42995) | feat: cross-channel memory sharing for unified agent experience | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42995.md) | complete | Apr 25, 2026, 07:13 UTC |
-| [#42925](https://github.com/openclaw/openclaw/pull/42925) | fix(gateway): bootstrap macOS LaunchAgent when gateway start sees not-loaded service | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42925.md) | complete | Apr 25, 2026, 07:13 UTC |
 | [#42927](https://github.com/openclaw/openclaw/pull/42927) | fix(discord): add @snazzah/davey dependency for DAVE encryption | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42927.md) | complete | Apr 25, 2026, 07:13 UTC |
 | [#42976](https://github.com/openclaw/openclaw/pull/42976) | Fix regex safety and enhance session log redaction | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42976.md) | complete | Apr 25, 2026, 07:13 UTC |
 | [#42894](https://github.com/openclaw/openclaw/pull/42894) | fix(auth): add bailian provider to env API key candidates | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42894.md) | complete | Apr 25, 2026, 07:13 UTC |
 | [#42770](https://github.com/openclaw/openclaw/pull/42770) | Canvas: add baseline security headers | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42770.md) | complete | Apr 25, 2026, 07:13 UTC |
-| [#42921](https://github.com/openclaw/openclaw/pull/42921) | fix(cron): respect OPENCLAW_STATE_DIR for cron store path at runtime | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42921.md) | complete | Apr 25, 2026, 07:12 UTC |
 | [#42933](https://github.com/openclaw/openclaw/pull/42933) | feat: session-level circuit breaker (pause after N consecutive model errors) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42933.md) | complete | Apr 25, 2026, 07:12 UTC |
 | [#42590](https://github.com/openclaw/openclaw/pull/42590) | Fix/nodes run timeout propagation | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42590.md) | complete | Apr 25, 2026, 07:12 UTC |
 | [#42728](https://github.com/openclaw/openclaw/pull/42728) | fix(feishu): apply dedup check to single-entry flush path (#42681) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/42728.md) | complete | Apr 25, 2026, 07:12 UTC |
@@ -68,6 +65,9 @@ Recently reviewed:
 | [#42904](https://github.com/openclaw/openclaw/pull/42904) | fix(logs): find active log file across date boundaries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42904.md) | complete | Apr 25, 2026, 07:12 UTC |
 | [#42677](https://github.com/openclaw/openclaw/pull/42677) | Keep bundled session-memory behavior consistent across automatic session rollover | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42677.md) | complete | Apr 25, 2026, 07:12 UTC |
 | [#42898](https://github.com/openclaw/openclaw/pull/42898) | fix(agents): classify compound read-only gateway actions correctly | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42898.md) | complete | Apr 25, 2026, 07:12 UTC |
+| [#42873](https://github.com/openclaw/openclaw/pull/42873) | fix(reply): suppress entire message when NO_REPLY appears on its own line | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42873.md) | complete | Apr 25, 2026, 07:12 UTC |
+| [#42832](https://github.com/openclaw/openclaw/pull/42832) | Nostr: restore DM delivery path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42832.md) | complete | Apr 25, 2026, 07:12 UTC |
+| [#42680](https://github.com/openclaw/openclaw/pull/42680) | fix(cron): start job timeout after execution begins, not at enqueue time | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42680.md) | complete | Apr 25, 2026, 07:12 UTC |
 
 ## How It Works
 
