@@ -117,7 +117,8 @@ jobs:
               if git push; then
                 exit 0
               fi
-              git pull --rebase --autostash
+              git fetch origin main
+              git rebase -X theirs origin/main
             done
             git push
           fi
@@ -184,7 +185,8 @@ jobs:
               if git push; then
                 exit 0
               fi
-              git pull --rebase --autostash
+              git fetch origin main
+              git rebase -X theirs origin/main
             done
             git push
           fi
@@ -331,7 +333,8 @@ jobs:
               if git push; then
                 exit 0
               fi
-              git pull --rebase --autostash
+              git fetch origin main
+              git rebase -X theirs origin/main
             done
             git push
           fi
@@ -385,6 +388,27 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p .artifacts/apply-reports
+          paths_include_readme() {
+            for path in "$@"; do
+              if [ "$path" = "README.md" ]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+          sync_for_publish_retry() {
+            if ! paths_include_readme "$@"; then
+              git restore --staged README.md || true
+              git restore README.md || true
+            fi
+            if ! git diff --quiet || ! git diff --cached --quiet; then
+              echo "Dirty worktree before publish retry:"
+              git status --short
+              return 1
+            fi
+            git fetch origin main
+            git rebase -X theirs origin/main
+          }
           publish_changes() {
             message="$1"
             shift
@@ -398,7 +422,7 @@ jobs:
               if git push; then
                 return 0
               fi
-              if ! git pull --rebase --autostash; then
+              if ! sync_for_publish_retry "$@"; then
                 git rebase --abort || true
                 return 1
               fi
@@ -488,7 +512,8 @@ jobs:
               if git push; then
                 exit 0
               fi
-              git pull --rebase --autostash
+              git fetch origin main
+              git rebase -X theirs origin/main
             done
             git push
           fi
