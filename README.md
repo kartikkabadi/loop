@@ -14,65 +14,65 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 13:00 UTC
+Last dashboard update: Apr 25, 2026, 13:01 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 13:00 UTC
+Updated: Apr 25, 2026, 13:01 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 51.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24930782854](https://github.com/openclaw/clawsweeper/actions/runs/24930782854)
+Merged review artifacts for run 24931256467. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24931256467](https://github.com/openclaw/clawsweeper/actions/runs/24931256467)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7627 |
-| Fresh reviewed issues in the last 7 days | 7575 |
-| Proposed issue closes | 2017 (26.6% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4852 |
-| Fresh reviewed PRs in the last 7 days | 4777 |
-| Proposed PR closes | 406 (8.5% of reviewed PRs) |
-| Open items total | 12479 |
-| Reviewed files | 12384 |
-| Unreviewed open items | 95 |
-| Archived closed files | 6750 |
-| Fresh verified reviews in the last 7 days | 12352 |
-| Proposed closes awaiting apply | 2423 (19.6% of fresh reviews) |
-| Closed by Codex apply | 4907 |
-| Failed or stale reviews | 32 |
-| Daily cadence coverage | 9424/9614 current (190 due, 98%) |
-| Daily PR cadence | 4618/4783 current (165 due, 96.6%) |
-| Daily new issue cadence (<30d) | 4806/4831 current (25 due, 99.5%) |
-| Weekly older issue cadence | 2769/2770 current (1 due, 100%) |
-| Due now by cadence | 286 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7617 |
+| Fresh reviewed issues in the last 7 days | 7604 |
+| Proposed issue closes | 2024 (26.6% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4851 |
+| Fresh reviewed PRs in the last 7 days | 4784 |
+| Proposed PR closes | 418 (8.7% of reviewed PRs) |
+| Open items total | 12468 |
+| Reviewed files | 12395 |
+| Unreviewed open items | 73 |
+| Archived closed files | 6752 |
+| Fresh verified reviews in the last 7 days | 12388 |
+| Proposed closes awaiting apply | 2442 (19.7% of fresh reviews) |
+| Closed by Codex apply | 4857 |
+| Failed or stale reviews | 7 |
+| Daily cadence coverage | 9536/9624 current (88 due, 99.1%) |
+| Daily PR cadence | 4702/4788 current (86 due, 98.2%) |
+| Daily new issue cadence (<30d) | 4834/4836 current (2 due, 100%) |
+| Weekly older issue cadence | 2770/2771 current (1 due, 100%) |
+| Due now by cadence | 162 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#51673](https://github.com/openclaw/openclaw/pull/51673) | fix(core): preserve totalTokens on zero usage reports (Consolidated v2) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51673.md) | complete | Apr 25, 2026, 12:45 UTC |
-| [#51556](https://github.com/openclaw/openclaw/pull/51556) | fix(pairing): propagate non-ENOENT errors in sync allowlist reader | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51556.md) | complete | Apr 25, 2026, 12:45 UTC |
-| [#51546](https://github.com/openclaw/openclaw/pull/51546) | UI: add progressive disclosure for long markdown messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51546.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51701](https://github.com/openclaw/openclaw/pull/51701) | fix(agents): avoid stale CLI session resume after /new | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51701.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51471](https://github.com/openclaw/openclaw/pull/51471) | Refresh skill prompts inside sandbox workspaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51471.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51581](https://github.com/openclaw/openclaw/pull/51581) | feat(cron): add --thread-id flag to cron create/edit for Telegram forum topics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51581.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51448](https://github.com/openclaw/openclaw/pull/51448) | fix(agent): forward configured tool choice into stream params | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51448.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51547](https://github.com/openclaw/openclaw/pull/51547) | fix(exec): default to GBK encoding on Windows (#50519) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51547.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51623](https://github.com/openclaw/openclaw/pull/51623) | fix: persist pending followup queues across gateway restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51623.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51603](https://github.com/openclaw/openclaw/pull/51603) | feat(config): add llm shorthand config key for custom model providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51603.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51668](https://github.com/openclaw/openclaw/pull/51668) | feat(outbound): gateway-layer secret sanitization with named reference handles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51668.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51584](https://github.com/openclaw/openclaw/pull/51584) | fix(sandbox): fall back to static channel registry for sandbox explain channel resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51584.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51653](https://github.com/openclaw/openclaw/pull/51653) | fix(outbound): strip inbound metadata in normalizeReplyPayloadsForDelivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51653.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51513](https://github.com/openclaw/openclaw/pull/51513) | docs(channels): add connection architecture overview and transport notes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51513.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51339](https://github.com/openclaw/openclaw/pull/51339) | fix(gateway): block mode=none auth with tailscale serve remote exposure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51339.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51166](https://github.com/openclaw/openclaw/pull/51166) | fix(sandbox): pull pre-built image from GHCR instead of plain debian:bookworm-slim | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51166.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51706](https://github.com/openclaw/openclaw/pull/51706) | Agents: show runtime model in session status | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51706.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51672](https://github.com/openclaw/openclaw/pull/51672) | ci: add missing extension and channel labels to labeler.yml | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51672.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51515](https://github.com/openclaw/openclaw/pull/51515) | fix(health): bound gateway health snapshots and normalize legacy cron | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51515.md) | complete | Apr 25, 2026, 12:44 UTC |
-| [#51708](https://github.com/openclaw/openclaw/pull/51708) | docs: remove trailing whitespace from documentation files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51708.md) | complete | Apr 25, 2026, 12:44 UTC |
+| [#64157](https://github.com/openclaw/openclaw/issues/64157) | [Bug]: Multi-Surface Message Routing Failure — Replies lost when switching from Feishu to Web Control UI mid-conversation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64157.md) | complete | Apr 25, 2026, 13:00 UTC |
+| [#71571](https://github.com/openclaw/openclaw/issues/71571) | Agent-level model field ignored during session creation — falls back to global default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71571.md) | complete | Apr 25, 2026, 12:59 UTC |
+| [#63235](https://github.com/openclaw/openclaw/issues/63235) | 功能优化 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63235.md) | complete | Apr 25, 2026, 12:59 UTC |
+| [#66360](https://github.com/openclaw/openclaw/issues/66360) | session.maintenance has no size cap for transcript .jsonl files — unbounded growth causes gateway CPU 100% | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66360.md) | complete | Apr 25, 2026, 12:59 UTC |
+| [#60570](https://github.com/openclaw/openclaw/issues/60570) | Bug: `tools.exec.host=auto` blocks agent-requested `host=node` — strict equality check prevents dynamic host switching | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60570.md) | complete | Apr 25, 2026, 12:58 UTC |
+| [#71562](https://github.com/openclaw/openclaw/issues/71562) | System attempting to JSON-parse Markdown (.md) files in workspace context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71562.md) | complete | Apr 25, 2026, 12:58 UTC |
+| [#56437](https://github.com/openclaw/openclaw/issues/56437) | [Feature Request] Native fallbackRunbook injection in agents config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56437.md) | complete | Apr 25, 2026, 12:58 UTC |
+| [#69501](https://github.com/openclaw/openclaw/issues/69501) | memory subcommands (status / index / search / promote) hang indefinitely with no output on Linux containers | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69501.md) | complete | Apr 25, 2026, 12:58 UTC |
+| [#48136](https://github.com/openclaw/openclaw/issues/48136) | fix(acpx): ACP bridge passes OpenClaw agent ID instead of runtime.acp.agent to ACPX harness | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48136.md) | complete | Apr 25, 2026, 12:58 UTC |
+| [#66540](https://github.com/openclaw/openclaw/issues/66540) | replyToCurrent default false blocks implicit replyToId in followup queue | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66540.md) | complete | Apr 25, 2026, 12:58 UTC |
+| [#52275](https://github.com/openclaw/openclaw/pull/52275) | [codex] fix(outbound): preserve delivery queue recovery metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52275.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#52236](https://github.com/openclaw/openclaw/pull/52236) | fix(mattermost): persist threadId in delivery context for all session types | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52236.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#52571](https://github.com/openclaw/openclaw/pull/52571) | fix: suppress reminder guard for sweep-backed reminders | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52571.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#65976](https://github.com/openclaw/openclaw/issues/65976) | memory-wiki bridge mode reports zero public artifacts and can remove existing bridge pages even when QMD memory is healthy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65976.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#71575](https://github.com/openclaw/openclaw/issues/71575) | Telegram channel renders intermediate tool call steps as visible messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71575.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#66768](https://github.com/openclaw/openclaw/issues/66768) | [Bug]: Empty completed turns in ghcr.io/openclaw/openclaw:2026.4.14 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66768.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#71569](https://github.com/openclaw/openclaw/issues/71569) | Mattermost streaming config: documented but not implemented + notification UX bug | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71569.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#52276](https://github.com/openclaw/openclaw/pull/52276) | [codex] fix(dedupe): preserve route-scoped suppression context | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52276.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#62531](https://github.com/openclaw/openclaw/issues/62531) | [Feature] Add option to configure wizard to add provider models without changing primary model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62531.md) | complete | Apr 25, 2026, 12:57 UTC |
+| [#63254](https://github.com/openclaw/openclaw/issues/63254) | Replay/dedup bug can redeliver prior cron and Matrix events into the same session | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63254.md) | complete | Apr 25, 2026, 12:57 UTC |
 
 ## How It Works
 
