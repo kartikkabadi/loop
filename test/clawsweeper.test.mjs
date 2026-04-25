@@ -79,9 +79,15 @@ test("protected labels block close proposals even for otherwise valid decisions"
 });
 
 test("review actions only propose valid closes and never apply directly", () => {
-  const action = reviewActionForDecision({ item: item(), decision: closeDecision(), git });
+  const action = reviewActionForDecision({
+    item: item(),
+    decision: closeDecision(),
+    git,
+    runtime: { model: "gpt-5.5", reasoningEffort: "medium" },
+  });
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /Closing this as implemented/);
+  assert.match(action.closeComment, /Codex Review notes: model gpt-5\.5, reasoning medium;/);
 });
 
 test("invalid close semantics are rejected", () => {

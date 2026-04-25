@@ -139,11 +139,20 @@ interface Action {
   closeComment: string;
 }
 
+interface ReviewRuntime {
+  model: string;
+  reasoningEffort: string;
+  sandboxMode?: string;
+  serviceTier?: string;
+}
+
 interface DashboardItem {
   number: number;
   kind: ItemKind;
   title: string;
   reviewedAt: string | undefined;
+  reviewModel: string | undefined;
+  reviewReasoningEffort: string | undefined;
   decision: string;
   action: string;
   reviewStatus: string;
@@ -1837,9 +1846,34 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
   };
 }
 
-function closeReviewLineFromDecision(decision: Decision, git: GitInfo): string {
+function runtimeReviewText(runtime?: {
+  model?: string | undefined;
+  reasoningEffort?: string | undefined;
+}): string {
+  const model = runtime?.model?.trim();
+  const reasoningEffort = runtime?.reasoningEffort?.trim();
+  if (model && reasoningEffort) return `model ${model}, reasoning ${reasoningEffort}`;
+  if (model) return `model ${model}`;
+  if (reasoningEffort) return `reasoning ${reasoningEffort}`;
+  return "";
+}
+
+function runtimeReviewTextFromReport(markdown: string): string {
+  return runtimeReviewText({
+    model: frontMatterValue(markdown, "review_model") ?? "",
+    reasoningEffort: frontMatterValue(markdown, "review_reasoning_effort") ?? "",
+  });
+}
+
+function closeReviewLineFromDecision(
+  decision: Decision,
+  git: GitInfo,
+  runtime?: Pick<ReviewRuntime, "model" | "reasoningEffort">,
+): string {
   const fixed = fixedInText(decision);
-  const parts = [`reviewed against ${linkedSha(git.mainSha)}`];
+  const parts = [runtimeReviewText(runtime), `reviewed against ${linkedSha(git.mainSha)}`].filter(
+    Boolean,
+  );
   if (fixed !== "not determined") parts.push(`fix evidence: ${fixed}`);
   return `Codex Review notes: ${parts.join("; ")}.`;
 }
@@ -1847,7 +1881,7 @@ function closeReviewLineFromDecision(decision: Decision, git: GitInfo): string {
 function closeReviewLineFromReport(markdown: string): string {
   const mainSha = frontMatterValue(markdown, "main_sha");
   const fixed = fixedInReportText(markdown);
-  const parts: string[] = [];
+  const parts: string[] = [runtimeReviewTextFromReport(markdown)].filter(Boolean);
   if (mainSha && mainSha !== "unknown") parts.push(`reviewed against ${linkedSha(mainSha)}`);
   if (fixed !== "not determined") parts.push(`fix evidence: ${fixed}`);
   return parts.length ? `Codex Review notes: ${parts.join("; ")}.` : "";
@@ -1879,12 +1913,16 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
   });
 }
 
-function normalizeComment(decision: Decision, git: GitInfo): string {
+function normalizeComment(
+  decision: Decision,
+  git: GitInfo,
+  runtime?: Pick<ReviewRuntime, "model" | "reasoningEffort">,
+): string {
   return renderCloseComment({
     reason: decision.closeReason,
     summary: decision.summary,
     evidence: decision.evidence,
-    reviewLine: closeReviewLineFromDecision(decision, git),
+    reviewLine: closeReviewLineFromDecision(decision, git, runtime),
   });
 }
 
@@ -2029,6 +2067,7 @@ export function reviewActionForDecision(options: {
   item: Item;
   decision: Decision;
   git: GitInfo;
+  runtime?: Pick<ReviewRuntime, "model" | "reasoningEffort">;
 }): Action {
   if (options.decision.decision !== "close") return { actionTaken: "kept_open", closeComment: "" };
   if (isMaintainerAuthored(options.item)) {
@@ -2036,7 +2075,7 @@ export function reviewActionForDecision(options: {
   }
   const validation = validateCloseDecision(options.item, options.decision);
   if (!validation.ok) return { actionTaken: validation.actionTaken, closeComment: "" };
-  const closeComment = normalizeComment(options.decision, options.git);
+  const closeComment = normalizeComment(options.decision, options.git, options.runtime);
   return { actionTaken: "proposed_close", closeComment };
 }
 
@@ -2049,6 +2088,7 @@ function markdownFor(options: {
   reviewMode: "propose" | "apply";
   snapshotHash: string;
   reviewPolicy: string;
+  runtime: ReviewRuntime;
 }): string {
   const labels = options.item.labels.length ? options.item.labels.join(", ") : "none";
   const evidence = options.decision.evidence.length
@@ -2089,6 +2129,10 @@ latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
 fixed_release: ${options.decision.fixedRelease ?? "unknown"}
 fixed_sha: ${options.decision.fixedSha ?? "unknown"}
 review_policy: ${options.reviewPolicy}
+review_model: ${options.runtime.model}
+review_reasoning_effort: ${options.runtime.reasoningEffort}
+review_sandbox: ${options.runtime.sandboxMode ?? "unknown"}
+review_service_tier: ${options.runtime.serviceTier ?? "unknown"}
 review_mode: ${options.reviewMode}
 review_status: ${options.decision.summary.startsWith("Codex review failed") ? "failed" : "complete"}
 local_checkout_access: verified
@@ -2117,6 +2161,8 @@ Created at: ${formatTimestamp(options.item.createdAt)}
 Updated at: ${formatTimestamp(options.item.updatedAt)}
 
 Reviewed against: ${linkedSha(options.git.mainSha)}
+
+Codex review: ${runtimeReviewText(options.runtime)}
 
 Latest release at review time: ${
     options.git.latestRelease?.tagName
@@ -2273,7 +2319,8 @@ function reviewCommand(args: Args): void {
         "Per-item Codex failure; continuing with the rest of the shard.",
       );
     }
-    const action = reviewActionForDecision({ item, decision, git });
+    const runtime = { model, reasoningEffort, sandboxMode, serviceTier };
+    const action = reviewActionForDecision({ item, decision, git, runtime });
     writeFileSync(
       join(artifactDir, `${item.number}.md`),
       markdownFor({
@@ -2285,6 +2332,7 @@ function reviewCommand(args: Args): void {
         reviewMode: "propose",
         snapshotHash,
         reviewPolicy,
+        runtime,
       }),
       "utf8",
     );
@@ -2766,6 +2814,8 @@ function dashboardStats(
       kind,
       title: frontMatterValue(markdown, "title") ?? "",
       reviewedAt,
+      reviewModel: frontMatterValue(markdown, "review_model"),
+      reviewReasoningEffort: frontMatterValue(markdown, "review_reasoning_effort"),
       decision,
       action,
       reviewStatus,
@@ -2825,9 +2875,14 @@ function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, 
           `${item.decision} / ${item.action}`,
           reportFileUrl(item.number),
         );
-        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title.replaceAll("|", "\\|")} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
+        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title.replaceAll("|", "\\|")} | ${outcome} | ${item.reviewStatus} | ${
+          runtimeReviewText({
+            model: item.reviewModel,
+            reasoningEffort: item.reviewReasoningEffort,
+          }) || "unknown"
+        } | ${formatTimestamp(item.reviewedAt)} |`;
       })
-      .join("\n") || "| _None_ |  |  |  |  |";
+      .join("\n") || "| _None_ |  |  |  |  |  |";
   const dashboard = `## Dashboard
 
 Last dashboard update: ${formatTimestamp(new Date().toISOString())}
@@ -2858,8 +2913,8 @@ ${status}
 
 Recently reviewed:
 
-| Item | Title | Outcome | Status | Reviewed |
-| --- | --- | --- | --- | --- |
+| Item | Title | Outcome | Status | Review Runtime | Reviewed |
+| --- | --- | --- | --- | --- | --- |
 ${recent}`;
   const updated = readme.replace(
     /## Dashboard[\s\S]*?## How It Works/,

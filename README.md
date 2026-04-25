@@ -85,7 +85,7 @@ Each review job:
 3. Checks out `openclaw/openclaw` at `main`, with cached git objects for faster startup.
 4. Pre-hydrates compact related issue/PR context referenced from the item body, comments, timeline, or PR review comments.
 5. Runs Codex with `gpt-5.5`, medium reasoning, fast service tier, and a 10-minute per-item timeout inside the OpenClaw checkout.
-6. Writes `items/<number>.md` with the decision, proposed close comment, and a GitHub snapshot hash.
+6. Writes `items/<number>.md` with the decision, proposed close comment, review runtime (`review_model`, `review_reasoning_effort`, sandbox, service tier), and a GitHub snapshot hash.
 7. Marks high-confidence allowed close decisions as `proposed_close`.
 
 Codex runs without GitHub write tokens. The runner checks the OpenClaw checkout before every review, makes the checkout read-only in CI, runs Codex without the nested Linux sandbox that blocks shell inspection on GitHub runners, checks the checkout again after review, and fails the item if Codex leaves any tracked or untracked change behind.
