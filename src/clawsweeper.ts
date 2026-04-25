@@ -293,7 +293,7 @@ function ghWithRetry(args: string[], attempts = 12): string {
       lastError = error;
       if (!shouldRetryGh(error) || attempt === attempts - 1) throw error;
       const waitMs = Math.min(600_000, 30_000 * 2 ** attempt);
-      console.error(`GitHub throttled write; retrying in ${Math.round(waitMs / 1000)}s`);
+      console.error(`GitHub throttled; retrying in ${Math.round(waitMs / 1000)}s`);
       sleepMs(waitMs);
     }
   }
@@ -301,12 +301,12 @@ function ghWithRetry(args: string[], attempts = 12): string {
 }
 
 function ghJson<T>(args: string[]): T {
-  const text = gh(args);
+  const text = ghWithRetry(args);
   return JSON.parse(text) as T;
 }
 
 function ghJsonLines<T>(args: string[]): T[] {
-  const text = gh(args);
+  const text = ghWithRetry(args);
   if (!text) return [];
   return text
     .split("\n")
