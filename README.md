@@ -23,26 +23,26 @@ Updated: Apr 25, 2026, 02:16 UTC
 
 State: Apply in progress
 
-Starting apply run for up to 500 fresh issue closes. Checkpoints commit every 50 fresh closes; close delay is 15000ms.
+Checkpoint 1 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 50/500. Result records in checkpoint: 50.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920206705](https://github.com/openclaw/clawsweeper/actions/runs/24920206705)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10419 |
-| Fresh reviewed issues in the last 7 days | 8261 |
-| Proposed issue closes | 3710 (44.9% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 8211 |
+| Proposed issue closes | 3660 (44.6% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6365 |
 | Fresh reviewed PRs in the last 7 days | 5027 |
 | Proposed PR closes | 1370 (27.3% of reviewed PRs) |
 | Open items total | 16784 |
-| Reviewed files | 13288 |
-| Archived closed files | 2139 |
-| Fresh verified reviews in the last 7 days | 13288 |
-| Proposed closes awaiting apply | 5080 (38.2% of fresh reviews) |
-| Closed by Codex apply | 1383 |
+| Reviewed files | 13238 |
+| Archived closed files | 2189 |
+| Fresh verified reviews in the last 7 days | 13238 |
+| Proposed closes awaiting apply | 5030 (38% of fresh reviews) |
+| Closed by Codex apply | 1433 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 3496 |
+| Todo for weekly coverage | 3546 |
 
 Recently reviewed:
 
