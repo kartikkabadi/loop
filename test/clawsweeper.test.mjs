@@ -83,11 +83,11 @@ test("review actions only propose valid closes and never apply directly", () => 
     item: item(),
     decision: closeDecision(),
     git,
-    runtime: { model: "gpt-5.5", reasoningEffort: "medium" },
+    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
   });
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /Closing this as implemented/);
-  assert.match(action.closeComment, /Codex Review notes: model gpt-5\.5, reasoning medium;/);
+  assert.match(action.closeComment, /Codex Review notes: model gpt-5\.5, reasoning high;/);
 });
 
 test("invalid close semantics are rejected", () => {
