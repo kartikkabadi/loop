@@ -253,5 +253,265 @@
     "number": 51506,
     "action": "closed",
     "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51507,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 51509,
+    "action": "closed",
+    "reason": "cannot reproduce on current main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51510,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51516,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51517,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51518,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51519,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51522,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51530,
+    "action": "skipped_already_closed",
+    "reason": "state is closed"
+  },
+  {
+    "number": 51532,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51533,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51541,
+    "action": "closed",
+    "reason": "cannot reproduce on current main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51545,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51551,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51564,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51585,
+    "action": "closed",
+    "reason": "belongs on ClawHub; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51601,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51611,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51612,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51629,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51632,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51636,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51637,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51638,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51639,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51640,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51645,
+    "action": "closed",
+    "reason": "already implemented on main; matching ClawSweeper close comment already exists"
+  },
+  {
+    "number": 51661,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51669,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51670,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51677,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51678,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51685,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51693,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51696,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51698,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51724,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51736,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51742,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51743,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51755,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51771,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51773,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51779,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51785,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51787,
+    "action": "closed",
+    "reason": "not actionable"
+  },
+  {
+    "number": 51788,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51796,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51797,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 51798,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 51800,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 51804,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
