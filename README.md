@@ -21,10 +21,10 @@ Last dashboard update: Apr 25, 2026, 08:43 UTC
 
 Updated: Apr 25, 2026, 08:43 UTC
 
-State: Review publish complete
+State: Planning review
 
-Merged review artifacts for run 24926747847. Dashboard reflects the latest files and proposed closes from completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24926747847](https://github.com/openclaw/clawsweeper/actions/runs/24926747847)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24927012474](https://github.com/openclaw/clawsweeper/actions/runs/24927012474)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
