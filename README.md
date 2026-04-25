@@ -14,60 +14,60 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 03:12 UTC
+Last dashboard update: Apr 25, 2026, 03:19 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 03:12 UTC
+Updated: Apr 25, 2026, 03:19 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Checkpoint 5 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 250/500. Result records in checkpoint: 50.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920206705](https://github.com/openclaw/clawsweeper/actions/runs/24920206705)
+Merged review artifacts for run 24921087124. Dashboard reflects the latest files and proposed closes from completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24921087124](https://github.com/openclaw/clawsweeper/actions/runs/24921087124)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10138 |
-| Fresh reviewed issues in the last 7 days | 8542 |
-| Proposed issue closes | 3736 (43.7% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6337 |
-| Fresh reviewed PRs in the last 7 days | 5294 |
-| Proposed PR closes | 1429 (27% of reviewed PRs) |
-| Open items total | 16475 |
-| Reviewed files | 13836 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10093 |
+| Fresh reviewed issues in the last 7 days | 8678 |
+| Proposed issue closes | 3807 (43.9% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6336 |
+| Fresh reviewed PRs in the last 7 days | 5358 |
+| Proposed PR closes | 1437 (26.8% of reviewed PRs) |
+| Open items total | 16429 |
+| Reviewed files | 14036 |
 | Archived closed files | 2391 |
-| Fresh verified reviews in the last 7 days | 13836 |
-| Proposed closes awaiting apply | 5165 (37.3% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 14036 |
+| Proposed closes awaiting apply | 5244 (37.4% of fresh reviews) |
 | Closed by Codex apply | 1633 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 2639 |
+| Todo for weekly coverage | 2393 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#66195](https://github.com/openclaw/openclaw/issues/66195) | memory-lancedb-pro v1.0.32: plugin tool fails with TypeError: stringEnum is not a function (OpenClaw 2026.4.12) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66195.md) | complete | Apr 25, 2026, 03:03 UTC |
-| [#66197](https://github.com/openclaw/openclaw/pull/66197) | security: wrap Telegram inbound DM body via wrapExternalContent | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66197.md) | complete | Apr 25, 2026, 03:03 UTC |
-| [#66187](https://github.com/openclaw/openclaw/issues/66187) | Bug: subagents list shows endedAt-set entries as active, blocking maxConcurrent quota | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66187.md) | complete | Apr 25, 2026, 03:03 UTC |
-| [#66168](https://github.com/openclaw/openclaw/pull/66168) | feat(gateway): add MCP Apps protocol extension (tools, resources, UI meta) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66168.md) | complete | Apr 25, 2026, 03:03 UTC |
-| [#66203](https://github.com/openclaw/openclaw/issues/66203) | [Bug]:  Cron Tool Corrupts Model IDs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66203.md) | complete | Apr 25, 2026, 03:03 UTC |
-| [#66204](https://github.com/openclaw/openclaw/issues/66204) | [Bug]: zai provider baseUrl ignored on v2026.4.11 — coding endpoint requests routed to standard endpoint | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66204.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66176](https://github.com/openclaw/openclaw/issues/66176) | [Bug]: WebChat briefly hides newly sent message before it reappears | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66176.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66174](https://github.com/openclaw/openclaw/pull/66174) | Fix session transcript path canonicalization on save | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66174.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66215](https://github.com/openclaw/openclaw/issues/66215) | Telegram image delivery race condition: tool-images resizes file but LocalMediaAccessError on send | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66215.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66156](https://github.com/openclaw/openclaw/pull/66156) | [codex] fix exec completion system-event history leak | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66156.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66200](https://github.com/openclaw/openclaw/pull/66200) | security: wrap BlueBubbles inbound DM body via wrapExternalContent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66200.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66201](https://github.com/openclaw/openclaw/issues/66201) | [Feature]: Feature Request: Add confirmation dialog or toggle for \"Reset Agent\" button in Control UI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66201.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66188](https://github.com/openclaw/openclaw/pull/66188) | fix(channels): prevent internal assistant scratch messages from leaking to Telegram | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66188.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66186](https://github.com/openclaw/openclaw/issues/66186) | Agent turn hangs indefinitely when image tool fails (no error propagation to turn) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66186.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66194](https://github.com/openclaw/openclaw/issues/66194) | Feature Request: Slack Socket Mode slash command event handling | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66194.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66157](https://github.com/openclaw/openclaw/issues/66157) | [Bug]: Active Memory still times out in Discord channel sessions on v2026.4.12 even with message/strict tuning | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66157.md) | complete | Apr 25, 2026, 03:02 UTC |
-| [#66222](https://github.com/openclaw/openclaw/issues/66222) | [Feature]: Multi-Agent Collaboration | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66222.md) | complete | Apr 25, 2026, 03:01 UTC |
-| [#66185](https://github.com/openclaw/openclaw/issues/66185) | [Bug] memory-core dreaming cron reports success but produces no artifacts and exits in ~6-8ms | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66185.md) | complete | Apr 25, 2026, 03:01 UTC |
-| [#66119](https://github.com/openclaw/openclaw/issues/66119) | [Bug] Signal: update to 2026.4.12 sets registered=false in signal-cli account file, causing account deletion | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66119.md) | complete | Apr 25, 2026, 03:01 UTC |
-| [#66100](https://github.com/openclaw/openclaw/issues/66100) | [Bug]:   Title: [Android] Bootstrap token not cleared after successful spend on plain LAN ws:// — causes permanent auth loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66100.md) | complete | Apr 25, 2026, 03:01 UTC |
+| [#66580](https://github.com/openclaw/openclaw/pull/66580) | fix(heartbeat): relay exec payload in prompts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66580.md) | complete | Apr 25, 2026, 03:19 UTC |
+| [#66552](https://github.com/openclaw/openclaw/pull/66552) | fix: recover reasoning-only Ollama turns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66552.md) | complete | Apr 25, 2026, 03:18 UTC |
+| [#66543](https://github.com/openclaw/openclaw/pull/66543) | fix(cron): strip internal whitespace from model IDs in cron job normalization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66543.md) | complete | Apr 25, 2026, 03:18 UTC |
+| [#66544](https://github.com/openclaw/openclaw/pull/66544) | fix(gateway): exclude heartbeat sender ID from session display name | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66544.md) | complete | Apr 25, 2026, 03:18 UTC |
+| [#66597](https://github.com/openclaw/openclaw/issues/66597) | [webchat] User message flickers after sending (v2026.4.12) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66597.md) | complete | Apr 25, 2026, 03:17 UTC |
+| [#66496](https://github.com/openclaw/openclaw/issues/66496) | Heartbeat/cron system events arrive as role:user — model mistakes them for human messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66496.md) | complete | Apr 25, 2026, 03:17 UTC |
+| [#66508](https://github.com/openclaw/openclaw/issues/66508) | Dream Diary: Timestamp tabs show red strikethrough on click | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66508.md) | complete | Apr 25, 2026, 03:17 UTC |
+| [#66608](https://github.com/openclaw/openclaw/issues/66608) | Bug: Z.ai glm-4.6v vision model always aborts with 'Request was aborted' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66608.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66576](https://github.com/openclaw/openclaw/issues/66576) | [Feature]: Configurable workspace file inclusion/exclusion (bootstrapFiles) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66576.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66530](https://github.com/openclaw/openclaw/issues/66530) | [Feature]: Primary model should be probed for recovery after fallback due to timeout | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66530.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66577](https://github.com/openclaw/openclaw/issues/66577) | [Feature]:  Add optional hard context truncation mode that keeps only a fixed recent portion of max context | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66577.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66537](https://github.com/openclaw/openclaw/pull/66537) | Fix: Issue 66397 silent final answer loss | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66537.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66551](https://github.com/openclaw/openclaw/pull/66551) | fix(media): allow host-read text document fallback mimes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66551.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66523](https://github.com/openclaw/openclaw/issues/66523) | [Bug]:  OPENCLAW_STATE_DIR Environment Variable Ignored on Windows | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66523.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66558](https://github.com/openclaw/openclaw/issues/66558) | [Bug] sessions_spawn / sessions_send not available in main agent session despite tools.profile: \"coding\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66558.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66486](https://github.com/openclaw/openclaw/issues/66486) | [Bug]: [Bug] image tool 报 Unknown model 当 本地模型 被设为 imageModel 而非主模型时 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66486.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66549](https://github.com/openclaw/openclaw/issues/66549) | [Bug]: openclaw message send --dry-run still delivers the message via gateway | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66549.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66546](https://github.com/openclaw/openclaw/pull/66546) | feat(sessions): add transcriptRotateBytes and transcriptMaxLines to cap .jsonl growth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66546.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66531](https://github.com/openclaw/openclaw/issues/66531) | [Feature]: Add agent.abort RPC to cancel embedded agent runs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66531.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66487](https://github.com/openclaw/openclaw/issues/66487) | Heartbeat exec-event prompt drops actual completion payload | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66487.md) | complete | Apr 25, 2026, 03:16 UTC |
 
 ## How It Works
 
