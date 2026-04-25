@@ -21,9 +21,9 @@ Last dashboard update: Apr 25, 2026, 12:21 UTC
 
 Updated: Apr 25, 2026, 12:21 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 10 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 500/500. Result records in checkpoint: 50.
+Apply run finished with 500 fresh closes out of requested limit 500. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24929701589](https://github.com/openclaw/clawsweeper/actions/runs/24929701589)
 <!-- clawsweeper-status:end -->
 
@@ -32,12 +32,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24929701589](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 7871 |
 | Fresh reviewed issues in the last 7 days | 7844 |
 | Proposed issue closes | 2272 (29% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4908 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4909 |
 | Fresh reviewed PRs in the last 7 days | 4838 |
 | Proposed PR closes | 448 (9.3% of reviewed PRs) |
-| Open items total | 12779 |
+| Open items total | 12780 |
 | Reviewed files | 12696 |
-| Unreviewed open items | 83 |
+| Unreviewed open items | 84 |
 | Archived closed files | 6432 |
 | Fresh verified reviews in the last 7 days | 12682 |
 | Proposed closes awaiting apply | 2720 (21.4% of fresh reviews) |
@@ -47,7 +47,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24929701589](https://
 | Daily PR cadence | 4608/4843 current (235 due, 95.1%) |
 | Daily new issue cadence (<30d) | 5072/5081 current (9 due, 99.8%) |
 | Weekly older issue cadence | 2772/2772 current (0 due, 100%) |
-| Due now by cadence | 327 |
+| Due now by cadence | 328 |
 
 Recently reviewed:
 
