@@ -14,35 +14,35 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 05:40 UTC
+Last dashboard update: Apr 25, 2026, 05:43 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 05:40 UTC
+Updated: Apr 25, 2026, 05:43 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 50/500. Result records in checkpoint: 51.
+Checkpoint 2 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 100/500. Result records in checkpoint: 52.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24923761277](https://github.com/openclaw/clawsweeper/actions/runs/24923761277)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9277 |
-| Fresh reviewed issues in the last 7 days | 8929 |
-| Proposed issue closes | 3543 (39.7% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6188 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 9252 |
+| Fresh reviewed issues in the last 7 days | 8877 |
+| Proposed issue closes | 3491 (39.3% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6186 |
 | Fresh reviewed PRs in the last 7 days | 5983 |
 | Proposed PR closes | 1545 (25.8% of reviewed PRs) |
-| Open items total | 15465 |
-| Reviewed files | 14912 |
-| Archived closed files | 3115 |
-| Fresh verified reviews in the last 7 days | 14912 |
-| Proposed closes awaiting apply | 5088 (34.1% of fresh reviews) |
-| Closed by Codex apply | 2333 |
+| Open items total | 15438 |
+| Reviewed files | 14860 |
+| Archived closed files | 3167 |
+| Fresh verified reviews in the last 7 days | 14860 |
+| Proposed closes awaiting apply | 5036 (33.9% of fresh reviews) |
+| Closed by Codex apply | 2383 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 553 |
+| Todo for weekly coverage | 578 |
 
 Recently reviewed:
 
