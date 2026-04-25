@@ -14,60 +14,60 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 06:53 UTC
+Last dashboard update: Apr 25, 2026, 06:59 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 06:53 UTC
+Updated: Apr 25, 2026, 06:59 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 50/500. Result records in checkpoint: 52.
+Checkpoint 2 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 100/500. Result records in checkpoint: 55.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24924985336](https://github.com/openclaw/clawsweeper/actions/runs/24924985336)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8874 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 8863 |
 | Fresh reviewed issues in the last 7 days | 8563 |
 | Proposed issue closes | 3193 (37.3% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6110 |
-| Fresh reviewed PRs in the last 7 days | 6334 |
-| Proposed PR closes | 1559 (24.6% of reviewed PRs) |
-| Open items total | 14984 |
-| Reviewed files | 14897 |
-| Archived closed files | 3533 |
-| Fresh verified reviews in the last 7 days | 14897 |
-| Proposed closes awaiting apply | 4752 (31.9% of fresh reviews) |
-| Closed by Codex apply | 2733 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6059 |
+| Fresh reviewed PRs in the last 7 days | 6280 |
+| Proposed PR closes | 1504 (23.9% of reviewed PRs) |
+| Open items total | 14922 |
+| Reviewed files | 14843 |
+| Archived closed files | 3587 |
+| Fresh verified reviews in the last 7 days | 14843 |
+| Proposed closes awaiting apply | 4697 (31.6% of fresh reviews) |
+| Closed by Codex apply | 2783 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 87 |
+| Todo for weekly coverage | 79 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
 | [#41027](https://github.com/openclaw/openclaw/pull/41027) | fix(discord): break resume loop on consecutive 1005 close failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41027.md) | complete | Apr 25, 2026, 06:47 UTC |
-| [#41098](https://github.com/openclaw/openclaw/pull/41098) | fix(acpx): prefer OAuth session auth and block OpenAI key env leakage in chatgpt mode | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41098.md) | complete | Apr 25, 2026, 06:47 UTC |
 | [#41037](https://github.com/openclaw/openclaw/pull/41037) | fix(config): infer auth profile providers from profile ids | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41037.md) | complete | Apr 25, 2026, 06:46 UTC |
 | [#41092](https://github.com/openclaw/openclaw/pull/41092) | fix: reduce pre-dispatch latency before LLM send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41092.md) | complete | Apr 25, 2026, 06:46 UTC |
 | [#40953](https://github.com/openclaw/openclaw/pull/40953) | fix(CLI): validate gateway-facing timeout input | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40953.md) | complete | Apr 25, 2026, 06:46 UTC |
-| [#39442](https://github.com/openclaw/openclaw/pull/39442) | feat: memory auto-prefetch — inject memory context before LLM sees the message | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39442.md) | complete | Apr 25, 2026, 06:46 UTC |
 | [#40463](https://github.com/openclaw/openclaw/pull/40463) | fix(msteams): fix image attachment download for channel and DM messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40463.md) | complete | Apr 25, 2026, 06:46 UTC |
 | [#41108](https://github.com/openclaw/openclaw/pull/41108) | fix(msteams): detect implicit mentions in thread replies via conversation.id | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41108.md) | complete | Apr 25, 2026, 06:46 UTC |
 | [#39463](https://github.com/openclaw/openclaw/pull/39463) | fix: improve npm install resilience on low-memory systems | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39463.md) | complete | Apr 25, 2026, 06:46 UTC |
 | [#41030](https://github.com/openclaw/openclaw/pull/41030) | fix(gateway): avoid false stuck restarts with fresh events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41030.md) | complete | Apr 25, 2026, 06:45 UTC |
 | [#41031](https://github.com/openclaw/openclaw/pull/41031) | fix(heartbeat): honor explicit target session keys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41031.md) | complete | Apr 25, 2026, 06:45 UTC |
 | [#39748](https://github.com/openclaw/openclaw/pull/39748) | fix(nostr): validate relay URLs require WebSocket protocol (wss/ws) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39748.md) | complete | Apr 25, 2026, 06:45 UTC |
-| [#41119](https://github.com/openclaw/openclaw/pull/41119) | Fix: Deduplicate tool call IDs in normalizeToolCallIdsInMessage | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41119.md) | complete | Apr 25, 2026, 06:45 UTC |
-| [#41054](https://github.com/openclaw/openclaw/pull/41054) | Accept legacy anthropic tool payload compat config overrides | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/41054.md) | complete | Apr 25, 2026, 06:45 UTC |
 | [#39653](https://github.com/openclaw/openclaw/pull/39653) | fix(security): reject hostname ws:// targets in allowPrivateWs mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39653.md) | complete | Apr 25, 2026, 06:45 UTC |
 | [#41038](https://github.com/openclaw/openclaw/pull/41038) | fix(chatui): show stdout for structured tool results | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41038.md) | complete | Apr 25, 2026, 06:45 UTC |
 | [#39766](https://github.com/openclaw/openclaw/pull/39766) | fix(config): make models.providers.<id>.models optional to allow credential-only entries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39766.md) | complete | Apr 25, 2026, 06:45 UTC |
 | [#40958](https://github.com/openclaw/openclaw/pull/40958) | fix(update): harden detached restart health recovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40958.md) | complete | Apr 25, 2026, 06:45 UTC |
 | [#40970](https://github.com/openclaw/openclaw/pull/40970) | logging.file configuration supports wildcard characters YYYY-MM-DD | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40970.md) | complete | Apr 25, 2026, 06:45 UTC |
 | [#40200](https://github.com/openclaw/openclaw/pull/40200) | fix(exec): prevent shell startup files from overriding daemon env | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40200.md) | complete | Apr 25, 2026, 06:45 UTC |
+| [#39683](https://github.com/openclaw/openclaw/pull/39683) | fix(cron): reject Feishu announce jobs without delivery target | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39683.md) | complete | Apr 25, 2026, 06:20 UTC |
+| [#41009](https://github.com/openclaw/openclaw/pull/41009) | fix(config): migrate tailscale serve binds to loopback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41009.md) | complete | Apr 25, 2026, 06:19 UTC |
+| [#39350](https://github.com/openclaw/openclaw/pull/39350) | fix(gateway): suppress NO_REPLY lead fragment in chat final message | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39350.md) | complete | Apr 25, 2026, 06:19 UTC |
+| [#41013](https://github.com/openclaw/openclaw/pull/41013) | fix: strip leading <session-recap> blocks from user-visible messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41013.md) | complete | Apr 25, 2026, 06:19 UTC |
 
 ## How It Works
 
