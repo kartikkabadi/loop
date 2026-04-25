@@ -248,5 +248,255 @@
     "number": 58095,
     "action": "closed",
     "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 58104,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 58107,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58108,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58109,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58111,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58113,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58119,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 58128,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 58129,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58131,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58132,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58140,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58146,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58149,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58152,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58158,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58163,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58164,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58173,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58176,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58194,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58206,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58213,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58219,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58230,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58232,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58233,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58235,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58240,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 58243,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58252,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 58259,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58268,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58286,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58288,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58291,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58295,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58303,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58305,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58306,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58308,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58314,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 58317,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58318,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58331,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58332,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58344,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 58345,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58352,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 58353,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
   }
 ]
