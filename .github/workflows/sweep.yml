@@ -171,12 +171,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm run reconcile
           npm run dashboard
           npm run status -- \
             --state "Review in progress" \
             --detail "Planned ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          git add README.md
+          git add README.md items closed
           if git diff --cached --quiet; then
             echo "No status changes"
           else
@@ -317,7 +318,7 @@ jobs:
           npm run apply-artifacts -- --artifact-dir artifacts
           npm run status -- \
             --state "Review publish complete" \
-            --detail "Merged review artifacts for run ${{ github.run_id }}. Dashboard reflects the latest files and proposed closes from completed shards." \
+            --detail "Merged review artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Commit dashboard and review files
@@ -436,12 +437,16 @@ jobs:
               git restore README.md || true
             fi
           }
+          npm run reconcile
           npm run dashboard
           npm run status -- \
             --state "Apply in progress" \
             --detail "Starting apply run for up to $limit fresh $apply_kind closes. Checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          publish_readme_status "chore: mark sweep apply in progress"
+          if ! publish_changes "chore: mark sweep apply in progress" README.md items closed; then
+            echo "Best-effort apply start status update failed"
+            git restore README.md || true
+          fi
           closed_total=0
           checkpoint=0
           while [ "$closed_total" -lt "$limit" ]; do

@@ -203,6 +203,14 @@ interface ApplyResult {
   reason: string;
 }
 
+interface ReconcileResult {
+  openItemsSeen: number;
+  pagesScanned: number;
+  movedToClosed: number;
+  movedToItems: number;
+  removedStaleClosedCopies: number;
+}
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGET_REPO = "openclaw/openclaw";
 const REPORT_REPO = "openclaw/clawsweeper";
@@ -720,6 +728,21 @@ function fetchOpenItemPage(page: number): Item[] {
       labels: item.labels ?? [],
     }))
     .sort((a, b) => a.number - b.number);
+}
+
+function fetchOpenItemNumbers(maxPages: number): { numbers: Set<number>; pagesScanned: number } {
+  const numbers = new Set<number>();
+  let pagesScanned = 0;
+  for (let page = 1; page <= maxPages; page += 1) {
+    const items = fetchOpenItemPage(page);
+    pagesScanned = page;
+    for (const item of items) numbers.add(item.number);
+    if (items.length === 0) return { numbers, pagesScanned };
+    if (items.length < 100) return { numbers, pagesScanned };
+  }
+  throw new Error(
+    `Open item scan reached max_pages=${maxPages} before the final page; refusing to reconcile folders from a partial scan.`,
+  );
 }
 
 function fetchItem(number: number): { item: Item; state: string } {
@@ -2061,6 +2084,7 @@ function applyArtifactsCommand(args: Args): void {
   const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts"));
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
   const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
+  const skipReconcile = boolArg(args.skip_reconcile);
   ensureDir(itemsDir);
   ensureDir(closedDir);
   if (existsSync(artifactDir)) {
@@ -2078,6 +2102,7 @@ function applyArtifactsCommand(args: Args): void {
       writeFileSync(join(destinationDir, basename(source)), markdown, "utf8");
     }
   }
+  if (!skipReconcile) reconcileFolders({ itemsDir, closedDir });
   updateDashboard(itemsDir, closedDir);
 }
 
@@ -2087,6 +2112,91 @@ function markdownFiles(dir: string): string[] {
         .filter((name) => /^\d+\.md$/.test(name))
         .sort((left, right) => Number(left.replace(".md", "")) - Number(right.replace(".md", "")))
     : [];
+}
+
+function numberForMarkdownFile(file: string): number {
+  return Number(file.replace(/\.md$/, ""));
+}
+
+function markReconciledState(markdown: string, state: "open" | "closed"): string {
+  let nextMarkdown = replaceFrontMatterValue(markdown, "current_state", state);
+  nextMarkdown = replaceFrontMatterValue(nextMarkdown, "reconciled_at", new Date().toISOString());
+  if (state === "open") {
+    nextMarkdown = replaceFrontMatterValue(nextMarkdown, "review_status", "stale_reopened");
+    nextMarkdown = replaceFrontMatterValue(nextMarkdown, "action_taken", "kept_open");
+  }
+  return nextMarkdown;
+}
+
+function moveMarkdownFile(options: {
+  sourcePath: string;
+  destinationPath: string;
+  markdown: string;
+  dryRun: boolean;
+}): void {
+  if (options.dryRun) return;
+  ensureDir(dirname(options.destinationPath));
+  writeFileSync(options.sourcePath, options.markdown, "utf8");
+  if (existsSync(options.destinationPath)) unlinkSync(options.destinationPath);
+  renameSync(options.sourcePath, options.destinationPath);
+}
+
+function reconcileFolders(options: {
+  itemsDir: string;
+  closedDir: string;
+  maxPages?: number;
+  dryRun?: boolean;
+}): ReconcileResult {
+  const maxPages = options.maxPages ?? 250;
+  const dryRun = options.dryRun ?? false;
+  ensureDir(options.itemsDir);
+  ensureDir(options.closedDir);
+  const { numbers: openNumbers, pagesScanned } = fetchOpenItemNumbers(maxPages);
+  let movedToClosed = 0;
+  let movedToItems = 0;
+  let removedStaleClosedCopies = 0;
+
+  for (const file of markdownFiles(options.itemsDir)) {
+    const number = numberForMarkdownFile(file);
+    if (openNumbers.has(number)) continue;
+    const sourcePath = join(options.itemsDir, file);
+    const destinationPath = join(options.closedDir, file);
+    const markdown = markReconciledState(readFileSync(sourcePath, "utf8"), "closed");
+    moveMarkdownFile({ sourcePath, destinationPath, markdown, dryRun });
+    movedToClosed += 1;
+  }
+
+  for (const file of markdownFiles(options.closedDir)) {
+    const number = numberForMarkdownFile(file);
+    if (!openNumbers.has(number)) continue;
+    const sourcePath = join(options.closedDir, file);
+    const destinationPath = join(options.itemsDir, file);
+    if (existsSync(destinationPath)) {
+      if (!dryRun) unlinkSync(sourcePath);
+      removedStaleClosedCopies += 1;
+      continue;
+    }
+    const markdown = markReconciledState(readFileSync(sourcePath, "utf8"), "open");
+    moveMarkdownFile({ sourcePath, destinationPath, markdown, dryRun });
+    movedToItems += 1;
+  }
+
+  return {
+    openItemsSeen: openNumbers.size,
+    pagesScanned,
+    movedToClosed,
+    movedToItems,
+    removedStaleClosedCopies,
+  };
+}
+
+function reconcileCommand(args: Args): void {
+  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
+  const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
+  const maxPages = numberArg(args.max_pages, 250);
+  const dryRun = boolArg(args.dry_run);
+  const result = reconcileFolders({ itemsDir, closedDir, maxPages, dryRun });
+  console.log(JSON.stringify(result, null, 2));
 }
 
 function cadenceBucketForReview(
@@ -2307,6 +2417,7 @@ if (command === "plan") planCommand(args);
 else if (command === "review") reviewCommand(args);
 else if (command === "apply-artifacts") applyArtifactsCommand(args);
 else if (command === "apply-decisions") applyDecisionsCommand(args);
+else if (command === "reconcile") reconcileCommand(args);
 else if (command === "dashboard")
   updateDashboard(
     resolve(stringArg(args.items_dir, join(ROOT, "items"))),
