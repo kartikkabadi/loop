@@ -14,60 +14,60 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 25, 2026, 03:26 UTC
+Last dashboard update: Apr 25, 2026, 03:33 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 25, 2026, 03:26 UTC
+Updated: Apr 25, 2026, 03:33 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Checkpoint 6 finished. Fresh closes in checkpoint: 50. Total fresh closes in this run: 300/500. Result records in checkpoint: 53.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24920206705](https://github.com/openclaw/clawsweeper/actions/runs/24920206705)
+Merged review artifacts for run 24921373016. Dashboard reflects the latest files and proposed closes from completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24921373016](https://github.com/openclaw/clawsweeper/actions/runs/24921373016)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10061 |
-| Fresh reviewed issues in the last 7 days | 8626 |
-| Proposed issue closes | 3754 (43.5% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6322 |
-| Fresh reviewed PRs in the last 7 days | 5358 |
-| Proposed PR closes | 1437 (26.8% of reviewed PRs) |
-| Open items total | 16383 |
-| Reviewed files | 13984 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 10028 |
+| Fresh reviewed issues in the last 7 days | 8762 |
+| Proposed issue closes | 3810 (43.5% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 6316 |
+| Fresh reviewed PRs in the last 7 days | 5422 |
+| Proposed PR closes | 1453 (26.8% of reviewed PRs) |
+| Open items total | 16344 |
+| Reviewed files | 14184 |
 | Archived closed files | 2443 |
-| Fresh verified reviews in the last 7 days | 13984 |
-| Proposed closes awaiting apply | 5191 (37.1% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 14184 |
+| Proposed closes awaiting apply | 5263 (37.1% of fresh reviews) |
 | Closed by Codex apply | 1683 |
 | Failed or stale reviews | 0 |
-| Todo for weekly coverage | 2399 |
+| Todo for weekly coverage | 2160 |
 
 Recently reviewed:
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#66580](https://github.com/openclaw/openclaw/pull/66580) | fix(heartbeat): relay exec payload in prompts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66580.md) | complete | Apr 25, 2026, 03:19 UTC |
-| [#66552](https://github.com/openclaw/openclaw/pull/66552) | fix: recover reasoning-only Ollama turns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66552.md) | complete | Apr 25, 2026, 03:18 UTC |
-| [#66543](https://github.com/openclaw/openclaw/pull/66543) | fix(cron): strip internal whitespace from model IDs in cron job normalization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66543.md) | complete | Apr 25, 2026, 03:18 UTC |
-| [#66544](https://github.com/openclaw/openclaw/pull/66544) | fix(gateway): exclude heartbeat sender ID from session display name | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66544.md) | complete | Apr 25, 2026, 03:18 UTC |
-| [#66597](https://github.com/openclaw/openclaw/issues/66597) | [webchat] User message flickers after sending (v2026.4.12) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66597.md) | complete | Apr 25, 2026, 03:17 UTC |
-| [#66496](https://github.com/openclaw/openclaw/issues/66496) | Heartbeat/cron system events arrive as role:user — model mistakes them for human messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66496.md) | complete | Apr 25, 2026, 03:17 UTC |
-| [#66508](https://github.com/openclaw/openclaw/issues/66508) | Dream Diary: Timestamp tabs show red strikethrough on click | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66508.md) | complete | Apr 25, 2026, 03:17 UTC |
-| [#66608](https://github.com/openclaw/openclaw/issues/66608) | Bug: Z.ai glm-4.6v vision model always aborts with 'Request was aborted' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66608.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66576](https://github.com/openclaw/openclaw/issues/66576) | [Feature]: Configurable workspace file inclusion/exclusion (bootstrapFiles) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66576.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66530](https://github.com/openclaw/openclaw/issues/66530) | [Feature]: Primary model should be probed for recovery after fallback due to timeout | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66530.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66577](https://github.com/openclaw/openclaw/issues/66577) | [Feature]:  Add optional hard context truncation mode that keeps only a fixed recent portion of max context | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66577.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66537](https://github.com/openclaw/openclaw/pull/66537) | Fix: Issue 66397 silent final answer loss | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66537.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66551](https://github.com/openclaw/openclaw/pull/66551) | fix(media): allow host-read text document fallback mimes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66551.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66523](https://github.com/openclaw/openclaw/issues/66523) | [Bug]:  OPENCLAW_STATE_DIR Environment Variable Ignored on Windows | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66523.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66558](https://github.com/openclaw/openclaw/issues/66558) | [Bug] sessions_spawn / sessions_send not available in main agent session despite tools.profile: \"coding\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66558.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66486](https://github.com/openclaw/openclaw/issues/66486) | [Bug]: [Bug] image tool 报 Unknown model 当 本地模型 被设为 imageModel 而非主模型时 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66486.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66549](https://github.com/openclaw/openclaw/issues/66549) | [Bug]: openclaw message send --dry-run still delivers the message via gateway | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66549.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66546](https://github.com/openclaw/openclaw/pull/66546) | feat(sessions): add transcriptRotateBytes and transcriptMaxLines to cap .jsonl growth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66546.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66531](https://github.com/openclaw/openclaw/issues/66531) | [Feature]: Add agent.abort RPC to cancel embedded agent runs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66531.md) | complete | Apr 25, 2026, 03:16 UTC |
-| [#66487](https://github.com/openclaw/openclaw/issues/66487) | Heartbeat exec-event prompt drops actual completion payload | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66487.md) | complete | Apr 25, 2026, 03:16 UTC |
+| [#66942](https://github.com/openclaw/openclaw/issues/66942) | [Bug]: TypeError: Cannot read properties of undefined (reading 'trim') | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66942.md) | complete | Apr 25, 2026, 03:33 UTC |
+| [#66953](https://github.com/openclaw/openclaw/issues/66953) | [Bug]: delivery-mirror transcript written to wrong agent session in multi-account multi-agent config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66953.md) | complete | Apr 25, 2026, 03:32 UTC |
+| [#66952](https://github.com/openclaw/openclaw/issues/66952) | [Bug]: openai-codex OAuth refresh race can invalidate shared refresh token; models status misreports expired Codex profiles as OK | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66952.md) | complete | Apr 25, 2026, 03:31 UTC |
+| [#66945](https://github.com/openclaw/openclaw/issues/66945) | [Bug]: TypeError: Cannot read properties of undefined (reading 'trim') | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66945.md) | complete | Apr 25, 2026, 03:31 UTC |
+| [#66944](https://github.com/openclaw/openclaw/issues/66944) | [Feature]: Plugin UI Extension System — Allow Plugins to Contribute Native Pages to Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66944.md) | complete | Apr 25, 2026, 03:31 UTC |
+| [#66924](https://github.com/openclaw/openclaw/pull/66924) | fix(google): do not inherit template 1M context window for gemma models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66924.md) | complete | Apr 25, 2026, 03:31 UTC |
+| [#66868](https://github.com/openclaw/openclaw/pull/66868) | fix: drain system events on session reset to prevent cross-session leak | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66868.md) | complete | Apr 25, 2026, 03:31 UTC |
+| [#66960](https://github.com/openclaw/openclaw/pull/66960) | ne4w | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66960.md) | complete | Apr 25, 2026, 03:31 UTC |
+| [#66925](https://github.com/openclaw/openclaw/issues/66925) | [Bug] registerMemoryCapability is overwrite-only — active-memory overrides memory-core's publicArtifacts, breaking wiki bridge import | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66925.md) | complete | Apr 25, 2026, 03:31 UTC |
+| [#66947](https://github.com/openclaw/openclaw/issues/66947) | Dreaming system pollutes daily memory files, causing heartbeat agents to skip memory logging | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66947.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66951](https://github.com/openclaw/openclaw/issues/66951) | Bug: Main agent falls back to 3rd-priority model (claude-sonnet) instead of 2nd (gpt-5.4-mini) on Ollama init failure | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66951.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66966](https://github.com/openclaw/openclaw/pull/66966) | fix(mcp): add required Accept header for streamable-http transport | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66966.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66936](https://github.com/openclaw/openclaw/issues/66936) | CLI: `openclaw agents list` fails with unresolved SecretRef; CLI process hangs after completion | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66936.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66937](https://github.com/openclaw/openclaw/issues/66937) | [Bug]: lmstudio provider does not allow to skip api key | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66937.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66844](https://github.com/openclaw/openclaw/pull/66844) | fix(memory): recognize ollama as valid embedding provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66844.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66963](https://github.com/openclaw/openclaw/issues/66963) | openclaw agent crashes on startup with ReferenceError in buildPollSchema | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66963.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66938](https://github.com/openclaw/openclaw/issues/66938) | Feature request: per-account and per-peer sendPolicy matching for shadow mode DM handling | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66938.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66933](https://github.com/openclaw/openclaw/pull/66933) | feat(tools): per-sender tool capability tiers via toolsBySender | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66933.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66875](https://github.com/openclaw/openclaw/issues/66875) | Webchat race: chat final / session.message / sessions.changed triggers eager chat.history reload, causing flicker, collapse, or duplicate bubbles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66875.md) | complete | Apr 25, 2026, 03:30 UTC |
+| [#66888](https://github.com/openclaw/openclaw/issues/66888) | Reasoning/thinking content leaked into assistant reply as visible output (heartbeat loop) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66888.md) | complete | Apr 25, 2026, 03:30 UTC |
 
 ## How It Works
 
