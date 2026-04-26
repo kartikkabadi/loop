@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 10:34 UTC
 
 Updated: Apr 26, 2026, 10:34 UTC
 
-State: Hot intake comments synced
+State: Review in progress
 
-Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 59859,71779,71783,71784,71786,71787,71791,71792,71813,71817,71819,71820,71828,71830,71831,71832,71834,71837,71839,71840.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954406502](https://github.com/openclaw/clawsweeper/actions/runs/24954406502)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954490372](https://github.com/openclaw/clawsweeper/actions/runs/24954490372)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954406502](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 459/951 current (492 due, 48.3%) |
-| Hourly hot item cadence (<7d) | 459/951 current (492 due, 48.3%) |
+| Hourly cadence coverage | 458/951 current (493 due, 48.2%) |
+| Hourly hot item cadence (<7d) | 458/951 current (493 due, 48.2%) |
 | Daily cadence coverage | 4363/4509 current (146 due, 96.8%) |
 | Daily PR cadence | 2949/3054 current (105 due, 96.6%) |
 | Daily new issue cadence (<30d) | 1414/1455 current (41 due, 97.2%) |
 | Weekly older issue cadence | 1871/1884 current (13 due, 99.3%) |
-| Due now by cadence | 729 |
+| Due now by cadence | 730 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 10:32 UTC. Latest close: Apr 26, 2026, 10:20 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 502 | 81 | 421 | 0 | 14 | 35 | 0 |
-| Last hour | 1774 | 149 | 1625 | 2 | 124 | 508 | 0 |
-| Last 24 hours | 10141 | 2701 | 7440 | 105 | 4852 | 2185 | 30 |
+| Last 15 minutes | 500 | 81 | 419 | 0 | 14 | 14 | 0 |
+| Last hour | 1768 | 149 | 1619 | 2 | 124 | 488 | 0 |
+| Last 24 hours | 10141 | 2701 | 7440 | 105 | 4852 | 2166 | 30 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
