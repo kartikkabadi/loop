@@ -1998,5 +1998,60 @@
     "number": 39630,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 41394,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 41394,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 41982,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 41982,
+    "action": "closed",
+    "reason": "cannot reproduce on current main"
+  },
+  {
+    "number": 42019,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 42019,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 42160,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 42160,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 42257,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 42257,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 42267,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
   }
 ]
