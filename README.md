@@ -23,30 +23,30 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:55 UTC
+Last dashboard update: Apr 26, 2026, 10:56 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:55 UTC
+Updated: Apr 26, 2026, 10:56 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954831125](https://github.com/openclaw/clawsweeper/actions/runs/24954831125)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954897001](https://github.com/openclaw/clawsweeper/actions/runs/24954897001)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3784 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3533 |
-| Open items total | 7317 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3785 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3534 |
+| Open items total | 7319 |
 | Reviewed files | 7234 |
-| Unreviewed open items | 83 |
+| Unreviewed open items | 85 |
 | Archived closed files | 12269 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954831125](https://
 | Daily PR cadence | 2952/3058 current (106 due, 96.5%) |
 | Daily new issue cadence (<30d) | 1414/1455 current (41 due, 97.2%) |
 | Weekly older issue cadence | 1872/1885 current (13 due, 99.3%) |
-| Due now by cadence | 269 |
+| Due now by cadence | 271 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 10:48 UTC. Latest close: Apr 26, 2026, 10:55 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 255 | 18 | 237 | 0 | 80 | 79 | 0 |
-| Last hour | 1524 | 139 | 1385 | 2 | 140 | 844 | 0 |
-| Last 24 hours | 10089 | 2701 | 7388 | 105 | 4952 | 2605 | 30 |
+| Last 15 minutes | 160 | 15 | 145 | 0 | 77 | 77 | 0 |
+| Last hour | 1520 | 139 | 1381 | 2 | 140 | 844 | 0 |
+| Last 24 hours | 10083 | 2697 | 7386 | 105 | 4952 | 2605 | 30 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
