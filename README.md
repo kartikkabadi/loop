@@ -23,42 +23,56 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 02:08 UTC
+Last dashboard update: Apr 26, 2026, 02:11 UTC
+
+### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 02:09 UTC
+Updated: Apr 26, 2026, 02:11 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24945953707](https://github.com/openclaw/clawsweeper/actions/runs/24945953707)
 <!-- clawsweeper-status:end -->
 
+### Queue
+
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5336 |
-| Fresh reviewed issues in the last 7 days | 5282 |
-| Proposed issue closes | 827 (15.7% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4248 |
-| Fresh reviewed PRs in the last 7 days | 4144 |
-| Proposed PR closes | 86 (2.1% of reviewed PRs) |
-| Open items total | 9584 |
-| Reviewed files | 9430 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5335 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4247 |
+| Open items total | 9582 |
+| Reviewed files | 9428 |
 | Unreviewed open items | 154 |
-| Archived closed files | 9867 |
-| Fresh verified reviews in the last 7 days | 9426 |
-| Proposed closes awaiting apply | 913 (9.7% of fresh reviews) |
+| Archived closed files | 9869 |
+
+### Review Outcomes
+
+| Metric | Count |
+| --- | ---: |
+| Fresh reviewed issues in the last 7 days | 5281 |
+| Proposed issue closes | 826 (15.6% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 4143 |
+| Proposed PR closes | 86 (2.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 9424 |
+| Proposed closes awaiting apply | 912 (9.7% of fresh reviews) |
 | Closed by Codex apply | 7632 |
 | Failed or stale reviews | 4 |
-| Hourly cadence coverage | 24/1057 current (1033 due, 2.3%) |
-| Hourly hot item cadence (<7d) | 24/1057 current (1033 due, 2.3%) |
-| Daily cadence coverage | 5603/5758 current (155 due, 97.3%) |
-| Daily PR cadence | 3567/3666 current (99 due, 97.3%) |
-| Daily new issue cadence (<30d) | 2036/2092 current (56 due, 97.3%) |
+
+### Cadence
+
+| Metric | Coverage |
+| --- | ---: |
+| Hourly cadence coverage | 23/1057 current (1034 due, 2.2%) |
+| Hourly hot item cadence (<7d) | 23/1057 current (1034 due, 2.2%) |
+| Daily cadence coverage | 5580/5756 current (176 due, 96.9%) |
+| Daily PR cadence | 3559/3665 current (106 due, 97.1%) |
+| Daily new issue cadence (<30d) | 2021/2091 current (70 due, 96.7%) |
 | Weekly older issue cadence | 2613/2615 current (2 due, 99.9%) |
-| Due now by cadence | 1344 |
+| Due now by cadence | 1366 |
 
 ### Latest Run Activity
 
@@ -67,10 +81,13 @@ Latest review: Apr 26, 2026, 02:07 UTC. Latest close: Apr 26, 2026, 01:49 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 250 | 12 | 238 | 0 | 0 | 0 | 0 |
-| Last hour | 840 | 109 | 731 | 1 | 49 | 146 | 6 |
-| Last 24 hours | 11611 | 2857 | 8754 | 18 | 5612 | 209 | 201 |
+| Last hour | 768 | 88 | 680 | 1 | 49 | 146 | 6 |
+| Last 24 hours | 11567 | 2836 | 8731 | 18 | 5604 | 209 | 201 |
 
-Recently reviewed:
+<details>
+<summary>Recently Reviewed (latest 10)</summary>
+
+<br>
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
@@ -84,16 +101,8 @@ Recently reviewed:
 | [#13417](https://github.com/openclaw/openclaw/issues/13417) | WhatsApp Newsletter/Channel support in message tool | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13417.md) | complete | Apr 26, 2026, 02:05 UTC |
 | [#14207](https://github.com/openclaw/openclaw/issues/14207) | Feature Request: Configurable Memory Indexing Concurrency | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14207.md) | complete | Apr 26, 2026, 02:05 UTC |
 | [#11955](https://github.com/openclaw/openclaw/issues/11955) | [Feature]: Memory/Context Improvements (metrics + global semantic search + conversation chaining + preload on restart) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/11955.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#14747](https://github.com/openclaw/openclaw/issues/14747) | Feature request: configurable lane wait diagnostic threshold | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14747.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#14344](https://github.com/openclaw/openclaw/issues/14344) | Feature request: message delete (revoke) action for WhatsApp channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14344.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#13607](https://github.com/openclaw/openclaw/issues/13607) | Feature: global default for reasoning visiblity | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13607.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#13670](https://github.com/openclaw/openclaw/issues/13670) | Add Model and Token Usage Status Display to Control UI Topbar | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13670.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#12736](https://github.com/openclaw/openclaw/issues/12736) | Feature Request: tools.cron.tools.deny config option for cron job tool restrictions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12736.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#14526](https://github.com/openclaw/openclaw/issues/14526) | Proposal: safer self-update with pre-update backup + health check + auto-rollback/restore | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14526.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#10659](https://github.com/openclaw/openclaw/issues/10659) | Feature Request: Masked Secrets - Prevent Agent from Accessing Raw API Keys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/10659.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#13616](https://github.com/openclaw/openclaw/issues/13616) | Add backup/restore utility for config, cron jobs, and session history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13616.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#16896](https://github.com/openclaw/openclaw/issues/16896) | [Feature] Add right-click reply in Dashboard webchat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/16896.md) | complete | Apr 26, 2026, 02:05 UTC |
-| [#12441](https://github.com/openclaw/openclaw/issues/12441) | [Feature] Control UI should accept gateway token from Authorization header | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12441.md) | complete | Apr 26, 2026, 02:05 UTC |
+
+</details>
 
 ## How It Works
 
