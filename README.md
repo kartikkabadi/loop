@@ -34,8 +34,8 @@ Updated: Apr 26, 2026, 23:52 UTC
 
 State: Review in progress
 
-Planned 285 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970174387](https://github.com/openclaw/clawsweeper/actions/runs/24970174387)
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970178715](https://github.com/openclaw/clawsweeper/actions/runs/24970178715)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -108,7 +108,7 @@ Latest review: Apr 26, 2026, 23:49 UTC. Latest close: Apr 26, 2026, 23:50 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 367 | 8 | 359 | 1 | 1 | 4 | 0 |
+| Last 15 minutes | 363 | 8 | 355 | 1 | 1 | 4 | 0 |
 | Last hour | 544 | 14 | 530 | 1 | 1 | 43 | 1 |
 | Last 24 hours | 9194 | 2021 | 7173 | 1 | 2075 | 2173 | 11 |
 
