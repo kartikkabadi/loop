@@ -23,42 +23,42 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:53 UTC
+Last dashboard update: Apr 26, 2026, 10:54 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:53 UTC
+Updated: Apr 26, 2026, 10:54 UTC
 
-State: Apply in progress
+State: Hot intake in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954831125](https://github.com/openclaw/clawsweeper/actions/runs/24954831125)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954851168](https://github.com/openclaw/clawsweeper/actions/runs/24954851168)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3802 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3535 |
-| Open items total | 7337 |
-| Reviewed files | 7254 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3792 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3534 |
+| Open items total | 7326 |
+| Reviewed files | 7243 |
 | Unreviewed open items | 83 |
-| Archived closed files | 12249 |
+| Archived closed files | 12260 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3734 |
-| Proposed issue closes | 20 (0.5% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3427 |
-| Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7161 |
-| Proposed closes awaiting apply | 23 (0.3% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3724 |
+| Proposed issue closes | 10 (0.3% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3426 |
+| Proposed PR closes | 2 (0.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7150 |
+| Proposed closes awaiting apply | 12 (0.2% of fresh reviews) |
 | Closed by Codex apply | 9724 |
 | Failed or stale reviews | 93 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954831125](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 836/861 current (25 due, 97.1%) |
-| Hourly hot item cadence (<7d) | 836/861 current (25 due, 97.1%) |
-| Daily cadence coverage | 4362/4509 current (147 due, 96.7%) |
-| Daily PR cadence | 2947/3053 current (106 due, 96.5%) |
-| Daily new issue cadence (<30d) | 1415/1456 current (41 due, 97.2%) |
-| Weekly older issue cadence | 1871/1884 current (13 due, 99.3%) |
-| Due now by cadence | 268 |
+| Hourly cadence coverage | 821/845 current (24 due, 97.2%) |
+| Hourly hot item cadence (<7d) | 821/845 current (24 due, 97.2%) |
+| Daily cadence coverage | 4366/4513 current (147 due, 96.7%) |
+| Daily PR cadence | 2952/3058 current (106 due, 96.5%) |
+| Daily new issue cadence (<30d) | 1414/1455 current (41 due, 97.2%) |
+| Weekly older issue cadence | 1872/1885 current (13 due, 99.3%) |
+| Due now by cadence | 267 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 10:48 UTC. Latest close: Apr 26, 2026, 10:51 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 367 | 30 | 337 | 1 | 74 | 86 | 0 |
-| Last hour | 1581 | 144 | 1437 | 2 | 120 | 825 | 0 |
-| Last 24 hours | 10104 | 2713 | 7391 | 105 | 4932 | 2586 | 30 |
+| Last 15 minutes | 303 | 25 | 278 | 1 | 68 | 69 | 0 |
+| Last hour | 1541 | 142 | 1399 | 2 | 120 | 825 | 0 |
+| Last 24 hours | 10094 | 2705 | 7389 | 105 | 4932 | 2586 | 30 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -127,8 +127,8 @@ Latest review: Apr 26, 2026, 10:48 UTC. Latest close: Apr 26, 2026, 10:51 UTC. L
 | [#71605](https://github.com/openclaw/openclaw/issues/71605) | Gateway WS `agent` dispatch times out 60s + embedded mode contends with running daemon for session file locks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71605.md) | complete | Apr 26, 2026, 10:45 UTC |
 | [#71594](https://github.com/openclaw/openclaw/pull/71594) | docs(gateway): clarify IPv4-only BYOH bind path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71594.md) | complete | Apr 26, 2026, 10:44 UTC |
 | [#71633](https://github.com/openclaw/openclaw/pull/71633) | fix(bonjour): suppress Windows arp-poll console flash via windowsHide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71633.md) | complete | Apr 26, 2026, 10:44 UTC |
-| [#71426](https://github.com/openclaw/openclaw/issues/71426) | RFC: sessions.patch plugin extension hook \\u2014 let plugins handle their own patch payloads | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71426.md) | complete | Apr 26, 2026, 10:44 UTC |
 | [#70777](https://github.com/openclaw/openclaw/issues/70777) | Main agent intermittently starts with wrong cwd and tries to read ~/.openclaw/agents/main/agent/AGENTS.md instead of workspace AGENTS.md | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70777.md) | complete | Apr 26, 2026, 10:44 UTC |
+| [#71607](https://github.com/openclaw/openclaw/issues/71607) | Cron may keep stale in-memory schedule after job expression change, causing duplicate runs (sanitized) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71607.md) | complete | Apr 26, 2026, 10:44 UTC |
 
 </details>
 
