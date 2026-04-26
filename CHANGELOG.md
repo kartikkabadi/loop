@@ -33,6 +33,8 @@ checkpoint, and status-only commits are intentionally omitted.
   Codex review comments immediately without closing items.
 - Separated targeted comment-sync workflow concurrency from bulk apply so hot
   comment runs are not displaced by apply continuation backlog.
+- Switched comment and close mutations to the `openclaw-ci` GitHub App
+  installation token so GitHub attributes automated comments to the bot.
 
 ### Changed
 

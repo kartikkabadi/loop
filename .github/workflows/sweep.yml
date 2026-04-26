@@ -360,10 +360,25 @@ jobs:
     needs: [plan, review]
     if: ${{ always() && !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) }}
     runs-on: ubuntu-latest
+    env:
+      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
+      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Create OpenClaw write token
+        id: openclaw-write-token
+        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: openclaw
+          permission-issues: write
+          permission-pull-requests: write
 
       - uses: actions/setup-node@v4
         with:
@@ -417,9 +432,10 @@ jobs:
       - name: Sync hot intake review comments
         if: ${{ success() && needs.plan.outputs.hot_intake == 'true' }}
         env:
-          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.openclaw-write-token.outputs.token }}
         run: |
           set -euo pipefail
+          test -n "$GH_TOKEN"
           item_numbers="$(find artifacts -type f -name '*.md' -exec basename {} .md \; | sort -n | paste -sd, -)"
           if [ -z "$item_numbers" ]; then
             echo "No hot intake artifacts to sync comments for."
@@ -470,10 +486,25 @@ jobs:
     if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *') }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
+    env:
+      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
+      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Create OpenClaw write token
+        id: openclaw-write-token
+        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: openclaw
+          permission-issues: write
+          permission-pull-requests: write
 
       - uses: actions/setup-node@v4
         with:
@@ -491,12 +522,13 @@ jobs:
 
       - name: Apply unchanged proposed decisions with checkpoints
         env:
-          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.openclaw-write-token.outputs.token }}
           CLAWSWEEPER_PUBLISH_THROTTLE_STATUS: "true"
           CLAWSWEEPER_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           CLAWSWEEPER_THROTTLE_STATUS_MIN_WAIT_MS: "60000"
           CLAWSWEEPER_THROTTLE_STATUS_MIN_INTERVAL_MS: "120000"
         run: |
+          test -n "$GH_TOKEN"
           limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_limit || '20' }}"
           min_age_days="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_min_age_days || '0' }}"
           apply_kind="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_kind || 'issue' }}"
