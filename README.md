@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 11:17 UTC
+Last dashboard update: Apr 26, 2026, 11:22 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 11:17 UTC
+Updated: Apr 26, 2026, 11:22 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24955279597. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24955279597](https://github.com/openclaw/clawsweeper/actions/runs/24955279597)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24955279597](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 804/840 current (36 due, 95.7%) |
-| Hourly hot item cadence (<7d) | 804/840 current (36 due, 95.7%) |
+| Hourly cadence coverage | 792/840 current (48 due, 94.3%) |
+| Hourly hot item cadence (<7d) | 792/840 current (48 due, 94.3%) |
 | Daily cadence coverage | 4449/4519 current (70 due, 98.5%) |
 | Daily PR cadence | 2996/3059 current (63 due, 97.9%) |
 | Daily new issue cadence (<30d) | 1453/1460 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
-| Due now by cadence | 186 |
+| Due now by cadence | 198 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 10:59 UTC. Latest close: Apr 26, 2026, 10:55 UTC. Latest comment sync: Apr 26, 2026, 10:59 UTC.
+Latest review: Apr 26, 2026, 11:20 UTC. Latest close: Apr 26, 2026, 10:55 UTC. Latest comment sync: Apr 26, 2026, 10:59 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 1348 | 139 | 1209 | 1 | 115 | 535 | 0 |
-| Last 24 hours | 10095 | 2711 | 7384 | 15 | 4794 | 2391 | 28 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| Last hour | 1302 | 138 | 1164 | 1 | 100 | 439 | 0 |
+| Last 24 hours | 10095 | 2711 | 7384 | 15 | 4773 | 2374 | 28 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 10:59 UTC. Latest close: Apr 26, 2026, 10:55 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72114](https://github.com/openclaw/openclaw/issues/72114) | update.run: bundled runtime deps staging timeout + shutdown race condition causes gateway crash on cold cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72114.md) | complete | Apr 26, 2026, 10:59 UTC |
-| [#72112](https://github.com/openclaw/openclaw/issues/72112) | MCP stdio server processes become orphans after gateway restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72112.md) | complete | Apr 26, 2026, 10:59 UTC |
-| [#71589](https://github.com/openclaw/openclaw/pull/71589) | fix(agent): suppress tool-use assistant text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71589.md) | complete | Apr 26, 2026, 10:59 UTC |
-| [#69172](https://github.com/openclaw/openclaw/pull/69172) | Fix/google overrides | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69172.md) | complete | Apr 26, 2026, 10:59 UTC |
-| [#70523](https://github.com/openclaw/openclaw/pull/70523) | fix(memory-core): suppress raw dreaming inline dumps on fallback (Fixes #70509) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70523.md) | complete | Apr 26, 2026, 10:59 UTC |
-| [#72111](https://github.com/openclaw/openclaw/issues/72111) | MCP streamable-http transport — spawned server process times out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72111.md) | complete | Apr 26, 2026, 10:59 UTC |
-| [#65902](https://github.com/openclaw/openclaw/issues/65902) | [Bug]: WhatsApp session discovery inconsistent with runtime status and cron delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65902.md) | complete | Apr 26, 2026, 10:59 UTC |
-| [#71236](https://github.com/openclaw/openclaw/pull/71236) | fix(session): log warning when session hook fails instead of silently swallowing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71236.md) | complete | Apr 26, 2026, 10:59 UTC |
-| [#70812](https://github.com/openclaw/openclaw/pull/70812) | fix: ignore trajectory sidecars in orphan transcript scans (Fixes #70680) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70812.md) | complete | Apr 26, 2026, 10:58 UTC |
-| [#72115](https://github.com/openclaw/openclaw/pull/72115) | [EV-002B] Skill Workshop parity: path, TOCTOU, prompt-budget hardening | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72115.md) | complete | Apr 26, 2026, 10:58 UTC |
+| [#26037](https://github.com/openclaw/openclaw/issues/26037) | [Feature]: Ali bailian coding plan support ( thinking/reasoning enabled ) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/26037.md) | complete | Apr 26, 2026, 11:20 UTC |
+| [#27526](https://github.com/openclaw/openclaw/issues/27526) | [Feature]: [Feature Request] OpenClaw WebChat: Conversation Management & Multi-AI Collaboration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/27526.md) | complete | Apr 26, 2026, 11:20 UTC |
+| [#28965](https://github.com/openclaw/openclaw/issues/28965) | [Proposal] Simplify Model Configuration: Single-Source Reconcile + Session Override Reset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/28965.md) | complete | Apr 26, 2026, 11:20 UTC |
+| [#70554](https://github.com/openclaw/openclaw/pull/70554) | Fix dreaming narrative retries for gateway background runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70554.md) | complete | Apr 26, 2026, 11:20 UTC |
+| [#25493](https://github.com/openclaw/openclaw/issues/25493) | [Feature]: Support to edit system prompt template | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/25493.md) | complete | Apr 26, 2026, 11:19 UTC |
+| [#28303](https://github.com/openclaw/openclaw/issues/28303) |  Rename i18n locale codes from region-based (zh-CN/zh-TW) to script-based (zh-Hans/zh-Hant) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/28303.md) | complete | Apr 26, 2026, 11:19 UTC |
+| [#26772](https://github.com/openclaw/openclaw/issues/26772) | [Feature]: Memory indexing lacks checkpoint/resume capability for long-running operations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/26772.md) | complete | Apr 26, 2026, 11:19 UTC |
+| [#24107](https://github.com/openclaw/openclaw/issues/24107) | [Feature]: Make fallback cooldowns RPM-aware to reduce unnecessary errors and improve availability | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/24107.md) | complete | Apr 26, 2026, 11:19 UTC |
+| [#25295](https://github.com/openclaw/openclaw/pull/25295) | feat(mattermost): add edit and delete message actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/25295.md) | complete | Apr 26, 2026, 11:19 UTC |
+| [#66617](https://github.com/openclaw/openclaw/pull/66617) | Skills: fix watcher so deleting a skill folder refreshes on macOS | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66617.md) | complete | Apr 26, 2026, 11:19 UTC |
 
 </details>
 
