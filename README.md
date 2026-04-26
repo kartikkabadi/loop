@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 11:53 UTC
+Last dashboard update: Apr 26, 2026, 11:54 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 11:53 UTC
+Updated: Apr 26, 2026, 11:54 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 42, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24955927052](https://github.com/openclaw/clawsweeper/actions/runs/24955927052)
 <!-- clawsweeper-status:end -->
 
@@ -42,24 +42,24 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24955927052](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3795 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
-| Open items total | 7333 |
-| Reviewed files | 7240 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3783 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3530 |
+| Open items total | 7313 |
+| Reviewed files | 7220 |
 | Unreviewed open items | 93 |
-| Archived closed files | 12275 |
+| Archived closed files | 12295 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3769 |
-| Proposed issue closes | 14 (0.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3467 |
-| Proposed PR closes | 11 (0.3% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7236 |
-| Proposed closes awaiting apply | 25 (0.3% of fresh reviews) |
-| Closed by Codex apply | 9744 |
+| Fresh reviewed issues in the last 7 days | 3757 |
+| Proposed issue closes | 2 (0.1% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3459 |
+| Proposed PR closes | 2 (0.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7216 |
+| Proposed closes awaiting apply | 4 (0.1% of fresh reviews) |
+| Closed by Codex apply | 9764 |
 | Failed or stale reviews | 4 |
 
 ### Cadence
@@ -68,10 +68,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24955927052](https://
 | --- | ---: |
 | Hourly cadence coverage | 25/834 current (809 due, 3%) |
 | Hourly hot item cadence (<7d) | 25/834 current (809 due, 3%) |
-| Daily cadence coverage | 4451/4521 current (70 due, 98.5%) |
-| Daily PR cadence | 2997/3060 current (63 due, 97.9%) |
-| Daily new issue cadence (<30d) | 1454/1461 current (7 due, 99.5%) |
-| Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
+| Daily cadence coverage | 4435/4505 current (70 due, 98.4%) |
+| Daily PR cadence | 2989/3052 current (63 due, 97.9%) |
+| Daily new issue cadence (<30d) | 1446/1453 current (7 due, 99.5%) |
+| Weekly older issue cadence | 1881/1881 current (0 due, 100%) |
 | Due now by cadence | 972 |
 
 ### Audit Health
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 11:46 UTC. Latest close: Apr 26, 2026, 10:55 UTC. Latest comment sync: Apr 26, 2026, 11:22 UTC.
+Latest review: Apr 26, 2026, 11:46 UTC. Latest close: Apr 26, 2026, 11:54 UTC. Latest comment sync: Apr 26, 2026, 11:54 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 359 | 3 | 356 | 0 | 0 | 0 | 0 |
-| Last hour | 854 | 24 | 830 | 0 | 20 | 45 | 1 |
-| Last 24 hours | 10077 | 2702 | 7375 | 15 | 4565 | 1944 | 28 |
+| Last 15 minutes | 244 | 3 | 241 | 0 | 20 | 21 | 1 |
+| Last hour | 717 | 24 | 693 | 0 | 22 | 49 | 2 |
+| Last 24 hours | 10077 | 2702 | 7375 | 15 | 4570 | 1965 | 29 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -125,10 +125,10 @@ Latest review: Apr 26, 2026, 11:46 UTC. Latest close: Apr 26, 2026, 10:55 UTC. L
 | [#39899](https://github.com/openclaw/openclaw/pull/39899) | fix: auto-reset session on surrogate encoding error to prevent infinite loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39899.md) | complete | Apr 26, 2026, 11:44 UTC |
 | [#39372](https://github.com/openclaw/openclaw/pull/39372) | fix(spawn): allow mode=\"session\" without thread=true for headless persistent sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39372.md) | complete | Apr 26, 2026, 11:44 UTC |
 | [#39102](https://github.com/openclaw/openclaw/pull/39102) | feat(agents): per-agent outbound A2A allowlist override | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39102.md) | complete | Apr 26, 2026, 11:44 UTC |
-| [#39805](https://github.com/openclaw/openclaw/issues/39805) | [Feature]: 飞书插件支持读取飞书表格 (Sheet) 内容 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39805.md) | complete | Apr 26, 2026, 11:44 UTC |
 | [#39826](https://github.com/openclaw/openclaw/pull/39826) | discord: include accountId in no-mention auto-reply logs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39826.md) | complete | Apr 26, 2026, 11:44 UTC |
 | [#39659](https://github.com/openclaw/openclaw/issues/39659) | [Feature]: First-class multi-instance management for Docker installs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39659.md) | complete | Apr 26, 2026, 11:44 UTC |
 | [#39889](https://github.com/openclaw/openclaw/issues/39889) | Control UI chat hangs in Chromium/Vivaldi; <openclaw-app> not registered/rendered although backend responds successfully | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39889.md) | complete | Apr 26, 2026, 11:44 UTC |
+| [#39635](https://github.com/openclaw/openclaw/issues/39635) | [Feature]: Support custom auto-injected bootstrap files via config (extraBootstrapFiles) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39635.md) | complete | Apr 26, 2026, 11:43 UTC |
 
 </details>
 
