@@ -23,30 +23,30 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 08:18 UTC
+Last dashboard update: Apr 26, 2026, 08:20 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 08:18 UTC
+Updated: Apr 26, 2026, 08:20 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952008990](https://github.com/openclaw/clawsweeper/actions/runs/24952008990)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952067412](https://github.com/openclaw/clawsweeper/actions/runs/24952067412)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4129 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4130 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3721 |
-| Open items total | 7850 |
+| Open items total | 7851 |
 | Reviewed files | 7612 |
-| Unreviewed open items | 238 |
+| Unreviewed open items | 239 |
 | Archived closed files | 11685 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952008990](https://
 | Daily PR cadence | 3128/3206 current (78 due, 97.6%) |
 | Daily new issue cadence (<30d) | 1599/1626 current (27 due, 98.3%) |
 | Weekly older issue cadence | 1981/1986 current (5 due, 99.7%) |
-| Due now by cadence | 1067 |
+| Due now by cadence | 1068 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 08:08 UTC. Latest close: Apr 26, 2026, 08:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 132 | 20 | 112 | 0 | 47 | 51 | 12 |
-| Last hour | 770 | 129 | 641 | 0 | 107 | 131 | 13 |
-| Last 24 hours | 10127 | 2352 | 7775 | 66 | 5075 | 1432 | 52 |
+| Last 15 minutes | 35 | 6 | 29 | 0 | 47 | 51 | 12 |
+| Last hour | 770 | 129 | 641 | 0 | 98 | 121 | 12 |
+| Last 24 hours | 10118 | 2345 | 7773 | 66 | 5061 | 1432 | 51 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
