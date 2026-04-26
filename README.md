@@ -21,12 +21,12 @@ Last dashboard update: Apr 26, 2026, 00:58 UTC
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 26, 2026, 00:58 UTC
+Updated: Apr 26, 2026, 00:51 UTC
 
-State: Planning review
+State: Apply throttled
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944737099](https://github.com/openclaw/clawsweeper/actions/runs/24944737099)
+Checkpoint 2. GitHub throttled while applying close decisions. Progress: 7/10 fresh closes, 193/200 processed records in this apply chunk. Last throttled command: `gh api repos/openclaw/openclaw/issues/27389`. Retry 2/11 in 60s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944438478](https://github.com/openclaw/clawsweeper/actions/runs/24944438478)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
