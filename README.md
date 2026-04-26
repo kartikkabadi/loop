@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 14:01 UTC
+Last dashboard update: Apr 26, 2026, 14:06 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 14:05 UTC
+Updated: Apr 26, 2026, 14:06 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958523935](https://github.com/openclaw/clawsweeper/actions/runs/24958523935)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958523935](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3765 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3767 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3522 |
-| Open items total | 7287 |
+| Open items total | 7289 |
 | Reviewed files | 7180 |
-| Unreviewed open items | 107 |
+| Unreviewed open items | 109 |
 | Archived closed files | 12372 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958523935](https://
 | Daily PR cadence | 2987/3045 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1446/1453 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1889/1889 current (0 due, 100%) |
-| Due now by cadence | 944 |
+| Due now by cadence | 946 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 13:57 UTC. Latest close: Apr 26, 2026, 12:22 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 500 | 3 | 497 | 0 | 0 | 0 | 0 |
-| Last hour | 520 | 4 | 516 | 0 | 0 | 33 | 2 |
-| Last 24 hours | 10006 | 2707 | 7299 | 15 | 3780 | 2054 | 24 |
+| Last 15 minutes | 315 | 2 | 313 | 0 | 0 | 0 | 0 |
+| Last hour | 520 | 4 | 516 | 0 | 0 | 18 | 2 |
+| Last 24 hours | 9998 | 2702 | 7296 | 15 | 3750 | 2054 | 23 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
