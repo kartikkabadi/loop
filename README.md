@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 22:46 UTC
+Last dashboard update: Apr 26, 2026, 22:50 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 22:46 UTC
+Updated: Apr 26, 2026, 22:50 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 2 items across 2 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968982501](https://github.com/openclaw/clawsweeper/actions/runs/24968982501)
+Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72395.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969046356](https://github.com/openclaw/clawsweeper/actions/runs/24969046356)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968982501](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 778/782 current (4 due, 99.5%) |
-| Hourly hot item cadence (<7d) | 778/782 current (4 due, 99.5%) |
+| Hourly cadence coverage | 707/782 current (75 due, 90.4%) |
+| Hourly hot item cadence (<7d) | 707/782 current (75 due, 90.4%) |
 | Daily cadence coverage | 4414/4481 current (67 due, 98.5%) |
 | Daily PR cadence | 2981/3039 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1433/1442 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
-| Due now by cadence | 148 |
+| Due now by cadence | 219 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 22:36 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 25 | 1 | 24 | 0 | 0 | 0 | 0 |
-| Last hour | 858 | 15 | 843 | 0 | 13 | 47 | 5 |
-| Last 24 hours | 9477 | 2295 | 7182 | 0 | 2074 | 2162 | 14 |
+| Last 15 minutes | 4 | 1 | 3 | 0 | 0 | 0 | 0 |
+| Last hour | 743 | 14 | 729 | 0 | 13 | 47 | 5 |
+| Last 24 hours | 9449 | 2269 | 7180 | 0 | 2074 | 2162 | 14 |
 
 ### Recently Closed
 
