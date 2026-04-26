@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 04:40 UTC
 
 Updated: Apr 26, 2026, 04:40 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 42, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948378745](https://github.com/openclaw/clawsweeper/actions/runs/24948378745)
 <!-- clawsweeper-status:end -->
 
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948378745](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4550 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4213 |
-| Open items total | 8763 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4214 |
+| Open items total | 8764 |
 | Reviewed files | 8573 |
-| Unreviewed open items | 190 |
+| Unreviewed open items | 191 |
 | Archived closed files | 10724 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948378745](https://
 | Daily PR cadence | 3563/3637 current (74 due, 98%) |
 | Daily new issue cadence (<30d) | 1888/1901 current (13 due, 99.3%) |
 | Weekly older issue cadence | 2025/2027 current (2 due, 99.9%) |
-| Due now by cadence | 1137 |
+| Due now by cadence | 1138 |
 
 ### Latest Run Activity
 
@@ -81,7 +81,7 @@ Latest review: Apr 26, 2026, 04:34 UTC. Latest close: Apr 26, 2026, 04:40 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 19 | 0 | 19 | 0 | 60 | 82 | 1 |
-| Last hour | 767 | 143 | 624 | 0 | 301 | 328 | 2 |
+| Last hour | 767 | 143 | 624 | 0 | 301 | 327 | 2 |
 | Last 24 hours | 10802 | 2388 | 8414 | 34 | 5541 | 697 | 187 |
 
 <details>
