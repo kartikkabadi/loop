@@ -170,8 +170,11 @@ still valid.
 - Moves reopened archived reports back to `items/<number>.md` as stale.
 - Commits checkpoints and dashboard heartbeats during long runs.
 
-Apply defaults to issue-only closes, no age floor, 2-second close delay, and
-50 fresh closes per checkpoint. If it reaches the requested limit, it queues
+Apply wakes every 15 minutes, no-ops when there are no unchanged
+high-confidence close proposals, and narrows scheduled runs to the currently
+eligible proposal list so idle runs do not scan unrelated keep-open records.
+It defaults to all item kinds, no age floor, a 2-second close delay, and 50
+fresh closes per checkpoint. If it reaches the requested limit, it queues
 another apply run with the same settings.
 
 ### Safety Model

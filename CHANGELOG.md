@@ -72,6 +72,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Reduced the default apply close delay from 5 seconds to 2 seconds.
 - Prioritized matching close proposals ahead of broad comment sync during apply
   runs so close batches do not stall on keep-open comment backfill.
+- Increased scheduled apply wakeups to every 15 minutes and made idle apply runs
+  exit after checking for close proposals instead of scanning keep-open records.
 - Classified missing-open audit findings so strict mode reports only actionable
   missing-open drift while preserving total visibility. Thanks @stainlu.
 - Added transient GitHub API/network retries with short backoff while preserving
