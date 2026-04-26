@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 04:09 UTC
+Last dashboard update: Apr 26, 2026, 04:10 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 04:09 UTC
+Updated: Apr 26, 2026, 04:10 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 40, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947900936](https://github.com/openclaw/clawsweeper/actions/runs/24947900936)
 <!-- clawsweeper-status:end -->
 
@@ -42,47 +42,47 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947900936](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4772 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4219 |
-| Open items total | 8991 |
-| Reviewed files | 8808 |
-| Unreviewed open items | 183 |
-| Archived closed files | 10489 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4752 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4220 |
+| Open items total | 8972 |
+| Reviewed files | 8788 |
+| Unreviewed open items | 184 |
+| Archived closed files | 10509 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4689 |
-| Proposed issue closes | 451 (9.6% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 4669 |
+| Proposed issue closes | 431 (9.2% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 4093 |
 | Proposed PR closes | 157 (3.8% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 8782 |
-| Proposed closes awaiting apply | 608 (6.9% of fresh reviews) |
-| Closed by Codex apply | 8132 |
+| Fresh verified reviews in the last 7 days | 8762 |
+| Proposed closes awaiting apply | 588 (6.7% of fresh reviews) |
+| Closed by Codex apply | 8152 |
 | Failed or stale reviews | 26 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 14/1014 current (1000 due, 1.4%) |
-| Hourly hot item cadence (<7d) | 14/1014 current (1000 due, 1.4%) |
-| Daily cadence coverage | 5613/5699 current (86 due, 98.5%) |
+| Hourly cadence coverage | 14/1013 current (999 due, 1.4%) |
+| Hourly hot item cadence (<7d) | 14/1013 current (999 due, 1.4%) |
+| Daily cadence coverage | 5614/5700 current (86 due, 98.5%) |
 | Daily PR cadence | 3573/3643 current (70 due, 98.1%) |
-| Daily new issue cadence (<30d) | 2040/2056 current (16 due, 99.2%) |
-| Weekly older issue cadence | 2092/2095 current (3 due, 99.9%) |
+| Daily new issue cadence (<30d) | 2041/2057 current (16 due, 99.2%) |
+| Weekly older issue cadence | 2072/2075 current (3 due, 99.9%) |
 | Due now by cadence | 1272 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 03:53 UTC. Latest close: Apr 26, 2026, 04:07 UTC. Latest comment sync: Apr 26, 2026, 04:07 UTC.
+Latest review: Apr 26, 2026, 03:53 UTC. Latest close: Apr 26, 2026, 04:10 UTC. Latest comment sync: Apr 26, 2026, 04:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 61 | 63 | 1 |
-| Last hour | 748 | 124 | 624 | 1 | 264 | 284 | 4 |
-| Last 24 hours | 10982 | 2460 | 8522 | 38 | 5601 | 539 | 191 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 81 | 83 | 1 |
+| Last hour | 748 | 124 | 624 | 1 | 267 | 287 | 4 |
+| Last 24 hours | 10966 | 2445 | 8521 | 38 | 5616 | 559 | 190 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
