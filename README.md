@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 18:14 UTC
 
 Updated: Apr 26, 2026, 18:14 UTC
 
-State: Hot intake publish complete
+State: Review publish complete
 
-Merged hot intake artifacts for run 24963486609. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963486609](https://github.com/openclaw/clawsweeper/actions/runs/24963486609)
+Merged review artifacts for run 24963313316. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963313316](https://github.com/openclaw/clawsweeper/actions/runs/24963313316)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -45,20 +45,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963486609](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3746 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3536 |
 | Open items total | 7282 |
-| Reviewed files | 7210 |
-| Unreviewed open items | 72 |
+| Reviewed files | 7208 |
+| Unreviewed open items | 74 |
 | Archived closed files | 12480 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3729 |
-| Proposed issue closes | 17 (0.5% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3727 |
+| Proposed issue closes | 30 (0.8% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3477 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7206 |
-| Proposed closes awaiting apply | 18 (0.2% of fresh reviews) |
+| Proposed PR closes | 5 (0.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7204 |
+| Proposed closes awaiting apply | 35 (0.5% of fresh reviews) |
 | Closed by Codex apply | 9908 |
 | Failed or stale reviews | 4 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963486609](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 312/819 current (507 due, 38.1%) |
-| Hourly hot item cadence (<7d) | 312/819 current (507 due, 38.1%) |
+| Hourly cadence coverage | 775/817 current (42 due, 94.9%) |
+| Hourly hot item cadence (<7d) | 775/817 current (42 due, 94.9%) |
 | Daily cadence coverage | 4427/4495 current (68 due, 98.5%) |
 | Daily PR cadence | 2993/3051 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1434/1444 current (10 due, 99.3%) |
 | Weekly older issue cadence | 1895/1896 current (1 due, 99.9%) |
-| Due now by cadence | 648 |
+| Due now by cadence | 185 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 18:13 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 3 | 17 | 0 | 0 | 166 | 1 |
-| Last hour | 1041 | 19 | 1022 | 0 | 0 | 378 | 4 |
-| Last 24 hours | 9879 | 2612 | 7267 | 7 | 2509 | 2465 | 19 |
+| Last 15 minutes | 500 | 20 | 480 | 0 | 0 | 164 | 1 |
+| Last hour | 1521 | 36 | 1485 | 0 | 0 | 378 | 4 |
+| Last 24 hours | 9877 | 2629 | 7248 | 7 | 2508 | 2447 | 18 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 18:13 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#47994](https://github.com/openclaw/openclaw/pull/47994) | fix(agent): prevent fallback model from permanently overwriting agent config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47994.md) | complete | Apr 26, 2026, 18:13 UTC |
-| [#72307](https://github.com/openclaw/openclaw/issues/72307) | Bonjour plugin crash loop on gateway startup (v2026.4.24 regression) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72307.md) | complete | Apr 26, 2026, 18:13 UTC |
-| [#72311](https://github.com/openclaw/openclaw/issues/72311) | [Bug]: Agent very slow on onboarding and after, tries to install missing deps on every command | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72311.md) | complete | Apr 26, 2026, 18:13 UTC |
+| [#71977](https://github.com/openclaw/openclaw/issues/71977) | [Feishu] Tool-call-heavy replies create multiple cards after streaming completes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71977.md) | complete | Apr 26, 2026, 18:13 UTC |
+| [#72203](https://github.com/openclaw/openclaw/issues/72203) | [Bug]: Gateway token mismatch prevents connection between Control UI and Gateway | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72203.md) | complete | Apr 26, 2026, 18:12 UTC |
+| [#72138](https://github.com/openclaw/openclaw/pull/72138) | fix(feishu): emit sent hooks for normal replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72138.md) | complete | Apr 26, 2026, 18:12 UTC |
+| [#72224](https://github.com/openclaw/openclaw/pull/72224) | fix gateway restart outside systemd | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72224.md) | complete | Apr 26, 2026, 18:12 UTC |
+| [#71631](https://github.com/openclaw/openclaw/issues/71631) | [Feature]: Improve gateway configuration and Web UI chat responsiveness | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71631.md) | complete | Apr 26, 2026, 18:12 UTC |
+| [#72184](https://github.com/openclaw/openclaw/issues/72184) | delivery-recovery on restart sends raw session context blob instead of original message | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72184.md) | complete | Apr 26, 2026, 18:12 UTC |
+| [#72081](https://github.com/openclaw/openclaw/issues/72081) | [Bug]: dashboard command run without giving a tocken | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72081.md) | complete | Apr 26, 2026, 18:12 UTC |
+| [#71787](https://github.com/openclaw/openclaw/pull/71787) | fix(feishu): accept schema 2 card callbacks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71787.md) | complete | Apr 26, 2026, 18:12 UTC |
 | [#72303](https://github.com/openclaw/openclaw/issues/72303) | [Bug]: Bonjour plugin failure causes infinite restart loop in 2026.4.24 when running in a bridged container | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72303.md) | complete | Apr 26, 2026, 18:12 UTC |
-| [#72114](https://github.com/openclaw/openclaw/issues/72114) | update.run: bundled runtime deps staging timeout + shutdown race condition causes gateway crash on cold cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72114.md) | complete | Apr 26, 2026, 18:12 UTC |
-| [#72177](https://github.com/openclaw/openclaw/pull/72177) | fix(litellm): post-#70246 hardening for image generation provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72177.md) | complete | Apr 26, 2026, 18:12 UTC |
-| [#46303](https://github.com/openclaw/openclaw/pull/46303) | fix: drain inbound debounce buffer and followup queues before SIGUSR1 reload | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46303.md) | complete | Apr 26, 2026, 18:12 UTC |
-| [#72153](https://github.com/openclaw/openclaw/pull/72153) | fix(gateway): use -FilePath instead of -LiteralPath in Start-Process [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72153.md) | complete | Apr 26, 2026, 18:12 UTC |
-| [#67509](https://github.com/openclaw/openclaw/pull/67509) | fix: add root guard to prevent CLI execution as root (#67478) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67509.md) | complete | Apr 26, 2026, 18:12 UTC |
-| [#72310](https://github.com/openclaw/openclaw/issues/72310) | [Bug]: Default plugin scanning is unsustainable on mid-range hardware | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72310.md) | complete | Apr 26, 2026, 18:12 UTC |
+| [#72227](https://github.com/openclaw/openclaw/issues/72227) | [Bug]: Control UI renders user messages twice: optimistic \"You\" message and gateway echo \"openclaw-control-ui\" are not deduplicated | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72227.md) | complete | Apr 26, 2026, 18:11 UTC |
 
 </details>
 
