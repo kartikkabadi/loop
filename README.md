@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 03:39 UTC
 
 Updated: Apr 26, 2026, 03:39 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 40, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947405570](https://github.com/openclaw/clawsweeper/actions/runs/24947405570)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947405570](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4966 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4967 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4232 |
-| Open items total | 9198 |
+| Open items total | 9199 |
 | Reviewed files | 9018 |
-| Unreviewed open items | 180 |
+| Unreviewed open items | 181 |
 | Archived closed files | 10279 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947405570](https://
 | Daily PR cadence | 3582/3646 current (64 due, 98.2%) |
 | Daily new issue cadence (<30d) | 2060/2073 current (13 due, 99.4%) |
 | Weekly older issue cadence | 2275/2279 current (4 due, 99.8%) |
-| Due now by cadence | 1271 |
+| Due now by cadence | 1272 |
 
 ### Latest Run Activity
 
