@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 20:29 UTC
+Last dashboard update: Apr 26, 2026, 20:30 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 20:29 UTC
+Updated: Apr 26, 2026, 20:30 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24966224153. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 40144,40194,40205,40209,40215,40217,40218,40247,40252,40255,40286,40314,40332,40355,40392,40402,40418,40443,40469,40522.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24966224153](https://github.com/openclaw/clawsweeper/actions/runs/24966224153)
 <!-- clawsweeper-status:end -->
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 20:28 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:13 UTC.
+Latest review: Apr 26, 2026, 20:28 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:30 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 30 | 2 | 28 | 0 | 0 | 0 | 0 |
-| Last hour | 1470 | 43 | 1427 | 0 | 1 | 680 | 3 |
-| Last 24 hours | 9765 | 2570 | 7195 | 0 | 2037 | 2768 | 10 |
+| Last 15 minutes | 22 | 2 | 20 | 0 | 0 | 20 | 0 |
+| Last hour | 1470 | 43 | 1427 | 0 | 1 | 695 | 3 |
+| Last 24 hours | 9759 | 2564 | 7195 | 0 | 2037 | 2788 | 10 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
