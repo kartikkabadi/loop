@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 15:16 UTC
+Last dashboard update: Apr 26, 2026, 15:20 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 15:16 UTC
+Updated: Apr 26, 2026, 15:20 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24959950114. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959950114](https://github.com/openclaw/clawsweeper/actions/runs/24959950114)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959950114](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 580/805 current (225 due, 72%) |
-| Hourly hot item cadence (<7d) | 580/805 current (225 due, 72%) |
-| Daily cadence coverage | 4433/4498 current (65 due, 98.6%) |
+| Hourly cadence coverage | 317/805 current (488 due, 39.4%) |
+| Hourly hot item cadence (<7d) | 317/805 current (488 due, 39.4%) |
+| Daily cadence coverage | 4432/4497 current (65 due, 98.6%) |
 | Daily PR cadence | 2989/3047 current (58 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1444/1451 current (7 due, 99.5%) |
-| Weekly older issue cadence | 1889/1889 current (0 due, 100%) |
-| Due now by cadence | 372 |
+| Daily new issue cadence (<30d) | 1443/1450 current (7 due, 99.5%) |
+| Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
+| Due now by cadence | 635 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 14:56 UTC. Latest close: Apr 26, 2026, 15:02 UTC. Latest comment sync: Apr 26, 2026, 15:13 UTC.
+Latest review: Apr 26, 2026, 15:19 UTC. Latest close: Apr 26, 2026, 15:02 UTC. Latest comment sync: Apr 26, 2026, 15:13 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 4 | 357 | 1 |
-| Last hour | 609 | 21 | 588 | 0 | 24 | 408 | 2 |
-| Last 24 hours | 10018 | 2709 | 7309 | 14 | 3458 | 2395 | 19 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 225 | 0 |
+| Last hour | 355 | 11 | 344 | 0 | 24 | 394 | 2 |
+| Last 24 hours | 10018 | 2709 | 7309 | 14 | 3458 | 2381 | 19 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 14:56 UTC. Latest close: Apr 26, 2026, 15:02 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#39747](https://github.com/openclaw/openclaw/pull/39747) | fix: resolve heartbeat.target not working for plugin channels like telegram | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39747.md) | complete | Apr 26, 2026, 14:56 UTC |
-| [#39975](https://github.com/openclaw/openclaw/pull/39975) | fix(discord): remove invalid message_reference from webhook payloads | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39975.md) | complete | Apr 26, 2026, 14:56 UTC |
-| [#39957](https://github.com/openclaw/openclaw/pull/39957) | fix(telegram): suppress toolUse intermediate message_end block replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39957.md) | complete | Apr 26, 2026, 14:55 UTC |
-| [#72082](https://github.com/openclaw/openclaw/pull/72082) | [plugin sdk] Add generic plugin host-hook SDK contracts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72082.md) | complete | Apr 26, 2026, 14:55 UTC |
-| [#71787](https://github.com/openclaw/openclaw/pull/71787) | fix(feishu): accept schema 2 card callbacks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71787.md) | complete | Apr 26, 2026, 14:55 UTC |
-| [#72085](https://github.com/openclaw/openclaw/pull/72085) | docs(commands): document bashForegroundMs clamp bounds (0–30 000 ms) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72085.md) | complete | Apr 26, 2026, 14:55 UTC |
-| [#69121](https://github.com/openclaw/openclaw/pull/69121) | fix(gateway): drain pending replies before restart shutdown | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69121.md) | complete | Apr 26, 2026, 14:55 UTC |
-| [#41419](https://github.com/openclaw/openclaw/pull/41419) | fix(discord): preserve MIME type on uploads and skip WebP optimization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41419.md) | complete | Apr 26, 2026, 14:55 UTC |
-| [#72132](https://github.com/openclaw/openclaw/pull/72132) | test(plugin-sdk): backfill DeepSeek V4 tool-call reasoning on large transcript (#71915) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72132.md) | complete | Apr 26, 2026, 14:55 UTC |
-| [#71857](https://github.com/openclaw/openclaw/pull/71857) | fix(skills): accept owner-prefixed clawhub slugs (#71767) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71857.md) | complete | Apr 26, 2026, 14:55 UTC |
+| [#14804](https://github.com/openclaw/openclaw/issues/14804) | Enhancement: Add ephemeral file system support for isolated sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14804.md) | complete | Apr 26, 2026, 15:19 UTC |
+| [#14376](https://github.com/openclaw/openclaw/issues/14376) | Feature: Reason-aware cron guardrails (quota/auth/rate-limit aware backoff + circuit breaker) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14376.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#50483](https://github.com/openclaw/openclaw/pull/50483) | fix(ios): stabilize chat streaming layout and session flow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50483.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#13362](https://github.com/openclaw/openclaw/issues/13362) | [Feature]: Add openclaw doctor --dry-run for safer config validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13362.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#40877](https://github.com/openclaw/openclaw/pull/40877) | fix(ios): resolve main-thread warnings for CLLocationManager and SFSpeechRecognizer | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40877.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#13962](https://github.com/openclaw/openclaw/issues/13962) | Feature: Per-mention model routing + context window for group mentions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13962.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#51011](https://github.com/openclaw/openclaw/pull/51011) | feat(ios): add Privacy & Access settings for contacts, calendar, and reminders | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51011.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#40878](https://github.com/openclaw/openclaw/pull/40878) | fix(ios): picker adaptive onChange loop + OSLog string concatenation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40878.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#40874](https://github.com/openclaw/openclaw/pull/40874) | feat(ios): Liquid Glass UI, Action Button & Dynamic Island | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40874.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#14593](https://github.com/openclaw/openclaw/issues/14593) | [Bug]: Skill install fails in Docker: `brew not installed` on Linux container | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14593.md) | complete | Apr 26, 2026, 15:18 UTC |
 
 </details>
 
