@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 23:50 UTC
 
 Updated: Apr 26, 2026, 23:50 UTC
 
-State: Review publish complete
+State: Apply in progress
 
-Merged review artifacts for run 24969827792. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969827792](https://github.com/openclaw/clawsweeper/actions/runs/24969827792)
+Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72374.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970150516](https://github.com/openclaw/clawsweeper/actions/runs/24970150516)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 23:49 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 493 | 11 | 482 | 1 | 0 | 4 | 0 |
-| Last hour | 544 | 14 | 530 | 1 | 0 | 45 | 2 |
-| Last 24 hours | 9220 | 2046 | 7174 | 1 | 2074 | 2173 | 11 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
+| Last hour | 60 | 2 | 58 | 0 | 0 | 61 | 1 |
+| Last 24 hours | 9209 | 2034 | 7175 | 0 | 2074 | 2208 | 14 |
 
 ### Recently Closed
 
