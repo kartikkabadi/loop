@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 15:45 UTC
+Last dashboard update: Apr 26, 2026, 15:47 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 15:46 UTC
+Updated: Apr 26, 2026, 15:47 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960579379](https://github.com/openclaw/clawsweeper/actions/runs/24960579379)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960579379](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 16/801 current (785 due, 2%) |
-| Hourly hot item cadence (<7d) | 16/801 current (785 due, 2%) |
-| Daily cadence coverage | 4436/4501 current (65 due, 98.6%) |
+| Hourly cadence coverage | 16/800 current (784 due, 2%) |
+| Hourly hot item cadence (<7d) | 16/800 current (784 due, 2%) |
+| Daily cadence coverage | 4437/4502 current (65 due, 98.6%) |
 | Daily PR cadence | 2991/3049 current (58 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1445/1452 current (7 due, 99.5%) |
+| Daily new issue cadence (<30d) | 1446/1453 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 952 |
+| Due now by cadence | 951 |
 
 ### Audit Health
 
