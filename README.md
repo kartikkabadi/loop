@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:06 UTC
+Last dashboard update: Apr 26, 2026, 10:10 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:06 UTC
+Updated: Apr 26, 2026, 10:10 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24953986385. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953986385](https://github.com/openclaw/clawsweeper/actions/runs/24953986385)
 <!-- clawsweeper-status:end -->
 
@@ -42,37 +42,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953986385](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3866 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3569 |
-| Open items total | 7435 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3868 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3571 |
+| Open items total | 7439 |
 | Reviewed files | 7181 |
-| Unreviewed open items | 254 |
+| Unreviewed open items | 258 |
 | Archived closed files | 12131 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3706 |
-| Proposed issue closes | 5 (0.1% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3701 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3372 |
-| Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7078 |
-| Proposed closes awaiting apply | 5 (0.1% of fresh reviews) |
+| Proposed PR closes | 1 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7073 |
+| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
 | Closed by Codex apply | 9604 |
-| Failed or stale reviews | 103 |
+| Failed or stale reviews | 108 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 86/773 current (687 due, 11.1%) |
-| Hourly hot item cadence (<7d) | 86/773 current (687 due, 11.1%) |
-| Daily cadence coverage | 4371/4509 current (138 due, 96.9%) |
-| Daily PR cadence | 2953/3053 current (100 due, 96.7%) |
-| Daily new issue cadence (<30d) | 1418/1456 current (38 due, 97.4%) |
-| Weekly older issue cadence | 1888/1899 current (11 due, 99.4%) |
-| Due now by cadence | 1090 |
+| Hourly cadence coverage | 78/773 current (695 due, 10.1%) |
+| Hourly hot item cadence (<7d) | 78/773 current (695 due, 10.1%) |
+| Daily cadence coverage | 4370/4512 current (142 due, 96.9%) |
+| Daily PR cadence | 2953/3055 current (102 due, 96.7%) |
+| Daily new issue cadence (<30d) | 1417/1457 current (40 due, 97.3%) |
+| Weekly older issue cadence | 1884/1896 current (12 due, 99.4%) |
+| Due now by cadence | 1107 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 09:55 UTC. Latest close: Apr 26, 2026, 10:03 UTC. Latest comment sync: Apr 26, 2026, 10:03 UTC.
+Latest review: Apr 26, 2026, 10:09 UTC. Latest close: Apr 26, 2026, 10:03 UTC. Latest comment sync: Apr 26, 2026, 10:03 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 197 | 18 | 179 | 0 | 24 | 26 | 0 |
-| Last hour | 1587 | 144 | 1443 | 5 | 179 | 499 | 8 |
-| Last 24 hours | 9954 | 2601 | 7353 | 115 | 4985 | 2101 | 37 |
+| Last 15 minutes | 22 | 1 | 21 | 0 | 20 | 21 | 0 |
+| Last hour | 1536 | 130 | 1406 | 5 | 173 | 409 | 8 |
+| Last 24 hours | 9954 | 2602 | 7352 | 120 | 4947 | 2101 | 37 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 09:55 UTC. Latest close: Apr 26, 2026, 10:03 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#50178](https://github.com/openclaw/openclaw/issues/50178) | [Bug]: 400 thinking is enabled, but reasoning_content is missing in assistant tool call message at index 12 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50178.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50107](https://github.com/openclaw/openclaw/issues/50107) | [Bug]: NVIDIA Provider Sends Anthropic-Style Message Format to OpenAI-Compatible API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50107.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50996](https://github.com/openclaw/openclaw/issues/50996) | Feature Request: Interruptible tool calls — agent unresponsive during long process(poll) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50996.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50310](https://github.com/openclaw/openclaw/issues/50310) | [Feature]: Auto-cleanup stale/orphaned Discord thread sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50310.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50472](https://github.com/openclaw/openclaw/issues/50472) | [Windows] Gateway exits silently without crash log | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50472.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50733](https://github.com/openclaw/openclaw/issues/50733) | [Bug]: Occasional errors printed in Slack due when attempting to add/readd duplicate reactions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50733.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50205](https://github.com/openclaw/openclaw/issues/50205) | [Feature]: Support configurable request labels for Gemini API calls (GCP billing tracking) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50205.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50779](https://github.com/openclaw/openclaw/issues/50779) | [Bug]: Control UI does not render tool-returned images inline in Chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50779.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50876](https://github.com/openclaw/openclaw/issues/50876) | Feature: bootstrapFiles config key to extend workspace injection set | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50876.md) | complete | Apr 26, 2026, 09:55 UTC |
-| [#50565](https://github.com/openclaw/openclaw/issues/50565) | Tool call logs always tagged under feishu subsystem regardless of actual channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50565.md) | complete | Apr 26, 2026, 09:54 UTC |
+| [#39768](https://github.com/openclaw/openclaw/issues/39768) | [Bug]: MCP tool failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39768.md) | complete | Apr 26, 2026, 10:09 UTC |
+| [#39690](https://github.com/openclaw/openclaw/issues/39690) | Bug: Multimodal (Vision) Messages Ignored for Custom Ollama Cloud Models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39690.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#40078](https://github.com/openclaw/openclaw/issues/40078) | [Feature]: Silent preflight transcription in requireMention channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40078.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#39785](https://github.com/openclaw/openclaw/pull/39785) | fix(config): respect explicit input modalities override in provider model merge | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39785.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#39685](https://github.com/openclaw/openclaw/issues/39685) | [Feature]: Network Access Control (allowedDomains / denyDomains) — Egress Firewall | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39685.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#39805](https://github.com/openclaw/openclaw/issues/39805) | [Feature]: 飞书插件支持读取飞书表格 (Sheet) 内容 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39805.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#39879](https://github.com/openclaw/openclaw/issues/39879) | [Feature] WhatsApp outbound mentions (mentionedJids) support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39879.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#39979](https://github.com/openclaw/openclaw/issues/39979) | [Feature]: Path-scoped RWX permissions for exec and file tools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39979.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#39996](https://github.com/openclaw/openclaw/pull/39996) | status: surface global tool profile hints in overview | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39996.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#39826](https://github.com/openclaw/openclaw/pull/39826) | discord: include accountId in no-mention auto-reply logs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39826.md) | complete | Apr 26, 2026, 10:08 UTC |
 
 </details>
 
