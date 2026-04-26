@@ -32,22 +32,22 @@ Last dashboard update: Apr 26, 2026, 09:44 UTC
 
 Updated: Apr 26, 2026, 09:44 UTC
 
-State: Review in progress
+State: Hot intake comments synced
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953571908](https://github.com/openclaw/clawsweeper/actions/runs/24953571908)
+Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 38290,38327,38346,38458,38501,38573,38597,38671,38702,38713,38821,38931,39115,39120,39127,39141,39245,39457,39476,39608.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953511507](https://github.com/openclaw/clawsweeper/actions/runs/24953511507)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3927 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3925 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3590 |
-| Open items total | 7517 |
-| Reviewed files | 7267 |
-| Unreviewed open items | 250 |
-| Archived closed files | 12045 |
+| Open items total | 7515 |
+| Reviewed files | 7272 |
+| Unreviewed open items | 243 |
+| Archived closed files | 12040 |
 
 ### Review Outcomes
 
@@ -71,8 +71,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953571908](https://
 | Daily cadence coverage | 4410/4536 current (126 due, 97.2%) |
 | Daily PR cadence | 2978/3068 current (90 due, 97.1%) |
 | Daily new issue cadence (<30d) | 1432/1468 current (36 due, 97.5%) |
-| Weekly older issue cadence | 1944/1953 current (9 due, 99.5%) |
-| Due now by cadence | 1045 |
+| Weekly older issue cadence | 1946/1955 current (9 due, 99.5%) |
+| Due now by cadence | 1039 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 09:43 UTC. Latest close: Apr 26, 2026, 09:42 UTC. Latest comment sync: Apr 26, 2026, 09:42 UTC.
+Latest review: Apr 26, 2026, 09:43 UTC. Latest close: Apr 26, 2026, 09:42 UTC. Latest comment sync: Apr 26, 2026, 09:44 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 500 | 40 | 460 | 2 | 25 | 335 | 4 |
-| Last hour | 2016 | 209 | 1807 | 4 | 240 | 903 | 9 |
-| Last 24 hours | 9986 | 2592 | 7394 | 99 | 5081 | 2366 | 38 |
+| Last 15 minutes | 520 | 41 | 479 | 2 | 25 | 335 | 3 |
+| Last hour | 2036 | 210 | 1826 | 4 | 240 | 903 | 9 |
+| Last 24 hours | 9985 | 2593 | 7392 | 99 | 5081 | 2366 | 38 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
