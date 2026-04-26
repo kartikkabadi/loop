@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 12:20 UTC
+Last dashboard update: Apr 26, 2026, 12:22 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 12:20 UTC
+Updated: Apr 26, 2026, 12:22 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 41, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956447841](https://github.com/openclaw/clawsweeper/actions/runs/24956447841)
 <!-- clawsweeper-status:end -->
 
@@ -42,35 +42,35 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956447841](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3757 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3522 |
-| Open items total | 7279 |
-| Reviewed files | 7205 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3745 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3514 |
+| Open items total | 7259 |
+| Reviewed files | 7185 |
 | Unreviewed open items | 74 |
-| Archived closed files | 12337 |
+| Archived closed files | 12357 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3742 |
-| Proposed issue closes | 14 (0.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3461 |
-| Proposed PR closes | 8 (0.2% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7203 |
-| Proposed closes awaiting apply | 22 (0.3% of fresh reviews) |
-| Closed by Codex apply | 9804 |
+| Fresh reviewed issues in the last 7 days | 3730 |
+| Proposed issue closes | 2 (0.1% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3453 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7183 |
+| Proposed closes awaiting apply | 2 (0% of fresh reviews) |
+| Closed by Codex apply | 9824 |
 | Failed or stale reviews | 2 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 814/819 current (5 due, 99.4%) |
-| Hourly hot item cadence (<7d) | 814/819 current (5 due, 99.4%) |
-| Daily cadence coverage | 4433/4503 current (70 due, 98.4%) |
+| Hourly cadence coverage | 793/798 current (5 due, 99.4%) |
+| Hourly hot item cadence (<7d) | 793/798 current (5 due, 99.4%) |
+| Daily cadence coverage | 4434/4504 current (70 due, 98.4%) |
 | Daily PR cadence | 2987/3050 current (63 due, 97.9%) |
-| Daily new issue cadence (<30d) | 1446/1453 current (7 due, 99.5%) |
+| Daily new issue cadence (<30d) | 1447/1454 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1883/1883 current (0 due, 100%) |
 | Due now by cadence | 149 |
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 12:14 UTC. Latest close: Apr 26, 2026, 12:09 UTC. Latest comment sync: Apr 26, 2026, 12:19 UTC.
+Latest review: Apr 26, 2026, 12:14 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 12:22 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 421 | 22 | 399 | 0 | 35 | 347 | 0 |
-| Last hour | 1422 | 63 | 1359 | 0 | 60 | 718 | 4 |
-| Last 24 hours | 10105 | 2761 | 7344 | 14 | 4398 | 2620 | 31 |
+| Last 15 minutes | 331 | 22 | 309 | 0 | 40 | 353 | 0 |
+| Last hour | 1421 | 63 | 1358 | 0 | 80 | 739 | 4 |
+| Last 24 hours | 10105 | 2761 | 7344 | 14 | 4410 | 2641 | 31 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,7 +119,6 @@ Latest review: Apr 26, 2026, 12:14 UTC. Latest close: Apr 26, 2026, 12:09 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71236](https://github.com/openclaw/openclaw/pull/71236) | fix(session): log warning when session hook fails instead of silently swallowing | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71236.md) | complete | Apr 26, 2026, 12:14 UTC |
 | [#71141](https://github.com/openclaw/openclaw/pull/71141) | fix(telegram): honor outbound reaction directives | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71141.md) | complete | Apr 26, 2026, 12:14 UTC |
 | [#71040](https://github.com/openclaw/openclaw/pull/71040) | fix(cron): mirror active-jobs mark/clear on startup catchup and manual run | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71040.md) | complete | Apr 26, 2026, 12:14 UTC |
 | [#71569](https://github.com/openclaw/openclaw/issues/71569) | Mattermost streaming config: documented but not implemented + notification UX bug | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71569.md) | complete | Apr 26, 2026, 12:13 UTC |
@@ -129,6 +128,7 @@ Latest review: Apr 26, 2026, 12:14 UTC. Latest close: Apr 26, 2026, 12:09 UTC. L
 | [#71537](https://github.com/openclaw/openclaw/pull/71537) | Recover archived (.reset) session transcripts in memory hook + session-logs skill | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71537.md) | complete | Apr 26, 2026, 12:13 UTC |
 | [#72146](https://github.com/openclaw/openclaw/issues/72146) | [Bug]: After updating to 4.24, LaunchAgent gateway doesn't work and only `openclaw gateway --force` works. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72146.md) | complete | Apr 26, 2026, 12:13 UTC |
 | [#71446](https://github.com/openclaw/openclaw/pull/71446) | fix(plugin-sdk): resolve JITI mocking test infrastructure and proxy validity checks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71446.md) | complete | Apr 26, 2026, 12:13 UTC |
+| [#71132](https://github.com/openclaw/openclaw/pull/71132) | test(slack): cover secret-contract registry and runtime-config assignments | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71132.md) | complete | Apr 26, 2026, 12:13 UTC |
 
 </details>
 
