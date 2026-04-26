@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 20:13 UTC
+Last dashboard update: Apr 26, 2026, 20:16 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 20:13 UTC
+Updated: Apr 26, 2026, 20:16 UTC
 
-State: Apply finished
+State: Review publish complete
 
-Apply/comment-sync run finished with 1 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965571618](https://github.com/openclaw/clawsweeper/actions/runs/24965571618)
+Merged review artifacts for run 24965807524. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965807524](https://github.com/openclaw/clawsweeper/actions/runs/24965807524)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -45,34 +45,34 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965571618](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3724 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
 | Open items total | 7262 |
-| Reviewed files | 7188 |
-| Unreviewed open items | 74 |
+| Reviewed files | 7189 |
+| Unreviewed open items | 73 |
 | Archived closed files | 12532 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3710 |
-| Proposed issue closes | 25 (0.7% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3474 |
-| Proposed PR closes | 5 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7184 |
-| Proposed closes awaiting apply | 30 (0.4% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3711 |
+| Proposed issue closes | 33 (0.9% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3476 |
+| Proposed PR closes | 8 (0.2% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7187 |
+| Proposed closes awaiting apply | 41 (0.6% of fresh reviews) |
 | Closed by Codex apply | 9948 |
-| Failed or stale reviews | 4 |
+| Failed or stale reviews | 2 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 386/804 current (418 due, 48%) |
-| Hourly hot item cadence (<7d) | 386/804 current (418 due, 48%) |
-| Daily cadence coverage | 4425/4494 current (69 due, 98.5%) |
-| Daily PR cadence | 2991/3050 current (59 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1434/1444 current (10 due, 99.3%) |
+| Hourly cadence coverage | 800/804 current (4 due, 99.5%) |
+| Hourly hot item cadence (<7d) | 800/804 current (4 due, 99.5%) |
+| Daily cadence coverage | 4428/4495 current (67 due, 98.5%) |
+| Daily PR cadence | 2993/3051 current (58 due, 98.1%) |
+| Daily new issue cadence (<30d) | 1435/1444 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 561 |
+| Due now by cadence | 144 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 20:10 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:13 UTC.
+Latest review: Apr 26, 2026, 20:15 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:13 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 126 | 21 | 105 | 0 | 0 | 465 | 4 |
-| Last hour | 1040 | 31 | 1009 | 0 | 1 | 723 | 4 |
-| Last 24 hours | 9818 | 2606 | 7212 | 2 | 2037 | 2817 | 11 |
+| Last 15 minutes | 451 | 14 | 437 | 0 | 0 | 331 | 3 |
+| Last hour | 1470 | 42 | 1428 | 0 | 1 | 700 | 3 |
+| Last 24 hours | 9805 | 2603 | 7202 | 0 | 2037 | 2788 | 10 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 20:10 UTC. Latest close: Apr 26, 2026, 19:53 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72346](https://github.com/openclaw/openclaw/issues/72346) | [Bug]: bonjour plugin: unhandled rejection on probe cancellation crashes process in 2026.4.24 (worked in 2026.4.23) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72346.md) | complete | Apr 26, 2026, 20:10 UTC |
-| [#72349](https://github.com/openclaw/openclaw/issues/72349) | [Bug]: Subagent spawn fails with \"No API key found for bedrock\" when using IAM Roles Anywhere (AWS_PROFILE + credential_process) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72349.md) | complete | Apr 26, 2026, 20:10 UTC |
-| [#20237](https://github.com/openclaw/openclaw/issues/20237) | [Feature]: WebUI notification system, cron job management popups, and context monitor integration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20237.md) | complete | Apr 26, 2026, 20:09 UTC |
-| [#25621](https://github.com/openclaw/openclaw/issues/25621) | [Feature]: Error: Gateway service install not supported on openbsd | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/25621.md) | complete | Apr 26, 2026, 20:09 UTC |
-| [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72348.md) | complete | Apr 26, 2026, 20:09 UTC |
-| [#29384](https://github.com/openclaw/openclaw/issues/29384) | [Feature]: Support for sandbox Docker parameters (--gpus all, --ipc=host) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/29384.md) | complete | Apr 26, 2026, 20:09 UTC |
-| [#72345](https://github.com/openclaw/openclaw/issues/72345) | voice-call: CLI `voicecall call` cannot run when gateway is owning the webhook port | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72345.md) | complete | Apr 26, 2026, 20:09 UTC |
-| [#72085](https://github.com/openclaw/openclaw/pull/72085) | docs(commands): document bashForegroundMs clamp bounds (0–30 000 ms) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72085.md) | complete | Apr 26, 2026, 20:09 UTC |
-| [#72347](https://github.com/openclaw/openclaw/issues/72347) | Active Memory: timeoutMs unenforceable due to multi-turn agent loop; need single-shot mode | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72347.md) | complete | Apr 26, 2026, 20:09 UTC |
-| [#20950](https://github.com/openclaw/openclaw/issues/20950) | [Feature]: cron jobs.d/ directory support (one file per job, for NixOS/GitOps declarative setups) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20950.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#72346](https://github.com/openclaw/openclaw/issues/72346) | [Bug]: bonjour plugin: unhandled rejection on probe cancellation crashes process in 2026.4.24 (worked in 2026.4.23) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72346.md) | complete | Apr 26, 2026, 20:15 UTC |
+| [#72255](https://github.com/openclaw/openclaw/issues/72255) | [Bug]: Pi runtime silently uses orphaned credentials from per-agent auth-profiles.json after their declarations are removed from openclaw.json — billing/quota leak | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72255.md) | complete | Apr 26, 2026, 20:15 UTC |
+| [#72080](https://github.com/openclaw/openclaw/issues/72080) | [Bug]: ACP child sessions report stopReason=\"stop\" with usage=0 before harness completes, causing parent agents to abandon mid-flight | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72080.md) | complete | Apr 26, 2026, 20:15 UTC |
+| [#72214](https://github.com/openclaw/openclaw/issues/72214) | Telegram channel can stall gateway when Node fetch to api.telegram.org times out while curl -4 succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72214.md) | complete | Apr 26, 2026, 20:15 UTC |
+| [#72240](https://github.com/openclaw/openclaw/issues/72240) | [Bug]: exec commands intermittently SIGKILL on macOS with no diagnostic cause | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72240.md) | complete | Apr 26, 2026, 20:15 UTC |
+| [#72013](https://github.com/openclaw/openclaw/issues/72013) | ACP startup identity reconcile warns on terminal one-shot sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72013.md) | complete | Apr 26, 2026, 20:15 UTC |
+| [#72203](https://github.com/openclaw/openclaw/issues/72203) | [Bug]: Gateway token mismatch prevents connection between Control UI and Gateway | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72203.md) | complete | Apr 26, 2026, 20:15 UTC |
+| [#72216](https://github.com/openclaw/openclaw/pull/72216) | fix(nostr): keep setup status off full surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72216.md) | complete | Apr 26, 2026, 20:15 UTC |
+| [#71830](https://github.com/openclaw/openclaw/pull/71830) | fix(whatsapp): sanitize XML tool text and suppress errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71830.md) | complete | Apr 26, 2026, 20:14 UTC |
+| [#72154](https://github.com/openclaw/openclaw/pull/72154) | docs(install): fix gog/goplaces release URLs in docker-vm-runtime example | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72154.md) | complete | Apr 26, 2026, 20:14 UTC |
 
 </details>
 
