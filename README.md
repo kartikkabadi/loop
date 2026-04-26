@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 07:21 UTC
+Last dashboard update: Apr 26, 2026, 07:23 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 07:21 UTC
+Updated: Apr 26, 2026, 07:23 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951000204](https://github.com/openclaw/clawsweeper/actions/runs/24951000204)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951060132](https://github.com/openclaw/clawsweeper/actions/runs/24951060132)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,11 +43,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951000204](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4140 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3806 |
-| Open items total | 7946 |
-| Reviewed files | 7725 |
-| Unreviewed open items | 221 |
-| Archived closed files | 11572 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3809 |
+| Open items total | 7949 |
+| Reviewed files | 7732 |
+| Unreviewed open items | 217 |
+| Archived closed files | 11565 |
 
 ### Review Outcomes
 
@@ -60,19 +60,19 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951000204](https://
 | Fresh verified reviews in the last 7 days | 7677 |
 | Proposed closes awaiting apply | 50 (0.7% of fresh reviews) |
 | Closed by Codex apply | 9065 |
-| Failed or stale reviews | 48 |
+| Failed or stale reviews | 55 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 214/821 current (607 due, 26.1%) |
-| Hourly hot item cadence (<7d) | 214/821 current (607 due, 26.1%) |
-| Daily cadence coverage | 4815/4916 current (101 due, 97.9%) |
-| Daily PR cadence | 3213/3295 current (82 due, 97.5%) |
-| Daily new issue cadence (<30d) | 1602/1621 current (19 due, 98.8%) |
+| Hourly cadence coverage | 197/822 current (625 due, 24%) |
+| Hourly hot item cadence (<7d) | 197/822 current (625 due, 24%) |
+| Daily cadence coverage | 4815/4922 current (107 due, 97.8%) |
+| Daily PR cadence | 3213/3296 current (83 due, 97.5%) |
+| Daily new issue cadence (<30d) | 1602/1626 current (24 due, 98.5%) |
 | Weekly older issue cadence | 1983/1988 current (5 due, 99.7%) |
-| Due now by cadence | 934 |
+| Due now by cadence | 954 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 07:15 UTC. Latest close: Apr 26, 2026, 07:21 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 233 | 42 | 191 | 0 | 70 | 87 | 1 |
-| Last hour | 917 | 188 | 729 | 1 | 327 | 336 | 1 |
-| Last 24 hours | 10283 | 2357 | 7926 | 61 | 5319 | 1339 | 67 |
+| Last 15 minutes | 181 | 31 | 150 | 0 | 52 | 69 | 1 |
+| Last hour | 872 | 181 | 691 | 1 | 324 | 336 | 1 |
+| Last 24 hours | 10272 | 2346 | 7926 | 68 | 5305 | 1339 | 67 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
