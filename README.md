@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 15:41 UTC
 
 Updated: Apr 26, 2026, 15:41 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24960378307. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 38259,38309,38349,38626,38635,38658,38709,38958,39013,39032,39117,39231,39284,39349,39373,39392,39461,39498,66712,67096.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960378307](https://github.com/openclaw/clawsweeper/actions/runs/24960378307)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960378307](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3761 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3762 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3527 |
-| Open items total | 7288 |
+| Open items total | 7289 |
 | Reviewed files | 7192 |
-| Unreviewed open items | 96 |
+| Unreviewed open items | 97 |
 | Archived closed files | 12418 |
 
 ### Review Outcomes
@@ -66,11 +66,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960378307](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 14/802 current (788 due, 1.7%) |
-| Hourly hot item cadence (<7d) | 14/802 current (788 due, 1.7%) |
-| Daily cadence coverage | 4435/4500 current (65 due, 98.6%) |
+| Hourly cadence coverage | 14/801 current (787 due, 1.7%) |
+| Hourly hot item cadence (<7d) | 14/801 current (787 due, 1.7%) |
+| Daily cadence coverage | 4436/4501 current (65 due, 98.6%) |
 | Daily PR cadence | 2991/3049 current (58 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1444/1451 current (7 due, 99.5%) |
+| Daily new issue cadence (<30d) | 1445/1452 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
 | Due now by cadence | 949 |
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 15:40 UTC. Latest close: Apr 26, 2026, 15:02 UTC. Latest comment sync: Apr 26, 2026, 15:26 UTC.
+Latest review: Apr 26, 2026, 15:40 UTC. Latest close: Apr 26, 2026, 15:02 UTC. Latest comment sync: Apr 26, 2026, 15:41 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 6 | 0 |
-| Last hour | 60 | 0 | 60 | 0 | 24 | 655 | 3 |
-| Last 24 hours | 10000 | 2697 | 7303 | 14 | 3368 | 2654 | 20 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
+| Last hour | 60 | 0 | 60 | 0 | 24 | 675 | 3 |
+| Last 24 hours | 9997 | 2694 | 7303 | 14 | 3363 | 2674 | 20 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
