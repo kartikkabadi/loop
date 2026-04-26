@@ -16,42 +16,42 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 01:22 UTC
+Last dashboard update: Apr 26, 2026, 01:24 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 26, 2026, 01:22 UTC
+Updated: Apr 26, 2026, 01:24 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24945153912](https://github.com/openclaw/clawsweeper/actions/runs/24945153912)
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 363, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944966461](https://github.com/openclaw/clawsweeper/actions/runs/24944966461)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5393 |
-| Fresh reviewed issues in the last 7 days | 5346 |
-| Proposed issue closes | 838 (15.7% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4255 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5387 |
+| Fresh reviewed issues in the last 7 days | 5336 |
+| Proposed issue closes | 828 (15.5% of reviewed issues) |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4254 |
 | Fresh reviewed PRs in the last 7 days | 4155 |
 | Proposed PR closes | 66 (1.6% of reviewed PRs) |
-| Open items total | 9648 |
-| Reviewed files | 9503 |
-| Unreviewed open items | 145 |
-| Archived closed files | 9794 |
-| Fresh verified reviews in the last 7 days | 9501 |
-| Proposed closes awaiting apply | 904 (9.5% of fresh reviews) |
-| Closed by Codex apply | 7573 |
+| Open items total | 9641 |
+| Reviewed files | 9493 |
+| Unreviewed open items | 148 |
+| Archived closed files | 9804 |
+| Fresh verified reviews in the last 7 days | 9491 |
+| Proposed closes awaiting apply | 894 (9.4% of fresh reviews) |
+| Closed by Codex apply | 7593 |
 | Failed or stale reviews | 2 |
 | Hourly cadence coverage | 12/1065 current (1053 due, 1.1%) |
 | Hourly hot item cadence (<7d) | 12/1065 current (1053 due, 1.1%) |
-| Daily cadence coverage | 5523/5764 current (241 due, 95.8%) |
+| Daily cadence coverage | 5522/5763 current (241 due, 95.8%) |
 | Daily PR cadence | 3549/3672 current (123 due, 96.7%) |
-| Daily new issue cadence (<30d) | 1974/2092 current (118 due, 94.4%) |
-| Weekly older issue cadence | 2673/2674 current (1 due, 100%) |
-| Due now by cadence | 1440 |
+| Daily new issue cadence (<30d) | 1973/2091 current (118 due, 94.4%) |
+| Weekly older issue cadence | 2664/2665 current (1 due, 100%) |
+| Due now by cadence | 1443 |
 
 Recently reviewed:
 
@@ -68,7 +68,7 @@ Recently reviewed:
 | [#63839](https://github.com/openclaw/openclaw/pull/63839) | fix: surface context overflow error for model_context_window_exceeded stop reason | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63839.md) | complete | Apr 26, 2026, 01:12 UTC |
 | [#63719](https://github.com/openclaw/openclaw/issues/63719) | openclaw update can leave the global openclaw bin missing after npm global update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63719.md) | complete | Apr 26, 2026, 01:12 UTC |
 | [#63823](https://github.com/openclaw/openclaw/issues/63823) | MiniMax plugin manifest missing providerAuthAliases after provider auth aliases system update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63823.md) | complete | Apr 26, 2026, 01:12 UTC |
-| [#23896](https://github.com/openclaw/openclaw/issues/23896) | [Feature]: requireMentionFromIds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23896.md) | failed | Apr 26, 2026, 01:12 UTC |
+| [#23896](https://github.com/openclaw/openclaw/issues/23896) | [Feature]: requireMentionFromIds | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/23896.md) | failed | Apr 26, 2026, 01:12 UTC |
 | [#63756](https://github.com/openclaw/openclaw/issues/63756) | [Windows] qmd memory backend unavailable — .cmd wrapper not resolved | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/63756.md) | complete | Apr 26, 2026, 01:12 UTC |
 | [#27771](https://github.com/openclaw/openclaw/pull/27771) | ability to set config path for signal-cli | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/27771.md) | complete | Apr 26, 2026, 01:12 UTC |
 | [#63743](https://github.com/openclaw/openclaw/issues/63743) | [Feature]: Gateway does not support IPv6 listening | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63743.md) | complete | Apr 26, 2026, 01:12 UTC |
