@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 19:14 UTC
 
 Updated: Apr 26, 2026, 19:14 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 19/20. Result records in checkpoint: 20, including durable review comment syncs.
+Apply/comment-sync run finished with 19 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24964493467](https://github.com/openclaw/clawsweeper/actions/runs/24964493467)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24964493467](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3717 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3716 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3539 |
-| Open items total | 7256 |
+| Open items total | 7255 |
 | Reviewed files | 7170 |
-| Unreviewed open items | 86 |
+| Unreviewed open items | 85 |
 | Archived closed files | 12527 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24964493467](https://
 | Daily PR cadence | 2992/3051 current (59 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1433/1442 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1892/1892 current (0 due, 100%) |
-| Due now by cadence | 883 |
+| Due now by cadence | 882 |
 
 ### Audit Health
 
@@ -108,8 +108,8 @@ Latest review: Apr 26, 2026, 19:00 UTC. Latest close: Apr 26, 2026, 19:01 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 12 | 0 | 12 | 0 | 19 | 335 | 4 |
-| Last hour | 99 | 5 | 94 | 0 | 39 | 367 | 4 |
+| Last 15 minutes | 11 | 0 | 11 | 0 | 19 | 335 | 4 |
+| Last hour | 99 | 5 | 94 | 0 | 39 | 365 | 4 |
 | Last 24 hours | 9865 | 2624 | 7241 | 1 | 2186 | 2754 | 20 |
 
 <details>
