@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:17 UTC
+Last dashboard update: Apr 26, 2026, 10:19 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:11 UTC
+Updated: Apr 26, 2026, 10:19 UTC
 
-State: Apply throttled
+State: Apply in progress
 
-Checkpoint 1. GitHub throttled while applying close decisions. Progress: 5/20 fresh closes, 189/400 processed records in this apply chunk. Last throttled command: `gh api repos/openclaw/openclaw/issues/37746/comments`. Retry 2/11 in 60s.
+Checkpoint 1 finished. Fresh closes in checkpoint: 5. Total fresh closes in this run: 5/20. Result records in checkpoint: 400, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953978751](https://github.com/openclaw/clawsweeper/actions/runs/24953978751)
 <!-- clawsweeper-status:end -->
 
@@ -59,20 +59,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953978751](https://
 | Proposed PR closes | 3 (0.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7101 |
 | Proposed closes awaiting apply | 21 (0.3% of fresh reviews) |
-| Closed by Codex apply | 9604 |
+| Closed by Codex apply | 9609 |
 | Failed or stale reviews | 88 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 109/780 current (671 due, 14%) |
-| Hourly hot item cadence (<7d) | 109/780 current (671 due, 14%) |
+| Hourly cadence coverage | 103/780 current (677 due, 13.2%) |
+| Hourly hot item cadence (<7d) | 103/780 current (677 due, 13.2%) |
 | Daily cadence coverage | 4371/4513 current (142 due, 96.9%) |
 | Daily PR cadence | 2953/3055 current (102 due, 96.7%) |
 | Daily new issue cadence (<30d) | 1418/1458 current (40 due, 97.3%) |
 | Weekly older issue cadence | 1883/1896 current (13 due, 99.3%) |
-| Due now by cadence | 1079 |
+| Due now by cadence | 1085 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 10:16 UTC. Latest close: Apr 26, 2026, 10:03 UTC. Latest comment sync: Apr 26, 2026, 10:10 UTC.
+Latest review: Apr 26, 2026, 10:16 UTC. Latest close: Apr 26, 2026, 10:05 UTC. Latest comment sync: Apr 26, 2026, 10:19 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 330 | 21 | 309 | 1 | 13 | 33 | 0 |
-| Last hour | 1830 | 133 | 1697 | 6 | 172 | 206 | 1 |
-| Last 24 hours | 9962 | 2620 | 7342 | 100 | 4881 | 1815 | 30 |
+| Last 15 minutes | 243 | 21 | 222 | 1 | 5 | 367 | 0 |
+| Last hour | 1728 | 115 | 1613 | 5 | 164 | 540 | 1 |
+| Last 24 hours | 9962 | 2620 | 7342 | 100 | 4873 | 2162 | 30 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
