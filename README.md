@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 10:10 UTC
 
 Updated: Apr 26, 2026, 10:10 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24953986385. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 39635,39659,39685,39690,39722,39768,39772,39785,39805,39806,39826,39879,39975,39979,39996,39999,40009,40044,40067,40078.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953986385](https://github.com/openclaw/clawsweeper/actions/runs/24953986385)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953986385](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3868 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3869 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3571 |
-| Open items total | 7439 |
+| Open items total | 7440 |
 | Reviewed files | 7181 |
-| Unreviewed open items | 258 |
+| Unreviewed open items | 259 |
 | Archived closed files | 12131 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953986385](https://
 | Daily PR cadence | 2953/3055 current (102 due, 96.7%) |
 | Daily new issue cadence (<30d) | 1417/1457 current (40 due, 97.3%) |
 | Weekly older issue cadence | 1884/1896 current (12 due, 99.4%) |
-| Due now by cadence | 1107 |
+| Due now by cadence | 1108 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 10:09 UTC. Latest close: Apr 26, 2026, 10:03 UTC. Latest comment sync: Apr 26, 2026, 10:03 UTC.
+Latest review: Apr 26, 2026, 10:09 UTC. Latest close: Apr 26, 2026, 10:03 UTC. Latest comment sync: Apr 26, 2026, 10:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 22 | 1 | 21 | 0 | 20 | 21 | 0 |
-| Last hour | 1536 | 130 | 1406 | 5 | 173 | 409 | 8 |
-| Last 24 hours | 9954 | 2602 | 7352 | 120 | 4947 | 2101 | 37 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 20 | 41 | 0 |
+| Last hour | 1536 | 130 | 1406 | 5 | 173 | 413 | 8 |
+| Last 24 hours | 9954 | 2602 | 7352 | 120 | 4943 | 2121 | 37 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
