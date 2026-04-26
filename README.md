@@ -30,12 +30,12 @@ Last dashboard update: Apr 26, 2026, 04:30 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 04:30 UTC
+Updated: Apr 26, 2026, 04:31 UTC
 
-State: Apply in progress
+State: Planning review
 
-Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948227156](https://github.com/openclaw/clawsweeper/actions/runs/24948227156)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948262003](https://github.com/openclaw/clawsweeper/actions/runs/24948262003)
 <!-- clawsweeper-status:end -->
 
 ### Queue
