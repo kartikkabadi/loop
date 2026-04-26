@@ -16,30 +16,30 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 02:00 UTC
+Last dashboard update: Apr 26, 2026, 02:01 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 26, 2026, 02:00 UTC
+Updated: Apr 26, 2026, 02:01 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24945724917. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 38502,38597,38607,38609,38664,38670,38713,38729,38744,38780,38781,38846,38881,38932,38939,38945,39001,66864,67049,71379.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24945724917](https://github.com/openclaw/clawsweeper/actions/runs/24945724917)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5343 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5342 |
 | Fresh reviewed issues in the last 7 days | 5294 |
 | Proposed issue closes | 833 (15.7% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4252 |
 | Fresh reviewed PRs in the last 7 days | 4149 |
 | Proposed PR closes | 83 (2% of reviewed PRs) |
-| Open items total | 9595 |
+| Open items total | 9594 |
 | Reviewed files | 9444 |
-| Unreviewed open items | 151 |
+| Unreviewed open items | 150 |
 | Archived closed files | 9853 |
 | Fresh verified reviews in the last 7 days | 9443 |
 | Proposed closes awaiting apply | 916 (9.7% of fresh reviews) |
@@ -47,21 +47,21 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24945724917](https://
 | Failed or stale reviews | 1 |
 | Hourly cadence coverage | 23/1057 current (1034 due, 2.2%) |
 | Hourly hot item cadence (<7d) | 23/1057 current (1034 due, 2.2%) |
-| Daily cadence coverage | 5630/5762 current (132 due, 97.7%) |
-| Daily PR cadence | 3579/3671 current (92 due, 97.5%) |
-| Daily new issue cadence (<30d) | 2051/2091 current (40 due, 98.1%) |
+| Daily cadence coverage | 5625/5762 current (137 due, 97.6%) |
+| Daily PR cadence | 3577/3671 current (94 due, 97.4%) |
+| Daily new issue cadence (<30d) | 2048/2091 current (43 due, 97.9%) |
 | Weekly older issue cadence | 2624/2625 current (1 due, 100%) |
-| Due now by cadence | 1318 |
+| Due now by cadence | 1322 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 01:59 UTC. Latest close: Apr 26, 2026, 01:49 UTC. Latest comment sync: Apr 26, 2026, 01:49 UTC.
+Latest review: Apr 26, 2026, 01:59 UTC. Latest close: Apr 26, 2026, 01:49 UTC. Latest comment sync: Apr 26, 2026, 02:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 157 | 17 | 140 | 0 | 8 | 71 | 0 |
-| Last hour | 772 | 122 | 650 | 1 | 49 | 372 | 6 |
-| Last 24 hours | 11657 | 2869 | 8788 | 15 | 5640 | 435 | 201 |
+| Last 15 minutes | 139 | 17 | 122 | 0 | 7 | 75 | 1 |
+| Last hour | 772 | 122 | 650 | 1 | 49 | 391 | 7 |
+| Last 24 hours | 11643 | 2862 | 8781 | 15 | 5638 | 454 | 202 |
 
 Recently reviewed:
 
@@ -84,7 +84,7 @@ Recently reviewed:
 | [#38713](https://github.com/openclaw/openclaw/pull/38713) | fix(skills): resolve `skills info` name mismatches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38713.md) | complete | Apr 26, 2026, 01:58 UTC |
 | [#38846](https://github.com/openclaw/openclaw/pull/38846) | security(windows): enhance command argument validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38846.md) | complete | Apr 26, 2026, 01:58 UTC |
 | [#67049](https://github.com/openclaw/openclaw/pull/67049) | fix: drain system events on /new session reset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67049.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#71379](https://github.com/openclaw/openclaw/pull/71379) | fix: expose image edit geometry flags in capability cli | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71379.md) | complete | Apr 26, 2026, 01:58 UTC |
+| [#71379](https://github.com/openclaw/openclaw/pull/71379) | fix: expose image edit geometry flags in capability cli | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/71379.md) | complete | Apr 26, 2026, 01:58 UTC |
 | [#38664](https://github.com/openclaw/openclaw/pull/38664) | docs: Add security scan workflow template (Trivy + KICS + TruffleHog) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38664.md) | complete | Apr 26, 2026, 01:57 UTC |
 | [#38780](https://github.com/openclaw/openclaw/pull/38780) | feat: context-pressure-aware continuation (CONTINUE_WORK / CONTINUE_DELEGATE) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38780.md) | complete | Apr 26, 2026, 01:57 UTC |
 
