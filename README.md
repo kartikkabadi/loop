@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 14:57 UTC
 
 Updated: Apr 26, 2026, 14:57 UTC
 
-State: Apply finished
+State: Hot intake publish complete
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959518375](https://github.com/openclaw/clawsweeper/actions/runs/24959518375)
+Merged hot intake artifacts for run 24959486258. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959486258](https://github.com/openclaw/clawsweeper/actions/runs/24959486258)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -59,20 +59,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959518375](https://
 | Proposed PR closes | 5 (0.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7216 |
 | Proposed closes awaiting apply | 25 (0.3% of fresh reviews) |
-| Closed by Codex apply | 9844 |
+| Closed by Codex apply | 9824 |
 | Failed or stale reviews | 2 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 807/832 current (25 due, 97%) |
-| Hourly hot item cadence (<7d) | 807/832 current (25 due, 97%) |
+| Hourly cadence coverage | 821/832 current (11 due, 98.7%) |
+| Hourly hot item cadence (<7d) | 821/832 current (11 due, 98.7%) |
 | Daily cadence coverage | 4433/4498 current (65 due, 98.6%) |
 | Daily PR cadence | 2989/3047 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1444/1451 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1888/1888 current (0 due, 100%) |
-| Due now by cadence | 163 |
+| Due now by cadence | 149 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 14:39 UTC. Latest close: Apr 26, 2026, 14:56 UTC. Latest comment sync: Apr 26, 2026, 14:56 UTC.
+Latest review: Apr 26, 2026, 14:56 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 14:34 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 20 | 21 | 0 |
-| Last hour | 1093 | 42 | 1051 | 0 | 20 | 36 | 0 |
-| Last 24 hours | 10018 | 2709 | 7309 | 14 | 3454 | 2037 | 19 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| Last hour | 1113 | 42 | 1071 | 0 | 0 | 15 | 0 |
+| Last 24 hours | 10018 | 2709 | 7309 | 14 | 3434 | 1999 | 17 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 14:39 UTC. Latest close: Apr 26, 2026, 14:56 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72217](https://github.com/openclaw/openclaw/issues/72217) | [Bug]: HEARTBEAT_OK final heartbeat payload can leak to channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72217.md) | complete | Apr 26, 2026, 14:39 UTC |
-| [#72216](https://github.com/openclaw/openclaw/pull/72216) | fix(nostr): keep setup status off full surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72216.md) | complete | Apr 26, 2026, 14:38 UTC |
-| [#72215](https://github.com/openclaw/openclaw/pull/72215) | Gateway: allow cron.enabled and compaction mode config paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72215.md) | complete | Apr 26, 2026, 14:38 UTC |
-| [#72146](https://github.com/openclaw/openclaw/issues/72146) | [Bug]: After updating to 4.24, LaunchAgent gateway doesn't work and only `openclaw gateway --force` works. | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72146.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#72214](https://github.com/openclaw/openclaw/issues/72214) | Telegram channel can stall gateway when Node fetch to api.telegram.org times out while curl -4 succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72214.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71555](https://github.com/openclaw/openclaw/issues/71555) | [Bug]: Large session JSONL can crash gateway during embedded context rebuild; SessionManager.open() loads file twice | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71555.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71699](https://github.com/openclaw/openclaw/issues/71699) | [Bug]: Gateway hard-crashes with 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN) on Windows during Mattermost streaming reply; auto-respawn frequently wedges | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71699.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#72141](https://github.com/openclaw/openclaw/issues/72141) | [Bug]: Isolated cron sessions emit replies that mirror the parent session's last assistant message | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72141.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71495](https://github.com/openclaw/openclaw/issues/71495) | [Bug]: /subagents list returns empty in 2026.4.23 despite gateway tracking active subagents (regression from 4.22) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71495.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71349](https://github.com/openclaw/openclaw/issues/71349) | memory-lancedb: autoCapture rarely fires; only 2 entries persisted across many sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71349.md) | complete | Apr 26, 2026, 14:32 UTC |
+| [#39747](https://github.com/openclaw/openclaw/pull/39747) | fix: resolve heartbeat.target not working for plugin channels like telegram | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39747.md) | complete | Apr 26, 2026, 14:56 UTC |
+| [#39975](https://github.com/openclaw/openclaw/pull/39975) | fix(discord): remove invalid message_reference from webhook payloads | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39975.md) | complete | Apr 26, 2026, 14:56 UTC |
+| [#39957](https://github.com/openclaw/openclaw/pull/39957) | fix(telegram): suppress toolUse intermediate message_end block replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39957.md) | complete | Apr 26, 2026, 14:55 UTC |
+| [#72082](https://github.com/openclaw/openclaw/pull/72082) | [plugin sdk] Add generic plugin host-hook SDK contracts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72082.md) | complete | Apr 26, 2026, 14:55 UTC |
+| [#71787](https://github.com/openclaw/openclaw/pull/71787) | fix(feishu): accept schema 2 card callbacks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71787.md) | complete | Apr 26, 2026, 14:55 UTC |
+| [#72085](https://github.com/openclaw/openclaw/pull/72085) | docs(commands): document bashForegroundMs clamp bounds (0–30 000 ms) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72085.md) | complete | Apr 26, 2026, 14:55 UTC |
+| [#69121](https://github.com/openclaw/openclaw/pull/69121) | fix(gateway): drain pending replies before restart shutdown | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69121.md) | complete | Apr 26, 2026, 14:55 UTC |
+| [#41419](https://github.com/openclaw/openclaw/pull/41419) | fix(discord): preserve MIME type on uploads and skip WebP optimization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41419.md) | complete | Apr 26, 2026, 14:55 UTC |
+| [#72132](https://github.com/openclaw/openclaw/pull/72132) | test(plugin-sdk): backfill DeepSeek V4 tool-call reasoning on large transcript (#71915) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72132.md) | complete | Apr 26, 2026, 14:55 UTC |
+| [#71857](https://github.com/openclaw/openclaw/pull/71857) | fix(skills): accept owner-prefixed clawhub slugs (#71767) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71857.md) | complete | Apr 26, 2026, 14:55 UTC |
 
 </details>
 
