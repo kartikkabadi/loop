@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 07:11 UTC
 
 Updated: Apr 26, 2026, 07:11 UTC
 
-State: Apply finished
+State: Hot intake publish complete
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950824726](https://github.com/openclaw/clawsweeper/actions/runs/24950824726)
+Merged hot intake artifacts for run 24950769848. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950769848](https://github.com/openclaw/clawsweeper/actions/runs/24950769848)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,25 +54,25 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950824726](https://
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 4063 |
-| Proposed issue closes | 49 (1.2% of reviewed issues) |
+| Proposed issue closes | 52 (1.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3685 |
-| Proposed PR closes | 18 (0.5% of reviewed PRs) |
+| Proposed PR closes | 19 (0.5% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7748 |
-| Proposed closes awaiting apply | 67 (0.9% of fresh reviews) |
-| Closed by Codex apply | 9006 |
+| Proposed closes awaiting apply | 71 (0.9% of fresh reviews) |
+| Closed by Codex apply | 8986 |
 | Failed or stale reviews | 49 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 254/864 current (610 due, 29.4%) |
-| Hourly hot item cadence (<7d) | 254/864 current (610 due, 29.4%) |
+| Hourly cadence coverage | 269/864 current (595 due, 31.1%) |
+| Hourly hot item cadence (<7d) | 269/864 current (595 due, 31.1%) |
 | Daily cadence coverage | 4842/4944 current (102 due, 97.9%) |
 | Daily PR cadence | 3235/3318 current (83 due, 97.5%) |
 | Daily new issue cadence (<30d) | 1607/1626 current (19 due, 98.8%) |
 | Weekly older issue cadence | 1984/1989 current (5 due, 99.7%) |
-| Due now by cadence | 929 |
+| Due now by cadence | 914 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 07:00 UTC. Latest close: Apr 26, 2026, 07:11 UTC. Latest comment sync: Apr 26, 2026, 07:11 UTC.
+Latest review: Apr 26, 2026, 07:10 UTC. Latest close: Apr 26, 2026, 07:07 UTC. Latest comment sync: Apr 26, 2026, 07:07 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 48 | 10 | 38 | 0 | 102 | 102 | 0 |
-| Last hour | 769 | 174 | 595 | 3 | 315 | 288 | 1 |
-| Last 24 hours | 10316 | 2342 | 7974 | 62 | 5353 | 1289 | 113 |
+| Last 15 minutes | 52 | 9 | 43 | 0 | 80 | 81 | 0 |
+| Last hour | 787 | 177 | 610 | 3 | 295 | 269 | 0 |
+| Last 24 hours | 10310 | 2339 | 7971 | 62 | 5333 | 1270 | 112 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 07:00 UTC. Latest close: Apr 26, 2026, 07:11 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#48442](https://github.com/openclaw/openclaw/pull/48442) | feat: add systemPrompt.identityLine and disabledSections config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48442.md) | complete | Apr 26, 2026, 07:00 UTC |
-| [#48285](https://github.com/openclaw/openclaw/pull/48285) | fix(gateway): allow loopback node-role sessions without device identity | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48285.md) | complete | Apr 26, 2026, 06:58 UTC |
-| [#48643](https://github.com/openclaw/openclaw/pull/48643) | feat(ui): add parallel thread creation in chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48643.md) | complete | Apr 26, 2026, 06:58 UTC |
-| [#55767](https://github.com/openclaw/openclaw/pull/55767) | fix(hooks): reject internal session namespaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/55767.md) | complete | Apr 26, 2026, 06:58 UTC |
-| [#48537](https://github.com/openclaw/openclaw/pull/48537) | Telegram: avoid aborting sends on polling restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48537.md) | complete | Apr 26, 2026, 06:57 UTC |
-| [#48336](https://github.com/openclaw/openclaw/pull/48336) | feat(gateway): add general per-IP request rate limiter | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48336.md) | complete | Apr 26, 2026, 06:57 UTC |
-| [#48681](https://github.com/openclaw/openclaw/pull/48681) | feat(agents): support multiple workspaces via composite symlink directory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48681.md) | complete | Apr 26, 2026, 06:57 UTC |
-| [#48668](https://github.com/openclaw/openclaw/pull/48668) | feat(memory-lancedb): Add Gemini embedding model support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48668.md) | complete | Apr 26, 2026, 06:57 UTC |
-| [#48742](https://github.com/openclaw/openclaw/pull/48742) | fix(doctor): auto-remove legacy notify:true when cron.webhook is unset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48742.md) | complete | Apr 26, 2026, 06:57 UTC |
-| [#48520](https://github.com/openclaw/openclaw/pull/48520) | feat(sea): package OpenClaw as Node.js Single Executable Application for container deployment | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/48520.md) | complete | Apr 26, 2026, 06:57 UTC |
+| [#65508](https://github.com/openclaw/openclaw/pull/65508) | fix(sanitize): strip tool_call XML tags from user-facing messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65508.md) | complete | Apr 26, 2026, 07:10 UTC |
+| [#71682](https://github.com/openclaw/openclaw/issues/71682) | long model timeouts . | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71682.md) | complete | Apr 26, 2026, 07:10 UTC |
+| [#71663](https://github.com/openclaw/openclaw/issues/71663) | Telegram: partial streaming leaks tool call names into chat | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71663.md) | complete | Apr 26, 2026, 07:09 UTC |
+| [#71696](https://github.com/openclaw/openclaw/pull/71696) | feat(telegram): add chat-type-based reply mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71696.md) | complete | Apr 26, 2026, 07:09 UTC |
+| [#71656](https://github.com/openclaw/openclaw/issues/71656) | Memory dreaming: corpus pre-filtering, weighted scoring, and session scan stall | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71656.md) | complete | Apr 26, 2026, 07:09 UTC |
+| [#71678](https://github.com/openclaw/openclaw/pull/71678) | Fix: Issue 71522 memory embeddings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71678.md) | complete | Apr 26, 2026, 07:08 UTC |
+| [#71728](https://github.com/openclaw/openclaw/issues/71728) | [RFC] Agent truthfulness and confidence signaling for verifiable trust | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71728.md) | complete | Apr 26, 2026, 07:08 UTC |
+| [#71677](https://github.com/openclaw/openclaw/issues/71677) | [Feature]: | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71677.md) | complete | Apr 26, 2026, 07:08 UTC |
+| [#71709](https://github.com/openclaw/openclaw/issues/71709) | [Bug]: slug-generator HTTP 400 misclassified as profile-wide billing failure (5h cooldown), kills all agents on profile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71709.md) | complete | Apr 26, 2026, 07:08 UTC |
+| [#71589](https://github.com/openclaw/openclaw/pull/71589) | fix(agent): suppress tool-use assistant text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71589.md) | complete | Apr 26, 2026, 07:08 UTC |
 
 </details>
 
