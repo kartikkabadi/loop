@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 20:30 UTC
+Last dashboard update: Apr 26, 2026, 20:33 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 20:31 UTC
+Updated: Apr 26, 2026, 20:33 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 183 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24966360228](https://github.com/openclaw/clawsweeper/actions/runs/24966360228)
 <!-- clawsweeper-status:end -->
 
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24966360228](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3724 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
-| Open items total | 7262 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3537 |
+| Open items total | 7261 |
 | Reviewed files | 7189 |
-| Unreviewed open items | 73 |
+| Unreviewed open items | 72 |
 | Archived closed files | 12532 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24966360228](https://
 | Daily PR cadence | 2993/3051 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1435/1444 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 144 |
+| Due now by cadence | 143 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 20:28 UTC. Latest close: Apr 26, 2026, 19:53 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 22 | 2 | 20 | 0 | 0 | 20 | 0 |
-| Last hour | 1470 | 43 | 1427 | 0 | 1 | 695 | 3 |
-| Last 24 hours | 9759 | 2564 | 7195 | 0 | 2037 | 2788 | 10 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 0 | 20 | 0 |
+| Last hour | 1470 | 43 | 1427 | 0 | 1 | 680 | 3 |
+| Last 24 hours | 9750 | 2556 | 7194 | 0 | 2037 | 2788 | 10 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
