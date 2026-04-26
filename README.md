@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 23:50 UTC
+Last dashboard update: Apr 26, 2026, 23:52 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 23:50 UTC
+Updated: Apr 26, 2026, 23:52 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970174387](https://github.com/openclaw/clawsweeper/actions/runs/24970174387)
+Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72374.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970178715](https://github.com/openclaw/clawsweeper/actions/runs/24970178715)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,10 +66,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970174387](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 513/790 current (277 due, 64.9%) |
-| Hourly hot item cadence (<7d) | 513/790 current (277 due, 64.9%) |
-| Daily cadence coverage | 4405/4472 current (67 due, 98.5%) |
-| Daily PR cadence | 2974/3032 current (58 due, 98.1%) |
+| Hourly cadence coverage | 512/789 current (277 due, 64.9%) |
+| Hourly hot item cadence (<7d) | 512/789 current (277 due, 64.9%) |
+| Daily cadence coverage | 4406/4473 current (67 due, 98.5%) |
+| Daily PR cadence | 2975/3033 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1431/1440 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1888/1888 current (0 due, 100%) |
 | Due now by cadence | 437 |
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 23:49 UTC. Latest close: Apr 26, 2026, 23:50 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 472 | 11 | 461 | 1 | 1 | 4 | 0 |
+| Last 15 minutes | 370 | 8 | 362 | 1 | 1 | 4 | 0 |
 | Last hour | 544 | 14 | 530 | 1 | 1 | 43 | 1 |
-| Last 24 hours | 9219 | 2045 | 7174 | 1 | 2075 | 2173 | 11 |
+| Last 24 hours | 9195 | 2022 | 7173 | 1 | 2075 | 2173 | 11 |
 
 ### Recently Closed
 
