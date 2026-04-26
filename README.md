@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 22:50 UTC
 
 Updated: Apr 26, 2026, 22:50 UTC
 
-State: Apply in progress
+State: Hot intake publish complete
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72395.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969046356](https://github.com/openclaw/clawsweeper/actions/runs/24969046356)
+Merged hot intake artifacts for run 24968982501. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968982501](https://github.com/openclaw/clawsweeper/actions/runs/24968982501)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969046356](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 707/782 current (75 due, 90.4%) |
-| Hourly hot item cadence (<7d) | 707/782 current (75 due, 90.4%) |
+| Hourly cadence coverage | 703/782 current (79 due, 89.9%) |
+| Hourly hot item cadence (<7d) | 703/782 current (79 due, 89.9%) |
 | Daily cadence coverage | 4414/4481 current (67 due, 98.5%) |
 | Daily PR cadence | 2981/3039 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1433/1442 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
-| Due now by cadence | 219 |
+| Due now by cadence | 223 |
 
 ### Audit Health
 
@@ -104,12 +104,12 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 22:36 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 22:28 UTC.
+Latest review: Apr 26, 2026, 22:49 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 22:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 4 | 1 | 3 | 0 | 0 | 0 | 0 |
-| Last hour | 743 | 14 | 729 | 0 | 13 | 47 | 5 |
+| Last 15 minutes | 6 | 1 | 5 | 0 | 0 | 0 | 0 |
+| Last hour | 740 | 14 | 726 | 0 | 13 | 46 | 5 |
 | Last 24 hours | 9449 | 2269 | 7180 | 0 | 2074 | 2162 | 14 |
 
 ### Recently Closed
@@ -134,6 +134,8 @@ Latest review: Apr 26, 2026, 22:36 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#33975](https://github.com/openclaw/openclaw/issues/33975) | [Feature]: Fallback approval mode + model attribution in messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/33975.md) | complete | Apr 26, 2026, 22:49 UTC |
+| [#69312](https://github.com/openclaw/openclaw/pull/69312) | fix: prevent MEDIA: false-positive extraction from indented code blocks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69312.md) | complete | Apr 26, 2026, 22:48 UTC |
 | [#72395](https://github.com/openclaw/openclaw/issues/72395) | [Bug]: [Windows] ERR_UNSUPPORTED_ESM_URL_SCHEME — Discord channel and browser plugin fail to load on v2026.4.24 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72395.md) | complete | Apr 26, 2026, 22:36 UTC |
 | [#53638](https://github.com/openclaw/openclaw/issues/53638) | Feature: per-channel / per-group / per-DM model override in config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53638.md) | complete | Apr 26, 2026, 22:35 UTC |
 | [#20950](https://github.com/openclaw/openclaw/issues/20950) | [Feature]: cron jobs.d/ directory support (one file per job, for NixOS/GitOps declarative setups) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20950.md) | complete | Apr 26, 2026, 22:35 UTC |
@@ -142,8 +144,6 @@ Latest review: Apr 26, 2026, 22:36 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 | [#64732](https://github.com/openclaw/openclaw/issues/64732) | [Bug]: openclaw tool/help CLI surfaces break when plugins.allow omits synthetic command ids | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64732.md) | complete | Apr 26, 2026, 22:35 UTC |
 | [#70856](https://github.com/openclaw/openclaw/issues/70856) | [Bug]: WhatsApp listener repeatedly disconnects/stalls on Windows, causing \"No active WhatsApp Web listener\" and missed messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70856.md) | complete | Apr 26, 2026, 22:35 UTC |
 | [#28965](https://github.com/openclaw/openclaw/issues/28965) | [Proposal] Simplify Model Configuration: Single-Source Reconcile + Session Override Reset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/28965.md) | complete | Apr 26, 2026, 22:35 UTC |
-| [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72348.md) | complete | Apr 26, 2026, 22:35 UTC |
-| [#20756](https://github.com/openclaw/openclaw/issues/20756) | message tool should auto-select the only enabled account | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20756.md) | complete | Apr 26, 2026, 22:35 UTC |
 
 </details>
 
