@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 22:00 UTC
 
 Updated: Apr 26, 2026, 22:00 UTC
 
-State: Apply in progress
+State: Review in progress
 
-Starting apply/comment-sync run for up to 9 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=40286,69931,70003,70590,71612,72282,72321,72366,72374.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968090172](https://github.com/openclaw/clawsweeper/actions/runs/24968090172)
+Planned 310 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968076927](https://github.com/openclaw/clawsweeper/actions/runs/24968076927)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,21 +43,21 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968090172](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3699 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3532 |
-| Open items total | 7231 |
-| Reviewed files | 7158 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3531 |
+| Open items total | 7230 |
+| Reviewed files | 7157 |
 | Unreviewed open items | 73 |
-| Archived closed files | 12588 |
+| Archived closed files | 12589 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3683 |
+| Fresh reviewed issues in the last 7 days | 3682 |
 | Proposed issue closes | 7 (0.2% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3472 |
 | Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7155 |
+| Fresh verified reviews in the last 7 days | 7154 |
 | Proposed closes awaiting apply | 9 (0.1% of fresh reviews) |
 | Closed by Codex apply | 9993 |
 | Failed or stale reviews | 3 |
@@ -66,8 +66,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968090172](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 477/784 current (307 due, 60.8%) |
-| Hourly hot item cadence (<7d) | 477/784 current (307 due, 60.8%) |
+| Hourly cadence coverage | 477/783 current (306 due, 60.9%) |
+| Hourly hot item cadence (<7d) | 477/783 current (306 due, 60.9%) |
 | Daily cadence coverage | 4420/4488 current (68 due, 98.5%) |
 | Daily PR cadence | 2989/3047 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1431/1441 current (10 due, 99.3%) |
