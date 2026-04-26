@@ -23,9 +23,9 @@ Last dashboard update: Apr 26, 2026, 00:34 UTC
 
 Updated: Apr 26, 2026, 00:34 UTC
 
-State: Apply comments synced
+State: Apply finished
 
-Comment-only apply checkpoint 1 finished. Synced durable review comments: 18. Result records: 20. Item numbers: 16085,58823,65730,68677,70577,71178,71398,71399,71400,71412,71416,71428,71429,71452,71485,71486,71487,71582,71614,71686.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 0. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944317241](https://github.com/openclaw/clawsweeper/actions/runs/24944317241)
 <!-- clawsweeper-status:end -->
 
