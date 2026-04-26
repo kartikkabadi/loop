@@ -1,4 +1,6 @@
-name: Sweep OpenClaw Items
+name: ClawSweeper
+
+run-name: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) && 'Apply OpenClaw closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *')) && 'Audit ClawSweeper dashboard' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'Review hot OpenClaw items' || 'Review OpenClaw items' }}
 
 on:
   workflow_dispatch:
@@ -85,6 +87,7 @@ concurrency:
 
 jobs:
   plan:
+    name: Plan review candidates
     if: ${{ !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && (github.event.schedule == '37 * * * *' || github.event.schedule == '7 */6 * * *'))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -249,6 +252,7 @@ jobs:
           fi
 
   review:
+    name: Review shard ${{ matrix.shard }}
     needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 75
@@ -362,6 +366,7 @@ jobs:
           if-no-files-found: ignore
 
   publish:
+    name: Publish review artifacts
     needs: [plan, review]
     if: ${{ always() && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && (github.event.schedule == '37 * * * *' || github.event.schedule == '7 */6 * * *'))) }}
     runs-on: ubuntu-latest
@@ -479,7 +484,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh workflow run "Sweep OpenClaw Items" \
+          gh workflow run sweep.yml \
             --ref main \
             -f apply_closures=false \
             -f apply_existing=false \
@@ -488,6 +493,7 @@ jobs:
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
 
   audit-dashboard:
+    name: Audit dashboard
     if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *') }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -552,6 +558,7 @@ jobs:
           fi
 
   apply-existing:
+    name: Apply close proposals
     if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *') }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
@@ -824,7 +831,7 @@ jobs:
           fi
 
           echo "Apply reached requested limit; queueing another apply run."
-          gh workflow run "Sweep OpenClaw Items" \
+          gh workflow run sweep.yml \
             --ref main \
             -f apply_existing=true \
             -f apply_limit="$APPLY_LIMIT" \
