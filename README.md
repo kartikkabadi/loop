@@ -23,56 +23,56 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:19 UTC
+Last dashboard update: Apr 26, 2026, 10:20 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:19 UTC
+Updated: Apr 26, 2026, 10:20 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954230480](https://github.com/openclaw/clawsweeper/actions/runs/24954230480)
+Checkpoint 2 finished. Fresh closes in checkpoint: 15. Total fresh closes in this run: 20/20. Result records in checkpoint: 30, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953978751](https://github.com/openclaw/clawsweeper/actions/runs/24953978751)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3866 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3856 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3571 |
-| Open items total | 7437 |
-| Reviewed files | 7184 |
-| Unreviewed open items | 253 |
-| Archived closed files | 12136 |
+| Open items total | 7427 |
+| Reviewed files | 7169 |
+| Unreviewed open items | 258 |
+| Archived closed files | 12151 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3716 |
-| Proposed issue closes | 18 (0.5% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3380 |
-| Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7096 |
-| Proposed closes awaiting apply | 21 (0.3% of fresh reviews) |
-| Closed by Codex apply | 9609 |
+| Fresh reviewed issues in the last 7 days | 3702 |
+| Proposed issue closes | 4 (0.1% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3379 |
+| Proposed PR closes | 2 (0.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7081 |
+| Proposed closes awaiting apply | 6 (0.1% of fresh reviews) |
+| Closed by Codex apply | 9624 |
 | Failed or stale reviews | 88 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 103/779 current (676 due, 13.2%) |
-| Hourly hot item cadence (<7d) | 103/779 current (676 due, 13.2%) |
-| Daily cadence coverage | 4367/4509 current (142 due, 96.9%) |
-| Daily PR cadence | 2950/3052 current (102 due, 96.7%) |
+| Hourly cadence coverage | 99/779 current (680 due, 12.7%) |
+| Hourly hot item cadence (<7d) | 99/779 current (680 due, 12.7%) |
+| Daily cadence coverage | 4366/4508 current (142 due, 96.9%) |
+| Daily PR cadence | 2949/3051 current (102 due, 96.7%) |
 | Daily new issue cadence (<30d) | 1417/1457 current (40 due, 97.3%) |
-| Weekly older issue cadence | 1883/1896 current (13 due, 99.3%) |
-| Due now by cadence | 1084 |
+| Weekly older issue cadence | 1869/1882 current (13 due, 99.3%) |
+| Due now by cadence | 1093 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 10:16 UTC. Latest close: Apr 26, 2026, 10:05 UTC. Latest comment sync: Apr 26, 2026, 10:19 UTC.
+Latest review: Apr 26, 2026, 10:16 UTC. Latest close: Apr 26, 2026, 10:20 UTC. Latest comment sync: Apr 26, 2026, 10:20 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 223 | 21 | 202 | 1 | 0 | 20 | 0 |
-| Last hour | 1707 | 110 | 1597 | 5 | 159 | 193 | 1 |
-| Last 24 hours | 9962 | 2620 | 7342 | 100 | 4865 | 1815 | 30 |
+| Last 15 minutes | 183 | 19 | 164 | 1 | 18 | 380 | 0 |
+| Last hour | 1656 | 109 | 1547 | 5 | 177 | 553 | 1 |
+| Last 24 hours | 9962 | 2620 | 7342 | 100 | 4879 | 2177 | 30 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -122,13 +122,13 @@ Latest review: Apr 26, 2026, 10:16 UTC. Latest close: Apr 26, 2026, 10:05 UTC. L
 | [#52499](https://github.com/openclaw/openclaw/issues/52499) | feat: native support for coordinator + reporter multi-agent channel patterns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52499.md) | complete | Apr 26, 2026, 10:16 UTC |
 | [#51133](https://github.com/openclaw/openclaw/issues/51133) | Model enters infinite loop in OpenClaw | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51133.md) | failed | Apr 26, 2026, 10:14 UTC |
 | [#52648](https://github.com/openclaw/openclaw/issues/52648) | google-vertex provider authentication fails when running through proxychains | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52648.md) | complete | Apr 26, 2026, 10:10 UTC |
-| [#52585](https://github.com/openclaw/openclaw/issues/52585) | [Bug]: failed to extract archive: SafeOpenError: path is not a regular file under root | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/52585.md) | complete | Apr 26, 2026, 10:09 UTC |
-| [#52680](https://github.com/openclaw/openclaw/issues/52680) | tools.read: out-of-range offset should not abort runs (clamp or return diagnostic) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/52680.md) | complete | Apr 26, 2026, 10:09 UTC |
 | [#52662](https://github.com/openclaw/openclaw/issues/52662) | [Feature]: Browser sandbox should support non-Docker backends (external CDP/noVNC endpoint) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52662.md) | complete | Apr 26, 2026, 10:09 UTC |
 | [#39768](https://github.com/openclaw/openclaw/issues/39768) | [Bug]: MCP tool failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39768.md) | complete | Apr 26, 2026, 10:09 UTC |
 | [#52960](https://github.com/openclaw/openclaw/issues/52960) | [Feature]: Control UI should show compact run progress for long or multi-agent tasks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52960.md) | complete | Apr 26, 2026, 10:09 UTC |
 | [#52147](https://github.com/openclaw/openclaw/issues/52147) | Agent run timeout during tool execution misclassified as LLM timeout, triggers unnecessary model fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52147.md) | complete | Apr 26, 2026, 10:08 UTC |
 | [#70871](https://github.com/openclaw/openclaw/issues/70871) | Memory plugin auto-recall embeds full conversation context, causing context length errors and timeouts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70871.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#52640](https://github.com/openclaw/openclaw/issues/52640) | Feature request: Persistent task-status surface for long-running channel turns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52640.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#39690](https://github.com/openclaw/openclaw/issues/39690) | Bug: Multimodal (Vision) Messages Ignored for Custom Ollama Cloud Models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39690.md) | complete | Apr 26, 2026, 10:08 UTC |
 
 </details>
 
