@@ -31,6 +31,8 @@ checkpoint, and status-only commits are intentionally omitted.
   or pull requests, fanning out single-item review shards.
 - Added targeted comment-sync mode so hot-intake reviews can publish durable
   Codex review comments immediately without closing items.
+- Separated targeted comment-sync workflow concurrency from bulk apply so hot
+  comment runs are not displaced by apply continuation backlog.
 
 ### Changed
 
