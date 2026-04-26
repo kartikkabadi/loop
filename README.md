@@ -23,42 +23,42 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 08:54 UTC
+Last dashboard update: Apr 26, 2026, 08:55 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 08:54 UTC
+Updated: Apr 26, 2026, 08:55 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952680554](https://github.com/openclaw/clawsweeper/actions/runs/24952680554)
+Merged review artifacts for run 24952466850. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952466850](https://github.com/openclaw/clawsweeper/actions/runs/24952466850)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4040 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3659 |
-| Open items total | 7699 |
-| Reviewed files | 7448 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4029 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3652 |
+| Open items total | 7681 |
+| Reviewed files | 7430 |
 | Unreviewed open items | 251 |
-| Archived closed files | 11849 |
+| Archived closed files | 11867 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3902 |
-| Proposed issue closes | 24 (0.6% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3480 |
-| Proposed PR closes | 20 (0.6% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7382 |
-| Proposed closes awaiting apply | 44 (0.6% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3890 |
+| Proposed issue closes | 32 (0.8% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3474 |
+| Proposed PR closes | 39 (1.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7364 |
+| Proposed closes awaiting apply | 71 (1% of fresh reviews) |
 | Closed by Codex apply | 9345 |
 | Failed or stale reviews | 66 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952680554](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 67/777 current (710 due, 8.6%) |
-| Hourly hot item cadence (<7d) | 67/777 current (710 due, 8.6%) |
-| Daily cadence coverage | 4584/4699 current (115 due, 97.6%) |
-| Daily PR cadence | 3059/3143 current (84 due, 97.3%) |
-| Daily new issue cadence (<30d) | 1525/1556 current (31 due, 98%) |
+| Hourly cadence coverage | 74/777 current (703 due, 9.5%) |
+| Hourly hot item cadence (<7d) | 74/777 current (703 due, 9.5%) |
+| Daily cadence coverage | 4566/4681 current (115 due, 97.5%) |
+| Daily PR cadence | 3053/3137 current (84 due, 97.3%) |
+| Daily new issue cadence (<30d) | 1513/1544 current (31 due, 98%) |
 | Weekly older issue cadence | 1967/1972 current (5 due, 99.7%) |
-| Due now by cadence | 1081 |
+| Due now by cadence | 1074 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 08:49 UTC. Latest close: Apr 26, 2026, 08:52 UTC. Latest comment sync: Apr 26, 2026, 08:52 UTC.
+Latest review: Apr 26, 2026, 08:54 UTC. Latest close: Apr 26, 2026, 08:52 UTC. Latest comment sync: Apr 26, 2026, 08:52 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 23 | 0 | 23 | 0 | 85 | 105 | 0 |
-| Last hour | 1517 | 253 | 1264 | 5 | 172 | 503 | 20 |
-| Last 24 hours | 9973 | 2404 | 7569 | 79 | 4970 | 1872 | 51 |
+| Last 15 minutes | 500 | 43 | 457 | 0 | 85 | 85 | 0 |
+| Last hour | 1997 | 296 | 1701 | 5 | 172 | 191 | 16 |
+| Last 24 hours | 9972 | 2442 | 7530 | 79 | 4958 | 1560 | 47 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 08:49 UTC. Latest close: Apr 26, 2026, 08:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71733](https://github.com/openclaw/openclaw/issues/71733) | [RFC] Durable next-turn injections and agent turn preparation hooks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71733.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#71736](https://github.com/openclaw/openclaw/issues/71736) | [RFC] Control UI plugin contribution slots | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71736.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#71732](https://github.com/openclaw/openclaw/issues/71732) | [RFC] Plugin session extensions and patch actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71732.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#71735](https://github.com/openclaw/openclaw/issues/71735) | [RFC] Scoped plugin commands, trusted command ownership, and continuation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71735.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#24196](https://github.com/openclaw/openclaw/issues/24196) | [Feature]: Allow max allowed file attachments on discord messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/24196.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#25592](https://github.com/openclaw/openclaw/issues/25592) | Text between tool calls leaks to messaging channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/25592.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#71734](https://github.com/openclaw/openclaw/issues/71734) | [RFC] Trusted tool policy stage and plugin tool metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71734.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#71731](https://github.com/openclaw/openclaw/pull/71731) | docs: add Plan Mode plugin host hook RFC | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71731.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#20935](https://github.com/openclaw/openclaw/issues/20935) | [Feature]: Audit log for agent memory changes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20935.md) | complete | Apr 26, 2026, 08:49 UTC |
-| [#23906](https://github.com/openclaw/openclaw/issues/23906) | [Feature]: feat(sessions_spawn): per-spawn tool profile override | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23906.md) | complete | Apr 26, 2026, 08:49 UTC |
+| [#60807](https://github.com/openclaw/openclaw/pull/60807) | feat: per-agent compaction configuration overrides | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60807.md) | complete | Apr 26, 2026, 08:54 UTC |
+| [#71735](https://github.com/openclaw/openclaw/issues/71735) | [RFC] Scoped plugin commands, trusted command ownership, and continuation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71735.md) | complete | Apr 26, 2026, 08:54 UTC |
+| [#69570](https://github.com/openclaw/openclaw/issues/69570) | [Bug] Async command cascade creates unstoppable approval loop — each approval generates delayed completion message, user commands blocked until all fire | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69570.md) | complete | Apr 26, 2026, 08:53 UTC |
+| [#60848](https://github.com/openclaw/openclaw/pull/60848) | Feature/feishu threadid fix | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60848.md) | complete | Apr 26, 2026, 08:53 UTC |
+| [#60027](https://github.com/openclaw/openclaw/pull/60027) | perf(gateway): add OPENCLAW_SKIP_MODEL_WARMUP env to skip startup model pre-warm | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60027.md) | complete | Apr 26, 2026, 08:53 UTC |
+| [#59514](https://github.com/openclaw/openclaw/issues/59514) | feat: support Bearer token auth for Bedrock gateway proxies | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59514.md) | complete | Apr 26, 2026, 08:53 UTC |
+| [#59806](https://github.com/openclaw/openclaw/issues/59806) | Bug: Feishu plugin fails with 'Cannot destructure property tenant_access_token' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59806.md) | complete | Apr 26, 2026, 08:53 UTC |
+| [#68584](https://github.com/openclaw/openclaw/pull/68584) | feat(plugins): add plugin-facing heartbeat and timeout timer seam for delegated tasks | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68584.md) | complete | Apr 26, 2026, 08:53 UTC |
+| [#61269](https://github.com/openclaw/openclaw/pull/61269) | fix(android): allow onboarding finish when operator is offline | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61269.md) | complete | Apr 26, 2026, 08:53 UTC |
+| [#67157](https://github.com/openclaw/openclaw/pull/67157) | Add stable tarball upgrade workflow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67157.md) | complete | Apr 26, 2026, 08:53 UTC |
 
 </details>
 
