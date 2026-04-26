@@ -1998,5 +1998,180 @@
     "number": 31172,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69131,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69131,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 69187,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69187,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 69293,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69293,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 69295,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69295,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 69387,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69387,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 69421,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69421,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 69434,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69434,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 69466,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69466,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 69621,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69621,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 69860,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69860,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 69979,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 69979,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 70052,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 70052,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 70109,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 70109,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 70600,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 70600,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 71734,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 71734,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 71794,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 71794,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 71807,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 71807,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 71888,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
   }
 ]
