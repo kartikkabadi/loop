@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 05:19 UTC
 
 Updated: Apr 26, 2026, 05:19 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 42, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948990811](https://github.com/openclaw/clawsweeper/actions/runs/24948990811)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948990811](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 189/1001 current (812 due, 18.9%) |
-| Hourly hot item cadence (<7d) | 189/1001 current (812 due, 18.9%) |
+| Hourly cadence coverage | 188/1001 current (813 due, 18.8%) |
+| Hourly hot item cadence (<7d) | 188/1001 current (813 due, 18.8%) |
 | Daily cadence coverage | 5220/5305 current (85 due, 98.4%) |
 | Daily PR cadence | 3566/3637 current (71 due, 98%) |
 | Daily new issue cadence (<30d) | 1654/1668 current (14 due, 99.2%) |
 | Weekly older issue cadence | 1991/1993 current (2 due, 99.9%) |
-| Due now by cadence | 1097 |
+| Due now by cadence | 1098 |
 
 ### Latest Run Activity
 
@@ -80,8 +80,8 @@ Latest review: Apr 26, 2026, 05:10 UTC. Latest close: Apr 26, 2026, 05:19 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 130 | 12 | 118 | 0 | 80 | 82 | 1 |
-| Last hour | 875 | 118 | 757 | 2 | 292 | 316 | 1 |
+| Last 15 minutes | 129 | 12 | 117 | 0 | 80 | 82 | 1 |
+| Last hour | 873 | 117 | 756 | 2 | 292 | 316 | 1 |
 | Last 24 hours | 10677 | 2366 | 8311 | 36 | 5495 | 900 | 175 |
 
 <details>
