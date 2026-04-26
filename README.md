@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 21:30 UTC
+Last dashboard update: Apr 26, 2026, 21:31 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 21:30 UTC
+Updated: Apr 26, 2026, 21:31 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24967416755. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 17931,18548,20237,20756,20950,25621,28965,29384,64732,65309,70790,70856,71921,72031,72085,72132,72345,72347,72348,72349.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967416755](https://github.com/openclaw/clawsweeper/actions/runs/24967416755)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967416755](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3729 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3541 |
-| Open items total | 7270 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3726 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3536 |
+| Open items total | 7262 |
 | Reviewed files | 7190 |
-| Unreviewed open items | 80 |
+| Unreviewed open items | 72 |
 | Archived closed files | 12539 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967416755](https://
 | Daily PR cadence | 2995/3053 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1431/1440 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 925 |
+| Due now by cadence | 917 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 21:29 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 21:12 UTC.
+Latest review: Apr 26, 2026, 21:29 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 21:31 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 2 | 18 | 0 | 0 | 0 | 0 |
-| Last hour | 226 | 7 | 219 | 0 | 0 | 22 | 1 |
-| Last 24 hours | 9731 | 2537 | 7194 | 0 | 2037 | 2627 | 10 |
+| Last 15 minutes | 20 | 2 | 18 | 0 | 0 | 20 | 0 |
+| Last hour | 226 | 7 | 219 | 0 | 0 | 42 | 1 |
+| Last 24 hours | 9731 | 2537 | 7194 | 0 | 2037 | 2647 | 10 |
 
 ### Recently Closed
 
