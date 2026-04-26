@@ -1,22 +1,12 @@
 [
   {
-    "number": 72347,
-    "action": "closed",
-    "reason": "already implemented on main"
+    "number": 38160,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
   },
   {
-    "number": 72349,
+    "number": 38160,
     "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 72354,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 72356,
-    "action": "closed",
-    "reason": "already implemented on main"
+    "reason": "belongs on ClawHub"
   }
 ]
