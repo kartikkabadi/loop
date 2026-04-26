@@ -34,7 +34,7 @@ on:
       apply_close_delay_ms:
         description: "Delay after each close/comment pair to avoid GitHub secondary write throttling"
         required: false
-        default: "5000"
+        default: "2000"
       apply_progress_every:
         description: "Log apply progress every N processed records, plus every close"
         required: false
@@ -532,7 +532,7 @@ jobs:
           limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_limit || '20' }}"
           min_age_days="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_min_age_days || '0' }}"
           apply_kind="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_kind || 'issue' }}"
-          close_delay_ms="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_delay_ms || '5000' }}"
+          close_delay_ms="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_delay_ms || '2000' }}"
           progress_every="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_progress_every || '10' }}"
           checkpoint_size="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_checkpoint_size || '50' }}"
           item_numbers="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_item_numbers || '' }}"

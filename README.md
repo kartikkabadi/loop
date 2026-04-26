@@ -140,7 +140,7 @@ still valid.
 - Moves reopened archived reports back to `items/<number>.md` as stale.
 - Commits checkpoints and dashboard heartbeats during long runs.
 
-Apply defaults to issue-only closes, no age floor, 5-second close delay, and
+Apply defaults to issue-only closes, no age floor, 2-second close delay, and
 50 fresh closes per checkpoint. If it reaches the requested limit, it queues
 another apply run with the same settings.
 

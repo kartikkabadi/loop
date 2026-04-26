@@ -58,6 +58,7 @@ checkpoint, and status-only commits are intentionally omitted.
   maintainer-authored items.
 - Made apply runs checkpoint their progress, publish dashboard heartbeats, and
   continue automatically while work remains.
+- Reduced the default apply close delay from 5 seconds to 2 seconds.
 - Added transient GitHub API/network retries with short backoff while preserving
   long secondary-rate-limit backoff and throttle heartbeats. Thanks @stainlu.
 - Split the README dashboard into focused sections and collapsed the recent
