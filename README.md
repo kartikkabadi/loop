@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 19:53 UTC
+Last dashboard update: Apr 26, 2026, 19:54 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 19:53 UTC
+Updated: Apr 26, 2026, 19:54 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24965502728. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 38520,38714,38775,38781,38806,38816,38817,38844,38876,38923,38924,38966,39037,39038,39097,39141,39245,39457,39513,39605.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965502728](https://github.com/openclaw/clawsweeper/actions/runs/24965502728)
 <!-- clawsweeper-status:end -->
 
@@ -42,7 +42,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965502728](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3722 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3721 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3537 |
 | Open items total | 7258 |
 | Reviewed files | 7165 |
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 19:52 UTC. Latest close: Apr 26, 2026, 19:01 UTC. Latest comment sync: Apr 26, 2026, 19:30 UTC.
+Latest review: Apr 26, 2026, 19:52 UTC. Latest close: Apr 26, 2026, 19:01 UTC. Latest comment sync: Apr 26, 2026, 19:53 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 520 | 1 | 519 | 0 | 0 | 0 | 0 |
-| Last hour | 560 | 1 | 559 | 0 | 39 | 173 | 2 |
-| Last 24 hours | 9853 | 2624 | 7229 | 1 | 2036 | 2240 | 11 |
+| Last 15 minutes | 520 | 1 | 519 | 0 | 0 | 20 | 0 |
+| Last hour | 560 | 1 | 559 | 0 | 39 | 193 | 2 |
+| Last 24 hours | 9853 | 2624 | 7229 | 1 | 2036 | 2260 | 11 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
