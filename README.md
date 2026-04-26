@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 23:32 UTC
+Last dashboard update: Apr 26, 2026, 23:33 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 23:32 UTC
+Updated: Apr 26, 2026, 23:33 UTC
 
-State: Hot intake comments synced
+State: Review in progress
 
-Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 63418,64318,71027,71569,71857,72121,72128,72229,72266,72314,72319,72342,72361,72364,72366,72367,72368,72373,72374,72376.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969711665](https://github.com/openclaw/clawsweeper/actions/runs/24969711665)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969827792](https://github.com/openclaw/clawsweeper/actions/runs/24969827792)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969711665](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3700 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3537 |
-| Open items total | 7237 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3536 |
+| Open items total | 7236 |
 | Reviewed files | 7140 |
-| Unreviewed open items | 97 |
+| Unreviewed open items | 96 |
 | Archived closed files | 12620 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969711665](https://
 | Daily PR cadence | 2974/3032 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1432/1441 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1887/1887 current (0 due, 100%) |
-| Due now by cadence | 905 |
+| Due now by cadence | 904 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 23:30 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 2 | 18 | 0 | 0 | 19 | 1 |
-| Last hour | 67 | 3 | 64 | 0 | 0 | 41 | 2 |
-| Last 24 hours | 9318 | 2139 | 7179 | 0 | 2074 | 2203 | 14 |
+| Last 15 minutes | 20 | 2 | 18 | 0 | 0 | 0 | 0 |
+| Last hour | 67 | 3 | 64 | 0 | 0 | 22 | 1 |
+| Last 24 hours | 9308 | 2129 | 7179 | 0 | 2074 | 2184 | 13 |
 
 ### Recently Closed
 
