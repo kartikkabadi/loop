@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 03:18 UTC
+Last dashboard update: Apr 26, 2026, 03:19 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 03:18 UTC
+Updated: Apr 26, 2026, 03:19 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947085068](https://github.com/openclaw/clawsweeper/actions/runs/24947085068)
+Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947096473](https://github.com/openclaw/clawsweeper/actions/runs/24947096473)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947085068](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 5/1034 current (1029 due, 0.5%) |
-| Hourly hot item cadence (<7d) | 5/1034 current (1029 due, 0.5%) |
-| Daily cadence coverage | 5576/5732 current (156 due, 97.3%) |
-| Daily PR cadence | 3554/3657 current (103 due, 97.2%) |
-| Daily new issue cadence (<30d) | 2022/2075 current (53 due, 97.4%) |
+| Hourly cadence coverage | 4/1033 current (1029 due, 0.4%) |
+| Hourly hot item cadence (<7d) | 4/1033 current (1029 due, 0.4%) |
+| Daily cadence coverage | 5575/5733 current (158 due, 97.2%) |
+| Daily PR cadence | 3552/3657 current (105 due, 97.1%) |
+| Daily new issue cadence (<30d) | 2023/2076 current (53 due, 97.4%) |
 | Weekly older issue cadence | 2373/2378 current (5 due, 99.8%) |
-| Due now by cadence | 1358 |
+| Due now by cadence | 1360 |
 
 ### Latest Run Activity
 
@@ -80,9 +80,9 @@ Latest review: Apr 26, 2026, 03:06 UTC. Latest close: Apr 26, 2026, 03:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 37 | 16 | 21 | 0 | 65 | 66 | 0 |
-| Last hour | 838 | 114 | 724 | 1 | 178 | 373 | 1 |
-| Last 24 hours | 11182 | 2582 | 8600 | 37 | 5561 | 486 | 198 |
+| Last 15 minutes | 14 | 8 | 6 | 0 | 72 | 73 | 0 |
+| Last hour | 801 | 113 | 688 | 1 | 198 | 393 | 1 |
+| Last 24 hours | 11180 | 2582 | 8598 | 37 | 5578 | 506 | 198 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
