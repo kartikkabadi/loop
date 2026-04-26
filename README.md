@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 13:40 UTC
+Last dashboard update: Apr 26, 2026, 13:41 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 13:40 UTC
+Updated: Apr 26, 2026, 13:41 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24957936410. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 18 hot-intake item(s). Item numbers: 39745,39747,39857,39957,39975,53805,69121,71731,71786,71787,71857,71902,72082,72085,72108,72131,72132,72134,72137,72138.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24957936410](https://github.com/openclaw/clawsweeper/actions/runs/24957936410)
 <!-- clawsweeper-status:end -->
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 13:39 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 13:01 UTC.
+Latest review: Apr 26, 2026, 13:39 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 13:41 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 1 | 19 | 0 | 0 | 0 | 0 |
-| Last hour | 44 | 5 | 39 | 0 | 0 | 20 | 0 |
-| Last 24 hours | 10053 | 2727 | 7326 | 14 | 3907 | 2471 | 26 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 0 | 18 | 2 |
+| Last hour | 42 | 4 | 38 | 0 | 0 | 38 | 2 |
+| Last 24 hours | 10053 | 2727 | 7326 | 14 | 3907 | 2489 | 28 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -127,7 +127,7 @@ Latest review: Apr 26, 2026, 13:39 UTC. Latest close: Apr 26, 2026, 12:22 UTC. L
 | [#72134](https://github.com/openclaw/openclaw/pull/72134) | [codex] Consolidate RuntimePlan finalization cleanup package | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72134.md) | complete | Apr 26, 2026, 13:38 UTC |
 | [#71786](https://github.com/openclaw/openclaw/pull/71786) | fix: stable sort using toSorted and fix paged select render type error | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71786.md) | complete | Apr 26, 2026, 13:38 UTC |
 | [#72108](https://github.com/openclaw/openclaw/pull/72108) | fix(build): exclude *.test-helpers.ts from plugin-sdk dts emit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72108.md) | complete | Apr 26, 2026, 13:38 UTC |
-| [#72082](https://github.com/openclaw/openclaw/pull/72082) | [plugin sdk] Add generic plugin host-hook SDK contracts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72082.md) | complete | Apr 26, 2026, 13:38 UTC |
+| [#72082](https://github.com/openclaw/openclaw/pull/72082) | [plugin sdk] Add generic plugin host-hook SDK contracts | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72082.md) | complete | Apr 26, 2026, 13:38 UTC |
 | [#69121](https://github.com/openclaw/openclaw/pull/69121) | fix(gateway): drain pending replies before restart shutdown | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69121.md) | complete | Apr 26, 2026, 13:38 UTC |
 
 </details>
