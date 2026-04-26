@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 09:38 UTC
+Last dashboard update: Apr 26, 2026, 09:40 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 09:39 UTC
+Updated: Apr 26, 2026, 09:40 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953511507](https://github.com/openclaw/clawsweeper/actions/runs/24953511507)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953511507](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3955 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3956 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3595 |
-| Open items total | 7550 |
+| Open items total | 7551 |
 | Reviewed files | 7298 |
-| Unreviewed open items | 252 |
+| Unreviewed open items | 253 |
 | Archived closed files | 12014 |
 
 ### Review Outcomes
@@ -66,11 +66,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953511507](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 115/781 current (666 due, 14.7%) |
-| Hourly hot item cadence (<7d) | 115/781 current (666 due, 14.7%) |
-| Daily cadence coverage | 4427/4547 current (120 due, 97.4%) |
+| Hourly cadence coverage | 115/780 current (665 due, 14.7%) |
+| Hourly hot item cadence (<7d) | 115/780 current (665 due, 14.7%) |
+| Daily cadence coverage | 4428/4548 current (120 due, 97.4%) |
 | Daily PR cadence | 2992/3078 current (86 due, 97.2%) |
-| Daily new issue cadence (<30d) | 1435/1469 current (34 due, 97.7%) |
+| Daily new issue cadence (<30d) | 1436/1470 current (34 due, 97.7%) |
 | Weekly older issue cadence | 1964/1970 current (6 due, 99.7%) |
 | Due now by cadence | 1044 |
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 09:25 UTC. Latest close: Apr 26, 2026, 09:38 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 7 | 0 | 7 | 0 | 33 | 337 | 18 |
-| Last hour | 1520 | 170 | 1350 | 1 | 245 | 916 | 18 |
-| Last 24 hours | 9987 | 2552 | 7435 | 89 | 5104 | 2370 | 49 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 20 | 324 | 18 |
+| Last hour | 1516 | 169 | 1347 | 1 | 245 | 916 | 18 |
+| Last 24 hours | 9987 | 2552 | 7435 | 89 | 5093 | 2370 | 49 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
