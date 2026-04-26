@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:34 UTC
+Last dashboard update: Apr 26, 2026, 10:38 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:34 UTC
+Updated: Apr 26, 2026, 10:38 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954490372](https://github.com/openclaw/clawsweeper/actions/runs/24954490372)
+Checkpoint 1 finished. Fresh closes in checkpoint: 6. Total fresh closes in this run: 6/20. Result records in checkpoint: 400, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954275469](https://github.com/openclaw/clawsweeper/actions/runs/24954275469)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -59,20 +59,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954490372](https://
 | Proposed PR closes | 32 (0.9% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7251 |
 | Proposed closes awaiting apply | 80 (1.1% of fresh reviews) |
-| Closed by Codex apply | 9624 |
+| Closed by Codex apply | 9630 |
 | Failed or stale reviews | 93 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 458/951 current (493 due, 48.2%) |
-| Hourly hot item cadence (<7d) | 458/951 current (493 due, 48.2%) |
+| Hourly cadence coverage | 457/951 current (494 due, 48.1%) |
+| Hourly hot item cadence (<7d) | 457/951 current (494 due, 48.1%) |
 | Daily cadence coverage | 4363/4509 current (146 due, 96.8%) |
 | Daily PR cadence | 2949/3054 current (105 due, 96.6%) |
 | Daily new issue cadence (<30d) | 1414/1455 current (41 due, 97.2%) |
 | Weekly older issue cadence | 1871/1884 current (13 due, 99.3%) |
-| Due now by cadence | 730 |
+| Due now by cadence | 731 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 10:32 UTC. Latest close: Apr 26, 2026, 10:20 UTC. Latest comment sync: Apr 26, 2026, 10:34 UTC.
+Latest review: Apr 26, 2026, 10:32 UTC. Latest close: Apr 26, 2026, 10:22 UTC. Latest comment sync: Apr 26, 2026, 10:38 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 500 | 81 | 419 | 0 | 14 | 14 | 0 |
-| Last hour | 1768 | 149 | 1619 | 2 | 124 | 488 | 0 |
-| Last 24 hours | 10141 | 2701 | 7440 | 105 | 4852 | 2166 | 30 |
+| Last 15 minutes | 335 | 72 | 263 | 0 | 0 | 350 | 0 |
+| Last hour | 1550 | 134 | 1416 | 1 | 125 | 848 | 0 |
+| Last 24 hours | 10134 | 2699 | 7435 | 105 | 4858 | 2531 | 30 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
