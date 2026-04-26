@@ -23,7 +23,7 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 18:04 UTC
+Last dashboard update: Apr 26, 2026, 18:05 UTC
 
 ### Current Run
 
@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 18:04 UTC
 
 Updated: Apr 26, 2026, 18:05 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/20. Result records in checkpoint: 400, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963160652](https://github.com/openclaw/clawsweeper/actions/runs/24963160652)
 <!-- clawsweeper-status:end -->
 
@@ -108,7 +108,7 @@ Latest review: Apr 26, 2026, 17:58 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 463 | 16 | 447 | 0 | 0 | 360 | 2 |
+| Last 15 minutes | 452 | 16 | 436 | 0 | 0 | 360 | 2 |
 | Last hour | 1041 | 16 | 1025 | 0 | 0 | 398 | 4 |
 | Last 24 hours | 9876 | 2611 | 7265 | 8 | 2588 | 2466 | 19 |
 
