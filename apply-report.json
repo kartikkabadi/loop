@@ -1,97 +1,47 @@
 [
   {
-    "number": 18860,
+    "number": 70053,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 64953,
+    "number": 70053,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 70869,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 65824,
+    "number": 70869,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 72094,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 66792,
+    "number": 72094,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 72166,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 71964,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 71988,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72005,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72019,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72021,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72084,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72097,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72139,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72209,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72245,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72351,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72352,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "number": 72166,
+    "action": "closed",
+    "reason": "duplicate or superseded"
   },
   {
     "number": 72380,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72381,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72382,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
