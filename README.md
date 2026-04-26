@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 17:27 UTC
+Last dashboard update: Apr 26, 2026, 17:31 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 17:27 UTC
+Updated: Apr 26, 2026, 17:31 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24962643290. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24962643290](https://github.com/openclaw/clawsweeper/actions/runs/24962643290)
 <!-- clawsweeper-status:end -->
 
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24962643290](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3737 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3534 |
-| Open items total | 7271 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3535 |
+| Open items total | 7272 |
 | Reviewed files | 7191 |
-| Unreviewed open items | 80 |
+| Unreviewed open items | 81 |
 | Archived closed files | 12472 |
 
 ### Review Outcomes
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24962643290](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 19/798 current (779 due, 2.4%) |
-| Hourly hot item cadence (<7d) | 19/798 current (779 due, 2.4%) |
-| Daily cadence coverage | 4431/4498 current (67 due, 98.5%) |
-| Daily PR cadence | 2995/3053 current (58 due, 98.1%) |
+| Hourly cadence coverage | 35/797 current (762 due, 4.4%) |
+| Hourly hot item cadence (<7d) | 35/797 current (762 due, 4.4%) |
+| Daily cadence coverage | 4432/4499 current (67 due, 98.5%) |
+| Daily PR cadence | 2996/3054 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1436/1445 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1895/1895 current (0 due, 100%) |
-| Due now by cadence | 926 |
+| Due now by cadence | 910 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 17:10 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 17:11 UTC.
+Latest review: Apr 26, 2026, 17:30 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 17:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 161 | 5 | 156 | 0 | 0 | 44 | 1 |
-| Last 24 hours | 9902 | 2623 | 7279 | 13 | 2818 | 2710 | 16 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| Last hour | 181 | 5 | 176 | 0 | 0 | 39 | 1 |
+| Last 24 hours | 9902 | 2623 | 7279 | 13 | 2818 | 2706 | 16 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 17:10 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#58110](https://github.com/openclaw/openclaw/issues/58110) | Feature Request: Multi-Agent Support with Chat-Style UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58110.md) | complete | Apr 26, 2026, 17:10 UTC |
-| [#69051](https://github.com/openclaw/openclaw/pull/69051) | [tts][personality] source-text metadata + provider capability handling (#69051 PR-A of 4) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69051.md) | complete | Apr 26, 2026, 17:10 UTC |
-| [#39487](https://github.com/openclaw/openclaw/pull/39487) | fix(feishu): report liveness status to prevent false health-monitor restarts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39487.md) | complete | Apr 26, 2026, 17:10 UTC |
-| [#72171](https://github.com/openclaw/openclaw/pull/72171) | fix(onboard): detect vision-capable models for custom providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72171.md) | complete | Apr 26, 2026, 17:09 UTC |
-| [#57326](https://github.com/openclaw/openclaw/issues/57326) | CLI-backed helper paths still bypass CLI dispatch on latest main | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57326.md) | complete | Apr 26, 2026, 17:09 UTC |
-| [#69988](https://github.com/openclaw/openclaw/pull/69988) | feat(config): support per-agent compaction overrides | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69988.md) | complete | Apr 26, 2026, 17:09 UTC |
-| [#39476](https://github.com/openclaw/openclaw/issues/39476) | A2A sessions_send: target agent can call sessions_send back, causing duplicate messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39476.md) | complete | Apr 26, 2026, 17:09 UTC |
-| [#52951](https://github.com/openclaw/openclaw/pull/52951) | feat: add tools.fs.roots — per-agent filesystem roots with access modes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52951.md) | complete | Apr 26, 2026, 17:09 UTC |
-| [#39489](https://github.com/openclaw/openclaw/pull/39489) | fix(feishu): report connection/event activity for health monitor | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39489.md) | complete | Apr 26, 2026, 17:09 UTC |
-| [#72208](https://github.com/openclaw/openclaw/issues/72208) | [Bug]: 4.24版本全局安装后卡死，无法使用 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72208.md) | complete | Apr 26, 2026, 17:09 UTC |
+| [#72239](https://github.com/openclaw/openclaw/pull/72239) | [tts][personality] voice.md SOUL.md-aware ElevenLabs v3 tag filter (#69051 PR-C of 4) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72239.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#72216](https://github.com/openclaw/openclaw/pull/72216) | fix(nostr): keep setup status off full surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72216.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#72218](https://github.com/openclaw/openclaw/pull/72218) | fix(heartbeat): suppress final ok payloads | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72218.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#72253](https://github.com/openclaw/openclaw/pull/72253) | fix(heartbeat): keep benign exec completions internal | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72253.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#64436](https://github.com/openclaw/openclaw/pull/64436) | feat: expose model pricing to plugins via runtime.usage API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64436.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#58823](https://github.com/openclaw/openclaw/pull/58823) | fix(agents): restore global subagent model default priority over agent own model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58823.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#38439](https://github.com/openclaw/openclaw/issues/38439) | [Bug] Webchat avatar endpoint /avatar/{agentId} returns 404 even with valid IDENTITY.md avatar | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38439.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#72251](https://github.com/openclaw/openclaw/pull/72251) | fix(backup): retry on tar EOF race and skip known volatile files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72251.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#72238](https://github.com/openclaw/openclaw/pull/72238) | fix(browser): resolve playwright-core through runtime shim | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72238.md) | complete | Apr 26, 2026, 17:29 UTC |
+| [#72220](https://github.com/openclaw/openclaw/pull/72220) | fix runtime deps temp cleanup race | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72220.md) | complete | Apr 26, 2026, 17:29 UTC |
 
 </details>
 
