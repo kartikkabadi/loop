@@ -23,66 +23,66 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 05:37 UTC
+Last dashboard update: Apr 26, 2026, 05:42 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 05:37 UTC
+Updated: Apr 26, 2026, 05:42 UTC
 
-State: Hot intake comments synced
+State: Review publish complete
 
-Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 60017,60298,60668,60718,60784,60934,61226,61228,61331,61386,61392,61538,61638,61687,61824,61926,62194,62257,62429,62479.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949193835](https://github.com/openclaw/clawsweeper/actions/runs/24949193835)
+Merged review artifacts for run 24949157533. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949157533](https://github.com/openclaw/clawsweeper/actions/runs/24949157533)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4232 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4208 |
-| Open items total | 8440 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4231 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4206 |
+| Open items total | 8437 |
 | Reviewed files | 8236 |
-| Unreviewed open items | 204 |
+| Unreviewed open items | 201 |
 | Archived closed files | 11061 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4143 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 4071 |
-| Proposed PR closes | 250 (6.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 8214 |
-| Proposed closes awaiting apply | 250 (3% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 4142 |
+| Proposed issue closes | 7 (0.2% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 4069 |
+| Proposed PR closes | 287 (7.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 8211 |
+| Proposed closes awaiting apply | 294 (3.6% of fresh reviews) |
 | Closed by Codex apply | 8658 |
-| Failed or stale reviews | 22 |
+| Failed or stale reviews | 25 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 244/964 current (720 due, 25.3%) |
-| Hourly hot item cadence (<7d) | 244/964 current (720 due, 25.3%) |
-| Daily cadence coverage | 5192/5278 current (86 due, 98.4%) |
-| Daily PR cadence | 3561/3633 current (72 due, 98%) |
-| Daily new issue cadence (<30d) | 1631/1645 current (14 due, 99.1%) |
+| Hourly cadence coverage | 254/964 current (710 due, 26.3%) |
+| Hourly hot item cadence (<7d) | 254/964 current (710 due, 26.3%) |
+| Daily cadence coverage | 5190/5278 current (88 due, 98.3%) |
+| Daily PR cadence | 3560/3634 current (74 due, 98%) |
+| Daily new issue cadence (<30d) | 1630/1644 current (14 due, 99.1%) |
 | Weekly older issue cadence | 1992/1994 current (2 due, 99.9%) |
-| Due now by cadence | 1012 |
+| Due now by cadence | 1001 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 05:35 UTC. Latest close: Apr 26, 2026, 05:27 UTC. Latest comment sync: Apr 26, 2026, 05:37 UTC.
+Latest review: Apr 26, 2026, 05:41 UTC. Latest close: Apr 26, 2026, 05:27 UTC. Latest comment sync: Apr 26, 2026, 05:37 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 56 | 24 | 32 | 0 | 36 | 251 | 11 |
-| Last hour | 798 | 103 | 695 | 1 | 287 | 504 | 12 |
-| Last 24 hours | 10610 | 2336 | 8274 | 35 | 5508 | 1163 | 186 |
+| Last 15 minutes | 270 | 65 | 205 | 1 | 4 | 218 | 10 |
+| Last hour | 1018 | 137 | 881 | 2 | 257 | 473 | 10 |
+| Last 24 hours | 10573 | 2347 | 8226 | 38 | 5467 | 1161 | 181 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -91,16 +91,16 @@ Latest review: Apr 26, 2026, 05:35 UTC. Latest close: Apr 26, 2026, 05:27 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#61926](https://github.com/openclaw/openclaw/pull/61926) | feat: add openclaw video CLI (generate, list, status) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61926.md) | complete | Apr 26, 2026, 05:35 UTC |
-| [#60718](https://github.com/openclaw/openclaw/pull/60718) | fix: resolve startedAt timestamp inversion in task registry | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60718.md) | complete | Apr 26, 2026, 05:34 UTC |
-| [#60298](https://github.com/openclaw/openclaw/pull/60298) | feat: add Atomic Chat local LLM provider plugin | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60298.md) | complete | Apr 26, 2026, 05:34 UTC |
-| [#61538](https://github.com/openclaw/openclaw/pull/61538) | feat(memory): add Jina AI embeddings provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61538.md) | complete | Apr 26, 2026, 05:34 UTC |
-| [#60934](https://github.com/openclaw/openclaw/pull/60934) | fix(auth): respect auth override by filtering profiles (token/oauth) (closes #60930) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60934.md) | complete | Apr 26, 2026, 05:34 UTC |
-| [#60668](https://github.com/openclaw/openclaw/pull/60668) | fix(control-ui): keep browser session-key helpers off server-only imports | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60668.md) | complete | Apr 26, 2026, 05:34 UTC |
-| [#62257](https://github.com/openclaw/openclaw/pull/62257) | fix(github-copilot): return IDE identity headers from prepareRuntimeAuth | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62257.md) | complete | Apr 26, 2026, 05:34 UTC |
-| [#62194](https://github.com/openclaw/openclaw/pull/62194) | fix(plugin-sdk): normalize bundled entry imports on Windows | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/62194.md) | complete | Apr 26, 2026, 05:33 UTC |
-| [#60017](https://github.com/openclaw/openclaw/pull/60017) | fix: improve reminder scheduling guidance for relative times | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60017.md) | complete | Apr 26, 2026, 05:33 UTC |
-| [#61386](https://github.com/openclaw/openclaw/pull/61386) | fix(heartbeat): clamp setTimeout delay to prevent 32-bit overflow | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/61386.md) | complete | Apr 26, 2026, 05:33 UTC |
+| [#43874](https://github.com/openclaw/openclaw/pull/43874) | feat(feishu): fix board tool SDK paths and add create_whiteboard action | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43874.md) | complete | Apr 26, 2026, 05:41 UTC |
+| [#69350](https://github.com/openclaw/openclaw/issues/69350) | [Bug]: OpenRouter API key is configured and validated (works with curl), but OpenClaw returns empty responses when using openrouter/google/gemma-4-26b-a4b-it | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69350.md) | complete | Apr 26, 2026, 05:41 UTC |
+| [#69401](https://github.com/openclaw/openclaw/issues/69401) | Feature Request: Untrusted content wrapping for inbound channel messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69401.md) | complete | Apr 26, 2026, 05:41 UTC |
+| [#69408](https://github.com/openclaw/openclaw/issues/69408) | [agents/loop-detection]: downgrade Loop warning log level to info for isolated sessions with lifetime <= cron interval | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69408.md) | complete | Apr 26, 2026, 05:41 UTC |
+| [#43790](https://github.com/openclaw/openclaw/pull/43790) | [AI-assisted] fix(message): honor explicit agent routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43790.md) | complete | Apr 26, 2026, 05:40 UTC |
+| [#43565](https://github.com/openclaw/openclaw/pull/43565) | feat(tools): add allowedRoots config for fs tools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43565.md) | complete | Apr 26, 2026, 05:40 UTC |
+| [#69331](https://github.com/openclaw/openclaw/issues/69331) | [Feature]: Add Venice.ai as an image_generate tool provider | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69331.md) | complete | Apr 26, 2026, 05:40 UTC |
+| [#69424](https://github.com/openclaw/openclaw/issues/69424) | docs-search skill broken after 2026.4.15: local docs bundle reduced from 375 files to 13 templates | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69424.md) | complete | Apr 26, 2026, 05:40 UTC |
+| [#69447](https://github.com/openclaw/openclaw/issues/69447) | Web UI attachments are image-only end-to-end (UI picker + Gateway) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69447.md) | complete | Apr 26, 2026, 05:40 UTC |
+| [#43609](https://github.com/openclaw/openclaw/pull/43609) | fix(web-search): guard null entries in extractGrokContent, wrap Grok AbortErrors, raise Grok default timeout to 60s | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43609.md) | complete | Apr 26, 2026, 05:40 UTC |
 
 </details>
 
