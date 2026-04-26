@@ -34,7 +34,7 @@ Updated: Apr 26, 2026, 23:50 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72374.
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 1, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970150516](https://github.com/openclaw/clawsweeper/actions/runs/24970150516)
 <!-- clawsweeper-status:end -->
 
@@ -42,32 +42,32 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970150516](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3703 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3702 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3541 |
-| Open items total | 7244 |
-| Reviewed files | 7151 |
+| Open items total | 7243 |
+| Reviewed files | 7150 |
 | Unreviewed open items | 93 |
-| Archived closed files | 12620 |
+| Archived closed files | 12621 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3685 |
-| Proposed issue closes | 11 (0.3% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3684 |
+| Proposed issue closes | 10 (0.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3463 |
 | Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7148 |
-| Proposed closes awaiting apply | 13 (0.2% of fresh reviews) |
-| Closed by Codex apply | 10005 |
+| Fresh verified reviews in the last 7 days | 7147 |
+| Proposed closes awaiting apply | 12 (0.2% of fresh reviews) |
+| Closed by Codex apply | 10006 |
 | Failed or stale reviews | 3 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 514/791 current (277 due, 65%) |
-| Hourly hot item cadence (<7d) | 514/791 current (277 due, 65%) |
+| Hourly cadence coverage | 513/790 current (277 due, 64.9%) |
+| Hourly hot item cadence (<7d) | 513/790 current (277 due, 64.9%) |
 | Daily cadence coverage | 4405/4472 current (67 due, 98.5%) |
 | Daily PR cadence | 2974/3032 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1431/1440 current (9 due, 99.4%) |
@@ -104,18 +104,19 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 23:49 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 23:44 UTC.
+Latest review: Apr 26, 2026, 23:49 UTC. Latest close: Apr 26, 2026, 23:50 UTC. Latest comment sync: Apr 26, 2026, 23:44 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
-| Last hour | 60 | 2 | 58 | 0 | 0 | 61 | 1 |
-| Last 24 hours | 9209 | 2034 | 7175 | 0 | 2074 | 2208 | 14 |
+| Last 15 minutes | 476 | 11 | 465 | 1 | 1 | 4 | 0 |
+| Last hour | 544 | 14 | 530 | 1 | 1 | 43 | 1 |
+| Last 24 hours | 9219 | 2045 | 7174 | 1 | 2075 | 2173 | 11 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#72374](https://github.com/openclaw/openclaw/issues/72374) | Bundled runtime dependency staging should create an isolated package root before npm install | already implemented on main | Apr 26, 2026, 23:50 UTC | [closed/72374.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72374.md) |
 | [#72380](https://github.com/openclaw/openclaw/issues/72380) | [v2026.4.24] doctor --fix installs bundled deps to wrong dir; ENOTEMPTY in plugin-sdk alias crashes node host | already implemented on main | Apr 26, 2026, 22:19 UTC | [closed/72380.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72380.md) |
 | [#72166](https://github.com/openclaw/openclaw/issues/72166) | Request: Add cron.enabled and compaction.mode to ALLOWED_GATEWAY_CONFIG_PATHS | duplicate or superseded | Apr 26, 2026, 22:19 UTC | [closed/72166.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72166.md) |
 | [#72094](https://github.com/openclaw/openclaw/issues/72094) | Feature request: route desktop-control tasks through Codex Desktop Computer Use, not only PeekabooBridge | already implemented on main | Apr 26, 2026, 22:19 UTC | [closed/72094.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72094.md) |
@@ -125,7 +126,6 @@ Latest review: Apr 26, 2026, 23:49 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 | [#72282](https://github.com/openclaw/openclaw/issues/72282) | [Bug]: Mattermost channel messages no longer received via WebSocket — regression in 2026.4.24 (DMs still work) | duplicate or superseded | Apr 26, 2026, 22:01 UTC | [closed/72282.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72282.md) |
 | [#71612](https://github.com/openclaw/openclaw/pull/71612) | fix(loop-detection): reset toolCallHistory on long idle gaps | already implemented on main | Apr 26, 2026, 22:01 UTC | [closed/71612.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71612.md) |
 | [#70590](https://github.com/openclaw/openclaw/issues/70590) | [Feature]: Solve the problem of hard-coded language | duplicate or superseded | Apr 26, 2026, 22:00 UTC | [closed/70590.md](https://github.com/openclaw/clawsweeper/blob/main/closed/70590.md) |
-| [#70003](https://github.com/openclaw/openclaw/issues/70003) | Support concurrent user turns during long-running tool execution | already implemented on main | Apr 26, 2026, 22:00 UTC | [closed/70003.md](https://github.com/openclaw/clawsweeper/blob/main/closed/70003.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
