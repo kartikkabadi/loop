@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 06:36 UTC
+Last dashboard update: Apr 26, 2026, 06:38 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 06:36 UTC
+Updated: Apr 26, 2026, 06:38 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950231327](https://github.com/openclaw/clawsweeper/actions/runs/24950231327)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950284482](https://github.com/openclaw/clawsweeper/actions/runs/24950284482)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,10 +66,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950231327](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 284/945 current (661 due, 30.1%) |
-| Hourly hot item cadence (<7d) | 284/945 current (661 due, 30.1%) |
-| Daily cadence coverage | 4974/5088 current (114 due, 97.8%) |
-| Daily PR cadence | 3364/3454 current (90 due, 97.4%) |
+| Hourly cadence coverage | 283/944 current (661 due, 30%) |
+| Hourly hot item cadence (<7d) | 283/944 current (661 due, 30%) |
+| Daily cadence coverage | 4975/5089 current (114 due, 97.8%) |
+| Daily PR cadence | 3365/3455 current (90 due, 97.4%) |
 | Daily new issue cadence (<30d) | 1610/1634 current (24 due, 98.5%) |
 | Weekly older issue cadence | 1985/1992 current (7 due, 99.6%) |
 | Due now by cadence | 998 |
@@ -86,8 +86,8 @@ Latest review: Apr 26, 2026, 06:28 UTC. Latest close: Apr 26, 2026, 06:36 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 145 | 27 | 118 | 1 | 83 | 75 | 0 |
-| Last hour | 871 | 306 | 565 | 2 | 110 | 168 | 5 |
+| Last 15 minutes | 106 | 22 | 84 | 1 | 80 | 75 | 0 |
+| Last hour | 831 | 302 | 529 | 2 | 110 | 149 | 3 |
 | Last 24 hours | 10458 | 2374 | 8084 | 74 | 5269 | 1109 | 158 |
 
 <details>
