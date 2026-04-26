@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 06:56 UTC
 
 Updated: Apr 26, 2026, 06:56 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 40, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950576448](https://github.com/openclaw/clawsweeper/actions/runs/24950576448)
 <!-- clawsweeper-status:end -->
 
@@ -66,10 +66,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950576448](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 360/930 current (570 due, 38.7%) |
-| Hourly hot item cadence (<7d) | 360/930 current (570 due, 38.7%) |
-| Daily cadence coverage | 4882/4979 current (97 due, 98.1%) |
-| Daily PR cadence | 3272/3350 current (78 due, 97.7%) |
+| Hourly cadence coverage | 360/929 current (569 due, 38.8%) |
+| Hourly hot item cadence (<7d) | 360/929 current (569 due, 38.8%) |
+| Daily cadence coverage | 4882/4980 current (98 due, 98%) |
+| Daily PR cadence | 3272/3351 current (79 due, 97.6%) |
 | Daily new issue cadence (<30d) | 1610/1629 current (19 due, 98.8%) |
 | Weekly older issue cadence | 1985/1990 current (5 due, 99.7%) |
 | Due now by cadence | 890 |
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 06:44 UTC. Latest close: Apr 26, 2026, 06:56 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 25 | 9 | 16 | 0 | 92 | 92 | 0 |
+| Last 15 minutes | 22 | 8 | 14 | 0 | 92 | 92 | 0 |
 | Last hour | 766 | 196 | 570 | 2 | 215 | 188 | 1 |
-| Last 24 hours | 10402 | 2376 | 8026 | 56 | 5310 | 1193 | 154 |
+| Last 24 hours | 10401 | 2376 | 8025 | 56 | 5310 | 1193 | 154 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
