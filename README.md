@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 19:30 UTC
 
 Updated: Apr 26, 2026, 19:30 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24965026816. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 38259,38290,38302,38430,38458,38505,38568,38633,38635,38640,38658,38664,38687,38691,38958,38982,39138,39412,43793,68677.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965026816](https://github.com/openclaw/clawsweeper/actions/runs/24965026816)
 <!-- clawsweeper-status:end -->
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 19:28 UTC. Latest close: Apr 26, 2026, 19:01 UTC. Latest comment sync: Apr 26, 2026, 19:14 UTC.
+Latest review: Apr 26, 2026, 19:28 UTC. Latest close: Apr 26, 2026, 19:01 UTC. Latest comment sync: Apr 26, 2026, 19:30 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
-| Last hour | 65 | 1 | 64 | 0 | 39 | 338 | 4 |
-| Last 24 hours | 9865 | 2624 | 7241 | 1 | 2050 | 2736 | 18 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
+| Last hour | 65 | 1 | 64 | 0 | 39 | 358 | 4 |
+| Last 24 hours | 9865 | 2624 | 7241 | 1 | 2044 | 2756 | 17 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
