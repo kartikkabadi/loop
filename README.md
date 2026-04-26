@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 07:20 UTC
+Last dashboard update: Apr 26, 2026, 07:21 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 07:20 UTC
+Updated: Apr 26, 2026, 07:21 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950988195](https://github.com/openclaw/clawsweeper/actions/runs/24950988195)
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 42, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951000204](https://github.com/openclaw/clawsweeper/actions/runs/24951000204)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,11 +43,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950988195](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4140 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3818 |
-| Open items total | 7958 |
-| Reviewed files | 7746 |
-| Unreviewed open items | 212 |
-| Archived closed files | 11551 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3806 |
+| Open items total | 7946 |
+| Reviewed files | 7725 |
+| Unreviewed open items | 221 |
+| Archived closed files | 11572 |
 
 ### Review Outcomes
 
@@ -55,24 +55,24 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950988195](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 4028 |
 | Proposed issue closes | 25 (0.6% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3670 |
-| Proposed PR closes | 46 (1.3% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7698 |
-| Proposed closes awaiting apply | 71 (0.9% of fresh reviews) |
-| Closed by Codex apply | 9025 |
+| Fresh reviewed PRs in the last 7 days | 3649 |
+| Proposed PR closes | 25 (0.7% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7677 |
+| Proposed closes awaiting apply | 50 (0.7% of fresh reviews) |
+| Closed by Codex apply | 9065 |
 | Failed or stale reviews | 48 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 232/822 current (590 due, 28.2%) |
-| Hourly hot item cadence (<7d) | 232/822 current (590 due, 28.2%) |
-| Daily cadence coverage | 4835/4936 current (101 due, 98%) |
-| Daily PR cadence | 3233/3315 current (82 due, 97.5%) |
+| Hourly cadence coverage | 215/821 current (606 due, 26.2%) |
+| Hourly hot item cadence (<7d) | 215/821 current (606 due, 26.2%) |
+| Daily cadence coverage | 4815/4916 current (101 due, 97.9%) |
+| Daily PR cadence | 3213/3295 current (82 due, 97.5%) |
 | Daily new issue cadence (<30d) | 1602/1621 current (19 due, 98.8%) |
 | Weekly older issue cadence | 1983/1988 current (5 due, 99.7%) |
-| Due now by cadence | 908 |
+| Due now by cadence | 933 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 07:15 UTC. Latest close: Apr 26, 2026, 07:17 UTC. Latest comment sync: Apr 26, 2026, 07:17 UTC.
+Latest review: Apr 26, 2026, 07:15 UTC. Latest close: Apr 26, 2026, 07:21 UTC. Latest comment sync: Apr 26, 2026, 07:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 265 | 44 | 221 | 0 | 39 | 55 | 0 |
-| Last hour | 960 | 202 | 758 | 1 | 314 | 304 | 0 |
-| Last 24 hours | 10289 | 2361 | 7928 | 61 | 5295 | 1305 | 78 |
+| Last 15 minutes | 234 | 42 | 192 | 0 | 70 | 88 | 1 |
+| Last hour | 919 | 189 | 730 | 1 | 328 | 336 | 1 |
+| Last 24 hours | 10283 | 2357 | 7926 | 61 | 5319 | 1339 | 67 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
