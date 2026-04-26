@@ -1,6 +1,6 @@
 name: ClawSweeper
 
-run-name: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/15 * * * *')) && 'Apply OpenClaw closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *')) && 'Audit ClawSweeper dashboard' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'Review hot OpenClaw items' || 'Review OpenClaw items' }}
+run-name: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '2-59/15 * * * *')) && 'Apply OpenClaw closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *')) && 'Audit ClawSweeper dashboard' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'Review hot OpenClaw items' || 'Review OpenClaw items' }}
 
 on:
   workflow_dispatch:
@@ -77,7 +77,7 @@ on:
     - cron: "*/5 * * * *"
     - cron: "7 */6 * * *"
     - cron: "17 * * * *"
-    - cron: "*/15 * * * *"
+    - cron: "2-59/15 * * * *"
 
 permissions:
   contents: write
@@ -86,13 +86,13 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/15 * * * *')) && 'clawsweeper-apply' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'clawsweeper-intake' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *')) && 'clawsweeper-audit' || 'clawsweeper-review' }}
+  group: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '2-59/15 * * * *')) && 'clawsweeper-apply' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'clawsweeper-intake' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *')) && 'clawsweeper-audit' || 'clawsweeper-review' }}
   cancel-in-progress: false
 
 jobs:
   plan:
     name: Plan review candidates
-    if: ${{ !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && (github.event.schedule == '*/15 * * * *' || github.event.schedule == '7 */6 * * *'))) }}
+    if: ${{ !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && (github.event.schedule == '2-59/15 * * * *' || github.event.schedule == '7 */6 * * *'))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -140,7 +140,7 @@ jobs:
         run: npm run build
 
       - name: Publish planning-started status
-        if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/15 * * * *')) }}
+        if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '2-59/15 * * * *')) }}
         continue-on-error: true
         working-directory: clawsweeper
         run: |
@@ -376,7 +376,7 @@ jobs:
   publish:
     name: Publish review artifacts
     needs: [plan, review]
-    if: ${{ always() && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && (github.event.schedule == '*/15 * * * *' || github.event.schedule == '7 */6 * * *'))) }}
+    if: ${{ always() && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && (github.event.schedule == '2-59/15 * * * *' || github.event.schedule == '7 */6 * * *'))) }}
     runs-on: ubuntu-latest
     env:
       CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
@@ -567,7 +567,7 @@ jobs:
 
   apply-existing:
     name: Apply close proposals
-    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/15 * * * *') }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '2-59/15 * * * *') }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     env:
