@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 15:53 UTC
+Last dashboard update: Apr 26, 2026, 15:59 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 15:58 UTC
+Updated: Apr 26, 2026, 15:59 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960840944](https://github.com/openclaw/clawsweeper/actions/runs/24960840944)
 <!-- clawsweeper-status:end -->
 
@@ -42,23 +42,23 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960840944](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3765 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3764 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3530 |
-| Open items total | 7295 |
-| Reviewed files | 7192 |
-| Unreviewed open items | 103 |
-| Archived closed files | 12418 |
+| Open items total | 7294 |
+| Reviewed files | 7190 |
+| Unreviewed open items | 104 |
+| Archived closed files | 12420 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3729 |
-| Proposed issue closes | 2 (0.1% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3727 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3461 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7190 |
-| Proposed closes awaiting apply | 2 (0% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 7188 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 9868 |
 | Failed or stale reviews | 2 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960840944](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 16/799 current (783 due, 2%) |
-| Hourly hot item cadence (<7d) | 16/799 current (783 due, 2%) |
-| Daily cadence coverage | 4436/4501 current (65 due, 98.6%) |
+| Hourly cadence coverage | 2/799 current (797 due, 0.3%) |
+| Hourly hot item cadence (<7d) | 2/799 current (797 due, 0.3%) |
+| Daily cadence coverage | 4435/4500 current (65 due, 98.6%) |
 | Daily PR cadence | 2992/3050 current (58 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1444/1451 current (7 due, 99.5%) |
-| Weekly older issue cadence | 1892/1892 current (0 due, 100%) |
-| Due now by cadence | 951 |
+| Daily new issue cadence (<30d) | 1443/1450 current (7 due, 99.5%) |
+| Weekly older issue cadence | 1891/1891 current (0 due, 100%) |
+| Due now by cadence | 966 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 15:44 UTC. Latest close: Apr 26, 2026, 15:02 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 273 | 1 | 272 | 0 | 0 | 0 | 0 |
-| Last hour | 540 | 2 | 538 | 0 | 24 | 179 | 2 |
-| Last 24 hours | 9966 | 2675 | 7291 | 14 | 3277 | 2178 | 18 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Last hour | 520 | 2 | 518 | 0 | 15 | 152 | 1 |
+| Last 24 hours | 9944 | 2654 | 7290 | 14 | 3228 | 2178 | 18 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
