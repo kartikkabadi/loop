@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 23:31 UTC
+Last dashboard update: Apr 26, 2026, 23:32 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 23:31 UTC
+Updated: Apr 26, 2026, 23:32 UTC
 
-State: Planning review
+State: Hot intake comments synced
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969827792](https://github.com/openclaw/clawsweeper/actions/runs/24969827792)
+Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 63418,64318,71027,71569,71857,72121,72128,72229,72266,72314,72319,72342,72361,72364,72366,72367,72368,72373,72374,72376.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969711665](https://github.com/openclaw/clawsweeper/actions/runs/24969711665)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,11 +54,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969827792](https://
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3679 |
-| Proposed issue closes | 2 (0.1% of reviewed issues) |
+| Proposed issue closes | 1 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3459 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7138 |
-| Proposed closes awaiting apply | 2 (0% of fresh reviews) |
+| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
 | Closed by Codex apply | 10005 |
 | Failed or stale reviews | 2 |
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 23:30 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 23:11 UTC.
+Latest review: Apr 26, 2026, 23:30 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 23:32 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 2 | 18 | 0 | 0 | 0 | 0 |
-| Last hour | 67 | 3 | 64 | 0 | 0 | 22 | 1 |
-| Last 24 hours | 9322 | 2143 | 7179 | 0 | 2074 | 2184 | 13 |
+| Last 15 minutes | 20 | 2 | 18 | 0 | 0 | 19 | 1 |
+| Last hour | 67 | 3 | 64 | 0 | 0 | 41 | 2 |
+| Last 24 hours | 9318 | 2139 | 7179 | 0 | 2074 | 2203 | 14 |
 
 ### Recently Closed
 
@@ -134,7 +134,7 @@ Latest review: Apr 26, 2026, 23:30 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72366](https://github.com/openclaw/openclaw/issues/72366) | [Bug]: Gateway crash-loop on startup when bonjour/mDNS plugin hits \"CIAO PROBING CANCELED\ | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72366.md) | complete | Apr 26, 2026, 23:30 UTC |
+| [#72366](https://github.com/openclaw/openclaw/issues/72366) | [Bug]: Gateway crash-loop on startup when bonjour/mDNS plugin hits \"CIAO PROBING CANCELED\ | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72366.md) | complete | Apr 26, 2026, 23:30 UTC |
 | [#72373](https://github.com/openclaw/openclaw/issues/72373) | OpenShell should fail fast on malformed generated commands and hard-abort repeated tool loops | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72373.md) | complete | Apr 26, 2026, 23:29 UTC |
 | [#72364](https://github.com/openclaw/openclaw/issues/72364) | Treat auto-compaction as a first-class agent task (route through /compact) to eliminate mid-conversation transcript mutations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72364.md) | complete | Apr 26, 2026, 23:28 UTC |
 | [#72376](https://github.com/openclaw/openclaw/pull/72376) | feat(memory-core): default to WAL journal mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72376.md) | complete | Apr 26, 2026, 23:28 UTC |
