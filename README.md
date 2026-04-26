@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 14:57 UTC
+Last dashboard update: Apr 26, 2026, 14:58 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 14:57 UTC
+Updated: Apr 26, 2026, 14:58 UTC
 
-State: Hot intake comments synced
+State: Apply in progress
 
-Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 39745,39747,39857,39957,39975,41419,69121,71731,71786,71787,71857,71902,72082,72085,72108,72131,72132,72134,72137,72138.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959486258](https://github.com/openclaw/clawsweeper/actions/runs/24959486258)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959577299](https://github.com/openclaw/clawsweeper/actions/runs/24959577299)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 14:56 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 14:57 UTC.
+Latest review: Apr 26, 2026, 14:56 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 14:56 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 21 | 0 |
-| Last hour | 1112 | 42 | 1070 | 0 | 0 | 36 | 0 |
-| Last 24 hours | 10018 | 2709 | 7309 | 14 | 3434 | 2020 | 17 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 1 | 0 |
+| Last hour | 1112 | 42 | 1070 | 0 | 0 | 16 | 0 |
+| Last 24 hours | 10018 | 2709 | 7309 | 14 | 3434 | 2000 | 17 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
