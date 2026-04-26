@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 16:23 UTC
+Last dashboard update: Apr 26, 2026, 16:27 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 16:23 UTC
+Updated: Apr 26, 2026, 16:27 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24961331395. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24961331395](https://github.com/openclaw/clawsweeper/actions/runs/24961331395)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24961331395](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3734 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3735 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3533 |
-| Open items total | 7267 |
+| Open items total | 7268 |
 | Reviewed files | 7191 |
-| Unreviewed open items | 76 |
+| Unreviewed open items | 77 |
 | Archived closed files | 12461 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24961331395](https://
 | Daily PR cadence | 2992/3050 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1441/1448 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1893/1893 current (0 due, 100%) |
-| Due now by cadence | 145 |
+| Due now by cadence | 146 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 16:14 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 16:17 UTC.
+Latest review: Apr 26, 2026, 16:26 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 16:17 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 244 | 11 | 233 | 0 | 12 | 350 | 0 |
-| Last hour | 1466 | 43 | 1423 | 0 | 40 | 750 | 2 |
-| Last 24 hours | 9943 | 2658 | 7285 | 14 | 3065 | 2777 | 19 |
+| Last 15 minutes | 51 | 4 | 47 | 0 | 12 | 180 | 0 |
+| Last hour | 1486 | 43 | 1443 | 0 | 40 | 730 | 2 |
+| Last 24 hours | 9943 | 2658 | 7285 | 14 | 3030 | 2757 | 19 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 16:14 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72037](https://github.com/openclaw/openclaw/issues/72037) | [Bug]: Codex ACP falls back to `npm exec` (`acpx` bundle issue) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72037.md) | complete | Apr 26, 2026, 16:14 UTC |
-| [#72255](https://github.com/openclaw/openclaw/issues/72255) | [Bug]: Pi runtime silently uses orphaned credentials from per-agent auth-profiles.json after their declarations are removed from openclaw.json — billing/quota leak | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72255.md) | complete | Apr 26, 2026, 16:13 UTC |
-| [#72072](https://github.com/openclaw/openclaw/issues/72072) | RFC: RuntimePlan finalization and embedded runner structural cleanup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72072.md) | complete | Apr 26, 2026, 16:13 UTC |
-| [#71709](https://github.com/openclaw/openclaw/issues/71709) | [Bug]: slug-generator HTTP 400 misclassified as profile-wide billing failure (5h cooldown), kills all agents on profile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71709.md) | complete | Apr 26, 2026, 16:13 UTC |
-| [#71947](https://github.com/openclaw/openclaw/issues/71947) | Architecture audit: concrete agchk scan leads for OpenClaw | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71947.md) | complete | Apr 26, 2026, 16:13 UTC |
-| [#72214](https://github.com/openclaw/openclaw/issues/72214) | Telegram channel can stall gateway when Node fetch to api.telegram.org times out while curl -4 succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72214.md) | complete | Apr 26, 2026, 16:13 UTC |
-| [#71849](https://github.com/openclaw/openclaw/issues/71849) | Realtime voice consult is too slow/fragile for live calls; add fast memory context path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71849.md) | complete | Apr 26, 2026, 16:13 UTC |
-| [#72016](https://github.com/openclaw/openclaw/issues/72016) | [Feature]: doctor api/extendability | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72016.md) | complete | Apr 26, 2026, 16:13 UTC |
-| [#71495](https://github.com/openclaw/openclaw/issues/71495) | [Bug]: /subagents list returns empty in 2026.4.23 despite gateway tracking active subagents (regression from 4.22) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71495.md) | complete | Apr 26, 2026, 16:13 UTC |
-| [#71566](https://github.com/openclaw/openclaw/pull/71566) | feat: implement directory handlers for self, peers, and groups list f… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71566.md) | complete | Apr 26, 2026, 16:12 UTC |
+| [#39811](https://github.com/openclaw/openclaw/issues/39811) | Model configuration accepts unvalidated model names, enabling silent misconfiguration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39811.md) | complete | Apr 26, 2026, 16:26 UTC |
+| [#39734](https://github.com/openclaw/openclaw/issues/39734) | Feature: Support custom anthropic_beta flags in Bedrock model config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39734.md) | complete | Apr 26, 2026, 16:25 UTC |
+| [#39714](https://github.com/openclaw/openclaw/pull/39714) | Sandbox: fix Dockerized browser bridge and tab creation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39714.md) | complete | Apr 26, 2026, 16:25 UTC |
+| [#39900](https://github.com/openclaw/openclaw/issues/39900) | Add extraBody support for custom TTS endpoints (OpenAI-compatible) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39900.md) | complete | Apr 26, 2026, 16:25 UTC |
+| [#39807](https://github.com/openclaw/openclaw/issues/39807) | Bug: Billing error (402) causes infinite retry death spiral for inline-apiKey providers (no backoff) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39807.md) | complete | Apr 26, 2026, 16:25 UTC |
+| [#39847](https://github.com/openclaw/openclaw/issues/39847) | Echo contamination: stripInboundMetadata not called in outbound delivery pipeline | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39847.md) | complete | Apr 26, 2026, 16:25 UTC |
+| [#39768](https://github.com/openclaw/openclaw/issues/39768) | [Bug]: MCP tool failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39768.md) | complete | Apr 26, 2026, 16:25 UTC |
+| [#39631](https://github.com/openclaw/openclaw/issues/39631) | Telegram: internal tool error message leaks into user chat on failed edit() | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39631.md) | complete | Apr 26, 2026, 16:25 UTC |
+| [#39528](https://github.com/openclaw/openclaw/issues/39528) | [Bug]: Context loss and unauthorized config modifications/restarts during multi-turn conversations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39528.md) | complete | Apr 26, 2026, 16:25 UTC |
+| [#39688](https://github.com/openclaw/openclaw/issues/39688) | [Bug]: Internal hooks (message:received, message:sent) 返回内容没有发送给用户 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39688.md) | complete | Apr 26, 2026, 16:25 UTC |
 
 </details>
 
