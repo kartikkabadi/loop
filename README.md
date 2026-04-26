@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 22:28 UTC
 
 Updated: Apr 26, 2026, 22:28 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24968557243. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 16 hot-intake item(s). Item numbers: 43793,46303,58823,64500,64752,72178,72239,72276,72281,72287,72301,72332,72343,72353,72355,72357,72383,72384,72385,72386.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968557243](https://github.com/openclaw/clawsweeper/actions/runs/24968557243)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968557243](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 770/778 current (8 due, 99%) |
-| Hourly hot item cadence (<7d) | 770/778 current (8 due, 99%) |
+| Hourly cadence coverage | 768/778 current (10 due, 98.7%) |
+| Hourly hot item cadence (<7d) | 768/778 current (10 due, 98.7%) |
 | Daily cadence coverage | 4414/4481 current (67 due, 98.5%) |
 | Daily PR cadence | 2982/3040 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1432/1441 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
-| Due now by cadence | 158 |
+| Due now by cadence | 160 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 22:27 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 22:19 UTC.
+Latest review: Apr 26, 2026, 22:27 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 22:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 5 | 4 | 0 |
-| Last hour | 1338 | 16 | 1322 | 0 | 37 | 69 | 2 |
-| Last 24 hours | 9539 | 2360 | 7179 | 0 | 2074 | 2164 | 11 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 5 | 20 | 3 |
+| Last hour | 1334 | 15 | 1319 | 0 | 37 | 85 | 5 |
+| Last 24 hours | 9539 | 2360 | 7179 | 0 | 2074 | 2180 | 14 |
 
 ### Recently Closed
 
