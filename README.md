@@ -23,7 +23,7 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 17:31 UTC
+Last dashboard update: Apr 26, 2026, 17:32 UTC
 
 ### Current Run
 
@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 17:31 UTC
 
 Updated: Apr 26, 2026, 17:32 UTC
 
-State: Planning review
+State: Hot intake comments synced
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24962740675](https://github.com/openclaw/clawsweeper/actions/runs/24962740675)
+Synced durable Codex review comments for 18 hot-intake item(s). Item numbers: 38439,58823,64127,64436,71862,72004,72038,72092,72216,72218,72219,72220,72225,72229,72237,72238,72239,72251,72253,72254.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24962643290](https://github.com/openclaw/clawsweeper/actions/runs/24962643290)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 17:30 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 17:11 UTC.
+Latest review: Apr 26, 2026, 17:30 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 17:32 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
-| Last hour | 181 | 5 | 176 | 0 | 0 | 39 | 1 |
-| Last 24 hours | 9902 | 2623 | 7279 | 13 | 2818 | 2706 | 16 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 18 | 2 |
+| Last hour | 181 | 5 | 176 | 0 | 0 | 57 | 3 |
+| Last 24 hours | 9902 | 2623 | 7279 | 13 | 2818 | 2724 | 18 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,7 +119,7 @@ Latest review: Apr 26, 2026, 17:30 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72239](https://github.com/openclaw/openclaw/pull/72239) | [tts][personality] voice.md SOUL.md-aware ElevenLabs v3 tag filter (#69051 PR-C of 4) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72239.md) | complete | Apr 26, 2026, 17:30 UTC |
+| [#72239](https://github.com/openclaw/openclaw/pull/72239) | [tts][personality] voice.md SOUL.md-aware ElevenLabs v3 tag filter (#69051 PR-C of 4) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72239.md) | complete | Apr 26, 2026, 17:30 UTC |
 | [#72216](https://github.com/openclaw/openclaw/pull/72216) | fix(nostr): keep setup status off full surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72216.md) | complete | Apr 26, 2026, 17:30 UTC |
 | [#72218](https://github.com/openclaw/openclaw/pull/72218) | fix(heartbeat): suppress final ok payloads | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72218.md) | complete | Apr 26, 2026, 17:30 UTC |
 | [#72253](https://github.com/openclaw/openclaw/pull/72253) | fix(heartbeat): keep benign exec completions internal | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72253.md) | complete | Apr 26, 2026, 17:30 UTC |
