@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 20:11 UTC
+Last dashboard update: Apr 26, 2026, 20:12 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 20:11 UTC
+Updated: Apr 26, 2026, 20:12 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24965864541. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 17931,18548,20237,20756,20950,25621,28965,29384,71948,72027,72031,72085,72121,72128,72132,72345,72346,72347,72348,72349.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965864541](https://github.com/openclaw/clawsweeper/actions/runs/24965864541)
 <!-- clawsweeper-status:end -->
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 20:10 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:01 UTC.
+Latest review: Apr 26, 2026, 20:10 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:12 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 242 | 24 | 218 | 0 | 0 | 196 | 0 |
-| Last hour | 1040 | 31 | 1009 | 0 | 1 | 375 | 0 |
-| Last 24 hours | 9827 | 2615 | 7212 | 2 | 2037 | 2469 | 7 |
+| Last 15 minutes | 211 | 23 | 188 | 0 | 0 | 192 | 1 |
+| Last hour | 1040 | 31 | 1009 | 0 | 1 | 394 | 1 |
+| Last 24 hours | 9827 | 2615 | 7212 | 2 | 2037 | 2488 | 8 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -123,7 +123,7 @@ Latest review: Apr 26, 2026, 20:10 UTC. Latest close: Apr 26, 2026, 19:53 UTC. L
 | [#72349](https://github.com/openclaw/openclaw/issues/72349) | [Bug]: Subagent spawn fails with \"No API key found for bedrock\" when using IAM Roles Anywhere (AWS_PROFILE + credential_process) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72349.md) | complete | Apr 26, 2026, 20:10 UTC |
 | [#20237](https://github.com/openclaw/openclaw/issues/20237) | [Feature]: WebUI notification system, cron job management popups, and context monitor integration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20237.md) | complete | Apr 26, 2026, 20:09 UTC |
 | [#25621](https://github.com/openclaw/openclaw/issues/25621) | [Feature]: Error: Gateway service install not supported on openbsd | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/25621.md) | complete | Apr 26, 2026, 20:09 UTC |
-| [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72348.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72348.md) | complete | Apr 26, 2026, 20:09 UTC |
 | [#29384](https://github.com/openclaw/openclaw/issues/29384) | [Feature]: Support for sandbox Docker parameters (--gpus all, --ipc=host) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/29384.md) | complete | Apr 26, 2026, 20:09 UTC |
 | [#72345](https://github.com/openclaw/openclaw/issues/72345) | voice-call: CLI `voicecall call` cannot run when gateway is owning the webhook port | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72345.md) | complete | Apr 26, 2026, 20:09 UTC |
 | [#72085](https://github.com/openclaw/openclaw/pull/72085) | docs(commands): document bashForegroundMs clamp bounds (0–30 000 ms) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72085.md) | complete | Apr 26, 2026, 20:09 UTC |
