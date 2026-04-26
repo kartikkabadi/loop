@@ -30,12 +30,12 @@ Last dashboard update: Apr 26, 2026, 18:21 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 18:21 UTC
+Updated: Apr 26, 2026, 18:26 UTC
 
-State: Review publish complete
+State: Audit finished
 
-Merged review artifacts for run 24963613670. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963613670](https://github.com/openclaw/clawsweeper/actions/runs/24963613670)
+Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963831003](https://github.com/openclaw/clawsweeper/actions/runs/24963831003)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -77,20 +77,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963613670](https://
 ### Audit Health
 
 <!-- clawsweeper-audit:start -->
-Last audit: Apr 26, 2026, 12:29 UTC
+Last audit: Apr 26, 2026, 18:26 UTC
 
 Status: **Action needed**
 
 | Metric | Count |
 | --- | ---: |
 | Scan complete | yes |
-| Open items seen | 7259 |
+| Open items seen | 7283 |
 | Missing eligible open records | 0 |
-| Missing maintainer-authored open records | 69 |
-| Missing protected open records | 0 |
-| Missing recently-created open records | 7 |
+| Missing maintainer-authored open records | 68 |
+| Missing protected open records | 1 |
+| Missing recently-created open records | 2 |
 | Archived records that are open again | 0 |
-| Stale item records | 2 |
+| Stale item records | 1 |
 | Duplicate records | 0 |
 | Protected proposed closes | 2 |
 | Stale reviews | 2 |
