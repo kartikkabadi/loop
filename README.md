@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 21:25 UTC
+Last dashboard update: Apr 26, 2026, 21:30 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 21:25 UTC
+Updated: Apr 26, 2026, 21:30 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967416755](https://github.com/openclaw/clawsweeper/actions/runs/24967416755)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=31584,39543,40441,40469,58843,69090,69108,69170,69303,70007,70032,70264,70302,70438,70588,70658,70728,71153,71299,71531,71602,71779,72026,72130,72205,72249,72270,72300,72318,72322,72323,72327,72330,72334,72335,72337,72339,72340,72344,72345,72346,72347,72349,72354,72356.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967497550](https://github.com/openclaw/clawsweeper/actions/runs/24967497550)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967416755](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3731 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3540 |
-| Open items total | 7271 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3541 |
+| Open items total | 7272 |
 | Reviewed files | 7192 |
-| Unreviewed open items | 79 |
+| Unreviewed open items | 80 |
 | Archived closed files | 12537 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967416755](https://
 | Daily PR cadence | 2995/3053 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1432/1441 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 935 |
+| Due now by cadence | 936 |
 
 ### Audit Health
 
@@ -108,8 +108,8 @@ Latest review: Apr 26, 2026, 21:10 UTC. Latest close: Apr 26, 2026, 19:53 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 19 | 1 |
-| Last hour | 226 | 6 | 220 | 0 | 0 | 42 | 1 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Last hour | 206 | 5 | 201 | 0 | 0 | 22 | 1 |
 | Last 24 hours | 9731 | 2538 | 7193 | 0 | 2037 | 2629 | 11 |
 
 ### Recently Closed
