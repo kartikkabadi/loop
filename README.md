@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 07:23 UTC
+Last dashboard update: Apr 26, 2026, 07:25 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 07:23 UTC
+Updated: Apr 26, 2026, 07:25 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 41, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951060132](https://github.com/openclaw/clawsweeper/actions/runs/24951060132)
 <!-- clawsweeper-status:end -->
 
@@ -42,37 +42,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951060132](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4140 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3809 |
-| Open items total | 7949 |
-| Reviewed files | 7732 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4139 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3790 |
+| Open items total | 7929 |
+| Reviewed files | 7712 |
 | Unreviewed open items | 217 |
-| Archived closed files | 11565 |
+| Archived closed files | 11585 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4028 |
-| Proposed issue closes | 25 (0.6% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3649 |
-| Proposed PR closes | 25 (0.7% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7677 |
-| Proposed closes awaiting apply | 50 (0.7% of fresh reviews) |
-| Closed by Codex apply | 9065 |
+| Fresh reviewed issues in the last 7 days | 4027 |
+| Proposed issue closes | 23 (0.6% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3630 |
+| Proposed PR closes | 6 (0.2% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7657 |
+| Proposed closes awaiting apply | 29 (0.4% of fresh reviews) |
+| Closed by Codex apply | 9085 |
 | Failed or stale reviews | 55 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 197/822 current (625 due, 24%) |
-| Hourly hot item cadence (<7d) | 197/822 current (625 due, 24%) |
-| Daily cadence coverage | 4815/4922 current (107 due, 97.8%) |
-| Daily PR cadence | 3213/3296 current (83 due, 97.5%) |
+| Hourly cadence coverage | 146/820 current (674 due, 17.8%) |
+| Hourly hot item cadence (<7d) | 146/820 current (674 due, 17.8%) |
+| Daily cadence coverage | 4797/4904 current (107 due, 97.8%) |
+| Daily PR cadence | 3195/3278 current (83 due, 97.5%) |
 | Daily new issue cadence (<30d) | 1602/1626 current (24 due, 98.5%) |
 | Weekly older issue cadence | 1983/1988 current (5 due, 99.7%) |
-| Due now by cadence | 954 |
+| Due now by cadence | 1003 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 07:15 UTC. Latest close: Apr 26, 2026, 07:21 UTC. Latest comment sync: Apr 26, 2026, 07:21 UTC.
+Latest review: Apr 26, 2026, 07:15 UTC. Latest close: Apr 26, 2026, 07:24 UTC. Latest comment sync: Apr 26, 2026, 07:24 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 181 | 31 | 150 | 0 | 52 | 69 | 1 |
-| Last hour | 872 | 181 | 691 | 1 | 324 | 336 | 1 |
-| Last 24 hours | 10272 | 2346 | 7926 | 68 | 5305 | 1339 | 67 |
+| Last 15 minutes | 113 | 17 | 96 | 0 | 72 | 89 | 2 |
+| Last hour | 802 | 171 | 631 | 0 | 327 | 344 | 2 |
+| Last 24 hours | 10259 | 2334 | 7925 | 68 | 5309 | 1359 | 67 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -128,7 +128,7 @@ Latest review: Apr 26, 2026, 07:15 UTC. Latest close: Apr 26, 2026, 07:21 UTC. L
 | [#50278](https://github.com/openclaw/openclaw/pull/50278) | fix: exclude Markdown image syntax from bash bang detection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50278.md) | complete | Apr 26, 2026, 07:14 UTC |
 | [#50300](https://github.com/openclaw/openclaw/pull/50300) | Fix session transcript timestamps to use local timezone offsets | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50300.md) | complete | Apr 26, 2026, 07:14 UTC |
 | [#66168](https://github.com/openclaw/openclaw/pull/66168) | feat(gateway): add MCP Apps protocol extension (tools, resources, UI meta) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66168.md) | complete | Apr 26, 2026, 07:13 UTC |
-| [#50929](https://github.com/openclaw/openclaw/pull/50929) | fix(ui): suppress leaked TUI debug lines in chat | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/50929.md) | complete | Apr 26, 2026, 07:13 UTC |
+| [#50160](https://github.com/openclaw/openclaw/pull/50160) | fix: throw error on Discord delivery failure instead of returning unknown | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50160.md) | complete | Apr 26, 2026, 07:13 UTC |
 
 </details>
 
