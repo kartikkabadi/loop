@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 06:48 UTC
+Last dashboard update: Apr 26, 2026, 06:50 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 06:48 UTC
+Updated: Apr 26, 2026, 06:50 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 41, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950457620](https://github.com/openclaw/clawsweeper/actions/runs/24950457620)
 <!-- clawsweeper-status:end -->
 
@@ -42,37 +42,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950457620](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4218 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3966 |
-| Open items total | 8184 |
-| Reviewed files | 7963 |
-| Unreviewed open items | 221 |
-| Archived closed files | 11334 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4214 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3948 |
+| Open items total | 8162 |
+| Reviewed files | 7943 |
+| Unreviewed open items | 219 |
+| Archived closed files | 11354 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4107 |
-| Proposed issue closes | 85 (2.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3814 |
-| Proposed PR closes | 102 (2.7% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7921 |
-| Proposed closes awaiting apply | 187 (2.4% of fresh reviews) |
-| Closed by Codex apply | 8846 |
+| Fresh reviewed issues in the last 7 days | 4104 |
+| Proposed issue closes | 82 (2% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3797 |
+| Proposed PR closes | 85 (2.2% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7901 |
+| Proposed closes awaiting apply | 167 (2.1% of fresh reviews) |
+| Closed by Codex apply | 8866 |
 | Failed or stale reviews | 42 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 379/942 current (563 due, 40.2%) |
-| Hourly hot item cadence (<7d) | 379/942 current (563 due, 40.2%) |
-| Daily cadence coverage | 4931/5029 current (98 due, 98.1%) |
-| Daily PR cadence | 3317/3396 current (79 due, 97.7%) |
-| Daily new issue cadence (<30d) | 1614/1633 current (19 due, 98.8%) |
-| Weekly older issue cadence | 1987/1992 current (5 due, 99.7%) |
-| Due now by cadence | 887 |
+| Hourly cadence coverage | 378/942 current (564 due, 40.1%) |
+| Hourly hot item cadence (<7d) | 378/942 current (564 due, 40.1%) |
+| Daily cadence coverage | 4913/5011 current (98 due, 98%) |
+| Daily PR cadence | 3300/3379 current (79 due, 97.7%) |
+| Daily new issue cadence (<30d) | 1613/1632 current (19 due, 98.8%) |
+| Weekly older issue cadence | 1985/1990 current (5 due, 99.7%) |
+| Due now by cadence | 886 |
 
 ### Audit Health
 
@@ -82,13 +82,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 06:44 UTC. Latest close: Apr 26, 2026, 06:46 UTC. Latest comment sync: Apr 26, 2026, 06:46 UTC.
+Latest review: Apr 26, 2026, 06:44 UTC. Latest close: Apr 26, 2026, 06:50 UTC. Latest comment sync: Apr 26, 2026, 06:50 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 250 | 73 | 177 | 0 | 82 | 81 | 1 |
-| Last hour | 952 | 309 | 643 | 2 | 163 | 136 | 2 |
-| Last 24 hours | 10452 | 2414 | 8038 | 55 | 5320 | 1141 | 157 |
+| Last 15 minutes | 197 | 43 | 154 | 0 | 90 | 90 | 1 |
+| Last hour | 895 | 292 | 603 | 2 | 175 | 149 | 2 |
+| Last 24 hours | 10452 | 2414 | 8038 | 55 | 5317 | 1154 | 157 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -97,16 +97,16 @@ Latest review: Apr 26, 2026, 06:44 UTC. Latest close: Apr 26, 2026, 06:46 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#45900](https://github.com/openclaw/openclaw/pull/45900) | fix(plugins): suppress false-positive duplicate id warning for channel registration pattern | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45900.md) | complete | Apr 26, 2026, 06:44 UTC |
 | [#51455](https://github.com/openclaw/openclaw/issues/51455) | bug: pdf extraction fallback renderer omits standardFontDataUrl and emits PDF.js warnings in Node | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51455.md) | complete | Apr 26, 2026, 06:42 UTC |
 | [#46472](https://github.com/openclaw/openclaw/pull/46472) | fix(feishu): add WebSocket heartbeat config to prevent silent disconnection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46472.md) | complete | Apr 26, 2026, 06:42 UTC |
 | [#60226](https://github.com/openclaw/openclaw/issues/60226) | Non-image file attachments (PDF/Word/etc) not injected into agent context after upload via webchat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60226.md) | complete | Apr 26, 2026, 06:42 UTC |
 | [#71188](https://github.com/openclaw/openclaw/issues/71188) | Windows: Gateway spawns visible cmd.exe every ~16s for LAN/ARP discovery (flashing console window) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71188.md) | complete | Apr 26, 2026, 06:42 UTC |
-| [#46578](https://github.com/openclaw/openclaw/pull/46578) | fix: replace console.log with logVerbose in tailscale funnel | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46578.md) | complete | Apr 26, 2026, 06:42 UTC |
 | [#46131](https://github.com/openclaw/openclaw/pull/46131) | fix(models): apply provider-level api default in buildInlineProviderModels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46131.md) | complete | Apr 26, 2026, 06:42 UTC |
 | [#46356](https://github.com/openclaw/openclaw/pull/46356) | Channels: restore webchat bidirectional sync and add proxy support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46356.md) | complete | Apr 26, 2026, 06:42 UTC |
 | [#69229](https://github.com/openclaw/openclaw/issues/69229) | [Bug]: tasks audit reports false-positive inconsistent_timestamps on succeeded/failed/running tasks | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69229.md) | complete | Apr 26, 2026, 06:42 UTC |
 | [#71476](https://github.com/openclaw/openclaw/issues/71476) | Webchat HTTP 401 on __openclaw/ routes after session compaction | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71476.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#46377](https://github.com/openclaw/openclaw/pull/46377) | fix: add SSRF guard to Anthropic/Gemini PDF providers and move Gemini API key to header | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46377.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#70578](https://github.com/openclaw/openclaw/issues/70578) | Silent config data loss: Zod `.strict()` strips unknown top-level fields on round-trip | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70578.md) | complete | Apr 26, 2026, 06:42 UTC |
 
 </details>
 
