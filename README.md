@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 06:44 UTC
+Last dashboard update: Apr 26, 2026, 06:46 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 06:44 UTC
+Updated: Apr 26, 2026, 06:46 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950395066](https://github.com/openclaw/clawsweeper/actions/runs/24950395066)
+Merged review artifacts for run 24950157558. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950157558](https://github.com/openclaw/clawsweeper/actions/runs/24950157558)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,36 +43,36 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950395066](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4217 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3986 |
-| Open items total | 8203 |
-| Reviewed files | 7983 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3972 |
+| Open items total | 8189 |
+| Reviewed files | 7969 |
 | Unreviewed open items | 220 |
-| Archived closed files | 11314 |
+| Archived closed files | 11328 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4100 |
-| Proposed issue closes | 57 (1.4% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 4107 |
+| Proposed issue closes | 85 (2.1% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3822 |
-| Proposed PR closes | 102 (2.7% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7922 |
-| Proposed closes awaiting apply | 159 (2% of fresh reviews) |
+| Proposed PR closes | 110 (2.9% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7929 |
+| Proposed closes awaiting apply | 195 (2.5% of fresh reviews) |
 | Closed by Codex apply | 8826 |
-| Failed or stale reviews | 61 |
+| Failed or stale reviews | 40 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 266/942 current (676 due, 28.2%) |
-| Hourly hot item cadence (<7d) | 266/942 current (676 due, 28.2%) |
-| Daily cadence coverage | 4935/5049 current (114 due, 97.7%) |
-| Daily PR cadence | 3326/3416 current (90 due, 97.4%) |
-| Daily new issue cadence (<30d) | 1609/1633 current (24 due, 98.5%) |
-| Weekly older issue cadence | 1985/1992 current (7 due, 99.6%) |
-| Due now by cadence | 1017 |
+| Hourly cadence coverage | 388/941 current (553 due, 41.2%) |
+| Hourly hot item cadence (<7d) | 388/941 current (553 due, 41.2%) |
+| Daily cadence coverage | 4939/5036 current (97 due, 98.1%) |
+| Daily PR cadence | 3325/3403 current (78 due, 97.7%) |
+| Daily new issue cadence (<30d) | 1614/1633 current (19 due, 98.8%) |
+| Weekly older issue cadence | 1987/1992 current (5 due, 99.7%) |
+| Due now by cadence | 875 |
 
 ### Audit Health
 
@@ -82,13 +82,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 06:28 UTC. Latest close: Apr 26, 2026, 06:43 UTC. Latest comment sync: Apr 26, 2026, 06:43 UTC.
+Latest review: Apr 26, 2026, 06:44 UTC. Latest close: Apr 26, 2026, 06:43 UTC. Latest comment sync: Apr 26, 2026, 06:43 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 80 | 80 | 1 |
-| Last hour | 765 | 288 | 477 | 1 | 143 | 154 | 4 |
-| Last 24 hours | 10458 | 2374 | 8084 | 74 | 5309 | 1148 | 159 |
+| Last 15 minutes | 250 | 73 | 177 | 0 | 80 | 79 | 1 |
+| Last hour | 1015 | 361 | 654 | 1 | 143 | 125 | 2 |
+| Last 24 hours | 10455 | 2417 | 8038 | 53 | 5309 | 1121 | 157 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -97,16 +97,16 @@ Latest review: Apr 26, 2026, 06:28 UTC. Latest close: Apr 26, 2026, 06:43 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#70563](https://github.com/openclaw/openclaw/issues/70563) | Subagent spawn fails: thinking enabled but reasoning_content missing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70563.md) | complete | Apr 26, 2026, 06:28 UTC |
-| [#70591](https://github.com/openclaw/openclaw/issues/70591) | [ClawX] Session freezes after compaction — Thinking... stuck, stop button not working | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70591.md) | complete | Apr 26, 2026, 06:27 UTC |
-| [#70622](https://github.com/openclaw/openclaw/issues/70622) | [Bug]: assistant turn can enter repeated terminated state immediately after a tool error instead of reporting the failure | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70622.md) | complete | Apr 26, 2026, 06:27 UTC |
-| [#70582](https://github.com/openclaw/openclaw/issues/70582) | LCM compaction sends deprecated  parameter to claude-opus-4-7, causing repeated API errors and retry loops | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70582.md) | complete | Apr 26, 2026, 06:27 UTC |
-| [#70753](https://github.com/openclaw/openclaw/issues/70753) | Bundled HTTP MCP client times out against hosted SSE server even when endpoint responds in <1s | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70753.md) | complete | Apr 26, 2026, 06:26 UTC |
-| [#70416](https://github.com/openclaw/openclaw/issues/70416) | cost.cacheWrite field wrong by ~5 orders of magnitude for claude-opus-4-7 (missing price table entry) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70416.md) | complete | Apr 26, 2026, 06:26 UTC |
-| [#70618](https://github.com/openclaw/openclaw/issues/70618) | Session crashes with Context overflow when large Project Context is injected at session start | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70618.md) | complete | Apr 26, 2026, 06:26 UTC |
-| [#70659](https://github.com/openclaw/openclaw/issues/70659) | QA-lab extension test fails on current main: aborts in-flight runner model catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70659.md) | complete | Apr 26, 2026, 06:26 UTC |
-| [#70453](https://github.com/openclaw/openclaw/issues/70453) | [Bug]: CLI and WebUI silent failure/hang when calling Gemini via HTTP proxy (v2026.4.21) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70453.md) | complete | Apr 26, 2026, 06:26 UTC |
-| [#70687](https://github.com/openclaw/openclaw/issues/70687) | Bug: Scope upgrade pending approval error after upgrade to 2026.4.21 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70687.md) | complete | Apr 26, 2026, 06:26 UTC |
+| [#45900](https://github.com/openclaw/openclaw/pull/45900) | fix(plugins): suppress false-positive duplicate id warning for channel registration pattern | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/45900.md) | complete | Apr 26, 2026, 06:44 UTC |
+| [#51455](https://github.com/openclaw/openclaw/issues/51455) | bug: pdf extraction fallback renderer omits standardFontDataUrl and emits PDF.js warnings in Node | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51455.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#46472](https://github.com/openclaw/openclaw/pull/46472) | fix(feishu): add WebSocket heartbeat config to prevent silent disconnection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46472.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#60226](https://github.com/openclaw/openclaw/issues/60226) | Non-image file attachments (PDF/Word/etc) not injected into agent context after upload via webchat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60226.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#71188](https://github.com/openclaw/openclaw/issues/71188) | Windows: Gateway spawns visible cmd.exe every ~16s for LAN/ARP discovery (flashing console window) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71188.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#46578](https://github.com/openclaw/openclaw/pull/46578) | fix: replace console.log with logVerbose in tailscale funnel | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/46578.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#46131](https://github.com/openclaw/openclaw/pull/46131) | fix(models): apply provider-level api default in buildInlineProviderModels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46131.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#46356](https://github.com/openclaw/openclaw/pull/46356) | Channels: restore webchat bidirectional sync and add proxy support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46356.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#69229](https://github.com/openclaw/openclaw/issues/69229) | [Bug]: tasks audit reports false-positive inconsistent_timestamps on succeeded/failed/running tasks | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69229.md) | complete | Apr 26, 2026, 06:42 UTC |
+| [#71476](https://github.com/openclaw/openclaw/issues/71476) | Webchat HTTP 401 on __openclaw/ routes after session compaction | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71476.md) | complete | Apr 26, 2026, 06:42 UTC |
 
 </details>
 
