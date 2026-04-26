@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 17:11 UTC
 
 Updated: Apr 26, 2026, 17:11 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24962236810. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 38713,39476,39485,39487,39489,39497,39507,52951,57326,58110,69051,69988,71731,72148,72154,72170,72171,72208,72213,72245.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24962236810](https://github.com/openclaw/clawsweeper/actions/runs/24962236810)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24962236810](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 79/800 current (721 due, 9.9%) |
-| Hourly hot item cadence (<7d) | 79/800 current (721 due, 9.9%) |
+| Hourly cadence coverage | 58/800 current (742 due, 7.2%) |
+| Hourly hot item cadence (<7d) | 58/800 current (742 due, 7.2%) |
 | Daily cadence coverage | 4431/4498 current (67 due, 98.5%) |
 | Daily PR cadence | 2994/3052 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1437/1446 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1894/1894 current (0 due, 100%) |
-| Due now by cadence | 862 |
+| Due now by cadence | 883 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 17:10 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 16:50 UTC.
+Latest review: Apr 26, 2026, 17:10 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 17:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
-| Last hour | 248 | 10 | 238 | 0 | 12 | 183 | 1 |
-| Last 24 hours | 9902 | 2623 | 7279 | 13 | 2956 | 2690 | 18 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
+| Last hour | 227 | 10 | 217 | 0 | 12 | 178 | 1 |
+| Last 24 hours | 9902 | 2623 | 7279 | 13 | 2952 | 2710 | 18 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
