@@ -32,18 +32,18 @@ Last dashboard update: Apr 26, 2026, 08:27 UTC
 
 Updated: Apr 26, 2026, 08:27 UTC
 
-State: Hot intake comments synced
+State: Review in progress
 
-Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 18860,40387,54467,55933,56162,56163,56283,56614,56685,56692,58134,58340,58426,58557,58692,59126,59210,59261,59522,62839.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952107455](https://github.com/openclaw/clawsweeper/actions/runs/24952107455)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952182339](https://github.com/openclaw/clawsweeper/actions/runs/24952182339)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4109 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3713 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4110 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3712 |
 | Open items total | 7822 |
 | Reviewed files | 7580 |
 | Unreviewed open items | 242 |
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952107455](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 79/778 current (699 due, 10.2%) |
-| Hourly hot item cadence (<7d) | 79/778 current (699 due, 10.2%) |
+| Hourly cadence coverage | 78/778 current (700 due, 10%) |
+| Hourly hot item cadence (<7d) | 78/778 current (700 due, 10%) |
 | Daily cadence coverage | 4711/4815 current (104 due, 97.8%) |
 | Daily PR cadence | 3121/3199 current (78 due, 97.6%) |
 | Daily new issue cadence (<30d) | 1590/1616 current (26 due, 98.4%) |
 | Weekly older issue cadence | 1982/1987 current (5 due, 99.7%) |
-| Due now by cadence | 1050 |
+| Due now by cadence | 1051 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 08:25 UTC. Latest close: Apr 26, 2026, 08:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 502 | 92 | 410 | 0 | 42 | 66 | 15 |
-| Last hour | 1104 | 187 | 917 | 0 | 63 | 108 | 24 |
-| Last 24 hours | 10063 | 2387 | 7676 | 65 | 5008 | 1439 | 60 |
+| Last 15 minutes | 500 | 93 | 407 | 0 | 40 | 43 | 15 |
+| Last hour | 1080 | 184 | 896 | 0 | 54 | 79 | 24 |
+| Last 24 hours | 10062 | 2387 | 7675 | 65 | 5002 | 1419 | 60 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
