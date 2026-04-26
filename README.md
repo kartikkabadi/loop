@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 07:12 UTC
+Last dashboard update: Apr 26, 2026, 07:14 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 07:12 UTC
+Updated: Apr 26, 2026, 07:14 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 39, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950881959](https://github.com/openclaw/clawsweeper/actions/runs/24950881959)
 <!-- clawsweeper-status:end -->
 
@@ -42,37 +42,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950881959](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4167 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3840 |
-| Open items total | 8007 |
-| Reviewed files | 7795 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4156 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3831 |
+| Open items total | 7987 |
+| Reviewed files | 7775 |
 | Unreviewed open items | 212 |
-| Archived closed files | 11502 |
+| Archived closed files | 11522 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4062 |
-| Proposed issue closes | 52 (1.3% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3684 |
-| Proposed PR closes | 19 (0.5% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7746 |
-| Proposed closes awaiting apply | 71 (0.9% of fresh reviews) |
-| Closed by Codex apply | 9006 |
+| Fresh reviewed issues in the last 7 days | 4051 |
+| Proposed issue closes | 41 (1% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3675 |
+| Proposed PR closes | 10 (0.3% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7726 |
+| Proposed closes awaiting apply | 51 (0.7% of fresh reviews) |
+| Closed by Codex apply | 9026 |
 | Failed or stale reviews | 49 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 268/864 current (596 due, 31%) |
-| Hourly hot item cadence (<7d) | 268/864 current (596 due, 31%) |
-| Daily cadence coverage | 4841/4943 current (102 due, 97.9%) |
-| Daily PR cadence | 3234/3317 current (83 due, 97.5%) |
+| Hourly cadence coverage | 250/845 current (595 due, 29.6%) |
+| Hourly hot item cadence (<7d) | 250/845 current (595 due, 29.6%) |
+| Daily cadence coverage | 4840/4942 current (102 due, 97.9%) |
+| Daily PR cadence | 3233/3316 current (83 due, 97.5%) |
 | Daily new issue cadence (<30d) | 1607/1626 current (19 due, 98.8%) |
 | Weekly older issue cadence | 1983/1988 current (5 due, 99.7%) |
-| Due now by cadence | 915 |
+| Due now by cadence | 914 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 07:10 UTC. Latest close: Apr 26, 2026, 07:07 UTC. Latest comment sync: Apr 26, 2026, 07:11 UTC.
+Latest review: Apr 26, 2026, 07:10 UTC. Latest close: Apr 26, 2026, 07:14 UTC. Latest comment sync: Apr 26, 2026, 07:14 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 29 | 6 | 23 | 0 | 78 | 81 | 0 |
-| Last hour | 785 | 176 | 609 | 3 | 295 | 270 | 0 |
-| Last 24 hours | 10304 | 2333 | 7971 | 62 | 5327 | 1271 | 112 |
+| Last 15 minutes | 21 | 4 | 17 | 0 | 80 | 100 | 1 |
+| Last hour | 785 | 176 | 609 | 3 | 315 | 308 | 1 |
+| Last 24 hours | 10298 | 2327 | 7971 | 62 | 5332 | 1309 | 112 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,7 +119,6 @@ Latest review: Apr 26, 2026, 07:10 UTC. Latest close: Apr 26, 2026, 07:07 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#65508](https://github.com/openclaw/openclaw/pull/65508) | fix(sanitize): strip tool_call XML tags from user-facing messages | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65508.md) | complete | Apr 26, 2026, 07:10 UTC |
 | [#71682](https://github.com/openclaw/openclaw/issues/71682) | long model timeouts . | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71682.md) | complete | Apr 26, 2026, 07:10 UTC |
 | [#71663](https://github.com/openclaw/openclaw/issues/71663) | Telegram: partial streaming leaks tool call names into chat | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71663.md) | complete | Apr 26, 2026, 07:09 UTC |
 | [#71696](https://github.com/openclaw/openclaw/pull/71696) | feat(telegram): add chat-type-based reply mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71696.md) | complete | Apr 26, 2026, 07:09 UTC |
@@ -129,6 +128,7 @@ Latest review: Apr 26, 2026, 07:10 UTC. Latest close: Apr 26, 2026, 07:07 UTC. L
 | [#71677](https://github.com/openclaw/openclaw/issues/71677) | [Feature]: | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71677.md) | complete | Apr 26, 2026, 07:08 UTC |
 | [#71709](https://github.com/openclaw/openclaw/issues/71709) | [Bug]: slug-generator HTTP 400 misclassified as profile-wide billing failure (5h cooldown), kills all agents on profile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71709.md) | complete | Apr 26, 2026, 07:08 UTC |
 | [#71589](https://github.com/openclaw/openclaw/pull/71589) | fix(agent): suppress tool-use assistant text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71589.md) | complete | Apr 26, 2026, 07:08 UTC |
+| [#71697](https://github.com/openclaw/openclaw/issues/71697) | Ollama Cloud provider fails in agent/Gateway path with non-alternating conversation roles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71697.md) | complete | Apr 26, 2026, 07:08 UTC |
 
 </details>
 
