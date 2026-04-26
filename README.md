@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 05:30 UTC
+Last dashboard update: Apr 26, 2026, 05:31 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 05:30 UTC
+Updated: Apr 26, 2026, 05:31 UTC
 
-State: Review in progress
+State: Hot intake in progress
 
-Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949157533](https://github.com/openclaw/clawsweeper/actions/runs/24949157533)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949193835](https://github.com/openclaw/clawsweeper/actions/runs/24949193835)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949157533](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4234 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4210 |
-| Open items total | 8444 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4211 |
+| Open items total | 8445 |
 | Reviewed files | 8242 |
-| Unreviewed open items | 202 |
+| Unreviewed open items | 203 |
 | Archived closed files | 11055 |
 
 ### Review Outcomes
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949157533](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 310/966 current (656 due, 32.1%) |
-| Hourly hot item cadence (<7d) | 310/966 current (656 due, 32.1%) |
+| Hourly cadence coverage | 289/966 current (677 due, 29.9%) |
+| Hourly hot item cadence (<7d) | 289/966 current (677 due, 29.9%) |
 | Daily cadence coverage | 5196/5282 current (86 due, 98.4%) |
 | Daily PR cadence | 3564/3636 current (72 due, 98%) |
 | Daily new issue cadence (<30d) | 1632/1646 current (14 due, 99.1%) |
 | Weekly older issue cadence | 1992/1994 current (2 due, 99.9%) |
-| Due now by cadence | 946 |
+| Due now by cadence | 968 |
 
 ### Latest Run Activity
 
@@ -80,9 +80,9 @@ Latest review: Apr 26, 2026, 05:26 UTC. Latest close: Apr 26, 2026, 05:26 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 249 | 28 | 221 | 0 | 79 | 80 | 1 |
-| Last hour | 1015 | 123 | 892 | 1 | 312 | 333 | 1 |
-| Last 24 hours | 10628 | 2353 | 8275 | 35 | 5508 | 940 | 175 |
+| Last 15 minutes | 244 | 28 | 216 | 0 | 63 | 64 | 1 |
+| Last hour | 974 | 117 | 857 | 1 | 312 | 333 | 1 |
+| Last 24 hours | 10627 | 2352 | 8275 | 35 | 5500 | 940 | 175 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
