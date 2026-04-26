@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 14:27 UTC
+Last dashboard update: Apr 26, 2026, 14:29 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 14:28 UTC
+Updated: Apr 26, 2026, 14:29 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 12 items across 12 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958987872](https://github.com/openclaw/clawsweeper/actions/runs/24958987872)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958987872](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3773 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3525 |
-| Open items total | 7298 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3774 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3526 |
+| Open items total | 7300 |
 | Reviewed files | 7228 |
-| Unreviewed open items | 70 |
+| Unreviewed open items | 72 |
 | Archived closed files | 12372 |
 
 ### Review Outcomes
@@ -68,11 +68,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958987872](https://
 | --- | ---: |
 | Hourly cadence coverage | 757/839 current (82 due, 90.2%) |
 | Hourly hot item cadence (<7d) | 757/839 current (82 due, 90.2%) |
-| Daily cadence coverage | 4435/4500 current (65 due, 98.6%) |
+| Daily cadence coverage | 4434/4499 current (65 due, 98.6%) |
 | Daily PR cadence | 2988/3046 current (58 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1447/1454 current (7 due, 99.5%) |
-| Weekly older issue cadence | 1889/1889 current (0 due, 100%) |
-| Due now by cadence | 217 |
+| Daily new issue cadence (<30d) | 1446/1453 current (7 due, 99.5%) |
+| Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
+| Due now by cadence | 219 |
 
 ### Audit Health
 
