@@ -2164,7 +2164,7 @@ function workflowStatusBlock(options?: {
   const detail = options?.detail ?? "No workflow status has been published yet.";
   const runLine = options?.runUrl ? `\nRun: ${markdownLink(options.runUrl, options.runUrl)}` : "";
   return `${STATUS_START}
-### Workflow Status
+**Workflow status**
 
 Updated: ${updatedAt}
 
@@ -3725,7 +3725,7 @@ function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, 
   const status = currentWorkflowStatusBlock(readme);
   const recent =
     stats.recent
-      .slice(0, 20)
+      .slice(0, 10)
       .map((item) => {
         const title = displayTitle(item.title);
         const outcome = markdownLink(
@@ -3739,24 +3739,38 @@ function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, 
 
 Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 
+### Current Run
+
 ${status}
+
+### Queue
 
 | Metric | Count |
 | --- | ---: |
 | Open issues in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.open.issues} |
-| Fresh reviewed issues in the last ${FRESH_DAYS} days | ${stats.byKind.issue.fresh} |
-| Proposed issue closes | ${stats.byKind.issue.proposedClose} (${formatPercent(stats.byKind.issue.proposedClose, stats.byKind.issue.fresh)} of reviewed issues) |
 | Open PRs in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.open.pullRequests} |
-| Fresh reviewed PRs in the last ${FRESH_DAYS} days | ${stats.byKind.pull_request.fresh} |
-| Proposed PR closes | ${stats.byKind.pull_request.proposedClose} (${formatPercent(stats.byKind.pull_request.proposedClose, stats.byKind.pull_request.fresh)} of reviewed PRs) |
 | Open items total | ${stats.open.total} |
 | Reviewed files | ${stats.files} |
 | Unreviewed open items | ${stats.cadence.unreviewedOpen} |
 | Archived closed files | ${stats.archivedFiles} |
+
+### Review Outcomes
+
+| Metric | Count |
+| --- | ---: |
+| Fresh reviewed issues in the last ${FRESH_DAYS} days | ${stats.byKind.issue.fresh} |
+| Proposed issue closes | ${stats.byKind.issue.proposedClose} (${formatPercent(stats.byKind.issue.proposedClose, stats.byKind.issue.fresh)} of reviewed issues) |
+| Fresh reviewed PRs in the last ${FRESH_DAYS} days | ${stats.byKind.pull_request.fresh} |
+| Proposed PR closes | ${stats.byKind.pull_request.proposedClose} (${formatPercent(stats.byKind.pull_request.proposedClose, stats.byKind.pull_request.fresh)} of reviewed PRs) |
 | Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
 | Proposed closes awaiting apply | ${stats.proposedClose} (${formatPercent(stats.proposedClose, stats.fresh)} of fresh reviews) |
 | Closed by Codex apply | ${stats.closed} |
 | Failed or stale reviews | ${stats.failed + stats.stale} |
+
+### Cadence
+
+| Metric | Coverage |
+| --- | ---: |
 | Hourly cadence coverage | ${formatCadenceBucket(stats.cadence.hourly)} |
 | Hourly hot item cadence (<${HOT_REVIEW_DAYS}d) | ${formatCadenceBucket(stats.cadence.hourlyHotItems)} |
 | Daily cadence coverage | ${formatCadenceBucket(stats.cadence.daily)} |
@@ -3775,11 +3789,16 @@ ${formatActivityRow("Last 15 minutes", stats.activity.last15Minutes)}
 ${formatActivityRow("Last hour", stats.activity.lastHour)}
 ${formatActivityRow("Last 24 hours", stats.activity.last24Hours)}
 
-Recently reviewed:
+<details>
+<summary>Recently Reviewed (latest 10)</summary>
+
+<br>
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-${recent}`;
+${recent}
+
+</details>`;
   const updated = readme.replace(
     /## Dashboard[\s\S]*?## How It Works/,
     `${dashboard}\n\n## How It Works`,

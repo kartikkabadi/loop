@@ -60,6 +60,8 @@ checkpoint, and status-only commits are intentionally omitted.
   continue automatically while work remains.
 - Added transient GitHub API/network retries with short backoff while preserving
   long secondary-rate-limit backoff and throttle heartbeats. Thanks @stainlu.
+- Split the README dashboard into focused sections and collapsed the recent
+  review table so the project page is easier to scan.
 
 ### Fixed
 

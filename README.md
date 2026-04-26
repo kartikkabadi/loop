@@ -1,25 +1,34 @@
 # ClawSweeper
 
-ClawSweeper is a conservative OpenClaw maintainer bot. It reviews open issues and PRs in `openclaw/openclaw`, writes one regenerated markdown record per open item, publishes a single durable Codex automated review comment when appropriate, and closes only when the evidence is strong.
+ClawSweeper is the conservative OpenClaw maintenance bot for
+`openclaw/openclaw`.
 
-Allowed close reasons:
+It keeps one markdown report per open issue or PR, publishes one durable Codex
+automated review comment when useful, and only closes items when the evidence is
+strong.
 
-- already implemented on `main`
-- cannot reproduce on current `main`
-- belongs on ClawHub as a skill/plugin, not in core
+## Guardrails
+
+ClawSweeper may propose a close only when the item is clearly one of these:
+
+- implemented on current `main`
+- not reproducible on current `main`
+- better suited for ClawHub skill/plugin work than core
 - duplicate or superseded by a canonical issue/PR
 - concrete but not actionable in this source repo
-- too incoherent to be actionable
-- stale issue older than 60 days with insufficient data to verify the bug
+- incoherent enough that no action can be taken
+- stale issue older than 60 days with too little data to verify
 
-Everything else stays open.
+Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
 Last dashboard update: Apr 26, 2026, 02:01 UTC
 
+### Current Run
+
 <!-- clawsweeper-status:start -->
-### Workflow Status
+**Workflow status**
 
 Updated: Apr 26, 2026, 02:01 UTC
 
@@ -29,22 +38,34 @@ Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 38
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24945724917](https://github.com/openclaw/clawsweeper/actions/runs/24945724917)
 <!-- clawsweeper-status:end -->
 
+### Queue
+
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5342 |
-| Fresh reviewed issues in the last 7 days | 5294 |
-| Proposed issue closes | 833 (15.7% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4252 |
-| Fresh reviewed PRs in the last 7 days | 4149 |
-| Proposed PR closes | 83 (2% of reviewed PRs) |
 | Open items total | 9594 |
 | Reviewed files | 9444 |
 | Unreviewed open items | 150 |
 | Archived closed files | 9853 |
+
+### Review Outcomes
+
+| Metric | Count |
+| --- | ---: |
+| Fresh reviewed issues in the last 7 days | 5294 |
+| Proposed issue closes | 833 (15.7% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 4149 |
+| Proposed PR closes | 83 (2% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 9443 |
 | Proposed closes awaiting apply | 916 (9.7% of fresh reviews) |
 | Closed by Codex apply | 7632 |
 | Failed or stale reviews | 1 |
+
+### Cadence
+
+| Metric | Coverage |
+| --- | ---: |
 | Hourly cadence coverage | 23/1057 current (1034 due, 2.2%) |
 | Hourly hot item cadence (<7d) | 23/1057 current (1034 due, 2.2%) |
 | Daily cadence coverage | 5625/5762 current (137 due, 97.6%) |
@@ -63,7 +84,10 @@ Latest review: Apr 26, 2026, 01:59 UTC. Latest close: Apr 26, 2026, 01:49 UTC. L
 | Last hour | 772 | 122 | 650 | 1 | 49 | 391 | 7 |
 | Last 24 hours | 11643 | 2862 | 8781 | 15 | 5638 | 454 | 202 |
 
-Recently reviewed:
+<details>
+<summary>Recently Reviewed (latest 10)</summary>
+
+<br>
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
@@ -77,40 +101,64 @@ Recently reviewed:
 | [#38881](https://github.com/openclaw/openclaw/pull/38881) | Fix imageModel auto-switch when primary model doesn't support vision | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38881.md) | complete | Apr 26, 2026, 01:58 UTC |
 | [#38729](https://github.com/openclaw/openclaw/pull/38729) | feat(thinking): register supportsXHighThinking for Anthropic provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38729.md) | complete | Apr 26, 2026, 01:58 UTC |
 | [#38939](https://github.com/openclaw/openclaw/pull/38939) | feishu: arbitrate group mentions across main and specialists | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38939.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#38670](https://github.com/openclaw/openclaw/pull/38670) | feat(hooks): add agent-scoped internal hook policy overrides | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38670.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#38502](https://github.com/openclaw/openclaw/pull/38502) | fix(tui): clarify Ctrl+C status when run is still active | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38502.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#66864](https://github.com/openclaw/openclaw/issues/66864) | /new session reset doesn't purge system-events queue — stale events leak into fresh session | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66864.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#38932](https://github.com/openclaw/openclaw/pull/38932) | docs(gateway): add Windows no-Docker hardening fallback guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38932.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#38713](https://github.com/openclaw/openclaw/pull/38713) | fix(skills): resolve `skills info` name mismatches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38713.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#38846](https://github.com/openclaw/openclaw/pull/38846) | security(windows): enhance command argument validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38846.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#67049](https://github.com/openclaw/openclaw/pull/67049) | fix: drain system events on /new session reset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67049.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#71379](https://github.com/openclaw/openclaw/pull/71379) | fix: expose image edit geometry flags in capability cli | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/71379.md) | complete | Apr 26, 2026, 01:58 UTC |
-| [#38664](https://github.com/openclaw/openclaw/pull/38664) | docs: Add security scan workflow template (Trivy + KICS + TruffleHog) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38664.md) | complete | Apr 26, 2026, 01:57 UTC |
-| [#38780](https://github.com/openclaw/openclaw/pull/38780) | feat: context-pressure-aware continuation (CONTINUE_WORK / CONTINUE_DELEGATE) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38780.md) | complete | Apr 26, 2026, 01:57 UTC |
+
+</details>
 
 ## How It Works
 
-The normal review workflow is proposal-only. It runs configurable parallel shards and never closes during review. A hot-intake publish step may sync the durable Codex automated review comment for newly reviewed items, but close actions are reserved for the separate apply/comment-sync workflow. Apply mode updates the durable review comment in place and closes only unchanged high-confidence proposals.
+ClawSweeper has two independent lanes.
 
-Each review job:
+### Review Lane
 
-1. Checks out this repo.
-2. Uses a planner job that scans open items, prioritizes due activity, and hands explicit item-number batches to review shards.
-3. Checks out `openclaw/openclaw` at `main`, with cached git objects for faster startup.
-4. Pre-hydrates compact related issue/PR context referenced from the item body, comments, timeline, or PR review comments, plus a small best-effort local title search over existing reports for likely duplicates/superseded work.
-5. Runs Codex with `gpt-5.5`, high reasoning, fast service tier, and a 10-minute per-item timeout inside the OpenClaw checkout. The review prompt requires source/docs/tests/history inspection, adjacent-code reading, and reason-specific evidence before Codex can mark a close as high-confidence.
-6. Writes `items/<number>.md` with the decision, best possible solution, proposed review comment, review runtime (`review_model`, `review_reasoning_effort`, sandbox, service tier), and a GitHub snapshot hash.
-7. Marks high-confidence allowed close decisions as `proposed_close`.
+Review is proposal-only. It never closes items.
 
-Codex runs without GitHub write tokens. The runner checks the OpenClaw checkout before every review, makes the checkout read-only in CI, runs Codex without the nested Linux sandbox that blocks shell inspection on GitHub runners, checks the checkout again after review, and fails the item if Codex leaves any tracked or untracked change behind.
+- A planner scans open issues and PRs, then assigns exact item numbers to shards.
+- Each shard checks out `openclaw/openclaw` at `main`.
+- Codex reviews with `gpt-5.5`, high reasoning, fast service tier, and a
+  10-minute per-item timeout.
+- Each item becomes `items/<number>.md` with the decision, evidence, suggested
+  comment, runtime metadata, and GitHub snapshot hash.
+- High-confidence allowed close decisions become `proposed_close`.
 
-Parallel workflow shards only receive planned item numbers. The planner posts a best-effort workflow status note to this README before shards start, each shard emits `[review]` progress lines, and the final job merges artifacts and updates the dashboard. Review jobs time out after 75 minutes so one stuck shard cannot hold the review concurrency group indefinitely. If the planner filled the current worker capacity, the publish job dispatches the next proposal-only sweep automatically. Review cadence is hourly for items with activity since the last stored snapshot and for anything created in the last 7 days, daily for older PRs and issues younger than 30 days, and weekly for older inactive issues. A separate hot-intake lane runs every 5 minutes with `batch_size=1`, up to 20 shards, and a two-page newest/most-recently-updated scan so brand-new issues and PRs get individual review workers quickly. A review policy change, including model, reasoning effort, sandbox, service tier, prompt, or schema changes, also makes old reports due again. When more items are due than fit in a run, the planner prioritizes active items first, then policy-stale reports, then hot new items, then PRs, then recent issues, then older weekly reviews. The dashboard reports local cadence coverage for hourly hot items, daily PRs, daily new issues, and weekly older issues; activity-based promotion is applied by the planner while scanning GitHub snapshots.
+Cadence:
 
-To sync comments or close later without rerunning Codex, dispatch the workflow with `apply_existing=true` or let the scheduled apply lane run at minute 37 each hour. That mode reads existing `items/*.md`, refetches the issue/PR context, updates the single marker-backed Codex automated review comment in place, and only closes if nothing except that review comment changed since the proposal was written. It never posts a second close comment; closing reuses the durable review comment and then closes the item. Comment and close mutations use the `openclaw-ci` GitHub App installation token, so new automated GitHub comments are attributed to `clawsweeper[bot]` instead of a maintainer account. Successfully closed or already-closed items move to `closed/<number>.md`; `items/` stays focused on open items that still need tracking. Folder reconciliation also compares tracked files with the current GitHub open set: externally closed items move from `items/` to `closed/`, and reopened archived items move back to `items/` as stale so the planner reviews them again. Apply runs update the dashboard when each checkpoint commits, cap total processed items separately from fresh closes, leave enough scan room to skip changed or already-closed records while still reaching fresh closures, and emit `[apply]` progress lines during long close batches. Apply mode also posts best-effort start/checkpoint/finish notes to the dashboard. When GitHub secondary throttling triggers a long retry sleep, apply mode posts a best-effort throttle heartbeat to the dashboard with the checkpoint, processed count, and next retry delay. Transient GitHub API/network failures use shorter retries so long scans can survive connection resets or gateway errors. Apply mode defaults to `apply_min_age_days=0`, `apply_kind=issue`, a 5-second close delay, 50 fresh closes per checkpoint commit, and long retry backoff for GitHub secondary write throttling, so issue cleanup can apply high-confidence closes regardless of age while PRs remain excluded. If an apply run reaches its requested close limit, it queues another apply run with the same settings.
+- hourly for items with activity since the last snapshot
+- hourly for anything created in the last 7 days
+- daily for older PRs and issues younger than 30 days
+- weekly for older inactive issues
+- immediate-ish hot intake every 5 minutes for newest/active items
 
-Maintainer-authored items are never auto-closed. Candidate planning and apply mode both read GitHub's `author_association` field and exclude `OWNER`, `MEMBER`, and `COLLABORATOR` items from automated close actions.
+### Apply Lane
 
-`npm run audit` compares live open GitHub items with the generated `items/` and `closed/` records without moving files. It reports missing open records, open records still archived under `closed/`, stale `items/` records that no longer appear open, duplicate markdown records, protected-label proposed closes, and stale review-status records. Use `--output audit-report.json` for the full report, `--sample-limit N` to control console samples, and `--strict` to exit non-zero when state drift is present.
+Apply reads existing reports and mutates GitHub only when the stored review is
+still valid.
+
+- Updates the single marker-backed Codex automated review comment in place.
+- Closes only unchanged high-confidence proposals.
+- Reuses the review comment when closing; no duplicate close comment.
+- Moves closed or already-closed reports to `closed/<number>.md`.
+- Moves reopened archived reports back to `items/<number>.md` as stale.
+- Commits checkpoints and dashboard heartbeats during long runs.
+
+Apply defaults to issue-only closes, no age floor, 5-second close delay, and
+50 fresh closes per checkpoint. If it reaches the requested limit, it queues
+another apply run with the same settings.
+
+### Safety Model
+
+- Maintainer-authored items are excluded from automated closes.
+- Protected labels block close proposals.
+- Codex runs without GitHub write tokens.
+- CI makes the OpenClaw checkout read-only for reviews.
+- Reviews fail if Codex leaves tracked or untracked changes behind.
+- Snapshot changes block apply unless the only change is the bot’s own review
+  comment.
+
+### Audit
+
+`npm run audit` compares live GitHub state with generated records without moving
+files. It reports missing open records, archived open records, stale records,
+duplicates, protected-label proposed closes, and stale review-status records.
 
 ## Local Run
 
@@ -155,6 +203,19 @@ Required secrets:
 - `CLAWSWEEPER_APP_ID`: GitHub App ID for `openclaw-ci`. Currently `3306130`.
 - `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `openclaw-ci`; plan/review jobs use a short-lived GitHub App installation token for read-heavy `openclaw/openclaw` API calls, and apply/comment-sync jobs use the app token for comments and closes.
 
-The workflow logs Codex in with `OPENAI_API_KEY`, then runs review shards without OpenAI or Codex token environment variables. Parent ClawSweeper code uses the `openclaw-ci` GitHub App installation token for read-heavy target and related GitHub context before invoking Codex, falling back to `OPENCLAW_GH_TOKEN` only if the App secrets are absent. `codex exec` uses the prepared login state, and the shard fails instead of writing fallback review markdown if Codex auth/output fails. Apply mode uses the `openclaw-ci` GitHub App installation token for `openclaw/openclaw` review comments and closes, so automated mutations are attributed to `clawsweeper[bot]`. The built-in `GITHUB_TOKEN` commits review markdown back to this repo.
+Token flow:
 
-The `openclaw-ci` GitHub App installation must have read access for target scan context and write access to `openclaw/openclaw` issues and pull requests. Grant Actions write on `openclaw/clawsweeper` only if app-token-based run cancellation or dispatch is needed; normal workflow execution can still use the repository `GITHUB_TOKEN` for ClawSweeper commits and workflow orchestration.
+- Review shards log Codex in with `OPENAI_API_KEY`, then run without OpenAI or
+  Codex token environment variables.
+- ClawSweeper uses the `openclaw-ci` GitHub App token for read-heavy target
+  context, falling back to `OPENCLAW_GH_TOKEN` only if app secrets are absent.
+- Apply mode uses the app token for review comments and closes, so GitHub
+  attributes mutations to `clawsweeper[bot]`.
+- The built-in `GITHUB_TOKEN` commits generated reports back to this repo.
+
+Required app permissions:
+
+- read access for target scan context
+- write access to `openclaw/openclaw` issues and pull requests
+- optional Actions write on `openclaw/clawsweeper` for app-token-based run
+  cancellation or dispatch
