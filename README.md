@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 15:20 UTC
+Last dashboard update: Apr 26, 2026, 15:21 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 15:20 UTC
+Updated: Apr 26, 2026, 15:21 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24959950114. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 13362,13364,13597,13962,13968,14376,14593,14619,14629,14804,14968,15591,15634,15840,40874,40877,40878,50483,50998,51011.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959950114](https://github.com/openclaw/clawsweeper/actions/runs/24959950114)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959950114](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3752 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3753 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3522 |
-| Open items total | 7274 |
+| Open items total | 7275 |
 | Reviewed files | 7192 |
-| Unreviewed open items | 82 |
+| Unreviewed open items | 83 |
 | Archived closed files | 12418 |
 
 ### Review Outcomes
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24959950114](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 317/805 current (488 due, 39.4%) |
-| Hourly hot item cadence (<7d) | 317/805 current (488 due, 39.4%) |
+| Hourly cadence coverage | 275/805 current (530 due, 34.2%) |
+| Hourly hot item cadence (<7d) | 275/805 current (530 due, 34.2%) |
 | Daily cadence coverage | 4432/4497 current (65 due, 98.6%) |
 | Daily PR cadence | 2989/3047 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1443/1450 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 635 |
+| Due now by cadence | 678 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 15:19 UTC. Latest close: Apr 26, 2026, 15:02 UTC. Latest comment sync: Apr 26, 2026, 15:13 UTC.
+Latest review: Apr 26, 2026, 15:19 UTC. Latest close: Apr 26, 2026, 15:02 UTC. Latest comment sync: Apr 26, 2026, 15:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 225 | 0 |
-| Last hour | 355 | 11 | 344 | 0 | 24 | 394 | 2 |
-| Last 24 hours | 10018 | 2709 | 7309 | 14 | 3458 | 2381 | 19 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 222 | 1 |
+| Last hour | 313 | 11 | 302 | 0 | 24 | 413 | 3 |
+| Last 24 hours | 10018 | 2709 | 7309 | 14 | 3458 | 2400 | 20 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -121,7 +121,7 @@ Latest review: Apr 26, 2026, 15:19 UTC. Latest close: Apr 26, 2026, 15:02 UTC. L
 | --- | --- | --- | --- | --- |
 | [#14804](https://github.com/openclaw/openclaw/issues/14804) | Enhancement: Add ephemeral file system support for isolated sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14804.md) | complete | Apr 26, 2026, 15:19 UTC |
 | [#14376](https://github.com/openclaw/openclaw/issues/14376) | Feature: Reason-aware cron guardrails (quota/auth/rate-limit aware backoff + circuit breaker) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14376.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#50483](https://github.com/openclaw/openclaw/pull/50483) | fix(ios): stabilize chat streaming layout and session flow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50483.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#50483](https://github.com/openclaw/openclaw/pull/50483) | fix(ios): stabilize chat streaming layout and session flow | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/50483.md) | complete | Apr 26, 2026, 15:18 UTC |
 | [#13362](https://github.com/openclaw/openclaw/issues/13362) | [Feature]: Add openclaw doctor --dry-run for safer config validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13362.md) | complete | Apr 26, 2026, 15:18 UTC |
 | [#40877](https://github.com/openclaw/openclaw/pull/40877) | fix(ios): resolve main-thread warnings for CLLocationManager and SFSpeechRecognizer | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40877.md) | complete | Apr 26, 2026, 15:18 UTC |
 | [#13962](https://github.com/openclaw/openclaw/issues/13962) | Feature: Per-mention model routing + context window for group mentions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13962.md) | complete | Apr 26, 2026, 15:18 UTC |
