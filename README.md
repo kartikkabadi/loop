@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 18:31 UTC
+Last dashboard update: Apr 26, 2026, 18:34 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 18:32 UTC
+Updated: Apr 26, 2026, 18:34 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 25 items across 25 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963973477](https://github.com/openclaw/clawsweeper/actions/runs/24963973477)
 <!-- clawsweeper-status:end -->
 
@@ -66,11 +66,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963973477](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 798/818 current (20 due, 97.6%) |
-| Hourly hot item cadence (<7d) | 798/818 current (20 due, 97.6%) |
-| Daily cadence coverage | 4430/4497 current (67 due, 98.5%) |
+| Hourly cadence coverage | 797/817 current (20 due, 97.6%) |
+| Hourly hot item cadence (<7d) | 797/817 current (20 due, 97.6%) |
+| Daily cadence coverage | 4431/4498 current (67 due, 98.5%) |
 | Daily PR cadence | 2996/3054 current (58 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1434/1443 current (9 due, 99.4%) |
+| Daily new issue cadence (<30d) | 1435/1444 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1896/1896 current (0 due, 100%) |
 | Due now by cadence | 159 |
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 18:20 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 54 | 4 | 50 | 0 | 0 | 0 | 0 |
-| Last hour | 1560 | 41 | 1519 | 0 | 0 | 397 | 5 |
-| Last 24 hours | 9873 | 2630 | 7243 | 5 | 2369 | 2446 | 19 |
+| Last 15 minutes | 11 | 2 | 9 | 0 | 0 | 0 | 0 |
+| Last hour | 1560 | 41 | 1519 | 0 | 0 | 379 | 3 |
+| Last 24 hours | 9873 | 2630 | 7243 | 5 | 2345 | 2446 | 19 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
