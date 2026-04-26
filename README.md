@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 09:04 UTC
+Last dashboard update: Apr 26, 2026, 09:06 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 09:04 UTC
+Updated: Apr 26, 2026, 09:06 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952843768](https://github.com/openclaw/clawsweeper/actions/runs/24952843768)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952897171](https://github.com/openclaw/clawsweeper/actions/runs/24952897171)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952843768](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 62/776 current (714 due, 8%) |
-| Hourly hot item cadence (<7d) | 62/776 current (714 due, 8%) |
+| Hourly cadence coverage | 37/776 current (739 due, 4.8%) |
+| Hourly hot item cadence (<7d) | 37/776 current (739 due, 4.8%) |
 | Daily cadence coverage | 4498/4618 current (120 due, 97.4%) |
 | Daily PR cadence | 3016/3102 current (86 due, 97.2%) |
 | Daily new issue cadence (<30d) | 1482/1516 current (34 due, 97.8%) |
 | Weekly older issue cadence | 1968/1974 current (6 due, 99.7%) |
-| Due now by cadence | 1094 |
+| Due now by cadence | 1119 |
 
 ### Audit Health
 
@@ -108,8 +108,8 @@ Latest review: Apr 26, 2026, 08:54 UTC. Latest close: Apr 26, 2026, 09:04 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 218 | 43 | 175 | 1 | 105 | 105 | 0 |
-| Last hour | 1578 | 225 | 1353 | 6 | 252 | 270 | 16 |
+| Last 15 minutes | 129 | 28 | 101 | 0 | 100 | 99 | 0 |
+| Last hour | 1506 | 218 | 1288 | 5 | 252 | 270 | 16 |
 | Last 24 hours | 9972 | 2442 | 7530 | 86 | 5036 | 1639 | 47 |
 
 <details>
