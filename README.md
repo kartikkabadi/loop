@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 15:37 UTC
+Last dashboard update: Apr 26, 2026, 15:41 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 15:37 UTC
+Updated: Apr 26, 2026, 15:41 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24960378307. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960378307](https://github.com/openclaw/clawsweeper/actions/runs/24960378307)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960378307](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3759 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3526 |
-| Open items total | 7285 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3761 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3527 |
+| Open items total | 7288 |
 | Reviewed files | 7192 |
-| Unreviewed open items | 93 |
+| Unreviewed open items | 96 |
 | Archived closed files | 12418 |
 
 ### Review Outcomes
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960378307](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 17/802 current (785 due, 2.1%) |
-| Hourly hot item cadence (<7d) | 17/802 current (785 due, 2.1%) |
+| Hourly cadence coverage | 14/802 current (788 due, 1.7%) |
+| Hourly hot item cadence (<7d) | 14/802 current (788 due, 1.7%) |
 | Daily cadence coverage | 4435/4500 current (65 due, 98.6%) |
 | Daily PR cadence | 2991/3049 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1444/1451 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 943 |
+| Due now by cadence | 949 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 15:19 UTC. Latest close: Apr 26, 2026, 15:02 UTC. Latest comment sync: Apr 26, 2026, 15:26 UTC.
+Latest review: Apr 26, 2026, 15:40 UTC. Latest close: Apr 26, 2026, 15:02 UTC. Latest comment sync: Apr 26, 2026, 15:26 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 117 | 0 |
-| Last hour | 43 | 0 | 43 | 0 | 24 | 673 | 3 |
-| Last 24 hours | 10008 | 2705 | 7303 | 14 | 3400 | 2672 | 20 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 6 | 0 |
+| Last hour | 60 | 0 | 60 | 0 | 24 | 655 | 3 |
+| Last 24 hours | 10000 | 2697 | 7303 | 14 | 3368 | 2654 | 20 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 15:19 UTC. Latest close: Apr 26, 2026, 15:02 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#14804](https://github.com/openclaw/openclaw/issues/14804) | Enhancement: Add ephemeral file system support for isolated sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14804.md) | complete | Apr 26, 2026, 15:19 UTC |
-| [#14376](https://github.com/openclaw/openclaw/issues/14376) | Feature: Reason-aware cron guardrails (quota/auth/rate-limit aware backoff + circuit breaker) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14376.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#50483](https://github.com/openclaw/openclaw/pull/50483) | fix(ios): stabilize chat streaming layout and session flow | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/50483.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#13362](https://github.com/openclaw/openclaw/issues/13362) | [Feature]: Add openclaw doctor --dry-run for safer config validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13362.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#40877](https://github.com/openclaw/openclaw/pull/40877) | fix(ios): resolve main-thread warnings for CLLocationManager and SFSpeechRecognizer | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40877.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#13962](https://github.com/openclaw/openclaw/issues/13962) | Feature: Per-mention model routing + context window for group mentions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/13962.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#51011](https://github.com/openclaw/openclaw/pull/51011) | feat(ios): add Privacy & Access settings for contacts, calendar, and reminders | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51011.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#40878](https://github.com/openclaw/openclaw/pull/40878) | fix(ios): picker adaptive onChange loop + OSLog string concatenation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40878.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#40874](https://github.com/openclaw/openclaw/pull/40874) | feat(ios): Liquid Glass UI, Action Button & Dynamic Island | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40874.md) | complete | Apr 26, 2026, 15:18 UTC |
-| [#14593](https://github.com/openclaw/openclaw/issues/14593) | [Bug]: Skill install fails in Docker: `brew not installed` on Linux container | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14593.md) | complete | Apr 26, 2026, 15:18 UTC |
+| [#39284](https://github.com/openclaw/openclaw/pull/39284) | feat(sessions_spawn): add contextFiles and inheritContext options | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39284.md) | complete | Apr 26, 2026, 15:40 UTC |
+| [#39231](https://github.com/openclaw/openclaw/pull/39231) | feat(agents): add opt-in CaMeL prompt injection defense | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39231.md) | complete | Apr 26, 2026, 15:40 UTC |
+| [#38309](https://github.com/openclaw/openclaw/issues/38309) | feat: support SecretRef in sandbox.docker.env | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38309.md) | complete | Apr 26, 2026, 15:40 UTC |
+| [#38349](https://github.com/openclaw/openclaw/issues/38349) | feat: contextual group activation — LLM-driven peeking/engaged state machine | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38349.md) | complete | Apr 26, 2026, 15:39 UTC |
+| [#39013](https://github.com/openclaw/openclaw/issues/39013) | Hook-injected virtual files show as `undefined` in `/context list`, and session memory keeps recalling hook content as if it were real session history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39013.md) | complete | Apr 26, 2026, 15:39 UTC |
+| [#38626](https://github.com/openclaw/openclaw/issues/38626) | Subagent lifecycle observability + async supervision controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38626.md) | complete | Apr 26, 2026, 15:39 UTC |
+| [#39117](https://github.com/openclaw/openclaw/pull/39117) | fix: recover busy sessions and improve queued handling | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39117.md) | complete | Apr 26, 2026, 15:39 UTC |
+| [#39498](https://github.com/openclaw/openclaw/pull/39498) | fix(secrets): prevent ByteString crashes from pasted unicode chars | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39498.md) | complete | Apr 26, 2026, 15:39 UTC |
+| [#38259](https://github.com/openclaw/openclaw/issues/38259) | dotenv loader does not expand env references in .env files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38259.md) | complete | Apr 26, 2026, 15:39 UTC |
+| [#38958](https://github.com/openclaw/openclaw/pull/38958) | feat(feishu): configurable group and DM display-name resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38958.md) | complete | Apr 26, 2026, 15:39 UTC |
 
 </details>
 
