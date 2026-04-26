@@ -19,6 +19,7 @@ import {
   reviewActionForDecision,
   safeOutputTail,
   shardItemNumbers,
+  shouldSyncReviewComment,
   shouldReviewItem,
   shouldRetryGh,
   shouldPlanItem,
@@ -355,6 +356,60 @@ test("apply mode prioritizes matching close proposals before comment sync", () =
   assert.equal(applyDecisionPriority(issueClose, "issue"), 0);
   assert.equal(applyDecisionPriority(pullRequestClose, "issue"), 1);
   assert.equal(applyDecisionPriority(reportFrontMatter(), "issue"), 2);
+});
+
+test("comment-only sync creates or refreshes stale durable review comments", () => {
+  const now = Date.parse("2026-04-26T12:00:00Z");
+  const base = {
+    syncCommentsOnly: true,
+    isCloseProposal: false,
+    commentSyncMinAgeDays: 7,
+    reviewCommentSyncedAt: "2026-04-25T12:00:00Z",
+    hasExistingReviewComment: true,
+    needsReviewCommentBodySync: true,
+    needsReviewCommentHashSync: true,
+    needsReviewCommentReferenceSync: false,
+    now,
+  };
+
+  assert.equal(shouldSyncReviewComment(base), false);
+  assert.equal(
+    shouldSyncReviewComment({
+      ...base,
+      hasExistingReviewComment: false,
+    }),
+    true,
+  );
+  assert.equal(
+    shouldSyncReviewComment({
+      ...base,
+      needsReviewCommentBodySync: false,
+      needsReviewCommentHashSync: false,
+      needsReviewCommentReferenceSync: true,
+    }),
+    true,
+  );
+  assert.equal(
+    shouldSyncReviewComment({
+      ...base,
+      reviewCommentSyncedAt: "2026-04-18T12:00:00Z",
+    }),
+    true,
+  );
+  assert.equal(
+    shouldSyncReviewComment({
+      ...base,
+      syncCommentsOnly: false,
+    }),
+    true,
+  );
+  assert.equal(
+    shouldSyncReviewComment({
+      ...base,
+      isCloseProposal: true,
+    }),
+    true,
+  );
 });
 
 test("decision parser enforces required schema-shaped evidence", () => {

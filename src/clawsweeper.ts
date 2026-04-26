@@ -1236,6 +1236,31 @@ export function applyDecisionPriority(markdown: string, applyKind: ApplyKind): n
   return 1;
 }
 
+export function shouldSyncReviewComment(options: {
+  syncCommentsOnly: boolean;
+  isCloseProposal: boolean;
+  commentSyncMinAgeDays: number;
+  reviewCommentSyncedAt: string | undefined;
+  hasExistingReviewComment: boolean;
+  needsReviewCommentBodySync: boolean;
+  needsReviewCommentHashSync: boolean;
+  needsReviewCommentReferenceSync: boolean;
+  now?: number;
+}): boolean {
+  if (
+    !options.needsReviewCommentBodySync &&
+    !options.needsReviewCommentHashSync &&
+    !options.needsReviewCommentReferenceSync
+  ) {
+    return false;
+  }
+  if (!options.syncCommentsOnly || options.isCloseProposal) return true;
+  if (!options.hasExistingReviewComment || options.needsReviewCommentReferenceSync) return true;
+  if (options.commentSyncMinAgeDays <= 0) return true;
+  if (!options.reviewCommentSyncedAt) return true;
+  return isOlderThanDays(options.reviewCommentSyncedAt, options.commentSyncMinAgeDays, options.now);
+}
+
 function replaceFrontMatterValue(markdown: string, key: string, value: string): string {
   const line = `${key}: ${value}`;
   const pattern = new RegExp(`^${key}:\\s*.*$`, "m");
@@ -3103,6 +3128,7 @@ function applyDecisionsCommand(args: Args): void {
   const progressEvery = Math.max(1, numberArg(args.progress_every, 10));
   const skipDashboard = boolArg(args.skip_dashboard);
   const syncCommentsOnly = boolArg(args.sync_comments_only);
+  const commentSyncMinAgeDays = numberArg(args.comment_sync_min_age_days, 0);
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const requestedItemNumberSet = new Set(requestedItemNumbers);
   const results: ApplyResult[] = [];
@@ -3148,7 +3174,7 @@ function applyDecisionsCommand(args: Args): void {
     .sort((left, right) => left.priority - right.priority || left.number - right.number)
     .map((entry) => entry.name);
   logProgress(
-    `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+    `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} comment_sync_min_age_days=${commentSyncMinAgeDays} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
   );
   for (const file of files) {
     const path = join(itemsDir, file);
@@ -3318,11 +3344,22 @@ function applyDecisionsCommand(args: Args): void {
       markedReviewComment,
     );
     const needsReviewCommentBodySync = !existingReviewComment || !existingReviewCommentMatches;
-    const needsReviewCommentMetadata =
-      frontMatterValue(markdown, "review_comment_sha256") !== reviewCommentHash ||
+    const needsReviewCommentHashSync =
+      frontMatterValue(markdown, "review_comment_sha256") !== reviewCommentHash;
+    const needsReviewCommentReferenceSync =
       frontMatterValue(markdown, "review_comment_id") === "unknown" ||
       frontMatterValue(markdown, "review_comment_url") === "unknown";
-    if (needsReviewCommentBodySync || needsReviewCommentMetadata) {
+    const needsReviewCommentSync = shouldSyncReviewComment({
+      syncCommentsOnly,
+      isCloseProposal,
+      commentSyncMinAgeDays,
+      reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+      hasExistingReviewComment: Boolean(existingReviewComment),
+      needsReviewCommentBodySync,
+      needsReviewCommentHashSync,
+      needsReviewCommentReferenceSync,
+    });
+    if (needsReviewCommentSync) {
       const lockedReason = needsReviewCommentBodySync ? lockedConversationApplyReason(item) : null;
       if (lockedReason) {
         if (markApplySkipped("skipped_locked_conversation", lockedReason)) break;

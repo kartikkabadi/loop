@@ -149,7 +149,20 @@ Latest review: Apr 26, 2026, 23:30 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 ## How It Works
 
-ClawSweeper has two independent lanes.
+ClawSweeper is split into a scheduler, a review lane, and an apply lane.
+
+### Scheduler
+
+The scheduler decides what to scan and how often. New and active items get more
+attention; older quiet items fall back to a slower cadence.
+
+- hot/new and recently active items are checked hourly, with a 5-minute intake
+  schedule for the newest queue edge
+- pull requests and issues younger than 30 days are checked daily once they
+  leave the hot window
+- older inactive issues are checked weekly
+- apply wakes every 15 minutes and exits quickly when there are no unchanged
+  high-confidence close proposals
 
 ### Review Lane
 
@@ -164,14 +177,9 @@ Review is proposal-only. It never closes items.
 - Each item becomes `items/<number>.md` with the decision, evidence, suggested
   comment, runtime metadata, and GitHub snapshot hash.
 - High-confidence allowed close decisions become `proposed_close`.
-
-Cadence:
-
-- hourly for items with activity since the last snapshot
-- hourly for anything created in the last 7 days
-- daily for older PRs and issues younger than 30 days
-- weekly for older inactive issues
-- immediate-ish hot intake every 5 minutes for newest/active items
+- After publish, the lane checks the selected items' single marker-backed Codex
+  review comment. Missing comments and missing metadata are synced immediately;
+  existing comments are refreshed only when stale, currently weekly.
 
 ### Apply Lane
 
@@ -191,6 +199,11 @@ eligible proposal list so idle runs do not scan unrelated keep-open records.
 It defaults to all item kinds, no age floor, a 2-second close delay, and 50
 fresh closes per checkpoint. If it reaches the requested limit, it queues
 another apply run with the same settings.
+
+There is still one deterministic apply path for writes. Review can propose and
+sync stale public review comments, but closing remains guarded by apply so a
+fresh GitHub snapshot, labels, maintainer-authorship, and unchanged item state
+are checked immediately before mutation.
 
 ### Safety Model
 
@@ -235,6 +248,13 @@ Apply unchanged proposals later:
 ```bash
 source ~/.profile
 npm run apply-decisions -- --limit 20 --apply-kind all
+```
+
+Sync durable review comments without closing:
+
+```bash
+source ~/.profile
+npm run apply-decisions -- --sync-comments-only --comment-sync-min-age-days 7 --processed-limit 1000 --limit 0
 ```
 
 Manual review runs are proposal-only even if `--apply-closures` or workflow input `apply_closures=true` is set. Use `apply_existing=true` to apply unchanged proposals later. Scheduled apply runs process both issues and pull requests by default; pass `apply_kind=issue` or `apply_kind=pull_request` to narrow a manual run.
