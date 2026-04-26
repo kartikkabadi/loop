@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 06:00 UTC
+Last dashboard update: Apr 26, 2026, 06:11 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 06:04 UTC
+Updated: Apr 26, 2026, 06:11 UTC
 
-State: Audit finished
+State: Apply in progress
 
-Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949726555](https://github.com/openclaw/clawsweeper/actions/runs/24949726555)
+Starting apply/comment-sync run for up to 50 fresh pull_request closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949829618](https://github.com/openclaw/clawsweeper/actions/runs/24949829618)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,36 +43,36 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949726555](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4216 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4207 |
-| Open items total | 8423 |
-| Reviewed files | 8220 |
-| Unreviewed open items | 203 |
-| Archived closed files | 11077 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4192 |
+| Open items total | 8408 |
+| Reviewed files | 8204 |
+| Unreviewed open items | 204 |
+| Archived closed files | 11093 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4127 |
+| Fresh reviewed issues in the last 7 days | 4126 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 4068 |
-| Proposed PR closes | 287 (7.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 8195 |
-| Proposed closes awaiting apply | 287 (3.5% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 4052 |
+| Proposed PR closes | 281 (6.9% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 8178 |
+| Proposed closes awaiting apply | 281 (3.4% of fresh reviews) |
 | Closed by Codex apply | 8666 |
-| Failed or stale reviews | 25 |
+| Failed or stale reviews | 26 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 275/958 current (683 due, 28.7%) |
-| Hourly hot item cadence (<7d) | 275/958 current (683 due, 28.7%) |
-| Daily cadence coverage | 5181/5269 current (88 due, 98.3%) |
-| Daily PR cadence | 3559/3633 current (74 due, 98%) |
-| Daily new issue cadence (<30d) | 1622/1636 current (14 due, 99.1%) |
+| Hourly cadence coverage | 272/956 current (684 due, 28.5%) |
+| Hourly hot item cadence (<7d) | 272/956 current (684 due, 28.5%) |
+| Daily cadence coverage | 5165/5255 current (90 due, 98.3%) |
+| Daily PR cadence | 3544/3620 current (76 due, 97.9%) |
+| Daily new issue cadence (<30d) | 1621/1635 current (14 due, 99.1%) |
 | Weekly older issue cadence | 1991/1993 current (2 due, 99.9%) |
-| Due now by cadence | 976 |
+| Due now by cadence | 980 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 05:56 UTC. Latest close: Apr 26, 2026, 05:44 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 250 | 165 | 85 | 0 | 0 | 66 | 5 |
-| Last hour | 1019 | 271 | 748 | 2 | 166 | 358 | 7 |
-| Last 24 hours | 10532 | 2322 | 8210 | 38 | 5317 | 1138 | 172 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Last hour | 769 | 258 | 511 | 2 | 96 | 287 | 7 |
+| Last 24 hours | 10495 | 2310 | 8185 | 39 | 5219 | 1138 | 164 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
