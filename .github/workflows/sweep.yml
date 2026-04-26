@@ -23,6 +23,14 @@ on:
         description: "Item kind to close in apply-existing mode: issue, pull_request, or all"
         required: false
         default: "issue"
+      apply_item_numbers:
+        description: "Optional comma-separated item numbers to sync/apply first"
+        required: false
+        default: ""
+      apply_sync_comments_only:
+        description: "Only sync durable review comments; do not close items"
+        required: false
+        default: "false"
       apply_close_delay_ms:
         description: "Delay after each close/comment pair to avoid GitHub secondary write throttling"
         required: false
@@ -406,6 +414,45 @@ jobs:
             git push
           fi
 
+      - name: Sync hot intake review comments
+        if: ${{ success() && needs.plan.outputs.hot_intake == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          item_numbers="$(find artifacts -type f -name '*.md' -exec basename {} .md \; | sort -n | paste -sd, -)"
+          if [ -z "$item_numbers" ]; then
+            echo "No hot intake artifacts to sync comments for."
+            exit 0
+          fi
+          git pull --rebase
+          npm run apply-decisions -- \
+            --item-numbers "$item_numbers" \
+            --sync-comments-only \
+            --apply-kind all \
+            --limit 0 \
+            --processed-limit 200 \
+            --progress-every 1
+          synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)')"
+          npm run status -- \
+            --state "Hot intake comments synced" \
+            --detail "Synced durable Codex review comments for $synced_count hot-intake item(s). Item numbers: $item_numbers." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git add README.md items closed apply-report.json
+          if git diff --cached --quiet; then
+            echo "No hot intake comment metadata changes"
+          else
+            git commit -m "chore: sync hot intake review comments"
+            for _attempt in 1 2 3; do
+              if git push; then
+                exit 0
+              fi
+              git fetch origin main
+              git rebase -X theirs origin/main
+            done
+            git push
+          fi
+
       - name: Continue sweep
         if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && needs.plan.outputs.apply_closures != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || github.event.inputs.item_number == '') }}
         env:
@@ -456,6 +503,16 @@ jobs:
           close_delay_ms="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_delay_ms || '5000' }}"
           progress_every="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_progress_every || '10' }}"
           checkpoint_size="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_checkpoint_size || '50' }}"
+          item_numbers="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_item_numbers || '' }}"
+          sync_comments_only="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_sync_comments_only || 'false' }}"
+          item_numbers_arg=()
+          if [ -n "$item_numbers" ]; then
+            item_numbers_arg=(--item-numbers "$item_numbers")
+          fi
+          sync_comments_arg=()
+          if [ "$sync_comments_only" = "true" ]; then
+            sync_comments_arg=(--sync-comments-only)
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p .artifacts/apply-reports
@@ -511,7 +568,7 @@ jobs:
           npm run dashboard
           npm run status -- \
             --state "Apply in progress" \
-            --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Existing Codex automated review comments are updated in place; checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms." \
+            --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Existing Codex automated review comments are updated in place; checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           if ! publish_changes "chore: mark sweep apply in progress" README.md items closed; then
             echo "Best-effort apply start status update failed"
@@ -519,7 +576,35 @@ jobs:
           fi
           closed_total=0
           checkpoint=0
+          if [ "$sync_comments_only" = "true" ]; then
+            checkpoint=1
+            echo "::group::Apply checkpoint $checkpoint"
+            echo "Syncing durable review comments only for item numbers: ${item_numbers:-all}"
+            npm run apply-decisions -- \
+              --limit 0 \
+              --min-age-days "$min_age_days" \
+              --apply-kind "$apply_kind" \
+              --close-delay-ms "$close_delay_ms" \
+              --progress-every "$progress_every" \
+              --processed-limit "$((checkpoint_size * 20))" \
+              "${item_numbers_arg[@]}" \
+              "${sync_comments_arg[@]}"
+            cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
+            result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
+            synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)' "$checkpoint")"
+            publish_changes "chore: sync sweep review comments checkpoint $checkpoint" items closed apply-report.json
+            npm run dashboard
+            npm run status -- \
+              --state "Apply comments synced" \
+              --detail "Comment-only apply checkpoint $checkpoint finished. Synced durable review comments: $synced_count. Result records: $result_count. Item numbers: ${item_numbers:-all}." \
+              --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            publish_readme_status "chore: update sweep comment sync status"
+            echo "::endgroup::"
+          fi
           while [ "$closed_total" -lt "$limit" ]; do
+            if [ "$sync_comments_only" = "true" ]; then
+              break
+            fi
             remaining=$((limit - closed_total))
             chunk_limit="$checkpoint_size"
             if [ "$remaining" -lt "$chunk_limit" ]; then
@@ -534,7 +619,9 @@ jobs:
               --apply-kind "$apply_kind" \
               --close-delay-ms "$close_delay_ms" \
               --progress-every "$progress_every" \
-              --processed-limit "$((chunk_limit * 20))"
+              --processed-limit "$((chunk_limit * 20))" \
+              "${item_numbers_arg[@]}" \
+              "${sync_comments_arg[@]}"
             cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
             # shellcheck disable=SC2016
             node -e 'const fs=require("node:fs"); const path=require("node:path"); const dir=".artifacts/apply-reports"; const files=fs.readdirSync(dir).filter((name)=>/^apply-report-\d+\.json$/.test(name)).sort((left,right)=>Number(left.match(/\d+/)[0])-Number(right.match(/\d+/)[0])); const combined=files.flatMap((file)=>JSON.parse(fs.readFileSync(path.join(dir,file),"utf8"))); fs.writeFileSync("apply-report.json", `${JSON.stringify(combined,null,2)}\n`);'
@@ -573,6 +660,8 @@ jobs:
             echo "APPLY_CLOSE_DELAY_MS=$close_delay_ms"
             echo "APPLY_PROGRESS_EVERY=$progress_every"
             echo "APPLY_CHECKPOINT_SIZE=$checkpoint_size"
+            echo "APPLY_ITEM_NUMBERS=$item_numbers"
+            echo "APPLY_SYNC_COMMENTS_ONLY=$sync_comments_only"
           } >> "$GITHUB_ENV"
 
       - name: Commit apply results
@@ -603,6 +692,10 @@ jobs:
             echo "Apply closed ${APPLY_CLOSED_TOTAL:-0}/${APPLY_LIMIT:-0}; not queueing another apply run."
             exit 0
           fi
+          if [ "${APPLY_SYNC_COMMENTS_ONLY:-false}" = "true" ]; then
+            echo "Comment-only apply run finished; not queueing another apply run."
+            exit 0
+          fi
 
           echo "Apply reached requested limit; queueing another apply run."
           gh workflow run "Sweep OpenClaw Items" \
@@ -611,6 +704,8 @@ jobs:
             -f apply_limit="$APPLY_LIMIT" \
             -f apply_min_age_days="$APPLY_MIN_AGE_DAYS" \
             -f apply_kind="$APPLY_KIND" \
+            -f apply_item_numbers="$APPLY_ITEM_NUMBERS" \
+            -f apply_sync_comments_only="$APPLY_SYNC_COMMENTS_ONLY" \
             -f apply_close_delay_ms="$APPLY_CLOSE_DELAY_MS" \
             -f apply_progress_every="$APPLY_PROGRESS_EVERY" \
             -f apply_checkpoint_size="$APPLY_CHECKPOINT_SIZE"

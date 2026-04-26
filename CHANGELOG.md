@@ -29,6 +29,8 @@ checkpoint, and status-only commits are intentionally omitted.
   alongside review work.
 - Added a five-minute hot-intake review lane for new and recently active issues
   or pull requests, fanning out single-item review shards.
+- Added targeted comment-sync mode so hot-intake reviews can publish durable
+  Codex review comments immediately without closing items.
 
 ### Changed
 

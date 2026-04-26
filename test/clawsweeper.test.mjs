@@ -6,6 +6,7 @@ import {
   ghRetryKind,
   isCodexReviewCommentBody,
   isProtectedItem,
+  itemNumbersArg,
   parseDecision,
   protectedLabels,
   relatedTitleSearchTerms,
@@ -294,6 +295,11 @@ test("comment matcher recognizes old and new Codex review comments", () => {
     true,
   );
   assert.equal(isCodexReviewCommentBody("Thanks for the report, I can reproduce this."), false);
+});
+
+test("item number args merge and sort workflow inputs", () => {
+  assert.deepEqual(itemNumbersArg("42, 7, nope, 42", "5"), [5, 7, 42]);
+  assert.deepEqual(itemNumbersArg("", undefined), []);
 });
 
 test("decision parser enforces required schema-shaped evidence", () => {

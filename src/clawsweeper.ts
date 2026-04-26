@@ -394,6 +394,22 @@ function boolArg(value: string | boolean | string[] | undefined): boolean {
   return value === "1" || value === "true" || value === "yes";
 }
 
+export function itemNumbersArg(
+  itemNumbers: string | boolean | string[] | undefined,
+  itemNumber: string | boolean | string[] | undefined,
+): number[] {
+  const numbers = new Set<number>();
+  const add = (value: string): void => {
+    for (const part of value.split(",")) {
+      const parsed = Number(part.trim());
+      if (Number.isInteger(parsed) && parsed > 0) numbers.add(parsed);
+    }
+  };
+  if (typeof itemNumbers === "string") add(itemNumbers);
+  if (typeof itemNumber === "string") add(itemNumber);
+  return [...numbers].sort((left, right) => left - right);
+}
+
 function run(
   command: string,
   args: string[],
@@ -2854,6 +2870,9 @@ function applyDecisionsCommand(args: Args): void {
   const closeDelayMs = numberArg(args.close_delay_ms, 5_000);
   const progressEvery = Math.max(1, numberArg(args.progress_every, 10));
   const skipDashboard = boolArg(args.skip_dashboard);
+  const syncCommentsOnly = boolArg(args.sync_comments_only);
+  const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
+  const requestedItemNumberSet = new Set(requestedItemNumbers);
   const results: ApplyResult[] = [];
   let closedCount = 0;
   let processedCount = 0;
@@ -2882,9 +2901,14 @@ function applyDecisionsCommand(args: Args): void {
   }
   const files = readdirSync(itemsDir)
     .filter((name) => /^\d+\.md$/.test(name))
+    .filter(
+      (name) =>
+        requestedItemNumberSet.size === 0 ||
+        requestedItemNumberSet.has(Number(name.replace(".md", ""))),
+    )
     .sort((left, right) => Number(left.replace(".md", "")) - Number(right.replace(".md", "")));
   logProgress(
-    `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs}`,
+    `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
   );
   for (const file of files) {
     const path = join(itemsDir, file);
@@ -3065,6 +3089,7 @@ function applyDecisionsCommand(args: Args): void {
       maybeLogProgress(`synced review comment #${number}`);
       if (processedCount >= processedLimit) break;
     }
+    if (syncCommentsOnly) continue;
     if (!isCloseProposal || !closeReason) {
       continue;
     }
