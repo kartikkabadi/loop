@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 23:40 UTC
+Last dashboard update: Apr 26, 2026, 23:44 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 23:40 UTC
+Updated: Apr 26, 2026, 23:44 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24969969837. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969969837](https://github.com/openclaw/clawsweeper/actions/runs/24969969837)
 <!-- clawsweeper-status:end -->
 
@@ -42,8 +42,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969969837](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3702 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3540 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3703 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3539 |
 | Open items total | 7242 |
 | Reviewed files | 7140 |
 | Unreviewed open items | 102 |
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969969837](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 25/780 current (755 due, 3.2%) |
-| Hourly hot item cadence (<7d) | 25/780 current (755 due, 3.2%) |
+| Hourly cadence coverage | 38/780 current (742 due, 4.9%) |
+| Hourly hot item cadence (<7d) | 38/780 current (742 due, 4.9%) |
 | Daily cadence coverage | 4406/4473 current (67 due, 98.5%) |
 | Daily PR cadence | 2974/3032 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1432/1441 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1887/1887 current (0 due, 100%) |
-| Due now by cadence | 924 |
+| Due now by cadence | 911 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 23:30 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 23:32 UTC.
+Latest review: Apr 26, 2026, 23:43 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 23:32 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 2 | 18 | 0 | 0 | 19 | 1 |
-| Last hour | 42 | 2 | 40 | 0 | 0 | 41 | 2 |
-| Last 24 hours | 9253 | 2077 | 7176 | 0 | 2074 | 2203 | 14 |
+| Last 15 minutes | 21 | 1 | 20 | 0 | 0 | 19 | 1 |
+| Last hour | 62 | 2 | 60 | 0 | 0 | 41 | 2 |
+| Last 24 hours | 9253 | 2077 | 7176 | 0 | 2074 | 2188 | 14 |
 
 ### Recently Closed
 
@@ -134,16 +134,16 @@ Latest review: Apr 26, 2026, 23:30 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72366](https://github.com/openclaw/openclaw/issues/72366) | [Bug]: Gateway crash-loop on startup when bonjour/mDNS plugin hits \"CIAO PROBING CANCELED\ | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72366.md) | complete | Apr 26, 2026, 23:30 UTC |
-| [#72373](https://github.com/openclaw/openclaw/issues/72373) | OpenShell should fail fast on malformed generated commands and hard-abort repeated tool loops | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72373.md) | complete | Apr 26, 2026, 23:29 UTC |
-| [#72364](https://github.com/openclaw/openclaw/issues/72364) | Treat auto-compaction as a first-class agent task (route through /compact) to eliminate mid-conversation transcript mutations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72364.md) | complete | Apr 26, 2026, 23:28 UTC |
-| [#72376](https://github.com/openclaw/openclaw/pull/72376) | feat(memory-core): default to WAL journal mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72376.md) | complete | Apr 26, 2026, 23:28 UTC |
-| [#72229](https://github.com/openclaw/openclaw/pull/72229) | [tts][personality] /emotions directive + emotion-tag sanitization (#69051 PR-B of 4) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72229.md) | complete | Apr 26, 2026, 23:28 UTC |
-| [#63418](https://github.com/openclaw/openclaw/pull/63418) | fix(control-ui): show effective thinking default in session settings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63418.md) | complete | Apr 26, 2026, 23:28 UTC |
-| [#72121](https://github.com/openclaw/openclaw/issues/72121) | [Bug]: Anthropic auth rejects valid sk-ant-api03 API keys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72121.md) | complete | Apr 26, 2026, 23:28 UTC |
-| [#64318](https://github.com/openclaw/openclaw/pull/64318) | feat: Add unified Amazon plugin — Polly TTS, Transcribe STT, Nova Sonic realtime voice | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64318.md) | complete | Apr 26, 2026, 23:28 UTC |
-| [#72128](https://github.com/openclaw/openclaw/pull/72128) | feat: implemented configurable label templates for spawned agent sess… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72128.md) | complete | Apr 26, 2026, 23:28 UTC |
-| [#71569](https://github.com/openclaw/openclaw/issues/71569) | Mattermost streaming config: documented but not implemented + notification UX bug | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71569.md) | complete | Apr 26, 2026, 23:28 UTC |
+| [#66792](https://github.com/openclaw/openclaw/issues/66792) | runEmbeddedPiAgent bootstrap ~6s with bootstrapContextMode: lightweight — makes blocking plugins impractical | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66792.md) | complete | Apr 26, 2026, 23:43 UTC |
+| [#72382](https://github.com/openclaw/openclaw/issues/72382) | [Bug]: General install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72382.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#47604](https://github.com/openclaw/openclaw/pull/47604) | feat(android): add Wear OS app MVP | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47604.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#71988](https://github.com/openclaw/openclaw/pull/71988) | dispatch: broadcast inbound_claim to global plugin listeners | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71988.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#71964](https://github.com/openclaw/openclaw/pull/71964) | fix(daemon): only emit existing version-manager dirs into service PATH (#71944) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71964.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#66912](https://github.com/openclaw/openclaw/pull/66912) | fix(telegram): restore self-authored reply-media guard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66912.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#68280](https://github.com/openclaw/openclaw/pull/68280) | fix(gateway): fail fast on missing local probe auth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68280.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#64953](https://github.com/openclaw/openclaw/pull/64953) | fix(models): respect models.mode=replace in model picker and gateway catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64953.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#72245](https://github.com/openclaw/openclaw/pull/72245) | perf(plugins): cache provider hook plugin lookups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72245.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#66913](https://github.com/openclaw/openclaw/pull/66913) | fix(memory-lancedb): show full IDs in memory_forget candidate list | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66913.md) | complete | Apr 26, 2026, 23:42 UTC |
 
 </details>
 
