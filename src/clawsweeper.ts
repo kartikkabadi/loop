@@ -33,6 +33,7 @@ type ActionTaken =
   | "kept_open"
   | "proposed_close"
   | "review_comment_synced"
+  | "skipped_locked_conversation"
   | "skipped_changed_since_review"
   | "skipped_already_closed"
   | "skipped_maintainer_authored"
@@ -72,6 +73,8 @@ interface Item {
   author: string;
   authorAssociation: string;
   labels: string[];
+  locked?: boolean;
+  activeLockReason?: string | null;
 }
 
 interface ExistingReview {
@@ -526,6 +529,16 @@ export function ghRetryKind(error: unknown): GhRetryKind {
 
 export function shouldRetryGh(error: unknown): boolean {
   return ghRetryKind(error) !== "none";
+}
+
+export function isLockedConversationCommentError(error: unknown): boolean {
+  const message = ghErrorText(error);
+  return (
+    /\bHTTP\s*403\b/i.test(message) &&
+    /(?:issue|conversation|discussion).{0,80}locked|locked.{0,80}(?:issue|conversation|discussion)/i.test(
+      message,
+    )
+  );
 }
 
 function ghRetryWaitMs(kind: GhRetryKind, attempt: number): number {
@@ -1480,11 +1493,17 @@ function fetchOpenItemNumbers(maxPages: number): { numbers: Set<number>; pagesSc
 }
 
 function fetchItem(number: number): { item: Item; state: string } {
-  const issue = ghJson<GitHubIssueListItem & { state?: string }>([
+  const issue = ghJson<
+    GitHubIssueListItem & {
+      active_lock_reason?: string | null;
+      locked?: boolean;
+      state?: string;
+    }
+  >([
     "api",
     `repos/${TARGET_REPO}/issues/${number}`,
     "--jq",
-    "{number,title,html_url,created_at,updated_at,state,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
+    "{number,title,html_url,created_at,updated_at,state,locked,active_lock_reason,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
   return {
     item: {
@@ -1497,6 +1516,8 @@ function fetchItem(number: number): { item: Item; state: string } {
       author: issue.user?.login ?? "unknown",
       authorAssociation: normalizeAuthorAssociation(issue.author_association),
       labels: issue.labels ?? [],
+      locked: issue.locked === true,
+      activeLockReason: issue.active_lock_reason ?? null,
     },
     state: issue.state ?? "unknown",
   };
@@ -2678,6 +2699,22 @@ function commentUrl(comment: Record<string, unknown> | undefined): string | null
   return typeof url === "string" ? url : null;
 }
 
+function commentBody(comment: Record<string, unknown> | undefined): string | undefined {
+  const body = comment?.body;
+  return typeof body === "string" ? body : undefined;
+}
+
+function commentBodyMatches(comment: Record<string, unknown> | undefined, body: string): boolean {
+  return commentBody(comment)?.trim() === body.trim();
+}
+
+export function lockedConversationApplyReason(
+  item: Pick<Item, "activeLockReason" | "locked">,
+): string | null {
+  if (!item.locked) return null;
+  return `conversation is locked${item.activeLockReason ? ` (${item.activeLockReason})` : ""}`;
+}
+
 function updateReviewCommentMetadata(
   markdown: string,
   comment: Record<string, unknown> | undefined,
@@ -3266,18 +3303,46 @@ function applyDecisionsCommand(args: Args): void {
         continue;
       }
     }
-    if (
-      frontMatterValue(markdown, "review_comment_sha256") !== sha256(markedReviewComment) ||
-      !existingReviewComment ||
-      frontMatterValue(markdown, "review_comment_id") === "unknown"
-    ) {
-      const syncedComment = upsertReviewComment(number, reviewComment, existingReviewComment);
+    const reviewCommentHash = sha256(markedReviewComment);
+    const existingReviewCommentMatches = commentBodyMatches(
+      existingReviewComment,
+      markedReviewComment,
+    );
+    const needsReviewCommentBodySync = !existingReviewComment || !existingReviewCommentMatches;
+    const needsReviewCommentMetadata =
+      frontMatterValue(markdown, "review_comment_sha256") !== reviewCommentHash ||
+      frontMatterValue(markdown, "review_comment_id") === "unknown" ||
+      frontMatterValue(markdown, "review_comment_url") === "unknown";
+    if (needsReviewCommentBodySync || needsReviewCommentMetadata) {
+      const lockedReason = needsReviewCommentBodySync ? lockedConversationApplyReason(item) : null;
+      if (lockedReason) {
+        if (markApplySkipped("skipped_locked_conversation", lockedReason)) break;
+        continue;
+      }
+      let syncedComment = existingReviewComment;
+      let syncReason = "recorded existing durable comment metadata";
+      if (needsReviewCommentBodySync) {
+        try {
+          syncedComment = upsertReviewComment(number, reviewComment, existingReviewComment);
+          syncReason = "updated durable Codex review comment";
+        } catch (error) {
+          if (!isLockedConversationCommentError(error)) throw error;
+          if (
+            markApplySkipped(
+              "skipped_locked_conversation",
+              "conversation was locked while syncing review comment",
+            )
+          )
+            break;
+          continue;
+        }
+      }
       markdown = updateReviewCommentMetadata(markdown, syncedComment, markedReviewComment);
       writeFileSync(path, markdown, "utf8");
       results.push({
         number,
         action: "review_comment_synced",
-        reason: "updated durable Codex review comment",
+        reason: syncReason,
       });
       processedCount += 1;
       maybeLogProgress(`synced review comment #${number}`);

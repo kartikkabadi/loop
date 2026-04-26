@@ -8,8 +8,10 @@ import {
   auditHealthSection,
   ghRetryKind,
   isCodexReviewCommentBody,
+  isLockedConversationCommentError,
   isProtectedItem,
   itemNumbersArg,
+  lockedConversationApplyReason,
   parseDecision,
   protectedLabels,
   relatedTitleSearchTerms,
@@ -555,6 +557,25 @@ test("GitHub retry classifier distinguishes throttle and transient failures", ()
     { stderr: "gh: HTTP 401: Bad credentials" },
   );
   assert.equal(ghRetryKind(authFailureForIssue502), "none");
+});
+
+test("locked conversation failures are non-retryable but recognizable apply skips", () => {
+  const locked = Object.assign(
+    new Error("Command failed: gh api repos/openclaw/openclaw/issues/40088/comments"),
+    {
+      stdout:
+        '{"message":"Unable to create comment because issue is locked.","documentation_url":"https://docs.github.com/articles/locking-conversations/","status":"403"}',
+      stderr: "gh: Unable to create comment because issue is locked. (HTTP 403)\n",
+    },
+  );
+
+  assert.equal(ghRetryKind(locked), "none");
+  assert.equal(isLockedConversationCommentError(locked), true);
+  assert.equal(
+    lockedConversationApplyReason({ locked: true, activeLockReason: "resolved" }),
+    "conversation is locked (resolved)",
+  );
+  assert.equal(lockedConversationApplyReason({ locked: false, activeLockReason: null }), null);
 });
 
 test("safeOutputTail tolerates missing process output", () => {
