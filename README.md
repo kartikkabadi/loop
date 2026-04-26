@@ -16,42 +16,42 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 01:01 UTC
+Last dashboard update: Apr 26, 2026, 01:09 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 26, 2026, 01:08 UTC
+Updated: Apr 26, 2026, 01:09 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944903908](https://github.com/openclaw/clawsweeper/actions/runs/24944903908)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5409 |
-| Fresh reviewed issues in the last 7 days | 5363 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5405 |
+| Fresh reviewed issues in the last 7 days | 5361 |
 | Proposed issue closes | 813 (15.2% of reviewed issues) |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4251 |
-| Fresh reviewed PRs in the last 7 days | 4155 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4253 |
+| Fresh reviewed PRs in the last 7 days | 4154 |
 | Proposed PR closes | 50 (1.2% of reviewed PRs) |
-| Open items total | 9660 |
-| Reviewed files | 9522 |
-| Unreviewed open items | 138 |
-| Archived closed files | 9775 |
-| Fresh verified reviews in the last 7 days | 9518 |
+| Open items total | 9658 |
+| Reviewed files | 9519 |
+| Unreviewed open items | 139 |
+| Archived closed files | 9778 |
+| Fresh verified reviews in the last 7 days | 9515 |
 | Proposed closes awaiting apply | 863 (9.1% of fresh reviews) |
-| Closed by Codex apply | 7565 |
+| Closed by Codex apply | 7573 |
 | Failed or stale reviews | 4 |
-| Hourly cadence coverage | 22/1073 current (1051 due, 2.1%) |
-| Hourly hot item cadence (<7d) | 22/1073 current (1051 due, 2.1%) |
-| Daily cadence coverage | 5335/5764 current (429 due, 92.6%) |
-| Daily PR cadence | 3463/3669 current (206 due, 94.4%) |
+| Hourly cadence coverage | 22/1069 current (1047 due, 2.1%) |
+| Hourly hot item cadence (<7d) | 22/1069 current (1047 due, 2.1%) |
+| Daily cadence coverage | 5336/5765 current (429 due, 92.6%) |
+| Daily PR cadence | 3464/3670 current (206 due, 94.4%) |
 | Daily new issue cadence (<30d) | 1872/2095 current (223 due, 89.4%) |
 | Weekly older issue cadence | 2684/2685 current (1 due, 100%) |
-| Due now by cadence | 1619 |
+| Due now by cadence | 1616 |
 
 Recently reviewed:
 
