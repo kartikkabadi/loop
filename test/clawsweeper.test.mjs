@@ -6,6 +6,7 @@ import {
   auditFromSnapshot,
   auditHasStrictFailures,
   auditHealthSection,
+  formatRecentClosedRows,
   ghRetryKind,
   isCodexReviewCommentBody,
   isLockedConversationCommentError,
@@ -525,6 +526,28 @@ test("audit defers stale item drift until the open scan is complete", () => {
   assert.equal(result.scan.complete, false);
   assert.equal(result.counts.staleItemRecords, 0);
   assert.deepEqual(result.findings.staleItemRecords, []);
+});
+
+test("recently closed dashboard rows link items and archived reports", () => {
+  const rows = formatRecentClosedRows([
+    {
+      number: 42,
+      kind: "pull_request",
+      title: "Fix pipe | title",
+      closeReason: "implemented_on_main",
+      appliedAt: "2026-04-26T20:00:00.000Z",
+      reportPath: "closed/42.md",
+    },
+  ]);
+
+  assert.match(rows, /\[#42\]\(https:\/\/github\.com\/openclaw\/openclaw\/pull\/42\)/);
+  assert.match(
+    rows,
+    /\[closed\/42\.md\]\(https:\/\/github\.com\/openclaw\/clawsweeper\/blob\/main\/closed\/42\.md\)/,
+  );
+  assert.match(rows, /Fix pipe \\| title/);
+  assert.match(rows, /already implemented on main/);
+  assert.match(rows, /Apr 26, 2026, 20:00 UTC/);
 });
 
 test("GitHub retry classifier distinguishes throttle and transient failures", () => {

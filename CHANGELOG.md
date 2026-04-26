@@ -74,6 +74,8 @@ checkpoint, and status-only commits are intentionally omitted.
   runs so close batches do not stall on keep-open comment backfill.
 - Increased scheduled apply wakeups to every 15 minutes and made idle apply runs
   exit after checking for close proposals instead of scanning keep-open records.
+- Added a Recently Closed dashboard table with links to the target item and
+  archived ClawSweeper report.
 - Classified missing-open audit findings so strict mode reports only actionable
   missing-open drift while preserving total visibility. Thanks @stainlu.
 - Added transient GitHub API/network retries with short backoff while preserving

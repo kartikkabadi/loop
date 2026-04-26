@@ -23,7 +23,7 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 20:33 UTC
+Last dashboard update: Apr 26, 2026, 20:41 UTC
 
 ### Current Run
 
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24966360228](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3724 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3537 |
-| Open items total | 7261 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
+| Open items total | 7262 |
 | Reviewed files | 7189 |
-| Unreviewed open items | 72 |
+| Unreviewed open items | 73 |
 | Archived closed files | 12532 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24966360228](https://
 | Daily PR cadence | 2993/3051 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1435/1444 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 143 |
+| Due now by cadence | 144 |
 
 ### Audit Health
 
@@ -109,8 +109,23 @@ Latest review: Apr 26, 2026, 20:28 UTC. Latest close: Apr 26, 2026, 19:53 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 20 | 1 | 19 | 0 | 0 | 20 | 0 |
-| Last hour | 1470 | 43 | 1427 | 0 | 1 | 680 | 3 |
-| Last 24 hours | 9750 | 2556 | 7194 | 0 | 2037 | 2788 | 10 |
+| Last hour | 1366 | 43 | 1323 | 0 | 1 | 680 | 3 |
+| Last 24 hours | 9730 | 2542 | 7188 | 0 | 2037 | 2788 | 10 |
+
+### Recently Closed
+
+| Item | Title | Reason | Closed | Report |
+| --- | --- | --- | --- | --- |
+| [#32932](https://github.com/openclaw/openclaw/issues/32932) | [Feature]: Suggestion for scheduled task,  WebHook URL function | duplicate or superseded | Apr 26, 2026, 19:53 UTC | [closed/32932.md](https://github.com/openclaw/clawsweeper/blob/main/closed/32932.md) |
+| [#72320](https://github.com/openclaw/openclaw/issues/72320) | Bug: tasks cancel fails because dist/task-registry-control.runtime.js is missing from published package | duplicate or superseded | Apr 26, 2026, 19:01 UTC | [closed/72320.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72320.md) |
+| [#72313](https://github.com/openclaw/openclaw/issues/72313) | Paperclip adapter sends 'paperclip' property rejected by AgentParamsSchema (additionalProperties: false) | duplicate or superseded | Apr 26, 2026, 19:01 UTC | [closed/72313.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72313.md) |
+| [#72312](https://github.com/openclaw/openclaw/issues/72312) | [FAL] queue.fal.ai DNS NXDOMAIN — all FAL image generation broken | already implemented on main | Apr 26, 2026, 19:01 UTC | [closed/72312.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72312.md) |
+| [#72311](https://github.com/openclaw/openclaw/issues/72311) | [Bug]: Agent very slow on onboarding and after, tries to install missing deps on every command | already implemented on main | Apr 26, 2026, 19:01 UTC | [closed/72311.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72311.md) |
+| [#72307](https://github.com/openclaw/openclaw/issues/72307) | Bonjour plugin crash loop on gateway startup (v2026.4.24 regression) | already implemented on main | Apr 26, 2026, 19:01 UTC | [closed/72307.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72307.md) |
+| [#72303](https://github.com/openclaw/openclaw/issues/72303) | [Bug]: Bonjour plugin failure causes infinite restart loop in 2026.4.24 when running in a bridged container | already implemented on main | Apr 26, 2026, 19:00 UTC | [closed/72303.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72303.md) |
+| [#72302](https://github.com/openclaw/openclaw/issues/72302) | [Bug]: ERR_UNSUPPORTED_ESM_URL_SCHEME on Windows with Node v22/v24 | already implemented on main | Apr 26, 2026, 19:00 UTC | [closed/72302.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72302.md) |
+| [#72288](https://github.com/openclaw/openclaw/issues/72288) | Every user message is processed twice: rewriteSubmittedPromptTranscript branches after agent reply, triggering duplicate run | already implemented on main | Apr 26, 2026, 19:00 UTC | [closed/72288.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72288.md) |
+| [#72279](https://github.com/openclaw/openclaw/issues/72279) | [Bug][Windows] openclaw update still hangs with stuck findstr on 2026.4.24 — prior fixes (#57682, #44693, #27802, #41804) are incomplete | already implemented on main | Apr 26, 2026, 19:00 UTC | [closed/72279.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72279.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>

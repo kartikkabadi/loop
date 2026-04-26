@@ -177,6 +177,15 @@ interface DashboardItem {
   reviewStatus: string;
 }
 
+interface DashboardClosedItem {
+  number: number;
+  kind: ItemKind;
+  title: string;
+  appliedAt: string | undefined;
+  closeReason: string | undefined;
+  reportPath: string;
+}
+
 interface RepoOpenCountsQuery {
   data?: {
     repository?: {
@@ -2178,8 +2187,8 @@ function itemUrl(number: number, kind: ItemKind = "issue"): string {
   return repoUrl(`/${kind === "pull_request" ? "pull" : "issues"}/${number}`);
 }
 
-function reportFileUrl(number: number): string {
-  return reportUrl(`/blob/main/items/${number}.md`);
+function reportFileUrl(number: number, path = `items/${number}.md`): string {
+  return reportUrl(`/blob/main/${githubPath(path)}`);
 }
 
 function githubPath(path: string): string {
@@ -3895,6 +3904,7 @@ function dashboardStats(
   cadence: DashboardCadenceStats;
   activity: DashboardActivityStats;
   recent: DashboardItem[];
+  recentClosed: DashboardClosedItem[];
 } {
   const open = fetchOpenItemCounts();
   const files = markdownFiles(itemsDir);
@@ -3915,6 +3925,7 @@ function dashboardStats(
   const weeklyOlderIssues = emptyDashboardCadenceBucket();
   const activity = emptyDashboardActivityStats();
   const recent: DashboardItem[] = [];
+  const recentClosed: DashboardClosedItem[] = [];
   for (const file of files) {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
     const number = Number(file.replace(/\.md$/, ""));
@@ -3961,10 +3972,25 @@ function dashboardStats(
   for (const file of closedFiles) {
     const markdown = readFileSync(join(closedDir, file), "utf8");
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
-    if (action === "closed") closed += 1;
+    if (action === "closed") {
+      closed += 1;
+      recentClosed.push({
+        number: Number(file.replace(/\.md$/, "")),
+        kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
+        title: frontMatterValue(markdown, "title") ?? "",
+        appliedAt: frontMatterValue(markdown, "applied_at"),
+        closeReason: frontMatterValue(markdown, "close_reason"),
+        reportPath: `closed/${file}`,
+      });
+    }
     recordDashboardActivity(markdown, activity, now);
   }
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
+  recentClosed.sort(
+    (a, b) =>
+      (timestampMs(b.appliedAt) ?? Number.NEGATIVE_INFINITY) -
+        (timestampMs(a.appliedAt) ?? Number.NEGATIVE_INFINITY) || b.number - a.number,
+  );
   const hourly = emptyDashboardCadenceBucket();
   addDashboardCadenceBucket(hourly, hourlyHotItems);
   const daily = emptyDashboardCadenceBucket();
@@ -4006,7 +4032,31 @@ function dashboardStats(
     },
     activity,
     recent,
+    recentClosed,
   };
+}
+
+function markdownTableCell(value: string): string {
+  return value.replaceAll("|", "\\|");
+}
+
+function displayCloseReason(reason: string | undefined): string {
+  if (reason && ALL_REASONS.has(reason as CloseReason))
+    return closeReasonText(reason as CloseReason);
+  return reason || "unknown";
+}
+
+export function formatRecentClosedRows(items: readonly DashboardClosedItem[], limit = 10): string {
+  return (
+    items
+      .slice(0, limit)
+      .map((item) => {
+        const title = markdownTableCell(displayTitle(item.title));
+        const reason = markdownTableCell(displayCloseReason(item.closeReason));
+        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title} | ${reason} | ${formatTimestamp(item.appliedAt)} | ${markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath))} |`;
+      })
+      .join("\n") || "| _None_ |  |  |  |  |"
+  );
 }
 
 function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, "closed")): void {
@@ -4019,14 +4069,15 @@ function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, 
     stats.recent
       .slice(0, 10)
       .map((item) => {
-        const title = displayTitle(item.title);
+        const title = markdownTableCell(displayTitle(item.title));
         const outcome = markdownLink(
           `${item.decision} / ${item.action}`,
           reportFileUrl(item.number),
         );
-        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title.replaceAll("|", "\\|")} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
+        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
       })
       .join("\n") || "| _None_ |  |  |  |  |";
+  const recentClosed = formatRecentClosedRows(stats.recentClosed);
   const dashboard = `## Dashboard
 
 Last dashboard update: ${formatTimestamp(new Date().toISOString())}
@@ -4082,6 +4133,12 @@ Latest review: ${formatTimestamp(stats.activity.latestReviewAt)}. Latest close: 
 ${formatActivityRow("Last 15 minutes", stats.activity.last15Minutes)}
 ${formatActivityRow("Last hour", stats.activity.lastHour)}
 ${formatActivityRow("Last 24 hours", stats.activity.last24Hours)}
+
+### Recently Closed
+
+| Item | Title | Reason | Closed | Report |
+| --- | --- | --- | --- | --- |
+${recentClosed}
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
