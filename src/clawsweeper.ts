@@ -16,6 +16,7 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 type ItemKind = "issue" | "pull_request";
+type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type CloseReason =
   | "implemented_on_main"
@@ -827,7 +828,7 @@ function isOlderThanDays(isoTimestamp: string, days: number, now = Date.now()): 
   return now - timestamp > days * 24 * 60 * 60 * 1000;
 }
 
-function applyKindArg(value: string | boolean | string[] | undefined): ItemKind | "all" {
+function applyKindArg(value: string | boolean | string[] | undefined): ApplyKind {
   const kind = stringArg(value, "issue");
   if (kind === "issue" || kind === "pull_request" || kind === "all") return kind;
   throw new Error(`Invalid apply kind: ${kind}`);
@@ -1178,6 +1179,19 @@ function ensureDir(path: string): void {
 function frontMatterValue(markdown: string, key: string): string | undefined {
   const match = markdown.match(new RegExp(`^${key}:\\s*(.+)$`, "m"));
   return match?.[1]?.trim().replace(/^"|"$/g, "");
+}
+
+export function applyDecisionPriority(markdown: string, applyKind: ApplyKind): number {
+  const closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
+  const itemKind = frontMatterValue(markdown, "type");
+  const isCloseProposal =
+    frontMatterValue(markdown, "decision") === "close" &&
+    frontMatterValue(markdown, "confidence") === "high" &&
+    frontMatterValue(markdown, "action_taken") === "proposed_close" &&
+    Boolean(closeReason && ALLOWED_REASONS.has(closeReason));
+  if (!isCloseProposal) return 2;
+  if (applyKind === "all" || itemKind === applyKind || !itemKind) return 0;
+  return 1;
 }
 
 function replaceFrontMatterValue(markdown: string, key: string, value: string): string {
@@ -3024,7 +3038,15 @@ function applyDecisionsCommand(args: Args): void {
         requestedItemNumberSet.size === 0 ||
         requestedItemNumberSet.has(Number(name.replace(".md", ""))),
     )
-    .sort((left, right) => Number(left.replace(".md", "")) - Number(right.replace(".md", "")));
+    .map((name) => ({
+      name,
+      number: Number(name.replace(".md", "")),
+      priority: syncCommentsOnly
+        ? 0
+        : applyDecisionPriority(readFileSync(join(itemsDir, name), "utf8"), applyKind),
+    }))
+    .sort((left, right) => left.priority - right.priority || left.number - right.number)
+    .map((entry) => entry.name);
   logProgress(
     `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
   );

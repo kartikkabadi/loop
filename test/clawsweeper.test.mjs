@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  applyDecisionPriority,
   auditFromSnapshot,
   ghRetryKind,
   isCodexReviewCommentBody,
@@ -62,6 +63,23 @@ const git = {
   mainSha: "abcdef1234567890",
   latestRelease: null,
 };
+
+function reportFrontMatter(overrides = {}) {
+  const values = {
+    type: "issue",
+    decision: "keep_open",
+    close_reason: "none",
+    confidence: "high",
+    action_taken: "kept_open",
+    ...overrides,
+  };
+  return `---
+${Object.entries(values)
+  .map(([key, value]) => `${key}: ${value}`)
+  .join("\n")}
+---
+`;
+}
 
 function auditRecord(number, overrides = {}) {
   return {
@@ -301,6 +319,24 @@ test("comment matcher recognizes old and new Codex review comments", () => {
 test("item number args merge and sort workflow inputs", () => {
   assert.deepEqual(itemNumbersArg("42, 7, nope, 42", "5"), [5, 7, 42]);
   assert.deepEqual(itemNumbersArg("", undefined), []);
+});
+
+test("apply mode prioritizes matching close proposals before comment sync", () => {
+  const issueClose = reportFrontMatter({
+    decision: "close",
+    close_reason: "implemented_on_main",
+    action_taken: "proposed_close",
+  });
+  const pullRequestClose = reportFrontMatter({
+    type: "pull_request",
+    decision: "close",
+    close_reason: "implemented_on_main",
+    action_taken: "proposed_close",
+  });
+
+  assert.equal(applyDecisionPriority(issueClose, "issue"), 0);
+  assert.equal(applyDecisionPriority(pullRequestClose, "issue"), 1);
+  assert.equal(applyDecisionPriority(reportFrontMatter(), "issue"), 2);
 });
 
 test("decision parser enforces required schema-shaped evidence", () => {
