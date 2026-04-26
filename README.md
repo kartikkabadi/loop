@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 07:25 UTC
+Last dashboard update: Apr 26, 2026, 07:26 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 07:25 UTC
+Updated: Apr 26, 2026, 07:26 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951060132](https://github.com/openclaw/clawsweeper/actions/runs/24951060132)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951123771](https://github.com/openclaw/clawsweeper/actions/runs/24951123771)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951060132](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 146/820 current (674 due, 17.8%) |
-| Hourly hot item cadence (<7d) | 146/820 current (674 due, 17.8%) |
+| Hourly cadence coverage | 125/820 current (695 due, 15.2%) |
+| Hourly hot item cadence (<7d) | 125/820 current (695 due, 15.2%) |
 | Daily cadence coverage | 4797/4904 current (107 due, 97.8%) |
 | Daily PR cadence | 3195/3278 current (83 due, 97.5%) |
 | Daily new issue cadence (<30d) | 1602/1626 current (24 due, 98.5%) |
 | Weekly older issue cadence | 1983/1988 current (5 due, 99.7%) |
-| Due now by cadence | 1003 |
+| Due now by cadence | 1024 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 07:15 UTC. Latest close: Apr 26, 2026, 07:24 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 112 | 17 | 95 | 0 | 72 | 89 | 2 |
-| Last hour | 801 | 170 | 631 | 0 | 327 | 344 | 2 |
-| Last 24 hours | 10259 | 2334 | 7925 | 68 | 5309 | 1359 | 67 |
+| Last 15 minutes | 66 | 11 | 55 | 0 | 72 | 88 | 2 |
+| Last hour | 769 | 162 | 607 | 0 | 307 | 325 | 2 |
+| Last 24 hours | 10255 | 2330 | 7925 | 68 | 5295 | 1359 | 67 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
