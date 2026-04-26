@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 12:06 UTC
+Last dashboard update: Apr 26, 2026, 12:07 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 12:06 UTC
+Updated: Apr 26, 2026, 12:07 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24955992713](https://github.com/openclaw/clawsweeper/actions/runs/24955992713)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956216819](https://github.com/openclaw/clawsweeper/actions/runs/24956216819)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 12:02 UTC. Latest close: Apr 26, 2026, 12:06 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 477 | 38 | 439 | 0 | 40 | 415 | 3 |
+| Last 15 minutes | 388 | 33 | 355 | 0 | 40 | 415 | 3 |
 | Last hour | 1022 | 41 | 981 | 0 | 40 | 434 | 4 |
-| Last 24 hours | 10100 | 2739 | 7361 | 14 | 4493 | 2343 | 31 |
+| Last 24 hours | 10100 | 2739 | 7361 | 14 | 4482 | 2343 | 31 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
