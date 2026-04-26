@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 05:11 UTC
 
 Updated: Apr 26, 2026, 05:11 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948884255](https://github.com/openclaw/clawsweeper/actions/runs/24948884255)
+Merged review artifacts for run 24948679486. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948679486](https://github.com/openclaw/clawsweeper/actions/runs/24948679486)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -44,45 +44,45 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948884255](https://
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4345 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4212 |
-| Open items total | 8557 |
-| Reviewed files | 8359 |
+| Open items total | 8556 |
+| Reviewed files | 8358 |
 | Unreviewed open items | 198 |
-| Archived closed files | 10938 |
+| Archived closed files | 10939 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 4259 |
-| Proposed issue closes | 108 (2.5% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 4073 |
+| Proposed issue closes | 109 (2.6% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 4077 |
 | Proposed PR closes | 234 (5.7% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 8332 |
-| Proposed closes awaiting apply | 342 (4.1% of fresh reviews) |
-| Closed by Codex apply | 8551 |
-| Failed or stale reviews | 27 |
+| Fresh verified reviews in the last 7 days | 8336 |
+| Proposed closes awaiting apply | 343 (4.1% of fresh reviews) |
+| Closed by Codex apply | 8550 |
+| Failed or stale reviews | 22 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 224/1002 current (778 due, 22.4%) |
-| Hourly hot item cadence (<7d) | 224/1002 current (778 due, 22.4%) |
-| Daily cadence coverage | 5275/5364 current (89 due, 98.3%) |
-| Daily PR cadence | 3562/3636 current (74 due, 98%) |
-| Daily new issue cadence (<30d) | 1713/1728 current (15 due, 99.1%) |
+| Hourly cadence coverage | 227/1001 current (774 due, 22.7%) |
+| Hourly hot item cadence (<7d) | 227/1001 current (774 due, 22.7%) |
+| Daily cadence coverage | 5279/5364 current (85 due, 98.4%) |
+| Daily PR cadence | 3565/3636 current (71 due, 98%) |
+| Daily new issue cadence (<30d) | 1714/1728 current (14 due, 99.2%) |
 | Weekly older issue cadence | 1991/1993 current (2 due, 99.9%) |
-| Due now by cadence | 1067 |
+| Due now by cadence | 1059 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 04:56 UTC. Latest close: Apr 26, 2026, 05:10 UTC. Latest comment sync: Apr 26, 2026, 05:10 UTC.
+Latest review: Apr 26, 2026, 05:10 UTC. Latest close: Apr 26, 2026, 05:10 UTC. Latest comment sync: Apr 26, 2026, 05:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 91 | 91 | 0 |
-| Last hour | 766 | 126 | 640 | 2 | 313 | 334 | 0 |
-| Last 24 hours | 10677 | 2366 | 8311 | 40 | 5456 | 859 | 174 |
+| Last 15 minutes | 250 | 13 | 237 | 0 | 88 | 89 | 0 |
+| Last hour | 1016 | 139 | 877 | 2 | 312 | 333 | 0 |
+| Last 24 hours | 10677 | 2366 | 8311 | 35 | 5455 | 858 | 174 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -91,16 +91,16 @@ Latest review: Apr 26, 2026, 04:56 UTC. Latest close: Apr 26, 2026, 05:10 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#37804](https://github.com/openclaw/openclaw/issues/37804) | RFC: treat models.providers-injected models as first-class forward-compat models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37804.md) | complete | Apr 26, 2026, 04:56 UTC |
-| [#38731](https://github.com/openclaw/openclaw/pull/38731) | Warn on high-frequency cron schedules (<30m) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38731.md) | complete | Apr 26, 2026, 04:56 UTC |
-| [#38897](https://github.com/openclaw/openclaw/pull/38897) | [codex] Surface tool runtime, execution queue, and autonomy posture | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38897.md) | complete | Apr 26, 2026, 04:55 UTC |
-| [#37813](https://github.com/openclaw/openclaw/issues/37813) | [Bug]: Unrecognised model IDs silently fall back to primary default — bypasses configured fallback chain and tool permissions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37813.md) | complete | Apr 26, 2026, 04:55 UTC |
-| [#37711](https://github.com/openclaw/openclaw/issues/37711) | [Bug]: Hostinger Docker template deploys successfully, but OpenClaw web UI stays black due to /assets/index-*.js ERR_CONTENT_LENGTH_MISMATCH | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37711.md) | complete | Apr 26, 2026, 04:55 UTC |
-| [#38923](https://github.com/openclaw/openclaw/pull/38923) | Fix/38439 webchat avatar identity md | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38923.md) | complete | Apr 26, 2026, 04:55 UTC |
-| [#38364](https://github.com/openclaw/openclaw/issues/38364) | control-ui: expose reply-to metadata to agent sessions and avoid confusing no-output completion notices | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38364.md) | complete | Apr 26, 2026, 04:55 UTC |
-| [#37746](https://github.com/openclaw/openclaw/issues/37746) | [Feature]: Sandboxed skill functions for remote heartbeat instructions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37746.md) | complete | Apr 26, 2026, 04:54 UTC |
-| [#38661](https://github.com/openclaw/openclaw/pull/38661) | fix: resolve multiple issues (#38517, #38501, #38554, #38494) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38661.md) | complete | Apr 26, 2026, 04:54 UTC |
-| [#38212](https://github.com/openclaw/openclaw/issues/38212) | codex-cli/gpt-5.4 fails in embedded/helper paths while openai-codex/gpt-5.4 works | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38212.md) | complete | Apr 26, 2026, 04:54 UTC |
+| [#39585](https://github.com/openclaw/openclaw/issues/39585) | Telegram owner commands: trusted execution mode for approval-gated actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39585.md) | complete | Apr 26, 2026, 05:10 UTC |
+| [#39673](https://github.com/openclaw/openclaw/issues/39673) | [Bug]:Gateway install failed: Error: systemctl --user unavailable: Failed to connect to bus: 找不到介质 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39673.md) | complete | Apr 26, 2026, 05:09 UTC |
+| [#60835](https://github.com/openclaw/openclaw/pull/60835) | docs: add multi-agent security operations guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60835.md) | complete | Apr 26, 2026, 05:09 UTC |
+| [#39248](https://github.com/openclaw/openclaw/issues/39248) | Bug: sandbox.mode: \"non-main\" silently breaks sessions_spawn subagent initialization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39248.md) | complete | Apr 26, 2026, 05:09 UTC |
+| [#38846](https://github.com/openclaw/openclaw/pull/38846) | security(windows): enhance command argument validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38846.md) | complete | Apr 26, 2026, 05:09 UTC |
+| [#38881](https://github.com/openclaw/openclaw/pull/38881) | Fix imageModel auto-switch when primary model doesn't support vision | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38881.md) | complete | Apr 26, 2026, 05:09 UTC |
+| [#38729](https://github.com/openclaw/openclaw/pull/38729) | feat(thinking): register supportsXHighThinking for Anthropic provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38729.md) | complete | Apr 26, 2026, 05:09 UTC |
+| [#39695](https://github.com/openclaw/openclaw/issues/39695) | [Bug] Agent Responds but Silently Fails to Execute exec Tool or Create Session Logs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39695.md) | complete | Apr 26, 2026, 05:09 UTC |
+| [#14593](https://github.com/openclaw/openclaw/issues/14593) | [Bug]: Skill install fails in Docker: `brew not installed` on Linux container | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/14593.md) | complete | Apr 26, 2026, 05:08 UTC |
+| [#22439](https://github.com/openclaw/openclaw/pull/22439) | feat(workspace): add tiered bootstrap loading with configurable bootstrapTier | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/22439.md) | complete | Apr 26, 2026, 05:08 UTC |
 
 </details>
 
