@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 19:30 UTC
+Last dashboard update: Apr 26, 2026, 19:37 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 19:36 UTC
+Updated: Apr 26, 2026, 19:37 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965251117](https://github.com/openclaw/clawsweeper/actions/runs/24965251117)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965251117](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 19/784 current (765 due, 2.4%) |
-| Hourly hot item cadence (<7d) | 19/784 current (765 due, 2.4%) |
+| Hourly cadence coverage | 0/784 current (784 due, 0%) |
+| Hourly hot item cadence (<7d) | 0/784 current (784 due, 0%) |
 | Daily cadence coverage | 4423/4491 current (68 due, 98.5%) |
 | Daily PR cadence | 2990/3049 current (59 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1433/1442 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1891/1891 current (0 due, 100%) |
-| Due now by cadence | 924 |
+| Due now by cadence | 943 |
 
 ### Audit Health
 
@@ -109,8 +109,8 @@ Latest review: Apr 26, 2026, 19:28 UTC. Latest close: Apr 26, 2026, 19:01 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
-| Last hour | 65 | 1 | 64 | 0 | 39 | 358 | 4 |
-| Last 24 hours | 9865 | 2624 | 7241 | 1 | 2044 | 2756 | 17 |
+| Last hour | 40 | 0 | 40 | 0 | 39 | 358 | 4 |
+| Last 24 hours | 9865 | 2624 | 7241 | 1 | 2036 | 2756 | 14 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
