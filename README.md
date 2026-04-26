@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 19:37 UTC
+Last dashboard update: Apr 26, 2026, 19:48 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 19:37 UTC
+Updated: Apr 26, 2026, 19:48 UTC
 
-State: Review in progress
+State: Review publish complete
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged review artifacts for run 24965251117. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965251117](https://github.com/openclaw/clawsweeper/actions/runs/24965251117)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965251117](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3720 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3721 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3537 |
-| Open items total | 7257 |
+| Open items total | 7258 |
 | Reviewed files | 7166 |
-| Unreviewed open items | 91 |
+| Unreviewed open items | 92 |
 | Archived closed files | 12531 |
 
 ### Review Outcomes
@@ -54,11 +54,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965251117](https://
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3695 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
+| Proposed issue closes | 1 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3468 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7163 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
 | Closed by Codex apply | 9947 |
 | Failed or stale reviews | 3 |
 
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965251117](https://
 | Daily PR cadence | 2990/3049 current (59 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1433/1442 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1891/1891 current (0 due, 100%) |
-| Due now by cadence | 943 |
+| Due now by cadence | 944 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 19:28 UTC. Latest close: Apr 26, 2026, 19:01 UTC. Latest comment sync: Apr 26, 2026, 19:30 UTC.
+Latest review: Apr 26, 2026, 19:47 UTC. Latest close: Apr 26, 2026, 19:01 UTC. Latest comment sync: Apr 26, 2026, 19:30 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
-| Last hour | 40 | 0 | 40 | 0 | 39 | 358 | 4 |
-| Last 24 hours | 9865 | 2624 | 7241 | 1 | 2036 | 2756 | 14 |
+| Last 15 minutes | 500 | 1 | 499 | 0 | 0 | 0 | 0 |
+| Last hour | 540 | 1 | 539 | 0 | 39 | 193 | 2 |
+| Last 24 hours | 9853 | 2624 | 7229 | 1 | 2036 | 2260 | 11 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 19:28 UTC. Latest close: Apr 26, 2026, 19:01 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#38687](https://github.com/openclaw/openclaw/pull/38687) | [AI-assisted] fix(media): bypass proxy for internal audio backends | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38687.md) | complete | Apr 26, 2026, 19:28 UTC |
-| [#38640](https://github.com/openclaw/openclaw/pull/38640) | feat: Add LLM retry mechanism with exponential backoff | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38640.md) | complete | Apr 26, 2026, 19:28 UTC |
-| [#38430](https://github.com/openclaw/openclaw/issues/38430) | Bug: Agent outputs ~ tilde shorthand instead of full absolute file paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38430.md) | complete | Apr 26, 2026, 19:28 UTC |
-| [#38458](https://github.com/openclaw/openclaw/issues/38458) | [Feature]: Option to suppress tool error output from reaching chat surfaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38458.md) | complete | Apr 26, 2026, 19:28 UTC |
-| [#39412](https://github.com/openclaw/openclaw/pull/39412) | Harden provider secret loading and daemon gateway token persistence | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39412.md) | complete | Apr 26, 2026, 19:27 UTC |
-| [#38505](https://github.com/openclaw/openclaw/issues/38505) | Discord: Handle messageUpdate events to re-trigger conversation on message edits | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38505.md) | complete | Apr 26, 2026, 19:27 UTC |
-| [#38691](https://github.com/openclaw/openclaw/pull/38691) | fix(android): support non-Google speech recognizer on Chinese OEM devices | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38691.md) | complete | Apr 26, 2026, 19:27 UTC |
-| [#38958](https://github.com/openclaw/openclaw/pull/38958) | feat(feishu): configurable group and DM display-name resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38958.md) | complete | Apr 26, 2026, 19:27 UTC |
-| [#38982](https://github.com/openclaw/openclaw/pull/38982) | feat(tui): add kitty-style interactive theme picker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38982.md) | complete | Apr 26, 2026, 19:27 UTC |
-| [#43793](https://github.com/openclaw/openclaw/pull/43793) | feat(tui): show reconnect hint and auto-probe gateway when disconnected | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43793.md) | complete | Apr 26, 2026, 19:27 UTC |
+| [#38897](https://github.com/openclaw/openclaw/pull/38897) | [codex] Surface tool runtime, execution queue, and autonomy posture | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38897.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#38603](https://github.com/openclaw/openclaw/issues/38603) | Telegram: sendMessageTelegram missing isSilentReply guard (causes flash of streamed text before NO_REPLY suppression) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38603.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#37706](https://github.com/openclaw/openclaw/issues/37706) | [Bug]: Feishu/Lark group @all should not count as bot mention | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37706.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#39166](https://github.com/openclaw/openclaw/pull/39166) | acp: add defaultRunTimeoutSeconds fallback for ACP sessions_spawn | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39166.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#38246](https://github.com/openclaw/openclaw/issues/38246) | Feature Request: Prevent accidental message routing to wrong recipient in DM sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38246.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#68751](https://github.com/openclaw/openclaw/issues/68751) | session-memory: raw prior-session turns replay as current input on /reset (autonomous re-execution) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68751.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#39112](https://github.com/openclaw/openclaw/pull/39112) | Agents/Usage: estimate Ollama usage for the dashboard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39112.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#26037](https://github.com/openclaw/openclaw/issues/26037) | [Feature]: Ali bailian coding plan support ( thinking/reasoning enabled ) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/26037.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#38932](https://github.com/openclaw/openclaw/pull/38932) | docs(gateway): add Windows no-Docker hardening fallback guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38932.md) | complete | Apr 26, 2026, 19:47 UTC |
+| [#37131](https://github.com/openclaw/openclaw/issues/37131) | [Feature]: Invoke tools directly without LLM round-trip | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37131.md) | complete | Apr 26, 2026, 19:47 UTC |
 
 </details>
 
