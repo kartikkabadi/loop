@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 16:04 UTC
 
 Updated: Apr 26, 2026, 16:04 UTC
 
-State: Apply finished
+State: Hot intake comments synced
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960727898](https://github.com/openclaw/clawsweeper/actions/runs/24960727898)
+Synced durable Codex review comments for 17 hot-intake item(s). Item numbers: 47604,71862,72023,72033,72038,72045,72051,72058,72069,72092,72101,72152,72168,72174,72179,72181,72187,72189,72200,72201.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960840944](https://github.com/openclaw/clawsweeper/actions/runs/24960840944)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -45,34 +45,34 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960727898](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3749 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3531 |
 | Open items total | 7280 |
-| Reviewed files | 7208 |
-| Unreviewed open items | 72 |
-| Archived closed files | 12439 |
+| Reviewed files | 7214 |
+| Unreviewed open items | 66 |
+| Archived closed files | 12433 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3732 |
-| Proposed issue closes | 7 (0.2% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3738 |
+| Proposed issue closes | 13 (0.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3473 |
 | Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7205 |
-| Proposed closes awaiting apply | 8 (0.1% of fresh reviews) |
-| Closed by Codex apply | 9888 |
+| Fresh verified reviews in the last 7 days | 7211 |
+| Proposed closes awaiting apply | 14 (0.2% of fresh reviews) |
+| Closed by Codex apply | 9870 |
 | Failed or stale reviews | 3 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 360/817 current (457 due, 44.1%) |
-| Hourly hot item cadence (<7d) | 360/817 current (457 due, 44.1%) |
+| Hourly cadence coverage | 366/823 current (457 due, 44.5%) |
+| Hourly hot item cadence (<7d) | 366/823 current (457 due, 44.5%) |
 | Daily cadence coverage | 4434/4499 current (65 due, 98.6%) |
 | Daily PR cadence | 2992/3050 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1442/1449 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1892/1892 current (0 due, 100%) |
-| Due now by cadence | 594 |
+| Due now by cadence | 588 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 16:02 UTC. Latest close: Apr 26, 2026, 16:04 UTC. Latest comment sync: Apr 26, 2026, 16:04 UTC.
+Latest review: Apr 26, 2026, 16:02 UTC. Latest close: Apr 26, 2026, 15:54 UTC. Latest comment sync: Apr 26, 2026, 16:04 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 480 | 26 | 454 | 1 | 20 | 377 | 3 |
-| Last hour | 1021 | 28 | 993 | 1 | 20 | 396 | 4 |
-| Last 24 hours | 9979 | 2677 | 7302 | 15 | 3214 | 2424 | 20 |
+| Last 15 minutes | 478 | 26 | 452 | 1 | 2 | 375 | 2 |
+| Last hour | 1021 | 28 | 993 | 1 | 2 | 394 | 3 |
+| Last 24 hours | 9979 | 2677 | 7302 | 15 | 3196 | 2422 | 19 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,7 +119,7 @@ Latest review: Apr 26, 2026, 16:02 UTC. Latest close: Apr 26, 2026, 16:04 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72045](https://github.com/openclaw/openclaw/pull/72045) | fix(qa-lab): keep mock threaded memory parity deterministic | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72045.md) | complete | Apr 26, 2026, 16:02 UTC |
+| [#72045](https://github.com/openclaw/openclaw/pull/72045) | fix(qa-lab): keep mock threaded memory parity deterministic | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72045.md) | complete | Apr 26, 2026, 16:02 UTC |
 | [#72058](https://github.com/openclaw/openclaw/issues/72058) | [Bug]: npm deps are missing after update to 24.04.2026 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72058.md) | complete | Apr 26, 2026, 16:01 UTC |
 | [#72201](https://github.com/openclaw/openclaw/pull/72201) | feat(events): add audience field for hidden runtime-context system events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72201.md) | complete | Apr 26, 2026, 16:01 UTC |
 | [#72189](https://github.com/openclaw/openclaw/pull/72189) | fix(voice-call): Google Live tool responses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72189.md) | complete | Apr 26, 2026, 16:01 UTC |
