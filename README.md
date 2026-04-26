@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 08:41 UTC
 
 Updated: Apr 26, 2026, 08:41 UTC
 
-State: Apply finished
+State: Review publish complete
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952417510](https://github.com/openclaw/clawsweeper/actions/runs/24952417510)
+Merged review artifacts for run 24952182339. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952182339](https://github.com/openclaw/clawsweeper/actions/runs/24952182339)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -45,34 +45,34 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952417510](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4082 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3693 |
 | Open items total | 7775 |
-| Reviewed files | 7528 |
-| Unreviewed open items | 247 |
-| Archived closed files | 11769 |
+| Reviewed files | 7529 |
+| Unreviewed open items | 246 |
+| Archived closed files | 11768 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3952 |
-| Proposed issue closes | 20 (0.5% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3524 |
-| Proposed PR closes | 21 (0.6% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7476 |
-| Proposed closes awaiting apply | 41 (0.5% of fresh reviews) |
-| Closed by Codex apply | 9265 |
-| Failed or stale reviews | 52 |
+| Fresh reviewed issues in the last 7 days | 3958 |
+| Proposed issue closes | 71 (1.8% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3523 |
+| Proposed PR closes | 59 (1.7% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7481 |
+| Proposed closes awaiting apply | 130 (1.7% of fresh reviews) |
+| Closed by Codex apply | 9245 |
+| Failed or stale reviews | 48 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 71/777 current (706 due, 9.1%) |
-| Hourly hot item cadence (<7d) | 71/777 current (706 due, 9.1%) |
-| Daily cadence coverage | 4676/4780 current (104 due, 97.8%) |
-| Daily PR cadence | 3102/3180 current (78 due, 97.5%) |
-| Daily new issue cadence (<30d) | 1574/1600 current (26 due, 98.4%) |
+| Hourly cadence coverage | 76/777 current (701 due, 9.8%) |
+| Hourly hot item cadence (<7d) | 76/777 current (701 due, 9.8%) |
+| Daily cadence coverage | 4681/4781 current (100 due, 97.9%) |
+| Daily PR cadence | 3101/3179 current (78 due, 97.5%) |
+| Daily new issue cadence (<30d) | 1580/1602 current (22 due, 98.6%) |
 | Weekly older issue cadence | 1966/1971 current (5 due, 99.7%) |
-| Due now by cadence | 1062 |
+| Due now by cadence | 1052 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 08:25 UTC. Latest close: Apr 26, 2026, 08:40 UTC. Latest comment sync: Apr 26, 2026, 08:40 UTC.
+Latest review: Apr 26, 2026, 08:39 UTC. Latest close: Apr 26, 2026, 08:38 UTC. Latest comment sync: Apr 26, 2026, 08:38 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 48 | 366 | 0 |
-| Last hour | 1018 | 171 | 847 | 0 | 107 | 489 | 24 |
-| Last 24 hours | 10007 | 2347 | 7660 | 65 | 4986 | 1839 | 56 |
+| Last 15 minutes | 500 | 84 | 416 | 0 | 28 | 345 | 0 |
+| Last hour | 1517 | 255 | 1262 | 0 | 87 | 432 | 20 |
+| Last 24 hours | 10007 | 2427 | 7580 | 61 | 4966 | 1781 | 52 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 08:25 UTC. Latest close: Apr 26, 2026, 08:40 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#58692](https://github.com/openclaw/openclaw/pull/58692) | Fractal/openclaw latest | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58692.md) | complete | Apr 26, 2026, 08:25 UTC |
-| [#59522](https://github.com/openclaw/openclaw/pull/59522) | docs(himalaya): align v1.1 provider guidance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59522.md) | complete | Apr 26, 2026, 08:25 UTC |
-| [#56283](https://github.com/openclaw/openclaw/pull/56283) | feat(outbound): strip markdown for plain-text channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56283.md) | complete | Apr 26, 2026, 08:25 UTC |
-| [#54467](https://github.com/openclaw/openclaw/issues/54467) | Bonjour: no config key for per-instance mDNS service name (multi-gateway same-host) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54467.md) | complete | Apr 26, 2026, 08:25 UTC |
-| [#59210](https://github.com/openclaw/openclaw/pull/59210) | docs(whatsapp): clarify remote QR pairing limitations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59210.md) | complete | Apr 26, 2026, 08:25 UTC |
-| [#56692](https://github.com/openclaw/openclaw/issues/56692) | Group chat context handling can blur which messages are addressed to the current agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56692.md) | complete | Apr 26, 2026, 08:25 UTC |
-| [#59126](https://github.com/openclaw/openclaw/pull/59126) | docs(contributing): add Development Environment section with WSL2 setup guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59126.md) | complete | Apr 26, 2026, 08:24 UTC |
-| [#62839](https://github.com/openclaw/openclaw/issues/62839) | [Bug]: openclaw update persists HTTP_PROXY into systemd service, breaking Feishu integration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62839.md) | complete | Apr 26, 2026, 08:24 UTC |
-| [#58557](https://github.com/openclaw/openclaw/pull/58557) | docs: add troubleshooting for cron job language output issues | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58557.md) | complete | Apr 26, 2026, 08:24 UTC |
-| [#40387](https://github.com/openclaw/openclaw/pull/40387) | docs: add EasyRunner deployment guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40387.md) | complete | Apr 26, 2026, 08:24 UTC |
+| [#58830](https://github.com/openclaw/openclaw/issues/58830) | [Feature]: Add user-visible and confirmable context compaction mechanisms | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58830.md) | complete | Apr 26, 2026, 08:39 UTC |
+| [#59451](https://github.com/openclaw/openclaw/issues/59451) | [Feature]: Add file-based fallback search when `node:sqlite` is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59451.md) | complete | Apr 26, 2026, 08:39 UTC |
+| [#58492](https://github.com/openclaw/openclaw/pull/58492) | Clarify self orchestrator prompt routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58492.md) | complete | Apr 26, 2026, 08:39 UTC |
+| [#59026](https://github.com/openclaw/openclaw/issues/59026) | [Bug]: Discord thread binding not released after ACP task completion — channel messages misrouted to thread | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59026.md) | complete | Apr 26, 2026, 08:38 UTC |
+| [#59543](https://github.com/openclaw/openclaw/pull/59543) | feat(plugins): add outbound-whitelist plugin and wire message_sending hooks into WhatsApp and Discord delivery | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/59543.md) | complete | Apr 26, 2026, 08:38 UTC |
+| [#58803](https://github.com/openclaw/openclaw/pull/58803) | feat: persist session context across reconnections | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/58803.md) | complete | Apr 26, 2026, 08:38 UTC |
+| [#59816](https://github.com/openclaw/openclaw/pull/59816) | fix(discord): record history entry when dropping bot message in allowBots=mentions mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59816.md) | complete | Apr 26, 2026, 08:38 UTC |
+| [#60064](https://github.com/openclaw/openclaw/pull/60064) | fix(gateway): accept allow-always exec approval metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60064.md) | complete | Apr 26, 2026, 08:38 UTC |
+| [#69292](https://github.com/openclaw/openclaw/pull/69292) | fix(doctor): skip plugins.entries for installed plugins already auto-loaded via manifest channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69292.md) | complete | Apr 26, 2026, 08:38 UTC |
+| [#59174](https://github.com/openclaw/openclaw/issues/59174) | [Bug]: Openclaw cant view referenced whatsapp image | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59174.md) | complete | Apr 26, 2026, 08:38 UTC |
 
 </details>
 
