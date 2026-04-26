@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 22:09 UTC
+Last dashboard update: Apr 26, 2026, 22:11 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 22:09 UTC
+Updated: Apr 26, 2026, 22:11 UTC
 
-State: Review publish complete
+State: Hot intake publish complete
 
-Merged review artifacts for run 24968076927. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968076927](https://github.com/openclaw/clawsweeper/actions/runs/24968076927)
+Merged hot intake artifacts for run 24968217103. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968217103](https://github.com/openclaw/clawsweeper/actions/runs/24968217103)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -45,20 +45,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968076927](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3694 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3533 |
 | Open items total | 7227 |
-| Reviewed files | 7150 |
-| Unreviewed open items | 77 |
+| Reviewed files | 7153 |
+| Unreviewed open items | 74 |
 | Archived closed files | 12597 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3678 |
-| Proposed issue closes | 4 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3470 |
+| Fresh reviewed issues in the last 7 days | 3680 |
+| Proposed issue closes | 5 (0.1% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3471 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7148 |
-| Proposed closes awaiting apply | 4 (0.1% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 7151 |
+| Proposed closes awaiting apply | 5 (0.1% of fresh reviews) |
 | Closed by Codex apply | 10000 |
 | Failed or stale reviews | 2 |
 
@@ -66,8 +66,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968076927](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 766/778 current (12 due, 98.5%) |
-| Hourly hot item cadence (<7d) | 766/778 current (12 due, 98.5%) |
+| Hourly cadence coverage | 766/781 current (15 due, 98.1%) |
+| Hourly hot item cadence (<7d) | 766/781 current (15 due, 98.1%) |
 | Daily cadence coverage | 4420/4487 current (67 due, 98.5%) |
 | Daily PR cadence | 2988/3046 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1432/1441 current (9 due, 99.4%) |
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 22:08 UTC. Latest close: Apr 26, 2026, 22:01 UTC. Latest comment sync: Apr 26, 2026, 22:01 UTC.
+Latest review: Apr 26, 2026, 22:09 UTC. Latest close: Apr 26, 2026, 22:01 UTC. Latest comment sync: Apr 26, 2026, 22:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 394 | 9 | 385 | 0 | 7 | 7 | 2 |
-| Last hour | 1336 | 18 | 1318 | 0 | 32 | 65 | 3 |
-| Last 24 hours | 9595 | 2420 | 7175 | 0 | 2069 | 2155 | 12 |
+| Last 15 minutes | 338 | 6 | 332 | 0 | 7 | 7 | 2 |
+| Last hour | 1333 | 17 | 1316 | 0 | 32 | 65 | 3 |
+| Last 24 hours | 9597 | 2420 | 7177 | 0 | 2069 | 2155 | 12 |
 
 ### Recently Closed
 
@@ -134,16 +134,16 @@ Latest review: Apr 26, 2026, 22:08 UTC. Latest close: Apr 26, 2026, 22:01 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71932](https://github.com/openclaw/openclaw/issues/71932) | [Bug] 404 Model Not Found when spawning sub-agents with google/gemini-3.1-flash-lite-preview | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71932.md) | complete | Apr 26, 2026, 22:08 UTC |
-| [#72080](https://github.com/openclaw/openclaw/issues/72080) | [Bug]: ACP child sessions report stopReason=\"stop\" with usage=0 before harness completes, causing parent agents to abandon mid-flight | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72080.md) | complete | Apr 26, 2026, 22:08 UTC |
-| [#72154](https://github.com/openclaw/openclaw/pull/72154) | docs(install): fix gog/goplaces release URLs in docker-vm-runtime example | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72154.md) | complete | Apr 26, 2026, 22:08 UTC |
-| [#72081](https://github.com/openclaw/openclaw/issues/72081) | [Bug]: dashboard command run without giving a tocken | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72081.md) | complete | Apr 26, 2026, 22:08 UTC |
-| [#71787](https://github.com/openclaw/openclaw/pull/71787) | fix(feishu): accept schema 2 card callbacks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71787.md) | complete | Apr 26, 2026, 22:08 UTC |
-| [#72224](https://github.com/openclaw/openclaw/pull/72224) | fix gateway restart outside systemd | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72224.md) | complete | Apr 26, 2026, 22:07 UTC |
-| [#72351](https://github.com/openclaw/openclaw/pull/72351) | fix(tui): handle zero history limit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72351.md) | complete | Apr 26, 2026, 22:07 UTC |
-| [#72226](https://github.com/openclaw/openclaw/issues/72226) | systemEvent causes SWW when session conversation ends with assistant turn (Anthropic provider) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72226.md) | complete | Apr 26, 2026, 22:07 UTC |
-| [#71699](https://github.com/openclaw/openclaw/issues/71699) | [Bug]: Gateway hard-crashes with 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN) on Windows during Mattermost streaming reply; auto-respawn frequently wedges | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71699.md) | complete | Apr 26, 2026, 22:07 UTC |
-| [#72213](https://github.com/openclaw/openclaw/pull/72213) | fix(discord): deduplicate tool progress entries in block streaming mode [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72213.md) | complete | Apr 26, 2026, 22:07 UTC |
+| [#72380](https://github.com/openclaw/openclaw/issues/72380) | [v2026.4.24] doctor --fix installs bundled deps to wrong dir; ENOTEMPTY in plugin-sdk alias crashes node host | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72380.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#72097](https://github.com/openclaw/openclaw/issues/72097) | [Feature]: sync tool-injection into active agent sessions on plugins install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72097.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#72139](https://github.com/openclaw/openclaw/issues/72139) | Control UI auth retry loop + blocking chat.history causes Slack Socket Mode disconnects | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72139.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#65824](https://github.com/openclaw/openclaw/issues/65824) | [Meta] Feature request bundle: 11 platform gaps from intensive daily use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65824.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#72382](https://github.com/openclaw/openclaw/issues/72382) | [Bug]: General install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72382.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#71988](https://github.com/openclaw/openclaw/pull/71988) | dispatch: broadcast inbound_claim to global plugin listeners | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71988.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#72209](https://github.com/openclaw/openclaw/pull/72209) | Add passive session recovery checkpoints | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72209.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#72352](https://github.com/openclaw/openclaw/pull/72352) | fix(agents): scope provider discovery from configured models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72352.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#72084](https://github.com/openclaw/openclaw/pull/72084) | postinstall: reinstall stale bundled runtime deps after npm updates | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72084.md) | complete | Apr 26, 2026, 22:09 UTC |
+| [#72381](https://github.com/openclaw/openclaw/pull/72381) | Add Google Meet realtime consult agentId | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72381.md) | complete | Apr 26, 2026, 22:08 UTC |
 
 </details>
 
