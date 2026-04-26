@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 14:06 UTC
+Last dashboard update: Apr 26, 2026, 14:10 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 14:06 UTC
+Updated: Apr 26, 2026, 14:10 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24958523935. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958523935](https://github.com/openclaw/clawsweeper/actions/runs/24958523935)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958523935](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3767 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3771 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3522 |
-| Open items total | 7289 |
+| Open items total | 7293 |
 | Reviewed files | 7180 |
-| Unreviewed open items | 109 |
+| Unreviewed open items | 113 |
 | Archived closed files | 12372 |
 
 ### Review Outcomes
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958523935](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 21/793 current (772 due, 2.6%) |
-| Hourly hot item cadence (<7d) | 21/793 current (772 due, 2.6%) |
+| Hourly cadence coverage | 35/793 current (758 due, 4.4%) |
+| Hourly hot item cadence (<7d) | 35/793 current (758 due, 4.4%) |
 | Daily cadence coverage | 4433/4498 current (65 due, 98.6%) |
 | Daily PR cadence | 2987/3045 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1446/1453 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1889/1889 current (0 due, 100%) |
-| Due now by cadence | 946 |
+| Due now by cadence | 936 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 13:57 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 13:41 UTC.
+Latest review: Apr 26, 2026, 14:09 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 13:41 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 315 | 2 | 313 | 0 | 0 | 0 | 0 |
-| Last hour | 520 | 4 | 516 | 0 | 0 | 18 | 2 |
-| Last 24 hours | 9998 | 2702 | 7296 | 15 | 3750 | 2054 | 23 |
+| Last 15 minutes | 68 | 1 | 67 | 0 | 0 | 0 | 0 |
+| Last hour | 540 | 4 | 536 | 0 | 0 | 18 | 2 |
+| Last 24 hours | 9982 | 2688 | 7294 | 15 | 3718 | 2044 | 21 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 13:57 UTC. Latest close: Apr 26, 2026, 12:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#39695](https://github.com/openclaw/openclaw/issues/39695) | [Bug] Agent Responds but Silently Fails to Execute exec Tool or Create Session Logs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39695.md) | complete | Apr 26, 2026, 13:57 UTC |
-| [#40043](https://github.com/openclaw/openclaw/pull/40043) | feat: Atlas bounty fixes - recursive skill scanning and startup auth warning | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40043.md) | complete | Apr 26, 2026, 13:56 UTC |
-| [#39796](https://github.com/openclaw/openclaw/pull/39796) | fix: refresh lastEventAt on heartbeat to prevent false stale-socket restarts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39796.md) | complete | Apr 26, 2026, 13:56 UTC |
-| [#39523](https://github.com/openclaw/openclaw/pull/39523) | fix: support mediaLocalRoots config for Feishu channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39523.md) | complete | Apr 26, 2026, 13:56 UTC |
-| [#39772](https://github.com/openclaw/openclaw/pull/39772) | fix(telegram): apply reply_to only to first stream preview to avoid 'Deleted message' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39772.md) | complete | Apr 26, 2026, 13:56 UTC |
-| [#39984](https://github.com/openclaw/openclaw/pull/39984) | web_search: improve missing API key guidance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39984.md) | complete | Apr 26, 2026, 13:56 UTC |
-| [#39979](https://github.com/openclaw/openclaw/issues/39979) | [Feature]: Path-scoped RWX permissions for exec and file tools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39979.md) | complete | Apr 26, 2026, 13:56 UTC |
-| [#39790](https://github.com/openclaw/openclaw/pull/39790) | fix(gateway): strip inbound metadata from TUI session titles and prefer external displayName | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39790.md) | complete | Apr 26, 2026, 13:56 UTC |
-| [#40024](https://github.com/openclaw/openclaw/issues/40024) | [Bug]: Embedded agent 不向配置的 OpenAI 兼容 proxy 发送 POST /v1/chat/completions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40024.md) | complete | Apr 26, 2026, 13:56 UTC |
-| [#65691](https://github.com/openclaw/openclaw/pull/65691) | feat(slack): add message search support via search.messages API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65691.md) | complete | Apr 26, 2026, 13:56 UTC |
+| [#72058](https://github.com/openclaw/openclaw/issues/72058) | [Bug]: npm deps are missing after update to 24.04.2026 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72058.md) | complete | Apr 26, 2026, 14:09 UTC |
+| [#72069](https://github.com/openclaw/openclaw/pull/72069) | fix(agents): seed claude-cli fallback prompts with prior-session context (#69973) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72069.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#71843](https://github.com/openclaw/openclaw/pull/71843) | fix(slack): suppress already_reacted from agent react tool | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71843.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#47687](https://github.com/openclaw/openclaw/pull/47687) | Telegram: add reaction semantics wake triggers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47687.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#69998](https://github.com/openclaw/openclaw/pull/69998) | fix(gateway): redact secrets in skills.update response | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69998.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#72038](https://github.com/openclaw/openclaw/pull/72038) | fix(telegram): send fresh finals for stale previews | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72038.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#72033](https://github.com/openclaw/openclaw/pull/72033) | feat(gateway): add diagnostics.pricing method for pricing cache visibility | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72033.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#72101](https://github.com/openclaw/openclaw/pull/72101) | fix(agents): ignore ACP-only streamTo and treat default model as unset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72101.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#7456](https://github.com/openclaw/openclaw/issues/7456) | [Feature]: Add \"go back\" navigation during onboarding wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7456.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#7379](https://github.com/openclaw/openclaw/issues/7379) | Feature Request: Add premium request % to /usage footer | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7379.md) | complete | Apr 26, 2026, 14:08 UTC |
 
 </details>
 
