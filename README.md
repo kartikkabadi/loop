@@ -23,42 +23,42 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 04:12 UTC
+Last dashboard update: Apr 26, 2026, 04:13 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 04:12 UTC
+Updated: Apr 26, 2026, 04:13 UTC
 
-State: Apply in progress
+State: Review in progress
 
-Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947944173](https://github.com/openclaw/clawsweeper/actions/runs/24947944173)
+Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947948687](https://github.com/openclaw/clawsweeper/actions/runs/24947948687)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4753 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4219 |
-| Open items total | 8972 |
-| Reviewed files | 8787 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4736 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4218 |
+| Open items total | 8954 |
+| Reviewed files | 8769 |
 | Unreviewed open items | 185 |
-| Archived closed files | 10510 |
+| Archived closed files | 10528 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4674 |
-| Proposed issue closes | 453 (9.7% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 4095 |
+| Fresh reviewed issues in the last 7 days | 4662 |
+| Proposed issue closes | 444 (9.5% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 4089 |
 | Proposed PR closes | 179 (4.4% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 8769 |
-| Proposed closes awaiting apply | 632 (7.2% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 8751 |
+| Proposed closes awaiting apply | 623 (7.1% of fresh reviews) |
 | Closed by Codex apply | 8152 |
 | Failed or stale reviews | 18 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947944173](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 16/1012 current (996 due, 1.6%) |
-| Hourly hot item cadence (<7d) | 16/1012 current (996 due, 1.6%) |
-| Daily cadence coverage | 5618/5700 current (82 due, 98.6%) |
-| Daily PR cadence | 3574/3643 current (69 due, 98.1%) |
-| Daily new issue cadence (<30d) | 2044/2057 current (13 due, 99.4%) |
-| Weekly older issue cadence | 2072/2075 current (3 due, 99.9%) |
-| Due now by cadence | 1266 |
+| Hourly cadence coverage | 16/1010 current (994 due, 1.6%) |
+| Hourly hot item cadence (<7d) | 16/1010 current (994 due, 1.6%) |
+| Daily cadence coverage | 5611/5693 current (82 due, 98.6%) |
+| Daily PR cadence | 3569/3638 current (69 due, 98.1%) |
+| Daily new issue cadence (<30d) | 2042/2055 current (13 due, 99.4%) |
+| Weekly older issue cadence | 2063/2066 current (3 due, 99.9%) |
+| Due now by cadence | 1264 |
 
 ### Latest Run Activity
 
@@ -81,8 +81,8 @@ Latest review: Apr 26, 2026, 04:09 UTC. Latest close: Apr 26, 2026, 04:10 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 250 | 46 | 204 | 0 | 62 | 64 | 1 |
-| Last hour | 948 | 169 | 779 | 1 | 246 | 267 | 4 |
-| Last 24 hours | 10948 | 2475 | 8473 | 30 | 5592 | 542 | 190 |
+| Last hour | 904 | 169 | 735 | 1 | 235 | 256 | 4 |
+| Last 24 hours | 10938 | 2467 | 8471 | 30 | 5588 | 542 | 190 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
