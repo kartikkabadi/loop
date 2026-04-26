@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:48 UTC
+Last dashboard update: Apr 26, 2026, 10:49 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:48 UTC
+Updated: Apr 26, 2026, 10:49 UTC
 
-State: Apply finished
+State: Review publish complete
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954734024](https://github.com/openclaw/clawsweeper/actions/runs/24954734024)
+Merged review artifacts for run 24954490372. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954490372](https://github.com/openclaw/clawsweeper/actions/runs/24954490372)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,36 +43,36 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954734024](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3813 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3541 |
-| Open items total | 7354 |
-| Reviewed files | 7270 |
-| Unreviewed open items | 84 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3542 |
+| Open items total | 7355 |
+| Reviewed files | 7274 |
+| Unreviewed open items | 81 |
 | Archived closed files | 12229 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3743 |
-| Proposed issue closes | 5 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3434 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7177 |
-| Proposed closes awaiting apply | 6 (0.1% of fresh reviews) |
-| Closed by Codex apply | 9704 |
-| Failed or stale reviews | 93 |
+| Fresh reviewed issues in the last 7 days | 3746 |
+| Proposed issue closes | 32 (0.9% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3436 |
+| Proposed PR closes | 11 (0.3% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7182 |
+| Proposed closes awaiting apply | 43 (0.6% of fresh reviews) |
+| Closed by Codex apply | 9684 |
+| Failed or stale reviews | 92 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 382/876 current (494 due, 43.6%) |
-| Hourly hot item cadence (<7d) | 382/876 current (494 due, 43.6%) |
+| Hourly cadence coverage | 856/880 current (24 due, 97.3%) |
+| Hourly hot item cadence (<7d) | 856/880 current (24 due, 97.3%) |
 | Daily cadence coverage | 4363/4510 current (147 due, 96.7%) |
 | Daily PR cadence | 2948/3054 current (106 due, 96.5%) |
 | Daily new issue cadence (<30d) | 1415/1456 current (41 due, 97.2%) |
 | Weekly older issue cadence | 1871/1884 current (13 due, 99.3%) |
-| Due now by cadence | 738 |
+| Due now by cadence | 265 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 10:32 UTC. Latest close: Apr 26, 2026, 10:48 UTC. Latest comment sync: Apr 26, 2026, 10:48 UTC.
+Latest review: Apr 26, 2026, 10:48 UTC. Latest close: Apr 26, 2026, 10:46 UTC. Latest comment sync: Apr 26, 2026, 10:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 74 | 127 | 0 |
-| Last hour | 1351 | 123 | 1228 | 1 | 140 | 861 | 0 |
-| Last 24 hours | 10104 | 2677 | 7427 | 105 | 4932 | 2604 | 30 |
+| Last 15 minutes | 500 | 37 | 463 | 0 | 54 | 95 | 0 |
+| Last hour | 1823 | 159 | 1664 | 1 | 120 | 822 | 0 |
+| Last 24 hours | 10108 | 2714 | 7394 | 104 | 4912 | 2564 | 30 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 10:32 UTC. Latest close: Apr 26, 2026, 10:48 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71784](https://github.com/openclaw/openclaw/issues/71784) | Bug: memory search live embedding fails ~20–40% with `fetch failed \| other side closed` (provider-agnostic; upstream healthy) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71784.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#72082](https://github.com/openclaw/openclaw/pull/72082) | Add generic plugin host-hook SDK contracts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72082.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#71792](https://github.com/openclaw/openclaw/pull/71792) | fix(session): persist memory on auto daily/idle rollover | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71792.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#71834](https://github.com/openclaw/openclaw/issues/71834) | Regression: 2026.4.22 invalid thinking bundle; 2026.4.24 Telegram webhook startup fails on VPS | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71834.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#71828](https://github.com/openclaw/openclaw/pull/71828) | fix: keep Discord typing alive during long runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71828.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#71779](https://github.com/openclaw/openclaw/pull/71779) | Fix configured thinking default in session rows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71779.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#71830](https://github.com/openclaw/openclaw/pull/71830) | fix(whatsapp): sanitize XML tool text and suppress errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71830.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#71837](https://github.com/openclaw/openclaw/pull/71837) | fix(memory-core): denoise dreaming wrappers and promote grounded REM truths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71837.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#71820](https://github.com/openclaw/openclaw/pull/71820) | feat(bluebubbles): add reply-context API fallback for cache misses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71820.md) | complete | Apr 26, 2026, 10:31 UTC |
-| [#72087](https://github.com/openclaw/openclaw/issues/72087) | Bug: dist/entry.js main-path breaks Codex OAuth image generation on Linux while direct runCli()/provider path succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72087.md) | complete | Apr 26, 2026, 10:31 UTC |
+| [#71712](https://github.com/openclaw/openclaw/issues/71712) | [RFC] Agent-facing scheduling API with non-forgeable provenance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71712.md) | complete | Apr 26, 2026, 10:48 UTC |
+| [#71243](https://github.com/openclaw/openclaw/pull/71243) | Improve Control UI onboarding UX | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71243.md) | complete | Apr 26, 2026, 10:46 UTC |
+| [#70959](https://github.com/openclaw/openclaw/issues/70959) | [Bug]: Control UI webchat re-sends image messages 4–9× causing 413 overflow and permanent session freeze | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70959.md) | complete | Apr 26, 2026, 10:46 UTC |
+| [#71583](https://github.com/openclaw/openclaw/issues/71583) | [Bug] QQ token fetch to bots.qq.com times out across A/B uplinks (core healthy) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71583.md) | complete | Apr 26, 2026, 10:45 UTC |
+| [#71566](https://github.com/openclaw/openclaw/pull/71566) | feat: implement directory handlers for self, peers, and groups list f… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71566.md) | complete | Apr 26, 2026, 10:45 UTC |
+| [#71605](https://github.com/openclaw/openclaw/issues/71605) | Gateway WS `agent` dispatch times out 60s + embedded mode contends with running daemon for session file locks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71605.md) | complete | Apr 26, 2026, 10:45 UTC |
+| [#71594](https://github.com/openclaw/openclaw/pull/71594) | docs(gateway): clarify IPv4-only BYOH bind path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71594.md) | complete | Apr 26, 2026, 10:44 UTC |
+| [#71633](https://github.com/openclaw/openclaw/pull/71633) | fix(bonjour): suppress Windows arp-poll console flash via windowsHide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71633.md) | complete | Apr 26, 2026, 10:44 UTC |
+| [#71426](https://github.com/openclaw/openclaw/issues/71426) | RFC: sessions.patch plugin extension hook \\u2014 let plugins handle their own patch payloads | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71426.md) | complete | Apr 26, 2026, 10:44 UTC |
+| [#70777](https://github.com/openclaw/openclaw/issues/70777) | Main agent intermittently starts with wrong cwd and tries to read ~/.openclaw/agents/main/agent/AGENTS.md instead of workspace AGENTS.md | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70777.md) | complete | Apr 26, 2026, 10:44 UTC |
 
 </details>
 
