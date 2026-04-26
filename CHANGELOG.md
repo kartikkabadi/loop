@@ -79,3 +79,5 @@ checkpoint, and status-only commits are intentionally omitted.
 - Ensured README dashboard cadence metrics reflect the current review rules.
 - Avoided duplicate close comments by adopting existing Codex review comments and
   adding a hidden marker for future updates.
+- Corrected the GitHub Actions setup docs to describe app-token comment and
+  close attribution.
