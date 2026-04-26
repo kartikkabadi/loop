@@ -23,30 +23,30 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 12:29 UTC
+Last dashboard update: Apr 26, 2026, 12:33 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 12:29 UTC
+Updated: Apr 26, 2026, 12:33 UTC
 
-State: Audit finished
+State: Hot intake publish complete
 
-Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956621725](https://github.com/openclaw/clawsweeper/actions/runs/24956621725)
+Merged hot intake artifacts for run 24956618141. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956618141](https://github.com/openclaw/clawsweeper/actions/runs/24956618141)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3745 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3514 |
-| Open items total | 7259 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3746 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3515 |
+| Open items total | 7261 |
 | Reviewed files | 7183 |
-| Unreviewed open items | 76 |
+| Unreviewed open items | 78 |
 | Archived closed files | 12359 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956621725](https://
 | Daily PR cadence | 2986/3049 current (63 due, 97.9%) |
 | Daily new issue cadence (<30d) | 1448/1455 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1883/1883 current (0 due, 100%) |
-| Due now by cadence | 151 |
+| Due now by cadence | 153 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 12:14 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 12:22 UTC.
+Latest review: Apr 26, 2026, 12:32 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 12:22 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 3 | 1 | 2 | 0 | 20 | 240 | 0 |
-| Last hour | 1421 | 63 | 1358 | 0 | 80 | 720 | 3 |
-| Last 24 hours | 10105 | 2761 | 7344 | 14 | 4366 | 2641 | 31 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 20 | 42 | 0 |
+| Last hour | 1441 | 63 | 1378 | 0 | 80 | 704 | 3 |
+| Last 24 hours | 10105 | 2761 | 7344 | 14 | 4360 | 2625 | 31 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 12:14 UTC. Latest close: Apr 26, 2026, 12:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71141](https://github.com/openclaw/openclaw/pull/71141) | fix(telegram): honor outbound reaction directives | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71141.md) | complete | Apr 26, 2026, 12:14 UTC |
-| [#71040](https://github.com/openclaw/openclaw/pull/71040) | fix(cron): mirror active-jobs mark/clear on startup catchup and manual run | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71040.md) | complete | Apr 26, 2026, 12:14 UTC |
-| [#71569](https://github.com/openclaw/openclaw/issues/71569) | Mattermost streaming config: documented but not implemented + notification UX bug | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71569.md) | complete | Apr 26, 2026, 12:13 UTC |
-| [#71744](https://github.com/openclaw/openclaw/issues/71744) | [Bug]: Watchdog fallback chain silently drops primary-failure root cause when fallback also fails — only terminal error surfaces in runtime_events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71744.md) | complete | Apr 26, 2026, 12:13 UTC |
-| [#71555](https://github.com/openclaw/openclaw/issues/71555) | [Bug]: Large session JSONL can crash gateway during embedded context rebuild; SessionManager.open() loads file twice | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71555.md) | complete | Apr 26, 2026, 12:13 UTC |
-| [#71646](https://github.com/openclaw/openclaw/issues/71646) | mcp/channel-bridge: pendingClaudePermissions / pendingApprovals leak — no TTL, no close-clear, no cap | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71646.md) | complete | Apr 26, 2026, 12:13 UTC |
-| [#71537](https://github.com/openclaw/openclaw/pull/71537) | Recover archived (.reset) session transcripts in memory hook + session-logs skill | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71537.md) | complete | Apr 26, 2026, 12:13 UTC |
-| [#72146](https://github.com/openclaw/openclaw/issues/72146) | [Bug]: After updating to 4.24, LaunchAgent gateway doesn't work and only `openclaw gateway --force` works. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72146.md) | complete | Apr 26, 2026, 12:13 UTC |
-| [#71446](https://github.com/openclaw/openclaw/pull/71446) | fix(plugin-sdk): resolve JITI mocking test infrastructure and proxy validity checks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71446.md) | complete | Apr 26, 2026, 12:13 UTC |
-| [#71132](https://github.com/openclaw/openclaw/pull/71132) | test(slack): cover secret-contract registry and runtime-config assignments | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71132.md) | complete | Apr 26, 2026, 12:13 UTC |
+| [#62364](https://github.com/openclaw/openclaw/issues/62364) | Slow startup with multiple providers (models.list takes 30+ seconds) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62364.md) | complete | Apr 26, 2026, 12:32 UTC |
+| [#38781](https://github.com/openclaw/openclaw/pull/38781) | adding system.run.prepare | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38781.md) | complete | Apr 26, 2026, 12:31 UTC |
+| [#38806](https://github.com/openclaw/openclaw/issues/38806) | [Bug]: bot replies outside thread in P2P direct message thread | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38806.md) | complete | Apr 26, 2026, 12:31 UTC |
+| [#38775](https://github.com/openclaw/openclaw/issues/38775) | [Feature Request] Usage-aware load balancing for multi-account auth profiles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38775.md) | complete | Apr 26, 2026, 12:31 UTC |
+| [#38981](https://github.com/openclaw/openclaw/pull/38981) | feat(agents): add workspaceConfig.allowedExternalPaths for trusted symlinked workspace files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38981.md) | complete | Apr 26, 2026, 12:31 UTC |
+| [#39031](https://github.com/openclaw/openclaw/issues/39031) | Feature: Forward iMessage tapback reactions to agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39031.md) | complete | Apr 26, 2026, 12:31 UTC |
+| [#39115](https://github.com/openclaw/openclaw/pull/39115) | feat(config): add reasoningDefault to agents.defaults | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39115.md) | complete | Apr 26, 2026, 12:31 UTC |
+| [#38923](https://github.com/openclaw/openclaw/pull/38923) | Fix/38439 webchat avatar identity md | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38923.md) | complete | Apr 26, 2026, 12:31 UTC |
+| [#39075](https://github.com/openclaw/openclaw/pull/39075) | Telegram: optimize message pipeline performance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39075.md) | complete | Apr 26, 2026, 12:31 UTC |
+| [#38853](https://github.com/openclaw/openclaw/issues/38853) | [Bug]: Discord channel reconnect loop triggers Cloudflare rate-limit ban (Error 1015) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38853.md) | complete | Apr 26, 2026, 12:31 UTC |
 
 </details>
 
