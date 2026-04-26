@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 09:10 UTC
+Last dashboard update: Apr 26, 2026, 09:12 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 09:10 UTC
+Updated: Apr 26, 2026, 09:12 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953004555](https://github.com/openclaw/clawsweeper/actions/runs/24953004555)
 <!-- clawsweeper-status:end -->
 
@@ -68,10 +68,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953004555](https://
 | --- | ---: |
 | Hourly cadence coverage | 57/774 current (717 due, 7.4%) |
 | Hourly hot item cadence (<7d) | 57/774 current (717 due, 7.4%) |
-| Daily cadence coverage | 4496/4612 current (116 due, 97.5%) |
+| Daily cadence coverage | 4495/4611 current (116 due, 97.5%) |
 | Daily PR cadence | 3015/3100 current (85 due, 97.3%) |
-| Daily new issue cadence (<30d) | 1481/1512 current (31 due, 97.9%) |
-| Weekly older issue cadence | 1967/1973 current (6 due, 99.7%) |
+| Daily new issue cadence (<30d) | 1480/1511 current (31 due, 97.9%) |
+| Weekly older issue cadence | 1968/1974 current (6 due, 99.7%) |
 | Due now by cadence | 1094 |
 
 ### Audit Health
@@ -108,8 +108,8 @@ Latest review: Apr 26, 2026, 09:09 UTC. Latest close: Apr 26, 2026, 09:04 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 500 | 63 | 437 | 0 | 60 | 61 | 0 |
-| Last hour | 1997 | 279 | 1718 | 5 | 250 | 267 | 16 |
+| Last 15 minutes | 500 | 63 | 437 | 0 | 46 | 46 | 0 |
+| Last hour | 1997 | 279 | 1718 | 5 | 245 | 261 | 15 |
 | Last 24 hours | 9972 | 2505 | 7467 | 82 | 5036 | 1621 | 47 |
 
 <details>
