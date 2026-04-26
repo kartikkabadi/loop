@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 06:11 UTC
+Last dashboard update: Apr 26, 2026, 06:13 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 06:11 UTC
+Updated: Apr 26, 2026, 06:13 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Starting apply/comment-sync run for up to 50 fresh pull_request closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949829618](https://github.com/openclaw/clawsweeper/actions/runs/24949829618)
+Merged review artifacts for run 24949636772. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949636772](https://github.com/openclaw/clawsweeper/actions/runs/24949636772)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,74 +43,46 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949829618](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4216 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4192 |
-| Open items total | 8408 |
-| Reviewed files | 8204 |
-| Unreviewed open items | 204 |
-| Archived closed files | 11093 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4156 |
+| Open items total | 8372 |
+| Reviewed files | 8171 |
+| Unreviewed open items | 201 |
+| Archived closed files | 11126 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4126 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 4052 |
-| Proposed PR closes | 281 (6.9% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 8178 |
-| Proposed closes awaiting apply | 281 (3.4% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 4122 |
+| Proposed issue closes | 23 (0.6% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 4024 |
+| Proposed PR closes | 275 (6.8% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 8146 |
+| Proposed closes awaiting apply | 298 (3.7% of fresh reviews) |
 | Closed by Codex apply | 8666 |
-| Failed or stale reviews | 26 |
+| Failed or stale reviews | 25 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 272/956 current (684 due, 28.5%) |
-| Hourly hot item cadence (<7d) | 272/956 current (684 due, 28.5%) |
-| Daily cadence coverage | 5165/5255 current (90 due, 98.3%) |
-| Daily PR cadence | 3544/3620 current (76 due, 97.9%) |
-| Daily new issue cadence (<30d) | 1621/1635 current (14 due, 99.1%) |
-| Weekly older issue cadence | 1991/1993 current (2 due, 99.9%) |
-| Due now by cadence | 980 |
-
-### Audit Health
-
-<!-- clawsweeper-audit:start -->
-Last audit: Apr 26, 2026, 06:04 UTC
-
-Status: **Action needed**
-
-| Metric | Count |
-| --- | ---: |
-| Scan complete | yes |
-| Open items seen | 8412 |
-| Missing eligible open records | 5 |
-| Missing maintainer-authored open records | 74 |
-| Missing protected open records | 0 |
-| Missing recently-created open records | 123 |
-| Archived records that are open again | 1 |
-| Stale item records | 11 |
-| Duplicate records | 0 |
-| Protected proposed closes | 2 |
-| Stale reviews | 24 |
-
-| Item | Category | Title | Detail |
-| --- | --- | --- | --- |
-| [#66922](https://github.com/openclaw/openclaw/issues/66922) | Missing eligible open | [Bug]: xAI grok reasoning models (grok-4-1-fast-reasoning) ignore workspace IDENTITY.md behavioral rules at 0% compliance rate | eligible |
-| [#66923](https://github.com/openclaw/openclaw/issues/66923) | Missing eligible open | OpenClaw Model Registry: GPT-4.1 family passes through unmanaged | eligible |
-| [#68655](https://github.com/openclaw/openclaw/issues/68655) | Missing eligible open | bug(web-ui): streaming markdown flickers — full DOM replacement on every token via unsafeHTML | eligible |
-<!-- clawsweeper-audit:end -->
+| Hourly cadence coverage | 358/955 current (597 due, 37.5%) |
+| Hourly hot item cadence (<7d) | 358/955 current (597 due, 37.5%) |
+| Daily cadence coverage | 5136/5225 current (89 due, 98.3%) |
+| Daily PR cadence | 3517/3592 current (75 due, 97.9%) |
+| Daily new issue cadence (<30d) | 1619/1633 current (14 due, 99.1%) |
+| Weekly older issue cadence | 1989/1991 current (2 due, 99.9%) |
+| Due now by cadence | 889 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 05:56 UTC. Latest close: Apr 26, 2026, 05:44 UTC. Latest comment sync: Apr 26, 2026, 05:51 UTC.
+Latest review: Apr 26, 2026, 06:11 UTC. Latest close: Apr 26, 2026, 05:44 UTC. Latest comment sync: Apr 26, 2026, 05:47 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| Last hour | 769 | 258 | 511 | 2 | 96 | 287 | 7 |
-| Last 24 hours | 10495 | 2310 | 8185 | 39 | 5219 | 1138 | 164 |
+| Last 15 minutes | 250 | 66 | 184 | 0 | 0 | 0 | 0 |
+| Last hour | 1019 | 324 | 695 | 2 | 96 | 194 | 5 |
+| Last 24 hours | 10492 | 2343 | 8149 | 38 | 5197 | 1035 | 161 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +91,16 @@ Latest review: Apr 26, 2026, 05:56 UTC. Latest close: Apr 26, 2026, 05:44 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#37841](https://github.com/openclaw/openclaw/issues/37841) | [Bug]: Session text invisible to user when message tool sends media on WhatsApp | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37841.md) | complete | Apr 26, 2026, 05:56 UTC |
-| [#68586](https://github.com/openclaw/openclaw/pull/68586) | fix(memory-core): resolve runtime artifacts before wiki bridge status | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68586.md) | complete | Apr 26, 2026, 05:55 UTC |
-| [#68557](https://github.com/openclaw/openclaw/pull/68557) | fix(ui): include cache tokens in ctx% badge and cache-hit-rate | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68557.md) | complete | Apr 26, 2026, 05:55 UTC |
-| [#68682](https://github.com/openclaw/openclaw/pull/68682) | anthropic: stop forcing Claude CLI permission bypass | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68682.md) | complete | Apr 26, 2026, 05:55 UTC |
-| [#69231](https://github.com/openclaw/openclaw/pull/69231) | docs: add heartbeat configuration examples to config CLI reference | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69231.md) | complete | Apr 26, 2026, 05:55 UTC |
-| [#68641](https://github.com/openclaw/openclaw/pull/68641) | Fix Control UI image history rendering | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68641.md) | complete | Apr 26, 2026, 05:55 UTC |
-| [#68334](https://github.com/openclaw/openclaw/pull/68334) | fix(memory): split restoreMemoryPluginState into restore/merge for cache-hit bug | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68334.md) | complete | Apr 26, 2026, 05:55 UTC |
-| [#69257](https://github.com/openclaw/openclaw/pull/69257) | docs: add gog tasks commands to SKILL.md | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69257.md) | complete | Apr 26, 2026, 05:54 UTC |
-| [#68420](https://github.com/openclaw/openclaw/pull/68420) | Agents/fallback: rotate to fallback model on incomplete-turn exits | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68420.md) | complete | Apr 26, 2026, 05:54 UTC |
-| [#68991](https://github.com/openclaw/openclaw/pull/68991) | fix(auto-reply): don't persist automatic fallback runtime as next-turn selected model | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68991.md) | complete | Apr 26, 2026, 05:54 UTC |
+| [#69849](https://github.com/openclaw/openclaw/issues/69849) | ACP SDK: Missing default values for optional array parameters cause Claude tool schema validation to fail | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69849.md) | complete | Apr 26, 2026, 06:11 UTC |
+| [#69622](https://github.com/openclaw/openclaw/issues/69622) | [Bug]: Feishu image: Media Understanding not triggered, model receives `[image data removed]` instead of image | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69622.md) | complete | Apr 26, 2026, 06:11 UTC |
+| [#69790](https://github.com/openclaw/openclaw/issues/69790) | Telegram inbound can fail with persistent session write lock on existing DM session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69790.md) | complete | Apr 26, 2026, 06:11 UTC |
+| [#69871](https://github.com/openclaw/openclaw/issues/69871) | [Bug] Image tool uses openai-completions instead of provider-zai-endpoint, causing 404 on zai VL models | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69871.md) | complete | Apr 26, 2026, 06:11 UTC |
+| [#69916](https://github.com/openclaw/openclaw/issues/69916) | [Bug]: Telegram exec approvals ignore targets.accountId and fan out across all bot accounts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69916.md) | complete | Apr 26, 2026, 06:10 UTC |
+| [#44256](https://github.com/openclaw/openclaw/pull/44256) | fix(feishu): do not treat @all as a bot mention | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44256.md) | complete | Apr 26, 2026, 06:10 UTC |
+| [#69695](https://github.com/openclaw/openclaw/issues/69695) | [Bug]: Gateway service check fails with \"No medium found\" on WSL2 despite systemd running correctly | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69695.md) | complete | Apr 26, 2026, 06:10 UTC |
+| [#69801](https://github.com/openclaw/openclaw/issues/69801) | Add visible New Chat / New Session button to Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69801.md) | complete | Apr 26, 2026, 06:10 UTC |
+| [#44205](https://github.com/openclaw/openclaw/pull/44205) | fix(cron): suppress stale descendant subagent fallback summaries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44205.md) | complete | Apr 26, 2026, 06:10 UTC |
+| [#69799](https://github.com/openclaw/openclaw/issues/69799) | [Security] Ship a dedicated/bundled Node binary so macOS TCC permissions (FDA, Accessibility) are scoped to OpenClaw only | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69799.md) | complete | Apr 26, 2026, 06:10 UTC |
 
 </details>
 
