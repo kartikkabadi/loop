@@ -30,12 +30,12 @@ Last dashboard update: Apr 26, 2026, 19:48 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 19:48 UTC
+Updated: Apr 26, 2026, 19:49 UTC
 
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965502728](https://github.com/openclaw/clawsweeper/actions/runs/24965502728)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965507293](https://github.com/openclaw/clawsweeper/actions/runs/24965507293)
 <!-- clawsweeper-status:end -->
 
 ### Queue
