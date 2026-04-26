@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:22 UTC
+Last dashboard update: Apr 26, 2026, 10:29 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:28 UTC
+Updated: Apr 26, 2026, 10:29 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954406502](https://github.com/openclaw/clawsweeper/actions/runs/24954406502)
 <!-- clawsweeper-status:end -->
 
@@ -42,23 +42,23 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954406502](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3856 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3571 |
-| Open items total | 7427 |
-| Reviewed files | 7174 |
-| Unreviewed open items | 253 |
-| Archived closed files | 12146 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3853 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3568 |
+| Open items total | 7421 |
+| Reviewed files | 7166 |
+| Unreviewed open items | 255 |
+| Archived closed files | 12154 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3702 |
-| Proposed issue closes | 4 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3379 |
-| Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7081 |
-| Proposed closes awaiting apply | 6 (0.1% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3697 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3376 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7073 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 9624 |
 | Failed or stale reviews | 93 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954406502](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 57/780 current (723 due, 7.3%) |
-| Hourly hot item cadence (<7d) | 57/780 current (723 due, 7.3%) |
-| Daily cadence coverage | 4366/4512 current (146 due, 96.8%) |
+| Hourly cadence coverage | 34/773 current (739 due, 4.4%) |
+| Hourly hot item cadence (<7d) | 34/773 current (739 due, 4.4%) |
+| Daily cadence coverage | 4365/4511 current (146 due, 96.8%) |
 | Daily PR cadence | 2949/3054 current (105 due, 96.6%) |
-| Daily new issue cadence (<30d) | 1417/1458 current (41 due, 97.2%) |
+| Daily new issue cadence (<30d) | 1416/1457 current (41 due, 97.2%) |
 | Weekly older issue cadence | 1869/1882 current (13 due, 99.3%) |
-| Due now by cadence | 1135 |
+| Due now by cadence | 1153 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 10:16 UTC. Latest close: Apr 26, 2026, 10:20 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 79 | 12 | 67 | 1 | 15 | 342 | 0 |
-| Last hour | 1558 | 94 | 1464 | 4 | 159 | 518 | 1 |
-| Last 24 hours | 9962 | 2620 | 7342 | 105 | 4862 | 2177 | 30 |
+| Last 15 minutes | 2 | 0 | 2 | 1 | 15 | 220 | 0 |
+| Last hour | 1520 | 87 | 1433 | 4 | 124 | 489 | 1 |
+| Last 24 hours | 9962 | 2620 | 7342 | 105 | 4852 | 2177 | 30 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -126,9 +126,9 @@ Latest review: Apr 26, 2026, 10:16 UTC. Latest close: Apr 26, 2026, 10:20 UTC. L
 | [#39768](https://github.com/openclaw/openclaw/issues/39768) | [Bug]: MCP tool failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39768.md) | complete | Apr 26, 2026, 10:09 UTC |
 | [#52960](https://github.com/openclaw/openclaw/issues/52960) | [Feature]: Control UI should show compact run progress for long or multi-agent tasks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52960.md) | complete | Apr 26, 2026, 10:09 UTC |
 | [#52147](https://github.com/openclaw/openclaw/issues/52147) | Agent run timeout during tool execution misclassified as LLM timeout, triggers unnecessary model fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52147.md) | complete | Apr 26, 2026, 10:08 UTC |
-| [#70871](https://github.com/openclaw/openclaw/issues/70871) | Memory plugin auto-recall embeds full conversation context, causing context length errors and timeouts | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70871.md) | complete | Apr 26, 2026, 10:08 UTC |
 | [#52640](https://github.com/openclaw/openclaw/issues/52640) | Feature request: Persistent task-status surface for long-running channel turns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52640.md) | complete | Apr 26, 2026, 10:08 UTC |
 | [#39690](https://github.com/openclaw/openclaw/issues/39690) | Bug: Multimodal (Vision) Messages Ignored for Custom Ollama Cloud Models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39690.md) | complete | Apr 26, 2026, 10:08 UTC |
+| [#52736](https://github.com/openclaw/openclaw/issues/52736) | [Feature]: Add screenshot capture button to Control UI chat input (like Doubao) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52736.md) | complete | Apr 26, 2026, 10:08 UTC |
 
 </details>
 
