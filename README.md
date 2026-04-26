@@ -32,57 +32,57 @@ Last dashboard update: Apr 26, 2026, 04:42 UTC
 
 Updated: Apr 26, 2026, 04:42 UTC
 
-State: Apply in progress
+State: Review publish complete
 
-Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948420898](https://github.com/openclaw/clawsweeper/actions/runs/24948420898)
+Merged review artifacts for run 24948189525. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948189525](https://github.com/openclaw/clawsweeper/actions/runs/24948189525)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4550 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4541 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4214 |
-| Open items total | 8764 |
-| Reviewed files | 8571 |
+| Open items total | 8755 |
+| Reviewed files | 8562 |
 | Unreviewed open items | 193 |
-| Archived closed files | 10726 |
+| Archived closed files | 10735 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4469 |
-| Proposed issue closes | 270 (6% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 4080 |
-| Proposed PR closes | 198 (4.9% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 8549 |
-| Proposed closes awaiting apply | 468 (5.5% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 4464 |
+| Proposed issue closes | 292 (6.5% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 4082 |
+| Proposed PR closes | 223 (5.5% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 8546 |
+| Proposed closes awaiting apply | 515 (6% of fresh reviews) |
 | Closed by Codex apply | 8352 |
-| Failed or stale reviews | 22 |
+| Failed or stale reviews | 16 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 150/1007 current (857 due, 14.9%) |
-| Hourly hot item cadence (<7d) | 150/1007 current (857 due, 14.9%) |
-| Daily cadence coverage | 5450/5538 current (88 due, 98.4%) |
-| Daily PR cadence | 3562/3636 current (74 due, 98%) |
-| Daily new issue cadence (<30d) | 1888/1902 current (14 due, 99.3%) |
-| Weekly older issue cadence | 2024/2026 current (2 due, 99.9%) |
-| Due now by cadence | 1140 |
+| Hourly cadence coverage | 238/1005 current (767 due, 23.7%) |
+| Hourly hot item cadence (<7d) | 238/1005 current (767 due, 23.7%) |
+| Daily cadence coverage | 5447/5530 current (83 due, 98.5%) |
+| Daily PR cadence | 3565/3634 current (69 due, 98.1%) |
+| Daily new issue cadence (<30d) | 1882/1896 current (14 due, 99.3%) |
+| Weekly older issue cadence | 2025/2027 current (2 due, 99.9%) |
+| Due now by cadence | 1045 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 04:34 UTC. Latest close: Apr 26, 2026, 04:40 UTC. Latest comment sync: Apr 26, 2026, 04:40 UTC.
+Latest review: Apr 26, 2026, 04:41 UTC. Latest close: Apr 26, 2026, 04:40 UTC. Latest comment sync: Apr 26, 2026, 04:40 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 0 | 19 | 0 | 60 | 82 | 1 |
-| Last hour | 767 | 143 | 624 | 0 | 284 | 311 | 2 |
-| Last 24 hours | 10801 | 2387 | 8414 | 35 | 5531 | 697 | 187 |
+| Last 15 minutes | 268 | 51 | 217 | 0 | 60 | 81 | 1 |
+| Last hour | 1015 | 194 | 821 | 0 | 283 | 307 | 1 |
+| Last 24 hours | 10801 | 2437 | 8364 | 29 | 5525 | 688 | 183 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -91,16 +91,16 @@ Latest review: Apr 26, 2026, 04:34 UTC. Latest close: Apr 26, 2026, 04:40 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#38160](https://github.com/openclaw/openclaw/pull/38160) | feat(agents): local model fallback + semantic cache store | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38160.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#34400](https://github.com/openclaw/openclaw/issues/34400) | Feature: memory_search should support recursive subdirectory search (memory/**/*.md) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/34400.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#37661](https://github.com/openclaw/openclaw/issues/37661) | [Bug]: LLM streaming output infinite loop - same phrase repeated 40+ times | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37661.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#38228](https://github.com/openclaw/openclaw/pull/38228) | fix: extract text from array content in tool cards | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38228.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#38170](https://github.com/openclaw/openclaw/pull/38170) | feat(telegram): embed file_id in media placeholders and add download-file action | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38170.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#35241](https://github.com/openclaw/openclaw/pull/35241) | CLI: add --session-key flag to openclaw agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/35241.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#36754](https://github.com/openclaw/openclaw/issues/36754) | Extension discovery silently skips symlinked plugin directories | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/36754.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#38237](https://github.com/openclaw/openclaw/pull/38237) | fix(slack): forward agent identity to draft stream initial message | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38237.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#37706](https://github.com/openclaw/openclaw/issues/37706) | [Bug]: Feishu/Lark group @all should not count as bot mention | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37706.md) | complete | Apr 26, 2026, 04:34 UTC |
-| [#37842](https://github.com/openclaw/openclaw/issues/37842) | Feature: Graph-aware loop detection for sessions_send (triangular/polygonal cascades bypass maxPingPongTurns) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/37842.md) | complete | Apr 26, 2026, 04:34 UTC |
+| [#69363](https://github.com/openclaw/openclaw/pull/69363) | fix(agents): ignore SessionStart hook session_ids when resuming claude-cli | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69363.md) | complete | Apr 26, 2026, 04:41 UTC |
+| [#69385](https://github.com/openclaw/openclaw/pull/69385) | Extensions: add aj-router plugin for classifier-driven model selection | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69385.md) | complete | Apr 26, 2026, 04:39 UTC |
+| [#40654](https://github.com/openclaw/openclaw/pull/40654) | feat(discord): archive ACP-created threads on /acp close | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40654.md) | complete | Apr 26, 2026, 04:39 UTC |
+| [#69413](https://github.com/openclaw/openclaw/pull/69413) | signal: detect bot mentions from native envelope metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69413.md) | complete | Apr 26, 2026, 04:39 UTC |
+| [#69584](https://github.com/openclaw/openclaw/pull/69584) | [codex] fix gateway runtime flow follow-ups | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69584.md) | complete | Apr 26, 2026, 04:39 UTC |
+| [#69342](https://github.com/openclaw/openclaw/pull/69342) | fix: support per-model provider extraParams | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69342.md) | complete | Apr 26, 2026, 04:39 UTC |
+| [#40894](https://github.com/openclaw/openclaw/pull/40894) | Codex/fix 40880 media staging max bytes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40894.md) | complete | Apr 26, 2026, 04:39 UTC |
+| [#69519](https://github.com/openclaw/openclaw/pull/69519) | Sessions page: use numeric input for Limit field | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69519.md) | complete | Apr 26, 2026, 04:39 UTC |
+| [#40910](https://github.com/openclaw/openclaw/issues/40910) | fix(config): missing migration for bind+tailscale validation causes crash loop | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/40910.md) | complete | Apr 26, 2026, 04:38 UTC |
+| [#69486](https://github.com/openclaw/openclaw/pull/69486) | fix(runner): ancestry-aware cleanup of rewrite-abandoned transcript entries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69486.md) | complete | Apr 26, 2026, 04:38 UTC |
 
 </details>
 
