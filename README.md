@@ -30,12 +30,12 @@ Last dashboard update: Apr 26, 2026, 06:00 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 06:00 UTC
+Updated: Apr 26, 2026, 06:04 UTC
 
-State: Review in progress
+State: Audit finished
 
-Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949636772](https://github.com/openclaw/clawsweeper/actions/runs/24949636772)
+Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949726555](https://github.com/openclaw/clawsweeper/actions/runs/24949726555)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -77,7 +77,29 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949636772](https://
 ### Audit Health
 
 <!-- clawsweeper-audit:start -->
-No audit has been published yet. Run `npm run audit -- --update-dashboard` to refresh this section.
+Last audit: Apr 26, 2026, 06:04 UTC
+
+Status: **Action needed**
+
+| Metric | Count |
+| --- | ---: |
+| Scan complete | yes |
+| Open items seen | 8412 |
+| Missing eligible open records | 5 |
+| Missing maintainer-authored open records | 74 |
+| Missing protected open records | 0 |
+| Missing recently-created open records | 123 |
+| Archived records that are open again | 1 |
+| Stale item records | 11 |
+| Duplicate records | 0 |
+| Protected proposed closes | 2 |
+| Stale reviews | 24 |
+
+| Item | Category | Title | Detail |
+| --- | --- | --- | --- |
+| [#66922](https://github.com/openclaw/openclaw/issues/66922) | Missing eligible open | [Bug]: xAI grok reasoning models (grok-4-1-fast-reasoning) ignore workspace IDENTITY.md behavioral rules at 0% compliance rate | eligible |
+| [#66923](https://github.com/openclaw/openclaw/issues/66923) | Missing eligible open | OpenClaw Model Registry: GPT-4.1 family passes through unmanaged | eligible |
+| [#68655](https://github.com/openclaw/openclaw/issues/68655) | Missing eligible open | bug(web-ui): streaming markdown flickers — full DOM replacement on every token via unsafeHTML | eligible |
 <!-- clawsweeper-audit:end -->
 
 ### Latest Run Activity
