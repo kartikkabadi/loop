@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 04:36 UTC
 
 Updated: Apr 26, 2026, 04:36 UTC
 
-State: Hot intake comments synced
+State: Apply in progress
 
-Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 34400,35152,35241,35682,36754,37589,37661,37696,37706,37748,37763,37841,37842,38160,38170,38222,38228,38237,71721.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948262003](https://github.com/openclaw/clawsweeper/actions/runs/24948262003)
+Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948328765](https://github.com/openclaw/clawsweeper/actions/runs/24948328765)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948262003](https://
 | Daily PR cadence | 3563/3637 current (74 due, 98%) |
 | Daily new issue cadence (<30d) | 1931/1944 current (13 due, 99.3%) |
 | Weekly older issue cadence | 2024/2026 current (2 due, 99.9%) |
-| Due now by cadence | 1142 |
+| Due now by cadence | 1143 |
 
 ### Latest Run Activity
 
@@ -80,9 +80,9 @@ Latest review: Apr 26, 2026, 04:34 UTC. Latest close: Apr 26, 2026, 04:34 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 83 | 14 | 69 | 0 | 40 | 63 | 1 |
-| Last hour | 771 | 144 | 627 | 0 | 266 | 291 | 1 |
-| Last 24 hours | 10830 | 2413 | 8417 | 34 | 5540 | 656 | 189 |
+| Last 15 minutes | 59 | 13 | 46 | 0 | 38 | 41 | 0 |
+| Last hour | 749 | 143 | 606 | 0 | 266 | 272 | 1 |
+| Last 24 hours | 10829 | 2413 | 8416 | 34 | 5538 | 637 | 189 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
