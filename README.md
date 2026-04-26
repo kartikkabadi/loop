@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 04:28 UTC
+Last dashboard update: Apr 26, 2026, 04:30 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 04:28 UTC
+Updated: Apr 26, 2026, 04:30 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948189525](https://github.com/openclaw/clawsweeper/actions/runs/24948189525)
+Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948227156](https://github.com/openclaw/clawsweeper/actions/runs/24948227156)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -59,30 +59,30 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24948189525](https://
 | Proposed PR closes | 198 (4.8% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 8637 |
 | Proposed closes awaiting apply | 549 (6.4% of fresh reviews) |
-| Closed by Codex apply | 8252 |
+| Closed by Codex apply | 8272 |
 | Failed or stale reviews | 20 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 154/1010 current (856 due, 15.2%) |
-| Hourly hot item cadence (<7d) | 154/1010 current (856 due, 15.2%) |
+| Hourly cadence coverage | 151/1010 current (859 due, 15%) |
+| Hourly hot item cadence (<7d) | 151/1010 current (859 due, 15%) |
 | Daily cadence coverage | 5535/5621 current (86 due, 98.5%) |
 | Daily PR cadence | 3564/3637 current (73 due, 98%) |
 | Daily new issue cadence (<30d) | 1971/1984 current (13 due, 99.3%) |
 | Weekly older issue cadence | 2024/2026 current (2 due, 99.9%) |
-| Due now by cadence | 1138 |
+| Due now by cadence | 1141 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 04:25 UTC. Latest close: Apr 26, 2026, 04:22 UTC. Latest comment sync: Apr 26, 2026, 04:25 UTC.
+Latest review: Apr 26, 2026, 04:25 UTC. Latest close: Apr 26, 2026, 04:22 UTC. Latest comment sync: Apr 26, 2026, 04:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 249 | 44 | 205 | 0 | 62 | 64 | 1 |
-| Last hour | 941 | 194 | 747 | 1 | 286 | 291 | 1 |
-| Last 24 hours | 10864 | 2443 | 8421 | 33 | 5582 | 615 | 189 |
+| Last 15 minutes | 249 | 44 | 205 | 0 | 60 | 63 | 1 |
+| Last hour | 903 | 187 | 716 | 1 | 286 | 292 | 1 |
+| Last 24 hours | 10864 | 2443 | 8421 | 33 | 5571 | 616 | 189 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
