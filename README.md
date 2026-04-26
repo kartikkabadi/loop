@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 06:25 UTC
+Last dashboard update: Apr 26, 2026, 06:26 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 06:25 UTC
+Updated: Apr 26, 2026, 06:26 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24949997839. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 6975,38780,44288,65343,71590,71592,71593,71594,71605,71609,71611,71612,71616,71619,71633,71636,71638,71645,71646,71653.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949997839](https://github.com/openclaw/clawsweeper/actions/runs/24949997839)
 <!-- clawsweeper-status:end -->
 
@@ -43,11 +43,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949997839](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4218 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4103 |
-| Open items total | 8321 |
-| Reviewed files | 8110 |
-| Unreviewed open items | 211 |
-| Archived closed files | 11187 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4092 |
+| Open items total | 8310 |
+| Reviewed files | 8109 |
+| Unreviewed open items | 201 |
+| Archived closed files | 11188 |
 
 ### Review Outcomes
 
@@ -55,9 +55,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949997839](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 4113 |
 | Proposed issue closes | 26 (0.6% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3942 |
-| Proposed PR closes | 203 (5.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 8055 |
+| Fresh reviewed PRs in the last 7 days | 3941 |
+| Proposed PR closes | 203 (5.2% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 8054 |
 | Proposed closes awaiting apply | 229 (2.8% of fresh reviews) |
 | Closed by Codex apply | 8706 |
 | Failed or stale reviews | 55 |
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949997839](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 151/951 current (800 due, 15.9%) |
-| Hourly hot item cadence (<7d) | 151/951 current (800 due, 15.9%) |
-| Daily cadence coverage | 5054/5165 current (111 due, 97.9%) |
-| Daily PR cadence | 3440/3531 current (91 due, 97.4%) |
+| Hourly cadence coverage | 150/951 current (801 due, 15.8%) |
+| Hourly hot item cadence (<7d) | 150/951 current (801 due, 15.8%) |
+| Daily cadence coverage | 5053/5164 current (111 due, 97.9%) |
+| Daily PR cadence | 3439/3530 current (91 due, 97.4%) |
 | Daily new issue cadence (<30d) | 1614/1634 current (20 due, 98.8%) |
 | Weekly older issue cadence | 1988/1994 current (6 due, 99.7%) |
-| Due now by cadence | 1128 |
+| Due now by cadence | 1119 |
 
 ### Audit Health
 
@@ -82,13 +82,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 06:24 UTC. Latest close: Apr 26, 2026, 06:24 UTC. Latest comment sync: Apr 26, 2026, 06:24 UTC.
+Latest review: Apr 26, 2026, 06:24 UTC. Latest close: Apr 26, 2026, 06:24 UTC. Latest comment sync: Apr 26, 2026, 06:26 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 27 | 6 | 21 | 0 | 40 | 14 | 1 |
-| Last hour | 792 | 301 | 491 | 2 | 63 | 134 | 6 |
-| Last 24 hours | 10458 | 2322 | 8136 | 68 | 5206 | 1048 | 159 |
+| Last 15 minutes | 24 | 5 | 19 | 0 | 40 | 33 | 2 |
+| Last hour | 790 | 299 | 491 | 2 | 56 | 146 | 7 |
+| Last 24 hours | 10458 | 2322 | 8136 | 68 | 5206 | 1067 | 160 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -104,7 +104,7 @@ Latest review: Apr 26, 2026, 06:24 UTC. Latest close: Apr 26, 2026, 06:24 UTC. L
 | [#71612](https://github.com/openclaw/openclaw/pull/71612) | fix(loop-detection): reset toolCallHistory on long idle gaps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71612.md) | complete | Apr 26, 2026, 06:24 UTC |
 | [#71609](https://github.com/openclaw/openclaw/issues/71609) | Control UI device token mismatch loop after scope upgrade causes rate-limit lockout | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71609.md) | complete | Apr 26, 2026, 06:23 UTC |
 | [#71593](https://github.com/openclaw/openclaw/issues/71593) | [Feature]: support to use plugin to implement secret ref provider and cover core schemas | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71593.md) | complete | Apr 26, 2026, 06:23 UTC |
-| [#38780](https://github.com/openclaw/openclaw/pull/38780) | feat: context-pressure-aware continuation (CONTINUE_WORK / CONTINUE_DELEGATE) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38780.md) | complete | Apr 26, 2026, 06:23 UTC |
+| [#38780](https://github.com/openclaw/openclaw/pull/38780) | feat: context-pressure-aware continuation (CONTINUE_WORK / CONTINUE_DELEGATE) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/38780.md) | complete | Apr 26, 2026, 06:23 UTC |
 | [#71592](https://github.com/openclaw/openclaw/issues/71592) | TUI local mode advertises /status and /compact but falls through to model text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71592.md) | complete | Apr 26, 2026, 06:23 UTC |
 | [#71636](https://github.com/openclaw/openclaw/pull/71636) | fix(config): make ModelProviderSchema.models optional to enable Ollama autodiscovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71636.md) | complete | Apr 26, 2026, 06:23 UTC |
 
