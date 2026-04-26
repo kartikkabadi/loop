@@ -16,33 +16,33 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 00:33 UTC
+Last dashboard update: Apr 26, 2026, 00:34 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 26, 2026, 00:33 UTC
+Updated: Apr 26, 2026, 00:34 UTC
 
-State: Apply in progress
+State: Apply comments synced
 
-Starting apply/comment-sync run for up to 0 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 20 fresh closes; close delay is 0ms; sync-comments-only=true; item numbers=16085,58823,65730,68677,70577,71178,71398,71399,71400,71412,71416,71428,71429,71452,71485,71486,71487,71582,71614,71686.
+Comment-only apply checkpoint 1 finished. Synced durable review comments: 18. Result records: 20. Item numbers: 16085,58823,65730,68677,70577,71178,71398,71399,71400,71412,71416,71428,71429,71452,71485,71486,71487,71582,71614,71686.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944317241](https://github.com/openclaw/clawsweeper/actions/runs/24944317241)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5443 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5441 |
 | Fresh reviewed issues in the last 7 days | 5398 |
 | Proposed issue closes | 802 (14.9% of reviewed issues) |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4251 |
 | Fresh reviewed PRs in the last 7 days | 4152 |
-| Proposed PR closes | 43 (1% of reviewed PRs) |
-| Open items total | 9694 |
+| Proposed PR closes | 42 (1% of reviewed PRs) |
+| Open items total | 9692 |
 | Reviewed files | 9562 |
-| Unreviewed open items | 132 |
+| Unreviewed open items | 130 |
 | Archived closed files | 9735 |
 | Fresh verified reviews in the last 7 days | 9550 |
-| Proposed closes awaiting apply | 845 (8.8% of fresh reviews) |
+| Proposed closes awaiting apply | 844 (8.8% of fresh reviews) |
 | Closed by Codex apply | 7535 |
 | Failed or stale reviews | 12 |
 | Hourly cadence coverage | 20/1076 current (1056 due, 1.9%) |
@@ -51,7 +51,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944317241](https://
 | Daily PR cadence | 3412/3669 current (257 due, 93%) |
 | Daily new issue cadence (<30d) | 1803/2094 current (291 due, 86.1%) |
 | Weekly older issue cadence | 2720/2723 current (3 due, 99.9%) |
-| Due now by cadence | 1739 |
+| Due now by cadence | 1737 |
 
 Recently reviewed:
 
