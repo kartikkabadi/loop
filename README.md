@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 20:05 UTC
+Last dashboard update: Apr 26, 2026, 20:07 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 20:06 UTC
+Updated: Apr 26, 2026, 20:07 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965864541](https://github.com/openclaw/clawsweeper/actions/runs/24965864541)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965864541](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3723 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3537 |
-| Open items total | 7260 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3724 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
+| Open items total | 7262 |
 | Reviewed files | 7183 |
-| Unreviewed open items | 77 |
+| Unreviewed open items | 79 |
 | Archived closed files | 12532 |
 
 ### Review Outcomes
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965864541](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 375/800 current (425 due, 46.9%) |
-| Hourly hot item cadence (<7d) | 375/800 current (425 due, 46.9%) |
-| Daily cadence coverage | 4424/4493 current (69 due, 98.5%) |
+| Hourly cadence coverage | 374/799 current (425 due, 46.8%) |
+| Hourly hot item cadence (<7d) | 374/799 current (425 due, 46.8%) |
+| Daily cadence coverage | 4425/4494 current (69 due, 98.5%) |
 | Daily PR cadence | 2991/3050 current (59 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1433/1443 current (10 due, 99.3%) |
+| Daily new issue cadence (<30d) | 1434/1444 current (10 due, 99.3%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 571 |
+| Due now by cadence | 573 |
 
 ### Audit Health
 
