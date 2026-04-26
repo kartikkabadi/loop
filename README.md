@@ -23,56 +23,56 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 10:59 UTC
+Last dashboard update: Apr 26, 2026, 11:00 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 10:59 UTC
+Updated: Apr 26, 2026, 11:00 UTC
 
-State: Hot intake comments synced
+State: Review publish complete
 
-Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 39602,39604,39605,39608,39610,39612,39617,39626,39630,41716,49145,56538,58426,63793,64727,72110,72111,72112,72113,72114.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954851168](https://github.com/openclaw/clawsweeper/actions/runs/24954851168)
+Merged review artifacts for run 24954787091. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24954787091](https://github.com/openclaw/clawsweeper/actions/runs/24954787091)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3784 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3785 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3534 |
-| Open items total | 7318 |
-| Reviewed files | 7237 |
-| Unreviewed open items | 81 |
+| Open items total | 7319 |
+| Reviewed files | 7244 |
+| Unreviewed open items | 75 |
 | Archived closed files | 12271 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3717 |
-| Proposed issue closes | 2 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3427 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7144 |
-| Proposed closes awaiting apply | 3 (0% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3769 |
+| Proposed issue closes | 13 (0.3% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3472 |
+| Proposed PR closes | 9 (0.3% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7241 |
+| Proposed closes awaiting apply | 22 (0.3% of fresh reviews) |
 | Closed by Codex apply | 9744 |
-| Failed or stale reviews | 93 |
+| Failed or stale reviews | 3 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 813/839 current (26 due, 96.9%) |
-| Hourly hot item cadence (<7d) | 813/839 current (26 due, 96.9%) |
-| Daily cadence coverage | 4366/4513 current (147 due, 96.7%) |
-| Daily PR cadence | 2952/3058 current (106 due, 96.5%) |
-| Daily new issue cadence (<30d) | 1414/1455 current (41 due, 97.2%) |
-| Weekly older issue cadence | 1872/1885 current (13 due, 99.3%) |
-| Due now by cadence | 267 |
+| Hourly cadence coverage | 834/841 current (7 due, 99.2%) |
+| Hourly hot item cadence (<7d) | 834/841 current (7 due, 99.2%) |
+| Daily cadence coverage | 4448/4518 current (70 due, 98.5%) |
+| Daily PR cadence | 2995/3058 current (63 due, 97.9%) |
+| Daily new issue cadence (<30d) | 1453/1460 current (7 due, 99.5%) |
+| Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
+| Due now by cadence | 152 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 10:58 UTC. Latest close: Apr 26, 2026, 10:55 UTC. Latest comment sync: Apr 26, 2026, 10:59 UTC.
+Latest review: Apr 26, 2026, 10:59 UTC. Latest close: Apr 26, 2026, 10:55 UTC. Latest comment sync: Apr 26, 2026, 10:59 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 34 | 4 | 30 | 0 | 59 | 80 | 1 |
-| Last hour | 1540 | 141 | 1399 | 2 | 140 | 854 | 1 |
-| Last 24 hours | 10088 | 2699 | 7389 | 105 | 4948 | 2615 | 31 |
+| Last 15 minutes | 351 | 21 | 330 | 0 | 42 | 50 | 0 |
+| Last hour | 1829 | 160 | 1669 | 1 | 140 | 631 | 0 |
+| Last 24 hours | 10095 | 2711 | 7384 | 15 | 4936 | 2391 | 29 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 10:58 UTC. Latest close: Apr 26, 2026, 10:55 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72114](https://github.com/openclaw/openclaw/issues/72114) | update.run: bundled runtime deps staging timeout + shutdown race condition causes gateway crash on cold cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72114.md) | complete | Apr 26, 2026, 10:58 UTC |
-| [#72112](https://github.com/openclaw/openclaw/issues/72112) | MCP stdio server processes become orphans after gateway restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72112.md) | complete | Apr 26, 2026, 10:57 UTC |
-| [#39612](https://github.com/openclaw/openclaw/issues/39612) | Feature: Graceful error handling for LLM failures — never expose raw errors to users | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39612.md) | complete | Apr 26, 2026, 10:57 UTC |
-| [#39610](https://github.com/openclaw/openclaw/pull/39610) | config: Support setting userTimezone per agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39610.md) | complete | Apr 26, 2026, 10:57 UTC |
-| [#72111](https://github.com/openclaw/openclaw/issues/72111) | MCP streamable-http transport — spawned server process times out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72111.md) | complete | Apr 26, 2026, 10:56 UTC |
-| [#64727](https://github.com/openclaw/openclaw/issues/64727) | Subagent announce can return toolResult text instead of final assistant summary on tool-heavy runs | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/64727.md) | complete | Apr 26, 2026, 10:56 UTC |
-| [#63793](https://github.com/openclaw/openclaw/pull/63793) | fix(acp): fail fast on dead spawns and recover stale disconnects | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63793.md) | complete | Apr 26, 2026, 10:56 UTC |
-| [#39617](https://github.com/openclaw/openclaw/pull/39617) | fix: reload config in slash command routing so dmScope is respected | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39617.md) | complete | Apr 26, 2026, 10:56 UTC |
-| [#39626](https://github.com/openclaw/openclaw/issues/39626) | [Bug]: Exposes the format of tool calls, for example:exec{\"command\": \"openclaw status\", \"description\": \"Check OpenClaw version and status\"} | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39626.md) | complete | Apr 26, 2026, 10:56 UTC |
-| [#41716](https://github.com/openclaw/openclaw/issues/41716) | [Feature]: nodes tool + node command surface: add file_push/file_pull (gateway ↔ node file transfer) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41716.md) | complete | Apr 26, 2026, 10:56 UTC |
+| [#72114](https://github.com/openclaw/openclaw/issues/72114) | update.run: bundled runtime deps staging timeout + shutdown race condition causes gateway crash on cold cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72114.md) | complete | Apr 26, 2026, 10:59 UTC |
+| [#72112](https://github.com/openclaw/openclaw/issues/72112) | MCP stdio server processes become orphans after gateway restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72112.md) | complete | Apr 26, 2026, 10:59 UTC |
+| [#71589](https://github.com/openclaw/openclaw/pull/71589) | fix(agent): suppress tool-use assistant text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71589.md) | complete | Apr 26, 2026, 10:59 UTC |
+| [#69172](https://github.com/openclaw/openclaw/pull/69172) | Fix/google overrides | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69172.md) | complete | Apr 26, 2026, 10:59 UTC |
+| [#70523](https://github.com/openclaw/openclaw/pull/70523) | fix(memory-core): suppress raw dreaming inline dumps on fallback (Fixes #70509) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70523.md) | complete | Apr 26, 2026, 10:59 UTC |
+| [#72111](https://github.com/openclaw/openclaw/issues/72111) | MCP streamable-http transport — spawned server process times out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72111.md) | complete | Apr 26, 2026, 10:59 UTC |
+| [#65902](https://github.com/openclaw/openclaw/issues/65902) | [Bug]: WhatsApp session discovery inconsistent with runtime status and cron delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65902.md) | complete | Apr 26, 2026, 10:59 UTC |
+| [#71236](https://github.com/openclaw/openclaw/pull/71236) | fix(session): log warning when session hook fails instead of silently swallowing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71236.md) | complete | Apr 26, 2026, 10:59 UTC |
+| [#70812](https://github.com/openclaw/openclaw/pull/70812) | fix: ignore trajectory sidecars in orphan transcript scans (Fixes #70680) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70812.md) | complete | Apr 26, 2026, 10:58 UTC |
+| [#72115](https://github.com/openclaw/openclaw/pull/72115) | [EV-002B] Skill Workshop parity: path, TOCTOU, prompt-budget hardening | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72115.md) | complete | Apr 26, 2026, 10:58 UTC |
 
 </details>
 
