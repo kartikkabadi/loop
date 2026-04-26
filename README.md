@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 14:34 UTC
 
 Updated: Apr 26, 2026, 14:34 UTC
 
-State: Review publish complete
+State: Hot intake publish complete
 
-Merged review artifacts for run 24958976613. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958976613](https://github.com/openclaw/clawsweeper/actions/runs/24958976613)
+Merged hot intake artifacts for run 24958987872. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958987872](https://github.com/openclaw/clawsweeper/actions/runs/24958987872)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -45,20 +45,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958976613](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3775 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3528 |
 | Open items total | 7303 |
-| Reviewed files | 7235 |
-| Unreviewed open items | 68 |
+| Reviewed files | 7234 |
+| Unreviewed open items | 69 |
 | Archived closed files | 12372 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3762 |
-| Proposed issue closes | 34 (0.9% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3761 |
+| Proposed issue closes | 35 (0.9% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3471 |
 | Proposed PR closes | 10 (0.3% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7233 |
-| Proposed closes awaiting apply | 44 (0.6% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 7232 |
+| Proposed closes awaiting apply | 45 (0.6% of fresh reviews) |
 | Closed by Codex apply | 9824 |
 | Failed or stale reviews | 2 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958976613](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 842/846 current (4 due, 99.5%) |
-| Hourly hot item cadence (<7d) | 842/846 current (4 due, 99.5%) |
+| Hourly cadence coverage | 768/845 current (77 due, 90.9%) |
+| Hourly hot item cadence (<7d) | 768/845 current (77 due, 90.9%) |
 | Daily cadence coverage | 4434/4499 current (65 due, 98.6%) |
 | Daily PR cadence | 2988/3046 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1446/1453 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 137 |
+| Due now by cadence | 211 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 14:32 UTC. Latest close: Apr 26, 2026, 12:22 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 418 | 13 | 405 | 0 | 0 | 0 | 0 |
-| Last hour | 1609 | 45 | 1564 | 0 | 0 | 21 | 2 |
-| Last 24 hours | 10037 | 2724 | 7313 | 14 | 3577 | 2004 | 20 |
+| Last 15 minutes | 342 | 14 | 328 | 0 | 0 | 0 | 0 |
+| Last hour | 1535 | 46 | 1489 | 0 | 0 | 21 | 2 |
+| Last 24 hours | 10036 | 2725 | 7311 | 14 | 3576 | 2004 | 20 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 14:32 UTC. Latest close: Apr 26, 2026, 12:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72214](https://github.com/openclaw/openclaw/issues/72214) | Telegram channel can stall gateway when Node fetch to api.telegram.org times out while curl -4 succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72214.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71555](https://github.com/openclaw/openclaw/issues/71555) | [Bug]: Large session JSONL can crash gateway during embedded context rebuild; SessionManager.open() loads file twice | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71555.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71699](https://github.com/openclaw/openclaw/issues/71699) | [Bug]: Gateway hard-crashes with 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN) on Windows during Mattermost streaming reply; auto-respawn frequently wedges | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71699.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71495](https://github.com/openclaw/openclaw/issues/71495) | [Bug]: /subagents list returns empty in 2026.4.23 despite gateway tracking active subagents (regression from 4.22) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71495.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71349](https://github.com/openclaw/openclaw/issues/71349) | memory-lancedb: autoCapture rarely fires; only 2 entries persisted across many sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71349.md) | complete | Apr 26, 2026, 14:32 UTC |
+| [#72146](https://github.com/openclaw/openclaw/issues/72146) | [Bug]: After updating to 4.24, LaunchAgent gateway doesn't work and only `openclaw gateway --force` works. | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72146.md) | complete | Apr 26, 2026, 14:32 UTC |
 | [#72141](https://github.com/openclaw/openclaw/issues/72141) | [Bug]: Isolated cron sessions emit replies that mirror the parent session's last assistant message | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72141.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71069](https://github.com/openclaw/openclaw/issues/71069) | [Bug]: Gemma4-26b-a4-it-gguf override is rejected and reverts to gpt-4o | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71069.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71584](https://github.com/openclaw/openclaw/issues/71584) | /think max rejected for ollama/deepseek-v4-flash:cloud despite provider support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71584.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71136](https://github.com/openclaw/openclaw/issues/71136) | Use minimum of agent config, model config, and model discovery for contextTokens/maxTokens | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71136.md) | complete | Apr 26, 2026, 14:32 UTC |
-| [#71449](https://github.com/openclaw/openclaw/pull/71449) | fix(startup): clarify gateway vs channel readiness | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71449.md) | complete | Apr 26, 2026, 14:31 UTC |
+| [#72208](https://github.com/openclaw/openclaw/issues/72208) | [Bug]: 4.24版本全局安装后卡死，无法使用 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72208.md) | complete | Apr 26, 2026, 14:31 UTC |
+| [#72111](https://github.com/openclaw/openclaw/issues/72111) | MCP streamable-http transport — spawned server process times out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72111.md) | complete | Apr 26, 2026, 14:31 UTC |
+| [#72210](https://github.com/openclaw/openclaw/issues/72210) | Cron runs with delivery.mode=none still emit misleading delivery.resolved.error in run record | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72210.md) | complete | Apr 26, 2026, 14:31 UTC |
+| [#72212](https://github.com/openclaw/openclaw/pull/72212) | Add continuity diagnostics and restore guardrails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72212.md) | complete | Apr 26, 2026, 14:31 UTC |
+| [#72154](https://github.com/openclaw/openclaw/pull/72154) | docs(install): fix gog/goplaces release URLs in docker-vm-runtime example | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72154.md) | complete | Apr 26, 2026, 14:31 UTC |
+| [#72211](https://github.com/openclaw/openclaw/pull/72211) | docs: add local dashboard gateway recovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72211.md) | complete | Apr 26, 2026, 14:31 UTC |
+| [#72209](https://github.com/openclaw/openclaw/pull/72209) | Add passive session recovery checkpoints | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72209.md) | complete | Apr 26, 2026, 14:31 UTC |
+| [#52951](https://github.com/openclaw/openclaw/pull/52951) | feat: add tools.fs.roots — per-agent filesystem roots with access modes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/52951.md) | complete | Apr 26, 2026, 14:30 UTC |
 
 </details>
 
