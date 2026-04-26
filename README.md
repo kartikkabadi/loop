@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 21:33 UTC
+Last dashboard update: Apr 26, 2026, 21:34 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 21:33 UTC
+Updated: Apr 26, 2026, 21:34 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967547602](https://github.com/openclaw/clawsweeper/actions/runs/24967547602)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=31584,39543,40441,40469,58843,69090,69108,69170,69303,70007,70032,70264,70302,70438,70588,70658,70728,71153,71299,71531,71602,71779,72026,72130,72205,72249,72270,72300,72318,72322,72323,72327,72330,72334,72335,72337,72339,72340,72344,72345,72346,72347,72349,72354,72356.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967568054](https://github.com/openclaw/clawsweeper/actions/runs/24967568054)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -59,7 +59,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967547602](https://
 | Proposed PR closes | 3 (0.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7168 |
 | Proposed closes awaiting apply | 24 (0.3% of fresh reviews) |
-| Closed by Codex apply | 9948 |
+| Closed by Codex apply | 9968 |
 | Failed or stale reviews | 4 |
 
 ### Cadence
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 21:29 UTC. Latest close: Apr 26, 2026, 21:32 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 2 | 18 | 0 | 0 | 20 | 0 |
-| Last hour | 226 | 7 | 219 | 0 | 0 | 42 | 1 |
-| Last 24 hours | 9731 | 2537 | 7194 | 2 | 2037 | 2647 | 10 |
+| Last 15 minutes | 20 | 2 | 18 | 0 | 20 | 40 | 0 |
+| Last hour | 226 | 7 | 219 | 0 | 20 | 62 | 1 |
+| Last 24 hours | 9731 | 2537 | 7194 | 2 | 2057 | 2667 | 10 |
 
 ### Recently Closed
 
