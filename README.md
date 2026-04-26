@@ -23,7 +23,7 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 03:15 UTC
+Last dashboard update: Apr 26, 2026, 03:17 UTC
 
 ### Current Run
 
@@ -32,57 +32,57 @@ Last dashboard update: Apr 26, 2026, 03:15 UTC
 
 Updated: Apr 26, 2026, 03:17 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947085068](https://github.com/openclaw/clawsweeper/actions/runs/24947085068)
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 40, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947043603](https://github.com/openclaw/clawsweeper/actions/runs/24947043603)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5090 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4244 |
-| Open items total | 9334 |
-| Reviewed files | 9165 |
-| Unreviewed open items | 169 |
-| Archived closed files | 10132 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5069 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4243 |
+| Open items total | 9312 |
+| Reviewed files | 9145 |
+| Unreviewed open items | 167 |
+| Archived closed files | 10152 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 5024 |
-| Proposed issue closes | 687 (13.7% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 5004 |
+| Proposed issue closes | 667 (13.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 4118 |
 | Proposed PR closes | 118 (2.9% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 9142 |
-| Proposed closes awaiting apply | 805 (8.8% of fresh reviews) |
-| Closed by Codex apply | 7852 |
+| Fresh verified reviews in the last 7 days | 9122 |
+| Proposed closes awaiting apply | 785 (8.6% of fresh reviews) |
+| Closed by Codex apply | 7872 |
 | Failed or stale reviews | 23 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 7/1035 current (1028 due, 0.7%) |
-| Hourly hot item cadence (<7d) | 7/1035 current (1028 due, 0.7%) |
-| Daily cadence coverage | 5586/5732 current (146 due, 97.5%) |
-| Daily PR cadence | 3558/3657 current (99 due, 97.3%) |
-| Daily new issue cadence (<30d) | 2028/2075 current (47 due, 97.7%) |
-| Weekly older issue cadence | 2393/2398 current (5 due, 99.8%) |
-| Due now by cadence | 1348 |
+| Hourly cadence coverage | 5/1035 current (1030 due, 0.5%) |
+| Hourly hot item cadence (<7d) | 5/1035 current (1030 due, 0.5%) |
+| Daily cadence coverage | 5576/5732 current (156 due, 97.3%) |
+| Daily PR cadence | 3554/3657 current (103 due, 97.2%) |
+| Daily new issue cadence (<30d) | 2022/2075 current (53 due, 97.4%) |
+| Weekly older issue cadence | 2373/2378 current (5 due, 99.8%) |
+| Due now by cadence | 1358 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 03:06 UTC. Latest close: Apr 26, 2026, 03:14 UTC. Latest comment sync: Apr 26, 2026, 03:14 UTC.
+Latest review: Apr 26, 2026, 03:06 UTC. Latest close: Apr 26, 2026, 03:17 UTC. Latest comment sync: Apr 26, 2026, 03:17 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 104 | 32 | 72 | 1 | 74 | 75 | 0 |
-| Last hour | 913 | 121 | 792 | 1 | 178 | 373 | 1 |
-| Last 24 hours | 11205 | 2593 | 8612 | 37 | 5569 | 486 | 198 |
+| Last 15 minutes | 59 | 21 | 38 | 1 | 90 | 91 | 0 |
+| Last hour | 857 | 116 | 741 | 1 | 198 | 393 | 1 |
+| Last 24 hours | 11183 | 2583 | 8600 | 37 | 5584 | 506 | 198 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
