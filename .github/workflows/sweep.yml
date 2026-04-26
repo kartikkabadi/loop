@@ -54,7 +54,7 @@ on:
       shard_count:
         description: "Parallel shards"
         required: false
-        default: "50"
+        default: "100"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -167,7 +167,7 @@ jobs:
             max_pages="2"
           else
             batch_size="${{ github.event.inputs.batch_size || '5' }}"
-            shard_count="${{ github.event.inputs.shard_count || '50' }}"
+            shard_count="${{ github.event.inputs.shard_count || '100' }}"
             max_pages="250"
           fi
           {
@@ -213,7 +213,7 @@ jobs:
           const plan = JSON.parse(fs.readFileSync("plan.json", "utf8"));
           console.log(`matrix=${JSON.stringify(plan.matrix)}`);
           console.log(`planned_count=${plan.candidates.length}`);
-          console.log(`planned_capacity=${Number(process.env.BATCH_SIZE || 5) * Number(process.env.SHARD_COUNT || 50)}`);
+          console.log(`planned_capacity=${Number(process.env.BATCH_SIZE || 5) * Number(process.env.SHARD_COUNT || 100)}`);
           console.log(`planned_shards=${plan.matrix.length}`);
           NODE
           cat plan.json

@@ -203,7 +203,7 @@ Requires Node 24.
 source ~/.profile
 npm install
 npm run build
-npm run plan -- --batch-size 5 --shard-count 50 --max-pages 250 --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast
+npm run plan -- --batch-size 5 --shard-count 100 --max-pages 250 --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast
 npm run review -- --openclaw-dir ../openclaw --batch-size 5 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 600000
 npm run apply-artifacts -- --artifact-dir artifacts/reviews
 npm run audit -- --max-pages 250 --sample-limit 25 --update-dashboard

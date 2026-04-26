@@ -2872,7 +2872,7 @@ function planCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
   const batchSize = numberArg(args.batch_size, 5);
   const maxPages = numberArg(args.max_pages, 250);
-  const shardCount = numberArg(args.shard_count, 50);
+  const shardCount = numberArg(args.shard_count, 100);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
   const hotIntake = boolArg(args.hot_intake);
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);

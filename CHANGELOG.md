@@ -44,7 +44,7 @@ checkpoint, and status-only commits are intentionally omitted.
 ### Changed
 
 - Switched review runs to GPT-5.5 with high reasoning.
-- Increased sweep throughput over time with larger worker batches, 50 shards,
+- Increased sweep throughput over time with larger worker batches, 100 shards,
   chained continuation runs, and 50-review checkpoints.
 - Made review cadence activity-aware: active items and items created in the last
   7 days are checked hourly, older PRs and young issues are checked daily, and
