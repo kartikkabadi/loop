@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 08:15 UTC
+Last dashboard update: Apr 26, 2026, 08:16 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 08:15 UTC
+Updated: Apr 26, 2026, 08:16 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951955273](https://github.com/openclaw/clawsweeper/actions/runs/24951955273)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952008990](https://github.com/openclaw/clawsweeper/actions/runs/24952008990)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951955273](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4132 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3736 |
-| Open items total | 7868 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3737 |
+| Open items total | 7869 |
 | Reviewed files | 7632 |
-| Unreviewed open items | 236 |
+| Unreviewed open items | 237 |
 | Archived closed files | 11665 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24951955273](https://
 | Daily PR cadence | 3144/3222 current (78 due, 97.6%) |
 | Daily new issue cadence (<30d) | 1599/1626 current (27 due, 98.3%) |
 | Weekly older issue cadence | 1984/1989 current (5 due, 99.7%) |
-| Due now by cadence | 1066 |
+| Due now by cadence | 1067 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 08:08 UTC. Latest close: Apr 26, 2026, 08:15 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 341 | 61 | 280 | 0 | 27 | 30 | 11 |
-| Last hour | 771 | 129 | 642 | 0 | 100 | 122 | 12 |
-| Last 24 hours | 10135 | 2355 | 7780 | 66 | 5081 | 1411 | 55 |
+| Last 15 minutes | 251 | 43 | 208 | 0 | 27 | 30 | 11 |
+| Last hour | 770 | 129 | 641 | 0 | 93 | 115 | 12 |
+| Last 24 hours | 10135 | 2355 | 7780 | 66 | 5069 | 1411 | 54 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
