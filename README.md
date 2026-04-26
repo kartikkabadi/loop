@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 14:10 UTC
+Last dashboard update: Apr 26, 2026, 14:13 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 14:10 UTC
+Updated: Apr 26, 2026, 14:13 UTC
 
-State: Hot intake comments synced
+State: Review publish complete
 
-Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 6792,6946,7379,7456,44167,47687,69494,69998,71841,71843,71862,72023,72033,72038,72045,72051,72058,72069,72092,72101.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958523935](https://github.com/openclaw/clawsweeper/actions/runs/24958523935)
+Merged review artifacts for run 24958402457. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958402457](https://github.com/openclaw/clawsweeper/actions/runs/24958402457)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -45,34 +45,34 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24958523935](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3771 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3522 |
 | Open items total | 7293 |
-| Reviewed files | 7180 |
-| Unreviewed open items | 113 |
+| Reviewed files | 7222 |
+| Unreviewed open items | 71 |
 | Archived closed files | 12372 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3730 |
-| Proposed issue closes | 6 (0.2% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3447 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7177 |
-| Proposed closes awaiting apply | 7 (0.1% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3753 |
+| Proposed issue closes | 20 (0.5% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3467 |
+| Proposed PR closes | 5 (0.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7220 |
+| Proposed closes awaiting apply | 25 (0.3% of fresh reviews) |
 | Closed by Codex apply | 9824 |
-| Failed or stale reviews | 3 |
+| Failed or stale reviews | 2 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 35/793 current (758 due, 4.4%) |
-| Hourly hot item cadence (<7d) | 35/793 current (758 due, 4.4%) |
+| Hourly cadence coverage | 260/835 current (575 due, 31.1%) |
+| Hourly hot item cadence (<7d) | 260/835 current (575 due, 31.1%) |
 | Daily cadence coverage | 4433/4498 current (65 due, 98.6%) |
 | Daily PR cadence | 2987/3045 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1446/1453 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1889/1889 current (0 due, 100%) |
-| Due now by cadence | 936 |
+| Due now by cadence | 711 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 14:09 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 14:10 UTC.
+Latest review: Apr 26, 2026, 14:11 UTC. Latest close: Apr 26, 2026, 12:22 UTC. Latest comment sync: Apr 26, 2026, 14:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 39 | 1 | 38 | 0 | 0 | 20 | 0 |
-| Last hour | 540 | 4 | 536 | 0 | 0 | 38 | 2 |
-| Last 24 hours | 9982 | 2688 | 7294 | 15 | 3712 | 2064 | 21 |
+| Last 15 minutes | 503 | 21 | 482 | 0 | 0 | 3 | 0 |
+| Last hour | 1023 | 25 | 998 | 0 | 0 | 21 | 2 |
+| Last 24 hours | 10024 | 2706 | 7318 | 14 | 3694 | 2005 | 21 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 14:09 UTC. Latest close: Apr 26, 2026, 12:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72058](https://github.com/openclaw/openclaw/issues/72058) | [Bug]: npm deps are missing after update to 24.04.2026 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72058.md) | complete | Apr 26, 2026, 14:09 UTC |
-| [#72069](https://github.com/openclaw/openclaw/pull/72069) | fix(agents): seed claude-cli fallback prompts with prior-session context (#69973) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72069.md) | complete | Apr 26, 2026, 14:08 UTC |
-| [#71843](https://github.com/openclaw/openclaw/pull/71843) | fix(slack): suppress already_reacted from agent react tool | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71843.md) | complete | Apr 26, 2026, 14:08 UTC |
-| [#47687](https://github.com/openclaw/openclaw/pull/47687) | Telegram: add reaction semantics wake triggers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47687.md) | complete | Apr 26, 2026, 14:08 UTC |
-| [#69998](https://github.com/openclaw/openclaw/pull/69998) | fix(gateway): redact secrets in skills.update response | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69998.md) | complete | Apr 26, 2026, 14:08 UTC |
-| [#72038](https://github.com/openclaw/openclaw/pull/72038) | fix(telegram): send fresh finals for stale previews | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72038.md) | complete | Apr 26, 2026, 14:08 UTC |
-| [#72033](https://github.com/openclaw/openclaw/pull/72033) | feat(gateway): add diagnostics.pricing method for pricing cache visibility | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72033.md) | complete | Apr 26, 2026, 14:08 UTC |
-| [#72101](https://github.com/openclaw/openclaw/pull/72101) | fix(agents): ignore ACP-only streamTo and treat default model as unset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72101.md) | complete | Apr 26, 2026, 14:08 UTC |
-| [#7456](https://github.com/openclaw/openclaw/issues/7456) | [Feature]: Add \"go back\" navigation during onboarding wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7456.md) | complete | Apr 26, 2026, 14:08 UTC |
-| [#7379](https://github.com/openclaw/openclaw/issues/7379) | Feature Request: Add premium request % to /usage footer | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/7379.md) | complete | Apr 26, 2026, 14:08 UTC |
+| [#69936](https://github.com/openclaw/openclaw/pull/69936) | fix: scope exec/plugin approval delivery to configured target accountId | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69936.md) | complete | Apr 26, 2026, 14:11 UTC |
+| [#72168](https://github.com/openclaw/openclaw/issues/72168) | [Bug]: Browser Playwright actions still fail after doctor --fix on 2026.4.24 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72168.md) | complete | Apr 26, 2026, 14:11 UTC |
+| [#72196](https://github.com/openclaw/openclaw/issues/72196) | [Feature] MCP server auth: expose custom-header configuration in openclaw.json (some servers require x-api-key, not Bearer) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72196.md) | complete | Apr 26, 2026, 14:11 UTC |
+| [#72195](https://github.com/openclaw/openclaw/issues/72195) | [Bug] Anthropic models not registered as media-understanding providers — `image` tool fails on anthropic-new / anthropic-paygo | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72195.md) | complete | Apr 26, 2026, 14:11 UTC |
+| [#69546](https://github.com/openclaw/openclaw/issues/69546) | [Bug]: QQBot channel does not apply updated bindings until gateway restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69546.md) | complete | Apr 26, 2026, 14:11 UTC |
+| [#72149](https://github.com/openclaw/openclaw/pull/72149) | fix(agents): omit temperature for anthropic opus 4.7 requests | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72149.md) | complete | Apr 26, 2026, 14:10 UTC |
+| [#72198](https://github.com/openclaw/openclaw/issues/72198) | Windows] ESM loader crashes with absolute paths (c: protocol) — Telegram & memory_search broken | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72198.md) | complete | Apr 26, 2026, 14:10 UTC |
+| [#72114](https://github.com/openclaw/openclaw/issues/72114) | update.run: bundled runtime deps staging timeout + shutdown race condition causes gateway crash on cold cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72114.md) | complete | Apr 26, 2026, 14:10 UTC |
+| [#72074](https://github.com/openclaw/openclaw/issues/72074) | subagent session label: add {agentId} auto-prefix template | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72074.md) | complete | Apr 26, 2026, 14:10 UTC |
+| [#70279](https://github.com/openclaw/openclaw/issues/70279) | claude-cli backend silently skipped on systemd-managed root gateway, never spawns subprocess | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70279.md) | complete | Apr 26, 2026, 14:10 UTC |
 
 </details>
 
