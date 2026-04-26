@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 06:25 UTC
 
 Updated: Apr 26, 2026, 06:25 UTC
 
-State: Apply in progress
+State: Hot intake publish complete
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950074719](https://github.com/openclaw/clawsweeper/actions/runs/24950074719)
+Merged hot intake artifacts for run 24949997839. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949997839](https://github.com/openclaw/clawsweeper/actions/runs/24949997839)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -53,12 +53,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950074719](https://
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4114 |
-| Proposed issue closes | 23 (0.6% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3941 |
-| Proposed PR closes | 203 (5.2% of reviewed PRs) |
+| Fresh reviewed issues in the last 7 days | 4113 |
+| Proposed issue closes | 26 (0.6% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3942 |
+| Proposed PR closes | 203 (5.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 8055 |
-| Proposed closes awaiting apply | 226 (2.8% of fresh reviews) |
+| Proposed closes awaiting apply | 229 (2.8% of fresh reviews) |
 | Closed by Codex apply | 8706 |
 | Failed or stale reviews | 55 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950074719](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 135/951 current (816 due, 14.2%) |
-| Hourly hot item cadence (<7d) | 135/951 current (816 due, 14.2%) |
+| Hourly cadence coverage | 151/951 current (800 due, 15.9%) |
+| Hourly hot item cadence (<7d) | 151/951 current (800 due, 15.9%) |
 | Daily cadence coverage | 5054/5165 current (111 due, 97.9%) |
-| Daily PR cadence | 3439/3530 current (91 due, 97.4%) |
-| Daily new issue cadence (<30d) | 1615/1635 current (20 due, 98.8%) |
+| Daily PR cadence | 3440/3531 current (91 due, 97.4%) |
+| Daily new issue cadence (<30d) | 1614/1634 current (20 due, 98.8%) |
 | Weekly older issue cadence | 1988/1994 current (6 due, 99.7%) |
-| Due now by cadence | 1144 |
+| Due now by cadence | 1128 |
 
 ### Audit Health
 
@@ -82,13 +82,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 06:11 UTC. Latest close: Apr 26, 2026, 06:24 UTC. Latest comment sync: Apr 26, 2026, 06:24 UTC.
+Latest review: Apr 26, 2026, 06:24 UTC. Latest close: Apr 26, 2026, 06:24 UTC. Latest comment sync: Apr 26, 2026, 06:24 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 9 | 3 | 6 | 0 | 40 | 14 | 1 |
-| Last hour | 772 | 298 | 474 | 2 | 64 | 136 | 6 |
-| Last 24 hours | 10458 | 2319 | 8139 | 68 | 5206 | 1049 | 159 |
+| Last 15 minutes | 27 | 6 | 21 | 0 | 40 | 14 | 1 |
+| Last hour | 792 | 301 | 491 | 2 | 63 | 134 | 6 |
+| Last 24 hours | 10458 | 2322 | 8136 | 68 | 5206 | 1048 | 159 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -97,16 +97,16 @@ Latest review: Apr 26, 2026, 06:11 UTC. Latest close: Apr 26, 2026, 06:24 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#69849](https://github.com/openclaw/openclaw/issues/69849) | ACP SDK: Missing default values for optional array parameters cause Claude tool schema validation to fail | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69849.md) | complete | Apr 26, 2026, 06:11 UTC |
-| [#69622](https://github.com/openclaw/openclaw/issues/69622) | [Bug]: Feishu image: Media Understanding not triggered, model receives `[image data removed]` instead of image | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69622.md) | complete | Apr 26, 2026, 06:11 UTC |
-| [#69790](https://github.com/openclaw/openclaw/issues/69790) | Telegram inbound can fail with persistent session write lock on existing DM session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69790.md) | complete | Apr 26, 2026, 06:11 UTC |
-| [#69871](https://github.com/openclaw/openclaw/issues/69871) | [Bug] Image tool uses openai-completions instead of provider-zai-endpoint, causing 404 on zai VL models | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69871.md) | complete | Apr 26, 2026, 06:11 UTC |
-| [#69916](https://github.com/openclaw/openclaw/issues/69916) | [Bug]: Telegram exec approvals ignore targets.accountId and fan out across all bot accounts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69916.md) | complete | Apr 26, 2026, 06:10 UTC |
-| [#44256](https://github.com/openclaw/openclaw/pull/44256) | fix(feishu): do not treat @all as a bot mention | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44256.md) | complete | Apr 26, 2026, 06:10 UTC |
-| [#69695](https://github.com/openclaw/openclaw/issues/69695) | [Bug]: Gateway service check fails with \"No medium found\" on WSL2 despite systemd running correctly | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/69695.md) | complete | Apr 26, 2026, 06:10 UTC |
-| [#69801](https://github.com/openclaw/openclaw/issues/69801) | Add visible New Chat / New Session button to Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69801.md) | complete | Apr 26, 2026, 06:10 UTC |
-| [#44205](https://github.com/openclaw/openclaw/pull/44205) | fix(cron): suppress stale descendant subagent fallback summaries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/44205.md) | complete | Apr 26, 2026, 06:10 UTC |
-| [#69799](https://github.com/openclaw/openclaw/issues/69799) | [Security] Ship a dedicated/bundled Node binary so macOS TCC permissions (FDA, Accessibility) are scoped to OpenClaw only | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69799.md) | complete | Apr 26, 2026, 06:10 UTC |
+| [#71616](https://github.com/openclaw/openclaw/issues/71616) | Control UI: assistant replies not rendered until next user message is sent | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/71616.md) | complete | Apr 26, 2026, 06:24 UTC |
+| [#6975](https://github.com/openclaw/openclaw/issues/6975) | [Feature] Configurable reply context length for Telegram | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/6975.md) | complete | Apr 26, 2026, 06:24 UTC |
+| [#71605](https://github.com/openclaw/openclaw/issues/71605) | Gateway WS `agent` dispatch times out 60s + embedded mode contends with running daemon for session file locks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71605.md) | complete | Apr 26, 2026, 06:24 UTC |
+| [#71638](https://github.com/openclaw/openclaw/issues/71638) | Telegram extension: surface forward_from / via_bot / reply_to_message on MessageReceivedHookEvent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71638.md) | complete | Apr 26, 2026, 06:24 UTC |
+| [#71612](https://github.com/openclaw/openclaw/pull/71612) | fix(loop-detection): reset toolCallHistory on long idle gaps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71612.md) | complete | Apr 26, 2026, 06:24 UTC |
+| [#71609](https://github.com/openclaw/openclaw/issues/71609) | Control UI device token mismatch loop after scope upgrade causes rate-limit lockout | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71609.md) | complete | Apr 26, 2026, 06:23 UTC |
+| [#71593](https://github.com/openclaw/openclaw/issues/71593) | [Feature]: support to use plugin to implement secret ref provider and cover core schemas | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71593.md) | complete | Apr 26, 2026, 06:23 UTC |
+| [#38780](https://github.com/openclaw/openclaw/pull/38780) | feat: context-pressure-aware continuation (CONTINUE_WORK / CONTINUE_DELEGATE) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/38780.md) | complete | Apr 26, 2026, 06:23 UTC |
+| [#71592](https://github.com/openclaw/openclaw/issues/71592) | TUI local mode advertises /status and /compact but falls through to model text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71592.md) | complete | Apr 26, 2026, 06:23 UTC |
+| [#71636](https://github.com/openclaw/openclaw/pull/71636) | fix(config): make ModelProviderSchema.models optional to enable Ollama autodiscovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71636.md) | complete | Apr 26, 2026, 06:23 UTC |
 
 </details>
 
