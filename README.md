@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 16:46 UTC
+Last dashboard update: Apr 26, 2026, 16:49 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 16:46 UTC
+Updated: Apr 26, 2026, 16:49 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24961799262. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24961799262](https://github.com/openclaw/clawsweeper/actions/runs/24961799262)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24961799262](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3739 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3740 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3528 |
-| Open items total | 7267 |
+| Open items total | 7268 |
 | Reviewed files | 7198 |
-| Unreviewed open items | 69 |
+| Unreviewed open items | 70 |
 | Archived closed files | 12465 |
 
 ### Review Outcomes
@@ -68,11 +68,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24961799262](https://
 | --- | ---: |
 | Hourly cadence coverage | 800/806 current (6 due, 99.3%) |
 | Hourly hot item cadence (<7d) | 800/806 current (6 due, 99.3%) |
-| Daily cadence coverage | 4430/4497 current (67 due, 98.5%) |
+| Daily cadence coverage | 4429/4496 current (67 due, 98.5%) |
 | Daily PR cadence | 2993/3051 current (58 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1437/1446 current (9 due, 99.4%) |
-| Weekly older issue cadence | 1895/1895 current (0 due, 100%) |
-| Due now by cadence | 142 |
+| Daily new issue cadence (<30d) | 1436/1445 current (9 due, 99.4%) |
+| Weekly older issue cadence | 1896/1896 current (0 due, 100%) |
+| Due now by cadence | 143 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 16:37 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 16:27 UTC.
+Latest review: Apr 26, 2026, 16:48 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 16:27 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 121 | 5 | 116 | 0 | 0 | 0 | 0 |
-| Last hour | 1107 | 46 | 1061 | 0 | 40 | 687 | 2 |
-| Last 24 hours | 9921 | 2638 | 7283 | 13 | 3022 | 2695 | 18 |
+| Last 15 minutes | 140 | 5 | 135 | 0 | 0 | 0 | 0 |
+| Last hour | 1044 | 46 | 998 | 0 | 40 | 670 | 1 |
+| Last 24 hours | 9921 | 2638 | 7283 | 13 | 3022 | 2678 | 17 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 16:37 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72264](https://github.com/openclaw/openclaw/issues/72264) | plugin runtime: avoid or explain openclaw-unknown cache keys | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72264.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#72275](https://github.com/openclaw/openclaw/issues/72275) | Bug: Session falls to agents.defaults.model.primary after context compaction instead of using agentId's configured model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72275.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#72273](https://github.com/openclaw/openclaw/issues/72273) | Make `DISCORD_GATEWAY_READY_TIMEOUT_MS` configurable (15s too short for multi-account stagger) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72273.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#40001](https://github.com/openclaw/openclaw/issues/40001) | Write tool lacks append mode — isolated cron sessions destroy shared files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40001.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#72270](https://github.com/openclaw/openclaw/issues/72270) | [Bug]: Bug Report — OpenClaw 2026.4.24 : Cascading ENOTEMPTY Errors on Gateway Startup | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72270.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#72265](https://github.com/openclaw/openclaw/issues/72265) | docs: clarify daemon vs foreground gateway quick start and Node service runtime checks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72265.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#40031](https://github.com/openclaw/openclaw/pull/40031) | feat(cron): main session announce delivery and Feishu/outbound fixes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40031.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#39941](https://github.com/openclaw/openclaw/pull/39941) | fix(ui): prefer matching object variant in config coercion | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39941.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#39587](https://github.com/openclaw/openclaw/issues/39587) | [Bug]: Documentation search does not work | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/39587.md) | complete | Apr 26, 2026, 16:37 UTC |
-| [#72267](https://github.com/openclaw/openclaw/pull/72267) | fix: zsh compdef directive on first line | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72267.md) | complete | Apr 26, 2026, 16:37 UTC |
+| [#68262](https://github.com/openclaw/openclaw/pull/68262) | fix: source-tag internal prompts to hide them from chat history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68262.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#39317](https://github.com/openclaw/openclaw/issues/39317) | [Bug]: OpenClaw treats codex exec sandbox-denied runs as success because codex exits 0 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39317.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#17684](https://github.com/openclaw/openclaw/pull/17684) | fix(skills): refresh notion skill for API 2026-03-11 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/17684.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#39248](https://github.com/openclaw/openclaw/issues/39248) | Bug: sandbox.mode: \"non-main\" silently breaks sessions_spawn subagent initialization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39248.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#39498](https://github.com/openclaw/openclaw/pull/39498) | fix(secrets): prevent ByteString crashes from pasted unicode chars | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39498.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#39284](https://github.com/openclaw/openclaw/pull/39284) | feat(sessions_spawn): add contextFiles and inheritContext options | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39284.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#39244](https://github.com/openclaw/openclaw/pull/39244) | feat(exec): add bubblewrap namespace sandbox for safeBins commands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39244.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#39496](https://github.com/openclaw/openclaw/pull/39496) | feat(feishu): comprehensive plugin enhancements — streaming, dedup, skills, calendar, and stability | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39496.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#39322](https://github.com/openclaw/openclaw/pull/39322) | feat(imessage): add tapback reaction support as inbound agent events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39322.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#39232](https://github.com/openclaw/openclaw/issues/39232) | feat: on_raw_inbound plugin hook for passive message observation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39232.md) | complete | Apr 26, 2026, 16:48 UTC |
 
 </details>
 
