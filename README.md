@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 22:50 UTC
 
 Updated: Apr 26, 2026, 22:50 UTC
 
-State: Apply finished
+State: Hot intake comments synced
 
-Apply/comment-sync run finished with 0 fresh closes out of requested limit 1. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969046356](https://github.com/openclaw/clawsweeper/actions/runs/24969046356)
+Synced durable Codex review comments for 2 hot-intake item(s). Item numbers: 33975,69312.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968982501](https://github.com/openclaw/clawsweeper/actions/runs/24968982501)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969046356](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 697/782 current (85 due, 89.1%) |
-| Hourly hot item cadence (<7d) | 697/782 current (85 due, 89.1%) |
+| Hourly cadence coverage | 696/782 current (86 due, 89%) |
+| Hourly hot item cadence (<7d) | 696/782 current (86 due, 89%) |
 | Daily cadence coverage | 4414/4481 current (67 due, 98.5%) |
 | Daily PR cadence | 2981/3039 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1433/1442 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
-| Due now by cadence | 229 |
+| Due now by cadence | 230 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 22:49 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 22:28 UTC.
+Latest review: Apr 26, 2026, 22:49 UTC. Latest close: Apr 26, 2026, 22:19 UTC. Latest comment sync: Apr 26, 2026, 22:50 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 5 | 1 | 4 | 0 | 0 | 0 | 1 |
-| Last hour | 734 | 14 | 720 | 0 | 12 | 46 | 6 |
-| Last 24 hours | 9448 | 2268 | 7180 | 0 | 2074 | 2162 | 15 |
+| Last 15 minutes | 5 | 1 | 4 | 0 | 0 | 2 | 1 |
+| Last hour | 733 | 14 | 719 | 0 | 12 | 48 | 6 |
+| Last 24 hours | 9447 | 2267 | 7180 | 0 | 2074 | 2164 | 15 |
 
 ### Recently Closed
 
