@@ -23,10 +23,10 @@ Last dashboard update: Apr 26, 2026, 01:25 UTC
 
 Updated: Apr 26, 2026, 01:25 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24945153912](https://github.com/openclaw/clawsweeper/actions/runs/24945153912)
+Starting apply/comment-sync run for up to 20 fresh issue closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 5000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24945189657](https://github.com/openclaw/clawsweeper/actions/runs/24945189657)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
@@ -43,7 +43,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24945153912](https://
 | Archived closed files | 9802 |
 | Fresh verified reviews in the last 7 days | 9488 |
 | Proposed closes awaiting apply | 894 (9.4% of fresh reviews) |
-| Closed by Codex apply | 7573 |
+| Closed by Codex apply | 7593 |
 | Failed or stale reviews | 7 |
 | Hourly cadence coverage | 12/1066 current (1054 due, 1.1%) |
 | Hourly hot item cadence (<7d) | 12/1066 current (1054 due, 1.1%) |
