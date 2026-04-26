@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 09:40 UTC
 
 Updated: Apr 26, 2026, 09:40 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953511507](https://github.com/openclaw/clawsweeper/actions/runs/24953511507)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953514887](https://github.com/openclaw/clawsweeper/actions/runs/24953514887)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24953511507](https://
 | Daily PR cadence | 2992/3078 current (86 due, 97.2%) |
 | Daily new issue cadence (<30d) | 1436/1470 current (34 due, 97.7%) |
 | Weekly older issue cadence | 1964/1970 current (6 due, 99.7%) |
-| Due now by cadence | 1044 |
+| Due now by cadence | 1043 |
 
 ### Audit Health
 
@@ -110,7 +110,7 @@ Latest review: Apr 26, 2026, 09:25 UTC. Latest close: Apr 26, 2026, 09:38 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 20 | 324 | 18 |
 | Last hour | 1516 | 169 | 1347 | 1 | 245 | 916 | 18 |
-| Last 24 hours | 9987 | 2552 | 7435 | 89 | 5093 | 2370 | 49 |
+| Last 24 hours | 9987 | 2552 | 7435 | 89 | 5091 | 2370 | 49 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
