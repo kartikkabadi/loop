@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 02:51 UTC
+Last dashboard update: Apr 26, 2026, 02:52 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 02:51 UTC
+Updated: Apr 26, 2026, 02:52 UTC
 
-State: Apply finished
+State: Review publish complete
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24946623951](https://github.com/openclaw/clawsweeper/actions/runs/24946623951)
+Merged review artifacts for run 24946457085. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24946457085](https://github.com/openclaw/clawsweeper/actions/runs/24946457085)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,35 +54,35 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24946623951](https://
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 5188 |
-| Proposed issue closes | 772 (14.9% of reviewed issues) |
+| Proposed issue closes | 805 (15.5% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 4137 |
-| Proposed PR closes | 104 (2.5% of reviewed PRs) |
+| Proposed PR closes | 109 (2.6% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 9325 |
-| Proposed closes awaiting apply | 876 (9.4% of fresh reviews) |
-| Closed by Codex apply | 7712 |
+| Proposed closes awaiting apply | 914 (9.8% of fresh reviews) |
+| Closed by Codex apply | 7692 |
 | Failed or stale reviews | 1 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 12/1043 current (1031 due, 1.2%) |
-| Hourly hot item cadence (<7d) | 12/1043 current (1031 due, 1.2%) |
-| Daily cadence coverage | 5473/5745 current (272 due, 95.3%) |
-| Daily PR cadence | 3518/3663 current (145 due, 96%) |
-| Daily new issue cadence (<30d) | 1955/2082 current (127 due, 93.9%) |
+| Hourly cadence coverage | 13/1043 current (1030 due, 1.2%) |
+| Hourly hot item cadence (<7d) | 13/1043 current (1030 due, 1.2%) |
+| Daily cadence coverage | 5644/5745 current (101 due, 98.2%) |
+| Daily PR cadence | 3585/3663 current (78 due, 97.9%) |
+| Daily new issue cadence (<30d) | 2059/2082 current (23 due, 98.9%) |
 | Weekly older issue cadence | 2537/2538 current (1 due, 100%) |
-| Due now by cadence | 1464 |
+| Due now by cadence | 1292 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 02:37 UTC. Latest close: Apr 26, 2026, 02:51 UTC. Latest comment sync: Apr 26, 2026, 02:51 UTC.
+Latest review: Apr 26, 2026, 02:51 UTC. Latest close: Apr 26, 2026, 02:48 UTC. Latest comment sync: Apr 26, 2026, 02:48 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 2 | 0 | 2 | 0 | 80 | 81 | 0 |
-| Last hour | 750 | 62 | 688 | 0 | 80 | 435 | 6 |
-| Last 24 hours | 11228 | 2671 | 8557 | 15 | 5559 | 548 | 205 |
+| Last 15 minutes | 250 | 40 | 210 | 0 | 60 | 61 | 0 |
+| Last hour | 1000 | 102 | 898 | 0 | 60 | 345 | 5 |
+| Last 24 hours | 11399 | 2709 | 8690 | 15 | 5536 | 458 | 203 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -91,16 +91,16 @@ Latest review: Apr 26, 2026, 02:37 UTC. Latest close: Apr 26, 2026, 02:51 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#65156](https://github.com/openclaw/openclaw/issues/65156) | [Bug] Memory vector search broken in v4.11 — sqlite-vec loads but registers no functions (SQLite ABI mismatch) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65156.md) | complete | Apr 26, 2026, 02:37 UTC |
-| [#65123](https://github.com/openclaw/openclaw/pull/65123) | fix(discord): preserve explicit target kind when parsing recipients | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65123.md) | complete | Apr 26, 2026, 02:36 UTC |
-| [#65131](https://github.com/openclaw/openclaw/issues/65131) | Feature Request: Option to hide system messages from Control UI chat window | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65131.md) | complete | Apr 26, 2026, 02:36 UTC |
-| [#65190](https://github.com/openclaw/openclaw/pull/65190) | feat(i18n): add Vietnamese (vi-VN) localization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65190.md) | complete | Apr 26, 2026, 02:36 UTC |
-| [#65194](https://github.com/openclaw/openclaw/pull/65194) | fix(imessage): avoid duplicate default monitor startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65194.md) | complete | Apr 26, 2026, 02:35 UTC |
-| [#65161](https://github.com/openclaw/openclaw/issues/65161) | Heartbeat isolated mode: cadence stalls, 'heartbeat last' mislabels exec-events, lightContext stays heavy, heartbeat-state writer appears missing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65161.md) | complete | Apr 26, 2026, 02:35 UTC |
-| [#65115](https://github.com/openclaw/openclaw/pull/65115) | fix: resolve 8 GUI bugs in webchat Control UI and TUI | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65115.md) | complete | Apr 26, 2026, 02:35 UTC |
-| [#65165](https://github.com/openclaw/openclaw/issues/65165) | [Bug]:  图片上传失败：模型不支持图片，但配置了 input: [\"text\", \"image\"] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65165.md) | complete | Apr 26, 2026, 02:35 UTC |
-| [#65195](https://github.com/openclaw/openclaw/issues/65195) | exec/runtime cannot reach LAN host on macOS while interactive shell can | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65195.md) | complete | Apr 26, 2026, 02:35 UTC |
-| [#65143](https://github.com/openclaw/openclaw/pull/65143) | feat(models): add per-provider timeoutSeconds config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65143.md) | complete | Apr 26, 2026, 02:35 UTC |
+| [#65619](https://github.com/openclaw/openclaw/issues/65619) | [Bug]: macOS: gateway bind=loopback resolves to 0.0.0.0 and refuses to start (2026.4.11, 1006 on health) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65619.md) | complete | Apr 26, 2026, 02:51 UTC |
+| [#65660](https://github.com/openclaw/openclaw/issues/65660) | [Bug]: Persisted TTS audio base64 blobs inflate context token estimate, causing compaction death spiral and session restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65660.md) | complete | Apr 26, 2026, 02:51 UTC |
+| [#65592](https://github.com/openclaw/openclaw/pull/65592) | feat(searxng): show JSON format setup note during onboarding | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65592.md) | complete | Apr 26, 2026, 02:51 UTC |
+| [#65624](https://github.com/openclaw/openclaw/issues/65624) | [Bug]: Mattermost slash commands default to cleartext callback URLs that expose reusable command tokens | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65624.md) | complete | Apr 26, 2026, 02:51 UTC |
+| [#65659](https://github.com/openclaw/openclaw/issues/65659) | bug: sessions.json entries missing sessionId and sessionFile — thread context lost on restart | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65659.md) | complete | Apr 26, 2026, 02:51 UTC |
+| [#65533](https://github.com/openclaw/openclaw/issues/65533) | [Bug]: reasoning field missing from plain-text assistant turns in message history (tool-call turns unaffected) — OpenRouter + MiniMax | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65533.md) | complete | Apr 26, 2026, 02:50 UTC |
+| [#65590](https://github.com/openclaw/openclaw/issues/65590) | Bug: MCP streamable-http transport not forwarding custom headers to remote servers | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65590.md) | complete | Apr 26, 2026, 02:50 UTC |
+| [#65643](https://github.com/openclaw/openclaw/issues/65643) | `--profile` flag does not clear OPENCLAW_LAUNCHD_LABEL, causing gateway status to resolve wrong plist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65643.md) | complete | Apr 26, 2026, 02:50 UTC |
+| [#65621](https://github.com/openclaw/openclaw/issues/65621) | Local gateway RPC can fail with opaque 1006 errors and GatewayClient does not honor explicit deviceIdentity=null | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65621.md) | complete | Apr 26, 2026, 02:50 UTC |
+| [#65720](https://github.com/openclaw/openclaw/issues/65720) | [Feature]: When building a work system with OpenClaw as the core, WebUI should remain accessible after the Gateway crashes. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65720.md) | complete | Apr 26, 2026, 02:50 UTC |
 
 </details>
 
