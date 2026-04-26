@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 23:52 UTC
+Last dashboard update: Apr 26, 2026, 23:53 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 23:52 UTC
+Updated: Apr 26, 2026, 23:53 UTC
 
-State: Apply finished
+State: Hot intake publish complete
 
-Apply/comment-sync run finished with 0 fresh closes out of requested limit 1. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970178715](https://github.com/openclaw/clawsweeper/actions/runs/24970178715)
+Merged hot intake artifacts for run 24970136397. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970136397](https://github.com/openclaw/clawsweeper/actions/runs/24970136397)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970178715](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 512/789 current (277 due, 64.9%) |
-| Hourly hot item cadence (<7d) | 512/789 current (277 due, 64.9%) |
+| Hourly cadence coverage | 513/789 current (276 due, 65%) |
+| Hourly hot item cadence (<7d) | 513/789 current (276 due, 65%) |
 | Daily cadence coverage | 4406/4473 current (67 due, 98.5%) |
 | Daily PR cadence | 2975/3033 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1431/1440 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1888/1888 current (0 due, 100%) |
-| Due now by cadence | 437 |
+| Due now by cadence | 436 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 23:49 UTC. Latest close: Apr 26, 2026, 23:50 UTC. Latest comment sync: Apr 26, 2026, 23:44 UTC.
+Latest review: Apr 26, 2026, 23:52 UTC. Latest close: Apr 26, 2026, 23:50 UTC. Latest comment sync: Apr 26, 2026, 23:44 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 357 | 8 | 349 | 1 | 1 | 4 | 0 |
-| Last hour | 544 | 14 | 530 | 1 | 1 | 43 | 1 |
-| Last 24 hours | 9194 | 2021 | 7173 | 1 | 2075 | 2173 | 11 |
+| Last 15 minutes | 276 | 4 | 272 | 1 | 1 | 4 | 0 |
+| Last hour | 546 | 14 | 532 | 1 | 1 | 43 | 1 |
+| Last 24 hours | 9183 | 2010 | 7173 | 1 | 2075 | 2173 | 11 |
 
 ### Recently Closed
 
@@ -134,16 +134,16 @@ Latest review: Apr 26, 2026, 23:49 UTC. Latest close: Apr 26, 2026, 23:50 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72287](https://github.com/openclaw/openclaw/pull/72287) | [plugin sdk] Add generic plugin host-hook contracts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72287.md) | complete | Apr 26, 2026, 23:49 UTC |
-| [#71736](https://github.com/openclaw/openclaw/issues/71736) | [RFC] Control UI plugin contribution slots | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71736.md) | failed | Apr 26, 2026, 23:48 UTC |
-| [#72418](https://github.com/openclaw/openclaw/issues/72418) | [Bug]: shouldSkipBackendSelfPairing allows loopback clients to self-declare GATEWAY_CLIENT identity and bypass device pairing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72418.md) | complete | Apr 26, 2026, 23:43 UTC |
-| [#70529](https://github.com/openclaw/openclaw/issues/70529) | [Bug]: Desktop cannot use existing Chrome sessions: EasyClaw Google sign-in fails, and user profile attach fails with spawn npx ENOENT | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70529.md) | complete | Apr 26, 2026, 23:43 UTC |
-| [#70578](https://github.com/openclaw/openclaw/issues/70578) | Silent config data loss: Zod `.strict()` strips unknown top-level fields on round-trip | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70578.md) | complete | Apr 26, 2026, 23:43 UTC |
-| [#72402](https://github.com/openclaw/openclaw/issues/72402) | Ollama Cloud models should receive native think: max instead of mapped think: high | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72402.md) | complete | Apr 26, 2026, 23:43 UTC |
-| [#71645](https://github.com/openclaw/openclaw/pull/71645) | Mattermost streaming text fix [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71645.md) | complete | Apr 26, 2026, 23:43 UTC |
-| [#72360](https://github.com/openclaw/openclaw/issues/72360) | [Bug]: /allowlist --store bypasses channel configWrites policy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72360.md) | complete | Apr 26, 2026, 23:43 UTC |
-| [#72341](https://github.com/openclaw/openclaw/issues/72341) | Control UI / WebChat: assistant text-between-tools blocks render as cumulative duplicates instead of fresh cards | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72341.md) | complete | Apr 26, 2026, 23:43 UTC |
-| [#70824](https://github.com/openclaw/openclaw/pull/70824) | fix: merge mode no longer drops image attachments when one provider lacks apiKey | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70824.md) | complete | Apr 26, 2026, 23:42 UTC |
+| [#71593](https://github.com/openclaw/openclaw/issues/71593) | [Feature]: support to use plugin to implement secret ref provider and cover core schemas | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71593.md) | complete | Apr 26, 2026, 23:52 UTC |
+| [#72386](https://github.com/openclaw/openclaw/issues/72386) | [Bug] v2026.4.25-beta.4: new runtime-context message text echoed verbatim by model into visible reply | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72386.md) | complete | Apr 26, 2026, 23:52 UTC |
+| [#72287](https://github.com/openclaw/openclaw/pull/72287) | [plugin sdk] Add generic plugin host-hook contracts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72287.md) | complete | Apr 26, 2026, 23:52 UTC |
+| [#43793](https://github.com/openclaw/openclaw/pull/43793) | feat(tui): show reconnect hint and auto-probe gateway when disconnected | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43793.md) | complete | Apr 26, 2026, 23:52 UTC |
+| [#65824](https://github.com/openclaw/openclaw/issues/65824) | [Meta] Feature request bundle: 11 platform gaps from intensive daily use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65824.md) | complete | Apr 26, 2026, 23:52 UTC |
+| [#72139](https://github.com/openclaw/openclaw/issues/72139) | Control UI auth retry loop + blocking chat.history causes Slack Socket Mode disconnects | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72139.md) | complete | Apr 26, 2026, 23:52 UTC |
+| [#72097](https://github.com/openclaw/openclaw/issues/72097) | [Feature]: sync tool-injection into active agent sessions on plugins install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72097.md) | complete | Apr 26, 2026, 23:52 UTC |
+| [#72383](https://github.com/openclaw/openclaw/pull/72383) | [plugin sdk] Add workflow action, outbound, scheduler, and retry host seams | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72383.md) | complete | Apr 26, 2026, 23:52 UTC |
+| [#67463](https://github.com/openclaw/openclaw/pull/67463) | Fix doctor SecretRef false positive and normalize task timestamps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67463.md) | complete | Apr 26, 2026, 23:51 UTC |
+| [#72343](https://github.com/openclaw/openclaw/pull/72343) | feat: start onboarding for fresh CLI installs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72343.md) | complete | Apr 26, 2026, 23:51 UTC |
 
 </details>
 
