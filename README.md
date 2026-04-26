@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 04:14 UTC
 
 Updated: Apr 26, 2026, 04:14 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 40, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947944173](https://github.com/openclaw/clawsweeper/actions/runs/24947944173)
 <!-- clawsweeper-status:end -->
 
@@ -42,11 +42,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947944173](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4733 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4218 |
-| Open items total | 8951 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4732 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4217 |
+| Open items total | 8949 |
 | Reviewed files | 8758 |
-| Unreviewed open items | 193 |
+| Unreviewed open items | 191 |
 | Archived closed files | 10539 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947944173](https://
 | Daily PR cadence | 3569/3638 current (69 due, 98.1%) |
 | Daily new issue cadence (<30d) | 2042/2055 current (13 due, 99.4%) |
 | Weekly older issue cadence | 2052/2055 current (3 due, 99.9%) |
-| Due now by cadence | 1272 |
+| Due now by cadence | 1270 |
 
 ### Latest Run Activity
 
@@ -81,7 +81,7 @@ Latest review: Apr 26, 2026, 04:09 UTC. Latest close: Apr 26, 2026, 04:13 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 250 | 46 | 204 | 0 | 82 | 84 | 1 |
-| Last hour | 895 | 169 | 726 | 1 | 250 | 271 | 4 |
+| Last hour | 895 | 169 | 726 | 1 | 249 | 270 | 4 |
 | Last 24 hours | 10936 | 2465 | 8471 | 30 | 5606 | 562 | 190 |
 
 <details>
