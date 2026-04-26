@@ -32,57 +32,57 @@ Last dashboard update: Apr 26, 2026, 03:23 UTC
 
 Updated: Apr 26, 2026, 03:23 UTC
 
-State: Hot intake comments synced
+State: Review publish complete
 
-Synced durable Codex review comments for 16 hot-intake item(s). Item numbers: 12219,12394,12398,12578,12759,15591,16251,17684,18860,40874,40877,40878,50483,50998,51011,58823,66953,71379,71550,71573.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947085068](https://github.com/openclaw/clawsweeper/actions/runs/24947085068)
+Merged review artifacts for run 24946926326. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24946926326](https://github.com/openclaw/clawsweeper/actions/runs/24946926326)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5042 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 5034 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4241 |
-| Open items total | 9283 |
-| Reviewed files | 9120 |
-| Unreviewed open items | 163 |
-| Archived closed files | 10177 |
+| Open items total | 9275 |
+| Reviewed files | 9107 |
+| Unreviewed open items | 168 |
+| Archived closed files | 10190 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4981 |
-| Proposed issue closes | 647 (13% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 4116 |
-| Proposed PR closes | 118 (2.9% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 9097 |
-| Proposed closes awaiting apply | 765 (8.4% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 4974 |
+| Proposed issue closes | 655 (13.2% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 4117 |
+| Proposed PR closes | 126 (3.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 9091 |
+| Proposed closes awaiting apply | 781 (8.6% of fresh reviews) |
 | Closed by Codex apply | 7892 |
-| Failed or stale reviews | 23 |
+| Failed or stale reviews | 16 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 6/1028 current (1022 due, 0.6%) |
-| Hourly hot item cadence (<7d) | 6/1028 current (1022 due, 0.6%) |
-| Daily cadence coverage | 5575/5734 current (159 due, 97.2%) |
-| Daily PR cadence | 3551/3657 current (106 due, 97.1%) |
-| Daily new issue cadence (<30d) | 2024/2077 current (53 due, 97.4%) |
-| Weekly older issue cadence | 2353/2358 current (5 due, 99.8%) |
-| Due now by cadence | 1349 |
+| Hourly cadence coverage | 9/1025 current (1016 due, 0.9%) |
+| Hourly hot item cadence (<7d) | 9/1025 current (1016 due, 0.9%) |
+| Daily cadence coverage | 5638/5728 current (90 due, 98.4%) |
+| Daily PR cadence | 3582/3656 current (74 due, 98%) |
+| Daily new issue cadence (<30d) | 2056/2072 current (16 due, 99.2%) |
+| Weekly older issue cadence | 2351/2354 current (3 due, 99.9%) |
+| Due now by cadence | 1277 |
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 03:20 UTC. Latest close: Apr 26, 2026, 03:20 UTC. Latest comment sync: Apr 26, 2026, 03:23 UTC.
+Latest review: Apr 26, 2026, 03:22 UTC. Latest close: Apr 26, 2026, 03:20 UTC. Latest comment sync: Apr 26, 2026, 03:20 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 60 | 77 | 3 |
-| Last hour | 769 | 113 | 656 | 1 | 198 | 401 | 4 |
-| Last 24 hours | 11179 | 2582 | 8597 | 37 | 5564 | 514 | 200 |
+| Last 15 minutes | 250 | 20 | 230 | 0 | 60 | 61 | 0 |
+| Last hour | 999 | 133 | 866 | 1 | 198 | 254 | 0 |
+| Last 24 hours | 11241 | 2600 | 8641 | 30 | 5562 | 367 | 195 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -91,16 +91,16 @@ Latest review: Apr 26, 2026, 03:20 UTC. Latest close: Apr 26, 2026, 03:20 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#66533](https://github.com/openclaw/openclaw/issues/66533) | [Bug]: WebChat session selector shows main session as “heartbeat” after a while, making /new feel like sessions disappear | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66533.md) | complete | Apr 26, 2026, 03:22 UTC |
 | [#66953](https://github.com/openclaw/openclaw/issues/66953) | [Bug]: delivery-mirror transcript written to wrong agent session in multi-account multi-agent config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66953.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#12394](https://github.com/openclaw/openclaw/issues/12394) | [Feature]: Per-user heartbeat routing for channel-level heartbeat messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12394.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#71573](https://github.com/openclaw/openclaw/pull/71573) | fix(update.run): journal restart continuation so post-update agents can resume their turn (#71178) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71573.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#71550](https://github.com/openclaw/openclaw/pull/71550) | feat(slack): expose channels.slack.logLevel so operators can silence socket-mode pong-timeout noise (#71531) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71550.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#50998](https://github.com/openclaw/openclaw/pull/50998) | fix(ios): restore contacts/calendar permission prompts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/50998.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#51011](https://github.com/openclaw/openclaw/pull/51011) | feat(ios): add Privacy & Access settings for contacts, calendar, and reminders | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51011.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#12398](https://github.com/openclaw/openclaw/issues/12398) | Feature: Postcondition checks for cron jobs (deterministic verification of agent outcomes) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12398.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#40878](https://github.com/openclaw/openclaw/pull/40878) | fix(ios): picker adaptive onChange loop + OSLog string concatenation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40878.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#18860](https://github.com/openclaw/openclaw/pull/18860) | feat(agents): expose tools and their schemas via new after_tools_resolved hook [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18860.md) | complete | Apr 26, 2026, 03:20 UTC |
-| [#12759](https://github.com/openclaw/openclaw/issues/12759) | [Feature]: add \"channel: ALL\" label | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/12759.md) | complete | Apr 26, 2026, 03:20 UTC |
+| [#66594](https://github.com/openclaw/openclaw/pull/66594) | fix(gateway): register chat run on agent start and enable provider hooks during model warmup | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66594.md) | complete | Apr 26, 2026, 03:20 UTC |
+| [#66561](https://github.com/openclaw/openclaw/issues/66561) | [Bug]: openai-codex SSE stream begins, but embedded run aborts locally and is surfaced as timeout (408) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66561.md) | complete | Apr 26, 2026, 03:19 UTC |
+| [#66485](https://github.com/openclaw/openclaw/pull/66485) | Align context usage display, refresh chat after compaction | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66485.md) | complete | Apr 26, 2026, 03:19 UTC |
+| [#66487](https://github.com/openclaw/openclaw/issues/66487) | Heartbeat exec-event prompt drops actual completion payload | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66487.md) | complete | Apr 26, 2026, 03:19 UTC |
+| [#66494](https://github.com/openclaw/openclaw/issues/66494) | Kilocode discovery failure falls back to single-entry static catalog, causing all model_not_found | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66494.md) | complete | Apr 26, 2026, 03:19 UTC |
+| [#66546](https://github.com/openclaw/openclaw/pull/66546) | feat(sessions): add transcriptRotateBytes and transcriptMaxLines to cap .jsonl growth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66546.md) | complete | Apr 26, 2026, 03:19 UTC |
+| [#66391](https://github.com/openclaw/openclaw/issues/66391) | [Bug]: TUI tool calls fail with \"The session ID openclaw-tui does not exist\" on local Ollama models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66391.md) | complete | Apr 26, 2026, 03:19 UTC |
+| [#66457](https://github.com/openclaw/openclaw/pull/66457) | fix(logging): implement log file rotation and update related tests | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/66457.md) | complete | Apr 26, 2026, 03:19 UTC |
 
 </details>
 
