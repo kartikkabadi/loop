@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 02:38 UTC
+Last dashboard update: Apr 26, 2026, 02:40 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 02:38 UTC
+Updated: Apr 26, 2026, 02:40 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24946457085](https://github.com/openclaw/clawsweeper/actions/runs/24946457085)
 <!-- clawsweeper-status:end -->
 
@@ -82,7 +82,7 @@ Latest review: Apr 26, 2026, 02:37 UTC. Latest close: Apr 26, 2026, 01:49 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 250 | 36 | 214 | 0 | 0 | 354 | 6 |
 | Last hour | 1000 | 84 | 916 | 0 | 19 | 373 | 6 |
-| Last 24 hours | 11412 | 2743 | 8669 | 15 | 5527 | 467 | 205 |
+| Last 24 hours | 11412 | 2743 | 8669 | 15 | 5519 | 467 | 205 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
