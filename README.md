@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 18:36 UTC
+Last dashboard update: Apr 26, 2026, 18:38 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 18:36 UTC
+Updated: Apr 26, 2026, 18:38 UTC
 
-State: Hot intake comments synced
+State: Review publish complete
 
-Synced durable Codex review comments for 17 hot-intake item(s). Item numbers: 58823,72004,72038,72092,72218,72219,72220,72225,72229,72237,72238,72251,72253,72254,72315,72318,72319,72320.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963919001](https://github.com/openclaw/clawsweeper/actions/runs/24963919001)
+Merged review artifacts for run 24963973477. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963973477](https://github.com/openclaw/clawsweeper/actions/runs/24963973477)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,11 +54,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963919001](https://
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3734 |
-| Proposed issue closes | 37 (1% of reviewed issues) |
+| Proposed issue closes | 36 (1% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3479 |
 | Proposed PR closes | 5 (0.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7213 |
-| Proposed closes awaiting apply | 42 (0.6% of fresh reviews) |
+| Proposed closes awaiting apply | 41 (0.6% of fresh reviews) |
 | Closed by Codex apply | 9908 |
 | Failed or stale reviews | 2 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963919001](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 813/820 current (7 due, 99.1%) |
-| Hourly hot item cadence (<7d) | 813/820 current (7 due, 99.1%) |
+| Hourly cadence coverage | 816/820 current (4 due, 99.5%) |
+| Hourly hot item cadence (<7d) | 816/820 current (4 due, 99.5%) |
 | Daily cadence coverage | 4432/4499 current (67 due, 98.5%) |
 | Daily PR cadence | 2996/3054 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1436/1445 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1896/1896 current (0 due, 100%) |
-| Due now by cadence | 143 |
+| Due now by cadence | 140 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 18:34 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 18:36 UTC.
+Latest review: Apr 26, 2026, 18:37 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 18:15 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 18 | 2 | 16 | 0 | 0 | 17 | 1 |
-| Last hour | 1523 | 43 | 1480 | 0 | 0 | 396 | 4 |
-| Last 24 hours | 9873 | 2631 | 7242 | 4 | 2345 | 2450 | 19 |
+| Last 15 minutes | 25 | 1 | 24 | 0 | 0 | 0 | 0 |
+| Last hour | 1389 | 42 | 1347 | 0 | 0 | 379 | 3 |
+| Last 24 hours | 9868 | 2627 | 7241 | 1 | 2330 | 2428 | 17 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 18:34 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72315](https://github.com/openclaw/openclaw/issues/72315) | [Bug]: npm grammyjs   npm anthropic frequent disturbance shell popup in windows every 15 seconds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72315.md) | complete | Apr 26, 2026, 18:34 UTC |
-| [#72318](https://github.com/openclaw/openclaw/issues/72318) | [Bug]: [default] channel exited: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'c:' | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72318.md) | complete | Apr 26, 2026, 18:34 UTC |
-| [#72229](https://github.com/openclaw/openclaw/pull/72229) | [tts][personality] /emotions directive + emotion-tag sanitization (#69051 PR-B of 4) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72229.md) | complete | Apr 26, 2026, 18:33 UTC |
-| [#72218](https://github.com/openclaw/openclaw/pull/72218) | fix(heartbeat): suppress final ok payloads | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72218.md) | complete | Apr 26, 2026, 18:33 UTC |
-| [#58823](https://github.com/openclaw/openclaw/pull/58823) | fix(agents): restore global subagent model default priority over agent own model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58823.md) | complete | Apr 26, 2026, 18:33 UTC |
-| [#72251](https://github.com/openclaw/openclaw/pull/72251) | fix(backup): retry on tar EOF race and skip known volatile files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72251.md) | complete | Apr 26, 2026, 18:33 UTC |
-| [#72253](https://github.com/openclaw/openclaw/pull/72253) | fix(heartbeat): keep benign exec completions internal | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72253.md) | complete | Apr 26, 2026, 18:33 UTC |
-| [#72319](https://github.com/openclaw/openclaw/pull/72319) | fix(agents): redact secrets in tool call output to Control UI | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72319.md) | complete | Apr 26, 2026, 18:33 UTC |
-| [#72004](https://github.com/openclaw/openclaw/pull/72004) | fix(control-ui): stop duplicate-render race on assistant final messages (#71992) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72004.md) | complete | Apr 26, 2026, 18:33 UTC |
-| [#72237](https://github.com/openclaw/openclaw/pull/72237) | Add realtime consult thinking and fast mode overrides | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72237.md) | complete | Apr 26, 2026, 18:33 UTC |
+| [#72315](https://github.com/openclaw/openclaw/issues/72315) | [Bug]: npm grammyjs   npm anthropic frequent disturbance shell popup in windows every 15 seconds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72315.md) | complete | Apr 26, 2026, 18:37 UTC |
+| [#72318](https://github.com/openclaw/openclaw/issues/72318) | [Bug]: [default] channel exited: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'c:' | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72318.md) | complete | Apr 26, 2026, 18:37 UTC |
+| [#63915](https://github.com/openclaw/openclaw/issues/63915) | [Bug]: zai/glm-4.6v imageModel fails with \"Request was aborted\" — direct API call works fine | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63915.md) | complete | Apr 26, 2026, 18:37 UTC |
+| [#64127](https://github.com/openclaw/openclaw/pull/64127) | feat: Provider circuit breaker for quota exhaustion | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64127.md) | complete | Apr 26, 2026, 18:36 UTC |
+| [#64436](https://github.com/openclaw/openclaw/pull/64436) | feat: expose model pricing to plugins via runtime.usage API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64436.md) | complete | Apr 26, 2026, 18:36 UTC |
+| [#72218](https://github.com/openclaw/openclaw/pull/72218) | fix(heartbeat): suppress final ok payloads | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72218.md) | complete | Apr 26, 2026, 18:36 UTC |
+| [#72320](https://github.com/openclaw/openclaw/issues/72320) | Bug: tasks cancel fails because dist/task-registry-control.runtime.js is missing from published package | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72320.md) | complete | Apr 26, 2026, 18:36 UTC |
+| [#72216](https://github.com/openclaw/openclaw/pull/72216) | fix(nostr): keep setup status off full surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72216.md) | complete | Apr 26, 2026, 18:36 UTC |
+| [#72229](https://github.com/openclaw/openclaw/pull/72229) | [tts][personality] /emotions directive + emotion-tag sanitization (#69051 PR-B of 4) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72229.md) | complete | Apr 26, 2026, 18:36 UTC |
+| [#72251](https://github.com/openclaw/openclaw/pull/72251) | fix(backup): retry on tar EOF race and skip known volatile files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72251.md) | complete | Apr 26, 2026, 18:36 UTC |
 
 </details>
 
