@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 12:16 UTC
+Last dashboard update: Apr 26, 2026, 12:19 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 12:16 UTC
+Updated: Apr 26, 2026, 12:19 UTC
 
-State: Review publish complete
+State: Apply in progress
 
-Merged review artifacts for run 24956134862. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956134862](https://github.com/openclaw/clawsweeper/actions/runs/24956134862)
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 400, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956216819](https://github.com/openclaw/clawsweeper/actions/runs/24956216819)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -59,7 +59,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24956134862](https://
 | Proposed PR closes | 8 (0.2% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7203 |
 | Proposed closes awaiting apply | 22 (0.3% of fresh reviews) |
-| Closed by Codex apply | 9784 |
+| Closed by Codex apply | 9804 |
 | Failed or stale reviews | 2 |
 
 ### Cadence
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 12:14 UTC. Latest close: Apr 26, 2026, 12:06 UTC. Latest comment sync: Apr 26, 2026, 12:06 UTC.
+Latest review: Apr 26, 2026, 12:14 UTC. Latest close: Apr 26, 2026, 12:09 UTC. Latest comment sync: Apr 26, 2026, 12:19 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 431 | 25 | 406 | 0 | 17 | 199 | 1 |
-| Last hour | 1441 | 63 | 1378 | 0 | 40 | 396 | 4 |
-| Last 24 hours | 10105 | 2761 | 7344 | 14 | 4416 | 2298 | 31 |
+| Last 15 minutes | 421 | 22 | 399 | 0 | 37 | 387 | 0 |
+| Last hour | 1440 | 63 | 1377 | 0 | 60 | 718 | 4 |
+| Last 24 hours | 10105 | 2761 | 7344 | 14 | 4410 | 2620 | 31 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
