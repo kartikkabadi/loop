@@ -30,12 +30,12 @@ Last dashboard update: Apr 26, 2026, 21:12 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 21:12 UTC
+Updated: Apr 26, 2026, 21:24 UTC
 
-State: Hot intake comments synced
+State: Planning review
 
-Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 46303,58823,64500,64752,72178,72239,72276,72280,72281,72287,72301,72332,72335,72339,72343,72353,72354,72355,72356,72357.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967060507](https://github.com/openclaw/clawsweeper/actions/runs/24967060507)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967416755](https://github.com/openclaw/clawsweeper/actions/runs/24967416755)
 <!-- clawsweeper-status:end -->
 
 ### Queue
