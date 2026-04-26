@@ -30,12 +30,12 @@ Last dashboard update: Apr 26, 2026, 18:21 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 18:26 UTC
+Updated: Apr 26, 2026, 18:30 UTC
 
-State: Audit finished
+State: Planning review
 
-Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963831003](https://github.com/openclaw/clawsweeper/actions/runs/24963831003)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24963919001](https://github.com/openclaw/clawsweeper/actions/runs/24963919001)
 <!-- clawsweeper-status:end -->
 
 ### Queue
