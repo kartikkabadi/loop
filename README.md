@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 09:02 UTC
+Last dashboard update: Apr 26, 2026, 09:04 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 09:02 UTC
+Updated: Apr 26, 2026, 09:04 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 40, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952843768](https://github.com/openclaw/clawsweeper/actions/runs/24952843768)
 <!-- clawsweeper-status:end -->
 
@@ -42,37 +42,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952843768](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4008 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3634 |
-| Open items total | 7642 |
-| Reviewed files | 7388 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4005 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3617 |
+| Open items total | 7622 |
+| Reviewed files | 7368 |
 | Unreviewed open items | 254 |
-| Archived closed files | 11909 |
+| Archived closed files | 11929 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3862 |
-| Proposed issue closes | 7 (0.2% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3453 |
-| Proposed PR closes | 19 (0.6% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7315 |
-| Proposed closes awaiting apply | 26 (0.4% of fresh reviews) |
-| Closed by Codex apply | 9405 |
+| Fresh reviewed issues in the last 7 days | 3859 |
+| Proposed issue closes | 4 (0.1% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3436 |
+| Proposed PR closes | 2 (0.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7295 |
+| Proposed closes awaiting apply | 6 (0.1% of fresh reviews) |
+| Closed by Codex apply | 9425 |
 | Failed or stale reviews | 73 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 72/776 current (704 due, 9.3%) |
-| Hourly hot item cadence (<7d) | 72/776 current (704 due, 9.3%) |
-| Daily cadence coverage | 4518/4638 current (120 due, 97.4%) |
-| Daily PR cadence | 3033/3119 current (86 due, 97.2%) |
-| Daily new issue cadence (<30d) | 1485/1519 current (34 due, 97.8%) |
+| Hourly cadence coverage | 63/776 current (713 due, 8.1%) |
+| Hourly hot item cadence (<7d) | 63/776 current (713 due, 8.1%) |
+| Daily cadence coverage | 4498/4618 current (120 due, 97.4%) |
+| Daily PR cadence | 3016/3102 current (86 due, 97.2%) |
+| Daily new issue cadence (<30d) | 1482/1516 current (34 due, 97.8%) |
 | Weekly older issue cadence | 1968/1974 current (6 due, 99.7%) |
-| Due now by cadence | 1084 |
+| Due now by cadence | 1093 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 08:54 UTC. Latest close: Apr 26, 2026, 09:01 UTC. Latest comment sync: Apr 26, 2026, 09:01 UTC.
+Latest review: Apr 26, 2026, 08:54 UTC. Latest close: Apr 26, 2026, 09:04 UTC. Latest comment sync: Apr 26, 2026, 09:04 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 331 | 43 | 288 | 1 | 100 | 99 | 0 |
-| Last hour | 1682 | 247 | 1435 | 6 | 232 | 250 | 16 |
-| Last 24 hours | 9972 | 2442 | 7530 | 86 | 5016 | 1619 | 47 |
+| Last 15 minutes | 222 | 43 | 179 | 1 | 106 | 105 | 0 |
+| Last hour | 1581 | 225 | 1356 | 6 | 252 | 270 | 16 |
+| Last 24 hours | 9972 | 2442 | 7530 | 86 | 5036 | 1639 | 47 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,7 +119,6 @@ Latest review: Apr 26, 2026, 08:54 UTC. Latest close: Apr 26, 2026, 09:01 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#60807](https://github.com/openclaw/openclaw/pull/60807) | feat: per-agent compaction configuration overrides | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/60807.md) | complete | Apr 26, 2026, 08:54 UTC |
 | [#71735](https://github.com/openclaw/openclaw/issues/71735) | [RFC] Scoped plugin commands, trusted command ownership, and continuation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71735.md) | complete | Apr 26, 2026, 08:54 UTC |
 | [#69570](https://github.com/openclaw/openclaw/issues/69570) | [Bug] Async command cascade creates unstoppable approval loop — each approval generates delayed completion message, user commands blocked until all fire | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69570.md) | complete | Apr 26, 2026, 08:53 UTC |
 | [#60848](https://github.com/openclaw/openclaw/pull/60848) | Feature/feishu threadid fix | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60848.md) | complete | Apr 26, 2026, 08:53 UTC |
@@ -129,6 +128,7 @@ Latest review: Apr 26, 2026, 08:54 UTC. Latest close: Apr 26, 2026, 09:01 UTC. L
 | [#61269](https://github.com/openclaw/openclaw/pull/61269) | fix(android): allow onboarding finish when operator is offline | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/61269.md) | complete | Apr 26, 2026, 08:53 UTC |
 | [#67157](https://github.com/openclaw/openclaw/pull/67157) | Add stable tarball upgrade workflow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67157.md) | complete | Apr 26, 2026, 08:53 UTC |
 | [#60743](https://github.com/openclaw/openclaw/pull/60743) | memory: add recent continuity snapshots | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60743.md) | complete | Apr 26, 2026, 08:53 UTC |
+| [#66210](https://github.com/openclaw/openclaw/pull/66210) | feat(msteams): add thread copilot approvals | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66210.md) | complete | Apr 26, 2026, 08:53 UTC |
 
 </details>
 
