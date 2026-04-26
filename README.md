@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 02:43 UTC
 
 Updated: Apr 26, 2026, 02:43 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 41, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24946480464](https://github.com/openclaw/clawsweeper/actions/runs/24946480464)
 <!-- clawsweeper-status:end -->
 
@@ -68,11 +68,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24946480464](https://
 | --- | ---: |
 | Hourly cadence coverage | 13/1043 current (1030 due, 1.2%) |
 | Hourly hot item cadence (<7d) | 13/1043 current (1030 due, 1.2%) |
-| Daily cadence coverage | 5550/5748 current (198 due, 96.6%) |
+| Daily cadence coverage | 5549/5748 current (199 due, 96.5%) |
 | Daily PR cadence | 3550/3663 current (113 due, 96.9%) |
-| Daily new issue cadence (<30d) | 2000/2085 current (85 due, 95.9%) |
+| Daily new issue cadence (<30d) | 1999/2085 current (86 due, 95.9%) |
 | Weekly older issue cadence | 2595/2596 current (1 due, 100%) |
-| Due now by cadence | 1389 |
+| Due now by cadence | 1390 |
 
 ### Latest Run Activity
 
@@ -80,9 +80,9 @@ Latest review: Apr 26, 2026, 02:37 UTC. Latest close: Apr 26, 2026, 02:43 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 228 | 36 | 192 | 0 | 20 | 346 | 4 |
-| Last hour | 981 | 83 | 898 | 0 | 39 | 394 | 6 |
-| Last 24 hours | 11363 | 2721 | 8642 | 15 | 5529 | 488 | 205 |
+| Last 15 minutes | 225 | 36 | 189 | 0 | 20 | 344 | 4 |
+| Last hour | 979 | 83 | 896 | 0 | 39 | 394 | 6 |
+| Last 24 hours | 11362 | 2721 | 8641 | 15 | 5529 | 488 | 205 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
