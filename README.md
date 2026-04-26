@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 16:49 UTC
+Last dashboard update: Apr 26, 2026, 16:50 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 16:49 UTC
+Updated: Apr 26, 2026, 16:50 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24961799262. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 17684,39137,39213,39232,39244,39248,39284,39317,39322,39323,39349,39350,39392,39413,39428,39496,39498,39505,68262,72053.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24961799262](https://github.com/openclaw/clawsweeper/actions/runs/24961799262)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24961799262](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 800/806 current (6 due, 99.3%) |
-| Hourly hot item cadence (<7d) | 800/806 current (6 due, 99.3%) |
+| Hourly cadence coverage | 799/806 current (7 due, 99.1%) |
+| Hourly hot item cadence (<7d) | 799/806 current (7 due, 99.1%) |
 | Daily cadence coverage | 4429/4496 current (67 due, 98.5%) |
 | Daily PR cadence | 2993/3051 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1436/1445 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1896/1896 current (0 due, 100%) |
-| Due now by cadence | 143 |
+| Due now by cadence | 144 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 16:48 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 16:27 UTC.
+Latest review: Apr 26, 2026, 16:48 UTC. Latest close: Apr 26, 2026, 16:17 UTC. Latest comment sync: Apr 26, 2026, 16:50 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 140 | 5 | 135 | 0 | 0 | 0 | 0 |
-| Last hour | 1044 | 46 | 998 | 0 | 40 | 670 | 1 |
-| Last 24 hours | 9921 | 2638 | 7283 | 13 | 3022 | 2678 | 17 |
+| Last 15 minutes | 121 | 5 | 116 | 0 | 0 | 19 | 1 |
+| Last hour | 1030 | 46 | 984 | 0 | 40 | 689 | 2 |
+| Last 24 hours | 9921 | 2638 | 7283 | 13 | 3022 | 2697 | 18 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,7 +119,7 @@ Latest review: Apr 26, 2026, 16:48 UTC. Latest close: Apr 26, 2026, 16:17 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#68262](https://github.com/openclaw/openclaw/pull/68262) | fix: source-tag internal prompts to hide them from chat history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68262.md) | complete | Apr 26, 2026, 16:48 UTC |
+| [#68262](https://github.com/openclaw/openclaw/pull/68262) | fix: source-tag internal prompts to hide them from chat history | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/68262.md) | complete | Apr 26, 2026, 16:48 UTC |
 | [#39317](https://github.com/openclaw/openclaw/issues/39317) | [Bug]: OpenClaw treats codex exec sandbox-denied runs as success because codex exits 0 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39317.md) | complete | Apr 26, 2026, 16:48 UTC |
 | [#17684](https://github.com/openclaw/openclaw/pull/17684) | fix(skills): refresh notion skill for API 2026-03-11 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/17684.md) | complete | Apr 26, 2026, 16:48 UTC |
 | [#39248](https://github.com/openclaw/openclaw/issues/39248) | Bug: sandbox.mode: \"non-main\" silently breaks sessions_spawn subagent initialization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39248.md) | complete | Apr 26, 2026, 16:48 UTC |
