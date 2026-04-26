@@ -21,12 +21,12 @@ Last dashboard update: Apr 26, 2026, 01:01 UTC
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 26, 2026, 01:01 UTC
+Updated: Apr 26, 2026, 01:08 UTC
 
-State: Review in progress
+State: Planning review
 
-Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944737099](https://github.com/openclaw/clawsweeper/actions/runs/24944737099)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944903908](https://github.com/openclaw/clawsweeper/actions/runs/24944903908)
 <!-- clawsweeper-status:end -->
 
 | Metric | Count |
