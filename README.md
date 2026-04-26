@@ -34,8 +34,8 @@ Updated: Apr 26, 2026, 22:50 UTC
 
 State: Hot intake publish complete
 
-Merged hot intake artifacts for run 24968982501. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968982501](https://github.com/openclaw/clawsweeper/actions/runs/24968982501)
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 1, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24969046356](https://github.com/openclaw/clawsweeper/actions/runs/24969046356)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,11 +54,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968982501](https://
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3680 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3466 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7146 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 10005 |
 | Failed or stale reviews | 2 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24968982501](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 703/782 current (79 due, 89.9%) |
-| Hourly hot item cadence (<7d) | 703/782 current (79 due, 89.9%) |
+| Hourly cadence coverage | 700/782 current (82 due, 89.5%) |
+| Hourly hot item cadence (<7d) | 700/782 current (82 due, 89.5%) |
 | Daily cadence coverage | 4414/4481 current (67 due, 98.5%) |
 | Daily PR cadence | 2981/3039 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1433/1442 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
-| Due now by cadence | 223 |
+| Due now by cadence | 226 |
 
 ### Audit Health
 
@@ -108,9 +108,9 @@ Latest review: Apr 26, 2026, 22:49 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 6 | 1 | 5 | 0 | 0 | 0 | 0 |
-| Last hour | 740 | 14 | 726 | 0 | 13 | 46 | 5 |
-| Last 24 hours | 9449 | 2269 | 7180 | 0 | 2074 | 2162 | 14 |
+| Last 15 minutes | 3 | 1 | 2 | 0 | 0 | 0 | 1 |
+| Last hour | 736 | 14 | 722 | 0 | 12 | 46 | 6 |
+| Last 24 hours | 9449 | 2269 | 7180 | 0 | 2074 | 2162 | 15 |
 
 ### Recently Closed
 
@@ -134,9 +134,7 @@ Latest review: Apr 26, 2026, 22:49 UTC. Latest close: Apr 26, 2026, 22:19 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#33975](https://github.com/openclaw/openclaw/issues/33975) | [Feature]: Fallback approval mode + model attribution in messages | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/33975.md) | complete | Apr 26, 2026, 22:49 UTC |
-| [#69312](https://github.com/openclaw/openclaw/pull/69312) | fix: prevent MEDIA: false-positive extraction from indented code blocks | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69312.md) | complete | Apr 26, 2026, 22:48 UTC |
-| [#72395](https://github.com/openclaw/openclaw/issues/72395) | [Bug]: [Windows] ERR_UNSUPPORTED_ESM_URL_SCHEME — Discord channel and browser plugin fail to load on v2026.4.24 | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72395.md) | complete | Apr 26, 2026, 22:36 UTC |
+| [#72395](https://github.com/openclaw/openclaw/issues/72395) | [Bug]: [Windows] ERR_UNSUPPORTED_ESM_URL_SCHEME — Discord channel and browser plugin fail to load on v2026.4.24 | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72395.md) | complete | Apr 26, 2026, 22:36 UTC |
 | [#53638](https://github.com/openclaw/openclaw/issues/53638) | Feature: per-channel / per-group / per-DM model override in config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53638.md) | complete | Apr 26, 2026, 22:35 UTC |
 | [#20950](https://github.com/openclaw/openclaw/issues/20950) | [Feature]: cron jobs.d/ directory support (one file per job, for NixOS/GitOps declarative setups) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20950.md) | complete | Apr 26, 2026, 22:35 UTC |
 | [#71921](https://github.com/openclaw/openclaw/issues/71921) | Bedrock Claude models (Opus 4.7, Sonnet 4.6, Opus 4.6) missing vision capability in registry | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71921.md) | complete | Apr 26, 2026, 22:35 UTC |
