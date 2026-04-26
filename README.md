@@ -23,19 +23,19 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 06:43 UTC
+Last dashboard update: Apr 26, 2026, 06:44 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 06:43 UTC
+Updated: Apr 26, 2026, 06:44 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950333879](https://github.com/openclaw/clawsweeper/actions/runs/24950333879)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950395066](https://github.com/openclaw/clawsweeper/actions/runs/24950395066)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -45,19 +45,19 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950333879](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4217 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3986 |
 | Open items total | 8203 |
-| Reviewed files | 7985 |
-| Unreviewed open items | 218 |
-| Archived closed files | 11312 |
+| Reviewed files | 7983 |
+| Unreviewed open items | 220 |
+| Archived closed files | 11314 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 4101 |
+| Fresh reviewed issues in the last 7 days | 4100 |
 | Proposed issue closes | 57 (1.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3823 |
+| Fresh reviewed PRs in the last 7 days | 3822 |
 | Proposed PR closes | 102 (2.7% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7924 |
+| Fresh verified reviews in the last 7 days | 7922 |
 | Proposed closes awaiting apply | 159 (2% of fresh reviews) |
 | Closed by Codex apply | 8826 |
 | Failed or stale reviews | 61 |
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950333879](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 267/944 current (677 due, 28.3%) |
-| Hourly hot item cadence (<7d) | 267/944 current (677 due, 28.3%) |
+| Hourly cadence coverage | 266/942 current (676 due, 28.2%) |
+| Hourly hot item cadence (<7d) | 266/942 current (676 due, 28.2%) |
 | Daily cadence coverage | 4935/5049 current (114 due, 97.7%) |
 | Daily PR cadence | 3326/3416 current (90 due, 97.4%) |
 | Daily new issue cadence (<30d) | 1609/1633 current (24 due, 98.5%) |
 | Weekly older issue cadence | 1985/1992 current (7 due, 99.6%) |
-| Due now by cadence | 1016 |
+| Due now by cadence | 1017 |
 
 ### Audit Health
 
@@ -86,8 +86,8 @@ Latest review: Apr 26, 2026, 06:28 UTC. Latest close: Apr 26, 2026, 06:43 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 83 | 82 | 1 |
-| Last hour | 765 | 288 | 477 | 1 | 150 | 162 | 4 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 80 | 80 | 1 |
+| Last hour | 765 | 288 | 477 | 1 | 143 | 154 | 4 |
 | Last 24 hours | 10458 | 2374 | 8084 | 74 | 5309 | 1148 | 159 |
 
 <details>
@@ -104,9 +104,9 @@ Latest review: Apr 26, 2026, 06:28 UTC. Latest close: Apr 26, 2026, 06:43 UTC. L
 | [#70753](https://github.com/openclaw/openclaw/issues/70753) | Bundled HTTP MCP client times out against hosted SSE server even when endpoint responds in <1s | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70753.md) | complete | Apr 26, 2026, 06:26 UTC |
 | [#70416](https://github.com/openclaw/openclaw/issues/70416) | cost.cacheWrite field wrong by ~5 orders of magnitude for claude-opus-4-7 (missing price table entry) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70416.md) | complete | Apr 26, 2026, 06:26 UTC |
 | [#70618](https://github.com/openclaw/openclaw/issues/70618) | Session crashes with Context overflow when large Project Context is injected at session start | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70618.md) | complete | Apr 26, 2026, 06:26 UTC |
-| [#70752](https://github.com/openclaw/openclaw/issues/70752) | gateway install can early-return already-installed while loaded LaunchAgent still embeds stale OPENCLAW_GATEWAY_TOKEN | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70752.md) | complete | Apr 26, 2026, 06:26 UTC |
 | [#70659](https://github.com/openclaw/openclaw/issues/70659) | QA-lab extension test fails on current main: aborts in-flight runner model catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70659.md) | complete | Apr 26, 2026, 06:26 UTC |
 | [#70453](https://github.com/openclaw/openclaw/issues/70453) | [Bug]: CLI and WebUI silent failure/hang when calling Gemini via HTTP proxy (v2026.4.21) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70453.md) | complete | Apr 26, 2026, 06:26 UTC |
+| [#70687](https://github.com/openclaw/openclaw/issues/70687) | Bug: Scope upgrade pending approval error after upgrade to 2026.4.21 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70687.md) | complete | Apr 26, 2026, 06:26 UTC |
 
 </details>
 
