@@ -70,6 +70,9 @@ jobs:
     if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
+      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     outputs:
       apply_closures: ${{ steps.mode.outputs.apply_closures }}
       batch_size: ${{ steps.mode.outputs.batch_size }}
@@ -83,6 +86,16 @@ jobs:
         with:
           path: clawsweeper
           fetch-depth: 0
+
+      - name: Create OpenClaw read token
+        id: openclaw-read-token
+        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: openclaw
 
       - uses: actions/setup-node@v4
         with:
@@ -138,7 +151,7 @@ jobs:
           SHARD_COUNT: ${{ github.event.inputs.shard_count || '50' }}
           BATCH_SIZE: ${{ github.event.inputs.batch_size || '5' }}
           ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
-          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.openclaw-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
           set -euo pipefail
           item_arg=()
@@ -198,6 +211,9 @@ jobs:
     needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 75
+    env:
+      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
+      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     permissions:
       contents: read
       issues: read
@@ -212,6 +228,16 @@ jobs:
           path: clawsweeper
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Create OpenClaw read token
+        id: openclaw-read-token
+        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: openclaw
 
       - uses: actions/setup-node@v4
         with:
@@ -264,7 +290,7 @@ jobs:
         working-directory: clawsweeper
         env:
           CLAWSWEEPER_APPLY_CLOSURES: ${{ needs.plan.outputs.apply_closures }}
-          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.openclaw-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
           npm run review -- \
             --openclaw-dir ../openclaw \
