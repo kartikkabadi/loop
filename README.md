@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 11:22 UTC
 
 Updated: Apr 26, 2026, 11:22 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24955279597. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 23718,23916,24107,25295,25493,25621,26037,26428,26772,27061,27526,27996,28303,28669,28913,28965,29100,43793,66617,70554.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24955279597](https://github.com/openclaw/clawsweeper/actions/runs/24955279597)
 <!-- clawsweeper-status:end -->
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24955279597](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 792/840 current (48 due, 94.3%) |
-| Hourly hot item cadence (<7d) | 792/840 current (48 due, 94.3%) |
+| Hourly cadence coverage | 785/840 current (55 due, 93.5%) |
+| Hourly hot item cadence (<7d) | 785/840 current (55 due, 93.5%) |
 | Daily cadence coverage | 4449/4519 current (70 due, 98.5%) |
 | Daily PR cadence | 2996/3059 current (63 due, 97.9%) |
 | Daily new issue cadence (<30d) | 1453/1460 current (7 due, 99.5%) |
 | Weekly older issue cadence | 1885/1885 current (0 due, 100%) |
-| Due now by cadence | 198 |
+| Due now by cadence | 205 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 11:20 UTC. Latest close: Apr 26, 2026, 10:55 UTC. Latest comment sync: Apr 26, 2026, 10:59 UTC.
+Latest review: Apr 26, 2026, 11:20 UTC. Latest close: Apr 26, 2026, 10:55 UTC. Latest comment sync: Apr 26, 2026, 11:22 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
-| Last hour | 1302 | 138 | 1164 | 1 | 100 | 439 | 0 |
-| Last 24 hours | 10095 | 2711 | 7384 | 15 | 4773 | 2374 | 28 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 19 | 1 |
+| Last hour | 1272 | 135 | 1137 | 1 | 95 | 454 | 1 |
+| Last 24 hours | 10095 | 2711 | 7384 | 15 | 4767 | 2393 | 28 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -128,7 +128,7 @@ Latest review: Apr 26, 2026, 11:20 UTC. Latest close: Apr 26, 2026, 10:55 UTC. L
 | [#26772](https://github.com/openclaw/openclaw/issues/26772) | [Feature]: Memory indexing lacks checkpoint/resume capability for long-running operations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/26772.md) | complete | Apr 26, 2026, 11:19 UTC |
 | [#24107](https://github.com/openclaw/openclaw/issues/24107) | [Feature]: Make fallback cooldowns RPM-aware to reduce unnecessary errors and improve availability | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/24107.md) | complete | Apr 26, 2026, 11:19 UTC |
 | [#25295](https://github.com/openclaw/openclaw/pull/25295) | feat(mattermost): add edit and delete message actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/25295.md) | complete | Apr 26, 2026, 11:19 UTC |
-| [#66617](https://github.com/openclaw/openclaw/pull/66617) | Skills: fix watcher so deleting a skill folder refreshes on macOS | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66617.md) | complete | Apr 26, 2026, 11:19 UTC |
+| [#66617](https://github.com/openclaw/openclaw/pull/66617) | Skills: fix watcher so deleting a skill folder refreshes on macOS | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/66617.md) | complete | Apr 26, 2026, 11:19 UTC |
 
 </details>
 
