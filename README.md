@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 06:39 UTC
 
 Updated: Apr 26, 2026, 06:39 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 40, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950284482](https://github.com/openclaw/clawsweeper/actions/runs/24950284482)
 <!-- clawsweeper-status:end -->
 
@@ -43,10 +43,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950284482](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4216 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4006 |
-| Open items total | 8222 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4007 |
+| Open items total | 8223 |
 | Reviewed files | 8005 |
-| Unreviewed open items | 217 |
+| Unreviewed open items | 218 |
 | Archived closed files | 11292 |
 
 ### Review Outcomes
@@ -72,7 +72,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950284482](https://
 | Daily PR cadence | 3346/3436 current (90 due, 97.4%) |
 | Daily new issue cadence (<30d) | 1609/1633 current (24 due, 98.5%) |
 | Weekly older issue cadence | 1985/1992 current (7 due, 99.6%) |
-| Due now by cadence | 1010 |
+| Due now by cadence | 1011 |
 
 ### Audit Health
 
@@ -86,8 +86,8 @@ Latest review: Apr 26, 2026, 06:28 UTC. Latest close: Apr 26, 2026, 06:39 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 42 | 13 | 29 | 0 | 83 | 82 | 1 |
-| Last hour | 783 | 292 | 491 | 1 | 130 | 165 | 4 |
+| Last 15 minutes | 41 | 13 | 28 | 0 | 83 | 82 | 1 |
+| Last hour | 782 | 292 | 490 | 1 | 130 | 164 | 4 |
 | Last 24 hours | 10458 | 2374 | 8084 | 74 | 5289 | 1128 | 159 |
 
 <details>
