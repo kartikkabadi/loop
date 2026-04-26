@@ -32,10 +32,10 @@ Last dashboard update: Apr 26, 2026, 06:48 UTC
 
 Updated: Apr 26, 2026, 06:48 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 250 items across 50 shards. Capacity is 250 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950446899](https://github.com/openclaw/clawsweeper/actions/runs/24950446899)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=all.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950457620](https://github.com/openclaw/clawsweeper/actions/runs/24950457620)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -59,20 +59,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24950446899](https://
 | Proposed PR closes | 102 (2.7% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7921 |
 | Proposed closes awaiting apply | 187 (2.4% of fresh reviews) |
-| Closed by Codex apply | 8826 |
+| Closed by Codex apply | 8846 |
 | Failed or stale reviews | 42 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 380/942 current (562 due, 40.3%) |
-| Hourly hot item cadence (<7d) | 380/942 current (562 due, 40.3%) |
+| Hourly cadence coverage | 379/942 current (563 due, 40.2%) |
+| Hourly hot item cadence (<7d) | 379/942 current (563 due, 40.2%) |
 | Daily cadence coverage | 4931/5029 current (98 due, 98.1%) |
 | Daily PR cadence | 3317/3396 current (79 due, 97.7%) |
 | Daily new issue cadence (<30d) | 1614/1633 current (19 due, 98.8%) |
 | Weekly older issue cadence | 1987/1992 current (5 due, 99.7%) |
-| Due now by cadence | 886 |
+| Due now by cadence | 887 |
 
 ### Audit Health
 
@@ -86,9 +86,9 @@ Latest review: Apr 26, 2026, 06:44 UTC. Latest close: Apr 26, 2026, 06:46 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 250 | 73 | 177 | 0 | 66 | 65 | 1 |
-| Last hour | 960 | 313 | 647 | 2 | 143 | 116 | 2 |
-| Last 24 hours | 10452 | 2414 | 8038 | 55 | 5303 | 1121 | 157 |
+| Last 15 minutes | 250 | 73 | 177 | 0 | 82 | 81 | 1 |
+| Last hour | 952 | 309 | 643 | 2 | 163 | 136 | 2 |
+| Last 24 hours | 10452 | 2414 | 8038 | 55 | 5320 | 1141 | 157 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
