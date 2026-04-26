@@ -16,16 +16,16 @@ Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 01:13 UTC
+Last dashboard update: Apr 26, 2026, 01:14 UTC
 
 <!-- clawsweeper-status:start -->
 ### Workflow Status
 
-Updated: Apr 26, 2026, 01:13 UTC
+Updated: Apr 26, 2026, 01:14 UTC
 
-State: Hot intake publish complete
+State: Hot intake comments synced
 
-Merged hot intake artifacts for run 24944903908. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Synced durable Codex review comments for 19 hot-intake item(s). Item numbers: 19859,20321,20802,20837,22021,22438,22439,22676,23096,23585,23718,25295,25621,25789,26183,26428,27061,27771,69028,69494.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24944903908](https://github.com/openclaw/clawsweeper/actions/runs/24944903908)
 <!-- clawsweeper-status:end -->
 
@@ -61,7 +61,7 @@ Recently reviewed:
 | [#27771](https://github.com/openclaw/openclaw/pull/27771) | ability to set config path for signal-cli | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/27771.md) | complete | Apr 26, 2026, 01:12 UTC |
 | [#22439](https://github.com/openclaw/openclaw/pull/22439) | feat(workspace): add tiered bootstrap loading with configurable bootstrapTier | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/22439.md) | complete | Apr 26, 2026, 01:11 UTC |
 | [#69028](https://github.com/openclaw/openclaw/issues/69028) | Feishu: media download silent failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69028.md) | complete | Apr 26, 2026, 01:11 UTC |
-| [#69494](https://github.com/openclaw/openclaw/pull/69494) | fix: resolve SecretRef keychain tokens in desktop app browser proxy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69494.md) | complete | Apr 26, 2026, 01:11 UTC |
+| [#69494](https://github.com/openclaw/openclaw/pull/69494) | fix: resolve SecretRef keychain tokens in desktop app browser proxy | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/69494.md) | complete | Apr 26, 2026, 01:11 UTC |
 | [#20837](https://github.com/openclaw/openclaw/issues/20837) | [Feature]: make agent aware of communication channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20837.md) | complete | Apr 26, 2026, 01:11 UTC |
 | [#19859](https://github.com/openclaw/openclaw/issues/19859) | [Feature Request] WebChat: Add option to control Enter key sending behavior | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/19859.md) | complete | Apr 26, 2026, 01:11 UTC |
 | [#23718](https://github.com/openclaw/openclaw/issues/23718) | [Feature]: Fallback chain support for heartbeat.model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/23718.md) | complete | Apr 26, 2026, 01:11 UTC |
