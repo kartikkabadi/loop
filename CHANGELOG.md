@@ -27,6 +27,8 @@ checkpoint, and status-only commits are intentionally omitted.
   any close action.
 - Added a separate hourly apply/comment-sync workflow lane that can run
   alongside review work.
+- Added a five-minute hot-intake review lane for new and recently active issues
+  or pull requests, fanning out single-item review shards.
 
 ### Changed
 

@@ -51,7 +51,12 @@ on:
         description: "Optional single issue/PR number to review"
         required: false
         default: ""
+      hot_intake:
+        description: "Run the low-latency intake lane for new/active issues and PRs"
+        required: false
+        default: "false"
   schedule:
+    - cron: "*/5 * * * *"
     - cron: "17 * * * *"
     - cron: "37 * * * *"
 
@@ -62,7 +67,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: ${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) && 'clawsweeper-apply' || 'clawsweeper-review' }}
+  group: ${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && github.event.schedule == '37 * * * *')) && 'clawsweeper-apply' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'clawsweeper-intake' || 'clawsweeper-review' }}
   cancel-in-progress: false
 
 jobs:
@@ -77,10 +82,13 @@ jobs:
       apply_closures: ${{ steps.mode.outputs.apply_closures }}
       batch_size: ${{ steps.mode.outputs.batch_size }}
       codex_timeout_ms: ${{ steps.mode.outputs.codex_timeout_ms }}
+      hot_intake: ${{ steps.mode.outputs.hot_intake }}
       matrix: ${{ steps.select.outputs.matrix }}
+      max_pages: ${{ steps.mode.outputs.max_pages }}
       planned_count: ${{ steps.select.outputs.planned_count }}
       planned_capacity: ${{ steps.select.outputs.planned_capacity }}
       planned_shards: ${{ steps.select.outputs.planned_shards }}
+      shard_count: ${{ steps.mode.outputs.shard_count }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -139,18 +147,33 @@ jobs:
 
       - id: mode
         run: |
+          hot_intake="${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'true' || 'false' }}"
+          if [ "$hot_intake" = "true" ]; then
+            batch_size="1"
+            shard_count="20"
+            max_pages="2"
+          else
+            batch_size="${{ github.event.inputs.batch_size || '5' }}"
+            shard_count="${{ github.event.inputs.shard_count || '50' }}"
+            max_pages="250"
+          fi
           {
             echo "apply_closures=false"
-            echo "batch_size=${{ github.event.inputs.batch_size || '5' }}"
+            echo "batch_size=$batch_size"
             echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '600000' }}"
+            echo "hot_intake=$hot_intake"
+            echo "max_pages=$max_pages"
+            echo "shard_count=$shard_count"
           } >> "$GITHUB_OUTPUT"
 
       - id: select
         working-directory: clawsweeper
         env:
-          SHARD_COUNT: ${{ github.event.inputs.shard_count || '50' }}
-          BATCH_SIZE: ${{ github.event.inputs.batch_size || '5' }}
+          SHARD_COUNT: ${{ steps.mode.outputs.shard_count }}
+          BATCH_SIZE: ${{ steps.mode.outputs.batch_size }}
+          HOT_INTAKE: ${{ steps.mode.outputs.hot_intake }}
           ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
+          MAX_PAGES: ${{ steps.mode.outputs.max_pages }}
           GH_TOKEN: ${{ steps.openclaw-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
           set -euo pipefail
@@ -158,14 +181,19 @@ jobs:
           if [ -n "$ITEM_NUMBER" ]; then
             item_arg=(--item-number "$ITEM_NUMBER")
           fi
+          hot_intake_arg=()
+          if [ "$HOT_INTAKE" = "true" ]; then
+            hot_intake_arg=(--hot-intake)
+          fi
           npm run --silent plan -- \
             --batch-size "$BATCH_SIZE" \
-            --max-pages 250 \
+            --max-pages "$MAX_PAGES" \
             --shard-count "$SHARD_COUNT" \
             --codex-model gpt-5.5 \
             --codex-reasoning-effort high \
             --codex-sandbox danger-full-access \
             --codex-service-tier fast \
+            "${hot_intake_arg[@]}" \
             "${item_arg[@]}" > plan.json
           node - <<'NODE' >> "$GITHUB_OUTPUT"
           const fs = require("node:fs");
@@ -189,8 +217,8 @@ jobs:
           npm run reconcile
           npm run dashboard
           npm run status -- \
-            --state "Review in progress" \
-            --detail "Planned ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
+            --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
+            --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           git add README.md items closed
           if git diff --cached --quiet; then
@@ -292,17 +320,22 @@ jobs:
           CLAWSWEEPER_APPLY_CLOSURES: ${{ needs.plan.outputs.apply_closures }}
           GH_TOKEN: ${{ steps.openclaw-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
+          hot_intake_arg=()
+          if [ "${{ needs.plan.outputs.hot_intake }}" = "true" ]; then
+            hot_intake_arg=(--hot-intake)
+          fi
           npm run review -- \
             --openclaw-dir ../openclaw \
             --artifact-dir ../review-artifacts/shard-${{ matrix.shard }} \
             --batch-size ${{ needs.plan.outputs.batch_size }} \
-            --max-pages 250 \
+            --max-pages ${{ needs.plan.outputs.max_pages }} \
             --codex-model gpt-5.5 \
             --codex-reasoning-effort high \
             --codex-sandbox danger-full-access \
             --codex-service-tier fast \
             --codex-timeout-ms ${{ needs.plan.outputs.codex_timeout_ms }} \
             --item-numbers "${{ matrix.item_numbers }}" \
+            "${hot_intake_arg[@]}" \
             --readonly-openclaw \
             --shard-index ${{ matrix.shard }} \
             --shard-count ${{ needs.plan.outputs.planned_shards }}
@@ -350,8 +383,8 @@ jobs:
         run: |
           npm run apply-artifacts -- --artifact-dir artifacts
           npm run status -- \
-            --state "Review publish complete" \
-            --detail "Merged review artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards." \
+            --state "${{ needs.plan.outputs.hot_intake == 'true' && 'Hot intake publish complete' || 'Review publish complete' }}" \
+            --detail "Merged ${{ needs.plan.outputs.hot_intake == 'true' && 'hot intake' || 'review' }} artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Commit dashboard and review files
@@ -374,7 +407,7 @@ jobs:
           fi
 
       - name: Continue sweep
-        if: ${{ success() && needs.plan.outputs.apply_closures != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || github.event.inputs.item_number == '') }}
+        if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && needs.plan.outputs.apply_closures != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || github.event.inputs.item_number == '') }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -383,7 +416,7 @@ jobs:
             -f apply_closures=false \
             -f apply_existing=false \
             -f batch_size="${{ needs.plan.outputs.batch_size }}" \
-            -f shard_count=50 \
+            -f shard_count="${{ needs.plan.outputs.shard_count }}" \
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
 
   apply-existing:

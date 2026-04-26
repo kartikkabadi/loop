@@ -1333,10 +1333,14 @@ function compareDueCandidates(left: DueCandidate, right: DueCandidate): number {
   );
 }
 
-function fetchOpenItemPage(page: number): Item[] {
+function fetchOpenItemPage(
+  page: number,
+  sort: "created" | "updated" = "created",
+  direction: "asc" | "desc" = "asc",
+): Item[] {
   const items = ghJsonLines<GitHubIssueListItem>([
     "api",
-    `repos/${TARGET_REPO}/issues?state=open&sort=created&direction=asc&per_page=100&page=${page}`,
+    `repos/${TARGET_REPO}/issues?state=open&sort=${sort}&direction=${direction}&per_page=100&page=${page}`,
     "--jq",
     ".[] | {number,title,html_url,created_at,updated_at,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
@@ -1371,6 +1375,26 @@ function fetchOpenItems(maxPages: number): {
     }
   }
   return { items, pagesScanned, complete: false };
+}
+
+function fetchHotIntakeItems(maxPages: number): { items: Item[]; pagesScanned: number } {
+  const byNumber = new Map<number, Item>();
+  let pagesScanned = 0;
+  for (const sort of ["created", "updated"] as const) {
+    for (let page = 1; page <= maxPages; page += 1) {
+      const pageItems = fetchOpenItemPage(page, sort, "desc");
+      pagesScanned = Math.max(pagesScanned, page);
+      for (const item of pageItems) byNumber.set(item.number, item);
+      if (pageItems.length === 0 || pageItems.length < 100) break;
+    }
+  }
+  return {
+    items: [...byNumber.values()].sort(
+      (left, right) =>
+        Date.parse(right.updatedAt) - Date.parse(left.updatedAt) || right.number - left.number,
+    ),
+    pagesScanned,
+  };
 }
 
 function fetchOpenItemNumbers(maxPages: number): { numbers: Set<number>; pagesScanned: number } {
@@ -1484,6 +1508,7 @@ function selectCandidates(options: {
   itemNumber?: number;
   itemNumbers?: number[];
   reviewPolicy?: string;
+  hotIntake?: boolean;
 }): { candidates: Item[]; scannedPages: number } {
   if (options.itemNumbers) {
     const candidates = options.itemNumbers.flatMap((number) => {
@@ -1499,8 +1524,22 @@ function selectCandidates(options: {
     return { candidates: [item], scannedPages: 0 };
   }
   const due: DueCandidate[] = [];
-  let scannedPages = 0;
   const now = Date.now();
+  if (options.hotIntake) {
+    const { items, pagesScanned } = fetchHotIntakeItems(options.maxPages);
+    for (const item of items) {
+      if (item.number % options.shardCount !== options.shardIndex) continue;
+      if (!shouldPlanItem(item)) continue;
+      const candidate = dueCandidate(item, options.itemsDir, now, options.reviewPolicy);
+      if (candidate) due.push(candidate);
+    }
+    const candidates = due
+      .sort(compareDueCandidates)
+      .slice(0, options.batchSize)
+      .map(({ item }) => item);
+    return { candidates, scannedPages: pagesScanned };
+  }
+  let scannedPages = 0;
   for (let page = 1; page <= options.maxPages; page += 1) {
     const items = fetchOpenItemPage(page);
     scannedPages = page;
@@ -1526,6 +1565,7 @@ function planCandidates(options: {
   itemsDir: string;
   itemNumber?: number;
   reviewPolicy: string;
+  hotIntake?: boolean;
 }): { shards: PlanShard[]; scannedPages: number; candidates: Item[] } {
   if (options.itemNumber) {
     const { item, state } = fetchItem(options.itemNumber);
@@ -1538,9 +1578,29 @@ function planCandidates(options: {
   }
 
   const due: DueCandidate[] = [];
-  let scannedPages = 0;
   const limit = Math.max(1, options.batchSize) * Math.max(1, options.shardCount);
   const now = Date.now();
+  if (options.hotIntake) {
+    const { items, pagesScanned } = fetchHotIntakeItems(options.maxPages);
+    for (const item of items) {
+      if (!shouldPlanItem(item)) continue;
+      const candidate = dueCandidate(item, options.itemsDir, now, options.reviewPolicy);
+      if (candidate) due.push(candidate);
+    }
+    const candidates = due
+      .sort(compareDueCandidates)
+      .slice(0, limit)
+      .map(({ item }) => item);
+    const shards = Array.from(
+      { length: Math.max(1, Math.min(options.shardCount, candidates.length || 1)) },
+      (_, shard) => ({ shard, itemNumbers: [] as number[] }),
+    );
+    candidates.forEach((item, index) => {
+      shards[index % shards.length]?.itemNumbers.push(item.number);
+    });
+    return { shards, scannedPages: pagesScanned, candidates };
+  }
+  let scannedPages = 0;
   for (let page = 1; page <= options.maxPages; page += 1) {
     const items = fetchOpenItemPage(page);
     scannedPages = page;
@@ -2646,6 +2706,7 @@ function planCommand(args: Args): void {
   const maxPages = numberArg(args.max_pages, 250);
   const shardCount = numberArg(args.shard_count, 50);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
+  const hotIntake = boolArg(args.hot_intake);
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
   const sandboxMode = stringArg(args.codex_sandbox, "read-only");
@@ -2659,6 +2720,7 @@ function planCommand(args: Args): void {
     reviewPolicy,
   };
   if (itemNumber) planOptions.itemNumber = itemNumber;
+  if (hotIntake) planOptions.hotIntake = true;
   const plan = planCandidates(planOptions);
   console.log(
     JSON.stringify(
@@ -2690,6 +2752,7 @@ function reviewCommand(args: Args): void {
   const shardIndex = numberArg(args.shard_index, 0);
   const shardCount = numberArg(args.shard_count, 1);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
+  const hotIntake = boolArg(args.hot_intake);
   const itemNumbers =
     typeof args.item_numbers === "string" && args.item_numbers.trim()
       ? args.item_numbers
@@ -2717,6 +2780,7 @@ function reviewCommand(args: Args): void {
   };
   if (itemNumber) selectionOptions.itemNumber = itemNumber;
   if (itemNumbers) selectionOptions.itemNumbers = itemNumbers;
+  if (hotIntake) selectionOptions.hotIntake = true;
   const { candidates, scannedPages } = selectCandidates(selectionOptions);
   console.error(
     `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} selected=${candidates.length} scanned_pages=${scannedPages}`,
