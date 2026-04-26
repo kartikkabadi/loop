@@ -32,9 +32,9 @@ Last dashboard update: Apr 26, 2026, 03:17 UTC
 
 Updated: Apr 26, 2026, 03:17 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 40, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24947043603](https://github.com/openclaw/clawsweeper/actions/runs/24947043603)
 <!-- clawsweeper-status:end -->
 
@@ -80,9 +80,9 @@ Latest review: Apr 26, 2026, 03:06 UTC. Latest close: Apr 26, 2026, 03:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 59 | 21 | 38 | 1 | 90 | 91 | 0 |
-| Last hour | 857 | 116 | 741 | 1 | 198 | 393 | 1 |
-| Last 24 hours | 11183 | 2583 | 8600 | 37 | 5584 | 506 | 198 |
+| Last 15 minutes | 57 | 20 | 37 | 1 | 90 | 91 | 0 |
+| Last hour | 854 | 116 | 738 | 1 | 198 | 393 | 1 |
+| Last 24 hours | 11182 | 2582 | 8600 | 37 | 5583 | 506 | 198 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
