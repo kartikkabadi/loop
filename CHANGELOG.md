@@ -61,6 +61,10 @@ checkpoint, and status-only commits are intentionally omitted.
   maintainer-authored items.
 - Made apply runs checkpoint their progress, publish dashboard heartbeats, and
   continue automatically while work remains.
+- Made scheduled apply runs process both issues and pull requests by default,
+  with manual `apply_kind` narrowing still available.
+- Made apply checkpoint publish retries auto-resolve generated item/closed
+  rename-delete conflicts from concurrent review publishes.
 - Reduced the default apply close delay from 5 seconds to 2 seconds.
 - Prioritized matching close proposals ahead of broad comment sync during apply
   runs so close batches do not stall on keep-open comment backfill.

@@ -192,10 +192,10 @@ Apply unchanged proposals later:
 
 ```bash
 source ~/.profile
-npm run apply-decisions -- --limit 20
+npm run apply-decisions -- --limit 20 --apply-kind all
 ```
 
-Manual review runs are proposal-only even if `--apply-closures` or workflow input `apply_closures=true` is set. Use `apply_existing=true` to apply unchanged proposals later.
+Manual review runs are proposal-only even if `--apply-closures` or workflow input `apply_closures=true` is set. Use `apply_existing=true` to apply unchanged proposals later. Scheduled apply runs process both issues and pull requests by default; pass `apply_kind=issue` or `apply_kind=pull_request` to narrow a manual run.
 
 ## Checks
 
