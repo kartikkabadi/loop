@@ -35,6 +35,8 @@ checkpoint, and status-only commits are intentionally omitted.
   comment runs are not displaced by apply continuation backlog.
 - Switched comment and close mutations to the `openclaw-ci` GitHub App
   installation token so GitHub attributes automated comments to the bot.
+- Added Latest Run Activity dashboard counters for recent reviews, close
+  decisions, comment syncs, apply skips, and close actions.
 
 ### Changed
 
@@ -85,3 +87,5 @@ checkpoint, and status-only commits are intentionally omitted.
   permission needed for app-token run cancellation.
 - Cancelled stale pre-app apply run 24944438478 so it cannot keep posting
   maintainer-attributed comments.
+- Guarded Codex process failure output so missing stdout/stderr does not hide the
+  original review failure. Thanks @ZHOUKAILIAN.

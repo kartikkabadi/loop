@@ -216,6 +216,25 @@ interface DashboardCadenceStats {
   due: number;
 }
 
+interface DashboardActivityBucket {
+  reviews: number;
+  closeDecisions: number;
+  keepOpenDecisions: number;
+  failedOrStaleReviews: number;
+  closes: number;
+  commentSyncs: number;
+  applySkips: number;
+}
+
+interface DashboardActivityStats {
+  last15Minutes: DashboardActivityBucket;
+  lastHour: DashboardActivityBucket;
+  last24Hours: DashboardActivityBucket;
+  latestReviewAt: string | undefined;
+  latestCloseAt: string | undefined;
+  latestCommentSyncAt: string | undefined;
+}
+
 interface PlanShard {
   shard: number;
   itemNumbers: number[];
@@ -1484,6 +1503,29 @@ function emptyDashboardCadenceBucket(): DashboardCadenceBucket {
   };
 }
 
+function emptyDashboardActivityBucket(): DashboardActivityBucket {
+  return {
+    reviews: 0,
+    closeDecisions: 0,
+    keepOpenDecisions: 0,
+    failedOrStaleReviews: 0,
+    closes: 0,
+    commentSyncs: 0,
+    applySkips: 0,
+  };
+}
+
+function emptyDashboardActivityStats(): DashboardActivityStats {
+  return {
+    last15Minutes: emptyDashboardActivityBucket(),
+    lastHour: emptyDashboardActivityBucket(),
+    last24Hours: emptyDashboardActivityBucket(),
+    latestReviewAt: undefined,
+    latestCloseAt: undefined,
+    latestCommentSyncAt: undefined,
+  };
+}
+
 function addDashboardCadenceBucket(
   target: DashboardCadenceBucket,
   source: DashboardCadenceBucket,
@@ -1513,6 +1555,73 @@ function formatPercent(numerator: number, denominator: number): string {
 function formatCadenceBucket(bucket: DashboardCadenceBucket): string {
   const due = bucket.total - bucket.current;
   return `${bucket.current}/${bucket.total} current (${due} due, ${formatPercent(bucket.current, bucket.total)})`;
+}
+
+function timestampMs(iso: string | undefined): number | null {
+  if (!iso) return null;
+  const parsed = Date.parse(iso);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function isWithinWindow(timestamp: number | null, now: number, windowMs: number): boolean {
+  return timestamp !== null && timestamp <= now && now - timestamp <= windowMs;
+}
+
+function latestTimestamp(
+  current: string | undefined,
+  candidate: string | undefined,
+): string | undefined {
+  const candidateMs = timestampMs(candidate);
+  if (candidateMs === null) return current;
+  const currentMs = timestampMs(current);
+  return currentMs === null || candidateMs > currentMs ? candidate : current;
+}
+
+function recordDashboardActivity(
+  markdown: string,
+  activity: DashboardActivityStats,
+  now: number,
+): void {
+  const reviewedAt = frontMatterValue(markdown, "reviewed_at");
+  const reviewedAtMs = timestampMs(reviewedAt);
+  const appliedAt = frontMatterValue(markdown, "applied_at");
+  const appliedAtMs = timestampMs(appliedAt);
+  const commentSyncedAt = frontMatterValue(markdown, "review_comment_synced_at");
+  const commentSyncedAtMs = timestampMs(commentSyncedAt);
+  const applyCheckedAt = frontMatterValue(markdown, "apply_checked_at");
+  const applyCheckedAtMs = timestampMs(applyCheckedAt);
+  const decision = frontMatterValue(markdown, "decision") ?? "unknown";
+  const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
+  const reviewStatus = effectiveReviewStatus(markdown);
+
+  activity.latestReviewAt = latestTimestamp(activity.latestReviewAt, reviewedAt);
+  activity.latestCloseAt = latestTimestamp(activity.latestCloseAt, appliedAt);
+  activity.latestCommentSyncAt = latestTimestamp(activity.latestCommentSyncAt, commentSyncedAt);
+
+  const buckets: Array<[DashboardActivityBucket, number]> = [
+    [activity.last15Minutes, 15 * 60 * 1000],
+    [activity.lastHour, 60 * 60 * 1000],
+    [activity.last24Hours, 24 * 60 * 60 * 1000],
+  ];
+  for (const [bucket, windowMs] of buckets) {
+    if (isWithinWindow(reviewedAtMs, now, windowMs)) {
+      bucket.reviews += 1;
+      if (decision === "close") bucket.closeDecisions += 1;
+      if (decision === "keep_open") bucket.keepOpenDecisions += 1;
+      if (reviewStatus === "failed" || reviewStatus.startsWith("stale_")) {
+        bucket.failedOrStaleReviews += 1;
+      }
+    }
+    if (isWithinWindow(appliedAtMs, now, windowMs)) bucket.closes += 1;
+    if (isWithinWindow(commentSyncedAtMs, now, windowMs)) bucket.commentSyncs += 1;
+    if (isWithinWindow(applyCheckedAtMs, now, windowMs) && action.startsWith("skipped_")) {
+      bucket.applySkips += 1;
+    }
+  }
+}
+
+function formatActivityRow(label: string, bucket: DashboardActivityBucket): string {
+  return `| ${label} | ${bucket.reviews} | ${bucket.closeDecisions} | ${bucket.keepOpenDecisions} | ${bucket.failedOrStaleReviews} | ${bucket.closes} | ${bucket.commentSyncs} | ${bucket.applySkips} |`;
 }
 
 function selectCandidates(options: {
@@ -3493,6 +3602,7 @@ function dashboardStats(
   stale: number;
   byKind: Record<ItemKind, DashboardKindStats>;
   cadence: DashboardCadenceStats;
+  activity: DashboardActivityStats;
   recent: DashboardItem[];
 } {
   const open = fetchOpenItemCounts();
@@ -3512,6 +3622,7 @@ function dashboardStats(
   const dailyPullRequests = emptyDashboardCadenceBucket();
   const dailyNewIssues = emptyDashboardCadenceBucket();
   const weeklyOlderIssues = emptyDashboardCadenceBucket();
+  const activity = emptyDashboardActivityStats();
   const recent: DashboardItem[] = [];
   for (const file of files) {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
@@ -3531,6 +3642,7 @@ function dashboardStats(
     if (action === "closed") closed += 1;
     if (reviewStatus === "failed") failed += 1;
     if (reviewStatus.startsWith("stale_")) stale += 1;
+    recordDashboardActivity(markdown, activity, now);
     const cadence = cadenceBucketForReview(markdown, now);
     const cadenceBucket =
       cadence.bucket === "hourlyHotItems"
@@ -3559,6 +3671,7 @@ function dashboardStats(
     const markdown = readFileSync(join(closedDir, file), "utf8");
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     if (action === "closed") closed += 1;
+    recordDashboardActivity(markdown, activity, now);
   }
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
   const hourly = emptyDashboardCadenceBucket();
@@ -3600,6 +3713,7 @@ function dashboardStats(
       unreviewedOpen,
       due: cadenceDue,
     },
+    activity,
     recent,
   };
 }
@@ -3650,6 +3764,16 @@ ${status}
 | Daily new issue cadence (<${RECENT_ISSUE_DAYS}d) | ${formatCadenceBucket(stats.cadence.dailyNewIssues)} |
 | Weekly older issue cadence | ${formatCadenceBucket(stats.cadence.weekly)} |
 | Due now by cadence | ${stats.cadence.due} |
+
+### Latest Run Activity
+
+Latest review: ${formatTimestamp(stats.activity.latestReviewAt)}. Latest close: ${formatTimestamp(stats.activity.latestCloseAt)}. Latest comment sync: ${formatTimestamp(stats.activity.latestCommentSyncAt)}.
+
+| Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+${formatActivityRow("Last 15 minutes", stats.activity.last15Minutes)}
+${formatActivityRow("Last hour", stats.activity.lastHour)}
+${formatActivityRow("Last 24 hours", stats.activity.last24Hours)}
 
 Recently reviewed:
 
