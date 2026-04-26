@@ -23,30 +23,30 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 08:27 UTC
+Last dashboard update: Apr 26, 2026, 08:34 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 08:27 UTC
+Updated: Apr 26, 2026, 08:34 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952182339](https://github.com/openclaw/clawsweeper/actions/runs/24952182339)
+Checkpoint 1 finished. Fresh closes in checkpoint: 12. Total fresh closes in this run: 12/20. Result records in checkpoint: 400, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952131195](https://github.com/openclaw/clawsweeper/actions/runs/24952131195)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4110 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3712 |
-| Open items total | 7822 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 4112 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3713 |
+| Open items total | 7825 |
 | Reviewed files | 7580 |
-| Unreviewed open items | 242 |
+| Unreviewed open items | 245 |
 | Archived closed files | 11717 |
 
 ### Review Outcomes
@@ -59,20 +59,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24952182339](https://
 | Proposed PR closes | 40 (1.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7528 |
 | Proposed closes awaiting apply | 89 (1.2% of fresh reviews) |
-| Closed by Codex apply | 9205 |
+| Closed by Codex apply | 9217 |
 | Failed or stale reviews | 52 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 78/778 current (700 due, 10%) |
-| Hourly hot item cadence (<7d) | 78/778 current (700 due, 10%) |
-| Daily cadence coverage | 4711/4815 current (104 due, 97.8%) |
-| Daily PR cadence | 3121/3199 current (78 due, 97.6%) |
+| Hourly cadence coverage | 71/777 current (706 due, 9.1%) |
+| Hourly hot item cadence (<7d) | 71/777 current (706 due, 9.1%) |
+| Daily cadence coverage | 4712/4816 current (104 due, 97.8%) |
+| Daily PR cadence | 3122/3200 current (78 due, 97.6%) |
 | Daily new issue cadence (<30d) | 1590/1616 current (26 due, 98.4%) |
 | Weekly older issue cadence | 1982/1987 current (5 due, 99.7%) |
-| Due now by cadence | 1051 |
+| Due now by cadence | 1060 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 08:25 UTC. Latest close: Apr 26, 2026, 08:18 UTC. Latest comment sync: Apr 26, 2026, 08:27 UTC.
+Latest review: Apr 26, 2026, 08:25 UTC. Latest close: Apr 26, 2026, 08:24 UTC. Latest comment sync: Apr 26, 2026, 08:34 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 500 | 93 | 407 | 0 | 40 | 43 | 15 |
-| Last hour | 1080 | 184 | 896 | 0 | 54 | 79 | 24 |
-| Last 24 hours | 10062 | 2387 | 7675 | 65 | 5002 | 1419 | 60 |
+| Last 15 minutes | 174 | 27 | 147 | 0 | 12 | 370 | 12 |
+| Last hour | 1018 | 171 | 847 | 0 | 59 | 441 | 24 |
+| Last 24 hours | 10051 | 2382 | 7669 | 65 | 4959 | 1791 | 58 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -123,12 +123,12 @@ Latest review: Apr 26, 2026, 08:25 UTC. Latest close: Apr 26, 2026, 08:18 UTC. L
 | [#59522](https://github.com/openclaw/openclaw/pull/59522) | docs(himalaya): align v1.1 provider guidance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59522.md) | complete | Apr 26, 2026, 08:25 UTC |
 | [#56283](https://github.com/openclaw/openclaw/pull/56283) | feat(outbound): strip markdown for plain-text channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56283.md) | complete | Apr 26, 2026, 08:25 UTC |
 | [#54467](https://github.com/openclaw/openclaw/issues/54467) | Bonjour: no config key for per-instance mDNS service name (multi-gateway same-host) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/54467.md) | complete | Apr 26, 2026, 08:25 UTC |
-| [#18860](https://github.com/openclaw/openclaw/pull/18860) | feat(agents): expose tools and their schemas via new after_tools_resolved hook [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/18860.md) | complete | Apr 26, 2026, 08:25 UTC |
 | [#59210](https://github.com/openclaw/openclaw/pull/59210) | docs(whatsapp): clarify remote QR pairing limitations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59210.md) | complete | Apr 26, 2026, 08:25 UTC |
 | [#56692](https://github.com/openclaw/openclaw/issues/56692) | Group chat context handling can blur which messages are addressed to the current agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56692.md) | complete | Apr 26, 2026, 08:25 UTC |
 | [#59126](https://github.com/openclaw/openclaw/pull/59126) | docs(contributing): add Development Environment section with WSL2 setup guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/59126.md) | complete | Apr 26, 2026, 08:24 UTC |
 | [#62839](https://github.com/openclaw/openclaw/issues/62839) | [Bug]: openclaw update persists HTTP_PROXY into systemd service, breaking Feishu integration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62839.md) | complete | Apr 26, 2026, 08:24 UTC |
 | [#58557](https://github.com/openclaw/openclaw/pull/58557) | docs: add troubleshooting for cron job language output issues | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/58557.md) | complete | Apr 26, 2026, 08:24 UTC |
+| [#40387](https://github.com/openclaw/openclaw/pull/40387) | docs: add EasyRunner deployment guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/40387.md) | complete | Apr 26, 2026, 08:24 UTC |
 
 </details>
 
