@@ -32,42 +32,42 @@ Last dashboard update: Apr 26, 2026, 16:03 UTC
 
 Updated: Apr 26, 2026, 16:03 UTC
 
-State: Review in progress
+State: Hot intake publish complete
 
-Planned 467 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960902837](https://github.com/openclaw/clawsweeper/actions/runs/24960902837)
+Merged hot intake artifacts for run 24960840944. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24960840944](https://github.com/openclaw/clawsweeper/actions/runs/24960840944)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3761 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3755 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3530 |
-| Open items total | 7291 |
-| Reviewed files | 7222 |
-| Unreviewed open items | 69 |
-| Archived closed files | 12425 |
+| Open items total | 7285 |
+| Reviewed files | 7215 |
+| Unreviewed open items | 70 |
+| Archived closed files | 12432 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3746 |
-| Proposed issue closes | 23 (0.6% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3473 |
+| Fresh reviewed issues in the last 7 days | 3738 |
+| Proposed issue closes | 13 (0.3% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3474 |
 | Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7219 |
-| Proposed closes awaiting apply | 24 (0.3% of fresh reviews) |
-| Closed by Codex apply | 9868 |
+| Fresh verified reviews in the last 7 days | 7212 |
+| Proposed closes awaiting apply | 14 (0.2% of fresh reviews) |
+| Closed by Codex apply | 9870 |
 | Failed or stale reviews | 3 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 374/831 current (457 due, 45%) |
-| Hourly hot item cadence (<7d) | 374/831 current (457 due, 45%) |
+| Hourly cadence coverage | 366/824 current (458 due, 44.4%) |
+| Hourly hot item cadence (<7d) | 366/824 current (458 due, 44.4%) |
 | Daily cadence coverage | 4434/4499 current (65 due, 98.6%) |
 | Daily PR cadence | 2992/3050 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1442/1449 current (7 due, 99.5%) |
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 15:59 UTC. Latest close: Apr 26, 2026, 15:54 UTC. Latest comment sync: Apr 26, 2026, 16:02 UTC.
+Latest review: Apr 26, 2026, 16:02 UTC. Latest close: Apr 26, 2026, 15:54 UTC. Latest comment sync: Apr 26, 2026, 16:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 500 | 28 | 472 | 1 | 0 | 0 | 0 |
-| Last hour | 1020 | 30 | 990 | 1 | 0 | 19 | 1 |
-| Last 24 hours | 9979 | 2679 | 7300 | 15 | 3204 | 2047 | 17 |
+| Last 15 minutes | 500 | 26 | 474 | 1 | 2 | 358 | 1 |
+| Last hour | 1021 | 28 | 993 | 1 | 2 | 377 | 2 |
+| Last 24 hours | 9979 | 2677 | 7302 | 15 | 3201 | 2405 | 18 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 15:59 UTC. Latest close: Apr 26, 2026, 15:54 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72238](https://github.com/openclaw/openclaw/pull/72238) | fix(browser): resolve playwright-core through runtime shim | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72238.md) | complete | Apr 26, 2026, 15:59 UTC |
-| [#72235](https://github.com/openclaw/openclaw/issues/72235) | bug: plain 'openclaw status' fails in 2026.4.24 with qqbot PlatformAdapter bootstrap error | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72235.md) | complete | Apr 26, 2026, 15:58 UTC |
-| [#72230](https://github.com/openclaw/openclaw/issues/72230) | [v2026.4.24] Bonjour plugin keeps gateway in a permanent crash-restart loop because the unhandled-rejection handler is never wired | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72230.md) | complete | Apr 26, 2026, 15:58 UTC |
-| [#72221](https://github.com/openclaw/openclaw/issues/72221) | Channel plugins fail to load on Windows + Node 25: ERR_UNSUPPORTED_ESM_URL_SCHEME (received protocol 'c:') | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72221.md) | complete | Apr 26, 2026, 15:58 UTC |
-| [#72233](https://github.com/openclaw/openclaw/issues/72233) | Bundled channel package exports missing require/default entries (CommonJS) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72233.md) | complete | Apr 26, 2026, 15:58 UTC |
-| [#72232](https://github.com/openclaw/openclaw/issues/72232) | Windows: Missing Discord runtime dependencies after npm global install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72232.md) | complete | Apr 26, 2026, 15:58 UTC |
-| [#72227](https://github.com/openclaw/openclaw/issues/72227) | [Bug]: Control UI renders user messages twice: optimistic \"You\" message and gateway echo \"openclaw-control-ui\" are not deduplicated | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72227.md) | complete | Apr 26, 2026, 15:58 UTC |
-| [#72236](https://github.com/openclaw/openclaw/issues/72236) | `codex/gpt-5.5` fails after successful `codex login` because Codex synthetic auth returns `codex-app-server` instead\n  of a real token | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72236.md) | complete | Apr 26, 2026, 15:58 UTC |
-| [#72223](https://github.com/openclaw/openclaw/issues/72223) | gateway restart should handle non-systemd background gateway processes | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72223.md) | complete | Apr 26, 2026, 15:58 UTC |
-| [#72247](https://github.com/openclaw/openclaw/pull/72247) | Fix Discord explicit DM target normalization | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72247.md) | complete | Apr 26, 2026, 15:58 UTC |
+| [#72045](https://github.com/openclaw/openclaw/pull/72045) | fix(qa-lab): keep mock threaded memory parity deterministic | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72045.md) | complete | Apr 26, 2026, 16:02 UTC |
+| [#72058](https://github.com/openclaw/openclaw/issues/72058) | [Bug]: npm deps are missing after update to 24.04.2026 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72058.md) | complete | Apr 26, 2026, 16:01 UTC |
+| [#72201](https://github.com/openclaw/openclaw/pull/72201) | feat(events): add audience field for hidden runtime-context system events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72201.md) | complete | Apr 26, 2026, 16:01 UTC |
+| [#72189](https://github.com/openclaw/openclaw/pull/72189) | fix(voice-call): Google Live tool responses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72189.md) | complete | Apr 26, 2026, 16:01 UTC |
+| [#72187](https://github.com/openclaw/openclaw/pull/72187) | feat(plugin-sdk): add service lifecycle test harness | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72187.md) | complete | Apr 26, 2026, 16:01 UTC |
+| [#72179](https://github.com/openclaw/openclaw/pull/72179) | feat(plugins): expose cron lifecycle hook | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72179.md) | complete | Apr 26, 2026, 16:01 UTC |
+| [#72101](https://github.com/openclaw/openclaw/pull/72101) | fix(agents): ignore ACP-only streamTo and treat default model as unset | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72101.md) | complete | Apr 26, 2026, 16:01 UTC |
+| [#72174](https://github.com/openclaw/openclaw/pull/72174) | fix(macos): keep attach-only from stopping gateway launchd | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72174.md) | complete | Apr 26, 2026, 16:01 UTC |
+| [#72051](https://github.com/openclaw/openclaw/pull/72051) | fix(tasks): harden taskflow timestamps and control runtime packaging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72051.md) | complete | Apr 26, 2026, 16:01 UTC |
+| [#72168](https://github.com/openclaw/openclaw/issues/72168) | [Bug]: Browser Playwright actions still fail after doctor --fix on 2026.4.24 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72168.md) | complete | Apr 26, 2026, 16:01 UTC |
 
 </details>
 
