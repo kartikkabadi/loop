@@ -74,6 +74,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24949636772](https://
 | Weekly older issue cadence | 1991/1993 current (2 due, 99.9%) |
 | Due now by cadence | 976 |
 
+### Audit Health
+
+<!-- clawsweeper-audit:start -->
+No audit has been published yet. Run `npm run audit -- --update-dashboard` to refresh this section.
+<!-- clawsweeper-audit:end -->
+
 ### Latest Run Activity
 
 Latest review: Apr 26, 2026, 05:56 UTC. Latest close: Apr 26, 2026, 05:44 UTC. Latest comment sync: Apr 26, 2026, 05:51 UTC.
@@ -162,6 +168,10 @@ duplicates, protected-label proposed closes, and stale review-status records.
 Missing open records are classified as eligible, maintainer-authored, protected,
 or recently created so strict audit mode can flag actionable drift without
 treating expected queue lag or excluded items as failures.
+Use `--update-dashboard` to publish the latest audit health into this README
+without making every normal dashboard heartbeat scan all open GitHub items.
+The workflow refreshes Audit Health on a separate six-hour schedule, and it can
+be run manually with `audit_dashboard=true`.
 
 ## Local Run
 
@@ -174,7 +184,7 @@ npm run build
 npm run plan -- --batch-size 5 --shard-count 50 --max-pages 250 --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast
 npm run review -- --openclaw-dir ../openclaw --batch-size 5 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 600000
 npm run apply-artifacts -- --artifact-dir artifacts/reviews
-npm run audit -- --max-pages 250 --sample-limit 25
+npm run audit -- --max-pages 250 --sample-limit 25 --update-dashboard
 npm run reconcile -- --dry-run
 ```
 
