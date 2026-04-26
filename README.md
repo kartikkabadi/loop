@@ -34,7 +34,7 @@ Updated: Apr 26, 2026, 21:50 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place; checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=38160.
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 2, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967892820](https://github.com/openclaw/clawsweeper/actions/runs/24967892820)
 <!-- clawsweeper-status:end -->
 
@@ -43,11 +43,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967892820](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3698 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3534 |
-| Open items total | 7232 |
-| Reviewed files | 7144 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3533 |
+| Open items total | 7231 |
+| Reviewed files | 7143 |
 | Unreviewed open items | 88 |
-| Archived closed files | 12585 |
+| Archived closed files | 12586 |
 
 ### Review Outcomes
 
@@ -55,11 +55,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967892820](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3670 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3469 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7139 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
-| Closed by Codex apply | 9992 |
+| Fresh reviewed PRs in the last 7 days | 3468 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7138 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 9993 |
 | Failed or stale reviews | 5 |
 
 ### Cadence
@@ -68,8 +68,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24967892820](https://
 | --- | ---: |
 | Hourly cadence coverage | 21/768 current (747 due, 2.7%) |
 | Hourly hot item cadence (<7d) | 21/768 current (747 due, 2.7%) |
-| Daily cadence coverage | 4422/4490 current (68 due, 98.5%) |
-| Daily PR cadence | 2992/3050 current (58 due, 98.1%) |
+| Daily cadence coverage | 4421/4489 current (68 due, 98.5%) |
+| Daily PR cadence | 2991/3049 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1430/1440 current (10 due, 99.3%) |
 | Weekly older issue cadence | 1886/1886 current (0 due, 100%) |
 | Due now by cadence | 903 |
@@ -104,18 +104,19 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 21:43 UTC. Latest close: Apr 26, 2026, 21:37 UTC. Latest comment sync: Apr 26, 2026, 21:35 UTC.
+Latest review: Apr 26, 2026, 21:43 UTC. Latest close: Apr 26, 2026, 21:50 UTC. Latest comment sync: Apr 26, 2026, 21:50 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 467 | 1 | 466 | 0 | 8 | 3 | 0 |
-| Last hour | 541 | 7 | 534 | 0 | 24 | 60 | 1 |
-| Last 24 hours | 9657 | 2487 | 7170 | 3 | 2061 | 2169 | 10 |
+| Last 15 minutes | 445 | 1 | 444 | 0 | 7 | 2 | 0 |
+| Last hour | 541 | 7 | 534 | 0 | 25 | 61 | 1 |
+| Last 24 hours | 9655 | 2485 | 7170 | 3 | 2062 | 2170 | 10 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#38160](https://github.com/openclaw/openclaw/pull/38160) | feat(agents): local model fallback + semantic cache store | belongs on ClawHub | Apr 26, 2026, 21:50 UTC | [closed/38160.md](https://github.com/openclaw/clawsweeper/blob/main/closed/38160.md) |
 | [#72356](https://github.com/openclaw/openclaw/issues/72356) | [Bug]: Double Messages | already implemented on main | Apr 26, 2026, 21:37 UTC | [closed/72356.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72356.md) |
 | [#72354](https://github.com/openclaw/openclaw/issues/72354) | Subagent result exists but requester reports \"aborted/no result\" due to completion announce timeout (Telegram) | already implemented on main | Apr 26, 2026, 21:37 UTC | [closed/72354.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72354.md) |
 | [#72349](https://github.com/openclaw/openclaw/issues/72349) | [Bug]: Subagent spawn fails with \"No API key found for bedrock\" when using IAM Roles Anywhere (AWS_PROFILE + credential_process) | already implemented on main | Apr 26, 2026, 21:36 UTC | [closed/72349.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72349.md) |
@@ -125,7 +126,6 @@ Latest review: Apr 26, 2026, 21:43 UTC. Latest close: Apr 26, 2026, 21:37 UTC. L
 | [#72340](https://github.com/openclaw/openclaw/issues/72340) | Slack: native streaming gate excludes DMs even though chat.startStream accepts recipient_user_id | duplicate or superseded | Apr 26, 2026, 21:35 UTC | [closed/72340.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72340.md) |
 | [#72339](https://github.com/openclaw/openclaw/issues/72339) | [Bug]: Gateway crashes after update to 2026.4.24 (CIAO PROBING CANCELLED) | already implemented on main | Apr 26, 2026, 21:35 UTC | [closed/72339.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72339.md) |
 | [#72337](https://github.com/openclaw/openclaw/issues/72337) | Bonjour plugin crash-loops gateway on headless VPS (v2026.4.24) | already implemented on main | Apr 26, 2026, 21:35 UTC | [closed/72337.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72337.md) |
-| [#72335](https://github.com/openclaw/openclaw/pull/72335) | Feature: Per-hour spending ceiling to prevent runaway failover costs | duplicate or superseded | Apr 26, 2026, 21:35 UTC | [closed/72335.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72335.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
