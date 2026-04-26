@@ -81,3 +81,7 @@ checkpoint, and status-only commits are intentionally omitted.
   adding a hidden marker for future updates.
 - Corrected the GitHub Actions setup docs to describe app-token comment and
   close attribution.
+- Documented the current bot/app operating model and the optional Actions write
+  permission needed for app-token run cancellation.
+- Cancelled stale pre-app apply run 24944438478 so it cannot keep posting
+  maintainer-attributed comments.
