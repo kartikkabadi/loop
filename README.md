@@ -23,56 +23,56 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 19:54 UTC
+Last dashboard update: Apr 26, 2026, 20:01 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 19:54 UTC
+Updated: Apr 26, 2026, 20:01 UTC
 
-State: Hot intake comments synced
+State: Apply in progress
 
-Synced durable Codex review comments for 20 hot-intake item(s). Item numbers: 38520,38714,38775,38781,38806,38816,38817,38844,38876,38923,38924,38966,39037,39038,39097,39141,39245,39457,39513,39605.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965502728](https://github.com/openclaw/clawsweeper/actions/runs/24965502728)
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/20. Result records in checkpoint: 400, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965571618](https://github.com/openclaw/clawsweeper/actions/runs/24965571618)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3721 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3722 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3537 |
-| Open items total | 7258 |
-| Reviewed files | 7165 |
-| Unreviewed open items | 93 |
-| Archived closed files | 12532 |
+| Open items total | 7259 |
+| Reviewed files | 7164 |
+| Unreviewed open items | 95 |
+| Archived closed files | 12533 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3694 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3693 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3468 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7162 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
-| Closed by Codex apply | 9947 |
+| Fresh verified reviews in the last 7 days | 7161 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 9948 |
 | Failed or stale reviews | 3 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 0/784 current (784 due, 0%) |
-| Hourly hot item cadence (<7d) | 0/784 current (784 due, 0%) |
-| Daily cadence coverage | 4422/4490 current (68 due, 98.5%) |
+| Hourly cadence coverage | 0/783 current (783 due, 0%) |
+| Hourly hot item cadence (<7d) | 0/783 current (783 due, 0%) |
+| Daily cadence coverage | 4423/4491 current (68 due, 98.5%) |
 | Daily PR cadence | 2990/3049 current (59 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1432/1441 current (9 due, 99.4%) |
-| Weekly older issue cadence | 1891/1891 current (0 due, 100%) |
-| Due now by cadence | 945 |
+| Daily new issue cadence (<30d) | 1433/1442 current (9 due, 99.4%) |
+| Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
+| Due now by cadence | 946 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 19:52 UTC. Latest close: Apr 26, 2026, 19:01 UTC. Latest comment sync: Apr 26, 2026, 19:53 UTC.
+Latest review: Apr 26, 2026, 19:52 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 520 | 1 | 519 | 0 | 0 | 20 | 0 |
-| Last hour | 560 | 1 | 559 | 0 | 39 | 193 | 2 |
-| Last 24 hours | 9853 | 2624 | 7229 | 1 | 2036 | 2260 | 11 |
+| Last 15 minutes | 57 | 0 | 57 | 0 | 1 | 380 | 0 |
+| Last hour | 540 | 1 | 539 | 0 | 1 | 503 | 0 |
+| Last 24 hours | 9823 | 2601 | 7222 | 1 | 2037 | 2609 | 11 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
