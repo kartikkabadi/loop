@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 26, 2026, 20:07 UTC
+Last dashboard update: Apr 26, 2026, 20:11 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 26, 2026, 20:07 UTC
+Updated: Apr 26, 2026, 20:11 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 24965864541. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965864541](https://github.com/openclaw/clawsweeper/actions/runs/24965864541)
 <!-- clawsweeper-status:end -->
 
@@ -45,20 +45,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965864541](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3724 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
 | Open items total | 7262 |
-| Reviewed files | 7183 |
-| Unreviewed open items | 79 |
+| Reviewed files | 7188 |
+| Unreviewed open items | 74 |
 | Archived closed files | 12532 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3706 |
-| Proposed issue closes | 22 (0.6% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3473 |
+| Fresh reviewed issues in the last 7 days | 3710 |
+| Proposed issue closes | 25 (0.7% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3474 |
 | Proposed PR closes | 5 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7179 |
-| Proposed closes awaiting apply | 27 (0.4% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 7184 |
+| Proposed closes awaiting apply | 30 (0.4% of fresh reviews) |
 | Closed by Codex apply | 9948 |
 | Failed or stale reviews | 4 |
 
@@ -66,13 +66,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24965864541](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 374/799 current (425 due, 46.8%) |
-| Hourly hot item cadence (<7d) | 374/799 current (425 due, 46.8%) |
+| Hourly cadence coverage | 386/804 current (418 due, 48%) |
+| Hourly hot item cadence (<7d) | 386/804 current (418 due, 48%) |
 | Daily cadence coverage | 4425/4494 current (69 due, 98.5%) |
 | Daily PR cadence | 2991/3050 current (59 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1434/1444 current (10 due, 99.3%) |
 | Weekly older issue cadence | 1890/1890 current (0 due, 100%) |
-| Due now by cadence | 573 |
+| Due now by cadence | 561 |
 
 ### Audit Health
 
@@ -104,13 +104,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 20:02 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:01 UTC.
+Latest review: Apr 26, 2026, 20:10 UTC. Latest close: Apr 26, 2026, 19:53 UTC. Latest comment sync: Apr 26, 2026, 20:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 500 | 27 | 473 | 0 | 1 | 360 | 0 |
-| Last hour | 1020 | 28 | 992 | 0 | 1 | 383 | 0 |
-| Last 24 hours | 9839 | 2623 | 7216 | 2 | 2037 | 2477 | 7 |
+| Last 15 minutes | 242 | 24 | 218 | 0 | 0 | 196 | 0 |
+| Last hour | 1040 | 31 | 1009 | 0 | 1 | 375 | 0 |
+| Last 24 hours | 9827 | 2615 | 7212 | 2 | 2037 | 2469 | 7 |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -119,16 +119,16 @@ Latest review: Apr 26, 2026, 20:02 UTC. Latest close: Apr 26, 2026, 19:53 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72168](https://github.com/openclaw/openclaw/issues/72168) | [Bug]: Browser Playwright actions still fail after doctor --fix on 2026.4.24 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72168.md) | complete | Apr 26, 2026, 20:02 UTC |
-| [#72270](https://github.com/openclaw/openclaw/issues/72270) | [Bug]: Bug Report — OpenClaw 2026.4.24 : Cascading ENOTEMPTY Errors on Gateway Startup | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72270.md) | complete | Apr 26, 2026, 20:00 UTC |
-| [#70202](https://github.com/openclaw/openclaw/issues/70202) | [Feature]: Allow selection of multiple models and one default during onboarding for reducing cost of openclaw | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70202.md) | complete | Apr 26, 2026, 20:00 UTC |
-| [#72332](https://github.com/openclaw/openclaw/pull/72332) | fix(gateway): suppress Windows console flicker from TUI and Bonjour A… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72332.md) | complete | Apr 26, 2026, 20:00 UTC |
-| [#72277](https://github.com/openclaw/openclaw/issues/72277) | [Bug]: Slack async exec completion still escapes originating thread | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72277.md) | complete | Apr 26, 2026, 20:00 UTC |
-| [#72215](https://github.com/openclaw/openclaw/pull/72215) | Gateway: allow cron.enabled and compaction mode config paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72215.md) | complete | Apr 26, 2026, 20:00 UTC |
-| [#71736](https://github.com/openclaw/openclaw/issues/71736) | [RFC] Control UI plugin contribution slots | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71736.md) | complete | Apr 26, 2026, 20:00 UTC |
-| [#72293](https://github.com/openclaw/openclaw/issues/72293) | Aborted subagent with empty content silently marked `done`, never auto-announces — parent black-holes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72293.md) | complete | Apr 26, 2026, 20:00 UTC |
-| [#72076](https://github.com/openclaw/openclaw/pull/72076) | feat(extensions): add computer plugin — macOS desktop automation via cua-driver | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72076.md) | complete | Apr 26, 2026, 20:00 UTC |
-| [#72252](https://github.com/openclaw/openclaw/issues/72252) | Bug: benign SIGTERM async completions surface into chat after restart | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72252.md) | complete | Apr 26, 2026, 20:00 UTC |
+| [#72346](https://github.com/openclaw/openclaw/issues/72346) | [Bug]: bonjour plugin: unhandled rejection on probe cancellation crashes process in 2026.4.24 (worked in 2026.4.23) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72346.md) | complete | Apr 26, 2026, 20:10 UTC |
+| [#72349](https://github.com/openclaw/openclaw/issues/72349) | [Bug]: Subagent spawn fails with \"No API key found for bedrock\" when using IAM Roles Anywhere (AWS_PROFILE + credential_process) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72349.md) | complete | Apr 26, 2026, 20:10 UTC |
+| [#20237](https://github.com/openclaw/openclaw/issues/20237) | [Feature]: WebUI notification system, cron job management popups, and context monitor integration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20237.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#25621](https://github.com/openclaw/openclaw/issues/25621) | [Feature]: Error: Gateway service install not supported on openbsd | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/25621.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72348.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#29384](https://github.com/openclaw/openclaw/issues/29384) | [Feature]: Support for sandbox Docker parameters (--gpus all, --ipc=host) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/29384.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#72345](https://github.com/openclaw/openclaw/issues/72345) | voice-call: CLI `voicecall call` cannot run when gateway is owning the webhook port | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72345.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#72085](https://github.com/openclaw/openclaw/pull/72085) | docs(commands): document bashForegroundMs clamp bounds (0–30 000 ms) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72085.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#72347](https://github.com/openclaw/openclaw/issues/72347) | Active Memory: timeoutMs unenforceable due to multi-turn agent loop; need single-shot mode | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72347.md) | complete | Apr 26, 2026, 20:09 UTC |
+| [#20950](https://github.com/openclaw/openclaw/issues/20950) | [Feature]: cron jobs.d/ directory support (one file per job, for NixOS/GitOps declarative setups) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/20950.md) | complete | Apr 26, 2026, 20:09 UTC |
 
 </details>
 
