@@ -27,43 +27,43 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 05:20 UTC
+Last dashboard update: Apr 27, 2026, 05:22 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 05:20 UTC
+Updated: Apr 27, 2026, 05:22 UTC
 
-State: Apply in progress
+State: Review comments checked
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=42105,42158,42218,42290,42518,42573,42673,42788,43043,43093,43137,43143,43223,43317,43327,43594,43634,43789,43874,43901,43954,44002,52133,53917,62548,66267,66494,66546,66891,66934,67036,67065,67116,67122,67175,67209,67248,67259,67260,67273,67532,67568,67764,67959,67970,68154,68227,68293,71190.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977900743](https://github.com/openclaw/clawsweeper/actions/runs/24977900743)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 397. Item numbers: 6457,15591,16251,17684,18915,19362,19482,20802,25222,25295,25789,27771,30142,32558,34542,34581,38709,39115,39137,39166,40144,40147,40155,40165,40194,40207,40210,40216,40217,40218,40220,40230,40236,40238,40268,40277,40287,40289,40290,40296,40311,40314,40317,40332,40352,40355,40366,40387,40402,40418,40421,40423,40427,40438,40440,40443,40446,40447,40453,40463,40464,40472,40481,40485,40502,40527,40530,40534,40540,40578,40602,40611,40618,40641,40644,40652,40654,40663,40665,40673,40678,40694,40697,40703,40716,40723,40732,40744,40747,40756,40760,40764,40875,41025,41108,41165,41195,41201,41419,41494,41581,41624,41716,41964,41965,41966,41983,41986,41993,42009,42010,42011,42014,42026,42027,42039,42059,42079,42083,42099,42105,42106,42139,42156,42157,42158,42165,42196,42201,42208,42213,42218,42243,42252,42253,42259,42261,42271,42273,42290,42291,42294,42301,42303,42304,42317,42319,42322,42327,42330,42350,42351,42354,42361,42373,42381,42391,42402,42408,42424,42425,42452,42461,42472,42475,42476,42480,42482,42496,42497,42504,42510,42518,42531,42533,42538,42539,42544,42555,42571,42573,42585,42586,42591,42592,42617,42631,42636,42646,42647,42648,42650,42651,42652,42654,42656,42663,42669,42673,42674,42675,42677,42680,42683,42690,42698,42707,42713,42715,42729,42771,42788,42797,42798,42802,42803,42809,42810,42819,42820,42824,42832,42837,42840,42841,42843,42847,42853,42854,42856,42858,42859,42862,42867,42873,42877,42895,42898,42904,42908,42933,42936,42937,42952,42961,42962,42978,42986,42987,42998,42999,43005,43006,43009,43013,43015,43020,43028,43043,43061,43063,43064,43065,43068,43093,43095,43097,43117,43137,43141,43143,43145,43151,43165,43170,43176,43195,43202,43204,43211,43216,43217,43223,43224,43231,43239,43243,43244,43246,43249,43253,43254,43260,43276,43286,43288,43291,43292,43295,43300,43306,43317,43327,43341,43348,43357,43367,43374,43383,43390,43404,43410,43411,43416,43440,43441,43443,43447,43454,43455,43456,43462,43467,43469,43480,43481,43493,43495,43512,43527,43529,43549,43557,43562,43563,43564,43565,43567,43568,43570,43573,43574,43585,43588,43594,43605,43609,43614,43616,43618,43631,43634,43656,43658,43659,43669,43671,43673,43679,43690,43712,43730,43735,43737,43743,43747,43750,43752,43760,43765,43770,43775,43789,43790,43791,43794,43795,43797,43803,43808,43810,43816,43821,43827,43835,43848,43866,43874,43892,43895,43901,43903,43910,43911,43912,43919,43935,43938,43942,43950,43951,43953,43954,43975,43976,43978,43982,43984,43992,43996,44002,44011,44013,44015,44023,44027,44049,44051,44062,44068,44077,44086,44098,44107,44108,44111,44118,44123,44126,44129,45280,45710,46542,47518,48504,48598,48914,50799,52133,52776,53565,53884,54105,55473,56242,56582,56706,57505,57524,58114,59245,60743,61536,62956,62968,63015,63034,63035,63069,63101,63106,63107,63121,63139,63145,63148,63167,63181,63454,63481,63530,63536,63552,63558,63572,63593,63626,63652,63680,63710,63769,63803,63807,63819,63893,63919,63940,63956,63959,63978,63992,64016,64027,64060,64065,64187,64271,64545,68839,72293.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977237443](https://github.com/openclaw/clawsweeper/actions/runs/24977237443)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3652 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
-| Open items total | 7190 |
-| Reviewed files | 6966 |
-| Unreviewed open items | 224 |
-| Archived closed files | 12815 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3645 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3533 |
+| Open items total | 7178 |
+| Reviewed files | 6987 |
+| Unreviewed open items | 191 |
+| Archived closed files | 12794 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3579 |
-| Proposed issue closes | 15 (0.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3385 |
-| Proposed PR closes | 13 (0.4% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6964 |
-| Proposed closes awaiting apply | 28 (0.4% of fresh reviews) |
-| Closed by Codex apply | 10123 |
+| Fresh reviewed issues in the last 7 days | 3584 |
+| Proposed issue closes | 20 (0.6% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3401 |
+| Proposed PR closes | 28 (0.8% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6985 |
+| Proposed closes awaiting apply | 48 (0.7% of fresh reviews) |
+| Closed by Codex apply | 10103 |
 | Failed or stale reviews | 2 |
 
 ### Cadence
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977900743](https://
 | --- | ---: |
 | Hourly cadence coverage | 33/737 current (704 due, 4.5%) |
 | Hourly hot item cadence (<7d) | 33/737 current (704 due, 4.5%) |
-| Daily cadence coverage | 4025/4371 current (346 due, 92.1%) |
-| Daily PR cadence | 2716/2976 current (260 due, 91.3%) |
+| Daily cadence coverage | 4040/4387 current (347 due, 92.1%) |
+| Daily PR cadence | 2731/2992 current (261 due, 91.3%) |
 | Daily new issue cadence (<30d) | 1309/1395 current (86 due, 93.8%) |
-| Weekly older issue cadence | 1858/1858 current (0 due, 100%) |
-| Due now by cadence | 1274 |
+| Weekly older issue cadence | 1863/1863 current (0 due, 100%) |
+| Due now by cadence | 1242 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 05:07 UTC. Latest close: Apr 27, 2026, 05:18 UTC. Latest comment sync: Apr 27, 2026, 05:18 UTC.
+Latest review: Apr 27, 2026, 05:07 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 05:22 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 54 | 2 | 52 | 0 | 20 | 21 | 1 |
-| Last hour | 1013 | 46 | 967 | 0 | 20 | 662 | 5 |
-| Last 24 hours | 8178 | 1578 | 6600 | 0 | 1283 | 2575 | 11 |
+| Last 15 minutes | 2 | 0 | 2 | 0 | 0 | 397 | 3 |
+| Last hour | 1013 | 46 | 967 | 0 | 0 | 973 | 7 |
+| Last 24 hours | 8176 | 1578 | 6598 | 0 | 1252 | 2940 | 13 |
 
 ### Recently Closed
 
