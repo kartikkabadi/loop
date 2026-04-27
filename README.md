@@ -27,19 +27,19 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 06:48 UTC
+Last dashboard update: Apr 27, 2026, 06:49 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 06:48 UTC
+Updated: Apr 27, 2026, 06:49 UTC
 
-State: Review comments checked
+State: Review in progress
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 19. Item numbers: 10356,43614,63634,72373,72376,72381,72382,72383,72384,72386,72387,72390,72394,72396,72398,72423,72425,72426,72428,72436.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980346225](https://github.com/openclaw/clawsweeper/actions/runs/24980346225)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980611021](https://github.com/openclaw/clawsweeper/actions/runs/24980611021)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -47,11 +47,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980346225](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3622 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3523 |
-| Open items total | 7145 |
-| Reviewed files | 6900 |
-| Unreviewed open items | 245 |
-| Archived closed files | 12881 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3524 |
+| Open items total | 7146 |
+| Reviewed files | 6898 |
+| Unreviewed open items | 248 |
+| Archived closed files | 12883 |
 
 ### Review Outcomes
 
@@ -59,9 +59,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980346225](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3549 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3348 |
+| Fresh reviewed PRs in the last 7 days | 3346 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6897 |
+| Fresh verified reviews in the last 7 days | 6895 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 10162 |
 | Failed or stale reviews | 3 |
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980346225](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 118/727 current (609 due, 16.2%) |
-| Hourly hot item cadence (<7d) | 118/727 current (609 due, 16.2%) |
-| Daily cadence coverage | 3784/4318 current (534 due, 87.6%) |
-| Daily PR cadence | 2503/2946 current (443 due, 85%) |
-| Daily new issue cadence (<30d) | 1281/1372 current (91 due, 93.4%) |
-| Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 1388 |
+| Hourly cadence coverage | 101/726 current (625 due, 13.9%) |
+| Hourly hot item cadence (<7d) | 101/726 current (625 due, 13.9%) |
+| Daily cadence coverage | 3785/4318 current (533 due, 87.7%) |
+| Daily PR cadence | 2503/2945 current (442 due, 85%) |
+| Daily new issue cadence (<30d) | 1282/1373 current (91 due, 93.4%) |
+| Weekly older issue cadence | 1854/1854 current (0 due, 100%) |
+| Due now by cadence | 1406 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 06:44 UTC. Latest close: Apr 27, 2026, 06:42 UTC. Latest comment sync: Apr 27, 2026, 06:48 UTC.
+Latest review: Apr 27, 2026, 06:32 UTC. Latest close: Apr 27, 2026, 06:42 UTC. Latest comment sync: Apr 27, 2026, 06:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 11 | 516 | 4 |
-| Last hour | 1020 | 10 | 1010 | 0 | 11 | 1127 | 7 |
-| Last 24 hours | 7544 | 1170 | 6374 | 1 | 1083 | 2665 | 13 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 11 | 497 | 3 |
+| Last hour | 1000 | 10 | 990 | 0 | 11 | 1073 | 6 |
+| Last 24 hours | 7544 | 1170 | 6374 | 1 | 1076 | 2641 | 13 |
 
 ### Recently Closed
 
