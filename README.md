@@ -27,19 +27,19 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 04:37 UTC
+Last dashboard update: Apr 27, 2026, 04:42 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 04:37 UTC
+Updated: Apr 27, 2026, 04:41 UTC
 
-State: Hot intake in progress
+State: Review publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24976752988](https://github.com/openclaw/clawsweeper/actions/runs/24976752988)
+Merged review artifacts for run 24976502570. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24976502570](https://github.com/openclaw/clawsweeper/actions/runs/24976502570)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -58,25 +58,25 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24976752988](https://
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3589 |
-| Proposed issue closes | 2 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3407 |
-| Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6996 |
-| Proposed closes awaiting apply | 4 (0.1% of fresh reviews) |
+| Proposed issue closes | 16 (0.4% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3409 |
+| Proposed PR closes | 11 (0.3% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6998 |
+| Proposed closes awaiting apply | 27 (0.4% of fresh reviews) |
 | Closed by Codex apply | 10103 |
-| Failed or stale reviews | 4 |
+| Failed or stale reviews | 2 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 202/745 current (543 due, 27.1%) |
-| Hourly hot item cadence (<7d) | 202/745 current (543 due, 27.1%) |
-| Daily cadence coverage | 3696/4391 current (695 due, 84.2%) |
-| Daily PR cadence | 2614/2993 current (379 due, 87.3%) |
-| Daily new issue cadence (<30d) | 1082/1398 current (316 due, 77.4%) |
+| Hourly cadence coverage | 224/745 current (521 due, 30.1%) |
+| Hourly hot item cadence (<7d) | 224/745 current (521 due, 30.1%) |
+| Daily cadence coverage | 4138/4391 current (253 due, 94.2%) |
+| Daily PR cadence | 2824/2993 current (169 due, 94.4%) |
+| Daily new issue cadence (<30d) | 1314/1398 current (84 due, 94%) |
 | Weekly older issue cadence | 1864/1864 current (0 due, 100%) |
-| Due now by cadence | 1449 |
+| Due now by cadence | 985 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 04:10 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 04:25 UTC.
+Latest review: Apr 27, 2026, 04:39 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 04:25 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 118 | 3 |
-| Last hour | 699 | 7 | 692 | 0 | 3 | 809 | 5 |
-| Last 24 hours | 7928 | 1563 | 6365 | 1 | 1503 | 2429 | 13 |
+| Last 15 minutes | 495 | 23 | 472 | 0 | 0 | 0 | 0 |
+| Last hour | 995 | 27 | 968 | 0 | 3 | 809 | 5 |
+| Last 24 hours | 8365 | 1581 | 6784 | 0 | 1472 | 2365 | 10 |
 
 ### Recently Closed
 
@@ -138,16 +138,16 @@ Latest review: Apr 27, 2026, 04:10 UTC. Latest close: Apr 27, 2026, 03:51 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71429](https://github.com/openclaw/openclaw/issues/71429) | [Bug] Telegram gateway drops in-flight messages on sendChatAction network failure during hot reload | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71429.md) | complete | Apr 27, 2026, 04:10 UTC |
-| [#71417](https://github.com/openclaw/openclaw/issues/71417) | `openclaw agent` defaults --channel to last, silently resumes most recent session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71417.md) | complete | Apr 27, 2026, 04:10 UTC |
-| [#71066](https://github.com/openclaw/openclaw/issues/71066) | Telegram subsystem: getUpdates polling silently non-functional despite reachable API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71066.md) | complete | Apr 27, 2026, 04:09 UTC |
-| [#72209](https://github.com/openclaw/openclaw/pull/72209) | Add passive session recovery checkpoints | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72209.md) | complete | Apr 27, 2026, 04:09 UTC |
-| [#71653](https://github.com/openclaw/openclaw/pull/71653) | refactor: trim reply prompt hot path plumbing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71653.md) | complete | Apr 27, 2026, 04:09 UTC |
-| [#71195](https://github.com/openclaw/openclaw/issues/71195) | feat(talk/macOS): add OpenAI Realtime (speech-to-speech) path for Talk Mode — parity with the voice-call plugin's phone experience | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71195.md) | complete | Apr 27, 2026, 04:08 UTC |
-| [#71546](https://github.com/openclaw/openclaw/issues/71546) | Discord ingest lag of 100–400 s on stable connection persists after PR #68159 / 2026.4.1 reconnect-ownership change | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71546.md) | complete | Apr 27, 2026, 04:08 UTC |
-| [#71327](https://github.com/openclaw/openclaw/pull/71327) | fix(line): require explicit wildcard for open DMs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71327.md) | complete | Apr 27, 2026, 04:08 UTC |
-| [#71677](https://github.com/openclaw/openclaw/issues/71677) | [Feature]: | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71677.md) | complete | Apr 27, 2026, 04:08 UTC |
-| [#71682](https://github.com/openclaw/openclaw/issues/71682) | long model timeouts . | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71682.md) | complete | Apr 27, 2026, 04:08 UTC |
+| [#68283](https://github.com/openclaw/openclaw/pull/68283) | fix(approvals): back off native handler bootstrap retries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68283.md) | complete | Apr 27, 2026, 04:39 UTC |
+| [#72315](https://github.com/openclaw/openclaw/issues/72315) | [Bug]: npm grammyjs   npm anthropic frequent disturbance shell popup in windows every 15 seconds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72315.md) | complete | Apr 27, 2026, 04:39 UTC |
+| [#68054](https://github.com/openclaw/openclaw/issues/68054) | Agent sending random pictures in the middle of the day (ghost cron?) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68054.md) | complete | Apr 27, 2026, 04:39 UTC |
+| [#68227](https://github.com/openclaw/openclaw/pull/68227) | fix(protocol): require hello-ok auth | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68227.md) | complete | Apr 27, 2026, 04:38 UTC |
+| [#68105](https://github.com/openclaw/openclaw/issues/68105) | [Bug]: RTL bidi isolation missing at gateway/outbound-reply boundary (Hebrew/Arabic punctuation renders on wrong side) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68105.md) | complete | Apr 27, 2026, 04:38 UTC |
+| [#67764](https://github.com/openclaw/openclaw/issues/67764) | [Feature]: Sessions UI should expose per-turn raw context and assembled model input | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/67764.md) | complete | Apr 27, 2026, 04:38 UTC |
+| [#72253](https://github.com/openclaw/openclaw/pull/72253) | fix(heartbeat): keep benign exec completions internal | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72253.md) | complete | Apr 27, 2026, 04:38 UTC |
+| [#68204](https://github.com/openclaw/openclaw/issues/68204) | Unified run trace schema across agent, ACP, subagent, and task flows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68204.md) | complete | Apr 27, 2026, 04:38 UTC |
+| [#68162](https://github.com/openclaw/openclaw/issues/68162) | [Bug] Control UI (webchat) creates new session on WebSocket reconnection instead of resuming | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68162.md) | complete | Apr 27, 2026, 04:38 UTC |
+| [#68176](https://github.com/openclaw/openclaw/pull/68176) | CLI: bake git commit at build time so --version reports built commit not live HEAD [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68176.md) | complete | Apr 27, 2026, 04:38 UTC |
 
 </details>
 
