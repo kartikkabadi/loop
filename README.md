@@ -34,12 +34,12 @@ Last dashboard update: Apr 27, 2026, 02:01 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 02:00 UTC
+Updated: Apr 27, 2026, 02:01 UTC
 
-State: Hot intake publish complete
+State: Planning review
 
-Merged hot intake artifacts for run 24972910537. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972910537](https://github.com/openclaw/clawsweeper/actions/runs/24972910537)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973067071](https://github.com/openclaw/clawsweeper/actions/runs/24973067071)
 <!-- clawsweeper-status:end -->
 
 ### Queue
