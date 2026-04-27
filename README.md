@@ -38,7 +38,7 @@ Updated: Apr 27, 2026, 09:03 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72466.
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 1, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24986085925](https://github.com/openclaw/clawsweeper/actions/runs/24986085925)
 <!-- clawsweeper-status:end -->
 
@@ -47,11 +47,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24986085925](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3595 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3499 |
-| Open items total | 7094 |
-| Reviewed files | 6845 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3498 |
+| Open items total | 7093 |
+| Reviewed files | 6844 |
 | Unreviewed open items | 249 |
-| Archived closed files | 12955 |
+| Archived closed files | 12956 |
 
 ### Review Outcomes
 
@@ -59,24 +59,24 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24986085925](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3515 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3319 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6834 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
-| Closed by Codex apply | 10180 |
+| Fresh reviewed PRs in the last 7 days | 3318 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6833 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10181 |
 | Failed or stale reviews | 11 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 24/709 current (685 due, 3.4%) |
-| Hourly hot item cadence (<7d) | 24/709 current (685 due, 3.4%) |
-| Daily cadence coverage | 2000/4282 current (2282 due, 46.7%) |
-| Daily PR cadence | 1221/2924 current (1703 due, 41.8%) |
-| Daily new issue cadence (<30d) | 779/1358 current (579 due, 57.4%) |
+| Hourly cadence coverage | 23/708 current (685 due, 3.2%) |
+| Hourly hot item cadence (<7d) | 23/708 current (685 due, 3.2%) |
+| Daily cadence coverage | 1994/4282 current (2288 due, 46.6%) |
+| Daily PR cadence | 1219/2924 current (1705 due, 41.7%) |
+| Daily new issue cadence (<30d) | 775/1358 current (583 due, 57.1%) |
 | Weekly older issue cadence | 1853/1854 current (1 due, 99.9%) |
-| Due now by cadence | 3217 |
+| Due now by cadence | 3223 |
 
 ### Audit Health
 
@@ -110,18 +110,19 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 08:43 UTC. Latest close: Apr 27, 2026, 08:23 UTC. Latest comment sync: Apr 27, 2026, 08:56 UTC.
+Latest review: Apr 27, 2026, 08:43 UTC. Latest close: Apr 27, 2026, 09:03 UTC. Latest comment sync: Apr 27, 2026, 08:56 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 273 | 1 |
-| Last hour | 503 | 1 | 502 | 2 | 4 | 895 | 11 |
-| Last 24 hours | 5218 | 751 | 4467 | 7 | 623 | 2035 | 19 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 1 | 265 | 1 |
+| Last hour | 503 | 1 | 502 | 2 | 5 | 895 | 11 |
+| Last 24 hours | 5212 | 751 | 4461 | 7 | 621 | 2032 | 19 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#72466](https://github.com/openclaw/openclaw/pull/72466) | Add denylist support for exec approvals (block high-risk commands by pattern) | duplicate or superseded | Apr 27, 2026, 09:03 UTC | [closed/72466.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72466.md) |
 | [#43288](https://github.com/openclaw/openclaw/issues/43288) | CLI backend: pickSessionId accepts non-UUID strings like 'rate-limited' causing resume failure | already implemented on main | Apr 27, 2026, 08:23 UTC | [closed/43288.md](https://github.com/openclaw/clawsweeper/blob/main/closed/43288.md) |
 | [#42680](https://github.com/openclaw/openclaw/pull/42680) | fix(cron): start job timeout after execution begins, not at enqueue time | already implemented on main | Apr 27, 2026, 08:23 UTC | [closed/42680.md](https://github.com/openclaw/clawsweeper/blob/main/closed/42680.md) |
 | [#42531](https://github.com/openclaw/openclaw/pull/42531) | fix(memory-lancedb): preserve dimensions for baseUrl embeddings | already implemented on main | Apr 27, 2026, 08:23 UTC | [closed/42531.md](https://github.com/openclaw/clawsweeper/blob/main/closed/42531.md) |
@@ -131,7 +132,6 @@ Latest review: Apr 27, 2026, 08:43 UTC. Latest close: Apr 27, 2026, 08:23 UTC. L
 | [#72457](https://github.com/openclaw/openclaw/pull/72457) | Fix/onboard trim typeerror | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72457.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72457.md) |
 | [#72456](https://github.com/openclaw/openclaw/pull/72456) | Fix/minimax m2.7 vlm support | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72456.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72456.md) |
 | [#72453](https://github.com/openclaw/openclaw/pull/72453) | Fix/freebsd homebrew onboard | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72453.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72453.md) |
-| [#72451](https://github.com/openclaw/openclaw/pull/72451) | Fix/exec approvals source field | already implemented on main | Apr 27, 2026, 08:01 UTC | [closed/72451.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72451.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -146,10 +146,10 @@ Latest review: Apr 27, 2026, 08:43 UTC. Latest close: Apr 27, 2026, 08:23 UTC. L
 | [#69998](https://github.com/openclaw/openclaw/pull/69998) | fix(gateway): redact secrets in skills.update response | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69998.md) | complete | Apr 27, 2026, 08:43 UTC |
 | [#72301](https://github.com/openclaw/openclaw/pull/72301) | fix(lcm): strip temperature for claude-opus-4-7 in all transport paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72301.md) | complete | Apr 27, 2026, 08:43 UTC |
 | [#72276](https://github.com/openclaw/openclaw/pull/72276) | [codex] Consolidate embedded runner structural splits | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72276.md) | complete | Apr 27, 2026, 08:43 UTC |
-| [#72466](https://github.com/openclaw/openclaw/pull/72466) | Add denylist support for exec approvals (block high-risk commands by pattern) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72466.md) | complete | Apr 27, 2026, 08:43 UTC |
 | [#72373](https://github.com/openclaw/openclaw/issues/72373) | OpenShell should fail fast on malformed generated commands and hard-abort repeated tool loops | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72373.md) | stale_local_checkout_blocked | Apr 27, 2026, 08:42 UTC |
 | [#72333](https://github.com/openclaw/openclaw/pull/72333) | [plugin sdk] Add host-hook examples and recipes (#72287 follow-up) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72333.md) | complete | Apr 27, 2026, 08:42 UTC |
 | [#72239](https://github.com/openclaw/openclaw/pull/72239) | [tts][personality] voice.md SOUL.md-aware ElevenLabs v3 tag filter (#69051 PR-C of 4) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72239.md) | complete | Apr 27, 2026, 08:42 UTC |
+| [#72401](https://github.com/openclaw/openclaw/issues/72401) | [Bug]: models struggle to use discord tool/skill for sending discord DM's because of target requiring \"user:\" prefix | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72401.md) | complete | Apr 27, 2026, 08:42 UTC |
 
 </details>
 
