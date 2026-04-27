@@ -1,111 +1,51 @@
 [
   {
-    "number": 53032,
+    "number": 62991,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 63045,
     "action": "closed",
     "reason": "duplicate or superseded"
   },
   {
-    "number": 53168,
+    "number": 63075,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 63075,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 53416,
+    "number": 63119,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 63119,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 53430,
+    "number": 63169,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 63169,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 53500,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 53679,
+    "number": 71148,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 53926,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 54150,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 54199,
-    "action": "skipped_changed_since_review",
-    "reason": "updated_at changed"
-  },
-  {
-    "number": 54254,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 54381,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 54413,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 54535,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 54658,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 54743,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 54837,
-    "action": "skipped_changed_since_review",
-    "reason": "updated_at changed"
-  },
-  {
-    "number": 54854,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 55059,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 55063,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 55074,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 55163,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 62890,
+    "number": 71848,
     "action": "closed",
     "reason": "already implemented on main"
   }
