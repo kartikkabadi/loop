@@ -36,10 +36,10 @@ Last dashboard update: Apr 27, 2026, 01:06 UTC
 
 Updated: Apr 27, 2026, 01:06 UTC
 
-State: Apply in progress
+State: Audit finished
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 7/8. Result records in checkpoint: 0, including durable review comment syncs.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24971729752](https://github.com/openclaw/clawsweeper/actions/runs/24971729752)
+Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24971763565](https://github.com/openclaw/clawsweeper/actions/runs/24971763565)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -81,29 +81,29 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24971729752](https://
 ### Audit Health
 
 <!-- clawsweeper-audit:start -->
-Last audit: Apr 27, 2026, 00:37 UTC
+Last audit: Apr 27, 2026, 01:06 UTC
 
 Status: **Action needed**
 
 | Metric | Count |
 | --- | ---: |
 | Scan complete | yes |
-| Open items seen | 7233 |
+| Open items seen | 7235 |
 | Missing eligible open records | 0 |
 | Missing maintainer-authored open records | 85 |
 | Missing protected open records | 2 |
-| Missing recently-created open records | 12 |
-| Archived records that are open again | 1 |
-| Stale item records | 8 |
+| Missing recently-created open records | 26 |
+| Archived records that are open again | 0 |
+| Stale item records | 7 |
 | Duplicate records | 0 |
 | Protected proposed closes | 2 |
-| Stale reviews | 4 |
+| Stale reviews | 5 |
 
 | Item | Category | Title | Detail |
 | --- | --- | --- | --- |
 | [#57413](https://github.com/openclaw/openclaw/pull/57413) | Protected proposed close | feat(whatsapp): add reply quoting via replyToMode | closed/57413.md |
 | [#60460](https://github.com/openclaw/openclaw/pull/60460) | Protected proposed close | Enforce browser profile CDP policy | closed/60460.md |
-| [#52115](https://github.com/openclaw/openclaw/issues/52115) | Open archived | [Feature]: memory_search returns stale/invalid results when gateway is long-running | closed/52115.md |
+| [#40945](https://github.com/openclaw/openclaw/issues/40945) | Stale review | Control UI chat markdown only renders data URI images, not remote https image URLs | items/40945.md |
 <!-- clawsweeper-audit:end -->
 
 ### Latest Run Activity
