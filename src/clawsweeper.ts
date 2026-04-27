@@ -564,7 +564,7 @@ function ghRetryWaitMs(kind: GhRetryKind, attempt: number): number {
   return 0;
 }
 
-function summarizeGhArgs(args: string[]): string {
+function summarizeGhArgs(args: readonly string[]): string {
   if (args[0] === "api" && args[1]) return `gh api ${args[1]}`;
   return `gh ${args.slice(0, 3).join(" ")}`;
 }
@@ -657,18 +657,42 @@ function ghWithRetry(args: string[], attempts = 12): string {
   throw lastError;
 }
 
-function ghJson<T>(args: string[]): T {
-  const text = ghWithRetry(args);
-  return JSON.parse(text) as T;
+function formatParseError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
-function ghJsonLines<T>(args: string[]): T[] {
-  const text = ghWithRetry(args);
+export function parseGhJson<T>(text: string, args: readonly string[]): T {
+  try {
+    return JSON.parse(text) as T;
+  } catch (error) {
+    throw new Error(
+      `Failed to parse JSON from ${summarizeGhArgs(args)}: ${formatParseError(error)}`,
+    );
+  }
+}
+
+export function parseGhJsonLines<T>(text: string, args: readonly string[]): T[] {
   if (!text) return [];
   return text
     .split("\n")
     .filter(Boolean)
-    .map((line) => JSON.parse(line) as T);
+    .map((line, index) => {
+      try {
+        return JSON.parse(line) as T;
+      } catch (error) {
+        throw new Error(
+          `Failed to parse JSON line ${index + 1} from ${summarizeGhArgs(args)}: ${formatParseError(error)}`,
+        );
+      }
+    });
+}
+
+function ghJson<T>(args: string[]): T {
+  return parseGhJson<T>(ghWithRetry(args), args);
+}
+
+function ghJsonLines<T>(args: string[]): T[] {
+  return parseGhJsonLines<T>(ghWithRetry(args), args);
 }
 
 function sha256(text: string): string {
