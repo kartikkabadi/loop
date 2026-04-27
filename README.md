@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 09:39 UTC
+Last dashboard update: Apr 27, 2026, 09:40 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 09:38 UTC
+Updated: Apr 27, 2026, 09:40 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 24987364711. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 18. Item numbers: 53742,67595,70651,72189,72365,72468,72476,72478,72480,72482,72483,72484,72485,72486,72487,72489,72490,72491,72494,72495.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24987364711](https://github.com/openclaw/clawsweeper/actions/runs/24987364711)
 <!-- clawsweeper-status:end -->
 
@@ -47,10 +47,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24987364711](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3581 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3485 |
-| Open items total | 7066 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3483 |
+| Open items total | 7064 |
 | Reviewed files | 6832 |
-| Unreviewed open items | 234 |
+| Unreviewed open items | 232 |
 | Archived closed files | 12983 |
 
 ### Review Outcomes
@@ -76,7 +76,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24987364711](https://
 | Daily PR cadence | 1022/2911 current (1889 due, 35.1%) |
 | Daily new issue cadence (<30d) | 644/1346 current (702 due, 47.8%) |
 | Weekly older issue cadence | 1853/1853 current (0 due, 100%) |
-| Due now by cadence | 3453 |
+| Due now by cadence | 3451 |
 
 ### Audit Health
 
@@ -110,13 +110,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 09:36 UTC. Latest close: Apr 27, 2026, 09:22 UTC. Latest comment sync: Apr 27, 2026, 09:25 UTC.
+Latest review: Apr 27, 2026, 09:36 UTC. Latest close: Apr 27, 2026, 09:22 UTC. Latest comment sync: Apr 27, 2026, 09:40 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 4 | 16 | 0 | 0 | 24 | 0 |
-| Last hour | 526 | 6 | 520 | 1 | 2 | 763 | 11 |
-| Last 24 hours | 4332 | 628 | 3704 | 5 | 535 | 1785 | 18 |
+| Last 15 minutes | 20 | 4 | 16 | 0 | 0 | 19 | 2 |
+| Last hour | 525 | 6 | 519 | 1 | 2 | 781 | 13 |
+| Last 24 hours | 4328 | 628 | 3700 | 5 | 535 | 1803 | 20 |
 
 ### Recently Closed
 
@@ -141,7 +141,7 @@ Latest review: Apr 27, 2026, 09:36 UTC. Latest close: Apr 27, 2026, 09:22 UTC. L
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
 | [#72487](https://github.com/openclaw/openclaw/pull/72487) | fix(qqbot): skip PlatformAdapter lookup in resolveQQBotAccount when adapter not registered (#72465) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72487.md) | complete | Apr 27, 2026, 09:36 UTC |
-| [#72189](https://github.com/openclaw/openclaw/pull/72189) | fix(realtime-voice): continue Google Live consult responses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72189.md) | complete | Apr 27, 2026, 09:36 UTC |
+| [#72189](https://github.com/openclaw/openclaw/pull/72189) | fix(realtime-voice): continue Google Live consult responses | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/72189.md) | complete | Apr 27, 2026, 09:36 UTC |
 | [#53742](https://github.com/openclaw/openclaw/issues/53742) | Bug: macOS gateway install --force resolves SecretRef values into plaintext LaunchAgent plist and triggers token mismatch loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/53742.md) | complete | Apr 27, 2026, 09:36 UTC |
 | [#72476](https://github.com/openclaw/openclaw/pull/72476) | Pass through configured thinking budgets | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72476.md) | complete | Apr 27, 2026, 09:36 UTC |
 | [#72494](https://github.com/openclaw/openclaw/pull/72494) | fix(plugins): fail loud on rejected registration gates | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/72494.md) | complete | Apr 27, 2026, 09:35 UTC |
