@@ -479,8 +479,9 @@ jobs:
             --apply-kind all \
             --limit 0 \
             --processed-limit 1000 \
+            --max-runtime-ms 720000 \
             --comment-sync-min-age-days 7 \
-            --progress-every 1
+            --progress-every 25
           synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)')"
           npm run status -- \
             --state "Review comments checked" \

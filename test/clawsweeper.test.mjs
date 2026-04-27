@@ -19,6 +19,7 @@ import {
   relatedTitleSearchTerms,
   reviewArtifactDestination,
   reviewActionForDecision,
+  runtimeBudgetExceeded,
   safeOutputTail,
   sameAuthorCounterpartApplyReason,
   sanitizePublicSelfReferences,
@@ -490,6 +491,12 @@ test("review artifacts are ignored once the live item is closed", () => {
   assert.equal(reviewArtifactDestination("closed", true), "closed");
   assert.equal(reviewArtifactDestination("proposed_close", false), "skip_closed");
   assert.equal(reviewArtifactDestination("kept_open", false), "skip_closed");
+});
+
+test("runtime budget only trips after a positive elapsed limit", () => {
+  assert.equal(runtimeBudgetExceeded(1000, 0, 100000), false);
+  assert.equal(runtimeBudgetExceeded(1000, 5000, 5999), false);
+  assert.equal(runtimeBudgetExceeded(1000, 5000, 6000), true);
 });
 
 test("decision parser enforces required schema-shaped evidence", () => {

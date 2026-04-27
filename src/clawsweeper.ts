@@ -40,7 +40,8 @@ type ActionTaken =
   | "skipped_already_closed"
   | "skipped_maintainer_authored"
   | "skipped_protected_label"
-  | "skipped_invalid_decision";
+  | "skipped_invalid_decision"
+  | "skipped_runtime_budget";
 
 const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 
@@ -2913,6 +2914,14 @@ export function reviewArtifactDestination(
   return action === "closed" || action === "skipped_already_closed" ? "closed" : "items";
 }
 
+export function runtimeBudgetExceeded(
+  startedAtMs: number,
+  maxRuntimeMs: number,
+  nowMs: number,
+): boolean {
+  return maxRuntimeMs > 0 && nowMs - startedAtMs >= maxRuntimeMs;
+}
+
 function updateReviewCommentMetadata(
   markdown: string,
   comment: Record<string, unknown> | undefined,
@@ -3293,6 +3302,8 @@ function applyDecisionsCommand(args: Args): void {
   const skipDashboard = boolArg(args.skip_dashboard);
   const syncCommentsOnly = boolArg(args.sync_comments_only);
   const commentSyncMinAgeDays = numberArg(args.comment_sync_min_age_days, 0);
+  const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
+  const startedAtMs = Date.now();
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const requestedItemNumberSet = new Set(requestedItemNumbers);
   const results: ApplyResult[] = [];
@@ -3338,9 +3349,18 @@ function applyDecisionsCommand(args: Args): void {
     .sort((left, right) => left.priority - right.priority || left.number - right.number)
     .map((entry) => entry.name);
   logProgress(
-    `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} comment_sync_min_age_days=${commentSyncMinAgeDays} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+    `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} comment_sync_min_age_days=${commentSyncMinAgeDays} max_runtime_ms=${maxRuntimeMs} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
   );
   for (const file of files) {
+    if (runtimeBudgetExceeded(startedAtMs, maxRuntimeMs, Date.now())) {
+      results.push({
+        number: 0,
+        action: "skipped_runtime_budget",
+        reason: `max runtime ${maxRuntimeMs}ms reached`,
+      });
+      logProgress(`stopping apply: max runtime ${maxRuntimeMs}ms reached`);
+      break;
+    }
     const path = join(itemsDir, file);
     let markdown = readFileSync(path, "utf8");
     const number = Number(file.replace(/\.md$/, ""));
