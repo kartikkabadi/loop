@@ -36,34 +36,34 @@ Last dashboard update: Apr 27, 2026, 08:23 UTC
 
 Updated: Apr 27, 2026, 08:23 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24984300925](https://github.com/openclaw/clawsweeper/actions/runs/24984300925)
+Checkpoint 1 finished. Fresh closes in checkpoint: 4. Total fresh closes in this run: 4/4. Result records in checkpoint: 4, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24984300826](https://github.com/openclaw/clawsweeper/actions/runs/24984300826)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3596 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3502 |
-| Open items total | 7098 |
-| Reviewed files | 6858 |
-| Unreviewed open items | 240 |
-| Archived closed files | 12940 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3595 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3501 |
+| Open items total | 7096 |
+| Reviewed files | 6854 |
+| Unreviewed open items | 242 |
+| Archived closed files | 12944 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3524 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3325 |
-| Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6849 |
-| Proposed closes awaiting apply | 4 (0.1% of fresh reviews) |
-| Closed by Codex apply | 10176 |
+| Fresh reviewed issues in the last 7 days | 3523 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3322 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6845 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10180 |
 | Failed or stale reviews | 9 |
 
 ### Cadence
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24984300925](https://
 | --- | ---: |
 | Hourly cadence coverage | 125/717 current (592 due, 17.4%) |
 | Hourly hot item cadence (<7d) | 125/717 current (592 due, 17.4%) |
-| Daily cadence coverage | 2729/4288 current (1559 due, 63.6%) |
-| Daily PR cadence | 1566/2927 current (1361 due, 53.5%) |
+| Daily cadence coverage | 2725/4285 current (1560 due, 63.6%) |
+| Daily PR cadence | 1562/2924 current (1362 due, 53.4%) |
 | Daily new issue cadence (<30d) | 1163/1361 current (198 due, 85.5%) |
-| Weekly older issue cadence | 1853/1853 current (0 due, 100%) |
-| Due now by cadence | 2391 |
+| Weekly older issue cadence | 1852/1852 current (0 due, 100%) |
+| Due now by cadence | 2394 |
 
 ### Audit Health
 
@@ -110,28 +110,28 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 08:06 UTC. Latest close: Apr 27, 2026, 08:02 UTC. Latest comment sync: Apr 27, 2026, 08:21 UTC.
+Latest review: Apr 27, 2026, 08:06 UTC. Latest close: Apr 27, 2026, 08:23 UTC. Latest comment sync: Apr 27, 2026, 08:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 452 | 1 |
-| Last hour | 811 | 15 | 796 | 1 | 10 | 923 | 4 |
-| Last 24 hours | 6123 | 914 | 5209 | 6 | 815 | 2260 | 10 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 4 | 452 | 1 |
+| Last hour | 787 | 15 | 772 | 1 | 14 | 923 | 4 |
+| Last 24 hours | 6122 | 914 | 5208 | 6 | 819 | 2260 | 10 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#43288](https://github.com/openclaw/openclaw/issues/43288) | CLI backend: pickSessionId accepts non-UUID strings like 'rate-limited' causing resume failure | already implemented on main | Apr 27, 2026, 08:23 UTC | [closed/43288.md](https://github.com/openclaw/clawsweeper/blob/main/closed/43288.md) |
+| [#42680](https://github.com/openclaw/openclaw/pull/42680) | fix(cron): start job timeout after execution begins, not at enqueue time | already implemented on main | Apr 27, 2026, 08:23 UTC | [closed/42680.md](https://github.com/openclaw/clawsweeper/blob/main/closed/42680.md) |
+| [#42531](https://github.com/openclaw/openclaw/pull/42531) | fix(memory-lancedb): preserve dimensions for baseUrl embeddings | already implemented on main | Apr 27, 2026, 08:23 UTC | [closed/42531.md](https://github.com/openclaw/clawsweeper/blob/main/closed/42531.md) |
+| [#40446](https://github.com/openclaw/openclaw/pull/40446) | feat(agents): add passive execution health monitoring for death spiral detection | belongs on ClawHub | Apr 27, 2026, 08:23 UTC | [closed/40446.md](https://github.com/openclaw/clawsweeper/blob/main/closed/40446.md) |
 | [#72460](https://github.com/openclaw/openclaw/pull/72460) | fix(gateway): align UI thinking default with runtime resolver | already implemented on main | Apr 27, 2026, 08:02 UTC | [closed/72460.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72460.md) |
 | [#72458](https://github.com/openclaw/openclaw/pull/72458) | Fix/skills snapshot stale after restart | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72458.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72458.md) |
 | [#72457](https://github.com/openclaw/openclaw/pull/72457) | Fix/onboard trim typeerror | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72457.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72457.md) |
 | [#72456](https://github.com/openclaw/openclaw/pull/72456) | Fix/minimax m2.7 vlm support | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72456.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72456.md) |
 | [#72453](https://github.com/openclaw/openclaw/pull/72453) | Fix/freebsd homebrew onboard | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72453.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72453.md) |
 | [#72451](https://github.com/openclaw/openclaw/pull/72451) | Fix/exec approvals source field | already implemented on main | Apr 27, 2026, 08:01 UTC | [closed/72451.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72451.md) |
-| [#72447](https://github.com/openclaw/openclaw/issues/72447) | Feature: Typing indicator during agent active processing | already implemented on main | Apr 27, 2026, 08:01 UTC | [closed/72447.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72447.md) |
-| [#72444](https://github.com/openclaw/openclaw/pull/72444) | fix: follow symlinks to plugin directories in global extensions | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72444.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72444.md) |
-| [#71349](https://github.com/openclaw/openclaw/issues/71349) | memory-lancedb: autoCapture rarely fires; only 2 entries persisted across many sessions | already implemented on main | Apr 27, 2026, 07:41 UTC | [closed/71349.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71349.md) |
-| [#67207](https://github.com/openclaw/openclaw/pull/67207) | fix(discord): add regression tests and diagnostics for https URL preservation | cannot reproduce on current main | Apr 27, 2026, 07:41 UTC | [closed/67207.md](https://github.com/openclaw/clawsweeper/blob/main/closed/67207.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
