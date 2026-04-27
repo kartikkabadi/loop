@@ -38,7 +38,7 @@ Updated: Apr 27, 2026, 09:22 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72206.
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 2, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24986919799](https://github.com/openclaw/clawsweeper/actions/runs/24986919799)
 <!-- clawsweeper-status:end -->
 
@@ -46,37 +46,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24986919799](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3592 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3591 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3495 |
-| Open items total | 7087 |
-| Reviewed files | 6837 |
+| Open items total | 7086 |
+| Reviewed files | 6836 |
 | Unreviewed open items | 250 |
-| Archived closed files | 12963 |
+| Archived closed files | 12964 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3513 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3512 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3316 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6829 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
-| Closed by Codex apply | 10181 |
+| Fresh verified reviews in the last 7 days | 6828 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10182 |
 | Failed or stale reviews | 8 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 85/708 current (623 due, 12%) |
-| Hourly hot item cadence (<7d) | 85/708 current (623 due, 12%) |
-| Daily cadence coverage | 1691/4273 current (2582 due, 39.6%) |
+| Hourly cadence coverage | 84/707 current (623 due, 11.9%) |
+| Hourly hot item cadence (<7d) | 84/707 current (623 due, 11.9%) |
+| Daily cadence coverage | 1689/4273 current (2584 due, 39.5%) |
 | Daily PR cadence | 1037/2921 current (1884 due, 35.5%) |
-| Daily new issue cadence (<30d) | 654/1352 current (698 due, 48.4%) |
+| Daily new issue cadence (<30d) | 652/1352 current (700 due, 48.2%) |
 | Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
-| Due now by cadence | 3455 |
+| Due now by cadence | 3457 |
 
 ### Audit Health
 
@@ -110,18 +110,19 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 09:09 UTC. Latest close: Apr 27, 2026, 09:03 UTC. Latest comment sync: Apr 27, 2026, 08:56 UTC.
+Latest review: Apr 27, 2026, 09:09 UTC. Latest close: Apr 27, 2026, 09:22 UTC. Latest comment sync: Apr 27, 2026, 09:22 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 62 | 0 | 62 | 1 | 0 | 0 | 0 |
-| Last hour | 984 | 2 | 982 | 1 | 5 | 441 | 10 |
-| Last 24 hours | 4778 | 669 | 4109 | 3 | 574 | 1498 | 17 |
+| Last 15 minutes | 44 | 0 | 44 | 1 | 1 | 1 | 0 |
+| Last hour | 984 | 2 | 982 | 1 | 6 | 442 | 10 |
+| Last 24 hours | 4774 | 667 | 4107 | 3 | 575 | 1499 | 17 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#72206](https://github.com/openclaw/openclaw/issues/72206) | New claude-cli live session fails immediately with FailoverError while session reuse succeeds | already implemented on main | Apr 27, 2026, 09:22 UTC | [closed/72206.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72206.md) |
 | [#72466](https://github.com/openclaw/openclaw/pull/72466) | Add denylist support for exec approvals (block high-risk commands by pattern) | duplicate or superseded | Apr 27, 2026, 09:03 UTC | [closed/72466.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72466.md) |
 | [#43288](https://github.com/openclaw/openclaw/issues/43288) | CLI backend: pickSessionId accepts non-UUID strings like 'rate-limited' causing resume failure | already implemented on main | Apr 27, 2026, 08:23 UTC | [closed/43288.md](https://github.com/openclaw/clawsweeper/blob/main/closed/43288.md) |
 | [#42680](https://github.com/openclaw/openclaw/pull/42680) | fix(cron): start job timeout after execution begins, not at enqueue time | already implemented on main | Apr 27, 2026, 08:23 UTC | [closed/42680.md](https://github.com/openclaw/clawsweeper/blob/main/closed/42680.md) |
@@ -131,7 +132,6 @@ Latest review: Apr 27, 2026, 09:09 UTC. Latest close: Apr 27, 2026, 09:03 UTC. L
 | [#72458](https://github.com/openclaw/openclaw/pull/72458) | Fix/skills snapshot stale after restart | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72458.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72458.md) |
 | [#72457](https://github.com/openclaw/openclaw/pull/72457) | Fix/onboard trim typeerror | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72457.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72457.md) |
 | [#72456](https://github.com/openclaw/openclaw/pull/72456) | Fix/minimax m2.7 vlm support | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72456.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72456.md) |
-| [#72453](https://github.com/openclaw/openclaw/pull/72453) | Fix/freebsd homebrew onboard | duplicate or superseded | Apr 27, 2026, 08:01 UTC | [closed/72453.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72453.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
