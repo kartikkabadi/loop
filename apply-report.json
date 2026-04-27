@@ -1,111 +1,41 @@
 [
   {
-    "number": 44002,
+    "number": 67764,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 52133,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 52133,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 53917,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 62548,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 66267,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 66494,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 66546,
+    "number": 67959,
     "action": "skipped_changed_since_review",
     "reason": "updated_at changed"
   },
   {
-    "number": 66891,
+    "number": 67970,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 66934,
+    "number": 68154,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 67036,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 67065,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 67116,
+    "number": 68227,
     "action": "closed",
     "reason": "duplicate or superseded"
   },
   {
-    "number": 67122,
+    "number": 68293,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 68293,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 67175,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 67209,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 67248,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 67259,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 67260,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 67273,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 67532,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 67568,
+    "number": 71190,
     "action": "closed",
     "reason": "already implemented on main"
   }
