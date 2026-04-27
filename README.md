@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 02:32 UTC
+Last dashboard update: Apr 27, 2026, 02:34 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 02:32 UTC
+Updated: Apr 27, 2026, 02:34 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973788373](https://github.com/openclaw/clawsweeper/actions/runs/24973788373)
 <!-- clawsweeper-status:end -->
 
@@ -46,37 +46,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973788373](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3639 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3552 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3640 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3551 |
 | Open items total | 7191 |
-| Reviewed files | 7078 |
-| Unreviewed open items | 113 |
-| Archived closed files | 12703 |
+| Reviewed files | 7036 |
+| Unreviewed open items | 155 |
+| Archived closed files | 12745 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3624 |
-| Proposed issue closes | 24 (0.7% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3448 |
-| Proposed PR closes | 14 (0.4% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7072 |
-| Proposed closes awaiting apply | 38 (0.5% of fresh reviews) |
-| Closed by Codex apply | 10054 |
+| Fresh reviewed issues in the last 7 days | 3600 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3430 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7030 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10090 |
 | Failed or stale reviews | 6 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 18/762 current (744 due, 2.4%) |
-| Hourly hot item cadence (<7d) | 18/762 current (744 due, 2.4%) |
-| Daily cadence coverage | 4378/4448 current (70 due, 98.4%) |
-| Daily PR cadence | 2966/3025 current (59 due, 98%) |
-| Daily new issue cadence (<30d) | 1412/1423 current (11 due, 99.2%) |
+| Hourly cadence coverage | 18/761 current (743 due, 2.4%) |
+| Hourly hot item cadence (<7d) | 18/761 current (743 due, 2.4%) |
+| Daily cadence coverage | 4337/4407 current (70 due, 98.4%) |
+| Daily PR cadence | 2948/3007 current (59 due, 98%) |
+| Daily new issue cadence (<30d) | 1389/1400 current (11 due, 99.2%) |
 | Weekly older issue cadence | 1868/1868 current (0 due, 100%) |
-| Due now by cadence | 927 |
+| Due now by cadence | 968 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 02:16 UTC. Latest close: Apr 27, 2026, 02:04 UTC. Latest comment sync: Apr 27, 2026, 02:32 UTC.
+Latest review: Apr 27, 2026, 02:16 UTC. Latest close: Apr 27, 2026, 02:30 UTC. Latest comment sync: Apr 27, 2026, 02:32 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 493 | 2 |
-| Last hour | 634 | 44 | 590 | 0 | 18 | 795 | 12 |
-| Last 24 hours | 8855 | 1773 | 7082 | 4 | 2011 | 3045 | 17 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 5 | 466 | 2 |
+| Last hour | 634 | 44 | 590 | 0 | 23 | 719 | 10 |
+| Last 24 hours | 8838 | 1759 | 7079 | 3 | 2016 | 3050 | 17 |
 
 ### Recently Closed
 
@@ -125,11 +125,11 @@ Latest review: Apr 27, 2026, 02:16 UTC. Latest close: Apr 27, 2026, 02:04 UTC. L
 | [#65724](https://github.com/openclaw/openclaw/issues/65724) | [Windows] DeprecationWarning: Passing args to child process with shell option true | already implemented on main | Apr 27, 2026, 02:30 UTC | [closed/65724.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65724.md) |
 | [#65675](https://github.com/openclaw/openclaw/pull/65675) | docs: add 2MB size limit note for avatar images | duplicate or superseded | Apr 27, 2026, 02:30 UTC | [closed/65675.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65675.md) |
 | [#65589](https://github.com/openclaw/openclaw/pull/65589) | feat(memory-core): dreaming circuit breaker to prevent runaway cost and data corruption | duplicate or superseded | Apr 27, 2026, 02:30 UTC | [closed/65589.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65589.md) |
-| [#65497](https://github.com/openclaw/openclaw/pull/65497) | fix: reuse gateway provider registry in worker sessions (#62051) | already implemented on main | Apr 27, 2026, 02:29 UTC | [closed/65497.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65497.md) |
-| [#65494](https://github.com/openclaw/openclaw/issues/65494) | iMessage channel fails with ReferenceError: accountInfo is not defined | already implemented on main | Apr 27, 2026, 02:29 UTC | [closed/65494.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65494.md) |
-| [#65457](https://github.com/openclaw/openclaw/pull/65457) | fix(gateway): stop dropping repeated markdown tokens in chat stream merge | duplicate or superseded | Apr 27, 2026, 02:29 UTC | [closed/65457.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65457.md) |
-| [#65195](https://github.com/openclaw/openclaw/issues/65195) | exec/runtime cannot reach LAN host on macOS while interactive shell can | duplicate or superseded | Apr 27, 2026, 02:29 UTC | [closed/65195.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65195.md) |
-| [#65176](https://github.com/openclaw/openclaw/pull/65176) | fix: improve SSRF resolved-IP error message with remediation hint (#65153) | duplicate or superseded | Apr 27, 2026, 02:29 UTC | [closed/65176.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65176.md) |
+| [#71848](https://github.com/openclaw/openclaw/issues/71848) | [SRE] Gateway SIGABRT (134) on macOS launchd (mini-lobby) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71848.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71848.md) |
+| [#71148](https://github.com/openclaw/openclaw/issues/71148) | Memory leak: Ajv `.compile()` per call in `sharedAjv` (and `ajv`) leaks SchemaEnv/run closures | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71148.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71148.md) |
+| [#63169](https://github.com/openclaw/openclaw/issues/63169) | WhatsApp media send reports success but attachment is never delivered (2026.4.8) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/63169.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63169.md) |
+| [#63119](https://github.com/openclaw/openclaw/issues/63119) | [Feature]: Session compaction: archive transcript files before deletion, with configurable retention | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/63119.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63119.md) |
+| [#63075](https://github.com/openclaw/openclaw/issues/63075) | Discord stale slash commands remain visible when channels.discord.commands.native=false | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/63075.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63075.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
