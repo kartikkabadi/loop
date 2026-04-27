@@ -27,7 +27,7 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 05:47 UTC
+Last dashboard update: Apr 27, 2026, 05:48 UTC
 
 ### Current Run
 
@@ -36,10 +36,10 @@ Last dashboard update: Apr 27, 2026, 05:47 UTC
 
 Updated: Apr 27, 2026, 05:47 UTC
 
-State: Apply finished
+State: Hot intake publish complete
 
-Apply/comment-sync run finished with 0 fresh closes out of requested limit 2. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24978662992](https://github.com/openclaw/clawsweeper/actions/runs/24978662992)
+Merged hot intake artifacts for run 24978531689. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24978531689](https://github.com/openclaw/clawsweeper/actions/runs/24978531689)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -60,9 +60,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24978662992](https://
 | Fresh reviewed issues in the last 7 days | 3561 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3366 |
-| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Proposed PR closes | 1 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6927 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
 | Closed by Codex apply | 10151 |
 | Failed or stale reviews | 2 |
 
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24978662992](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 3/732 current (729 due, 0.4%) |
-| Hourly hot item cadence (<7d) | 3/732 current (729 due, 0.4%) |
+| Hourly cadence coverage | 17/732 current (715 due, 2.3%) |
+| Hourly hot item cadence (<7d) | 17/732 current (715 due, 2.3%) |
 | Daily cadence coverage | 3989/4341 current (352 due, 91.9%) |
 | Daily PR cadence | 2693/2959 current (266 due, 91%) |
 | Daily new issue cadence (<30d) | 1296/1382 current (86 due, 93.8%) |
 | Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
-| Due now by cadence | 1317 |
+| Due now by cadence | 1303 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 05:35 UTC. Latest close: Apr 27, 2026, 05:46 UTC. Latest comment sync: Apr 27, 2026, 05:46 UTC.
+Latest review: Apr 27, 2026, 05:46 UTC. Latest close: Apr 27, 2026, 05:46 UTC. Latest comment sync: Apr 27, 2026, 05:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 100 | 1 | 99 | 0 | 2 | 2 | 0 |
-| Last hour | 998 | 25 | 973 | 0 | 21 | 650 | 5 |
-| Last 24 hours | 8052 | 1472 | 6580 | 0 | 1228 | 2353 | 13 |
+| Last 15 minutes | 69 | 2 | 67 | 0 | 2 | 2 | 0 |
+| Last hour | 1018 | 26 | 992 | 0 | 21 | 629 | 5 |
+| Last 24 hours | 8044 | 1465 | 6579 | 0 | 1228 | 2348 | 13 |
 
 ### Recently Closed
 
@@ -138,16 +138,16 @@ Latest review: Apr 27, 2026, 05:35 UTC. Latest close: Apr 27, 2026, 05:46 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#65180](https://github.com/openclaw/openclaw/pull/65180) | fix(cli,sessions): make local model run stateless by default and keep transcript fallback profile-scoped | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65180.md) | complete | Apr 27, 2026, 05:35 UTC |
-| [#65374](https://github.com/openclaw/openclaw/issues/65374) | Bug: Built-in dreaming system contaminates agent identity in multi-agent setups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65374.md) | complete | Apr 27, 2026, 05:35 UTC |
-| [#64784](https://github.com/openclaw/openclaw/issues/64784) | [Feature]: LINE sticker send/receive support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64784.md) | complete | Apr 27, 2026, 05:35 UTC |
-| [#65383](https://github.com/openclaw/openclaw/pull/65383) | fix(imessage): avoid duplicate default watcher | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65383.md) | complete | Apr 27, 2026, 05:35 UTC |
-| [#65058](https://github.com/openclaw/openclaw/pull/65058) | fix(googlechat): accept add-on space lifecycle payload variants | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65058.md) | complete | Apr 27, 2026, 05:35 UTC |
-| [#64960](https://github.com/openclaw/openclaw/issues/64960) | Compaction fails permanently when Azure content filter blocks summarization — no model fallback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64960.md) | complete | Apr 27, 2026, 05:34 UTC |
-| [#65398](https://github.com/openclaw/openclaw/pull/65398) | fix(feishu): preserve top-level groupPolicy and avoid duplicate registration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65398.md) | complete | Apr 27, 2026, 05:34 UTC |
-| [#65307](https://github.com/openclaw/openclaw/issues/65307) | [Critical Bug] Agent misinterprets opencli as openclaw and executes destructive npm uninstall without confirmation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65307.md) | complete | Apr 27, 2026, 05:34 UTC |
-| [#65177](https://github.com/openclaw/openclaw/issues/65177) | [Bug]: openclaw doctor --fix does not migrate Feishu botName to name after upgrade to 2026.4.11 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65177.md) | complete | Apr 27, 2026, 05:34 UTC |
-| [#64831](https://github.com/openclaw/openclaw/issues/64831) | [Bug]: Cron jobs run inconsistently, chat-triggered exec unstable, and missing catch-up delivery on Telegram | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64831.md) | complete | Apr 27, 2026, 05:34 UTC |
+| [#56538](https://github.com/openclaw/openclaw/pull/56538) | fix: use TextDecoder for proper GBK encoding support on Windows | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/56538.md) | complete | Apr 27, 2026, 05:46 UTC |
+| [#17098](https://github.com/openclaw/openclaw/pull/17098) | docs: add xCloud hosting guide | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/17098.md) | complete | Apr 27, 2026, 05:45 UTC |
+| [#68449](https://github.com/openclaw/openclaw/issues/68449) | [Bug]: Dreaming plugin: stopword list too narrow and no filter for cron-triggered sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68449.md) | complete | Apr 27, 2026, 05:45 UTC |
+| [#60860](https://github.com/openclaw/openclaw/pull/60860) | feat(google): add Google Vertex AI provider with ADC auth and global endpoint routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/60860.md) | complete | Apr 27, 2026, 05:45 UTC |
+| [#66551](https://github.com/openclaw/openclaw/pull/66551) | fix(media): allow host-read text document fallback mimes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66551.md) | complete | Apr 27, 2026, 05:45 UTC |
+| [#71027](https://github.com/openclaw/openclaw/pull/71027) | chore(deps): bump useblacksmith/build-push-action from 2.1.0 to 2.2.0 in the actions group across 1 directory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71027.md) | complete | Apr 27, 2026, 05:45 UTC |
+| [#71336](https://github.com/openclaw/openclaw/pull/71336) | fix(webchat): persist chat queue to localStorage with drain-on-reconnect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71336.md) | complete | Apr 27, 2026, 05:45 UTC |
+| [#71142](https://github.com/openclaw/openclaw/issues/71142) | Feature Request: Configurable upload size limit for Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71142.md) | complete | Apr 27, 2026, 05:45 UTC |
+| [#72421](https://github.com/openclaw/openclaw/issues/72421) | Discord channel lanes intermittently held after run completes — \"lane wait exceeded\" with stale per-session jsonl mtime | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72421.md) | complete | Apr 27, 2026, 05:45 UTC |
+| [#72432](https://github.com/openclaw/openclaw/pull/72432) | Add structured Matrix approval metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72432.md) | complete | Apr 27, 2026, 05:45 UTC |
 
 </details>
 
