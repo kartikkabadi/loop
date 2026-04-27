@@ -13,11 +13,13 @@ import {
   isProtectedItem,
   itemNumbersArg,
   lockedConversationApplyReason,
+  openClosingPullRequestApplyReason,
   parseDecision,
   protectedLabels,
   relatedTitleSearchTerms,
   reviewActionForDecision,
   safeOutputTail,
+  sanitizePublicSelfReferences,
   shardItemNumbers,
   shouldSyncReviewComment,
   shouldReviewItem,
@@ -283,6 +285,19 @@ test("duplicate or superseded closes are allowed with evidence and comment", () 
   assert.match(action.closeComment, /duplicate or superseded/);
 });
 
+test("open PRs that close an issue block apply closes", () => {
+  assert.equal(
+    openClosingPullRequestApplyReason([
+      { number: 69425, state: "open", title: "daemon: honor OPENCLAW_WRAPPER" },
+    ]),
+    "open PR #69425 (daemon: honor OPENCLAW_WRAPPER) is a closing reference",
+  );
+  assert.equal(
+    openClosingPullRequestApplyReason([{ number: 69425, state: "closed", title: "done" }]),
+    null,
+  );
+});
+
 test("not-actionable-in-repo closes are allowed with evidence and comment", () => {
   const action = reviewActionForDecision({
     item: item(),
@@ -305,6 +320,19 @@ test("not-actionable-in-repo closes are allowed with evidence and comment", () =
   });
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /not actionable in this repository/);
+});
+
+test("public comments avoid self-referencing the current item number", () => {
+  const comment = sanitizePublicSelfReferences(
+    "Issue #69400 is tracked by PR #69425, which says Fixes #69400. Close #69400 later.",
+    69400,
+    "issue",
+  );
+
+  assert.equal(
+    comment,
+    "This issue is tracked by PR #69425, which says Fixes this issue. Close this issue later.",
+  );
 });
 
 test("comment matcher recognizes old and new Codex review comments", () => {

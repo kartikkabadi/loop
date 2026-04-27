@@ -35,6 +35,7 @@ type ActionTaken =
   | "review_comment_synced"
   | "skipped_locked_conversation"
   | "skipped_changed_since_review"
+  | "skipped_open_closing_pr"
   | "skipped_already_closed"
   | "skipped_maintainer_authored"
   | "skipped_protected_label"
@@ -126,6 +127,7 @@ interface ItemContext {
   issue: unknown;
   comments: unknown[];
   timeline: unknown[];
+  closingPullRequests?: unknown[];
   relatedItems?: unknown[];
   pullRequest?: unknown;
   pullFiles?: unknown[];
@@ -134,6 +136,7 @@ interface ItemContext {
   counts?: {
     comments: number;
     timeline: number;
+    closingPullRequests?: number;
     relatedItems?: number;
     pullFiles?: number;
     pullCommits?: number;
@@ -369,7 +372,7 @@ const AUDIT_HEALTH_END = "<!-- clawsweeper-audit:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
-const REVIEW_POLICY_VERSION = "2026-04-26-policy-v5";
+const REVIEW_POLICY_VERSION = "2026-04-27-policy-v6";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
@@ -968,6 +971,49 @@ function compactPullRequest(value: unknown): unknown {
     updatedAt: pull.updated_at,
     body: truncateText(pull.body, 12000),
   };
+}
+
+function closingPullRequestReferencesForIssue(number: number): number[] {
+  const issue = ghJson<unknown>([
+    "issue",
+    "view",
+    String(number),
+    "--repo",
+    TARGET_REPO,
+    "--json",
+    "closedByPullRequestsReferences",
+  ]);
+  const references = asRecord(issue).closedByPullRequestsReferences;
+  if (!Array.isArray(references)) return [];
+  return references
+    .map((reference) => asRecord(reference).number)
+    .filter((referenceNumber): referenceNumber is number => Number.isInteger(referenceNumber));
+}
+
+function closingPullRequestsForIssue(number: number): unknown[] {
+  return closingPullRequestReferencesForIssue(number).map((pullNumber) =>
+    ghJson<unknown>([
+      "api",
+      `repos/${TARGET_REPO}/pulls/${pullNumber}`,
+      "--jq",
+      "{number,title,state,html_url,body,user:{login:.user.login},merged:.merged,merged_at:.merged_at,head:{ref:.head.ref,sha:.head.sha},base:{ref:.base.ref,sha:.base.sha}}",
+    ]),
+  );
+}
+
+export function openClosingPullRequestApplyReason(pullRequests: readonly unknown[]): string | null {
+  const openPulls = pullRequests
+    .map(asRecord)
+    .filter((pull) => String(pull.state ?? "").toLowerCase() === "open")
+    .map((pull) => ({
+      number: typeof pull.number === "number" ? pull.number : null,
+      title: typeof pull.title === "string" ? pull.title : "",
+    }))
+    .filter((pull): pull is { number: number; title: string } => pull.number !== null);
+  const first = openPulls[0];
+  if (!first) return null;
+  const suffix = openPulls.length > 1 ? ` and ${openPulls.length - 1} other open PR(s)` : "";
+  return `open PR #${first.number}${first.title ? ` (${first.title})` : ""} is a closing reference${suffix}`;
 }
 
 function collectRelatedMentions(options: {
@@ -1891,6 +1937,18 @@ function collectItemContext(item: Item): ItemContext {
   };
   let pullRequest: unknown | undefined;
   let pullReviewComments: unknown[] | undefined;
+  if (item.kind === "issue") {
+    const closingPullRequests = closingPullRequestsForIssue(item.number);
+    if (closingPullRequests.length > 0) {
+      context.closingPullRequests = compactSlice(closingPullRequests.map(compactPullRequest), 12);
+      context.counts = {
+        ...context.counts,
+        comments: comments.length,
+        timeline: timeline.length,
+        closingPullRequests: closingPullRequests.length,
+      };
+    }
+  }
   if (item.kind === "pull_request") {
     pullRequest = ghJson<unknown>(["api", `repos/${TARGET_REPO}/pulls/${item.number}`]);
     const pullFiles = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/files`);
@@ -1929,6 +1987,8 @@ function collectItemContext(item: Item): ItemContext {
     if (context.counts?.pullCommits !== undefined) counts.pullCommits = context.counts.pullCommits;
     if (context.counts?.pullReviewComments !== undefined)
       counts.pullReviewComments = context.counts.pullReviewComments;
+    if (context.counts?.closingPullRequests !== undefined)
+      counts.closingPullRequests = context.counts.closingPullRequests;
     context.counts = counts;
   }
   return context;
@@ -2543,13 +2603,42 @@ function renderCloseComment(options: {
 }
 
 function renderCloseCommentFromReport(markdown: string, reason: CloseReason): string {
-  return renderCloseComment({
-    reason,
-    summary: sectionValue(markdown, "Summary"),
-    bestSolution: sectionValue(markdown, "Best Possible Solution"),
-    evidence: reportEvidence(markdown),
-    reviewLine: closeReviewLineFromReport(markdown),
-  });
+  return sanitizePublicSelfReferences(
+    renderCloseComment({
+      reason,
+      summary: sectionValue(markdown, "Summary"),
+      bestSolution: sectionValue(markdown, "Best Possible Solution"),
+      evidence: reportEvidence(markdown),
+      reviewLine: closeReviewLineFromReport(markdown),
+    }),
+    Number(frontMatterValue(markdown, "number")),
+    (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
+  );
+}
+
+export function sanitizePublicSelfReferences(text: string, number: number, kind: ItemKind): string {
+  if (!Number.isInteger(number) || number <= 0) return text;
+  const noun = kind === "pull_request" ? "this PR" : "this issue";
+  const escapedNumber = String(number).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const selfRefSource = `#${escapedNumber}\\b`;
+  const typedSelfRef = new RegExp(
+    `\\b(?:Issue|issue|PR|pr|Pull request|pull request)\\s+${selfRefSource}`,
+    "g",
+  );
+  const closingVerbSelfRef = new RegExp(
+    `\\b(Fixes|fixes|Fix|fix|Closes|closes|Resolves|resolves)\\s+${selfRefSource}`,
+    "g",
+  );
+  const selfRef = new RegExp(selfRefSource, "g");
+  return text
+    .replace(closingVerbSelfRef, (_match, verb: string) => `${verb} ${noun}`)
+    .replace(typedSelfRef, noun)
+    .replace(selfRef, noun)
+    .replace(
+      /(^|[.!?]\s+)(this issue|this PR)/g,
+      (_match, prefix: string, value: string) =>
+        `${prefix}${value[0]?.toUpperCase()}${value.slice(1)}`,
+    );
 }
 
 function normalizeComment(
@@ -2587,7 +2676,11 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   if (risks && risks !== "- none") lines.push("", "Remaining risk / open question:", "", risks);
   const reviewLine = closeReviewLineFromReport(markdown);
   if (reviewLine) lines.push("", reviewLine);
-  return lines.join("\n");
+  return sanitizePublicSelfReferences(
+    lines.join("\n"),
+    Number(frontMatterValue(markdown, "number")),
+    (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
+  );
 }
 
 function renderReviewCommentFromReport(markdown: string, reason: CloseReason): string {
@@ -3335,6 +3428,15 @@ function applyDecisionsCommand(args: Args): void {
         processedCount += 1;
         maybeLogProgress(`skipped #${number}: snapshot changed`);
         if (processedCount >= processedLimit) break;
+        continue;
+      }
+    }
+    if (isCloseProposal && item.kind === "issue") {
+      const openClosingPullRequestReason = openClosingPullRequestApplyReason(
+        closingPullRequestsForIssue(number),
+      );
+      if (openClosingPullRequestReason) {
+        if (markApplySkipped("skipped_open_closing_pr", openClosingPullRequestReason)) break;
         continue;
       }
     }

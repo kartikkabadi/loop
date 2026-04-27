@@ -36,6 +36,13 @@ Close as implemented when current `main` solves the observable user problem well
 
 Keep open for everything else, including real bugs, unclear-but-salvageable reports, stale PRs that might still contain useful work, optional features that require a new core/plugin API first, or anything where the evidence is not high-confidence.
 
+Keep an issue open when an open PR specifically references it with GitHub closing
+syntax such as `Fixes #123`, `Closes #123`, or `Resolves #123`. That PR is an
+implementation candidate, not a reason to close the issue before merge. In this
+case, keep the issue open and say the best solution is to review/land or close
+the linked PR; only after the PR merges should the issue be closed as
+implemented by GitHub or by apply.
+
 Keep open any item whose GitHub author association is `OWNER`, `MEMBER`, or `COLLABORATOR`. Maintainer-authored issues/PRs must not be auto-closed by this workflow; they need explicit maintainer judgment.
 
 Keep open any item with a protected label: `security`, `beta-blocker`, `release-blocker`, or `maintainer`. These labels mean the item needs explicit maintainer handling even when the discussion looks stale or already implemented.

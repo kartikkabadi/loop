@@ -20,10 +20,12 @@ ClawSweeper may propose a close only when the item is clearly one of these:
 - stale issue older than 60 days with too little data to verify
 
 Maintainer-authored items are never auto-closed. Everything else stays open.
+Issues with an open PR that references them using GitHub closing syntax such as
+`Fixes #123` stay open until that PR merges or is closed.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 00:14 UTC
+Last dashboard update: Apr 27, 2026, 00:23 UTC
 
 ### Current Run
 
@@ -42,12 +44,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970504824](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3689 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3692 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
-| Open items total | 7227 |
-| Reviewed files | 7141 |
-| Unreviewed open items | 86 |
-| Archived closed files | 12640 |
+| Open items total | 7230 |
+| Reviewed files | 7140 |
+| Unreviewed open items | 90 |
+| Archived closed files | 12639 |
 
 ### Review Outcomes
 
@@ -57,49 +59,49 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970504824](https://
 | Proposed issue closes | 7 (0.2% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3464 |
 | Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7137 |
-| Proposed closes awaiting apply | 8 (0.1% of fresh reviews) |
-| Closed by Codex apply | 10019 |
-| Failed or stale reviews | 4 |
+| Fresh verified reviews in the last 7 days | 7135 |
+| Proposed closes awaiting apply | 7 (0.1% of fresh reviews) |
+| Closed by Codex apply | 10018 |
+| Failed or stale reviews | 5 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 772/781 current (9 due, 98.8%) |
-| Hourly hot item cadence (<7d) | 772/781 current (9 due, 98.8%) |
-| Daily cadence coverage | 4406/4473 current (67 due, 98.5%) |
+| Hourly cadence coverage | 769/779 current (10 due, 98.7%) |
+| Hourly hot item cadence (<7d) | 769/779 current (10 due, 98.7%) |
+| Daily cadence coverage | 4407/4474 current (67 due, 98.5%) |
 | Daily PR cadence | 2975/3033 current (58 due, 98.1%) |
-| Daily new issue cadence (<30d) | 1431/1440 current (9 due, 99.4%) |
+| Daily new issue cadence (<30d) | 1432/1441 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1885/1887 current (2 due, 99.9%) |
-| Due now by cadence | 164 |
+| Due now by cadence | 169 |
 
 ### Audit Health
 
 <!-- clawsweeper-audit:start -->
-Last audit: Apr 26, 2026, 18:26 UTC
+Last audit: Apr 27, 2026, 00:23 UTC
 
 Status: **Action needed**
 
 | Metric | Count |
 | --- | ---: |
 | Scan complete | yes |
-| Open items seen | 7283 |
+| Open items seen | 7230 |
 | Missing eligible open records | 0 |
-| Missing maintainer-authored open records | 68 |
-| Missing protected open records | 1 |
-| Missing recently-created open records | 2 |
+| Missing maintainer-authored open records | 83 |
+| Missing protected open records | 2 |
+| Missing recently-created open records | 5 |
 | Archived records that are open again | 0 |
-| Stale item records | 1 |
+| Stale item records | 0 |
 | Duplicate records | 0 |
 | Protected proposed closes | 2 |
-| Stale reviews | 2 |
+| Stale reviews | 5 |
 
 | Item | Category | Title | Detail |
 | --- | --- | --- | --- |
 | [#57413](https://github.com/openclaw/openclaw/pull/57413) | Protected proposed close | feat(whatsapp): add reply quoting via replyToMode | closed/57413.md |
 | [#60460](https://github.com/openclaw/openclaw/pull/60460) | Protected proposed close | Enforce browser profile CDP policy | closed/60460.md |
-| [#61960](https://github.com/openclaw/openclaw/pull/61960) | Stale review | docs: require i18n postprocess before skip | items/61960.md |
+| [#40945](https://github.com/openclaw/openclaw/issues/40945) | Stale review | Control UI chat markdown only renders data URI images, not remote https image URLs | items/40945.md |
 <!-- clawsweeper-audit:end -->
 
 ### Latest Run Activity
@@ -108,9 +110,9 @@ Latest review: Apr 27, 2026, 00:12 UTC. Latest close: Apr 27, 2026, 00:02 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 5 | 1 | 4 | 0 | 12 | 169 | 0 |
-| Last hour | 812 | 22 | 790 | 0 | 13 | 210 | 1 |
-| Last 24 hours | 9103 | 1927 | 7176 | 2 | 2088 | 2358 | 10 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Last hour | 808 | 21 | 787 | 1 | 13 | 206 | 1 |
+| Last 24 hours | 8890 | 1867 | 7023 | 3 | 2078 | 2343 | 10 |
 
 ### Recently Closed
 
@@ -124,8 +126,8 @@ Latest review: Apr 27, 2026, 00:12 UTC. Latest close: Apr 27, 2026, 00:02 UTC. L
 | [#69790](https://github.com/openclaw/openclaw/issues/69790) | Telegram inbound can fail with persistent session write lock on existing DM session | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/69790.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69790.md) |
 | [#69616](https://github.com/openclaw/openclaw/issues/69616) | Bug: `openclaw gateway` enters an infinite loop on startup | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/69616.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69616.md) |
 | [#69409](https://github.com/openclaw/openclaw/issues/69409) | Feature request: Approval gate for restart-required config changes | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/69409.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69409.md) |
-| [#69400](https://github.com/openclaw/openclaw/issues/69400) | Feature: honor OPENCLAW_WRAPPER (or --wrapper) when generating LaunchAgent ProgramArguments | duplicate or superseded | Apr 27, 2026, 00:01 UTC | [closed/69400.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69400.md) |
 | [#69291](https://github.com/openclaw/openclaw/issues/69291) | [Feature]: [Proposal] Add systematic Agent Behavior Principles to system prompt | belongs on ClawHub | Apr 27, 2026, 00:01 UTC | [closed/69291.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69291.md) |
+| [#69251](https://github.com/openclaw/openclaw/issues/69251) | exec host=node SYSTEM_RUN_DENIED for all file-referencing commands due to /bin/sh -lc wrapping | duplicate or superseded | Apr 27, 2026, 00:01 UTC | [closed/69251.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69251.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -209,6 +211,8 @@ are checked immediately before mutation.
 
 - Maintainer-authored items are excluded from automated closes.
 - Protected labels block close proposals.
+- Open PRs with GitHub closing references block issue closes until the PR is
+  resolved.
 - Codex runs without GitHub write tokens.
 - CI makes the OpenClaw checkout read-only for reviews.
 - Reviews fail if Codex leaves tracked or untracked changes behind.
