@@ -388,6 +388,8 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 ]);
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
+
+type ReviewArtifactDestination = "items" | "closed" | "skip_closed";
 const CONFIDENCES = new Set<Confidence>(["high", "medium", "low"]);
 const DECISION_SCHEMA_KEYS = new Set([
   "decision",
@@ -2903,6 +2905,14 @@ export function lockedConversationApplyReason(
   return `conversation is locked${item.activeLockReason ? ` (${item.activeLockReason})` : ""}`;
 }
 
+export function reviewArtifactDestination(
+  action: string | undefined,
+  itemIsOpen: boolean,
+): ReviewArtifactDestination {
+  if (!itemIsOpen) return "skip_closed";
+  return action === "closed" || action === "skipped_already_closed" ? "closed" : "items";
+}
+
 function updateReviewCommentMetadata(
   markdown: string,
   comment: Record<string, unknown> | undefined,
@@ -3380,6 +3390,13 @@ function applyDecisionsCommand(args: Args): void {
       currentContext ??= collectItemContext(item);
       return currentContext;
     };
+    if (syncCommentsOnly && state !== "open") {
+      results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
+      processedCount += 1;
+      maybeLogProgress(`skipped comment sync #${number}: already ${state}`);
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
     markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
     const reviewComment = renderReviewCommentFromReport(markdown, closeReason ?? "none");
     const existingReviewComment = issueReviewComment(number, [
@@ -3632,6 +3649,10 @@ function applyArtifactsCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
   const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
   const skipReconcile = boolArg(args.skip_reconcile);
+  const maxPages = numberArg(args.max_pages, 250);
+  const { numbers: openNumbers } = fetchOpenItemNumbers(maxPages);
+  let appliedArtifacts = 0;
+  let skippedClosedArtifacts = 0;
   ensureDir(itemsDir);
   ensureDir(closedDir);
   if (existsSync(artifactDir)) {
@@ -3640,15 +3661,24 @@ function applyArtifactsCommand(args: Args): void {
       if (!name.endsWith(".md")) continue;
       const source = join(artifactDir, name);
       if (!/^\d+\.md$/.test(basename(source))) continue;
+      const number = numberForMarkdownFile(basename(source));
       const markdown = readFileSync(source, "utf8");
       const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
-      const destinationDir =
-        action === "closed" || action === "skipped_already_closed" ? closedDir : itemsDir;
+      const destination = reviewArtifactDestination(action, openNumbers.has(number));
+      if (destination === "skip_closed") {
+        skippedClosedArtifacts += 1;
+        continue;
+      }
+      const destinationDir = destination === "closed" ? closedDir : itemsDir;
       const stalePath = join(destinationDir === itemsDir ? closedDir : itemsDir, basename(source));
       if (existsSync(stalePath)) unlinkSync(stalePath);
       writeFileSync(join(destinationDir, basename(source)), markdown, "utf8");
+      appliedArtifacts += 1;
     }
   }
+  console.error(
+    `[apply-artifacts] applied=${appliedArtifacts} skipped_closed=${skippedClosedArtifacts}`,
+  );
   if (!skipReconcile) reconcileFolders({ itemsDir, closedDir });
   updateDashboard(itemsDir, closedDir);
 }

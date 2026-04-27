@@ -17,6 +17,7 @@ import {
   parseDecision,
   protectedLabels,
   relatedTitleSearchTerms,
+  reviewArtifactDestination,
   reviewActionForDecision,
   safeOutputTail,
   sameAuthorCounterpartApplyReason,
@@ -481,6 +482,14 @@ test("comment-only sync creates or refreshes stale durable review comments", () 
     }),
     true,
   );
+});
+
+test("review artifacts are ignored once the live item is closed", () => {
+  assert.equal(reviewArtifactDestination("kept_open", true), "items");
+  assert.equal(reviewArtifactDestination("proposed_close", true), "items");
+  assert.equal(reviewArtifactDestination("closed", true), "closed");
+  assert.equal(reviewArtifactDestination("proposed_close", false), "skip_closed");
+  assert.equal(reviewArtifactDestination("kept_open", false), "skip_closed");
 });
 
 test("decision parser enforces required schema-shaped evidence", () => {

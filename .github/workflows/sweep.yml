@@ -385,6 +385,7 @@ jobs:
     needs: [plan, review]
     if: ${{ always() && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *') || github.event.schedule == '7 */6 * * *'))) }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
       CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
@@ -456,6 +457,7 @@ jobs:
 
       - name: Sync selected review comments
         if: ${{ success() }}
+        timeout-minutes: 15
         env:
           GH_TOKEN: ${{ steps.openclaw-write-token.outputs.token }}
         run: |
