@@ -36,10 +36,10 @@ Last dashboard update: Apr 27, 2026, 03:23 UTC
 
 Updated: Apr 27, 2026, 03:23 UTC
 
-State: Apply finished
+State: Hot intake in progress
 
-Apply/comment-sync run finished with 0 fresh closes out of requested limit 9. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24974976854](https://github.com/openclaw/clawsweeper/actions/runs/24974976854)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24974884389](https://github.com/openclaw/clawsweeper/actions/runs/24974884389)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -47,11 +47,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24974976854](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3650 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3548 |
-| Open items total | 7198 |
-| Reviewed files | 7016 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3547 |
+| Open items total | 7197 |
+| Reviewed files | 7015 |
 | Unreviewed open items | 182 |
-| Archived closed files | 12765 |
+| Archived closed files | 12766 |
 
 ### Review Outcomes
 
@@ -59,9 +59,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24974976854](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3592 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3415 |
+| Fresh reviewed PRs in the last 7 days | 3413 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7007 |
+| Fresh verified reviews in the last 7 days | 7006 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 10098 |
 | Failed or stale reviews | 9 |
@@ -72,9 +72,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24974976854](https://
 | --- | ---: |
 | Hourly cadence coverage | 220/750 current (530 due, 29.3%) |
 | Hourly hot item cadence (<7d) | 220/750 current (530 due, 29.3%) |
-| Daily cadence coverage | 4251/4402 current (151 due, 96.6%) |
-| Daily PR cadence | 2902/3004 current (102 due, 96.6%) |
-| Daily new issue cadence (<30d) | 1349/1398 current (49 due, 96.5%) |
+| Daily cadence coverage | 4250/4401 current (151 due, 96.6%) |
+| Daily PR cadence | 2900/3002 current (102 due, 96.6%) |
+| Daily new issue cadence (<30d) | 1350/1399 current (49 due, 96.5%) |
 | Weekly older issue cadence | 1864/1864 current (0 due, 100%) |
 | Due now by cadence | 863 |
 
@@ -113,7 +113,7 @@ Latest review: Apr 27, 2026, 03:19 UTC. Latest close: Apr 27, 2026, 02:30 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 19 | 1 |
-| Last hour | 518 | 9 | 509 | 1 | 5 | 355 | 2 |
+| Last hour | 518 | 9 | 509 | 1 | 5 | 339 | 2 |
 | Last 24 hours | 8665 | 1692 | 6973 | 6 | 1818 | 2393 | 6 |
 
 ### Recently Closed
@@ -142,12 +142,12 @@ Latest review: Apr 27, 2026, 03:19 UTC. Latest close: Apr 27, 2026, 02:30 UTC. L
 | [#72369](https://github.com/openclaw/openclaw/issues/72369) | [webchat] Hide startup trigger message from chat history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72369.md) | complete | Apr 27, 2026, 03:19 UTC |
 | [#72315](https://github.com/openclaw/openclaw/issues/72315) | [Bug]: npm grammyjs   npm anthropic frequent disturbance shell popup in windows every 15 seconds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72315.md) | complete | Apr 27, 2026, 03:19 UTC |
 | [#72251](https://github.com/openclaw/openclaw/pull/72251) | fix(backup): retry on tar EOF race and skip known volatile files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72251.md) | complete | Apr 27, 2026, 03:19 UTC |
-| [#51032](https://github.com/openclaw/openclaw/pull/51032) | feat(feishu): display group name instead of chat_id in session labels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/51032.md) | complete | Apr 27, 2026, 03:19 UTC |
 | [#70651](https://github.com/openclaw/openclaw/pull/70651) | fix(feishu): degrade gracefully when card table count exceeds platform limit (230099/11310) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70651.md) | complete | Apr 27, 2026, 03:19 UTC |
 | [#64512](https://github.com/openclaw/openclaw/pull/64512) | feat(amazon-bedrock): support service_tier parameter for Bedrock models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64512.md) | complete | Apr 27, 2026, 03:19 UTC |
 | [#72284](https://github.com/openclaw/openclaw/issues/72284) | [Bug]: DREAMS.md not created after successful REM phase; Control UI Dreams tab empty | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72284.md) | complete | Apr 27, 2026, 03:19 UTC |
 | [#72285](https://github.com/openclaw/openclaw/pull/72285) | Status: show post-compaction context tokens when totals are stale | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72285.md) | complete | Apr 27, 2026, 03:19 UTC |
 | [#72310](https://github.com/openclaw/openclaw/issues/72310) | [Bug]: Default plugin scanning is unsustainable on mid-range hardware | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72310.md) | complete | Apr 27, 2026, 03:19 UTC |
+| [#72237](https://github.com/openclaw/openclaw/pull/72237) | Add realtime consult thinking and fast mode overrides | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72237.md) | complete | Apr 27, 2026, 03:19 UTC |
 
 </details>
 
