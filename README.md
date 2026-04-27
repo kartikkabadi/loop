@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 02:24 UTC
+Last dashboard update: Apr 27, 2026, 02:27 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 02:24 UTC
+Updated: Apr 27, 2026, 02:27 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=61320,63002,63109,63187,63227,63260,63401,63606,63688,63723,63773,63994,64201,64289,64296,64319,64321,64549,64606,64653,64661,64672,64709,64744,64745,64787,64836,64927,65081,65176,65195,65457,65481,65494,65497,65589,65675,65724,65813,65938.
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 44, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973579249](https://github.com/openclaw/clawsweeper/actions/runs/24973579249)
 <!-- clawsweeper-status:end -->
 
@@ -46,24 +46,24 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973579249](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3662 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3563 |
-| Open items total | 7225 |
-| Reviewed files | 7077 |
-| Unreviewed open items | 148 |
-| Archived closed files | 12704 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3648 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3556 |
+| Open items total | 7204 |
+| Reviewed files | 7057 |
+| Unreviewed open items | 147 |
+| Archived closed files | 12724 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3623 |
-| Proposed issue closes | 24 (0.7% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3448 |
-| Proposed PR closes | 16 (0.5% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7071 |
-| Proposed closes awaiting apply | 40 (0.6% of fresh reviews) |
-| Closed by Codex apply | 10054 |
+| Fresh reviewed issues in the last 7 days | 3609 |
+| Proposed issue closes | 9 (0.2% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3442 |
+| Proposed PR closes | 8 (0.2% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7051 |
+| Proposed closes awaiting apply | 17 (0.2% of fresh reviews) |
+| Closed by Codex apply | 10074 |
 | Failed or stale reviews | 6 |
 
 ### Cadence
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973579249](https://
 | --- | ---: |
 | Hourly cadence coverage | 18/761 current (743 due, 2.4%) |
 | Hourly hot item cadence (<7d) | 18/761 current (743 due, 2.4%) |
-| Daily cadence coverage | 4378/4448 current (70 due, 98.4%) |
-| Daily PR cadence | 2966/3025 current (59 due, 98%) |
-| Daily new issue cadence (<30d) | 1412/1423 current (11 due, 99.2%) |
+| Daily cadence coverage | 4358/4428 current (70 due, 98.4%) |
+| Daily PR cadence | 2960/3019 current (59 due, 98%) |
+| Daily new issue cadence (<30d) | 1398/1409 current (11 due, 99.2%) |
 | Weekly older issue cadence | 1868/1868 current (0 due, 100%) |
-| Due now by cadence | 961 |
+| Due now by cadence | 960 |
 
 ### Audit Health
 
@@ -108,28 +108,28 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 02:16 UTC. Latest close: Apr 27, 2026, 02:04 UTC. Latest comment sync: Apr 27, 2026, 02:03 UTC.
+Latest review: Apr 27, 2026, 02:16 UTC. Latest close: Apr 27, 2026, 02:26 UTC. Latest comment sync: Apr 27, 2026, 02:27 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 233 | 21 | 212 | 0 | 0 | 0 | 0 |
-| Last hour | 634 | 44 | 590 | 0 | 18 | 510 | 12 |
-| Last 24 hours | 8871 | 1782 | 7089 | 4 | 2011 | 2552 | 15 |
+| Last 15 minutes | 81 | 9 | 72 | 0 | 20 | 21 | 3 |
+| Last hour | 634 | 44 | 590 | 0 | 38 | 479 | 13 |
+| Last 24 hours | 8871 | 1782 | 7089 | 4 | 2031 | 2573 | 18 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#71848](https://github.com/openclaw/openclaw/issues/71848) | [SRE] Gateway SIGABRT (134) on macOS launchd (mini-lobby) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71848.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71848.md) |
-| [#71148](https://github.com/openclaw/openclaw/issues/71148) | Memory leak: Ajv `.compile()` per call in `sharedAjv` (and `ajv`) leaks SchemaEnv/run closures | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71148.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71148.md) |
-| [#63169](https://github.com/openclaw/openclaw/issues/63169) | WhatsApp media send reports success but attachment is never delivered (2026.4.8) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/63169.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63169.md) |
-| [#63119](https://github.com/openclaw/openclaw/issues/63119) | [Feature]: Session compaction: archive transcript files before deletion, with configurable retention | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/63119.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63119.md) |
-| [#63075](https://github.com/openclaw/openclaw/issues/63075) | Discord stale slash commands remain visible when channels.discord.commands.native=false | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/63075.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63075.md) |
-| [#63045](https://github.com/openclaw/openclaw/pull/63045) | fix(device-pairing): guard against array-typed state files in loadState | duplicate or superseded | Apr 27, 2026, 02:03 UTC | [closed/63045.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63045.md) |
-| [#62991](https://github.com/openclaw/openclaw/pull/62991) | fix(agents): merge user-configured providers into model catalog | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/62991.md](https://github.com/openclaw/clawsweeper/blob/main/closed/62991.md) |
-| [#54413](https://github.com/openclaw/openclaw/issues/54413) | Discord delivery silently drops messages after response termination + retry | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54413.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54413.md) |
-| [#54381](https://github.com/openclaw/openclaw/issues/54381) | [Bug]: Subsystem logger caches file path on first call, logs written to wrong date file after midnight | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54381.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54381.md) |
-| [#54254](https://github.com/openclaw/openclaw/issues/54254) | Telegram: bot gets stuck in 'typing' during long model inference, /stop unresponsive | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54254.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54254.md) |
+| [#64709](https://github.com/openclaw/openclaw/pull/64709) | fix(process): handle Windows CJK encoding in child process output [AI-assisted] | duplicate or superseded | Apr 27, 2026, 02:26 UTC | [closed/64709.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64709.md) |
+| [#64672](https://github.com/openclaw/openclaw/issues/64672) | qwen3.6-plus unavailable on Qwen Coding Plan Pro subscription | duplicate or superseded | Apr 27, 2026, 02:26 UTC | [closed/64672.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64672.md) |
+| [#64661](https://github.com/openclaw/openclaw/pull/64661) | fix(exec): apply Windows codepage-aware output decoding in runExec and spawn-based callers [AI-assisted] | duplicate or superseded | Apr 27, 2026, 02:26 UTC | [closed/64661.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64661.md) |
+| [#64606](https://github.com/openclaw/openclaw/issues/64606) | Duplicate Telegram message sent after provider timeout + retry | already implemented on main | Apr 27, 2026, 02:26 UTC | [closed/64606.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64606.md) |
+| [#64549](https://github.com/openclaw/openclaw/issues/64549) | [Bug]: memorySearch watch does not auto-index new markdown files in workspace/memory or extraPaths | already implemented on main | Apr 27, 2026, 02:26 UTC | [closed/64549.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64549.md) |
+| [#64321](https://github.com/openclaw/openclaw/issues/64321) | sessions.list slow with large session history (23s for 112MB) | duplicate or superseded | Apr 27, 2026, 02:26 UTC | [closed/64321.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64321.md) |
+| [#64319](https://github.com/openclaw/openclaw/issues/64319) | [Bug]: models auth config shows Waiting for GitHub authorization | duplicate or superseded | Apr 27, 2026, 02:26 UTC | [closed/64319.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64319.md) |
+| [#64296](https://github.com/openclaw/openclaw/issues/64296) | [Bug]: WhatsApp Web connection ended before fully opening | duplicate or superseded | Apr 27, 2026, 02:26 UTC | [closed/64296.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64296.md) |
+| [#64289](https://github.com/openclaw/openclaw/issues/64289) | [Bug] Session-scoped plugin lazy-initialization causes UX disruption after idle | already implemented on main | Apr 27, 2026, 02:26 UTC | [closed/64289.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64289.md) |
+| [#63773](https://github.com/openclaw/openclaw/issues/63773) | Bug: Subagent session JSONL does not record token usage (usage fields always 0) | already implemented on main | Apr 27, 2026, 02:25 UTC | [closed/63773.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63773.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
