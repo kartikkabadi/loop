@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 03:57 UTC
+Last dashboard update: Apr 27, 2026, 03:59 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 03:57 UTC
+Updated: Apr 27, 2026, 03:59 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24975806525](https://github.com/openclaw/clawsweeper/actions/runs/24975806525)
 <!-- clawsweeper-status:end -->
 
@@ -46,22 +46,22 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24975806525](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3655 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3549 |
-| Open items total | 7204 |
-| Reviewed files | 7014 |
-| Unreviewed open items | 190 |
-| Archived closed files | 12767 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3653 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3546 |
+| Open items total | 7199 |
+| Reviewed files | 7004 |
+| Unreviewed open items | 195 |
+| Archived closed files | 12777 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3590 |
+| Fresh reviewed issues in the last 7 days | 3588 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3412 |
+| Fresh reviewed PRs in the last 7 days | 3409 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7002 |
+| Fresh verified reviews in the last 7 days | 6997 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 10103 |
 | Failed or stale reviews | 7 |
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24975806525](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 38/749 current (711 due, 5.1%) |
-| Hourly hot item cadence (<7d) | 38/749 current (711 due, 5.1%) |
-| Daily cadence coverage | 3968/4401 current (433 due, 90.2%) |
-| Daily PR cadence | 2775/3002 current (227 due, 92.4%) |
-| Daily new issue cadence (<30d) | 1193/1399 current (206 due, 85.3%) |
+| Hourly cadence coverage | 37/748 current (711 due, 4.9%) |
+| Hourly hot item cadence (<7d) | 37/748 current (711 due, 4.9%) |
+| Daily cadence coverage | 3960/4392 current (432 due, 90.2%) |
+| Daily PR cadence | 2771/2997 current (226 due, 92.5%) |
+| Daily new issue cadence (<30d) | 1189/1395 current (206 due, 85.2%) |
 | Weekly older issue cadence | 1864/1864 current (0 due, 100%) |
-| Due now by cadence | 1334 |
+| Due now by cadence | 1338 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 03:41 UTC. Latest close: Apr 27, 2026, 02:30 UTC. Latest comment sync: Apr 27, 2026, 03:57 UTC.
+Latest review: Apr 27, 2026, 03:41 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 03:57 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 403 | 1 |
-| Last hour | 540 | 5 | 535 | 0 | 0 | 440 | 4 |
-| Last 24 hours | 8294 | 1625 | 6669 | 4 | 1675 | 2220 | 9 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 3 | 405 | 1 |
+| Last hour | 540 | 5 | 535 | 0 | 3 | 442 | 4 |
+| Last 24 hours | 8294 | 1625 | 6669 | 4 | 1677 | 2221 | 9 |
 
 ### Recently Closed
 
@@ -123,13 +123,13 @@ Latest review: Apr 27, 2026, 03:41 UTC. Latest close: Apr 27, 2026, 02:30 UTC. L
 | [#70597](https://github.com/openclaw/openclaw/pull/70597) | yuanbao channel | belongs on ClawHub | Apr 27, 2026, 03:51 UTC | [closed/70597.md](https://github.com/openclaw/clawsweeper/blob/main/closed/70597.md) |
 | [#65669](https://github.com/openclaw/openclaw/pull/65669) | feat: support custom job IDs in cron add command | duplicate or superseded | Apr 27, 2026, 03:50 UTC | [closed/65669.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65669.md) |
 | [#64653](https://github.com/openclaw/openclaw/pull/64653) | fix: honor provider-prefixed configured model ids for routed providers | already implemented on main | Apr 27, 2026, 03:50 UTC | [closed/64653.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64653.md) |
-| [#64201](https://github.com/openclaw/openclaw/issues/64201) | [Bug]: OpenClaw: Crash loop on plugin config reload (ECONNREFUSED on loopback port 18789) | already implemented on main | Apr 27, 2026, 03:50 UTC | [closed/64201.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64201.md) |
-| [#63779](https://github.com/openclaw/openclaw/issues/63779) | ACP completion delivery-mirror message (assistant role) does not activate next turn after sessions_yield | already implemented on main | Apr 27, 2026, 03:50 UTC | [closed/63779.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63779.md) |
 | [#65938](https://github.com/openclaw/openclaw/pull/65938) | docs(providers): add Bedrock Mantle to provider index pages | already implemented on main | Apr 27, 2026, 02:30 UTC | [closed/65938.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65938.md) |
 | [#65813](https://github.com/openclaw/openclaw/issues/65813) | openai-codex auth profile rotation burns through both profiles before escalating to model fallback | already implemented on main | Apr 27, 2026, 02:30 UTC | [closed/65813.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65813.md) |
 | [#65724](https://github.com/openclaw/openclaw/issues/65724) | [Windows] DeprecationWarning: Passing args to child process with shell option true | already implemented on main | Apr 27, 2026, 02:30 UTC | [closed/65724.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65724.md) |
 | [#65675](https://github.com/openclaw/openclaw/pull/65675) | docs: add 2MB size limit note for avatar images | duplicate or superseded | Apr 27, 2026, 02:30 UTC | [closed/65675.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65675.md) |
 | [#65589](https://github.com/openclaw/openclaw/pull/65589) | feat(memory-core): dreaming circuit breaker to prevent runaway cost and data corruption | duplicate or superseded | Apr 27, 2026, 02:30 UTC | [closed/65589.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65589.md) |
+| [#71848](https://github.com/openclaw/openclaw/issues/71848) | [SRE] Gateway SIGABRT (134) on macOS launchd (mini-lobby) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71848.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71848.md) |
+| [#71148](https://github.com/openclaw/openclaw/issues/71148) | Memory leak: Ajv `.compile()` per call in `sharedAjv` (and `ajv`) leaks SchemaEnv/run closures | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71148.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71148.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
