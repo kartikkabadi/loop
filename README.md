@@ -27,19 +27,19 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 07:03 UTC
+Last dashboard update: Apr 27, 2026, 07:11 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 07:02 UTC
+Updated: Apr 27, 2026, 07:11 UTC
 
-State: Review publish complete
+State: Apply in progress
 
-Merged review artifacts for run 24980611021. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980611021](https://github.com/openclaw/clawsweeper/actions/runs/24980611021)
+Starting apply/comment-sync run for up to 5 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=43669,43671,53475,63120,64714.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24981437187](https://github.com/openclaw/clawsweeper/actions/runs/24981437187)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -47,11 +47,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980611021](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3618 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3519 |
-| Open items total | 7137 |
-| Reviewed files | 6887 |
-| Unreviewed open items | 250 |
-| Archived closed files | 12894 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3516 |
+| Open items total | 7134 |
+| Reviewed files | 6886 |
+| Unreviewed open items | 248 |
+| Archived closed files | 12895 |
 
 ### Review Outcomes
 
@@ -59,9 +59,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980611021](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3545 |
 | Proposed issue closes | 3 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3336 |
+| Fresh reviewed PRs in the last 7 days | 3335 |
 | Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6881 |
+| Fresh verified reviews in the last 7 days | 6880 |
 | Proposed closes awaiting apply | 5 (0.1% of fresh reviews) |
 | Closed by Codex apply | 10162 |
 | Failed or stale reviews | 6 |
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980611021](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 41/722 current (681 due, 5.7%) |
-| Hourly hot item cadence (<7d) | 41/722 current (681 due, 5.7%) |
-| Daily cadence coverage | 3603/4312 current (709 due, 83.6%) |
-| Daily PR cadence | 2323/2939 current (616 due, 79%) |
-| Daily new issue cadence (<30d) | 1280/1373 current (93 due, 93.2%) |
+| Hourly cadence coverage | 35/720 current (685 due, 4.9%) |
+| Hourly hot item cadence (<7d) | 35/720 current (685 due, 4.9%) |
+| Daily cadence coverage | 3482/4313 current (831 due, 80.7%) |
+| Daily PR cadence | 2204/2939 current (735 due, 75%) |
+| Daily new issue cadence (<30d) | 1278/1374 current (96 due, 93%) |
 | Weekly older issue cadence | 1853/1853 current (0 due, 100%) |
-| Due now by cadence | 1640 |
+| Due now by cadence | 1764 |
 
 ### Audit Health
 
@@ -112,9 +112,9 @@ Latest review: Apr 27, 2026, 07:00 UTC. Latest close: Apr 27, 2026, 06:42 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 500 | 5 | 495 | 1 | 0 | 0 | 0 |
-| Last hour | 1010 | 12 | 998 | 1 | 11 | 997 | 6 |
-| Last 24 hours | 7320 | 1133 | 6187 | 4 | 980 | 2066 | 12 |
+| Last 15 minutes | 161 | 1 | 160 | 1 | 0 | 0 | 0 |
+| Last hour | 1003 | 12 | 991 | 1 | 11 | 819 | 6 |
+| Last 24 hours | 7165 | 1103 | 6062 | 4 | 944 | 2029 | 12 |
 
 ### Recently Closed
 
