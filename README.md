@@ -38,7 +38,7 @@ Updated: Apr 27, 2026, 08:03 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 8 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72444,72447,72451,72453,72456,72457,72458,72460.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/8. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24983511968](https://github.com/openclaw/clawsweeper/actions/runs/24983511968)
 <!-- clawsweeper-status:end -->
 
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24983511968](https://
 | --- | ---: |
 | Hourly cadence coverage | 111/719 current (608 due, 15.4%) |
 | Hourly hot item cadence (<7d) | 111/719 current (608 due, 15.4%) |
-| Daily cadence coverage | 3043/4293 current (1250 due, 70.9%) |
-| Daily PR cadence | 1784/2929 current (1145 due, 60.9%) |
-| Daily new issue cadence (<30d) | 1259/1364 current (105 due, 92.3%) |
+| Daily cadence coverage | 3039/4293 current (1254 due, 70.8%) |
+| Daily PR cadence | 1781/2929 current (1148 due, 60.8%) |
+| Daily new issue cadence (<30d) | 1258/1364 current (106 due, 92.2%) |
 | Weekly older issue cadence | 1854/1854 current (0 due, 100%) |
-| Due now by cadence | 2093 |
+| Due now by cadence | 2097 |
 
 ### Audit Health
 
@@ -115,8 +115,8 @@ Latest review: Apr 27, 2026, 07:43 UTC. Latest close: Apr 27, 2026, 08:02 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 8 | 0 | 0 |
-| Last hour | 520 | 12 | 508 | 0 | 11 | 897 | 4 |
-| Last 24 hours | 6624 | 1006 | 5618 | 4 | 862 | 2352 | 12 |
+| Last hour | 520 | 12 | 508 | 0 | 11 | 893 | 4 |
+| Last 24 hours | 6619 | 1005 | 5614 | 4 | 862 | 2352 | 12 |
 
 ### Recently Closed
 
