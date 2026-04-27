@@ -38,7 +38,7 @@ Updated: Apr 27, 2026, 01:06 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 7. Total fresh closes in this run: 7/8. Result records in checkpoint: 14, including durable review comment syncs.
+Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 7/8. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24971729752](https://github.com/openclaw/clawsweeper/actions/runs/24971729752)
 <!-- clawsweeper-status:end -->
 
