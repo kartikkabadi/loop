@@ -27,19 +27,19 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 02:30 UTC
+Last dashboard update: Apr 27, 2026, 02:32 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 02:30 UTC
+Updated: Apr 27, 2026, 02:32 UTC
 
-State: Apply finished
+State: Review comments checked
 
-Apply/comment-sync run finished with 16 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973669832](https://github.com/openclaw/clawsweeper/actions/runs/24973669832)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 493. Item numbers: 48512,56582,57326,58114,61076,61320,62956,63002,63005,63109,63139,63187,63227,63260,63263,63352,63356,63398,63401,63411,63425,63432,63454,63460,63463,63481,63486,63488,63492,63497,63530,63535,63536,63552,63556,63558,63572,63578,63588,63591,63593,63606,63610,63612,63626,63633,63634,63651,63652,63655,63663,63664,63666,63673,63680,63685,63688,63691,63697,63700,63710,63713,63723,63734,63740,63757,63758,63759,63760,63769,63773,63779,63780,63786,63803,63807,63819,63829,63840,63845,63855,63864,63870,63871,63881,63884,63892,63893,63901,63904,63919,63920,63924,63940,63941,63956,63959,63978,63990,63992,63994,63998,64004,64015,64016,64022,64026,64027,64028,64030,64037,64044,64060,64065,64081,64086,64102,64103,64112,64121,64126,64129,64139,64148,64150,64168,64175,64179,64181,64182,64187,64193,64199,64201,64205,64212,64213,64217,64220,64224,64236,64253,64260,64262,64267,64268,64271,64274,64281,64289,64293,64294,64296,64299,64301,64310,64315,64317,64319,64321,64322,64327,64334,64344,64347,64362,64365,64375,64383,64384,64399,64400,64408,64411,64413,64416,64426,64427,64429,64438,64443,64448,64463,64472,64473,64483,64486,64490,64503,64507,64530,64540,64541,64545,64546,64549,64555,64556,64559,64593,64604,64606,64607,64608,64609,64611,64613,64622,64624,64625,64633,64639,64640,64647,64649,64651,64653,64656,64658,64661,64664,64672,64673,64676,64684,64695,64696,64699,64703,64707,64708,64709,64714,64715,64717,64718,64719,64720,64721,64726,64733,64734,64744,64745,64749,64758,64760,64767,64768,64773,64782,64783,64784,64787,64800,64805,64807,64810,64813,64818,64820,64825,64830,64831,64832,64836,64846,64874,64879,64881,64883,64887,64891,64901,64902,64903,64921,64927,64929,64934,64946,64950,64957,64960,64962,64970,64973,64983,64986,64988,64993,65005,65007,65011,65013,65023,65030,65036,65037,65039,65040,65058,65059,65066,65081,65095,65109,65111,65123,65130,65131,65134,65141,65143,65149,65156,65161,65164,65165,65168,65169,65176,65177,65178,65179,65180,65185,65187,65190,65194,65195,65198,65199,65209,65212,65213,65223,65235,65239,65242,65251,65252,65258,65260,65262,65270,65271,65279,65284,65293,65301,65305,65307,65312,65316,65317,65326,65329,65331,65333,65345,65353,65355,65358,65359,65364,65370,65374,65375,65381,65382,65383,65384,65398,65404,65405,65408,65409,65414,65423,65425,65433,65435,65438,65444,65445,65452,65457,65477,65480,65481,65486,65490,65494,65497,65502,65504,65506,65509,65522,65525,65536,65538,65541,65544,65547,65553,65557,65563,65565,65567,65574,65575,65589,65592,65600,65606,65619,65623,65624,65636,65637,65640,65641,65642,65643,65650,65655,65656,65669,65670,65675,65685,65686,65687,65689,65692,65704,65707,65720,65724,65726,65727,65729,65733,65736,65737,65741,65745,65746,65751,65767,65768,65770,65772,65773,65774,65776,65782,65783,65786,65792,65799,65802,65813,65825,65828,65839,65851,65852,65855,65859,65860,65862,65868,65870,65886,65892,65894,65898,65906,65914,65923,65933,65936,65937,65938,65939,65957,65958,66020,66023,66041,66067,66115,66123,66252,67157,68845,71235.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973067071](https://github.com/openclaw/clawsweeper/actions/runs/24973067071)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -47,36 +47,36 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973669832](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3639 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3551 |
-| Open items total | 7190 |
-| Reviewed files | 7040 |
-| Unreviewed open items | 150 |
-| Archived closed files | 12741 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3552 |
+| Open items total | 7191 |
+| Reviewed files | 7078 |
+| Unreviewed open items | 113 |
+| Archived closed files | 12703 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3600 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3434 |
-| Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7034 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Closed by Codex apply | 10090 |
+| Fresh reviewed issues in the last 7 days | 3624 |
+| Proposed issue closes | 24 (0.7% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3448 |
+| Proposed PR closes | 14 (0.4% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7072 |
+| Proposed closes awaiting apply | 38 (0.5% of fresh reviews) |
+| Closed by Codex apply | 10054 |
 | Failed or stale reviews | 6 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 18/761 current (743 due, 2.4%) |
-| Hourly hot item cadence (<7d) | 18/761 current (743 due, 2.4%) |
-| Daily cadence coverage | 4341/4411 current (70 due, 98.4%) |
-| Daily PR cadence | 2952/3011 current (59 due, 98%) |
-| Daily new issue cadence (<30d) | 1389/1400 current (11 due, 99.2%) |
+| Hourly cadence coverage | 18/762 current (744 due, 2.4%) |
+| Hourly hot item cadence (<7d) | 18/762 current (744 due, 2.4%) |
+| Daily cadence coverage | 4378/4448 current (70 due, 98.4%) |
+| Daily PR cadence | 2966/3025 current (59 due, 98%) |
+| Daily new issue cadence (<30d) | 1412/1423 current (11 due, 99.2%) |
 | Weekly older issue cadence | 1868/1868 current (0 due, 100%) |
-| Due now by cadence | 963 |
+| Due now by cadence | 927 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 02:16 UTC. Latest close: Apr 27, 2026, 02:30 UTC. Latest comment sync: Apr 27, 2026, 02:30 UTC.
+Latest review: Apr 27, 2026, 02:16 UTC. Latest close: Apr 27, 2026, 02:04 UTC. Latest comment sync: Apr 27, 2026, 02:32 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 1 | 0 | 0 | 36 | 36 | 4 |
-| Last hour | 634 | 44 | 590 | 0 | 54 | 382 | 14 |
-| Last 24 hours | 8863 | 1781 | 7082 | 4 | 2047 | 2588 | 19 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 493 | 2 |
+| Last hour | 634 | 44 | 590 | 0 | 18 | 795 | 12 |
+| Last 24 hours | 8855 | 1773 | 7082 | 4 | 2011 | 3045 | 17 |
 
 ### Recently Closed
 
