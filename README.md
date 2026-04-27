@@ -27,56 +27,56 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 02:04 UTC
+Last dashboard update: Apr 27, 2026, 02:18 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 02:04 UTC
+Updated: Apr 27, 2026, 02:18 UTC
 
-State: Apply finished
+State: Review publish complete
 
-Apply/comment-sync run finished with 7 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973085727](https://github.com/openclaw/clawsweeper/actions/runs/24973085727)
+Merged review artifacts for run 24973067071. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973067071](https://github.com/openclaw/clawsweeper/actions/runs/24973067071)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3659 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3661 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3558 |
-| Open items total | 7217 |
-| Reviewed files | 7080 |
-| Unreviewed open items | 137 |
-| Archived closed files | 12701 |
+| Open items total | 7219 |
+| Reviewed files | 7078 |
+| Unreviewed open items | 141 |
+| Archived closed files | 12703 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3625 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3445 |
-| Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7070 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3624 |
+| Proposed issue closes | 24 (0.7% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3448 |
+| Proposed PR closes | 16 (0.5% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7072 |
+| Proposed closes awaiting apply | 40 (0.6% of fresh reviews) |
 | Closed by Codex apply | 10054 |
-| Failed or stale reviews | 10 |
+| Failed or stale reviews | 6 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 222/763 current (541 due, 29.1%) |
-| Hourly hot item cadence (<7d) | 222/763 current (541 due, 29.1%) |
-| Daily cadence coverage | 4172/4449 current (277 due, 93.8%) |
-| Daily PR cadence | 2881/3025 current (144 due, 95.2%) |
-| Daily new issue cadence (<30d) | 1291/1424 current (133 due, 90.7%) |
+| Hourly cadence coverage | 149/762 current (613 due, 19.6%) |
+| Hourly hot item cadence (<7d) | 149/762 current (613 due, 19.6%) |
+| Daily cadence coverage | 4378/4448 current (70 due, 98.4%) |
+| Daily PR cadence | 2966/3025 current (59 due, 98%) |
+| Daily new issue cadence (<30d) | 1412/1423 current (11 due, 99.2%) |
 | Weekly older issue cadence | 1868/1868 current (0 due, 100%) |
-| Due now by cadence | 955 |
+| Due now by cadence | 824 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 01:59 UTC. Latest close: Apr 27, 2026, 02:04 UTC. Latest comment sync: Apr 27, 2026, 02:03 UTC.
+Latest review: Apr 27, 2026, 02:16 UTC. Latest close: Apr 27, 2026, 02:04 UTC. Latest comment sync: Apr 27, 2026, 02:03 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 18 | 23 | 2 |
-| Last hour | 634 | 33 | 601 | 1 | 27 | 519 | 12 |
-| Last 24 hours | 8673 | 1748 | 6925 | 8 | 2011 | 2553 | 15 |
+| Last 15 minutes | 500 | 40 | 460 | 0 | 6 | 3 | 0 |
+| Last hour | 778 | 49 | 729 | 0 | 18 | 510 | 12 |
+| Last 24 hours | 8871 | 1782 | 7089 | 4 | 2011 | 2552 | 15 |
 
 ### Recently Closed
 
@@ -138,16 +138,16 @@ Latest review: Apr 27, 2026, 01:59 UTC. Latest close: Apr 27, 2026, 02:04 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72284](https://github.com/openclaw/openclaw/issues/72284) | [Bug]: DREAMS.md not created after successful REM phase; Control UI Dreams tab empty | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72284.md) | complete | Apr 27, 2026, 01:59 UTC |
-| [#72149](https://github.com/openclaw/openclaw/pull/72149) | fix(agents): omit temperature for anthropic opus 4.7 requests | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72149.md) | complete | Apr 27, 2026, 01:58 UTC |
-| [#72189](https://github.com/openclaw/openclaw/pull/72189) | fix(voice-call): Google Live tool responses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72189.md) | complete | Apr 27, 2026, 01:58 UTC |
-| [#72278](https://github.com/openclaw/openclaw/issues/72278) | Fix SecretRef integration so external secret providers batch/memoize lookups across all vault backends | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72278.md) | complete | Apr 27, 2026, 01:58 UTC |
-| [#72254](https://github.com/openclaw/openclaw/pull/72254) | fix(skills): clean up partially-copied skill dirs after sync failure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72254.md) | complete | Apr 27, 2026, 01:58 UTC |
-| [#72369](https://github.com/openclaw/openclaw/issues/72369) | [webchat] Hide startup trigger message from chat history | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72369.md) | complete | Apr 27, 2026, 01:58 UTC |
-| [#72251](https://github.com/openclaw/openclaw/pull/72251) | fix(backup): retry on tar EOF race and skip known volatile files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72251.md) | complete | Apr 27, 2026, 01:58 UTC |
-| [#72286](https://github.com/openclaw/openclaw/pull/72286) | Add Google Live browser Talk sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72286.md) | complete | Apr 27, 2026, 01:58 UTC |
-| [#65668](https://github.com/openclaw/openclaw/issues/65668) | [Bug]: SIGUSR1/config.patch restart orphans gateway under custom supervisors → EADDRINUSE crash loop (workaround: OPENCLAW_NO_RESPAWN=1) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65668.md) | complete | Apr 27, 2026, 01:58 UTC |
-| [#72253](https://github.com/openclaw/openclaw/pull/72253) | fix(heartbeat): keep benign exec completions internal | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72253.md) | complete | Apr 27, 2026, 01:58 UTC |
+| [#65497](https://github.com/openclaw/openclaw/pull/65497) | fix: reuse gateway provider registry in worker sessions (#62051) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65497.md) | complete | Apr 27, 2026, 02:16 UTC |
+| [#65486](https://github.com/openclaw/openclaw/issues/65486) | [Bug]: Gateway restart does not invalidate approval-pending session tool results - stale approval IDs cause INVALID_REQUEST loop on resume | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65486.md) | complete | Apr 27, 2026, 02:15 UTC |
+| [#65490](https://github.com/openclaw/openclaw/issues/65490) | Running an OpenClaw agent in production: the execution discipline gap | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65490.md) | complete | Apr 27, 2026, 02:15 UTC |
+| [#65687](https://github.com/openclaw/openclaw/issues/65687) | [Bug]: Discord voice conversations break after one successful back and forth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65687.md) | complete | Apr 27, 2026, 02:14 UTC |
+| [#65592](https://github.com/openclaw/openclaw/pull/65592) | feat(searxng): show JSON format setup note during onboarding | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65592.md) | complete | Apr 27, 2026, 02:14 UTC |
+| [#65933](https://github.com/openclaw/openclaw/pull/65933) | fix(exec): respect configured security=full as floor; model args cannot downgrade | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65933.md) | complete | Apr 27, 2026, 02:14 UTC |
+| [#65589](https://github.com/openclaw/openclaw/pull/65589) | feat(memory-core): dreaming circuit breaker to prevent runaway cost and data corruption | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/65589.md) | complete | Apr 27, 2026, 02:14 UTC |
+| [#67157](https://github.com/openclaw/openclaw/pull/67157) | Add stable tarball upgrade workflow | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67157.md) | complete | Apr 27, 2026, 02:14 UTC |
+| [#65670](https://github.com/openclaw/openclaw/pull/65670) | feat: keep vite-plus companion bin on daemon PATH | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65670.md) | complete | Apr 27, 2026, 02:14 UTC |
+| [#65855](https://github.com/openclaw/openclaw/pull/65855) | chore: add qqbot to channel contract guardrails and fix synology-chat labeler | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/65855.md) | complete | Apr 27, 2026, 02:14 UTC |
 
 </details>
 
