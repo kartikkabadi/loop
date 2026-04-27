@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 01:45 UTC
+Last dashboard update: Apr 27, 2026, 01:47 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 01:42 UTC
+Updated: Apr 27, 2026, 01:47 UTC
 
-State: Review in progress
+State: Review publish complete
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged review artifacts for run 24972586457. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972586457](https://github.com/openclaw/clawsweeper/actions/runs/24972586457)
 <!-- clawsweeper-status:end -->
 
@@ -47,22 +47,22 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972586457](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3683 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3555 |
-| Open items total | 7238 |
-| Reviewed files | 7113 |
-| Unreviewed open items | 125 |
-| Archived closed files | 12668 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3558 |
+| Open items total | 7241 |
+| Reviewed files | 7112 |
+| Unreviewed open items | 129 |
+| Archived closed files | 12669 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3656 |
-| Proposed issue closes | 24 (0.7% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3655 |
+| Proposed issue closes | 27 (0.7% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3455 |
-| Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7111 |
-| Proposed closes awaiting apply | 26 (0.4% of fresh reviews) |
+| Proposed PR closes | 3 (0.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7110 |
+| Proposed closes awaiting apply | 30 (0.4% of fresh reviews) |
 | Closed by Codex apply | 10027 |
 | Failed or stale reviews | 2 |
 
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972586457](https://
 | --- | ---: |
 | Hourly cadence coverage | 208/766 current (558 due, 27.2%) |
 | Hourly hot item cadence (<7d) | 208/766 current (558 due, 27.2%) |
-| Daily cadence coverage | 4126/4460 current (334 due, 92.5%) |
-| Daily PR cadence | 2867/3029 current (162 due, 94.7%) |
-| Daily new issue cadence (<30d) | 1259/1431 current (172 due, 88%) |
+| Daily cadence coverage | 4218/4459 current (241 due, 94.6%) |
+| Daily PR cadence | 2902/3029 current (127 due, 95.8%) |
+| Daily new issue cadence (<30d) | 1316/1430 current (114 due, 92%) |
 | Weekly older issue cadence | 1887/1887 current (0 due, 100%) |
-| Due now by cadence | 1017 |
+| Due now by cadence | 928 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 01:24 UTC. Latest close: Apr 27, 2026, 01:18 UTC. Latest comment sync: Apr 27, 2026, 01:40 UTC.
+Latest review: Apr 27, 2026, 01:46 UTC. Latest close: Apr 27, 2026, 01:18 UTC. Latest comment sync: Apr 27, 2026, 01:40 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 348 | 8 |
-| Last hour | 500 | 29 | 471 | 0 | 9 | 496 | 10 |
-| Last 24 hours | 8628 | 1764 | 6864 | 0 | 2004 | 2541 | 14 |
+| Last 15 minutes | 114 | 4 | 110 | 0 | 0 | 268 | 8 |
+| Last hour | 614 | 33 | 581 | 0 | 9 | 496 | 10 |
+| Last 24 hours | 8724 | 1767 | 6957 | 0 | 1997 | 2534 | 13 |
 
 ### Recently Closed
 
@@ -138,16 +138,16 @@ Latest review: Apr 27, 2026, 01:24 UTC. Latest close: Apr 27, 2026, 01:18 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71592](https://github.com/openclaw/openclaw/issues/71592) | TUI local mode advertises /status and /compact but falls through to model text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71592.md) | complete | Apr 27, 2026, 01:24 UTC |
-| [#70812](https://github.com/openclaw/openclaw/pull/70812) | fix: ignore trajectory sidecars in orphan transcript scans (Fixes #70680) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/70812.md) | complete | Apr 27, 2026, 01:22 UTC |
-| [#72383](https://github.com/openclaw/openclaw/pull/72383) | [plugin sdk] Add workflow action, outbound, scheduler, and retry host seams | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72383.md) | complete | Apr 27, 2026, 01:22 UTC |
-| [#71157](https://github.com/openclaw/openclaw/issues/71157) | [Feature]: Support WhatsApp disappearing-message expiration for outbound replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71157.md) | complete | Apr 27, 2026, 01:22 UTC |
-| [#72266](https://github.com/openclaw/openclaw/pull/72266) | [tts][personality] Gateway display + status surfaces for emotion mode (#69051 PR-D of 4) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72266.md) | complete | Apr 27, 2026, 01:22 UTC |
-| [#72139](https://github.com/openclaw/openclaw/issues/72139) | Control UI auth retry loop + blocking chat.history causes Slack Socket Mode disconnects | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72139.md) | complete | Apr 27, 2026, 01:22 UTC |
-| [#70876](https://github.com/openclaw/openclaw/pull/70876) | fix: include MCP server tools in /tools inventory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70876.md) | complete | Apr 27, 2026, 01:22 UTC |
-| [#71569](https://github.com/openclaw/openclaw/issues/71569) | Mattermost streaming config: documented but not implemented + notification UX bug | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71569.md) | complete | Apr 27, 2026, 01:21 UTC |
-| [#71652](https://github.com/openclaw/openclaw/pull/71652) | fix: refuse local tsgo under host pressure | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71652.md) | complete | Apr 27, 2026, 01:21 UTC |
-| [#71626](https://github.com/openclaw/openclaw/pull/71626) | test(cli-runner): bound argv length for large Claude system prompts (#71600) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71626.md) | complete | Apr 27, 2026, 01:21 UTC |
+| [#63636](https://github.com/openclaw/openclaw/pull/63636) | fix(compaction): guard malformed token estimation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63636.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#63696](https://github.com/openclaw/openclaw/pull/63696) | fix(agents): suppress duplicate user persistence on fallback retries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63696.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#63644](https://github.com/openclaw/openclaw/pull/63644) | fix(ui): fix iPhone Safari chat layout and input zoom | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63644.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#63571](https://github.com/openclaw/openclaw/pull/63571) | feat(web-search): add explicit provider fallback support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63571.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#64078](https://github.com/openclaw/openclaw/issues/64078) | Slack: top-level channel messages with replyToMode=\"all\" cause dual-session processing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64078.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#63637](https://github.com/openclaw/openclaw/pull/63637) | fix: pass currentMessageId to applyReplyThreading in followup drain | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63637.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#63654](https://github.com/openclaw/openclaw/issues/63654) | Qwen: qwen3.6-plus image understanding blocked on Coding Plan endpoint despite model supporting vision | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63654.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#63335](https://github.com/openclaw/openclaw/issues/63335) | [Bug]: Single turn can enter pathological retry churn with same runId, near-identical prompt size, and stuck processing state | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63335.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#63210](https://github.com/openclaw/openclaw/issues/63210) | [Feature]: Detect and recover from output truncation (stopReason:\"length\") in main agent sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63210.md) | complete | Apr 27, 2026, 01:46 UTC |
+| [#63794](https://github.com/openclaw/openclaw/pull/63794) | fix: repair missing bin symlink after npm global update | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63794.md) | complete | Apr 27, 2026, 01:46 UTC |
 
 </details>
 
