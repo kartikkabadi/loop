@@ -36,10 +36,10 @@ Last dashboard update: Apr 27, 2026, 01:06 UTC
 
 Updated: Apr 27, 2026, 01:06 UTC
 
-State: Audit finished
+State: Apply finished
 
-Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24971763565](https://github.com/openclaw/clawsweeper/actions/runs/24971763565)
+Apply/comment-sync run finished with 7 fresh closes out of requested limit 8. See apply-report.json for per-item results.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24971729752](https://github.com/openclaw/clawsweeper/actions/runs/24971729752)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24971763565](https://
 | --- | ---: |
 | Hourly cadence coverage | 3/772 current (769 due, 0.4%) |
 | Hourly hot item cadence (<7d) | 3/772 current (769 due, 0.4%) |
-| Daily cadence coverage | 4279/4463 current (184 due, 95.9%) |
-| Daily PR cadence | 2924/3029 current (105 due, 96.5%) |
-| Daily new issue cadence (<30d) | 1355/1434 current (79 due, 94.5%) |
+| Daily cadence coverage | 4277/4463 current (186 due, 95.8%) |
+| Daily PR cadence | 2923/3029 current (106 due, 96.5%) |
+| Daily new issue cadence (<30d) | 1354/1434 current (80 due, 94.4%) |
 | Weekly older issue cadence | 1884/1887 current (3 due, 99.8%) |
-| Due now by cadence | 1069 |
+| Due now by cadence | 1071 |
 
 ### Audit Health
 
@@ -114,7 +114,7 @@ Latest review: Apr 27, 2026, 00:28 UTC. Latest close: Apr 27, 2026, 01:05 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 7 | 6 | 1 |
 | Last hour | 5 | 1 | 4 | 0 | 7 | 11 | 1 |
-| Last 24 hours | 8650 | 1807 | 6843 | 3 | 2040 | 2303 | 9 |
+| Last 24 hours | 8648 | 1807 | 6841 | 3 | 2040 | 2303 | 9 |
 
 ### Recently Closed
 
