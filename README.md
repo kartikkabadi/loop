@@ -36,10 +36,10 @@ Last dashboard update: Apr 27, 2026, 02:02 UTC
 
 Updated: Apr 27, 2026, 02:02 UTC
 
-State: Review comments checked
+State: Apply in progress
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 65201,65668,66459,72149,72189,72201,72219,72220,72237,72251,72253,72254,72278,72284,72285,72286,72310,72315,72369,72396.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972910537](https://github.com/openclaw/clawsweeper/actions/runs/24972910537)
+Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 22, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972996272](https://github.com/openclaw/clawsweeper/actions/runs/24972996272)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -49,21 +49,21 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972910537](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3664 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3561 |
 | Open items total | 7225 |
-| Reviewed files | 7094 |
-| Unreviewed open items | 131 |
-| Archived closed files | 12687 |
+| Reviewed files | 7085 |
+| Unreviewed open items | 140 |
+| Archived closed files | 12696 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3640 |
-| Proposed issue closes | 16 (0.4% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3631 |
+| Proposed issue closes | 5 (0.1% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3448 |
 | Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7088 |
-| Proposed closes awaiting apply | 18 (0.3% of fresh reviews) |
-| Closed by Codex apply | 10027 |
+| Fresh verified reviews in the last 7 days | 7079 |
+| Proposed closes awaiting apply | 7 (0.1% of fresh reviews) |
+| Closed by Codex apply | 10047 |
 | Failed or stale reviews | 6 |
 
 ### Cadence
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972910537](https://
 | --- | ---: |
 | Hourly cadence coverage | 224/766 current (542 due, 29.2%) |
 | Hourly hot item cadence (<7d) | 224/766 current (542 due, 29.2%) |
-| Daily cadence coverage | 4179/4452 current (273 due, 93.9%) |
+| Daily cadence coverage | 4178/4451 current (273 due, 93.9%) |
 | Daily PR cadence | 2883/3025 current (142 due, 95.3%) |
-| Daily new issue cadence (<30d) | 1296/1427 current (131 due, 90.8%) |
-| Weekly older issue cadence | 1876/1876 current (0 due, 100%) |
-| Due now by cadence | 946 |
+| Daily new issue cadence (<30d) | 1295/1426 current (131 due, 90.8%) |
+| Weekly older issue cadence | 1868/1868 current (0 due, 100%) |
+| Due now by cadence | 955 |
 
 ### Audit Health
 
@@ -108,28 +108,28 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 01:59 UTC. Latest close: Apr 27, 2026, 01:18 UTC. Latest comment sync: Apr 27, 2026, 02:02 UTC.
+Latest review: Apr 27, 2026, 01:59 UTC. Latest close: Apr 27, 2026, 02:02 UTC. Latest comment sync: Apr 27, 2026, 02:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
-| Last hour | 634 | 33 | 601 | 1 | 9 | 516 | 10 |
-| Last 24 hours | 8674 | 1749 | 6925 | 4 | 1993 | 2550 | 13 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 20 | 20 | 2 |
+| Last hour | 634 | 33 | 601 | 1 | 29 | 516 | 12 |
+| Last 24 hours | 8674 | 1749 | 6925 | 4 | 2013 | 2550 | 15 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#72366](https://github.com/openclaw/openclaw/issues/72366) | [Bug]: Gateway crash-loop on startup when bonjour/mDNS plugin hits \"CIAO PROBING CANCELED\ | already implemented on main | Apr 27, 2026, 01:18 UTC | [closed/72366.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72366.md) |
-| [#72364](https://github.com/openclaw/openclaw/issues/72364) | Treat auto-compaction as a first-class agent task (route through /compact) to eliminate mid-conversation transcript mutations | already implemented on main | Apr 27, 2026, 01:18 UTC | [closed/72364.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72364.md) |
-| [#72430](https://github.com/openclaw/openclaw/issues/72430) | [Bug]: Windows: Slack channel fails to start with ESM URL error (`c:` protocol) in v2026.4.24 | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/72430.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72430.md) |
-| [#72429](https://github.com/openclaw/openclaw/issues/72429) | [Bug]: Duplication of messages with minmax 2.7 | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/72429.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72429.md) |
-| [#72395](https://github.com/openclaw/openclaw/issues/72395) | [Bug]: [Windows] ERR_UNSUPPORTED_ESM_URL_SCHEME — Discord channel and browser plugin fail to load on v2026.4.24 | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/72395.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72395.md) |
-| [#72184](https://github.com/openclaw/openclaw/issues/72184) | delivery-recovery on restart sends raw session context blob instead of original message | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/72184.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72184.md) |
-| [#71860](https://github.com/openclaw/openclaw/pull/71860) | fix(heartbeat): keep successful exec completions internal | duplicate or superseded | Apr 27, 2026, 01:05 UTC | [closed/71860.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71860.md) |
-| [#71084](https://github.com/openclaw/openclaw/issues/71084) | Question: should CLI-backed agents be allowed to trigger memoryFlush / preflightCompaction? | duplicate or superseded | Apr 27, 2026, 01:05 UTC | [closed/71084.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71084.md) |
-| [#71018](https://github.com/openclaw/openclaw/issues/71018) | openclaw-lark 插件工具执行步骤不显示（工具執行区域始终显示'暂无工具步骤'） | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/71018.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71018.md) |
-| [#72420](https://github.com/openclaw/openclaw/issues/72420) | Bonjour plugin crash-loops gateway on hosts without working multicast (2026.4.24) | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/72420.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72420.md) |
+| [#62890](https://github.com/openclaw/openclaw/issues/62890) | [Bug]: Missing @img/colour module breaks inline screenshot rendering | already implemented on main | Apr 27, 2026, 02:02 UTC | [closed/62890.md](https://github.com/openclaw/clawsweeper/blob/main/closed/62890.md) |
+| [#55163](https://github.com/openclaw/openclaw/issues/55163) | [Bug]: Doctor auto-enable creates config reload loop for local extensions in ~/.openclaw/extensions/ | already implemented on main | Apr 27, 2026, 02:02 UTC | [closed/55163.md](https://github.com/openclaw/clawsweeper/blob/main/closed/55163.md) |
+| [#55074](https://github.com/openclaw/openclaw/issues/55074) | Make MEDIA_MAX_BYTES configurable instead of hardcoded 5MB | duplicate or superseded | Apr 27, 2026, 02:01 UTC | [closed/55074.md](https://github.com/openclaw/clawsweeper/blob/main/closed/55074.md) |
+| [#55063](https://github.com/openclaw/openclaw/issues/55063) | [Bug]: /new and /reset preserve session model override; reset banner default can differ from agents.defaults.model.primary | duplicate or superseded | Apr 27, 2026, 02:01 UTC | [closed/55063.md](https://github.com/openclaw/clawsweeper/blob/main/closed/55063.md) |
+| [#55059](https://github.com/openclaw/openclaw/issues/55059) | [Feature]:Support openai-chat API type for providers | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/55059.md](https://github.com/openclaw/clawsweeper/blob/main/closed/55059.md) |
+| [#54854](https://github.com/openclaw/openclaw/issues/54854) | Control UI regression: drag-and-drop file to chat no longer works / old 'drop to local file path' workflow is gone | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54854.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54854.md) |
+| [#54743](https://github.com/openclaw/openclaw/issues/54743) | config set throws Maximum call stack size exceeded | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54743.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54743.md) |
+| [#54658](https://github.com/openclaw/openclaw/issues/54658) | Silent message delivery failure: AI response generated but never delivered to Discord | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54658.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54658.md) |
+| [#54535](https://github.com/openclaw/openclaw/issues/54535) | [Bug] openclaw browser CLI crashes Chrome 146 via Playwright connectOverCDP (EXC_BREAKPOINT/SIGTRAP) | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54535.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54535.md) |
+| [#54413](https://github.com/openclaw/openclaw/issues/54413) | Discord delivery silently drops messages after response termination + retry | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54413.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54413.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
