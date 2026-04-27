@@ -27,7 +27,7 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 01:42 UTC
+Last dashboard update: Apr 27, 2026, 01:45 UTC
 
 ### Current Run
 
@@ -46,11 +46,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972586457](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3684 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3683 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3555 |
-| Open items total | 7239 |
+| Open items total | 7238 |
 | Reviewed files | 7113 |
-| Unreviewed open items | 126 |
+| Unreviewed open items | 125 |
 | Archived closed files | 12668 |
 
 ### Review Outcomes
@@ -63,7 +63,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972586457](https://
 | Proposed PR closes | 2 (0.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 7111 |
 | Proposed closes awaiting apply | 26 (0.4% of fresh reviews) |
-| Closed by Codex apply | 10025 |
+| Closed by Codex apply | 10027 |
 | Failed or stale reviews | 2 |
 
 ### Cadence
@@ -76,7 +76,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972586457](https://
 | Daily PR cadence | 2867/3029 current (162 due, 94.7%) |
 | Daily new issue cadence (<30d) | 1259/1431 current (172 due, 88%) |
 | Weekly older issue cadence | 1887/1887 current (0 due, 100%) |
-| Due now by cadence | 1018 |
+| Due now by cadence | 1017 |
 
 ### Audit Health
 
@@ -108,18 +108,20 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 01:24 UTC. Latest close: Apr 27, 2026, 01:05 UTC. Latest comment sync: Apr 27, 2026, 01:40 UTC.
+Latest review: Apr 27, 2026, 01:24 UTC. Latest close: Apr 27, 2026, 01:18 UTC. Latest comment sync: Apr 27, 2026, 01:40 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 420 | 8 |
-| Last hour | 500 | 29 | 471 | 0 | 7 | 494 | 10 |
-| Last 24 hours | 8634 | 1770 | 6864 | 0 | 2010 | 2547 | 14 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 348 | 8 |
+| Last hour | 500 | 29 | 471 | 0 | 9 | 496 | 10 |
+| Last 24 hours | 8628 | 1764 | 6864 | 0 | 2004 | 2541 | 14 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#72366](https://github.com/openclaw/openclaw/issues/72366) | [Bug]: Gateway crash-loop on startup when bonjour/mDNS plugin hits \"CIAO PROBING CANCELED\ | already implemented on main | Apr 27, 2026, 01:18 UTC | [closed/72366.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72366.md) |
+| [#72364](https://github.com/openclaw/openclaw/issues/72364) | Treat auto-compaction as a first-class agent task (route through /compact) to eliminate mid-conversation transcript mutations | already implemented on main | Apr 27, 2026, 01:18 UTC | [closed/72364.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72364.md) |
 | [#72430](https://github.com/openclaw/openclaw/issues/72430) | [Bug]: Windows: Slack channel fails to start with ESM URL error (`c:` protocol) in v2026.4.24 | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/72430.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72430.md) |
 | [#72429](https://github.com/openclaw/openclaw/issues/72429) | [Bug]: Duplication of messages with minmax 2.7 | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/72429.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72429.md) |
 | [#72395](https://github.com/openclaw/openclaw/issues/72395) | [Bug]: [Windows] ERR_UNSUPPORTED_ESM_URL_SCHEME — Discord channel and browser plugin fail to load on v2026.4.24 | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/72395.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72395.md) |
@@ -128,8 +130,6 @@ Latest review: Apr 27, 2026, 01:24 UTC. Latest close: Apr 27, 2026, 01:05 UTC. L
 | [#71084](https://github.com/openclaw/openclaw/issues/71084) | Question: should CLI-backed agents be allowed to trigger memoryFlush / preflightCompaction? | duplicate or superseded | Apr 27, 2026, 01:05 UTC | [closed/71084.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71084.md) |
 | [#71018](https://github.com/openclaw/openclaw/issues/71018) | openclaw-lark 插件工具执行步骤不显示（工具執行区域始终显示'暂无工具步骤'） | already implemented on main | Apr 27, 2026, 01:05 UTC | [closed/71018.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71018.md) |
 | [#72420](https://github.com/openclaw/openclaw/issues/72420) | Bonjour plugin crash-loops gateway on hosts without working multicast (2026.4.24) | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/72420.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72420.md) |
-| [#72415](https://github.com/openclaw/openclaw/issues/72415) | [Bug]: ERR_MODULE_NOT_FOUND 'openclaw' still happening on 2026.4.22 (Telegram channel + scheduled cron) — same root cause as #71484, fix appears incomplete on upgrade path | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/72415.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72415.md) |
-| [#72403](https://github.com/openclaw/openclaw/pull/72403) | Feature/bucky jarvis phase1 | belongs on ClawHub | Apr 27, 2026, 00:02 UTC | [closed/72403.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72403.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
