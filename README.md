@@ -27,30 +27,30 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 02:01 UTC
+Last dashboard update: Apr 27, 2026, 02:02 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 02:01 UTC
+Updated: Apr 27, 2026, 02:02 UTC
 
-State: Planning review
+State: Review comments checked
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973067071](https://github.com/openclaw/clawsweeper/actions/runs/24973067071)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 65201,65668,66459,72149,72189,72201,72219,72220,72237,72251,72253,72254,72278,72284,72285,72286,72310,72315,72369,72396.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24972910537](https://github.com/openclaw/clawsweeper/actions/runs/24972910537)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3669 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3560 |
-| Open items total | 7229 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3664 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3561 |
+| Open items total | 7225 |
 | Reviewed files | 7094 |
-| Unreviewed open items | 135 |
+| Unreviewed open items | 131 |
 | Archived closed files | 12687 |
 
 ### Review Outcomes
@@ -76,7 +76,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973067071](https://
 | Daily PR cadence | 2883/3025 current (142 due, 95.3%) |
 | Daily new issue cadence (<30d) | 1296/1427 current (131 due, 90.8%) |
 | Weekly older issue cadence | 1876/1876 current (0 due, 100%) |
-| Due now by cadence | 950 |
+| Due now by cadence | 946 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 01:59 UTC. Latest close: Apr 27, 2026, 01:18 UTC. Latest comment sync: Apr 27, 2026, 01:40 UTC.
+Latest review: Apr 27, 2026, 01:59 UTC. Latest close: Apr 27, 2026, 01:18 UTC. Latest comment sync: Apr 27, 2026, 02:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
-| Last hour | 634 | 33 | 601 | 1 | 9 | 496 | 10 |
-| Last 24 hours | 8676 | 1751 | 6925 | 4 | 1993 | 2530 | 13 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
+| Last hour | 634 | 33 | 601 | 1 | 9 | 516 | 10 |
+| Last 24 hours | 8674 | 1749 | 6925 | 4 | 1993 | 2550 | 13 |
 
 ### Recently Closed
 
