@@ -36,10 +36,10 @@ Last dashboard update: Apr 27, 2026, 03:29 UTC
 
 Updated: Apr 27, 2026, 03:29 UTC
 
-State: Planning review
+State: Review comments checked
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24975161672](https://github.com/openclaw/clawsweeper/actions/runs/24975161672)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 18. Item numbers: 17311,23096,62024,64046,64086,64127,64436,68839,68848,70597,70624,70638,71040,72005,72265,72276,72293,72350,72358,72416.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24974884389](https://github.com/openclaw/clawsweeper/actions/runs/24974884389)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24975161672](https://
 | --- | ---: |
 | Hourly cadence coverage | 231/750 current (519 due, 30.8%) |
 | Hourly hot item cadence (<7d) | 231/750 current (519 due, 30.8%) |
-| Daily cadence coverage | 4234/4401 current (167 due, 96.2%) |
-| Daily PR cadence | 2893/3002 current (109 due, 96.4%) |
-| Daily new issue cadence (<30d) | 1341/1399 current (58 due, 95.9%) |
+| Daily cadence coverage | 4224/4401 current (177 due, 96%) |
+| Daily PR cadence | 2887/3002 current (115 due, 96.2%) |
+| Daily new issue cadence (<30d) | 1337/1399 current (62 due, 95.6%) |
 | Weekly older issue cadence | 1864/1864 current (0 due, 100%) |
-| Due now by cadence | 871 |
+| Due now by cadence | 881 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 03:27 UTC. Latest close: Apr 27, 2026, 02:30 UTC. Latest comment sync: Apr 27, 2026, 03:22 UTC.
+Latest review: Apr 27, 2026, 03:27 UTC. Latest close: Apr 27, 2026, 02:30 UTC. Latest comment sync: Apr 27, 2026, 03:29 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 40 | 1 | 39 | 0 | 0 | 19 | 1 |
-| Last hour | 537 | 10 | 527 | 0 | 5 | 131 | 2 |
-| Last 24 hours | 8648 | 1692 | 6956 | 6 | 1818 | 2392 | 6 |
+| Last 15 minutes | 40 | 1 | 39 | 0 | 0 | 37 | 3 |
+| Last hour | 537 | 10 | 527 | 0 | 5 | 131 | 3 |
+| Last 24 hours | 8633 | 1688 | 6945 | 6 | 1818 | 2410 | 8 |
 
 ### Recently Closed
 
@@ -140,8 +140,8 @@ Latest review: Apr 27, 2026, 03:27 UTC. Latest close: Apr 27, 2026, 02:30 UTC. L
 | --- | --- | --- | --- | --- |
 | [#72293](https://github.com/openclaw/openclaw/issues/72293) | Aborted subagent with empty content silently marked `done`, never auto-announces — parent black-holes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72293.md) | complete | Apr 27, 2026, 03:27 UTC |
 | [#70597](https://github.com/openclaw/openclaw/pull/70597) | yuanbao channel | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/70597.md) | complete | Apr 27, 2026, 03:26 UTC |
-| [#64127](https://github.com/openclaw/openclaw/pull/64127) | feat: Provider circuit breaker for quota exhaustion | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64127.md) | complete | Apr 27, 2026, 03:26 UTC |
-| [#64046](https://github.com/openclaw/openclaw/issues/64046) | [Feature]: 希望支持敏感数据脱敏 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64046.md) | complete | Apr 27, 2026, 03:26 UTC |
+| [#64127](https://github.com/openclaw/openclaw/pull/64127) | feat: Provider circuit breaker for quota exhaustion | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/64127.md) | complete | Apr 27, 2026, 03:26 UTC |
+| [#64046](https://github.com/openclaw/openclaw/issues/64046) | [Feature]: 希望支持敏感数据脱敏 | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/64046.md) | complete | Apr 27, 2026, 03:26 UTC |
 | [#64436](https://github.com/openclaw/openclaw/pull/64436) | feat: expose model pricing to plugins via runtime.usage API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64436.md) | complete | Apr 27, 2026, 03:26 UTC |
 | [#70624](https://github.com/openclaw/openclaw/pull/70624) | feat(qqbot): group chat support, C2C streaming, chunked media upload, and architecture refactor | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70624.md) | complete | Apr 27, 2026, 03:26 UTC |
 | [#62024](https://github.com/openclaw/openclaw/issues/62024) | [Bug]: Discord cron delivery fix — 2026-04-02 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62024.md) | complete | Apr 27, 2026, 03:26 UTC |
