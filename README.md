@@ -23,18 +23,18 @@ Maintainer-authored items are never auto-closed. Everything else stays open.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 00:01 UTC
+Last dashboard update: Apr 27, 2026, 00:02 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 00:01 UTC
+Updated: Apr 27, 2026, 00:02 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 12 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=69147,69251,69291,69400,69409,69616,69790,69997,72252,72403,72415,72420.
+Checkpoint 1 finished. Fresh closes in checkpoint: 12. Total fresh closes in this run: 12/12. Result records in checkpoint: 24, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970349383](https://github.com/openclaw/clawsweeper/actions/runs/24970349383)
 <!-- clawsweeper-status:end -->
 
@@ -42,37 +42,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24970349383](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3703 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3541 |
-| Open items total | 7244 |
-| Reviewed files | 7150 |
-| Unreviewed open items | 94 |
-| Archived closed files | 12621 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3693 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3539 |
+| Open items total | 7232 |
+| Reviewed files | 7146 |
+| Unreviewed open items | 86 |
+| Archived closed files | 12633 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3688 |
-| Proposed issue closes | 16 (0.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3468 |
-| Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7156 |
-| Proposed closes awaiting apply | 19 (0.3% of fresh reviews) |
-| Closed by Codex apply | 10006 |
+| Fresh reviewed issues in the last 7 days | 3678 |
+| Proposed issue closes | 6 (0.2% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3466 |
+| Proposed PR closes | 1 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7144 |
+| Proposed closes awaiting apply | 7 (0.1% of fresh reviews) |
+| Closed by Codex apply | 10018 |
 | Failed or stale reviews | 2 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 794/797 current (3 due, 99.6%) |
-| Hourly hot item cadence (<7d) | 794/797 current (3 due, 99.6%) |
+| Hourly cadence coverage | 782/785 current (3 due, 99.6%) |
+| Hourly hot item cadence (<7d) | 782/785 current (3 due, 99.6%) |
 | Daily cadence coverage | 4406/4473 current (67 due, 98.5%) |
 | Daily PR cadence | 2975/3033 current (58 due, 98.1%) |
 | Daily new issue cadence (<30d) | 1431/1440 current (9 due, 99.4%) |
 | Weekly older issue cadence | 1888/1888 current (0 due, 100%) |
-| Due now by cadence | 437 |
+| Due now by cadence | 156 |
 
 ### Audit Health
 
@@ -104,28 +104,28 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 26, 2026, 23:59 UTC. Latest close: Apr 26, 2026, 23:50 UTC. Latest comment sync: Apr 26, 2026, 23:54 UTC.
+Latest review: Apr 26, 2026, 23:59 UTC. Latest close: Apr 27, 2026, 00:02 UTC. Latest comment sync: Apr 27, 2026, 00:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 21 | 0 | 21 | 1 | 1 | 20 | 0 |
-| Last hour | 546 | 14 | 532 | 1 | 1 | 63 | 1 |
-| Last 24 hours | 9175 | 2002 | 7173 | 1 | 2075 | 2193 | 11 |
+| Last 15 minutes | 303 | 7 | 296 | 0 | 13 | 30 | 0 |
+| Last hour | 828 | 21 | 807 | 0 | 13 | 73 | 1 |
+| Last 24 hours | 9167 | 1992 | 7175 | 0 | 2087 | 2201 | 10 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#72374](https://github.com/openclaw/openclaw/issues/72374) | Bundled runtime dependency staging should create an isolated package root before npm install | already implemented on main | Apr 26, 2026, 23:50 UTC | [closed/72374.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72374.md) |
-| [#72380](https://github.com/openclaw/openclaw/issues/72380) | [v2026.4.24] doctor --fix installs bundled deps to wrong dir; ENOTEMPTY in plugin-sdk alias crashes node host | already implemented on main | Apr 26, 2026, 22:19 UTC | [closed/72380.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72380.md) |
-| [#72166](https://github.com/openclaw/openclaw/issues/72166) | Request: Add cron.enabled and compaction.mode to ALLOWED_GATEWAY_CONFIG_PATHS | duplicate or superseded | Apr 26, 2026, 22:19 UTC | [closed/72166.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72166.md) |
-| [#72094](https://github.com/openclaw/openclaw/issues/72094) | Feature request: route desktop-control tasks through Codex Desktop Computer Use, not only PeekabooBridge | already implemented on main | Apr 26, 2026, 22:19 UTC | [closed/72094.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72094.md) |
-| [#70869](https://github.com/openclaw/openclaw/issues/70869) | delivery-mirror: writes role:assistant into parent session without paired user message, violating Anthropic alternation | already implemented on main | Apr 26, 2026, 22:19 UTC | [closed/70869.md](https://github.com/openclaw/clawsweeper/blob/main/closed/70869.md) |
-| [#70053](https://github.com/openclaw/openclaw/issues/70053) | sub-agent dispatch: in-process spawn hits gateway pairing gate (no in-process lane shortcut) | already implemented on main | Apr 26, 2026, 22:19 UTC | [closed/70053.md](https://github.com/openclaw/clawsweeper/blob/main/closed/70053.md) |
-| [#72321](https://github.com/openclaw/openclaw/issues/72321) | Context usage % display bug: cumulative cacheRead/cacheWrite divided by context window size instead of current conversation tokens | already implemented on main | Apr 26, 2026, 22:01 UTC | [closed/72321.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72321.md) |
-| [#72282](https://github.com/openclaw/openclaw/issues/72282) | [Bug]: Mattermost channel messages no longer received via WebSocket — regression in 2026.4.24 (DMs still work) | duplicate or superseded | Apr 26, 2026, 22:01 UTC | [closed/72282.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72282.md) |
-| [#71612](https://github.com/openclaw/openclaw/pull/71612) | fix(loop-detection): reset toolCallHistory on long idle gaps | already implemented on main | Apr 26, 2026, 22:01 UTC | [closed/71612.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71612.md) |
-| [#70590](https://github.com/openclaw/openclaw/issues/70590) | [Feature]: Solve the problem of hard-coded language | duplicate or superseded | Apr 26, 2026, 22:00 UTC | [closed/70590.md](https://github.com/openclaw/clawsweeper/blob/main/closed/70590.md) |
+| [#72420](https://github.com/openclaw/openclaw/issues/72420) | Bonjour plugin crash-loops gateway on hosts without working multicast (2026.4.24) | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/72420.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72420.md) |
+| [#72415](https://github.com/openclaw/openclaw/issues/72415) | [Bug]: ERR_MODULE_NOT_FOUND 'openclaw' still happening on 2026.4.22 (Telegram channel + scheduled cron) — same root cause as #71484, fix appears incomplete on upgrade path | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/72415.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72415.md) |
+| [#72403](https://github.com/openclaw/openclaw/pull/72403) | Feature/bucky jarvis phase1 | belongs on ClawHub | Apr 27, 2026, 00:02 UTC | [closed/72403.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72403.md) |
+| [#72252](https://github.com/openclaw/openclaw/issues/72252) | Bug: benign SIGTERM async completions surface into chat after restart | duplicate or superseded | Apr 27, 2026, 00:02 UTC | [closed/72252.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72252.md) |
+| [#69997](https://github.com/openclaw/openclaw/pull/69997) | fix: add defensive type check in normalizeStoredOverrideModel | duplicate or superseded | Apr 27, 2026, 00:02 UTC | [closed/69997.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69997.md) |
+| [#69790](https://github.com/openclaw/openclaw/issues/69790) | Telegram inbound can fail with persistent session write lock on existing DM session | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/69790.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69790.md) |
+| [#69616](https://github.com/openclaw/openclaw/issues/69616) | Bug: `openclaw gateway` enters an infinite loop on startup | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/69616.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69616.md) |
+| [#69409](https://github.com/openclaw/openclaw/issues/69409) | Feature request: Approval gate for restart-required config changes | already implemented on main | Apr 27, 2026, 00:02 UTC | [closed/69409.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69409.md) |
+| [#69400](https://github.com/openclaw/openclaw/issues/69400) | Feature: honor OPENCLAW_WRAPPER (or --wrapper) when generating LaunchAgent ProgramArguments | duplicate or superseded | Apr 27, 2026, 00:01 UTC | [closed/69400.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69400.md) |
+| [#69291](https://github.com/openclaw/openclaw/issues/69291) | [Feature]: [Proposal] Add systematic Agent Behavior Principles to system prompt | belongs on ClawHub | Apr 27, 2026, 00:01 UTC | [closed/69291.md](https://github.com/openclaw/clawsweeper/blob/main/closed/69291.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
