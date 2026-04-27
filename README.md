@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 03:50 UTC
+Last dashboard update: Apr 27, 2026, 03:51 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 03:50 UTC
+Updated: Apr 27, 2026, 03:51 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 5 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=63779,64201,64653,65669,70597.
+Checkpoint 1 finished. Fresh closes in checkpoint: 5. Total fresh closes in this run: 5/5. Result records in checkpoint: 9, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24975624127](https://github.com/openclaw/clawsweeper/actions/runs/24975624127)
 <!-- clawsweeper-status:end -->
 
@@ -47,36 +47,36 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24975624127](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3654 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3554 |
-| Open items total | 7208 |
-| Reviewed files | 7014 |
-| Unreviewed open items | 194 |
-| Archived closed files | 12767 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3551 |
+| Open items total | 7205 |
+| Reviewed files | 7009 |
+| Unreviewed open items | 196 |
+| Archived closed files | 12772 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3592 |
-| Proposed issue closes | 2 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3415 |
-| Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7007 |
-| Proposed closes awaiting apply | 5 (0.1% of fresh reviews) |
-| Closed by Codex apply | 10098 |
+| Fresh reviewed issues in the last 7 days | 3590 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3412 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7002 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10103 |
 | Failed or stale reviews | 7 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 38/750 current (712 due, 5.1%) |
-| Hourly hot item cadence (<7d) | 38/750 current (712 due, 5.1%) |
-| Daily cadence coverage | 3982/4401 current (419 due, 90.5%) |
-| Daily PR cadence | 2780/3002 current (222 due, 92.6%) |
-| Daily new issue cadence (<30d) | 1202/1399 current (197 due, 85.9%) |
+| Hourly cadence coverage | 37/749 current (712 due, 4.9%) |
+| Hourly hot item cadence (<7d) | 37/749 current (712 due, 4.9%) |
+| Daily cadence coverage | 3974/4397 current (423 due, 90.4%) |
+| Daily PR cadence | 2777/3000 current (223 due, 92.6%) |
+| Daily new issue cadence (<30d) | 1197/1397 current (200 due, 85.7%) |
 | Weekly older issue cadence | 1863/1863 current (0 due, 100%) |
-| Due now by cadence | 1325 |
+| Due now by cadence | 1331 |
 
 ### Audit Health
 
@@ -108,28 +108,28 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 03:41 UTC. Latest close: Apr 27, 2026, 02:30 UTC. Latest comment sync: Apr 27, 2026, 03:29 UTC.
+Latest review: Apr 27, 2026, 03:41 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 03:50 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 331 | 4 | 327 | 0 | 0 | 0 | 0 |
-| Last hour | 540 | 5 | 535 | 0 | 0 | 37 | 3 |
-| Last 24 hours | 8313 | 1630 | 6683 | 4 | 1695 | 1838 | 8 |
+| Last 15 minutes | 293 | 4 | 289 | 0 | 5 | 4 | 0 |
+| Last hour | 540 | 5 | 535 | 0 | 5 | 41 | 3 |
+| Last 24 hours | 8307 | 1628 | 6679 | 4 | 1700 | 1842 | 8 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#70597](https://github.com/openclaw/openclaw/pull/70597) | yuanbao channel | belongs on ClawHub | Apr 27, 2026, 03:51 UTC | [closed/70597.md](https://github.com/openclaw/clawsweeper/blob/main/closed/70597.md) |
+| [#65669](https://github.com/openclaw/openclaw/pull/65669) | feat: support custom job IDs in cron add command | duplicate or superseded | Apr 27, 2026, 03:50 UTC | [closed/65669.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65669.md) |
+| [#64653](https://github.com/openclaw/openclaw/pull/64653) | fix: honor provider-prefixed configured model ids for routed providers | already implemented on main | Apr 27, 2026, 03:50 UTC | [closed/64653.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64653.md) |
+| [#64201](https://github.com/openclaw/openclaw/issues/64201) | [Bug]: OpenClaw: Crash loop on plugin config reload (ECONNREFUSED on loopback port 18789) | already implemented on main | Apr 27, 2026, 03:50 UTC | [closed/64201.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64201.md) |
+| [#63779](https://github.com/openclaw/openclaw/issues/63779) | ACP completion delivery-mirror message (assistant role) does not activate next turn after sessions_yield | already implemented on main | Apr 27, 2026, 03:50 UTC | [closed/63779.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63779.md) |
 | [#65938](https://github.com/openclaw/openclaw/pull/65938) | docs(providers): add Bedrock Mantle to provider index pages | already implemented on main | Apr 27, 2026, 02:30 UTC | [closed/65938.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65938.md) |
 | [#65813](https://github.com/openclaw/openclaw/issues/65813) | openai-codex auth profile rotation burns through both profiles before escalating to model fallback | already implemented on main | Apr 27, 2026, 02:30 UTC | [closed/65813.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65813.md) |
 | [#65724](https://github.com/openclaw/openclaw/issues/65724) | [Windows] DeprecationWarning: Passing args to child process with shell option true | already implemented on main | Apr 27, 2026, 02:30 UTC | [closed/65724.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65724.md) |
 | [#65675](https://github.com/openclaw/openclaw/pull/65675) | docs: add 2MB size limit note for avatar images | duplicate or superseded | Apr 27, 2026, 02:30 UTC | [closed/65675.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65675.md) |
 | [#65589](https://github.com/openclaw/openclaw/pull/65589) | feat(memory-core): dreaming circuit breaker to prevent runaway cost and data corruption | duplicate or superseded | Apr 27, 2026, 02:30 UTC | [closed/65589.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65589.md) |
-| [#71848](https://github.com/openclaw/openclaw/issues/71848) | [SRE] Gateway SIGABRT (134) on macOS launchd (mini-lobby) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71848.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71848.md) |
-| [#71148](https://github.com/openclaw/openclaw/issues/71148) | Memory leak: Ajv `.compile()` per call in `sharedAjv` (and `ajv`) leaks SchemaEnv/run closures | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71148.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71148.md) |
-| [#63169](https://github.com/openclaw/openclaw/issues/63169) | WhatsApp media send reports success but attachment is never delivered (2026.4.8) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/63169.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63169.md) |
-| [#63119](https://github.com/openclaw/openclaw/issues/63119) | [Feature]: Session compaction: archive transcript files before deletion, with configurable retention | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/63119.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63119.md) |
-| [#63075](https://github.com/openclaw/openclaw/issues/63075) | Discord stale slash commands remain visible when channels.discord.commands.native=false | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/63075.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63075.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
