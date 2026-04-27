@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 10:48 UTC
+Last dashboard update: Apr 27, 2026, 10:50 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 10:48 UTC
+Updated: Apr 27, 2026, 10:50 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 18 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=40777,40903,41097,41151,41319,41528,41655,41869,66515,68611,68831,68865,68866,68878,72497,72505,72517,72519.
+Checkpoint 1 finished. Fresh closes in checkpoint: 17. Total fresh closes in this run: 17/18. Result records in checkpoint: 31, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24990620435](https://github.com/openclaw/clawsweeper/actions/runs/24990620435)
 <!-- clawsweeper-status:end -->
 
@@ -46,37 +46,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24990620435](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3551 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3463 |
-| Open items total | 7014 |
-| Reviewed files | 6797 |
-| Unreviewed open items | 217 |
-| Archived closed files | 13034 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3549 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3449 |
+| Open items total | 6998 |
+| Reviewed files | 6780 |
+| Unreviewed open items | 218 |
+| Archived closed files | 13051 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3486 |
-| Proposed issue closes | 3 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3307 |
-| Proposed PR closes | 15 (0.5% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6793 |
-| Proposed closes awaiting apply | 18 (0.3% of fresh reviews) |
-| Closed by Codex apply | 10200 |
+| Fresh reviewed issues in the last 7 days | 3483 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3293 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6776 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10217 |
 | Failed or stale reviews | 4 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 39/725 current (686 due, 5.4%) |
-| Hourly hot item cadence (<7d) | 39/725 current (686 due, 5.4%) |
-| Daily cadence coverage | 1869/4225 current (2356 due, 44.2%) |
-| Daily PR cadence | 1173/2897 current (1724 due, 40.5%) |
-| Daily new issue cadence (<30d) | 696/1328 current (632 due, 52.4%) |
+| Hourly cadence coverage | 35/721 current (686 due, 4.9%) |
+| Hourly hot item cadence (<7d) | 35/721 current (686 due, 4.9%) |
+| Daily cadence coverage | 1856/4212 current (2356 due, 44.1%) |
+| Daily PR cadence | 1161/2885 current (1724 due, 40.2%) |
+| Daily new issue cadence (<30d) | 695/1327 current (632 due, 52.4%) |
 | Weekly older issue cadence | 1847/1847 current (0 due, 100%) |
-| Due now by cadence | 3259 |
+| Due now by cadence | 3260 |
 
 ### Audit Health
 
@@ -110,28 +110,28 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 10:39 UTC. Latest close: Apr 27, 2026, 10:23 UTC. Latest comment sync: Apr 27, 2026, 10:34 UTC.
+Latest review: Apr 27, 2026, 10:39 UTC. Latest close: Apr 27, 2026, 10:50 UTC. Latest comment sync: Apr 27, 2026, 10:50 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 226 | 6 | 220 | 1 | 0 | 16 | 0 |
-| Last hour | 925 | 24 | 901 | 1 | 15 | 604 | 1 |
-| Last 24 hours | 4137 | 495 | 3642 | 2 | 371 | 1286 | 12 |
+| Last 15 minutes | 107 | 6 | 101 | 0 | 17 | 13 | 1 |
+| Last hour | 925 | 24 | 901 | 1 | 32 | 552 | 2 |
+| Last 24 hours | 4137 | 495 | 3642 | 2 | 380 | 1290 | 13 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#68572](https://github.com/openclaw/openclaw/pull/68572) | feat(plugin-sdk): add delegated wait-run handle seam | duplicate or superseded | Apr 27, 2026, 10:23 UTC | [closed/68572.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68572.md) |
-| [#68477](https://github.com/openclaw/openclaw/pull/68477) | feat(auth): add --profile to models auth login | duplicate or superseded | Apr 27, 2026, 10:22 UTC | [closed/68477.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68477.md) |
-| [#68465](https://github.com/openclaw/openclaw/pull/68465) | fix(whatsapp): support silentErrorReplies parity | duplicate or superseded | Apr 27, 2026, 10:22 UTC | [closed/68465.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68465.md) |
-| [#72494](https://github.com/openclaw/openclaw/pull/72494) | fix(plugins): fail loud on rejected registration gates | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/72494.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72494.md) |
-| [#72487](https://github.com/openclaw/openclaw/pull/72487) | fix(qqbot): skip PlatformAdapter lookup in resolveQQBotAccount when adapter not registered (#72465) | duplicate or superseded | Apr 27, 2026, 09:59 UTC | [closed/72487.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72487.md) |
-| [#72483](https://github.com/openclaw/openclaw/pull/72483) | Feature Request: Custom TUI Footer Fields for Cost/Balance/Rate L... | not actionable in this repository | Apr 27, 2026, 09:59 UTC | [closed/72483.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72483.md) |
-| [#68589](https://github.com/openclaw/openclaw/pull/68589) | fix(cli): skip sessions warmup for non-TTY output | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68589.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68589.md) |
-| [#68445](https://github.com/openclaw/openclaw/pull/68445) | fix: exec tool gateway crash (#68376) and memory-core dreaming bloat (#68379) | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68445.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68445.md) |
-| [#68417](https://github.com/openclaw/openclaw/pull/68417) | fix(exec-approvals): allow ~/.openclaw symlink when OPENCLAW_STATE_DIR is set | duplicate or superseded | Apr 27, 2026, 09:59 UTC | [closed/68417.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68417.md) |
-| [#68386](https://github.com/openclaw/openclaw/issues/68386) | Bug: Async command completion notification routed to wrong session (heartbeat instead of main) | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68386.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68386.md) |
+| [#72519](https://github.com/openclaw/openclaw/pull/72519) | Cost estimate omits cache read tokens (cacheRead cost not applied... | duplicate or superseded | Apr 27, 2026, 10:50 UTC | [closed/72519.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72519.md) |
+| [#72517](https://github.com/openclaw/openclaw/pull/72517) | Add session cost to /status output | not actionable | Apr 27, 2026, 10:50 UTC | [closed/72517.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72517.md) |
+| [#72505](https://github.com/openclaw/openclaw/issues/72505) | Gateway infinite loop during initialization on v2026.4.23+ (CPU 100%+, never reaches HTTP bind) | already implemented on main | Apr 27, 2026, 10:50 UTC | [closed/72505.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72505.md) |
+| [#72497](https://github.com/openclaw/openclaw/issues/72497) | [Bug]: Tool calls invisible in Telegram DM despite verbose: on — user cannot see agent activity | already implemented on main | Apr 27, 2026, 10:50 UTC | [closed/72497.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72497.md) |
+| [#68878](https://github.com/openclaw/openclaw/pull/68878) | [codex] Optimize gateway session listing before full row construction | duplicate or superseded | Apr 27, 2026, 10:50 UTC | [closed/68878.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68878.md) |
+| [#68866](https://github.com/openclaw/openclaw/pull/68866) | fix(auth): invalidate stale runtime auth snapshots when auth files change | already implemented on main | Apr 27, 2026, 10:50 UTC | [closed/68866.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68866.md) |
+| [#68865](https://github.com/openclaw/openclaw/pull/68865) | fix(feishu): add application-level WebSocket reconnection with backoff | duplicate or superseded | Apr 27, 2026, 10:50 UTC | [closed/68865.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68865.md) |
+| [#68831](https://github.com/openclaw/openclaw/pull/68831) | perf: share JITI instances across plugins with identical alias configs | already implemented on main | Apr 27, 2026, 10:49 UTC | [closed/68831.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68831.md) |
+| [#68611](https://github.com/openclaw/openclaw/issues/68611) | [Bug]: WebChat CLI runner — assistant replies invisible + user messages erased after each turn | already implemented on main | Apr 27, 2026, 10:49 UTC | [closed/68611.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68611.md) |
+| [#66515](https://github.com/openclaw/openclaw/pull/66515) | feat: add YandexGPT as native provider via Yandex AI Studio | belongs on ClawHub | Apr 27, 2026, 10:49 UTC | [closed/66515.md](https://github.com/openclaw/clawsweeper/blob/main/closed/66515.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -149,7 +149,7 @@ Latest review: Apr 27, 2026, 10:39 UTC. Latest close: Apr 27, 2026, 10:23 UTC. L
 | [#66791](https://github.com/openclaw/openclaw/issues/66791) | [Feature]:  Discord event-edit and event-delete Support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66791.md) | complete | Apr 27, 2026, 10:38 UTC |
 | [#68843](https://github.com/openclaw/openclaw/pull/68843) | fix(acp): treat missing cwd as stale bound session | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68843.md) | complete | Apr 27, 2026, 10:38 UTC |
 | [#66344](https://github.com/openclaw/openclaw/pull/66344) | feat(chunker): add table protection to streaming block chunker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66344.md) | complete | Apr 27, 2026, 10:38 UTC |
-| [#68865](https://github.com/openclaw/openclaw/pull/68865) | fix(feishu): add application-level WebSocket reconnection with backoff | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/68865.md) | complete | Apr 27, 2026, 10:38 UTC |
+| [#66160](https://github.com/openclaw/openclaw/pull/66160) | fix(litellm): honor --custom-base-url in non-interactive onboard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/66160.md) | complete | Apr 27, 2026, 10:38 UTC |
 
 </details>
 
