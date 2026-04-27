@@ -43,6 +43,11 @@ case, keep the issue open and say the best solution is to review/land or close
 the linked PR; only after the PR merges should the issue be closed as
 implemented by GitHub or by apply.
 
+In user-visible prose, avoid bare self-references to the current item such as
+`#123`, `Issue #123`, `PR #123`, or quoted closing syntax like `Fixes #123`.
+Write `this issue` or `this PR` instead. Keep other issue/PR references as
+normal `#123` links when they point to different items.
+
 Keep open any item whose GitHub author association is `OWNER`, `MEMBER`, or `COLLABORATOR`. Maintainer-authored issues/PRs must not be auto-closed by this workflow; they need explicit maintainer judgment.
 
 Keep open any item with a protected label: `security`, `beta-blocker`, `release-blocker`, or `maintainer`. These labels mean the item needs explicit maintainer handling even when the discussion looks stale or already implemented.
