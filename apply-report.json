@@ -1,102 +1,157 @@
 [
   {
-    "number": 42400,
+    "number": 40777,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 40777,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 40903,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 40903,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41097,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 41097,
+    "action": "closed",
+    "reason": "not actionable"
+  },
+  {
+    "number": 41151,
     "action": "skipped_changed_since_review",
     "reason": "updated_at changed"
   },
   {
-    "number": 67158,
+    "number": 41319,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 41319,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 41528,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 41528,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41655,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 41655,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 41869,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 41869,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 66515,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 72092,
+    "number": 66515,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 68611,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 72398,
+    "number": 68611,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 68831,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 68831,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 68865,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 68865,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 68866,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 68866,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 68878,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 68878,
+    "action": "closed",
+    "reason": "duplicate or superseded"
   },
   {
     "number": 72497,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72499,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72500,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72501,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72504,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
     "number": 72505,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72507,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72510,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72511,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72512,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72513,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72514,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72515,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72516,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
     "number": 72517,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "action": "closed",
+    "reason": "not actionable"
   },
   {
     "number": 72519,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "action": "closed",
+    "reason": "duplicate or superseded"
   }
 ]
