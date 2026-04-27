@@ -1,42 +1,22 @@
 [
   {
-    "number": 67764,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 67959,
-    "action": "skipped_changed_since_review",
-    "reason": "updated_at changed"
-  },
-  {
-    "number": 67970,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 68154,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 68227,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 68293,
+    "number": 63871,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 68293,
+    "number": 63871,
     "action": "closed",
-    "reason": "already implemented on main"
+    "reason": "duplicate or superseded"
   },
   {
-    "number": 71190,
+    "number": 65750,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 65750,
     "action": "closed",
-    "reason": "already implemented on main"
+    "reason": "cannot reproduce on current main"
   }
 ]
