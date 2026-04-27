@@ -27,30 +27,30 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 10:26 UTC
+Last dashboard update: Apr 27, 2026, 10:27 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 10:26 UTC
+Updated: Apr 27, 2026, 10:27 UTC
 
-State: Hot intake in progress
+State: Review in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989699373](https://github.com/openclaw/clawsweeper/actions/runs/24989699373)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989676514](https://github.com/openclaw/clawsweeper/actions/runs/24989676514)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3559 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3558 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3466 |
-| Open items total | 7025 |
+| Open items total | 7024 |
 | Reviewed files | 6789 |
-| Unreviewed open items | 236 |
+| Unreviewed open items | 235 |
 | Archived closed files | 13026 |
 
 ### Review Outcomes
@@ -76,7 +76,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989699373](https://
 | Daily PR cadence | 1086/2899 current (1813 due, 37.5%) |
 | Daily new issue cadence (<30d) | 681/1331 current (650 due, 51.2%) |
 | Weekly older issue cadence | 1847/1848 current (1 due, 99.9%) |
-| Due now by cadence | 3373 |
+| Due now by cadence | 3372 |
 
 ### Audit Health
 
@@ -116,7 +116,7 @@ Latest review: Apr 27, 2026, 10:09 UTC. Latest close: Apr 27, 2026, 10:23 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 3 | 385 | 0 |
 | Last hour | 938 | 19 | 919 | 0 | 15 | 765 | 4 |
-| Last 24 hours | 4096 | 563 | 3533 | 1 | 425 | 1654 | 14 |
+| Last 24 hours | 4088 | 555 | 3533 | 1 | 425 | 1654 | 14 |
 
 ### Recently Closed
 
