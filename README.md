@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 09:05 UTC
+Last dashboard update: Apr 27, 2026, 09:06 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 09:05 UTC
+Updated: Apr 27, 2026, 09:06 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 1. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24986163184](https://github.com/openclaw/clawsweeper/actions/runs/24986163184)
 <!-- clawsweeper-status:end -->
 
@@ -72,11 +72,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24986163184](https://
 | --- | ---: |
 | Hourly cadence coverage | 23/708 current (685 due, 3.2%) |
 | Hourly hot item cadence (<7d) | 23/708 current (685 due, 3.2%) |
-| Daily cadence coverage | 1902/4281 current (2379 due, 44.4%) |
-| Daily PR cadence | 1174/2924 current (1750 due, 40.2%) |
+| Daily cadence coverage | 1899/4281 current (2382 due, 44.4%) |
+| Daily PR cadence | 1171/2924 current (1753 due, 40%) |
 | Daily new issue cadence (<30d) | 728/1357 current (629 due, 53.6%) |
 | Weekly older issue cadence | 1854/1855 current (1 due, 99.9%) |
-| Due now by cadence | 3314 |
+| Due now by cadence | 3317 |
 
 ### Audit Health
 
@@ -114,9 +114,9 @@ Latest review: Apr 27, 2026, 08:43 UTC. Latest close: Apr 27, 2026, 09:03 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 1 | 192 | 1 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 1 | 190 | 1 |
 | Last hour | 502 | 1 | 501 | 2 | 5 | 895 | 11 |
-| Last 24 hours | 5105 | 738 | 4367 | 7 | 614 | 2025 | 19 |
+| Last 24 hours | 5102 | 738 | 4364 | 7 | 614 | 2025 | 19 |
 
 ### Recently Closed
 
