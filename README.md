@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 10:22 UTC
+Last dashboard update: Apr 27, 2026, 10:23 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 10:22 UTC
+Updated: Apr 27, 2026, 10:23 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 6 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=53186,53895,62974,68465,68477,68572.
+Checkpoint 1 finished. Fresh closes in checkpoint: 6. Total fresh closes in this run: 6/6. Result records in checkpoint: 12, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989477717](https://github.com/openclaw/clawsweeper/actions/runs/24989477717)
 <!-- clawsweeper-status:end -->
 
@@ -46,24 +46,24 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989477717](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3565 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3471 |
-| Open items total | 7036 |
-| Reviewed files | 6798 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3562 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3468 |
+| Open items total | 7030 |
+| Reviewed files | 6792 |
 | Unreviewed open items | 238 |
-| Archived closed files | 13017 |
+| Archived closed files | 13023 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3489 |
-| Proposed issue closes | 3 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3305 |
-| Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6794 |
-| Proposed closes awaiting apply | 6 (0.1% of fresh reviews) |
-| Closed by Codex apply | 10194 |
+| Fresh reviewed issues in the last 7 days | 3486 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3302 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6788 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10200 |
 | Failed or stale reviews | 4 |
 
 ### Cadence
@@ -72,10 +72,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989477717](https://
 | --- | ---: |
 | Hourly cadence coverage | 38/712 current (674 due, 5.3%) |
 | Hourly hot item cadence (<7d) | 38/712 current (674 due, 5.3%) |
-| Daily cadence coverage | 1778/4236 current (2458 due, 42%) |
-| Daily PR cadence | 1094/2903 current (1809 due, 37.7%) |
-| Daily new issue cadence (<30d) | 684/1333 current (649 due, 51.3%) |
-| Weekly older issue cadence | 1849/1850 current (1 due, 99.9%) |
+| Daily cadence coverage | 1774/4232 current (2458 due, 41.9%) |
+| Daily PR cadence | 1091/2900 current (1809 due, 37.6%) |
+| Daily new issue cadence (<30d) | 683/1332 current (649 due, 51.3%) |
+| Weekly older issue cadence | 1847/1848 current (1 due, 99.9%) |
 | Due now by cadence | 3371 |
 
 ### Audit Health
@@ -110,28 +110,28 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 10:09 UTC. Latest close: Apr 27, 2026, 09:59 UTC. Latest comment sync: Apr 27, 2026, 09:59 UTC.
+Latest review: Apr 27, 2026, 10:09 UTC. Latest close: Apr 27, 2026, 10:23 UTC. Latest comment sync: Apr 27, 2026, 10:22 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 48 | 2 | 46 | 0 | 0 | 0 | 0 |
-| Last hour | 938 | 19 | 919 | 0 | 13 | 470 | 4 |
-| Last 24 hours | 4131 | 593 | 3538 | 1 | 428 | 1274 | 14 |
+| Last 15 minutes | 15 | 0 | 15 | 0 | 6 | 6 | 0 |
+| Last hour | 938 | 19 | 919 | 0 | 18 | 449 | 4 |
+| Last 24 hours | 4127 | 589 | 3538 | 1 | 428 | 1275 | 14 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#68572](https://github.com/openclaw/openclaw/pull/68572) | feat(plugin-sdk): add delegated wait-run handle seam | duplicate or superseded | Apr 27, 2026, 10:23 UTC | [closed/68572.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68572.md) |
+| [#68477](https://github.com/openclaw/openclaw/pull/68477) | feat(auth): add --profile to models auth login | duplicate or superseded | Apr 27, 2026, 10:22 UTC | [closed/68477.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68477.md) |
+| [#68465](https://github.com/openclaw/openclaw/pull/68465) | fix(whatsapp): support silentErrorReplies parity | duplicate or superseded | Apr 27, 2026, 10:22 UTC | [closed/68465.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68465.md) |
+| [#62974](https://github.com/openclaw/openclaw/issues/62974) | Feature: cache-aware sticky fallback to prevent prompt cache bouncing across providers | already implemented on main | Apr 27, 2026, 10:22 UTC | [closed/62974.md](https://github.com/openclaw/clawsweeper/blob/main/closed/62974.md) |
+| [#53895](https://github.com/openclaw/openclaw/issues/53895) | Outbound message retry queue for transient Telegram failures | duplicate or superseded | Apr 27, 2026, 10:22 UTC | [closed/53895.md](https://github.com/openclaw/clawsweeper/blob/main/closed/53895.md) |
+| [#53186](https://github.com/openclaw/openclaw/issues/53186) | replyToMode: \"off\" and replyToMode: \"first\" have no effect on Mattermost DM replies — replies are always threaded | already implemented on main | Apr 27, 2026, 10:22 UTC | [closed/53186.md](https://github.com/openclaw/clawsweeper/blob/main/closed/53186.md) |
 | [#72494](https://github.com/openclaw/openclaw/pull/72494) | fix(plugins): fail loud on rejected registration gates | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/72494.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72494.md) |
 | [#72487](https://github.com/openclaw/openclaw/pull/72487) | fix(qqbot): skip PlatformAdapter lookup in resolveQQBotAccount when adapter not registered (#72465) | duplicate or superseded | Apr 27, 2026, 09:59 UTC | [closed/72487.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72487.md) |
 | [#72483](https://github.com/openclaw/openclaw/pull/72483) | Feature Request: Custom TUI Footer Fields for Cost/Balance/Rate L... | not actionable in this repository | Apr 27, 2026, 09:59 UTC | [closed/72483.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72483.md) |
 | [#68589](https://github.com/openclaw/openclaw/pull/68589) | fix(cli): skip sessions warmup for non-TTY output | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68589.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68589.md) |
-| [#68445](https://github.com/openclaw/openclaw/pull/68445) | fix: exec tool gateway crash (#68376) and memory-core dreaming bloat (#68379) | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68445.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68445.md) |
-| [#68417](https://github.com/openclaw/openclaw/pull/68417) | fix(exec-approvals): allow ~/.openclaw symlink when OPENCLAW_STATE_DIR is set | duplicate or superseded | Apr 27, 2026, 09:59 UTC | [closed/68417.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68417.md) |
-| [#68386](https://github.com/openclaw/openclaw/issues/68386) | Bug: Async command completion notification routed to wrong session (heartbeat instead of main) | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68386.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68386.md) |
-| [#68303](https://github.com/openclaw/openclaw/issues/68303) | [OpenClaw][Dashboard] GUI accepts and buffers user messages with no UI indicator when sandbox SSH channel goes stale; flush arrives minutes later | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68303.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68303.md) |
-| [#68290](https://github.com/openclaw/openclaw/pull/68290) | fix(plugins): allow explicitly enabled plugins to load when plugins.enabled is false | duplicate or superseded | Apr 27, 2026, 09:59 UTC | [closed/68290.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68290.md) |
-| [#68183](https://github.com/openclaw/openclaw/issues/68183) | [Bug]: Windows + Docker Desktop 4.x: OpenClaw sandbox fails due to bundled Docker CLI (API 1.41) vs Engine (API >=1.44) | already implemented on main | Apr 27, 2026, 09:58 UTC | [closed/68183.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68183.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
