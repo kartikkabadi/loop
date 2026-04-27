@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 10:25 UTC
+Last dashboard update: Apr 27, 2026, 10:26 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 10:25 UTC
+Updated: Apr 27, 2026, 10:26 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989699373](https://github.com/openclaw/clawsweeper/actions/runs/24989699373)
 <!-- clawsweeper-status:end -->
 
@@ -46,22 +46,22 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989699373](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3561 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3559 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3466 |
-| Open items total | 7027 |
-| Reviewed files | 6799 |
-| Unreviewed open items | 228 |
-| Archived closed files | 13016 |
+| Open items total | 7025 |
+| Reviewed files | 6789 |
+| Unreviewed open items | 236 |
+| Archived closed files | 13026 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3486 |
+| Fresh reviewed issues in the last 7 days | 3484 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3301 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6787 |
+| Fresh verified reviews in the last 7 days | 6785 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 10200 |
 | Failed or stale reviews | 4 |
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989699373](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 38/712 current (674 due, 5.3%) |
-| Hourly hot item cadence (<7d) | 38/712 current (674 due, 5.3%) |
-| Daily cadence coverage | 1773/4237 current (2464 due, 41.8%) |
-| Daily PR cadence | 1090/2903 current (1813 due, 37.5%) |
-| Daily new issue cadence (<30d) | 683/1334 current (651 due, 51.2%) |
-| Weekly older issue cadence | 1849/1850 current (1 due, 99.9%) |
-| Due now by cadence | 3367 |
+| Hourly cadence coverage | 38/711 current (673 due, 5.3%) |
+| Hourly hot item cadence (<7d) | 38/711 current (673 due, 5.3%) |
+| Daily cadence coverage | 1767/4230 current (2463 due, 41.8%) |
+| Daily PR cadence | 1086/2899 current (1813 due, 37.5%) |
+| Daily new issue cadence (<30d) | 681/1331 current (650 due, 51.2%) |
+| Weekly older issue cadence | 1847/1848 current (1 due, 99.9%) |
+| Due now by cadence | 3373 |
 
 ### Audit Health
 
@@ -110,13 +110,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 10:09 UTC. Latest close: Apr 27, 2026, 09:59 UTC. Latest comment sync: Apr 27, 2026, 10:25 UTC.
+Latest review: Apr 27, 2026, 10:09 UTC. Latest close: Apr 27, 2026, 10:23 UTC. Latest comment sync: Apr 27, 2026, 10:25 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 382 | 0 |
-| Last hour | 938 | 19 | 919 | 0 | 12 | 772 | 4 |
-| Last 24 hours | 4112 | 579 | 3533 | 1 | 422 | 1651 | 14 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 3 | 385 | 0 |
+| Last hour | 938 | 19 | 919 | 0 | 15 | 765 | 4 |
+| Last 24 hours | 4096 | 563 | 3533 | 1 | 425 | 1654 | 14 |
 
 ### Recently Closed
 
@@ -125,13 +125,13 @@ Latest review: Apr 27, 2026, 10:09 UTC. Latest close: Apr 27, 2026, 09:59 UTC. L
 | [#68572](https://github.com/openclaw/openclaw/pull/68572) | feat(plugin-sdk): add delegated wait-run handle seam | duplicate or superseded | Apr 27, 2026, 10:23 UTC | [closed/68572.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68572.md) |
 | [#68477](https://github.com/openclaw/openclaw/pull/68477) | feat(auth): add --profile to models auth login | duplicate or superseded | Apr 27, 2026, 10:22 UTC | [closed/68477.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68477.md) |
 | [#68465](https://github.com/openclaw/openclaw/pull/68465) | fix(whatsapp): support silentErrorReplies parity | duplicate or superseded | Apr 27, 2026, 10:22 UTC | [closed/68465.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68465.md) |
-| [#62974](https://github.com/openclaw/openclaw/issues/62974) | Feature: cache-aware sticky fallback to prevent prompt cache bouncing across providers | already implemented on main | Apr 27, 2026, 10:22 UTC | [closed/62974.md](https://github.com/openclaw/clawsweeper/blob/main/closed/62974.md) |
-| [#53895](https://github.com/openclaw/openclaw/issues/53895) | Outbound message retry queue for transient Telegram failures | duplicate or superseded | Apr 27, 2026, 10:22 UTC | [closed/53895.md](https://github.com/openclaw/clawsweeper/blob/main/closed/53895.md) |
-| [#53186](https://github.com/openclaw/openclaw/issues/53186) | replyToMode: \"off\" and replyToMode: \"first\" have no effect on Mattermost DM replies — replies are always threaded | already implemented on main | Apr 27, 2026, 10:22 UTC | [closed/53186.md](https://github.com/openclaw/clawsweeper/blob/main/closed/53186.md) |
 | [#72494](https://github.com/openclaw/openclaw/pull/72494) | fix(plugins): fail loud on rejected registration gates | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/72494.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72494.md) |
 | [#72487](https://github.com/openclaw/openclaw/pull/72487) | fix(qqbot): skip PlatformAdapter lookup in resolveQQBotAccount when adapter not registered (#72465) | duplicate or superseded | Apr 27, 2026, 09:59 UTC | [closed/72487.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72487.md) |
 | [#72483](https://github.com/openclaw/openclaw/pull/72483) | Feature Request: Custom TUI Footer Fields for Cost/Balance/Rate L... | not actionable in this repository | Apr 27, 2026, 09:59 UTC | [closed/72483.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72483.md) |
 | [#68589](https://github.com/openclaw/openclaw/pull/68589) | fix(cli): skip sessions warmup for non-TTY output | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68589.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68589.md) |
+| [#68445](https://github.com/openclaw/openclaw/pull/68445) | fix: exec tool gateway crash (#68376) and memory-core dreaming bloat (#68379) | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68445.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68445.md) |
+| [#68417](https://github.com/openclaw/openclaw/pull/68417) | fix(exec-approvals): allow ~/.openclaw symlink when OPENCLAW_STATE_DIR is set | duplicate or superseded | Apr 27, 2026, 09:59 UTC | [closed/68417.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68417.md) |
+| [#68386](https://github.com/openclaw/openclaw/issues/68386) | Bug: Async command completion notification routed to wrong session (heartbeat instead of main) | already implemented on main | Apr 27, 2026, 09:59 UTC | [closed/68386.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68386.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
