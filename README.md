@@ -38,7 +38,7 @@ Updated: Apr 27, 2026, 07:41 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 4 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=62024,66992,67207,71349.
+Checkpoint 1 finished. Fresh closes in checkpoint: 3. Total fresh closes in this run: 3/4. Result records in checkpoint: 7, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24982590084](https://github.com/openclaw/clawsweeper/actions/runs/24982590084)
 <!-- clawsweeper-status:end -->
 
@@ -46,35 +46,35 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24982590084](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3609 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3515 |
-| Open items total | 7124 |
-| Reviewed files | 6873 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3607 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3514 |
+| Open items total | 7121 |
+| Reviewed files | 6870 |
 | Unreviewed open items | 251 |
-| Archived closed files | 12908 |
+| Archived closed files | 12911 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3538 |
-| Proposed issue closes | 3 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3330 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6868 |
-| Proposed closes awaiting apply | 4 (0.1% of fresh reviews) |
-| Closed by Codex apply | 10166 |
+| Fresh reviewed issues in the last 7 days | 3536 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3329 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6865 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10169 |
 | Failed or stale reviews | 5 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 133/714 current (581 due, 18.6%) |
-| Hourly hot item cadence (<7d) | 133/714 current (581 due, 18.6%) |
-| Daily cadence coverage | 3272/4306 current (1034 due, 76%) |
-| Daily PR cadence | 2005/2936 current (931 due, 68.3%) |
-| Daily new issue cadence (<30d) | 1267/1370 current (103 due, 92.5%) |
+| Hourly cadence coverage | 132/713 current (581 due, 18.5%) |
+| Hourly hot item cadence (<7d) | 132/713 current (581 due, 18.5%) |
+| Daily cadence coverage | 3270/4304 current (1034 due, 76%) |
+| Daily PR cadence | 2004/2935 current (931 due, 68.3%) |
+| Daily new issue cadence (<30d) | 1266/1369 current (103 due, 92.5%) |
 | Weekly older issue cadence | 1853/1853 current (0 due, 100%) |
 | Due now by cadence | 1866 |
 
@@ -110,18 +110,21 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 07:30 UTC. Latest close: Apr 27, 2026, 07:11 UTC. Latest comment sync: Apr 27, 2026, 07:15 UTC.
+Latest review: Apr 27, 2026, 07:30 UTC. Latest close: Apr 27, 2026, 07:41 UTC. Latest comment sync: Apr 27, 2026, 07:41 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 120 | 1 | 119 | 0 | 0 | 0 | 0 |
-| Last hour | 1002 | 9 | 993 | 0 | 12 | 673 | 2 |
-| Last 24 hours | 6899 | 1054 | 5845 | 3 | 852 | 1880 | 9 |
+| Last 15 minutes | 85 | 1 | 84 | 0 | 3 | 3 | 1 |
+| Last hour | 1002 | 9 | 993 | 0 | 12 | 651 | 3 |
+| Last 24 hours | 6899 | 1054 | 5845 | 3 | 855 | 1883 | 10 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#71349](https://github.com/openclaw/openclaw/issues/71349) | memory-lancedb: autoCapture rarely fires; only 2 entries persisted across many sessions | already implemented on main | Apr 27, 2026, 07:41 UTC | [closed/71349.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71349.md) |
+| [#67207](https://github.com/openclaw/openclaw/pull/67207) | fix(discord): add regression tests and diagnostics for https URL preservation | cannot reproduce on current main | Apr 27, 2026, 07:41 UTC | [closed/67207.md](https://github.com/openclaw/clawsweeper/blob/main/closed/67207.md) |
+| [#66992](https://github.com/openclaw/openclaw/issues/66992) | macOS: gateway plist should set ProcessType: Interactive to prevent App Nap timer stalls | duplicate or superseded | Apr 27, 2026, 07:41 UTC | [closed/66992.md](https://github.com/openclaw/clawsweeper/blob/main/closed/66992.md) |
 | [#64714](https://github.com/openclaw/openclaw/issues/64714) | sessions_spawn rejects subagent runtime when streamTo is auto-filled by strict-mode providers | already implemented on main | Apr 27, 2026, 07:11 UTC | [closed/64714.md](https://github.com/openclaw/clawsweeper/blob/main/closed/64714.md) |
 | [#72433](https://github.com/openclaw/openclaw/pull/72433) | test(gateway): move SecretInputs probe auth regression | duplicate or superseded | Apr 27, 2026, 06:42 UTC | [closed/72433.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72433.md) |
 | [#68179](https://github.com/openclaw/openclaw/pull/68179) | fix(discord): use normalized target in parseDiscordExplicitTarget | already implemented on main | Apr 27, 2026, 06:42 UTC | [closed/68179.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68179.md) |
@@ -129,9 +132,6 @@ Latest review: Apr 27, 2026, 07:30 UTC. Latest close: Apr 27, 2026, 07:11 UTC. L
 | [#67924](https://github.com/openclaw/openclaw/pull/67924) | fix(exec): tolerate  inside Python/JS string literals during preflight | already implemented on main | Apr 27, 2026, 06:42 UTC | [closed/67924.md](https://github.com/openclaw/clawsweeper/blob/main/closed/67924.md) |
 | [#67335](https://github.com/openclaw/openclaw/issues/67335) | Bug: gateway LaunchAgent is sometimes removed from launchd domain and requires doctor/re-bootstrap | already implemented on main | Apr 27, 2026, 06:42 UTC | [closed/67335.md](https://github.com/openclaw/clawsweeper/blob/main/closed/67335.md) |
 | [#67292](https://github.com/openclaw/openclaw/pull/67292) | fix(openai-transport): handle Mistral reasoning_content as non-string delta content | duplicate or superseded | Apr 27, 2026, 06:42 UTC | [closed/67292.md](https://github.com/openclaw/clawsweeper/blob/main/closed/67292.md) |
-| [#67236](https://github.com/openclaw/openclaw/issues/67236) | [qqbot] 同一条消息触发 Agent 重复回复 2-3 次 | already implemented on main | Apr 27, 2026, 06:41 UTC | [closed/67236.md](https://github.com/openclaw/clawsweeper/blob/main/closed/67236.md) |
-| [#66546](https://github.com/openclaw/openclaw/pull/66546) | feat(sessions): add transcriptRotateBytes and transcriptMaxLines to cap .jsonl growth | duplicate or superseded | Apr 27, 2026, 06:41 UTC | [closed/66546.md](https://github.com/openclaw/clawsweeper/blob/main/closed/66546.md) |
-| [#56538](https://github.com/openclaw/openclaw/pull/56538) | fix: use TextDecoder for proper GBK encoding support on Windows | duplicate or superseded | Apr 27, 2026, 06:41 UTC | [closed/56538.md](https://github.com/openclaw/clawsweeper/blob/main/closed/56538.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
