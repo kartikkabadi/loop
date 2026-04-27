@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 09:25 UTC
+Last dashboard update: Apr 27, 2026, 09:27 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 09:25 UTC
+Updated: Apr 27, 2026, 09:27 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24987105929](https://github.com/openclaw/clawsweeper/actions/runs/24987105929)
 <!-- clawsweeper-status:end -->
 
@@ -46,22 +46,22 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24987105929](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3591 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3495 |
-| Open items total | 7086 |
-| Reviewed files | 6839 |
-| Unreviewed open items | 247 |
-| Archived closed files | 12961 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3590 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3494 |
+| Open items total | 7084 |
+| Reviewed files | 6833 |
+| Unreviewed open items | 251 |
+| Archived closed files | 12967 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3512 |
+| Fresh reviewed issues in the last 7 days | 3510 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3316 |
+| Fresh reviewed PRs in the last 7 days | 3315 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6828 |
+| Fresh verified reviews in the last 7 days | 6825 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 10182 |
 | Failed or stale reviews | 8 |
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24987105929](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 85/708 current (623 due, 12%) |
-| Hourly hot item cadence (<7d) | 85/708 current (623 due, 12%) |
-| Daily cadence coverage | 1684/4274 current (2590 due, 39.4%) |
-| Daily PR cadence | 1036/2922 current (1886 due, 35.5%) |
-| Daily new issue cadence (<30d) | 648/1352 current (704 due, 47.9%) |
-| Weekly older issue cadence | 1857/1857 current (0 due, 100%) |
-| Due now by cadence | 3460 |
+| Hourly cadence coverage | 84/707 current (623 due, 11.9%) |
+| Hourly hot item cadence (<7d) | 84/707 current (623 due, 11.9%) |
+| Daily cadence coverage | 1683/4270 current (2587 due, 39.4%) |
+| Daily PR cadence | 1035/2920 current (1885 due, 35.4%) |
+| Daily new issue cadence (<30d) | 648/1350 current (702 due, 48%) |
+| Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
+| Due now by cadence | 3461 |
 
 ### Audit Health
 
@@ -110,13 +110,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 09:09 UTC. Latest close: Apr 27, 2026, 09:03 UTC. Latest comment sync: Apr 27, 2026, 09:25 UTC.
+Latest review: Apr 27, 2026, 09:09 UTC. Latest close: Apr 27, 2026, 09:22 UTC. Latest comment sync: Apr 27, 2026, 09:25 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 322 | 1 |
-| Last hour | 983 | 2 | 981 | 1 | 1 | 763 | 11 |
-| Last 24 hours | 4764 | 662 | 4102 | 3 | 554 | 1800 | 18 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 1 | 323 | 1 |
+| Last hour | 834 | 2 | 832 | 1 | 2 | 764 | 11 |
+| Last 24 hours | 4764 | 662 | 4102 | 3 | 540 | 1793 | 18 |
 
 ### Recently Closed
 
