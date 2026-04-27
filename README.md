@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 04:56 UTC
+Last dashboard update: Apr 27, 2026, 05:10 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 04:56 UTC
+Updated: Apr 27, 2026, 05:09 UTC
 
-State: Review in progress
+State: Review publish complete
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged review artifacts for run 24977237443. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977237443](https://github.com/openclaw/clawsweeper/actions/runs/24977237443)
 <!-- clawsweeper-status:end -->
 
@@ -46,23 +46,23 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977237443](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3658 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3557 |
-| Open items total | 7215 |
-| Reviewed files | 6997 |
-| Unreviewed open items | 218 |
-| Archived closed files | 12784 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3657 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3553 |
+| Open items total | 7210 |
+| Reviewed files | 6987 |
+| Unreviewed open items | 223 |
+| Archived closed files | 12794 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3588 |
-| Proposed issue closes | 16 (0.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3407 |
-| Proposed PR closes | 11 (0.3% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6995 |
-| Proposed closes awaiting apply | 27 (0.4% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3584 |
+| Proposed issue closes | 20 (0.6% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3401 |
+| Proposed PR closes | 29 (0.9% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6985 |
+| Proposed closes awaiting apply | 49 (0.7% of fresh reviews) |
 | Closed by Codex apply | 10103 |
 | Failed or stale reviews | 2 |
 
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977237443](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 223/741 current (518 due, 30.1%) |
-| Hourly hot item cadence (<7d) | 223/741 current (518 due, 30.1%) |
-| Daily cadence coverage | 4049/4392 current (343 due, 92.2%) |
-| Daily PR cadence | 2736/2994 current (258 due, 91.4%) |
-| Daily new issue cadence (<30d) | 1313/1398 current (85 due, 93.9%) |
-| Weekly older issue cadence | 1864/1864 current (0 due, 100%) |
-| Due now by cadence | 1079 |
+| Hourly cadence coverage | 35/737 current (702 due, 4.7%) |
+| Hourly hot item cadence (<7d) | 35/737 current (702 due, 4.7%) |
+| Daily cadence coverage | 4044/4388 current (344 due, 92.2%) |
+| Daily PR cadence | 2733/2992 current (259 due, 91.3%) |
+| Daily new issue cadence (<30d) | 1311/1396 current (85 due, 93.9%) |
+| Weekly older issue cadence | 1862/1862 current (0 due, 100%) |
+| Due now by cadence | 1269 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 04:40 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 04:54 UTC.
+Latest review: Apr 27, 2026, 05:07 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 04:54 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 461 | 1 |
-| Last hour | 1015 | 27 | 988 | 0 | 0 | 889 | 5 |
-| Last 24 hours | 8197 | 1566 | 6631 | 0 | 1393 | 2746 | 11 |
+| Last 15 minutes | 498 | 23 | 475 | 0 | 0 | 0 | 0 |
+| Last hour | 1015 | 46 | 969 | 0 | 0 | 865 | 5 |
+| Last 24 hours | 8181 | 1578 | 6603 | 0 | 1303 | 2595 | 10 |
 
 ### Recently Closed
 
@@ -138,16 +138,16 @@ Latest review: Apr 27, 2026, 04:40 UTC. Latest close: Apr 27, 2026, 03:51 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#41956](https://github.com/openclaw/openclaw/pull/41956) | fix(telegram): split watchdog stability fixes from #41883 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41956.md) | complete | Apr 27, 2026, 04:40 UTC |
-| [#41957](https://github.com/openclaw/openclaw/pull/41957) | fix(auto-reply): split typing-timeout stability fix from #41883 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41957.md) | complete | Apr 27, 2026, 04:40 UTC |
-| [#42052](https://github.com/openclaw/openclaw/pull/42052) | fix(backup): treat non-existent output paths as directories | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42052.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#68283](https://github.com/openclaw/openclaw/pull/68283) | fix(approvals): back off native handler bootstrap retries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68283.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#72315](https://github.com/openclaw/openclaw/issues/72315) | [Bug]: npm grammyjs   npm anthropic frequent disturbance shell popup in windows every 15 seconds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72315.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#42065](https://github.com/openclaw/openclaw/pull/42065) | UI: add global locale switch and complete zh-CN dashboard translations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42065.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#42007](https://github.com/openclaw/openclaw/pull/42007) | feat(feishu): add mentionTriggers support for text-based keyword triggers in groups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42007.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#42258](https://github.com/openclaw/openclaw/pull/42258) | fix: recover stuck Control UI chat runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42258.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#41308](https://github.com/openclaw/openclaw/pull/41308) | feat(exec): add cloud execution provider (host=\"cloud\") | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41308.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#41265](https://github.com/openclaw/openclaw/pull/41265) | fix(discord): preserve content-type and skip optimization for animated/WebP images | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41265.md) | complete | Apr 27, 2026, 04:39 UTC |
+| [#56242](https://github.com/openclaw/openclaw/pull/56242) | fix: add CJK error patterns to failover classification | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/56242.md) | complete | Apr 27, 2026, 05:07 UTC |
+| [#62956](https://github.com/openclaw/openclaw/pull/62956) | fix(tui): surface error details and elapsed time in status bar on agent failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/62956.md) | complete | Apr 27, 2026, 05:07 UTC |
+| [#57505](https://github.com/openclaw/openclaw/pull/57505) | Matrix: stop no-progress bot loops with semantic judge | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/57505.md) | complete | Apr 27, 2026, 05:07 UTC |
+| [#43747](https://github.com/openclaw/openclaw/issues/43747) | [Bug]: Memory management is in chaos | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43747.md) | complete | Apr 27, 2026, 05:06 UTC |
+| [#64016](https://github.com/openclaw/openclaw/issues/64016) | BUG: heartbeat fires duplicate runs when external wake events (openclaw agent CLI) arrive during scheduled heartbeat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/64016.md) | complete | Apr 27, 2026, 05:06 UTC |
+| [#47518](https://github.com/openclaw/openclaw/pull/47518) | fix(gemini-cli-auth): respect env proxy vars and fix hung exit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/47518.md) | complete | Apr 27, 2026, 05:06 UTC |
+| [#43996](https://github.com/openclaw/openclaw/issues/43996) | [Bug]: Sandbox container exits immediately when no-new-privileges is applied (exec /usr/bin/sleep: operation not permitted) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/43996.md) | complete | Apr 27, 2026, 05:06 UTC |
+| [#63558](https://github.com/openclaw/openclaw/issues/63558) | Control UI: Dreaming tab has no agent selector — cannot switch between agent contexts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63558.md) | complete | Apr 27, 2026, 05:06 UTC |
+| [#63139](https://github.com/openclaw/openclaw/issues/63139) | before_model_resolve hook fires once per fallback iteration in runWithModelFallback, defeating runtime failover for routing plugins | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63139.md) | complete | Apr 27, 2026, 05:06 UTC |
+| [#46542](https://github.com/openclaw/openclaw/pull/46542) | feat(memory): add shared memory store for cross-agent document sharing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/46542.md) | complete | Apr 27, 2026, 05:06 UTC |
 
 </details>
 
