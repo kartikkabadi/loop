@@ -39,7 +39,7 @@ Updated: Apr 27, 2026, 10:25 UTC
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989676514](https://github.com/openclaw/clawsweeper/actions/runs/24989676514)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989699373](https://github.com/openclaw/clawsweeper/actions/runs/24989699373)
 <!-- clawsweeper-status:end -->
 
 ### Queue
