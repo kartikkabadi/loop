@@ -38,7 +38,7 @@ Updated: Apr 27, 2026, 05:46 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 2 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=63871,65750.
+Checkpoint 1 finished. Fresh closes in checkpoint: 2. Total fresh closes in this run: 2/2. Result records in checkpoint: 4, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24978617852](https://github.com/openclaw/clawsweeper/actions/runs/24978617852)
 <!-- clawsweeper-status:end -->
 
@@ -47,11 +47,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24978617852](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3637 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3531 |
-| Open items total | 7168 |
-| Reviewed files | 6931 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3529 |
+| Open items total | 7166 |
+| Reviewed files | 6929 |
 | Unreviewed open items | 237 |
-| Archived closed files | 12850 |
+| Archived closed files | 12852 |
 
 ### Review Outcomes
 
@@ -59,11 +59,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24978617852](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3561 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3368 |
-| Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6929 |
-| Proposed closes awaiting apply | 2 (0% of fresh reviews) |
-| Closed by Codex apply | 10149 |
+| Fresh reviewed PRs in the last 7 days | 3366 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6927 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10151 |
 | Failed or stale reviews | 2 |
 
 ### Cadence
@@ -72,8 +72,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24978617852](https://
 | --- | ---: |
 | Hourly cadence coverage | 3/732 current (729 due, 0.4%) |
 | Hourly hot item cadence (<7d) | 3/732 current (729 due, 0.4%) |
-| Daily cadence coverage | 3992/4343 current (351 due, 91.9%) |
-| Daily PR cadence | 2696/2961 current (265 due, 91.1%) |
+| Daily cadence coverage | 3990/4341 current (351 due, 91.9%) |
+| Daily PR cadence | 2694/2959 current (265 due, 91%) |
 | Daily new issue cadence (<30d) | 1296/1382 current (86 due, 93.8%) |
 | Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
 | Due now by cadence | 1317 |
@@ -108,18 +108,20 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 05:35 UTC. Latest close: Apr 27, 2026, 05:25 UTC. Latest comment sync: Apr 27, 2026, 05:25 UTC.
+Latest review: Apr 27, 2026, 05:35 UTC. Latest close: Apr 27, 2026, 05:46 UTC. Latest comment sync: Apr 27, 2026, 05:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 211 | 1 | 210 | 0 | 0 | 0 | 0 |
-| Last hour | 998 | 25 | 973 | 0 | 19 | 711 | 5 |
-| Last 24 hours | 8098 | 1517 | 6581 | 0 | 1226 | 2363 | 13 |
+| Last 15 minutes | 186 | 1 | 185 | 0 | 2 | 2 | 0 |
+| Last hour | 998 | 25 | 973 | 0 | 21 | 699 | 5 |
+| Last 24 hours | 8096 | 1515 | 6581 | 0 | 1228 | 2355 | 13 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#65750](https://github.com/openclaw/openclaw/pull/65750) | fix(control-ui): stop reloading history after clear (#65719) | cannot reproduce on current main | Apr 27, 2026, 05:46 UTC | [closed/65750.md](https://github.com/openclaw/clawsweeper/blob/main/closed/65750.md) |
+| [#63871](https://github.com/openclaw/openclaw/pull/63871) | fix(cron): honor deleteAfterRun for recurring jobs | duplicate or superseded | Apr 27, 2026, 05:46 UTC | [closed/63871.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63871.md) |
 | [#71190](https://github.com/openclaw/openclaw/issues/71190) | [Bug]: mergeOrphanedTrailingUserPrompt snowballs queued messages after abort — model re-answers on every turn | already implemented on main | Apr 27, 2026, 05:25 UTC | [closed/71190.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71190.md) |
 | [#68293](https://github.com/openclaw/openclaw/pull/68293) | fix(systemd): use resolveSystemdServiceName in activate/uninstall | already implemented on main | Apr 27, 2026, 05:25 UTC | [closed/68293.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68293.md) |
 | [#68227](https://github.com/openclaw/openclaw/pull/68227) | fix(protocol): require hello-ok auth | duplicate or superseded | Apr 27, 2026, 05:25 UTC | [closed/68227.md](https://github.com/openclaw/clawsweeper/blob/main/closed/68227.md) |
@@ -128,8 +130,6 @@ Latest review: Apr 27, 2026, 05:35 UTC. Latest close: Apr 27, 2026, 05:25 UTC. L
 | [#67764](https://github.com/openclaw/openclaw/issues/67764) | [Feature]: Sessions UI should expose per-turn raw context and assembled model input | already implemented on main | Apr 27, 2026, 05:24 UTC | [closed/67764.md](https://github.com/openclaw/clawsweeper/blob/main/closed/67764.md) |
 | [#43954](https://github.com/openclaw/openclaw/pull/43954) | feat(feishu): add feishu_card tool for sending and updating interactive cards | belongs on ClawHub | Apr 27, 2026, 05:18 UTC | [closed/43954.md](https://github.com/openclaw/clawsweeper/blob/main/closed/43954.md) |
 | [#43901](https://github.com/openclaw/openclaw/pull/43901) | fix: remove L1 bootstrap snapshot cache to fix workspace file staleness | duplicate or superseded | Apr 27, 2026, 05:18 UTC | [closed/43901.md](https://github.com/openclaw/clawsweeper/blob/main/closed/43901.md) |
-| [#43874](https://github.com/openclaw/openclaw/pull/43874) | feat(feishu): fix board tool SDK paths and add create_whiteboard action | belongs on ClawHub | Apr 27, 2026, 05:18 UTC | [closed/43874.md](https://github.com/openclaw/clawsweeper/blob/main/closed/43874.md) |
-| [#43789](https://github.com/openclaw/openclaw/pull/43789) | [AI-assisted] fix(agents): compact sandbox skill paths | duplicate or superseded | Apr 27, 2026, 05:18 UTC | [closed/43789.md](https://github.com/openclaw/clawsweeper/blob/main/closed/43789.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
