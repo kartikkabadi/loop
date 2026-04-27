@@ -27,19 +27,19 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 05:19 UTC
+Last dashboard update: Apr 27, 2026, 05:20 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 05:19 UTC
+Updated: Apr 27, 2026, 05:20 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977765322](https://github.com/openclaw/clawsweeper/actions/runs/24977765322)
+Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=42105,42158,42218,42290,42518,42573,42673,42788,43043,43093,43137,43143,43223,43317,43327,43594,43634,43789,43874,43901,43954,44002,52133,53917,62548,66267,66494,66546,66891,66934,67036,67065,67116,67122,67175,67209,67248,67259,67260,67273,67532,67568,67764,67959,67970,68154,68227,68293,71190.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977900743](https://github.com/openclaw/clawsweeper/actions/runs/24977900743)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -47,11 +47,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977765322](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3652 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3539 |
-| Open items total | 7191 |
-| Reviewed files | 6967 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3538 |
+| Open items total | 7190 |
+| Reviewed files | 6966 |
 | Unreviewed open items | 224 |
-| Archived closed files | 12814 |
+| Archived closed files | 12815 |
 
 ### Review Outcomes
 
@@ -59,9 +59,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977765322](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3579 |
 | Proposed issue closes | 15 (0.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3386 |
+| Fresh reviewed PRs in the last 7 days | 3385 |
 | Proposed PR closes | 13 (0.4% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6965 |
+| Fresh verified reviews in the last 7 days | 6964 |
 | Proposed closes awaiting apply | 28 (0.4% of fresh reviews) |
 | Closed by Codex apply | 10123 |
 | Failed or stale reviews | 2 |
@@ -72,10 +72,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24977765322](https://
 | --- | ---: |
 | Hourly cadence coverage | 33/737 current (704 due, 4.5%) |
 | Hourly hot item cadence (<7d) | 33/737 current (704 due, 4.5%) |
-| Daily cadence coverage | 4027/4373 current (346 due, 92.1%) |
-| Daily PR cadence | 2717/2977 current (260 due, 91.3%) |
-| Daily new issue cadence (<30d) | 1310/1396 current (86 due, 93.8%) |
-| Weekly older issue cadence | 1857/1857 current (0 due, 100%) |
+| Daily cadence coverage | 4025/4371 current (346 due, 92.1%) |
+| Daily PR cadence | 2716/2976 current (260 due, 91.3%) |
+| Daily new issue cadence (<30d) | 1309/1395 current (86 due, 93.8%) |
+| Weekly older issue cadence | 1858/1858 current (0 due, 100%) |
 | Due now by cadence | 1274 |
 
 ### Audit Health
@@ -112,9 +112,9 @@ Latest review: Apr 27, 2026, 05:07 UTC. Latest close: Apr 27, 2026, 05:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 142 | 8 | 134 | 0 | 20 | 21 | 1 |
-| Last hour | 1013 | 46 | 967 | 0 | 20 | 712 | 6 |
-| Last 24 hours | 8178 | 1578 | 6600 | 0 | 1292 | 2585 | 11 |
+| Last 15 minutes | 54 | 2 | 52 | 0 | 20 | 21 | 1 |
+| Last hour | 1013 | 46 | 967 | 0 | 20 | 662 | 5 |
+| Last 24 hours | 8178 | 1578 | 6600 | 0 | 1283 | 2575 | 11 |
 
 ### Recently Closed
 
