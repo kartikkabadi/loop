@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 06:47 UTC
+Last dashboard update: Apr 27, 2026, 06:48 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 06:46 UTC
+Updated: Apr 27, 2026, 06:48 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 24980346225. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 19. Item numbers: 10356,43614,63634,72373,72376,72381,72382,72383,72384,72386,72387,72390,72394,72396,72398,72423,72425,72426,72428,72436.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980346225](https://github.com/openclaw/clawsweeper/actions/runs/24980346225)
 <!-- clawsweeper-status:end -->
 
@@ -46,11 +46,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980346225](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3623 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3524 |
-| Open items total | 7147 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3622 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3523 |
+| Open items total | 7145 |
 | Reviewed files | 6900 |
-| Unreviewed open items | 247 |
+| Unreviewed open items | 245 |
 | Archived closed files | 12881 |
 
 ### Review Outcomes
@@ -76,7 +76,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980346225](https://
 | Daily PR cadence | 2503/2946 current (443 due, 85%) |
 | Daily new issue cadence (<30d) | 1281/1372 current (91 due, 93.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 1390 |
+| Due now by cadence | 1388 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 06:44 UTC. Latest close: Apr 27, 2026, 06:42 UTC. Latest comment sync: Apr 27, 2026, 06:42 UTC.
+Latest review: Apr 27, 2026, 06:44 UTC. Latest close: Apr 27, 2026, 06:42 UTC. Latest comment sync: Apr 27, 2026, 06:48 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 11 | 7 | 0 |
-| Last hour | 1020 | 10 | 1010 | 0 | 11 | 644 | 3 |
-| Last 24 hours | 7544 | 1170 | 6374 | 1 | 1084 | 2158 | 9 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 11 | 516 | 4 |
+| Last hour | 1020 | 10 | 1010 | 0 | 11 | 1127 | 7 |
+| Last 24 hours | 7544 | 1170 | 6374 | 1 | 1083 | 2665 | 13 |
 
 ### Recently Closed
 
@@ -147,7 +147,7 @@ Latest review: Apr 27, 2026, 06:44 UTC. Latest close: Apr 27, 2026, 06:42 UTC. L
 | [#72426](https://github.com/openclaw/openclaw/pull/72426) | Fix Google Live tool response names | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72426.md) | complete | Apr 27, 2026, 06:43 UTC |
 | [#72436](https://github.com/openclaw/openclaw/pull/72436) | Add append-only session recovery log | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72436.md) | complete | Apr 27, 2026, 06:43 UTC |
 | [#72423](https://github.com/openclaw/openclaw/pull/72423) | fix(channels): document Discord/Slack <user:ID\|channel:ID> target syntax in tool description (#72401) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72423.md) | complete | Apr 27, 2026, 06:43 UTC |
-| [#63634](https://github.com/openclaw/openclaw/pull/63634) | fix: accept valid MCP tool schemas without strict inputSchema.type check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/63634.md) | complete | Apr 27, 2026, 06:43 UTC |
+| [#63634](https://github.com/openclaw/openclaw/pull/63634) | fix: accept valid MCP tool schemas without strict inputSchema.type check | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/63634.md) | complete | Apr 27, 2026, 06:43 UTC |
 
 </details>
 
