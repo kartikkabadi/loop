@@ -36,10 +36,10 @@ Last dashboard update: Apr 27, 2026, 07:11 UTC
 
 Updated: Apr 27, 2026, 07:11 UTC
 
-State: Apply in progress
+State: Audit finished
 
-Starting apply/comment-sync run for up to 5 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=43669,43671,53475,63120,64714.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24981437187](https://github.com/openclaw/clawsweeper/actions/runs/24981437187)
+Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24981459220](https://github.com/openclaw/clawsweeper/actions/runs/24981459220)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -81,29 +81,31 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24981437187](https://
 ### Audit Health
 
 <!-- clawsweeper-audit:start -->
-Last audit: Apr 27, 2026, 01:06 UTC
+Last audit: Apr 27, 2026, 07:11 UTC
 
 Status: **Action needed**
+
+Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 | Metric | Count |
 | --- | ---: |
 | Scan complete | yes |
-| Open items seen | 7235 |
-| Missing eligible open records | 0 |
-| Missing maintainer-authored open records | 85 |
-| Missing protected open records | 2 |
-| Missing recently-created open records | 26 |
+| Open items seen | 7132 |
+| Missing eligible open records | 2 |
+| Missing maintainer-authored open records | 94 |
+| Missing protected open records | 1 |
+| Missing recently-created open records | 149 |
 | Archived records that are open again | 0 |
-| Stale item records | 7 |
+| Stale item records | 1 |
 | Duplicate records | 0 |
-| Protected proposed closes | 2 |
-| Stale reviews | 5 |
+| Protected proposed closes | 0 |
+| Stale reviews | 6 |
 
 | Item | Category | Title | Detail |
 | --- | --- | --- | --- |
-| [#57413](https://github.com/openclaw/openclaw/pull/57413) | Protected proposed close | feat(whatsapp): add reply quoting via replyToMode | closed/57413.md |
-| [#60460](https://github.com/openclaw/openclaw/pull/60460) | Protected proposed close | Enforce browser profile CDP policy | closed/60460.md |
-| [#40945](https://github.com/openclaw/openclaw/issues/40945) | Stale review | Control UI chat markdown only renders data URI images, not remote https image URLs | items/40945.md |
+| [#64563](https://github.com/openclaw/openclaw/pull/64563) | Missing eligible open | fix(whatsapp): lazy default auth dir for profile state (#64555) | eligible |
+| [#65635](https://github.com/openclaw/openclaw/pull/65635) | Missing eligible open | fix(gateway): keep explicit loopback binds on 127.0.0.1 | eligible |
+| [#56915](https://github.com/openclaw/openclaw/issues/56915) | Stale review | [Bug]: [Bug] Skills scanner ignores subdirectories under ~/.openclaw/skills/ | items/56915.md |
 <!-- clawsweeper-audit:end -->
 
 ### Latest Run Activity
