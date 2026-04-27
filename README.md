@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 02:03 UTC
+Last dashboard update: Apr 27, 2026, 02:04 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 02:03 UTC
+Updated: Apr 27, 2026, 02:04 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 20 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=53032,53168,53416,53430,53500,53679,53926,54150,54199,54254,54381,54413,54535,54658,54743,54837,54854,55059,55063,55074,55163,62890,62991,63045,63075,63119,63169,71148,71848.
+Checkpoint 1 finished. Fresh closes in checkpoint: 7. Total fresh closes in this run: 7/20. Result records in checkpoint: 10, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973085727](https://github.com/openclaw/clawsweeper/actions/runs/24973085727)
 <!-- clawsweeper-status:end -->
 
@@ -46,35 +46,35 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24973085727](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3664 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3560 |
-| Open items total | 7224 |
-| Reviewed files | 7087 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3659 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3558 |
+| Open items total | 7217 |
+| Reviewed files | 7080 |
 | Unreviewed open items | 137 |
-| Archived closed files | 12694 |
+| Archived closed files | 12701 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3630 |
-| Proposed issue closes | 5 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3447 |
-| Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 7077 |
-| Proposed closes awaiting apply | 7 (0.1% of fresh reviews) |
-| Closed by Codex apply | 10047 |
+| Fresh reviewed issues in the last 7 days | 3625 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3445 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 7070 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10054 |
 | Failed or stale reviews | 10 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 224/765 current (541 due, 29.3%) |
-| Hourly hot item cadence (<7d) | 224/765 current (541 due, 29.3%) |
-| Daily cadence coverage | 4177/4454 current (277 due, 93.8%) |
-| Daily PR cadence | 2883/3027 current (144 due, 95.2%) |
-| Daily new issue cadence (<30d) | 1294/1427 current (133 due, 90.7%) |
+| Hourly cadence coverage | 222/763 current (541 due, 29.1%) |
+| Hourly hot item cadence (<7d) | 222/763 current (541 due, 29.1%) |
+| Daily cadence coverage | 4172/4449 current (277 due, 93.8%) |
+| Daily PR cadence | 2881/3025 current (144 due, 95.2%) |
+| Daily new issue cadence (<30d) | 1291/1424 current (133 due, 90.7%) |
 | Weekly older issue cadence | 1868/1868 current (0 due, 100%) |
 | Due now by cadence | 955 |
 
@@ -108,28 +108,28 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 01:59 UTC. Latest close: Apr 27, 2026, 02:02 UTC. Latest comment sync: Apr 27, 2026, 02:02 UTC.
+Latest review: Apr 27, 2026, 01:59 UTC. Latest close: Apr 27, 2026, 02:04 UTC. Latest comment sync: Apr 27, 2026, 02:03 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 20 | 20 | 2 |
-| Last hour | 634 | 33 | 601 | 1 | 29 | 516 | 12 |
-| Last 24 hours | 8673 | 1748 | 6925 | 8 | 2013 | 2550 | 15 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 18 | 23 | 2 |
+| Last hour | 634 | 33 | 601 | 1 | 27 | 519 | 12 |
+| Last 24 hours | 8673 | 1748 | 6925 | 8 | 2011 | 2553 | 15 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#62890](https://github.com/openclaw/openclaw/issues/62890) | [Bug]: Missing @img/colour module breaks inline screenshot rendering | already implemented on main | Apr 27, 2026, 02:02 UTC | [closed/62890.md](https://github.com/openclaw/clawsweeper/blob/main/closed/62890.md) |
-| [#55163](https://github.com/openclaw/openclaw/issues/55163) | [Bug]: Doctor auto-enable creates config reload loop for local extensions in ~/.openclaw/extensions/ | already implemented on main | Apr 27, 2026, 02:02 UTC | [closed/55163.md](https://github.com/openclaw/clawsweeper/blob/main/closed/55163.md) |
-| [#55074](https://github.com/openclaw/openclaw/issues/55074) | Make MEDIA_MAX_BYTES configurable instead of hardcoded 5MB | duplicate or superseded | Apr 27, 2026, 02:01 UTC | [closed/55074.md](https://github.com/openclaw/clawsweeper/blob/main/closed/55074.md) |
-| [#55063](https://github.com/openclaw/openclaw/issues/55063) | [Bug]: /new and /reset preserve session model override; reset banner default can differ from agents.defaults.model.primary | duplicate or superseded | Apr 27, 2026, 02:01 UTC | [closed/55063.md](https://github.com/openclaw/clawsweeper/blob/main/closed/55063.md) |
-| [#55059](https://github.com/openclaw/openclaw/issues/55059) | [Feature]:Support openai-chat API type for providers | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/55059.md](https://github.com/openclaw/clawsweeper/blob/main/closed/55059.md) |
-| [#54854](https://github.com/openclaw/openclaw/issues/54854) | Control UI regression: drag-and-drop file to chat no longer works / old 'drop to local file path' workflow is gone | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54854.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54854.md) |
-| [#54743](https://github.com/openclaw/openclaw/issues/54743) | config set throws Maximum call stack size exceeded | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54743.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54743.md) |
-| [#54658](https://github.com/openclaw/openclaw/issues/54658) | Silent message delivery failure: AI response generated but never delivered to Discord | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54658.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54658.md) |
-| [#54535](https://github.com/openclaw/openclaw/issues/54535) | [Bug] openclaw browser CLI crashes Chrome 146 via Playwright connectOverCDP (EXC_BREAKPOINT/SIGTRAP) | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54535.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54535.md) |
+| [#71848](https://github.com/openclaw/openclaw/issues/71848) | [SRE] Gateway SIGABRT (134) on macOS launchd (mini-lobby) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71848.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71848.md) |
+| [#71148](https://github.com/openclaw/openclaw/issues/71148) | Memory leak: Ajv `.compile()` per call in `sharedAjv` (and `ajv`) leaks SchemaEnv/run closures | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/71148.md](https://github.com/openclaw/clawsweeper/blob/main/closed/71148.md) |
+| [#63169](https://github.com/openclaw/openclaw/issues/63169) | WhatsApp media send reports success but attachment is never delivered (2026.4.8) | already implemented on main | Apr 27, 2026, 02:04 UTC | [closed/63169.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63169.md) |
+| [#63119](https://github.com/openclaw/openclaw/issues/63119) | [Feature]: Session compaction: archive transcript files before deletion, with configurable retention | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/63119.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63119.md) |
+| [#63075](https://github.com/openclaw/openclaw/issues/63075) | Discord stale slash commands remain visible when channels.discord.commands.native=false | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/63075.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63075.md) |
+| [#63045](https://github.com/openclaw/openclaw/pull/63045) | fix(device-pairing): guard against array-typed state files in loadState | duplicate or superseded | Apr 27, 2026, 02:03 UTC | [closed/63045.md](https://github.com/openclaw/clawsweeper/blob/main/closed/63045.md) |
+| [#62991](https://github.com/openclaw/openclaw/pull/62991) | fix(agents): merge user-configured providers into model catalog | already implemented on main | Apr 27, 2026, 02:03 UTC | [closed/62991.md](https://github.com/openclaw/clawsweeper/blob/main/closed/62991.md) |
 | [#54413](https://github.com/openclaw/openclaw/issues/54413) | Discord delivery silently drops messages after response termination + retry | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54413.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54413.md) |
+| [#54381](https://github.com/openclaw/openclaw/issues/54381) | [Bug]: Subsystem logger caches file path on first call, logs written to wrong date file after midnight | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54381.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54381.md) |
+| [#54254](https://github.com/openclaw/openclaw/issues/54254) | Telegram: bot gets stuck in 'typing' during long model inference, /stop unresponsive | already implemented on main | Apr 27, 2026, 02:01 UTC | [closed/54254.md](https://github.com/openclaw/clawsweeper/blob/main/closed/54254.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
