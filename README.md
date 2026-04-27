@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 10:33 UTC
+Last dashboard update: Apr 27, 2026, 10:34 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 10:32 UTC
+Updated: Apr 27, 2026, 10:34 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 24989699373. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 19. Item numbers: 42400,67158,72092,72398,72497,72499,72500,72501,72504,72505,72507,72510,72511,72512,72513,72514,72515,72516,72517,72519.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989699373](https://github.com/openclaw/clawsweeper/actions/runs/24989699373)
 <!-- clawsweeper-status:end -->
 
@@ -46,8 +46,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24989699373](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3557 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3463 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3556 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3464 |
 | Open items total | 7020 |
 | Reviewed files | 6804 |
 | Unreviewed open items | 216 |
@@ -110,13 +110,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 10:30 UTC. Latest close: Apr 27, 2026, 10:23 UTC. Latest comment sync: Apr 27, 2026, 10:25 UTC.
+Latest review: Apr 27, 2026, 10:30 UTC. Latest close: Apr 27, 2026, 10:23 UTC. Latest comment sync: Apr 27, 2026, 10:34 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 4 | 16 | 0 | 3 | 214 | 0 |
-| Last hour | 722 | 22 | 700 | 0 | 15 | 765 | 4 |
-| Last 24 hours | 4062 | 517 | 3545 | 1 | 425 | 1654 | 14 |
+| Last 15 minutes | 20 | 4 | 16 | 0 | 3 | 204 | 1 |
+| Last hour | 668 | 22 | 646 | 0 | 15 | 784 | 5 |
+| Last 24 hours | 4062 | 517 | 3545 | 1 | 425 | 1672 | 15 |
 
 ### Recently Closed
 
@@ -147,7 +147,7 @@ Latest review: Apr 27, 2026, 10:30 UTC. Latest close: Apr 27, 2026, 10:23 UTC. L
 | [#72510](https://github.com/openclaw/openclaw/pull/72510) | fix(group-chat): wire multi-agent bot-targeting signals end-to-end (#56692) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72510.md) | complete | Apr 27, 2026, 10:29 UTC |
 | [#72513](https://github.com/openclaw/openclaw/pull/72513) | fix(mattermost): handle post_edited websocket events (#71930) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72513.md) | complete | Apr 27, 2026, 10:29 UTC |
 | [#72514](https://github.com/openclaw/openclaw/issues/72514) | [Feature]: OpenClaw 跨会话/跨 Agent 互通问题 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72514.md) | complete | Apr 27, 2026, 10:29 UTC |
-| [#42400](https://github.com/openclaw/openclaw/pull/42400) | feat(channels): add neverReply config for group message suppression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42400.md) | complete | Apr 27, 2026, 10:29 UTC |
+| [#42400](https://github.com/openclaw/openclaw/pull/42400) | feat(channels): add neverReply config for group message suppression | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/42400.md) | complete | Apr 27, 2026, 10:29 UTC |
 | [#72398](https://github.com/openclaw/openclaw/pull/72398) | UI: harden chat scroll interrupts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72398.md) | complete | Apr 27, 2026, 10:29 UTC |
 | [#72501](https://github.com/openclaw/openclaw/pull/72501) | fix(telegram): implement poll_answer event routing into sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72501.md) | complete | Apr 27, 2026, 10:29 UTC |
 
