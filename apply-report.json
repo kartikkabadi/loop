@@ -1,222 +1,162 @@
 [
   {
-    "number": 61320,
+    "number": 64744,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 64745,
     "action": "review_comment_synced",
     "reason": "recorded existing durable comment metadata"
   },
   {
-    "number": 61320,
+    "number": 64745,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 64787,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 64787,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 64836,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 64836,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 64927,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 64927,
     "action": "closed",
     "reason": "cannot reproduce on current main"
   },
   {
-    "number": 63002,
+    "number": 65081,
     "action": "review_comment_synced",
     "reason": "recorded existing durable comment metadata"
   },
   {
-    "number": 63002,
+    "number": 65081,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 65176,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 65176,
     "action": "closed",
     "reason": "duplicate or superseded"
   },
   {
-    "number": 63109,
+    "number": 65195,
     "action": "review_comment_synced",
     "reason": "recorded existing durable comment metadata"
   },
   {
-    "number": 63109,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 63187,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 63187,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 63227,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 63227,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 63260,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 63260,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 63401,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 63401,
+    "number": 65195,
     "action": "closed",
     "reason": "duplicate or superseded"
   },
   {
-    "number": 63606,
+    "number": 65457,
     "action": "review_comment_synced",
     "reason": "recorded existing durable comment metadata"
   },
   {
-    "number": 63606,
+    "number": 65457,
     "action": "closed",
     "reason": "duplicate or superseded"
   },
   {
-    "number": 63688,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 63688,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 63723,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 63723,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 63773,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 63773,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 63994,
+    "number": 65481,
     "action": "skipped_same_author_pair",
-    "reason": "open issue #63769 ([Bug] Gateway WebSocket chat stream may drop repeated consecutive characters in merged assistant text) by the same author is paired with this PR"
+    "reason": "open issue #65480 (QMD regression: collection patterns fall back to **/*.md because qmd-manager prefers --glob over --mask) by the same author is paired with this PR"
   },
   {
-    "number": 64201,
-    "action": "skipped_changed_since_review",
-    "reason": "updated_at changed"
-  },
-  {
-    "number": 64289,
+    "number": 65494,
     "action": "review_comment_synced",
     "reason": "recorded existing durable comment metadata"
   },
   {
-    "number": 64289,
+    "number": 65494,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 64296,
+    "number": 65497,
     "action": "review_comment_synced",
     "reason": "recorded existing durable comment metadata"
   },
   {
-    "number": 64296,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 64319,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 64319,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 64321,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 64321,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 64549,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 64549,
+    "number": 65497,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 64606,
+    "number": 65589,
     "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
+    "reason": "updated durable Codex review comment"
   },
   {
-    "number": 64606,
+    "number": 65589,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 65675,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 65675,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 65724,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 65724,
     "action": "closed",
     "reason": "already implemented on main"
   },
   {
-    "number": 64653,
-    "action": "skipped_changed_since_review",
-    "reason": "updated_at changed"
-  },
-  {
-    "number": 64661,
+    "number": 65813,
     "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
+    "reason": "updated durable Codex review comment"
   },
   {
-    "number": 64661,
+    "number": 65813,
     "action": "closed",
-    "reason": "duplicate or superseded"
+    "reason": "already implemented on main"
   },
   {
-    "number": 64672,
+    "number": 65938,
     "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
+    "reason": "updated durable Codex review comment"
   },
   {
-    "number": 64672,
+    "number": 65938,
     "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 64709,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 64709,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 64744,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
+    "reason": "already implemented on main"
   }
 ]
