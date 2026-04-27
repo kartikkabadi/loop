@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 04:43 UTC
+Last dashboard update: Apr 27, 2026, 04:44 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 04:42 UTC
+Updated: Apr 27, 2026, 04:44 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 24976752988. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 41265,41299,41308,41954,41955,41956,41957,41991,42001,42007,42052,42065,42131,42174,42197,42207,42222,42223,42245,42258.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/24976752988](https://github.com/openclaw/clawsweeper/actions/runs/24976752988)
 <!-- clawsweeper-status:end -->
 
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24976752988](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 192/745 current (553 due, 25.8%) |
-| Hourly hot item cadence (<7d) | 192/745 current (553 due, 25.8%) |
-| Daily cadence coverage | 3694/4391 current (697 due, 84.1%) |
-| Daily PR cadence | 2612/2993 current (381 due, 87.3%) |
-| Daily new issue cadence (<30d) | 1082/1398 current (316 due, 77.4%) |
+| Hourly cadence coverage | 224/745 current (521 due, 30.1%) |
+| Hourly hot item cadence (<7d) | 224/745 current (521 due, 30.1%) |
+| Daily cadence coverage | 4138/4391 current (253 due, 94.2%) |
+| Daily PR cadence | 2824/2993 current (169 due, 94.4%) |
+| Daily new issue cadence (<30d) | 1314/1398 current (84 due, 94%) |
 | Weekly older issue cadence | 1864/1864 current (0 due, 100%) |
-| Due now by cadence | 1462 |
+| Due now by cadence | 986 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 04:40 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 04:25 UTC.
+Latest review: Apr 27, 2026, 04:40 UTC. Latest close: Apr 27, 2026, 03:51 UTC. Latest comment sync: Apr 27, 2026, 04:44 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
-| Last hour | 520 | 4 | 516 | 0 | 3 | 809 | 5 |
-| Last 24 hours | 7918 | 1558 | 6360 | 1 | 1472 | 2398 | 13 |
+| Last 15 minutes | 513 | 23 | 490 | 0 | 0 | 20 | 0 |
+| Last hour | 1015 | 27 | 988 | 0 | 3 | 829 | 5 |
+| Last 24 hours | 8365 | 1581 | 6784 | 0 | 1472 | 2385 | 10 |
 
 ### Recently Closed
 
@@ -141,13 +141,13 @@ Latest review: Apr 27, 2026, 04:40 UTC. Latest close: Apr 27, 2026, 03:51 UTC. L
 | [#41956](https://github.com/openclaw/openclaw/pull/41956) | fix(telegram): split watchdog stability fixes from #41883 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41956.md) | complete | Apr 27, 2026, 04:40 UTC |
 | [#41957](https://github.com/openclaw/openclaw/pull/41957) | fix(auto-reply): split typing-timeout stability fix from #41883 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41957.md) | complete | Apr 27, 2026, 04:40 UTC |
 | [#42052](https://github.com/openclaw/openclaw/pull/42052) | fix(backup): treat non-existent output paths as directories | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42052.md) | complete | Apr 27, 2026, 04:39 UTC |
+| [#68283](https://github.com/openclaw/openclaw/pull/68283) | fix(approvals): back off native handler bootstrap retries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68283.md) | complete | Apr 27, 2026, 04:39 UTC |
+| [#72315](https://github.com/openclaw/openclaw/issues/72315) | [Bug]: npm grammyjs   npm anthropic frequent disturbance shell popup in windows every 15 seconds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/72315.md) | complete | Apr 27, 2026, 04:39 UTC |
 | [#42065](https://github.com/openclaw/openclaw/pull/42065) | UI: add global locale switch and complete zh-CN dashboard translations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42065.md) | complete | Apr 27, 2026, 04:39 UTC |
 | [#42007](https://github.com/openclaw/openclaw/pull/42007) | feat(feishu): add mentionTriggers support for text-based keyword triggers in groups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42007.md) | complete | Apr 27, 2026, 04:39 UTC |
 | [#42258](https://github.com/openclaw/openclaw/pull/42258) | fix: recover stuck Control UI chat runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42258.md) | complete | Apr 27, 2026, 04:39 UTC |
 | [#41308](https://github.com/openclaw/openclaw/pull/41308) | feat(exec): add cloud execution provider (host=\"cloud\") | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41308.md) | complete | Apr 27, 2026, 04:39 UTC |
 | [#41265](https://github.com/openclaw/openclaw/pull/41265) | fix(discord): preserve content-type and skip optimization for animated/WebP images | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/41265.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#42001](https://github.com/openclaw/openclaw/pull/42001) | fix(ui): preserve gateway token when editing WebSocket URL | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42001.md) | complete | Apr 27, 2026, 04:39 UTC |
-| [#42174](https://github.com/openclaw/openclaw/pull/42174) | fix: false error of Windows path when binding the host path to the sandbox. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/42174.md) | complete | Apr 27, 2026, 04:39 UTC |
 
 </details>
 
