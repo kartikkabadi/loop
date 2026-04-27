@@ -27,31 +27,31 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 27, 2026, 06:44 UTC
+Last dashboard update: Apr 27, 2026, 06:46 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 27, 2026, 06:44 UTC
+Updated: Apr 27, 2026, 06:46 UTC
 
-State: Apply finished
+State: Review comments checked
 
-Apply/comment-sync run finished with 0 fresh closes out of requested limit 11. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980465811](https://github.com/openclaw/clawsweeper/actions/runs/24980465811)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 490. Item numbers: 6457,15591,16251,17684,18915,19362,19482,20802,25222,25295,25789,27061,27771,30142,32558,34542,34581,38709,39115,39137,39166,40144,40147,40155,40165,40194,40207,40210,40216,40217,40218,40220,40230,40236,40238,40268,40277,40287,40289,40290,40296,40311,40314,40317,40332,40352,40355,40366,40387,40402,40418,40421,40423,40427,40438,40440,40446,40447,40453,40463,40464,40472,40481,40485,40502,40527,40530,40534,40540,40578,40602,40611,40618,40641,40644,40652,40654,40663,40665,40673,40678,40694,40697,40703,40716,40723,40732,40744,40747,40756,40760,40764,40875,41025,41108,41165,41195,41201,41265,41299,41308,41419,41494,41581,41624,41716,41954,41955,41956,41957,41964,41965,41966,41983,41986,41991,41993,42001,42007,42009,42010,42011,42014,42026,42027,42039,42052,42059,42065,42079,42083,42099,42106,42131,42139,42156,42157,42165,42174,42196,42197,42201,42207,42208,42213,42222,42223,42243,42245,42252,42253,42258,42259,42261,42271,42273,42291,42294,42301,42303,42304,42317,42319,42322,42327,42330,42350,42351,42354,42361,42373,42381,42391,42402,42408,42424,42452,42461,42472,42475,42476,42480,42482,42496,42497,42504,42510,42531,42533,42538,42539,42544,42555,42571,42585,42586,42591,42592,42617,42631,42636,42646,42647,42648,42650,42651,42652,42654,42656,42663,42669,42674,42675,42677,42680,42683,42690,42698,42707,42713,42715,42729,42771,42797,42798,42802,42803,42809,42810,42819,42824,42832,42837,42840,42841,42843,42847,42853,42854,42856,42858,42859,42862,42867,42873,42877,42895,42898,42904,42908,42933,42936,42952,42961,42962,42978,42987,42998,42999,43005,43006,43009,43013,43015,43028,43061,43063,43064,43065,43068,43095,43097,43117,43141,43145,43151,43165,43176,43195,43202,43204,43211,43231,43244,43249,43253,43260,43276,43286,43288,43291,43300,43341,43390,43404,43440,43441,43467,43480,43495,43512,43527,43557,43562,43564,43565,43568,43585,43588,43616,43656,43658,43673,43690,43712,43743,43752,43775,43791,43794,43808,43835,43848,43866,43938,43951,43953,43978,43984,43992,44011,44013,44023,58070,66521,66771,66926,67019,67035,67177,67181,67191,67202,67244,67332,67333,67335,67341,67345,67350,67363,67366,67376,67378,67393,67394,67404,67434,67444,67460,67461,67466,67472,67477,67488,67493,67506,67547,67551,67552,67569,67584,67587,67593,67594,67595,67621,67623,67626,67629,67631,67639,67655,67661,67662,67669,67670,67680,67682,67687,67690,67692,67693,67694,67701,67702,67703,67706,67709,67716,67727,67728,67731,67734,67750,67751,67758,67759,67761,67766,67779,67781,67782,67783,67784,67792,67793,67796,67805,67817,67826,67832,67836,67841,67842,67843,67868,67872,67910,67916,67917,67924,67935,67943,67946,67952,67959,67966,67967,67971,67976,67977,67986,67988,67990,68010,68015,68019,68037,68041,68045,68046,68047,68054,68061,68064,68065,68066,68070,68089,68101,68103,68105,68106,68109,68112,68113,68115,68116,68124,68126,68127,68129,68146,68149,68152,68155,68160,68161,68162,68164,68170,68176,68179,68180,68181,68188,68196,68197,68204,68209,68222,68226,68240,68257,68258,68264,71902,72216,72433.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/24979651048](https://github.com/openclaw/clawsweeper/actions/runs/24979651048)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3624 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3522 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3623 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3523 |
 | Open items total | 7146 |
-| Reviewed files | 6902 |
-| Unreviewed open items | 244 |
-| Archived closed files | 12879 |
+| Reviewed files | 6916 |
+| Unreviewed open items | 230 |
+| Archived closed files | 12865 |
 
 ### Review Outcomes
 
@@ -70,13 +70,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/24980465811](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 115/727 current (612 due, 15.8%) |
-| Hourly hot item cadence (<7d) | 115/727 current (612 due, 15.8%) |
-| Daily cadence coverage | 3786/4320 current (534 due, 87.6%) |
-| Daily PR cadence | 2504/2947 current (443 due, 85%) |
-| Daily new issue cadence (<30d) | 1282/1373 current (91 due, 93.4%) |
-| Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 1390 |
+| Hourly cadence coverage | 102/729 current (627 due, 14%) |
+| Hourly hot item cadence (<7d) | 102/729 current (627 due, 14%) |
+| Daily cadence coverage | 3796/4330 current (534 due, 87.7%) |
+| Daily PR cadence | 2512/2955 current (443 due, 85%) |
+| Daily new issue cadence (<30d) | 1284/1375 current (91 due, 93.4%) |
+| Weekly older issue cadence | 1857/1857 current (0 due, 100%) |
+| Due now by cadence | 1391 |
 
 ### Audit Health
 
@@ -108,13 +108,13 @@ Status: **Action needed**
 
 ### Latest Run Activity
 
-Latest review: Apr 27, 2026, 06:32 UTC. Latest close: Apr 27, 2026, 06:42 UTC. Latest comment sync: Apr 27, 2026, 06:42 UTC.
+Latest review: Apr 27, 2026, 06:32 UTC. Latest close: Apr 27, 2026, 05:46 UTC. Latest comment sync: Apr 27, 2026, 06:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 108 | 4 | 104 | 0 | 11 | 7 | 0 |
-| Last hour | 1020 | 11 | 1009 | 0 | 13 | 747 | 3 |
-| Last 24 hours | 7545 | 1171 | 6374 | 1 | 1096 | 2172 | 10 |
+| Last 15 minutes | 3 | 0 | 3 | 0 | 0 | 490 | 3 |
+| Last hour | 1000 | 10 | 990 | 0 | 0 | 1151 | 6 |
+| Last 24 hours | 7544 | 1170 | 6374 | 1 | 1073 | 2643 | 13 |
 
 ### Recently Closed
 
@@ -146,7 +146,7 @@ Latest review: Apr 27, 2026, 06:32 UTC. Latest close: Apr 27, 2026, 06:42 UTC. L
 | [#67988](https://github.com/openclaw/openclaw/issues/67988) | Control UI: Model dropdown shows alias/key instead of display name for Claude Opus 4.7 and Claude Sonnet 4.6 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67988.md) | complete | Apr 27, 2026, 06:31 UTC |
 | [#67728](https://github.com/openclaw/openclaw/issues/67728) | Browser: Remote CDP WebSocket needs auto-reconnect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67728.md) | complete | Apr 27, 2026, 06:31 UTC |
 | [#67976](https://github.com/openclaw/openclaw/issues/67976) | [Bug] imageModel调用火山引擎API返回404错误 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67976.md) | complete | Apr 27, 2026, 06:31 UTC |
-| [#67692](https://github.com/openclaw/openclaw/pull/67692) | Feat/acp tui lazy init | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67692.md) | complete | Apr 27, 2026, 06:31 UTC |
+| [#67692](https://github.com/openclaw/openclaw/pull/67692) | Feat/acp tui lazy init | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/67692.md) | complete | Apr 27, 2026, 06:31 UTC |
 | [#67990](https://github.com/openclaw/openclaw/issues/67990) | Proposal: Improved Backup Design with Configurable Exclusion Rules and Service-Aware Archiving | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/67990.md) | complete | Apr 27, 2026, 06:31 UTC |
 
 </details>
