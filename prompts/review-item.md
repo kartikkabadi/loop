@@ -48,6 +48,11 @@ In user-visible prose, avoid bare self-references to the current item such as
 Write `this issue` or `this PR` instead. Keep other issue/PR references as
 normal `#123` links when they point to different items.
 
+Keep open when the current item appears paired with an open issue or PR by the
+same author. Contributor issues and PRs commonly arrive as a pair for the same
+work; do not close only one half unless the paired item is already resolved or a
+maintainer explicitly says to split/close it.
+
 Keep open any item whose GitHub author association is `OWNER`, `MEMBER`, or `COLLABORATOR`. Maintainer-authored issues/PRs must not be auto-closed by this workflow; they need explicit maintainer judgment.
 
 Keep open any item with a protected label: `security`, `beta-blocker`, `release-blocker`, or `maintainer`. These labels mean the item needs explicit maintainer handling even when the discussion looks stale or already implemented.

@@ -19,6 +19,7 @@ import {
   relatedTitleSearchTerms,
   reviewActionForDecision,
   safeOutputTail,
+  sameAuthorCounterpartApplyReason,
   sanitizePublicSelfReferences,
   shardItemNumbers,
   shouldSyncReviewComment,
@@ -294,6 +295,48 @@ test("open PRs that close an issue block apply closes", () => {
   );
   assert.equal(
     openClosingPullRequestApplyReason([{ number: 69425, state: "closed", title: "done" }]),
+    null,
+  );
+});
+
+test("same-author open issue and PR pairs block one-sided apply closes", () => {
+  assert.equal(
+    sameAuthorCounterpartApplyReason(item({ number: 42, author: "alice" }), [
+      {
+        issue: {
+          number: 43,
+          title: "Fix the same bug",
+          state: "open",
+          author: "alice",
+        },
+        pullRequest: {
+          number: 43,
+          title: "Fix the same bug",
+          state: "open",
+          author: "alice",
+        },
+      },
+    ]),
+    "open PR #43 (Fix the same bug) by the same author is paired with this issue",
+  );
+  assert.equal(
+    sameAuthorCounterpartApplyReason(item({ number: 42, kind: "pull_request", author: "alice" }), [
+      {
+        localReport: {
+          number: 41,
+          kind: "issue",
+          title: "Fix the same bug",
+          author: "Alice",
+          location: "items",
+        },
+      },
+    ]),
+    "open issue #41 (Fix the same bug) by the same author is paired with this PR",
+  );
+  assert.equal(
+    sameAuthorCounterpartApplyReason(item({ number: 42, author: "alice" }), [
+      { issue: { number: 43, title: "Different author", state: "open", author: "bob" } },
+    ]),
     null,
   );
 });

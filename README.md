@@ -22,6 +22,8 @@ ClawSweeper may propose a close only when the item is clearly one of these:
 Maintainer-authored items are never auto-closed. Everything else stays open.
 Issues with an open PR that references them using GitHub closing syntax such as
 `Fixes #123` stay open until that PR merges or is closed.
+Open issue/PR pairs from the same author stay open together unless the paired
+item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
@@ -213,6 +215,7 @@ are checked immediately before mutation.
 - Protected labels block close proposals.
 - Open PRs with GitHub closing references block issue closes until the PR is
   resolved.
+- Open same-author issue/PR pairs block one-sided closes.
 - Codex runs without GitHub write tokens.
 - CI makes the OpenClaw checkout read-only for reviews.
 - Reviews fail if Codex leaves tracked or untracked changes behind.

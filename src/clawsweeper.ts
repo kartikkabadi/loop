@@ -36,6 +36,7 @@ type ActionTaken =
   | "skipped_locked_conversation"
   | "skipped_changed_since_review"
   | "skipped_open_closing_pr"
+  | "skipped_same_author_pair"
   | "skipped_already_closed"
   | "skipped_maintainer_authored"
   | "skipped_protected_label"
@@ -149,6 +150,7 @@ interface LocalRelatedTitleEntry {
   kind: ItemKind | undefined;
   title: string;
   url: string | undefined;
+  author: string | undefined;
   location: AuditRecordLocation;
   path: string;
   decision: string | undefined;
@@ -372,7 +374,7 @@ const AUDIT_HEALTH_END = "<!-- clawsweeper-audit:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
-const REVIEW_POLICY_VERSION = "2026-04-27-policy-v7";
+const REVIEW_POLICY_VERSION = "2026-04-27-policy-v8";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
@@ -1176,6 +1178,7 @@ function localRelatedTitleIndex(): LocalRelatedTitleEntry[] {
         kind: frontMatterValue(markdown, "type") as ItemKind | undefined,
         title: displayTitle(frontMatterValue(markdown, "title") ?? ""),
         url: frontMatterValue(markdown, "url"),
+        author: frontMatterValue(markdown, "author"),
         location,
         path: repoRelativePath(path),
         decision: frontMatterValue(markdown, "decision"),
@@ -1230,6 +1233,64 @@ function relatedItemsContext(options: {
     .filter((entry) => entry !== null);
   const searchedRelated = compactRelatedSearchItems(options.item, new Set(mentions.keys()));
   return [...explicitRelated, ...searchedRelated].slice(0, 12);
+}
+
+function normalizeAuthorLogin(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value.trim().toLowerCase() : null;
+}
+
+function relatedCounterpartInfo(value: unknown): {
+  number: number | null;
+  kind: ItemKind | null;
+  author: string | null;
+  state: string;
+  title: string;
+} {
+  const record = asRecord(value);
+  const localReport = asRecord(record.localReport);
+  if (Object.keys(localReport).length > 0) {
+    const kind =
+      localReport.kind === "issue" || localReport.kind === "pull_request" ? localReport.kind : null;
+    return {
+      number: typeof localReport.number === "number" ? localReport.number : null,
+      kind,
+      author: normalizeAuthorLogin(localReport.author),
+      state: localReport.location === "items" ? "open" : "closed",
+      title: typeof localReport.title === "string" ? localReport.title : "",
+    };
+  }
+
+  const issue = asRecord(record.issue);
+  const pullRequest = asRecord(record.pullRequest);
+  const isPullRequest = Object.keys(pullRequest).length > 0;
+  return {
+    number: typeof issue.number === "number" ? issue.number : null,
+    kind: isPullRequest ? "pull_request" : "issue",
+    author: normalizeAuthorLogin(isPullRequest ? pullRequest.author : issue.author),
+    state: String((isPullRequest ? pullRequest.state : issue.state) ?? "").toLowerCase(),
+    title: typeof issue.title === "string" ? issue.title : "",
+  };
+}
+
+function itemKindLabel(kind: ItemKind): string {
+  return kind === "pull_request" ? "PR" : "issue";
+}
+
+export function sameAuthorCounterpartApplyReason(
+  item: Pick<Item, "number" | "kind" | "author">,
+  relatedItems: readonly unknown[],
+): string | null {
+  const itemAuthor = normalizeAuthorLogin(item.author);
+  if (!itemAuthor) return null;
+  for (const relatedItem of relatedItems) {
+    const related = relatedCounterpartInfo(relatedItem);
+    if (related.number === null || related.number === item.number) continue;
+    if (!related.kind || related.kind === item.kind) continue;
+    if (related.state !== "open") continue;
+    if (related.author !== itemAuthor) continue;
+    return `open ${itemKindLabel(related.kind)} #${related.number}${related.title ? ` (${related.title})` : ""} by the same author is paired with this ${itemKindLabel(item.kind)}`;
+  }
+  return null;
 }
 
 function compactPullFile(value: unknown): unknown {
@@ -3314,6 +3375,11 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     const { item, state } = fetchItem(number);
+    let currentContext: ItemContext | undefined;
+    const currentItemContext = (): ItemContext => {
+      currentContext ??= collectItemContext(item);
+      return currentContext;
+    };
     markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
     const reviewComment = renderReviewCommentFromReport(markdown, closeReason ?? "none");
     const existingReviewComment = issueReviewComment(number, [
@@ -3409,8 +3475,7 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     if (!storedUpdatedAt) {
-      const currentContext = collectItemContext(item);
-      const currentHash = itemSnapshotHash(item, currentContext);
+      const currentHash = itemSnapshotHash(item, currentItemContext());
       if (currentHash !== storedHash && !reviewCommentOnlyUpdate) {
         markdown = replaceFrontMatterValue(
           markdown,
@@ -3437,6 +3502,16 @@ function applyDecisionsCommand(args: Args): void {
       );
       if (openClosingPullRequestReason) {
         if (markApplySkipped("skipped_open_closing_pr", openClosingPullRequestReason)) break;
+        continue;
+      }
+    }
+    if (isCloseProposal) {
+      const sameAuthorCounterpartReason = sameAuthorCounterpartApplyReason(
+        item,
+        currentItemContext().relatedItems ?? [],
+      );
+      if (sameAuthorCounterpartReason) {
+        if (markApplySkipped("skipped_same_author_pair", sameAuthorCounterpartReason)) break;
         continue;
       }
     }
