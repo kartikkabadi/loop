@@ -31,18 +31,18 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 03:58 UTC
+Last dashboard update: Apr 28, 2026, 04:01 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 03:58 UTC
+Updated: Apr 28, 2026, 04:01 UTC
 
-State: Hot intake in progress
+State: Hot intake publish complete
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged hot intake artifacts for run 25033071907. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25033071907](https://github.com/openclaw/clawsweeper/actions/runs/25033071907)
 <!-- clawsweeper-status:end -->
 
@@ -54,20 +54,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25033071907](https://
 | Open issues in [openclaw/clawhub](https://github.com/openclaw/clawhub) | 876 |
 | Open PRs in [openclaw/clawhub](https://github.com/openclaw/clawhub) | 35 |
 | Open items total | 911 |
-| Reviewed files | 0 |
-| Unreviewed open items | 911 |
+| Reviewed files | 20 |
+| Unreviewed open items | 891 |
 | Archived closed files | 0 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 0 |
-| Proposed issue closes | 0 (- of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 20 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 0 |
 | Proposed PR closes | 0 (- of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 0 |
-| Proposed closes awaiting apply | 0 (- of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 20 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 0 |
 | Failed or stale reviews | 0 |
 
@@ -75,13 +75,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25033071907](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 0/0 current (0 due, -) |
-| Hourly hot item cadence (<7d) | 0/0 current (0 due, -) |
+| Hourly cadence coverage | 20/20 current (0 due, 100%) |
+| Hourly hot item cadence (<7d) | 20/20 current (0 due, 100%) |
 | Daily cadence coverage | 0/0 current (0 due, -) |
 | Daily PR cadence | 0/0 current (0 due, -) |
 | Daily new issue cadence (<30d) | 0/0 current (0 due, -) |
 | Weekly older issue cadence | 0/0 current (0 due, -) |
-| Due now by cadence | 911 |
+| Due now by cadence | 891 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: unknown. Latest close: unknown. Latest comment sync: unknown.
+Latest review: Apr 28, 2026, 04:00 UTC. Latest close: unknown. Latest comment sync: unknown.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last 24 hours | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| Last hour | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| Last 24 hours | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
 
 ### Recently Closed
 
@@ -136,7 +136,16 @@ Latest review: unknown. Latest close: unknown. Latest comment sync: unknown.
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| _None_ |  |  |  |  |
+| [#1788](https://github.com/openclaw/clawhub/issues/1788) | False Positive - Liuyao Skill Flagged as Suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1788.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1766](https://github.com/openclaw/clawhub/issues/1766) | False Positive: Liuyao Divination Skill Flagged as Suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1766.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1757](https://github.com/openclaw/clawhub/issues/1757) | Appeal: funasr-transcribe incorrectly flagged as suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1757.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1781](https://github.com/openclaw/clawhub/issues/1781) | [Skill Appeal] markdown2doc incorrectly flagged as suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1781.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1758](https://github.com/openclaw/clawhub/issues/1758) | [Appeal] Skill not searchable + false positive flag + request to remove three duplicate skills – Account ValueScan-ai | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1758.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1756](https://github.com/openclaw/clawhub/issues/1756) | Search results shift after initial render — high-relevance skills missing from top until scroll cycle | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1756.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1797](https://github.com/openclaw/clawhub/issues/1797) | Skill flagged — suspicious patterns detected | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1797.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1767](https://github.com/openclaw/clawhub/issues/1767) | Feature request: Local plugin scanner CLI for pre-publish validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1767.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1760](https://github.com/openclaw/clawhub/issues/1760) | Exposed production API credentials in archived skill (skills/akkualle/akkualle-seo/SKILL.md) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1760.md) | complete | Apr 28, 2026, 04:00 UTC |
+| [#1772](https://github.com/openclaw/clawhub/issues/1772) | Skill flagged as suspicious — docx-builder | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1772.md) | complete | Apr 28, 2026, 04:00 UTC |
 
 </details>
 
