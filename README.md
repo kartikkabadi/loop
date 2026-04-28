@@ -38,6 +38,19 @@ Last dashboard update: Apr 28, 2026, 19:15 UTC
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
+Updated: Apr 28, 2026, 19:23 UTC
+
+State: Apply throttled
+
+GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/openclaw/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 5/11 in 480s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25072705696](https://github.com/openclaw/clawsweeper/actions/runs/25072705696)
+<!-- clawsweeper-status:openclaw-openclaw:end -->
+
+<!-- clawsweeper-status:openclaw-openclaw:start -->
+**Workflow status**
+
+Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
+
 Updated: Apr 28, 2026, 19:19 UTC
 
 State: Apply throttled
