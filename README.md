@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 05:18 UTC
+Last dashboard update: Apr 28, 2026, 05:19 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 05:18 UTC
+Updated: Apr 28, 2026, 05:19 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 3 fresh closes out of requested limit 3. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25035335479](https://github.com/openclaw/clawsweeper/actions/runs/25035335479)
+Starting apply/comment-sync run for up to 3 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=1240,1324,1736.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25035360485](https://github.com/openclaw/clawsweeper/actions/runs/25035360485)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -119,7 +119,7 @@ Latest review: Apr 28, 2026, 05:16 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 46 | 0 | 46 | 0 | 3 | 404 | 0 |
+| Last 15 minutes | 27 | 0 | 27 | 0 | 3 | 404 | 0 |
 | Last hour | 903 | 3 | 900 | 0 | 3 | 851 | 0 |
 | Last 24 hours | 903 | 3 | 900 | 0 | 3 | 851 | 0 |
 
