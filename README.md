@@ -31,7 +31,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 23:09 UTC
+Last dashboard update: Apr 28, 2026, 23:11 UTC
 
 ### Fleet
 
@@ -39,44 +39,45 @@ Last dashboard update: Apr 28, 2026, 23:09 UTC
 | --- | ---: |
 | Covered repositories | 2 |
 | Open issues | 4389 |
-| Open PRs | 3462 |
-| Open items total | 7851 |
-| Reviewed files | 7462 |
-| Unreviewed open items | 389 |
-| Due now by cadence | 2106 |
+| Open PRs | 3463 |
+| Open items total | 7852 |
+| Reviewed files | 7461 |
+| Unreviewed open items | 391 |
+| Due now by cadence | 2107 |
 | Proposed closes awaiting apply | 0 |
 | Closed by Codex apply | 10580 |
 | Failed or stale reviews | 39 |
-| Archived closed files | 13821 |
+| Archived closed files | 13822 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6935 | 6553 | 382 | 2035 | 0 | 10577 | Apr 28, 2026, 23:08 UTC | Apr 28, 2026, 23:09 UTC | 911 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 916 | 909 | 7 | 71 | 0 | 3 | Apr 28, 2026, 23:08 UTC | Apr 28, 2026, 22:18 UTC | 40 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6936 | 6552 | 384 | 2036 | 0 | 10577 | Apr 28, 2026, 23:08 UTC | Apr 28, 2026, 23:09 UTC | 876 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 916 | 909 | 7 | 71 | 0 | 3 | Apr 28, 2026, 23:08 UTC | Apr 28, 2026, 22:18 UTC | 60 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 23:09 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25082312265) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 23:09 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081399336) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 23:11 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25082369874) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 23:09 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081925119) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 23:07 UTC. Latest close: Apr 28, 2026, 23:02 UTC. Latest comment sync: Apr 28, 2026, 23:09 UTC.
+Latest review: Apr 28, 2026, 23:08 UTC. Latest close: Apr 28, 2026, 23:09 UTC. Latest comment sync: Apr 28, 2026, 23:09 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 71 | 1 | 70 | 16 | 4 | 204 | 0 |
-| Last hour | 1077 | 12 | 1065 | 31 | 26 | 951 | 4 |
-| Last 24 hours | 6217 | 363 | 5854 | 35 | 751 | 1370 | 24 |
+| Last 15 minutes | 58 | 1 | 57 | 13 | 5 | 161 | 0 |
+| Last hour | 1071 | 12 | 1059 | 31 | 22 | 936 | 4 |
+| Last 24 hours | 6217 | 363 | 5854 | 35 | 752 | 1390 | 24 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71389](https://github.com/openclaw/openclaw/issues/71389) | SIGILL crash when sharp loads on non-AVX CPUs | closed externally after review | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/71389.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71389.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73848](https://github.com/openclaw/openclaw/issues/73848) | Bug: Session reset via Control UI injects blank user message, crashing MiniMax provider | cannot reproduce on current main | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/73848.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73848.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#64257](https://github.com/openclaw/openclaw/pull/64257) | build: ignore generated docker-compose.sandbox.yml | closed externally after review | Apr 28, 2026, 23:02 UTC | [records/openclaw-openclaw/closed/64257.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64257.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73843](https://github.com/openclaw/openclaw/pull/73843) | feat(rls): add weekly Supabase RLS leak scanner | closed externally after item changed | Apr 28, 2026, 23:02 UTC | [records/openclaw-openclaw/closed/73843.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73843.md) |
@@ -86,7 +87,6 @@ Latest review: Apr 28, 2026, 23:07 UTC. Latest close: Apr 28, 2026, 23:02 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#49080](https://github.com/openclaw/openclaw/issues/49080) | Live channel sessions keep stale policy context after durable rule changes | already implemented on main | Apr 28, 2026, 22:53 UTC | [records/openclaw-openclaw/closed/49080.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49080.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#55518](https://github.com/openclaw/openclaw/pull/55518) | feat(docker): add OPENCLAW_SKIP_ONBOARDING env to skip onboarding during Docker setup | closed externally after review | Apr 28, 2026, 22:50 UTC | [records/openclaw-openclaw/closed/55518.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/55518.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#51282](https://github.com/openclaw/openclaw/pull/51282) | feat(gateway): make handshake timeout configurable via gateway.handshakeTimeoutMs | closed externally after review | Apr 28, 2026, 22:50 UTC | [records/openclaw-openclaw/closed/51282.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/51282.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73776](https://github.com/openclaw/openclaw/pull/73776) | fix(cli): make crestodian exit non-zero on no-TTY (#73646) | closed externally after review | Apr 28, 2026, 22:45 UTC | [records/openclaw-openclaw/closed/73776.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73776.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 23:07 UTC. Latest close: Apr 28, 2026, 23:02 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 23:09 UTC
+Updated: Apr 28, 2026, 23:11 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 1 fresh closes out of requested limit 1. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082312265](https://github.com/openclaw/clawsweeper/actions/runs/25082312265)
+Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=73848.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082369874](https://github.com/openclaw/clawsweeper/actions/runs/25082369874)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -136,21 +136,21 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082312265](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3512 |
-| Open PRs | 3423 |
-| Open items total | 6935 |
-| Reviewed files | 6553 |
-| Unreviewed open items | 382 |
-| Archived closed files | 13808 |
+| Open PRs | 3424 |
+| Open items total | 6936 |
+| Reviewed files | 6552 |
+| Unreviewed open items | 384 |
+| Archived closed files | 13810 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3330 |
+| Fresh reviewed issues in the last 7 days | 3329 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3211 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6541 |
+| Fresh verified reviews in the last 7 days | 6540 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 10577 |
 | Failed or stale reviews | 12 |
@@ -159,13 +159,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082312265](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 74/861 current (787 due, 8.6%) |
-| Hourly hot item cadence (<7d) | 74/861 current (787 due, 8.6%) |
+| Hourly cadence coverage | 74/860 current (786 due, 8.6%) |
+| Hourly hot item cadence (<7d) | 74/860 current (786 due, 8.6%) |
 | Daily cadence coverage | 3008/3872 current (864 due, 77.7%) |
 | Daily PR cadence | 2229/2708 current (479 due, 82.3%) |
 | Daily new issue cadence (<30d) | 779/1164 current (385 due, 66.9%) |
 | Weekly older issue cadence | 1818/1820 current (2 due, 99.9%) |
-| Due now by cadence | 2035 |
+| Due now by cadence | 2036 |
 
 ### Audit Health
 
@@ -205,14 +205,15 @@ Latest review: Apr 28, 2026, 23:08 UTC. Latest close: Apr 28, 2026, 23:09 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 12 | 1 | 11 | 0 | 4 | 204 | 0 |
-| Last hour | 537 | 12 | 525 | 4 | 25 | 911 | 4 |
-| Last 24 hours | 5296 | 360 | 4936 | 8 | 739 | 1316 | 24 |
+| Last 15 minutes | 11 | 1 | 10 | 0 | 5 | 141 | 0 |
+| Last hour | 537 | 12 | 525 | 4 | 21 | 876 | 4 |
+| Last 24 hours | 5296 | 360 | 4936 | 8 | 740 | 1316 | 24 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#71389](https://github.com/openclaw/openclaw/issues/71389) | SIGILL crash when sharp loads on non-AVX CPUs | closed externally after review | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/71389.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71389.md) |
 | [#73848](https://github.com/openclaw/openclaw/issues/73848) | Bug: Session reset via Control UI injects blank user message, crashing MiniMax provider | cannot reproduce on current main | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/73848.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73848.md) |
 | [#64257](https://github.com/openclaw/openclaw/pull/64257) | build: ignore generated docker-compose.sandbox.yml | closed externally after review | Apr 28, 2026, 23:02 UTC | [records/openclaw-openclaw/closed/64257.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64257.md) |
 | [#73843](https://github.com/openclaw/openclaw/pull/73843) | feat(rls): add weekly Supabase RLS leak scanner | closed externally after item changed | Apr 28, 2026, 23:02 UTC | [records/openclaw-openclaw/closed/73843.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73843.md) |
@@ -222,7 +223,6 @@ Latest review: Apr 28, 2026, 23:08 UTC. Latest close: Apr 28, 2026, 23:09 UTC. L
 | [#49080](https://github.com/openclaw/openclaw/issues/49080) | Live channel sessions keep stale policy context after durable rule changes | already implemented on main | Apr 28, 2026, 22:53 UTC | [records/openclaw-openclaw/closed/49080.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49080.md) |
 | [#55518](https://github.com/openclaw/openclaw/pull/55518) | feat(docker): add OPENCLAW_SKIP_ONBOARDING env to skip onboarding during Docker setup | closed externally after review | Apr 28, 2026, 22:50 UTC | [records/openclaw-openclaw/closed/55518.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/55518.md) |
 | [#51282](https://github.com/openclaw/openclaw/pull/51282) | feat(gateway): make handshake timeout configurable via gateway.handshakeTimeoutMs | closed externally after review | Apr 28, 2026, 22:50 UTC | [records/openclaw-openclaw/closed/51282.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/51282.md) |
-| [#73776](https://github.com/openclaw/openclaw/pull/73776) | fix(cli): make crestodian exit non-zero on no-TTY (#73646) | closed externally after review | Apr 28, 2026, 22:45 UTC | [records/openclaw-openclaw/closed/73776.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73776.md) |
 
 #### Recently Reviewed
 
@@ -330,13 +330,13 @@ Targeted review input: _none_
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 23:07 UTC. Latest close: Apr 28, 2026, 22:18 UTC. Latest comment sync: Apr 28, 2026, 23:09 UTC.
+Latest review: Apr 28, 2026, 23:08 UTC. Latest close: Apr 28, 2026, 22:18 UTC. Latest comment sync: Apr 28, 2026, 23:09 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 59 | 0 | 59 | 16 | 0 | 0 | 0 |
-| Last hour | 540 | 0 | 540 | 27 | 1 | 40 | 0 |
-| Last 24 hours | 921 | 3 | 918 | 27 | 12 | 54 | 0 |
+| Last 15 minutes | 47 | 0 | 47 | 13 | 0 | 20 | 0 |
+| Last hour | 534 | 0 | 534 | 27 | 1 | 60 | 0 |
+| Last 24 hours | 921 | 3 | 918 | 27 | 12 | 74 | 0 |
 
 #### Recently Closed
 
