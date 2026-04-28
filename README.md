@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 07:10 UTC
 
 Updated: Apr 28, 2026, 07:10 UTC
 
-State: Review in progress
+State: Audit finished
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039018375](https://github.com/openclaw/clawsweeper/actions/runs/25039018375)
+Refreshed README Audit Health from a full live openclaw/clawhub state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039086041](https://github.com/openclaw/clawsweeper/actions/runs/25039086041)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -86,31 +86,29 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039018375](https://
 ### Audit Health
 
 <!-- clawsweeper-audit:start -->
-Last audit: Apr 27, 2026, 07:11 UTC
+Last audit: Apr 28, 2026, 07:10 UTC
 
-Status: **Action needed**
+Status: **Passing**
 
-Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
+Targeted review input: _none_
 
 | Metric | Count |
 | --- | ---: |
 | Scan complete | yes |
-| Open items seen | 7132 |
-| Missing eligible open records | 2 |
-| Missing maintainer-authored open records | 94 |
-| Missing protected open records | 1 |
-| Missing recently-created open records | 149 |
+| Open items seen | 912 |
+| Missing eligible open records | 0 |
+| Missing maintainer-authored open records | 7 |
+| Missing protected open records | 0 |
+| Missing recently-created open records | 0 |
 | Archived records that are open again | 0 |
-| Stale item records | 1 |
+| Stale item records | 0 |
 | Duplicate records | 0 |
 | Protected proposed closes | 0 |
-| Stale reviews | 6 |
+| Stale reviews | 0 |
 
 | Item | Category | Title | Detail |
 | --- | --- | --- | --- |
-| [#64563](https://github.com/openclaw/openclaw/pull/64563) | Missing eligible open | fix(whatsapp): lazy default auth dir for profile state (#64555) | eligible |
-| [#65635](https://github.com/openclaw/openclaw/pull/65635) | Missing eligible open | fix(gateway): keep explicit loopback binds on 127.0.0.1 | eligible |
-| [#56915](https://github.com/openclaw/openclaw/issues/56915) | Stale review | [Bug]: [Bug] Skills scanner ignores subdirectories under ~/.openclaw/skills/ | records/openclaw-openclaw/items/56915.md |
+| _None_ |  |  |  |
 <!-- clawsweeper-audit:end -->
 
 ### Latest Run Activity
