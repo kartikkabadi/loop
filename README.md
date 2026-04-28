@@ -60,7 +60,7 @@ Last dashboard update: Apr 28, 2026, 23:40 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 23:40 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25083277540) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 23:40 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25083277540) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 23:33 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25082711223) |
 
 ### Fleet Activity
@@ -70,7 +70,7 @@ Latest review: Apr 28, 2026, 23:36 UTC. Latest close: Apr 28, 2026, 23:37 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 29 | 0 | 29 | 1 | 6 | 407 | 0 |
-| Last hour | 1094 | 9 | 1085 | 26 | 24 | 1226 | 3 |
+| Last hour | 1093 | 9 | 1084 | 26 | 24 | 1226 | 3 |
 | Last 24 hours | 6233 | 368 | 5865 | 30 | 765 | 1671 | 24 |
 
 ### Recently Closed Across Repos
@@ -124,9 +124,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 23:40 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/2. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 2. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25083277540](https://github.com/openclaw/clawsweeper/actions/runs/25083277540)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -206,7 +206,7 @@ Latest review: Apr 28, 2026, 23:36 UTC. Latest close: Apr 28, 2026, 23:37 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 28 | 0 | 28 | 0 | 5 | 386 | 0 |
-| Last hour | 578 | 9 | 569 | 3 | 22 | 813 | 3 |
+| Last hour | 577 | 9 | 568 | 3 | 22 | 813 | 3 |
 | Last 24 hours | 5311 | 365 | 4946 | 7 | 751 | 1207 | 24 |
 
 #### Recently Closed
