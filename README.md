@@ -226,7 +226,7 @@ are checked immediately before mutation.
 
 ### Audit
 
-`npm run audit` compares live GitHub state with generated records without moving
+`pnpm run audit` compares live GitHub state with generated records without moving
 files. It reports missing open records, archived open records, stale records,
 duplicates, protected-label proposed closes, and stale review-status records.
 Protected proposed closes are reported only for active `items/` records because
@@ -247,27 +247,30 @@ Requires Node 24.
 
 ```bash
 source ~/.profile
-npm install
-npm run build
-npm run plan -- --batch-size 5 --shard-count 100 --max-pages 250 --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast
-npm run review -- --openclaw-dir ../openclaw --batch-size 5 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 600000
-npm run apply-artifacts -- --artifact-dir artifacts/reviews
-npm run audit -- --max-pages 250 --sample-limit 25 --update-dashboard
-npm run reconcile -- --dry-run
+corepack enable
+pnpm install
+pnpm run build
+pnpm run plan -- --batch-size 5 --shard-count 100 --max-pages 250 --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast
+pnpm run review -- --openclaw-dir ../openclaw --batch-size 5 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.5 --codex-reasoning-effort high --codex-service-tier fast --codex-timeout-ms 600000
+pnpm run apply-artifacts -- --artifact-dir artifacts/reviews
+pnpm run audit -- --max-pages 250 --sample-limit 25 --update-dashboard
+pnpm run reconcile -- --dry-run
 ```
 
 Apply unchanged proposals later:
 
 ```bash
 source ~/.profile
-npm run apply-decisions -- --limit 20 --apply-kind all
+corepack enable
+pnpm run apply-decisions -- --limit 20 --apply-kind all
 ```
 
 Sync durable review comments without closing:
 
 ```bash
 source ~/.profile
-npm run apply-decisions -- --sync-comments-only --comment-sync-min-age-days 7 --processed-limit 1000 --limit 0
+corepack enable
+pnpm run apply-decisions -- --sync-comments-only --comment-sync-min-age-days 7 --processed-limit 1000 --limit 0
 ```
 
 Manual review runs are proposal-only even if `--apply-closures` or workflow input `apply_closures=true` is set. Use `apply_existing=true` to apply unchanged proposals later. Scheduled apply runs process both issues and pull requests by default; pass `apply_kind=issue` or `apply_kind=pull_request` to narrow a manual run.
@@ -275,11 +278,11 @@ Manual review runs are proposal-only even if `--apply-closures` or workflow inpu
 ## Checks
 
 ```bash
-npm run check
-npm run oxformat
+pnpm run check
+pnpm run oxformat
 ```
 
-`oxformat` is an alias for `oxfmt`; there is no separate `oxformat` npm package.
+`oxformat` is an alias for `oxfmt`; there is no separate `oxformat` pnpm package.
 
 ## GitHub Actions Setup
 

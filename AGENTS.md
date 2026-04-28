@@ -44,14 +44,15 @@ issue/PR subtrees.
 ## Commands
 
 ```bash
-npm install
-npm run build
-npm run test:unit
-npm run format
-npm run check
+corepack enable
+pnpm install
+pnpm run build
+pnpm run test:unit
+pnpm run format
+pnpm run check
 ```
 
-Use `npm run check` before handoff for code/test/workflow changes.
+Use `pnpm run check` before handoff for code/test/workflow changes.
 
 ## GitHub Checks
 

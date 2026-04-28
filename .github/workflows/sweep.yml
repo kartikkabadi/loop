@@ -135,16 +135,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: npm
-          cache-dependency-path: clawsweeper/package-lock.json
 
       - name: Install dependencies
         working-directory: clawsweeper
-        run: npm ci
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
 
       - name: Build ClawSweeper
         working-directory: clawsweeper
-        run: npm run build
+        run: pnpm run build
 
       - name: Publish planning-started status
         if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *'))) }}
@@ -153,7 +153,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          npm run status -- \
+          pnpm run status -- \
             --state "Planning review" \
             --detail "Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -216,7 +216,7 @@ jobs:
           if [ "$HOT_INTAKE" = "true" ]; then
             hot_intake_arg=(--hot-intake)
           fi
-          npm run --silent plan -- \
+          pnpm run --silent plan -- \
             --batch-size "$BATCH_SIZE" \
             --max-pages "$MAX_PAGES" \
             --shard-count "$SHARD_COUNT" \
@@ -245,9 +245,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          npm run reconcile
-          npm run dashboard
-          npm run status -- \
+          pnpm run reconcile
+          pnpm run dashboard
+          pnpm run status -- \
             --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
             --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -302,16 +302,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: npm
-          cache-dependency-path: clawsweeper/package-lock.json
 
       - name: Install dependencies
         working-directory: clawsweeper
-        run: npm ci
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
 
       - name: Build ClawSweeper
         working-directory: clawsweeper
-        run: npm run build
+        run: pnpm run build
 
       - name: Install Codex
         run: npm install -g @openai/codex@0.125.0 --prefer-offline
@@ -356,7 +356,7 @@ jobs:
           if [ "${{ needs.plan.outputs.hot_intake }}" = "true" ]; then
             hot_intake_arg=(--hot-intake)
           fi
-          npm run review -- \
+          pnpm run review -- \
             --openclaw-dir ../openclaw \
             --artifact-dir ../review-artifacts/shard-${{ matrix.shard }} \
             --batch-size ${{ needs.plan.outputs.batch_size }} \
@@ -409,13 +409,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
 
       - name: Build ClawSweeper
-        run: npm run build
+        run: pnpm run build
 
       - uses: actions/download-artifact@v4
         with:
@@ -430,8 +431,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
-          npm run apply-artifacts -- --artifact-dir artifacts
-          npm run status -- \
+          pnpm run apply-artifacts -- --artifact-dir artifacts
+          pnpm run status -- \
             --state "${{ needs.plan.outputs.hot_intake == 'true' && 'Hot intake publish complete' || 'Review publish complete' }}" \
             --detail "Merged ${{ needs.plan.outputs.hot_intake == 'true' && 'hot intake' || 'review' }} artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -440,8 +441,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
-          npm run reconcile
-          npm run dashboard
+          pnpm run reconcile
+          pnpm run dashboard
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md items closed
@@ -473,7 +474,7 @@ jobs:
             exit 0
           fi
           git pull --rebase
-          npm run apply-decisions -- \
+          pnpm run apply-decisions -- \
             --item-numbers "$item_numbers" \
             --sync-comments-only \
             --apply-kind all \
@@ -483,7 +484,7 @@ jobs:
             --comment-sync-min-age-days 7 \
             --progress-every 25
           synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)')"
-          npm run status -- \
+          pnpm run status -- \
             --state "Review comments checked" \
             --detail "Checked selected durable Codex review comments and synced missing or stale comments. Synced: $synced_count. Item numbers: $item_numbers." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -541,13 +542,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
 
       - name: Build ClawSweeper
-        run: npm run build
+        run: pnpm run build
 
       - name: Refresh Audit Health
         env:
@@ -555,8 +557,8 @@ jobs:
         run: |
           set -euo pipefail
           git pull --rebase
-          npm run audit -- --max-pages 250 --sample-limit 25 --output /tmp/clawsweeper-audit.json --update-dashboard
-          npm run status -- \
+          pnpm run audit -- --max-pages 250 --sample-limit 25 --output /tmp/clawsweeper-audit.json --update-dashboard
+          pnpm run status -- \
             --state "Audit finished" \
             --detail "Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -608,13 +610,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
 
       - name: Build ClawSweeper
-        run: npm run build
+        run: pnpm run build
 
       - name: Sync before applying decisions
         run: git pull --rebase
@@ -754,8 +757,8 @@ jobs:
           process.stdout.write(numbers.join(","));
           NODE
           }
-          npm run reconcile
-          npm run dashboard
+          pnpm run reconcile
+          pnpm run dashboard
           if [ "$sync_comments_only" != "true" ] && [ -z "$item_numbers" ]; then
             item_numbers="$(proposed_item_numbers)"
             if [ -n "$item_numbers" ]; then
@@ -787,7 +790,7 @@ jobs:
             } >> "$GITHUB_ENV"
             exit 0
           fi
-          npm run status -- \
+          pnpm run status -- \
             --state "Apply in progress" \
             --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by ${comment_sync_min_age_days} day(s); checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -801,7 +804,7 @@ jobs:
             checkpoint=1
             echo "::group::Apply checkpoint $checkpoint"
             echo "Syncing durable review comments only for item numbers: ${item_numbers:-all}"
-            npm run apply-decisions -- \
+            pnpm run apply-decisions -- \
               --limit 0 \
               --min-age-days "$min_age_days" \
               --apply-kind "$apply_kind" \
@@ -815,8 +818,8 @@ jobs:
             result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
             synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)' "$checkpoint")"
             publish_changes "chore: sync sweep review comments checkpoint $checkpoint" items closed apply-report.json
-            npm run dashboard
-            npm run status -- \
+            pnpm run dashboard
+            pnpm run status -- \
               --state "Apply comments synced" \
               --detail "Comment-only apply checkpoint $checkpoint finished. Synced durable review comments: $synced_count. Result records: $result_count. Item numbers: ${item_numbers:-all}." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -835,7 +838,7 @@ jobs:
             checkpoint=$((checkpoint + 1))
             echo "::group::Apply checkpoint $checkpoint"
             echo "Applying up to $chunk_limit fresh closes; $closed_total/$limit already closed in this run"
-            CLAWSWEEPER_APPLY_CHECKPOINT="$checkpoint" npm run apply-decisions -- \
+            CLAWSWEEPER_APPLY_CHECKPOINT="$checkpoint" pnpm run apply-decisions -- \
               --limit "$chunk_limit" \
               --min-age-days "$min_age_days" \
               --apply-kind "$apply_kind" \
@@ -853,8 +856,8 @@ jobs:
             closed_total=$((closed_total + closed_in_chunk))
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
             publish_changes "chore: apply sweep decisions checkpoint $checkpoint" items closed apply-report.json
-            npm run dashboard
-            npm run status -- \
+            pnpm run dashboard
+            pnpm run status -- \
               --state "Apply in progress" \
               --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count, including durable review comment syncs." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -869,8 +872,8 @@ jobs:
               break
             fi
           done
-          npm run dashboard
-          npm run status -- \
+          pnpm run dashboard
+          pnpm run status -- \
             --state "Apply finished" \
             --detail "Apply/comment-sync run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
