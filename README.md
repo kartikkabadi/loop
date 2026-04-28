@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:05 UTC
 
 State: Event review applied
 
-Reviewed event item #73282, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036648149](https://github.com/openclaw/clawsweeper/actions/runs/25036648149)
+Reviewed event item #73320, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036624166](https://github.com/openclaw/clawsweeper/actions/runs/25036624166)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -51,11 +51,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036648149](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3576 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3577 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3467 |
-| Open items total | 7043 |
+| Open items total | 7044 |
 | Reviewed files | 6568 |
-| Unreviewed open items | 475 |
+| Unreviewed open items | 476 |
 | Archived closed files | 13270 |
 
 ### Review Outcomes
@@ -81,7 +81,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036648149](https://
 | Daily PR cadence | 880/2842 current (1962 due, 31%) |
 | Daily new issue cadence (<30d) | 436/1268 current (832 due, 34.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 3856 |
+| Due now by cadence | 3857 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:03 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 06:05 UTC.
+Latest review: Apr 28, 2026, 06:03 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 06:03 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 29 | 1 | 28 | 0 | 0 | 316 | 2 |
-| Last hour | 509 | 15 | 494 | 0 | 0 | 346 | 2 |
-| Last 24 hours | 2194 | 101 | 2093 | 1 | 72 | 1074 | 15 |
+| Last 15 minutes | 27 | 1 | 26 | 0 | 0 | 305 | 3 |
+| Last hour | 509 | 15 | 494 | 0 | 0 | 345 | 3 |
+| Last 24 hours | 2194 | 101 | 2093 | 1 | 72 | 1073 | 16 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:03 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73282](https://github.com/openclaw/openclaw/pull/73282) | fix(gateway): accept heartbeat/cron/webhook channel hints in agent params (#73237) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73282.md) | complete | Apr 28, 2026, 06:03 UTC |
+| [#73320](https://github.com/openclaw/openclaw/pull/73320) | Limit internal task completion payloads | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73320.md) | complete | Apr 28, 2026, 06:03 UTC |
 | [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 06:01 UTC |
 | [#73319](https://github.com/openclaw/openclaw/issues/73319) | openclaw channels list only shows auth providers, not configured chat channel accounts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73319.md) | complete | Apr 28, 2026, 06:01 UTC |
 | [#72115](https://github.com/openclaw/openclaw/pull/72115) | [EV-002B] Skill Workshop parity: path, TOCTOU, prompt-budget hardening | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72115.md) | complete | Apr 28, 2026, 06:01 UTC |
