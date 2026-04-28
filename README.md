@@ -31,7 +31,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 23:08 UTC
+Last dashboard update: Apr 28, 2026, 23:09 UTC
 
 ### Fleet
 
@@ -43,7 +43,7 @@ Last dashboard update: Apr 28, 2026, 23:08 UTC
 | Open items total | 7853 |
 | Reviewed files | 7462 |
 | Unreviewed open items | 391 |
-| Due now by cadence | 2098 |
+| Due now by cadence | 2097 |
 | Proposed closes awaiting apply | 1 |
 | Closed by Codex apply | 10579 |
 | Failed or stale reviews | 14 |
@@ -53,25 +53,25 @@ Last dashboard update: Apr 28, 2026, 23:08 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6937 | 6553 | 384 | 2037 | 1 | 10576 | Apr 28, 2026, 23:06 UTC | Apr 28, 2026, 23:02 UTC | 921 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 916 | 909 | 7 | 61 | 0 | 3 | Apr 28, 2026, 23:07 UTC | Apr 28, 2026, 22:18 UTC | 40 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6937 | 6553 | 384 | 2037 | 1 | 10576 | Apr 28, 2026, 23:06 UTC | Apr 28, 2026, 23:02 UTC | 918 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 916 | 909 | 7 | 60 | 0 | 3 | Apr 28, 2026, 22:36 UTC | Apr 28, 2026, 22:18 UTC | 40 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 28, 2026, 23:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25082230493) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake publish complete | Apr 28, 2026, 23:08 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081925119) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 23:09 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25082312265) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 28, 2026, 22:57 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081925119) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 23:07 UTC. Latest close: Apr 28, 2026, 23:02 UTC. Latest comment sync: Apr 28, 2026, 23:07 UTC.
+Latest review: Apr 28, 2026, 23:06 UTC. Latest close: Apr 28, 2026, 23:02 UTC. Latest comment sync: Apr 28, 2026, 23:07 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 31 | 1 | 30 | 2 | 3 | 236 | 0 |
-| Last hour | 596 | 12 | 584 | 6 | 25 | 961 | 4 |
-| Last 24 hours | 6216 | 363 | 5853 | 10 | 750 | 1788 | 24 |
+| Last 15 minutes | 11 | 1 | 10 | 0 | 3 | 225 | 0 |
+| Last hour | 576 | 12 | 564 | 4 | 25 | 958 | 4 |
+| Last 24 hours | 6216 | 363 | 5853 | 8 | 750 | 1806 | 24 |
 
 ### Recently Closed Across Repos
 
@@ -95,8 +95,6 @@ Latest review: Apr 28, 2026, 23:07 UTC. Latest close: Apr 28, 2026, 23:02 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1053](https://github.com/openclaw/clawhub/issues/1053) | Scanner flags env var mismatch because registry summary doesn't read metadata.json env declarations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1053.md) | failed | Apr 28, 2026, 23:07 UTC |
-| [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1097](https://github.com/openclaw/clawhub/issues/1097) | False positive: kevros skill flagged as suspicious for intended gateway behavior | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1097.md) | failed | Apr 28, 2026, 23:07 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73852](https://github.com/openclaw/openclaw/pull/73852) | Use owner identity for Telegram exec approvals | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73852.md) | complete | Apr 28, 2026, 23:06 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68341](https://github.com/openclaw/openclaw/pull/68341) | fix(gateway): resolve inflight deduplication race for send and poll | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68341.md) | complete | Apr 28, 2026, 23:05 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70156](https://github.com/openclaw/openclaw/pull/70156) | chore: repo hygiene — gitignore generalization + large-file + exec-surface CI guards | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70156.md) | complete | Apr 28, 2026, 23:04 UTC |
@@ -105,6 +103,8 @@ Latest review: Apr 28, 2026, 23:07 UTC. Latest close: Apr 28, 2026, 23:02 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73850](https://github.com/openclaw/openclaw/issues/73850) | Google Meet realtime voice should allow human barge-in during assistant playback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73850.md) | complete | Apr 28, 2026, 23:01 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73822](https://github.com/openclaw/openclaw/pull/73822) | feat(config): support SecretRef for phone numbers in channel configs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73822.md) | complete | Apr 28, 2026, 23:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73849](https://github.com/openclaw/openclaw/pull/73849) | fix(daemon): use KeepAlive SuccessfulExit=false to prevent launchd crash-loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73849.md) | complete | Apr 28, 2026, 23:00 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#65198](https://github.com/openclaw/openclaw/pull/65198) | test: cover string-backed non-streaming assistant replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/65198.md) | complete | Apr 28, 2026, 22:58 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73817](https://github.com/openclaw/openclaw/pull/73817) | fix(media): allow private openai compatible audio transcription endpoints | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73817.md) | complete | Apr 28, 2026, 22:56 UTC |
 
 </details>
 
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 23:07 UTC. Latest close: Apr 28, 2026, 23:02 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 23:07 UTC
+Updated: Apr 28, 2026, 23:09 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082230493](https://github.com/openclaw/clawsweeper/actions/runs/25082230493)
+Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=73848.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082312265](https://github.com/openclaw/clawsweeper/actions/runs/25082312265)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -205,8 +205,8 @@ Latest review: Apr 28, 2026, 23:06 UTC. Latest close: Apr 28, 2026, 23:02 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 1 | 10 | 0 | 3 | 236 | 0 |
-| Last hour | 536 | 12 | 524 | 4 | 24 | 921 | 4 |
+| Last 15 minutes | 11 | 1 | 10 | 0 | 3 | 225 | 0 |
+| Last hour | 536 | 12 | 524 | 4 | 24 | 918 | 4 |
 | Last 24 hours | 5295 | 360 | 4935 | 8 | 738 | 1315 | 24 |
 
 #### Recently Closed
