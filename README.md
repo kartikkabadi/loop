@@ -53,15 +53,15 @@ Last dashboard update: Apr 28, 2026, 12:54 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6974 | 6545 | 429 | 3450 | 0 | 10350 | Apr 28, 2026, 12:49 UTC | Apr 28, 2026, 12:52 UTC | 414 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6974 | 6545 | 429 | 3450 | 0 | 10350 | Apr 28, 2026, 12:49 UTC | Apr 28, 2026, 12:52 UTC | 412 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 912 | 905 | 7 | 11 | 0 | 3 | Apr 28, 2026, 12:44 UTC | Apr 28, 2026, 08:18 UTC | 352 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 12:53 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25053907822) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Audit finished | Apr 28, 2026, 12:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25053955069) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Audit finished | Apr 28, 2026, 12:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25053900606) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 12:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25051577108) |
 
 ### Fleet Activity
 
@@ -70,7 +70,7 @@ Latest review: Apr 28, 2026, 12:49 UTC. Latest close: Apr 28, 2026, 12:52 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 397 | 6 | 391 | 1 | 7 | 17 | 1 |
-| Last hour | 975 | 9 | 966 | 1 | 37 | 766 | 1 |
+| Last hour | 975 | 9 | 966 | 1 | 37 | 764 | 1 |
 | Last 24 hours | 3502 | 133 | 3369 | 2 | 451 | 919 | 13 |
 
 ### Recently Closed Across Repos
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 12:49 UTC. Latest close: Apr 28, 2026, 12:52 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 12:53 UTC
+Updated: Apr 28, 2026, 12:54 UTC
 
-State: Apply finished
+State: Audit finished
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25053907822](https://github.com/openclaw/clawsweeper/actions/runs/25053907822)
+Refreshed README Audit Health from a full live openclaw/openclaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25053900606](https://github.com/openclaw/clawsweeper/actions/runs/25053900606)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -172,7 +172,31 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25053907822](https://
 <!-- clawsweeper-audit:openclaw-openclaw:start -->
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-No audit has been published yet. Run `npm run audit -- --update-dashboard` to refresh this section.
+Last audit: Apr 28, 2026, 12:54 UTC
+
+Status: **Action needed**
+
+Targeted review input: `64563,65635,72522,72527,72529,72531,72532,72535,72536,72537`
+
+| Metric | Count |
+| --- | ---: |
+| Scan complete | yes |
+| Open items seen | 6974 |
+| Missing eligible open records | 117 |
+| Missing maintainer-authored open records | 74 |
+| Missing protected open records | 1 |
+| Missing recently-created open records | 237 |
+| Archived records that are open again | 0 |
+| Stale item records | 0 |
+| Duplicate records | 0 |
+| Protected proposed closes | 0 |
+| Stale reviews | 4 |
+
+| Item | Category | Title | Detail |
+| --- | --- | --- | --- |
+| [#64563](https://github.com/openclaw/openclaw/pull/64563) | Missing eligible open | fix(whatsapp): lazy default auth dir for profile state (#64555) | eligible |
+| [#65635](https://github.com/openclaw/openclaw/pull/65635) | Missing eligible open | fix(gateway): keep explicit loopback binds on 127.0.0.1 | eligible |
+| [#72522](https://github.com/openclaw/openclaw/pull/72522) | Missing eligible open | fix(control-ui): keep chat UI mounted across transient reconnects | eligible |
 <!-- clawsweeper-audit:openclaw-openclaw:end -->
 
 #### Latest Run Activity
@@ -182,7 +206,7 @@ Latest review: Apr 28, 2026, 12:49 UTC. Latest close: Apr 28, 2026, 12:52 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 233 | 6 | 227 | 0 | 7 | 17 | 1 |
-| Last hour | 533 | 9 | 524 | 0 | 37 | 414 | 1 |
+| Last hour | 533 | 9 | 524 | 0 | 37 | 412 | 1 |
 | Last 24 hours | 2587 | 130 | 2457 | 1 | 441 | 559 | 13 |
 
 #### Recently Closed
