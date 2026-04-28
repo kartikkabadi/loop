@@ -126,6 +126,9 @@ permissions:
   issues: write
   pull-requests: write
 
+env:
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+
 concurrency:
   group: ${{ github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw')) }}
   cancel-in-progress: ${{ github.event_name == 'repository_dispatch' }}
@@ -180,9 +183,9 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v3.1.1
         with:
-          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
@@ -259,9 +262,9 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v3.1.1
         with:
-          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
@@ -285,6 +288,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           target_slug="${TARGET_REPO//\//-}"
           report_path=".artifacts/event-apply-report.json"
+          snapshot_dir=".artifacts/event-record-snapshot"
+          item_record="records/$target_slug/items/$ITEM_NUMBER.md"
+          closed_record="records/$target_slug/closed/$ITEM_NUMBER.md"
 
           write_event_summary() {
             {
@@ -296,40 +302,68 @@ jobs:
             } >> "$GITHUB_STEP_SUMMARY"
           }
 
+          rm -rf "$snapshot_dir"
+          mkdir -p "$snapshot_dir/items" "$snapshot_dir/closed"
+          rm -f "$report_path"
+          pnpm run apply-artifacts -- \
+            --target-repo "$TARGET_REPO" \
+            --artifact-dir artifacts/event \
+            --skip-reconcile \
+            --skip-dashboard \
+            --replay-closed-artifacts
+          pnpm run apply-decisions -- \
+            --target-repo "$TARGET_REPO" \
+            --item-numbers "$ITEM_NUMBER" \
+            --apply-kind all \
+            --apply-close-reasons "$CLOSE_REASONS" \
+            --stale-min-age-days 30 \
+            --limit 1 \
+            --processed-limit 20 \
+            --min-age-minutes "$MIN_AGE_MINUTES" \
+            --close-delay-ms 1000 \
+            --comment-sync-min-age-days 0 \
+            --progress-every 1 \
+            --skip-dashboard \
+            --report-path "$report_path"
+          synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)' "$report_path")"
+          closed_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(r.filter((x)=>x.action==="closed").length)' "$report_path")"
+          if [ -e "$item_record" ]; then
+            cp "$item_record" "$snapshot_dir/items/$ITEM_NUMBER.md"
+          fi
+          if [ -e "$closed_record" ]; then
+            cp "$closed_record" "$snapshot_dir/closed/$ITEM_NUMBER.md"
+          fi
+
           publish_once() {
             git fetch origin main || return
             git reset --hard origin/main || return
-            rm -f "$report_path" || return
-            pnpm run apply-artifacts -- \
-              --target-repo "$TARGET_REPO" \
-              --artifact-dir artifacts/event \
-              --skip-reconcile \
-              --skip-dashboard \
-              --replay-closed-artifacts || return
-            pnpm run apply-decisions -- \
-              --target-repo "$TARGET_REPO" \
-              --item-numbers "$ITEM_NUMBER" \
-              --apply-kind all \
-              --apply-close-reasons "$CLOSE_REASONS" \
-              --stale-min-age-days 30 \
-              --limit 1 \
-              --processed-limit 20 \
-              --min-age-minutes "$MIN_AGE_MINUTES" \
-              --close-delay-ms 1000 \
-              --comment-sync-min-age-days 0 \
-              --progress-every 1 \
-              --skip-dashboard \
-              --report-path "$report_path" || return
-            synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)' "$report_path")" || return
-            closed_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(r.filter((x)=>x.action==="closed").length)' "$report_path")" || return
-            for record_path in \
-              "records/$target_slug/items/$ITEM_NUMBER.md" \
-              "records/$target_slug/closed/$ITEM_NUMBER.md"
-            do
-              if [ -e "$record_path" ]; then
-                git add "$record_path" || return
+            if [ -e "$snapshot_dir/closed/$ITEM_NUMBER.md" ]; then
+              mkdir -p "$(dirname "$closed_record")" || return
+              rm -f "$item_record" || return
+              cp "$snapshot_dir/closed/$ITEM_NUMBER.md" "$closed_record" || return
+            elif [ -e "$snapshot_dir/items/$ITEM_NUMBER.md" ]; then
+              if [ -e "$closed_record" ]; then
+                echo "Remote already has closed record for $target_slug#$ITEM_NUMBER; skipping open-record publish"
+                write_event_summary
+                return 0
               fi
-            done
+              mkdir -p "$(dirname "$item_record")" || return
+              cp "$snapshot_dir/items/$ITEM_NUMBER.md" "$item_record" || return
+            else
+              echo "No event record snapshot for $target_slug#$ITEM_NUMBER"
+              write_event_summary
+              return 0
+            fi
+            if [ -e "$item_record" ]; then
+              git add "$item_record" || return
+            else
+              git rm -f --ignore-unmatch "$item_record" || return
+            fi
+            if [ -e "$closed_record" ]; then
+              git add "$closed_record" || return
+            else
+              git rm -f --ignore-unmatch "$closed_record" || return
+            fi
             if git diff --cached --quiet; then
               echo "No event result changes"
               write_event_summary
@@ -401,9 +435,9 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v3.1.1
         with:
-          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
@@ -572,9 +606,9 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v3.1.1
         with:
-          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ needs.plan.outputs.target_repo_owner }}
           repositories: ${{ needs.plan.outputs.target_repo_name }}
@@ -676,9 +710,9 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v3.1.1
         with:
-          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ needs.plan.outputs.target_repo_owner }}
           repositories: ${{ needs.plan.outputs.target_repo_name }}
@@ -912,9 +946,9 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v3.1.1
         with:
-          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
@@ -997,9 +1031,9 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v3.1.1
         with:
-          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
