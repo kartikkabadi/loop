@@ -31,7 +31,59 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 19:41 UTC
+Last dashboard update: Apr 28, 2026, 19:15 UTC
+
+<!-- clawsweeper-status:openclaw-openclaw:start -->
+**Workflow status**
+
+Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
+
+Updated: Apr 28, 2026, 19:31 UTC
+
+State: Apply throttled
+
+GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/openclaw/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 6/11 in 600s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25072705696](https://github.com/openclaw/clawsweeper/actions/runs/25072705696)
+<!-- clawsweeper-status:openclaw-openclaw:end -->
+
+<!-- clawsweeper-status:openclaw-openclaw:start -->
+**Workflow status**
+
+Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
+
+Updated: Apr 28, 2026, 19:23 UTC
+
+State: Apply throttled
+
+GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/openclaw/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 5/11 in 480s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25072705696](https://github.com/openclaw/clawsweeper/actions/runs/25072705696)
+<!-- clawsweeper-status:openclaw-openclaw:end -->
+
+<!-- clawsweeper-status:openclaw-openclaw:start -->
+**Workflow status**
+
+Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
+
+Updated: Apr 28, 2026, 19:19 UTC
+
+State: Apply throttled
+
+GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/openclaw/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 4/11 in 240s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25072705696](https://github.com/openclaw/clawsweeper/actions/runs/25072705696)
+<!-- clawsweeper-status:openclaw-openclaw:end -->
+
+<!-- clawsweeper-status:openclaw-openclaw:start -->
+**Workflow status**
+
+Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
+
+Updated: Apr 28, 2026, 19:16 UTC
+
+State: Apply throttled
+
+GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/openclaw/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 2/11 in 60s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25072705696](https://github.com/openclaw/clawsweeper/actions/runs/25072705696)
+<!-- clawsweeper-status:openclaw-openclaw:end -->
 
 ### Fleet
 
