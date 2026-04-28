@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 07:10 UTC
 
 Updated: Apr 28, 2026, 07:10 UTC
 
-State: Audit finished
+State: Apply in progress
 
-Refreshed README Audit Health from a full live openclaw/clawhub state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039086041](https://github.com/openclaw/clawsweeper/actions/runs/25039086041)
+Starting apply/comment-sync run for up to 18 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=41985,45751,46406,46472,47654,47933,53643,54786,59998,60226,65385,66076,67221,68259,68876,72899,72974,72975.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039048295](https://github.com/openclaw/clawsweeper/actions/runs/25039048295)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -52,8 +52,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039086041](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3567 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3462 |
-| Open items total | 7029 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3461 |
+| Open items total | 7028 |
 | Reviewed files | 6579 |
 | Unreviewed open items | 450 |
 | Archived closed files | 13310 |
@@ -118,7 +118,7 @@ Latest review: Apr 28, 2026, 07:04 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 14 | 3 | 11 | 0 | 2 | 356 | 3 |
-| Last hour | 751 | 29 | 722 | 2 | 6 | 836 | 9 |
+| Last hour | 745 | 29 | 716 | 2 | 6 | 836 | 9 |
 | Last 24 hours | 2423 | 120 | 2303 | 10 | 67 | 1311 | 18 |
 
 ### Recently Closed
