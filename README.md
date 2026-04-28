@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:24 UTC
 
 State: Event review applied
 
-Reviewed event item #55652, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037299393](https://github.com/openclaw/clawsweeper/actions/runs/25037299393)
+Reviewed event item #73277, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037312132](https://github.com/openclaw/clawsweeper/actions/runs/25037312132)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -55,7 +55,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037299393](https://
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3465 |
 | Open items total | 7045 |
 | Reviewed files | 6574 |
-| Unreviewed open items | 471 |
+| Unreviewed open items | 472 |
 | Archived closed files | 13277 |
 
 ### Review Outcomes
@@ -64,7 +64,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037299393](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3385 |
 | Proposed issue closes | 12 (0.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3187 |
+| Fresh reviewed PRs in the last 7 days | 3185 |
 | Proposed PR closes | 6 (0.2% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6572 |
 | Proposed closes awaiting apply | 18 (0.3% of fresh reviews) |
@@ -75,13 +75,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037299393](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 61/611 current (550 due, 10%) |
-| Hourly hot item cadence (<7d) | 61/611 current (550 due, 10%) |
-| Daily cadence coverage | 1317/4108 current (2791 due, 32.1%) |
-| Daily PR cadence | 882/2841 current (1959 due, 31%) |
-| Daily new issue cadence (<30d) | 435/1267 current (832 due, 34.3%) |
+| Hourly cadence coverage | 61/612 current (551 due, 10%) |
+| Hourly hot item cadence (<7d) | 61/612 current (551 due, 10%) |
+| Daily cadence coverage | 1317/4107 current (2790 due, 32.1%) |
+| Daily PR cadence | 881/2839 current (1958 due, 31%) |
+| Daily new issue cadence (<30d) | 436/1268 current (832 due, 34.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 3812 |
+| Due now by cadence | 3813 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:22 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:24 UTC.
+Latest review: Apr 28, 2026, 06:23 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:22 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 272 | 5 | 267 | 0 | 2 | 12 | 1 |
-| Last hour | 1024 | 22 | 1002 | 1 | 2 | 358 | 4 |
-| Last 24 hours | 2210 | 108 | 2102 | 2 | 74 | 589 | 11 |
+| Last 15 minutes | 233 | 5 | 228 | 0 | 2 | 10 | 1 |
+| Last hour | 1024 | 22 | 1002 | 1 | 2 | 357 | 4 |
+| Last 24 hours | 2210 | 108 | 2102 | 2 | 74 | 588 | 11 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:22 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#55652](https://github.com/openclaw/openclaw/pull/55652) | fix(discord): skip channels claimed by other instances | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/55652.md) | complete | Apr 28, 2026, 06:22 UTC |
+| [#73277](https://github.com/openclaw/openclaw/pull/73277) | fix(zalouser): persist refreshed session cookies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73277.md) | complete | Apr 28, 2026, 06:23 UTC |
 | [#73312](https://github.com/openclaw/openclaw/pull/73312) | feat(matrix): expose MessagePresentation metadata in Matrix events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73312.md) | complete | Apr 28, 2026, 06:19 UTC |
 | [#73332](https://github.com/openclaw/openclaw/issues/73332) | v2026.4.25: Agents with no fallbacks array auto-fail-over to every registered models.providers.* entry | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73332.md) | complete | Apr 28, 2026, 06:19 UTC |
 | [#73330](https://github.com/openclaw/openclaw/pull/73330) | feat: add authenticated iOS background presence beacon | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73330.md) | complete | Apr 28, 2026, 06:18 UTC |
