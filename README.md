@@ -31,52 +31,53 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 09:00 UTC
+Last dashboard update: Apr 28, 2026, 09:01 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4415 |
-| Open PRs | 3498 |
-| Open items total | 7913 |
+| Open issues | 4413 |
+| Open PRs | 3496 |
+| Open items total | 7909 |
 | Reviewed files | 7471 |
-| Unreviewed open items | 442 |
-| Due now by cadence | 3738 |
-| Proposed closes awaiting apply | 8 |
-| Closed by Codex apply | 10281 |
+| Unreviewed open items | 438 |
+| Due now by cadence | 3734 |
+| Proposed closes awaiting apply | 7 |
+| Closed by Codex apply | 10282 |
 | Failed or stale reviews | 40 |
-| Archived closed files | 13386 |
+| Archived closed files | 13387 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 7003 | 6568 | 435 | 3680 | 8 | 10278 | Apr 28, 2026, 08:58 UTC | Apr 28, 2026, 08:53 UTC | 39 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6999 | 6568 | 431 | 3676 | 7 | 10279 | Apr 28, 2026, 08:59 UTC | Apr 28, 2026, 09:01 UTC | 39 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 910 | 903 | 7 | 58 | 0 | 3 | Apr 28, 2026, 08:46 UTC | Apr 28, 2026, 05:18 UTC | 20 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 09:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043538402) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 09:01 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043549495) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 08:47 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25041191333) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 08:58 UTC. Latest close: Apr 28, 2026, 08:53 UTC. Latest comment sync: Apr 28, 2026, 09:00 UTC.
+Latest review: Apr 28, 2026, 08:59 UTC. Latest close: Apr 28, 2026, 09:01 UTC. Latest comment sync: Apr 28, 2026, 09:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 516 | 8 | 508 | 0 | 1 | 30 | 3 |
-| Last hour | 1039 | 11 | 1028 | 1 | 3 | 59 | 6 |
-| Last 24 hours | 3318 | 116 | 3202 | 15 | 59 | 1148 | 25 |
+| Last 15 minutes | 459 | 8 | 451 | 0 | 2 | 29 | 3 |
+| Last hour | 1039 | 11 | 1028 | 1 | 4 | 59 | 6 |
+| Last 24 hours | 3319 | 117 | 3202 | 15 | 60 | 1148 | 26 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73433](https://github.com/openclaw/openclaw/issues/73433) | [Bug]: Gateway pegs single CPU thread at 100% immediately on boot in 2026.4.26 — TUI handshake timeouts, multi-minute message latency | duplicate or superseded | Apr 28, 2026, 09:01 UTC | [records/openclaw-openclaw/closed/73433.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73433.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73383](https://github.com/openclaw/openclaw/pull/73383) | feat(line): persist inbound media to ~/.openclaw/media/inbound/ | already implemented on main | Apr 28, 2026, 08:53 UTC | [records/openclaw-openclaw/closed/73383.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73383.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73418](https://github.com/openclaw/openclaw/issues/73418) | memory-wiki bridge still imports 0 artifacts with QMD backend on 2026.4.26 | duplicate or superseded | Apr 28, 2026, 08:45 UTC | [records/openclaw-openclaw/closed/73418.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73418.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73413](https://github.com/openclaw/openclaw/issues/73413) | [Bug]: When the sub-agent compresses, the session yield incorrectly returns intermediate results, causing the system to fail to produce the correct outcome once compression is complete and execution proceeds. | already implemented on main | Apr 28, 2026, 08:38 UTC | [records/openclaw-openclaw/closed/73413.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73413.md) |
@@ -86,7 +87,6 @@ Latest review: Apr 28, 2026, 08:58 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73348](https://github.com/openclaw/openclaw/issues/73348) | openclaw update can succeed while the running gateway stays on an older version, causing plugin/config version skew | already implemented on main | Apr 28, 2026, 06:50 UTC | [records/openclaw-openclaw/closed/73348.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73348.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73344](https://github.com/openclaw/openclaw/issues/73344) | [Bug]: /new on openai-codex/* (Responses API) returns \"One of input/previous_response_id/prompt/conversation_id must be provided\" — regression in 2026.4.26 | already implemented on main | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/73344.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73344.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73331](https://github.com/openclaw/openclaw/issues/73331) | v2026.4.26: Gateway busy-loops on bundled openai SDK directory walk; stops accepting connections | already implemented on main | Apr 28, 2026, 06:22 UTC | [records/openclaw-openclaw/closed/73331.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73331.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73329](https://github.com/openclaw/openclaw/issues/73329) | [Bug]: Gateway hard-couples to OpenRouter + LiteLLM pricing fetches at boot; no opt-out | duplicate or superseded | Apr 28, 2026, 06:20 UTC | [records/openclaw-openclaw/closed/73329.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73329.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -123,12 +123,12 @@ Latest review: Apr 28, 2026, 08:58 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 09:00 UTC
+Updated: Apr 28, 2026, 09:01 UTC
 
 State: Event review applied
 
-Reviewed event item #10356, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043538402](https://github.com/openclaw/clawsweeper/actions/runs/25043538402)
+Reviewed event item #73433, synced durable comment(s): 1, closed safe proposal(s): 1. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043549495](https://github.com/openclaw/clawsweeper/actions/runs/25043549495)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -136,12 +136,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043538402](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3542 |
-| Open PRs | 3461 |
-| Open items total | 7003 |
+| Open issues | 3540 |
+| Open PRs | 3459 |
+| Open items total | 6999 |
 | Reviewed files | 6568 |
-| Unreviewed open items | 435 |
-| Archived closed files | 13376 |
+| Unreviewed open items | 431 |
+| Archived closed files | 13377 |
 
 #### Review Outcomes
 
@@ -150,10 +150,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043538402](https://
 | Fresh reviewed issues in the last 7 days | 3344 |
 | Proposed issue closes | 3 (0.1% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3185 |
-| Proposed PR closes | 5 (0.2% of reviewed PRs) |
+| Proposed PR closes | 4 (0.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6529 |
-| Proposed closes awaiting apply | 8 (0.1% of fresh reviews) |
-| Closed by Codex apply | 10278 |
+| Proposed closes awaiting apply | 7 (0.1% of fresh reviews) |
+| Closed by Codex apply | 10279 |
 | Failed or stale reviews | 39 |
 
 #### Cadence
@@ -166,7 +166,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043538402](https://
 | Daily PR cadence | 1076/2825 current (1749 due, 38.1%) |
 | Daily new issue cadence (<30d) | 380/1248 current (868 due, 30.4%) |
 | Weekly older issue cadence | 1841/1846 current (5 due, 99.7%) |
-| Due now by cadence | 3680 |
+| Due now by cadence | 3676 |
 
 ### Audit Health
 
@@ -178,18 +178,19 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 08:58 UTC. Latest close: Apr 28, 2026, 08:53 UTC. Latest comment sync: Apr 28, 2026, 09:00 UTC.
+Latest review: Apr 28, 2026, 08:59 UTC. Latest close: Apr 28, 2026, 09:01 UTC. Latest comment sync: Apr 28, 2026, 09:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 512 | 8 | 504 | 0 | 1 | 10 | 3 |
-| Last hour | 538 | 11 | 527 | 0 | 3 | 39 | 6 |
-| Last 24 hours | 2405 | 113 | 2292 | 14 | 56 | 895 | 24 |
+| Last 15 minutes | 458 | 8 | 450 | 0 | 2 | 9 | 3 |
+| Last hour | 538 | 11 | 527 | 0 | 4 | 39 | 6 |
+| Last 24 hours | 2406 | 114 | 2292 | 14 | 57 | 895 | 25 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#73433](https://github.com/openclaw/openclaw/issues/73433) | [Bug]: Gateway pegs single CPU thread at 100% immediately on boot in 2026.4.26 — TUI handshake timeouts, multi-minute message latency | duplicate or superseded | Apr 28, 2026, 09:01 UTC | [records/openclaw-openclaw/closed/73433.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73433.md) |
 | [#73383](https://github.com/openclaw/openclaw/pull/73383) | feat(line): persist inbound media to ~/.openclaw/media/inbound/ | already implemented on main | Apr 28, 2026, 08:53 UTC | [records/openclaw-openclaw/closed/73383.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73383.md) |
 | [#73418](https://github.com/openclaw/openclaw/issues/73418) | memory-wiki bridge still imports 0 artifacts with QMD backend on 2026.4.26 | duplicate or superseded | Apr 28, 2026, 08:45 UTC | [records/openclaw-openclaw/closed/73418.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73418.md) |
 | [#73413](https://github.com/openclaw/openclaw/issues/73413) | [Bug]: When the sub-agent compresses, the session yield incorrectly returns intermediate results, causing the system to fail to produce the correct outcome once compression is complete and execution proceeds. | already implemented on main | Apr 28, 2026, 08:38 UTC | [records/openclaw-openclaw/closed/73413.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73413.md) |
@@ -199,7 +200,6 @@ Latest review: Apr 28, 2026, 08:58 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 | [#73348](https://github.com/openclaw/openclaw/issues/73348) | openclaw update can succeed while the running gateway stays on an older version, causing plugin/config version skew | already implemented on main | Apr 28, 2026, 06:50 UTC | [records/openclaw-openclaw/closed/73348.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73348.md) |
 | [#73344](https://github.com/openclaw/openclaw/issues/73344) | [Bug]: /new on openai-codex/* (Responses API) returns \"One of input/previous_response_id/prompt/conversation_id must be provided\" — regression in 2026.4.26 | already implemented on main | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/73344.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73344.md) |
 | [#73331](https://github.com/openclaw/openclaw/issues/73331) | v2026.4.26: Gateway busy-loops on bundled openai SDK directory walk; stops accepting connections | already implemented on main | Apr 28, 2026, 06:22 UTC | [records/openclaw-openclaw/closed/73331.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73331.md) |
-| [#73329](https://github.com/openclaw/openclaw/issues/73329) | [Bug]: Gateway hard-couples to OpenRouter + LiteLLM pricing fetches at boot; no opt-out | duplicate or superseded | Apr 28, 2026, 06:20 UTC | [records/openclaw-openclaw/closed/73329.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73329.md) |
 
 #### Recently Reviewed
 
@@ -288,7 +288,7 @@ Latest review: Apr 28, 2026, 08:46 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 4 | 0 | 4 | 0 | 0 | 20 | 0 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 20 | 0 |
 | Last hour | 501 | 0 | 501 | 1 | 0 | 20 | 0 |
 | Last 24 hours | 913 | 3 | 910 | 1 | 3 | 253 | 1 |
 
