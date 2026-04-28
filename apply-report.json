@@ -1,7 +1,12 @@
 [
   {
-    "number": 73362,
+    "number": 73425,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 73425,
     "action": "kept_open",
-    "reason": "protected label: maintainer"
+    "reason": "close reason clawhub is not enabled for this apply run"
   }
 ]

@@ -41,10 +41,10 @@ Last dashboard update: Apr 28, 2026, 08:45 UTC
 | Open issues | 4422 |
 | Open PRs | 3511 |
 | Open items total | 7933 |
-| Reviewed files | 7481 |
-| Unreviewed open items | 452 |
-| Due now by cadence | 3767 |
-| Proposed closes awaiting apply | 0 |
+| Reviewed files | 7482 |
+| Unreviewed open items | 451 |
+| Due now by cadence | 3766 |
+| Proposed closes awaiting apply | 1 |
 | Closed by Codex apply | 10279 |
 | Failed or stale reviews | 39 |
 | Archived closed files | 13367 |
@@ -53,25 +53,25 @@ Last dashboard update: Apr 28, 2026, 08:45 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 7023 | 6578 | 445 | 3709 | 0 | 10276 | Apr 28, 2026, 08:43 UTC | Apr 28, 2026, 08:38 UTC | 58 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 7023 | 6579 | 444 | 3708 | 1 | 10276 | Apr 28, 2026, 08:43 UTC | Apr 28, 2026, 08:38 UTC | 59 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 910 | 903 | 7 | 58 | 0 | 3 | Apr 28, 2026, 08:38 UTC | Apr 28, 2026, 05:18 UTC | 1 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 08:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25042903731) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 08:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25042680593) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Event review applied | Apr 28, 2026, 08:38 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25041991936) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 08:43 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:43 UTC.
+Latest review: Apr 28, 2026, 08:43 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:45 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 21 | 0 | 21 | 0 | 1 | 15 | 1 |
-| Last hour | 56 | 2 | 54 | 0 | 2 | 59 | 9 |
-| Last 24 hours | 3289 | 108 | 3181 | 18 | 57 | 2091 | 27 |
+| Last 15 minutes | 22 | 1 | 21 | 0 | 1 | 16 | 1 |
+| Last hour | 57 | 3 | 54 | 0 | 2 | 60 | 9 |
+| Last 24 hours | 3290 | 109 | 3181 | 18 | 57 | 2092 | 27 |
 
 ### Recently Closed Across Repos
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 08:43 UTC. Latest close: Apr 28, 2026, 08:38 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73362](https://github.com/openclaw/openclaw/pull/73362) | Fix default sandbox image fallback for python3-dependent mutations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73362.md) | complete | Apr 28, 2026, 08:43 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73425](https://github.com/openclaw/openclaw/pull/73425) | docs(mistral): mention MCP option for specialized API capabilities | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73425.md) | complete | Apr 28, 2026, 08:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71027](https://github.com/openclaw/openclaw/pull/71027) | chore(deps): bump useblacksmith/build-push-action from 2.1.0 to 2.2.0 in the actions group across 1 directory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71027.md) | complete | Apr 28, 2026, 08:41 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73379](https://github.com/openclaw/openclaw/pull/73379) | fix(cron): support Telegram thread IDs in cron add/edit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73379.md) | complete | Apr 28, 2026, 08:40 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73419](https://github.com/openclaw/openclaw/pull/73419) | fix(onboarding): skip redundant install prompt when only one source e… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73419.md) | complete | Apr 28, 2026, 08:40 UTC |
@@ -126,8 +126,8 @@ Updated: Apr 28, 2026, 08:45 UTC
 
 State: Event review applied
 
-Reviewed event item #73362, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042903731](https://github.com/openclaw/clawsweeper/actions/runs/25042903731)
+Reviewed event item #73425, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042680593](https://github.com/openclaw/clawsweeper/actions/runs/25042680593)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -138,8 +138,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042903731](https://
 | Open issues | 3549 |
 | Open PRs | 3474 |
 | Open items total | 7023 |
-| Reviewed files | 6578 |
-| Unreviewed open items | 445 |
+| Reviewed files | 6579 |
+| Unreviewed open items | 444 |
 | Archived closed files | 13357 |
 
 #### Review Outcomes
@@ -148,10 +148,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042903731](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3349 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3190 |
-| Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6539 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 3191 |
+| Proposed PR closes | 1 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6540 |
+| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
 | Closed by Codex apply | 10276 |
 | Failed or stale reviews | 39 |
 
@@ -159,13 +159,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042903731](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 32/650 current (618 due, 4.9%) |
-| Hourly hot item cadence (<7d) | 32/650 current (618 due, 4.9%) |
+| Hourly cadence coverage | 33/651 current (618 due, 5.1%) |
+| Hourly hot item cadence (<7d) | 33/651 current (618 due, 5.1%) |
 | Daily cadence coverage | 1440/4080 current (2640 due, 35.3%) |
 | Daily PR cadence | 1058/2826 current (1768 due, 37.4%) |
 | Daily new issue cadence (<30d) | 382/1254 current (872 due, 30.5%) |
 | Weekly older issue cadence | 1842/1848 current (6 due, 99.7%) |
-| Due now by cadence | 3709 |
+| Due now by cadence | 3708 |
 
 ### Audit Health
 
@@ -177,13 +177,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 08:43 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:43 UTC.
+Latest review: Apr 28, 2026, 08:43 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:45 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 0 | 20 | 0 | 1 | 15 | 1 |
-| Last hour | 55 | 2 | 53 | 0 | 2 | 58 | 9 |
-| Last 24 hours | 2376 | 105 | 2271 | 18 | 54 | 1362 | 26 |
+| Last 15 minutes | 21 | 1 | 20 | 0 | 1 | 16 | 1 |
+| Last hour | 56 | 3 | 53 | 0 | 2 | 59 | 9 |
+| Last 24 hours | 2377 | 106 | 2271 | 18 | 54 | 1363 | 26 |
 
 #### Recently Closed
 
@@ -204,7 +204,7 @@ Latest review: Apr 28, 2026, 08:43 UTC. Latest close: Apr 28, 2026, 08:38 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73362](https://github.com/openclaw/openclaw/pull/73362) | Fix default sandbox image fallback for python3-dependent mutations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73362.md) | complete | Apr 28, 2026, 08:43 UTC |
+| [#73425](https://github.com/openclaw/openclaw/pull/73425) | docs(mistral): mention MCP option for specialized API capabilities | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73425.md) | complete | Apr 28, 2026, 08:43 UTC |
 | [#71027](https://github.com/openclaw/openclaw/pull/71027) | chore(deps): bump useblacksmith/build-push-action from 2.1.0 to 2.2.0 in the actions group across 1 directory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71027.md) | complete | Apr 28, 2026, 08:41 UTC |
 | [#73379](https://github.com/openclaw/openclaw/pull/73379) | fix(cron): support Telegram thread IDs in cron add/edit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73379.md) | complete | Apr 28, 2026, 08:40 UTC |
 | [#73419](https://github.com/openclaw/openclaw/pull/73419) | fix(onboarding): skip redundant install prompt when only one source e… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73419.md) | complete | Apr 28, 2026, 08:40 UTC |
