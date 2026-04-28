@@ -1,7 +1,12 @@
 [
   {
-    "number": 73343,
+    "number": 73344,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 73344,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
