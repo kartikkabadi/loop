@@ -38,45 +38,46 @@ Last dashboard update: Apr 28, 2026, 17:23 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4255 |
-| Open PRs | 3232 |
-| Open items total | 7487 |
-| Reviewed files | 7487 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 2266 |
-| Proposed closes awaiting apply | 1 |
-| Closed by Codex apply | 10474 |
+| Open issues | 4429 |
+| Open PRs | 3447 |
+| Open items total | 7876 |
+| Reviewed files | 7486 |
+| Unreviewed open items | 390 |
+| Due now by cadence | 2656 |
+| Proposed closes awaiting apply | 0 |
+| Closed by Codex apply | 10475 |
 | Failed or stale reviews | 6 |
-| Archived closed files | 13652 |
+| Archived closed files | 13653 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6580 | 6580 | 0 | 2251 | 1 | 10471 | Apr 28, 2026, 17:19 UTC | Apr 28, 2026, 17:10 UTC | 775 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 907 | 907 | 0 | 15 | 0 | 3 | Apr 28, 2026, 17:04 UTC | Apr 28, 2026, 08:18 UTC | 305 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6962 | 6579 | 383 | 2634 | 0 | 10472 | Apr 28, 2026, 17:19 UTC | Apr 28, 2026, 17:23 UTC | 767 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 914 | 907 | 7 | 22 | 0 | 3 | Apr 28, 2026, 17:04 UTC | Apr 28, 2026, 08:18 UTC | 300 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 17:22 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25067584269) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 17:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25067537126) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 17:06 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25066600918) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 17:19 UTC. Latest close: Apr 28, 2026, 17:10 UTC. Latest comment sync: Apr 28, 2026, 17:20 UTC.
+Latest review: Apr 28, 2026, 17:19 UTC. Latest close: Apr 28, 2026, 17:23 UTC. Latest comment sync: Apr 28, 2026, 17:20 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 1 | 18 | 0 | 1 | 37 | 0 |
-| Last hour | 642 | 21 | 621 | 2 | 29 | 1080 | 1 |
-| Last 24 hours | 4713 | 247 | 4466 | 3 | 583 | 1485 | 16 |
+| Last 15 minutes | 18 | 1 | 17 | 0 | 2 | 37 | 0 |
+| Last hour | 641 | 20 | 621 | 2 | 30 | 1067 | 1 |
+| Last 24 hours | 4713 | 247 | 4466 | 3 | 584 | 1485 | 16 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73644](https://github.com/openclaw/openclaw/issues/73644) | Feature Request: Add option to disable missed jobs catch-up on gateway restart | duplicate or superseded | Apr 28, 2026, 17:23 UTC | [records/openclaw-openclaw/closed/73644.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73644.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73630](https://github.com/openclaw/openclaw/pull/73630) | test: drop spurious await + redundant cast on plugin.register call sites | closed externally after review | Apr 28, 2026, 17:10 UTC | [records/openclaw-openclaw/closed/73630.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73630.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70853](https://github.com/openclaw/openclaw/issues/70853) | Telegram DM session continuity lost after session reset/rebind on stable session key | closed externally after review | Apr 28, 2026, 17:01 UTC | [records/openclaw-openclaw/closed/70853.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70853.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60839](https://github.com/openclaw/openclaw/pull/60839) | [Fix] Don't deny local reverse proxy | already implemented on main | Apr 28, 2026, 17:00 UTC | [records/openclaw-openclaw/closed/60839.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60839.md) |
@@ -86,7 +87,6 @@ Latest review: Apr 28, 2026, 17:19 UTC. Latest close: Apr 28, 2026, 17:10 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60500](https://github.com/openclaw/openclaw/pull/60500) | feat(web): support PDF file uploads in web chat UI | already implemented on main | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/60500.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60500.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60022](https://github.com/openclaw/openclaw/pull/60022) | fix: restore MS Teams file sending functionality | not actionable in this repository | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/60022.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60022.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59970](https://github.com/openclaw/openclaw/issues/59970) | Proposal: reply-first chat behavior, retrieval guardrails, and result-oriented sub-agent reporting | belongs on ClawHub | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59970.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59970.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59957](https://github.com/openclaw/openclaw/issues/59957) | [Bug]: Tool output unknown error after forced update to v2026.4.2 | already implemented on main | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59957.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59957.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 17:19 UTC. Latest close: Apr 28, 2026, 17:10 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 17:22 UTC
+Updated: Apr 28, 2026, 17:23 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25067584269](https://github.com/openclaw/clawsweeper/actions/runs/25067584269)
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 1, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25067537126](https://github.com/openclaw/clawsweeper/actions/runs/25067537126)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -135,37 +135,37 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25067584269](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3380 |
-| Open PRs | 3200 |
-| Open items total | 6580 |
-| Reviewed files | 6580 |
-| Unreviewed open items | 0 |
-| Archived closed files | 13642 |
+| Open issues | 3553 |
+| Open PRs | 3409 |
+| Open items total | 6962 |
+| Reviewed files | 6579 |
+| Unreviewed open items | 383 |
+| Archived closed files | 13643 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3377 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3376 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3197 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6574 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
-| Closed by Codex apply | 10471 |
+| Fresh verified reviews in the last 7 days | 6573 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10472 |
 | Failed or stale reviews | 6 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 92/794 current (702 due, 11.6%) |
-| Hourly hot item cadence (<7d) | 92/794 current (702 due, 11.6%) |
+| Hourly cadence coverage | 91/793 current (702 due, 11.5%) |
+| Hourly hot item cadence (<7d) | 91/793 current (702 due, 11.5%) |
 | Daily cadence coverage | 2398/3946 current (1548 due, 60.8%) |
 | Daily PR cadence | 1901/2736 current (835 due, 69.5%) |
 | Daily new issue cadence (<30d) | 497/1210 current (713 due, 41.1%) |
 | Weekly older issue cadence | 1839/1840 current (1 due, 99.9%) |
-| Due now by cadence | 2251 |
+| Due now by cadence | 2634 |
 
 ### Audit Health
 
@@ -201,18 +201,19 @@ Targeted review input: `64563,65635,72522,72527,72529,72531,72532,72535,72536,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 17:19 UTC. Latest close: Apr 28, 2026, 17:10 UTC. Latest comment sync: Apr 28, 2026, 17:20 UTC.
+Latest review: Apr 28, 2026, 17:19 UTC. Latest close: Apr 28, 2026, 17:23 UTC. Latest comment sync: Apr 28, 2026, 17:20 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 1 | 18 | 0 | 1 | 37 | 0 |
-| Last hour | 604 | 21 | 583 | 2 | 29 | 775 | 1 |
-| Last 24 hours | 3796 | 244 | 3552 | 3 | 573 | 1165 | 16 |
+| Last 15 minutes | 18 | 1 | 17 | 0 | 2 | 37 | 0 |
+| Last hour | 603 | 20 | 583 | 2 | 30 | 767 | 1 |
+| Last 24 hours | 3796 | 244 | 3552 | 3 | 574 | 1165 | 16 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#73644](https://github.com/openclaw/openclaw/issues/73644) | Feature Request: Add option to disable missed jobs catch-up on gateway restart | duplicate or superseded | Apr 28, 2026, 17:23 UTC | [records/openclaw-openclaw/closed/73644.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73644.md) |
 | [#73630](https://github.com/openclaw/openclaw/pull/73630) | test: drop spurious await + redundant cast on plugin.register call sites | closed externally after review | Apr 28, 2026, 17:10 UTC | [records/openclaw-openclaw/closed/73630.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73630.md) |
 | [#70853](https://github.com/openclaw/openclaw/issues/70853) | Telegram DM session continuity lost after session reset/rebind on stable session key | closed externally after review | Apr 28, 2026, 17:01 UTC | [records/openclaw-openclaw/closed/70853.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70853.md) |
 | [#60839](https://github.com/openclaw/openclaw/pull/60839) | [Fix] Don't deny local reverse proxy | already implemented on main | Apr 28, 2026, 17:00 UTC | [records/openclaw-openclaw/closed/60839.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60839.md) |
@@ -222,7 +223,6 @@ Latest review: Apr 28, 2026, 17:19 UTC. Latest close: Apr 28, 2026, 17:10 UTC. L
 | [#60500](https://github.com/openclaw/openclaw/pull/60500) | feat(web): support PDF file uploads in web chat UI | already implemented on main | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/60500.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60500.md) |
 | [#60022](https://github.com/openclaw/openclaw/pull/60022) | fix: restore MS Teams file sending functionality | not actionable in this repository | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/60022.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60022.md) |
 | [#59970](https://github.com/openclaw/openclaw/issues/59970) | Proposal: reply-first chat behavior, retrieval guardrails, and result-oriented sub-agent reporting | belongs on ClawHub | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59970.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59970.md) |
-| [#59957](https://github.com/openclaw/openclaw/issues/59957) | [Bug]: Tool output unknown error after forced update to v2026.4.2 | already implemented on main | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59957.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59957.md) |
 
 #### Recently Reviewed
 
@@ -266,11 +266,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066600918](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues | 875 |
-| Open PRs | 32 |
-| Open items total | 907 |
+| Open issues | 876 |
+| Open PRs | 38 |
+| Open items total | 914 |
 | Reviewed files | 907 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 7 |
 | Archived closed files | 10 |
 
 #### Review Outcomes
@@ -296,7 +296,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066600918](https://
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 202/202 current (0 due, 100%) |
 | Weekly older issue cadence | 632/632 current (0 due, 100%) |
-| Due now by cadence | 15 |
+| Due now by cadence | 22 |
 
 ### Audit Health
 
@@ -335,7 +335,7 @@ Latest review: Apr 28, 2026, 17:04 UTC. Latest close: Apr 28, 2026, 08:18 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 38 | 0 | 38 | 0 | 0 | 305 | 0 |
+| Last hour | 38 | 0 | 38 | 0 | 0 | 300 | 0 |
 | Last 24 hours | 917 | 3 | 914 | 0 | 10 | 320 | 0 |
 
 #### Recently Closed
