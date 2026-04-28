@@ -38,12 +38,12 @@ Last dashboard update: Apr 28, 2026, 21:07 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4223 |
-| Open PRs | 3241 |
-| Open items total | 7464 |
+| Open issues | 4397 |
+| Open PRs | 3453 |
+| Open items total | 7850 |
 | Reviewed files | 7464 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 1851 |
+| Unreviewed open items | 386 |
+| Due now by cadence | 2237 |
 | Proposed closes awaiting apply | 16 |
 | Closed by Codex apply | 10542 |
 | Failed or stale reviews | 14 |
@@ -53,15 +53,15 @@ Last dashboard update: Apr 28, 2026, 21:07 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6557 | 6557 | 0 | 1816 | 16 | 10539 | Apr 28, 2026, 21:04 UTC | Apr 28, 2026, 21:01 UTC | 119 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 907 | 907 | 0 | 35 | 0 | 3 | Apr 28, 2026, 21:03 UTC | Apr 28, 2026, 18:47 UTC | 481 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6935 | 6557 | 378 | 2194 | 16 | 10539 | Apr 28, 2026, 21:04 UTC | Apr 28, 2026, 21:01 UTC | 119 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 915 | 907 | 8 | 43 | 0 | 3 | Apr 28, 2026, 21:03 UTC | Apr 28, 2026, 18:47 UTC | 481 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
 | [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 21:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25077718449) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 21:06 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25075999264) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 28, 2026, 21:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25077718449) |
 
 ### Fleet Activity
 
@@ -69,7 +69,7 @@ Latest review: Apr 28, 2026, 21:04 UTC. Latest close: Apr 28, 2026, 21:01 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 60 | 2 | 58 | 4 | 2 | 494 | 0 |
+| Last 15 minutes | 48 | 0 | 48 | 4 | 2 | 494 | 0 |
 | Last hour | 1053 | 17 | 1036 | 4 | 27 | 600 | 1 |
 | Last 24 hours | 5783 | 333 | 5450 | 10 | 701 | 1016 | 18 |
 
@@ -135,11 +135,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25077718449](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3348 |
-| Open PRs | 3209 |
-| Open items total | 6557 |
+| Open issues | 3521 |
+| Open PRs | 3414 |
+| Open items total | 6935 |
 | Reviewed files | 6557 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 378 |
 | Archived closed files | 13759 |
 
 #### Review Outcomes
@@ -165,7 +165,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25077718449](https://
 | Daily PR cadence | 2122/2712 current (590 due, 78.2%) |
 | Daily new issue cadence (<30d) | 730/1167 current (437 due, 62.6%) |
 | Weekly older issue cadence | 1833/1836 current (3 due, 99.8%) |
-| Due now by cadence | 1816 |
+| Due now by cadence | 2194 |
 
 ### Audit Health
 
@@ -205,7 +205,7 @@ Latest review: Apr 28, 2026, 21:04 UTC. Latest close: Apr 28, 2026, 21:01 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 30 | 2 | 28 | 2 | 2 | 14 | 0 |
+| Last 15 minutes | 24 | 0 | 24 | 2 | 2 | 14 | 0 |
 | Last hour | 552 | 17 | 535 | 2 | 27 | 119 | 1 |
 | Last 24 hours | 4865 | 330 | 4535 | 8 | 690 | 507 | 18 |
 
@@ -253,12 +253,12 @@ Latest review: Apr 28, 2026, 21:04 UTC. Latest close: Apr 28, 2026, 21:01 UTC. L
 
 Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
 
-Updated: Apr 28, 2026, 21:06 UTC
+Updated: Apr 28, 2026, 21:07 UTC
 
-State: Review comments checked
+State: Review in progress
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 479. Item numbers: 3,15,17,18,23,26,32,33,48,49,51,52,60,62,65,72,77,79,84,86,88,95,96,97,99,100,102,115,117,120,127,128,129,131,134,137,151,156,162,169,170,171,173,174,178,184,192,205,208,211,224,225,226,227,228,231,234,236,237,238,243,248,256,265,268,275,277,279,284,287,288,290,314,321,323,328,329,330,337,340,345,348,349,351,353,364,367,369,371,373,374,378,379,380,382,385,386,387,388,390,392,393,397,402,406,410,420,423,424,425,426,437,438,442,443,447,448,449,450,451,454,455,459,463,469,471,474,478,479,480,481,482,484,485,487,488,489,494,495,498,501,503,504,509,516,528,531,532,535,539,541,553,563,566,567,568,573,574,575,579,580,581,586,589,593,600,604,609,613,614,615,618,619,621,625,630,631,635,636,637,642,645,646,650,651,652,653,654,656,657,658,661,662,664,667,669,670,672,673,674,675,676,677,678,679,680,681,683,686,692,694,699,700,701,705,706,707,708,711,712,716,717,718,722,729,730,733,734,737,740,745,752,756,758,760,761,762,764,765,767,768,769,772,779,782,784,786,789,791,792,794,800,804,807,808,809,816,817,819,823,824,834,835,838,847,848,849,850,852,853,854,856,858,860,862,863,865,868,869,870,871,873,874,876,878,879,880,882,883,886,887,889,890,892,895,896,897,899,900,901,903,904,906,907,908,910,911,912,913,914,915,917,920,922,927,928,930,932,933,936,939,941,943,946,951,954,958,959,960,962,967,970,971,972,974,975,984,985,987,992,995,997,998,999,1003,1006,1007,1008,1009,1010,1011,1015,1016,1017,1018,1020,1021,1022,1024,1026,1027,1028,1032,1033,1035,1036,1038,1039,1040,1041,1043,1044,1045,1046,1048,1049,1051,1052,1053,1054,1059,1062,1063,1068,1069,1070,1072,1075,1079,1080,1081,1082,1083,1084,1085,1088,1089,1090,1091,1092,1094,1097,1098,1099,1100,1102,1103,1104,1105,1106,1107,1109,1110,1112,1113,1114,1116,1118,1119,1120,1121,1122,1124,1125,1126,1128,1129,1131,1132,1133,1136,1137,1140,1141,1142,1147,1148,1149,1152,1153,1154,1155,1156,1159,1164,1168,1169,1170,1171,1172,1173,1175,1176,1177,1179,1180,1181,1182,1184,1186,1188,1193,1195,1197,1199,1201,1204,1206,1207,1211,1212,1217,1218,1219,1221,1222,1228,1282,1290,1296,1542,1591,1672,1771,1772,1781,1783,1787,1789,1797,1815,1818,1819,1823,1824,1828,1833,1849,1857,1860.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25075999264](https://github.com/openclaw/clawsweeper/actions/runs/25075999264)
+Planned 169 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25077718449](https://github.com/openclaw/clawsweeper/actions/runs/25077718449)
 <!-- clawsweeper-status:openclaw-clawhub:end -->
 
 #### Queue
@@ -266,11 +266,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25075999264](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues | 875 |
-| Open PRs | 32 |
-| Open items total | 907 |
+| Open issues | 876 |
+| Open PRs | 39 |
+| Open items total | 915 |
 | Reviewed files | 907 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 8 |
 | Archived closed files | 11 |
 
 #### Review Outcomes
@@ -296,7 +296,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25075999264](https://
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 202/202 current (0 due, 100%) |
 | Weekly older issue cadence | 631/633 current (2 due, 99.7%) |
-| Due now by cadence | 35 |
+| Due now by cadence | 43 |
 
 ### Audit Health
 
@@ -334,7 +334,7 @@ Latest review: Apr 28, 2026, 21:03 UTC. Latest close: Apr 28, 2026, 18:47 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 30 | 0 | 30 | 2 | 0 | 480 | 0 |
+| Last 15 minutes | 24 | 0 | 24 | 2 | 0 | 480 | 0 |
 | Last hour | 501 | 0 | 501 | 2 | 0 | 481 | 0 |
 | Last 24 hours | 918 | 3 | 915 | 2 | 11 | 509 | 0 |
 
