@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 06:48 UTC
+Last dashboard update: Apr 28, 2026, 06:49 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 06:48 UTC
+Updated: Apr 28, 2026, 06:49 UTC
 
 State: Event review applied
 
-Reviewed event item #73347, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038138103](https://github.com/openclaw/clawsweeper/actions/runs/25038138103)
+Reviewed event item #73349, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038155663](https://github.com/openclaw/clawsweeper/actions/runs/25038155663)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -115,12 +115,12 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:47 UTC. Latest close: Apr 28, 2026, 06:45 UTC. Latest comment sync: Apr 28, 2026, 06:48 UTC.
+Latest review: Apr 28, 2026, 06:48 UTC. Latest close: Apr 28, 2026, 06:45 UTC. Latest comment sync: Apr 28, 2026, 06:47 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 13 | 1 | 12 | 0 | 1 | 11 | 2 |
-| Last hour | 565 | 10 | 555 | 2 | 3 | 810 | 7 |
+| Last 15 minutes | 14 | 1 | 13 | 0 | 1 | 11 | 3 |
+| Last hour | 565 | 10 | 555 | 2 | 3 | 797 | 7 |
 | Last 24 hours | 2216 | 103 | 2113 | 11 | 64 | 1029 | 14 |
 
 ### Recently Closed
@@ -145,7 +145,8 @@ Latest review: Apr 28, 2026, 06:47 UTC. Latest close: Apr 28, 2026, 06:45 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73347](https://github.com/openclaw/openclaw/pull/73347) | fix(wizard): use setup token for onboarding health check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73347.md) | complete | Apr 28, 2026, 06:47 UTC |
+| [#73349](https://github.com/openclaw/openclaw/pull/73349) | feat(exec): inject OPENCLAW_SESSION_KEY and OPENCLAW_AGENT_ID env vars for child processes | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73349.md) | complete | Apr 28, 2026, 06:48 UTC |
+| [#73334](https://github.com/openclaw/openclaw/pull/73334) | refactor(feishu): unify document link parsing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73334.md) | complete | Apr 28, 2026, 06:45 UTC |
 | [#73346](https://github.com/openclaw/openclaw/pull/73346) | fix(agents/anthropic-transport): suppress default beta headers on custom Anthropic-compatible providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73346.md) | complete | Apr 28, 2026, 06:44 UTC |
 | [#73039](https://github.com/openclaw/openclaw/pull/73039) | perf(tools): memoize media + web tool factories in createOpenClawTools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73039.md) | complete | Apr 28, 2026, 06:44 UTC |
 | [#73343](https://github.com/openclaw/openclaw/issues/73343) | [Feature]: Expose channel user identity (SenderId) to skill/tool execution environment | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73343.md) | complete | Apr 28, 2026, 06:42 UTC |
@@ -154,7 +155,6 @@ Latest review: Apr 28, 2026, 06:47 UTC. Latest close: Apr 28, 2026, 06:45 UTC. L
 | [#72333](https://github.com/openclaw/openclaw/pull/72333) | [plugin sdk] Add host-hook examples and recipes (#72287 follow-up) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72333.md) | complete | Apr 28, 2026, 06:41 UTC |
 | [#72384](https://github.com/openclaw/openclaw/pull/72384) | [plugin sdk] Add advanced workflow plugin contract fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72384.md) | complete | Apr 28, 2026, 06:40 UTC |
 | [#73342](https://github.com/openclaw/openclaw/pull/73342) | refactor(memory-host): replace core runtime bridge with services | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73342.md) | complete | Apr 28, 2026, 06:38 UTC |
-| [#69056](https://github.com/openclaw/openclaw/pull/69056) | fix(gateway): handle SIGUSR1 gracefully on Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69056.md) | complete | Apr 28, 2026, 06:38 UTC |
 
 </details>
 
