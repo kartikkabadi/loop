@@ -53,14 +53,14 @@ Last dashboard update: Apr 28, 2026, 12:54 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6974 | 6545 | 429 | 3450 | 0 | 10350 | Apr 28, 2026, 12:49 UTC | Apr 28, 2026, 12:52 UTC | 412 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6974 | 6545 | 429 | 3450 | 0 | 10350 | Apr 28, 2026, 12:49 UTC | Apr 28, 2026, 12:52 UTC | 406 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 912 | 905 | 7 | 11 | 0 | 3 | Apr 28, 2026, 12:44 UTC | Apr 28, 2026, 08:18 UTC | 352 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Audit finished | Apr 28, 2026, 12:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25053900606) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 28, 2026, 12:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25053907822) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 12:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25051577108) |
 
 ### Fleet Activity
@@ -70,7 +70,7 @@ Latest review: Apr 28, 2026, 12:49 UTC. Latest close: Apr 28, 2026, 12:52 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 397 | 6 | 391 | 1 | 7 | 17 | 1 |
-| Last hour | 975 | 9 | 966 | 1 | 37 | 764 | 1 |
+| Last hour | 975 | 9 | 966 | 1 | 37 | 758 | 1 |
 | Last 24 hours | 3502 | 133 | 3369 | 2 | 451 | 919 | 13 |
 
 ### Recently Closed Across Repos
@@ -124,10 +124,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 12:54 UTC
 
-State: Audit finished
+State: Hot intake in progress
 
-Refreshed README Audit Health from a full live openclaw/openclaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25053900606](https://github.com/openclaw/clawsweeper/actions/runs/25053900606)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25053907822](https://github.com/openclaw/clawsweeper/actions/runs/25053907822)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -206,7 +206,7 @@ Latest review: Apr 28, 2026, 12:49 UTC. Latest close: Apr 28, 2026, 12:52 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 233 | 6 | 227 | 0 | 7 | 17 | 1 |
-| Last hour | 533 | 9 | 524 | 0 | 37 | 412 | 1 |
+| Last hour | 533 | 9 | 524 | 0 | 37 | 406 | 1 |
 | Last 24 hours | 2587 | 130 | 2457 | 1 | 441 | 559 | 13 |
 
 #### Recently Closed
