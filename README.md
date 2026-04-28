@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 06:08 UTC
+Last dashboard update: Apr 28, 2026, 06:09 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 06:08 UTC
+Updated: Apr 28, 2026, 06:09 UTC
 
 State: Event review applied
 
-Reviewed event item #10356, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036486455](https://github.com/openclaw/clawsweeper/actions/runs/25036486455)
+Reviewed event item #72384, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036750656](https://github.com/openclaw/clawsweeper/actions/runs/25036750656)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -64,9 +64,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036486455](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3382 |
 | Proposed issue closes | 10 (0.3% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3186 |
+| Fresh reviewed PRs in the last 7 days | 3187 |
 | Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6568 |
+| Fresh verified reviews in the last 7 days | 6569 |
 | Proposed closes awaiting apply | 13 (0.2% of fresh reviews) |
 | Closed by Codex apply | 10236 |
 | Failed or stale reviews | 4 |
@@ -77,11 +77,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036486455](https://
 | --- | ---: |
 | Hourly cadence coverage | 20/607 current (587 due, 3.3%) |
 | Hourly hot item cadence (<7d) | 20/607 current (587 due, 3.3%) |
-| Daily cadence coverage | 1315/4110 current (2795 due, 32%) |
-| Daily PR cadence | 879/2842 current (1963 due, 30.9%) |
+| Daily cadence coverage | 1316/4110 current (2794 due, 32%) |
+| Daily PR cadence | 880/2842 current (1962 due, 31%) |
 | Daily new issue cadence (<30d) | 436/1268 current (832 due, 34.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 3854 |
+| Due now by cadence | 3853 |
 
 ### Audit Health
 
@@ -119,9 +119,9 @@ Latest review: Apr 28, 2026, 06:06 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 0 | 15 | 1 | 0 | 224 | 3 |
-| Last hour | 515 | 15 | 500 | 1 | 0 | 349 | 3 |
-| Last 24 hours | 2199 | 101 | 2098 | 2 | 72 | 1075 | 16 |
+| Last 15 minutes | 15 | 0 | 15 | 0 | 0 | 208 | 3 |
+| Last hour | 514 | 15 | 499 | 0 | 0 | 349 | 3 |
+| Last 24 hours | 2199 | 101 | 2098 | 1 | 72 | 1076 | 16 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:06 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#10356](https://github.com/openclaw/openclaw/pull/10356) | TTS: add Typecast provider (emotion presets, audio tuning, Asian language voices) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/10356.md) | failed | Apr 28, 2026, 06:06 UTC |
+| [#72384](https://github.com/openclaw/openclaw/pull/72384) | [plugin sdk] Add advanced workflow plugin contract fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72384.md) | complete | Apr 28, 2026, 06:06 UTC |
 | [#73046](https://github.com/openclaw/openclaw/pull/73046) | fix(discord): make always-on auto replies more robust | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73046.md) | complete | Apr 28, 2026, 06:03 UTC |
 | [#73282](https://github.com/openclaw/openclaw/pull/73282) | fix(gateway): accept heartbeat/cron/webhook channel hints in agent params (#73237) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73282.md) | complete | Apr 28, 2026, 06:03 UTC |
 | [#73320](https://github.com/openclaw/openclaw/pull/73320) | Limit internal task completion payloads | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73320.md) | complete | Apr 28, 2026, 06:03 UTC |
