@@ -2878,21 +2878,21 @@ function closeEvidenceLine(evidence: Evidence): string {
 function closeIntro(reason: CloseReason): string {
   switch (reason) {
     case "implemented_on_main":
-      return "Closing this as implemented after Codex automated review.";
+      return "Thanks for the context here. I did a careful shell check against current `main`, and this is already implemented.";
     case "cannot_reproduce":
-      return "Closing this as not reproducible on current `main` after Codex automated review.";
+      return "Thanks for the report. I gave this a fresh shell check against current `main`, and I could not reproduce it anymore.";
     case "clawhub":
-      return `Closing this as better suited for ${markdownLink("ClawHub", targetProfile().communityUrl ?? "https://clawhub.ai/")}/community plugin work after Codex automated review.`;
+      return `Thanks for the idea. I checked the current extension path, and this is a better fit for the ${markdownLink("ClawHub", targetProfile().communityUrl ?? "https://clawhub.ai/")}/community tide pool than OpenClaw core.`;
     case "duplicate_or_superseded":
-      return "Closing this as duplicate or superseded after Codex automated review.";
+      return "Thanks for the context here. I swept through the related work, and this is now duplicate or superseded.";
     case "not_actionable_in_repo":
-      return "Closing this as not actionable in this repository after Codex automated review.";
+      return "Thanks for writing this up. I checked the repo boundary, and this lives outside the OpenClaw source shell.";
     case "incoherent":
-      return "Closing this as not actionable after Codex automated review.";
+      return "Thanks for the note. I could not crack enough detail here to turn it into a concrete OpenClaw code or docs action.";
     case "stale_insufficient_info":
-      return "Closing this as stale with insufficient information after Codex automated review.";
+      return "Thanks for the report. I checked current `main`, but this shell is missing enough reproduction detail to verify a current bug.";
     case "none":
-      return "Closing this after Codex automated review.";
+      return "Thanks for the context here. I checked this with Codex and am closing it based on the evidence below.";
   }
 }
 
@@ -2988,7 +2988,7 @@ function closeReviewLineFromDecision(
     Boolean,
   );
   if (fixed !== "not determined") parts.push(`fix evidence: ${fixed}`);
-  return `Codex Review notes: ${parts.join("; ")}.`;
+  return `Codex review notes: ${parts.join("; ")}.`;
 }
 
 function closeReviewLineFromReport(markdown: string): string {
@@ -2997,7 +2997,7 @@ function closeReviewLineFromReport(markdown: string): string {
   const parts: string[] = [runtimeReviewTextFromReport(markdown)].filter(Boolean);
   if (mainSha && mainSha !== "unknown") parts.push(`reviewed against ${linkedSha(mainSha)}`);
   if (fixed !== "not determined") parts.push(`fix evidence: ${fixed}`);
-  return parts.length ? `Codex Review notes: ${parts.join("; ")}.` : "";
+  return parts.length ? `Codex review notes: ${parts.join("; ")}.` : "";
 }
 
 function renderCloseComment(options: {
@@ -3079,7 +3079,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const bestSolution = sectionValue(markdown, "Best Possible Solution");
   const risks = sectionValue(markdown, "Risks / Open Questions");
   const lines = [
-    "Codex automated review: keeping this open.",
+    "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
     "",
     sentence(summary),
     "",
@@ -3205,6 +3205,8 @@ function markedReviewCommentBody(number: number, body: string): string {
 
 export function isCodexReviewCommentBody(body: string): boolean {
   return (
+    body.includes("Codex review:") ||
+    body.includes("Codex review notes:") ||
     body.includes("Codex Review notes:") ||
     body.includes("Codex automated review:") ||
     body.includes("after Codex review.") ||

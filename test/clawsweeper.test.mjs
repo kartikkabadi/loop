@@ -166,8 +166,10 @@ test("review actions only propose valid closes and never apply directly", () => 
     runtime: { model: "gpt-5.5", reasoningEffort: "high" },
   });
   assert.equal(action.actionTaken, "proposed_close");
-  assert.match(action.closeComment, /Closing this as implemented/);
-  assert.match(action.closeComment, /Codex Review notes: model gpt-5\.5, reasoning high;/);
+  assert.match(action.closeComment, /Thanks for the context here/);
+  assert.match(action.closeComment, /shell check/);
+  assert.match(action.closeComment, /already implemented/);
+  assert.match(action.closeComment, /Codex review notes: model gpt-5\.5, reasoning high;/);
 });
 
 test("ClawHub policy only allows implemented-on-main PR close proposals", () => {
@@ -344,6 +346,7 @@ test("duplicate or superseded closes are allowed with evidence and comment", () 
   });
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /duplicate or superseded/);
+  assert.match(action.closeComment, /swept through the related work/);
 });
 
 test("apply close reason filters support exact fast-close lanes", () => {
@@ -464,7 +467,8 @@ test("not-actionable-in-repo closes are allowed with evidence and comment", () =
     git,
   });
   assert.equal(action.actionTaken, "proposed_close");
-  assert.match(action.closeComment, /not actionable in this repository/);
+  assert.match(action.closeComment, /Thanks for writing this up/);
+  assert.match(action.closeComment, /outside the OpenClaw source shell/);
 });
 
 test("public comments avoid self-referencing the current item number", () => {
@@ -490,6 +494,12 @@ test("comment matcher recognizes old and new Codex review comments", () => {
   assert.equal(
     isCodexReviewCommentBody(
       "Codex automated review: keeping this open.\n\nBest possible solution:\n\nShip it.",
+    ),
+    true,
+  );
+  assert.equal(
+    isCodexReviewCommentBody(
+      "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.\n\nBest possible solution:\n\nShip it.",
     ),
     true,
   );
