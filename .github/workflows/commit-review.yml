@@ -1,0 +1,463 @@
+name: ClawSweeper Commit Review
+
+run-name: Commit review ${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}@${{ github.event.inputs.commit_sha || github.event.client_payload.after_sha || github.event.client_payload.commit_sha || '?' }}
+
+on:
+  repository_dispatch:
+    types: [clawsweeper_commit_review]
+  workflow_dispatch:
+    inputs:
+      enabled:
+        description: "Run commit review"
+        required: false
+        default: "true"
+      target_repo:
+        description: "Repository containing the main commit"
+        required: false
+        default: "openclaw/openclaw"
+      commit_sha:
+        description: "Specific commit SHA to review"
+        required: true
+      before_sha:
+        description: "Optional base SHA; defaults to the commit's first parent"
+        required: false
+        default: ""
+      commit_offset:
+        description: "Internal offset for continuation runs"
+        required: false
+        default: "0"
+      create_checks:
+        description: "Create/update GitHub Checks on reviewed commits"
+        required: false
+        default: "true"
+      additional_prompt:
+        description: "Optional extra review instruction appended to the prompt"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  actions: write
+
+env:
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+
+concurrency:
+  group: commit-review-${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}-${{ github.event.inputs.commit_sha || github.event.client_payload.after_sha || github.event.client_payload.commit_sha || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: Plan commits
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      create_checks: ${{ steps.mode.outputs.create_checks }}
+      enabled: ${{ steps.mode.outputs.enabled }}
+      has_more: ${{ steps.select.outputs.has_more }}
+      matrix: ${{ steps.select.outputs.matrix }}
+      next_offset: ${{ steps.select.outputs.next_offset }}
+      planned_count: ${{ steps.select.outputs.planned_count }}
+      skipped_count: ${{ steps.select.outputs.skipped_count }}
+      target_checkout_dir: ${{ steps.target.outputs.target_checkout_dir }}
+      target_repo: ${{ steps.target.outputs.target_repo }}
+      target_repo_name: ${{ steps.target.outputs.target_repo_name }}
+      target_repo_owner: ${{ steps.target.outputs.target_repo_owner }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: clawsweeper
+          fetch-depth: 0
+
+      - name: Resolve mode
+        id: mode
+        run: |
+          enabled="${{ github.event.inputs.enabled || github.event.client_payload.enabled || 'true' }}"
+          create_checks="${{ github.event.inputs.create_checks || github.event.client_payload.create_checks || 'true' }}"
+          if [ "$enabled" = "false" ] || [ "$enabled" = "0" ]; then
+            echo "Commit review disabled by input/payload."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "create_checks=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+          echo "create_checks=$create_checks" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve target repository
+        id: target
+        run: |
+          target_repo="${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
+          if ! printf '%s' "$target_repo" | grep -Eq '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'; then
+            echo "Invalid target_repo: $target_repo" >&2
+            exit 1
+          fi
+          target_owner="${target_repo%%/*}"
+          target_name="${target_repo#*/}"
+          {
+            echo "target_repo=$target_repo"
+            echo "target_repo_owner=$target_owner"
+            echo "target_repo_name=$target_name"
+            echo "target_checkout_dir=$target_name"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create target read token
+        id: target-read-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ steps.target.outputs.target_repo_owner }}
+          repositories: ${{ steps.target.outputs.target_repo_name }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        working-directory: clawsweeper
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Build ClawSweeper
+        working-directory: clawsweeper
+        run: pnpm run build
+
+      - name: Select commits
+        id: select
+        env:
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          TARGET_NAME: ${{ steps.target.outputs.target_repo_name }}
+          TARGET_TOKEN: ${{ steps.target-read-token.outputs.token }}
+          COMMIT_SHA: ${{ github.event.inputs.commit_sha || github.event.client_payload.after_sha || github.event.client_payload.commit_sha || '' }}
+          BEFORE_SHA: ${{ github.event.inputs.before_sha || github.event.client_payload.before_sha || '' }}
+          COMMIT_OFFSET: ${{ github.event.inputs.commit_offset || github.event.client_payload.commit_offset || '0' }}
+          ENABLED: ${{ steps.mode.outputs.enabled }}
+          SOURCE_REF: ${{ github.event.client_payload.ref || 'refs/heads/main' }}
+        run: |
+          set -euo pipefail
+          if [ "$ENABLED" = "false" ]; then
+            {
+              echo "matrix=[]"
+              echo "has_more=false"
+              echo "next_offset=0"
+              echo "planned_count=0"
+              echo "skipped_count=0"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! printf '%s' "$COMMIT_OFFSET" | grep -Eq '^[0-9]+$'; then
+            echo "Invalid commit offset: $COMMIT_OFFSET" >&2
+            exit 1
+          fi
+          if [ "$SOURCE_REF" != "refs/heads/main" ]; then
+            echo "Commit review only accepts main branch pushes; got $SOURCE_REF" >&2
+            exit 1
+          fi
+          if [ -z "$COMMIT_SHA" ]; then
+            echo "Missing commit SHA." >&2
+            exit 1
+          fi
+          if ! printf '%s' "$COMMIT_SHA" | grep -Eq '^[0-9a-fA-F]{40}$'; then
+            echo "Invalid commit SHA: $COMMIT_SHA" >&2
+            exit 1
+          fi
+          if [ -n "$BEFORE_SHA" ] && ! printf '%s' "$BEFORE_SHA" | grep -Eq '^(0{40}|[0-9a-fA-F]{40})$'; then
+            echo "Invalid before SHA: $BEFORE_SHA" >&2
+            exit 1
+          fi
+          url="https://x-access-token:${TARGET_TOKEN}@github.com/${TARGET_REPO}.git"
+          git clone --filter=blob:none --no-checkout "$url" "$TARGET_NAME"
+          git -C "$TARGET_NAME" fetch --no-tags origin main --depth=1000
+          git -C "$TARGET_NAME" fetch --no-tags origin "$COMMIT_SHA" --depth=200
+          if ! git -C "$TARGET_NAME" merge-base --is-ancestor "$COMMIT_SHA" refs/remotes/origin/main; then
+            echo "Commit $COMMIT_SHA is not reachable from origin/main in the fetched history." >&2
+            exit 1
+          fi
+          if [ -n "$BEFORE_SHA" ] && ! printf '%s' "$BEFORE_SHA" | grep -Eq '^0{40}$'; then
+            git -C "$TARGET_NAME" fetch --no-tags origin "$BEFORE_SHA" --depth=200 || true
+            commits="$(git -C "$TARGET_NAME" rev-list --reverse "$BEFORE_SHA..$COMMIT_SHA" || true)"
+          else
+            commits="$COMMIT_SHA"
+          fi
+          if [ -z "$commits" ]; then
+            commits="$COMMIT_SHA"
+          fi
+          total_count="$(printf '%s\n' "$commits" | sed '/^$/d' | wc -l | tr -d ' ')"
+          page_size=256
+          start_line=$((COMMIT_OFFSET + 1))
+          end_line=$((COMMIT_OFFSET + page_size))
+          selected_commits="$(printf '%s\n' "$commits" | sed -n "${start_line},${end_line}p")"
+          selected_count="$(printf '%s\n' "$selected_commits" | sed '/^$/d' | wc -l | tr -d ' ')"
+          next_offset=$((COMMIT_OFFSET + selected_count))
+          has_more=false
+          if [ "$next_offset" -lt "$total_count" ]; then
+            has_more=true
+          fi
+          pnpm --dir clawsweeper run --silent commit-review -- classify \
+            --target-repo "$TARGET_REPO" \
+            --target-dir "../$TARGET_NAME" \
+            --commit-shas "$selected_commits" \
+            --artifact-dir ../skipped-commit-artifacts > classify.json
+          cat classify.json
+          CLASSIFY_JSON="$(cat classify.json)" HAS_MORE="$has_more" NEXT_OFFSET="$next_offset" node - <<'NODE' >> "$GITHUB_OUTPUT"
+          const classified = JSON.parse(process.env.CLASSIFY_JSON || "{}");
+          const review = Array.isArray(classified.review) ? classified.review : [];
+          const skipped = Array.isArray(classified.skipped) ? classified.skipped : [];
+          console.log(`matrix=${JSON.stringify(review.map((sha) => ({ sha })))}`);
+          console.log(`planned_count=${review.length}`);
+          console.log(`skipped_count=${skipped.length}`);
+          console.log(`has_more=${process.env.HAS_MORE || "false"}`);
+          console.log(`next_offset=${process.env.NEXT_OFFSET || "0"}`);
+          NODE
+          echo "Selected $selected_count/$total_count commits at offset $COMMIT_OFFSET"
+          printf 'Selected commits:\n%s\n' "$selected_commits"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: skipped-commit-reports
+          path: skipped-commit-artifacts
+          if-no-files-found: ignore
+
+  review:
+    name: Review commit ${{ matrix.sha }}
+    needs: plan
+    if: ${{ needs.plan.outputs.planned_count != '0' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: clawsweeper
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Create target read token
+        id: target-read-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ needs.plan.outputs.target_repo_owner }}
+          repositories: ${{ needs.plan.outputs.target_repo_name }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        working-directory: clawsweeper
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Build ClawSweeper
+        working-directory: clawsweeper
+        run: pnpm run build
+
+      - name: Install Codex
+        run: npm install -g @openai/codex@0.125.0 --prefer-offline
+
+      - name: Authenticate Codex
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
+        run: |
+          test -n "$OPENAI_API_KEY"
+          test -n "$CODEX_API_KEY"
+          printenv OPENAI_API_KEY | codex login --with-api-key
+          codex login status
+
+      - name: Check out target commit
+        env:
+          TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
+          TARGET_NAME: ${{ needs.plan.outputs.target_checkout_dir }}
+          TARGET_TOKEN: ${{ steps.target-read-token.outputs.token }}
+          COMMIT_SHA: ${{ matrix.sha }}
+        run: |
+          set -euo pipefail
+          url="https://x-access-token:${TARGET_TOKEN}@github.com/${TARGET_REPO}.git"
+          git clone --filter=blob:none --no-checkout "$url" "$TARGET_NAME"
+          git -C "$TARGET_NAME" fetch --no-tags origin "$COMMIT_SHA" --depth=200
+          git -C "$TARGET_NAME" checkout --detach "$COMMIT_SHA"
+          if ! git -C "$TARGET_NAME" rev-parse --verify "$COMMIT_SHA^" >/dev/null 2>&1; then
+            git -C "$TARGET_NAME" fetch --deepen=500 origin "$COMMIT_SHA" || true
+          fi
+          git -C "$TARGET_NAME" rev-parse --short HEAD
+
+      - name: Review commit
+        working-directory: clawsweeper
+        env:
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
+          COMMIT_SWEEPER_ADDITIONAL_PROMPT: ${{ github.event.inputs.additional_prompt || github.event.client_payload.additional_prompt || '' }}
+        run: |
+          pnpm run commit-review -- review \
+            --target-repo "${{ needs.plan.outputs.target_repo }}" \
+            --target-dir "../${{ needs.plan.outputs.target_checkout_dir }}" \
+            --commit-sha "${{ matrix.sha }}" \
+            --report-dir ../commit-artifacts \
+            --artifact-mode \
+            --work-dir ../commit-work \
+            --codex-model gpt-5.5 \
+            --codex-reasoning-effort high \
+            --codex-sandbox danger-full-access \
+            --codex-service-tier fast \
+            --codex-timeout-ms 1800000
+
+      - name: Create target checks token
+        id: target-checks-token
+        if: ${{ needs.plan.outputs.create_checks == 'true' }}
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ needs.plan.outputs.target_repo_owner }}
+          repositories: ${{ needs.plan.outputs.target_repo_name }}
+          permission-checks: write
+
+      - name: Publish commit check
+        if: ${{ needs.plan.outputs.create_checks == 'true' }}
+        working-directory: clawsweeper
+        env:
+          GH_TOKEN: ${{ steps.target-checks-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          report_path="$(find ../commit-artifacts -name '${{ matrix.sha }}.md' -print -quit)"
+          if [ -z "$report_path" ]; then
+            echo "Missing report artifact for ${{ matrix.sha }}" >&2
+            exit 1
+          fi
+          relative_path="records/${report_path#../commit-artifacts/}"
+          pnpm run commit-review -- publish-check \
+            --target-repo "${{ needs.plan.outputs.target_repo }}" \
+            --commit-sha "${{ matrix.sha }}" \
+            --report-path "$report_path" \
+            --report-relative-path "$relative_path" \
+            --report-repo "${{ github.repository }}"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: commit-review-${{ matrix.sha }}
+          path: commit-artifacts
+          if-no-files-found: ignore
+
+  publish:
+    name: Commit reports
+    needs: [plan, review]
+    if: ${{ always() && (needs.plan.outputs.planned_count != '0' || needs.plan.outputs.skipped_count != '0') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Build ClawSweeper
+        run: pnpm run build
+
+      - uses: actions/download-artifact@v4
+        if: ${{ needs.plan.outputs.planned_count != '0' }}
+        with:
+          pattern: commit-review-*
+          path: commit-artifacts
+          merge-multiple: true
+
+      - uses: actions/download-artifact@v4
+        if: ${{ needs.plan.outputs.skipped_count != '0' }}
+        with:
+          name: skipped-commit-reports
+          path: commit-artifacts
+
+      - name: Create target checks token
+        id: target-checks-token
+        if: ${{ needs.plan.outputs.create_checks == 'true' }}
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ needs.plan.outputs.target_repo_owner }}
+          repositories: ${{ needs.plan.outputs.target_repo_name }}
+          permission-checks: write
+
+      - name: Commit reports
+        run: |
+          set -euo pipefail
+          git pull --rebase
+          pnpm run commit-review -- copy-artifacts --artifact-dir commit-artifacts --records-dir records
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add records
+          if git diff --cached --quiet; then
+            echo "No commit report changes"
+          else
+            git commit -m "chore: update commit review reports"
+            for _attempt in 1 2 3; do
+              if git push; then
+                exit 0
+              fi
+              git fetch origin main
+              git rebase -X theirs origin/main
+            done
+            git push
+          fi
+
+      - name: Publish commit checks
+        if: ${{ needs.plan.outputs.create_checks == 'true' }}
+        env:
+          GH_TOKEN: ${{ steps.target-checks-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          find commit-artifacts -name '*.md' -print0 | while IFS= read -r -d '' report_path; do
+            sha="$(basename "$report_path" .md)"
+            relative_path="records/${report_path#commit-artifacts/}"
+            pnpm run commit-review -- publish-check \
+              --target-repo "${{ needs.plan.outputs.target_repo }}" \
+              --commit-sha "$sha" \
+              --report-path "$report_path" \
+              --report-relative-path "$relative_path" \
+              --report-repo "${{ github.repository }}"
+          done
+
+      - name: Continue commit review range
+        if: ${{ success() && needs.plan.outputs.has_more == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
+          BEFORE_SHA: ${{ github.event.inputs.before_sha || github.event.client_payload.before_sha || '' }}
+          AFTER_SHA: ${{ github.event.inputs.commit_sha || github.event.client_payload.after_sha || github.event.client_payload.commit_sha || '' }}
+          NEXT_OFFSET: ${{ needs.plan.outputs.next_offset }}
+          CREATE_CHECKS: ${{ needs.plan.outputs.create_checks }}
+          ADDITIONAL_PROMPT: ${{ github.event.inputs.additional_prompt || github.event.client_payload.additional_prompt || '' }}
+        run: |
+          set -euo pipefail
+          payload="$(jq -nc \
+            --arg target_repo "$TARGET_REPO" \
+            --arg before_sha "$BEFORE_SHA" \
+            --arg after_sha "$AFTER_SHA" \
+            --arg ref "refs/heads/main" \
+            --arg additional_prompt "$ADDITIONAL_PROMPT" \
+            --argjson commit_offset "$NEXT_OFFSET" \
+            --argjson create_checks "$CREATE_CHECKS" \
+            '{event_type:"clawsweeper_commit_review",client_payload:{target_repo:$target_repo,before_sha:$before_sha,after_sha:$after_sha,ref:$ref,commit_offset:$commit_offset,enabled:true,create_checks:$create_checks,additional_prompt:$additional_prompt}}')"
+          gh api repos/${{ github.repository }}/dispatches \
+            --method POST \
+            --input - <<< "$payload"

@@ -39,6 +39,12 @@ import {
   shouldPlanItem,
   validateCloseDecision,
 } from "../dist/clawsweeper.js";
+import { checkConclusionForFrontMatter } from "../dist/commit-checks.js";
+import {
+  commitReportRelativePath,
+  isReviewableCommitPath,
+  parseCoAuthors,
+} from "../dist/commit-sweeper.js";
 
 function item(overrides = {}) {
   return {
@@ -179,6 +185,62 @@ test("parseGhJsonLines adds line number and command context to malformed JSONL e
     () => parseGhJsonLines('{"ok":true}\nnot-json\n', ["issue", "list", "--json", "number"]),
     /Failed to parse JSON line 2 from gh issue list --json:/,
   );
+});
+
+test("commit review reports use one canonical path per commit", () => {
+  const sha = "abcdef1234567890abcdef1234567890abcdef12";
+  assert.equal(
+    commitReportRelativePath("openclaw/openclaw", sha),
+    "records/openclaw-openclaw/commits/abcdef1234567890abcdef1234567890abcdef12.md",
+  );
+});
+
+test("commit review parses co-authored-by trailers", () => {
+  assert.deepEqual(
+    parseCoAuthors(`subject
+
+Body text.
+
+Co-authored-by: Alice Example <alice@example.com>
+Co-authored-by: Bob Example <bob@example.com>
+co-authored-by: Alice Example <alice@example.com>
+`),
+    ["Alice Example <alice@example.com>", "Bob Example <bob@example.com>"],
+  );
+});
+
+test("commit review cheaply skips documentation-only paths", () => {
+  assert.equal(isReviewableCommitPath("docs/usage.md"), false);
+  assert.equal(isReviewableCommitPath("CHANGELOG.md"), false);
+  assert.equal(isReviewableCommitPath("README.md"), false);
+  assert.equal(isReviewableCommitPath("assets/logo.png"), false);
+  assert.equal(isReviewableCommitPath("test/clawsweeper.test.mjs"), true);
+  assert.equal(isReviewableCommitPath("src/clawsweeper.ts"), true);
+  assert.equal(isReviewableCommitPath(".github/workflows/sweep.yml"), true);
+  assert.equal(isReviewableCommitPath("package.json"), true);
+});
+
+test("skipped non-code commit reports still publish green checks", () => {
+  assert.equal(
+    checkConclusionForFrontMatter({ result: "skipped_non_code", highest_severity: "none" }),
+    "success",
+  );
+});
+
+test("commit review check conclusions stay conservative", () => {
+  assert.equal(
+    checkConclusionForFrontMatter({ result: "nothing_found", highest_severity: "none" }),
+    "success",
+  );
+  assert.equal(
+    checkConclusionForFrontMatter({ result: "findings", highest_severity: "high" }),
+    "failure",
+  );
+  assert.equal(
+    checkConclusionForFrontMatter({ result: "findings", highest_severity: "medium" }),
+    "neutral",
+  );
+  assert.equal(checkConclusionForFrontMatter({ result: "inconclusive" }), "neutral");
 });
 
 test("protected labels block close proposals even for otherwise valid decisions", () => {
