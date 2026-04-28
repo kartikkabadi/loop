@@ -1,96 +1,101 @@
 [
   {
-    "number": 42999,
+    "number": 14248,
+    "action": "skipped_open_closing_pr",
+    "reason": "open PR #290 (Slack: expose Socket Mode ping/pong timeout config) is a closing reference"
+  },
+  {
+    "number": 71412,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 59859,
+    "number": 73581,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 70523,
+    "number": 73614,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 71142,
+    "number": 73618,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 71203,
+    "number": 73619,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 71839,
+    "number": 73622,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 71924,
+    "number": 73623,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 72499,
+    "number": 73649,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73428,
+    "number": 73651,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73566,
+    "number": 73674,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73671,
+    "number": 73698,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73711,
+    "number": 73715,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73758,
+    "number": 73720,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73761,
+    "number": 73730,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73769,
+    "number": 73768,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73770,
+    "number": 73775,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73771,
+    "number": 73776,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73772,
+    "number": 73777,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 73773,
+    "number": 73779,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   }
