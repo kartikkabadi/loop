@@ -43,7 +43,7 @@ Last dashboard update: Apr 28, 2026, 07:45 UTC
 | Open items total | 7935 |
 | Reviewed files | 7469 |
 | Unreviewed open items | 466 |
-| Due now by cadence | 3664 |
+| Due now by cadence | 3665 |
 | Proposed closes awaiting apply | 0 |
 | Closed by Codex apply | 10277 |
 | Failed or stale reviews | 36 |
@@ -53,14 +53,14 @@ Last dashboard update: Apr 28, 2026, 07:45 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 7023 | 6565 | 458 | 3653 | 0 | 10274 | Apr 28, 2026, 07:43 UTC | Apr 28, 2026, 07:06 UTC | 411 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 7023 | 6565 | 458 | 3654 | 0 | 10274 | Apr 28, 2026, 07:43 UTC | Apr 28, 2026, 07:06 UTC | 410 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 912 | 904 | 8 | 11 | 0 | 3 | Apr 28, 2026, 07:42 UTC | Apr 28, 2026, 05:18 UTC | 381 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 07:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25040345981) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 07:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25039664753) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Idle | unknown | _none_ |
 
 ### Fleet Activity
@@ -69,9 +69,9 @@ Latest review: Apr 28, 2026, 07:43 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 42 | 0 | 42 | 0 | 0 | 39 | 2 |
-| Last hour | 229 | 10 | 219 | 3 | 4 | 792 | 14 |
-| Last 24 hours | 3322 | 111 | 3211 | 16 | 67 | 2061 | 20 |
+| Last 15 minutes | 41 | 0 | 41 | 0 | 0 | 39 | 2 |
+| Last hour | 227 | 10 | 217 | 3 | 3 | 791 | 14 |
+| Last 24 hours | 3321 | 111 | 3210 | 16 | 67 | 2060 | 20 |
 
 ### Recently Closed Across Repos
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 07:43 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60677](https://github.com/openclaw/openclaw/pull/60677) | fix(imessage): filter tapback reactions in imsg rpc inbound processing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60677.md) | complete | Apr 28, 2026, 07:43 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50522](https://github.com/openclaw/openclaw/pull/50522) | fix(discord): only include ThreadStarterBody for new sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/50522.md) | complete | Apr 28, 2026, 07:43 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1797](https://github.com/openclaw/clawhub/issues/1797) | Skill flagged — suspicious patterns detected | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1797.md) | complete | Apr 28, 2026, 07:42 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#57755](https://github.com/openclaw/openclaw/pull/57755) | feat(delivery): surface deliveryStatus in --json output | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/57755.md) | complete | Apr 28, 2026, 07:41 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#39891](https://github.com/openclaw/openclaw/pull/39891) | fix(googlechat): clean up typing message on NO_REPLY | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/39891.md) | complete | Apr 28, 2026, 07:41 UTC |
@@ -126,8 +126,8 @@ Updated: Apr 28, 2026, 07:45 UTC
 
 State: Event review applied
 
-Reviewed event item #60677, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040345981](https://github.com/openclaw/clawsweeper/actions/runs/25040345981)
+Reviewed event item #50522, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039664753](https://github.com/openclaw/clawsweeper/actions/runs/25039664753)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -161,8 +161,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040345981](https://
 | --- | ---: |
 | Hourly cadence coverage | 45/636 current (591 due, 7.1%) |
 | Hourly hot item cadence (<7d) | 45/636 current (591 due, 7.1%) |
-| Daily cadence coverage | 1485/4083 current (2598 due, 36.4%) |
-| Daily PR cadence | 1067/2825 current (1758 due, 37.8%) |
+| Daily cadence coverage | 1484/4083 current (2599 due, 36.3%) |
+| Daily PR cadence | 1066/2825 current (1759 due, 37.7%) |
 | Daily new issue cadence (<30d) | 418/1258 current (840 due, 33.2%) |
 | Weekly older issue cadence | 1840/1846 current (6 due, 99.7%) |
 | Due now by cadence | 3653 |
@@ -181,9 +181,9 @@ Latest review: Apr 28, 2026, 07:43 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 41 | 0 | 41 | 0 | 0 | 38 | 2 |
-| Last hour | 102 | 10 | 92 | 3 | 4 | 411 | 13 |
-| Last 24 hours | 2410 | 108 | 2302 | 16 | 64 | 1332 | 19 |
+| Last 15 minutes | 40 | 0 | 40 | 0 | 0 | 38 | 2 |
+| Last hour | 101 | 10 | 91 | 3 | 3 | 410 | 13 |
+| Last 24 hours | 2409 | 108 | 2301 | 16 | 64 | 1331 | 19 |
 
 #### Recently Closed
 
@@ -204,8 +204,7 @@ Latest review: Apr 28, 2026, 07:43 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#60677](https://github.com/openclaw/openclaw/pull/60677) | fix(imessage): filter tapback reactions in imsg rpc inbound processing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60677.md) | complete | Apr 28, 2026, 07:43 UTC |
-| [#57755](https://github.com/openclaw/openclaw/pull/57755) | feat(delivery): surface deliveryStatus in --json output | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/57755.md) | complete | Apr 28, 2026, 07:41 UTC |
+| [#50522](https://github.com/openclaw/openclaw/pull/50522) | fix(discord): only include ThreadStarterBody for new sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/50522.md) | complete | Apr 28, 2026, 07:43 UTC |
 | [#39891](https://github.com/openclaw/openclaw/pull/39891) | fix(googlechat): clean up typing message on NO_REPLY | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/39891.md) | complete | Apr 28, 2026, 07:41 UTC |
 | [#73381](https://github.com/openclaw/openclaw/issues/73381) | Gateway agent invocation blocked by session sendPolicy even when not delivering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73381.md) | complete | Apr 28, 2026, 07:41 UTC |
 | [#72534](https://github.com/openclaw/openclaw/pull/72534) | fix(skills): scan nested subdirectories for grouped skill layouts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72534.md) | complete | Apr 28, 2026, 07:41 UTC |
@@ -286,7 +285,7 @@ Latest review: Apr 28, 2026, 07:42 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last hour | 127 | 0 | 127 | 0 | 0 | 381 | 1 |
+| Last hour | 126 | 0 | 126 | 0 | 0 | 381 | 1 |
 | Last 24 hours | 912 | 3 | 909 | 0 | 3 | 729 | 1 |
 
 #### Recently Closed
