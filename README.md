@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 06:20 UTC
 
 Updated: Apr 28, 2026, 06:20 UTC
 
-State: Event review applied
+State: Review comments checked
 
-Reviewed event item #73315, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037133569](https://github.com/openclaw/clawsweeper/actions/runs/25037133569)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 1463,1465,1471,1476,1477,1480,1500,1523,1529,1530,1534,1539,1541,1552,1649,1667,1670,1671,1682,1690.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037156402](https://github.com/openclaw/clawsweeper/actions/runs/25037156402)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:18 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 06:20 UTC.
+Latest review: Apr 28, 2026, 06:18 UTC. Latest close: Apr 28, 2026, 05:18 UTC. Latest comment sync: Apr 28, 2026, 06:20 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 8 | 0 | 8 | 1 | 0 | 8 | 2 |
-| Last hour | 520 | 15 | 505 | 1 | 0 | 354 | 4 |
-| Last 24 hours | 2203 | 101 | 2102 | 2 | 72 | 1075 | 17 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 20 | 0 |
+| Last hour | 21 | 0 | 21 | 0 | 0 | 21 | 0 |
+| Last 24 hours | 903 | 3 | 900 | 0 | 3 | 851 | 0 |
 
 ### Recently Closed
 
