@@ -38,14 +38,14 @@ Last dashboard update: Apr 28, 2026, 17:02 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4427 |
+| Open issues | 4426 |
 | Open PRs | 3447 |
-| Open items total | 7874 |
+| Open items total | 7873 |
 | Reviewed files | 7480 |
-| Unreviewed open items | 394 |
-| Due now by cadence | 2640 |
+| Unreviewed open items | 393 |
+| Due now by cadence | 2639 |
 | Proposed closes awaiting apply | 0 |
-| Closed by Codex apply | 10473 |
+| Closed by Codex apply | 10474 |
 | Failed or stale reviews | 7 |
 | Archived closed files | 13651 |
 
@@ -53,7 +53,7 @@ Last dashboard update: Apr 28, 2026, 17:02 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6960 | 6573 | 387 | 2614 | 0 | 10470 | Apr 28, 2026, 17:00 UTC | Apr 28, 2026, 17:01 UTC | 486 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6959 | 6573 | 386 | 2613 | 0 | 10471 | Apr 28, 2026, 17:00 UTC | Apr 28, 2026, 17:01 UTC | 487 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 914 | 907 | 7 | 26 | 0 | 3 | Apr 28, 2026, 16:48 UTC | Apr 28, 2026, 08:18 UTC | 294 |
 
 ### Current Runs
@@ -61,24 +61,23 @@ Last dashboard update: Apr 28, 2026, 17:02 UTC
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
 | [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 17:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25066573299) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 16:50 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25065834871) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 28, 2026, 17:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25066600918) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 17:00 UTC. Latest close: Apr 28, 2026, 17:01 UTC. Latest comment sync: Apr 28, 2026, 17:01 UTC.
+Latest review: Apr 28, 2026, 17:00 UTC. Latest close: Apr 28, 2026, 17:01 UTC. Latest comment sync: Apr 28, 2026, 17:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 45 | 3 | 42 | 1 | 16 | 55 | 1 |
-| Last hour | 1376 | 27 | 1349 | 3 | 30 | 780 | 1 |
-| Last 24 hours | 4705 | 246 | 4459 | 4 | 583 | 1090 | 16 |
+| Last 15 minutes | 43 | 3 | 40 | 1 | 15 | 56 | 1 |
+| Last hour | 1376 | 27 | 1349 | 3 | 29 | 781 | 1 |
+| Last 24 hours | 4705 | 246 | 4459 | 4 | 582 | 1091 | 16 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70853](https://github.com/openclaw/openclaw/issues/70853) | Telegram DM session continuity lost after session reset/rebind on stable session key | closed externally after review | Apr 28, 2026, 17:01 UTC | [records/openclaw-openclaw/closed/70853.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70853.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70898](https://github.com/openclaw/openclaw/pull/70898) | fix(auto-reply): preserve DM continuity across silent session rotations | closed externally after review | Apr 28, 2026, 17:01 UTC | [records/openclaw-openclaw/closed/70898.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70898.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60839](https://github.com/openclaw/openclaw/pull/60839) | [Fix] Don't deny local reverse proxy | already implemented on main | Apr 28, 2026, 17:00 UTC | [records/openclaw-openclaw/closed/60839.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60839.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60819](https://github.com/openclaw/openclaw/issues/60819) | doctor/status memory false positive after mem0 runtime recovery | duplicate or superseded | Apr 28, 2026, 17:00 UTC | [records/openclaw-openclaw/closed/60819.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60819.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60664](https://github.com/openclaw/openclaw/pull/60664) | fix: Edit tool false positive 'failed' error | already implemented on main | Apr 28, 2026, 17:00 UTC | [records/openclaw-openclaw/closed/60664.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60664.md) |
@@ -87,6 +86,7 @@ Latest review: Apr 28, 2026, 17:00 UTC. Latest close: Apr 28, 2026, 17:01 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60022](https://github.com/openclaw/openclaw/pull/60022) | fix: restore MS Teams file sending functionality | not actionable in this repository | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/60022.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60022.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59970](https://github.com/openclaw/openclaw/issues/59970) | Proposal: reply-first chat behavior, retrieval guardrails, and result-oriented sub-agent reporting | belongs on ClawHub | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59970.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59970.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59957](https://github.com/openclaw/openclaw/issues/59957) | [Bug]: Tool output unknown error after forced update to v2026.4.2 | already implemented on main | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59957.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59957.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59888](https://github.com/openclaw/openclaw/issues/59888) | [Bug]: WhatsApp web-auto-reply dispatches stale/cached reply to subsequent inbound message (5ms response, no LLM call) | already implemented on main | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59888.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59888.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -126,7 +126,7 @@ Updated: Apr 28, 2026, 17:02 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 11 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=59797,59868,59888,59957,59970,60022,60500,60520,60664,60819,60839.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/11. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066573299](https://github.com/openclaw/clawsweeper/actions/runs/25066573299)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -135,11 +135,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066573299](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3551 |
+| Open issues | 3550 |
 | Open PRs | 3409 |
-| Open items total | 6960 |
+| Open items total | 6959 |
 | Reviewed files | 6573 |
-| Unreviewed open items | 387 |
+| Unreviewed open items | 386 |
 | Archived closed files | 13641 |
 
 #### Review Outcomes
@@ -152,7 +152,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066573299](https://
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6567 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Closed by Codex apply | 10470 |
+| Closed by Codex apply | 10471 |
 | Failed or stale reviews | 6 |
 
 #### Cadence
@@ -165,7 +165,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066573299](https://
 | Daily PR cadence | 1901/2736 current (835 due, 69.5%) |
 | Daily new issue cadence (<30d) | 497/1209 current (712 due, 41.1%) |
 | Weekly older issue cadence | 1839/1840 current (1 due, 99.9%) |
-| Due now by cadence | 2614 |
+| Due now by cadence | 2613 |
 
 ### Audit Health
 
@@ -201,20 +201,19 @@ Targeted review input: `64563,65635,72522,72527,72529,72531,72532,72535,72536,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 17:00 UTC. Latest close: Apr 28, 2026, 17:01 UTC. Latest comment sync: Apr 28, 2026, 17:01 UTC.
+Latest review: Apr 28, 2026, 17:00 UTC. Latest close: Apr 28, 2026, 17:01 UTC. Latest comment sync: Apr 28, 2026, 17:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 27 | 3 | 24 | 1 | 16 | 35 | 1 |
-| Last hour | 1082 | 27 | 1055 | 2 | 30 | 486 | 1 |
-| Last 24 hours | 3788 | 243 | 3545 | 3 | 573 | 787 | 16 |
+| Last 15 minutes | 27 | 3 | 24 | 1 | 15 | 36 | 1 |
+| Last hour | 1082 | 27 | 1055 | 2 | 29 | 487 | 1 |
+| Last 24 hours | 3788 | 243 | 3545 | 3 | 572 | 788 | 16 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
 | [#70853](https://github.com/openclaw/openclaw/issues/70853) | Telegram DM session continuity lost after session reset/rebind on stable session key | closed externally after review | Apr 28, 2026, 17:01 UTC | [records/openclaw-openclaw/closed/70853.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70853.md) |
-| [#70898](https://github.com/openclaw/openclaw/pull/70898) | fix(auto-reply): preserve DM continuity across silent session rotations | closed externally after review | Apr 28, 2026, 17:01 UTC | [records/openclaw-openclaw/closed/70898.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70898.md) |
 | [#60839](https://github.com/openclaw/openclaw/pull/60839) | [Fix] Don't deny local reverse proxy | already implemented on main | Apr 28, 2026, 17:00 UTC | [records/openclaw-openclaw/closed/60839.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60839.md) |
 | [#60819](https://github.com/openclaw/openclaw/issues/60819) | doctor/status memory false positive after mem0 runtime recovery | duplicate or superseded | Apr 28, 2026, 17:00 UTC | [records/openclaw-openclaw/closed/60819.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60819.md) |
 | [#60664](https://github.com/openclaw/openclaw/pull/60664) | fix: Edit tool false positive 'failed' error | already implemented on main | Apr 28, 2026, 17:00 UTC | [records/openclaw-openclaw/closed/60664.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60664.md) |
@@ -223,6 +222,7 @@ Latest review: Apr 28, 2026, 17:00 UTC. Latest close: Apr 28, 2026, 17:01 UTC. L
 | [#60022](https://github.com/openclaw/openclaw/pull/60022) | fix: restore MS Teams file sending functionality | not actionable in this repository | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/60022.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60022.md) |
 | [#59970](https://github.com/openclaw/openclaw/issues/59970) | Proposal: reply-first chat behavior, retrieval guardrails, and result-oriented sub-agent reporting | belongs on ClawHub | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59970.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59970.md) |
 | [#59957](https://github.com/openclaw/openclaw/issues/59957) | [Bug]: Tool output unknown error after forced update to v2026.4.2 | already implemented on main | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59957.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59957.md) |
+| [#59888](https://github.com/openclaw/openclaw/issues/59888) | [Bug]: WhatsApp web-auto-reply dispatches stale/cached reply to subsequent inbound message (5ms response, no LLM call) | already implemented on main | Apr 28, 2026, 16:59 UTC | [records/openclaw-openclaw/closed/59888.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59888.md) |
 
 #### Recently Reviewed
 
@@ -334,7 +334,7 @@ Latest review: Apr 28, 2026, 16:48 UTC. Latest close: Apr 28, 2026, 08:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 18 | 0 | 18 | 0 | 0 | 20 | 0 |
+| Last 15 minutes | 16 | 0 | 16 | 0 | 0 | 20 | 0 |
 | Last hour | 294 | 0 | 294 | 1 | 0 | 294 | 0 |
 | Last 24 hours | 917 | 3 | 914 | 1 | 10 | 303 | 0 |
 
