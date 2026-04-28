@@ -1,7 +1,12 @@
 [
   {
-    "number": 72936,
-    "action": "kept_open",
-    "reason": "protected label: maintainer"
+    "number": 73348,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 73348,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
