@@ -60,7 +60,7 @@ Last dashboard update: Apr 28, 2026, 16:00 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 16:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25063595775) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 16:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25063595775) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 15:28 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25061130507) |
 
 ### Fleet Activity
@@ -69,7 +69,7 @@ Latest review: Apr 28, 2026, 15:58 UTC. Latest close: Apr 28, 2026, 15:58 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 48 | 0 | 48 | 0 | 7 | 42 | 0 |
+| Last 15 minutes | 45 | 0 | 45 | 0 | 7 | 42 | 0 |
 | Last hour | 1084 | 13 | 1071 | 1 | 43 | 395 | 3 |
 | Last 24 hours | 4545 | 220 | 4325 | 2 | 551 | 1091 | 16 |
 
@@ -124,9 +124,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 16:00 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/6. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 6. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25063595775](https://github.com/openclaw/clawsweeper/actions/runs/25063595775)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -205,7 +205,7 @@ Latest review: Apr 28, 2026, 15:58 UTC. Latest close: Apr 28, 2026, 15:58 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 48 | 0 | 48 | 0 | 7 | 42 | 0 |
+| Last 15 minutes | 45 | 0 | 45 | 0 | 7 | 42 | 0 |
 | Last hour | 584 | 13 | 571 | 0 | 43 | 395 | 3 |
 | Last 24 hours | 3629 | 217 | 3412 | 1 | 541 | 810 | 16 |
 
