@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 06:19 UTC
 
 Updated: Apr 28, 2026, 06:19 UTC
 
-State: Review in progress
+State: Hot intake publish complete
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037237761](https://github.com/openclaw/clawsweeper/actions/runs/25037237761)
+Merged hot intake artifacts for run 25037156402. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037156402](https://github.com/openclaw/clawsweeper/actions/runs/25037156402)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 05:46 UTC. Latest close: Apr 28, 2026, 05:18 UTC. Latest comment sync: Apr 28, 2026, 05:46 UTC.
+Latest review: Apr 28, 2026, 06:18 UTC. Latest close: Apr 28, 2026, 05:18 UTC. Latest comment sync: Apr 28, 2026, 05:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last 24 hours | 903 | 3 | 900 | 0 | 3 | 851 | 0 |
+| Last 15 minutes | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| Last hour | 21 | 0 | 21 | 0 | 0 | 1 | 0 |
+| Last 24 hours | 903 | 3 | 900 | 0 | 3 | 831 | 0 |
 
 ### Recently Closed
 
@@ -138,16 +138,16 @@ Latest review: Apr 28, 2026, 05:46 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#1797](https://github.com/openclaw/clawhub/issues/1797) | Skill flagged — suspicious patterns detected | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1797.md) | complete | Apr 28, 2026, 05:46 UTC |
-| [#1764](https://github.com/openclaw/clawhub/issues/1764) | Some people couldn't login clawhub normally over github auth. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1764.md) | complete | Apr 28, 2026, 05:16 UTC |
-| [#1789](https://github.com/openclaw/clawhub/issues/1789) | https://clawhub.ai/aiworkskills/aws-wechat-article-topics why it was flagged and what  i can do. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1789.md) | complete | Apr 28, 2026, 05:15 UTC |
-| [#1770](https://github.com/openclaw/clawhub/issues/1770) | [Request] Purge soft-deleted slug \"creator-scraper-cv\" to allow rename | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1770.md) | complete | Apr 28, 2026, 05:15 UTC |
-| [#1772](https://github.com/openclaw/clawhub/issues/1772) | Skill flagged as suspicious — docx-builder | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1772.md) | complete | Apr 28, 2026, 05:15 UTC |
-| [#1783](https://github.com/openclaw/clawhub/issues/1783) | False Positive Malware Detection for @nimsuite/openclaw-nim-channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1783.md) | complete | Apr 28, 2026, 05:15 UTC |
-| [#1756](https://github.com/openclaw/clawhub/issues/1756) | Search results shift after initial render — high-relevance skills missing from top until scroll cycle | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1756.md) | complete | Apr 28, 2026, 05:15 UTC |
-| [#1785](https://github.com/openclaw/clawhub/issues/1785) | Appeal: opsrobot skill falsely flagged as suspicious by VirusTotal | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1785.md) | complete | Apr 28, 2026, 05:15 UTC |
-| [#1787](https://github.com/openclaw/clawhub/issues/1787) | False-positive VT Code Insight flags blocking installs of legitimate trading SDK skills — request trustedPublisher / manual overrides | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1787.md) | complete | Apr 28, 2026, 05:15 UTC |
-| [#1758](https://github.com/openclaw/clawhub/issues/1758) | [Appeal] Skill not searchable + false positive flag + request to remove three duplicate skills – Account ValueScan-ai | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1758.md) | complete | Apr 28, 2026, 05:15 UTC |
+| [#1463](https://github.com/openclaw/clawhub/issues/1463) | email-suite (imap+smtp) - False positive: \"env var + network send\" is legitimate IMAP/SMTP auth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1463.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1667](https://github.com/openclaw/clawhub/issues/1667) | [False Positive] trump-daily-report v1.1.6 flagged SUSPICIOUS - metadata mismatch (registry shows \"Required env vars: none\" but skill declares config) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1667.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1671](https://github.com/openclaw/clawhub/issues/1671) | Request for Security Re-evaluation: \"book-companion\" skill marked as suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1671.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1539](https://github.com/openclaw/clawhub/issues/1539) | https://clawhub.ai/wangqianqianjun/eps  - flagged suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1539.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1682](https://github.com/openclaw/clawhub/issues/1682) | Skill incorrectly flagged as suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1682.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1541](https://github.com/openclaw/clawhub/issues/1541) | False positive suspicious flag on emotion-shared-experience skill | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1541.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1649](https://github.com/openclaw/clawhub/issues/1649) | Add skill: recomby-ai/promptly-prompt | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1649.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1670](https://github.com/openclaw/clawhub/issues/1670) | Runtime requirements 文字对比度太低，难以阅读 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1670.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1480](https://github.com/openclaw/clawhub/pull/1480) | feat(dashboard): add pagination, server-side search | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1480.md) | complete | Apr 28, 2026, 06:18 UTC |
+| [#1529](https://github.com/openclaw/clawhub/issues/1529) | https://clawhub.ai/danielfoojunwei/agent-see flagged | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1529.md) | complete | Apr 28, 2026, 06:18 UTC |
 
 </details>
 
