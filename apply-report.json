@@ -1,1 +1,157 @@
-[]
+[
+  {
+    "number": 55492,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 55492,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 55506,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 55506,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 56044,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56044,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 56202,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56202,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 56271,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56271,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 56299,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56299,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 56453,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56453,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 56454,
+    "action": "skipped_same_author_pair",
+    "reason": "open issue #56419 ([Bug]: image tool uses a fixed 30s provider timeout and aborts slow image-analysis requests) by the same author is paired with this PR"
+  },
+  {
+    "number": 56469,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56469,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 56504,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56504,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 56601,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56601,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 56671,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56671,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 56698,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 56698,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 57139,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 57139,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 57470,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 57470,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 73576,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 73576,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  }
+]
