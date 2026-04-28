@@ -53,14 +53,14 @@ Last dashboard update: Apr 28, 2026, 07:40 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 7024 | 6560 | 464 | 3647 | 0 | 10274 | Apr 28, 2026, 07:38 UTC | Apr 28, 2026, 07:06 UTC | 384 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 7024 | 6560 | 464 | 3647 | 0 | 10274 | Apr 28, 2026, 07:37 UTC | Apr 28, 2026, 07:06 UTC | 384 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 911 | 905 | 6 | 7 | 0 | 3 | Apr 28, 2026, 07:00 UTC | Apr 28, 2026, 05:18 UTC | 390 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 07:40 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25039956229) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 07:40 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25039797239) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Idle | unknown | _none_ |
 
 ### Fleet Activity
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 07:38 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#51689](https://github.com/openclaw/openclaw/pull/51689) | docs: capitalize \"Thanks\" in changelog contributor attribution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/51689.md) | complete | Apr 28, 2026, 07:38 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70605](https://github.com/openclaw/openclaw/pull/70605) | BUG: Strip strikethrough text from context files before sending to model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70605.md) | complete | Apr 28, 2026, 07:37 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73357](https://github.com/openclaw/openclaw/pull/73357) | fix: handle ENOSPC file watcher errors gracefully | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73357.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73355](https://github.com/openclaw/openclaw/pull/73355) | fix(cron): add .catch() re-arm and watchdog to prevent runtime timer chain death | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73355.md) | complete | Apr 28, 2026, 07:09 UTC |
@@ -126,8 +126,8 @@ Updated: Apr 28, 2026, 07:40 UTC
 
 State: Event review applied
 
-Reviewed event item #51689, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039956229](https://github.com/openclaw/clawsweeper/actions/runs/25039956229)
+Reviewed event item #70605, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039797239](https://github.com/openclaw/clawsweeper/actions/runs/25039797239)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 ### Queue
@@ -159,10 +159,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039956229](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 64/629 current (565 due, 10.2%) |
-| Hourly hot item cadence (<7d) | 64/629 current (565 due, 10.2%) |
-| Daily cadence coverage | 1473/4086 current (2613 due, 36%) |
-| Daily PR cadence | 1055/2826 current (1771 due, 37.3%) |
+| Hourly cadence coverage | 65/629 current (564 due, 10.3%) |
+| Hourly hot item cadence (<7d) | 65/629 current (564 due, 10.3%) |
+| Daily cadence coverage | 1472/4086 current (2614 due, 36%) |
+| Daily PR cadence | 1054/2826 current (1772 due, 37.3%) |
 | Daily new issue cadence (<30d) | 418/1260 current (842 due, 33.2%) |
 | Weekly older issue cadence | 1840/1845 current (5 due, 99.7%) |
 | Due now by cadence | 3647 |
@@ -232,7 +232,7 @@ Latest review: Apr 28, 2026, 07:38 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#51689](https://github.com/openclaw/openclaw/pull/51689) | docs: capitalize \"Thanks\" in changelog contributor attribution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/51689.md) | complete | Apr 28, 2026, 07:38 UTC |
+| [#70605](https://github.com/openclaw/openclaw/pull/70605) | BUG: Strip strikethrough text from context files before sending to model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70605.md) | complete | Apr 28, 2026, 07:37 UTC |
 | [#73357](https://github.com/openclaw/openclaw/pull/73357) | fix: handle ENOSPC file watcher errors gracefully | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73357.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [#73355](https://github.com/openclaw/openclaw/pull/73355) | fix(cron): add .catch() re-arm and watchdog to prevent runtime timer chain death | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73355.md) | complete | Apr 28, 2026, 07:09 UTC |
