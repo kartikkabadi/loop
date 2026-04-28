@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 06:34 UTC
 
 Updated: Apr 28, 2026, 06:34 UTC
 
-State: Event review applied
+State: Review in progress
 
-Reviewed event item #73282, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037588003](https://github.com/openclaw/clawsweeper/actions/runs/25037588003)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037687176](https://github.com/openclaw/clawsweeper/actions/runs/25037687176)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -52,10 +52,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037588003](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3578 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3465 |
-| Open items total | 7043 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3466 |
+| Open items total | 7044 |
 | Reviewed files | 6577 |
-| Unreviewed open items | 466 |
+| Unreviewed open items | 467 |
 | Archived closed files | 13282 |
 
 ### Review Outcomes
@@ -81,7 +81,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037588003](https://
 | Daily PR cadence | 880/2839 current (1959 due, 31%) |
 | Daily new issue cadence (<30d) | 434/1266 current (832 due, 34.3%) |
 | Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
-| Due now by cadence | 3807 |
+| Due now by cadence | 3808 |
 
 ### Audit Health
 
@@ -119,7 +119,7 @@ Latest review: Apr 28, 2026, 06:30 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 2 | 17 | 0 | 2 | 453 | 2 |
+| Last 15 minutes | 17 | 2 | 15 | 0 | 2 | 453 | 2 |
 | Last hour | 1033 | 23 | 1010 | 1 | 2 | 803 | 5 |
 | Last 24 hours | 2208 | 102 | 2106 | 6 | 74 | 1033 | 12 |
 
