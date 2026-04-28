@@ -1,7 +1,7 @@
 [
   {
-    "number": 73277,
-    "action": "kept_open",
-    "reason": "protected label: maintainer"
+    "number": 73334,
+    "action": "skipped_changed_since_review",
+    "reason": "updated_at changed"
   }
 ]
