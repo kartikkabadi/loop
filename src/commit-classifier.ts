@@ -77,7 +77,8 @@ const REVIEWABLE_BASENAMES = new Set([
 ]);
 
 function run(command: string, commandArgs: string[], options: { cwd?: string } = {}): string {
-  return execFileSync(command, commandArgs, {
+  const executable = command === "git" ? (process.env.GIT_BIN ?? "/usr/bin/git") : command;
+  return execFileSync(executable, commandArgs, {
     cwd: options.cwd,
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
