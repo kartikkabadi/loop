@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 06:43 UTC
+Last dashboard update: Apr 28, 2026, 06:44 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 06:43 UTC
+Updated: Apr 28, 2026, 06:44 UTC
 
-State: Event review applied
+State: Apply in progress
 
-Reviewed event item #73343, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037942566](https://github.com/openclaw/clawsweeper/actions/runs/25037942566)
+Starting apply/comment-sync run for up to 17 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=41243,41308,41862,42319,42978,44458,44539,44555,44565,44794,44881,45134,45200,53989,56161,66846,67766.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038065560](https://github.com/openclaw/clawsweeper/actions/runs/25038065560)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -64,7 +64,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037942566](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3381 |
 | Proposed issue closes | 11 (0.3% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3183 |
+| Fresh reviewed PRs in the last 7 days | 3184 |
 | Proposed PR closes | 6 (0.2% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6564 |
 | Proposed closes awaiting apply | 17 (0.3% of fresh reviews) |
@@ -119,8 +119,8 @@ Latest review: Apr 28, 2026, 06:42 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 0 | 11 | 0 | 0 | 122 | 0 |
-| Last hour | 567 | 10 | 557 | 1 | 2 | 805 | 5 |
+| Last 15 minutes | 12 | 0 | 12 | 0 | 0 | 105 | 0 |
+| Last hour | 563 | 9 | 554 | 1 | 2 | 805 | 5 |
 | Last 24 hours | 2211 | 102 | 2109 | 6 | 63 | 1024 | 12 |
 
 ### Recently Closed
@@ -145,7 +145,9 @@ Latest review: Apr 28, 2026, 06:42 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73343](https://github.com/openclaw/openclaw/issues/73343) | [Feature]: Expose channel user identity (SenderId) to skill/tool execution environment | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73343.md) | complete | Apr 28, 2026, 06:42 UTC |
+| [#73338](https://github.com/openclaw/openclaw/pull/73338) | fix(tui): follow active gateway port | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73338.md) | complete | Apr 28, 2026, 06:41 UTC |
+| [#72333](https://github.com/openclaw/openclaw/pull/72333) | [plugin sdk] Add host-hook examples and recipes (#72287 follow-up) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72333.md) | complete | Apr 28, 2026, 06:41 UTC |
+| [#72384](https://github.com/openclaw/openclaw/pull/72384) | [plugin sdk] Add advanced workflow plugin contract fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72384.md) | complete | Apr 28, 2026, 06:40 UTC |
 | [#73342](https://github.com/openclaw/openclaw/pull/73342) | refactor(memory-host): replace core runtime bridge with services | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73342.md) | complete | Apr 28, 2026, 06:38 UTC |
 | [#69056](https://github.com/openclaw/openclaw/pull/69056) | fix(gateway): handle SIGUSR1 gracefully on Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69056.md) | complete | Apr 28, 2026, 06:38 UTC |
 | [#73340](https://github.com/openclaw/openclaw/pull/73340) | Test tokenjuice tool result middleware adapter | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73340.md) | complete | Apr 28, 2026, 06:38 UTC |
@@ -153,8 +155,6 @@ Latest review: Apr 28, 2026, 06:42 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 | [#72987](https://github.com/openclaw/openclaw/pull/72987) | docs(compaction): document reserveTokensFloor default (20,000 tokens) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72987.md) | complete | Apr 28, 2026, 06:30 UTC |
 | [#73337](https://github.com/openclaw/openclaw/issues/73337) | [Bug] macOS Companion App: Canvas A2UI push returns ok but renders completely blank (regression of #7143) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73337.md) | complete | Apr 28, 2026, 06:29 UTC |
 | [#67290](https://github.com/openclaw/openclaw/pull/67290) | fix(ui): remove duplicate usage page header | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/67290.md) | complete | Apr 28, 2026, 06:29 UTC |
-| [#55652](https://github.com/openclaw/openclaw/pull/55652) | fix(discord): skip channels claimed by other instances | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/55652.md) | complete | Apr 28, 2026, 06:28 UTC |
-| [#49145](https://github.com/openclaw/openclaw/pull/49145) | feat(signal): reliable reply context, reaction wake, and quoted replies (v2) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/49145.md) | complete | Apr 28, 2026, 06:28 UTC |
 
 </details>
 
