@@ -40,9 +40,9 @@ Last dashboard update: Apr 28, 2026, 05:18 UTC
 
 Updated: Apr 28, 2026, 05:18 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 3. Total fresh closes in this run: 3/3. Result records in checkpoint: 4, including durable review comment syncs.
+Apply/comment-sync run finished with 3 fresh closes out of requested limit 3. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25035335479](https://github.com/openclaw/clawsweeper/actions/runs/25035335479)
 <!-- clawsweeper-status:end -->
 
