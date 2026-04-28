@@ -42,8 +42,8 @@ Last dashboard update: Apr 28, 2026, 20:26 UTC
 | Open PRs | 3457 |
 | Open items total | 7868 |
 | Reviewed files | 7486 |
-| Unreviewed open items | 382 |
-| Due now by cadence | 2205 |
+| Unreviewed open items | 0 |
+| Due now by cadence | 1823 |
 | Proposed closes awaiting apply | 21 |
 | Closed by Codex apply | 10522 |
 | Failed or stale reviews | 9 |
@@ -53,15 +53,15 @@ Last dashboard update: Apr 28, 2026, 20:26 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6953 | 6580 | 373 | 2145 | 21 | 10519 | Apr 28, 2026, 19:54 UTC | Apr 28, 2026, 19:56 UTC | 141 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 915 | 906 | 9 | 60 | 0 | 3 | Apr 28, 2026, 19:44 UTC | Apr 28, 2026, 18:47 UTC | 20 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6580 | 6580 | 0 | 1772 | 21 | 10519 | Apr 28, 2026, 19:54 UTC | Apr 28, 2026, 19:56 UTC | 141 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 906 | 906 | 0 | 51 | 0 | 3 | Apr 28, 2026, 19:44 UTC | Apr 28, 2026, 18:47 UTC | 20 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 20:17 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25075464473) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake publish complete | Apr 28, 2026, 20:25 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25074440222) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 20:26 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25075833696) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Apply throttled | Apr 28, 2026, 20:22 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25075680073) |
 
 ### Fleet Activity
 
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 19:54 UTC. Latest close: Apr 28, 2026, 19:56 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 20:17 UTC
+Updated: Apr 28, 2026, 20:26 UTC
 
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25075464473](https://github.com/openclaw/clawsweeper/actions/runs/25075464473)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25075833696](https://github.com/openclaw/clawsweeper/actions/runs/25075833696)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -165,7 +165,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25075464473](https://
 | Daily PR cadence | 2120/2718 current (598 due, 78%) |
 | Daily new issue cadence (<30d) | 734/1174 current (440 due, 62.5%) |
 | Weekly older issue cadence | 1847/1848 current (1 due, 99.9%) |
-| Due now by cadence | 2145 |
+| Due now by cadence | 1772 |
 
 ### Audit Health
 
@@ -253,12 +253,12 @@ Latest review: Apr 28, 2026, 19:54 UTC. Latest close: Apr 28, 2026, 19:56 UTC. L
 
 Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
 
-Updated: Apr 28, 2026, 20:25 UTC
+Updated: Apr 28, 2026, 20:22 UTC
 
-State: Hot intake publish complete
+State: Apply throttled
 
-Merged hot intake artifacts for run 25074440222. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25074440222](https://github.com/openclaw/clawsweeper/actions/runs/25074440222)
+GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/clawhub/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 2/11 in 60s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25075680073](https://github.com/openclaw/clawsweeper/actions/runs/25075680073)
 <!-- clawsweeper-status:openclaw-clawhub:end -->
 
 #### Queue
