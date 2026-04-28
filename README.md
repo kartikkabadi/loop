@@ -53,7 +53,7 @@ Last dashboard update: Apr 28, 2026, 23:11 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6936 | 6552 | 384 | 2036 | 0 | 10577 | Apr 28, 2026, 23:08 UTC | Apr 28, 2026, 23:09 UTC | 876 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6936 | 6552 | 384 | 2036 | 0 | 10577 | Apr 28, 2026, 23:08 UTC | Apr 28, 2026, 23:09 UTC | 867 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 916 | 909 | 7 | 71 | 0 | 3 | Apr 28, 2026, 23:08 UTC | Apr 28, 2026, 22:18 UTC | 60 |
 
 ### Current Runs
@@ -69,15 +69,15 @@ Latest review: Apr 28, 2026, 23:08 UTC. Latest close: Apr 28, 2026, 23:09 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 58 | 1 | 57 | 13 | 5 | 161 | 0 |
-| Last hour | 1071 | 12 | 1059 | 31 | 22 | 936 | 4 |
+| Last 15 minutes | 54 | 1 | 53 | 13 | 5 | 152 | 0 |
+| Last hour | 1068 | 12 | 1056 | 31 | 20 | 927 | 4 |
 | Last 24 hours | 6217 | 363 | 5854 | 35 | 752 | 1390 | 24 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71389](https://github.com/openclaw/openclaw/issues/71389) | SIGILL crash when sharp loads on non-AVX CPUs | closed externally after review | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/71389.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71389.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71389](https://github.com/openclaw/openclaw/issues/71389) | SIGILL crash when sharp loads on non-AVX CPUs | already closed before apply | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/71389.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71389.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73848](https://github.com/openclaw/openclaw/issues/73848) | Bug: Session reset via Control UI injects blank user message, crashing MiniMax provider | cannot reproduce on current main | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/73848.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73848.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#64257](https://github.com/openclaw/openclaw/pull/64257) | build: ignore generated docker-compose.sandbox.yml | closed externally after review | Apr 28, 2026, 23:02 UTC | [records/openclaw-openclaw/closed/64257.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64257.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73843](https://github.com/openclaw/openclaw/pull/73843) | feat(rls): add weekly Supabase RLS leak scanner | closed externally after item changed | Apr 28, 2026, 23:02 UTC | [records/openclaw-openclaw/closed/73843.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73843.md) |
@@ -126,7 +126,7 @@ Updated: Apr 28, 2026, 23:11 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=73848.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082369874](https://github.com/openclaw/clawsweeper/actions/runs/25082369874)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -205,15 +205,15 @@ Latest review: Apr 28, 2026, 23:08 UTC. Latest close: Apr 28, 2026, 23:09 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 1 | 10 | 0 | 5 | 141 | 0 |
-| Last hour | 537 | 12 | 525 | 4 | 21 | 876 | 4 |
+| Last 15 minutes | 11 | 1 | 10 | 0 | 5 | 132 | 0 |
+| Last hour | 537 | 12 | 525 | 4 | 19 | 867 | 4 |
 | Last 24 hours | 5296 | 360 | 4936 | 8 | 740 | 1316 | 24 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#71389](https://github.com/openclaw/openclaw/issues/71389) | SIGILL crash when sharp loads on non-AVX CPUs | closed externally after review | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/71389.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71389.md) |
+| [#71389](https://github.com/openclaw/openclaw/issues/71389) | SIGILL crash when sharp loads on non-AVX CPUs | already closed before apply | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/71389.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71389.md) |
 | [#73848](https://github.com/openclaw/openclaw/issues/73848) | Bug: Session reset via Control UI injects blank user message, crashing MiniMax provider | cannot reproduce on current main | Apr 28, 2026, 23:09 UTC | [records/openclaw-openclaw/closed/73848.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73848.md) |
 | [#64257](https://github.com/openclaw/openclaw/pull/64257) | build: ignore generated docker-compose.sandbox.yml | closed externally after review | Apr 28, 2026, 23:02 UTC | [records/openclaw-openclaw/closed/64257.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64257.md) |
 | [#73843](https://github.com/openclaw/openclaw/pull/73843) | feat(rls): add weekly Supabase RLS leak scanner | closed externally after item changed | Apr 28, 2026, 23:02 UTC | [records/openclaw-openclaw/closed/73843.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73843.md) |
@@ -334,8 +334,8 @@ Latest review: Apr 28, 2026, 23:08 UTC. Latest close: Apr 28, 2026, 22:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 47 | 0 | 47 | 13 | 0 | 20 | 0 |
-| Last hour | 534 | 0 | 534 | 27 | 1 | 60 | 0 |
+| Last 15 minutes | 43 | 0 | 43 | 13 | 0 | 20 | 0 |
+| Last hour | 531 | 0 | 531 | 27 | 1 | 60 | 0 |
 | Last 24 hours | 921 | 3 | 918 | 27 | 12 | 74 | 0 |
 
 #### Recently Closed
