@@ -14,6 +14,14 @@ import {
 } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  DEFAULT_TARGET_REPO,
+  isAutoCloseAllowed,
+  normalizeRepo,
+  repositoryProfileFor,
+  repositoryProfileForSlug,
+  type RepositoryProfile,
+} from "./repository-profiles.js";
 
 type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
@@ -67,6 +75,7 @@ interface GitHubIssueListItem {
 }
 
 interface Item {
+  repo: string;
   number: number;
   kind: ItemKind;
   title: string;
@@ -174,6 +183,7 @@ interface ReviewRuntime {
 }
 
 interface DashboardItem {
+  repo: string;
   number: number;
   kind: ItemKind;
   title: string;
@@ -181,9 +191,11 @@ interface DashboardItem {
   decision: string;
   action: string;
   reviewStatus: string;
+  reportPath: string;
 }
 
 interface DashboardClosedItem {
+  repo: string;
   number: number;
   kind: ItemKind;
   title: string;
@@ -267,6 +279,7 @@ interface DueCandidate {
 }
 
 interface ApplyResult {
+  repo?: string;
   number: number;
   action: ActionTaken;
   reason: string;
@@ -288,6 +301,7 @@ type MissingOpenReason =
   | "recently_created";
 
 interface AuditRecord {
+  repo: string;
   number: number;
   location: AuditRecordLocation;
   path: string;
@@ -356,10 +370,11 @@ interface AuditResult {
 }
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const TARGET_REPO = "openclaw/openclaw";
 const REPORT_REPO = "openclaw/clawsweeper";
-const CLAWHUB_URL = "https://clawhub.ai/";
-const DOCS_URL = "https://docs.openclaw.ai";
+const RECORDS_ROOT = join(ROOT, "records");
+let activeRepositoryProfile = repositoryProfileFor(
+  process.env.CLAWSWEEPER_TARGET_REPO ?? DEFAULT_TARGET_REPO,
+);
 const FRESH_DAYS = 7;
 const HOT_REVIEW_DAYS = 7;
 const RECENT_ISSUE_DAYS = 30;
@@ -405,6 +420,70 @@ const DECISION_SCHEMA_KEYS = new Set([
   "closeComment",
 ]);
 const EVIDENCE_SCHEMA_KEYS = new Set(["label", "detail", "file", "line", "command", "sha"]);
+
+function targetProfile(): RepositoryProfile {
+  return activeRepositoryProfile;
+}
+
+function targetRepo(): string {
+  return activeRepositoryProfile.targetRepo;
+}
+
+function setTargetRepo(targetRepoName: string): RepositoryProfile {
+  activeRepositoryProfile = repositoryProfileFor(targetRepoName);
+  return activeRepositoryProfile;
+}
+
+function repoFromArgs(args: Args): RepositoryProfile {
+  return setTargetRepo(
+    stringArg(args.target_repo, process.env.CLAWSWEEPER_TARGET_REPO ?? DEFAULT_TARGET_REPO),
+  );
+}
+
+function repoRecordsDir(profile = targetProfile()): string {
+  return join(RECORDS_ROOT, profile.slug);
+}
+
+function defaultItemsDir(profile = targetProfile()): string {
+  return join(repoRecordsDir(profile), "items");
+}
+
+function defaultClosedDir(profile = targetProfile()): string {
+  return join(repoRecordsDir(profile), "closed");
+}
+
+function reportFileName(repo: string, number: number): string {
+  repositoryProfileFor(repo);
+  return `${number}.md`;
+}
+
+function parseReportFileName(file: string): { repo: string | undefined; number: number } | null {
+  const legacy = file.match(/^(\d+)\.md$/);
+  if (legacy?.[1]) return { repo: undefined, number: Number(legacy[1]) };
+  const prefixed = file.match(/^([a-z0-9][a-z0-9-]*)-(\d+)\.md$/);
+  if (!prefixed?.[1] || !prefixed[2]) return null;
+  return { repo: repositoryProfileForSlug(prefixed[1])?.targetRepo, number: Number(prefixed[2]) };
+}
+
+function markdownRepository(markdown: string, file?: string): string {
+  const fromMarkdown = frontMatterValue(markdown, "repository");
+  if (fromMarkdown) return normalizeRepo(fromMarkdown);
+  if (file) {
+    const normalizedPath = repoRelativePath(file);
+    const recordsMatch = normalizedPath.match(/^records\/([^/]+)\//);
+    if (recordsMatch?.[1]) {
+      const profile = repositoryProfileForSlug(recordsMatch[1]);
+      if (profile) return profile.targetRepo;
+    }
+    const parsed = parseReportFileName(basename(file));
+    if (parsed?.repo) return parsed.repo;
+  }
+  return DEFAULT_TARGET_REPO;
+}
+
+function isMarkdownForActiveRepo(markdown: string, file?: string): boolean {
+  return markdownRepository(markdown, file) === targetRepo();
+}
 
 function evidenceEntry(options: Partial<Evidence> & Pick<Evidence, "label" | "detail">): Evidence {
   return {
@@ -486,7 +565,11 @@ function run(
 
 function gh(args: string[]): string {
   if (args[0] === "api") return run("gh", args);
-  return run("gh", ["--repo", TARGET_REPO, ...args]);
+  return run("gh", ["--repo", targetRepo(), ...args]);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function sleepMs(milliseconds: number): void {
@@ -715,6 +798,7 @@ function sortStable(value: unknown): unknown {
 
 function itemSnapshotHash(item: Item, context: ItemContext): string {
   const snapshotItem = {
+    repo: item.repo,
     number: item.number,
     kind: item.kind,
     title: item.title,
@@ -741,6 +825,8 @@ function reviewPolicyHash(options: {
       reasoningEffort: options.reasoningEffort ?? DEFAULT_REASONING_EFFORT,
       sandboxMode: options.sandboxMode ?? "read-only",
       serviceTier: options.serviceTier ?? DEFAULT_SERVICE_TIER,
+      targetRepo: targetRepo(),
+      repositoryProfile: targetProfile(),
       prompt: readFileSync(join(ROOT, "prompts", "review-item.md"), "utf8"),
       schema: readFileSync(join(ROOT, "schema", "clawsweeper-decision.schema.json"), "utf8"),
     }),
@@ -1008,7 +1094,7 @@ function closingPullRequestReferencesForIssue(number: number): number[] {
     "view",
     String(number),
     "--repo",
-    TARGET_REPO,
+    targetRepo(),
     "--json",
     "closedByPullRequestsReferences",
   ]);
@@ -1023,7 +1109,7 @@ function closingPullRequestsForIssue(number: number): unknown[] {
   return closingPullRequestReferencesForIssue(number).map((pullNumber) =>
     ghJson<unknown>([
       "api",
-      `repos/${TARGET_REPO}/pulls/${pullNumber}`,
+      `repos/${targetRepo()}/pulls/${pullNumber}`,
       "--jq",
       "{number,title,state,html_url,body,user:{login:.user.login},merged:.merged,merged_at:.merged_at,head:{ref:.head.ref,sha:.head.sha},base:{ref:.base.ref,sha:.base.sha}}",
     ]),
@@ -1062,8 +1148,13 @@ function collectRelatedMentions(options: {
   };
   const scanText = (value: unknown, source: string): void => {
     if (typeof value !== "string" || !value.trim()) return;
+    const [owner, repo] = targetRepo().split("/");
+    const escapedRepo = `${escapeRegExp(owner ?? "")}\\/${escapeRegExp(repo ?? "")}`;
     const linked = value.matchAll(
-      /github\.com\/openclaw\/openclaw\/(?:issues|pull)\/(\d+)|(?<![\w/])#(\d+)\b/g,
+      new RegExp(
+        `github\\.com\\/${escapedRepo}\\/(?:issues|pull)\\/(\\d+)|(?<![\\w/])#(\\d+)\\b`,
+        "g",
+      ),
     );
     for (const match of linked) add(Number(match[1] ?? match[2]), source);
   };
@@ -1096,7 +1187,7 @@ function collectRelatedMentions(options: {
 
 function compactRelatedItem(number: number, mentionedIn: string[]): unknown | null {
   try {
-    const issue = ghJson<unknown>(["api", `repos/${TARGET_REPO}/issues/${number}`]);
+    const issue = ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${number}`]);
     const issueRecord = asRecord(issue);
     const related: Record<string, unknown> = {
       mentionedIn: mentionedIn.slice(0, 6),
@@ -1107,7 +1198,7 @@ function compactRelatedItem(number: number, mentionedIn: string[]): unknown | nu
     if (issueRecord.pull_request) {
       try {
         related.pullRequest = compactPullRequest(
-          ghJson<unknown>(["api", `repos/${TARGET_REPO}/pulls/${number}`]),
+          ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]),
         );
       } catch (error) {
         related.pullRequestError = error instanceof Error ? error.message : String(error);
@@ -1170,7 +1261,7 @@ const RELATED_TITLE_STOP_WORDS = new Set([
   "without",
 ]);
 
-let localRelatedTitleIndexCache: LocalRelatedTitleEntry[] | null = null;
+let localRelatedTitleIndexCache: { repo: string; entries: LocalRelatedTitleEntry[] } | null = null;
 
 export function relatedTitleSearchTerms(title: string, limit = 6): string[] {
   const seen = new Set<string>();
@@ -1191,15 +1282,17 @@ export function relatedTitleSearchTerms(title: string, limit = 6): string[] {
 }
 
 function localRelatedTitleIndex(): LocalRelatedTitleEntry[] {
-  if (localRelatedTitleIndexCache) return localRelatedTitleIndexCache;
+  if (localRelatedTitleIndexCache?.repo === targetRepo())
+    return localRelatedTitleIndexCache.entries;
   const entries: LocalRelatedTitleEntry[] = [];
   for (const [location, dir] of [
-    ["items", join(ROOT, "items")],
-    ["closed", join(ROOT, "closed")],
+    ["items", defaultItemsDir()],
+    ["closed", defaultClosedDir()],
   ] as const) {
     for (const file of markdownFiles(dir)) {
       const path = join(dir, file);
       const markdown = readFileSync(path, "utf8");
+      if (!isMarkdownForActiveRepo(markdown, file)) continue;
       entries.push({
         number: numberForMarkdownFile(file),
         kind: frontMatterValue(markdown, "type") as ItemKind | undefined,
@@ -1216,7 +1309,7 @@ function localRelatedTitleIndex(): LocalRelatedTitleEntry[] {
       });
     }
   }
-  localRelatedTitleIndexCache = entries;
+  localRelatedTitleIndexCache = { repo: targetRepo(), entries };
   return entries;
 }
 
@@ -1359,12 +1452,18 @@ function frontMatterValue(markdown: string, key: string): string | undefined {
 
 export function applyDecisionPriority(markdown: string, applyKind: ApplyKind): number {
   const closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
-  const itemKind = frontMatterValue(markdown, "type");
+  const itemKind = frontMatterValue(markdown, "type") as ItemKind | undefined;
+  const profile = repositoryProfileFor(markdownRepository(markdown));
   const isCloseProposal =
     frontMatterValue(markdown, "decision") === "close" &&
     frontMatterValue(markdown, "confidence") === "high" &&
     frontMatterValue(markdown, "action_taken") === "proposed_close" &&
-    Boolean(closeReason && ALLOWED_REASONS.has(closeReason));
+    Boolean(
+      closeReason &&
+      itemKind &&
+      ALLOWED_REASONS.has(closeReason) &&
+      isAutoCloseAllowed(profile, itemKind, closeReason),
+    );
   if (!isCloseProposal) return 2;
   if (applyKind === "all" || itemKind === applyKind || !itemKind) return 0;
   return 1;
@@ -1432,9 +1531,23 @@ function frontMatterStringArray(markdown: string, key: string): string[] {
     .filter(Boolean);
 }
 
-function existingReview(number: number, itemsDir: string): ExistingReview | null {
-  const path = join(itemsDir, `${number}.md`);
-  if (!existsSync(path)) return null;
+function existingReview(
+  item: Pick<Item, "number" | "repo">,
+  itemsDir: string,
+): ExistingReview | null {
+  const candidates = [join(itemsDir, reportFileName(item.repo, item.number))];
+  for (const legacy of [
+    join(itemsDir, `${item.number}.md`),
+    join(ROOT, "items", `${item.number}.md`),
+  ]) {
+    if (!candidates.includes(legacy)) candidates.push(legacy);
+  }
+  const path = candidates.find((candidate) => {
+    if (!existsSync(candidate)) return false;
+    const markdown = readFileSync(candidate, "utf8");
+    return markdownRepository(markdown, candidate) === item.repo;
+  });
+  if (!path) return null;
   const markdown = readFileSync(path, "utf8");
   return {
     path,
@@ -1565,7 +1678,7 @@ function dueCandidate(
   now = Date.now(),
   reviewPolicy?: string,
 ): DueCandidate | null {
-  const review = existingReview(item.number, itemsDir);
+  const review = existingReview(item, itemsDir);
   if (!shouldReviewItem(item, review, now, reviewPolicy)) return null;
   return {
     item,
@@ -1590,12 +1703,13 @@ function fetchOpenItemPage(
 ): Item[] {
   const items = ghJsonLines<GitHubIssueListItem>([
     "api",
-    `repos/${TARGET_REPO}/issues?state=open&sort=${sort}&direction=${direction}&per_page=100&page=${page}`,
+    `repos/${targetRepo()}/issues?state=open&sort=${sort}&direction=${direction}&per_page=100&page=${page}`,
     "--jq",
     ".[] | {number,title,html_url,created_at,updated_at,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
   return items
     .map((item) => ({
+      repo: targetRepo(),
       number: item.number,
       kind: item.pull_request ? ("pull_request" as const) : ("issue" as const),
       title: item.title,
@@ -1669,12 +1783,13 @@ function fetchItem(number: number): { item: Item; state: string } {
     }
   >([
     "api",
-    `repos/${TARGET_REPO}/issues/${number}`,
+    `repos/${targetRepo()}/issues/${number}`,
     "--jq",
     "{number,title,html_url,created_at,updated_at,state,locked,active_lock_reason,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
   return {
     item: {
+      repo: targetRepo(),
       number: issue.number,
       kind: issue.pull_request ? "pull_request" : "issue",
       title: issue.title,
@@ -1692,8 +1807,8 @@ function fetchItem(number: number): { item: Item; state: string } {
 }
 
 function fetchOpenItemCounts(): OpenItemCounts {
-  const [owner, name] = TARGET_REPO.split("/");
-  if (!owner || !name) throw new Error(`Invalid target repo: ${TARGET_REPO}`);
+  const [owner, name] = targetRepo().split("/");
+  if (!owner || !name) throw new Error(`Invalid target repo: ${targetRepo()}`);
   const result = ghJson<RepoOpenCountsQuery>([
     "api",
     "graphql",
@@ -2011,9 +2126,9 @@ function planCandidates(options: {
 }
 
 function collectItemContext(item: Item): ItemContext {
-  const issue = ghJson<unknown>(["api", `repos/${TARGET_REPO}/issues/${item.number}`]);
-  const comments = ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${item.number}/comments`);
-  const timeline = ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${item.number}/timeline`);
+  const issue = ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${item.number}`]);
+  const comments = ghPaged<unknown>(`repos/${targetRepo()}/issues/${item.number}/comments`);
+  const timeline = ghPaged<unknown>(`repos/${targetRepo()}/issues/${item.number}/timeline`);
   const context: ItemContext = {
     issue: compactIssue(issue),
     comments: compactSlice(comments.map(compactComment), 24),
@@ -2038,10 +2153,10 @@ function collectItemContext(item: Item): ItemContext {
     }
   }
   if (item.kind === "pull_request") {
-    pullRequest = ghJson<unknown>(["api", `repos/${TARGET_REPO}/pulls/${item.number}`]);
-    const pullFiles = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/files`);
-    const pullCommits = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/commits`);
-    pullReviewComments = ghPaged<unknown>(`repos/${TARGET_REPO}/pulls/${item.number}/comments`);
+    pullRequest = ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${item.number}`]);
+    const pullFiles = ghPaged<unknown>(`repos/${targetRepo()}/pulls/${item.number}/files`);
+    const pullCommits = ghPaged<unknown>(`repos/${targetRepo()}/pulls/${item.number}/commits`);
+    pullReviewComments = ghPaged<unknown>(`repos/${targetRepo()}/pulls/${item.number}/comments`);
     context.pullRequest = compactPullRequest(pullRequest);
     context.pullFiles = compactSlice(pullFiles.map(compactPullFile), 80);
     context.pullCommits = compactSlice(pullCommits.map(compactPullCommit), 80);
@@ -2117,7 +2232,8 @@ function promptFor(item: Item, context: ItemContext, git: GitInfo): string {
 
 ## Repository State
 
-- Target repo: ${TARGET_REPO}
+- Target repo: ${item.repo}
+- Repository policy: ${repositoryProfileFor(item.repo).promptNote}
 - Item: #${item.number}
 - Type: ${item.kind}
 - Title: ${item.title}
@@ -2337,7 +2453,7 @@ function closeReasonText(reason: CloseReason): string {
 }
 
 function repoUrl(path = ""): string {
-  return `https://github.com/${TARGET_REPO}${path}`;
+  return `https://github.com/${targetRepo()}${path}`;
 }
 
 function reportUrl(path = ""): string {
@@ -2360,7 +2476,10 @@ function itemUrl(number: number, kind: ItemKind = "issue"): string {
   return repoUrl(`/${kind === "pull_request" ? "pull" : "issues"}/${number}`);
 }
 
-function reportFileUrl(number: number, path = `items/${number}.md`): string {
+function reportFileUrl(
+  number: number,
+  path = `records/${targetProfile().slug}/items/${number}.md`,
+): string {
   return reportUrl(`/blob/main/${githubPath(path)}`);
 }
 
@@ -2390,12 +2509,13 @@ function latestFileUrl(file: string): string {
 }
 
 function docsPageUrl(file: string): string | null {
-  if (!file.startsWith("docs/")) return null;
+  const docsUrl = targetProfile().docsUrl;
+  if (!docsUrl || !file.startsWith("docs/")) return null;
   const page = file
     .replace(/^docs\//, "")
     .replace(/\/index\.mdx?$/, "")
     .replace(/\.mdx?$/, "");
-  return `${DOCS_URL}/${page}`;
+  return `${docsUrl}/${page}`;
 }
 
 function markdownLink(label: string, url: string): string {
@@ -2552,7 +2672,7 @@ function closeIntro(reason: CloseReason): string {
     case "cannot_reproduce":
       return "Closing this as not reproducible on current `main` after Codex automated review.";
     case "clawhub":
-      return `Closing this as better suited for ${markdownLink("ClawHub", CLAWHUB_URL)}/community plugin work after Codex automated review.`;
+      return `Closing this as better suited for ${markdownLink("ClawHub", targetProfile().communityUrl ?? "https://clawhub.ai/")}/community plugin work after Codex automated review.`;
     case "duplicate_or_superseded":
       return "Closing this as duplicate or superseded after Codex automated review.";
     case "not_actionable_in_repo":
@@ -2798,9 +2918,10 @@ function canClose(decision: Decision): boolean {
 }
 
 export function validateCloseDecision(
-  item: Pick<Item, "kind" | "labels">,
+  item: Pick<Item, "kind" | "labels"> & Partial<Pick<Item, "repo">>,
   decision: Decision,
 ): { ok: true } | { ok: false; actionTaken: ActionTaken; reason: string } {
+  const profile = repositoryProfileFor(item.repo ?? targetRepo());
   if (decision.decision !== "close") {
     return {
       ok: false,
@@ -2820,6 +2941,13 @@ export function validateCloseDecision(
       ok: false,
       actionTaken: "skipped_invalid_decision",
       reason: "close decision is not high-confidence with an allowed close reason",
+    };
+  }
+  if (!isAutoCloseAllowed(profile, item.kind, decision.closeReason)) {
+    return {
+      ok: false,
+      actionTaken: "skipped_invalid_decision",
+      reason: `${decision.closeReason} is not allowed for ${profile.targetRepo} ${item.kind} apply policy`,
     };
   }
   if (item.kind === "pull_request" && decision.closeReason === "stale_insufficient_info") {
@@ -2879,7 +3007,9 @@ function issueReviewComment(
   fallbackBodies: readonly string[] = [],
 ): Record<string, unknown> | undefined {
   const marker = reviewCommentMarker(number);
-  const comments = ghPaged<unknown>(`repos/${TARGET_REPO}/issues/${number}/comments`).map(asRecord);
+  const comments = ghPaged<unknown>(`repos/${targetRepo()}/issues/${number}/comments`).map(
+    asRecord,
+  );
   const marked = comments.find((candidate) => {
     const body = candidate.body;
     return typeof body === "string" && body.includes(marker);
@@ -2980,7 +3110,7 @@ function upsertReviewComment(
   if (id !== null) {
     ghWithRetry([
       "api",
-      `repos/${TARGET_REPO}/issues/comments/${id}`,
+      `repos/${targetRepo()}/issues/comments/${id}`,
       "--method",
       "PATCH",
       "--input",
@@ -2989,7 +3119,7 @@ function upsertReviewComment(
   } else {
     ghWithRetry([
       "api",
-      `repos/${TARGET_REPO}/issues/${number}/comments`,
+      `repos/${targetRepo()}/issues/${number}/comments`,
       "--method",
       "POST",
       "--input",
@@ -3012,7 +3142,7 @@ function closeItem(options: { number: number; kind: ItemKind; reason: CloseReaso
     );
     ghWithRetry([
       "api",
-      `repos/${TARGET_REPO}/issues/${options.number}`,
+      `repos/${targetRepo()}/issues/${options.number}`,
       "--method",
       "PATCH",
       "--input",
@@ -3072,6 +3202,7 @@ function markdownFor(options: {
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
   return `---
 number: ${options.item.number}
+repository: ${options.item.repo}
 type: ${options.item.kind}
 title: ${JSON.stringify(options.item.title)}
 url: ${options.item.url}
@@ -3173,7 +3304,8 @@ ${options.action.closeComment ? options.action.closeComment : "_No close comment
 }
 
 function planCommand(args: Args): void {
-  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
+  repoFromArgs(args);
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const batchSize = numberArg(args.batch_size, 5);
   const maxPages = numberArg(args.max_pages, 250);
   const shardCount = numberArg(args.shard_count, 100);
@@ -3212,9 +3344,12 @@ function planCommand(args: Args): void {
 }
 
 function reviewCommand(args: Args): void {
-  const openclawDir = resolve(stringArg(args.openclaw_dir, "../openclaw"));
+  const profile = repoFromArgs(args);
+  const openclawDir = resolve(
+    stringArg(args.target_dir, stringArg(args.openclaw_dir, `../${profile.checkoutDir}`)),
+  );
   const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts/reviews"));
-  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const batchSize = numberArg(args.batch_size, 5);
   const maxPages = numberArg(args.max_pages, 250);
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
@@ -3290,7 +3425,7 @@ function reviewCommand(args: Args): void {
     const runtime = { model, reasoningEffort, sandboxMode, serviceTier };
     const action = reviewActionForDecision({ item, decision, git, runtime });
     writeFileSync(
-      join(artifactDir, `${item.number}.md`),
+      join(artifactDir, reportFileName(item.repo, item.number)),
       markdownFor({
         item,
         context,
@@ -3315,8 +3450,9 @@ function reviewCommand(args: Args): void {
 }
 
 function applyDecisionsCommand(args: Args): void {
-  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
-  const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
+  repoFromArgs(args);
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
+  const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const limit = numberArg(args.limit, 20);
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const minAgeDays = numberArg(args.min_age_days, 0);
@@ -3357,15 +3493,17 @@ function applyDecisionsCommand(args: Args): void {
     return;
   }
   const files = readdirSync(itemsDir)
-    .filter((name) => /^\d+\.md$/.test(name))
-    .filter(
-      (name) =>
-        requestedItemNumberSet.size === 0 ||
-        requestedItemNumberSet.has(Number(name.replace(".md", ""))),
-    )
+    .filter((name) => parseReportFileName(name) !== null)
+    .filter((name) => {
+      const markdown = readFileSync(join(itemsDir, name), "utf8");
+      if (!isMarkdownForActiveRepo(markdown, name)) return false;
+      return (
+        requestedItemNumberSet.size === 0 || requestedItemNumberSet.has(numberForMarkdownFile(name))
+      );
+    })
     .map((name) => ({
       name,
-      number: Number(name.replace(".md", "")),
+      number: numberForMarkdownFile(name),
       priority: syncCommentsOnly
         ? 0
         : applyDecisionPriority(readFileSync(join(itemsDir, name), "utf8"), applyKind),
@@ -3387,7 +3525,8 @@ function applyDecisionsCommand(args: Args): void {
     }
     const path = join(itemsDir, file);
     let markdown = readFileSync(path, "utf8");
-    const number = Number(file.replace(/\.md$/, ""));
+    const repo = markdownRepository(markdown, file);
+    const number = numberForMarkdownFile(file);
     const decision = frontMatterValue(markdown, "decision");
     const confidence = frontMatterValue(markdown, "confidence");
     const closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
@@ -3649,7 +3788,7 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     const currentReportValidation = validateCloseDecision(
-      { kind: item.kind, labels: item.labels },
+      { repo, kind: item.kind, labels: item.labels },
       reportDecision(markdown, closeReason),
     );
     if (!currentReportValidation.ok && currentReportValidation.actionTaken !== "kept_open") {
@@ -3689,9 +3828,10 @@ function applyDecisionsCommand(args: Args): void {
 }
 
 function applyArtifactsCommand(args: Args): void {
+  repoFromArgs(args);
   const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts"));
-  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
-  const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
+  const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const skipReconcile = boolArg(args.skip_reconcile);
   const maxPages = numberArg(args.max_pages, 250);
   const { numbers: openNumbers } = fetchOpenItemNumbers(maxPages);
@@ -3704,9 +3844,14 @@ function applyArtifactsCommand(args: Args): void {
       const name = String(entry);
       if (!name.endsWith(".md")) continue;
       const source = join(artifactDir, name);
-      if (!/^\d+\.md$/.test(basename(source))) continue;
+      if (!parseReportFileName(basename(source))) continue;
       const number = numberForMarkdownFile(basename(source));
       const markdown = readFileSync(source, "utf8");
+      if (!isMarkdownForActiveRepo(markdown, basename(source))) continue;
+      const destinationFile = reportFileName(
+        markdownRepository(markdown, basename(source)),
+        number,
+      );
       const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
       const destination = reviewArtifactDestination(action, openNumbers.has(number));
       if (destination === "skip_closed") {
@@ -3714,9 +3859,9 @@ function applyArtifactsCommand(args: Args): void {
         continue;
       }
       const destinationDir = destination === "closed" ? closedDir : itemsDir;
-      const stalePath = join(destinationDir === itemsDir ? closedDir : itemsDir, basename(source));
+      const stalePath = join(destinationDir === itemsDir ? closedDir : itemsDir, destinationFile);
       if (existsSync(stalePath)) unlinkSync(stalePath);
-      writeFileSync(join(destinationDir, basename(source)), markdown, "utf8");
+      writeFileSync(join(destinationDir, destinationFile), markdown, "utf8");
       appliedArtifacts += 1;
     }
   }
@@ -3730,13 +3875,23 @@ function applyArtifactsCommand(args: Args): void {
 function markdownFiles(dir: string): string[] {
   return existsSync(dir)
     ? readdirSync(dir)
-        .filter((name) => /^\d+\.md$/.test(name))
-        .sort((left, right) => Number(left.replace(".md", "")) - Number(right.replace(".md", "")))
+        .filter((name) => parseReportFileName(name) !== null)
+        .sort((left, right) => {
+          const leftParsed = parseReportFileName(left);
+          const rightParsed = parseReportFileName(right);
+          return (
+            (leftParsed?.repo ?? DEFAULT_TARGET_REPO).localeCompare(
+              rightParsed?.repo ?? DEFAULT_TARGET_REPO,
+            ) || (leftParsed?.number ?? 0) - (rightParsed?.number ?? 0)
+          );
+        })
     : [];
 }
 
 function numberForMarkdownFile(file: string): number {
-  return Number(file.replace(/\.md$/, ""));
+  const parsed = parseReportFileName(file);
+  if (!parsed) throw new Error(`Invalid report filename: ${file}`);
+  return parsed.number;
 }
 
 function repoRelativePath(path: string): string {
@@ -3750,7 +3905,9 @@ function markdownAuditRecord(
 ): AuditRecord {
   const path = join(dir, file);
   const markdown = readFileSync(path, "utf8");
+  const repo = markdownRepository(markdown, file);
   return {
+    repo,
     number: numberForMarkdownFile(file),
     location,
     path: repoRelativePath(path),
@@ -3766,7 +3923,9 @@ function markdownAuditRecord(
 }
 
 function auditRecords(location: AuditRecordLocation, dir: string): AuditRecord[] {
-  return markdownFiles(dir).map((file) => markdownAuditRecord(location, dir, file));
+  return markdownFiles(dir)
+    .map((file) => markdownAuditRecord(location, dir, file))
+    .filter((record) => record.repo === targetRepo());
 }
 
 function openItemFinding(item: Item, extra: Partial<AuditFinding> = {}): AuditFinding {
@@ -3874,7 +4033,7 @@ export function auditFromSnapshot(options: {
 
   return {
     generatedAt,
-    targetRepo: TARGET_REPO,
+    targetRepo: targetRepo(),
     scan: {
       complete: options.scanComplete,
       pagesScanned: options.pagesScanned,
@@ -4111,25 +4270,29 @@ function reconcileFolders(options: {
 
   for (const file of markdownFiles(options.itemsDir)) {
     const number = numberForMarkdownFile(file);
-    if (openNumbers.has(number)) continue;
     const sourcePath = join(options.itemsDir, file);
+    const sourceMarkdown = readFileSync(sourcePath, "utf8");
+    if (!isMarkdownForActiveRepo(sourceMarkdown, file)) continue;
+    if (openNumbers.has(number)) continue;
     const destinationPath = join(options.closedDir, file);
-    const markdown = markReconciledState(readFileSync(sourcePath, "utf8"), "closed");
+    const markdown = markReconciledState(sourceMarkdown, "closed");
     moveMarkdownFile({ sourcePath, destinationPath, markdown, dryRun });
     movedToClosed += 1;
   }
 
   for (const file of markdownFiles(options.closedDir)) {
     const number = numberForMarkdownFile(file);
-    if (!openNumbers.has(number)) continue;
     const sourcePath = join(options.closedDir, file);
+    const sourceMarkdown = readFileSync(sourcePath, "utf8");
+    if (!isMarkdownForActiveRepo(sourceMarkdown, file)) continue;
+    if (!openNumbers.has(number)) continue;
     const destinationPath = join(options.itemsDir, file);
     if (existsSync(destinationPath)) {
       if (!dryRun) unlinkSync(sourcePath);
       removedStaleClosedCopies += 1;
       continue;
     }
-    const markdown = markReconciledState(readFileSync(sourcePath, "utf8"), "open");
+    const markdown = markReconciledState(sourceMarkdown, "open");
     moveMarkdownFile({ sourcePath, destinationPath, markdown, dryRun });
     movedToItems += 1;
   }
@@ -4144,8 +4307,9 @@ function reconcileFolders(options: {
 }
 
 function reconcileCommand(args: Args): void {
-  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
-  const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
+  repoFromArgs(args);
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
+  const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const maxPages = numberArg(args.max_pages, 250);
   const dryRun = boolArg(args.dry_run);
   const result = reconcileFolders({ itemsDir, closedDir, maxPages, dryRun });
@@ -4153,8 +4317,9 @@ function reconcileCommand(args: Args): void {
 }
 
 function auditCommand(args: Args): void {
-  const itemsDir = resolve(stringArg(args.items_dir, join(ROOT, "items")));
-  const closedDir = resolve(stringArg(args.closed_dir, join(ROOT, "closed")));
+  repoFromArgs(args);
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
+  const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const maxPages = numberArg(args.max_pages, 250);
   const sampleLimit = numberArg(args.sample_limit, 25);
   const output = typeof args.output === "string" ? resolve(args.output) : undefined;
@@ -4202,7 +4367,7 @@ function cadenceBucketForReview(
 
 function dashboardStats(
   itemsDir: string,
-  closedDir = join(ROOT, "closed"),
+  closedDir = defaultClosedDir(),
 ): {
   open: OpenItemCounts;
   fresh: number;
@@ -4241,7 +4406,9 @@ function dashboardStats(
   const recentClosed: DashboardClosedItem[] = [];
   for (const file of files) {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
-    const number = Number(file.replace(/\.md$/, ""));
+    if (!isMarkdownForActiveRepo(markdown, file)) continue;
+    const repo = markdownRepository(markdown, file);
+    const number = numberForMarkdownFile(file);
     const reviewedAt = frontMatterValue(markdown, "reviewed_at");
     const reviewStatus = effectiveReviewStatus(markdown);
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
@@ -4273,6 +4440,7 @@ function dashboardStats(
     }
     if (decision === "close" && action === "proposed_close") cadenceBucket.proposedClose += 1;
     recent.push({
+      repo,
       number,
       kind,
       title: frontMatterValue(markdown, "title") ?? "",
@@ -4280,20 +4448,24 @@ function dashboardStats(
       decision,
       action,
       reviewStatus,
+      reportPath: repoRelativePath(join(itemsDir, file)),
     });
   }
   for (const file of closedFiles) {
     const markdown = readFileSync(join(closedDir, file), "utf8");
+    if (!isMarkdownForActiveRepo(markdown, file)) continue;
+    const repo = markdownRepository(markdown, file);
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     if (action === "closed") {
       closed += 1;
       recentClosed.push({
-        number: Number(file.replace(/\.md$/, "")),
+        repo,
+        number: numberForMarkdownFile(file),
         kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
         title: frontMatterValue(markdown, "title") ?? "",
         appliedAt: frontMatterValue(markdown, "applied_at"),
         closeReason: frontMatterValue(markdown, "close_reason"),
-        reportPath: `closed/${file}`,
+        reportPath: repoRelativePath(join(closedDir, file)),
       });
     }
     recordDashboardActivity(markdown, activity, now);
@@ -4325,10 +4497,14 @@ function dashboardStats(
     open,
     fresh,
     todo: cadenceDue,
-    files: files.length,
+    files: files.filter((file) =>
+      isMarkdownForActiveRepo(readFileSync(join(itemsDir, file), "utf8"), file),
+    ).length,
     proposedClose,
     closed,
-    archivedFiles: closedFiles.length,
+    archivedFiles: closedFiles.filter((file) =>
+      isMarkdownForActiveRepo(readFileSync(join(closedDir, file), "utf8"), file),
+    ).length,
     failed,
     stale,
     byKind,
@@ -4372,7 +4548,7 @@ export function formatRecentClosedRows(items: readonly DashboardClosedItem[], li
   );
 }
 
-function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, "closed")): void {
+function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosedDir()): void {
   const readmePath = join(ROOT, "README.md");
   const readme = readFileSync(readmePath, "utf8");
   const stats = dashboardStats(itemsDir, closedDir);
@@ -4385,7 +4561,7 @@ function updateDashboard(itemsDir = join(ROOT, "items"), closedDir = join(ROOT, 
         const title = markdownTableCell(displayTitle(item.title));
         const outcome = markdownLink(
           `${item.decision} / ${item.action}`,
-          reportFileUrl(item.number),
+          reportFileUrl(item.number, item.reportPath),
         );
         return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
       })
@@ -4403,8 +4579,9 @@ ${status}
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.open.issues} |
-| Open PRs in ${markdownLink(TARGET_REPO, repoUrl())} | ${stats.open.pullRequests} |
+| Target repository | ${markdownLink(targetRepo(), repoUrl())} |
+| Open issues in ${markdownLink(targetRepo(), repoUrl())} | ${stats.open.issues} |
+| Open PRs in ${markdownLink(targetRepo(), repoUrl())} | ${stats.open.pullRequests} |
 | Open items total | ${stats.open.total} |
 | Reviewed files | ${stats.files} |
 | Unreviewed open items | ${stats.cadence.unreviewedOpen} |
@@ -4500,12 +4677,13 @@ export function main(argv = process.argv.slice(2)): void {
   else if (command === "apply-decisions") applyDecisionsCommand(args);
   else if (command === "audit") auditCommand(args);
   else if (command === "reconcile") reconcileCommand(args);
-  else if (command === "dashboard")
+  else if (command === "dashboard") {
+    repoFromArgs(args);
     updateDashboard(
-      resolve(stringArg(args.items_dir, join(ROOT, "items"))),
-      resolve(stringArg(args.closed_dir, join(ROOT, "closed"))),
+      resolve(stringArg(args.items_dir, defaultItemsDir())),
+      resolve(stringArg(args.closed_dir, defaultClosedDir())),
     );
-  else if (command === "status") statusCommand(args);
+  } else if (command === "status") statusCommand(args);
   else if (command === "check") checkCommand();
   else {
     console.error(`Unknown command: ${command}`);

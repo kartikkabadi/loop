@@ -1,10 +1,14 @@
 name: ClawSweeper
 
-run-name: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *'))) && 'Apply OpenClaw closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *')) && 'Audit ClawSweeper dashboard' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'Review hot OpenClaw items' || 'Review OpenClaw items' }}
+run-name: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'Audit ClawSweeper dashboard' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
 
 on:
   workflow_dispatch:
     inputs:
+      target_repo:
+        description: "Repository to sweep"
+        required: false
+        default: "openclaw/openclaw"
       apply_closures:
         description: "Deprecated; review shards are proposal-only. Use apply_existing to close unchanged proposed decisions."
         required: false
@@ -79,12 +83,16 @@ on:
         default: "false"
   schedule:
     - cron: "*/5 * * * *"
+    - cron: "2/5 * * * *"
     - cron: "7 */6 * * *"
+    - cron: "12 */6 * * *"
     - cron: "17 * * * *"
+    - cron: "22 * * * *"
     - cron: "3 * * * *"
     - cron: "18 * * * *"
     - cron: "33 * * * *"
     - cron: "48 * * * *"
+    - cron: "8,23,38,53 * * * *"
 
 permissions:
   contents: write
@@ -93,13 +101,13 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *'))) && 'clawsweeper-apply' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'clawsweeper-intake' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *')) && 'clawsweeper-audit' || 'clawsweeper-review' }}
+  group: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review' }}
   cancel-in-progress: false
 
 jobs:
   plan:
     name: Plan review candidates
-    if: ${{ !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *') || github.event.schedule == '7 */6 * * *'))) }}
+    if: ${{ !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -116,21 +124,48 @@ jobs:
       planned_capacity: ${{ steps.select.outputs.planned_capacity }}
       planned_shards: ${{ steps.select.outputs.planned_shards }}
       shard_count: ${{ steps.mode.outputs.shard_count }}
+      target_checkout_dir: ${{ steps.target.outputs.target_checkout_dir }}
+      target_repo: ${{ steps.target.outputs.target_repo }}
+      target_repo_name: ${{ steps.target.outputs.target_repo_name }}
+      target_repo_owner: ${{ steps.target.outputs.target_repo_owner }}
     steps:
       - uses: actions/checkout@v4
         with:
           path: clawsweeper
           fetch-depth: 0
 
-      - name: Create OpenClaw read token
-        id: openclaw-read-token
+      - name: Resolve target repository
+        id: target
+        run: |
+          target_repo="${{ github.event.inputs.target_repo || '' }}"
+          if [ -z "$target_repo" ]; then
+            case "${{ github.event.schedule || '' }}" in
+              "2/5 * * * *"|"22 * * * *"|"8,23,38,53 * * * *"|"12 */6 * * *")
+                target_repo="openclaw/clawhub"
+                ;;
+              *)
+                target_repo="openclaw/openclaw"
+                ;;
+            esac
+          fi
+          target_owner="${target_repo%%/*}"
+          target_name="${target_repo#*/}"
+          {
+            echo "target_repo=$target_repo"
+            echo "target_repo_owner=$target_owner"
+            echo "target_repo_name=$target_name"
+            echo "target_checkout_dir=$target_name"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create target read token
+        id: target-read-token
         if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ env.CLAWSWEEPER_APP_ID }}
           private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: openclaw
-          repositories: openclaw
+          owner: ${{ steps.target.outputs.target_repo_owner }}
+          repositories: ${{ steps.target.outputs.target_repo_name }}
 
       - uses: actions/setup-node@v4
         with:
@@ -174,7 +209,7 @@ jobs:
 
       - id: mode
         run: |
-          hot_intake="${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *')) && 'true' || 'false' }}"
+          hot_intake="${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'true' || 'false' }}"
           if [ "$hot_intake" = "true" ]; then
             batch_size="1"
             shard_count="20"
@@ -202,7 +237,8 @@ jobs:
           ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
           ITEM_NUMBERS: ${{ github.event.inputs.item_numbers || '' }}
           MAX_PAGES: ${{ steps.mode.outputs.max_pages }}
-          GH_TOKEN: ${{ steps.openclaw-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
           set -euo pipefail
           item_arg=()
@@ -217,6 +253,7 @@ jobs:
             hot_intake_arg=(--hot-intake)
           fi
           pnpm run --silent plan -- \
+            --target-repo "$TARGET_REPO" \
             --batch-size "$BATCH_SIZE" \
             --max-pages "$MAX_PAGES" \
             --shard-count "$SHARD_COUNT" \
@@ -242,16 +279,17 @@ jobs:
         working-directory: clawsweeper
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          pnpm run reconcile
-          pnpm run dashboard
+          pnpm run reconcile -- --target-repo "$TARGET_REPO"
+          pnpm run dashboard -- --target-repo "$TARGET_REPO"
           pnpm run status -- \
             --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
             --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          git add README.md items closed
+          git add README.md records
           if git diff --cached --quiet; then
             echo "No status changes"
           else
@@ -289,15 +327,15 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Create OpenClaw read token
-        id: openclaw-read-token
+      - name: Create target read token
+        id: target-read-token
         if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ env.CLAWSWEEPER_APP_ID }}
           private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: openclaw
-          repositories: openclaw
+          owner: ${{ needs.plan.outputs.target_repo_owner }}
+          repositories: ${{ needs.plan.outputs.target_repo_name }}
 
       - uses: actions/setup-node@v4
         with:
@@ -328,36 +366,39 @@ jobs:
 
       - uses: actions/cache@v4
         with:
-          path: openclaw-cache.git
-          key: openclaw-git-${{ runner.os }}-${{ github.run_id }}
+          path: ${{ needs.plan.outputs.target_checkout_dir }}-cache.git
+          key: ${{ needs.plan.outputs.target_repo_name }}-git-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
-            openclaw-git-${{ runner.os }}-
+            ${{ needs.plan.outputs.target_repo_name }}-git-${{ runner.os }}-
 
-      - name: Check out OpenClaw
+      - name: Check out target repository
         run: |
           set -euo pipefail
-          url="https://github.com/openclaw/openclaw.git"
-          if [ -d openclaw-cache.git ]; then
-            git -C openclaw-cache.git remote set-url origin "$url"
-            git -C openclaw-cache.git fetch --prune --depth=1 origin main
+          url="https://github.com/${{ needs.plan.outputs.target_repo }}.git"
+          cache_dir="${{ needs.plan.outputs.target_checkout_dir }}-cache.git"
+          checkout_dir="${{ needs.plan.outputs.target_checkout_dir }}"
+          if [ -d "$cache_dir" ]; then
+            git -C "$cache_dir" remote set-url origin "$url"
+            git -C "$cache_dir" fetch --prune --depth=1 origin main
           else
-            git clone --bare --depth=1 "$url" openclaw-cache.git
+            git clone --bare --depth=1 "$url" "$cache_dir"
           fi
-          git clone --reference-if-able openclaw-cache.git --dissociate --depth=1 --branch main --single-branch "$url" openclaw
-          git -C openclaw rev-parse --short HEAD
+          git clone --reference-if-able "$cache_dir" --dissociate --depth=1 --branch main --single-branch "$url" "$checkout_dir"
+          git -C "$checkout_dir" rev-parse --short HEAD
 
       - name: Review shard
         working-directory: clawsweeper
         env:
           CLAWSWEEPER_APPLY_CLOSURES: ${{ needs.plan.outputs.apply_closures }}
-          GH_TOKEN: ${{ steps.openclaw-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
         run: |
           hot_intake_arg=()
           if [ "${{ needs.plan.outputs.hot_intake }}" = "true" ]; then
             hot_intake_arg=(--hot-intake)
           fi
           pnpm run review -- \
-            --openclaw-dir ../openclaw \
+            --target-repo "${{ needs.plan.outputs.target_repo }}" \
+            --target-dir "../${{ needs.plan.outputs.target_checkout_dir }}" \
             --artifact-dir ../review-artifacts/shard-${{ matrix.shard }} \
             --batch-size ${{ needs.plan.outputs.batch_size }} \
             --max-pages ${{ needs.plan.outputs.max_pages }} \
@@ -383,7 +424,7 @@ jobs:
   publish:
     name: Publish review artifacts
     needs: [plan, review]
-    if: ${{ always() && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *') || github.event.schedule == '7 */6 * * *'))) }}
+    if: ${{ always() && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -394,15 +435,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create OpenClaw write token
-        id: openclaw-write-token
+      - name: Create target write token
+        id: target-write-token
         if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ env.CLAWSWEEPER_APP_ID }}
           private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: openclaw
-          repositories: openclaw
+          owner: ${{ needs.plan.outputs.target_repo_owner }}
+          repositories: ${{ needs.plan.outputs.target_repo_name }}
           permission-issues: write
           permission-pull-requests: write
 
@@ -430,8 +471,9 @@ jobs:
       - name: Apply review artifacts
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
-          pnpm run apply-artifacts -- --artifact-dir artifacts
+          pnpm run apply-artifacts -- --target-repo "$TARGET_REPO" --artifact-dir artifacts
           pnpm run status -- \
             --state "${{ needs.plan.outputs.hot_intake == 'true' && 'Hot intake publish complete' || 'Review publish complete' }}" \
             --detail "Merged ${{ needs.plan.outputs.hot_intake == 'true' && 'hot intake' || 'review' }} artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards." \
@@ -440,12 +482,13 @@ jobs:
       - name: Commit dashboard and review files
         env:
           GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
-          pnpm run reconcile
-          pnpm run dashboard
+          pnpm run reconcile -- --target-repo "$TARGET_REPO"
+          pnpm run dashboard -- --target-repo "$TARGET_REPO"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md items closed
+          git add README.md records
           if git diff --cached --quiet; then
             echo "No review changes"
           else
@@ -464,17 +507,32 @@ jobs:
         if: ${{ success() }}
         timeout-minutes: 15
         env:
-          GH_TOKEN: ${{ steps.openclaw-write-token.outputs.token }}
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           set -euo pipefail
           test -n "$GH_TOKEN"
-          item_numbers="$(find artifacts -type f -name '*.md' -exec basename {} .md \; | sort -n | paste -sd, -)"
+          item_numbers="$(node - <<'NODE'
+          const fs = require("node:fs");
+          const path = require("node:path");
+          const files = fs.existsSync("artifacts")
+            ? fs.readdirSync("artifacts", { recursive: true }).filter((name) => String(name).endsWith(".md"))
+            : [];
+          const numbers = files
+            .map((name) => String(path.basename(String(name), ".md")).match(/(\d+)$/)?.[1])
+            .filter(Boolean)
+            .map(Number)
+            .sort((left, right) => left - right);
+          process.stdout.write(numbers.join(","));
+          NODE
+          )"
           if [ -z "$item_numbers" ]; then
             echo "No review artifacts to sync comments for."
             exit 0
           fi
           git pull --rebase
           pnpm run apply-decisions -- \
+            --target-repo "$TARGET_REPO" \
             --item-numbers "$item_numbers" \
             --sync-comments-only \
             --apply-kind all \
@@ -488,7 +546,7 @@ jobs:
             --state "Review comments checked" \
             --detail "Checked selected durable Codex review comments and synced missing or stale comments. Synced: $synced_count. Item numbers: $item_numbers." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          git add README.md items closed apply-report.json
+          git add README.md records apply-report.json
           if git diff --cached --quiet; then
             echo "No review comment metadata changes"
           else
@@ -512,13 +570,14 @@ jobs:
             --ref main \
             -f apply_closures=false \
             -f apply_existing=false \
+            -f target_repo="${{ needs.plan.outputs.target_repo }}" \
             -f batch_size="${{ needs.plan.outputs.batch_size }}" \
             -f shard_count="${{ needs.plan.outputs.shard_count }}" \
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
 
   audit-dashboard:
     name: Audit dashboard
-    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && github.event.schedule == '7 */6 * * *') }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
@@ -529,15 +588,37 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create OpenClaw read token
-        id: openclaw-read-token
+      - name: Resolve target repository
+        id: target
+        run: |
+          target_repo="${{ github.event.inputs.target_repo || '' }}"
+          if [ -z "$target_repo" ]; then
+            case "${{ github.event.schedule || '' }}" in
+              "12 */6 * * *")
+                target_repo="openclaw/clawhub"
+                ;;
+              *)
+                target_repo="openclaw/openclaw"
+                ;;
+            esac
+          fi
+          target_owner="${target_repo%%/*}"
+          target_name="${target_repo#*/}"
+          {
+            echo "target_repo=$target_repo"
+            echo "target_repo_owner=$target_owner"
+            echo "target_repo_name=$target_name"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create target read token
+        id: target-read-token
         if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ env.CLAWSWEEPER_APP_ID }}
           private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: openclaw
-          repositories: openclaw
+          owner: ${{ steps.target.outputs.target_repo_owner }}
+          repositories: ${{ steps.target.outputs.target_repo_name }}
 
       - uses: actions/setup-node@v4
         with:
@@ -553,14 +634,15 @@ jobs:
 
       - name: Refresh Audit Health
         env:
-          GH_TOKEN: ${{ steps.openclaw-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
           set -euo pipefail
           git pull --rebase
-          pnpm run audit -- --max-pages 250 --sample-limit 25 --output /tmp/clawsweeper-audit.json --update-dashboard
+          pnpm run audit -- --target-repo "$TARGET_REPO" --max-pages 250 --sample-limit 25 --output /tmp/clawsweeper-audit.json --update-dashboard
           pnpm run status -- \
             --state "Audit finished" \
-            --detail "Refreshed README Audit Health from a full live OpenClaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan." \
+            --detail "Refreshed README Audit Health from a full live $TARGET_REPO state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Commit Audit Health
@@ -584,7 +666,7 @@ jobs:
 
   apply-existing:
     name: Apply close proposals
-    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *')) }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     env:
@@ -595,15 +677,37 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create OpenClaw write token
-        id: openclaw-write-token
+      - name: Resolve target repository
+        id: target
+        run: |
+          target_repo="${{ github.event.inputs.target_repo || '' }}"
+          if [ -z "$target_repo" ]; then
+            case "${{ github.event.schedule || '' }}" in
+              "8,23,38,53 * * * *")
+                target_repo="openclaw/clawhub"
+                ;;
+              *)
+                target_repo="openclaw/openclaw"
+                ;;
+            esac
+          fi
+          target_owner="${target_repo%%/*}"
+          target_name="${target_repo#*/}"
+          {
+            echo "target_repo=$target_repo"
+            echo "target_repo_owner=$target_owner"
+            echo "target_repo_name=$target_name"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create target write token
+        id: target-write-token
         if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ env.CLAWSWEEPER_APP_ID }}
           private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: openclaw
-          repositories: openclaw
+          owner: ${{ steps.target.outputs.target_repo_owner }}
+          repositories: ${{ steps.target.outputs.target_repo_name }}
           permission-issues: write
           permission-pull-requests: write
 
@@ -624,7 +728,8 @@ jobs:
 
       - name: Apply unchanged proposed decisions with checkpoints
         env:
-          GH_TOKEN: ${{ steps.openclaw-write-token.outputs.token }}
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
           CLAWSWEEPER_PUBLISH_THROTTLE_STATUS: "true"
           CLAWSWEEPER_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           CLAWSWEEPER_THROTTLE_STATUS_MIN_WAIT_MS: "60000"
@@ -676,10 +781,10 @@ jobs:
             unsupported_conflict=0
             while IFS= read -r path; do
               case "$path" in
-                items/*.md)
+                records/*/items/*.md)
                   git rm -f -- "$path" || true
                   ;;
-                closed/*.md | README.md | apply-report.json)
+                records/*/closed/*.md | README.md | apply-report.json)
                   git add -- "$path"
                   ;;
                 *)
@@ -721,7 +826,7 @@ jobs:
             fi
           }
           proposed_item_numbers() {
-            APPLY_KIND="$apply_kind" node <<'NODE'
+            APPLY_KIND="$apply_kind" TARGET_REPO="$TARGET_REPO" node <<'NODE'
           const fs = require("node:fs");
           const path = require("node:path");
 
@@ -736,29 +841,40 @@ jobs:
           ]);
 
           const applyKind = process.env.APPLY_KIND || "all";
+          const targetRepo = process.env.TARGET_REPO || "openclaw/openclaw";
+          const targetSlug = targetRepo.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+          const itemsDir = path.join("records", targetSlug, "items");
           const frontMatterValue = (markdown, key) =>
             markdown.match(new RegExp(`^${key}:\\s*(.+)$`, "m"))?.[1]?.trim().replace(/^"|"$/g, "");
+          const repoFor = (markdown, name) => frontMatterValue(markdown, "repository") || (/^\d+\.md$/.test(name) ? "openclaw/openclaw" : "");
+          const numberFor = (name) => Number(name.match(/(\d+)\.md$/)?.[1] || 0);
+          const allowedForTarget = (type, reason) => {
+            if (targetRepo === "openclaw/clawhub") return type === "pull_request" && reason === "implemented_on_main";
+            if (type === "pull_request" && reason === "stale_insufficient_info") return false;
+            return allowedReasons.has(reason);
+          };
 
-          const numbers = fs
-            .readdirSync("items")
-            .filter((name) => /^\d+\.md$/.test(name))
+          const names = fs.existsSync(itemsDir) ? fs.readdirSync(itemsDir) : [];
+          const numbers = names
+            .filter((name) => /(?:^|[a-z0-9-]-)\d+\.md$/.test(name))
             .flatMap((name) => {
-              const markdown = fs.readFileSync(path.join("items", name), "utf8");
+              const markdown = fs.readFileSync(path.join(itemsDir, name), "utf8");
+              if (repoFor(markdown, name) !== targetRepo) return [];
               const type = frontMatterValue(markdown, "type");
               if (applyKind !== "all" && type && type !== applyKind) return [];
               if (frontMatterValue(markdown, "decision") !== "close") return [];
               if (frontMatterValue(markdown, "confidence") !== "high") return [];
               if (frontMatterValue(markdown, "action_taken") !== "proposed_close") return [];
-              if (!allowedReasons.has(frontMatterValue(markdown, "close_reason"))) return [];
-              return [Number(name.replace(".md", ""))];
+              if (!allowedForTarget(type, frontMatterValue(markdown, "close_reason"))) return [];
+              return [numberFor(name)];
             })
             .sort((left, right) => left - right);
 
           process.stdout.write(numbers.join(","));
           NODE
           }
-          pnpm run reconcile
-          pnpm run dashboard
+          pnpm run reconcile -- --target-repo "$TARGET_REPO"
+          pnpm run dashboard -- --target-repo "$TARGET_REPO"
           if [ "$sync_comments_only" != "true" ] && [ -z "$item_numbers" ]; then
             item_numbers="$(proposed_item_numbers)"
             if [ -n "$item_numbers" ]; then
@@ -794,7 +910,7 @@ jobs:
             --state "Apply in progress" \
             --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by ${comment_sync_min_age_days} day(s); checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          if ! publish_changes "chore: mark sweep apply in progress" README.md items closed; then
+          if ! publish_changes "chore: mark sweep apply in progress" README.md records; then
             echo "Best-effort apply start status update failed"
             git restore README.md || true
           fi
@@ -805,6 +921,7 @@ jobs:
             echo "::group::Apply checkpoint $checkpoint"
             echo "Syncing durable review comments only for item numbers: ${item_numbers:-all}"
             pnpm run apply-decisions -- \
+              --target-repo "$TARGET_REPO" \
               --limit 0 \
               --min-age-days "$min_age_days" \
               --apply-kind "$apply_kind" \
@@ -817,8 +934,8 @@ jobs:
             cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
             result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
             synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)' "$checkpoint")"
-            publish_changes "chore: sync sweep review comments checkpoint $checkpoint" items closed apply-report.json
-            pnpm run dashboard
+            publish_changes "chore: sync sweep review comments checkpoint $checkpoint" records apply-report.json
+            pnpm run dashboard -- --target-repo "$TARGET_REPO"
             pnpm run status -- \
               --state "Apply comments synced" \
               --detail "Comment-only apply checkpoint $checkpoint finished. Synced durable review comments: $synced_count. Result records: $result_count. Item numbers: ${item_numbers:-all}." \
@@ -839,6 +956,7 @@ jobs:
             echo "::group::Apply checkpoint $checkpoint"
             echo "Applying up to $chunk_limit fresh closes; $closed_total/$limit already closed in this run"
             CLAWSWEEPER_APPLY_CHECKPOINT="$checkpoint" pnpm run apply-decisions -- \
+              --target-repo "$TARGET_REPO" \
               --limit "$chunk_limit" \
               --min-age-days "$min_age_days" \
               --apply-kind "$apply_kind" \
@@ -855,8 +973,8 @@ jobs:
             result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
             closed_total=$((closed_total + closed_in_chunk))
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
-            publish_changes "chore: apply sweep decisions checkpoint $checkpoint" items closed apply-report.json
-            pnpm run dashboard
+            publish_changes "chore: apply sweep decisions checkpoint $checkpoint" records apply-report.json
+            pnpm run dashboard -- --target-repo "$TARGET_REPO"
             pnpm run status -- \
               --state "Apply in progress" \
               --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count, including durable review comment syncs." \
@@ -872,7 +990,7 @@ jobs:
               break
             fi
           done
-          pnpm run dashboard
+          pnpm run dashboard -- --target-repo "$TARGET_REPO"
           pnpm run status -- \
             --state "Apply finished" \
             --detail "Apply/comment-sync run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
@@ -887,6 +1005,7 @@ jobs:
             echo "APPLY_PROGRESS_EVERY=$progress_every"
             echo "APPLY_CHECKPOINT_SIZE=$checkpoint_size"
             echo "APPLY_ITEM_NUMBERS=$item_numbers"
+            echo "APPLY_TARGET_REPO=$TARGET_REPO"
             echo "APPLY_SYNC_COMMENTS_ONLY=$sync_comments_only"
             echo "APPLY_COMMENT_SYNC_MIN_AGE_DAYS=$comment_sync_min_age_days"
           } >> "$GITHUB_ENV"
@@ -899,7 +1018,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md items closed apply-report.json
+          git add README.md records apply-report.json
           if git diff --cached --quiet; then
             echo "No remaining apply changes"
           else
@@ -936,6 +1055,7 @@ jobs:
           gh workflow run sweep.yml \
             --ref main \
             -f apply_existing=true \
+            -f target_repo="$APPLY_TARGET_REPO" \
             -f apply_limit="$APPLY_LIMIT" \
             -f apply_min_age_days="$APPLY_MIN_AGE_DAYS" \
             -f apply_kind="$APPLY_KIND" \

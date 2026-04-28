@@ -1,6 +1,6 @@
 # AGENTS.MD
 
-ClawSweeper is the conservative maintenance bot for `openclaw/openclaw`.
+ClawSweeper is the conservative maintenance bot for OpenClaw repositories.
 Keep changes narrow, evidence-backed, and automation-safe.
 
 ## Structure
@@ -9,18 +9,20 @@ Keep changes narrow, evidence-backed, and automation-safe.
 - Tests: `test/clawsweeper.test.mjs`.
 - Workflow: `.github/workflows/sweep.yml`.
 - Dashboard and explainer: `README.md`.
-- Open/reviewed records: flat `items/<number>.md`.
-- Archived records: flat `closed/<number>.md`.
+- Open/reviewed records: `records/<repo-slug>/items/<number>.md`.
+- Archived records: `records/<repo-slug>/closed/<number>.md`.
 - Scratch/generated output: `.artifacts/`, `artifacts/`, `apply-report.json`.
 
-Preserve the flat `items/` and `closed/` report layout. Do not split reports into
-issue/PR subtrees.
+Preserve one flat `items/` and `closed/` report layout per repository slug. Do
+not split reports into issue/PR subtrees.
 
 ## Operating Model
 
 - Review lane is proposal-only. It never closes GitHub items.
 - Apply lane mutates GitHub by syncing the durable Codex review comment and then
   closing only unchanged, high-confidence proposals.
+- Repository-specific rules live in `src/repository-profiles.ts`; ClawHub apply
+  may close only PRs that are certainly implemented on `main`.
 - Worker concurrency is shard-level: each shard processes its selected items
   sequentially. Maximum parallel Codex sessions equals `shard_count`, not
   `batch_size * shard_count`.

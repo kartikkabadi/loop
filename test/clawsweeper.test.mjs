@@ -35,6 +35,7 @@ import {
 
 function item(overrides = {}) {
   return {
+    repo: "openclaw/openclaw",
     number: 123,
     kind: "issue",
     title: "Sample item",
@@ -80,6 +81,7 @@ const git = {
 
 function reportFrontMatter(overrides = {}) {
   const values = {
+    repository: "openclaw/openclaw",
     type: "issue",
     decision: "keep_open",
     close_reason: "none",
@@ -97,6 +99,7 @@ ${Object.entries(values)
 
 function auditRecord(number, overrides = {}) {
   return {
+    repo: "openclaw/openclaw",
     number,
     location: "items",
     path: `items/${number}.md`,
@@ -160,6 +163,40 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /Closing this as implemented/);
   assert.match(action.closeComment, /Codex Review notes: model gpt-5\.5, reasoning high;/);
+});
+
+test("ClawHub policy only allows implemented-on-main PR close proposals", () => {
+  const implementedPr = validateCloseDecision(
+    item({
+      repo: "openclaw/clawhub",
+      kind: "pull_request",
+      url: "https://github.com/openclaw/clawhub/pull/123",
+    }),
+    closeDecision(),
+  );
+  assert.equal(implementedPr.ok, true);
+
+  const implementedIssue = validateCloseDecision(
+    item({
+      repo: "openclaw/clawhub",
+      kind: "issue",
+      url: "https://github.com/openclaw/clawhub/issues/123",
+    }),
+    closeDecision(),
+  );
+  assert.equal(implementedIssue.ok, false);
+  assert.equal(implementedIssue.actionTaken, "skipped_invalid_decision");
+
+  const nonImplementedPr = validateCloseDecision(
+    item({
+      repo: "openclaw/clawhub",
+      kind: "pull_request",
+      url: "https://github.com/openclaw/clawhub/pull/123",
+    }),
+    closeDecision({ closeReason: "cannot_reproduce" }),
+  );
+  assert.equal(nonImplementedPr.ok, false);
+  assert.equal(nonImplementedPr.actionTaken, "skipped_invalid_decision");
 });
 
 test("review policy changes force fresh complete reports back into planning", () => {
