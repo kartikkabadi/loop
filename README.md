@@ -38,7 +38,7 @@ Updated: Apr 28, 2026, 02:00 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=52291.
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 1, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029765300](https://github.com/openclaw/clawsweeper/actions/runs/25029765300)
 <!-- clawsweeper-status:end -->
 
@@ -47,11 +47,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029765300](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3583 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3461 |
-| Open items total | 7044 |
-| Reviewed files | 6632 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3460 |
+| Open items total | 7043 |
+| Reviewed files | 6631 |
 | Unreviewed open items | 412 |
-| Archived closed files | 13199 |
+| Archived closed files | 13200 |
 
 ### Review Outcomes
 
@@ -59,11 +59,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029765300](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3408 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3221 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6629 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
-| Closed by Codex apply | 10225 |
+| Fresh reviewed PRs in the last 7 days | 3220 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6628 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10226 |
 | Failed or stale reviews | 3 |
 
 ### Cadence
@@ -72,8 +72,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029765300](https://
 | --- | ---: |
 | Hourly cadence coverage | 8/627 current (619 due, 1.3%) |
 | Hourly hot item cadence (<7d) | 8/627 current (619 due, 1.3%) |
-| Daily cadence coverage | 1471/4149 current (2678 due, 35.5%) |
-| Daily PR cadence | 918/2870 current (1952 due, 32%) |
+| Daily cadence coverage | 1470/4148 current (2678 due, 35.4%) |
+| Daily PR cadence | 917/2869 current (1952 due, 32%) |
 | Daily new issue cadence (<30d) | 553/1279 current (726 due, 43.2%) |
 | Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
 | Due now by cadence | 3709 |
@@ -110,18 +110,19 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 01:24 UTC. Latest comment sync: Apr 28, 2026, 01:29 UTC.
+Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 02:00 UTC. Latest comment sync: Apr 28, 2026, 01:29 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 20 | 1 | 19 | 0 | 8 | 19 | 1 |
-| Last 24 hours | 2459 | 180 | 2279 | 1 | 103 | 1519 | 12 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| Last hour | 20 | 1 | 19 | 0 | 9 | 19 | 1 |
+| Last 24 hours | 2459 | 180 | 2279 | 1 | 101 | 1519 | 12 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#52291](https://github.com/openclaw/openclaw/pull/52291) | fix(ui): make ui:build work on Windows | already implemented on main | Apr 28, 2026, 02:00 UTC | [closed/52291.md](https://github.com/openclaw/clawsweeper/blob/main/closed/52291.md) |
 | [#72468](https://github.com/openclaw/openclaw/pull/72468) | fix(plugins): hard-fail invalid hook and memory capability registrations | already implemented on main | Apr 28, 2026, 01:24 UTC | [closed/72468.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72468.md) |
 | [#62482](https://github.com/openclaw/openclaw/pull/62482) | fix: refresh subsystem file loggers across daily log rollovers [AI-assisted] | already implemented on main | Apr 28, 2026, 01:24 UTC | [closed/62482.md](https://github.com/openclaw/clawsweeper/blob/main/closed/62482.md) |
 | [#43141](https://github.com/openclaw/openclaw/issues/43141) | Queued cron-lane runs are not abort-aware and can time out before model invocation | already implemented on main | Apr 28, 2026, 01:24 UTC | [closed/43141.md](https://github.com/openclaw/clawsweeper/blob/main/closed/43141.md) |
@@ -131,7 +132,6 @@ Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 01:24 UTC. L
 | [#41736](https://github.com/openclaw/openclaw/issues/41736) | [DX] Simplify and unify agent configuration hierarchy to avoid silent override bugs | duplicate or superseded | Apr 28, 2026, 01:23 UTC | [closed/41736.md](https://github.com/openclaw/clawsweeper/blob/main/closed/41736.md) |
 | [#41537](https://github.com/openclaw/openclaw/issues/41537) | openclaw doctor / configure reverts channels.telegram.dmPolicy from allowlist to pairing | already implemented on main | Apr 28, 2026, 01:23 UTC | [closed/41537.md](https://github.com/openclaw/clawsweeper/blob/main/closed/41537.md) |
 | [#72519](https://github.com/openclaw/openclaw/pull/72519) | Cost estimate omits cache read tokens (cacheRead cost not applied... | duplicate or superseded | Apr 27, 2026, 10:50 UTC | [closed/72519.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72519.md) |
-| [#72517](https://github.com/openclaw/openclaw/pull/72517) | Add session cost to /status output | not actionable | Apr 27, 2026, 10:50 UTC | [closed/72517.md](https://github.com/openclaw/clawsweeper/blob/main/closed/72517.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
@@ -141,7 +141,6 @@ Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 01:24 UTC. L
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
 | [#68341](https://github.com/openclaw/openclaw/pull/68341) | fix: remediate critical vulnerabilities and logic regressions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68341.md) | complete | Apr 28, 2026, 01:26 UTC |
-| [#52291](https://github.com/openclaw/openclaw/pull/52291) | fix(ui): make ui:build work on Windows | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/items/52291.md) | complete | Apr 28, 2026, 01:25 UTC |
 | [#39350](https://github.com/openclaw/openclaw/pull/39350) | fix(gateway): suppress NO_REPLY lead fragment in chat final message | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/39350.md) | complete | Apr 28, 2026, 01:25 UTC |
 | [#36630](https://github.com/openclaw/openclaw/pull/36630) | fix(signal): complete bidirectional quote-reply support | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/36630.md) | complete | Apr 28, 2026, 01:25 UTC |
 | [#71839](https://github.com/openclaw/openclaw/pull/71839) | fix(telegram): avoid routine reply quoting | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/71839.md) | complete | Apr 28, 2026, 01:25 UTC |
@@ -150,6 +149,7 @@ Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 01:24 UTC. L
 | [#70814](https://github.com/openclaw/openclaw/pull/70814) | fix(cron): accept numeric telegram announce chat ids (Fixes #70758) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70814.md) | complete | Apr 28, 2026, 01:25 UTC |
 | [#69292](https://github.com/openclaw/openclaw/pull/69292) | fix(doctor): skip plugins.entries for installed plugins already auto-loaded via manifest channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69292.md) | complete | Apr 28, 2026, 01:25 UTC |
 | [#70074](https://github.com/openclaw/openclaw/pull/70074) | chore(deps): bump github.com/apple/swift-testing from 0.99.0 to 6.3.1 in /Swabble | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/70074.md) | complete | Apr 28, 2026, 01:25 UTC |
+| [#49751](https://github.com/openclaw/openclaw/pull/49751) | fix: clear WS handshake timer early, increase timeouts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/49751.md) | complete | Apr 28, 2026, 01:25 UTC |
 
 </details>
 
