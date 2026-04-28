@@ -40,9 +40,9 @@ Last dashboard update: Apr 28, 2026, 03:53 UTC
 
 Updated: Apr 28, 2026, 03:53 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/11. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 11. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25032929242](https://github.com/openclaw/clawsweeper/actions/runs/25032929242)
 <!-- clawsweeper-status:end -->
 
@@ -51,11 +51,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25032929242](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3577 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3467 |
-| Open items total | 7044 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3576 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3465 |
+| Open items total | 7041 |
 | Reviewed files | 6599 |
-| Unreviewed open items | 445 |
+| Unreviewed open items | 442 |
 | Archived closed files | 13232 |
 
 ### Review Outcomes
@@ -81,7 +81,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25032929242](https://
 | Daily PR cadence | 900/2861 current (1961 due, 31.5%) |
 | Daily new issue cadence (<30d) | 517/1278 current (761 due, 40.5%) |
 | Weekly older issue cadence | 1857/1857 current (0 due, 100%) |
-| Due now by cadence | 3743 |
+| Due now by cadence | 3740 |
 
 ### Audit Health
 
@@ -119,7 +119,7 @@ Latest review: Apr 28, 2026, 03:43 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 187 | 7 | 180 | 0 | 11 | 11 | 0 |
+| Last 15 minutes | 185 | 7 | 178 | 0 | 11 | 11 | 0 |
 | Last hour | 519 | 11 | 508 | 1 | 11 | 29 | 1 |
 | Last 24 hours | 2372 | 140 | 2232 | 2 | 93 | 1108 | 15 |
 
