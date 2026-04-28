@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:48 UTC
 
 State: Event review applied
 
-Reviewed event item #72510, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038119214](https://github.com/openclaw/clawsweeper/actions/runs/25038119214)
+Reviewed event item #73347, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038138103](https://github.com/openclaw/clawsweeper/actions/runs/25038138103)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,8 +54,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038119214](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3567 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3460 |
 | Open items total | 7027 |
-| Reviewed files | 6563 |
-| Unreviewed open items | 464 |
+| Reviewed files | 6564 |
+| Unreviewed open items | 463 |
 | Archived closed files | 13303 |
 
 ### Review Outcomes
@@ -64,9 +64,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038119214](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3363 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3174 |
+| Fresh reviewed PRs in the last 7 days | 3175 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6537 |
+| Fresh verified reviews in the last 7 days | 6538 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Closed by Codex apply | 10254 |
 | Failed or stale reviews | 26 |
@@ -75,8 +75,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038119214](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 62/619 current (557 due, 10%) |
-| Hourly hot item cadence (<7d) | 62/619 current (557 due, 10%) |
+| Hourly cadence coverage | 62/620 current (558 due, 10%) |
+| Hourly hot item cadence (<7d) | 62/620 current (558 due, 10%) |
 | Daily cadence coverage | 1306/4097 current (2791 due, 31.9%) |
 | Daily PR cadence | 873/2833 current (1960 due, 30.8%) |
 | Daily new issue cadence (<30d) | 433/1264 current (831 due, 34.3%) |
@@ -121,7 +121,7 @@ Latest review: Apr 28, 2026, 06:47 UTC. Latest close: Apr 28, 2026, 06:45 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 13 | 1 | 12 | 0 | 1 | 11 | 2 |
 | Last hour | 565 | 10 | 555 | 2 | 3 | 810 | 7 |
-| Last 24 hours | 2215 | 103 | 2112 | 11 | 64 | 1029 | 14 |
+| Last 24 hours | 2216 | 103 | 2113 | 11 | 64 | 1029 | 14 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:47 UTC. Latest close: Apr 28, 2026, 06:45 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72510](https://github.com/openclaw/openclaw/pull/72510) | fix(group-chat): wire multi-agent bot-targeting signals end-to-end (#56692) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72510.md) | complete | Apr 28, 2026, 06:47 UTC |
+| [#73347](https://github.com/openclaw/openclaw/pull/73347) | fix(wizard): use setup token for onboarding health check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73347.md) | complete | Apr 28, 2026, 06:47 UTC |
 | [#73346](https://github.com/openclaw/openclaw/pull/73346) | fix(agents/anthropic-transport): suppress default beta headers on custom Anthropic-compatible providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73346.md) | complete | Apr 28, 2026, 06:44 UTC |
 | [#73039](https://github.com/openclaw/openclaw/pull/73039) | perf(tools): memoize media + web tool factories in createOpenClawTools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73039.md) | complete | Apr 28, 2026, 06:44 UTC |
 | [#73343](https://github.com/openclaw/openclaw/issues/73343) | [Feature]: Expose channel user identity (SenderId) to skill/tool execution environment | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73343.md) | complete | Apr 28, 2026, 06:42 UTC |
