@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "number": 73441,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 73441,
+    "action": "closed",
+    "reason": "already implemented on main"
+  }
+]
