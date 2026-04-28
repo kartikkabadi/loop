@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:05 UTC
 
 State: Event review applied
 
-Reviewed event item #73320, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036624166](https://github.com/openclaw/clawsweeper/actions/runs/25036624166)
+Reviewed event item #73046, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036696186](https://github.com/openclaw/clawsweeper/actions/runs/25036696186)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -119,9 +119,9 @@ Latest review: Apr 28, 2026, 06:03 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 27 | 1 | 26 | 0 | 0 | 305 | 3 |
-| Last hour | 509 | 15 | 494 | 0 | 0 | 345 | 3 |
-| Last 24 hours | 2194 | 101 | 2093 | 1 | 72 | 1073 | 16 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 0 | 298 | 2 |
+| Last hour | 509 | 15 | 494 | 0 | 0 | 345 | 2 |
+| Last 24 hours | 2194 | 101 | 2093 | 1 | 72 | 1073 | 15 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:03 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73320](https://github.com/openclaw/openclaw/pull/73320) | Limit internal task completion payloads | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73320.md) | complete | Apr 28, 2026, 06:03 UTC |
+| [#73046](https://github.com/openclaw/openclaw/pull/73046) | fix(discord): make always-on auto replies more robust | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73046.md) | complete | Apr 28, 2026, 06:03 UTC |
 | [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 06:01 UTC |
 | [#73319](https://github.com/openclaw/openclaw/issues/73319) | openclaw channels list only shows auth providers, not configured chat channel accounts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73319.md) | complete | Apr 28, 2026, 06:01 UTC |
 | [#72115](https://github.com/openclaw/openclaw/pull/72115) | [EV-002B] Skill Workshop parity: path, TOCTOU, prompt-budget hardening | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72115.md) | complete | Apr 28, 2026, 06:01 UTC |
