@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 07:10 UTC
 
 Updated: Apr 28, 2026, 07:10 UTC
 
-State: Apply in progress
+State: Event review applied
 
-Starting apply/comment-sync run for up to 18 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=41985,45751,46406,46472,47654,47933,53643,54786,59998,60226,65385,66076,67221,68259,68876,72899,72974,72975.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039048295](https://github.com/openclaw/clawsweeper/actions/runs/25039048295)
+Reviewed event item #73346, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038943298](https://github.com/openclaw/clawsweeper/actions/runs/25038943298)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -51,12 +51,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039048295](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3567 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3566 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3461 |
-| Open items total | 7028 |
-| Reviewed files | 6579 |
+| Open items total | 7027 |
+| Reviewed files | 6577 |
 | Unreviewed open items | 450 |
-| Archived closed files | 13310 |
+| Archived closed files | 13312 |
 
 ### Review Outcomes
 
@@ -64,9 +64,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039048295](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3369 |
 | Proposed issue closes | 10 (0.3% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3188 |
+| Fresh reviewed PRs in the last 7 days | 3186 |
 | Proposed PR closes | 8 (0.3% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6557 |
+| Fresh verified reviews in the last 7 days | 6555 |
 | Proposed closes awaiting apply | 18 (0.3% of fresh reviews) |
 | Closed by Codex apply | 10257 |
 | Failed or stale reviews | 22 |
@@ -75,8 +75,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039048295](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 110/635 current (525 due, 17.3%) |
-| Hourly hot item cadence (<7d) | 110/635 current (525 due, 17.3%) |
+| Hourly cadence coverage | 108/633 current (525 due, 17.1%) |
+| Hourly hot item cadence (<7d) | 108/633 current (525 due, 17.1%) |
 | Daily cadence coverage | 1486/4096 current (2610 due, 36.3%) |
 | Daily PR cadence | 1062/2833 current (1771 due, 37.5%) |
 | Daily new issue cadence (<30d) | 424/1263 current (839 due, 33.6%) |
@@ -113,13 +113,13 @@ Targeted review input: _none_
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 07:04 UTC. Latest close: Apr 28, 2026, 07:06 UTC. Latest comment sync: Apr 28, 2026, 07:08 UTC.
+Latest review: Apr 28, 2026, 07:09 UTC. Latest close: Apr 28, 2026, 07:06 UTC. Latest comment sync: Apr 28, 2026, 07:08 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 3 | 11 | 0 | 2 | 356 | 3 |
-| Last hour | 745 | 29 | 716 | 2 | 6 | 836 | 9 |
-| Last 24 hours | 2423 | 120 | 2303 | 10 | 67 | 1311 | 18 |
+| Last 15 minutes | 14 | 3 | 11 | 0 | 2 | 355 | 4 |
+| Last hour | 724 | 29 | 695 | 2 | 6 | 835 | 10 |
+| Last 24 hours | 2423 | 120 | 2303 | 10 | 67 | 1310 | 18 |
 
 ### Recently Closed
 
@@ -143,9 +143,9 @@ Latest review: Apr 28, 2026, 07:04 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73346](https://github.com/openclaw/openclaw/pull/73346) | fix(agents/anthropic-transport): suppress default beta headers on custom Anthropic-compatible providers | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73346.md) | complete | Apr 28, 2026, 07:09 UTC |
 | [#73347](https://github.com/openclaw/openclaw/pull/73347) | fix(wizard): use setup token for onboarding health check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73347.md) | complete | Apr 28, 2026, 07:01 UTC |
 | [#69297](https://github.com/openclaw/openclaw/pull/69297) | fix(whatsapp): Add group admin privacy controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69297.md) | complete | Apr 28, 2026, 07:00 UTC |
-| [#73346](https://github.com/openclaw/openclaw/pull/73346) | fix(agents/anthropic-transport): suppress default beta headers on custom Anthropic-compatible providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73346.md) | complete | Apr 28, 2026, 06:59 UTC |
 | [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 06:59 UTC |
 | [#73351](https://github.com/openclaw/openclaw/pull/73351) | fix(cli-runner): transfer bundle-MCP cleanup to live session lifecycle (#73244) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73351.md) | complete | Apr 28, 2026, 06:59 UTC |
 | [#73349](https://github.com/openclaw/openclaw/pull/73349) | feat(exec): inject OPENCLAW_SESSION_KEY and OPENCLAW_AGENT_ID env vars for child processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73349.md) | complete | Apr 28, 2026, 06:59 UTC |
