@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:31 UTC
 
 State: Event review applied
 
-Reviewed event item #72987, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037555641](https://github.com/openclaw/clawsweeper/actions/runs/25037555641)
+Reviewed event item #73337, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037531813](https://github.com/openclaw/clawsweeper/actions/runs/25037531813)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -77,11 +77,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037555641](https://
 | --- | ---: |
 | Hourly cadence coverage | 66/616 current (550 due, 10.7%) |
 | Hourly hot item cadence (<7d) | 66/616 current (550 due, 10.7%) |
-| Daily cadence coverage | 1316/4104 current (2788 due, 32.1%) |
-| Daily PR cadence | 881/2838 current (1957 due, 31%) |
-| Daily new issue cadence (<30d) | 435/1266 current (831 due, 34.4%) |
+| Daily cadence coverage | 1315/4104 current (2789 due, 32%) |
+| Daily PR cadence | 881/2839 current (1958 due, 31%) |
+| Daily new issue cadence (<30d) | 434/1265 current (831 due, 34.3%) |
 | Weekly older issue cadence | 1857/1857 current (0 due, 100%) |
-| Due now by cadence | 3804 |
+| Due now by cadence | 3805 |
 
 ### Audit Health
 
@@ -119,9 +119,9 @@ Latest review: Apr 28, 2026, 06:30 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 21 | 3 | 18 | 0 | 2 | 16 | 1 |
-| Last hour | 1031 | 23 | 1008 | 1 | 2 | 364 | 4 |
-| Last 24 hours | 2207 | 102 | 2105 | 4 | 74 | 595 | 11 |
+| Last 15 minutes | 20 | 3 | 17 | 0 | 2 | 15 | 2 |
+| Last hour | 1031 | 23 | 1008 | 1 | 2 | 363 | 5 |
+| Last 24 hours | 2207 | 102 | 2105 | 4 | 74 | 594 | 12 |
 
 ### Recently Closed
 
@@ -145,9 +145,8 @@ Latest review: Apr 28, 2026, 06:30 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72987](https://github.com/openclaw/openclaw/pull/72987) | docs(compaction): document reserveTokensFloor default (20,000 tokens) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72987.md) | complete | Apr 28, 2026, 06:30 UTC |
+| [#73337](https://github.com/openclaw/openclaw/issues/73337) | [Bug] macOS Companion App: Canvas A2UI push returns ok but renders completely blank (regression of #7143) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73337.md) | complete | Apr 28, 2026, 06:29 UTC |
 | [#73309](https://github.com/openclaw/openclaw/pull/73309) | fix(logging): redact secrets at subsystem console sink (#73284) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73309.md) | complete | Apr 28, 2026, 06:27 UTC |
-| [#72383](https://github.com/openclaw/openclaw/pull/72383) | [plugin sdk] Add workflow action, outbound, scheduler, and retry host seams | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72383.md) | complete | Apr 28, 2026, 06:27 UTC |
 | [#73336](https://github.com/openclaw/openclaw/pull/73336) | docs(concepts): Fix links to Gateway protocol and related documents | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73336.md) | complete | Apr 28, 2026, 06:27 UTC |
 | [#69297](https://github.com/openclaw/openclaw/pull/69297) | fix(whatsapp): Add group admin privacy controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69297.md) | complete | Apr 28, 2026, 06:25 UTC |
 | [#72773](https://github.com/openclaw/openclaw/pull/72773) | Add cron changed plugin hook | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72773.md) | complete | Apr 28, 2026, 06:25 UTC |
@@ -155,6 +154,7 @@ Latest review: Apr 28, 2026, 06:30 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 | [#73282](https://github.com/openclaw/openclaw/pull/73282) | fix(gateway): accept heartbeat/cron/webhook channel hints in agent params (#73237) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73282.md) | complete | Apr 28, 2026, 06:24 UTC |
 | [#73334](https://github.com/openclaw/openclaw/pull/73334) | refactor(feishu): unify document link parsing | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73334.md) | complete | Apr 28, 2026, 06:23 UTC |
 | [#55652](https://github.com/openclaw/openclaw/pull/55652) | fix(discord): skip channels claimed by other instances | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/55652.md) | complete | Apr 28, 2026, 06:22 UTC |
+| [#73312](https://github.com/openclaw/openclaw/pull/73312) | feat(matrix): expose MessagePresentation metadata in Matrix events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73312.md) | complete | Apr 28, 2026, 06:19 UTC |
 
 </details>
 
