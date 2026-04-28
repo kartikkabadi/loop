@@ -6,7 +6,10 @@ import {
   auditFromSnapshot,
   auditHasStrictFailures,
   auditHealthSection,
+  closeReasonApplyAgeSkipReason,
+  closeReasonsArg,
   closingPullRequestReferenceTarget,
+  codexEnv,
   formatRecentClosedRows,
   ghRetryKind,
   isCodexReviewCommentBody,
@@ -343,6 +346,48 @@ test("duplicate or superseded closes are allowed with evidence and comment", () 
   assert.match(action.closeComment, /duplicate or superseded/);
 });
 
+test("apply close reason filters support exact fast-close lanes", () => {
+  assert.equal(closeReasonsArg("all"), null);
+  assert.deepEqual([...closeReasonsArg("implemented_on_main, duplicate_or_superseded")].sort(), [
+    "duplicate_or_superseded",
+    "implemented_on_main",
+  ]);
+  assert.throws(() => closeReasonsArg("stale"), /Invalid apply close reason: stale/);
+});
+
+test("stale insufficient-info closes require older items while implemented closes can be immediate", () => {
+  const now = Date.parse("2026-04-28T12:00:00Z");
+  const freshItem = item({ createdAt: "2026-04-28T11:59:00Z" });
+
+  assert.equal(
+    closeReasonApplyAgeSkipReason(freshItem, "implemented_on_main", {
+      minAgeMs: 0,
+      minAgeDescription: "0 minutes",
+      staleMinAgeDays: 30,
+      now,
+    }),
+    null,
+  );
+  assert.equal(
+    closeReasonApplyAgeSkipReason(freshItem, "duplicate_or_superseded", {
+      minAgeMs: 5 * 60 * 1000,
+      minAgeDescription: "5 minutes",
+      staleMinAgeDays: 30,
+      now,
+    }),
+    "created less than or equal to 5 minutes ago",
+  );
+  assert.equal(
+    closeReasonApplyAgeSkipReason(freshItem, "stale_insufficient_info", {
+      minAgeMs: 0,
+      minAgeDescription: "0 minutes",
+      staleMinAgeDays: 30,
+      now,
+    }),
+    "stale_insufficient_info requires item older than 30 days",
+  );
+});
+
 test("open PRs that close an issue block apply closes", () => {
   assert.equal(
     openClosingPullRequestApplyReason([
@@ -576,6 +621,32 @@ test("review parser strips environment access caveats from risks", () => {
     }),
   );
   assert.deepEqual(parsed.risks, ["A real product uncertainty remains."]);
+});
+
+test("codex subprocess env strips GitHub and App credentials", () => {
+  const originalEnv = { ...process.env };
+  try {
+    process.env.GH_TOKEN = "gh";
+    process.env.GITHUB_TOKEN = "github";
+    process.env.OPENCLAW_GH_TOKEN = "openclaw";
+    process.env.CLAWSWEEPER_APP_ID = "123";
+    process.env.CLAWSWEEPER_APP_PRIVATE_KEY = "private";
+    process.env.OPENAI_API_KEY = "openai";
+    process.env.CODEX_API_KEY = "codex";
+
+    const env = codexEnv();
+
+    assert.equal(env.GH_TOKEN, undefined);
+    assert.equal(env.GITHUB_TOKEN, undefined);
+    assert.equal(env.OPENCLAW_GH_TOKEN, undefined);
+    assert.equal(env.CLAWSWEEPER_APP_ID, undefined);
+    assert.equal(env.CLAWSWEEPER_APP_PRIVATE_KEY, undefined);
+    assert.equal(env.OPENAI_API_KEY, undefined);
+    assert.equal(env.CODEX_API_KEY, undefined);
+    assert.equal(env.GIT_OPTIONAL_LOCKS, "0");
+  } finally {
+    process.env = originalEnv;
+  }
 });
 
 test("related title search terms keep issue-specific words", () => {

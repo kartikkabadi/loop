@@ -1,8 +1,10 @@
 name: ClawSweeper
 
-run-name: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'Audit ClawSweeper dashboard' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
+run-name: ${{ github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'Audit ClawSweeper dashboard' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
 
 on:
+  repository_dispatch:
+    types: [clawsweeper_item]
   workflow_dispatch:
     inputs:
       target_repo:
@@ -25,10 +27,22 @@ on:
         description: "Minimum item age in days before apply-existing can close it"
         required: false
         default: "0"
+      apply_min_age_minutes:
+        description: "Optional minute-level minimum item age before apply-existing can close it"
+        required: false
+        default: ""
       apply_kind:
         description: "Item kind to close in apply-existing mode: issue, pull_request, or all"
         required: false
         default: "all"
+      apply_close_reasons:
+        description: "Close reasons enabled in apply-existing mode, comma-separated or all"
+        required: false
+        default: "all"
+      apply_stale_min_age_days:
+        description: "Minimum item age in days before stale-insufficient-info issue closes"
+        required: false
+        default: "30"
       apply_item_numbers:
         description: "Optional comma-separated item numbers to sync/apply first"
         required: false
@@ -77,6 +91,18 @@ on:
         description: "Run the low-latency intake lane for new/active issues and PRs"
         required: false
         default: "false"
+      apply_after_review:
+        description: "After publishing selected review artifacts, immediately apply safe close proposals for those items"
+        required: false
+        default: "false"
+      apply_after_review_close_reasons:
+        description: "Close reasons enabled for immediate post-review apply"
+        required: false
+        default: "implemented_on_main,duplicate_or_superseded"
+      apply_after_review_min_age_minutes:
+        description: "Minute-level item age floor for immediate post-review apply"
+        required: false
+        default: "0"
       audit_dashboard:
         description: "Refresh README Audit Health without running review or apply work"
         required: false
@@ -101,18 +127,202 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review' }}
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw')) }}
+  cancel-in-progress: ${{ github.event_name == 'repository_dispatch' }}
 
 jobs:
+  event-review-apply:
+    name: Review, comment, and apply event item
+    if: ${{ github.event_name == 'repository_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve event payload
+        id: target
+        run: |
+          set -euo pipefail
+          target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
+          item_number="${{ github.event.client_payload.item_number || '' }}"
+          item_kind="${{ github.event.client_payload.item_kind || '' }}"
+          if ! printf '%s' "$target_repo" | grep -Eq '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'; then
+            echo "Invalid target_repo: $target_repo" >&2
+            exit 1
+          fi
+          if ! printf '%s' "$item_number" | grep -Eq '^[0-9]+$'; then
+            echo "Invalid item_number: $item_number" >&2
+            exit 1
+          fi
+          case "$item_kind" in
+            ""|"issue"|"pull_request") ;;
+            *)
+              echo "Invalid item_kind: $item_kind" >&2
+              exit 1
+              ;;
+          esac
+          target_owner="${target_repo%%/*}"
+          target_name="${target_repo#*/}"
+          {
+            echo "target_repo=$target_repo"
+            echo "target_repo_owner=$target_owner"
+            echo "target_repo_name=$target_name"
+            echo "target_checkout_dir=$target_name"
+            echo "item_number=$item_number"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create target read token
+        id: target-read-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ steps.target.outputs.target_repo_owner }}
+          repositories: ${{ steps.target.outputs.target_repo_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Build ClawSweeper
+        run: pnpm run build
+
+      - name: Install Codex
+        run: npm install -g @openai/codex@0.125.0 --prefer-offline
+
+      - name: Authenticate Codex
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
+        run: |
+          test -n "$OPENAI_API_KEY"
+          test -n "$CODEX_API_KEY"
+          printenv OPENAI_API_KEY | codex login --with-api-key
+          codex login status
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.target.outputs.target_checkout_dir }}-cache.git
+          key: ${{ steps.target.outputs.target_repo_name }}-event-git-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ steps.target.outputs.target_repo_name }}-event-git-${{ runner.os }}-
+            ${{ steps.target.outputs.target_repo_name }}-git-${{ runner.os }}-
+
+      - name: Check out target repository
+        run: |
+          set -euo pipefail
+          url="https://github.com/${{ steps.target.outputs.target_repo }}.git"
+          cache_dir="${{ steps.target.outputs.target_checkout_dir }}-cache.git"
+          checkout_dir="${{ steps.target.outputs.target_checkout_dir }}"
+          if [ -d "$cache_dir" ]; then
+            git -C "$cache_dir" remote set-url origin "$url"
+            git -C "$cache_dir" fetch --prune --depth=1 origin main
+          else
+            git clone --bare --depth=1 "$url" "$cache_dir"
+          fi
+          git clone --reference-if-able "$cache_dir" --dissociate --depth=1 --branch main --single-branch "$url" "$checkout_dir"
+          git -C "$checkout_dir" rev-parse --short HEAD
+
+      - name: Review exact event item
+        env:
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          pnpm run review -- \
+            --target-repo "${{ steps.target.outputs.target_repo }}" \
+            --target-dir "${{ steps.target.outputs.target_checkout_dir }}" \
+            --artifact-dir artifacts/event \
+            --batch-size 1 \
+            --max-pages 1 \
+            --codex-model gpt-5.5 \
+            --codex-reasoning-effort high \
+            --codex-sandbox danger-full-access \
+            --codex-service-tier fast \
+            --codex-timeout-ms 600000 \
+            --item-numbers "${{ steps.target.outputs.item_number }}" \
+            --readonly-openclaw \
+            --shard-index 0 \
+            --shard-count 1
+
+      - name: Create target write token
+        id: target-write-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ steps.target.outputs.target_repo_owner }}
+          repositories: ${{ steps.target.outputs.target_repo_name }}
+          permission-issues: write
+          permission-pull-requests: write
+
+      - name: Publish event result and apply safe close
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          REPO_TOKEN: ${{ github.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+          CLOSE_REASONS: ${{ github.event.client_payload.apply_close_reasons || 'implemented_on_main,duplicate_or_superseded' }}
+          MIN_AGE_MINUTES: ${{ github.event.client_payload.apply_min_age_minutes || '0' }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          test -n "$REPO_TOKEN"
+          git remote set-url origin "https://x-access-token:${REPO_TOKEN}@github.com/${{ github.repository }}.git"
+          git pull --rebase
+          pnpm run apply-artifacts -- --target-repo "$TARGET_REPO" --artifact-dir artifacts/event
+          pnpm run apply-decisions -- \
+            --target-repo "$TARGET_REPO" \
+            --item-numbers "$ITEM_NUMBER" \
+            --apply-kind all \
+            --apply-close-reasons "$CLOSE_REASONS" \
+            --stale-min-age-days 30 \
+            --limit 1 \
+            --processed-limit 20 \
+            --min-age-minutes "$MIN_AGE_MINUTES" \
+            --close-delay-ms 1000 \
+            --comment-sync-min-age-days 0 \
+            --progress-every 1
+          synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)')"
+          closed_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="closed").length)')"
+          pnpm run status -- \
+            --state "Event review applied" \
+            --detail "Reviewed event item #$ITEM_NUMBER, synced durable comment(s): $synced_count, closed safe proposal(s): $closed_count. Close reasons enabled: $CLOSE_REASONS." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md records apply-report.json
+          if git diff --cached --quiet; then
+            echo "No event result changes"
+          else
+            git commit -m "chore: apply event sweep result"
+            for _attempt in 1 2 3; do
+              if git push; then
+                exit 0
+              fi
+              git fetch origin main
+              git rebase -X theirs origin/main
+            done
+            git push
+          fi
+
   plan:
     name: Plan review candidates
-    if: ${{ !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
+    if: ${{ github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
-      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     outputs:
       apply_closures: ${{ steps.mode.outputs.apply_closures }}
       batch_size: ${{ steps.mode.outputs.batch_size }}
@@ -137,7 +347,7 @@ jobs:
       - name: Resolve target repository
         id: target
         run: |
-          target_repo="${{ github.event.inputs.target_repo || '' }}"
+          target_repo="${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || '' }}"
           if [ -z "$target_repo" ]; then
             case "${{ github.event.schedule || '' }}" in
               "2/5 * * * *"|"22 * * * *"|"8,23,38,53 * * * *"|"12 */6 * * *")
@@ -159,11 +369,10 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
-          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
 
@@ -210,7 +419,12 @@ jobs:
       - id: mode
         run: |
           hot_intake="${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'true' || 'false' }}"
-          if [ "$hot_intake" = "true" ]; then
+          exact_item="${{ github.event.client_payload.item_number || github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}"
+          if [ "$hot_intake" = "true" ] && [ -n "$exact_item" ]; then
+            batch_size="1"
+            shard_count="1"
+            max_pages="1"
+          elif [ "$hot_intake" = "true" ]; then
             batch_size="1"
             shard_count="20"
             max_pages="2"
@@ -235,7 +449,7 @@ jobs:
           BATCH_SIZE: ${{ steps.mode.outputs.batch_size }}
           HOT_INTAKE: ${{ steps.mode.outputs.hot_intake }}
           ITEM_NUMBER: ${{ github.event.inputs.item_number || '' }}
-          ITEM_NUMBERS: ${{ github.event.inputs.item_numbers || '' }}
+          ITEM_NUMBERS: ${{ github.event.inputs.item_numbers || github.event.client_payload.item_number || '' }}
           MAX_PAGES: ${{ steps.mode.outputs.max_pages }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
           GH_TOKEN: ${{ steps.target-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
@@ -309,9 +523,6 @@ jobs:
     needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 75
-    env:
-      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
-      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     permissions:
       contents: read
       issues: read
@@ -329,11 +540,10 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
-          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ needs.plan.outputs.target_repo_owner }}
           repositories: ${{ needs.plan.outputs.target_repo_name }}
 
@@ -424,12 +634,9 @@ jobs:
   publish:
     name: Publish review artifacts
     needs: [plan, review]
-    if: ${{ always() && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
+    if: ${{ always() && github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    env:
-      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
-      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -437,11 +644,10 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
-        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
-          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ needs.plan.outputs.target_repo_owner }}
           repositories: ${{ needs.plan.outputs.target_repo_name }}
           permission-issues: write
@@ -561,6 +767,71 @@ jobs:
             git push
           fi
 
+      - name: Apply selected safe close proposals
+        if: ${{ success() && github.event.inputs.apply_after_review == 'true' }}
+        timeout-minutes: 30
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          item_numbers="$(node - <<'NODE'
+          const fs = require("node:fs");
+          const path = require("node:path");
+          const files = fs.existsSync("artifacts")
+            ? fs.readdirSync("artifacts", { recursive: true }).filter((name) => String(name).endsWith(".md"))
+            : [];
+          const numbers = files
+            .map((name) => String(path.basename(String(name), ".md")).match(/(\d+)$/)?.[1])
+            .filter(Boolean)
+            .map(Number)
+            .sort((left, right) => left - right);
+          process.stdout.write(numbers.join(","));
+          NODE
+          )"
+          if [ -z "$item_numbers" ]; then
+            echo "No review artifacts to apply."
+            exit 0
+          fi
+          item_count="$(node -e 'const value = process.argv[1] || ""; console.log(value ? value.split(",").length : 0)' "$item_numbers")"
+          close_reasons="${{ github.event.inputs.apply_after_review_close_reasons || 'implemented_on_main,duplicate_or_superseded' }}"
+          min_age_minutes="${{ github.event.inputs.apply_after_review_min_age_minutes || '0' }}"
+          git pull --rebase
+          pnpm run apply-decisions -- \
+            --target-repo "$TARGET_REPO" \
+            --item-numbers "$item_numbers" \
+            --apply-kind all \
+            --apply-close-reasons "$close_reasons" \
+            --stale-min-age-days 30 \
+            --limit "$item_count" \
+            --processed-limit "$((item_count * 10))" \
+            --min-age-minutes "$min_age_minutes" \
+            --close-delay-ms 1000 \
+            --comment-sync-min-age-days 0 \
+            --progress-every 1
+          closed_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="closed").length)')"
+          pnpm run status -- \
+            --state "Immediate apply checked" \
+            --detail "Checked selected safe close proposals right after review publish. Closed: $closed_count/$item_count. Close reasons enabled: $close_reasons. Item numbers: $item_numbers." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md records apply-report.json
+          if git diff --cached --quiet; then
+            echo "No immediate apply changes"
+          else
+            git commit -m "chore: apply selected sweep decisions"
+            for _attempt in 1 2 3; do
+              if git push; then
+                exit 0
+              fi
+              git fetch origin main
+              git rebase -X theirs origin/main
+            done
+            git push
+          fi
+
       - name: Continue sweep
         if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && needs.plan.outputs.apply_closures != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
         env:
@@ -580,9 +851,6 @@ jobs:
     if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
-      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -591,7 +859,7 @@ jobs:
       - name: Resolve target repository
         id: target
         run: |
-          target_repo="${{ github.event.inputs.target_repo || '' }}"
+          target_repo="${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || '' }}"
           if [ -z "$target_repo" ]; then
             case "${{ github.event.schedule || '' }}" in
               "12 */6 * * *")
@@ -612,11 +880,10 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
-          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
 
@@ -669,9 +936,6 @@ jobs:
     if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
-    env:
-      CLAWSWEEPER_APP_ID: ${{ secrets.CLAWSWEEPER_APP_ID }}
-      CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -701,11 +965,10 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
-        if: ${{ env.CLAWSWEEPER_APP_ID != '' && env.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ env.CLAWSWEEPER_APP_ID }}
-          private-key: ${{ env.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
           permission-issues: write
@@ -738,7 +1001,10 @@ jobs:
           test -n "$GH_TOKEN"
           limit="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_limit || '20' }}"
           min_age_days="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_min_age_days || '0' }}"
+          min_age_minutes="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_min_age_minutes || '' }}"
           apply_kind="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_kind || 'all' }}"
+          apply_close_reasons="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_reasons || 'all' }}"
+          stale_min_age_days="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_stale_min_age_days || '30' }}"
           close_delay_ms="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_delay_ms || '2000' }}"
           progress_every="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_progress_every || '10' }}"
           checkpoint_size="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_checkpoint_size || '50' }}"
@@ -748,6 +1014,10 @@ jobs:
           sync_comments_arg=()
           if [ "$sync_comments_only" = "true" ]; then
             sync_comments_arg=(--sync-comments-only)
+          fi
+          min_age_minutes_arg=()
+          if [ -n "$min_age_minutes" ]; then
+            min_age_minutes_arg=(--min-age-minutes "$min_age_minutes")
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -826,7 +1096,7 @@ jobs:
             fi
           }
           proposed_item_numbers() {
-            APPLY_KIND="$apply_kind" TARGET_REPO="$TARGET_REPO" node <<'NODE'
+            APPLY_KIND="$apply_kind" APPLY_CLOSE_REASONS="$apply_close_reasons" STALE_MIN_AGE_DAYS="$stale_min_age_days" MIN_AGE_DAYS="$min_age_days" MIN_AGE_MINUTES="$min_age_minutes" TARGET_REPO="$TARGET_REPO" node <<'NODE'
           const fs = require("node:fs");
           const path = require("node:path");
 
@@ -842,6 +1112,19 @@ jobs:
 
           const applyKind = process.env.APPLY_KIND || "all";
           const targetRepo = process.env.TARGET_REPO || "openclaw/openclaw";
+          const applyCloseReasonsRaw = process.env.APPLY_CLOSE_REASONS || "all";
+          const applyCloseReasons =
+            applyCloseReasonsRaw === "all"
+              ? null
+              : new Set(applyCloseReasonsRaw.split(",").map((reason) => reason.trim()).filter(Boolean));
+          const staleMinAgeDays = Number(process.env.STALE_MIN_AGE_DAYS || "30");
+          const minAgeMinutes = process.env.MIN_AGE_MINUTES ? Number(process.env.MIN_AGE_MINUTES) : null;
+          const minAgeMs = minAgeMinutes === null ? Number(process.env.MIN_AGE_DAYS || "0") * 24 * 60 * 60 * 1000 : minAgeMinutes * 60 * 1000;
+          const olderThan = (iso, milliseconds) => {
+            if (milliseconds <= 0) return true;
+            const parsed = Date.parse(iso || "");
+            return Number.isFinite(parsed) && Date.now() - parsed > milliseconds;
+          };
           const targetSlug = targetRepo.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
           const itemsDir = path.join("records", targetSlug, "items");
           const frontMatterValue = (markdown, key) =>
@@ -865,7 +1148,11 @@ jobs:
               if (frontMatterValue(markdown, "decision") !== "close") return [];
               if (frontMatterValue(markdown, "confidence") !== "high") return [];
               if (frontMatterValue(markdown, "action_taken") !== "proposed_close") return [];
-              if (!allowedForTarget(type, frontMatterValue(markdown, "close_reason"))) return [];
+              const reason = frontMatterValue(markdown, "close_reason");
+              if (!allowedForTarget(type, reason)) return [];
+              if (applyCloseReasons && !applyCloseReasons.has(reason)) return [];
+              if (reason === "stale_insufficient_info" && !olderThan(frontMatterValue(markdown, "item_created_at"), staleMinAgeDays * 24 * 60 * 60 * 1000)) return [];
+              if (!olderThan(frontMatterValue(markdown, "item_created_at"), minAgeMs)) return [];
               return [numberFor(name)];
             })
             .sort((left, right) => left - right);
@@ -895,7 +1182,10 @@ jobs:
               echo "APPLY_CLOSED_TOTAL=0"
               echo "APPLY_LIMIT=1"
               echo "APPLY_MIN_AGE_DAYS=$min_age_days"
+              echo "APPLY_MIN_AGE_MINUTES=$min_age_minutes"
               echo "APPLY_KIND=$apply_kind"
+              echo "APPLY_CLOSE_REASONS=$apply_close_reasons"
+              echo "APPLY_STALE_MIN_AGE_DAYS=$stale_min_age_days"
               echo "APPLY_CLOSE_DELAY_MS=$close_delay_ms"
               echo "APPLY_PROGRESS_EVERY=$progress_every"
               echo "APPLY_CHECKPOINT_SIZE=$checkpoint_size"
@@ -908,7 +1198,7 @@ jobs:
           fi
           pnpm run status -- \
             --state "Apply in progress" \
-            --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by ${comment_sync_min_age_days} day(s); checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
+            --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Close reasons: $apply_close_reasons. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by ${comment_sync_min_age_days} day(s); checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           if ! publish_changes "chore: mark sweep apply in progress" README.md records; then
             echo "Best-effort apply start status update failed"
@@ -924,7 +1214,10 @@ jobs:
               --target-repo "$TARGET_REPO" \
               --limit 0 \
               --min-age-days "$min_age_days" \
+              "${min_age_minutes_arg[@]}" \
               --apply-kind "$apply_kind" \
+              --apply-close-reasons "$apply_close_reasons" \
+              --stale-min-age-days "$stale_min_age_days" \
               --close-delay-ms "$close_delay_ms" \
               --progress-every "$progress_every" \
               --processed-limit "$((checkpoint_size * 20))" \
@@ -959,7 +1252,10 @@ jobs:
               --target-repo "$TARGET_REPO" \
               --limit "$chunk_limit" \
               --min-age-days "$min_age_days" \
+              "${min_age_minutes_arg[@]}" \
               --apply-kind "$apply_kind" \
+              --apply-close-reasons "$apply_close_reasons" \
+              --stale-min-age-days "$stale_min_age_days" \
               --close-delay-ms "$close_delay_ms" \
               --progress-every "$progress_every" \
               --processed-limit "$((chunk_limit * 20))" \
@@ -1000,7 +1296,10 @@ jobs:
             echo "APPLY_CLOSED_TOTAL=$closed_total"
             echo "APPLY_LIMIT=$limit"
             echo "APPLY_MIN_AGE_DAYS=$min_age_days"
+            echo "APPLY_MIN_AGE_MINUTES=$min_age_minutes"
             echo "APPLY_KIND=$apply_kind"
+            echo "APPLY_CLOSE_REASONS=$apply_close_reasons"
+            echo "APPLY_STALE_MIN_AGE_DAYS=$stale_min_age_days"
             echo "APPLY_CLOSE_DELAY_MS=$close_delay_ms"
             echo "APPLY_PROGRESS_EVERY=$progress_every"
             echo "APPLY_CHECKPOINT_SIZE=$checkpoint_size"
@@ -1058,7 +1357,10 @@ jobs:
             -f target_repo="$APPLY_TARGET_REPO" \
             -f apply_limit="$APPLY_LIMIT" \
             -f apply_min_age_days="$APPLY_MIN_AGE_DAYS" \
+            -f apply_min_age_minutes="$APPLY_MIN_AGE_MINUTES" \
             -f apply_kind="$APPLY_KIND" \
+            -f apply_close_reasons="$APPLY_CLOSE_REASONS" \
+            -f apply_stale_min_age_days="$APPLY_STALE_MIN_AGE_DAYS" \
             -f apply_item_numbers="$APPLY_ITEM_NUMBERS" \
             -f apply_sync_comments_only="$APPLY_SYNC_COMMENTS_ONLY" \
             -f apply_comment_sync_min_age_days="$APPLY_COMMENT_SYNC_MIN_AGE_DAYS" \

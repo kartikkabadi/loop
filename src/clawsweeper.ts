@@ -381,6 +381,7 @@ const RECENT_ISSUE_DAYS = 30;
 const HOURLY_REVIEW_MS = 60 * 60 * 1000;
 const DAILY_REVIEW_DAYS = 1;
 const WEEKLY_REVIEW_DAYS = 7;
+const STALE_INSUFFICIENT_INFO_MIN_AGE_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RECENT_MISSING_OPEN_MS = DAY_MS;
 const STATUS_START = "<!-- clawsweeper-status:start -->";
@@ -525,6 +526,12 @@ function numberArg(value: string | boolean | string[] | undefined, fallback: num
   if (typeof value !== "string") return fallback;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function optionalNumberArg(value: string | boolean | string[] | undefined): number | undefined {
+  if (typeof value !== "string" || value.trim() === "") return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
 }
 
 function boolArg(value: string | boolean | string[] | undefined): boolean {
@@ -987,16 +994,71 @@ export function shouldPlanItem(item: Pick<Item, "authorAssociation" | "labels">)
 }
 
 function isOlderThanDays(isoTimestamp: string, days: number, now = Date.now()): boolean {
-  if (days <= 0) return true;
+  return isOlderThanMs(isoTimestamp, days * DAY_MS, now);
+}
+
+function isOlderThanMs(isoTimestamp: string, milliseconds: number, now = Date.now()): boolean {
+  if (milliseconds <= 0) return true;
   const timestamp = Date.parse(isoTimestamp);
   if (!Number.isFinite(timestamp)) return false;
-  return now - timestamp > days * 24 * 60 * 60 * 1000;
+  return now - timestamp > milliseconds;
 }
 
 function applyKindArg(value: string | boolean | string[] | undefined): ApplyKind {
   const kind = stringArg(value, "issue");
   if (kind === "issue" || kind === "pull_request" || kind === "all") return kind;
   throw new Error(`Invalid apply kind: ${kind}`);
+}
+
+export function closeReasonsArg(
+  value: string | boolean | string[] | undefined,
+): Set<CloseReason> | null {
+  const raw = stringArg(value, "all").trim();
+  if (!raw || raw === "all") return null;
+  const reasons = new Set<CloseReason>();
+  for (const part of raw.split(",")) {
+    const reason = part.trim();
+    if (!reason) continue;
+    if (!ALLOWED_REASONS.has(reason as CloseReason)) {
+      throw new Error(`Invalid apply close reason: ${reason}`);
+    }
+    reasons.add(reason as CloseReason);
+  }
+  return reasons.size ? reasons : null;
+}
+
+function closeReasonFilterText(filter: ReadonlySet<CloseReason> | null): string {
+  return filter ? [...filter].sort().join(",") : "all";
+}
+
+function closeReasonEnabled(
+  closeReason: CloseReason,
+  filter: ReadonlySet<CloseReason> | null,
+): boolean {
+  return filter === null || filter.has(closeReason);
+}
+
+export function closeReasonApplyAgeSkipReason(
+  item: Pick<Item, "createdAt">,
+  closeReason: CloseReason,
+  options: {
+    minAgeMs: number;
+    minAgeDescription: string;
+    staleMinAgeDays: number;
+    now?: number;
+  },
+): string | null {
+  const now = options.now ?? Date.now();
+  if (
+    closeReason === "stale_insufficient_info" &&
+    !isOlderThanDays(item.createdAt, options.staleMinAgeDays, now)
+  ) {
+    return `stale_insufficient_info requires item older than ${options.staleMinAgeDays} days`;
+  }
+  if (!isOlderThanMs(item.createdAt, options.minAgeMs, now)) {
+    return `created less than or equal to ${options.minAgeDescription} ago`;
+  }
+  return null;
 }
 
 function compactSlice<T>(items: T[], limit: number): unknown[] {
@@ -2335,11 +2397,13 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
   };
 }
 
-function codexEnv(): NodeJS.ProcessEnv {
+export function codexEnv(): NodeJS.ProcessEnv {
   const env = { ...process.env };
   delete env.GH_TOKEN;
   delete env.GITHUB_TOKEN;
   delete env.OPENCLAW_GH_TOKEN;
+  delete env.CLAWSWEEPER_APP_ID;
+  delete env.CLAWSWEEPER_APP_PRIVATE_KEY;
   delete env.OPENAI_API_KEY;
   delete env.CODEX_API_KEY;
   env.GIT_OPTIONAL_LOCKS = "0";
@@ -3493,7 +3557,13 @@ function applyDecisionsCommand(args: Args): void {
   const limit = numberArg(args.limit, 20);
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const minAgeDays = numberArg(args.min_age_days, 0);
+  const minAgeMinutes = optionalNumberArg(args.min_age_minutes);
+  const minAgeMs = minAgeMinutes === undefined ? minAgeDays * DAY_MS : minAgeMinutes * 60 * 1000;
+  const minAgeDescription =
+    minAgeMinutes === undefined ? `${minAgeDays} days` : `${minAgeMinutes} minutes`;
   const applyKind = applyKindArg(args.apply_kind);
+  const applyCloseReasons = closeReasonsArg(args.apply_close_reasons);
+  const staleMinAgeDays = numberArg(args.stale_min_age_days, STALE_INSUFFICIENT_INFO_MIN_AGE_DAYS);
   const closeDelayMs = numberArg(args.close_delay_ms, 2_000);
   const progressEvery = Math.max(1, numberArg(args.progress_every, 10));
   const skipDashboard = boolArg(args.skip_dashboard);
@@ -3548,7 +3618,7 @@ function applyDecisionsCommand(args: Args): void {
     .sort((left, right) => left.priority - right.priority || left.number - right.number)
     .map((entry) => entry.name);
   logProgress(
-    `starting apply: files=${files.length} apply_kind=${applyKind} min_age_days=${minAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} comment_sync_min_age_days=${commentSyncMinAgeDays} max_runtime_ms=${maxRuntimeMs} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+    `starting apply: files=${files.length} apply_kind=${applyKind} min_age=${minAgeDescription} apply_close_reasons=${closeReasonFilterText(applyCloseReasons)} stale_min_age_days=${staleMinAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} comment_sync_min_age_days=${commentSyncMinAgeDays} max_runtime_ms=${maxRuntimeMs} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
   );
   for (const file of files) {
     if (runtimeBudgetExceeded(startedAtMs, maxRuntimeMs, Date.now())) {
@@ -3824,6 +3894,17 @@ function applyDecisionsCommand(args: Args): void {
       if (processedCount >= processedLimit) break;
       continue;
     }
+    if (!closeReasonEnabled(closeReason, applyCloseReasons)) {
+      results.push({
+        number,
+        action: "kept_open",
+        reason: `close reason ${closeReason} is not enabled for this apply run`,
+      });
+      processedCount += 1;
+      maybeLogProgress(`skipped #${number}: close reason ${closeReason} not enabled`);
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
     const currentReportValidation = validateCloseDecision(
       { repo, kind: item.kind, labels: item.labels },
       reportDecision(markdown, closeReason),
@@ -3833,14 +3914,19 @@ function applyDecisionsCommand(args: Args): void {
         break;
       continue;
     }
-    if (!isOlderThanDays(item.createdAt, minAgeDays)) {
+    const ageSkipReason = closeReasonApplyAgeSkipReason(item, closeReason, {
+      minAgeMs,
+      minAgeDescription,
+      staleMinAgeDays,
+    });
+    if (ageSkipReason) {
       results.push({
         number,
         action: "kept_open",
-        reason: `created less than or equal to ${minAgeDays} days ago`,
+        reason: ageSkipReason,
       });
       processedCount += 1;
-      maybeLogProgress(`skipped #${number}: too new`);
+      maybeLogProgress(`skipped #${number}: ${ageSkipReason}`);
       if (processedCount >= processedLimit) break;
       continue;
     }

@@ -169,6 +169,10 @@ attention; older quiet items fall back to a slower cadence.
 
 - hot/new and recently active items are checked hourly, with a 5-minute intake
   schedule for the newest queue edge
+- target repositories can forward issue and PR events with
+  `repository_dispatch`; those exact item runs use a dedicated single job to
+  review one item, sync the durable comment, and apply only safe close
+  proposals for that same item
 - pull requests and issues younger than 30 days are checked daily once they
   leave the hot window
 - older inactive issues are checked weekly
@@ -213,6 +217,14 @@ It defaults to all item kinds, no age floor, a 2-second close delay, and 50
 fresh closes per checkpoint. If it reaches the requested limit, it queues
 another apply run with the same settings.
 
+Exact event runs skip the bulk planner, shard matrix, artifact upload, and
+separate publish job. They still use the same review and apply code paths, but
+only for the selected item number and only with immediate-safe reasons enabled
+by default: `implemented_on_main` and `duplicate_or_superseded`.
+`stale_insufficient_info` is never applied to young items; apply requires those
+issue reports to be at least 30 days old unless a manual run explicitly changes
+the threshold.
+
 There is still one deterministic apply path for writes. Review can propose and
 sync stale public review comments, but closing remains guarded by apply so a
 fresh GitHub snapshot, labels, maintainer-authorship, and unchanged item state
@@ -226,6 +238,8 @@ are checked immediately before mutation.
   resolved.
 - Open same-author issue/PR pairs block one-sided closes.
 - Codex runs without GitHub write tokens.
+- Event jobs create target write and report-push credentials only after Codex
+  exits.
 - CI makes the target checkout read-only for reviews.
 - Reviews fail if Codex leaves tracked or untracked changes behind.
 - Snapshot changes block apply unless the only change is the bot’s own review
@@ -287,6 +301,13 @@ existing cadence; `openclaw/clawhub` runs on offset review/apply/audit crons so
 its reports live under `records/openclaw-clawhub/` without colliding with
 default repo records.
 
+Target repositories can opt into event-level latency by installing the
+dispatcher workflow in [docs/target-dispatcher.md](docs/target-dispatcher.md).
+The dispatcher sends `repository_dispatch` events to this repository with the
+target repo and exact item number; ClawSweeper then runs one event job that
+reviews, comments, and checks immediate safe apply instead of waiting for the
+next hot-intake cron or bulk publish lane.
+
 ## Checks
 
 ```bash
@@ -307,6 +328,9 @@ Required secrets:
 - `OPENCLAW_GH_TOKEN`: optional fallback GitHub token for read-heavy target scans and artifact publish reconciliation when the GitHub App token is unavailable.
 - `CLAWSWEEPER_APP_ID`: GitHub App ID for `openclaw-ci`. Currently `3306130`.
 - `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `openclaw-ci`; plan/review jobs use a short-lived GitHub App installation token for read-heavy target API calls, and apply/comment-sync jobs use the app token for comments and closes.
+  Keep App credentials scoped to the `actions/create-github-app-token` step.
+  Review shards run Codex over attacker-controlled issue/PR text, so
+  `codexEnv()` also strips these App variables before spawning Codex.
 
 Token flow:
 
