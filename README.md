@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 06:16 UTC
 
 Updated: Apr 28, 2026, 06:16 UTC
 
-State: Event review applied
+State: Planning review
 
-Reviewed event item #73328, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037021757](https://github.com/openclaw/clawsweeper/actions/runs/25037021757)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037156402](https://github.com/openclaw/clawsweeper/actions/runs/25037156402)
 <!-- clawsweeper-status:end -->
 
 ### Queue
