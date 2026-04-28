@@ -31,7 +31,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 21:44 UTC
+Last dashboard update: Apr 28, 2026, 21:45 UTC
 
 ### Fleet
 
@@ -41,52 +41,52 @@ Last dashboard update: Apr 28, 2026, 21:44 UTC
 | Open issues | 4395 |
 | Open PRs | 3458 |
 | Open items total | 7853 |
-| Reviewed files | 7465 |
-| Unreviewed open items | 388 |
-| Due now by cadence | 2214 |
-| Proposed closes awaiting apply | 16 |
+| Reviewed files | 7449 |
+| Unreviewed open items | 404 |
+| Due now by cadence | 2230 |
+| Proposed closes awaiting apply | 1 |
 | Closed by Codex apply | 10542 |
 | Failed or stale reviews | 12 |
-| Archived closed files | 13788 |
+| Archived closed files | 13787 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6936 | 6557 | 379 | 2203 | 16 | 10539 | Apr 28, 2026, 21:12 UTC | Apr 28, 2026, 21:07 UTC | 31 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6936 | 6541 | 395 | 2219 | 1 | 10539 | Apr 28, 2026, 21:12 UTC | Apr 28, 2026, 21:45 UTC | 21 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 917 | 908 | 9 | 11 | 0 | 3 | Apr 28, 2026, 21:11 UTC | Apr 28, 2026, 18:47 UTC | 478 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 21:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25078217976) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 28, 2026, 21:44 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25078217976) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 28, 2026, 21:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25078234096) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 21:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25077718449) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 21:42 UTC. Latest close: Apr 28, 2026, 21:41 UTC. Latest comment sync: Apr 28, 2026, 21:43 UTC.
+Latest review: Apr 28, 2026, 21:12 UTC. Latest close: Apr 28, 2026, 21:45 UTC. Latest comment sync: Apr 28, 2026, 21:13 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 1084 | 17 | 1067 | 2 | 5 | 509 | 0 |
-| Last 24 hours | 5786 | 333 | 5453 | 8 | 702 | 997 | 18 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 11 | 0 | 0 |
+| Last hour | 1036 | 17 | 1019 | 2 | 20 | 499 | 0 |
+| Last 24 hours | 5786 | 333 | 5453 | 8 | 718 | 997 | 18 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73815](https://github.com/openclaw/openclaw/issues/73815) | OPENCLAW_PLUGIN_STAGE_DIR with two paths: memory status fails on missing chokidar in second path | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73815.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73815.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73811](https://github.com/openclaw/openclaw/issues/73811) | [Bug]: sessions_spawn model parameter ignored due to write/read field mismatch | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73811.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73811.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73702](https://github.com/openclaw/openclaw/issues/73702) | sessions_send reply forwarding creates cross-session prompt-injection vector | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73702.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73702.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73647](https://github.com/openclaw/openclaw/issues/73647) | [Bug]: 2026.4.26 Telegram-only gateway spins CPU in channel runtime / staged runtime deps | duplicate or superseded | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73647.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73647.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73595](https://github.com/openclaw/openclaw/issues/73595) | Runtime injection tags (`<system-reminder>`, `<previous_response>`) leak verbatim to delivery channels when model is in degraded state | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73595.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73595.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50989](https://github.com/openclaw/openclaw/issues/50989) | Suppress intermediate text output before tool calls in group channels | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/50989.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50989.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50468](https://github.com/openclaw/openclaw/issues/50468) | [Bug]: Skills file watcher broken due to chokidar v5 glob incompatibility — installed skills not detected in existing sessions | already implemented on main | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50468.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50468.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50213](https://github.com/openclaw/openclaw/issues/50213) | [Feature]: add web search provider baseurl for gemini, so we could use Third-party GEMINI API provider | duplicate or superseded | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50213.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50213.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50211](https://github.com/openclaw/openclaw/issues/50211) | [Bug]: Shared CI regressions in loader, Feishu, and Google OAuth tests are failing unrelated PRs | already implemented on main | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50211.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50211.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50154](https://github.com/openclaw/openclaw/issues/50154) | [Bug]: macOS LaunchAgent gateway fails to push to LAN GitLab over SSH, foreground gateway works | duplicate or superseded | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50154.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50154.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73637](https://github.com/openclaw/openclaw/pull/73637) | fix(agents): preserve extraSystemPrompt under systemPromptOverride (#73624) | closed externally after review | Apr 28, 2026, 21:45 UTC | [records/openclaw-openclaw/closed/73637.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73637.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73702](https://github.com/openclaw/openclaw/issues/73702) | sessions_send reply forwarding creates cross-session prompt-injection vector | closed externally after proposed_close | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73702.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73702.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73647](https://github.com/openclaw/openclaw/issues/73647) | [Bug]: 2026.4.26 Telegram-only gateway spins CPU in channel runtime / staged runtime deps | closed externally after proposed_close | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73647.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73647.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73595](https://github.com/openclaw/openclaw/issues/73595) | Runtime injection tags (`<system-reminder>`, `<previous_response>`) leak verbatim to delivery channels when model is in degraded state | closed externally after proposed_close | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73595.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73595.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50989](https://github.com/openclaw/openclaw/issues/50989) | Suppress intermediate text output before tool calls in group channels | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50989.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50989.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50468](https://github.com/openclaw/openclaw/issues/50468) | [Bug]: Skills file watcher broken due to chokidar v5 glob incompatibility — installed skills not detected in existing sessions | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50468.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50468.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50213](https://github.com/openclaw/openclaw/issues/50213) | [Feature]: add web search provider baseurl for gemini, so we could use Third-party GEMINI API provider | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50213.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50213.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50211](https://github.com/openclaw/openclaw/issues/50211) | [Bug]: Shared CI regressions in loader, Feishu, and Google OAuth tests are failing unrelated PRs | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50211.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50211.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50154](https://github.com/openclaw/openclaw/issues/50154) | [Bug]: macOS LaunchAgent gateway fails to push to LAN GitLab over SSH, foreground gateway works | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50154.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50154.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#49878](https://github.com/openclaw/openclaw/issues/49878) | Bug: Heartbeat session caches old HEARTBEAT.md content and doesn't re-read after update | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/49878.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49878.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 21:42 UTC. Latest close: Apr 28, 2026, 21:41 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 21:43 UTC
+Updated: Apr 28, 2026, 21:45 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25079240917](https://github.com/openclaw/clawsweeper/actions/runs/25079240917)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25078234096](https://github.com/openclaw/clawsweeper/actions/runs/25078234096)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -138,34 +138,34 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25079240917](https://
 | Open issues | 3518 |
 | Open PRs | 3418 |
 | Open items total | 6936 |
-| Reviewed files | 6557 |
-| Unreviewed open items | 379 |
-| Archived closed files | 13760 |
+| Reviewed files | 6541 |
+| Unreviewed open items | 395 |
+| Archived closed files | 13776 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3332 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3204 |
+| Fresh reviewed issues in the last 7 days | 3327 |
+| Proposed issue closes | 1 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3202 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6536 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Closed by Codex apply | 10556 |
+| Fresh verified reviews in the last 7 days | 6529 |
+| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
+| Closed by Codex apply | 10539 |
 | Failed or stale reviews | 12 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 49/843 current (794 due, 5.8%) |
-| Hourly hot item cadence (<7d) | 49/843 current (794 due, 5.8%) |
-| Daily cadence coverage | 2850/3877 current (1027 due, 73.5%) |
+| Hourly cadence coverage | 45/839 current (794 due, 5.4%) |
+| Hourly hot item cadence (<7d) | 45/839 current (794 due, 5.4%) |
+| Daily cadence coverage | 2849/3876 current (1027 due, 73.5%) |
 | Daily PR cadence | 2121/2711 current (590 due, 78.2%) |
-| Daily new issue cadence (<30d) | 729/1166 current (437 due, 62.5%) |
-| Weekly older issue cadence | 1834/1837 current (3 due, 99.8%) |
-| Due now by cadence | 2203 |
+| Daily new issue cadence (<30d) | 728/1165 current (437 due, 62.5%) |
+| Weekly older issue cadence | 1823/1826 current (3 due, 99.8%) |
+| Due now by cadence | 2219 |
 
 ### Audit Health
 
@@ -201,28 +201,28 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 21:42 UTC. Latest close: Apr 28, 2026, 21:41 UTC. Latest comment sync: Apr 28, 2026, 21:43 UTC.
+Latest review: Apr 28, 2026, 21:12 UTC. Latest close: Apr 28, 2026, 21:45 UTC. Latest comment sync: Apr 28, 2026, 21:13 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 417 | 17 | 400 | 2 | 5 | 31 | 0 |
-| Last 24 hours | 4867 | 330 | 4537 | 8 | 691 | 509 | 18 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 11 | 0 | 0 |
+| Last hour | 369 | 17 | 352 | 2 | 20 | 21 | 0 |
+| Last 24 hours | 4867 | 330 | 4537 | 8 | 707 | 509 | 18 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#73815](https://github.com/openclaw/openclaw/issues/73815) | OPENCLAW_PLUGIN_STAGE_DIR with two paths: memory status fails on missing chokidar in second path | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73815.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73815.md) |
-| [#73811](https://github.com/openclaw/openclaw/issues/73811) | [Bug]: sessions_spawn model parameter ignored due to write/read field mismatch | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73811.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73811.md) |
-| [#73702](https://github.com/openclaw/openclaw/issues/73702) | sessions_send reply forwarding creates cross-session prompt-injection vector | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73702.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73702.md) |
-| [#73647](https://github.com/openclaw/openclaw/issues/73647) | [Bug]: 2026.4.26 Telegram-only gateway spins CPU in channel runtime / staged runtime deps | duplicate or superseded | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73647.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73647.md) |
-| [#73595](https://github.com/openclaw/openclaw/issues/73595) | Runtime injection tags (`<system-reminder>`, `<previous_response>`) leak verbatim to delivery channels when model is in degraded state | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73595.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73595.md) |
-| [#50989](https://github.com/openclaw/openclaw/issues/50989) | Suppress intermediate text output before tool calls in group channels | already implemented on main | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/50989.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50989.md) |
-| [#50468](https://github.com/openclaw/openclaw/issues/50468) | [Bug]: Skills file watcher broken due to chokidar v5 glob incompatibility — installed skills not detected in existing sessions | already implemented on main | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50468.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50468.md) |
-| [#50213](https://github.com/openclaw/openclaw/issues/50213) | [Feature]: add web search provider baseurl for gemini, so we could use Third-party GEMINI API provider | duplicate or superseded | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50213.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50213.md) |
-| [#50211](https://github.com/openclaw/openclaw/issues/50211) | [Bug]: Shared CI regressions in loader, Feishu, and Google OAuth tests are failing unrelated PRs | already implemented on main | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50211.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50211.md) |
-| [#50154](https://github.com/openclaw/openclaw/issues/50154) | [Bug]: macOS LaunchAgent gateway fails to push to LAN GitLab over SSH, foreground gateway works | duplicate or superseded | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50154.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50154.md) |
+| [#73637](https://github.com/openclaw/openclaw/pull/73637) | fix(agents): preserve extraSystemPrompt under systemPromptOverride (#73624) | closed externally after review | Apr 28, 2026, 21:45 UTC | [records/openclaw-openclaw/closed/73637.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73637.md) |
+| [#73702](https://github.com/openclaw/openclaw/issues/73702) | sessions_send reply forwarding creates cross-session prompt-injection vector | closed externally after proposed_close | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73702.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73702.md) |
+| [#73647](https://github.com/openclaw/openclaw/issues/73647) | [Bug]: 2026.4.26 Telegram-only gateway spins CPU in channel runtime / staged runtime deps | closed externally after proposed_close | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73647.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73647.md) |
+| [#73595](https://github.com/openclaw/openclaw/issues/73595) | Runtime injection tags (`<system-reminder>`, `<previous_response>`) leak verbatim to delivery channels when model is in degraded state | closed externally after proposed_close | Apr 28, 2026, 21:41 UTC | [records/openclaw-openclaw/closed/73595.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73595.md) |
+| [#50989](https://github.com/openclaw/openclaw/issues/50989) | Suppress intermediate text output before tool calls in group channels | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50989.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50989.md) |
+| [#50468](https://github.com/openclaw/openclaw/issues/50468) | [Bug]: Skills file watcher broken due to chokidar v5 glob incompatibility — installed skills not detected in existing sessions | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50468.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50468.md) |
+| [#50213](https://github.com/openclaw/openclaw/issues/50213) | [Feature]: add web search provider baseurl for gemini, so we could use Third-party GEMINI API provider | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50213.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50213.md) |
+| [#50211](https://github.com/openclaw/openclaw/issues/50211) | [Bug]: Shared CI regressions in loader, Feishu, and Google OAuth tests are failing unrelated PRs | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50211.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50211.md) |
+| [#50154](https://github.com/openclaw/openclaw/issues/50154) | [Bug]: macOS LaunchAgent gateway fails to push to LAN GitLab over SSH, foreground gateway works | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/50154.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50154.md) |
+| [#49878](https://github.com/openclaw/openclaw/issues/49878) | Bug: Heartbeat session caches old HEARTBEAT.md content and doesn't re-read after update | closed externally after proposed_close | Apr 28, 2026, 21:40 UTC | [records/openclaw-openclaw/closed/49878.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49878.md) |
 
 #### Recently Reviewed
 
