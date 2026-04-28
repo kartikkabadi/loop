@@ -31,7 +31,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 08:53 UTC
+Last dashboard update: Apr 28, 2026, 08:54 UTC
 
 ### Fleet
 
@@ -41,9 +41,9 @@ Last dashboard update: Apr 28, 2026, 08:53 UTC
 | Open issues | 4421 |
 | Open PRs | 3508 |
 | Open items total | 7929 |
-| Reviewed files | 7481 |
-| Unreviewed open items | 448 |
-| Due now by cadence | 3753 |
+| Reviewed files | 7480 |
+| Unreviewed open items | 449 |
+| Due now by cadence | 3754 |
 | Proposed closes awaiting apply | 1 |
 | Closed by Codex apply | 10280 |
 | Failed or stale reviews | 41 |
@@ -53,25 +53,25 @@ Last dashboard update: Apr 28, 2026, 08:53 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 7019 | 6578 | 441 | 3695 | 1 | 10277 | Apr 28, 2026, 08:51 UTC | Apr 28, 2026, 08:45 UTC | 55 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 7019 | 6577 | 442 | 3696 | 1 | 10277 | Apr 28, 2026, 08:52 UTC | Apr 28, 2026, 08:45 UTC | 56 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 910 | 903 | 7 | 58 | 0 | 3 | Apr 28, 2026, 08:46 UTC | Apr 28, 2026, 05:18 UTC | 20 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 08:53 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043266847) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 08:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043244118) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 08:47 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25041191333) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 08:51 UTC. Latest close: Apr 28, 2026, 08:45 UTC. Latest comment sync: Apr 28, 2026, 08:49 UTC.
+Latest review: Apr 28, 2026, 08:52 UTC. Latest close: Apr 28, 2026, 08:45 UTC. Latest comment sync: Apr 28, 2026, 08:53 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 62 | 2 | 60 | 0 | 1 | 60 | 6 |
-| Last hour | 556 | 3 | 553 | 1 | 2 | 75 | 8 |
-| Last 24 hours | 3314 | 110 | 3204 | 17 | 58 | 1635 | 29 |
+| Last 15 minutes | 61 | 2 | 59 | 0 | 1 | 61 | 5 |
+| Last hour | 555 | 3 | 552 | 1 | 2 | 76 | 7 |
+| Last 24 hours | 3313 | 110 | 3203 | 17 | 58 | 1636 | 28 |
 
 ### Recently Closed Across Repos
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 08:51 UTC. Latest close: Apr 28, 2026, 08:45 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71884](https://github.com/openclaw/openclaw/pull/71884) | fix: allow safe Windows companion node commands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71884.md) | complete | Apr 28, 2026, 08:51 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 08:52 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams, fixtures, and host-hook recipes | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 28, 2026, 08:49 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73429](https://github.com/openclaw/openclaw/pull/73429) | fix(plugin-sdk): backfill reasoning_content on all DeepSeek V4 assistant messages | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73429.md) | complete | Apr 28, 2026, 08:48 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71027](https://github.com/openclaw/openclaw/pull/71027) | build(deps): bump useblacksmith/build-push-action from 2.1.0 to 2.2.0 in the actions group across 1 directory | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71027.md) | complete | Apr 28, 2026, 08:48 UTC |
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 08:51 UTC. Latest close: Apr 28, 2026, 08:45 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 08:53 UTC
+Updated: Apr 28, 2026, 08:54 UTC
 
 State: Event review applied
 
-Reviewed event item #71884, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043266847](https://github.com/openclaw/clawsweeper/actions/runs/25043266847)
+Reviewed event item #72645, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043244118](https://github.com/openclaw/clawsweeper/actions/runs/25043244118)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -138,8 +138,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043266847](https://
 | Open issues | 3548 |
 | Open PRs | 3471 |
 | Open items total | 7019 |
-| Reviewed files | 6578 |
-| Unreviewed open items | 441 |
+| Reviewed files | 6577 |
+| Unreviewed open items | 442 |
 | Archived closed files | 13364 |
 
 #### Review Outcomes
@@ -148,9 +148,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043266847](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3348 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3190 |
+| Fresh reviewed PRs in the last 7 days | 3189 |
 | Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6538 |
+| Fresh verified reviews in the last 7 days | 6537 |
 | Proposed closes awaiting apply | 1 (0% of fresh reviews) |
 | Closed by Codex apply | 10277 |
 | Failed or stale reviews | 40 |
@@ -159,13 +159,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043266847](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 28/653 current (625 due, 4.3%) |
-| Hourly hot item cadence (<7d) | 28/653 current (625 due, 4.3%) |
+| Hourly cadence coverage | 27/652 current (625 due, 4.1%) |
+| Hourly hot item cadence (<7d) | 27/652 current (625 due, 4.1%) |
 | Daily cadence coverage | 1456/4078 current (2622 due, 35.7%) |
 | Daily PR cadence | 1075/2826 current (1751 due, 38%) |
 | Daily new issue cadence (<30d) | 381/1252 current (871 due, 30.4%) |
 | Weekly older issue cadence | 1840/1847 current (7 due, 99.6%) |
-| Due now by cadence | 3695 |
+| Due now by cadence | 3696 |
 
 ### Audit Health
 
@@ -177,13 +177,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 08:51 UTC. Latest close: Apr 28, 2026, 08:45 UTC. Latest comment sync: Apr 28, 2026, 08:49 UTC.
+Latest review: Apr 28, 2026, 08:52 UTC. Latest close: Apr 28, 2026, 08:45 UTC. Latest comment sync: Apr 28, 2026, 08:53 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 43 | 2 | 41 | 0 | 1 | 40 | 6 |
-| Last hour | 55 | 3 | 52 | 0 | 2 | 55 | 8 |
-| Last 24 hours | 2401 | 107 | 2294 | 16 | 55 | 1382 | 28 |
+| Last 15 minutes | 42 | 2 | 40 | 0 | 1 | 41 | 5 |
+| Last hour | 54 | 3 | 51 | 0 | 2 | 56 | 7 |
+| Last 24 hours | 2400 | 107 | 2293 | 16 | 55 | 1383 | 27 |
 
 #### Recently Closed
 
@@ -204,7 +204,7 @@ Latest review: Apr 28, 2026, 08:51 UTC. Latest close: Apr 28, 2026, 08:45 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71884](https://github.com/openclaw/openclaw/pull/71884) | fix: allow safe Windows companion node commands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71884.md) | complete | Apr 28, 2026, 08:51 UTC |
+| [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 08:52 UTC |
 | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams, fixtures, and host-hook recipes | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 28, 2026, 08:49 UTC |
 | [#73429](https://github.com/openclaw/openclaw/pull/73429) | fix(plugin-sdk): backfill reasoning_content on all DeepSeek V4 assistant messages | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73429.md) | complete | Apr 28, 2026, 08:48 UTC |
 | [#71027](https://github.com/openclaw/openclaw/pull/71027) | build(deps): bump useblacksmith/build-push-action from 2.1.0 to 2.2.0 in the actions group across 1 directory | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71027.md) | complete | Apr 28, 2026, 08:48 UTC |
