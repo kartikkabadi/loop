@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 07:08 UTC
 
 State: Planning review
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039018375](https://github.com/openclaw/clawsweeper/actions/runs/25039018375)
+Reviewed event item #73354, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038927949](https://github.com/openclaw/clawsweeper/actions/runs/25038927949)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,9 +54,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039018375](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3566 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3462 |
 | Open items total | 7028 |
-| Reviewed files | 6580 |
-| Unreviewed open items | 448 |
-| Archived closed files | 13305 |
+| Reviewed files | 6579 |
+| Unreviewed open items | 449 |
+| Archived closed files | 13310 |
 
 ### Review Outcomes
 
@@ -65,20 +65,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039018375](https://
 | Fresh reviewed issues in the last 7 days | 3370 |
 | Proposed issue closes | 10 (0.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3188 |
-| Proposed PR closes | 8 (0.3% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6558 |
-| Proposed closes awaiting apply | 18 (0.3% of fresh reviews) |
-| Closed by Codex apply | 10255 |
+| Proposed PR closes | 9 (0.3% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6557 |
+| Proposed closes awaiting apply | 19 (0.3% of fresh reviews) |
+| Closed by Codex apply | 10257 |
 | Failed or stale reviews | 22 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 109/635 current (526 due, 17.2%) |
-| Hourly hot item cadence (<7d) | 109/635 current (526 due, 17.2%) |
-| Daily cadence coverage | 1487/4097 current (2610 due, 36.3%) |
-| Daily PR cadence | 1063/2834 current (1771 due, 37.5%) |
+| Hourly cadence coverage | 110/635 current (525 due, 17.3%) |
+| Hourly hot item cadence (<7d) | 110/635 current (525 due, 17.3%) |
+| Daily cadence coverage | 1486/4096 current (2610 due, 36.3%) |
+| Daily PR cadence | 1062/2833 current (1771 due, 37.5%) |
 | Daily new issue cadence (<30d) | 424/1263 current (839 due, 33.6%) |
 | Weekly older issue cadence | 1844/1848 current (4 due, 99.8%) |
 | Due now by cadence | 3588 |
@@ -119,15 +119,16 @@ Latest review: Apr 28, 2026, 06:53 UTC. Latest close: Apr 28, 2026, 06:50 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 366 | 3 |
-| Last hour | 862 | 27 | 835 | 2 | 4 | 834 | 8 |
-| Last 24 hours | 2419 | 118 | 2301 | 10 | 65 | 1309 | 17 |
+| Last 15 minutes | 14 | 3 | 11 | 0 | 2 | 20 | 2 |
+| Last hour | 846 | 29 | 817 | 2 | 6 | 491 | 8 |
+| Last 24 hours | 2423 | 120 | 2303 | 10 | 67 | 965 | 17 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
 | [#73353](https://github.com/openclaw/openclaw/issues/73353) | 60s startup hang in sidecars.channels — synchronous plugin manifest re-discovery on every cold start (v2026.4.26) | already implemented on main | Apr 28, 2026, 07:06 UTC | [records/openclaw-openclaw/closed/73353.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73353.md) |
+| [#73352](https://github.com/openclaw/openclaw/issues/73352) | MCP Client: Add OAuth2 Authorization Code Flow support for HTTP-based MCP servers | duplicate or superseded | Apr 28, 2026, 07:05 UTC | [records/openclaw-openclaw/closed/73352.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73352.md) |
 | [#73348](https://github.com/openclaw/openclaw/issues/73348) | openclaw update can succeed while the running gateway stays on an older version, causing plugin/config version skew | already implemented on main | Apr 28, 2026, 06:50 UTC | [records/openclaw-openclaw/closed/73348.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73348.md) |
 | [#73344](https://github.com/openclaw/openclaw/issues/73344) | [Bug]: /new on openai-codex/* (Responses API) returns \"One of input/previous_response_id/prompt/conversation_id must be provided\" — regression in 2026.4.26 | already implemented on main | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/73344.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73344.md) |
 | [#73331](https://github.com/openclaw/openclaw/issues/73331) | v2026.4.26: Gateway busy-loops on bundled openai SDK directory walk; stops accepting connections | already implemented on main | Apr 28, 2026, 06:22 UTC | [records/openclaw-openclaw/closed/73331.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73331.md) |
@@ -136,7 +137,6 @@ Latest review: Apr 28, 2026, 06:53 UTC. Latest close: Apr 28, 2026, 06:50 UTC. L
 | [#72507](https://github.com/openclaw/openclaw/issues/72507) | Bug: sessions.json grows unbounded due to static schema serialized into dynamic session state | duplicate or superseded | Apr 28, 2026, 03:52 UTC | [records/openclaw-openclaw/closed/72507.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72507.md) |
 | [#72286](https://github.com/openclaw/openclaw/pull/72286) | Add Google Live browser Talk sessions | already implemented on main | Apr 28, 2026, 03:52 UTC | [records/openclaw-openclaw/closed/72286.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72286.md) |
 | [#70597](https://github.com/openclaw/openclaw/pull/70597) | yuanbao channel | already implemented on main | Apr 28, 2026, 03:51 UTC | [records/openclaw-openclaw/closed/70597.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70597.md) |
-| [#65147](https://github.com/openclaw/openclaw/pull/65147) | fix: add --force flag to npm install -g for container updates | already implemented on main | Apr 28, 2026, 03:51 UTC | [records/openclaw-openclaw/closed/65147.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65147.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
