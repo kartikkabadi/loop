@@ -31,18 +31,18 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 05:05 UTC
+Last dashboard update: Apr 28, 2026, 05:14 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 05:13 UTC
+Updated: Apr 28, 2026, 05:14 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25035199417](https://github.com/openclaw/clawsweeper/actions/runs/25035199417)
 <!-- clawsweeper-status:end -->
 
@@ -119,7 +119,7 @@ Latest review: Apr 28, 2026, 05:05 UTC. Latest close: unknown. Latest comment sy
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 383 | 0 | 383 | 0 | 0 | 257 | 0 |
+| Last 15 minutes | 383 | 0 | 383 | 0 | 0 | 0 | 0 |
 | Last hour | 883 | 3 | 880 | 0 | 0 | 447 | 0 |
 | Last 24 hours | 903 | 3 | 900 | 0 | 0 | 467 | 0 |
 
