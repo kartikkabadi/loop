@@ -43,7 +43,7 @@ Last dashboard update: Apr 28, 2026, 07:41 UTC
 | Open items total | 7937 |
 | Reviewed files | 7465 |
 | Unreviewed open items | 472 |
-| Due now by cadence | 3658 |
+| Due now by cadence | 3659 |
 | Proposed closes awaiting apply | 0 |
 | Closed by Codex apply | 10277 |
 | Failed or stale reviews | 33 |
@@ -53,14 +53,14 @@ Last dashboard update: Apr 28, 2026, 07:41 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 7026 | 6560 | 466 | 3651 | 0 | 10274 | Apr 28, 2026, 07:39 UTC | Apr 28, 2026, 07:06 UTC | 384 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 7026 | 6560 | 466 | 3652 | 0 | 10274 | Apr 28, 2026, 07:39 UTC | Apr 28, 2026, 07:06 UTC | 384 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 911 | 905 | 6 | 7 | 0 | 3 | Apr 28, 2026, 07:00 UTC | Apr 28, 2026, 05:18 UTC | 380 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 07:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25040124480) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 07:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25040129778) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Idle | unknown | _none_ |
 
 ### Fleet Activity
@@ -71,7 +71,7 @@ Latest review: Apr 28, 2026, 07:39 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
 | Last hour | 647 | 22 | 625 | 3 | 4 | 764 | 14 |
-| Last 24 hours | 3303 | 120 | 3183 | 14 | 69 | 2034 | 22 |
+| Last 24 hours | 3302 | 120 | 3182 | 14 | 69 | 2033 | 22 |
 
 ### Recently Closed Across Repos
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 07:39 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50802](https://github.com/openclaw/openclaw/pull/50802) | fix: recognize snake_case tool call types in session history repair | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/50802.md) | complete | Apr 28, 2026, 07:39 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#66367](https://github.com/openclaw/openclaw/pull/66367) | fix: expose qwen3.6-plus on Coding Plan endpoints | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/66367.md) | complete | Apr 28, 2026, 07:39 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73357](https://github.com/openclaw/openclaw/pull/73357) | fix: handle ENOSPC file watcher errors gracefully | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73357.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73355](https://github.com/openclaw/openclaw/pull/73355) | fix(cron): add .catch() re-arm and watchdog to prevent runtime timer chain death | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73355.md) | complete | Apr 28, 2026, 07:09 UTC |
@@ -126,8 +126,8 @@ Updated: Apr 28, 2026, 07:41 UTC
 
 State: Planning review
 
-Reviewed event item #50802, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040124480](https://github.com/openclaw/clawsweeper/actions/runs/25040124480)
+Reviewed event item #66367, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040129778](https://github.com/openclaw/clawsweeper/actions/runs/25040129778)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -161,11 +161,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040124480](https://
 | --- | ---: |
 | Hourly cadence coverage | 62/629 current (567 due, 9.9%) |
 | Hourly hot item cadence (<7d) | 62/629 current (567 due, 9.9%) |
-| Daily cadence coverage | 1473/4086 current (2613 due, 36%) |
-| Daily PR cadence | 1055/2826 current (1771 due, 37.3%) |
+| Daily cadence coverage | 1472/4086 current (2614 due, 36%) |
+| Daily PR cadence | 1054/2826 current (1772 due, 37.3%) |
 | Daily new issue cadence (<30d) | 418/1260 current (842 due, 33.2%) |
 | Weekly older issue cadence | 1840/1845 current (5 due, 99.7%) |
-| Due now by cadence | 3651 |
+| Due now by cadence | 3652 |
 
 ### Audit Health
 
@@ -183,7 +183,7 @@ Latest review: Apr 28, 2026, 07:39 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
 | Last hour | 265 | 22 | 243 | 3 | 4 | 384 | 13 |
-| Last 24 hours | 2391 | 117 | 2274 | 14 | 66 | 1305 | 21 |
+| Last 24 hours | 2390 | 117 | 2273 | 14 | 66 | 1304 | 21 |
 
 #### Recently Closed
 
@@ -204,7 +204,7 @@ Latest review: Apr 28, 2026, 07:39 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#50802](https://github.com/openclaw/openclaw/pull/50802) | fix: recognize snake_case tool call types in session history repair | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/50802.md) | complete | Apr 28, 2026, 07:39 UTC |
+| [#66367](https://github.com/openclaw/openclaw/pull/66367) | fix: expose qwen3.6-plus on Coding Plan endpoints | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/66367.md) | complete | Apr 28, 2026, 07:39 UTC |
 | [#73357](https://github.com/openclaw/openclaw/pull/73357) | fix: handle ENOSPC file watcher errors gracefully | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73357.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [#73355](https://github.com/openclaw/openclaw/pull/73355) | fix(cron): add .catch() re-arm and watchdog to prevent runtime timer chain death | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73355.md) | complete | Apr 28, 2026, 07:09 UTC |
