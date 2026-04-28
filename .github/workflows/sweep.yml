@@ -180,7 +180,7 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
@@ -212,7 +212,7 @@ jobs:
           printenv OPENAI_API_KEY | codex login --with-api-key
           codex login status
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ steps.target.outputs.target_checkout_dir }}-cache.git
           key: ${{ steps.target.outputs.target_repo_name }}-event-git-${{ runner.os }}-${{ github.run_id }}
@@ -259,7 +259,7 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
@@ -401,7 +401,7 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
@@ -572,7 +572,7 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
@@ -606,7 +606,7 @@ jobs:
           printenv OPENAI_API_KEY | codex login --with-api-key
           codex login status
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ needs.plan.outputs.target_checkout_dir }}-cache.git
           key: ${{ needs.plan.outputs.target_repo_name }}-git-${{ runner.os }}-${{ github.run_id }}
@@ -676,7 +676,7 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
@@ -912,7 +912,7 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
@@ -997,7 +997,7 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.CLAWSWEEPER_APP_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
