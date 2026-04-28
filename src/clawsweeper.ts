@@ -3134,19 +3134,31 @@ function hasImplementationSourceEvidence(decision: Decision): boolean {
   );
 }
 
-function hasImplementationProvenanceEvidence(decision: Decision): boolean {
+function evidenceText(entry: Evidence): string {
+  return [entry.label, entry.detail, entry.command ?? ""].join("\n");
+}
+
+function hasImplementationHistoryEvidence(decision: Decision): boolean {
   return decision.evidence.some((entry) =>
-    [entry.label, entry.detail, entry.command ?? ""]
-      .join("\n")
-      .match(
-        /\b(?:release|tag|changelog|CHANGELOG|git (?:show|log|tag|describe|branch)|gh release|main-only|unreleased|published)\b/i,
-      ),
+    evidenceText(entry).match(/\b(?:git (?:blame|show|log)|blame)\b/i),
+  );
+}
+
+function hasImplementationReleaseStateEvidence(decision: Decision): boolean {
+  return decision.evidence.some((entry) =>
+    evidenceText(entry).match(
+      /\b(?:release|tag|changelog|CHANGELOG|git (?:tag|describe|branch)|gh release|main-only|unreleased|published)\b/i,
+    ),
   );
 }
 
 function hasValidFixedAt(decision: Decision): boolean {
   const value = decision.fixedAt?.trim();
-  return Boolean(value && Number.isFinite(Date.parse(value)));
+  return Boolean(
+    value &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value) &&
+    Number.isFinite(Date.parse(value)),
+  );
 }
 
 function canClose(decision: Decision): boolean {
@@ -3251,7 +3263,17 @@ export function validateCloseDecision(
   }
   if (
     decision.closeReason === "implemented_on_main" &&
-    !hasImplementationProvenanceEvidence(decision)
+    !hasImplementationHistoryEvidence(decision)
+  ) {
+    return {
+      ok: false,
+      actionTaken: "skipped_invalid_decision",
+      reason: "implemented_on_main requires git history provenance evidence",
+    };
+  }
+  if (
+    decision.closeReason === "implemented_on_main" &&
+    !hasImplementationReleaseStateEvidence(decision)
   ) {
     return {
       ok: false,

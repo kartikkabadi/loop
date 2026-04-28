@@ -71,6 +71,14 @@ function closeDecision(overrides = {}) {
         sha: "abcdef1234567890",
       },
       {
+        label: "git history provenance",
+        detail: "git blame traces the implemented line to abcdef1234567890.",
+        file: "src/example.ts",
+        line: 12,
+        command: "git blame -L 12,12 -- src/example.ts",
+        sha: "abcdef1234567890",
+      },
+      {
         label: "release provenance",
         detail: "The fix is on current main and no containing release tag was found.",
         file: null,
@@ -353,6 +361,15 @@ test("implemented-on-main closes require fix provenance", () => {
   assert.equal(invalidFixedAt.ok, false);
   assert.equal(invalidFixedAt.reason, "implemented_on_main fixedAt must be an ISO timestamp");
 
+  const dateOnlyFixedAt = validateCloseDecision(
+    item(),
+    closeDecision({
+      fixedAt: "2026-04-28",
+    }),
+  );
+  assert.equal(dateOnlyFixedAt.ok, false);
+  assert.equal(dateOnlyFixedAt.reason, "implemented_on_main fixedAt must be an ISO timestamp");
+
   const missingReleaseOrTimestamp = validateCloseDecision(
     item(),
     closeDecision({
@@ -384,8 +401,72 @@ test("implemented-on-main closes require fix provenance", () => {
   assert.equal(missingProvenanceEvidence.ok, false);
   assert.equal(
     missingProvenanceEvidence.reason,
+    "implemented_on_main requires git history provenance evidence",
+  );
+
+  const missingReleaseStateEvidence = validateCloseDecision(
+    item(),
+    closeDecision({
+      evidence: [
+        {
+          label: "implementation",
+          detail: "The feature is present in source.",
+          file: "src/example.ts",
+          line: 12,
+          command: null,
+          sha: "abcdef1234567890",
+        },
+        {
+          label: "git history provenance",
+          detail: "git blame traced this line to the fixed commit.",
+          file: "src/example.ts",
+          line: 12,
+          command: "git blame -L 12,12 -- src/example.ts",
+          sha: "abcdef1234567890",
+        },
+      ],
+    }),
+  );
+  assert.equal(missingReleaseStateEvidence.ok, false);
+  assert.equal(
+    missingReleaseStateEvidence.reason,
     "implemented_on_main requires release or main-only provenance evidence",
   );
+
+  const blameAndMainTimestamp = validateCloseDecision(
+    item(),
+    closeDecision({
+      fixedRelease: null,
+      fixedAt: "2026-04-28T12:00:00Z",
+      evidence: [
+        {
+          label: "implementation",
+          detail: "The feature is present in source.",
+          file: "src/example.ts",
+          line: 12,
+          command: null,
+          sha: "abcdef1234567890",
+        },
+        {
+          label: "git history provenance",
+          detail: "git blame traced this line to the fixed commit.",
+          file: "src/example.ts",
+          line: 12,
+          command: "git blame -L 12,12 -- src/example.ts",
+          sha: "abcdef1234567890",
+        },
+        {
+          label: "main-only release provenance",
+          detail: "No shipped release tag contains the fix; current main includes it.",
+          file: null,
+          line: null,
+          command: "git tag --contains abcdef1234567890",
+          sha: "abcdef1234567890",
+        },
+      ],
+    }),
+  );
+  assert.equal(blameAndMainTimestamp.ok, true);
 });
 
 test("duplicate or superseded closes are allowed with evidence and comment", () => {
