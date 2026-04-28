@@ -38,12 +38,12 @@ Last dashboard update: Apr 28, 2026, 23:41 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4213 |
-| Open PRs | 3250 |
-| Open items total | 7463 |
+| Open issues | 4395 |
+| Open PRs | 3460 |
+| Open items total | 7855 |
 | Reviewed files | 7463 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 1666 |
+| Unreviewed open items | 392 |
+| Due now by cadence | 2060 |
 | Proposed closes awaiting apply | 0 |
 | Closed by Codex apply | 10588 |
 | Failed or stale reviews | 34 |
@@ -53,15 +53,15 @@ Last dashboard update: Apr 28, 2026, 23:41 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6555 | 6555 | 0 | 1610 | 0 | 10584 | Apr 28, 2026, 23:36 UTC | Apr 28, 2026, 23:37 UTC | 829 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 908 | 908 | 0 | 56 | 0 | 4 | Apr 28, 2026, 23:31 UTC | Apr 28, 2026, 23:32 UTC | 413 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6941 | 6555 | 386 | 1998 | 0 | 10584 | Apr 28, 2026, 23:36 UTC | Apr 28, 2026, 23:37 UTC | 829 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 914 | 908 | 6 | 62 | 0 | 4 | Apr 28, 2026, 23:31 UTC | Apr 28, 2026, 23:32 UTC | 413 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
 | [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 23:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25083368259) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 23:33 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25082711223) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 28, 2026, 23:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25083368259) |
 
 ### Fleet Activity
 
@@ -70,7 +70,7 @@ Latest review: Apr 28, 2026, 23:36 UTC. Latest close: Apr 28, 2026, 23:37 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 28 | 0 | 28 | 1 | 6 | 423 | 0 |
-| Last hour | 1093 | 9 | 1084 | 26 | 24 | 1242 | 3 |
+| Last hour | 1090 | 9 | 1081 | 26 | 24 | 1242 | 3 |
 | Last 24 hours | 6233 | 368 | 5865 | 30 | 765 | 1688 | 24 |
 
 ### Recently Closed Across Repos
@@ -135,11 +135,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25083368259](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3337 |
-| Open PRs | 3218 |
-| Open items total | 6555 |
+| Open issues | 3519 |
+| Open PRs | 3422 |
+| Open items total | 6941 |
 | Reviewed files | 6555 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 386 |
 | Archived closed files | 13821 |
 
 #### Review Outcomes
@@ -159,13 +159,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25083368259](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 119/866 current (747 due, 13.7%) |
-| Hourly hot item cadence (<7d) | 119/866 current (747 due, 13.7%) |
+| Hourly cadence coverage | 117/866 current (749 due, 13.5%) |
+| Hourly hot item cadence (<7d) | 117/866 current (749 due, 13.5%) |
 | Daily cadence coverage | 3008/3870 current (862 due, 77.7%) |
 | Daily PR cadence | 2230/2707 current (477 due, 82.4%) |
 | Daily new issue cadence (<30d) | 778/1163 current (385 due, 66.9%) |
 | Weekly older issue cadence | 1818/1819 current (1 due, 99.9%) |
-| Due now by cadence | 1610 |
+| Due now by cadence | 1998 |
 
 ### Audit Health
 
@@ -206,7 +206,7 @@ Latest review: Apr 28, 2026, 23:36 UTC. Latest close: Apr 28, 2026, 23:37 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 27 | 0 | 27 | 0 | 5 | 402 | 0 |
-| Last hour | 577 | 9 | 568 | 3 | 22 | 829 | 3 |
+| Last hour | 574 | 9 | 565 | 3 | 22 | 829 | 3 |
 | Last 24 hours | 5311 | 365 | 4946 | 7 | 751 | 1224 | 24 |
 
 #### Recently Closed
@@ -253,12 +253,12 @@ Latest review: Apr 28, 2026, 23:36 UTC. Latest close: Apr 28, 2026, 23:37 UTC. L
 
 Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
 
-Updated: Apr 28, 2026, 23:33 UTC
+Updated: Apr 28, 2026, 23:41 UTC
 
-State: Review comments checked
+State: Hot intake in progress
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 600,677,772,786,888,1511,1519,1522,1524,1525,1539,1577,1589,1653,1678,1738,1743,1866,1867,1868.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082711223](https://github.com/openclaw/clawsweeper/actions/runs/25082711223)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25083368259](https://github.com/openclaw/clawsweeper/actions/runs/25083368259)
 <!-- clawsweeper-status:openclaw-clawhub:end -->
 
 #### Queue
@@ -267,10 +267,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082711223](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 876 |
-| Open PRs | 32 |
-| Open items total | 908 |
+| Open PRs | 38 |
+| Open items total | 914 |
 | Reviewed files | 908 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 6 |
 | Archived closed files | 14 |
 
 #### Review Outcomes
@@ -296,7 +296,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25082711223](https://
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 200/201 current (1 due, 99.5%) |
 | Weekly older issue cadence | 613/634 current (21 due, 96.7%) |
-| Due now by cadence | 56 |
+| Due now by cadence | 62 |
 
 ### Audit Health
 
