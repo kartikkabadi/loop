@@ -47,31 +47,31 @@ Last dashboard update: Apr 28, 2026, 09:03 UTC
 | Proposed closes awaiting apply | 8 |
 | Closed by Codex apply | 10282 |
 | Failed or stale reviews | 40 |
-| Archived closed files | 13389 |
+| Archived closed files | 13390 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6996 | 6566 | 430 | 3674 | 8 | 10278 | Apr 28, 2026, 08:58 UTC | Apr 28, 2026, 08:53 UTC | 40 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6996 | 6566 | 430 | 3674 | 8 | 10279 | Apr 28, 2026, 09:01 UTC | Apr 28, 2026, 09:01 UTC | 41 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 910 | 903 | 7 | 58 | 0 | 3 | Apr 28, 2026, 08:46 UTC | Apr 28, 2026, 05:18 UTC | 467 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 09:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043749253) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 09:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043721587) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 28, 2026, 09:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043739194) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. Latest comment sync: Apr 28, 2026, 09:03 UTC.
+Latest review: Apr 28, 2026, 09:01 UTC. Latest close: Apr 28, 2026, 09:01 UTC. Latest comment sync: Apr 28, 2026, 09:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 360 | 7 | 353 | 0 | 1 | 452 | 3 |
-| Last hour | 1040 | 11 | 1029 | 1 | 3 | 507 | 6 |
-| Last 24 hours | 3318 | 116 | 3202 | 15 | 59 | 1596 | 25 |
+| Last 15 minutes | 357 | 8 | 349 | 0 | 2 | 451 | 3 |
+| Last hour | 1041 | 12 | 1029 | 1 | 4 | 508 | 6 |
+| Last 24 hours | 3319 | 117 | 3202 | 15 | 60 | 1597 | 25 |
 
 ### Recently Closed Across Repos
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59859](https://github.com/openclaw/openclaw/pull/59859) | feat: cute GTK-native Linux App (#75) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/59859.md) | complete | Apr 28, 2026, 09:00 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73365](https://github.com/openclaw/openclaw/pull/73365) | fix: allow steer messages during active non-streaming runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73365.md) | complete | Apr 28, 2026, 09:01 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#10356](https://github.com/openclaw/openclaw/pull/10356) | TTS: add Typecast provider (emotion presets, audio tuning, Asian language voices) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/10356.md) | complete | Apr 28, 2026, 08:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73432](https://github.com/openclaw/openclaw/issues/73432) | [Bug]: qmd embedding is never triggered per memory.qmd.update.interval/embedInterval | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73432.md) | complete | Apr 28, 2026, 08:57 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#44354](https://github.com/openclaw/openclaw/issues/44354) | Bug: openclaw health --json reports stale Discord state | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44354.md) | complete | Apr 28, 2026, 08:55 UTC |
@@ -105,7 +105,6 @@ Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#53531](https://github.com/openclaw/openclaw/issues/53531) | Compaction should use auth-profile rotation / failover within the same provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/53531.md) | complete | Apr 28, 2026, 08:54 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#53742](https://github.com/openclaw/openclaw/issues/53742) | Bug: macOS gateway install --force resolves SecretRef values into plaintext LaunchAgent plist and triggers token mismatch loop | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/53742.md) | complete | Apr 28, 2026, 08:54 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#44027](https://github.com/openclaw/openclaw/pull/44027) | fix: respect /verbose mode when suppressing tool summaries in group chats | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44027.md) | complete | Apr 28, 2026, 08:54 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#44828](https://github.com/openclaw/openclaw/pull/44828) | fix(feishu): suppress NO_REPLY silent token before API send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44828.md) | complete | Apr 28, 2026, 08:54 UTC |
 
 </details>
 
@@ -127,8 +126,8 @@ Updated: Apr 28, 2026, 09:03 UTC
 
 State: Planning review
 
-Reviewed event item #73351, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043749253](https://github.com/openclaw/clawsweeper/actions/runs/25043749253)
+Reviewed event item #73365, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043721587](https://github.com/openclaw/clawsweeper/actions/runs/25043721587)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -141,7 +140,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043749253](https://
 | Open items total | 6996 |
 | Reviewed files | 6566 |
 | Unreviewed open items | 430 |
-| Archived closed files | 13379 |
+| Archived closed files | 13380 |
 
 #### Review Outcomes
 
@@ -178,13 +177,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. Latest comment sync: Apr 28, 2026, 09:03 UTC.
+Latest review: Apr 28, 2026, 09:01 UTC. Latest close: Apr 28, 2026, 09:01 UTC. Latest comment sync: Apr 28, 2026, 09:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 360 | 7 | 353 | 0 | 1 | 8 | 3 |
-| Last hour | 539 | 11 | 528 | 0 | 3 | 40 | 6 |
-| Last 24 hours | 2405 | 113 | 2292 | 14 | 56 | 896 | 24 |
+| Last 15 minutes | 357 | 8 | 349 | 0 | 2 | 9 | 3 |
+| Last hour | 540 | 12 | 528 | 0 | 4 | 41 | 6 |
+| Last 24 hours | 2406 | 114 | 2292 | 14 | 57 | 897 | 24 |
 
 #### Recently Closed
 
@@ -205,7 +204,7 @@ Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#59859](https://github.com/openclaw/openclaw/pull/59859) | feat: cute GTK-native Linux App (#75) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/59859.md) | complete | Apr 28, 2026, 09:00 UTC |
+| [#73365](https://github.com/openclaw/openclaw/pull/73365) | fix: allow steer messages during active non-streaming runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73365.md) | complete | Apr 28, 2026, 09:01 UTC |
 | [#10356](https://github.com/openclaw/openclaw/pull/10356) | TTS: add Typecast provider (emotion presets, audio tuning, Asian language voices) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/10356.md) | complete | Apr 28, 2026, 08:58 UTC |
 | [#73432](https://github.com/openclaw/openclaw/issues/73432) | [Bug]: qmd embedding is never triggered per memory.qmd.update.interval/embedInterval | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73432.md) | complete | Apr 28, 2026, 08:57 UTC |
 | [#44354](https://github.com/openclaw/openclaw/issues/44354) | Bug: openclaw health --json reports stale Discord state | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44354.md) | complete | Apr 28, 2026, 08:55 UTC |
@@ -215,7 +214,6 @@ Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 | [#53531](https://github.com/openclaw/openclaw/issues/53531) | Compaction should use auth-profile rotation / failover within the same provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/53531.md) | complete | Apr 28, 2026, 08:54 UTC |
 | [#53742](https://github.com/openclaw/openclaw/issues/53742) | Bug: macOS gateway install --force resolves SecretRef values into plaintext LaunchAgent plist and triggers token mismatch loop | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/53742.md) | complete | Apr 28, 2026, 08:54 UTC |
 | [#44027](https://github.com/openclaw/openclaw/pull/44027) | fix: respect /verbose mode when suppressing tool summaries in group chats | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44027.md) | complete | Apr 28, 2026, 08:54 UTC |
-| [#44828](https://github.com/openclaw/openclaw/pull/44828) | fix(feishu): suppress NO_REPLY silent token before API send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44828.md) | complete | Apr 28, 2026, 08:54 UTC |
 
 </details>
 
@@ -288,7 +286,7 @@ Latest review: Apr 28, 2026, 08:46 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 444 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 442 | 0 |
 | Last hour | 501 | 0 | 501 | 1 | 0 | 467 | 0 |
 | Last 24 hours | 913 | 3 | 910 | 1 | 3 | 700 | 1 |
 
