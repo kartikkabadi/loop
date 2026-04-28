@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:21 UTC
 
 State: Event review applied
 
-Reviewed event item #73312, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037172998](https://github.com/openclaw/clawsweeper/actions/runs/25037172998)
+Reviewed event item #73332, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037173857](https://github.com/openclaw/clawsweeper/actions/runs/25037173857)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,15 +54,15 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037172998](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3581 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3466 |
 | Open items total | 7047 |
-| Reviewed files | 6573 |
-| Unreviewed open items | 474 |
+| Reviewed files | 6574 |
+| Unreviewed open items | 473 |
 | Archived closed files | 13273 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3384 |
+| Fresh reviewed issues in the last 7 days | 3385 |
 | Proposed issue closes | 10 (0.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3185 |
 | Proposed PR closes | 3 (0.1% of reviewed PRs) |
@@ -75,13 +75,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037172998](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 25/609 current (584 due, 4.1%) |
-| Hourly hot item cadence (<7d) | 25/609 current (584 due, 4.1%) |
+| Hourly cadence coverage | 26/610 current (584 due, 4.3%) |
+| Hourly hot item cadence (<7d) | 26/610 current (584 due, 4.3%) |
 | Daily cadence coverage | 1315/4109 current (2794 due, 32%) |
 | Daily PR cadence | 879/2841 current (1962 due, 30.9%) |
 | Daily new issue cadence (<30d) | 436/1268 current (832 due, 34.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 3852 |
+| Due now by cadence | 3851 |
 
 ### Audit Health
 
@@ -120,8 +120,8 @@ Latest review: Apr 28, 2026, 06:19 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 10 | 0 | 10 | 1 | 0 | 9 | 1 |
-| Last hour | 521 | 15 | 506 | 1 | 0 | 355 | 4 |
-| Last 24 hours | 2202 | 101 | 2101 | 2 | 72 | 1075 | 17 |
+| Last hour | 522 | 15 | 507 | 1 | 0 | 356 | 4 |
+| Last 24 hours | 2203 | 101 | 2102 | 2 | 72 | 1076 | 17 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:19 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73312](https://github.com/openclaw/openclaw/pull/73312) | feat(matrix): expose MessagePresentation metadata in Matrix events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73312.md) | complete | Apr 28, 2026, 06:19 UTC |
+| [#73332](https://github.com/openclaw/openclaw/issues/73332) | v2026.4.25: Agents with no fallbacks array auto-fail-over to every registered models.providers.* entry | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73332.md) | complete | Apr 28, 2026, 06:19 UTC |
 | [#72333](https://github.com/openclaw/openclaw/pull/72333) | [plugin sdk] Add host-hook examples and recipes (#72287 follow-up) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72333.md) | complete | Apr 28, 2026, 06:16 UTC |
 | [#55652](https://github.com/openclaw/openclaw/pull/55652) | fix(discord): skip channels claimed by other instances | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/55652.md) | complete | Apr 28, 2026, 06:16 UTC |
 | [#72383](https://github.com/openclaw/openclaw/pull/72383) | [plugin sdk] Add workflow action, outbound, scheduler, and retry host seams | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72383.md) | complete | Apr 28, 2026, 06:16 UTC |
