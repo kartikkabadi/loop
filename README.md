@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 17:00 UTC
+Last dashboard update: Apr 28, 2026, 17:01 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4428 |
-| Open PRs | 3447 |
-| Open items total | 7875 |
+| Open issues | 4254 |
+| Open PRs | 3228 |
+| Open items total | 7482 |
 | Reviewed files | 7482 |
-| Unreviewed open items | 393 |
-| Due now by cadence | 2638 |
+| Unreviewed open items | 0 |
+| Due now by cadence | 2247 |
 | Proposed closes awaiting apply | 0 |
 | Closed by Codex apply | 10473 |
 | Failed or stale reviews | 7 |
@@ -53,24 +53,24 @@ Last dashboard update: Apr 28, 2026, 17:00 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6961 | 6575 | 386 | 2612 | 0 | 10470 | Apr 28, 2026, 16:59 UTC | Apr 28, 2026, 17:00 UTC | 496 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 914 | 907 | 7 | 26 | 0 | 3 | Apr 28, 2026, 16:48 UTC | Apr 28, 2026, 08:18 UTC | 294 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6575 | 6575 | 0 | 2228 | 0 | 10470 | Apr 28, 2026, 17:00 UTC | Apr 28, 2026, 17:00 UTC | 489 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 907 | 907 | 0 | 19 | 0 | 3 | Apr 28, 2026, 16:48 UTC | Apr 28, 2026, 08:18 UTC | 294 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 17:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25066370672) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 17:01 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25066600918) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 16:50 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25065834871) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 16:59 UTC. Latest close: Apr 28, 2026, 17:00 UTC. Latest comment sync: Apr 28, 2026, 17:00 UTC.
+Latest review: Apr 28, 2026, 17:00 UTC. Latest close: Apr 28, 2026, 17:00 UTC. Latest comment sync: Apr 28, 2026, 17:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 55 | 6 | 49 | 1 | 17 | 58 | 1 |
-| Last hour | 1379 | 27 | 1352 | 3 | 29 | 790 | 1 |
+| Last 15 minutes | 48 | 3 | 45 | 1 | 14 | 55 | 1 |
+| Last hour | 1377 | 27 | 1350 | 3 | 28 | 783 | 1 |
 | Last 24 hours | 4705 | 246 | 4459 | 4 | 581 | 1090 | 16 |
 
 ### Recently Closed Across Repos
@@ -95,6 +95,7 @@ Latest review: Apr 28, 2026, 16:59 UTC. Latest close: Apr 28, 2026, 17:00 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73686](https://github.com/openclaw/openclaw/pull/73686) | fix #73549: Feature Request: Persistent Skill/.md configuration support for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73686.md) | complete | Apr 28, 2026, 17:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73692](https://github.com/openclaw/openclaw/pull/73692) | fix: log fetch timeout aborts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73692.md) | complete | Apr 28, 2026, 16:59 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73691](https://github.com/openclaw/openclaw/issues/73691) | [Bug]: MEMORY.md grows unbounded → bootstrap overflow → Gateway freeze | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73691.md) | complete | Apr 28, 2026, 16:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73674](https://github.com/openclaw/openclaw/pull/73674) | fix(memory): resolve QMD Windows cmd shims | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73674.md) | complete | Apr 28, 2026, 16:58 UTC |
@@ -104,7 +105,6 @@ Latest review: Apr 28, 2026, 16:59 UTC. Latest close: Apr 28, 2026, 17:00 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73190](https://github.com/openclaw/openclaw/pull/73190) | Keep Codex same-session replies on the normal OpenClaw path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73190.md) | complete | Apr 28, 2026, 16:56 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 16:55 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73689](https://github.com/openclaw/openclaw/pull/73689) | fix(bedrock): strip inferenceConfig.temperature for Opus 4.7 (#73663) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73689.md) | complete | Apr 28, 2026, 16:54 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73566](https://github.com/openclaw/openclaw/pull/73566) | fix(cli): handle closed plugin uninstall prompt | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73566.md) | complete | Apr 28, 2026, 16:53 UTC |
 
 </details>
 
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 16:59 UTC. Latest close: Apr 28, 2026, 17:00 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 17:00 UTC
+Updated: Apr 28, 2026, 17:01 UTC
 
-State: Apply finished
+State: Planning review
 
-Apply/comment-sync run finished with 11 fresh closes out of requested limit 11. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066370672](https://github.com/openclaw/clawsweeper/actions/runs/25066370672)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066600918](https://github.com/openclaw/clawsweeper/actions/runs/25066600918)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -135,11 +135,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066370672](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3552 |
-| Open PRs | 3409 |
-| Open items total | 6961 |
+| Open issues | 3379 |
+| Open PRs | 3196 |
+| Open items total | 6575 |
 | Reviewed files | 6575 |
-| Unreviewed open items | 386 |
+| Unreviewed open items | 0 |
 | Archived closed files | 13639 |
 
 #### Review Outcomes
@@ -159,13 +159,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25066370672](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 112/790 current (678 due, 14.2%) |
-| Hourly hot item cadence (<7d) | 112/790 current (678 due, 14.2%) |
+| Hourly cadence coverage | 110/790 current (680 due, 13.9%) |
+| Hourly hot item cadence (<7d) | 110/790 current (680 due, 13.9%) |
 | Daily cadence coverage | 2398/3945 current (1547 due, 60.8%) |
 | Daily PR cadence | 1901/2736 current (835 due, 69.5%) |
 | Daily new issue cadence (<30d) | 497/1209 current (712 due, 41.1%) |
 | Weekly older issue cadence | 1839/1840 current (1 due, 99.9%) |
-| Due now by cadence | 2612 |
+| Due now by cadence | 2228 |
 
 ### Audit Health
 
@@ -201,12 +201,12 @@ Targeted review input: `64563,65635,72522,72527,72529,72531,72532,72535,72536,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 16:59 UTC. Latest close: Apr 28, 2026, 17:00 UTC. Latest comment sync: Apr 28, 2026, 17:00 UTC.
+Latest review: Apr 28, 2026, 17:00 UTC. Latest close: Apr 28, 2026, 17:00 UTC. Latest comment sync: Apr 28, 2026, 17:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 35 | 6 | 29 | 1 | 17 | 38 | 1 |
-| Last hour | 1085 | 27 | 1058 | 2 | 29 | 496 | 1 |
+| Last 15 minutes | 28 | 3 | 25 | 1 | 14 | 35 | 1 |
+| Last hour | 1083 | 27 | 1056 | 2 | 28 | 489 | 1 |
 | Last 24 hours | 3788 | 243 | 3545 | 3 | 571 | 787 | 16 |
 
 #### Recently Closed
@@ -228,6 +228,7 @@ Latest review: Apr 28, 2026, 16:59 UTC. Latest close: Apr 28, 2026, 17:00 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73686](https://github.com/openclaw/openclaw/pull/73686) | fix #73549: Feature Request: Persistent Skill/.md configuration support for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73686.md) | complete | Apr 28, 2026, 17:00 UTC |
 | [#73692](https://github.com/openclaw/openclaw/pull/73692) | fix: log fetch timeout aborts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73692.md) | complete | Apr 28, 2026, 16:59 UTC |
 | [#73691](https://github.com/openclaw/openclaw/issues/73691) | [Bug]: MEMORY.md grows unbounded → bootstrap overflow → Gateway freeze | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73691.md) | complete | Apr 28, 2026, 16:58 UTC |
 | [#73674](https://github.com/openclaw/openclaw/pull/73674) | fix(memory): resolve QMD Windows cmd shims | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73674.md) | complete | Apr 28, 2026, 16:58 UTC |
@@ -237,7 +238,6 @@ Latest review: Apr 28, 2026, 16:59 UTC. Latest close: Apr 28, 2026, 17:00 UTC. L
 | [#73190](https://github.com/openclaw/openclaw/pull/73190) | Keep Codex same-session replies on the normal OpenClaw path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73190.md) | complete | Apr 28, 2026, 16:56 UTC |
 | [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 16:55 UTC |
 | [#73689](https://github.com/openclaw/openclaw/pull/73689) | fix(bedrock): strip inferenceConfig.temperature for Opus 4.7 (#73663) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73689.md) | complete | Apr 28, 2026, 16:54 UTC |
-| [#73566](https://github.com/openclaw/openclaw/pull/73566) | fix(cli): handle closed plugin uninstall prompt | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73566.md) | complete | Apr 28, 2026, 16:53 UTC |
 
 </details>
 
@@ -266,11 +266,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25065834871](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues | 876 |
-| Open PRs | 38 |
-| Open items total | 914 |
+| Open issues | 875 |
+| Open PRs | 32 |
+| Open items total | 907 |
 | Reviewed files | 907 |
-| Unreviewed open items | 7 |
+| Unreviewed open items | 0 |
 | Archived closed files | 10 |
 
 #### Review Outcomes
@@ -296,7 +296,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25065834871](https://
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 202/202 current (0 due, 100%) |
 | Weekly older issue cadence | 631/632 current (1 due, 99.8%) |
-| Due now by cadence | 26 |
+| Due now by cadence | 19 |
 
 ### Audit Health
 
