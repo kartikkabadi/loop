@@ -43,7 +43,7 @@ Last dashboard update: Apr 28, 2026, 07:39 UTC
 | Open items total | 7935 |
 | Reviewed files | 7465 |
 | Unreviewed open items | 470 |
-| Due now by cadence | 3655 |
+| Due now by cadence | 3654 |
 | Proposed closes awaiting apply | 0 |
 | Closed by Codex apply | 10277 |
 | Failed or stale reviews | 33 |
@@ -53,14 +53,14 @@ Last dashboard update: Apr 28, 2026, 07:39 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 7024 | 6560 | 464 | 3648 | 0 | 10274 | Apr 28, 2026, 07:37 UTC | Apr 28, 2026, 07:06 UTC | 384 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 911 | 905 | 6 | 7 | 0 | 3 | Apr 28, 2026, 07:00 UTC | Apr 28, 2026, 05:18 UTC | 417 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 7024 | 6560 | 464 | 3647 | 0 | 10274 | Apr 28, 2026, 07:37 UTC | Apr 28, 2026, 07:06 UTC | 385 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 911 | 905 | 6 | 7 | 0 | 3 | Apr 28, 2026, 07:00 UTC | Apr 28, 2026, 05:18 UTC | 416 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 07:39 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25040066281) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 07:39 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25040076712) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Idle | unknown | _none_ |
 
 ### Fleet Activity
@@ -70,8 +70,8 @@ Latest review: Apr 28, 2026, 07:37 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last hour | 766 | 24 | 742 | 3 | 4 | 801 | 14 |
-| Last 24 hours | 3302 | 120 | 3182 | 14 | 69 | 2034 | 22 |
+| Last hour | 758 | 24 | 734 | 3 | 4 | 801 | 14 |
+| Last 24 hours | 3303 | 120 | 3183 | 14 | 69 | 2035 | 22 |
 
 ### Recently Closed Across Repos
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 07:37 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#69297](https://github.com/openclaw/openclaw/pull/69297) | fix(whatsapp): Add group admin privacy controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69297.md) | complete | Apr 28, 2026, 07:37 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50694](https://github.com/openclaw/openclaw/pull/50694) | fix(compaction): clamp reserveTokensFloor to prevent negative flush threshold | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/50694.md) | complete | Apr 28, 2026, 07:37 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73357](https://github.com/openclaw/openclaw/pull/73357) | fix: handle ENOSPC file watcher errors gracefully | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73357.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73355](https://github.com/openclaw/openclaw/pull/73355) | fix(cron): add .catch() re-arm and watchdog to prevent runtime timer chain death | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73355.md) | complete | Apr 28, 2026, 07:09 UTC |
@@ -126,8 +126,8 @@ Updated: Apr 28, 2026, 07:39 UTC
 
 State: Event review applied
 
-Reviewed event item #69297, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040066281](https://github.com/openclaw/clawsweeper/actions/runs/25040066281)
+Reviewed event item #50694, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040076712](https://github.com/openclaw/clawsweeper/actions/runs/25040076712)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 ### Queue
@@ -161,11 +161,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040066281](https://
 | --- | ---: |
 | Hourly cadence coverage | 64/629 current (565 due, 10.2%) |
 | Hourly hot item cadence (<7d) | 64/629 current (565 due, 10.2%) |
-| Daily cadence coverage | 1472/4086 current (2614 due, 36%) |
-| Daily PR cadence | 1054/2826 current (1772 due, 37.3%) |
+| Daily cadence coverage | 1473/4086 current (2613 due, 36%) |
+| Daily PR cadence | 1055/2826 current (1771 due, 37.3%) |
 | Daily new issue cadence (<30d) | 418/1260 current (842 due, 33.2%) |
 | Weekly older issue cadence | 1840/1845 current (5 due, 99.7%) |
-| Due now by cadence | 3648 |
+| Due now by cadence | 3647 |
 
 ### Audit Health
 
@@ -207,8 +207,8 @@ Latest review: Apr 28, 2026, 07:37 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last hour | 384 | 24 | 360 | 3 | 4 | 384 | 13 |
-| Last 24 hours | 2390 | 117 | 2273 | 14 | 66 | 1305 | 21 |
+| Last hour | 376 | 24 | 352 | 3 | 4 | 385 | 13 |
+| Last 24 hours | 2391 | 117 | 2274 | 14 | 66 | 1306 | 21 |
 
 ### Recently Closed
 
@@ -232,7 +232,7 @@ Latest review: Apr 28, 2026, 07:37 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#69297](https://github.com/openclaw/openclaw/pull/69297) | fix(whatsapp): Add group admin privacy controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69297.md) | complete | Apr 28, 2026, 07:37 UTC |
+| [#50694](https://github.com/openclaw/openclaw/pull/50694) | fix(compaction): clamp reserveTokensFloor to prevent negative flush threshold | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/50694.md) | complete | Apr 28, 2026, 07:37 UTC |
 | [#73357](https://github.com/openclaw/openclaw/pull/73357) | fix: handle ENOSPC file watcher errors gracefully | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73357.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [#73355](https://github.com/openclaw/openclaw/pull/73355) | fix(cron): add .catch() re-arm and watchdog to prevent runtime timer chain death | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73355.md) | complete | Apr 28, 2026, 07:09 UTC |
@@ -314,7 +314,7 @@ Latest review: Apr 28, 2026, 07:00 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 382 | 0 | 382 | 0 | 0 | 417 | 1 |
+| Last hour | 382 | 0 | 382 | 0 | 0 | 416 | 1 |
 | Last 24 hours | 912 | 3 | 909 | 0 | 3 | 729 | 1 |
 
 #### Recently Closed
