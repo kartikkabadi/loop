@@ -1,33 +1,43 @@
 [
   {
-    "number": 59324,
+    "number": 58567,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 58567,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 59477,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 59477,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 61701,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 61701,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 66875,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 64758,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 65309,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 65886,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 65914,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 69310,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "number": 66875,
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
     "number": 69472,
@@ -35,68 +45,33 @@
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 70864,
+    "number": 69472,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 70149,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 71142,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "number": 70149,
+    "action": "closed",
+    "reason": "already implemented on main"
   },
   {
-    "number": 71396,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 71459,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 71550,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 71857,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72237,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72245,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72268,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72294,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72297,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72338,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "number": 71731,
+    "action": "skipped_same_author_pair",
+    "reason": "open issue #71736 ([RFC] Control UI plugin contribution slots) by the same author is paired with this PR"
   },
   {
     "number": 72376,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 72376,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
