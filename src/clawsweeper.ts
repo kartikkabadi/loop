@@ -124,12 +124,22 @@ interface Evidence {
   sha: string | null;
 }
 
+interface LikelyOwner {
+  person: string;
+  role: string;
+  reason: string;
+  commits: string[];
+  files: string[];
+  confidence: Confidence;
+}
+
 interface Decision {
   decision: DecisionKind;
   closeReason: CloseReason;
   confidence: Confidence;
   summary: string;
   evidence: Evidence[];
+  likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
   fixedRelease?: string | null;
@@ -428,7 +438,7 @@ const AUDIT_HEALTH_END = "<!-- clawsweeper-audit:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
-const REVIEW_POLICY_VERSION = "2026-04-28-policy-v9";
+const REVIEW_POLICY_VERSION = "2026-04-28-policy-v10";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
@@ -451,6 +461,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "confidence",
   "summary",
   "evidence",
+  "likelyOwners",
   "risks",
   "bestSolution",
   "fixedRelease",
@@ -459,6 +470,14 @@ const DECISION_SCHEMA_KEYS = new Set([
   "closeComment",
 ]);
 const EVIDENCE_SCHEMA_KEYS = new Set(["label", "detail", "file", "line", "command", "sha"]);
+const LIKELY_OWNER_SCHEMA_KEYS = new Set([
+  "person",
+  "role",
+  "reason",
+  "commits",
+  "files",
+  "confidence",
+]);
 
 function targetProfile(): RepositoryProfile {
   return activeRepositoryProfile;
@@ -973,6 +992,19 @@ function parseEvidence(value: unknown, path: string): Evidence {
   };
 }
 
+function parseLikelyOwner(value: unknown, path: string): LikelyOwner {
+  const record = requireRecord(value, path);
+  rejectUnexpectedKeys(record, LIKELY_OWNER_SCHEMA_KEYS, path);
+  return {
+    person: requireString(record.person, `${path}.person`),
+    role: requireString(record.role, `${path}.role`),
+    reason: requireString(record.reason, `${path}.reason`),
+    commits: requireStringArray(record.commits, `${path}.commits`),
+    files: requireStringArray(record.files, `${path}.files`),
+    confidence: requireEnum(record.confidence, CONFIDENCES, `${path}.confidence`),
+  };
+}
+
 function requireEnum<T extends string>(value: unknown, allowed: Set<T>, path: string): T {
   if (typeof value === "string" && allowed.has(value as T)) return value as T;
   throw new Error(`${path} has invalid value`);
@@ -986,12 +1018,21 @@ export function parseDecision(value: unknown): Decision {
     : (() => {
         throw new Error("decision.evidence must be an array");
       })();
+  const likelyOwners = Array.isArray(record.likelyOwners)
+    ? record.likelyOwners.map((entry, index) =>
+        parseLikelyOwner(entry, `decision.likelyOwners[${index}]`),
+      )
+    : (() => {
+        throw new Error("decision.likelyOwners must be an array");
+      })();
+  if (likelyOwners.length === 0) throw new Error("decision.likelyOwners must not be empty");
   return {
     decision: requireEnum(record.decision, DECISIONS, "decision.decision"),
     closeReason: requireEnum(record.closeReason, ALL_REASONS, "decision.closeReason"),
     confidence: requireEnum(record.confidence, CONFIDENCES, "decision.confidence"),
     summary: requireString(record.summary, "decision.summary"),
     evidence,
+    likelyOwners,
     risks: requireStringArray(record.risks, "decision.risks").filter(
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
@@ -2460,6 +2501,16 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
       evidenceEntry({ label: "codex failure detail", detail: trimMiddle(detail, 4000) }),
       evidenceEntry({ label: "codex stdout", detail: trimMiddle(stdout || "No stdout.", 2000) }),
     ],
+    likelyOwners: [
+      {
+        person: "unknown",
+        role: "review did not complete",
+        reason: "Codex failed before it could trace repository history.",
+        commits: [],
+        files: [],
+        confidence: "low",
+      },
+    ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
     fixedRelease: null,
@@ -2888,6 +2939,29 @@ function closeEvidenceLine(evidence: Evidence): string {
   return `- ${prefix}${detail}${evidenceLocation(evidence)}`;
 }
 
+function likelyOwnerLine(owner: LikelyOwner): string {
+  const person = owner.person.trim() || "unknown";
+  const role = owner.role.trim();
+  const reason = sentence(owner.reason.trim() || "Related by repository history.");
+  const commits = owner.commits
+    .filter(Boolean)
+    .slice(0, 3)
+    .map((commit) => linkedSha(commit))
+    .join(", ");
+  const files = owner.files
+    .filter(Boolean)
+    .slice(0, 3)
+    .map((file) => `\`${file}\``)
+    .join(", ");
+  const suffix = [
+    role ? `role: ${role}` : "",
+    `confidence: ${owner.confidence}`,
+    commits ? `commits: ${commits}` : "",
+    files ? `files: ${files}` : "",
+  ].filter(Boolean);
+  return `- **${person}:** ${reason}${suffix.length ? ` (${suffix.join("; ")})` : ""}`;
+}
+
 function closeIntro(reason: CloseReason): string {
   switch (reason) {
     case "implemented_on_main":
@@ -2955,6 +3029,53 @@ function reportEvidence(markdown: string): Evidence[] {
   return entries;
 }
 
+function reportLikelyOwners(markdown: string): LikelyOwner[] {
+  const section = sectionValue(markdown, "Likely Related People");
+  const owners: LikelyOwner[] = [];
+  let current: LikelyOwner | null = null;
+  for (const line of section.split("\n")) {
+    const heading = line.match(/^- \*\*(.*?):\*\*\s*(.*)$/);
+    if (heading) {
+      if (current) owners.push(current);
+      current = {
+        person: heading[1] ?? "",
+        role: heading[2] ?? "",
+        reason: "",
+        commits: [],
+        files: [],
+        confidence: "low",
+      };
+      continue;
+    }
+    if (!current) continue;
+    const reason = line.match(/^\s+- reason: (.*)$/);
+    if (reason?.[1]) {
+      current.reason = reason[1];
+      continue;
+    }
+    const commits = line.match(/^\s+- commits: (.*)$/);
+    if (commits?.[1]) {
+      current.commits = commits[1]
+        .split(",")
+        .map((commit) => commit.trim())
+        .filter(Boolean);
+      continue;
+    }
+    const files = line.match(/^\s+- files: (.*)$/);
+    if (files?.[1]) {
+      current.files = files[1]
+        .split(",")
+        .map((file) => file.trim())
+        .filter(Boolean);
+      continue;
+    }
+    const confidence = line.match(/^\s+- confidence: (high|medium|low)$/);
+    if (confidence?.[1]) current.confidence = confidence[1] as Confidence;
+  }
+  if (current) owners.push(current);
+  return owners;
+}
+
 function reportDecision(markdown: string, closeReason: CloseReason): Decision {
   const fixedRelease = frontMatterValue(markdown, "fixed_release");
   const fixedSha = frontMatterValue(markdown, "fixed_sha");
@@ -2965,6 +3086,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     confidence: "high",
     summary: sectionValue(markdown, "Summary"),
     evidence: reportEvidence(markdown),
+    likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: sectionValue(markdown, "Best Possible Solution"),
     fixedRelease: fixedRelease && fixedRelease !== "unknown" ? fixedRelease : null,
@@ -3020,13 +3142,16 @@ function renderCloseComment(options: {
   summary: string;
   bestSolution?: string;
   evidence: Evidence[];
+  likelyOwners?: LikelyOwner[];
   reviewLine: string;
 }): string {
   const evidence = options.evidence.slice(0, 6).map(closeEvidenceLine);
+  const likelyOwners = (options.likelyOwners ?? []).slice(0, 5).map(likelyOwnerLine);
   const lines = [closeIntro(options.reason), "", sentence(options.summary)];
   const bestSolution = options.bestSolution?.trim();
   if (bestSolution) lines.push("", "Best possible solution:", "", sentence(bestSolution));
   if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
+  if (likelyOwners.length) lines.push("", "Likely related people:", "", ...likelyOwners);
 
   const outro = closeOutro(options.reason);
   if (outro) lines.push("", outro);
@@ -3042,6 +3167,7 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
       summary: sectionValue(markdown, "Summary"),
       bestSolution: sectionValue(markdown, "Best Possible Solution"),
       evidence: reportEvidence(markdown),
+      likelyOwners: reportLikelyOwners(markdown),
       reviewLine: closeReviewLineFromReport(markdown),
     }),
     Number(frontMatterValue(markdown, "number")),
@@ -3084,12 +3210,14 @@ function normalizeComment(
     summary: decision.summary,
     bestSolution: decision.bestSolution,
     evidence: decision.evidence,
+    likelyOwners: decision.likelyOwners,
     reviewLine: closeReviewLineFromDecision(decision, git, runtime),
   });
 }
 
 function renderKeepOpenCommentFromReport(markdown: string): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
+  const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
   const summary = sectionValue(markdown, "Summary");
   const bestSolution = sectionValue(markdown, "Best Possible Solution");
   const risks = sectionValue(markdown, "Risks / Open Questions");
@@ -3106,6 +3234,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     ),
   ];
   if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
+  if (likelyOwners.length) lines.push("", "Likely related people:", "", ...likelyOwners);
   if (risks && risks !== "- none") lines.push("", "Remaining risk / open question:", "", risks);
   const reviewLine = closeReviewLineFromReport(markdown);
   if (reviewLine) lines.push("", reviewLine);
@@ -3502,6 +3631,18 @@ function markdownFor(options: {
   const risks = options.decision.risks.length
     ? options.decision.risks.map((risk) => `- ${risk}`).join("\n")
     : "- none";
+  const likelyOwners = options.decision.likelyOwners.length
+    ? options.decision.likelyOwners
+        .map((owner) => {
+          const bits = [`- **${owner.person}:** ${owner.role}`];
+          bits.push(`  - reason: ${owner.reason}`);
+          bits.push(`  - confidence: ${owner.confidence}`);
+          if (owner.commits.length) bits.push(`  - commits: ${owner.commits.join(", ")}`);
+          if (owner.files.length) bits.push(`  - files: ${owner.files.join(", ")}`);
+          return bits.join("\n");
+        })
+        .join("\n")
+    : "- none";
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
   return `---
 number: ${options.item.number}
@@ -3588,6 +3729,10 @@ ${bestSolution}
 ## Evidence
 
 ${evidence}
+
+## Likely Related People
+
+${likelyOwners}
 
 ## Risks / Open Questions
 

@@ -8,6 +8,7 @@
     "confidence",
     "summary",
     "evidence",
+    "likelyOwners",
     "risks",
     "bestSolution",
     "fixedRelease",
@@ -64,6 +65,46 @@
           },
           "sha": {
             "type": ["string", "null"]
+          }
+        }
+      }
+    },
+    "likelyOwners": {
+      "type": "array",
+      "description": "People most likely connected to the relevant code or behavior, based on git blame/log/PR history. Include multiple candidates when responsibility is shared or ambiguous.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["person", "role", "reason", "commits", "files", "confidence"],
+        "properties": {
+          "person": {
+            "type": "string",
+            "description": "GitHub login, commit author name/email, or maintainer handle. Use the most specific stable identifier available."
+          },
+          "role": {
+            "type": "string",
+            "description": "Neutral role in the history, such as introduced behavior, recent maintainer, reviewer, merger, adjacent owner, or likely follow-up owner."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Brief evidence-backed reason this person is relevant."
+          },
+          "commits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
           }
         }
       }

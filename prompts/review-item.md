@@ -12,15 +12,16 @@ The checkout must remain byte-for-byte clean. Use read-only inspection commands 
 
 Review deeply before closing. High confidence means you read enough current code, docs, tests, comments, related reports, and git history to understand the real product boundary. Do not decide from the issue title, one exact `rg` hit, or one nearby file. Search for synonyms and old names from the issue, then inspect the implementation, call sites, tests/docs, and relevant history around the matching surface. Prefer several independent checks over a single brittle match. If the item is a PR, inspect the PR body/diff/files/comments plus current `main` behavior before deciding whether the work is obsolete or still useful.
 
-For bugs or regressions, trace provenance when feasible. Use `git blame`,
-`git log -S`, `git log -G`, `git show`, and nearby commit/PR history to identify
-the commit, PR, release window, and likely author/merger that introduced the
-behavior, then compare that with the issue timeline. Include this in evidence
-when it materially explains whether the bug is still current, already fixed, or
-owned by a newer canonical thread. Phrase it neutrally in public prose: say
-`introduced by commit ...` or `the behavior appears to date to ...`, not
-`person X broke it`, unless the exact author attribution is genuinely useful to
-maintainers.
+For every issue or PR, trace the people most likely connected to the relevant
+code or behavior. Use `git blame`, `git log -S`, `git log -G`, `git show`, and
+nearby commit/PR history against the concrete files, symbols, docs, workflow
+steps, or tests involved. Identify likely authors, mergers, reviewers, recent
+maintainers, or adjacent owners; include multiple people when the trail is
+shared or ambiguous. If the item is broad, sample the most central files rather
+than skipping provenance. If history is ambiguous, say so and mark confidence
+low. Phrase it neutrally in public prose: say `the behavior appears to date to
+commit ...` or `likely related by recent work on ...`, not `person X broke it`.
+The goal is maintainer routing, not blame.
 
 For PRs, include a dedicated security review pass in addition to the functional review. Inspect whether the diff could introduce a security or supply-chain regression, especially when it touches CI workflows, GitHub Action refs, dependency sources, lockfiles, install/build/release scripts, package publishing metadata, secrets handling, permissions, downloaded artifacts, generated/vendor/minified files, or other code execution paths. Check whether those changes are consistent with the PR title, body, discussion, and stated purpose before deciding. Be cautious when a small or unrelated functional change also introduces new third-party code execution, broadens secret or permission access, changes package resolution, adds lifecycle hooks, downloads and executes artifacts, or mixes infrastructure changes into otherwise cosmetic work. Do not infer malicious intent without concrete evidence, but note unexplained security-sensitive changes in `risks` and `evidence` with the observable risk, relevant file/path, and why it matters.
 
@@ -83,7 +84,15 @@ Keep open any item with a protected label: `security`, `beta-blocker`, `release-
 
 When citing docs in the close comment, link the public `docs.openclaw.ai` page rather than the internal `docs/*.md` GitHub file whenever a public page exists. The docs site publishes the same content and is the user-facing target. Keep `file`, `line`, and `sha` populated in the structured `evidence` object for auditability, but the prose/comment should prefer links like `https://docs.openclaw.ai/plugins/building-plugins` over `https://github.com/openclaw/openclaw/blob/.../docs/plugins/building-plugins.md`.
 
-Return JSON only, matching the output schema. If you choose `close`, set
+Return JSON only, matching the output schema. Always populate `likelyOwners`
+with the person or people most likely connected to the relevant code path or
+behavior. Each entry should include the person, neutral role, reason, relevant
+commits, files, and confidence. Prefer concrete git history over guesswork:
+`git blame`, `git log -S`, `git log -G`, `git show`, PR metadata, and recent
+touches to the central files. Include at least one likely owner for every review;
+when the trail is weak, use low confidence and explain why.
+
+If you choose `close`, set
 `confidence` to `high`, include at least one evidence entry, and write a
 friendly maintainer comment in `closeComment`. Format it as readable Markdown: a
 short opening sentence, a blank line, then concise evidence bullets. Do not
@@ -91,6 +100,11 @@ write one long paragraph. The comment should explain the specific reason,
 mention that this was a Codex review, acknowledge useful prior
 discussion/comment links when relevant, and include concrete evidence such as
 file paths, release version, commit SHA, or fix timestamp when available.
+
+For both close and keep-open decisions, the public review comment should include
+a short `Likely related people` section with the best routing candidates from
+`likelyOwners`, using neutral language and confidence. Do not accuse people of
+breaking the issue.
 
 For implemented-on-main decisions, include both implementation evidence and
 release provenance evidence:

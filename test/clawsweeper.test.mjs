@@ -87,6 +87,24 @@ function closeDecision(overrides = {}) {
         sha: "abcdef1234567890",
       },
     ],
+    likelyOwners: [
+      {
+        person: "@alice",
+        role: "introduced behavior",
+        reason: "git blame points the relevant implementation line at abcdef1234567890.",
+        commits: ["abcdef1234567890"],
+        files: ["src/example.ts"],
+        confidence: "high",
+      },
+      {
+        person: "@bob",
+        role: "recent maintainer",
+        reason: "Recent adjacent commits changed the same code path.",
+        commits: ["1234567890abcdef"],
+        files: ["src/example.ts"],
+        confidence: "medium",
+      },
+    ],
     risks: [],
     bestSolution: "Keep the implementation as-is.",
     fixedRelease: null,
@@ -187,6 +205,9 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.match(action.closeComment, /Thanks for the context here/);
   assert.match(action.closeComment, /shell check/);
   assert.match(action.closeComment, /already implemented/);
+  assert.match(action.closeComment, /Likely related people:/);
+  assert.match(action.closeComment, /@alice/);
+  assert.match(action.closeComment, /@bob/);
   assert.match(action.closeComment, /Codex review notes: model gpt-5\.5, reasoning high;/);
 });
 
@@ -763,6 +784,22 @@ test("decision parser enforces required schema-shaped evidence", () => {
         evidence: [{ label: "partial", detail: "missing nullable fields" }],
       }),
     /decision\.evidence\[0\]\.file/,
+  );
+  assert.throws(
+    () =>
+      parseDecision({
+        ...closeDecision(),
+        likelyOwners: [],
+      }),
+    /decision\.likelyOwners must not be empty/,
+  );
+  assert.throws(
+    () =>
+      parseDecision({
+        ...closeDecision(),
+        likelyOwners: [{ person: "@alice", reason: "missing fields" }],
+      }),
+    /decision\.likelyOwners\[0\]\.role/,
   );
 });
 
