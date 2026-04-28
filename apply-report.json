@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "number": 73384,
+    "action": "skipped_changed_since_review",
+    "reason": "updated_at changed"
+  }
+]
