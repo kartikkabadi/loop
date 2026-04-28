@@ -1,10 +1,5 @@
 [
   {
-    "number": 1866,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
     "number": 1868,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
