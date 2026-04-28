@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:59 UTC
 
 State: Event review applied
 
-Reviewed event item #73321, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038480676](https://github.com/openclaw/clawsweeper/actions/runs/25038480676)
+Reviewed event item #72645, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038504908](https://github.com/openclaw/clawsweeper/actions/runs/25038504908)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -119,8 +119,8 @@ Latest review: Apr 28, 2026, 06:57 UTC. Latest close: Apr 28, 2026, 06:50 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 113 | 11 | 102 | 1 | 2 | 30 | 6 |
-| Last hour | 1065 | 29 | 1036 | 3 | 4 | 536 | 9 |
+| Last 15 minutes | 97 | 11 | 86 | 1 | 2 | 29 | 6 |
+| Last hour | 1065 | 29 | 1036 | 3 | 4 | 529 | 9 |
 | Last 24 hours | 2421 | 118 | 2303 | 10 | 65 | 965 | 16 |
 
 ### Recently Closed
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:57 UTC. Latest close: Apr 28, 2026, 06:50 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73321](https://github.com/openclaw/openclaw/pull/73321) | Add MCP trace-context propagation canary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73321.md) | complete | Apr 28, 2026, 06:57 UTC |
+| [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 06:57 UTC |
 | [#69297](https://github.com/openclaw/openclaw/pull/69297) | fix(whatsapp): Add group admin privacy controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69297.md) | complete | Apr 28, 2026, 06:54 UTC |
 | [#73350](https://github.com/openclaw/openclaw/issues/73350) | MiniMax-only configuration still invokes claude-cli/codex-cli and can hang TUI/model execution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73350.md) | complete | Apr 28, 2026, 06:53 UTC |
 | [#60444](https://github.com/openclaw/openclaw/pull/60444) | fix: replace structuredClone with JSON cloning in session store cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60444.md) | complete | Apr 28, 2026, 06:53 UTC |
