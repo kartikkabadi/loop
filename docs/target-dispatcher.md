@@ -21,18 +21,29 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: clawsweeper-dispatch-${{ github.repository }}-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   dispatch:
     runs-on: ubuntu-latest
+    if: ${{ !(endsWith(github.actor, '[bot]') && (github.event.action == 'labeled' || github.event.action == 'unlabeled')) }}
     env:
       HAS_CLAWSWEEPER_APP_PRIVATE_KEY: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY != '' }}
+      CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+      SUPERSEDES_IN_PROGRESS: ${{ (github.event.action == 'edited' || github.event.action == 'synchronize' || github.event.action == 'ready_for_review') && 'true' || 'false' }}
     steps:
+      - name: Debounce bursty metadata events
+        if: ${{ github.event.action == 'labeled' || github.event.action == 'unlabeled' }}
+        run: sleep 20
+
       - name: Create ClawSweeper dispatch token
         id: token
         if: ${{ env.HAS_CLAWSWEEPER_APP_PRIVATE_KEY == 'true' }}
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3.1.1
         with:
-          app-id: 3306130
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: openclaw
           repositories: clawsweeper
@@ -52,11 +63,19 @@ jobs:
             --arg target_repo "$TARGET_REPO" \
             --argjson item_number "$ITEM_NUMBER" \
             --arg item_kind "$ITEM_KIND" \
-            '{event_type:"clawsweeper_item",client_payload:{target_repo:$target_repo,item_number:$item_number,item_kind:$item_kind}}')"
+            --arg source_event "${{ github.event_name }}" \
+            --arg source_action "${{ github.event.action }}" \
+            --argjson supersedes_in_progress "$SUPERSEDES_IN_PROGRESS" \
+            '{event_type:"clawsweeper_item",client_payload:{target_repo:$target_repo,item_number:$item_number,item_kind:$item_kind,source_event:$source_event,source_action:$source_action,supersedes_in_progress:$supersedes_in_progress}}')"
           gh api repos/openclaw/clawsweeper/dispatches \
             --method POST \
             --input - <<< "$payload"
 ```
+
+Comments are intentionally not a trigger. Bot-authored label churn is also
+ignored, while human label changes are debounced and do not cancel an in-flight
+receiver run. Content-changing events such as issue edits and PR synchronizes
+mark their dispatch as superseding so the receiver can cancel stale work.
 
 The receiver keeps the review lane proposal-only, then runs exact apply for the
 selected item with only immediate-safe close reasons enabled:

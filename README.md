@@ -495,7 +495,7 @@ Required secrets:
 - `OPENAI_API_KEY`: OpenAI API key used to log Codex in before review shards run.
 - `CODEX_API_KEY`: optional compatibility alias for the same key during the login check.
 - `OPENCLAW_GH_TOKEN`: optional fallback GitHub token for read-heavy target scans and artifact publish reconciliation when the GitHub App token is unavailable.
-- `CLAWSWEEPER_APP_ID`: GitHub App ID for `openclaw-ci`. Currently `3306130`.
+- `CLAWSWEEPER_APP_CLIENT_ID`: public GitHub App client ID for `openclaw-ci`. Currently `Iv23liOECG0slfuhz093`.
 - `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `openclaw-ci`; plan/review jobs use a short-lived GitHub App installation token for read-heavy target API calls, and apply/comment-sync jobs use the app token for comments and closes.
   Keep App credentials scoped to the `actions/create-github-app-token` step.
   Review shards run Codex over attacker-controlled issue/PR text, so
