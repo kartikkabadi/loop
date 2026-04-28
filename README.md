@@ -31,18 +31,18 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 03:26 UTC
+Last dashboard update: Apr 28, 2026, 03:27 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 03:25 UTC
+Updated: Apr 28, 2026, 03:27 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 25032024881. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 18. Item numbers: 10356,38502,39102,40970,41991,42840,43454,55761,63884,63892,64175,64220,64540,64555,67290,70638,70859,72177,72449,72454.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25032024881](https://github.com/openclaw/clawsweeper/actions/runs/25032024881)
 <!-- clawsweeper-status:end -->
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 03:24 UTC. Latest close: Apr 28, 2026, 01:24 UTC. Latest comment sync: Apr 28, 2026, 02:46 UTC.
+Latest review: Apr 28, 2026, 03:24 UTC. Latest close: Apr 28, 2026, 01:24 UTC. Latest comment sync: Apr 28, 2026, 03:27 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 0 | 19 | 0 | 0 | 0 | 0 |
-| Last hour | 20 | 0 | 20 | 0 | 0 | 54 | 2 |
-| Last 24 hours | 2461 | 134 | 2327 | 1 | 84 | 1561 | 15 |
+| Last 15 minutes | 19 | 0 | 19 | 0 | 0 | 18 | 1 |
+| Last hour | 20 | 0 | 20 | 0 | 0 | 52 | 2 |
+| Last 24 hours | 2461 | 134 | 2327 | 1 | 84 | 1579 | 16 |
 
 ### Recently Closed
 
