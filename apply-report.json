@@ -1,97 +1,112 @@
 [
   {
-    "number": 10356,
+    "number": 41151,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 38502,
+    "number": 41151,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 41593,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 39102,
+    "number": 41593,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 54665,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 40970,
+    "number": 54665,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 54740,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 41991,
+    "number": 54740,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 62976,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 42840,
+    "number": 62976,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 64559,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 43454,
+    "number": 64559,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 65147,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 55761,
+    "number": 65147,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 70597,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 63884,
+    "number": 70597,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 72286,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 63892,
+    "number": 72286,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 72507,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 64175,
+    "number": 72507,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 72512,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 64220,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 64540,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 64555,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 67290,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 70638,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 70859,
-    "action": "skipped_changed_since_review",
-    "reason": "updated_at changed"
-  },
-  {
-    "number": 72449,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 72454,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "number": 72512,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
