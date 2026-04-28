@@ -69,6 +69,7 @@ interface GitHubIssueListItem {
   html_url: string;
   created_at: string;
   updated_at: string;
+  closed_at?: string | null;
   author_association?: string;
   user?: GitHubUser;
   labels?: string[];
@@ -83,6 +84,7 @@ interface Item {
   url: string;
   createdAt: string;
   updatedAt: string;
+  closedAt?: string | null | undefined;
   author: string;
   authorAssociation: string;
   labels: string[];
@@ -200,6 +202,7 @@ interface DashboardClosedItem {
   number: number;
   kind: ItemKind;
   title: string;
+  closedAt?: string | undefined;
   appliedAt: string | undefined;
   closeReason: string | undefined;
   reportPath: string;
@@ -1948,7 +1951,7 @@ function fetchItem(number: number): { item: Item; state: string } {
     "api",
     `repos/${targetRepo()}/issues/${number}`,
     "--jq",
-    "{number,title,html_url,created_at,updated_at,state,locked,active_lock_reason,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
+    "{number,title,html_url,created_at,updated_at,closed_at,state,locked,active_lock_reason,author_association,user:{login:.user.login},labels:[.labels[].name],pull_request:(.pull_request // null)}",
   ]);
   return {
     item: {
@@ -1959,6 +1962,7 @@ function fetchItem(number: number): { item: Item; state: string } {
       url: issue.html_url,
       createdAt: issue.created_at,
       updatedAt: issue.updated_at,
+      closedAt: issue.closed_at,
       author: issue.user?.login ?? "unknown",
       authorAssociation: normalizeAuthorAssociation(issue.author_association),
       labels: issue.labels ?? [],
@@ -2085,8 +2089,8 @@ function recordDashboardActivity(
 ): void {
   const reviewedAt = frontMatterValue(markdown, "reviewed_at");
   const reviewedAtMs = timestampMs(reviewedAt);
-  const appliedAt = frontMatterValue(markdown, "applied_at");
-  const appliedAtMs = timestampMs(appliedAt);
+  const closedAt = dashboardClosedAt(markdown);
+  const closedAtMs = timestampMs(closedAt);
   const commentSyncedAt = frontMatterValue(markdown, "review_comment_synced_at");
   const commentSyncedAtMs = timestampMs(commentSyncedAt);
   const applyCheckedAt = frontMatterValue(markdown, "apply_checked_at");
@@ -2096,7 +2100,7 @@ function recordDashboardActivity(
   const reviewStatus = effectiveReviewStatus(markdown);
 
   activity.latestReviewAt = latestTimestamp(activity.latestReviewAt, reviewedAt);
-  activity.latestCloseAt = latestTimestamp(activity.latestCloseAt, appliedAt);
+  activity.latestCloseAt = latestTimestamp(activity.latestCloseAt, closedAt);
   activity.latestCommentSyncAt = latestTimestamp(activity.latestCommentSyncAt, commentSyncedAt);
 
   const buckets: Array<[DashboardActivityBucket, number]> = [
@@ -2113,7 +2117,7 @@ function recordDashboardActivity(
         bucket.failedOrStaleReviews += 1;
       }
     }
-    if (isWithinWindow(appliedAtMs, now, windowMs)) bucket.closes += 1;
+    if (isWithinWindow(closedAtMs, now, windowMs)) bucket.closes += 1;
     if (isWithinWindow(commentSyncedAtMs, now, windowMs)) bucket.commentSyncs += 1;
     if (isWithinWindow(applyCheckedAtMs, now, windowMs) && action.startsWith("skipped_")) {
       bucket.applySkips += 1;
@@ -3681,6 +3685,7 @@ function applyDecisionsCommand(args: Args): void {
   const syncCommentsOnly = boolArg(args.sync_comments_only);
   const commentSyncMinAgeDays = numberArg(args.comment_sync_min_age_days, 0);
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
+  const reportPath = resolve(stringArg(args.report_path, join(ROOT, "apply-report.json")));
   const startedAtMs = Date.now();
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const requestedItemNumberSet = new Set(requestedItemNumbers);
@@ -3808,13 +3813,8 @@ function applyDecisionsCommand(args: Args): void {
     if (isProtectedItem(item)) {
       if (isCloseProposal) {
         if (markApplySkipped("skipped_protected_label", protectedLabelReason(item.labels))) break;
-      } else {
-        results.push({ number, action: "kept_open", reason: protectedLabelReason(item.labels) });
-        processedCount += 1;
-        maybeLogProgress(`skipped #${number}: protected label`);
-        if (processedCount >= processedLimit) break;
       }
-      continue;
+      if (isCloseProposal) continue;
     }
     const currentAuthorAssociation = normalizeAuthorAssociation(item.authorAssociation);
     const reviewedAuthorAssociation = normalizeAuthorAssociation(storedAuthorAssociation);
@@ -3831,19 +3831,24 @@ function applyDecisionsCommand(args: Args): void {
         markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
         writeFileSync(path, markdown, "utf8");
       }
-      results.push({
-        number,
-        action: isCloseProposal ? "skipped_maintainer_authored" : "kept_open",
-        reason: `author association is ${authorAssociation}`,
-      });
-      processedCount += 1;
-      maybeLogProgress(`skipped #${number}: maintainer authored`);
-      if (processedCount >= processedLimit) break;
-      continue;
+      if (isCloseProposal) {
+        results.push({
+          number,
+          action: "skipped_maintainer_authored",
+          reason: `author association is ${authorAssociation}`,
+        });
+        processedCount += 1;
+        maybeLogProgress(`skipped #${number}: maintainer authored`);
+        if (processedCount >= processedLimit) break;
+        continue;
+      }
     }
     const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
     const reviewCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingReviewComment);
     if (state !== "open") {
+      if (item.closedAt) {
+        markdown = replaceFrontMatterValue(markdown, "current_item_closed_at", item.closedAt);
+      }
       if (existingReviewComment) {
         markdown = updateReviewCommentMetadata(
           markdown,
@@ -3877,7 +3882,7 @@ function applyDecisionsCommand(args: Args): void {
       if (processedCount >= processedLimit) break;
       continue;
     }
-    if (updatedSinceReview && !reviewCommentOnlyUpdate) {
+    if (isCloseProposal && updatedSinceReview && !reviewCommentOnlyUpdate) {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
       markdown = replaceFrontMatterValue(markdown, "current_item_updated_at", item.updatedAt);
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
@@ -3892,7 +3897,7 @@ function applyDecisionsCommand(args: Args): void {
       if (processedCount >= processedLimit) break;
       continue;
     }
-    if (!storedUpdatedAt) {
+    if (isCloseProposal && !storedUpdatedAt) {
       const currentHash = itemSnapshotHash(item, currentItemContext());
       if (currentHash !== storedHash && !reviewCommentOnlyUpdate) {
         markdown = replaceFrontMatterValue(
@@ -4055,7 +4060,8 @@ function applyDecisionsCommand(args: Args): void {
     logProgress(`closed #${number}`);
     if (processedCount >= processedLimit) break;
   }
-  writeFileSync(join(ROOT, "apply-report.json"), JSON.stringify(results, null, 2), "utf8");
+  ensureDir(dirname(reportPath));
+  writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
   if (!skipDashboard) updateDashboard(itemsDir, closedDir);
   logProgress("finished apply");
   console.log(JSON.stringify(results, null, 2));
@@ -4067,6 +4073,8 @@ function applyArtifactsCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const skipReconcile = boolArg(args.skip_reconcile);
+  const skipDashboard = boolArg(args.skip_dashboard);
+  const replayClosedArtifacts = boolArg(args.replay_closed_artifacts);
   const maxPages = numberArg(args.max_pages, 250);
   const { numbers: openNumbers } = fetchOpenItemNumbers(maxPages);
   let appliedArtifacts = 0;
@@ -4087,7 +4095,10 @@ function applyArtifactsCommand(args: Args): void {
         number,
       );
       const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
-      const destination = reviewArtifactDestination(action, openNumbers.has(number));
+      const destination = reviewArtifactDestination(
+        action,
+        replayClosedArtifacts || openNumbers.has(number),
+      );
       if (destination === "skip_closed") {
         skippedClosedArtifacts += 1;
         continue;
@@ -4103,7 +4114,7 @@ function applyArtifactsCommand(args: Args): void {
     `[apply-artifacts] applied=${appliedArtifacts} skipped_closed=${skippedClosedArtifacts}`,
   );
   if (!skipReconcile) reconcileFolders({ itemsDir, closedDir });
-  updateDashboard(itemsDir, closedDir);
+  if (!skipDashboard) updateDashboard(itemsDir, closedDir);
 }
 
 function markdownFiles(dir: string): string[] {
@@ -4494,9 +4505,20 @@ function updateAuditHealthDashboard(result: AuditResult): void {
   updateDashboard();
 }
 
-function markReconciledState(markdown: string, state: "open" | "closed"): string {
+function markReconciledState(
+  markdown: string,
+  state: "open" | "closed",
+  options: { closedAt?: string | null | undefined } = {},
+): string {
   let nextMarkdown = replaceFrontMatterValue(markdown, "current_state", state);
   nextMarkdown = replaceFrontMatterValue(nextMarkdown, "reconciled_at", new Date().toISOString());
+  if (state === "closed" && options.closedAt) {
+    nextMarkdown = replaceFrontMatterValue(
+      nextMarkdown,
+      "current_item_closed_at",
+      options.closedAt,
+    );
+  }
   if (state === "open") {
     nextMarkdown = replaceFrontMatterValue(nextMarkdown, "review_status", "stale_reopened");
     nextMarkdown = replaceFrontMatterValue(nextMarkdown, "action_taken", "kept_open");
@@ -4539,7 +4561,18 @@ function reconcileFolders(options: {
     if (!isMarkdownForActiveRepo(sourceMarkdown, file)) continue;
     if (openNumbers.has(number)) continue;
     const destinationPath = join(options.closedDir, file);
-    const markdown = markReconciledState(sourceMarkdown, "closed");
+    let closedAt: string | null | undefined;
+    try {
+      const fetched = fetchItem(number);
+      if (fetched.state !== "open") closedAt = fetched.item.closedAt;
+    } catch (error) {
+      console.error(
+        `[reconcile] failed to fetch closed_at for #${number}; using reconciled_at fallback: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+    const markdown = markReconciledState(sourceMarkdown, "closed", { closedAt });
     moveMarkdownFile({ sourcePath, destinationPath, markdown, dryRun });
     movedToClosed += 1;
   }
@@ -4705,15 +4738,19 @@ function dashboardStats(
     if (markdownRepository(markdown, join(closedDir, file)) !== profile.targetRepo) continue;
     const repo = markdownRepository(markdown, join(closedDir, file));
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
+    const closedAt = dashboardClosedAt(markdown);
     if (action === "closed") {
       closed += 1;
+    }
+    if (closedAt) {
       recentClosed.push({
         repo,
         number: numberForMarkdownFile(file),
         kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
         title: frontMatterValue(markdown, "title") ?? "",
+        closedAt,
         appliedAt: frontMatterValue(markdown, "applied_at"),
-        closeReason: frontMatterValue(markdown, "close_reason"),
+        closeReason: dashboardCloseReason(markdown),
         reportPath: repoRelativePath(join(closedDir, file)),
       });
     }
@@ -4722,8 +4759,8 @@ function dashboardStats(
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
   recentClosed.sort(
     (a, b) =>
-      (timestampMs(b.appliedAt) ?? Number.NEGATIVE_INFINITY) -
-        (timestampMs(a.appliedAt) ?? Number.NEGATIVE_INFINITY) || b.number - a.number,
+      (timestampMs(b.closedAt ?? b.appliedAt) ?? Number.NEGATIVE_INFINITY) -
+        (timestampMs(a.closedAt ?? a.appliedAt) ?? Number.NEGATIVE_INFINITY) || b.number - a.number,
   );
   const open = fetchDashboardOpenItemCounts(profile, {
     issues: byKind.issue.total,
@@ -4793,6 +4830,31 @@ function displayCloseReason(reason: string | undefined): string {
   return reason || "unknown";
 }
 
+export function dashboardClosedAt(markdown: string): string | undefined {
+  const appliedAt = frontMatterValue(markdown, "applied_at");
+  if (appliedAt) return appliedAt;
+  const currentItemClosedAt = frontMatterValue(markdown, "current_item_closed_at");
+  if (currentItemClosedAt) return currentItemClosedAt;
+  const currentState = frontMatterValue(markdown, "current_state");
+  const action = frontMatterValue(markdown, "action_taken");
+  if (currentState === "closed") return frontMatterValue(markdown, "reconciled_at");
+  if (action === "skipped_already_closed") return frontMatterValue(markdown, "apply_checked_at");
+  return undefined;
+}
+
+function dashboardCloseReason(markdown: string): string | undefined {
+  const closeReason = frontMatterValue(markdown, "close_reason");
+  const action = frontMatterValue(markdown, "action_taken");
+  if (action === "closed") return closeReason;
+  if (action === "skipped_already_closed") return "already closed before apply";
+  if (frontMatterValue(markdown, "current_state") === "closed") {
+    if (action === "kept_open") return "closed externally after review";
+    if (action === "skipped_changed_since_review") return "closed externally after item changed";
+    return action ? `closed externally after ${action}` : "closed externally";
+  }
+  return closeReason;
+}
+
 function fetchDashboardOpenItemCounts(
   profile: RepositoryProfile,
   fallback: OpenItemCounts,
@@ -4815,7 +4877,7 @@ export function formatRecentClosedRows(items: readonly DashboardClosedItem[], li
         const repo = item.repo ?? targetRepo();
         const title = markdownTableCell(displayTitle(item.title));
         const reason = markdownTableCell(displayCloseReason(item.closeReason));
-        return `| ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${reason} | ${formatTimestamp(item.appliedAt)} | ${markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath))} |`;
+        return `| ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${reason} | ${formatTimestamp(item.closedAt ?? item.appliedAt)} | ${markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath))} |`;
       })
       .join("\n") || "| _None_ |  |  |  |  |"
   );
@@ -4846,7 +4908,7 @@ function formatFleetRecentClosedRows(items: readonly DashboardClosedItem[], limi
         const repo = item.repo ?? targetRepo();
         const title = markdownTableCell(displayTitle(item.title));
         const reason = markdownTableCell(displayCloseReason(item.closeReason));
-        return `| ${markdownLink(repo, repoUrlFor(repo))} | ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${reason} | ${formatTimestamp(item.appliedAt)} | ${markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath))} |`;
+        return `| ${markdownLink(repo, repoUrlFor(repo))} | ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${reason} | ${formatTimestamp(item.closedAt ?? item.appliedAt)} | ${markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath))} |`;
       })
       .join("\n") || "| _None_ |  |  |  |  |  |"
   );
@@ -5034,8 +5096,9 @@ function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosed
     .flatMap((snapshot) => snapshot.stats.recentClosed)
     .sort(
       (a, b) =>
-        (timestampMs(b.appliedAt) ?? Number.NEGATIVE_INFINITY) -
-          (timestampMs(a.appliedAt) ?? Number.NEGATIVE_INFINITY) || b.number - a.number,
+        (timestampMs(b.closedAt ?? b.appliedAt) ?? Number.NEGATIVE_INFINITY) -
+          (timestampMs(a.closedAt ?? a.appliedAt) ?? Number.NEGATIVE_INFINITY) ||
+        b.number - a.number,
     );
   const totals = snapshots.reduce(
     (accumulator, snapshot) => {

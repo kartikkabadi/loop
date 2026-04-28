@@ -10,6 +10,7 @@ import {
   closeReasonsArg,
   closingPullRequestReferenceTarget,
   codexEnv,
+  dashboardClosedAt,
   formatRecentClosedRows,
   ghRetryKind,
   isCodexReviewCommentBody,
@@ -845,6 +846,41 @@ test("recently closed dashboard rows link items and archived reports", () => {
   assert.match(rows, /Fix pipe \\| title/);
   assert.match(rows, /already implemented on main/);
   assert.match(rows, /Apr 26, 2026, 20:00 UTC/);
+});
+
+test("recently closed dashboard rows include reconciled external closes", () => {
+  const markdown = reportFrontMatter({
+    current_state: "closed",
+    current_item_closed_at: "2026-04-28T08:15:03.000Z",
+    reconciled_at: "2026-04-28T08:18:02.202Z",
+    action_taken: "kept_open",
+  });
+  const rows = formatRecentClosedRows([
+    {
+      repo: "openclaw/openclaw",
+      number: 73370,
+      kind: "issue",
+      title: "Externally closed item",
+      closeReason: "closed externally after review",
+      closedAt: dashboardClosedAt(markdown),
+      appliedAt: undefined,
+      reportPath: "records/openclaw-openclaw/closed/73370.md",
+    },
+  ]);
+
+  assert.equal(dashboardClosedAt(markdown), "2026-04-28T08:15:03.000Z");
+  assert.equal(
+    dashboardClosedAt(
+      reportFrontMatter({
+        current_state: "closed",
+        reconciled_at: "2026-04-28T08:18:02.202Z",
+        action_taken: "kept_open",
+      }),
+    ),
+    "2026-04-28T08:18:02.202Z",
+  );
+  assert.match(rows, /closed externally after review/);
+  assert.match(rows, /Apr 28, 2026, 08:15 UTC/);
 });
 
 test("GitHub retry classifier distinguishes throttle and transient failures", () => {
