@@ -38,7 +38,7 @@ Updated: Apr 28, 2026, 01:26 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 8 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=41537,41736,41764,41809,41936,43141,62482,72468.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/8. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25028750931](https://github.com/openclaw/clawsweeper/actions/runs/25028750931)
 <!-- clawsweeper-status:end -->
 
@@ -116,7 +116,7 @@ Latest review: Apr 27, 2026, 11:08 UTC. Latest close: Apr 28, 2026, 01:24 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 8 | 0 | 0 |
 | Last hour | 0 | 0 | 0 | 0 | 8 | 0 | 0 |
-| Last 24 hours | 2508 | 183 | 2325 | 1 | 107 | 1525 | 11 |
+| Last 24 hours | 2508 | 183 | 2325 | 1 | 107 | 1524 | 11 |
 
 ### Recently Closed
 
