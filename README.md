@@ -53,14 +53,14 @@ Last dashboard update: Apr 28, 2026, 12:02 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6982 | 6555 | 427 | 3463 | 9 | 10331 | Apr 28, 2026, 11:59 UTC | Apr 28, 2026, 12:00 UTC | 386 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6982 | 6555 | 427 | 3463 | 9 | 10331 | Apr 28, 2026, 11:59 UTC | Apr 28, 2026, 12:00 UTC | 384 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 911 | 904 | 7 | 59 | 0 | 3 | Apr 28, 2026, 11:58 UTC | Apr 28, 2026, 08:18 UTC | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 28, 2026, 12:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25051556056) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 12:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25051557925) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 11:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25049237151) |
 
 ### Fleet Activity
@@ -69,8 +69,8 @@ Latest review: Apr 28, 2026, 11:59 UTC. Latest close: Apr 28, 2026, 12:00 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 379 | 8 | 371 | 2 | 23 | 43 | 1 |
-| Last hour | 893 | 40 | 853 | 3 | 45 | 386 | 2 |
+| Last 15 minutes | 366 | 8 | 358 | 2 | 23 | 43 | 1 |
+| Last hour | 893 | 40 | 853 | 3 | 45 | 384 | 2 |
 | Last 24 hours | 3442 | 126 | 3316 | 3 | 434 | 711 | 14 |
 
 ### Recently Closed Across Repos
@@ -124,10 +124,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 12:02 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25051556056](https://github.com/openclaw/clawsweeper/actions/runs/25051556056)
+Starting apply/comment-sync run for up to 20 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=47947,48147,48245,48289,48325,48668,48795,48808,48967,49072,49366,49669,49770,49850,50102,50158,50586,50587,50885,51198,51316,51893,51965,51986,52329,54061,56153,60675,65272,73241.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25051557925](https://github.com/openclaw/clawsweeper/actions/runs/25051557925)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -181,8 +181,8 @@ Latest review: Apr 28, 2026, 11:59 UTC. Latest close: Apr 28, 2026, 12:00 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 138 | 8 | 130 | 1 | 23 | 43 | 1 |
-| Last hour | 559 | 40 | 519 | 1 | 45 | 386 | 2 |
+| Last 15 minutes | 132 | 8 | 124 | 1 | 23 | 43 | 1 |
+| Last hour | 559 | 40 | 519 | 1 | 45 | 384 | 2 |
 | Last 24 hours | 2528 | 123 | 2405 | 1 | 424 | 613 | 14 |
 
 #### Recently Closed
@@ -286,7 +286,7 @@ Latest review: Apr 28, 2026, 11:58 UTC. Latest close: Apr 28, 2026, 08:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 241 | 0 | 241 | 1 | 0 | 0 | 0 |
+| Last 15 minutes | 234 | 0 | 234 | 1 | 0 | 0 | 0 |
 | Last hour | 334 | 0 | 334 | 2 | 0 | 0 | 0 |
 | Last 24 hours | 914 | 3 | 911 | 2 | 10 | 98 | 0 |
 
