@@ -45,33 +45,33 @@ Last dashboard update: Apr 28, 2026, 08:39 UTC
 | Unreviewed open items | 463 |
 | Due now by cadence | 3772 |
 | Proposed closes awaiting apply | 0 |
-| Closed by Codex apply | 10279 |
+| Closed by Codex apply | 10278 |
 | Failed or stale reviews | 37 |
-| Archived closed files | 13364 |
+| Archived closed files | 13363 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 7028 | 6572 | 456 | 3715 | 0 | 10276 | Apr 28, 2026, 08:20 UTC | Apr 28, 2026, 08:38 UTC | 71 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 910 | 903 | 7 | 57 | 0 | 3 | Apr 28, 2026, 08:38 UTC | Apr 28, 2026, 05:18 UTC | 1 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 7028 | 6572 | 456 | 3715 | 0 | 10275 | Apr 28, 2026, 08:38 UTC | Apr 28, 2026, 07:50 UTC | 68 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 910 | 903 | 7 | 57 | 0 | 3 | Apr 28, 2026, 07:47 UTC | Apr 28, 2026, 05:18 UTC | 1 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 28, 2026, 08:39 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25042789834) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Event review applied | Apr 28, 2026, 08:38 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25041991936) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 08:39 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25042677230) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 28, 2026, 08:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25041191333) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 08:38 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:38 UTC.
+Latest review: Apr 28, 2026, 08:38 UTC. Latest close: Apr 28, 2026, 07:50 UTC. Latest comment sync: Apr 28, 2026, 08:15 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 1 | 1 | 0 |
-| Last hour | 71 | 2 | 69 | 0 | 2 | 72 | 9 |
-| Last 24 hours | 3282 | 109 | 3173 | 18 | 57 | 2083 | 26 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Last hour | 70 | 1 | 69 | 0 | 1 | 69 | 9 |
+| Last 24 hours | 3281 | 108 | 3173 | 18 | 56 | 2082 | 26 |
 
 ### Recently Closed Across Repos
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 08:38 UTC. Latest close: Apr 28, 2026, 08:38 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71988](https://github.com/openclaw/openclaw/pull/71988) | dispatch: broadcast inbound_claim to global plugin listeners | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71988.md) | complete | Apr 28, 2026, 08:37 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73362](https://github.com/openclaw/openclaw/pull/73362) | Fix default sandbox image fallback for python3-dependent mutations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73362.md) | complete | Apr 28, 2026, 08:38 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70391](https://github.com/openclaw/openclaw/pull/70391) | fix(ui): avoid redundant reload after final chat event | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70391.md) | complete | Apr 28, 2026, 07:51 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73393](https://github.com/openclaw/openclaw/pull/73393) | feat(whatsapp): support newsletter targets in message tool | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73393.md) | complete | Apr 28, 2026, 07:50 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73388](https://github.com/openclaw/openclaw/pull/73388) | Fix Trinity main-session compatibility mismatch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73388.md) | complete | Apr 28, 2026, 07:50 UTC |
@@ -124,10 +124,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 08:39 UTC
 
-State: Hot intake in progress
+State: Event review applied
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042789834](https://github.com/openclaw/clawsweeper/actions/runs/25042789834)
+Reviewed event item #73362, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042677230](https://github.com/openclaw/clawsweeper/actions/runs/25042677230)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -140,7 +140,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042789834](https://
 | Open items total | 7028 |
 | Reviewed files | 6572 |
 | Unreviewed open items | 456 |
-| Archived closed files | 13354 |
+| Archived closed files | 13353 |
 
 #### Review Outcomes
 
@@ -177,13 +177,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 08:37 UTC. Latest close: Apr 28, 2026, 07:50 UTC. Latest comment sync: Apr 28, 2026, 08:39 UTC.
+Latest review: Apr 28, 2026, 08:38 UTC. Latest close: Apr 28, 2026, 07:50 UTC. Latest comment sync: Apr 28, 2026, 08:15 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 1 | 1 | 0 |
-| Last hour | 69 | 2 | 67 | 0 | 2 | 71 | 9 |
-| Last 24 hours | 2369 | 106 | 2263 | 18 | 54 | 1354 | 25 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Last hour | 68 | 1 | 67 | 0 | 1 | 68 | 9 |
+| Last 24 hours | 2368 | 105 | 2263 | 18 | 53 | 1353 | 25 |
 
 #### Recently Closed
 
@@ -204,7 +204,7 @@ Latest review: Apr 28, 2026, 08:37 UTC. Latest close: Apr 28, 2026, 07:50 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#71988](https://github.com/openclaw/openclaw/pull/71988) | dispatch: broadcast inbound_claim to global plugin listeners | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71988.md) | complete | Apr 28, 2026, 08:37 UTC |
+| [#73362](https://github.com/openclaw/openclaw/pull/73362) | Fix default sandbox image fallback for python3-dependent mutations | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73362.md) | complete | Apr 28, 2026, 08:38 UTC |
 | [#70391](https://github.com/openclaw/openclaw/pull/70391) | fix(ui): avoid redundant reload after final chat event | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70391.md) | complete | Apr 28, 2026, 07:51 UTC |
 | [#73393](https://github.com/openclaw/openclaw/pull/73393) | feat(whatsapp): support newsletter targets in message tool | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73393.md) | complete | Apr 28, 2026, 07:50 UTC |
 | [#73388](https://github.com/openclaw/openclaw/pull/73388) | Fix Trinity main-session compatibility mismatch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73388.md) | complete | Apr 28, 2026, 07:50 UTC |
