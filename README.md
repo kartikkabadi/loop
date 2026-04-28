@@ -42,46 +42,46 @@ Updated: Apr 28, 2026, 06:58 UTC
 
 State: Event review applied
 
-Reviewed event item #1858, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038547838](https://github.com/openclaw/clawsweeper/actions/runs/25038547838)
+Reviewed event item #72383, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038452774](https://github.com/openclaw/clawsweeper/actions/runs/25038452774)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues in [openclaw/clawhub](https://github.com/openclaw/clawhub) | 875 |
-| Open PRs in [openclaw/clawhub](https://github.com/openclaw/clawhub) | 36 |
-| Open items total | 911 |
-| Reviewed files | 903 |
-| Unreviewed open items | 8 |
-| Archived closed files | 7 |
+| Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3567 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3459 |
+| Open items total | 7026 |
+| Reviewed files | 6579 |
+| Unreviewed open items | 447 |
+| Archived closed files | 13306 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 874 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 29 |
-| Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 903 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Closed by Codex apply | 3 |
-| Failed or stale reviews | 0 |
+| Fresh reviewed issues in the last 7 days | 3370 |
+| Proposed issue closes | 10 (0.3% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3187 |
+| Proposed PR closes | 9 (0.3% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6557 |
+| Proposed closes awaiting apply | 19 (0.3% of fresh reviews) |
+| Closed by Codex apply | 10255 |
+| Failed or stale reviews | 22 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 51/52 current (1 due, 98.1%) |
-| Hourly hot item cadence (<7d) | 51/52 current (1 due, 98.1%) |
-| Daily cadence coverage | 229/229 current (0 due, 100%) |
-| Daily PR cadence | 21/21 current (0 due, 100%) |
-| Daily new issue cadence (<30d) | 208/208 current (0 due, 100%) |
-| Weekly older issue cadence | 622/622 current (0 due, 100%) |
-| Due now by cadence | 9 |
+| Hourly cadence coverage | 114/636 current (522 due, 17.9%) |
+| Hourly hot item cadence (<7d) | 114/636 current (522 due, 17.9%) |
+| Daily cadence coverage | 1495/4096 current (2601 due, 36.5%) |
+| Daily PR cadence | 1068/2832 current (1764 due, 37.7%) |
+| Daily new issue cadence (<30d) | 427/1264 current (837 due, 33.8%) |
+| Weekly older issue cadence | 1843/1847 current (4 due, 99.8%) |
+| Due now by cadence | 3574 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:57 UTC. Latest close: Apr 28, 2026, 05:18 UTC. Latest comment sync: Apr 28, 2026, 06:58 UTC.
+Latest review: Apr 28, 2026, 06:56 UTC. Latest close: Apr 28, 2026, 06:50 UTC. Latest comment sync: Apr 28, 2026, 06:55 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 365 | 0 | 365 | 0 | 0 | 5 | 0 |
-| Last hour | 880 | 0 | 880 | 0 | 0 | 348 | 0 |
-| Last 24 hours | 910 | 3 | 907 | 0 | 3 | 354 | 0 |
+| Last 15 minutes | 176 | 13 | 163 | 2 | 2 | 30 | 7 |
+| Last hour | 1065 | 29 | 1036 | 3 | 4 | 563 | 10 |
+| Last 24 hours | 2432 | 119 | 2313 | 10 | 65 | 964 | 17 |
 
 ### Recently Closed
 
@@ -138,16 +138,16 @@ Latest review: Apr 28, 2026, 06:57 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#1858](https://github.com/openclaw/clawhub/pull/1858) | fix(ui): resolve relative skill README links | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1858.md) | complete | Apr 28, 2026, 06:57 UTC |
-| [#1856](https://github.com/openclaw/clawhub/pull/1856) | fix(cli): preserve root skill manifest during publish | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1856.md) | complete | Apr 28, 2026, 06:56 UTC |
-| [#1857](https://github.com/openclaw/clawhub/pull/1857) | fix(security): tighten crypto capability swap detection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1857.md) | complete | Apr 28, 2026, 06:56 UTC |
-| [#1854](https://github.com/openclaw/clawhub/pull/1854) | fix(ui): use download icon for public skill stats | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1854.md) | complete | Apr 28, 2026, 06:56 UTC |
-| [#1855](https://github.com/openclaw/clawhub/pull/1855) | feat(cli): show skill moderation in inspect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1855.md) | complete | Apr 28, 2026, 06:56 UTC |
-| [#1226](https://github.com/openclaw/clawhub/issues/1226) | clawhub package publish fails with \"openclaw.plugin.json required\" error | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1226.md) | complete | Apr 28, 2026, 06:48 UTC |
-| [#1760](https://github.com/openclaw/clawhub/issues/1760) | Exposed production API credentials in archived skill (skills/akkualle/akkualle-seo/SKILL.md) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1760.md) | complete | Apr 28, 2026, 06:48 UTC |
-| [#1830](https://github.com/openclaw/clawhub/issues/1830) | False positive: skill-factory incorrectly flagged as suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1830.md) | complete | Apr 28, 2026, 06:48 UTC |
-| [#1326](https://github.com/openclaw/clawhub/issues/1326) | False positive: amber-voice-assistant v5.5.7 (slug: batthis/amber-voice-assistant) flagged as suspicious — all findings are normal telephony bridge patterns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1326.md) | complete | Apr 28, 2026, 06:48 UTC |
-| [#1783](https://github.com/openclaw/clawhub/issues/1783) | False Positive Malware Detection for @nimsuite/openclaw-nim-channel | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1783.md) | complete | Apr 28, 2026, 06:47 UTC |
+| [#72383](https://github.com/openclaw/openclaw/pull/72383) | [plugin sdk] Add workflow action, outbound, scheduler, and retry host seams | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72383.md) | complete | Apr 28, 2026, 06:56 UTC |
+| [#73350](https://github.com/openclaw/openclaw/issues/73350) | MiniMax-only configuration still invokes claude-cli/codex-cli and can hang TUI/model execution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73350.md) | complete | Apr 28, 2026, 06:53 UTC |
+| [#60444](https://github.com/openclaw/openclaw/pull/60444) | fix: replace structuredClone with JSON cloning in session store cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60444.md) | complete | Apr 28, 2026, 06:53 UTC |
+| [#55761](https://github.com/openclaw/openclaw/pull/55761) | fix(hooks): suppress silent shared-hook fallback while preserving error surfacing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/55761.md) | complete | Apr 28, 2026, 06:51 UTC |
+| [#73347](https://github.com/openclaw/openclaw/pull/73347) | fix(wizard): use setup token for onboarding health check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73347.md) | complete | Apr 28, 2026, 06:50 UTC |
+| [#72069](https://github.com/openclaw/openclaw/pull/72069) | fix(agents): seed claude-cli fallback prompts with prior-session context (#69973) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72069.md) | complete | Apr 28, 2026, 06:49 UTC |
+| [#72899](https://github.com/openclaw/openclaw/issues/72899) | Empty-text ContentBlock persisted to transcript permanently bricks a session (Bedrock validation error: messages.N.content.0 is blank) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72899.md) | complete | Apr 28, 2026, 06:49 UTC |
+| [#46406](https://github.com/openclaw/openclaw/pull/46406) | fix(bootstrap-cache): invalidate on mtime + fix(exec): skip resolveWorkdir for host=node (#46396, #46395) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/46406.md) | complete | Apr 28, 2026, 06:49 UTC |
+| [#72973](https://github.com/openclaw/openclaw/pull/72973) | fix(media): strip control and bidi characters from outbound filenames | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72973.md) | complete | Apr 28, 2026, 06:49 UTC |
+| [#72997](https://github.com/openclaw/openclaw/issues/72997) | Feature request: channel reload <provider> command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72997.md) | complete | Apr 28, 2026, 06:49 UTC |
 
 </details>
 
