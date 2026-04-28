@@ -1,7 +1,72 @@
 [
   {
-    "number": 73431,
+    "number": 10356,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
+  },
+  {
+    "number": 41964,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 41964,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 42010,
+    "action": "review_comment_synced",
+    "reason": "recorded existing durable comment metadata"
+  },
+  {
+    "number": 42010,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 43341,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 43341,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 44816,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 44816,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 53742,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 53742,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 54378,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 54378,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 73425,
+    "action": "closed",
+    "reason": "belongs on ClawHub"
   }
 ]
