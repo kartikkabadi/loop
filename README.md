@@ -31,7 +31,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 21:01 UTC
+Last dashboard update: Apr 28, 2026, 21:02 UTC
 
 ### Fleet
 
@@ -43,7 +43,7 @@ Last dashboard update: Apr 28, 2026, 21:01 UTC
 | Open items total | 7850 |
 | Reviewed files | 7464 |
 | Unreviewed open items | 386 |
-| Due now by cadence | 2255 |
+| Due now by cadence | 2253 |
 | Proposed closes awaiting apply | 1 |
 | Closed by Codex apply | 10542 |
 | Failed or stale reviews | 13 |
@@ -53,25 +53,25 @@ Last dashboard update: Apr 28, 2026, 21:01 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6935 | 6557 | 378 | 2213 | 1 | 10539 | Apr 28, 2026, 20:58 UTC | Apr 28, 2026, 20:53 UTC | 129 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6935 | 6557 | 378 | 2211 | 1 | 10539 | Apr 28, 2026, 21:00 UTC | Apr 28, 2026, 20:53 UTC | 150 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 915 | 907 | 8 | 42 | 0 | 3 | Apr 28, 2026, 20:53 UTC | Apr 28, 2026, 18:47 UTC | 1 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake publish complete | Apr 28, 2026, 21:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25076922379) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 28, 2026, 21:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25076922379) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 20:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25075999264) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 20:58 UTC. Latest close: Apr 28, 2026, 20:53 UTC. Latest comment sync: Apr 28, 2026, 20:58 UTC.
+Latest review: Apr 28, 2026, 21:00 UTC. Latest close: Apr 28, 2026, 20:53 UTC. Latest comment sync: Apr 28, 2026, 21:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 528 | 2 | 526 | 1 | 2 | 28 | 0 |
-| Last hour | 586 | 2 | 584 | 1 | 27 | 130 | 1 |
-| Last 24 hours | 5553 | 318 | 5235 | 8 | 700 | 555 | 18 |
+| Last 15 minutes | 449 | 2 | 447 | 1 | 2 | 47 | 0 |
+| Last hour | 588 | 2 | 586 | 1 | 27 | 151 | 1 |
+| Last 24 hours | 5553 | 318 | 5235 | 8 | 700 | 574 | 18 |
 
 ### Recently Closed Across Repos
 
@@ -95,6 +95,8 @@ Latest review: Apr 28, 2026, 20:58 UTC. Latest close: Apr 28, 2026, 20:53 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73028](https://github.com/openclaw/openclaw/pull/73028) | fix: allow cron self-removal in isolated runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73028.md) | complete | Apr 28, 2026, 21:00 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73704](https://github.com/openclaw/openclaw/pull/73704) | fix(safeguard): resolve compaction provider/model before registering runtime | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73704.md) | complete | Apr 28, 2026, 21:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73647](https://github.com/openclaw/openclaw/issues/73647) | [Bug]: 2026.4.26 Telegram-only gateway spins CPU in channel runtime / staged runtime deps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73647.md) | complete | Apr 28, 2026, 20:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73702](https://github.com/openclaw/openclaw/issues/73702) | sessions_send reply forwarding creates cross-session prompt-injection vector | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73702.md) | complete | Apr 28, 2026, 20:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73655](https://github.com/openclaw/openclaw/issues/73655) | Gateway leak triad on plugin restart: Manifest EADDRINUSE retry loop, signal-handler accumulation, sync I/O on session JSONL → WS handshake starvation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73655.md) | complete | Apr 28, 2026, 20:57 UTC |
@@ -103,8 +105,6 @@ Latest review: Apr 28, 2026, 20:58 UTC. Latest close: Apr 28, 2026, 20:53 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73705](https://github.com/openclaw/openclaw/issues/73705) | [Bug]: 2026.4.25+ macOS startup hot loop / 100% CPU in bundled plugin path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73705.md) | complete | Apr 28, 2026, 20:57 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72950](https://github.com/openclaw/openclaw/issues/72950) | Plugin config (plugins.entries.<id>.config) has no env-var or writable-overlay path — every change requires image rebuild in policy-locked sandboxes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72950.md) | complete | Apr 28, 2026, 20:57 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73717](https://github.com/openclaw/openclaw/pull/73717) | fix(cli): canonicalize infer model run refs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73717.md) | complete | Apr 28, 2026, 20:57 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73586](https://github.com/openclaw/openclaw/issues/73586) | [Bug]: sandbox.mode: \"off\" still triggers Docker capability probe for cron/heartbeat/sub-agent sessions — causes failures when Docker daemon is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73586.md) | complete | Apr 28, 2026, 20:57 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73700](https://github.com/openclaw/openclaw/pull/73700) | fix(cli): tolerate deleted cwd in shouldLoadCliDotEnv (#73676) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73700.md) | complete | Apr 28, 2026, 20:57 UTC |
 
 </details>
 
@@ -122,11 +122,11 @@ Latest review: Apr 28, 2026, 20:58 UTC. Latest close: Apr 28, 2026, 20:53 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 21:00 UTC
+Updated: Apr 28, 2026, 21:02 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 25076922379. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 19. Item numbers: 72950,73533,73586,73594,73595,73638,73639,73643,73646,73647,73648,73655,73699,73700,73702,73705,73717,73746,73756,73757.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25076922379](https://github.com/openclaw/clawsweeper/actions/runs/25076922379)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -159,13 +159,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25076922379](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 48/841 current (793 due, 5.7%) |
-| Hourly hot item cadence (<7d) | 48/841 current (793 due, 5.7%) |
+| Hourly cadence coverage | 50/841 current (791 due, 5.9%) |
+| Hourly hot item cadence (<7d) | 50/841 current (791 due, 5.9%) |
 | Daily cadence coverage | 2841/3881 current (1040 due, 73.2%) |
 | Daily PR cadence | 2112/2713 current (601 due, 77.8%) |
 | Daily new issue cadence (<30d) | 729/1168 current (439 due, 62.4%) |
 | Weekly older issue cadence | 1833/1835 current (2 due, 99.9%) |
-| Due now by cadence | 2213 |
+| Due now by cadence | 2211 |
 
 ### Audit Health
 
@@ -201,13 +201,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 20:58 UTC. Latest close: Apr 28, 2026, 20:53 UTC. Latest comment sync: Apr 28, 2026, 20:58 UTC.
+Latest review: Apr 28, 2026, 21:00 UTC. Latest close: Apr 28, 2026, 20:53 UTC. Latest comment sync: Apr 28, 2026, 21:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 46 | 2 | 44 | 0 | 2 | 28 | 0 |
-| Last hour | 85 | 2 | 83 | 0 | 27 | 129 | 1 |
-| Last 24 hours | 4635 | 315 | 4320 | 7 | 689 | 526 | 18 |
+| Last 15 minutes | 42 | 2 | 40 | 0 | 2 | 47 | 0 |
+| Last hour | 87 | 2 | 85 | 0 | 27 | 150 | 1 |
+| Last 24 hours | 4635 | 315 | 4320 | 7 | 689 | 545 | 18 |
 
 #### Recently Closed
 
@@ -228,6 +228,8 @@ Latest review: Apr 28, 2026, 20:58 UTC. Latest close: Apr 28, 2026, 20:53 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73028](https://github.com/openclaw/openclaw/pull/73028) | fix: allow cron self-removal in isolated runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73028.md) | complete | Apr 28, 2026, 21:00 UTC |
+| [#73704](https://github.com/openclaw/openclaw/pull/73704) | fix(safeguard): resolve compaction provider/model before registering runtime | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73704.md) | complete | Apr 28, 2026, 21:00 UTC |
 | [#73647](https://github.com/openclaw/openclaw/issues/73647) | [Bug]: 2026.4.26 Telegram-only gateway spins CPU in channel runtime / staged runtime deps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73647.md) | complete | Apr 28, 2026, 20:58 UTC |
 | [#73702](https://github.com/openclaw/openclaw/issues/73702) | sessions_send reply forwarding creates cross-session prompt-injection vector | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73702.md) | complete | Apr 28, 2026, 20:58 UTC |
 | [#73655](https://github.com/openclaw/openclaw/issues/73655) | Gateway leak triad on plugin restart: Manifest EADDRINUSE retry loop, signal-handler accumulation, sync I/O on session JSONL → WS handshake starvation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73655.md) | complete | Apr 28, 2026, 20:57 UTC |
@@ -236,8 +238,6 @@ Latest review: Apr 28, 2026, 20:58 UTC. Latest close: Apr 28, 2026, 20:53 UTC. L
 | [#73705](https://github.com/openclaw/openclaw/issues/73705) | [Bug]: 2026.4.25+ macOS startup hot loop / 100% CPU in bundled plugin path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73705.md) | complete | Apr 28, 2026, 20:57 UTC |
 | [#72950](https://github.com/openclaw/openclaw/issues/72950) | Plugin config (plugins.entries.<id>.config) has no env-var or writable-overlay path — every change requires image rebuild in policy-locked sandboxes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72950.md) | complete | Apr 28, 2026, 20:57 UTC |
 | [#73717](https://github.com/openclaw/openclaw/pull/73717) | fix(cli): canonicalize infer model run refs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73717.md) | complete | Apr 28, 2026, 20:57 UTC |
-| [#73586](https://github.com/openclaw/openclaw/issues/73586) | [Bug]: sandbox.mode: \"off\" still triggers Docker capability probe for cron/heartbeat/sub-agent sessions — causes failures when Docker daemon is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73586.md) | complete | Apr 28, 2026, 20:57 UTC |
-| [#73700](https://github.com/openclaw/openclaw/pull/73700) | fix(cli): tolerate deleted cwd in shouldLoadCliDotEnv (#73676) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73700.md) | complete | Apr 28, 2026, 20:57 UTC |
 
 </details>
 
@@ -334,7 +334,7 @@ Latest review: Apr 28, 2026, 20:53 UTC. Latest close: Apr 28, 2026, 18:47 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 482 | 0 | 482 | 1 | 0 | 0 | 0 |
+| Last 15 minutes | 407 | 0 | 407 | 1 | 0 | 0 | 0 |
 | Last hour | 501 | 0 | 501 | 1 | 0 | 1 | 0 |
 | Last 24 hours | 918 | 3 | 915 | 1 | 11 | 29 | 0 |
 
