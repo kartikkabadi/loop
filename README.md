@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 06:46 UTC
 
 Updated: Apr 28, 2026, 06:46 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Reviewed event item #73039, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038017984](https://github.com/openclaw/clawsweeper/actions/runs/25038017984)
+Checkpoint 1 finished. Fresh closes in checkpoint: 15. Total fresh closes in this run: 15/17. Result records in checkpoint: 21, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038065560](https://github.com/openclaw/clawsweeper/actions/runs/25038065560)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -52,36 +52,36 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038017984](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3567 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3461 |
-| Open items total | 7028 |
-| Reviewed files | 6564 |
-| Unreviewed open items | 464 |
-| Archived closed files | 13300 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3460 |
+| Open items total | 7027 |
+| Reviewed files | 6547 |
+| Unreviewed open items | 480 |
+| Archived closed files | 13318 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3373 |
-| Proposed issue closes | 6 (0.2% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3180 |
-| Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6553 |
-| Proposed closes awaiting apply | 9 (0.1% of fresh reviews) |
-| Closed by Codex apply | 10238 |
+| Fresh reviewed issues in the last 7 days | 3363 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3173 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6536 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10254 |
 | Failed or stale reviews | 11 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 60/617 current (557 due, 9.7%) |
-| Hourly hot item cadence (<7d) | 60/617 current (557 due, 9.7%) |
-| Daily cadence coverage | 1309/4097 current (2788 due, 32%) |
-| Daily PR cadence | 876/2833 current (1957 due, 30.9%) |
-| Daily new issue cadence (<30d) | 433/1264 current (831 due, 34.3%) |
-| Weekly older issue cadence | 1850/1850 current (0 due, 100%) |
-| Due now by cadence | 3809 |
+| Hourly cadence coverage | 60/615 current (555 due, 9.8%) |
+| Hourly hot item cadence (<7d) | 60/615 current (555 due, 9.8%) |
+| Daily cadence coverage | 1306/4089 current (2783 due, 31.9%) |
+| Daily PR cadence | 873/2827 current (1954 due, 30.9%) |
+| Daily new issue cadence (<30d) | 433/1262 current (829 due, 34.3%) |
+| Weekly older issue cadence | 1843/1843 current (0 due, 100%) |
+| Due now by cadence | 3818 |
 
 ### Audit Health
 
@@ -115,28 +115,28 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:44 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:46 UTC.
+Latest review: Apr 28, 2026, 06:44 UTC. Latest close: Apr 28, 2026, 06:46 UTC. Latest comment sync: Apr 28, 2026, 06:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 0 | 11 | 0 | 0 | 42 | 0 |
-| Last hour | 562 | 9 | 553 | 1 | 2 | 807 | 5 |
-| Last 24 hours | 2213 | 102 | 2111 | 6 | 63 | 1026 | 12 |
+| Last 15 minutes | 12 | 1 | 11 | 0 | 16 | 36 | 2 |
+| Last hour | 563 | 10 | 553 | 1 | 18 | 812 | 7 |
+| Last 24 hours | 2214 | 103 | 2111 | 6 | 79 | 1031 | 14 |
 
 ### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#67766](https://github.com/openclaw/openclaw/pull/67766) | fix(gateway): fall back to explicit provider config for image capability when catalog misses [AI-assisted] | already implemented on main | Apr 28, 2026, 06:46 UTC | [records/openclaw-openclaw/closed/67766.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/67766.md) |
+| [#66846](https://github.com/openclaw/openclaw/pull/66846) | feat(memory): add model override for memoryFlush | already implemented on main | Apr 28, 2026, 06:46 UTC | [records/openclaw-openclaw/closed/66846.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/66846.md) |
+| [#53989](https://github.com/openclaw/openclaw/issues/53989) | Slack event dispatch broken after 2026.3.23-1 → 2026.3.23-2 update (regression) | already implemented on main | Apr 28, 2026, 06:46 UTC | [records/openclaw-openclaw/closed/53989.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/53989.md) |
+| [#45134](https://github.com/openclaw/openclaw/issues/45134) | Intermediate assistant text leaks to Mattermost channels as unthreaded messages during multi-step tool calls | duplicate or superseded | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/45134.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/45134.md) |
+| [#44881](https://github.com/openclaw/openclaw/issues/44881) | Gateway holds port after npm upgrade — new process crash-loops until openclaw gateway stop is run | duplicate or superseded | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/44881.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/44881.md) |
 | [#73344](https://github.com/openclaw/openclaw/issues/73344) | [Bug]: /new on openai-codex/* (Responses API) returns \"One of input/previous_response_id/prompt/conversation_id must be provided\" — regression in 2026.4.26 | already implemented on main | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/73344.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73344.md) |
-| [#73331](https://github.com/openclaw/openclaw/issues/73331) | v2026.4.26: Gateway busy-loops on bundled openai SDK directory walk; stops accepting connections | already implemented on main | Apr 28, 2026, 06:22 UTC | [records/openclaw-openclaw/closed/73331.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73331.md) |
-| [#73329](https://github.com/openclaw/openclaw/issues/73329) | [Bug]: Gateway hard-couples to OpenRouter + LiteLLM pricing fetches at boot; no opt-out | duplicate or superseded | Apr 28, 2026, 06:20 UTC | [records/openclaw-openclaw/closed/73329.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73329.md) |
-| [#72512](https://github.com/openclaw/openclaw/pull/72512) | fix(webchat): guard Enter-to-send when a request is already in flight (#72157) | already implemented on main | Apr 28, 2026, 03:52 UTC | [records/openclaw-openclaw/closed/72512.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72512.md) |
-| [#72507](https://github.com/openclaw/openclaw/issues/72507) | Bug: sessions.json grows unbounded due to static schema serialized into dynamic session state | duplicate or superseded | Apr 28, 2026, 03:52 UTC | [records/openclaw-openclaw/closed/72507.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72507.md) |
-| [#72286](https://github.com/openclaw/openclaw/pull/72286) | Add Google Live browser Talk sessions | already implemented on main | Apr 28, 2026, 03:52 UTC | [records/openclaw-openclaw/closed/72286.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72286.md) |
-| [#70597](https://github.com/openclaw/openclaw/pull/70597) | yuanbao channel | already implemented on main | Apr 28, 2026, 03:51 UTC | [records/openclaw-openclaw/closed/70597.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70597.md) |
-| [#65147](https://github.com/openclaw/openclaw/pull/65147) | fix: add --force flag to npm install -g for container updates | already implemented on main | Apr 28, 2026, 03:51 UTC | [records/openclaw-openclaw/closed/65147.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65147.md) |
-| [#64559](https://github.com/openclaw/openclaw/pull/64559) | fix(plugins): emit message_received hook for queued inbound messages (#64525) | already implemented on main | Apr 28, 2026, 03:51 UTC | [records/openclaw-openclaw/closed/64559.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64559.md) |
-| [#62976](https://github.com/openclaw/openclaw/issues/62976) | Doctor cannot recover from invalid third-party plugin config; gateway hard-fails to start | already implemented on main | Apr 28, 2026, 03:51 UTC | [records/openclaw-openclaw/closed/62976.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62976.md) |
+| [#44794](https://github.com/openclaw/openclaw/issues/44794) | Feature Request: gateway.preStartCommand / gateway.wrapperScript for LaunchAgent/systemd | already implemented on main | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/44794.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/44794.md) |
+| [#44565](https://github.com/openclaw/openclaw/issues/44565) | [Bug]: Interactive browser tool fails despite healthy gateway (Docker / Hostinger image) | already implemented on main | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/44565.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/44565.md) |
+| [#44555](https://github.com/openclaw/openclaw/issues/44555) | [Bug]: Discord attachments sent via message tool do not arrive (buffer reports success, path inputs fail) | duplicate or superseded | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/44555.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/44555.md) |
+| [#44539](https://github.com/openclaw/openclaw/issues/44539) | openclaw doctor reports 'Telegram: not configured' despite Telegram channel working correctly | already implemented on main | Apr 28, 2026, 06:45 UTC | [records/openclaw-openclaw/closed/44539.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/44539.md) |
 
 <details>
 <summary>Recently Reviewed (latest 10)</summary>
