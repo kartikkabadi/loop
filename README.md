@@ -60,16 +60,16 @@ Last dashboard update: Apr 28, 2026, 08:41 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 08:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25042697279) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 08:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25042688038) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Event review applied | Apr 28, 2026, 08:38 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25041991936) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 08:39 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:38 UTC.
+Latest review: Apr 28, 2026, 08:39 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:41 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 2 | 0 | 2 | 0 | 1 | 1 | 0 |
+| Last 15 minutes | 2 | 0 | 2 | 0 | 1 | 2 | 0 |
 | Last hour | 65 | 2 | 63 | 0 | 2 | 56 | 9 |
 | Last 24 hours | 3282 | 109 | 3173 | 18 | 57 | 2083 | 26 |
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 08:39 UTC. Latest close: Apr 28, 2026, 08:38 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73368](https://github.com/openclaw/openclaw/pull/73368) | fix(ui): clear webchat pending state only for completed active run | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73368.md) | complete | Apr 28, 2026, 08:39 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams, fixtures, and host-hook recipes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 28, 2026, 08:39 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1861](https://github.com/openclaw/clawhub/pull/1861) | feat: add owner rescan security surfaces | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1861.md) | complete | Apr 28, 2026, 08:38 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70391](https://github.com/openclaw/openclaw/pull/70391) | fix(ui): avoid redundant reload after final chat event | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70391.md) | complete | Apr 28, 2026, 07:51 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73393](https://github.com/openclaw/openclaw/pull/73393) | feat(whatsapp): support newsletter targets in message tool | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73393.md) | complete | Apr 28, 2026, 07:50 UTC |
@@ -126,8 +126,8 @@ Updated: Apr 28, 2026, 08:41 UTC
 
 State: Event review applied
 
-Reviewed event item #73368, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042697279](https://github.com/openclaw/clawsweeper/actions/runs/25042697279)
+Reviewed event item #73384, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25042688038](https://github.com/openclaw/clawsweeper/actions/runs/25042688038)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -177,11 +177,11 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 08:39 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:38 UTC.
+Latest review: Apr 28, 2026, 08:39 UTC. Latest close: Apr 28, 2026, 08:38 UTC. Latest comment sync: Apr 28, 2026, 08:41 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 1 | 1 | 0 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 1 | 2 | 0 |
 | Last hour | 63 | 2 | 61 | 0 | 2 | 55 | 9 |
 | Last 24 hours | 2369 | 106 | 2263 | 18 | 54 | 1354 | 25 |
 
@@ -204,7 +204,7 @@ Latest review: Apr 28, 2026, 08:39 UTC. Latest close: Apr 28, 2026, 08:38 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73368](https://github.com/openclaw/openclaw/pull/73368) | fix(ui): clear webchat pending state only for completed active run | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73368.md) | complete | Apr 28, 2026, 08:39 UTC |
+| [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams, fixtures, and host-hook recipes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 28, 2026, 08:39 UTC |
 | [#70391](https://github.com/openclaw/openclaw/pull/70391) | fix(ui): avoid redundant reload after final chat event | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70391.md) | complete | Apr 28, 2026, 07:51 UTC |
 | [#73393](https://github.com/openclaw/openclaw/pull/73393) | feat(whatsapp): support newsletter targets in message tool | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73393.md) | complete | Apr 28, 2026, 07:50 UTC |
 | [#73388](https://github.com/openclaw/openclaw/pull/73388) | Fix Trinity main-session compatibility mismatch | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73388.md) | complete | Apr 28, 2026, 07:50 UTC |
