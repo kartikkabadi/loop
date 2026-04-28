@@ -23,7 +23,7 @@ permissions:
 
 concurrency:
   group: clawsweeper-dispatch-${{ github.repository }}-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event.action == 'edited' || github.event.action == 'synchronize' || github.event.action == 'ready_for_review' }}
 
 jobs:
   dispatch:
@@ -75,9 +75,11 @@ jobs:
 ```
 
 Comments are intentionally not a trigger. Bot-authored label churn is also
-ignored, while human label changes are debounced and do not cancel an in-flight
-receiver run. Content-changing events such as issue edits and PR synchronizes
-mark their dispatch as superseding so the receiver can cancel stale work.
+ignored. Human label changes are debounced and may run after an active
+dispatcher, but they must not cancel a content-changing dispatch before it posts
+to ClawSweeper. Content-changing events such as issue edits and PR synchronizes
+cancel stale target-side dispatch jobs and mark their receiver dispatch as
+superseding so the receiver can cancel stale work.
 
 The receiver keeps the review lane proposal-only, then runs exact apply for the
 selected item with only immediate-safe close reasons enabled:
