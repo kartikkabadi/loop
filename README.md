@@ -53,25 +53,25 @@ Last dashboard update: Apr 28, 2026, 09:45 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6992 | 6549 | 443 | 3863 | 0 | 10288 | Apr 28, 2026, 09:43 UTC | Apr 28, 2026, 09:42 UTC | 24 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6992 | 6549 | 443 | 3863 | 0 | 10288 | Apr 28, 2026, 09:43 UTC | Apr 28, 2026, 09:42 UTC | 22 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 910 | 903 | 7 | 40 | 0 | 3 | Apr 28, 2026, 09:39 UTC | Apr 28, 2026, 05:18 UTC | 467 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 09:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25044432508) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 09:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25044496406) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Event review applied | Apr 28, 2026, 09:39 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25044728445) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 09:43 UTC. Latest close: Apr 28, 2026, 09:42 UTC. Latest comment sync: Apr 28, 2026, 09:45 UTC.
+Latest review: Apr 28, 2026, 09:43 UTC. Latest close: Apr 28, 2026, 09:42 UTC. Latest comment sync: Apr 28, 2026, 09:43 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 7 | 1 | 6 | 0 | 1 | 8 | 0 |
-| Last hour | 559 | 10 | 549 | 0 | 3 | 491 | 4 |
-| Last 24 hours | 3071 | 105 | 2966 | 11 | 59 | 1578 | 24 |
+| Last 15 minutes | 7 | 1 | 6 | 0 | 1 | 7 | 0 |
+| Last hour | 558 | 10 | 548 | 0 | 3 | 489 | 4 |
+| Last 24 hours | 3071 | 105 | 2966 | 11 | 59 | 1577 | 24 |
 
 ### Recently Closed Across Repos
 
@@ -95,7 +95,7 @@ Latest review: Apr 28, 2026, 09:43 UTC. Latest close: Apr 28, 2026, 09:42 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73440](https://github.com/openclaw/openclaw/pull/73440) | fix(gateway/command-auth): memoize ownerAllowFrom list per raw array (#50289) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73440.md) | complete | Apr 28, 2026, 09:43 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73374](https://github.com/openclaw/openclaw/pull/73374) | fix: gate same-model retries to idempotent calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73374.md) | complete | Apr 28, 2026, 09:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73453](https://github.com/openclaw/openclaw/pull/73453) | fix(whatsapp): detect group @mentions when self is in allowFrom (#49317) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73453.md) | complete | Apr 28, 2026, 09:40 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73446](https://github.com/openclaw/openclaw/issues/73446) | Docs language switcher loses page path (Mintlify platform behavior) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73446.md) | complete | Apr 28, 2026, 09:39 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#652](https://github.com/openclaw/clawhub/issues/652) | Use GitHub user as commit author | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/652.md) | complete | Apr 28, 2026, 09:39 UTC |
@@ -126,8 +126,8 @@ Updated: Apr 28, 2026, 09:45 UTC
 
 State: Hot intake publish complete
 
-Reviewed event item #73440, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25044432508](https://github.com/openclaw/clawsweeper/actions/runs/25044432508)
+Reviewed event item #73374, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25044496406](https://github.com/openclaw/clawsweeper/actions/runs/25044496406)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -177,13 +177,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 09:43 UTC. Latest close: Apr 28, 2026, 09:42 UTC. Latest comment sync: Apr 28, 2026, 09:45 UTC.
+Latest review: Apr 28, 2026, 09:43 UTC. Latest close: Apr 28, 2026, 09:42 UTC. Latest comment sync: Apr 28, 2026, 09:43 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 6 | 1 | 5 | 0 | 1 | 7 | 0 |
-| Last hour | 532 | 10 | 522 | 0 | 3 | 24 | 4 |
-| Last 24 hours | 2158 | 102 | 2056 | 10 | 56 | 897 | 24 |
+| Last 15 minutes | 6 | 1 | 5 | 0 | 1 | 6 | 0 |
+| Last hour | 532 | 10 | 522 | 0 | 3 | 22 | 4 |
+| Last 24 hours | 2158 | 102 | 2056 | 10 | 56 | 896 | 24 |
 
 #### Recently Closed
 
@@ -204,7 +204,7 @@ Latest review: Apr 28, 2026, 09:43 UTC. Latest close: Apr 28, 2026, 09:42 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73440](https://github.com/openclaw/openclaw/pull/73440) | fix(gateway/command-auth): memoize ownerAllowFrom list per raw array (#50289) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73440.md) | complete | Apr 28, 2026, 09:43 UTC |
+| [#73374](https://github.com/openclaw/openclaw/pull/73374) | fix: gate same-model retries to idempotent calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73374.md) | complete | Apr 28, 2026, 09:43 UTC |
 | [#73453](https://github.com/openclaw/openclaw/pull/73453) | fix(whatsapp): detect group @mentions when self is in allowFrom (#49317) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73453.md) | complete | Apr 28, 2026, 09:40 UTC |
 | [#73446](https://github.com/openclaw/openclaw/issues/73446) | Docs language switcher loses page path (Mintlify platform behavior) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73446.md) | complete | Apr 28, 2026, 09:39 UTC |
 | [#73443](https://github.com/openclaw/openclaw/pull/73443) | feat(channel) add yuanbao docs entrance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73443.md) | complete | Apr 28, 2026, 09:38 UTC |
@@ -287,7 +287,7 @@ Latest review: Apr 28, 2026, 09:39 UTC. Latest close: Apr 28, 2026, 08:18 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last hour | 27 | 0 | 27 | 0 | 0 | 467 | 0 |
+| Last hour | 26 | 0 | 26 | 0 | 0 | 467 | 0 |
 | Last 24 hours | 913 | 3 | 910 | 1 | 3 | 681 | 0 |
 
 #### Recently Closed
