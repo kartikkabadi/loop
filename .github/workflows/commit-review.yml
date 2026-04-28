@@ -196,9 +196,9 @@ jobs:
           fi
           node clawsweeper/dist/commit-sweeper.js classify \
             --target-repo "$TARGET_REPO" \
-            --target-dir "../$TARGET_NAME" \
+            --target-dir "$TARGET_NAME" \
             --commit-shas "$selected_commits" \
-            --artifact-dir ../skipped-commit-artifacts > classify.json
+            --artifact-dir skipped-commit-artifacts > classify.json
           cat classify.json
           CLASSIFY_JSON="$(cat classify.json)" HAS_MORE="$has_more" NEXT_OFFSET="$next_offset" node - <<'NODE' >> "$GITHUB_OUTPUT"
           const classified = JSON.parse(process.env.CLASSIFY_JSON || "{}");
