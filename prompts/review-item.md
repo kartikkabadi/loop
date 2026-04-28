@@ -26,7 +26,17 @@ For PRs, include a dedicated security review pass in addition to the functional 
 
 Use reason-specific anchors:
 
-- For `implemented_on_main`, verify the current behavior in source and, when relevant, tests/docs/release history. Cite the implementation file and commit SHA; add release evidence when you can determine it.
+- For `implemented_on_main`, verify the current behavior in source and,
+  tests/docs when relevant, then do a fix-provenance pass through git/release
+  history. Use commands such as `git blame`, `git log -S`, `git log -G`,
+  `git show -s --format=%H%n%cI%n%s <sha>`, `git tag --contains <sha>`,
+  `git branch --contains <sha>`, `git show <tag>:CHANGELOG.md`, and
+  `gh release list/view` when available. Determine the fix/proof commit, the
+  commit timestamp, and whether that commit is included in a shipped release. If
+  the fix shipped, name the exact release tag/version. If it is only on current
+  `main`, say that and include the commit timestamp. If you cannot establish
+  either the shipped release or the main-only timestamp with high confidence,
+  keep the item open.
 - For `clawhub`, inspect `VISION.md` and the relevant plugin/skill/MCP/channel/provider docs or APIs, then confirm the request can be satisfied outside core without a missing extension API.
 - For `duplicate_or_superseded`, read the canonical related report/PR from the provided context or `gh`, and explain whether it is open, closed, merged, or already shipped.
 - For `not_actionable_in_repo`, read enough discussion/context to confirm the action belongs to repo/project administration, third-party setup, external ownership, or historical cleanup rather than OpenClaw code/docs.
@@ -73,7 +83,32 @@ Keep open any item with a protected label: `security`, `beta-blocker`, `release-
 
 When citing docs in the close comment, link the public `docs.openclaw.ai` page rather than the internal `docs/*.md` GitHub file whenever a public page exists. The docs site publishes the same content and is the user-facing target. Keep `file`, `line`, and `sha` populated in the structured `evidence` object for auditability, but the prose/comment should prefer links like `https://docs.openclaw.ai/plugins/building-plugins` over `https://github.com/openclaw/openclaw/blob/.../docs/plugins/building-plugins.md`.
 
-Return JSON only, matching the output schema. If you choose `close`, set `confidence` to `high`, include at least one evidence entry, and write a friendly maintainer comment in `closeComment`. Format it as readable Markdown: a short opening sentence, a blank line, then concise evidence bullets. Do not write one long paragraph. The comment should explain the specific reason, mention that this was a Codex review, acknowledge useful prior discussion/comment links when relevant, and include concrete evidence such as file paths, release version, or commit SHA when available. For implemented-on-main decisions, include source-backed evidence with `file` and `sha`, set `fixedRelease` to the release tag/version that shipped the fix if you can determine it from changelog, appcast, tags, PRs, or release notes; otherwise set it to `null`. Set `fixedSha` to the specific commit SHA that fixed or best proves the implementation if you can determine it; otherwise set it to `null`. Do not invent release facts.
+Return JSON only, matching the output schema. If you choose `close`, set
+`confidence` to `high`, include at least one evidence entry, and write a
+friendly maintainer comment in `closeComment`. Format it as readable Markdown: a
+short opening sentence, a blank line, then concise evidence bullets. Do not
+write one long paragraph. The comment should explain the specific reason,
+mention that this was a Codex review, acknowledge useful prior
+discussion/comment links when relevant, and include concrete evidence such as
+file paths, release version, commit SHA, or fix timestamp when available.
+
+For implemented-on-main decisions, include both implementation evidence and
+release provenance evidence:
+
+- Include source-backed evidence with `file` and `sha`.
+- Set `fixedSha` to the specific commit SHA that fixed or best proves the
+  implementation.
+- Set `fixedAt` to the ISO-8601 commit or merge timestamp for `fixedSha`.
+- Set `fixedRelease` to the release tag/version that first shipped the fix if
+  you can determine it from changelog, appcast, tags, PRs, or release notes.
+- Set `fixedRelease` to `null` only when the fix is present on current `main`
+  but you cannot prove it is in a shipped release; in that case the close
+  comment must say it is fixed on current `main` and include `fixedAt`.
+- Add at least one evidence entry whose label/detail/command explains the
+  release check, such as `git tag --contains <fixedSha>`, `gh release view`, or
+  changelog/tag inspection.
+- Do not invent release facts. If you cannot identify `fixedSha` plus either
+  `fixedRelease` or `fixedAt`, keep the item open.
 
 Voice: friendly, calm, and human, like a maintainer doing careful cleanup. Prefer
 `Thanks for the report/context/contribution` when it fits, then get straight to

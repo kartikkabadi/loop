@@ -70,11 +70,20 @@ function closeDecision(overrides = {}) {
         command: null,
         sha: "abcdef1234567890",
       },
+      {
+        label: "release provenance",
+        detail: "The fix is on current main and no containing release tag was found.",
+        file: null,
+        line: null,
+        command: "git tag --contains abcdef1234567890",
+        sha: "abcdef1234567890",
+      },
     ],
     risks: [],
     bestSolution: "Keep the implementation as-is.",
     fixedRelease: null,
     fixedSha: "abcdef1234567890",
+    fixedAt: "2026-04-28T12:00:00Z",
     closeComment: "Closing this as implemented after Codex review.\n\n- Evidence.",
     ...overrides,
   };
@@ -323,6 +332,60 @@ test("invalid close semantics are rejected", () => {
   );
   assert.equal(missingSource.ok, false);
   assert.equal(missingSource.actionTaken, "skipped_invalid_decision");
+});
+
+test("implemented-on-main closes require fix provenance", () => {
+  const missingFixedSha = validateCloseDecision(
+    item(),
+    closeDecision({
+      fixedSha: null,
+    }),
+  );
+  assert.equal(missingFixedSha.ok, false);
+  assert.equal(missingFixedSha.reason, "implemented_on_main requires fixedSha");
+
+  const invalidFixedAt = validateCloseDecision(
+    item(),
+    closeDecision({
+      fixedAt: "recently",
+    }),
+  );
+  assert.equal(invalidFixedAt.ok, false);
+  assert.equal(invalidFixedAt.reason, "implemented_on_main fixedAt must be an ISO timestamp");
+
+  const missingReleaseOrTimestamp = validateCloseDecision(
+    item(),
+    closeDecision({
+      fixedRelease: null,
+      fixedAt: null,
+    }),
+  );
+  assert.equal(missingReleaseOrTimestamp.ok, false);
+  assert.equal(
+    missingReleaseOrTimestamp.reason,
+    "implemented_on_main requires fixedRelease or fixedAt",
+  );
+
+  const missingProvenanceEvidence = validateCloseDecision(
+    item(),
+    closeDecision({
+      evidence: [
+        {
+          label: "implementation",
+          detail: "The feature is present in source.",
+          file: "src/example.ts",
+          line: 12,
+          command: null,
+          sha: "abcdef1234567890",
+        },
+      ],
+    }),
+  );
+  assert.equal(missingProvenanceEvidence.ok, false);
+  assert.equal(
+    missingProvenanceEvidence.reason,
+    "implemented_on_main requires release or main-only provenance evidence",
+  );
 });
 
 test("duplicate or superseded closes are allowed with evidence and comment", () => {

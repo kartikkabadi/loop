@@ -134,6 +134,7 @@ interface Decision {
   bestSolution: string;
   fixedRelease?: string | null;
   fixedSha?: string | null;
+  fixedAt?: string | null;
   closeComment: string;
 }
 
@@ -427,7 +428,7 @@ const AUDIT_HEALTH_END = "<!-- clawsweeper-audit:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
-const REVIEW_POLICY_VERSION = "2026-04-27-policy-v8";
+const REVIEW_POLICY_VERSION = "2026-04-28-policy-v9";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
@@ -454,6 +455,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "bestSolution",
   "fixedRelease",
   "fixedSha",
+  "fixedAt",
   "closeComment",
 ]);
 const EVIDENCE_SCHEMA_KEYS = new Set(["label", "detail", "file", "line", "command", "sha"]);
@@ -996,6 +998,7 @@ export function parseDecision(value: unknown): Decision {
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
     fixedRelease: requireNullableString(record.fixedRelease, "decision.fixedRelease"),
     fixedSha: requireNullableString(record.fixedSha, "decision.fixedSha"),
+    fixedAt: requireNullableString(record.fixedAt, "decision.fixedAt"),
     closeComment: requireString(record.closeComment, "decision.closeComment"),
   };
 }
@@ -2461,6 +2464,7 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     bestSolution: "Retry the Codex review after fixing the execution failure.",
     fixedRelease: null,
     fixedSha: null,
+    fixedAt: null,
     closeComment: "",
   };
 }
@@ -2800,6 +2804,8 @@ function fixedInText(decision: Decision): string {
   const parts: string[] = [];
   if (decision.fixedRelease) parts.push(`release ${linkedRelease(decision.fixedRelease)}`);
   if (decision.fixedSha) parts.push(`commit ${linkedSha(decision.fixedSha)}`);
+  if (!decision.fixedRelease && decision.fixedAt)
+    parts.push(`main fix timestamp ${decision.fixedAt}`);
   return parts.length ? parts.join(", ") : "not determined";
 }
 
@@ -2807,9 +2813,12 @@ function fixedInReportText(markdown: string): string {
   const parts: string[] = [];
   const fixedRelease = frontMatterValue(markdown, "fixed_release");
   const fixedSha = frontMatterValue(markdown, "fixed_sha");
+  const fixedAt = frontMatterValue(markdown, "fixed_at");
   if (fixedRelease && fixedRelease !== "unknown")
     parts.push(`release ${linkedRelease(fixedRelease)}`);
   if (fixedSha && fixedSha !== "unknown") parts.push(`commit ${linkedSha(fixedSha)}`);
+  if ((!fixedRelease || fixedRelease === "unknown") && fixedAt && fixedAt !== "unknown")
+    parts.push(`main fix timestamp ${fixedAt}`);
   return parts.length ? parts.join(", ") : "not determined";
 }
 
@@ -2949,6 +2958,7 @@ function reportEvidence(markdown: string): Evidence[] {
 function reportDecision(markdown: string, closeReason: CloseReason): Decision {
   const fixedRelease = frontMatterValue(markdown, "fixed_release");
   const fixedSha = frontMatterValue(markdown, "fixed_sha");
+  const fixedAt = frontMatterValue(markdown, "fixed_at");
   return {
     decision: "close",
     closeReason,
@@ -2959,6 +2969,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     bestSolution: sectionValue(markdown, "Best Possible Solution"),
     fixedRelease: fixedRelease && fixedRelease !== "unknown" ? fixedRelease : null,
     fixedSha: fixedSha && fixedSha !== "unknown" ? fixedSha : null,
+    fixedAt: fixedAt && fixedAt !== "unknown" ? fixedAt : null,
     closeComment: sectionValue(markdown, "Close Comment"),
   };
 }
@@ -3123,6 +3134,21 @@ function hasImplementationSourceEvidence(decision: Decision): boolean {
   );
 }
 
+function hasImplementationProvenanceEvidence(decision: Decision): boolean {
+  return decision.evidence.some((entry) =>
+    [entry.label, entry.detail, entry.command ?? ""]
+      .join("\n")
+      .match(
+        /\b(?:release|tag|changelog|CHANGELOG|git (?:show|log|tag|describe|branch)|gh release|main-only|unreleased|published)\b/i,
+      ),
+  );
+}
+
+function hasValidFixedAt(decision: Decision): boolean {
+  const value = decision.fixedAt?.trim();
+  return Boolean(value && Number.isFinite(Date.parse(value)));
+}
+
 function canClose(decision: Decision): boolean {
   return (
     decision.decision === "close" &&
@@ -3192,6 +3218,45 @@ export function validateCloseDecision(
       ok: false,
       actionTaken: "skipped_invalid_decision",
       reason: "implemented_on_main requires evidence with file and sha",
+    };
+  }
+  if (decision.closeReason === "implemented_on_main" && !decision.fixedSha?.trim()) {
+    return {
+      ok: false,
+      actionTaken: "skipped_invalid_decision",
+      reason: "implemented_on_main requires fixedSha",
+    };
+  }
+  if (
+    decision.closeReason === "implemented_on_main" &&
+    decision.fixedAt &&
+    !hasValidFixedAt(decision)
+  ) {
+    return {
+      ok: false,
+      actionTaken: "skipped_invalid_decision",
+      reason: "implemented_on_main fixedAt must be an ISO timestamp",
+    };
+  }
+  if (
+    decision.closeReason === "implemented_on_main" &&
+    !decision.fixedRelease?.trim() &&
+    !hasValidFixedAt(decision)
+  ) {
+    return {
+      ok: false,
+      actionTaken: "skipped_invalid_decision",
+      reason: "implemented_on_main requires fixedRelease or fixedAt",
+    };
+  }
+  if (
+    decision.closeReason === "implemented_on_main" &&
+    !hasImplementationProvenanceEvidence(decision)
+  ) {
+    return {
+      ok: false,
+      actionTaken: "skipped_invalid_decision",
+      reason: "implemented_on_main requires release or main-only provenance evidence",
     };
   }
   return { ok: true };
@@ -3434,6 +3499,7 @@ latest_release: ${options.git.latestRelease?.tagName ?? "unknown"}
 latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
 fixed_release: ${options.decision.fixedRelease ?? "unknown"}
 fixed_sha: ${options.decision.fixedSha ?? "unknown"}
+fixed_at: ${options.decision.fixedAt ?? "unknown"}
 review_policy: ${options.reviewPolicy}
 review_model: ${options.runtime.model}
 review_reasoning_effort: ${options.runtime.reasoningEffort}
