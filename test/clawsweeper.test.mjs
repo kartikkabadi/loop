@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -801,6 +802,16 @@ test("decision parser enforces required schema-shaped evidence", () => {
       }),
     /decision\.likelyOwners\[0\]\.role/,
   );
+});
+
+test("review prompt routes PR likely owners through feature history", () => {
+  const prompt = readFileSync("prompts/review-item.md", "utf8");
+
+  assert.match(prompt, /feature-history hunt/);
+  assert.match(prompt, /who introduced the feature/);
+  assert.match(prompt, /git log --follow -- <file>/);
+  assert.match(prompt, /do not list the PR author solely/);
+  assert.match(prompt, /not to the PR\s+author merely for writing the proposal/);
 });
 
 test("review parser strips environment access caveats from risks", () => {

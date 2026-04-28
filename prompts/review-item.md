@@ -13,15 +13,31 @@ The checkout must remain byte-for-byte clean. Use read-only inspection commands 
 Review deeply before closing. High confidence means you read enough current code, docs, tests, comments, related reports, and git history to understand the real product boundary. Do not decide from the issue title, one exact `rg` hit, or one nearby file. Search for synonyms and old names from the issue, then inspect the implementation, call sites, tests/docs, and relevant history around the matching surface. Prefer several independent checks over a single brittle match. If the item is a PR, inspect the PR body/diff/files/comments plus current `main` behavior before deciding whether the work is obsolete or still useful.
 
 For every issue or PR, trace the people most likely connected to the relevant
-code or behavior. Use `git blame`, `git log -S`, `git log -G`, `git show`, and
-nearby commit/PR history against the concrete files, symbols, docs, workflow
-steps, or tests involved. Identify likely authors, mergers, reviewers, recent
-maintainers, or adjacent owners; include multiple people when the trail is
-shared or ambiguous. If the item is broad, sample the most central files rather
-than skipping provenance. If history is ambiguous, say so and mark confidence
-low. Phrase it neutrally in public prose: say `the behavior appears to date to
-commit ...` or `likely related by recent work on ...`, not `person X broke it`.
-The goal is maintainer routing, not blame.
+code or behavior. Do a small feature-history hunt, not just latest-line blame:
+look for who introduced the feature, who spent the most time on that area, who
+carried major refactors, and who most recently maintained the relevant path. Use
+`git blame`, `git log --follow -- <file>`, `git log -S`, `git log -G`, `git
+shortlog`, `git show`, and nearby commit/PR history against the concrete files,
+symbols, docs, workflow steps, or tests involved. Follow old names, renamed
+files, moved helpers, and refactored call sites when the current code is a
+wrapper around older behavior. Identify likely authors, mergers, reviewers,
+recent maintainers, or adjacent owners; include multiple people when the trail
+is shared or ambiguous. If the item is broad, sample the most central files
+rather than skipping provenance. If history is ambiguous, say so and mark
+confidence low. Phrase it neutrally in public prose: say `the behavior appears
+to date to commit ...` or `likely related by recent work on ...`, not `person X
+broke it`. The goal is maintainer routing, not blame.
+
+For PRs, do not list the PR author solely because they opened the PR, reported
+the issue, or authored the proposed branch. `likelyOwners` should point to
+people connected to the current `main` history and merged feature history for
+the affected code path: original introducers, heavy contributors, major
+refactor authors, reviewers/mergers of the feature, or recent adjacent
+maintainers. Include the PR author only when they also show up in prior merged
+history, current-main ownership, maintainer review context, or clear domain
+ownership beyond this PR. If the PR author is only the proposer/reporter, you
+may mention that in evidence or summary when useful, but do not make them a
+likely owner.
 
 For PRs, include a dedicated security review pass in addition to the functional review. Inspect whether the diff could introduce a security or supply-chain regression, especially when it touches CI workflows, GitHub Action refs, dependency sources, lockfiles, install/build/release scripts, package publishing metadata, secrets handling, permissions, downloaded artifacts, generated/vendor/minified files, or other code execution paths. Check whether those changes are consistent with the PR title, body, discussion, and stated purpose before deciding. Be cautious when a small or unrelated functional change also introduces new third-party code execution, broadens secret or permission access, changes package resolution, adds lifecycle hooks, downloads and executes artifacts, or mixes infrastructure changes into otherwise cosmetic work. Do not infer malicious intent without concrete evidence, but note unexplained security-sensitive changes in `risks` and `evidence` with the observable risk, relevant file/path, and why it matters.
 
@@ -88,9 +104,11 @@ Return JSON only, matching the output schema. Always populate `likelyOwners`
 with the person or people most likely connected to the relevant code path or
 behavior. Each entry should include the person, neutral role, reason, relevant
 commits, files, and confidence. Prefer concrete git history over guesswork:
-`git blame`, `git log -S`, `git log -G`, `git show`, PR metadata, and recent
-touches to the central files. Include at least one likely owner for every review;
-when the trail is weak, use low confidence and explain why.
+`git blame`, `git log --follow -- <file>`, `git log -S`, `git log -G`, `git
+shortlog`, `git show`, PR metadata, and recent touches to the central files.
+For PRs, route to feature-history owners from current `main`, not to the PR
+author merely for writing the proposal. Include at least one likely owner for
+every review; when the trail is weak, use low confidence and explain why.
 
 If you choose `close`, set
 `confidence` to `high`, include at least one evidence entry, and write a
