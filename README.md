@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 05:55 UTC
+Last dashboard update: Apr 28, 2026, 06:00 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 05:55 UTC
+Updated: Apr 28, 2026, 06:00 UTC
 
-State: Review comments checked
+State: Event review applied
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 44640,44662,44671,44673,44676,44680,44683,44695,44735,44811,44814,44816,44824,44828,44841,44859,44884,44888,44973,45114.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036198568](https://github.com/openclaw/clawsweeper/actions/runs/25036198568)
+Reviewed event item #73312, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036490245](https://github.com/openclaw/clawsweeper/actions/runs/25036490245)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -51,22 +51,22 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036198568](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3574 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3466 |
-| Open items total | 7040 |
-| Reviewed files | 6564 |
-| Unreviewed open items | 476 |
-| Archived closed files | 13267 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3575 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3468 |
+| Open items total | 7043 |
+| Reviewed files | 6563 |
+| Unreviewed open items | 480 |
+| Archived closed files | 13269 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3381 |
+| Fresh reviewed issues in the last 7 days | 3380 |
 | Proposed issue closes | 11 (0.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3180 |
 | Proposed PR closes | 5 (0.2% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6561 |
+| Fresh verified reviews in the last 7 days | 6560 |
 | Proposed closes awaiting apply | 16 (0.2% of fresh reviews) |
 | Closed by Codex apply | 10236 |
 | Failed or stale reviews | 3 |
@@ -75,13 +75,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036198568](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 9/597 current (588 due, 1.5%) |
-| Hourly hot item cadence (<7d) | 9/597 current (588 due, 1.5%) |
-| Daily cadence coverage | 1315/4112 current (2797 due, 32%) |
-| Daily PR cadence | 879/2843 current (1964 due, 30.9%) |
-| Daily new issue cadence (<30d) | 436/1269 current (833 due, 34.4%) |
+| Hourly cadence coverage | 10/598 current (588 due, 1.7%) |
+| Hourly hot item cadence (<7d) | 10/598 current (588 due, 1.7%) |
+| Daily cadence coverage | 1315/4110 current (2795 due, 32%) |
+| Daily PR cadence | 879/2842 current (1963 due, 30.9%) |
+| Daily new issue cadence (<30d) | 436/1268 current (832 due, 34.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 3861 |
+| Due now by cadence | 3863 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 05:51 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 05:55 UTC.
+Latest review: Apr 28, 2026, 05:58 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 06:00 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 187 | 11 | 176 | 0 | 0 | 20 | 0 |
-| Last hour | 500 | 16 | 484 | 0 | 0 | 20 | 0 |
-| Last 24 hours | 2192 | 105 | 2087 | 1 | 72 | 749 | 13 |
+| Last 15 minutes | 23 | 2 | 21 | 0 | 0 | 21 | 0 |
+| Last hour | 501 | 16 | 485 | 0 | 0 | 21 | 0 |
+| Last 24 hours | 2190 | 104 | 2086 | 1 | 72 | 750 | 13 |
 
 ### Recently Closed
 
@@ -145,6 +145,7 @@ Latest review: Apr 28, 2026, 05:51 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73312](https://github.com/openclaw/openclaw/pull/73312) | feat(matrix): expose MessagePresentation metadata in Matrix events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73312.md) | complete | Apr 28, 2026, 05:58 UTC |
 | [#44814](https://github.com/openclaw/openclaw/pull/44814) | fix: make webui attachment maxBytes configurable (fixes #44757) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44814.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44640](https://github.com/openclaw/openclaw/pull/44640) | fix: three critical bug fixes for device pairing, Discord threads, and Feishu redirect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44640.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44828](https://github.com/openclaw/openclaw/pull/44828) | fix(feishu): suppress NO_REPLY silent token before API send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44828.md) | complete | Apr 28, 2026, 05:51 UTC |
@@ -154,7 +155,6 @@ Latest review: Apr 28, 2026, 05:51 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 | [#44888](https://github.com/openclaw/openclaw/pull/44888) | fix(agents): compact Kimi tool schemas for openai-completions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44888.md) | complete | Apr 28, 2026, 05:50 UTC |
 | [#44680](https://github.com/openclaw/openclaw/pull/44680) | Feat/backup checksum integrity | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44680.md) | complete | Apr 28, 2026, 05:50 UTC |
 | [#44973](https://github.com/openclaw/openclaw/pull/44973) | fix(cron): deduplicate main-session systemEvent in heartbeat prompt (issue #44922) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44973.md) | complete | Apr 28, 2026, 05:50 UTC |
-| [#44859](https://github.com/openclaw/openclaw/pull/44859) | Cron: Add additional targets that result of cron jobs will be sent to multiple channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44859.md) | complete | Apr 28, 2026, 05:50 UTC |
 
 </details>
 
