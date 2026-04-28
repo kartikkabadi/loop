@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 02:07 UTC
+Last dashboard update: Apr 28, 2026, 02:08 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 02:06 UTC
+Updated: Apr 28, 2026, 02:08 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 25029751134. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 59324,64758,65309,65886,65914,69310,69472,70864,71142,71396,71459,71550,71857,72237,72245,72268,72294,72297,72338,72376.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029751134](https://github.com/openclaw/clawsweeper/actions/runs/25029751134)
 <!-- clawsweeper-status:end -->
 
@@ -47,10 +47,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029751134](https://
 | Metric | Count |
 | --- | ---: |
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3583 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3460 |
-| Open items total | 7043 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3461 |
+| Open items total | 7044 |
 | Reviewed files | 6631 |
-| Unreviewed open items | 412 |
+| Unreviewed open items | 413 |
 | Archived closed files | 13200 |
 
 ### Review Outcomes
@@ -76,7 +76,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029751134](https://
 | Daily PR cadence | 919/2869 current (1950 due, 32%) |
 | Daily new issue cadence (<30d) | 554/1279 current (725 due, 43.3%) |
 | Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
-| Due now by cadence | 3693 |
+| Due now by cadence | 3694 |
 
 ### Audit Health
 
@@ -110,13 +110,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 02:03 UTC. Latest close: Apr 28, 2026, 02:00 UTC. Latest comment sync: Apr 28, 2026, 01:29 UTC.
+Latest review: Apr 28, 2026, 02:03 UTC. Latest close: Apr 28, 2026, 02:00 UTC. Latest comment sync: Apr 28, 2026, 02:08 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 2 | 18 | 0 | 1 | 0 | 0 |
-| Last hour | 40 | 3 | 37 | 0 | 9 | 19 | 1 |
-| Last 24 hours | 2451 | 172 | 2279 | 1 | 90 | 1516 | 12 |
+| Last 15 minutes | 20 | 2 | 18 | 0 | 1 | 20 | 0 |
+| Last hour | 40 | 3 | 37 | 0 | 9 | 39 | 1 |
+| Last 24 hours | 2446 | 167 | 2279 | 1 | 90 | 1536 | 12 |
 
 ### Recently Closed
 
