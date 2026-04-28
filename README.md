@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:57 UTC
 
 State: Event review applied
 
-Reviewed event item #1854, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038503428](https://github.com/openclaw/clawsweeper/actions/runs/25038503428)
+Reviewed event item #1857, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038509912](https://github.com/openclaw/clawsweeper/actions/runs/25038509912)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -115,7 +115,7 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:56 UTC. Latest close: Apr 28, 2026, 05:18 UTC. Latest comment sync: Apr 28, 2026, 06:56 UTC.
+Latest review: Apr 28, 2026, 06:56 UTC. Latest close: Apr 28, 2026, 05:18 UTC. Latest comment sync: Apr 28, 2026, 06:57 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -138,7 +138,7 @@ Latest review: Apr 28, 2026, 06:56 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#1854](https://github.com/openclaw/clawhub/pull/1854) | fix(ui): use download icon for public skill stats | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1854.md) | complete | Apr 28, 2026, 06:56 UTC |
+| [#1857](https://github.com/openclaw/clawhub/pull/1857) | fix(security): tighten crypto capability swap detection | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1857.md) | complete | Apr 28, 2026, 06:56 UTC |
 | [#1226](https://github.com/openclaw/clawhub/issues/1226) | clawhub package publish fails with \"openclaw.plugin.json required\" error | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1226.md) | complete | Apr 28, 2026, 06:48 UTC |
 | [#1760](https://github.com/openclaw/clawhub/issues/1760) | Exposed production API credentials in archived skill (skills/akkualle/akkualle-seo/SKILL.md) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1760.md) | complete | Apr 28, 2026, 06:48 UTC |
 | [#1830](https://github.com/openclaw/clawhub/issues/1830) | False positive: skill-factory incorrectly flagged as suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1830.md) | complete | Apr 28, 2026, 06:48 UTC |
