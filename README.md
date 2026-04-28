@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:03 UTC
 
 State: Review in progress
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036655331](https://github.com/openclaw/clawsweeper/actions/runs/25036655331)
+Reviewed event item #73277, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036608539](https://github.com/openclaw/clawsweeper/actions/runs/25036608539)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,8 +54,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036655331](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3575 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3468 |
 | Open items total | 7043 |
-| Reviewed files | 6564 |
-| Unreviewed open items | 479 |
+| Reviewed files | 6566 |
+| Unreviewed open items | 477 |
 | Archived closed files | 13269 |
 
 ### Review Outcomes
@@ -64,9 +64,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036655331](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3380 |
 | Proposed issue closes | 10 (0.3% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3181 |
+| Fresh reviewed PRs in the last 7 days | 3183 |
 | Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6561 |
+| Fresh verified reviews in the last 7 days | 6563 |
 | Proposed closes awaiting apply | 13 (0.2% of fresh reviews) |
 | Closed by Codex apply | 10236 |
 | Failed or stale reviews | 3 |
@@ -75,13 +75,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036655331](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 11/599 current (588 due, 1.8%) |
-| Hourly hot item cadence (<7d) | 11/599 current (588 due, 1.8%) |
-| Daily cadence coverage | 1315/4110 current (2795 due, 32%) |
-| Daily PR cadence | 879/2842 current (1963 due, 30.9%) |
+| Hourly cadence coverage | 13/601 current (588 due, 2.2%) |
+| Hourly hot item cadence (<7d) | 13/601 current (588 due, 2.2%) |
+| Daily cadence coverage | 1316/4110 current (2794 due, 32%) |
+| Daily PR cadence | 880/2842 current (1962 due, 31%) |
 | Daily new issue cadence (<30d) | 436/1268 current (832 due, 34.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 3862 |
+| Due now by cadence | 3859 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 05:58 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 06:01 UTC.
+Latest review: Apr 28, 2026, 06:02 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 06:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 22 | 1 | 21 | 0 | 0 | 342 | 2 |
-| Last hour | 502 | 15 | 487 | 0 | 0 | 342 | 2 |
-| Last 24 hours | 2188 | 101 | 2087 | 1 | 72 | 1071 | 15 |
+| Last 15 minutes | 25 | 1 | 24 | 0 | 0 | 343 | 2 |
+| Last hour | 505 | 15 | 490 | 0 | 0 | 343 | 2 |
+| Last 24 hours | 2191 | 101 | 2090 | 1 | 72 | 1072 | 15 |
 
 ### Recently Closed
 
@@ -145,6 +145,9 @@ Latest review: Apr 28, 2026, 05:58 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73277](https://github.com/openclaw/openclaw/pull/73277) | fix(zalouser): persist refreshed session cookies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73277.md) | complete | Apr 28, 2026, 06:02 UTC |
+| [#73318](https://github.com/openclaw/openclaw/pull/73318) | fix(codeql): tune Android pinning profile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73318.md) | complete | Apr 28, 2026, 05:59 UTC |
+| [#63148](https://github.com/openclaw/openclaw/pull/63148) | feat(feishu): scope DM topic sessions + per-topic dispatch parallelism | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/63148.md) | complete | Apr 28, 2026, 05:59 UTC |
 | [#73312](https://github.com/openclaw/openclaw/pull/73312) | feat(matrix): expose MessagePresentation metadata in Matrix events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73312.md) | complete | Apr 28, 2026, 05:58 UTC |
 | [#73295](https://github.com/openclaw/openclaw/pull/73295) | Add Discord stuck-session circuit breaker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73295.md) | complete | Apr 28, 2026, 05:58 UTC |
 | [#44814](https://github.com/openclaw/openclaw/pull/44814) | fix: make webui attachment maxBytes configurable (fixes #44757) | [keep_open / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44814.md) | complete | Apr 28, 2026, 05:51 UTC |
@@ -152,9 +155,6 @@ Latest review: Apr 28, 2026, 05:58 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 | [#44828](https://github.com/openclaw/openclaw/pull/44828) | fix(feishu): suppress NO_REPLY silent token before API send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44828.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44671](https://github.com/openclaw/openclaw/pull/44671) | fix(docker): allow whitespace in config and workspace paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44671.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44735](https://github.com/openclaw/openclaw/pull/44735) | fix(doctor): skip feishu auto-enable when alternative feishu plugin is enabled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44735.md) | complete | Apr 28, 2026, 05:50 UTC |
-| [#44824](https://github.com/openclaw/openclaw/pull/44824) | build(docs): make check:docs PowerShell-compatible | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44824.md) | complete | Apr 28, 2026, 05:50 UTC |
-| [#44888](https://github.com/openclaw/openclaw/pull/44888) | fix(agents): compact Kimi tool schemas for openai-completions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44888.md) | complete | Apr 28, 2026, 05:50 UTC |
-| [#44680](https://github.com/openclaw/openclaw/pull/44680) | Feat/backup checksum integrity | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44680.md) | complete | Apr 28, 2026, 05:50 UTC |
 
 </details>
 
