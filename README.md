@@ -38,12 +38,12 @@ Last dashboard update: Apr 28, 2026, 05:19 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 05:19 UTC
+Updated: Apr 28, 2026, 05:30 UTC
 
-State: Apply finished
+State: Planning review
 
-Apply/comment-sync run finished with 0 fresh closes out of requested limit 3. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25035360485](https://github.com/openclaw/clawsweeper/actions/runs/25035360485)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25035698384](https://github.com/openclaw/clawsweeper/actions/runs/25035698384)
 <!-- clawsweeper-status:end -->
 
 ### Queue
