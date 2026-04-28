@@ -126,9 +126,9 @@ Updated: Apr 28, 2026, 07:47 UTC
 
 State: Event review applied
 
-Reviewed event item #41991, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040390821](https://github.com/openclaw/clawsweeper/actions/runs/25040390821)
-<!-- clawsweeper-status:openclaw-openclaw:end -->
+Reviewed event item #73364, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039390013](https://github.com/openclaw/clawsweeper/actions/runs/25039390013)
+<!-- clawsweeper-status:end -->
 
 ### Queue
 
@@ -138,8 +138,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040390821](https://
 | Open issues | 3555 |
 | Open PRs | 3469 |
 | Open items total | 7024 |
-| Reviewed files | 6565 |
-| Unreviewed open items | 459 |
+| Reviewed files | 6566 |
+| Unreviewed open items | 458 |
 | Archived closed files | 13340 |
 
 ### Review Outcomes
@@ -148,7 +148,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040390821](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3353 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3177 |
+| Fresh reviewed PRs in the last 7 days | 3178 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6529 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
@@ -159,8 +159,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25040390821](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 41/636 current (595 due, 6.4%) |
-| Hourly hot item cadence (<7d) | 41/636 current (595 due, 6.4%) |
+| Hourly cadence coverage | 42/637 current (595 due, 6.6%) |
+| Hourly hot item cadence (<7d) | 42/637 current (595 due, 6.6%) |
 | Daily cadence coverage | 1485/4083 current (2598 due, 36.4%) |
 | Daily PR cadence | 1067/2825 current (1758 due, 37.8%) |
 | Daily new issue cadence (<30d) | 418/1258 current (840 due, 33.2%) |
@@ -180,8 +180,8 @@ Latest review: Apr 28, 2026, 07:45 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 42 | 0 | 42 | 0 | 0 | 40 | 2 |
-| Last hour | 83 | 9 | 74 | 1 | 3 | 410 | 11 |
-| Last 24 hours | 2410 | 108 | 2302 | 16 | 64 | 1324 | 19 |
+| Last hour | 83 | 9 | 74 | 1 | 3 | 411 | 11 |
+| Last 24 hours | 2411 | 108 | 2303 | 16 | 64 | 1325 | 19 |
 
 ### Recently Closed
 
@@ -205,7 +205,7 @@ Latest review: Apr 28, 2026, 07:45 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#41991](https://github.com/openclaw/openclaw/pull/41991) | Google: show detailed Gemini CLI OAuth extraction failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/41991.md) | complete | Apr 28, 2026, 07:45 UTC |
+| [#73364](https://github.com/openclaw/openclaw/pull/73364) | fix: reduce mirror lock hold time on slow filesystems (fixes #73339) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73364.md) | complete | Apr 28, 2026, 07:45 UTC |
 | [#38789](https://github.com/openclaw/openclaw/pull/38789) | fix(agents): rebuild sandbox skill prompt paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/38789.md) | complete | Apr 28, 2026, 07:43 UTC |
 | [#57755](https://github.com/openclaw/openclaw/pull/57755) | feat(delivery): surface deliveryStatus in --json output | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/57755.md) | complete | Apr 28, 2026, 07:41 UTC |
 | [#39891](https://github.com/openclaw/openclaw/pull/39891) | fix(googlechat): clean up typing message on NO_REPLY | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/39891.md) | complete | Apr 28, 2026, 07:41 UTC |
