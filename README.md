@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:00 UTC
 
 State: Event review applied
 
-Reviewed event item #73312, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036490245](https://github.com/openclaw/clawsweeper/actions/runs/25036490245)
+Reviewed event item #73295, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036482789](https://github.com/openclaw/clawsweeper/actions/runs/25036482789)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -119,7 +119,7 @@ Latest review: Apr 28, 2026, 05:58 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 23 | 2 | 21 | 0 | 0 | 21 | 0 |
+| Last 15 minutes | 22 | 2 | 20 | 0 | 0 | 21 | 0 |
 | Last hour | 501 | 16 | 485 | 0 | 0 | 21 | 0 |
 | Last 24 hours | 2190 | 104 | 2086 | 1 | 72 | 750 | 13 |
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 05:58 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73312](https://github.com/openclaw/openclaw/pull/73312) | feat(matrix): expose MessagePresentation metadata in Matrix events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73312.md) | complete | Apr 28, 2026, 05:58 UTC |
+| [#73295](https://github.com/openclaw/openclaw/pull/73295) | Add Discord stuck-session circuit breaker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73295.md) | complete | Apr 28, 2026, 05:58 UTC |
 | [#44814](https://github.com/openclaw/openclaw/pull/44814) | fix: make webui attachment maxBytes configurable (fixes #44757) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44814.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44640](https://github.com/openclaw/openclaw/pull/44640) | fix: three critical bug fixes for device pairing, Discord threads, and Feishu redirect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44640.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44828](https://github.com/openclaw/openclaw/pull/44828) | fix(feishu): suppress NO_REPLY silent token before API send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44828.md) | complete | Apr 28, 2026, 05:51 UTC |
