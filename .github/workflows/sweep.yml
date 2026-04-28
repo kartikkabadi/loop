@@ -244,7 +244,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$GH_TOKEN"
-          pnpm run review -- \
+          timeout --kill-after=30s 12m pnpm run review -- \
             --target-repo "${{ steps.target.outputs.target_repo }}" \
             --target-dir "${{ steps.target.outputs.target_checkout_dir }}" \
             --artifact-dir artifacts/event \
