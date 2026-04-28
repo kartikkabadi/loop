@@ -194,7 +194,7 @@ jobs:
           if [ "$next_offset" -lt "$total_count" ]; then
             has_more=true
           fi
-          pnpm --dir clawsweeper run --silent commit-review -- classify \
+          node clawsweeper/dist/commit-sweeper.js classify \
             --target-repo "$TARGET_REPO" \
             --target-dir "../$TARGET_NAME" \
             --commit-shas "$selected_commits" \
@@ -298,7 +298,7 @@ jobs:
           GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
           COMMIT_SWEEPER_ADDITIONAL_PROMPT: ${{ github.event.inputs.additional_prompt || github.event.client_payload.additional_prompt || '' }}
         run: |
-          pnpm run commit-review -- review \
+          node dist/commit-sweeper.js review \
             --target-repo "${{ needs.plan.outputs.target_repo }}" \
             --target-dir "../${{ needs.plan.outputs.target_checkout_dir }}" \
             --commit-sha "${{ matrix.sha }}" \
@@ -336,7 +336,7 @@ jobs:
             exit 1
           fi
           relative_path="records/${report_path#../commit-artifacts/}"
-          pnpm run commit-review -- publish-check \
+          node dist/commit-sweeper.js publish-check \
             --target-repo "${{ needs.plan.outputs.target_repo }}" \
             --commit-sha "${{ matrix.sha }}" \
             --report-path "$report_path" \
@@ -401,7 +401,7 @@ jobs:
         run: |
           set -euo pipefail
           git pull --rebase
-          pnpm run commit-review -- copy-artifacts --artifact-dir commit-artifacts --records-dir records
+          node dist/commit-sweeper.js copy-artifacts --artifact-dir commit-artifacts --records-dir records
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add records
@@ -429,7 +429,7 @@ jobs:
           find commit-artifacts -name '*.md' -print0 | while IFS= read -r -d '' report_path; do
             sha="$(basename "$report_path" .md)"
             relative_path="records/${report_path#commit-artifacts/}"
-            pnpm run commit-review -- publish-check \
+            node dist/commit-sweeper.js publish-check \
               --target-repo "${{ needs.plan.outputs.target_repo }}" \
               --commit-sha "$sha" \
               --report-path "$report_path" \
