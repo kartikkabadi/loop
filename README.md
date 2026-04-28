@@ -31,46 +31,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 10:18 UTC
-
-<!-- clawsweeper-status:openclaw-clawhub:start -->
-**Workflow status**
-
-Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
-
-Updated: Apr 28, 2026, 10:16 UTC
-
-State: Apply throttled
-
-GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/clawhub/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 5/11 in 480s.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25046846753](https://github.com/openclaw/clawsweeper/actions/runs/25046846753)
-<!-- clawsweeper-status:openclaw-clawhub:end -->
-
-<!-- clawsweeper-status:openclaw-clawhub:start -->
-**Workflow status**
-
-Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
-
-Updated: Apr 28, 2026, 10:12 UTC
-
-State: Apply throttled
-
-GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/clawhub/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 4/11 in 240s.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25046846753](https://github.com/openclaw/clawsweeper/actions/runs/25046846753)
-<!-- clawsweeper-status:openclaw-clawhub:end -->
-
-<!-- clawsweeper-status:openclaw-clawhub:start -->
-**Workflow status**
-
-Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
-
-Updated: Apr 28, 2026, 10:09 UTC
-
-State: Apply throttled
-
-GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/clawhub/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 2/11 in 60s.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25046846753](https://github.com/openclaw/clawsweeper/actions/runs/25046846753)
-<!-- clawsweeper-status:openclaw-clawhub:end -->
+Last dashboard update: Apr 28, 2026, 10:26 UTC
 
 ### Fleet
 
@@ -99,8 +60,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25046846753](https://
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 10:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25046595038) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 10:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25046290368) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 10:26 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25047553807) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Apply throttled | Apr 28, 2026, 10:16 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25046846753) |
 
 ### Fleet Activity
 
@@ -110,7 +71,7 @@ Latest review: Apr 28, 2026, 09:59 UTC. Latest close: Apr 28, 2026, 10:01 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Last hour | 574 | 4 | 570 | 1 | 20 | 540 | 1 |
-| Last 24 hours | 3016 | 102 | 2914 | 10 | 393 | 1109 | 20 |
+| Last 24 hours | 3016 | 102 | 2914 | 10 | 388 | 1099 | 20 |
 
 ### Recently Closed Across Repos
 
@@ -161,12 +122,12 @@ Latest review: Apr 28, 2026, 09:59 UTC. Latest close: Apr 28, 2026, 10:01 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 10:18 UTC
+Updated: Apr 28, 2026, 10:26 UTC
 
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25046595038](https://github.com/openclaw/clawsweeper/actions/runs/25046595038)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25047553807](https://github.com/openclaw/clawsweeper/actions/runs/25047553807)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -198,11 +159,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25046595038](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 43/654 current (611 due, 6.6%) |
-| Hourly hot item cadence (<7d) | 43/654 current (611 due, 6.6%) |
-| Daily cadence coverage | 1234/4067 current (2833 due, 30.3%) |
+| Hourly cadence coverage | 43/653 current (610 due, 6.6%) |
+| Hourly hot item cadence (<7d) | 43/653 current (610 due, 6.6%) |
+| Daily cadence coverage | 1234/4068 current (2834 due, 30.3%) |
 | Daily PR cadence | 959/2819 current (1860 due, 34%) |
-| Daily new issue cadence (<30d) | 275/1248 current (973 due, 22%) |
+| Daily new issue cadence (<30d) | 275/1249 current (974 due, 22%) |
 | Weekly older issue cadence | 1830/1838 current (8 due, 99.6%) |
 | Due now by cadence | 3452 |
 
@@ -222,7 +183,7 @@ Latest review: Apr 28, 2026, 09:59 UTC. Latest close: Apr 28, 2026, 10:01 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Last hour | 534 | 4 | 530 | 1 | 20 | 33 | 1 |
-| Last 24 hours | 2103 | 99 | 2004 | 9 | 383 | 405 | 20 |
+| Last 24 hours | 2103 | 99 | 2004 | 9 | 378 | 395 | 20 |
 
 #### Recently Closed
 
@@ -268,12 +229,12 @@ Latest review: Apr 28, 2026, 09:59 UTC. Latest close: Apr 28, 2026, 10:01 UTC. L
 
 Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
 
-Updated: Apr 28, 2026, 10:00 UTC
+Updated: Apr 28, 2026, 10:16 UTC
 
-State: Review comments checked
+State: Apply throttled
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 1649,1671,1682,1690,1719,1720,1721,1725,1733,1734,1735,1738,1741,1742,1745,1746,1747,1748,1749,1755.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25046290368](https://github.com/openclaw/clawsweeper/actions/runs/25046290368)
+GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/clawhub/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 5/11 in 480s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25046846753](https://github.com/openclaw/clawsweeper/actions/runs/25046846753)
 <!-- clawsweeper-status:openclaw-clawhub:end -->
 
 #### Queue
