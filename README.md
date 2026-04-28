@@ -60,7 +60,7 @@ Last dashboard update: Apr 28, 2026, 12:53 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 12:53 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25053822632) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 12:53 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25053907822) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 12:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25051577108) |
 
 ### Fleet Activity
@@ -126,8 +126,8 @@ Updated: Apr 28, 2026, 12:53 UTC
 
 State: Apply finished
 
-Apply/comment-sync run finished with 4 fresh closes out of requested limit 4. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25053822632](https://github.com/openclaw/clawsweeper/actions/runs/25053822632)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25053907822](https://github.com/openclaw/clawsweeper/actions/runs/25053907822)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
