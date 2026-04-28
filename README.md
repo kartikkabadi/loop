@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 06:02 UTC
+Last dashboard update: Apr 28, 2026, 06:03 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 06:02 UTC
+Updated: Apr 28, 2026, 06:03 UTC
 
 State: Event review applied
 
-Reviewed event item #72115, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036589067](https://github.com/openclaw/clawsweeper/actions/runs/25036589067)
+Reviewed event item #73319, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036554419](https://github.com/openclaw/clawsweeper/actions/runs/25036554419)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,20 +54,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036589067](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3575 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3468 |
 | Open items total | 7043 |
-| Reviewed files | 6564 |
-| Unreviewed open items | 479 |
+| Reviewed files | 6565 |
+| Unreviewed open items | 478 |
 | Archived closed files | 13269 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3380 |
-| Proposed issue closes | 11 (0.3% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3381 |
+| Proposed issue closes | 10 (0.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3181 |
-| Proposed PR closes | 5 (0.2% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6561 |
-| Proposed closes awaiting apply | 16 (0.2% of fresh reviews) |
+| Proposed PR closes | 3 (0.1% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6562 |
+| Proposed closes awaiting apply | 13 (0.2% of fresh reviews) |
 | Closed by Codex apply | 10236 |
 | Failed or stale reviews | 3 |
 
@@ -75,8 +75,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036589067](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 12/599 current (587 due, 2%) |
-| Hourly hot item cadence (<7d) | 12/599 current (587 due, 2%) |
+| Hourly cadence coverage | 12/600 current (588 due, 2%) |
+| Hourly hot item cadence (<7d) | 12/600 current (588 due, 2%) |
 | Daily cadence coverage | 1315/4110 current (2795 due, 32%) |
 | Daily PR cadence | 879/2842 current (1963 due, 30.9%) |
 | Daily new issue cadence (<30d) | 436/1268 current (832 due, 34.4%) |
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:01 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 06:02 UTC.
+Latest review: Apr 28, 2026, 06:01 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 06:03 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 23 | 2 | 21 | 0 | 0 | 23 | 0 |
-| Last hour | 503 | 16 | 487 | 0 | 0 | 23 | 0 |
-| Last 24 hours | 2189 | 102 | 2087 | 1 | 72 | 751 | 13 |
+| Last 15 minutes | 23 | 1 | 22 | 0 | 0 | 343 | 2 |
+| Last hour | 503 | 15 | 488 | 0 | 0 | 343 | 2 |
+| Last 24 hours | 2189 | 101 | 2088 | 1 | 72 | 1072 | 15 |
 
 ### Recently Closed
 
@@ -145,10 +145,10 @@ Latest review: Apr 28, 2026, 06:01 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72115](https://github.com/openclaw/openclaw/pull/72115) | [EV-002B] Skill Workshop parity: path, TOCTOU, prompt-budget hardening | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72115.md) | complete | Apr 28, 2026, 06:01 UTC |
+| [#73319](https://github.com/openclaw/openclaw/issues/73319) | openclaw channels list only shows auth providers, not configured chat channel accounts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73319.md) | complete | Apr 28, 2026, 06:01 UTC |
 | [#73312](https://github.com/openclaw/openclaw/pull/73312) | feat(matrix): expose MessagePresentation metadata in Matrix events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73312.md) | complete | Apr 28, 2026, 05:58 UTC |
 | [#73295](https://github.com/openclaw/openclaw/pull/73295) | Add Discord stuck-session circuit breaker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73295.md) | complete | Apr 28, 2026, 05:58 UTC |
-| [#44814](https://github.com/openclaw/openclaw/pull/44814) | fix: make webui attachment maxBytes configurable (fixes #44757) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44814.md) | complete | Apr 28, 2026, 05:51 UTC |
+| [#44814](https://github.com/openclaw/openclaw/pull/44814) | fix: make webui attachment maxBytes configurable (fixes #44757) | [keep_open / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44814.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44640](https://github.com/openclaw/openclaw/pull/44640) | fix: three critical bug fixes for device pairing, Discord threads, and Feishu redirect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44640.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44828](https://github.com/openclaw/openclaw/pull/44828) | fix(feishu): suppress NO_REPLY silent token before API send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44828.md) | complete | Apr 28, 2026, 05:51 UTC |
 | [#44671](https://github.com/openclaw/openclaw/pull/44671) | fix(docker): allow whitespace in config and workspace paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44671.md) | complete | Apr 28, 2026, 05:51 UTC |
