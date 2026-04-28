@@ -43,40 +43,41 @@ Last dashboard update: Apr 28, 2026, 11:43 UTC
 | Open items total | 7907 |
 | Reviewed files | 7473 |
 | Unreviewed open items | 434 |
-| Due now by cadence | 3855 |
+| Due now by cadence | 3856 |
 | Proposed closes awaiting apply | 0 |
-| Closed by Codex apply | 10309 |
+| Closed by Codex apply | 10310 |
 | Failed or stale reviews | 49 |
-| Archived closed files | 13467 |
+| Archived closed files | 13468 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6996 | 6570 | 426 | 3844 | 0 | 10306 | Apr 28, 2026, 11:41 UTC | Apr 28, 2026, 11:43 UTC | 482 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 911 | 903 | 8 | 11 | 0 | 3 | Apr 28, 2026, 11:41 UTC | Apr 28, 2026, 08:18 UTC | 399 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6996 | 6570 | 426 | 3845 | 0 | 10307 | Apr 28, 2026, 11:42 UTC | Apr 28, 2026, 11:43 UTC | 483 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 911 | 903 | 8 | 11 | 0 | 3 | Apr 28, 2026, 11:41 UTC | Apr 28, 2026, 08:18 UTC | 393 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 11:43 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25049622963) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 11:43 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25049622963) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Hot intake publish complete | Apr 28, 2026, 11:42 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25049943284) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 11:41 UTC. Latest close: Apr 28, 2026, 11:43 UTC. Latest comment sync: Apr 28, 2026, 11:42 UTC.
+Latest review: Apr 28, 2026, 11:42 UTC. Latest close: Apr 28, 2026, 11:43 UTC. Latest comment sync: Apr 28, 2026, 11:43 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 39 | 3 | 36 | 1 | 13 | 20 | 2 |
-| Last hour | 1084 | 15 | 1069 | 1 | 29 | 881 | 3 |
-| Last 24 hours | 3030 | 92 | 2938 | 9 | 407 | 1012 | 15 |
+| Last 15 minutes | 40 | 4 | 36 | 1 | 14 | 21 | 2 |
+| Last hour | 1084 | 16 | 1068 | 1 | 30 | 876 | 3 |
+| Last 24 hours | 3031 | 93 | 2938 | 9 | 408 | 1013 | 15 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73528](https://github.com/openclaw/openclaw/issues/73528) | Gateway startup warmup is slow for inline configured primary model | already implemented on main | Apr 28, 2026, 11:43 UTC | [records/openclaw-openclaw/closed/73528.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73528.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#46992](https://github.com/openclaw/openclaw/pull/46992) | Fix: Windows terminal encoding set to UTF-8 | already implemented on main | Apr 28, 2026, 11:43 UTC | [records/openclaw-openclaw/closed/46992.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/46992.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#46472](https://github.com/openclaw/openclaw/pull/46472) | fix(feishu): add WebSocket heartbeat config to prevent silent disconnection | duplicate or superseded | Apr 28, 2026, 11:42 UTC | [records/openclaw-openclaw/closed/46472.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/46472.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#41473](https://github.com/openclaw/openclaw/pull/41473) | Slack: expose Socket Mode ping/pong timeout config | already implemented on main | Apr 28, 2026, 11:42 UTC | [records/openclaw-openclaw/closed/41473.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/41473.md) |
@@ -86,7 +87,6 @@ Latest review: Apr 28, 2026, 11:41 UTC. Latest close: Apr 28, 2026, 11:43 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70803](https://github.com/openclaw/openclaw/pull/70803) | fix(whatsapp): normalize hosted LID targets | closed externally after review | Apr 28, 2026, 11:36 UTC | [records/openclaw-openclaw/closed/70803.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70803.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71791](https://github.com/openclaw/openclaw/pull/71791) | fix(whatsapp): preserve e164 for group history allowlists | closed externally after review | Apr 28, 2026, 11:36 UTC | [records/openclaw-openclaw/closed/71791.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71791.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71553](https://github.com/openclaw/openclaw/pull/71553) | fix(whatsapp): use sender lid for group ack reactions | closed externally after review | Apr 28, 2026, 11:35 UTC | [records/openclaw-openclaw/closed/71553.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71553.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72342](https://github.com/openclaw/openclaw/pull/72342) | fix(codex): default app-server to guardian mode | closed externally after review | Apr 28, 2026, 11:35 UTC | [records/openclaw-openclaw/closed/72342.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72342.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -124,9 +124,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 11:43 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 3. Total fresh closes in this run: 3/3. Result records in checkpoint: 3, including durable review comment syncs.
+Apply/comment-sync run finished with 3 fresh closes out of requested limit 3. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25049622963](https://github.com/openclaw/clawsweeper/actions/runs/25049622963)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -140,7 +140,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25049622963](https://
 | Open items total | 6996 |
 | Reviewed files | 6570 |
 | Unreviewed open items | 426 |
-| Archived closed files | 13457 |
+| Archived closed files | 13458 |
 
 #### Review Outcomes
 
@@ -152,20 +152,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25049622963](https://
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6522 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Closed by Codex apply | 10306 |
+| Closed by Codex apply | 10307 |
 | Failed or stale reviews | 48 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 92/683 current (591 due, 13.5%) |
-| Hourly hot item cadence (<7d) | 92/683 current (591 due, 13.5%) |
+| Hourly cadence coverage | 91/683 current (592 due, 13.3%) |
+| Hourly hot item cadence (<7d) | 91/683 current (592 due, 13.3%) |
 | Daily cadence coverage | 1229/4048 current (2819 due, 30.4%) |
 | Daily PR cadence | 958/2809 current (1851 due, 34.1%) |
 | Daily new issue cadence (<30d) | 271/1239 current (968 due, 21.9%) |
 | Weekly older issue cadence | 1831/1839 current (8 due, 99.6%) |
-| Due now by cadence | 3844 |
+| Due now by cadence | 3845 |
 
 ### Audit Health
 
@@ -177,18 +177,19 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 11:41 UTC. Latest close: Apr 28, 2026, 11:43 UTC. Latest comment sync: Apr 28, 2026, 11:42 UTC.
+Latest review: Apr 28, 2026, 11:42 UTC. Latest close: Apr 28, 2026, 11:43 UTC. Latest comment sync: Apr 28, 2026, 11:43 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 3 | 16 | 0 | 13 | 20 | 2 |
-| Last hour | 565 | 15 | 550 | 0 | 29 | 482 | 3 |
-| Last 24 hours | 2117 | 89 | 2028 | 8 | 397 | 601 | 15 |
+| Last 15 minutes | 20 | 4 | 16 | 0 | 14 | 21 | 2 |
+| Last hour | 565 | 16 | 549 | 0 | 30 | 483 | 3 |
+| Last 24 hours | 2118 | 90 | 2028 | 8 | 398 | 602 | 15 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#73528](https://github.com/openclaw/openclaw/issues/73528) | Gateway startup warmup is slow for inline configured primary model | already implemented on main | Apr 28, 2026, 11:43 UTC | [records/openclaw-openclaw/closed/73528.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73528.md) |
 | [#46992](https://github.com/openclaw/openclaw/pull/46992) | Fix: Windows terminal encoding set to UTF-8 | already implemented on main | Apr 28, 2026, 11:43 UTC | [records/openclaw-openclaw/closed/46992.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/46992.md) |
 | [#46472](https://github.com/openclaw/openclaw/pull/46472) | fix(feishu): add WebSocket heartbeat config to prevent silent disconnection | duplicate or superseded | Apr 28, 2026, 11:42 UTC | [records/openclaw-openclaw/closed/46472.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/46472.md) |
 | [#41473](https://github.com/openclaw/openclaw/pull/41473) | Slack: expose Socket Mode ping/pong timeout config | already implemented on main | Apr 28, 2026, 11:42 UTC | [records/openclaw-openclaw/closed/41473.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/41473.md) |
@@ -198,7 +199,6 @@ Latest review: Apr 28, 2026, 11:41 UTC. Latest close: Apr 28, 2026, 11:43 UTC. L
 | [#70803](https://github.com/openclaw/openclaw/pull/70803) | fix(whatsapp): normalize hosted LID targets | closed externally after review | Apr 28, 2026, 11:36 UTC | [records/openclaw-openclaw/closed/70803.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70803.md) |
 | [#71791](https://github.com/openclaw/openclaw/pull/71791) | fix(whatsapp): preserve e164 for group history allowlists | closed externally after review | Apr 28, 2026, 11:36 UTC | [records/openclaw-openclaw/closed/71791.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71791.md) |
 | [#71553](https://github.com/openclaw/openclaw/pull/71553) | fix(whatsapp): use sender lid for group ack reactions | closed externally after review | Apr 28, 2026, 11:35 UTC | [records/openclaw-openclaw/closed/71553.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71553.md) |
-| [#72342](https://github.com/openclaw/openclaw/pull/72342) | fix(codex): default app-server to guardian mode | closed externally after review | Apr 28, 2026, 11:35 UTC | [records/openclaw-openclaw/closed/72342.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72342.md) |
 
 #### Recently Reviewed
 
@@ -287,7 +287,7 @@ Latest review: Apr 28, 2026, 11:41 UTC. Latest close: Apr 28, 2026, 08:18 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 20 | 0 | 20 | 1 | 0 | 0 | 0 |
-| Last hour | 519 | 0 | 519 | 1 | 0 | 399 | 0 |
+| Last hour | 519 | 0 | 519 | 1 | 0 | 393 | 0 |
 | Last 24 hours | 913 | 3 | 910 | 1 | 10 | 411 | 0 |
 
 #### Recently Closed
