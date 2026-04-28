@@ -31,18 +31,18 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 05:54 UTC
+Last dashboard update: Apr 28, 2026, 05:55 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 05:53 UTC
+Updated: Apr 28, 2026, 05:55 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 25036198568. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 44640,44662,44671,44673,44676,44680,44683,44695,44735,44811,44814,44816,44824,44828,44841,44859,44884,44888,44973,45114.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036198568](https://github.com/openclaw/clawsweeper/actions/runs/25036198568)
 <!-- clawsweeper-status:end -->
 
@@ -51,11 +51,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036198568](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3575 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3467 |
-| Open items total | 7042 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3574 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3466 |
+| Open items total | 7040 |
 | Reviewed files | 6564 |
-| Unreviewed open items | 478 |
+| Unreviewed open items | 476 |
 | Archived closed files | 13267 |
 
 ### Review Outcomes
@@ -81,7 +81,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036198568](https://
 | Daily PR cadence | 879/2843 current (1964 due, 30.9%) |
 | Daily new issue cadence (<30d) | 436/1269 current (833 due, 34.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 3863 |
+| Due now by cadence | 3861 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 05:51 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 04:45 UTC.
+Latest review: Apr 28, 2026, 05:51 UTC. Latest close: Apr 28, 2026, 03:52 UTC. Latest comment sync: Apr 28, 2026, 05:55 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 231 | 13 | 218 | 0 | 0 | 0 | 0 |
-| Last hour | 500 | 16 | 484 | 0 | 0 | 0 | 0 |
-| Last 24 hours | 2192 | 105 | 2087 | 1 | 72 | 729 | 13 |
+| Last 15 minutes | 187 | 11 | 176 | 0 | 0 | 20 | 0 |
+| Last hour | 500 | 16 | 484 | 0 | 0 | 20 | 0 |
+| Last 24 hours | 2192 | 105 | 2087 | 1 | 72 | 749 | 13 |
 
 ### Recently Closed
 
