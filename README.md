@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:27 UTC
 
 State: Event review applied
 
-Reviewed event item #72773, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037391521](https://github.com/openclaw/clawsweeper/actions/runs/25037391521)
+Reviewed event item #69297, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037384550](https://github.com/openclaw/clawsweeper/actions/runs/25037384550)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,8 +54,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037391521](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3580 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3465 |
 | Open items total | 7045 |
-| Reviewed files | 6576 |
-| Unreviewed open items | 469 |
+| Reviewed files | 6575 |
+| Unreviewed open items | 470 |
 | Archived closed files | 13278 |
 
 ### Review Outcomes
@@ -64,9 +64,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037391521](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3386 |
 | Proposed issue closes | 12 (0.4% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3184 |
+| Fresh reviewed PRs in the last 7 days | 3183 |
 | Proposed PR closes | 6 (0.2% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6569 |
+| Fresh verified reviews in the last 7 days | 6568 |
 | Proposed closes awaiting apply | 18 (0.3% of fresh reviews) |
 | Closed by Codex apply | 10238 |
 | Failed or stale reviews | 7 |
@@ -75,8 +75,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037391521](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 63/614 current (551 due, 10.3%) |
-| Hourly hot item cadence (<7d) | 63/614 current (551 due, 10.3%) |
+| Hourly cadence coverage | 62/613 current (551 due, 10.1%) |
+| Hourly hot item cadence (<7d) | 62/613 current (551 due, 10.1%) |
 | Daily cadence coverage | 1316/4107 current (2791 due, 32%) |
 | Daily PR cadence | 881/2839 current (1958 due, 31%) |
 | Daily new issue cadence (<30d) | 435/1268 current (833 due, 34.3%) |
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:25 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:24 UTC.
+Latest review: Apr 28, 2026, 06:25 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:27 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 105 | 3 | 102 | 0 | 2 | 12 | 2 |
-| Last hour | 1027 | 22 | 1005 | 1 | 2 | 359 | 5 |
-| Last 24 hours | 2211 | 108 | 2103 | 4 | 74 | 590 | 12 |
+| Last 15 minutes | 99 | 3 | 96 | 0 | 2 | 13 | 2 |
+| Last hour | 1026 | 22 | 1004 | 1 | 2 | 360 | 5 |
+| Last 24 hours | 2210 | 108 | 2102 | 4 | 74 | 591 | 12 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:25 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#72773](https://github.com/openclaw/openclaw/pull/72773) | Add cron changed plugin hook | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72773.md) | complete | Apr 28, 2026, 06:25 UTC |
+| [#69297](https://github.com/openclaw/openclaw/pull/69297) | fix(whatsapp): Add group admin privacy controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69297.md) | complete | Apr 28, 2026, 06:25 UTC |
 | [#73334](https://github.com/openclaw/openclaw/pull/73334) | refactor(feishu): unify document link parsing | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73334.md) | complete | Apr 28, 2026, 06:23 UTC |
 | [#55652](https://github.com/openclaw/openclaw/pull/55652) | fix(discord): skip channels claimed by other instances | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/55652.md) | complete | Apr 28, 2026, 06:22 UTC |
 | [#73333](https://github.com/openclaw/openclaw/issues/73333) | [Bug]: Acpx broken after 2025.4.26 update when openclaw home is on remote file systems | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73333.md) | complete | Apr 28, 2026, 06:21 UTC |
