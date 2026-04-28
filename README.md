@@ -27,19 +27,19 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 01:22 UTC
+Last dashboard update: Apr 28, 2026, 01:23 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 01:22 UTC
+Updated: Apr 28, 2026, 01:23 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25028648434](https://github.com/openclaw/clawsweeper/actions/runs/25028648434)
+Starting apply/comment-sync run for up to 8 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=41537,41736,41764,41809,41936,43141,62482,72468.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25028664322](https://github.com/openclaw/clawsweeper/actions/runs/25028664322)
 <!-- clawsweeper-status:end -->
 
 ### Queue
