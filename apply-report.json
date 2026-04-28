@@ -1,12 +1,1 @@
-[
-  {
-    "number": 73234,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 73598,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  }
-]
+[]
