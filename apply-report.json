@@ -1,7 +1,7 @@
 [
   {
-    "number": 51421,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
+    "number": 73391,
+    "action": "skipped_changed_since_review",
+    "reason": "updated_at changed"
   }
 ]
