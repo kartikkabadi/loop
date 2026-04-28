@@ -1,12 +1,1 @@
-[
-  {
-    "number": 57210,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57210,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  }
-]
+[]
