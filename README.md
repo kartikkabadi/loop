@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:29 UTC
 
 State: Review publish complete
 
-Reviewed event item #73309, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037457318](https://github.com/openclaw/clawsweeper/actions/runs/25037457318)
+Reviewed event item #73336, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037450912](https://github.com/openclaw/clawsweeper/actions/runs/25037450912)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -65,9 +65,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037457318](https://
 | Fresh reviewed issues in the last 7 days | 3384 |
 | Proposed issue closes | 12 (0.4% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3186 |
-| Proposed PR closes | 6 (0.2% of reviewed PRs) |
+| Proposed PR closes | 7 (0.2% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6570 |
-| Proposed closes awaiting apply | 18 (0.3% of fresh reviews) |
+| Proposed closes awaiting apply | 19 (0.3% of fresh reviews) |
 | Closed by Codex apply | 10238 |
 | Failed or stale reviews | 7 |
 
@@ -119,9 +119,9 @@ Latest review: Apr 28, 2026, 06:27 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 29 | 3 | 26 | 0 | 2 | 15 | 2 |
-| Last hour | 1029 | 22 | 1007 | 1 | 2 | 361 | 5 |
-| Last 24 hours | 2209 | 105 | 2104 | 4 | 74 | 592 | 12 |
+| Last 15 minutes | 26 | 4 | 22 | 0 | 2 | 15 | 2 |
+| Last hour | 1029 | 23 | 1006 | 1 | 2 | 361 | 5 |
+| Last 24 hours | 2209 | 106 | 2103 | 4 | 74 | 592 | 12 |
 
 ### Recently Closed
 
@@ -138,7 +138,7 @@ Latest review: Apr 28, 2026, 06:27 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73309](https://github.com/openclaw/openclaw/pull/73309) | fix(logging): redact secrets at subsystem console sink (#73284) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73309.md) | complete | Apr 28, 2026, 06:27 UTC |
+| [#73336](https://github.com/openclaw/openclaw/pull/73336) | docs(concepts): Fix links to Gateway protocol and related documents | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73336.md) | complete | Apr 28, 2026, 06:27 UTC |
 | [#69297](https://github.com/openclaw/openclaw/pull/69297) | fix(whatsapp): Add group admin privacy controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69297.md) | complete | Apr 28, 2026, 06:25 UTC |
 | [#72773](https://github.com/openclaw/openclaw/pull/72773) | Add cron changed plugin hook | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72773.md) | complete | Apr 28, 2026, 06:25 UTC |
 | [#73335](https://github.com/openclaw/openclaw/pull/73335) | fix(tui): dedupe ASCII backspace events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73335.md) | complete | Apr 28, 2026, 06:25 UTC |
