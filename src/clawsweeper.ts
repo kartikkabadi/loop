@@ -16,6 +16,7 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   DEFAULT_TARGET_REPO,
+  REPOSITORY_PROFILES,
   isAutoCloseAllowed,
   normalizeRepo,
   repositoryProfileFor,
@@ -266,6 +267,38 @@ interface DashboardActivityStats {
   latestCommentSyncAt: string | undefined;
 }
 
+interface DashboardStats {
+  open: OpenItemCounts;
+  fresh: number;
+  todo: number;
+  files: number;
+  proposedClose: number;
+  closed: number;
+  archivedFiles: number;
+  failed: number;
+  stale: number;
+  byKind: Record<ItemKind, DashboardKindStats>;
+  cadence: DashboardCadenceStats;
+  activity: DashboardActivityStats;
+  recent: DashboardItem[];
+  recentClosed: DashboardClosedItem[];
+}
+
+interface WorkflowStatusSummary {
+  updatedAt: string | undefined;
+  state: string;
+  detail: string;
+  runUrl: string | undefined;
+}
+
+interface RepoDashboardSnapshot {
+  profile: RepositoryProfile;
+  stats: DashboardStats;
+  status: string;
+  statusSummary: WorkflowStatusSummary;
+  auditHealth: string;
+}
+
 interface PlanShard {
   shard: number;
   itemNumbers: number[];
@@ -435,10 +468,41 @@ function setTargetRepo(targetRepoName: string): RepositoryProfile {
   return activeRepositoryProfile;
 }
 
-function repoFromArgs(args: Args): RepositoryProfile {
-  return setTargetRepo(
-    stringArg(args.target_repo, process.env.CLAWSWEEPER_TARGET_REPO ?? DEFAULT_TARGET_REPO),
+function targetRepoInput(args: Args): string {
+  return stringArg(
+    args.target_repo,
+    process.env.CLAWSWEEPER_TARGET_REPO ?? process.env.TARGET_REPO ?? DEFAULT_TARGET_REPO,
   );
+}
+
+function repoFromArgs(args: Args): RepositoryProfile {
+  return setTargetRepo(targetRepoInput(args));
+}
+
+function withTargetProfile<T>(profile: RepositoryProfile, fn: () => T): T {
+  const previousProfile = activeRepositoryProfile;
+  activeRepositoryProfile = profile;
+  try {
+    return fn();
+  } finally {
+    activeRepositoryProfile = previousProfile;
+  }
+}
+
+function profileStatusStart(profile = targetProfile()): string {
+  return `<!-- clawsweeper-status:${profile.slug}:start -->`;
+}
+
+function profileStatusEnd(profile = targetProfile()): string {
+  return `<!-- clawsweeper-status:${profile.slug}:end -->`;
+}
+
+function profileAuditStart(profile = targetProfile()): string {
+  return `<!-- clawsweeper-audit:${profile.slug}:start -->`;
+}
+
+function profileAuditEnd(profile = targetProfile()): string {
+  return `<!-- clawsweeper-audit:${profile.slug}:end -->`;
 }
 
 function repoRecordsDir(profile = targetProfile()): string {
@@ -2553,8 +2617,12 @@ function closeReasonText(reason: CloseReason): string {
   }
 }
 
+function repoUrlFor(repo: string, path = ""): string {
+  return `https://github.com/${normalizeRepo(repo)}${path}`;
+}
+
 function repoUrl(path = ""): string {
-  return `https://github.com/${targetRepo()}${path}`;
+  return repoUrlFor(targetRepo(), path);
 }
 
 function reportUrl(path = ""): string {
@@ -2573,8 +2641,8 @@ function releaseUrl(tag: string): string {
   return repoUrl(`/releases/tag/${encodeURIComponent(tag)}`);
 }
 
-function itemUrl(number: number, kind: ItemKind = "issue"): string {
-  return repoUrl(`/${kind === "pull_request" ? "pull" : "issues"}/${number}`);
+function itemUrlFor(repo: string, number: number, kind: ItemKind = "issue"): string {
+  return repoUrlFor(repo, `/${kind === "pull_request" ? "pull" : "issues"}/${number}`);
 }
 
 function reportFileUrl(
@@ -2652,25 +2720,66 @@ function workflowStatusBlock(options?: {
   detail?: string;
   runUrl?: string;
   updatedAt?: string;
+  profile?: RepositoryProfile;
 }): string {
+  const profile = options?.profile ?? targetProfile();
   const updatedAt = formatTimestamp(options?.updatedAt ?? new Date().toISOString());
   const state = options?.state ?? "Idle";
   const detail = options?.detail ?? "No workflow status has been published yet.";
   const runLine = options?.runUrl ? `\nRun: ${markdownLink(options.runUrl, options.runUrl)}` : "";
-  return `${STATUS_START}
+  return `${profileStatusStart(profile)}
 **Workflow status**
+
+Repository: ${markdownLink(profile.targetRepo, repoUrlFor(profile.targetRepo))}
 
 Updated: ${updatedAt}
 
 State: ${state}
 
 ${detail}${runLine}
-${STATUS_END}`;
+${profileStatusEnd(profile)}`;
 }
 
-function currentWorkflowStatusBlock(readme: string): string {
-  const pattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
-  return readme.match(pattern)?.[0] ?? workflowStatusBlock();
+function currentWorkflowStatusBlock(readme: string, profile = targetProfile()): string {
+  const profilePattern = new RegExp(
+    `${escapeRegExp(profileStatusStart(profile))}[\\s\\S]*?${escapeRegExp(profileStatusEnd(profile))}`,
+  );
+  const profileMatch = readme.match(profilePattern)?.[0];
+  if (profileMatch) {
+    const summary = workflowStatusSummary(profileMatch);
+    if (
+      summary.state === "Idle" &&
+      summary.detail === "No workflow status has been published yet." &&
+      !summary.runUrl
+    ) {
+      return workflowStatusBlock({ profile, updatedAt: "unknown" });
+    }
+    return profileMatch;
+  }
+  if (profile.targetRepo === DEFAULT_TARGET_REPO) {
+    const legacyPattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
+    const legacyMatch = readme.match(legacyPattern)?.[0];
+    if (legacyMatch) {
+      const summary = workflowStatusSummary(legacyMatch);
+      return workflowStatusBlock({
+        state: summary.state,
+        detail: summary.detail,
+        ...(summary.runUrl ? { runUrl: summary.runUrl } : {}),
+        ...(summary.updatedAt ? { updatedAt: summary.updatedAt } : {}),
+        profile,
+      });
+    }
+  }
+  return workflowStatusBlock({ profile, updatedAt: "unknown" });
+}
+
+function workflowStatusSummary(block: string): WorkflowStatusSummary {
+  const updatedAt = block.match(/^Updated: (.+)$/m)?.[1];
+  const state = block.match(/^State: (.+)$/m)?.[1] ?? "Idle";
+  const runUrl = block.match(/^Run: \[([^\]]+)\]\([^)]+\)$/m)?.[1];
+  const detailMatch = block.match(/^State: .+\n\n([\s\S]*?)(?:\nRun: |\n<!-- clawsweeper-status)/m);
+  const detail = detailMatch?.[1]?.trim() || "No workflow status has been published yet.";
+  return { updatedAt, state, detail, runUrl };
 }
 
 function displayTitle(title: string): string {
@@ -3632,7 +3741,7 @@ function applyDecisionsCommand(args: Args): void {
     }
     const path = join(itemsDir, file);
     let markdown = readFileSync(path, "utf8");
-    const repo = markdownRepository(markdown, file);
+    const repo = markdownRepository(markdown, join(itemsDir, file));
     const number = numberForMarkdownFile(file);
     const decision = frontMatterValue(markdown, "decision");
     const confidence = frontMatterValue(markdown, "confidence");
@@ -4288,7 +4397,7 @@ function actionableAuditFindings(result: AuditResult, limit = 3): string {
   for (const category of categories) {
     for (const finding of result.findings[category]) {
       rows.push(
-        `| ${markdownLink(`#${finding.number}`, itemUrl(finding.number, finding.kind ?? "issue"))} | ${auditFindingCategory(category)} | ${displayTitle(finding.title ?? "").replaceAll("|", "\\|")} | ${auditFindingDetail(finding).replaceAll("|", "\\|")} |`,
+        `| ${markdownLink(`#${finding.number}`, itemUrlFor(result.targetRepo, finding.number, finding.kind ?? "issue"))} | ${auditFindingCategory(category)} | ${displayTitle(finding.title ?? "").replaceAll("|", "\\|")} | ${auditFindingDetail(finding).replaceAll("|", "\\|")} |`,
       );
       if (rows.length >= limit) return rows.join("\n");
     }
@@ -4297,16 +4406,19 @@ function actionableAuditFindings(result: AuditResult, limit = 3): string {
 }
 
 export function auditHealthSection(result: AuditResult | null): string {
+  const profile = result ? repositoryProfileFor(result.targetRepo) : targetProfile();
   if (!result) {
     return `### Audit Health
 
-${AUDIT_HEALTH_START}
+${profileAuditStart(profile)}
 No audit has been published yet. Run \`npm run audit -- --update-dashboard\` to refresh this section.
-${AUDIT_HEALTH_END}`;
+${profileAuditEnd(profile)}`;
   }
   return `### Audit Health
 
-${AUDIT_HEALTH_START}
+${profileAuditStart(profile)}
+Repository: ${markdownLink(result.targetRepo, repoUrlFor(result.targetRepo))}
+
 Last audit: ${formatTimestamp(result.generatedAt)}
 
 Status: **${auditHealthStatus(result)}**
@@ -4330,27 +4442,54 @@ ${auditReviewTargets(result)}
 | Item | Category | Title | Detail |
 | --- | --- | --- | --- |
 ${actionableAuditFindings(result)}
-${AUDIT_HEALTH_END}`;
+${profileAuditEnd(profile)}`;
 }
 
-function currentAuditHealthSection(readme: string): string {
-  const match = readme.match(
-    new RegExp(`### Audit Health\\n\\n${AUDIT_HEALTH_START}[\\s\\S]*?${AUDIT_HEALTH_END}`),
+function currentAuditHealthSection(readme: string, profile = targetProfile()): string {
+  const profileMatch = readme.match(
+    new RegExp(
+      `### Audit Health\\n\\n${escapeRegExp(profileAuditStart(profile))}[\\s\\S]*?${escapeRegExp(profileAuditEnd(profile))}`,
+    ),
   );
-  return match?.[0] ?? auditHealthSection(null);
+  if (profileMatch?.[0]) return profileMatch[0];
+  if (profile.targetRepo === DEFAULT_TARGET_REPO) {
+    const legacyMatch = readme.match(
+      new RegExp(`### Audit Health\\n\\n${AUDIT_HEALTH_START}[\\s\\S]*?${AUDIT_HEALTH_END}`),
+    );
+    if (legacyMatch?.[0]) {
+      const withProfileMarkers = legacyMatch[0]
+        .replace(AUDIT_HEALTH_START, profileAuditStart(profile))
+        .replace(AUDIT_HEALTH_END, profileAuditEnd(profile));
+      return withProfileMarkers.replace(
+        profileAuditStart(profile),
+        `${profileAuditStart(profile)}\nRepository: ${markdownLink(profile.targetRepo, repoUrlFor(profile.targetRepo))}\n`,
+      );
+    }
+  }
+  return withTargetProfile(profile, () => auditHealthSection(null));
 }
 
 function updateAuditHealthDashboard(result: AuditResult): void {
   const readmePath = join(ROOT, "README.md");
+  const profile = repositoryProfileFor(result.targetRepo);
   const readme = readFileSync(readmePath, "utf8");
   const section = auditHealthSection(result);
-  const existingPattern = new RegExp(
+  const profilePattern = new RegExp(
+    `### Audit Health\\n\\n${escapeRegExp(profileAuditStart(profile))}[\\s\\S]*?${escapeRegExp(profileAuditEnd(profile))}`,
+  );
+  const legacyPattern = new RegExp(
     `### Audit Health\\n\\n${AUDIT_HEALTH_START}[\\s\\S]*?${AUDIT_HEALTH_END}`,
   );
-  const updated = existingPattern.test(readme)
-    ? readme.replace(existingPattern, section)
-    : readme.replace(/\n### Latest Run Activity/, `\n${section}\n\n### Latest Run Activity`);
+  let updated = readme;
+  if (profilePattern.test(updated)) {
+    updated = updated.replace(profilePattern, section);
+  } else if (profile.targetRepo === DEFAULT_TARGET_REPO && legacyPattern.test(updated)) {
+    updated = updated.replace(legacyPattern, section);
+  } else {
+    updated = updated.replace(/\n## How It Works/, `\n${section}\n\n## How It Works`);
+  }
   writeFileSync(readmePath, updated, "utf8");
+  updateDashboard();
 }
 
 function markReconciledState(markdown: string, state: "open" | "closed"): string {
@@ -4491,23 +4630,8 @@ function cadenceBucketForReview(
 function dashboardStats(
   itemsDir: string,
   closedDir = defaultClosedDir(),
-): {
-  open: OpenItemCounts;
-  fresh: number;
-  todo: number;
-  files: number;
-  proposedClose: number;
-  closed: number;
-  archivedFiles: number;
-  failed: number;
-  stale: number;
-  byKind: Record<ItemKind, DashboardKindStats>;
-  cadence: DashboardCadenceStats;
-  activity: DashboardActivityStats;
-  recent: DashboardItem[];
-  recentClosed: DashboardClosedItem[];
-} {
-  const open = fetchOpenItemCounts();
+  profile = targetProfile(),
+): DashboardStats {
   const files = markdownFiles(itemsDir);
   const closedFiles = markdownFiles(closedDir);
   const now = Date.now();
@@ -4529,8 +4653,8 @@ function dashboardStats(
   const recentClosed: DashboardClosedItem[] = [];
   for (const file of files) {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
-    if (!isMarkdownForActiveRepo(markdown, file)) continue;
-    const repo = markdownRepository(markdown, file);
+    if (markdownRepository(markdown, join(itemsDir, file)) !== profile.targetRepo) continue;
+    const repo = markdownRepository(markdown, join(closedDir, file));
     const number = numberForMarkdownFile(file);
     const reviewedAt = frontMatterValue(markdown, "reviewed_at");
     const reviewStatus = effectiveReviewStatus(markdown);
@@ -4576,8 +4700,8 @@ function dashboardStats(
   }
   for (const file of closedFiles) {
     const markdown = readFileSync(join(closedDir, file), "utf8");
-    if (!isMarkdownForActiveRepo(markdown, file)) continue;
-    const repo = markdownRepository(markdown, file);
+    if (markdownRepository(markdown, join(closedDir, file)) !== profile.targetRepo) continue;
+    const repo = markdownRepository(markdown, join(closedDir, file));
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     if (action === "closed") {
       closed += 1;
@@ -4599,6 +4723,11 @@ function dashboardStats(
       (timestampMs(b.appliedAt) ?? Number.NEGATIVE_INFINITY) -
         (timestampMs(a.appliedAt) ?? Number.NEGATIVE_INFINITY) || b.number - a.number,
   );
+  const open = fetchDashboardOpenItemCounts(profile, {
+    issues: byKind.issue.total,
+    pullRequests: byKind.pull_request.total,
+    total: byKind.issue.total + byKind.pull_request.total,
+  });
   const hourly = emptyDashboardCadenceBucket();
   addDashboardCadenceBucket(hourly, hourlyHotItems);
   const daily = emptyDashboardCadenceBucket();
@@ -4620,13 +4749,17 @@ function dashboardStats(
     open,
     fresh,
     todo: cadenceDue,
-    files: files.filter((file) =>
-      isMarkdownForActiveRepo(readFileSync(join(itemsDir, file), "utf8"), file),
+    files: files.filter(
+      (file) =>
+        markdownRepository(readFileSync(join(itemsDir, file), "utf8"), join(itemsDir, file)) ===
+        profile.targetRepo,
     ).length,
     proposedClose,
     closed,
-    archivedFiles: closedFiles.filter((file) =>
-      isMarkdownForActiveRepo(readFileSync(join(closedDir, file), "utf8"), file),
+    archivedFiles: closedFiles.filter(
+      (file) =>
+        markdownRepository(readFileSync(join(closedDir, file), "utf8"), join(closedDir, file)) ===
+        profile.targetRepo,
     ).length,
     failed,
     stale,
@@ -4658,59 +4791,184 @@ function displayCloseReason(reason: string | undefined): string {
   return reason || "unknown";
 }
 
+function fetchDashboardOpenItemCounts(
+  profile: RepositoryProfile,
+  fallback: OpenItemCounts,
+): OpenItemCounts {
+  try {
+    return withTargetProfile(profile, () => fetchOpenItemCounts());
+  } catch (error) {
+    console.error(
+      `[dashboard] failed to fetch open item counts for ${profile.targetRepo}; using local record counts: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return fallback;
+  }
+}
+
 export function formatRecentClosedRows(items: readonly DashboardClosedItem[], limit = 10): string {
   return (
     items
       .slice(0, limit)
       .map((item) => {
+        const repo = item.repo ?? targetRepo();
         const title = markdownTableCell(displayTitle(item.title));
         const reason = markdownTableCell(displayCloseReason(item.closeReason));
-        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title} | ${reason} | ${formatTimestamp(item.appliedAt)} | ${markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath))} |`;
+        return `| ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${reason} | ${formatTimestamp(item.appliedAt)} | ${markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath))} |`;
       })
       .join("\n") || "| _None_ |  |  |  |  |"
   );
 }
 
-function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosedDir()): void {
-  const readmePath = join(ROOT, "README.md");
-  const readme = readFileSync(readmePath, "utf8");
-  const stats = dashboardStats(itemsDir, closedDir);
-  const status = currentWorkflowStatusBlock(readme);
-  const auditHealth = currentAuditHealthSection(readme);
-  const recent =
-    stats.recent
-      .slice(0, 10)
+function formatRecentReviewedRows(items: readonly DashboardItem[], limit = 10): string {
+  return (
+    items
+      .slice(0, limit)
       .map((item) => {
+        const repo = item.repo ?? targetRepo();
         const title = markdownTableCell(displayTitle(item.title));
         const outcome = markdownLink(
           `${item.decision} / ${item.action}`,
           reportFileUrl(item.number, item.reportPath),
         );
-        return `| ${markdownLink(`#${item.number}`, itemUrl(item.number, item.kind))} | ${title} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
+        return `| ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
       })
-      .join("\n") || "| _None_ |  |  |  |  |";
-  const recentClosed = formatRecentClosedRows(stats.recentClosed);
-  const dashboard = `## Dashboard
+      .join("\n") || "| _None_ |  |  |  |  |"
+  );
+}
 
-Last dashboard update: ${formatTimestamp(new Date().toISOString())}
+function formatFleetRecentClosedRows(items: readonly DashboardClosedItem[], limit = 10): string {
+  return (
+    items
+      .slice(0, limit)
+      .map((item) => {
+        const repo = item.repo ?? targetRepo();
+        const title = markdownTableCell(displayTitle(item.title));
+        const reason = markdownTableCell(displayCloseReason(item.closeReason));
+        return `| ${markdownLink(repo, repoUrlFor(repo))} | ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${reason} | ${formatTimestamp(item.appliedAt)} | ${markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath))} |`;
+      })
+      .join("\n") || "| _None_ |  |  |  |  |  |"
+  );
+}
 
-### Current Run
+function formatFleetRecentReviewedRows(items: readonly DashboardItem[], limit = 10): string {
+  return (
+    items
+      .slice(0, limit)
+      .map((item) => {
+        const repo = item.repo ?? targetRepo();
+        const title = markdownTableCell(displayTitle(item.title));
+        const outcome = markdownLink(
+          `${item.decision} / ${item.action}`,
+          reportFileUrl(item.number, item.reportPath),
+        );
+        return `| ${markdownLink(repo, repoUrlFor(repo))} | ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
+      })
+      .join("\n") || "| _None_ |  |  |  |  |  |"
+  );
+}
 
-${status}
+function addActivityBucket(target: DashboardActivityBucket, source: DashboardActivityBucket): void {
+  target.reviews += source.reviews;
+  target.closeDecisions += source.closeDecisions;
+  target.keepOpenDecisions += source.keepOpenDecisions;
+  target.failedOrStaleReviews += source.failedOrStaleReviews;
+  target.closes += source.closes;
+  target.commentSyncs += source.commentSyncs;
+  target.applySkips += source.applySkips;
+}
 
-### Queue
+function aggregateActivity(snapshots: readonly RepoDashboardSnapshot[]): DashboardActivityStats {
+  const activity = emptyDashboardActivityStats();
+  for (const snapshot of snapshots) {
+    addActivityBucket(activity.last15Minutes, snapshot.stats.activity.last15Minutes);
+    addActivityBucket(activity.lastHour, snapshot.stats.activity.lastHour);
+    addActivityBucket(activity.last24Hours, snapshot.stats.activity.last24Hours);
+    activity.latestReviewAt = latestTimestamp(
+      activity.latestReviewAt,
+      snapshot.stats.activity.latestReviewAt,
+    );
+    activity.latestCloseAt = latestTimestamp(
+      activity.latestCloseAt,
+      snapshot.stats.activity.latestCloseAt,
+    );
+    activity.latestCommentSyncAt = latestTimestamp(
+      activity.latestCommentSyncAt,
+      snapshot.stats.activity.latestCommentSyncAt,
+    );
+  }
+  return activity;
+}
+
+function buildRepoDashboardSnapshot(
+  profile: RepositoryProfile,
+  readme: string,
+  options: { itemsDir?: string; closedDir?: string } = {},
+): RepoDashboardSnapshot {
+  const stats = withTargetProfile(profile, () =>
+    dashboardStats(
+      options.itemsDir ?? defaultItemsDir(profile),
+      options.closedDir ?? defaultClosedDir(profile),
+      profile,
+    ),
+  );
+  const status = currentWorkflowStatusBlock(readme, profile);
+  return {
+    profile,
+    stats,
+    status,
+    statusSummary: workflowStatusSummary(status),
+    auditHealth: currentAuditHealthSection(readme, profile),
+  };
+}
+
+function dashboardSnapshots(
+  readme: string,
+  itemsDir: string,
+  closedDir: string,
+): RepoDashboardSnapshot[] {
+  const scopedDirs = itemsDir !== defaultItemsDir() || closedDir !== defaultClosedDir();
+  if (scopedDirs) {
+    return [buildRepoDashboardSnapshot(targetProfile(), readme, { itemsDir, closedDir })];
+  }
+  return REPOSITORY_PROFILES.map((profile) => buildRepoDashboardSnapshot(profile, readme));
+}
+
+function formatRepositoryOverviewRow(snapshot: RepoDashboardSnapshot): string {
+  const stats = snapshot.stats;
+  return `| ${markdownLink(snapshot.profile.displayName, repoUrlFor(snapshot.profile.targetRepo))} | ${stats.open.total} | ${stats.files} | ${stats.cadence.unreviewedOpen} | ${stats.cadence.due} | ${stats.proposedClose} | ${stats.closed} | ${formatTimestamp(stats.activity.latestReviewAt)} | ${formatTimestamp(stats.activity.latestCloseAt)} | ${stats.activity.lastHour.commentSyncs} |`;
+}
+
+function formatWorkflowStatusRow(snapshot: RepoDashboardSnapshot): string {
+  const run = snapshot.statusSummary.runUrl
+    ? markdownLink("run", snapshot.statusSummary.runUrl)
+    : "_none_";
+  return `| ${markdownLink(snapshot.profile.displayName, repoUrlFor(snapshot.profile.targetRepo))} | ${markdownTableCell(snapshot.statusSummary.state)} | ${formatTimestamp(snapshot.statusSummary.updatedAt)} | ${run} |`;
+}
+
+function renderRepoDashboardDetails(snapshot: RepoDashboardSnapshot): string {
+  const stats = snapshot.stats;
+  return `<details>
+<summary>${snapshot.profile.displayName} (${snapshot.profile.targetRepo})</summary>
+
+<br>
+
+#### Current Run
+
+${snapshot.status}
+
+#### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Target repository | ${markdownLink(targetRepo(), repoUrl())} |
-| Open issues in ${markdownLink(targetRepo(), repoUrl())} | ${stats.open.issues} |
-| Open PRs in ${markdownLink(targetRepo(), repoUrl())} | ${stats.open.pullRequests} |
+| Target repository | ${markdownLink(snapshot.profile.targetRepo, repoUrlFor(snapshot.profile.targetRepo))} |
+| Open issues | ${stats.open.issues} |
+| Open PRs | ${stats.open.pullRequests} |
 | Open items total | ${stats.open.total} |
 | Reviewed files | ${stats.files} |
 | Unreviewed open items | ${stats.cadence.unreviewedOpen} |
 | Archived closed files | ${stats.archivedFiles} |
 
-### Review Outcomes
+#### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
@@ -4723,7 +4981,7 @@ ${status}
 | Closed by Codex apply | ${stats.closed} |
 | Failed or stale reviews | ${stats.failed + stats.stale} |
 
-### Cadence
+#### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
@@ -4735,9 +4993,9 @@ ${status}
 | Weekly older issue cadence | ${formatCadenceBucket(stats.cadence.weekly)} |
 | Due now by cadence | ${stats.cadence.due} |
 
-${auditHealth}
+${snapshot.auditHealth}
 
-### Latest Run Activity
+#### Latest Run Activity
 
 Latest review: ${formatTimestamp(stats.activity.latestReviewAt)}. Latest close: ${formatTimestamp(stats.activity.latestCloseAt)}. Latest comment sync: ${formatTimestamp(stats.activity.latestCommentSyncAt)}.
 
@@ -4747,22 +5005,124 @@ ${formatActivityRow("Last 15 minutes", stats.activity.last15Minutes)}
 ${formatActivityRow("Last hour", stats.activity.lastHour)}
 ${formatActivityRow("Last 24 hours", stats.activity.last24Hours)}
 
-### Recently Closed
+#### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-${recentClosed}
+${formatRecentClosedRows(stats.recentClosed)}
 
-<details>
-<summary>Recently Reviewed (latest 10)</summary>
-
-<br>
+#### Recently Reviewed
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-${recent}
+${formatRecentReviewedRows(stats.recent)}
 
 </details>`;
+}
+
+function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosedDir()): void {
+  const readmePath = join(ROOT, "README.md");
+  const readme = readFileSync(readmePath, "utf8");
+  const snapshots = dashboardSnapshots(readme, itemsDir, closedDir);
+  const activity = aggregateActivity(snapshots);
+  const recent = snapshots
+    .flatMap((snapshot) => snapshot.stats.recent)
+    .sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
+  const recentClosed = snapshots
+    .flatMap((snapshot) => snapshot.stats.recentClosed)
+    .sort(
+      (a, b) =>
+        (timestampMs(b.appliedAt) ?? Number.NEGATIVE_INFINITY) -
+          (timestampMs(a.appliedAt) ?? Number.NEGATIVE_INFINITY) || b.number - a.number,
+    );
+  const totals = snapshots.reduce(
+    (accumulator, snapshot) => {
+      const stats = snapshot.stats;
+      accumulator.openIssues += stats.open.issues;
+      accumulator.openPullRequests += stats.open.pullRequests;
+      accumulator.reviewedFiles += stats.files;
+      accumulator.unreviewedOpen += stats.cadence.unreviewedOpen;
+      accumulator.due += stats.cadence.due;
+      accumulator.proposedClose += stats.proposedClose;
+      accumulator.closed += stats.closed;
+      accumulator.failedOrStale += stats.failed + stats.stale;
+      accumulator.archivedFiles += stats.archivedFiles;
+      return accumulator;
+    },
+    {
+      openIssues: 0,
+      openPullRequests: 0,
+      reviewedFiles: 0,
+      unreviewedOpen: 0,
+      due: 0,
+      proposedClose: 0,
+      closed: 0,
+      failedOrStale: 0,
+      archivedFiles: 0,
+    },
+  );
+  const dashboard = `## Dashboard
+
+Last dashboard update: ${formatTimestamp(new Date().toISOString())}
+
+### Fleet
+
+| Metric | Count |
+| --- | ---: |
+| Covered repositories | ${snapshots.length} |
+| Open issues | ${totals.openIssues} |
+| Open PRs | ${totals.openPullRequests} |
+| Open items total | ${totals.openIssues + totals.openPullRequests} |
+| Reviewed files | ${totals.reviewedFiles} |
+| Unreviewed open items | ${totals.unreviewedOpen} |
+| Due now by cadence | ${totals.due} |
+| Proposed closes awaiting apply | ${totals.proposedClose} |
+| Closed by Codex apply | ${totals.closed} |
+| Failed or stale reviews | ${totals.failedOrStale} |
+| Archived closed files | ${totals.archivedFiles} |
+
+### Repositories
+
+| Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
+${snapshots.map(formatRepositoryOverviewRow).join("\n")}
+
+### Current Runs
+
+| Repository | State | Updated | Run |
+| --- | --- | --- | --- |
+${snapshots.map(formatWorkflowStatusRow).join("\n")}
+
+### Fleet Activity
+
+Latest review: ${formatTimestamp(activity.latestReviewAt)}. Latest close: ${formatTimestamp(activity.latestCloseAt)}. Latest comment sync: ${formatTimestamp(activity.latestCommentSyncAt)}.
+
+| Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+${formatActivityRow("Last 15 minutes", activity.last15Minutes)}
+${formatActivityRow("Last hour", activity.lastHour)}
+${formatActivityRow("Last 24 hours", activity.last24Hours)}
+
+### Recently Closed Across Repos
+
+| Repository | Item | Title | Reason | Closed | Report |
+| --- | --- | --- | --- | --- | --- |
+${formatFleetRecentClosedRows(recentClosed)}
+
+<details>
+<summary>Recently Reviewed Across Repos</summary>
+
+<br>
+
+| Repository | Item | Title | Outcome | Status | Reviewed |
+| --- | --- | --- | --- | --- | --- |
+${formatFleetRecentReviewedRows(recent)}
+
+</details>
+
+### Repository Details
+
+${snapshots.map(renderRepoDashboardDetails).join("\n\n")}`;
   const updated = readme.replace(
     /## Dashboard[\s\S]*?## How It Works/,
     `${dashboard}\n\n## How It Works`,
@@ -4771,17 +5131,29 @@ ${recent}
 }
 
 function statusCommand(args: Args): void {
+  const profile = repoFromArgs(args);
   const readmePath = join(ROOT, "README.md");
   const readme = readFileSync(readmePath, "utf8");
   const state = stringArg(args.state, "Working");
   const detail = stringArg(args.detail, "Workflow is running.");
   const runUrl = stringArg(args.run_url, "");
-  const block = workflowStatusBlock(runUrl ? { state, detail, runUrl } : { state, detail });
-  const pattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
-  const updated = pattern.test(readme)
-    ? readme.replace(pattern, block)
-    : readme.replace(/Last dashboard update: .+/, `$&\n\n${block}`);
+  const block = workflowStatusBlock(
+    runUrl ? { state, detail, runUrl, profile } : { state, detail, profile },
+  );
+  const profilePattern = new RegExp(
+    `${escapeRegExp(profileStatusStart(profile))}[\\s\\S]*?${escapeRegExp(profileStatusEnd(profile))}`,
+  );
+  const legacyPattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
+  let updated = readme;
+  if (profilePattern.test(updated)) {
+    updated = updated.replace(profilePattern, block);
+  } else if (profile.targetRepo === DEFAULT_TARGET_REPO && legacyPattern.test(updated)) {
+    updated = updated.replace(legacyPattern, block);
+  } else {
+    updated = updated.replace(/Last dashboard update: .+/, `$&\n\n${block}`);
+  }
   writeFileSync(readmePath, updated, "utf8");
+  updateDashboard();
 }
 
 function checkCommand(): void {

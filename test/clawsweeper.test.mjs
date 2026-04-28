@@ -782,7 +782,11 @@ test("audit health section summarizes strict status and actionable findings", ()
   const section = auditHealthSection(result);
 
   assert.match(section, /### Audit Health/);
-  assert.match(section, /<!-- clawsweeper-audit:start -->/);
+  assert.match(section, /<!-- clawsweeper-audit:openclaw-openclaw:start -->/);
+  assert.match(
+    section,
+    /Repository: \[openclaw\/openclaw\]\(https:\/\/github\.com\/openclaw\/openclaw\)/,
+  );
   assert.match(section, /Status: \*\*Action needed\*\*/);
   assert.match(section, /Targeted review input: `10,11,14`/);
   assert.match(section, /\| Missing eligible open records \| 1 \|/);
@@ -813,6 +817,7 @@ test("audit defers stale item drift until the open scan is complete", () => {
 test("recently closed dashboard rows link items and archived reports", () => {
   const rows = formatRecentClosedRows([
     {
+      repo: "openclaw/clawhub",
       number: 42,
       kind: "pull_request",
       title: "Fix pipe | title",
@@ -822,7 +827,7 @@ test("recently closed dashboard rows link items and archived reports", () => {
     },
   ]);
 
-  assert.match(rows, /\[#42\]\(https:\/\/github\.com\/openclaw\/openclaw\/pull\/42\)/);
+  assert.match(rows, /\[#42\]\(https:\/\/github\.com\/openclaw\/clawhub\/pull\/42\)/);
   assert.match(
     rows,
     /\[closed\/42\.md\]\(https:\/\/github\.com\/openclaw\/clawsweeper\/blob\/main\/closed\/42\.md\)/,
