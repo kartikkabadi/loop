@@ -41,42 +41,44 @@ Last dashboard update: Apr 28, 2026, 16:46 UTC
 | Open issues | 4435 |
 | Open PRs | 3448 |
 | Open items total | 7883 |
-| Reviewed files | 7490 |
-| Unreviewed open items | 393 |
-| Due now by cadence | 2774 |
+| Reviewed files | 7488 |
+| Unreviewed open items | 395 |
+| Due now by cadence | 2776 |
 | Proposed closes awaiting apply | 2 |
 | Closed by Codex apply | 10457 |
 | Failed or stale reviews | 6 |
-| Archived closed files | 13630 |
+| Archived closed files | 13632 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6969 | 6583 | 386 | 2728 | 2 | 10454 | Apr 28, 2026, 16:43 UTC | Apr 28, 2026, 16:37 UTC | 886 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6969 | 6581 | 388 | 2730 | 2 | 10454 | Apr 28, 2026, 16:43 UTC | Apr 28, 2026, 16:45 UTC | 885 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 914 | 907 | 7 | 46 | 0 | 3 | Apr 28, 2026, 16:21 UTC | Apr 28, 2026, 08:18 UTC | 274 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 28, 2026, 16:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25065834871) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 28, 2026, 16:46 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25065834871) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 16:46 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25065805456) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 16:33 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25064003364) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 16:43 UTC. Latest close: Apr 28, 2026, 16:37 UTC. Latest comment sync: Apr 28, 2026, 16:44 UTC.
+Latest review: Apr 28, 2026, 16:43 UTC. Latest close: Apr 28, 2026, 16:45 UTC. Latest comment sync: Apr 28, 2026, 16:44 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 0 | 19 | 0 | 2 | 104 | 0 |
-| Last hour | 875 | 12 | 863 | 1 | 18 | 1160 | 0 |
-| Last 24 hours | 4586 | 231 | 4355 | 2 | 562 | 1432 | 15 |
+| Last 15 minutes | 19 | 0 | 19 | 0 | 4 | 79 | 0 |
+| Last hour | 864 | 12 | 852 | 1 | 20 | 1159 | 0 |
+| Last 24 hours | 4586 | 231 | 4355 | 2 | 564 | 1432 | 15 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#66912](https://github.com/openclaw/openclaw/pull/66912) | fix(telegram): restore self-authored reply-media guard | closed externally after review | Apr 28, 2026, 16:45 UTC | [records/openclaw-openclaw/closed/66912.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/66912.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70153](https://github.com/openclaw/openclaw/pull/70153) | fix(auto-reply): persist CLI turn transcript after successful reply | closed externally after review | Apr 28, 2026, 16:43 UTC | [records/openclaw-openclaw/closed/70153.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70153.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73672](https://github.com/openclaw/openclaw/pull/73672) | Fix native slash command replies in groups | kept open | Apr 28, 2026, 16:37 UTC | [records/openclaw-openclaw/closed/73672.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73672.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73670](https://github.com/openclaw/openclaw/issues/73670) | [Bug]: Mac App overwrites user config fields on save, removing existing entries | already implemented on main | Apr 28, 2026, 16:31 UTC | [records/openclaw-openclaw/closed/73670.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73670.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73669](https://github.com/openclaw/openclaw/pull/73669) | fix(telegram): restore sticky IPv4 fallback when grammY wraps transpo… | duplicate or superseded | Apr 28, 2026, 16:28 UTC | [records/openclaw-openclaw/closed/73669.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73669.md) |
@@ -85,8 +87,6 @@ Latest review: Apr 28, 2026, 16:43 UTC. Latest close: Apr 28, 2026, 16:37 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#57756](https://github.com/openclaw/openclaw/issues/57756) | [Bug]: session-key-based session access is not scoped to the calling operator client/device | not actionable in this repository | Apr 28, 2026, 16:26 UTC | [records/openclaw-openclaw/closed/57756.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/57756.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73665](https://github.com/openclaw/openclaw/issues/73665) | Image optimization regression after 2026.4.26: MiniMax-M2.7 image understanding fails with 'Failed to optimize image' | already implemented on main | Apr 28, 2026, 16:24 UTC | [records/openclaw-openclaw/closed/73665.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73665.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73666](https://github.com/openclaw/openclaw/issues/73666) | [Bug]：TUI enters infinite reconnect loop on WebSocket close (code 1006) | duplicate or superseded | Apr 28, 2026, 16:24 UTC | [records/openclaw-openclaw/closed/73666.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73666.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73661](https://github.com/openclaw/openclaw/issues/73661) | [Bug]:TUI cannot connect to gateway after version mismatch (device identity required) | already implemented on main | Apr 28, 2026, 16:17 UTC | [records/openclaw-openclaw/closed/73661.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73661.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73264](https://github.com/openclaw/openclaw/pull/73264) | fix(security): prevent workspace PATH injection via service env and trash helpers | closed externally after review | Apr 28, 2026, 16:00 UTC | [records/openclaw-openclaw/closed/73264.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73264.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 16:43 UTC. Latest close: Apr 28, 2026, 16:37 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 16:45 UTC
+Updated: Apr 28, 2026, 16:46 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25065834871](https://github.com/openclaw/clawsweeper/actions/runs/25065834871)
+Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72706,73405.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25065805456](https://github.com/openclaw/clawsweeper/actions/runs/25065805456)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -138,9 +138,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25065834871](https://
 | Open issues | 3559 |
 | Open PRs | 3410 |
 | Open items total | 6969 |
-| Reviewed files | 6583 |
-| Unreviewed open items | 386 |
-| Archived closed files | 13620 |
+| Reviewed files | 6581 |
+| Unreviewed open items | 388 |
+| Archived closed files | 13622 |
 
 #### Review Outcomes
 
@@ -148,9 +148,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25065834871](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3381 |
 | Proposed issue closes | 2 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3197 |
+| Fresh reviewed PRs in the last 7 days | 3195 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6578 |
+| Fresh verified reviews in the last 7 days | 6576 |
 | Proposed closes awaiting apply | 2 (0% of fresh reviews) |
 | Closed by Codex apply | 10454 |
 | Failed or stale reviews | 5 |
@@ -159,13 +159,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25065834871](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 99/786 current (687 due, 12.6%) |
-| Hourly hot item cadence (<7d) | 99/786 current (687 due, 12.6%) |
-| Daily cadence coverage | 2304/3958 current (1654 due, 58.2%) |
-| Daily PR cadence | 1844/2742 current (898 due, 67.3%) |
+| Hourly cadence coverage | 98/785 current (687 due, 12.5%) |
+| Hourly hot item cadence (<7d) | 98/785 current (687 due, 12.5%) |
+| Daily cadence coverage | 2303/3957 current (1654 due, 58.2%) |
+| Daily PR cadence | 1843/2741 current (898 due, 67.2%) |
 | Daily new issue cadence (<30d) | 460/1216 current (756 due, 37.8%) |
 | Weekly older issue cadence | 1838/1839 current (1 due, 99.9%) |
-| Due now by cadence | 2728 |
+| Due now by cadence | 2730 |
 
 ### Audit Health
 
@@ -201,18 +201,20 @@ Targeted review input: `64563,65635,72522,72527,72529,72531,72532,72535,72536,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 16:43 UTC. Latest close: Apr 28, 2026, 16:37 UTC. Latest comment sync: Apr 28, 2026, 16:44 UTC.
+Latest review: Apr 28, 2026, 16:43 UTC. Latest close: Apr 28, 2026, 16:45 UTC. Latest comment sync: Apr 28, 2026, 16:44 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 0 | 19 | 0 | 2 | 52 | 0 |
-| Last hour | 601 | 12 | 589 | 0 | 18 | 886 | 0 |
-| Last 24 hours | 3669 | 228 | 3441 | 1 | 552 | 1149 | 15 |
+| Last 15 minutes | 19 | 0 | 19 | 0 | 4 | 35 | 0 |
+| Last hour | 590 | 12 | 578 | 0 | 20 | 885 | 0 |
+| Last 24 hours | 3669 | 228 | 3441 | 1 | 554 | 1149 | 15 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#66912](https://github.com/openclaw/openclaw/pull/66912) | fix(telegram): restore self-authored reply-media guard | closed externally after review | Apr 28, 2026, 16:45 UTC | [records/openclaw-openclaw/closed/66912.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/66912.md) |
+| [#70153](https://github.com/openclaw/openclaw/pull/70153) | fix(auto-reply): persist CLI turn transcript after successful reply | closed externally after review | Apr 28, 2026, 16:43 UTC | [records/openclaw-openclaw/closed/70153.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70153.md) |
 | [#73672](https://github.com/openclaw/openclaw/pull/73672) | Fix native slash command replies in groups | kept open | Apr 28, 2026, 16:37 UTC | [records/openclaw-openclaw/closed/73672.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73672.md) |
 | [#73670](https://github.com/openclaw/openclaw/issues/73670) | [Bug]: Mac App overwrites user config fields on save, removing existing entries | already implemented on main | Apr 28, 2026, 16:31 UTC | [records/openclaw-openclaw/closed/73670.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73670.md) |
 | [#73669](https://github.com/openclaw/openclaw/pull/73669) | fix(telegram): restore sticky IPv4 fallback when grammY wraps transpo… | duplicate or superseded | Apr 28, 2026, 16:28 UTC | [records/openclaw-openclaw/closed/73669.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73669.md) |
@@ -221,8 +223,6 @@ Latest review: Apr 28, 2026, 16:43 UTC. Latest close: Apr 28, 2026, 16:37 UTC. L
 | [#57756](https://github.com/openclaw/openclaw/issues/57756) | [Bug]: session-key-based session access is not scoped to the calling operator client/device | not actionable in this repository | Apr 28, 2026, 16:26 UTC | [records/openclaw-openclaw/closed/57756.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/57756.md) |
 | [#73665](https://github.com/openclaw/openclaw/issues/73665) | Image optimization regression after 2026.4.26: MiniMax-M2.7 image understanding fails with 'Failed to optimize image' | already implemented on main | Apr 28, 2026, 16:24 UTC | [records/openclaw-openclaw/closed/73665.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73665.md) |
 | [#73666](https://github.com/openclaw/openclaw/issues/73666) | [Bug]：TUI enters infinite reconnect loop on WebSocket close (code 1006) | duplicate or superseded | Apr 28, 2026, 16:24 UTC | [records/openclaw-openclaw/closed/73666.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73666.md) |
-| [#73661](https://github.com/openclaw/openclaw/issues/73661) | [Bug]:TUI cannot connect to gateway after version mismatch (device identity required) | already implemented on main | Apr 28, 2026, 16:17 UTC | [records/openclaw-openclaw/closed/73661.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73661.md) |
-| [#73264](https://github.com/openclaw/openclaw/pull/73264) | fix(security): prevent workspace PATH injection via service env and trash helpers | closed externally after review | Apr 28, 2026, 16:00 UTC | [records/openclaw-openclaw/closed/73264.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73264.md) |
 
 #### Recently Reviewed
 
@@ -334,7 +334,7 @@ Latest review: Apr 28, 2026, 16:21 UTC. Latest close: Apr 28, 2026, 08:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 52 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 44 | 0 |
 | Last hour | 274 | 0 | 274 | 1 | 0 | 274 | 0 |
 | Last 24 hours | 917 | 3 | 914 | 1 | 10 | 283 | 0 |
 
