@@ -43,7 +43,7 @@ Last dashboard update: Apr 28, 2026, 09:03 UTC
 | Open items total | 7906 |
 | Reviewed files | 7469 |
 | Unreviewed open items | 437 |
-| Due now by cadence | 3731 |
+| Due now by cadence | 3732 |
 | Proposed closes awaiting apply | 8 |
 | Closed by Codex apply | 10282 |
 | Failed or stale reviews | 40 |
@@ -53,14 +53,14 @@ Last dashboard update: Apr 28, 2026, 09:03 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6996 | 6566 | 430 | 3673 | 8 | 10278 | Apr 28, 2026, 09:00 UTC | Apr 28, 2026, 08:53 UTC | 41 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6996 | 6566 | 430 | 3674 | 8 | 10278 | Apr 28, 2026, 08:58 UTC | Apr 28, 2026, 08:53 UTC | 40 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 910 | 903 | 7 | 58 | 0 | 3 | Apr 28, 2026, 08:46 UTC | Apr 28, 2026, 05:18 UTC | 467 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 09:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043677914) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Event review applied | Apr 28, 2026, 09:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043749253) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 28, 2026, 09:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25043739194) |
 
 ### Fleet Activity
@@ -69,9 +69,9 @@ Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 366 | 7 | 359 | 0 | 1 | 456 | 3 |
-| Last hour | 1041 | 11 | 1030 | 1 | 3 | 508 | 6 |
-| Last 24 hours | 3319 | 116 | 3203 | 15 | 59 | 1597 | 25 |
+| Last 15 minutes | 360 | 7 | 353 | 0 | 1 | 452 | 3 |
+| Last hour | 1040 | 11 | 1029 | 1 | 3 | 507 | 6 |
+| Last 24 hours | 3318 | 116 | 3202 | 15 | 59 | 1596 | 25 |
 
 ### Recently Closed Across Repos
 
@@ -103,6 +103,9 @@ Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#44710](https://github.com/openclaw/openclaw/pull/44710) | feat(hooks): add before_tools_resolve hook for list-level tool filtering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44710.md) | complete | Apr 28, 2026, 08:55 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#54622](https://github.com/openclaw/openclaw/issues/54622) | [Bug]: CLI relay exits silently with code 1 when session lane is blocked — no timeout or busy error surfaced | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/54622.md) | complete | Apr 28, 2026, 08:54 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#53531](https://github.com/openclaw/openclaw/issues/53531) | Compaction should use auth-profile rotation / failover within the same provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/53531.md) | complete | Apr 28, 2026, 08:54 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#53742](https://github.com/openclaw/openclaw/issues/53742) | Bug: macOS gateway install --force resolves SecretRef values into plaintext LaunchAgent plist and triggers token mismatch loop | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/53742.md) | complete | Apr 28, 2026, 08:54 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#44027](https://github.com/openclaw/openclaw/pull/44027) | fix: respect /verbose mode when suppressing tool summaries in group chats | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44027.md) | complete | Apr 28, 2026, 08:54 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#44828](https://github.com/openclaw/openclaw/pull/44828) | fix(feishu): suppress NO_REPLY silent token before API send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44828.md) | complete | Apr 28, 2026, 08:54 UTC |
 
 </details>
 
@@ -124,8 +127,8 @@ Updated: Apr 28, 2026, 09:03 UTC
 
 State: Planning review
 
-Reviewed event item #59859, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043677914](https://github.com/openclaw/clawsweeper/actions/runs/25043677914)
+Reviewed event item #73351, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043749253](https://github.com/openclaw/clawsweeper/actions/runs/25043749253)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -146,7 +149,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043677914](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3345 |
 | Proposed issue closes | 3 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3183 |
+| Fresh reviewed PRs in the last 7 days | 3182 |
 | Proposed PR closes | 5 (0.2% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6527 |
 | Proposed closes awaiting apply | 8 (0.1% of fresh reviews) |
@@ -157,13 +160,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25043677914](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 25/647 current (622 due, 3.9%) |
-| Hourly hot item cadence (<7d) | 25/647 current (622 due, 3.9%) |
-| Daily cadence coverage | 1457/4073 current (2616 due, 35.8%) |
-| Daily PR cadence | 1077/2825 current (1748 due, 38.1%) |
+| Hourly cadence coverage | 25/648 current (623 due, 3.9%) |
+| Hourly hot item cadence (<7d) | 25/648 current (623 due, 3.9%) |
+| Daily cadence coverage | 1456/4072 current (2616 due, 35.8%) |
+| Daily PR cadence | 1076/2824 current (1748 due, 38.1%) |
 | Daily new issue cadence (<30d) | 380/1248 current (868 due, 30.4%) |
 | Weekly older issue cadence | 1841/1846 current (5 due, 99.7%) |
-| Due now by cadence | 3673 |
+| Due now by cadence | 3674 |
 
 ### Audit Health
 
@@ -179,9 +182,9 @@ Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 366 | 7 | 359 | 0 | 1 | 9 | 3 |
-| Last hour | 540 | 11 | 529 | 0 | 3 | 41 | 6 |
-| Last 24 hours | 2406 | 113 | 2293 | 14 | 56 | 897 | 24 |
+| Last 15 minutes | 360 | 7 | 353 | 0 | 1 | 8 | 3 |
+| Last hour | 539 | 11 | 528 | 0 | 3 | 40 | 6 |
+| Last 24 hours | 2405 | 113 | 2292 | 14 | 56 | 896 | 24 |
 
 #### Recently Closed
 
@@ -210,6 +213,9 @@ Latest review: Apr 28, 2026, 09:00 UTC. Latest close: Apr 28, 2026, 08:53 UTC. L
 | [#44710](https://github.com/openclaw/openclaw/pull/44710) | feat(hooks): add before_tools_resolve hook for list-level tool filtering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44710.md) | complete | Apr 28, 2026, 08:55 UTC |
 | [#54622](https://github.com/openclaw/openclaw/issues/54622) | [Bug]: CLI relay exits silently with code 1 when session lane is blocked — no timeout or busy error surfaced | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/54622.md) | complete | Apr 28, 2026, 08:54 UTC |
 | [#53531](https://github.com/openclaw/openclaw/issues/53531) | Compaction should use auth-profile rotation / failover within the same provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/53531.md) | complete | Apr 28, 2026, 08:54 UTC |
+| [#53742](https://github.com/openclaw/openclaw/issues/53742) | Bug: macOS gateway install --force resolves SecretRef values into plaintext LaunchAgent plist and triggers token mismatch loop | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/53742.md) | complete | Apr 28, 2026, 08:54 UTC |
+| [#44027](https://github.com/openclaw/openclaw/pull/44027) | fix: respect /verbose mode when suppressing tool summaries in group chats | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44027.md) | complete | Apr 28, 2026, 08:54 UTC |
+| [#44828](https://github.com/openclaw/openclaw/pull/44828) | fix(feishu): suppress NO_REPLY silent token before API send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44828.md) | complete | Apr 28, 2026, 08:54 UTC |
 
 </details>
 
@@ -282,7 +288,7 @@ Latest review: Apr 28, 2026, 08:46 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 447 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 444 | 0 |
 | Last hour | 501 | 0 | 501 | 1 | 0 | 467 | 0 |
 | Last 24 hours | 913 | 3 | 910 | 1 | 3 | 700 | 1 |
 
