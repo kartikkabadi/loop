@@ -31,18 +31,18 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 02:41 UTC
+Last dashboard update: Apr 28, 2026, 02:46 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 02:41 UTC
+Updated: Apr 28, 2026, 02:45 UTC
 
-State: Review in progress
+State: Review publish complete
 
-Planned 1 items across 1 shards. Capacity is 1 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged review artifacts for run 25030885772. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25030885772](https://github.com/openclaw/clawsweeper/actions/runs/25030885772)
 <!-- clawsweeper-status:end -->
 
@@ -51,11 +51,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25030885772](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3581 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3463 |
-| Open items total | 7044 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3582 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3464 |
+| Open items total | 7046 |
 | Reviewed files | 6621 |
-| Unreviewed open items | 423 |
+| Unreviewed open items | 425 |
 | Archived closed files | 13210 |
 
 ### Review Outcomes
@@ -81,7 +81,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25030885772](https://
 | Daily PR cadence | 940/2868 current (1928 due, 32.8%) |
 | Daily new issue cadence (<30d) | 557/1279 current (722 due, 43.5%) |
 | Weekly older issue cadence | 1857/1857 current (0 due, 100%) |
-| Due now by cadence | 3642 |
+| Due now by cadence | 3644 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 02:15 UTC. Latest close: Apr 28, 2026, 01:24 UTC. Latest comment sync: Apr 28, 2026, 02:28 UTC.
+Latest review: Apr 28, 2026, 02:43 UTC. Latest close: Apr 28, 2026, 01:24 UTC. Latest comment sync: Apr 28, 2026, 02:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 58 | 2 |
-| Last hour | 409 | 1 | 408 | 0 | 0 | 404 | 5 |
-| Last 24 hours | 2462 | 136 | 2326 | 1 | 84 | 1573 | 15 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Last hour | 410 | 1 | 409 | 0 | 0 | 404 | 5 |
+| Last 24 hours | 2458 | 134 | 2324 | 1 | 84 | 1572 | 15 |
 
 ### Recently Closed
 
@@ -145,6 +145,7 @@ Latest review: Apr 28, 2026, 02:15 UTC. Latest close: Apr 28, 2026, 01:24 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#40255](https://github.com/openclaw/openclaw/issues/40255) | [Bug]: Regression: User-configured heartbeat prompt no longer respected | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/40255.md) | complete | Apr 28, 2026, 02:43 UTC |
 | [#72129](https://github.com/openclaw/openclaw/pull/72129) | feat(huggingface): add text-to-image generation via hf-inference Inference Providers route | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72129.md) | complete | Apr 28, 2026, 02:15 UTC |
 | [#71820](https://github.com/openclaw/openclaw/pull/71820) | feat(bluebubbles): add reply-context API fallback for cache misses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71820.md) | complete | Apr 28, 2026, 02:15 UTC |
 | [#67572](https://github.com/openclaw/openclaw/pull/67572) | [Feat] Gateway: offload non-image attachments on chat.send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/67572.md) | complete | Apr 28, 2026, 02:14 UTC |
@@ -154,7 +155,6 @@ Latest review: Apr 28, 2026, 02:15 UTC. Latest close: Apr 28, 2026, 01:24 UTC. L
 | [#71744](https://github.com/openclaw/openclaw/issues/71744) | [Bug]: Watchdog fallback chain silently drops primary-failure root cause when fallback also fails — only terminal error surfaces in runtime_events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71744.md) | complete | Apr 28, 2026, 02:14 UTC |
 | [#66985](https://github.com/openclaw/openclaw/pull/66985) | fix(agents): resolve requestedNode to canonical ID before boundNode comparison | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/66985.md) | complete | Apr 28, 2026, 02:14 UTC |
 | [#68280](https://github.com/openclaw/openclaw/pull/68280) | fix(gateway): fail fast on missing local probe auth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68280.md) | complete | Apr 28, 2026, 02:14 UTC |
-| [#70586](https://github.com/openclaw/openclaw/pull/70586) | fix(slack): fire trackEvent from message events for socket-health liveness (follow-up to #69833) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70586.md) | complete | Apr 28, 2026, 02:14 UTC |
 
 </details>
 
