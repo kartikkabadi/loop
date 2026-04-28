@@ -6,9 +6,11 @@ import {
   auditFromSnapshot,
   auditHasStrictFailures,
   auditHealthSection,
+  closingPullRequestReferenceTarget,
   formatRecentClosedRows,
   ghRetryKind,
   isCodexReviewCommentBody,
+  isGitHubNotFoundError,
   isLockedConversationCommentError,
   isProtectedItem,
   itemNumbersArg,
@@ -789,6 +791,35 @@ test("GitHub retry classifier distinguishes throttle and transient failures", ()
     { stderr: "gh: HTTP 401: Bad credentials" },
   );
   assert.equal(ghRetryKind(authFailureForIssue502), "none");
+});
+
+test("GitHub not found errors are recognizable non-retryable lookup misses", () => {
+  const error = new Error(
+    "Command failed: gh api repos/openclaw/openclaw/pulls/228\nHTTP 404: Not Found",
+  );
+  assert.equal(isGitHubNotFoundError(error), true);
+  assert.equal(shouldRetryGh(error), false);
+});
+
+test("closing pull request references preserve fork repository identity", () => {
+  assert.deepEqual(
+    closingPullRequestReferenceTarget(
+      {
+        number: 228,
+        repository: {
+          owner: { login: "BingqingLyu" },
+          name: "openclaw",
+        },
+      },
+      "openclaw/openclaw",
+    ),
+    { repo: "BingqingLyu/openclaw", number: 228 },
+  );
+  assert.deepEqual(closingPullRequestReferenceTarget({ number: 40756 }, "openclaw/openclaw"), {
+    repo: "openclaw/openclaw",
+    number: 40756,
+  });
+  assert.equal(closingPullRequestReferenceTarget({ number: "228" }, "openclaw/openclaw"), null);
 });
 
 test("locked conversation failures are non-retryable but recognizable apply skips", () => {

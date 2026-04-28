@@ -641,6 +641,11 @@ export function isLockedConversationCommentError(error: unknown): boolean {
   );
 }
 
+export function isGitHubNotFoundError(error: unknown): boolean {
+  const message = ghErrorText(error);
+  return /\b(?:HTTP\s*)?404\b/i.test(message) && /\bnot found\b/i.test(message);
+}
+
 function ghRetryWaitMs(kind: GhRetryKind, attempt: number): number {
   if (kind === "throttle") return Math.min(600_000, 30_000 * 2 ** attempt);
   if (kind === "transient") return Math.min(60_000, 2_000 * 2 ** attempt);
@@ -1088,7 +1093,28 @@ function compactPullRequest(value: unknown): unknown {
   };
 }
 
-function closingPullRequestReferencesForIssue(number: number): number[] {
+interface ClosingPullRequestReference {
+  repo: string;
+  number: number;
+}
+
+export function closingPullRequestReferenceTarget(
+  reference: unknown,
+  fallbackRepo = targetRepo(),
+): ClosingPullRequestReference | null {
+  const record = asRecord(reference);
+  const number = record.number;
+  if (typeof number !== "number" || !Number.isInteger(number)) return null;
+
+  const repository = asRecord(record.repository);
+  const owner = asRecord(repository.owner).login;
+  const name = repository.name;
+  const repo =
+    typeof owner === "string" && typeof name === "string" ? `${owner}/${name}` : fallbackRepo;
+  return { repo, number };
+}
+
+function closingPullRequestReferencesForIssue(number: number): ClosingPullRequestReference[] {
   const issue = ghJson<unknown>([
     "issue",
     "view",
@@ -1101,19 +1127,30 @@ function closingPullRequestReferencesForIssue(number: number): number[] {
   const references = asRecord(issue).closedByPullRequestsReferences;
   if (!Array.isArray(references)) return [];
   return references
-    .map((reference) => asRecord(reference).number)
-    .filter((referenceNumber): referenceNumber is number => Number.isInteger(referenceNumber));
+    .map((reference) => closingPullRequestReferenceTarget(reference))
+    .filter((reference): reference is ClosingPullRequestReference => reference !== null);
 }
 
 function closingPullRequestsForIssue(number: number): unknown[] {
-  return closingPullRequestReferencesForIssue(number).map((pullNumber) =>
-    ghJson<unknown>([
-      "api",
-      `repos/${targetRepo()}/pulls/${pullNumber}`,
-      "--jq",
-      "{number,title,state,html_url,body,user:{login:.user.login},merged:.merged,merged_at:.merged_at,head:{ref:.head.ref,sha:.head.sha},base:{ref:.base.ref,sha:.base.sha}}",
-    ]),
-  );
+  const pullRequests: unknown[] = [];
+  for (const reference of closingPullRequestReferencesForIssue(number)) {
+    try {
+      pullRequests.push(
+        ghJson<unknown>([
+          "api",
+          `repos/${reference.repo}/pulls/${reference.number}`,
+          "--jq",
+          "{number,title,state,html_url,body,user:{login:.user.login},merged:.merged,merged_at:.merged_at,head:{ref:.head.ref,sha:.head.sha},base:{ref:.base.ref,sha:.base.sha}}",
+        ]),
+      );
+    } catch (error) {
+      if (!isGitHubNotFoundError(error)) throw error;
+      console.error(
+        `Skipping missing closing PR ${reference.repo}#${reference.number} for #${number}`,
+      );
+    }
+  }
+  return pullRequests;
 }
 
 export function openClosingPullRequestApplyReason(pullRequests: readonly unknown[]): string | null {
