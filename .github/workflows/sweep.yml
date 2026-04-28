@@ -281,42 +281,74 @@ jobs:
           test -n "$GH_TOKEN"
           test -n "$REPO_TOKEN"
           git remote set-url origin "https://x-access-token:${REPO_TOKEN}@github.com/${{ github.repository }}.git"
-          git pull --rebase
-          pnpm run apply-artifacts -- --target-repo "$TARGET_REPO" --artifact-dir artifacts/event
-          pnpm run apply-decisions -- \
-            --target-repo "$TARGET_REPO" \
-            --item-numbers "$ITEM_NUMBER" \
-            --apply-kind all \
-            --apply-close-reasons "$CLOSE_REASONS" \
-            --stale-min-age-days 30 \
-            --limit 1 \
-            --processed-limit 20 \
-            --min-age-minutes "$MIN_AGE_MINUTES" \
-            --close-delay-ms 1000 \
-            --comment-sync-min-age-days 0 \
-            --progress-every 1
-          synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)')"
-          closed_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="closed").length)')"
-          pnpm run status -- \
-            --state "Event review applied" \
-            --detail "Reviewed event item #$ITEM_NUMBER, synced durable comment(s): $synced_count, closed safe proposal(s): $closed_count. Close reasons enabled: $CLOSE_REASONS." \
-            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md records apply-report.json
-          if git diff --cached --quiet; then
-            echo "No event result changes"
-          else
-            git commit -m "chore: apply event sweep result"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
+          target_slug="${TARGET_REPO//\//-}"
+          report_path=".artifacts/event-apply-report.json"
+
+          write_event_summary() {
+            {
+              echo "### Event review applied"
+              echo "- Item: $TARGET_REPO#$ITEM_NUMBER"
+              echo "- Synced durable comments: $synced_count"
+              echo "- Closed safe proposals: $closed_count"
+              echo "- Close reasons enabled: $CLOSE_REASONS"
+            } >> "$GITHUB_STEP_SUMMARY"
+          }
+
+          publish_once() {
+            git fetch origin main
+            git reset --hard origin/main
+            rm -f "$report_path"
+            pnpm run apply-artifacts -- \
+              --target-repo "$TARGET_REPO" \
+              --artifact-dir artifacts/event \
+              --skip-reconcile \
+              --skip-dashboard \
+              --replay-closed-artifacts
+            pnpm run apply-decisions -- \
+              --target-repo "$TARGET_REPO" \
+              --item-numbers "$ITEM_NUMBER" \
+              --apply-kind all \
+              --apply-close-reasons "$CLOSE_REASONS" \
+              --stale-min-age-days 30 \
+              --limit 1 \
+              --processed-limit 20 \
+              --min-age-minutes "$MIN_AGE_MINUTES" \
+              --close-delay-ms 1000 \
+              --comment-sync-min-age-days 0 \
+              --progress-every 1 \
+              --skip-dashboard \
+              --report-path "$report_path"
+            synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)' "$report_path")"
+            closed_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(r.filter((x)=>x.action==="closed").length)' "$report_path")"
+            for record_path in \
+              "records/$target_slug/items/$ITEM_NUMBER.md" \
+              "records/$target_slug/closed/$ITEM_NUMBER.md"
+            do
+              if [ -e "$record_path" ]; then
+                git add "$record_path"
               fi
-              git fetch origin main
-              git rebase -X theirs origin/main
             done
+            if git diff --cached --quiet; then
+              echo "No event result changes"
+              write_event_summary
+              return 0
+            fi
+            git commit -m "chore: apply event sweep result for $target_slug#$ITEM_NUMBER"
             git push
-          fi
+            write_event_summary
+          }
+
+          for attempt in 1 2 3 4 5; do
+            if publish_once; then
+              exit 0
+            fi
+            sleep_seconds=$((attempt * 2 + RANDOM % 5))
+            echo "Event publish attempt $attempt failed; retrying from origin/main in ${sleep_seconds}s"
+            sleep "$sleep_seconds"
+          done
+          publish_once
 
   plan:
     name: Plan review candidates
