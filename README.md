@@ -41,11 +41,11 @@ Last dashboard update: Apr 28, 2026, 22:54 UTC
 | Open issues | 4389 |
 | Open PRs | 3461 |
 | Open items total | 7850 |
-| Reviewed files | 7458 |
-| Unreviewed open items | 392 |
-| Due now by cadence | 2039 |
-| Proposed closes awaiting apply | 0 |
-| Closed by Codex apply | 10579 |
+| Reviewed files | 7462 |
+| Unreviewed open items | 388 |
+| Due now by cadence | 2035 |
+| Proposed closes awaiting apply | 4 |
+| Closed by Codex apply | 10575 |
 | Failed or stale reviews | 11 |
 | Archived closed files | 13818 |
 
@@ -53,25 +53,25 @@ Last dashboard update: Apr 28, 2026, 22:54 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6934 | 6549 | 385 | 1979 | 0 | 10576 | Apr 28, 2026, 22:51 UTC | Apr 28, 2026, 22:53 UTC | 441 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6934 | 6553 | 381 | 1975 | 4 | 10572 | Apr 28, 2026, 22:51 UTC | Apr 28, 2026, 22:53 UTC | 457 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 916 | 909 | 7 | 60 | 0 | 3 | Apr 28, 2026, 22:36 UTC | Apr 28, 2026, 22:18 UTC | 40 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 22:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081766216) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 28, 2026, 22:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081289831) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 28, 2026, 22:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081399336) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 22:51 UTC. Latest close: Apr 28, 2026, 22:53 UTC. Latest comment sync: Apr 28, 2026, 22:53 UTC.
+Latest review: Apr 28, 2026, 22:51 UTC. Latest close: Apr 28, 2026, 22:53 UTC. Latest comment sync: Apr 28, 2026, 22:54 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 39 | 2 | 37 | 4 | 8 | 15 | 2 |
-| Last hour | 840 | 25 | 815 | 4 | 27 | 481 | 6 |
-| Last 24 hours | 6208 | 362 | 5846 | 8 | 749 | 1311 | 24 |
+| Last 15 minutes | 39 | 2 | 37 | 4 | 4 | 31 | 2 |
+| Last hour | 823 | 25 | 798 | 4 | 23 | 497 | 6 |
+| Last 24 hours | 6208 | 362 | 5846 | 8 | 745 | 1327 | 24 |
 
 ### Recently Closed Across Repos
 
@@ -124,10 +124,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 22:54 UTC
 
-State: Apply finished
+State: Review comments checked
 
-Apply/comment-sync run finished with 4 fresh closes out of requested limit 4. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25081766216](https://github.com/openclaw/clawsweeper/actions/runs/25081766216)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 71856,72645,73376,73594,73620,73643,73655,73700,73710,73740,73743,73746,73747,73753,73754,73755,73756,73757,73785,73799.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25081289831](https://github.com/openclaw/clawsweeper/actions/runs/25081289831)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -138,34 +138,34 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25081766216](https://
 | Open issues | 3512 |
 | Open PRs | 3422 |
 | Open items total | 6934 |
-| Reviewed files | 6549 |
-| Unreviewed open items | 385 |
-| Archived closed files | 13806 |
+| Reviewed files | 6553 |
+| Unreviewed open items | 381 |
+| Archived closed files | 13802 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3329 |
-| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3333 |
+| Proposed issue closes | 4 (0.1% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3209 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6538 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Closed by Codex apply | 10576 |
+| Fresh verified reviews in the last 7 days | 6542 |
+| Proposed closes awaiting apply | 4 (0.1% of fresh reviews) |
+| Closed by Codex apply | 10572 |
 | Failed or stale reviews | 11 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 129/857 current (728 due, 15.1%) |
-| Hourly hot item cadence (<7d) | 129/857 current (728 due, 15.1%) |
+| Hourly cadence coverage | 131/859 current (728 due, 15.3%) |
+| Hourly hot item cadence (<7d) | 131/859 current (728 due, 15.3%) |
 | Daily cadence coverage | 3009/3873 current (864 due, 77.7%) |
 | Daily PR cadence | 2229/2708 current (479 due, 82.3%) |
 | Daily new issue cadence (<30d) | 780/1165 current (385 due, 67%) |
-| Weekly older issue cadence | 1817/1819 current (2 due, 99.9%) |
-| Due now by cadence | 1979 |
+| Weekly older issue cadence | 1819/1821 current (2 due, 99.9%) |
+| Due now by cadence | 1975 |
 
 ### Audit Health
 
@@ -201,13 +201,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 22:51 UTC. Latest close: Apr 28, 2026, 22:53 UTC. Latest comment sync: Apr 28, 2026, 22:53 UTC.
+Latest review: Apr 28, 2026, 22:51 UTC. Latest close: Apr 28, 2026, 22:53 UTC. Latest comment sync: Apr 28, 2026, 22:54 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 39 | 2 | 37 | 4 | 8 | 15 | 2 |
-| Last hour | 800 | 25 | 775 | 4 | 26 | 441 | 6 |
-| Last 24 hours | 5287 | 359 | 4928 | 8 | 737 | 820 | 24 |
+| Last 15 minutes | 39 | 2 | 37 | 4 | 4 | 31 | 2 |
+| Last hour | 783 | 25 | 758 | 4 | 22 | 457 | 6 |
+| Last 24 hours | 5287 | 359 | 4928 | 8 | 733 | 836 | 24 |
 
 #### Recently Closed
 
