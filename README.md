@@ -27,18 +27,18 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 01:28 UTC
+Last dashboard update: Apr 28, 2026, 01:29 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 01:28 UTC
+Updated: Apr 28, 2026, 01:29 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 25028648434. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 19. Item numbers: 36630,39350,39715,49751,52291,59118,62392,67096,68341,68853,68944,69292,69638,70074,70523,70814,71839,72181,72208,72290.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25028648434](https://github.com/openclaw/clawsweeper/actions/runs/25028648434)
 <!-- clawsweeper-status:end -->
 
@@ -46,11 +46,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25028648434](https://
 
 | Metric | Count |
 | --- | ---: |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3580 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3579 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3463 |
-| Open items total | 7043 |
+| Open items total | 7042 |
 | Reviewed files | 6635 |
-| Unreviewed open items | 408 |
+| Unreviewed open items | 407 |
 | Archived closed files | 13196 |
 
 ### Review Outcomes
@@ -76,7 +76,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25028648434](https://
 | Daily PR cadence | 942/2869 current (1927 due, 32.8%) |
 | Daily new issue cadence (<30d) | 590/1279 current (689 due, 46.1%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
-| Due now by cadence | 3648 |
+| Due now by cadence | 3647 |
 
 ### Audit Health
 
@@ -110,13 +110,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 01:24 UTC. Latest comment sync: Apr 27, 2026, 11:22 UTC.
+Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 01:24 UTC. Latest comment sync: Apr 28, 2026, 01:29 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 1 | 19 | 0 | 8 | 0 | 0 |
-| Last hour | 20 | 1 | 19 | 0 | 8 | 0 | 0 |
-| Last 24 hours | 2528 | 184 | 2344 | 1 | 107 | 1519 | 11 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 8 | 19 | 1 |
+| Last hour | 20 | 1 | 19 | 0 | 8 | 19 | 1 |
+| Last 24 hours | 2528 | 184 | 2344 | 1 | 107 | 1536 | 12 |
 
 ### Recently Closed
 
@@ -149,7 +149,7 @@ Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 01:24 UTC. L
 | [#68944](https://github.com/openclaw/openclaw/issues/68944) | [Bug]: CLI commands hang at WebSocket gateway handshake | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/68944.md) | complete | Apr 28, 2026, 01:25 UTC |
 | [#70814](https://github.com/openclaw/openclaw/pull/70814) | fix(cron): accept numeric telegram announce chat ids (Fixes #70758) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70814.md) | complete | Apr 28, 2026, 01:25 UTC |
 | [#69292](https://github.com/openclaw/openclaw/pull/69292) | fix(doctor): skip plugins.entries for installed plugins already auto-loaded via manifest channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/69292.md) | complete | Apr 28, 2026, 01:25 UTC |
-| [#70074](https://github.com/openclaw/openclaw/pull/70074) | chore(deps): bump github.com/apple/swift-testing from 0.99.0 to 6.3.1 in /Swabble | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/items/70074.md) | complete | Apr 28, 2026, 01:25 UTC |
+| [#70074](https://github.com/openclaw/openclaw/pull/70074) | chore(deps): bump github.com/apple/swift-testing from 0.99.0 to 6.3.1 in /Swabble | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/items/70074.md) | complete | Apr 28, 2026, 01:25 UTC |
 
 </details>
 
