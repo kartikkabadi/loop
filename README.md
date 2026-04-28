@@ -31,7 +31,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 22:38 UTC
+Last dashboard update: Apr 28, 2026, 22:39 UTC
 
 ### Fleet
 
@@ -45,7 +45,7 @@ Last dashboard update: Apr 28, 2026, 22:38 UTC
 | Unreviewed open items | 391 |
 | Due now by cadence | 2064 |
 | Proposed closes awaiting apply | 0 |
-| Closed by Codex apply | 10574 |
+| Closed by Codex apply | 10573 |
 | Failed or stale reviews | 7 |
 | Archived closed files | 13809 |
 
@@ -53,31 +53,31 @@ Last dashboard update: Apr 28, 2026, 22:38 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6935 | 6551 | 384 | 2007 | 0 | 10571 | Apr 28, 2026, 22:35 UTC | Apr 28, 2026, 22:38 UTC | 543 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 916 | 909 | 7 | 57 | 0 | 3 | Apr 28, 2026, 22:36 UTC | Apr 28, 2026, 22:18 UTC | 45 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6935 | 6551 | 384 | 2007 | 0 | 10570 | Apr 28, 2026, 22:35 UTC | Apr 28, 2026, 22:38 UTC | 543 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 916 | 909 | 7 | 57 | 0 | 3 | Apr 28, 2026, 22:36 UTC | Apr 28, 2026, 22:18 UTC | 25 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 22:38 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081258581) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 22:38 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081107345) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 28, 2026, 22:39 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081289831) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake publish complete | Apr 28, 2026, 22:37 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081107345) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 22:36 UTC. Latest close: Apr 28, 2026, 22:38 UTC. Latest comment sync: Apr 28, 2026, 22:38 UTC.
+Latest review: Apr 28, 2026, 22:36 UTC. Latest close: Apr 28, 2026, 22:38 UTC. Latest comment sync: Apr 28, 2026, 22:36 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 29 | 2 | 27 | 0 | 3 | 29 | 0 |
-| Last hour | 602 | 24 | 578 | 0 | 33 | 588 | 4 |
-| Last 24 hours | 6200 | 357 | 5843 | 4 | 740 | 1451 | 23 |
+| Last 15 minutes | 29 | 2 | 27 | 0 | 3 | 9 | 0 |
+| Last hour | 602 | 24 | 578 | 0 | 33 | 568 | 4 |
+| Last 24 hours | 6200 | 357 | 5843 | 4 | 740 | 1431 | 23 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73175](https://github.com/openclaw/openclaw/pull/73175) | Plugins: list Kudosity SMS in community plugins | belongs on ClawHub | Apr 28, 2026, 22:38 UTC | [records/openclaw-openclaw/closed/73175.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73175.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73175](https://github.com/openclaw/openclaw/pull/73175) | Plugins: list Kudosity SMS in community plugins | closed externally after proposed_close | Apr 28, 2026, 22:38 UTC | [records/openclaw-openclaw/closed/73175.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73175.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73838](https://github.com/openclaw/openclaw/issues/73838) | [Bug]: Control UI intermittently loses webchat state and renders NO_REPLY as NO | already implemented on main | Apr 28, 2026, 22:35 UTC | [records/openclaw-openclaw/closed/73838.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73838.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71069](https://github.com/openclaw/openclaw/issues/71069) | [Bug]: Gemma4-26b-a4-it-gguf override is rejected and reverts to gpt-4o | closed externally after review | Apr 28, 2026, 22:33 UTC | [records/openclaw-openclaw/closed/71069.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71069.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73825](https://github.com/openclaw/openclaw/pull/73825) | fix(imessage): strip visible metadata envelopes before send | closed externally after item changed | Apr 28, 2026, 22:23 UTC | [records/openclaw-openclaw/closed/73825.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73825.md) |
@@ -122,12 +122,12 @@ Latest review: Apr 28, 2026, 22:36 UTC. Latest close: Apr 28, 2026, 22:38 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 22:38 UTC
+Updated: Apr 28, 2026, 22:39 UTC
 
-State: Apply in progress
+State: Hot intake in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 1, including durable review comment syncs.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25081258581](https://github.com/openclaw/clawsweeper/actions/runs/25081258581)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25081289831](https://github.com/openclaw/clawsweeper/actions/runs/25081289831)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -152,7 +152,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25081258581](https://
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6544 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Closed by Codex apply | 10571 |
+| Closed by Codex apply | 10570 |
 | Failed or stale reviews | 7 |
 
 #### Cadence
@@ -213,7 +213,7 @@ Latest review: Apr 28, 2026, 22:35 UTC. Latest close: Apr 28, 2026, 22:38 UTC. L
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#73175](https://github.com/openclaw/openclaw/pull/73175) | Plugins: list Kudosity SMS in community plugins | belongs on ClawHub | Apr 28, 2026, 22:38 UTC | [records/openclaw-openclaw/closed/73175.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73175.md) |
+| [#73175](https://github.com/openclaw/openclaw/pull/73175) | Plugins: list Kudosity SMS in community plugins | closed externally after proposed_close | Apr 28, 2026, 22:38 UTC | [records/openclaw-openclaw/closed/73175.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73175.md) |
 | [#73838](https://github.com/openclaw/openclaw/issues/73838) | [Bug]: Control UI intermittently loses webchat state and renders NO_REPLY as NO | already implemented on main | Apr 28, 2026, 22:35 UTC | [records/openclaw-openclaw/closed/73838.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73838.md) |
 | [#71069](https://github.com/openclaw/openclaw/issues/71069) | [Bug]: Gemma4-26b-a4-it-gguf override is rejected and reverts to gpt-4o | closed externally after review | Apr 28, 2026, 22:33 UTC | [records/openclaw-openclaw/closed/71069.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71069.md) |
 | [#73825](https://github.com/openclaw/openclaw/pull/73825) | fix(imessage): strip visible metadata envelopes before send | closed externally after item changed | Apr 28, 2026, 22:23 UTC | [records/openclaw-openclaw/closed/73825.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73825.md) |
