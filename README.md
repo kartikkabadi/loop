@@ -31,52 +31,54 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 15:01 UTC
+Last dashboard update: Apr 28, 2026, 15:02 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4427 |
-| Open PRs | 3449 |
-| Open items total | 7876 |
-| Reviewed files | 7459 |
+| Open issues | 4426 |
+| Open PRs | 3448 |
+| Open items total | 7874 |
+| Reviewed files | 7457 |
 | Unreviewed open items | 417 |
 | Due now by cadence | 3116 |
-| Proposed closes awaiting apply | 2 |
-| Closed by Codex apply | 10404 |
+| Proposed closes awaiting apply | 0 |
+| Closed by Codex apply | 10406 |
 | Failed or stale reviews | 5 |
-| Archived closed files | 13573 |
+| Archived closed files | 13575 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6963 | 6553 | 410 | 3064 | 2 | 10401 | Apr 28, 2026, 14:58 UTC | Apr 28, 2026, 14:56 UTC | 660 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6961 | 6551 | 410 | 3064 | 0 | 10403 | Apr 28, 2026, 14:58 UTC | Apr 28, 2026, 15:01 UTC | 640 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 913 | 906 | 7 | 52 | 0 | 3 | Apr 28, 2026, 14:22 UTC | Apr 28, 2026, 08:18 UTC | 20 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 15:01 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25060472570) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 15:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25060472570) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 28, 2026, 14:24 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25058345601) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 14:58 UTC. Latest close: Apr 28, 2026, 14:56 UTC. Latest comment sync: Apr 28, 2026, 14:59 UTC.
+Latest review: Apr 28, 2026, 14:58 UTC. Latest close: Apr 28, 2026, 15:01 UTC. Latest comment sync: Apr 28, 2026, 14:59 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 18 | 2 | 16 | 0 | 2 | 19 | 0 |
-| Last hour | 587 | 25 | 562 | 0 | 43 | 680 | 1 |
-| Last 24 hours | 4087 | 180 | 3907 | 2 | 508 | 1806 | 13 |
+| Last 15 minutes | 18 | 2 | 16 | 0 | 4 | 19 | 0 |
+| Last hour | 587 | 25 | 562 | 0 | 42 | 660 | 1 |
+| Last 24 hours | 4087 | 180 | 3907 | 2 | 510 | 1806 | 13 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73598](https://github.com/openclaw/openclaw/pull/73598) | feat: add local AlpaCore MCP bridge | belongs on ClawHub | Apr 28, 2026, 15:01 UTC | [records/openclaw-openclaw/closed/73598.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73598.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73234](https://github.com/openclaw/openclaw/issues/73234) | WebChat/Control UI duplicates assistant replies when auto-TTS appends assistant-media transcript entries | already implemented on main | Apr 28, 2026, 15:01 UTC | [records/openclaw-openclaw/closed/73234.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73234.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73612](https://github.com/openclaw/openclaw/issues/73612) | [Bug]: Error: Unknown memory embedding provider: voyage | already implemented on main | Apr 28, 2026, 14:56 UTC | [records/openclaw-openclaw/closed/73612.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73612.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73136](https://github.com/openclaw/openclaw/pull/73136) | fix(reply): keep consumed reset triggers empty | closed externally after proposed_close | Apr 28, 2026, 14:49 UTC | [records/openclaw-openclaw/closed/73136.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73136.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73576](https://github.com/openclaw/openclaw/pull/73576) | fix: clarify infer audio/image errors when no provider configured | duplicate or superseded | Apr 28, 2026, 14:42 UTC | [records/openclaw-openclaw/closed/73576.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73576.md) |
@@ -85,8 +87,6 @@ Latest review: Apr 28, 2026, 14:58 UTC. Latest close: Apr 28, 2026, 14:56 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56698](https://github.com/openclaw/openclaw/issues/56698) | Bug: Hook bootstrap virtual files accumulate on every restart (no dedup) | already implemented on main | Apr 28, 2026, 14:42 UTC | [records/openclaw-openclaw/closed/56698.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56698.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56671](https://github.com/openclaw/openclaw/pull/56671) | fix(config): deduplicate clobbered config snapshots in-process | already implemented on main | Apr 28, 2026, 14:42 UTC | [records/openclaw-openclaw/closed/56671.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56671.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56601](https://github.com/openclaw/openclaw/issues/56601) | [Bug]: In Chat in Web Interface the Microsoft Edge voice does not use the voice in the openclaw.json config | already implemented on main | Apr 28, 2026, 14:42 UTC | [records/openclaw-openclaw/closed/56601.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56601.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56504](https://github.com/openclaw/openclaw/pull/56504) | fix: normalize tool IDs in repairToolUseResultPairing for cross-model sessions | already implemented on main | Apr 28, 2026, 14:41 UTC | [records/openclaw-openclaw/closed/56504.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56504.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56469](https://github.com/openclaw/openclaw/issues/56469) | Support per-device typingIndicator configuration for Feishu channel | belongs on ClawHub | Apr 28, 2026, 14:41 UTC | [records/openclaw-openclaw/closed/56469.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56469.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -122,11 +122,11 @@ Latest review: Apr 28, 2026, 14:58 UTC. Latest close: Apr 28, 2026, 14:56 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 28, 2026, 15:01 UTC
+Updated: Apr 28, 2026, 15:02 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=73234,73598.
+Checkpoint 1 finished. Fresh closes in checkpoint: 2. Total fresh closes in this run: 2/2. Result records in checkpoint: 2, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25060472570](https://github.com/openclaw/clawsweeper/actions/runs/25060472570)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -135,36 +135,36 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25060472570](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3552 |
-| Open PRs | 3411 |
-| Open items total | 6963 |
-| Reviewed files | 6553 |
+| Open issues | 3551 |
+| Open PRs | 3410 |
+| Open items total | 6961 |
+| Reviewed files | 6551 |
 | Unreviewed open items | 410 |
-| Archived closed files | 13563 |
+| Archived closed files | 13565 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3372 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3177 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6549 |
-| Proposed closes awaiting apply | 2 (0% of fresh reviews) |
-| Closed by Codex apply | 10401 |
+| Fresh reviewed issues in the last 7 days | 3371 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3176 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6547 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Closed by Codex apply | 10403 |
 | Failed or stale reviews | 4 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 107/725 current (618 due, 14.8%) |
-| Hourly hot item cadence (<7d) | 107/725 current (618 due, 14.8%) |
-| Daily cadence coverage | 1959/3994 current (2035 due, 49%) |
+| Hourly cadence coverage | 105/723 current (618 due, 14.5%) |
+| Hourly hot item cadence (<7d) | 105/723 current (618 due, 14.5%) |
+| Daily cadence coverage | 1958/3993 current (2035 due, 49%) |
 | Daily PR cadence | 1651/2762 current (1111 due, 59.8%) |
-| Daily new issue cadence (<30d) | 308/1232 current (924 due, 25%) |
-| Weekly older issue cadence | 1833/1834 current (1 due, 99.9%) |
+| Daily new issue cadence (<30d) | 307/1231 current (924 due, 24.9%) |
+| Weekly older issue cadence | 1834/1835 current (1 due, 99.9%) |
 | Due now by cadence | 3064 |
 
 ### Audit Health
@@ -201,18 +201,20 @@ Targeted review input: `64563,65635,72522,72527,72529,72531,72532,72535,72536,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 14:58 UTC. Latest close: Apr 28, 2026, 14:56 UTC. Latest comment sync: Apr 28, 2026, 14:59 UTC.
+Latest review: Apr 28, 2026, 14:58 UTC. Latest close: Apr 28, 2026, 15:01 UTC. Latest comment sync: Apr 28, 2026, 14:59 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 18 | 2 | 16 | 0 | 2 | 19 | 0 |
-| Last hour | 567 | 25 | 542 | 0 | 43 | 660 | 1 |
-| Last 24 hours | 3171 | 177 | 2994 | 1 | 498 | 1025 | 13 |
+| Last 15 minutes | 18 | 2 | 16 | 0 | 4 | 19 | 0 |
+| Last hour | 567 | 25 | 542 | 0 | 42 | 640 | 1 |
+| Last 24 hours | 3171 | 177 | 2994 | 1 | 500 | 1025 | 13 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#73598](https://github.com/openclaw/openclaw/pull/73598) | feat: add local AlpaCore MCP bridge | belongs on ClawHub | Apr 28, 2026, 15:01 UTC | [records/openclaw-openclaw/closed/73598.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73598.md) |
+| [#73234](https://github.com/openclaw/openclaw/issues/73234) | WebChat/Control UI duplicates assistant replies when auto-TTS appends assistant-media transcript entries | already implemented on main | Apr 28, 2026, 15:01 UTC | [records/openclaw-openclaw/closed/73234.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73234.md) |
 | [#73612](https://github.com/openclaw/openclaw/issues/73612) | [Bug]: Error: Unknown memory embedding provider: voyage | already implemented on main | Apr 28, 2026, 14:56 UTC | [records/openclaw-openclaw/closed/73612.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73612.md) |
 | [#73136](https://github.com/openclaw/openclaw/pull/73136) | fix(reply): keep consumed reset triggers empty | closed externally after proposed_close | Apr 28, 2026, 14:49 UTC | [records/openclaw-openclaw/closed/73136.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73136.md) |
 | [#73576](https://github.com/openclaw/openclaw/pull/73576) | fix: clarify infer audio/image errors when no provider configured | duplicate or superseded | Apr 28, 2026, 14:42 UTC | [records/openclaw-openclaw/closed/73576.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73576.md) |
@@ -221,8 +223,6 @@ Latest review: Apr 28, 2026, 14:58 UTC. Latest close: Apr 28, 2026, 14:56 UTC. L
 | [#56698](https://github.com/openclaw/openclaw/issues/56698) | Bug: Hook bootstrap virtual files accumulate on every restart (no dedup) | already implemented on main | Apr 28, 2026, 14:42 UTC | [records/openclaw-openclaw/closed/56698.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56698.md) |
 | [#56671](https://github.com/openclaw/openclaw/pull/56671) | fix(config): deduplicate clobbered config snapshots in-process | already implemented on main | Apr 28, 2026, 14:42 UTC | [records/openclaw-openclaw/closed/56671.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56671.md) |
 | [#56601](https://github.com/openclaw/openclaw/issues/56601) | [Bug]: In Chat in Web Interface the Microsoft Edge voice does not use the voice in the openclaw.json config | already implemented on main | Apr 28, 2026, 14:42 UTC | [records/openclaw-openclaw/closed/56601.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56601.md) |
-| [#56504](https://github.com/openclaw/openclaw/pull/56504) | fix: normalize tool IDs in repairToolUseResultPairing for cross-model sessions | already implemented on main | Apr 28, 2026, 14:41 UTC | [records/openclaw-openclaw/closed/56504.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56504.md) |
-| [#56469](https://github.com/openclaw/openclaw/issues/56469) | Support per-device typingIndicator configuration for Feishu channel | belongs on ClawHub | Apr 28, 2026, 14:41 UTC | [records/openclaw-openclaw/closed/56469.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56469.md) |
 
 #### Recently Reviewed
 
