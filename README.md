@@ -60,7 +60,7 @@ Last dashboard update: Apr 28, 2026, 15:14 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 15:14 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25060986826) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 15:14 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25060986826) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 28, 2026, 15:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25061130507) |
 
 ### Fleet Activity
@@ -69,7 +69,7 @@ Latest review: Apr 28, 2026, 15:12 UTC. Latest close: Apr 28, 2026, 15:13 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 33 | 4 | 29 | 0 | 24 | 46 | 2 |
+| Last 15 minutes | 32 | 4 | 28 | 0 | 24 | 46 | 2 |
 | Last hour | 1093 | 53 | 1040 | 0 | 46 | 407 | 3 |
 | Last 24 hours | 4460 | 209 | 4251 | 2 | 532 | 1703 | 15 |
 
@@ -124,9 +124,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 15:14 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 20. Total fresh closes in this run: 20/20. Result records in checkpoint: 43, including durable review comment syncs.
+Apply/comment-sync run finished with 20 fresh closes out of requested limit 20. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25060986826](https://github.com/openclaw/clawsweeper/actions/runs/25060986826)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -205,7 +205,7 @@ Latest review: Apr 28, 2026, 15:12 UTC. Latest close: Apr 28, 2026, 15:13 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 33 | 4 | 29 | 0 | 24 | 46 | 2 |
+| Last 15 minutes | 32 | 4 | 28 | 0 | 24 | 46 | 2 |
 | Last hour | 1073 | 53 | 1020 | 0 | 46 | 387 | 3 |
 | Last 24 hours | 3544 | 206 | 3338 | 1 | 522 | 922 | 15 |
 
