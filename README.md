@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:04 UTC
 
 State: Event review applied
 
-Reviewed event item #73321, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036588603](https://github.com/openclaw/clawsweeper/actions/runs/25036588603)
+Reviewed event item #73322, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036589506](https://github.com/openclaw/clawsweeper/actions/runs/25036589506)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -62,9 +62,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25036588603](https://
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3380 |
+| Fresh reviewed issues in the last 7 days | 3381 |
 | Proposed issue closes | 10 (0.3% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3182 |
+| Fresh reviewed PRs in the last 7 days | 3181 |
 | Proposed PR closes | 3 (0.1% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6563 |
 | Proposed closes awaiting apply | 13 (0.2% of fresh reviews) |
@@ -119,7 +119,7 @@ Latest review: Apr 28, 2026, 06:02 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 23 | 1 | 22 | 0 | 0 | 343 | 2 |
+| Last 15 minutes | 23 | 1 | 22 | 0 | 0 | 339 | 2 |
 | Last hour | 503 | 15 | 488 | 0 | 0 | 343 | 2 |
 | Last 24 hours | 2189 | 101 | 2088 | 1 | 72 | 1072 | 15 |
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:02 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73321](https://github.com/openclaw/openclaw/pull/73321) | Add MCP trace-context propagation canary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73321.md) | complete | Apr 28, 2026, 06:02 UTC |
+| [#73322](https://github.com/openclaw/openclaw/issues/73322) | openclaw channels list only shows auth providers, not configured chat channel accounts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73322.md) | complete | Apr 28, 2026, 06:02 UTC |
 | [#73312](https://github.com/openclaw/openclaw/pull/73312) | feat(matrix): expose MessagePresentation metadata in Matrix events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73312.md) | complete | Apr 28, 2026, 05:58 UTC |
 | [#73295](https://github.com/openclaw/openclaw/pull/73295) | Add Discord stuck-session circuit breaker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73295.md) | complete | Apr 28, 2026, 05:58 UTC |
 | [#44814](https://github.com/openclaw/openclaw/pull/44814) | fix: make webui attachment maxBytes configurable (fixes #44757) | [keep_open / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/44814.md) | complete | Apr 28, 2026, 05:51 UTC |
