@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 06:45 UTC
+Last dashboard update: Apr 28, 2026, 06:46 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 06:45 UTC
+Updated: Apr 28, 2026, 06:46 UTC
 
 State: Hot intake in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038118247](https://github.com/openclaw/clawsweeper/actions/runs/25038118247)
+Reviewed event item #73039, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038017984](https://github.com/openclaw/clawsweeper/actions/runs/25038017984)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -51,23 +51,23 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038118247](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3569 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3462 |
-| Open items total | 7031 |
-| Reviewed files | 6565 |
-| Unreviewed open items | 466 |
-| Archived closed files | 13298 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3567 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3461 |
+| Open items total | 7028 |
+| Reviewed files | 6564 |
+| Unreviewed open items | 464 |
+| Archived closed files | 13300 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3374 |
-| Proposed issue closes | 8 (0.2% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3373 |
+| Proposed issue closes | 6 (0.2% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3180 |
 | Proposed PR closes | 3 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6554 |
-| Proposed closes awaiting apply | 11 (0.2% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 6553 |
+| Proposed closes awaiting apply | 9 (0.1% of fresh reviews) |
 | Closed by Codex apply | 10238 |
 | Failed or stale reviews | 11 |
 
@@ -75,13 +75,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038118247](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 59/616 current (557 due, 9.6%) |
-| Hourly hot item cadence (<7d) | 59/616 current (557 due, 9.6%) |
-| Daily cadence coverage | 1309/4098 current (2789 due, 31.9%) |
-| Daily PR cadence | 876/2834 current (1958 due, 30.9%) |
+| Hourly cadence coverage | 60/617 current (557 due, 9.7%) |
+| Hourly hot item cadence (<7d) | 60/617 current (557 due, 9.7%) |
+| Daily cadence coverage | 1309/4097 current (2788 due, 32%) |
+| Daily PR cadence | 876/2833 current (1957 due, 30.9%) |
 | Daily new issue cadence (<30d) | 433/1264 current (831 due, 34.3%) |
-| Weekly older issue cadence | 1851/1851 current (0 due, 100%) |
-| Due now by cadence | 3812 |
+| Weekly older issue cadence | 1850/1850 current (0 due, 100%) |
+| Due now by cadence | 3809 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:43 UTC. Latest close: Apr 28, 2026, 06:45 UTC. Latest comment sync: Apr 28, 2026, 06:45 UTC.
+Latest review: Apr 28, 2026, 06:44 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 0 | 11 | 0 | 0 | 58 | 0 |
-| Last hour | 561 | 9 | 552 | 1 | 2 | 806 | 5 |
-| Last 24 hours | 2212 | 102 | 2110 | 6 | 63 | 1025 | 12 |
+| Last 15 minutes | 11 | 0 | 11 | 0 | 0 | 42 | 0 |
+| Last hour | 562 | 9 | 553 | 1 | 2 | 807 | 5 |
+| Last 24 hours | 2213 | 102 | 2111 | 6 | 63 | 1026 | 12 |
 
 ### Recently Closed
 
@@ -145,6 +145,7 @@ Latest review: Apr 28, 2026, 06:43 UTC. Latest close: Apr 28, 2026, 06:45 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73039](https://github.com/openclaw/openclaw/pull/73039) | perf(tools): memoize media + web tool factories in createOpenClawTools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73039.md) | complete | Apr 28, 2026, 06:44 UTC |
 | [#73343](https://github.com/openclaw/openclaw/issues/73343) | [Feature]: Expose channel user identity (SenderId) to skill/tool execution environment | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73343.md) | complete | Apr 28, 2026, 06:42 UTC |
 | [#72383](https://github.com/openclaw/openclaw/pull/72383) | [plugin sdk] Add workflow action, outbound, scheduler, and retry host seams | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72383.md) | complete | Apr 28, 2026, 06:41 UTC |
 | [#73338](https://github.com/openclaw/openclaw/pull/73338) | fix(tui): follow active gateway port | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73338.md) | complete | Apr 28, 2026, 06:41 UTC |
@@ -154,7 +155,6 @@ Latest review: Apr 28, 2026, 06:43 UTC. Latest close: Apr 28, 2026, 06:45 UTC. L
 | [#69056](https://github.com/openclaw/openclaw/pull/69056) | fix(gateway): handle SIGUSR1 gracefully on Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69056.md) | complete | Apr 28, 2026, 06:38 UTC |
 | [#73340](https://github.com/openclaw/openclaw/pull/73340) | Test tokenjuice tool result middleware adapter | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73340.md) | complete | Apr 28, 2026, 06:38 UTC |
 | [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 06:31 UTC |
-| [#72987](https://github.com/openclaw/openclaw/pull/72987) | docs(compaction): document reserveTokensFloor default (20,000 tokens) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72987.md) | complete | Apr 28, 2026, 06:30 UTC |
 
 </details>
 
