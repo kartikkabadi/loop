@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 07:40 UTC
 
 State: Event review applied
 
-Reviewed event item #73369, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039470553](https://github.com/openclaw/clawsweeper/actions/runs/25039470553)
+Reviewed event item #73361, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039297794](https://github.com/openclaw/clawsweeper/actions/runs/25039297794)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -91,13 +91,13 @@ No audit has been published yet. Run `npm run audit -- --update-dashboard` to re
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 07:38 UTC. Latest close: Apr 28, 2026, 07:06 UTC. Latest comment sync: Apr 28, 2026, 07:40 UTC.
+Latest review: Apr 28, 2026, 07:37 UTC. Latest close: Apr 28, 2026, 07:06 UTC. Latest comment sync: Apr 28, 2026, 07:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last hour | 357 | 24 | 333 | 3 | 4 | 384 | 13 |
-| Last 24 hours | 2391 | 117 | 2274 | 14 | 66 | 1306 | 21 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| Last hour | 357 | 24 | 333 | 3 | 4 | 383 | 13 |
+| Last 24 hours | 2391 | 117 | 2274 | 14 | 66 | 1305 | 21 |
 
 ### Recently Closed
 
@@ -121,7 +121,7 @@ Latest review: Apr 28, 2026, 07:38 UTC. Latest close: Apr 28, 2026, 07:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73369](https://github.com/openclaw/openclaw/pull/73369) | fix(skills/discord): clarify message.send is sideband-only to prevent autoThread duplicate replies (#73278) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73369.md) | complete | Apr 28, 2026, 07:38 UTC |
+| [#73361](https://github.com/openclaw/openclaw/pull/73361) | fix(ui): confirm button-triggered new session resets | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73361.md) | complete | Apr 28, 2026, 07:37 UTC |
 | [#73357](https://github.com/openclaw/openclaw/pull/73357) | fix: handle ENOSPC file watcher errors gracefully | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73357.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 07:10 UTC |
 | [#73355](https://github.com/openclaw/openclaw/pull/73355) | fix(cron): add .catch() re-arm and watchdog to prevent runtime timer chain death | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73355.md) | complete | Apr 28, 2026, 07:09 UTC |
