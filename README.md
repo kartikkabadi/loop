@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 06:44 UTC
 
 Updated: Apr 28, 2026, 06:44 UTC
 
-State: Apply in progress
+State: Planning review
 
-Starting apply/comment-sync run for up to 17 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=41243,41308,41862,42319,42978,44458,44539,44555,44565,44794,44881,45134,45200,53989,56161,66846,67766.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038065560](https://github.com/openclaw/clawsweeper/actions/runs/25038065560)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038118247](https://github.com/openclaw/clawsweeper/actions/runs/25038118247)
 <!-- clawsweeper-status:end -->
 
 ### Queue
