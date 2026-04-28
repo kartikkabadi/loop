@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 06:49 UTC
+Last dashboard update: Apr 28, 2026, 06:50 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 06:49 UTC
+Updated: Apr 28, 2026, 06:50 UTC
 
 State: Review publish complete
 
-Reviewed event item #38502, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038167373](https://github.com/openclaw/clawsweeper/actions/runs/25038167373)
+Reviewed event item #72936, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038174990](https://github.com/openclaw/clawsweeper/actions/runs/25038174990)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -115,12 +115,12 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:47 UTC. Latest close: Apr 28, 2026, 06:45 UTC. Latest comment sync: Apr 28, 2026, 06:49 UTC.
+Latest review: Apr 28, 2026, 06:48 UTC. Latest close: Apr 28, 2026, 06:45 UTC. Latest comment sync: Apr 28, 2026, 06:47 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 1 | 13 | 0 | 1 | 12 | 2 |
-| Last hour | 565 | 10 | 555 | 2 | 3 | 789 | 6 |
+| Last 15 minutes | 13 | 1 | 12 | 0 | 1 | 11 | 2 |
+| Last hour | 562 | 10 | 552 | 2 | 3 | 773 | 6 |
 | Last 24 hours | 2215 | 103 | 2112 | 11 | 64 | 1029 | 13 |
 
 ### Recently Closed
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:47 UTC. Latest close: Apr 28, 2026, 06:45 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#38502](https://github.com/openclaw/openclaw/pull/38502) | fix(tui): clarify Ctrl+C status when run is still active | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/38502.md) | complete | Apr 28, 2026, 06:47 UTC |
+| [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 06:48 UTC |
 | [#73334](https://github.com/openclaw/openclaw/pull/73334) | refactor(feishu): unify document link parsing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73334.md) | complete | Apr 28, 2026, 06:45 UTC |
 | [#73346](https://github.com/openclaw/openclaw/pull/73346) | fix(agents/anthropic-transport): suppress default beta headers on custom Anthropic-compatible providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73346.md) | complete | Apr 28, 2026, 06:44 UTC |
 | [#73039](https://github.com/openclaw/openclaw/pull/73039) | perf(tools): memoize media + web tool factories in createOpenClawTools | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73039.md) | complete | Apr 28, 2026, 06:44 UTC |
