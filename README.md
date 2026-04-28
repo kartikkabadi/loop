@@ -27,19 +27,19 @@ item is already resolved or a maintainer explicitly asks to close one side.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 01:59 UTC
+Last dashboard update: Apr 28, 2026, 02:00 UTC
 
 ### Current Run
 
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 01:59 UTC
+Updated: Apr 28, 2026, 02:00 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029751134](https://github.com/openclaw/clawsweeper/actions/runs/25029751134)
+Starting apply/comment-sync run for up to 1 fresh all closes. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=52291.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029765300](https://github.com/openclaw/clawsweeper/actions/runs/25029765300)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -70,11 +70,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25029751134](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 8/628 current (620 due, 1.3%) |
-| Hourly hot item cadence (<7d) | 8/628 current (620 due, 1.3%) |
-| Daily cadence coverage | 1471/4148 current (2677 due, 35.5%) |
+| Hourly cadence coverage | 8/627 current (619 due, 1.3%) |
+| Hourly hot item cadence (<7d) | 8/627 current (619 due, 1.3%) |
+| Daily cadence coverage | 1471/4149 current (2678 due, 35.5%) |
 | Daily PR cadence | 918/2870 current (1952 due, 32%) |
-| Daily new issue cadence (<30d) | 553/1278 current (725 due, 43.3%) |
+| Daily new issue cadence (<30d) | 553/1279 current (726 due, 43.2%) |
 | Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
 | Due now by cadence | 3709 |
 
@@ -116,7 +116,7 @@ Latest review: Apr 28, 2026, 01:26 UTC. Latest close: Apr 28, 2026, 01:24 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Last hour | 20 | 1 | 19 | 0 | 8 | 19 | 1 |
-| Last 24 hours | 2459 | 180 | 2279 | 1 | 107 | 1519 | 12 |
+| Last 24 hours | 2459 | 180 | 2279 | 1 | 103 | 1519 | 12 |
 
 ### Recently Closed
 
