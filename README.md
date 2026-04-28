@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 06:40 UTC
 
 State: Review comments checked
 
-Reviewed event item #73342, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037829129](https://github.com/openclaw/clawsweeper/actions/runs/25037829129)
+Reviewed event item #69056, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037811326](https://github.com/openclaw/clawsweeper/actions/runs/25037811326)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,8 +54,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037829129](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3578 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3461 |
 | Open items total | 7039 |
-| Reviewed files | 6573 |
-| Unreviewed open items | 466 |
+| Reviewed files | 6572 |
+| Unreviewed open items | 467 |
 | Archived closed files | 13287 |
 
 ### Review Outcomes
@@ -64,9 +64,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037829129](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3380 |
 | Proposed issue closes | 11 (0.3% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3182 |
+| Fresh reviewed PRs in the last 7 days | 3181 |
 | Proposed PR closes | 6 (0.2% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6562 |
+| Fresh verified reviews in the last 7 days | 6561 |
 | Proposed closes awaiting apply | 17 (0.3% of fresh reviews) |
 | Closed by Codex apply | 10238 |
 | Failed or stale reviews | 11 |
@@ -75,13 +75,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037829129](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 64/614 current (550 due, 10.4%) |
-| Hourly hot item cadence (<7d) | 64/614 current (550 due, 10.4%) |
+| Hourly cadence coverage | 63/613 current (550 due, 10.3%) |
+| Hourly hot item cadence (<7d) | 63/613 current (550 due, 10.3%) |
 | Daily cadence coverage | 1312/4103 current (2791 due, 32%) |
 | Daily PR cadence | 879/2838 current (1959 due, 31%) |
 | Daily new issue cadence (<30d) | 433/1265 current (832 due, 34.2%) |
 | Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
-| Due now by cadence | 3807 |
+| Due now by cadence | 3808 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:38 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:32 UTC.
+Latest review: Apr 28, 2026, 06:38 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:40 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 12 | 1 | 11 | 0 | 0 | 238 | 1 |
-| Last hour | 701 | 16 | 685 | 1 | 2 | 802 | 5 |
-| Last 24 hours | 2209 | 102 | 2107 | 6 | 74 | 1029 | 12 |
+| Last 15 minutes | 12 | 1 | 11 | 0 | 0 | 239 | 1 |
+| Last hour | 700 | 16 | 684 | 1 | 2 | 803 | 5 |
+| Last 24 hours | 2208 | 102 | 2106 | 6 | 74 | 1029 | 12 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:38 UTC. Latest close: Apr 28, 2026, 06:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73342](https://github.com/openclaw/openclaw/pull/73342) | refactor(memory-host): replace core runtime bridge with services | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73342.md) | complete | Apr 28, 2026, 06:38 UTC |
+| [#69056](https://github.com/openclaw/openclaw/pull/69056) | fix(gateway): handle SIGUSR1 gracefully on Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69056.md) | complete | Apr 28, 2026, 06:38 UTC |
 | [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 06:31 UTC |
 | [#72987](https://github.com/openclaw/openclaw/pull/72987) | docs(compaction): document reserveTokensFloor default (20,000 tokens) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72987.md) | complete | Apr 28, 2026, 06:30 UTC |
 | [#73337](https://github.com/openclaw/openclaw/issues/73337) | [Bug] macOS Companion App: Canvas A2UI push returns ok but renders completely blank (regression of #7143) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73337.md) | complete | Apr 28, 2026, 06:29 UTC |
