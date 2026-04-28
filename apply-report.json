@@ -1,217 +1,47 @@
 [
   {
-    "number": 49913,
-    "action": "review_comment_synced",
-    "reason": "recorded existing durable comment metadata"
-  },
-  {
-    "number": 49913,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 56708,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 56708,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 57174,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57174,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 57247,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57247,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 57288,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57288,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 57448,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57448,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 57497,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57497,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 57711,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57711,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 57713,
-    "action": "skipped_open_closing_pr",
-    "reason": "open PR #57789 (fix(sandbox): fail fast on incompatible default image) is a closing reference and 1 other open PR(s)"
-  },
-  {
-    "number": 57789,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57789,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 57914,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57914,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 57952,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 57952,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 57971,
-    "action": "skipped_same_author_pair",
-    "reason": "open issue #57967 (macOS: gateway LaunchAgent plist is written with 0644 instead of 0600) by the same author is paired with this PR"
-  },
-  {
-    "number": 58166,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 58166,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 58298,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 58298,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 58492,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 58492,
-    "action": "closed",
-    "reason": "belongs on ClawHub"
-  },
-  {
-    "number": 58741,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 58741,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 58946,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 58946,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 58975,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 58975,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 59020,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 59020,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 59057,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 59057,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 59070,
-    "action": "review_comment_synced",
-    "reason": "updated durable Codex review comment"
-  },
-  {
-    "number": 59070,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
     "number": 59075,
+    "action": "skipped_changed_since_review",
+    "reason": "updated_at changed"
+  },
+  {
+    "number": 59319,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 59319,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 59422,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 59422,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 59435,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 59435,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 59571,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 59571,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
