@@ -53,25 +53,25 @@ Last dashboard update: Apr 28, 2026, 16:49 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6967 | 6583 | 384 | 2729 | 0 | 10456 | Apr 28, 2026, 16:47 UTC | Apr 28, 2026, 16:46 UTC | 885 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6967 | 6583 | 384 | 2729 | 0 | 10456 | Apr 28, 2026, 16:48 UTC | Apr 28, 2026, 16:46 UTC | 886 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 914 | 907 | 7 | 46 | 0 | 3 | Apr 28, 2026, 16:21 UTC | Apr 28, 2026, 08:18 UTC | 274 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 16:49 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25065922977) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 16:49 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25065922977) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 28, 2026, 16:46 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25065834871) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 16:47 UTC. Latest close: Apr 28, 2026, 16:46 UTC. Latest comment sync: Apr 28, 2026, 16:49 UTC.
+Latest review: Apr 28, 2026, 16:48 UTC. Latest close: Apr 28, 2026, 16:46 UTC. Latest comment sync: Apr 28, 2026, 16:49 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 26 | 1 | 25 | 0 | 6 | 25 | 1 |
-| Last hour | 857 | 13 | 844 | 1 | 22 | 1159 | 1 |
-| Last 24 hours | 4591 | 232 | 4359 | 2 | 567 | 1437 | 16 |
+| Last 15 minutes | 27 | 1 | 26 | 0 | 6 | 26 | 1 |
+| Last hour | 858 | 13 | 845 | 1 | 22 | 1160 | 1 |
+| Last 24 hours | 4591 | 232 | 4359 | 2 | 567 | 1438 | 16 |
 
 ### Recently Closed Across Repos
 
@@ -95,6 +95,7 @@ Latest review: Apr 28, 2026, 16:47 UTC. Latest close: Apr 28, 2026, 16:46 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58823](https://github.com/openclaw/openclaw/pull/58823) | fix(agents): restore global subagent model default priority over agent own model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58823.md) | complete | Apr 28, 2026, 16:48 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72984](https://github.com/openclaw/openclaw/pull/72984) | fix(subagent): resolve runtime model from subagent default instead of parent primary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72984.md) | complete | Apr 28, 2026, 16:47 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73685](https://github.com/openclaw/openclaw/issues/73685) | [Bug]: @openclaw/discord@2026.3.13 fails on openclaw@2026.4.26: missing plugin-sdk/discord export | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73685.md) | complete | Apr 28, 2026, 16:47 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73686](https://github.com/openclaw/openclaw/pull/73686) | fix #73549: Feature Request: Persistent Skill/.md configuration support for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73686.md) | complete | Apr 28, 2026, 16:47 UTC |
@@ -104,7 +105,6 @@ Latest review: Apr 28, 2026, 16:47 UTC. Latest close: Apr 28, 2026, 16:46 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73554](https://github.com/openclaw/openclaw/pull/73554) | fix(cli): reject missing plugin ids before config writes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73554.md) | complete | Apr 28, 2026, 16:45 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73681](https://github.com/openclaw/openclaw/issues/73681) | googlechat: REACTION_ADDED / REACTION_REMOVED webhook events are silently dropped | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73681.md) | complete | Apr 28, 2026, 16:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73680](https://github.com/openclaw/openclaw/issues/73680) | Per-agent `verboseDefault` / `elevatedDefault` rejected by config schema, despite resolver and SDK types supporting them | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73680.md) | complete | Apr 28, 2026, 16:43 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73679](https://github.com/openclaw/openclaw/pull/73679) | fix(ui): preserve queued chat messages across session switches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73679.md) | complete | Apr 28, 2026, 16:42 UTC |
 
 </details>
 
@@ -124,9 +124,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 16:49 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/2. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 2. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25065922977](https://github.com/openclaw/clawsweeper/actions/runs/25065922977)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -201,13 +201,13 @@ Targeted review input: `64563,65635,72522,72527,72529,72531,72532,72535,72536,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 16:47 UTC. Latest close: Apr 28, 2026, 16:46 UTC. Latest comment sync: Apr 28, 2026, 16:49 UTC.
+Latest review: Apr 28, 2026, 16:48 UTC. Latest close: Apr 28, 2026, 16:46 UTC. Latest comment sync: Apr 28, 2026, 16:49 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 26 | 1 | 25 | 0 | 6 | 25 | 1 |
-| Last hour | 583 | 13 | 570 | 0 | 22 | 885 | 1 |
-| Last 24 hours | 3674 | 229 | 3445 | 1 | 557 | 1154 | 16 |
+| Last 15 minutes | 27 | 1 | 26 | 0 | 6 | 26 | 1 |
+| Last hour | 584 | 13 | 571 | 0 | 22 | 886 | 1 |
+| Last 24 hours | 3674 | 229 | 3445 | 1 | 557 | 1155 | 16 |
 
 #### Recently Closed
 
@@ -228,6 +228,7 @@ Latest review: Apr 28, 2026, 16:47 UTC. Latest close: Apr 28, 2026, 16:46 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#58823](https://github.com/openclaw/openclaw/pull/58823) | fix(agents): restore global subagent model default priority over agent own model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58823.md) | complete | Apr 28, 2026, 16:48 UTC |
 | [#72984](https://github.com/openclaw/openclaw/pull/72984) | fix(subagent): resolve runtime model from subagent default instead of parent primary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72984.md) | complete | Apr 28, 2026, 16:47 UTC |
 | [#73685](https://github.com/openclaw/openclaw/issues/73685) | [Bug]: @openclaw/discord@2026.3.13 fails on openclaw@2026.4.26: missing plugin-sdk/discord export | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73685.md) | complete | Apr 28, 2026, 16:47 UTC |
 | [#73686](https://github.com/openclaw/openclaw/pull/73686) | fix #73549: Feature Request: Persistent Skill/.md configuration support for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73686.md) | complete | Apr 28, 2026, 16:47 UTC |
@@ -237,7 +238,6 @@ Latest review: Apr 28, 2026, 16:47 UTC. Latest close: Apr 28, 2026, 16:46 UTC. L
 | [#73554](https://github.com/openclaw/openclaw/pull/73554) | fix(cli): reject missing plugin ids before config writes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73554.md) | complete | Apr 28, 2026, 16:45 UTC |
 | [#73681](https://github.com/openclaw/openclaw/issues/73681) | googlechat: REACTION_ADDED / REACTION_REMOVED webhook events are silently dropped | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73681.md) | complete | Apr 28, 2026, 16:43 UTC |
 | [#73680](https://github.com/openclaw/openclaw/issues/73680) | Per-agent `verboseDefault` / `elevatedDefault` rejected by config schema, despite resolver and SDK types supporting them | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73680.md) | complete | Apr 28, 2026, 16:43 UTC |
-| [#73679](https://github.com/openclaw/openclaw/pull/73679) | fix(ui): preserve queued chat messages across session switches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73679.md) | complete | Apr 28, 2026, 16:42 UTC |
 
 </details>
 
