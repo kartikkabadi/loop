@@ -40,10 +40,10 @@ Last dashboard update: Apr 28, 2026, 06:18 UTC
 
 Updated: Apr 28, 2026, 06:18 UTC
 
-State: Hot intake in progress
+State: Event review applied
 
-Reviewed event item #55652, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037084876](https://github.com/openclaw/clawsweeper/actions/runs/25037084876)
+Reviewed event item #72333, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037091125](https://github.com/openclaw/clawsweeper/actions/runs/25037091125)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -51,12 +51,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037084876](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3581 |
-| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3467 |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3582 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3466 |
 | Open items total | 7048 |
-| Reviewed files | 6574 |
-| Unreviewed open items | 474 |
-| Archived closed files | 13272 |
+| Reviewed files | 6573 |
+| Unreviewed open items | 475 |
+| Archived closed files | 13273 |
 
 ### Review Outcomes
 
@@ -75,10 +75,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037084876](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 24/609 current (585 due, 3.9%) |
-| Hourly hot item cadence (<7d) | 24/609 current (585 due, 3.9%) |
-| Daily cadence coverage | 1315/4110 current (2795 due, 32%) |
-| Daily PR cadence | 879/2842 current (1963 due, 30.9%) |
+| Hourly cadence coverage | 25/609 current (584 due, 4.1%) |
+| Hourly hot item cadence (<7d) | 25/609 current (584 due, 4.1%) |
+| Daily cadence coverage | 1315/4109 current (2794 due, 32%) |
+| Daily PR cadence | 879/2841 current (1962 due, 30.9%) |
 | Daily new issue cadence (<30d) | 436/1268 current (832 due, 34.4%) |
 | Weekly older issue cadence | 1855/1855 current (0 due, 100%) |
 | Due now by cadence | 3854 |
@@ -119,9 +119,9 @@ Latest review: Apr 28, 2026, 06:16 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 0 | 11 | 1 | 0 | 10 | 1 |
+| Last 15 minutes | 8 | 0 | 8 | 1 | 0 | 10 | 1 |
 | Last hour | 520 | 15 | 505 | 1 | 0 | 355 | 3 |
-| Last 24 hours | 2202 | 101 | 2101 | 2 | 72 | 1075 | 16 |
+| Last 24 hours | 2202 | 101 | 2101 | 2 | 72 | 1076 | 16 |
 
 ### Recently Closed
 
@@ -138,7 +138,7 @@ Latest review: Apr 28, 2026, 06:16 UTC. Latest close: Apr 28, 2026, 03:52 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#55652](https://github.com/openclaw/openclaw/pull/55652) | fix(discord): skip channels claimed by other instances | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/55652.md) | complete | Apr 28, 2026, 06:16 UTC |
+| [#72333](https://github.com/openclaw/openclaw/pull/72333) | [plugin sdk] Add host-hook examples and recipes (#72287 follow-up) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72333.md) | complete | Apr 28, 2026, 06:16 UTC |
 | [#73328](https://github.com/openclaw/openclaw/issues/73328) | amazon-bedrock discovery: contextWindow defaults to 32000 for Claude 3.x/4.x; need per-model override | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73328.md) | complete | Apr 28, 2026, 06:14 UTC |
 | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 06:14 UTC |
 | [#73323](https://github.com/openclaw/openclaw/issues/73323) | [Bug]: Gateway runtime degradation: pricing fetch 60s timeouts, Telegram polling stalls, slow RPC — chronic across 4.23/4.25/4.26 on Windows 11 + Node 24 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73323.md) | complete | Apr 28, 2026, 06:07 UTC |
