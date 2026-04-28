@@ -53,7 +53,7 @@ Last dashboard update: Apr 28, 2026, 12:04 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6973 | 6548 | 425 | 3461 | 0 | 10340 | Apr 28, 2026, 12:03 UTC | Apr 28, 2026, 12:04 UTC | 312 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6973 | 6548 | 425 | 3461 | 0 | 10340 | Apr 28, 2026, 12:03 UTC | Apr 28, 2026, 12:04 UTC | 304 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 911 | 904 | 7 | 59 | 0 | 3 | Apr 28, 2026, 11:58 UTC | Apr 28, 2026, 08:18 UTC | 0 |
 
 ### Current Runs
@@ -69,8 +69,8 @@ Latest review: Apr 28, 2026, 12:03 UTC. Latest close: Apr 28, 2026, 12:04 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 101 | 5 | 96 | 1 | 31 | 48 | 2 |
-| Last hour | 893 | 40 | 853 | 3 | 53 | 312 | 3 |
+| Last 15 minutes | 77 | 4 | 73 | 1 | 31 | 48 | 2 |
+| Last hour | 893 | 40 | 853 | 3 | 53 | 304 | 3 |
 | Last 24 hours | 3444 | 126 | 3318 | 3 | 443 | 721 | 14 |
 
 ### Recently Closed Across Repos
@@ -126,7 +126,7 @@ Updated: Apr 28, 2026, 12:04 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 9. Total fresh closes in this run: 9/20. Result records in checkpoint: 17, including durable review comment syncs.
+Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 9/20. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25051557925](https://github.com/openclaw/clawsweeper/actions/runs/25051557925)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -181,8 +181,8 @@ Latest review: Apr 28, 2026, 12:03 UTC. Latest close: Apr 28, 2026, 12:04 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 39 | 5 | 34 | 0 | 31 | 48 | 2 |
-| Last hour | 559 | 40 | 519 | 1 | 53 | 312 | 3 |
+| Last 15 minutes | 31 | 4 | 27 | 0 | 31 | 48 | 2 |
+| Last hour | 559 | 40 | 519 | 1 | 53 | 304 | 3 |
 | Last 24 hours | 2530 | 123 | 2407 | 1 | 433 | 623 | 14 |
 
 #### Recently Closed
@@ -286,7 +286,7 @@ Latest review: Apr 28, 2026, 11:58 UTC. Latest close: Apr 28, 2026, 08:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 62 | 0 | 62 | 1 | 0 | 0 | 0 |
+| Last 15 minutes | 46 | 0 | 46 | 1 | 0 | 0 | 0 |
 | Last hour | 334 | 0 | 334 | 2 | 0 | 0 | 0 |
 | Last 24 hours | 914 | 3 | 911 | 2 | 10 | 98 | 0 |
 
