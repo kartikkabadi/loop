@@ -39,11 +39,11 @@ Last dashboard update: Apr 28, 2026, 16:27 UTC
 | --- | ---: |
 | Covered repositories | 2 |
 | Open issues | 4428 |
-| Open PRs | 3446 |
-| Open items total | 7874 |
+| Open PRs | 3447 |
+| Open items total | 7875 |
 | Reviewed files | 7474 |
-| Unreviewed open items | 400 |
-| Due now by cadence | 2769 |
+| Unreviewed open items | 401 |
+| Due now by cadence | 2770 |
 | Proposed closes awaiting apply | 0 |
 | Closed by Codex apply | 10454 |
 | Failed or stale reviews | 6 |
@@ -53,24 +53,24 @@ Last dashboard update: Apr 28, 2026, 16:27 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6960 | 6567 | 393 | 2723 | 0 | 10451 | Apr 28, 2026, 16:25 UTC | Apr 28, 2026, 16:27 UTC | 486 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6961 | 6567 | 394 | 2724 | 0 | 10451 | Apr 28, 2026, 16:26 UTC | Apr 28, 2026, 16:27 UTC | 486 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 914 | 907 | 7 | 46 | 0 | 3 | Apr 28, 2026, 16:21 UTC | Apr 28, 2026, 08:18 UTC | 1 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 16:27 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25064875711) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 16:27 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25064875711) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 28, 2026, 16:22 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25064003364) |
 
 ### Fleet Activity
 
-Latest review: Apr 28, 2026, 16:25 UTC. Latest close: Apr 28, 2026, 16:27 UTC. Latest comment sync: Apr 28, 2026, 16:27 UTC.
+Latest review: Apr 28, 2026, 16:26 UTC. Latest close: Apr 28, 2026, 16:27 UTC. Latest comment sync: Apr 28, 2026, 16:27 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 224 | 6 | 218 | 1 | 8 | 20 | 0 |
-| Last hour | 1098 | 17 | 1081 | 1 | 22 | 487 | 0 |
+| Last 15 minutes | 207 | 6 | 201 | 1 | 8 | 21 | 0 |
+| Last hour | 1084 | 17 | 1067 | 1 | 22 | 487 | 0 |
 | Last 24 hours | 4564 | 227 | 4337 | 2 | 561 | 749 | 15 |
 
 ### Recently Closed Across Repos
@@ -95,6 +95,7 @@ Latest review: Apr 28, 2026, 16:25 UTC. Latest close: Apr 28, 2026, 16:27 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#34581](https://github.com/openclaw/openclaw/pull/34581) | fix(msteams): handle invalid JSON escape sequences in Bot Framework activities | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/34581.md) | complete | Apr 28, 2026, 16:26 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73190](https://github.com/openclaw/openclaw/pull/73190) | Keep Codex same-session replies on the normal OpenClaw path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73190.md) | complete | Apr 28, 2026, 16:25 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68559](https://github.com/openclaw/openclaw/pull/68559) | fix(memory-host-sdk): index only primary session transcripts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68559.md) | complete | Apr 28, 2026, 16:24 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73668](https://github.com/openclaw/openclaw/pull/73668) | feat(profile): add privacy-safe profile export and import | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73668.md) | complete | Apr 28, 2026, 16:24 UTC |
@@ -104,7 +105,6 @@ Latest review: Apr 28, 2026, 16:25 UTC. Latest close: Apr 28, 2026, 16:27 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73663](https://github.com/openclaw/openclaw/issues/73663) | Bedrock Opus 4.7 (us.anthropic.claude-opus-4-7) rejects requests with `temperature` field — causes silent run-dispatch hangs, no failover | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73663.md) | complete | Apr 28, 2026, 16:21 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1624](https://github.com/openclaw/clawhub/issues/1624) | Skill `power-oracle` flagged as suspicious - incorrectly flagged | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1624.md) | complete | Apr 28, 2026, 16:21 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#42400](https://github.com/openclaw/openclaw/pull/42400) | feat(channels): add neverReply config for group message suppression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/42400.md) | complete | Apr 28, 2026, 16:21 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73554](https://github.com/openclaw/openclaw/pull/73554) | fix(cli): reject missing plugin ids before config writes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73554.md) | complete | Apr 28, 2026, 16:20 UTC |
 
 </details>
 
@@ -124,9 +124,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 16:27 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 5. Total fresh closes in this run: 5/5. Result records in checkpoint: 10, including durable review comment syncs.
+Apply/comment-sync run finished with 5 fresh closes out of requested limit 5. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25064875711](https://github.com/openclaw/clawsweeper/actions/runs/25064875711)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -136,10 +136,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25064875711](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3552 |
-| Open PRs | 3408 |
-| Open items total | 6960 |
+| Open PRs | 3409 |
+| Open items total | 6961 |
 | Reviewed files | 6567 |
-| Unreviewed open items | 393 |
+| Unreviewed open items | 394 |
 | Archived closed files | 13617 |
 
 #### Review Outcomes
@@ -165,7 +165,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25064875711](https://
 | Daily PR cadence | 1843/2742 current (899 due, 67.2%) |
 | Daily new issue cadence (<30d) | 460/1216 current (756 due, 37.8%) |
 | Weekly older issue cadence | 1838/1839 current (1 due, 99.9%) |
-| Due now by cadence | 2723 |
+| Due now by cadence | 2724 |
 
 ### Audit Health
 
@@ -201,12 +201,12 @@ Targeted review input: `64563,65635,72522,72527,72529,72531,72532,72535,72536,72
 
 #### Latest Run Activity
 
-Latest review: Apr 28, 2026, 16:25 UTC. Latest close: Apr 28, 2026, 16:27 UTC. Latest comment sync: Apr 28, 2026, 16:27 UTC.
+Latest review: Apr 28, 2026, 16:26 UTC. Latest close: Apr 28, 2026, 16:27 UTC. Latest comment sync: Apr 28, 2026, 16:27 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 173 | 6 | 167 | 0 | 8 | 20 | 0 |
-| Last hour | 823 | 17 | 806 | 0 | 22 | 486 | 0 |
+| Last 15 minutes | 164 | 6 | 158 | 0 | 8 | 21 | 0 |
+| Last hour | 810 | 17 | 793 | 0 | 22 | 486 | 0 |
 | Last 24 hours | 3647 | 224 | 3423 | 1 | 551 | 739 | 15 |
 
 #### Recently Closed
@@ -228,6 +228,7 @@ Latest review: Apr 28, 2026, 16:25 UTC. Latest close: Apr 28, 2026, 16:27 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#34581](https://github.com/openclaw/openclaw/pull/34581) | fix(msteams): handle invalid JSON escape sequences in Bot Framework activities | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/34581.md) | complete | Apr 28, 2026, 16:26 UTC |
 | [#73190](https://github.com/openclaw/openclaw/pull/73190) | Keep Codex same-session replies on the normal OpenClaw path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73190.md) | complete | Apr 28, 2026, 16:25 UTC |
 | [#68559](https://github.com/openclaw/openclaw/pull/68559) | fix(memory-host-sdk): index only primary session transcripts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68559.md) | complete | Apr 28, 2026, 16:24 UTC |
 | [#73668](https://github.com/openclaw/openclaw/pull/73668) | feat(profile): add privacy-safe profile export and import | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73668.md) | complete | Apr 28, 2026, 16:24 UTC |
@@ -237,7 +238,6 @@ Latest review: Apr 28, 2026, 16:25 UTC. Latest close: Apr 28, 2026, 16:27 UTC. L
 | [#73663](https://github.com/openclaw/openclaw/issues/73663) | Bedrock Opus 4.7 (us.anthropic.claude-opus-4-7) rejects requests with `temperature` field — causes silent run-dispatch hangs, no failover | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73663.md) | complete | Apr 28, 2026, 16:21 UTC |
 | [#42400](https://github.com/openclaw/openclaw/pull/42400) | feat(channels): add neverReply config for group message suppression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/42400.md) | complete | Apr 28, 2026, 16:21 UTC |
 | [#73554](https://github.com/openclaw/openclaw/pull/73554) | fix(cli): reject missing plugin ids before config writes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73554.md) | complete | Apr 28, 2026, 16:20 UTC |
-| [#73102](https://github.com/openclaw/openclaw/pull/73102) | Clear Codex app-server env keys case-insensitively on Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73102.md) | complete | Apr 28, 2026, 16:19 UTC |
 
 </details>
 
@@ -334,8 +334,8 @@ Latest review: Apr 28, 2026, 16:21 UTC. Latest close: Apr 28, 2026, 08:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 51 | 0 | 51 | 1 | 0 | 0 | 0 |
-| Last hour | 275 | 0 | 275 | 1 | 0 | 1 | 0 |
+| Last 15 minutes | 43 | 0 | 43 | 1 | 0 | 0 | 0 |
+| Last hour | 274 | 0 | 274 | 1 | 0 | 1 | 0 |
 | Last 24 hours | 917 | 3 | 914 | 1 | 10 | 10 | 0 |
 
 #### Recently Closed
