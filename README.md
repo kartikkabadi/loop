@@ -38,12 +38,12 @@ Last dashboard update: Apr 28, 2026, 07:08 UTC
 <!-- clawsweeper-status:start -->
 **Workflow status**
 
-Updated: Apr 28, 2026, 07:08 UTC
+Updated: Apr 28, 2026, 07:09 UTC
 
 State: Planning review
 
-Reviewed event item #73354, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038927949](https://github.com/openclaw/clawsweeper/actions/runs/25038927949)
+Reviewed event item #70049, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038939897](https://github.com/openclaw/clawsweeper/actions/runs/25038939897)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -119,8 +119,8 @@ Latest review: Apr 28, 2026, 06:53 UTC. Latest close: Apr 28, 2026, 06:50 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 3 | 11 | 0 | 2 | 20 | 2 |
-| Last hour | 846 | 29 | 817 | 2 | 6 | 491 | 8 |
+| Last 15 minutes | 14 | 3 | 11 | 0 | 2 | 19 | 2 |
+| Last hour | 841 | 29 | 812 | 2 | 6 | 491 | 8 |
 | Last 24 hours | 2423 | 120 | 2303 | 10 | 67 | 965 | 17 |
 
 ### Recently Closed
