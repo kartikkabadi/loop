@@ -60,7 +60,7 @@ Last dashboard update: Apr 28, 2026, 22:55 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 28, 2026, 22:55 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081848282) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 28, 2026, 22:55 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081848282) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 28, 2026, 22:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25081399336) |
 
 ### Fleet Activity
@@ -70,7 +70,7 @@ Latest review: Apr 28, 2026, 22:51 UTC. Latest close: Apr 28, 2026, 22:53 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 36 | 2 | 34 | 3 | 7 | 34 | 2 |
-| Last hour | 754 | 21 | 733 | 4 | 25 | 500 | 6 |
+| Last hour | 749 | 21 | 728 | 4 | 25 | 500 | 6 |
 | Last 24 hours | 6208 | 362 | 5846 | 8 | 748 | 1331 | 24 |
 
 ### Recently Closed Across Repos
@@ -124,9 +124,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 28, 2026, 22:55 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/4. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 4. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25081848282](https://github.com/openclaw/clawsweeper/actions/runs/25081848282)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -206,7 +206,7 @@ Latest review: Apr 28, 2026, 22:51 UTC. Latest close: Apr 28, 2026, 22:53 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 36 | 2 | 34 | 3 | 7 | 34 | 2 |
-| Last hour | 714 | 21 | 693 | 4 | 24 | 460 | 6 |
+| Last hour | 709 | 21 | 688 | 4 | 24 | 460 | 6 |
 | Last 24 hours | 5287 | 359 | 4928 | 8 | 736 | 840 | 24 |
 
 #### Recently Closed
