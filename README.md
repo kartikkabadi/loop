@@ -31,7 +31,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 28, 2026, 04:57 UTC
+Last dashboard update: Apr 28, 2026, 04:58 UTC
 
 ### Current Run
 
@@ -40,9 +40,9 @@ Last dashboard update: Apr 28, 2026, 04:57 UTC
 
 Updated: Apr 28, 2026, 04:58 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 383 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25034741838](https://github.com/openclaw/clawsweeper/actions/runs/25034741838)
 <!-- clawsweeper-status:end -->
 
@@ -119,7 +119,7 @@ Latest review: Apr 28, 2026, 04:44 UTC. Latest close: unknown. Latest comment sy
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 36 | 0 | 36 | 0 | 0 | 447 | 0 |
+| Last 15 minutes | 9 | 0 | 9 | 0 | 0 | 447 | 0 |
 | Last hour | 520 | 3 | 517 | 0 | 0 | 467 | 0 |
 | Last 24 hours | 520 | 3 | 517 | 0 | 0 | 467 | 0 |
 
