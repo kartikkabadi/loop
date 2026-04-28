@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 07:01 UTC
 
 State: Event review applied
 
-Reviewed event item #73346, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038618978](https://github.com/openclaw/clawsweeper/actions/runs/25038618978)
+Reviewed event item #73349, synced durable comment(s): 1, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25038561325](https://github.com/openclaw/clawsweeper/actions/runs/25038561325)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -119,9 +119,9 @@ Latest review: Apr 28, 2026, 06:59 UTC. Latest close: Apr 28, 2026, 06:50 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 40 | 5 | 35 | 0 | 1 | 29 | 5 |
-| Last hour | 1064 | 29 | 1035 | 3 | 4 | 489 | 9 |
-| Last 24 hours | 2419 | 118 | 2301 | 10 | 65 | 964 | 17 |
+| Last 15 minutes | 37 | 5 | 32 | 0 | 1 | 29 | 4 |
+| Last hour | 1064 | 29 | 1035 | 3 | 4 | 490 | 8 |
+| Last 24 hours | 2419 | 118 | 2301 | 10 | 65 | 965 | 16 |
 
 ### Recently Closed
 
@@ -145,9 +145,7 @@ Latest review: Apr 28, 2026, 06:59 UTC. Latest close: Apr 28, 2026, 06:50 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73346](https://github.com/openclaw/openclaw/pull/73346) | fix(agents/anthropic-transport): suppress default beta headers on custom Anthropic-compatible providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73346.md) | complete | Apr 28, 2026, 06:59 UTC |
-| [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 06:57 UTC |
-| [#73321](https://github.com/openclaw/openclaw/pull/73321) | Add MCP trace-context propagation canary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73321.md) | complete | Apr 28, 2026, 06:57 UTC |
+| [#73349](https://github.com/openclaw/openclaw/pull/73349) | feat(exec): inject OPENCLAW_SESSION_KEY and OPENCLAW_AGENT_ID env vars for child processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73349.md) | complete | Apr 28, 2026, 06:59 UTC |
 | [#72384](https://github.com/openclaw/openclaw/pull/72384) | [plugin sdk] Add advanced workflow plugin contract fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72384.md) | complete | Apr 28, 2026, 06:56 UTC |
 | [#72383](https://github.com/openclaw/openclaw/pull/72383) | [plugin sdk] Add workflow action, outbound, scheduler, and retry host seams | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72383.md) | complete | Apr 28, 2026, 06:56 UTC |
 | [#69297](https://github.com/openclaw/openclaw/pull/69297) | fix(whatsapp): Add group admin privacy controls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69297.md) | complete | Apr 28, 2026, 06:54 UTC |
@@ -155,6 +153,8 @@ Latest review: Apr 28, 2026, 06:59 UTC. Latest close: Apr 28, 2026, 06:50 UTC. L
 | [#60444](https://github.com/openclaw/openclaw/pull/60444) | fix: replace structuredClone with JSON cloning in session store cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60444.md) | complete | Apr 28, 2026, 06:53 UTC |
 | [#55761](https://github.com/openclaw/openclaw/pull/55761) | fix(hooks): suppress silent shared-hook fallback while preserving error surfacing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/55761.md) | complete | Apr 28, 2026, 06:51 UTC |
 | [#73347](https://github.com/openclaw/openclaw/pull/73347) | fix(wizard): use setup token for onboarding health check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73347.md) | complete | Apr 28, 2026, 06:50 UTC |
+| [#72069](https://github.com/openclaw/openclaw/pull/72069) | fix(agents): seed claude-cli fallback prompts with prior-session context (#69973) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72069.md) | complete | Apr 28, 2026, 06:49 UTC |
+| [#72899](https://github.com/openclaw/openclaw/issues/72899) | Empty-text ContentBlock persisted to transcript permanently bricks a session (Bedrock validation error: messages.N.content.0 is blank) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72899.md) | complete | Apr 28, 2026, 06:49 UTC |
 
 </details>
 
