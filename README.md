@@ -42,21 +42,21 @@ Updated: Apr 28, 2026, 06:40 UTC
 
 State: Review comments checked
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 343. Item numbers: 3,15,17,18,23,26,32,33,48,49,51,52,60,62,65,72,77,79,84,86,88,95,96,97,99,100,102,115,117,120,125,127,128,129,131,134,137,151,156,162,169,170,171,173,174,178,184,192,205,208,211,224,225,226,227,228,231,234,236,237,238,243,248,256,265,268,275,277,279,284,287,288,290,314,321,323,328,329,330,337,340,345,348,349,351,353,364,367,369,371,373,374,378,379,380,382,385,386,387,388,390,392,393,397,402,406,410,420,423,424,425,426,437,438,442,443,447,448,449,450,451,454,455,459,463,469,471,474,478,479,480,481,482,484,485,487,488,489,494,495,498,501,503,504,509,516,528,531,532,535,539,541,549,553,563,566,567,568,573,574,575,576,579,580,581,586,589,593,600,604,606,609,613,614,615,618,619,621,625,630,631,635,636,637,642,645,646,647,650,651,652,653,654,655,656,657,658,661,662,664,666,667,668,669,670,672,673,674,675,676,677,678,679,680,681,683,686,692,694,699,700,701,702,705,706,707,708,711,712,713,716,717,718,722,723,729,730,731,733,734,740,745,747,752,758,760,761,762,770,779,784,785,791,792,800,807,808,819,822,824,834,835,845,846,848,849,850,853,854,856,860,861,863,867,869,871,873,876,879,880,881,882,883,888,889,892,895,897,899,903,904,908,909,912,914,915,963,1040,1045,1110,1125,1132,1133,1230,1233,1256,1287,1292,1368,1370,1371,1374,1376,1377,1378,1379,1381,1382,1383,1384,1385,1387,1389,1391,1392,1393,1394,1395,1396,1397,1398,1400,1401,1402,1403,1404,1405,1406,1407,1408,1409,1410,1411,1412,1413,1414,1415,1416,1417,1418,1420,1421,1422,1423,1424,1425,1426,1427,1428,1430,1431,1432,1433,1434,1435,1437,1440,1442,1443,1444,1445,1446,1447,1448,1450,1451,1452,1457,1462,1463,1465,1471,1472,1473,1476,1477,1480,1483,1494,1495,1500,1501,1503,1509,1511,1514,1515,1516,1517,1518,1519,1520,1521,1522,1523,1524,1525,1526,1528,1529,1530,1533,1534,1535,1538,1539,1540,1541,1542,1543,1551,1552,1553,1554,1557,1558,1559,1563,1565,1568,1569,1571,1572,1574,1575,1576,1577,1578,1580,1581,1582,1583,1584,1585,1586,1587,1588,1589,1591,1592,1594,1595,1614,1617,1620,1621,1624,1631,1632,1639,1649,1653,1654,1657,1658,1659,1662,1666,1667,1668,1669,1670,1671,1672,1673,1674,1675,1676,1677,1678,1679,1680,1681,1682,1683,1684,1685,1689,1690,1691,1692,1694,1695,1702,1703,1705,1706,1707,1710,1711.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037237761](https://github.com/openclaw/clawsweeper/actions/runs/25037237761)
+Reviewed event item #73342, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037829129](https://github.com/openclaw/clawsweeper/actions/runs/25037829129)
 <!-- clawsweeper-status:end -->
 
 ### Queue
 
 | Metric | Count |
 | --- | ---: |
-| Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues in [openclaw/clawhub](https://github.com/openclaw/clawhub) | 875 |
-| Open PRs in [openclaw/clawhub](https://github.com/openclaw/clawhub) | 30 |
-| Open items total | 905 |
-| Reviewed files | 897 |
-| Unreviewed open items | 8 |
-| Archived closed files | 6 |
+| Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
+| Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3578 |
+| Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3461 |
+| Open items total | 7039 |
+| Reviewed files | 6573 |
+| Unreviewed open items | 466 |
+| Archived closed files | 13287 |
 
 ### Review Outcomes
 
@@ -75,13 +75,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25037237761](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 1/45 current (44 due, 2.2%) |
-| Hourly hot item cadence (<7d) | 1/45 current (44 due, 2.2%) |
-| Daily cadence coverage | 229/229 current (0 due, 100%) |
-| Daily PR cadence | 21/21 current (0 due, 100%) |
-| Daily new issue cadence (<30d) | 208/208 current (0 due, 100%) |
-| Weekly older issue cadence | 623/623 current (0 due, 100%) |
-| Due now by cadence | 52 |
+| Hourly cadence coverage | 64/614 current (550 due, 10.4%) |
+| Hourly hot item cadence (<7d) | 64/614 current (550 due, 10.4%) |
+| Daily cadence coverage | 1312/4103 current (2791 due, 32%) |
+| Daily PR cadence | 879/2838 current (1959 due, 31%) |
+| Daily new issue cadence (<30d) | 433/1265 current (832 due, 34.2%) |
+| Weekly older issue cadence | 1856/1856 current (0 due, 100%) |
+| Due now by cadence | 3807 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,56915,61960,62112,62431,64150,71072`
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 06:27 UTC. Latest close: Apr 28, 2026, 05:18 UTC. Latest comment sync: Apr 28, 2026, 06:40 UTC.
+Latest review: Apr 28, 2026, 06:38 UTC. Latest close: Apr 28, 2026, 06:22 UTC. Latest comment sync: Apr 28, 2026, 06:32 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 45 | 0 | 45 | 0 | 0 | 343 | 0 |
-| Last hour | 501 | 0 | 501 | 0 | 0 | 344 | 0 |
-| Last 24 hours | 903 | 3 | 900 | 0 | 3 | 694 | 0 |
+| Last 15 minutes | 12 | 1 | 11 | 0 | 0 | 238 | 1 |
+| Last hour | 701 | 16 | 685 | 1 | 2 | 802 | 5 |
+| Last 24 hours | 2209 | 102 | 2107 | 6 | 74 | 1029 | 12 |
 
 ### Recently Closed
 
@@ -145,7 +145,7 @@ Latest review: Apr 28, 2026, 06:27 UTC. Latest close: Apr 28, 2026, 05:18 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73340](https://github.com/openclaw/openclaw/pull/73340) | Test tokenjuice tool result middleware adapter | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73340.md) | complete | Apr 28, 2026, 06:38 UTC |
+| [#73342](https://github.com/openclaw/openclaw/pull/73342) | refactor(memory-host): replace core runtime bridge with services | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73342.md) | complete | Apr 28, 2026, 06:38 UTC |
 | [#72936](https://github.com/openclaw/openclaw/pull/72936) | Wire diagnostics through the core chat command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72936.md) | complete | Apr 28, 2026, 06:31 UTC |
 | [#72987](https://github.com/openclaw/openclaw/pull/72987) | docs(compaction): document reserveTokensFloor default (20,000 tokens) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72987.md) | complete | Apr 28, 2026, 06:30 UTC |
 | [#73337](https://github.com/openclaw/openclaw/issues/73337) | [Bug] macOS Companion App: Canvas A2UI push returns ok but renders completely blank (regression of #7143) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73337.md) | complete | Apr 28, 2026, 06:29 UTC |
