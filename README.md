@@ -42,8 +42,8 @@ Updated: Apr 28, 2026, 07:13 UTC
 
 State: Apply finished
 
-Apply/comment-sync run finished with 17 fresh closes out of requested limit 18. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039048295](https://github.com/openclaw/clawsweeper/actions/runs/25039048295)
+Reviewed event item #73356, synced durable comment(s): 0, closed safe proposal(s): 0. Close reasons enabled: implemented_on_main,duplicate_or_superseded.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039022070](https://github.com/openclaw/clawsweeper/actions/runs/25039022070)
 <!-- clawsweeper-status:end -->
 
 ### Queue
@@ -54,34 +54,34 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25039048295](https://
 | Open issues in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3558 |
 | Open PRs in [openclaw/openclaw](https://github.com/openclaw/openclaw) | 3455 |
 | Open items total | 7013 |
-| Reviewed files | 6552 |
-| Unreviewed open items | 461 |
-| Archived closed files | 13339 |
+| Reviewed files | 6563 |
+| Unreviewed open items | 450 |
+| Archived closed files | 13328 |
 
 ### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3354 |
+| Fresh reviewed issues in the last 7 days | 3357 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3176 |
-| Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6530 |
-| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Closed by Codex apply | 10274 |
-| Failed or stale reviews | 22 |
+| Fresh reviewed PRs in the last 7 days | 3178 |
+| Proposed PR closes | 1 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6535 |
+| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
+| Closed by Codex apply | 10257 |
+| Failed or stale reviews | 28 |
 
 ### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 76/630 current (554 due, 12.1%) |
-| Hourly hot item cadence (<7d) | 76/630 current (554 due, 12.1%) |
-| Daily cadence coverage | 1474/4079 current (2605 due, 36.1%) |
-| Daily PR cadence | 1055/2822 current (1767 due, 37.4%) |
-| Daily new issue cadence (<30d) | 419/1257 current (838 due, 33.3%) |
-| Weekly older issue cadence | 1839/1843 current (4 due, 99.8%) |
-| Due now by cadence | 3624 |
+| Hourly cadence coverage | 76/633 current (557 due, 12%) |
+| Hourly hot item cadence (<7d) | 76/633 current (557 due, 12%) |
+| Daily cadence coverage | 1474/4086 current (2612 due, 36.1%) |
+| Daily PR cadence | 1055/2826 current (1771 due, 37.3%) |
+| Daily new issue cadence (<30d) | 419/1260 current (841 due, 33.3%) |
+| Weekly older issue cadence | 1840/1844 current (4 due, 99.8%) |
+| Due now by cadence | 3623 |
 
 ### Audit Health
 
@@ -115,13 +115,13 @@ Targeted review input: `64563,65635,72522,72527,72531,72532,72534,72535,72536,72
 
 ### Latest Run Activity
 
-Latest review: Apr 28, 2026, 07:10 UTC. Latest close: Apr 28, 2026, 07:13 UTC. Latest comment sync: Apr 28, 2026, 07:12 UTC.
+Latest review: Apr 28, 2026, 07:11 UTC. Latest close: Apr 28, 2026, 07:06 UTC. Latest comment sync: Apr 28, 2026, 07:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 12 | 2 | 10 | 0 | 19 | 292 | 5 |
-| Last hour | 588 | 27 | 561 | 2 | 23 | 846 | 13 |
-| Last 24 hours | 2425 | 120 | 2305 | 10 | 83 | 1319 | 21 |
+| Last 15 minutes | 11 | 3 | 8 | 0 | 2 | 277 | 4 |
+| Last hour | 582 | 28 | 554 | 3 | 6 | 835 | 12 |
+| Last 24 hours | 2425 | 121 | 2304 | 13 | 66 | 1308 | 20 |
 
 ### Recently Closed
 
@@ -145,8 +145,7 @@ Latest review: Apr 28, 2026, 07:10 UTC. Latest close: Apr 28, 2026, 07:13 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#73357](https://github.com/openclaw/openclaw/pull/73357) | fix: handle ENOSPC file watcher errors gracefully | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73357.md) | complete | Apr 28, 2026, 07:10 UTC |
-| [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 07:10 UTC |
+| [#73356](https://github.com/openclaw/openclaw/pull/73356) | fix(cli): surface respawn child exit signal/code so launcher no longer hangs silently | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73356.md) | complete | Apr 28, 2026, 07:11 UTC |
 | [#73355](https://github.com/openclaw/openclaw/pull/73355) | fix(cron): add .catch() re-arm and watchdog to prevent runtime timer chain death | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73355.md) | complete | Apr 28, 2026, 07:09 UTC |
 | [#73347](https://github.com/openclaw/openclaw/pull/73347) | fix(wizard): use setup token for onboarding health check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73347.md) | complete | Apr 28, 2026, 07:09 UTC |
 | [#73346](https://github.com/openclaw/openclaw/pull/73346) | fix(agents/anthropic-transport): suppress default beta headers on custom Anthropic-compatible providers | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73346.md) | complete | Apr 28, 2026, 07:09 UTC |
@@ -155,6 +154,7 @@ Latest review: Apr 28, 2026, 07:10 UTC. Latest close: Apr 28, 2026, 07:13 UTC. L
 | [#73351](https://github.com/openclaw/openclaw/pull/73351) | fix(cli-runner): transfer bundle-MCP cleanup to live session lifecycle (#73244) | [keep_open / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73351.md) | complete | Apr 28, 2026, 06:59 UTC |
 | [#73349](https://github.com/openclaw/openclaw/pull/73349) | feat(exec): inject OPENCLAW_SESSION_KEY and OPENCLAW_AGENT_ID env vars for child processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73349.md) | complete | Apr 28, 2026, 06:59 UTC |
 | [#10356](https://github.com/openclaw/openclaw/pull/10356) | TTS: add Typecast provider (emotion presets, audio tuning, Asian language voices) | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/10356.md) | complete | Apr 28, 2026, 06:58 UTC |
+| [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 28, 2026, 06:57 UTC |
 
 </details>
 

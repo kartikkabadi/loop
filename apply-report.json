@@ -1,21 +1,6 @@
 [
   {
-    "number": 41985,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 45751,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 46406,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 46472,
+    "number": 73356,
     "action": "skipped_changed_since_review",
     "reason": "updated_at changed"
   },
