@@ -314,6 +314,7 @@ jobs:
       - name: Create target checks token
         id: target-checks-token
         if: ${{ needs.plan.outputs.create_checks == 'true' }}
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -323,7 +324,7 @@ jobs:
           permission-checks: write
 
       - name: Publish commit check
-        if: ${{ needs.plan.outputs.create_checks == 'true' }}
+        if: ${{ needs.plan.outputs.create_checks == 'true' && steps.target-checks-token.outputs.token != '' }}
         working-directory: clawsweeper
         env:
           GH_TOKEN: ${{ steps.target-checks-token.outputs.token }}
@@ -386,17 +387,6 @@ jobs:
           name: skipped-commit-reports
           path: commit-artifacts
 
-      - name: Create target checks token
-        id: target-checks-token
-        if: ${{ needs.plan.outputs.create_checks == 'true' }}
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ needs.plan.outputs.target_repo_owner }}
-          repositories: ${{ needs.plan.outputs.target_repo_name }}
-          permission-checks: write
-
       - name: Commit reports
         run: |
           set -euo pipefail
@@ -419,8 +409,20 @@ jobs:
             git push
           fi
 
-      - name: Publish commit checks
+      - name: Create target checks token
+        id: target-checks-token
         if: ${{ needs.plan.outputs.create_checks == 'true' }}
+        continue-on-error: true
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ needs.plan.outputs.target_repo_owner }}
+          repositories: ${{ needs.plan.outputs.target_repo_name }}
+          permission-checks: write
+
+      - name: Publish commit checks
+        if: ${{ needs.plan.outputs.create_checks == 'true' && steps.target-checks-token.outputs.token != '' }}
         env:
           GH_TOKEN: ${{ steps.target-checks-token.outputs.token }}
         run: |
