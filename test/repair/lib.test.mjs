@@ -7,6 +7,7 @@ import {
   parseArgs,
   renderPrompt,
 } from "../../dist/repair/lib.js";
+import { normalizeRetiredTerms } from "../../dist/repair/retired-terms.js";
 
 test("parseArgs ignores package-manager double dash separators", () => {
   assert.deepEqual(parseArgs(["--", "jobs/openclaw/inbox/example.md"]), {
@@ -34,6 +35,16 @@ test("renderPrompt loads tracked repair prompt templates", () => {
   );
   assert.match(prompt, /## Job file/);
   assert.match(prompt, /Repair smoke\./);
+});
+
+test("normalizeRetiredTerms rewrites old repair env names", () => {
+  const oldPrefix = "CLAWSWEEPER" + "_REPAIR_";
+  assert.equal(
+    normalizeRetiredTerms(
+      `merge requires ${oldPrefix}ALLOW_MERGE=1; set ${oldPrefix}ALLOW_BROAD_FIX_ARTIFACTS=1`,
+    ),
+    "merge requires CLAWSWEEPER_ALLOW_MERGE=1; set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1",
+  );
 });
 
 test("security signal detection ignores non-security advisory wording", () => {

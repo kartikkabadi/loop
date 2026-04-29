@@ -17,6 +17,7 @@ import {
   readSiblingJson,
 } from "./publish-files.js";
 import { formatTimestamp, tableCell } from "./publish-markdown.js";
+import { normalizeRetiredTerms } from "./retired-terms.js";
 import {
   buildInspectionRows,
   renderBlockedReasonRows,
@@ -399,14 +400,16 @@ ${DASHBOARD_END}`;
 function writeAggregateApplyReport() {
   const records = readRunRecords(root);
   const rows = records.flatMap((record: JsonValue) =>
-    (record.apply_actions ?? []).filter(isApplicatorAction).map((action: JsonValue) => ({
-      repo: record.repo,
-      run_id: record.run_id,
-      run_url: record.run_url,
-      cluster_id: record.cluster_id,
-      published_at: record.published_at,
-      ...action,
-    })),
+    (record.apply_actions ?? []).filter(isApplicatorAction).map((action: JsonValue) =>
+      normalizeReportRow({
+        repo: record.repo,
+        run_id: record.run_id,
+        run_url: record.run_url,
+        cluster_id: record.cluster_id,
+        published_at: record.published_at,
+        ...action,
+      }),
+    ),
   );
   fs.writeFileSync(
     path.join(root, "repair-apply-report.json"),
@@ -423,7 +426,7 @@ function summarizeActions(actions: LooseRecord[]) {
     classification: action.classification ?? null,
     canonical: action.canonical ?? action.duplicate_of ?? null,
     candidate_fix: action.candidate_fix ?? null,
-    reason: action.reason ?? null,
+    reason: normalizeNullableText(action.reason),
   }));
 }
 
@@ -437,7 +440,7 @@ function sanitizeApplyAction(action: LooseRecord) {
     candidate_fix: action.candidate_fix ?? null,
     title: action.title ?? action.target_title ?? action.pr_title ?? null,
     idempotency_key: action.idempotency_key ?? null,
-    reason: action.reason ?? null,
+    reason: normalizeNullableText(action.reason),
     merged_at: action.merged_at ?? null,
     merge_commit_sha: action.merge_commit_sha ?? null,
     live_state: action.live_state ?? null,
@@ -455,7 +458,7 @@ function sanitizeFixAction(action: LooseRecord) {
     source_action: action.source_action ?? null,
     source_status: action.source_status ?? null,
     repair_strategy: action.repair_strategy ?? null,
-    reason: action.reason ?? null,
+    reason: normalizeNullableText(action.reason),
     title: action.title ?? null,
     url: action.url ?? action.pr_url ?? null,
   };
@@ -482,7 +485,7 @@ function postFlightToApplyAction(action: LooseRecord) {
       canonical: action.canonical ?? null,
       candidate_fix: action.candidate_fix ?? null,
       title: action.title ?? null,
-      reason: action.reason ?? null,
+      reason: normalizeNullableText(action.reason),
       merged_at: null,
       merge_commit_sha: action.merge_commit_sha ?? null,
       live_state: action.live_state ?? null,
@@ -495,12 +498,25 @@ function postFlightToApplyAction(action: LooseRecord) {
     status: action.status,
     classification: "fix_pr",
     title: action.title ?? null,
-    reason: action.reason ?? null,
+    reason: normalizeNullableText(action.reason),
     merged_at: action.merged_at ?? null,
     merge_commit_sha: action.merge_commit_sha ?? null,
     live_state: action.status === "executed" ? "merged" : null,
     live_updated_at: null,
   };
+}
+
+function normalizeNullableText(value: JsonValue) {
+  if (typeof value !== "string") return value ?? null;
+  return normalizeRetiredTerms(value);
+}
+
+function normalizeReportRow(row: LooseRecord): LooseRecord {
+  const normalized: LooseRecord = {};
+  for (const [key, value] of Object.entries(row)) {
+    normalized[key] = typeof value === "string" ? normalizeRetiredTerms(value) : value;
+  }
+  return normalized;
 }
 
 function sortNewestRecordFirst(left: JsonValue, right: JsonValue) {

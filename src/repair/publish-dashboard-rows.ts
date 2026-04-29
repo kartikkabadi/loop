@@ -6,6 +6,7 @@ import {
   tableCell,
   truncate,
 } from "./publish-markdown.js";
+import { normalizeRetiredTerms } from "./retired-terms.js";
 
 type InspectionInput = {
   latestByCluster: LooseRecord[];
@@ -184,10 +185,5 @@ function inspectionRank(state: string): number {
 }
 
 function compactReason(value: unknown): string {
-  return truncate(
-    String(value ?? "")
-      .replace(/\s+/g, " ")
-      .trim(),
-    160,
-  );
+  return truncate(normalizeRetiredTerms(value).replace(/\s+/g, " ").trim(), 160);
 }
