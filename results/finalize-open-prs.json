@@ -2,18 +2,18 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-29T19:09:46.757Z",
-  "count": 22,
+  "generated_at": "2026-04-29T19:12:52.987Z",
+  "count": 23,
   "summary": {
-    "open_prs": 22,
+    "open_prs": 23,
     "ready_candidates": 0,
     "security_hold": 0,
     "needs_rebase": 3,
     "mergeability_unknown": 0,
-    "needs_checks": 22,
+    "needs_checks": 23,
     "needs_review": 0,
-    "needs_merge_preflight": 22,
-    "needs_result_backfill": 18
+    "needs_merge_preflight": 23,
+    "needs_result_backfill": 15
   },
   "dispatch": {
     "enabled": false,
@@ -27,34 +27,33 @@
   },
   "prs": [
     {
-      "number": 74564,
-      "title": "fix: use agent auth scope in /models provider data",
-      "url": "https://github.com/openclaw/openclaw/pull/74564",
-      "branch": "clawsweeper/automerge-openclaw-openclaw-74525",
-      "head_sha": "ae050e64de94c93b68d7de58ff10315012d9b11a",
-      "cluster_id": "automerge-openclaw-openclaw-74525",
-      "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74525.md",
-      "updated_at": "2026-04-29T19:07:42Z",
+      "number": 74565,
+      "title": "fix: Found one concrete regression in the remote URL path: malformed `",
+      "url": "https://github.com/openclaw/openclaw/pull/74565",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-dabf76b3defd",
+      "head_sha": "79b645f47e32bded05f3cadc6fe95258d4ffbdb3",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-dabf76b3defd",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-dabf76b3defd.md",
+      "updated_at": "2026-04-29T19:08:37Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 13,
+        "total": 83,
         "counts": {
-          "CANCELLED": 1,
-          "QUEUED": 4,
-          "IN_PROGRESS": 6,
-          "SKIPPED": 2
+          "CANCELLED": 3,
+          "SKIPPED": 14,
+          "SUCCESS": 61,
+          "IN_PROGRESS": 2,
+          "FAILURE": 3
         },
         "blockers": [
-          "ClawSweeper Dispatch / dispatch:QUEUED",
-          "Workflow Sanity / no-tabs:QUEUED",
-          "CI / preflight:IN_PROGRESS",
-          "OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
-          "CI / security-scm-fast:QUEUED",
-          "Workflow Sanity / actionlint:IN_PROGRESS",
-          "CI / security-dependency-audit:QUEUED"
+          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
+          "CI / check-lint:FAILURE",
+          "CI / checks-node-channels:FAILURE",
+          "CI / checks-node-core-support-boundary:IN_PROGRESS",
+          "CI / check:FAILURE"
         ]
       },
       "review_threads": {
@@ -67,12 +66,100 @@
         "count": 0,
         "latest": []
       },
-      "latest_record": null,
+      "latest_record": {
+        "run_id": "25127795681",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25127795681",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-dabf76b3defd",
+        "published_at": "2026-04-29T19:08:19.509Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74565",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:ClawSweeper Dispatch / dispatch:QUEUED; Workflow Sanity / no-tabs:QUEUED; CI / preflight:IN_PROGRESS",
-        "needs_merge_preflight",
-        "needs_result_backfill"
+        "needs_checks:CI / checks-node-auto-reply-reply-session:IN_PROGRESS; CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74564,
+      "title": "fix: use agent auth scope in /models provider data",
+      "url": "https://github.com/openclaw/openclaw/pull/74564",
+      "branch": "clawsweeper/automerge-openclaw-openclaw-74525",
+      "head_sha": "ae050e64de94c93b68d7de58ff10315012d9b11a",
+      "cluster_id": "automerge-openclaw-openclaw-74525",
+      "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74525.md",
+      "updated_at": "2026-04-29T19:07:53Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 79,
+        "counts": {
+          "CANCELLED": 2,
+          "SKIPPED": 9,
+          "SUCCESS": 63,
+          "FAILURE": 5
+        },
+        "blockers": [
+          "CI / check-lint:FAILURE",
+          "CI / checks-node-channels:FAILURE",
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / check:FAILURE",
+          "CI / checks-node-core:FAILURE"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 0,
+        "latest": []
+      },
+      "latest_record": {
+        "run_id": "25127265443",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25127265443",
+        "cluster_id": "automerge-openclaw-openclaw-74525",
+        "published_at": "2026-04-29T19:10:40.486Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74564",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-boundary:FAILURE",
+        "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
     },
@@ -84,27 +171,25 @@
       "head_sha": "b1deca6b9cb76bab20d569086790e3ad685ab327",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-89f871679e8d",
       "job_path": null,
-      "updated_at": "2026-04-29T19:07:40Z",
+      "updated_at": "2026-04-29T19:07:56Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 15,
+        "total": 81,
         "counts": {
-          "CANCELLED": 2,
-          "QUEUED": 1,
-          "IN_PROGRESS": 8,
-          "SKIPPED": 3,
-          "SUCCESS": 1
+          "CANCELLED": 3,
+          "SKIPPED": 11,
+          "SUCCESS": 62,
+          "FAILURE": 5
         },
         "blockers": [
-          "CI / preflight:IN_PROGRESS",
-          "OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
-          "Workflow Sanity / no-tabs:IN_PROGRESS",
-          "CI / security-scm-fast:IN_PROGRESS",
-          "Workflow Sanity / actionlint:IN_PROGRESS",
-          "CI / security-dependency-audit:IN_PROGRESS"
+          "CI / check-lint:FAILURE",
+          "CI / checks-node-channels:FAILURE",
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / check:FAILURE",
+          "CI / checks-node-core:FAILURE"
         ]
       },
       "review_threads": {
@@ -120,7 +205,7 @@
       "latest_record": null,
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / preflight:IN_PROGRESS; OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS; Workflow Sanity / no-tabs:IN_PROGRESS",
+        "needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-boundary:FAILURE",
         "needs_merge_preflight",
         "needs_result_backfill"
       ],
@@ -133,74 +218,26 @@
       "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-57e4994caf6d",
       "head_sha": "6724998efe4144fbb9e49020076c43e8262fdcbe",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-57e4994caf6d",
-      "job_path": null,
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-57e4994caf6d.md",
       "updated_at": "2026-04-29T19:07:39Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 72,
+        "total": 81,
         "counts": {
           "CANCELLED": 2,
-          "IN_PROGRESS": 17,
           "SKIPPED": 11,
-          "SUCCESS": 6,
-          "QUEUED": 36
+          "SUCCESS": 63,
+          "FAILURE": 5
         },
         "blockers": [
-          "Blacksmith Build Artifacts Testbox / build-artifacts:IN_PROGRESS",
-          "Blacksmith Testbox / check:IN_PROGRESS",
-          "OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
-          "CI / security-scm-fast:IN_PROGRESS",
-          "Workflow Sanity / actionlint:IN_PROGRESS",
-          "CI / build-artifacts:IN_PROGRESS",
-          "CI / checks-fast-bundled:QUEUED",
-          "CI / checks-fast-contracts-plugins-a:QUEUED",
-          "CI / checks-fast-contracts-plugins-b:QUEUED",
-          "CI / checks-fast-contracts-plugins-c:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-d:QUEUED",
-          "CI / checks-fast-contracts-channels-a:QUEUED",
-          "CI / checks-fast-contracts-channels-b:QUEUED",
-          "CI / checks-fast-contracts-channels-c:QUEUED",
-          "CI / checks-fast-protocol:QUEUED",
-          "CI / checks-node-core-fast-support:QUEUED",
-          "CI / checks-node-core-src-security:QUEUED",
-          "CI / checks-node-core-ui:QUEUED",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:QUEUED",
-          "CI / checks-node-core-runtime-shared:QUEUED",
-          "CI / checks-node-agentic-control-plane:QUEUED",
-          "CI / checks-node-agentic-cli:QUEUED",
-          "CI / checks-node-agentic-command-support:QUEUED",
-          "CI / checks-node-agentic-commands-agent-channel:QUEUED",
-          "CI / checks-node-agentic-commands-doctor:QUEUED",
-          "CI / checks-node-agentic-commands-doctor-shared:QUEUED",
-          "CI / checks-node-agentic-commands-models:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-onboard-config:QUEUED",
-          "CI / checks-node-agentic-commands-status-tools:QUEUED",
-          "CI / checks-node-agentic-agents:QUEUED",
-          "CI / checks-node-agentic-gateway-core:IN_PROGRESS",
-          "CI / checks-node-agentic-gateway-methods:QUEUED",
-          "CI / checks-node-agentic-plugin-sdk:QUEUED",
-          "CI / checks-node-auto-reply-core-top-level:QUEUED",
-          "CI / checks-node-auto-reply-reply-agent-runner:QUEUED",
-          "CI / checks-node-auto-reply-reply-commands:QUEUED",
-          "CI / checks-node-auto-reply-reply-dispatch:QUEUED",
-          "CI / checks-node-auto-reply-reply-session:QUEUED",
-          "CI / checks-node-auto-reply-reply-state-routing:QUEUED",
-          "CI / check-preflight-guards:QUEUED",
-          "CI / check-prod-types:IN_PROGRESS",
-          "CI / check-lint:IN_PROGRESS",
-          "CI / check-dependencies:IN_PROGRESS",
-          "CI / check-policy-guards:IN_PROGRESS",
-          "CI / check-test-types:IN_PROGRESS",
-          "CI / check-strict-smoke:QUEUED",
-          "CI / check-additional-boundaries:QUEUED",
-          "CI / check-additional-extension-channels:QUEUED",
-          "CI / check-additional-extension-bundled:QUEUED",
-          "CI / check-additional-extension-package-boundary:QUEUED",
-          "CI / check-additional-runtime-topology-architecture:IN_PROGRESS"
+          "CI / check-lint:FAILURE",
+          "CI / checks-node-channels:FAILURE",
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / check:FAILURE",
+          "CI / checks-node-core:FAILURE"
         ]
       },
       "review_threads": {
@@ -213,12 +250,32 @@
         "count": 0,
         "latest": []
       },
-      "latest_record": null,
+      "latest_record": {
+        "run_id": "25128232401",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25128232401",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-57e4994caf6d",
+        "published_at": "2026-04-29T19:07:32.476Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74562",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:Blacksmith Build Artifacts Testbox / build-artifacts:IN_PROGRESS; Blacksmith Testbox / check:IN_PROGRESS; OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
-        "needs_merge_preflight",
-        "needs_result_backfill"
+        "needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-boundary:FAILURE",
+        "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
     },
@@ -230,69 +287,25 @@
       "head_sha": "5083adda5bfea67157445cd27d1d8d8c72978840",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-e69da9d5781c",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-e69da9d5781c.md",
-      "updated_at": "2026-04-29T19:07:12Z",
+      "updated_at": "2026-04-29T19:10:57Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 73,
+        "total": 82,
         "counts": {
           "CANCELLED": 3,
-          "IN_PROGRESS": 47,
-          "SKIPPED": 11,
-          "SUCCESS": 11,
-          "QUEUED": 1
+          "SKIPPED": 12,
+          "SUCCESS": 62,
+          "FAILURE": 5
         },
         "blockers": [
-          "OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
-          "CI / build-artifacts:IN_PROGRESS",
-          "CI / checks-fast-bundled:QUEUED",
-          "CI / checks-fast-contracts-plugins-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-b:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-c:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-d:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-b:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-c:IN_PROGRESS",
-          "CI / checks-fast-protocol:IN_PROGRESS",
-          "CI / checks-node-core-fast-support:IN_PROGRESS",
-          "CI / checks-node-core-src-security:IN_PROGRESS",
-          "CI / checks-node-core-ui:IN_PROGRESS",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
-          "CI / checks-node-core-runtime-shared:IN_PROGRESS",
-          "CI / checks-node-agentic-control-plane:IN_PROGRESS",
-          "CI / checks-node-agentic-cli:IN_PROGRESS",
-          "CI / checks-node-agentic-command-support:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-agent-channel:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-doctor:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-doctor-shared:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-models:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-onboard-config:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-status-tools:IN_PROGRESS",
-          "CI / checks-node-agentic-agents:IN_PROGRESS",
-          "CI / checks-node-agentic-gateway-core:IN_PROGRESS",
-          "CI / checks-node-agentic-gateway-methods:IN_PROGRESS",
-          "CI / checks-node-agentic-plugin-sdk:IN_PROGRESS",
-          "CI / checks-node-auto-reply-core-top-level:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-agent-runner:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-commands:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-state-routing:IN_PROGRESS",
-          "CI / check-preflight-guards:IN_PROGRESS",
-          "CI / check-prod-types:IN_PROGRESS",
-          "CI / check-lint:IN_PROGRESS",
-          "CI / check-dependencies:IN_PROGRESS",
-          "CI / check-policy-guards:IN_PROGRESS",
-          "CI / check-test-types:IN_PROGRESS",
-          "CI / check-strict-smoke:IN_PROGRESS",
-          "CI / check-additional-boundaries:IN_PROGRESS",
-          "CI / check-additional-extension-channels:IN_PROGRESS",
-          "CI / check-additional-extension-bundled:IN_PROGRESS",
-          "CI / check-additional-extension-package-boundary:IN_PROGRESS",
-          "CI / check-additional-runtime-topology-architecture:IN_PROGRESS"
+          "CI / check-lint:FAILURE",
+          "CI / checks-node-channels:FAILURE",
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / check:FAILURE",
+          "CI / checks-node-core:FAILURE"
         ]
       },
       "review_threads": {
@@ -302,8 +315,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74561#issuecomment-4346768387",
+            "submitted_at": "2026-04-29T19:10:57Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25128116958",
@@ -329,7 +349,7 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS; CI / checks-fast-bundled:QUEUED",
+        "needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-boundary:FAILURE",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
@@ -342,40 +362,25 @@
       "head_sha": "199787b654a8d061103fc97b6c7f47361b03ee1b",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-d001c3436bbf",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-d001c3436bbf.md",
-      "updated_at": "2026-04-29T19:06:36Z",
+      "updated_at": "2026-04-29T19:10:39Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 72,
+        "total": 80,
         "counts": {
           "CANCELLED": 3,
-          "IN_PROGRESS": 18,
           "SKIPPED": 10,
-          "SUCCESS": 40,
-          "FAILURE": 1
+          "SUCCESS": 62,
+          "FAILURE": 5
         },
         "blockers": [
-          "OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
-          "CI / build-artifacts:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-b:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-c:IN_PROGRESS",
-          "CI / checks-node-core-fast-support:IN_PROGRESS",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
-          "CI / checks-node-core-runtime-shared:IN_PROGRESS",
-          "CI / checks-node-agentic-control-plane:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-status-tools:IN_PROGRESS",
-          "CI / checks-node-agentic-gateway-core:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
           "CI / check-lint:FAILURE",
-          "CI / check-test-types:IN_PROGRESS",
-          "CI / check-additional-extension-bundled:IN_PROGRESS",
-          "CI / check-additional-extension-package-boundary:IN_PROGRESS"
+          "CI / checks-node-channels:FAILURE",
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / check:FAILURE",
+          "CI / checks-node-core:FAILURE"
         ]
       },
       "review_threads": {
@@ -385,8 +390,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74560#issuecomment-4346766453",
+            "submitted_at": "2026-04-29T19:10:38Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25128115424",
@@ -412,7 +424,7 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS; CI / checks-fast-contracts-plugins-a:IN_PROGRESS",
+        "needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-boundary:FAILURE",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
@@ -759,12 +771,26 @@
           }
         ]
       },
-      "latest_record": null,
+      "latest_record": {
+        "run_id": "25127265443",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25127265443",
+        "cluster_id": "automerge-openclaw-openclaw-74525",
+        "published_at": "2026-04-29T19:10:40.486Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74525",
+          "action": "fix_needed",
+          "status": "planned",
+          "classification": "canonical",
+          "canonical": "#74525",
+          "candidate_fix": null,
+          "reason": "Canonical PR is useful but not merge-ready, and the branch cannot be safely repaired in place because `maintainer_can_modify` is false."
+        }
+      },
       "blockers": [
         "needs_merge_state:UNSTABLE",
         "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI / checks-node-channels:FAILURE",
-        "needs_merge_preflight",
-        "needs_result_backfill"
+        "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
     },
@@ -837,53 +863,19 @@
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 68,
+        "total": 76,
         "counts": {
-          "FAILURE": 1,
-          "SUCCESS": 21,
-          "SKIPPED": 8,
-          "IN_PROGRESS": 38
+          "FAILURE": 6,
+          "SUCCESS": 62,
+          "SKIPPED": 8
         },
         "blockers": [
           "OpenGrep — PR Diff / Scan changed paths (precise):FAILURE",
-          "CI / build-artifacts:IN_PROGRESS",
-          "CI / checks-fast-bundled:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-d:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-b:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-c:IN_PROGRESS",
-          "CI / checks-node-core-fast-support:IN_PROGRESS",
-          "CI / checks-node-core-src-security:IN_PROGRESS",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
-          "CI / checks-node-core-runtime-shared:IN_PROGRESS",
-          "CI / checks-node-agentic-control-plane:IN_PROGRESS",
-          "CI / checks-node-agentic-cli:IN_PROGRESS",
-          "CI / checks-node-agentic-command-support:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-agent-channel:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-doctor:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-onboard-config:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-status-tools:IN_PROGRESS",
-          "CI / checks-node-agentic-gateway-core:IN_PROGRESS",
-          "CI / checks-node-agentic-gateway-methods:IN_PROGRESS",
-          "CI / checks-node-agentic-plugin-sdk:IN_PROGRESS",
-          "CI / checks-node-auto-reply-core-top-level:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-agent-runner:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-commands:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-state-routing:IN_PROGRESS",
-          "CI / check-lint:IN_PROGRESS",
-          "CI / check-dependencies:IN_PROGRESS",
-          "CI / check-policy-guards:IN_PROGRESS",
-          "CI / check-test-types:IN_PROGRESS",
-          "CI / check-additional-boundaries:IN_PROGRESS",
-          "CI / check-additional-extension-channels:IN_PROGRESS",
-          "CI / check-additional-extension-bundled:IN_PROGRESS",
-          "CI / check-additional-extension-package-boundary:IN_PROGRESS",
-          "CI / check-additional-runtime-topology-architecture:IN_PROGRESS",
-          "CI / check-docs:IN_PROGRESS"
+          "CI / check-lint:FAILURE",
+          "CI / checks-node-channels:FAILURE",
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / check:FAILURE",
+          "CI / checks-node-core:FAILURE"
         ]
       },
       "review_threads": {
@@ -906,7 +898,7 @@
       "latest_record": null,
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):FAILURE; CI / build-artifacts:IN_PROGRESS; CI / checks-fast-bundled:IN_PROGRESS",
+        "needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):FAILURE; CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE",
         "needs_merge_preflight",
         "needs_result_backfill"
       ],
