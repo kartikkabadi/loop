@@ -54,6 +54,14 @@ export function normalizeGitHubActor(login: JsonValue) {
     .replace(/\[bot\]$/i, "");
 }
 
+export function isGitHubAppIntegrationAuthError(message: JsonValue) {
+  const text = String(message ?? "").toLowerCase();
+  return (
+    text.includes("resource not accessible by integration") &&
+    (text.includes("http 403") || text.includes('"status":"403"') || text.includes("status: 403"))
+  );
+}
+
 function ignoredCheckNames() {
   return commaSet(
     process.env.CLAWSWEEPER_COMMENT_ROUTER_IGNORE_CHECKS ?? DEFAULT_IGNORED_CHECKS.join(","),

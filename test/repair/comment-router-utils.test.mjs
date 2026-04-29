@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   appendLedger,
+  isGitHubAppIntegrationAuthError,
   isAllowedMutationActor,
   normalizeGitHubActor,
   shouldSuppressProcessedCommentVersion,
@@ -135,4 +136,19 @@ test("mutation actor guard accepts only trusted bot identities", () => {
   assert.equal(isAllowedMutationActor("openclaw-clawsweeper[bot]", trustedBots), true);
   assert.equal(isAllowedMutationActor("steipete", trustedBots), false);
   assert.equal(isAllowedMutationActor("github-actions[bot]", trustedBots), false);
+});
+
+test("mutation actor guard recognizes GitHub App integration auth shape", () => {
+  assert.equal(
+    isGitHubAppIntegrationAuthError("gh: Resource not accessible by integration (HTTP 403)"),
+    true,
+  );
+  assert.equal(
+    isGitHubAppIntegrationAuthError(
+      '{"message":"Resource not accessible by integration","status":"403"}',
+    ),
+    true,
+  );
+  assert.equal(isGitHubAppIntegrationAuthError("gh: Resource not accessible (HTTP 403)"), false);
+  assert.equal(isGitHubAppIntegrationAuthError("Resource not accessible by integration"), false);
 });

@@ -37,6 +37,7 @@ import {
   appendLedger,
   issueNumberFromUrl,
   isAllowedMutationActor,
+  isGitHubAppIntegrationAuthError,
   readLedger,
   shouldSuppressProcessedCommentVersion,
   stripAnsi,
@@ -181,11 +182,23 @@ if (writeReport) writeReportFile(repoRoot(), report);
 console.log(JSON.stringify(report, null, 2));
 
 function assertMutationActorIsClawsweeperBot() {
-  const viewer = ghJson<LooseRecord>(["api", "user"]);
-  const login = String(viewer.login ?? "");
-  if (isAllowedMutationActor(login, trustedBots)) return;
-  throw new Error(
-    `refusing to execute ClawSweeper comment-router mutations as ${login || "unknown actor"}; set GH_TOKEN to the Clawsweeper GitHub App installation token`,
+  try {
+    const viewer = ghJson<LooseRecord>(["api", "user"]);
+    const login = String(viewer.login ?? "");
+    if (isAllowedMutationActor(login, trustedBots)) return;
+    throw new Error(
+      `refusing to execute ClawSweeper comment-router mutations as ${login || "unknown actor"}; set GH_TOKEN to the Clawsweeper GitHub App installation token`,
+    );
+  } catch (error) {
+    if (isExpectedGitHubAppIntegrationToken(error)) return;
+    throw error;
+  }
+}
+
+function isExpectedGitHubAppIntegrationToken(error: unknown) {
+  return (
+    process.env.CLAWSWEEPER_MUTATION_TOKEN_SOURCE === "clawsweeper-app" &&
+    isGitHubAppIntegrationAuthError(ghErrorText(error))
   );
 }
 
