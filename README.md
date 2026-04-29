@@ -87,7 +87,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 11:07 UTC
+Last dashboard update: Apr 29, 2026, 11:08 UTC
 
 ### Fleet
 
@@ -117,8 +117,8 @@ Last dashboard update: Apr 29, 2026, 11:07 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 11:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105356225) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 11:05 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105232314) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 11:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105363784) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 11:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105232314) |
 
 ### Fleet Activity
 
@@ -128,7 +128,7 @@ Latest review: Apr 29, 2026, 11:05 UTC. Latest close: Apr 29, 2026, 11:07 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 21 | 1 | 20 | 0 | 6 | 21 | 1 |
 | Last hour | 53 | 4 | 49 | 0 | 18 | 53 | 1 |
-| Last 24 hours | 6465 | 443 | 6022 | 23 | 745 | 2391 | 26 |
+| Last 24 hours | 6464 | 443 | 6021 | 23 | 745 | 2391 | 26 |
 
 ### Recently Closed Across Repos
 
@@ -204,7 +204,7 @@ Updated: Apr 29, 2026, 11:07 UTC
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25105356225](https://github.com/openclaw/clawsweeper/actions/runs/25105356225)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25105363784](https://github.com/openclaw/clawsweeper/actions/runs/25105363784)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -285,7 +285,7 @@ Latest review: Apr 29, 2026, 11:05 UTC. Latest close: Apr 29, 2026, 11:07 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 21 | 1 | 20 | 0 | 6 | 21 | 1 |
 | Last hour | 52 | 4 | 48 | 0 | 18 | 52 | 1 |
-| Last 24 hours | 5532 | 443 | 5089 | 12 | 732 | 1591 | 26 |
+| Last 24 hours | 5531 | 443 | 5088 | 12 | 732 | 1591 | 26 |
 
 #### Recently Closed
 
