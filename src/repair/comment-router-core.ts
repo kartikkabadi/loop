@@ -8,6 +8,9 @@ export const REPAIR_INTENTS = new Set([
 export const MERGE_INTENTS = new Set(["clawsweeper_auto_merge"]);
 export const AUTOCLOSE_INTENTS = new Set(["autoclose"]);
 export const AUTOMERGE_JOB_SOURCE = "pr_automerge";
+export const AUTOMERGE_LABEL = "clawsweeper:automerge";
+export const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
+export const MERGE_READY_LABEL = "clawsweeper:merge-ready";
 export const DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS = ["admin", "maintain", "write"];
 
 export function repoSlug(repo: string) {
@@ -79,7 +82,7 @@ Title: ${safeTitle}
 
 ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop:
 
-- If ClawSweeper requests changes, returns \`needs-human\`, or finds failing checks/rebase work, and the PR branch is safe to update, emit a fix artifact with \`repair_strategy: "repair_contributor_branch"\` and \`source_prs: ["${prUrl}"]\`.
+- If ClawSweeper emits an explicit repair marker, requests changes, or finds failing checks/rebase work, and the PR branch is safe to update, emit a fix artifact with \`repair_strategy: "repair_contributor_branch"\` and \`source_prs: ["${prUrl}"]\`.
 - If the PR branch cannot be safely updated, emit a narrow credited replacement only when the artifact can preserve the original contributor credit; otherwise return \`needs_human\`.
 - Do not merge, close, or bypass review gates from the worker. The comment router owns final merge only after a passing ClawSweeper verdict for the exact current head.
 - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.
@@ -160,14 +163,7 @@ export function parseTrustedAutomation(
       marker: verdict,
     });
   }
-  if (verdict && verdict.action === "needs-human") {
-    return trustedRepair({
-      author,
-      reason: `structured ClawSweeper verdict: ${verdict.action}${markerReasonSuffix(verdict.attrs)}`,
-      marker: verdict,
-    });
-  }
-  if (verdict && verdict.action === "human-review") {
+  if (verdict && ["needs-human", "human-review"].includes(verdict.action)) {
     return trustedHumanReview({
       author,
       reason: `structured ClawSweeper verdict: ${verdict.action}${markerReasonSuffix(verdict.attrs)}`,
@@ -186,9 +182,13 @@ export function parseTrustedAutomation(
   }
   if (
     verdict &&
-    ["needs-changes", "changes-requested", "fix-required", "repair-required"].includes(
-      verdict.action,
-    )
+    [
+      "needs-changes",
+      "changes-requested",
+      "needs-repair",
+      "fix-required",
+      "repair-required",
+    ].includes(verdict.action)
   ) {
     return trustedRepair({
       author,
@@ -196,14 +196,6 @@ export function parseTrustedAutomation(
       marker: verdict,
     });
   }
-
-  if (looksLikeActionableClawSweeperReview(body)) {
-    return trustedRepair({
-      author,
-      reason: "ClawSweeper review comment asks to keep repairing this PR",
-    });
-  }
-
   return null;
 }
 
@@ -228,7 +220,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       marker,
       "Got it. ClawSweeper will leave this item for human review.",
       "",
-      "I kept the regular `clawsweeper` label on it and paused the automation trail until a maintainer asks again.",
+      `I added \`${HUMAN_REVIEW_LABEL}\` and paused the automation trail until a maintainer asks again.`,
     ].join("\n");
   }
   if (command.intent === "automerge") {
@@ -242,7 +234,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
         : "ClawSweeper could not enable automerge for this PR.",
       "",
       dispatched?.clawsweeper
-        ? `I ${clearedHumanReview ? "cleared `clawsweeper:human-review`, " : ""}added \`clawsweeper:automerge\` and asked ClawSweeper to review this head. If ClawSweeper requests changes or returns \`needs-human\`, I will repair/rebase the branch and ask for another review, up to the configured round limit.`
+        ? `I ${clearedHumanReview ? `cleared \`${HUMAN_REVIEW_LABEL}\`, ` : ""}added \`${AUTOMERGE_LABEL}\` and asked ClawSweeper to review this head. If ClawSweeper emits a repair marker or requests changes, I will repair/rebase the branch and ask for another review, up to the configured round limit.`
         : `Reason: ${command.reason ?? "automerge requires a pull request"}.`,
       "",
       "A maintainer can pause this with `/clawsweeper stop`.",
@@ -280,12 +272,9 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     ].join("\n");
   }
   if (command.intent === "clawsweeper_auto_repair") {
-    const fromNeedsHuman = String(command.repair_reason ?? "").includes("needs-human");
     return [
       marker,
-      fromNeedsHuman
-        ? "Thanks, ClawSweeper. ClawSweeper is continuing the automerge repair loop for this PR."
-        : "Thanks, ClawSweeper. ClawSweeper picked up the repair feedback.",
+      "Thanks, ClawSweeper. ClawSweeper picked up the repair feedback.",
       "",
       `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
       `Feedback: ${command.repair_reason ?? "ClawSweeper requested another repair pass."}`,
@@ -320,7 +309,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
       `Reason: ${command.repair_reason ?? "ClawSweeper requested human review."}`,
       "",
-      "I kept the regular `clawsweeper` label on it and left the final call with a maintainer.",
+      `I added \`${HUMAN_REVIEW_LABEL}\` and left the final call with a maintainer.`,
     ].join("\n");
   }
   if (!dispatched) {
@@ -455,40 +444,15 @@ function markerReasonSuffix(attrs: LooseRecord) {
   return parts.length ? ` (${parts.join(" ")})` : "";
 }
 
-function looksLikeActionableClawSweeperReview(body: string) {
-  const text = String(body ?? "").toLowerCase();
-  if (!text.includes("clawsweeper") && !text.includes("codex review:")) return false;
-  if (
-    [
-      "no actionable",
-      "no issues found",
-      "looks good",
-      "safe to merge",
-      "approved",
-      "nothing to fix",
-      "no findings",
-    ].some((phrase: JsonValue) => text.includes(phrase))
-  ) {
-    return false;
-  }
-  return [
-    /keep this pr open/s,
-    /needs? (?:maintainer )?follow[- ]up/s,
-    /still (?:has|lacks|needs|fails|failing|blocked|broken|missing)/s,
-    /unresolved review/s,
-    /failing checks?/s,
-    /actionable (?:review )?finding/s,
-    /please (?:fix|address|rebase)/s,
-  ].some((pattern: JsonValue) => pattern.test(text));
-}
-
 function renderStatusBody(command: LooseRecord) {
   const target = command.target ?? {};
   const lines = ["ClawSweeper status:"];
   if (target.kind === "pull_request") {
+    const labelState = automergeLabelState(target.labels ?? []);
     lines.push(`- PR: #${command.issue_number}`);
     lines.push(`- Branch: \`${target.branch ?? "unknown"}\``);
     lines.push(`- ClawSweeper PR: ${target.is_clawsweeper_pr ? "yes" : "no"}`);
+    lines.push(`- Automerge: \`${labelState}\``);
     if (target.automerge_job_path) lines.push(`- Automerge job: \`${target.automerge_job_path}\``);
     if (target.job_path) lines.push(`- Job: \`${target.job_path}\``);
     if (target.merge_state_status) lines.push(`- Merge state: \`${target.merge_state_status}\``);
@@ -502,6 +466,14 @@ function renderStatusBody(command: LooseRecord) {
     lines.push("- Existing PR repair: not applicable until a ClawSweeper PR exists.");
   }
   return lines.join("\n");
+}
+
+function automergeLabelState(labels: JsonValue[]) {
+  const normalized = new Set(labels.map((value: JsonValue) => String(value).toLowerCase()));
+  if (normalized.has(HUMAN_REVIEW_LABEL)) return "paused-human-review";
+  if (normalized.has(MERGE_READY_LABEL)) return "merge-ready-human-gate";
+  if (normalized.has(AUTOMERGE_LABEL)) return "enabled";
+  return "not-enabled";
 }
 
 function formatCounts(counts: LooseRecord) {

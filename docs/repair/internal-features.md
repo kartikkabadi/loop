@@ -372,9 +372,10 @@ the backing job, posts one idempotent response marker, and dispatches
 Trusted ClawSweeper comments become `clawsweeper_auto_repair`. Preferred
 comments use hidden `clawsweeper-verdict:*` markers and include
 `clawsweeper-action:fix-required` only when ClawSweeper should wake up. For PRs
-already opted into `clawsweeper:automerge`, a trusted `needs-human` verdict also
-wakes the bounded repair/rebase loop; explicit `human-review` still pauses the
-loop. The default caps are five automatic repair iterations per PR and one
+already opted into `clawsweeper:automerge`, trusted `needs-human` and
+`human-review` verdicts pause the loop with `clawsweeper:human-review`. Repair
+dispatch requires an accepted repair verdict or action marker. The default caps
+are five automatic repair iterations per PR and one
 dispatch per PR head SHA. The per-PR cap is total across head SHA changes, so
 repeated findings on the same commit do not stampede the branch and a single PR
 cannot loop forever.
@@ -384,7 +385,8 @@ or `no-changes` verdict markers become `clawsweeper_auto_merge`. The router
 merges only when the marker SHA matches the current PR head, checks are green,
 GitHub mergeability is clean, no human-review label is present, and both
 `CLAWSWEEPER_REPAIR_ALLOW_MERGE=1` and `CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE=1` are set. Otherwise
-it leaves the PR open and labels it `clawsweeper:merge-ready` when appropriate.
+it leaves the PR open and labels it `clawsweeper:human-review` and
+`clawsweeper:merge-ready` when merge gates are closed.
 
 The scheduled workflow is dry by default. Set
 `CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE=1` to let scheduled runs post replies and

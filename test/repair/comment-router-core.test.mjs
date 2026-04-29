@@ -154,7 +154,7 @@ test("parseTrustedAutomation accepts trusted ClawSweeper pass verdicts for autom
   assert.match(parsed.repair_reason, /verdict: pass/);
 });
 
-test("parseTrustedAutomation treats trusted ClawSweeper needs-human as automerge repair input", () => {
+test("parseTrustedAutomation treats trusted ClawSweeper needs-human as a pause", () => {
   const trustedAuthors = new Set(["clawsweeper[bot]"]);
   const parsed = parseTrustedAutomation(
     {
@@ -164,9 +164,24 @@ test("parseTrustedAutomation treats trusted ClawSweeper needs-human as automerge
     { trustedAuthors },
   );
 
-  assert.equal(parsed.intent, "clawsweeper_auto_repair");
+  assert.equal(parsed.intent, "clawsweeper_needs_human");
   assert.equal(parsed.expected_head_sha, "abc123");
   assert.match(parsed.repair_reason, /needs-human/);
+});
+
+test("parseTrustedAutomation accepts explicit repair verdicts", () => {
+  const trustedAuthors = new Set(["clawsweeper[bot]"]);
+  const parsed = parseTrustedAutomation(
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: "ClawSweeper requests another repair pass.\n<!-- clawsweeper-verdict:needs-repair sha=abc123 -->",
+    },
+    { trustedAuthors },
+  );
+
+  assert.equal(parsed.intent, "clawsweeper_auto_repair");
+  assert.equal(parsed.expected_head_sha, "abc123");
+  assert.match(parsed.repair_reason, /needs-repair/);
 });
 
 test("parseTrustedAutomation preserves explicit human-review verdicts as pauses", () => {
@@ -183,27 +198,28 @@ test("parseTrustedAutomation preserves explicit human-review verdicts as pauses"
   assert.equal(parsed.expected_head_sha, "abc123");
 });
 
-test("parseTrustedAutomation falls back to actionable ClawSweeper review text", () => {
+test("parseTrustedAutomation ignores prose-only ClawSweeper review text", () => {
   const trustedAuthors = new Set(["clawsweeper[bot]"]);
-  const parsed = parseTrustedAutomation(
-    {
-      user: { login: "clawsweeper[bot]" },
-      body: "ClawSweeper review: this PR still has failing checks; please fix.",
-    },
-    { trustedAuthors },
+  assert.equal(
+    parseTrustedAutomation(
+      {
+        user: { login: "clawsweeper[bot]" },
+        body: "ClawSweeper review: this PR still has failing checks; please fix.",
+      },
+      { trustedAuthors },
+    ),
+    null,
   );
-
-  assert.equal(parsed.intent, "clawsweeper_auto_repair");
-  assert.match(parsed.repair_reason, /keep repairing/);
-
-  const ignored = parseTrustedAutomation(
-    {
-      user: { login: "clawsweeper[bot]" },
-      body: "ClawSweeper review: looks good, no actionable findings.",
-    },
-    { trustedAuthors },
+  assert.equal(
+    parseTrustedAutomation(
+      {
+        user: { login: "clawsweeper[bot]" },
+        body: "ClawSweeper review: looks good, no actionable findings.",
+      },
+      { trustedAuthors },
+    ),
+    null,
   );
-  assert.equal(ignored, null);
 });
 
 test("renderResponse keeps public command replies friendly and scoped", () => {
@@ -290,13 +306,13 @@ test("renderResponse reports maintainer autoclose results", () => {
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
 });
 
-test("renderResponse reports needs-human automerge repair dispatches", () => {
+test("renderResponse reports automerge repair dispatches", () => {
   const body = renderResponse(
     {
       comment_id: "457",
       intent: "clawsweeper_auto_repair",
       trusted_bot_author: "clawsweeper[bot]",
-      repair_reason: "structured ClawSweeper verdict: needs-human",
+      repair_reason: "structured ClawSweeper verdict: needs-repair",
       target: { head_sha: "def457" },
     },
     {
@@ -307,7 +323,7 @@ test("renderResponse reports needs-human automerge repair dispatches", () => {
     },
   );
 
-  assert.match(body, /continuing the automerge repair loop/);
+  assert.match(body, /picked up the repair feedback/);
   assert.match(body, /cluster-worker\.yml/);
   assert.match(body, /automerge-openclaw-openclaw-74156/);
   assert.doesNotMatch(body, /did not dispatch/);
@@ -326,8 +342,7 @@ test("renderResponse reports explicit human-review pause actions", () => {
   );
 
   assert.match(body, /pausing automerge/);
-  assert.match(body, /regular `clawsweeper` label/);
-  assert.doesNotMatch(body, /clawsweeper:human-review/);
+  assert.match(body, /`clawsweeper:human-review`/);
   assert.doesNotMatch(body, /did not dispatch/);
 });
 

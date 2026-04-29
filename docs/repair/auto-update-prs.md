@@ -61,9 +61,9 @@ ClawSweeper. The visible text should say whether the PR needs changes, what
 change is required before merge, what acceptance criteria would prove the fix,
 what evidence was checked, and what risk remains.
 
-The hidden markers at the bottom are the automation contract. ClawSweeper should
-prefer markers over prose whenever they exist. The action marker is omitted for
-pass, approved, needs-human, failed, or inconclusive reviews.
+The hidden markers at the bottom are the automation contract. The router ignores
+review prose for repair dispatch. The action marker is omitted for pass,
+approved, needs-human, failed, or inconclusive reviews.
 
 ## ClawSweeper PR Markers
 
@@ -138,25 +138,17 @@ Accepted repair verdicts:
 
 - `needs-changes`
 - `changes-requested`
+- `needs-repair`
 - `fix-required`
 - `repair-required`
 
 `pass`, `approved`, and `no-changes` verdicts never repair. On a PR opted into
 `clawsweeper:automerge`, a pass verdict for the exact current head can merge only
 after required checks, mergeability, review state, and both merge gates are
-green. `needs-human` still wakes the bounded repair/rebase loop for an opted-in
-PR so ClawSweeper can reconcile conflicts, failing checks, and review follow-up
-before asking again. `human-review` and `/clawsweeper stop` pause automerge by
-adding `clawsweeper:human-review`.
-
-The router also has a conservative fallback for current ClawSweeper review
-comments. It only applies to trusted bot authors and looks for phrases like
-`keep this PR open`, `needs follow-up`, `still missing`, `unresolved review`,
-or `failing checks`. It ignores positive summaries such as `no actionable`,
-`looks good`, `safe to merge`, and `no findings`.
-
-The marker is still the preferred contract. It is easier to audit and safer
-than relying on prose.
+green. `needs-human`, `human-review`, and `/clawsweeper stop` pause automerge by
+adding `clawsweeper:human-review`. If ClawSweeper wants the bounded
+repair/rebase loop to continue, it must emit an accepted repair verdict or action
+marker.
 
 ## Duplicate Guards
 

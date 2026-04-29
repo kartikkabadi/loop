@@ -226,10 +226,10 @@ branch when safe or opens a credited replacement when it is not; `pass`,
 `approved`, or `no-changes` may merge only when the marker SHA matches the
 current head, checks and mergeability are clean, no human-review label is
 present, and both `CLAWSWEEPER_REPAIR_ALLOW_MERGE=1` and
-`CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE=1` are set. A trusted `needs-human` verdict on an
-opted-in PR dispatches the repair/rebase loop so ClawSweeper can reconcile the
-branch before asking again. `/clawsweeper stop` or an explicit `human-review`
-verdict adds `clawsweeper:human-review` and pauses the loop.
+`CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE=1` are set. A trusted `needs-human` or
+`human-review` verdict on an opted-in PR adds `clawsweeper:human-review` and
+pauses the loop. ClawSweeper must emit an accepted repair verdict or action
+marker to dispatch the repair/rebase loop.
 
 The scheduled workflow is dry by default. Set
 `CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE=1` in repo variables to let scheduled runs
