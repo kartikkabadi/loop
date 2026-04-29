@@ -190,6 +190,45 @@ jobs:
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
 
+      - name: Create target write token
+        id: target-write-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ steps.target.outputs.target_repo_owner }}
+          repositories: ${{ steps.target.outputs.target_repo_name }}
+          permission-issues: write
+          permission-pull-requests: write
+
+      - name: React to target item review start
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          react() {
+            local content="$1"
+            local err
+            err="$(mktemp)"
+            if gh api -X POST \
+              -H "Accept: application/vnd.github+json" \
+              "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions" \
+              -f content="$content" 2>"$err" >/dev/null; then
+              echo "Added $content reaction to $TARGET_REPO#$ITEM_NUMBER."
+            elif grep -qi "HTTP 422\\|already exists" "$err"; then
+              echo "$content reaction already exists on $TARGET_REPO#$ITEM_NUMBER."
+            else
+              cat "$err" >&2
+              return 1
+            fi
+            rm -f "$err"
+          }
+          react "eyes"
+
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
@@ -259,17 +298,6 @@ jobs:
             --readonly-openclaw \
             --shard-index 0 \
             --shard-count 1
-
-      - name: Create target write token
-        id: target-write-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ steps.target.outputs.target_repo_owner }}
-          repositories: ${{ steps.target.outputs.target_repo_name }}
-          permission-issues: write
-          permission-pull-requests: write
 
       - name: Publish event result and apply safe close
         env:
@@ -383,6 +411,30 @@ jobs:
             sleep "$sleep_seconds"
           done
           publish_once
+
+      - name: React to target item completion
+        if: ${{ success() }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN"
+          err="$(mktemp)"
+          if gh api -X POST \
+            -H "Accept: application/vnd.github+json" \
+            "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions" \
+            -f content="+1" 2>"$err" >/dev/null; then
+            echo "Added +1 reaction to $TARGET_REPO#$ITEM_NUMBER."
+          elif grep -qi "HTTP 422\\|already exists" "$err"; then
+            echo "+1 reaction already exists on $TARGET_REPO#$ITEM_NUMBER."
+          else
+            cat "$err" >&2
+            exit 1
+          fi
+          rm -f "$err"
 
   plan:
     name: Plan review candidates
