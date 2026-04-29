@@ -142,9 +142,9 @@ Last dashboard update: Apr 29, 2026, 15:33 UTC
 | Open issues | 4426 |
 | Open PRs | 3434 |
 | Open items total | 7860 |
-| Reviewed files | 7507 |
-| Unreviewed open items | 356 |
-| Due now by cadence | 2885 |
+| Reviewed files | 7508 |
+| Unreviewed open items | 355 |
+| Due now by cadence | 2884 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 721 |
 | Closed by Codex apply | 10815 |
@@ -155,7 +155,7 @@ Last dashboard update: Apr 29, 2026, 15:33 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6934 | 6583 | 351 | 2816 | 0 | 673 | 10807 | Apr 29, 2026, 15:32 UTC | Apr 29, 2026, 15:33 UTC | 73 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6934 | 6584 | 350 | 2815 | 0 | 673 | 10807 | Apr 29, 2026, 15:32 UTC | Apr 29, 2026, 15:33 UTC | 73 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 926 | 921 | 5 | 66 | 0 | 47 | 8 | Apr 29, 2026, 15:25 UTC | Apr 29, 2026, 13:48 UTC | 394 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -163,7 +163,7 @@ Last dashboard update: Apr 29, 2026, 15:33 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 15:33 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25118125689) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 15:33 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25118125689) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 15:26 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25116895225) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -173,9 +173,9 @@ Latest review: Apr 29, 2026, 15:32 UTC. Latest close: Apr 29, 2026, 15:33 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 128 | 3 | 125 | 9 | 8 | 24 | 2 |
+| Last 15 minutes | 124 | 3 | 121 | 9 | 8 | 25 | 2 |
 | Last hour | 1406 | 27 | 1379 | 11 | 27 | 467 | 5 |
-| Last 24 hours | 6028 | 368 | 5660 | 12 | 762 | 1030 | 28 |
+| Last 24 hours | 6029 | 368 | 5661 | 12 | 762 | 1031 | 28 |
 
 ### Recently Closed Across Repos
 
@@ -219,6 +219,7 @@ Latest review: Apr 29, 2026, 15:32 UTC. Latest close: Apr 29, 2026, 15:33 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74444](https://github.com/openclaw/openclaw/pull/74444) | feat(openai): add queryTask/documentTask config for Jina v5 task-specific embeddings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74444.md) | complete | Apr 29, 2026, 15:32 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74445](https://github.com/openclaw/openclaw/pull/74445) | fix(deepseek): expose xhigh and max thinking levels for V4 models | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74445.md) | complete | Apr 29, 2026, 15:32 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#69483](https://github.com/openclaw/openclaw/pull/69483) | feat(security): add GHSA detector-review pipeline and OpenGrep CI workflows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69483.md) | complete | Apr 29, 2026, 15:29 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74381](https://github.com/openclaw/openclaw/pull/74381) | refactor: centralize Discord and Slack DM access resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74381.md) | complete | Apr 29, 2026, 15:29 UTC |
@@ -228,7 +229,6 @@ Latest review: Apr 29, 2026, 15:32 UTC. Latest close: Apr 29, 2026, 15:33 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74442](https://github.com/openclaw/openclaw/pull/74442) | fix(gateway): persist hidden lifecycle session keys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74442.md) | complete | Apr 29, 2026, 15:26 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1376](https://github.com/openclaw/clawhub/issues/1376) | False positive: openclaw-workspace-sync flagged as suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1376.md) | complete | Apr 29, 2026, 15:25 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74441](https://github.com/openclaw/openclaw/pull/74441) | docs: add NOEMate ADNClaw analysis | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74441.md) | complete | Apr 29, 2026, 15:24 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74437](https://github.com/openclaw/openclaw/pull/74437) | ci: add local shell CodeQL security shard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74437.md) | complete | Apr 29, 2026, 15:24 UTC |
 
 </details>
 
@@ -248,9 +248,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 15:33 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 5/6. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 5 fresh closes out of requested limit 6. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25118125689](https://github.com/openclaw/clawsweeper/actions/runs/25118125689)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -262,8 +262,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25118125689](https://
 | Open issues | 3539 |
 | Open PRs | 3395 |
 | Open items total | 6934 |
-| Reviewed files | 6583 |
-| Unreviewed open items | 351 |
+| Reviewed files | 6584 |
+| Unreviewed open items | 350 |
 | Archived closed files | 14362 |
 
 #### Review Outcomes
@@ -272,9 +272,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25118125689](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3365 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3212 |
+| Fresh reviewed PRs in the last 7 days | 3213 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6577 |
+| Fresh verified reviews in the last 7 days | 6578 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 673 |
 | Closed by Codex apply | 10807 |
@@ -284,13 +284,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25118125689](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 183/1097 current (914 due, 16.7%) |
-| Hourly hot item cadence (<7d) | 183/1097 current (914 due, 16.7%) |
+| Hourly cadence coverage | 184/1098 current (914 due, 16.8%) |
+| Hourly hot item cadence (<7d) | 184/1098 current (914 due, 16.8%) |
 | Daily cadence coverage | 2131/3680 current (1549 due, 57.9%) |
 | Daily PR cadence | 1516/2568 current (1052 due, 59%) |
 | Daily new issue cadence (<30d) | 615/1112 current (497 due, 55.3%) |
 | Weekly older issue cadence | 1804/1806 current (2 due, 99.9%) |
-| Due now by cadence | 2816 |
+| Due now by cadence | 2815 |
 
 ### Audit Health
 
@@ -330,9 +330,9 @@ Latest review: Apr 29, 2026, 15:32 UTC. Latest close: Apr 29, 2026, 15:33 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 103 | 3 | 100 | 0 | 8 | 24 | 2 |
+| Last 15 minutes | 99 | 3 | 96 | 0 | 8 | 25 | 2 |
 | Last hour | 1067 | 27 | 1040 | 1 | 27 | 73 | 5 |
-| Last 24 hours | 5091 | 368 | 4723 | 2 | 748 | 620 | 28 |
+| Last 24 hours | 5092 | 368 | 4724 | 2 | 748 | 621 | 28 |
 
 #### Recently Closed
 
@@ -368,6 +368,7 @@ Latest review: Apr 29, 2026, 15:32 UTC. Latest close: Apr 29, 2026, 15:33 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74444](https://github.com/openclaw/openclaw/pull/74444) | feat(openai): add queryTask/documentTask config for Jina v5 task-specific embeddings | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74444.md) | complete | Apr 29, 2026, 15:32 UTC |
 | [#74445](https://github.com/openclaw/openclaw/pull/74445) | fix(deepseek): expose xhigh and max thinking levels for V4 models | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74445.md) | complete | Apr 29, 2026, 15:32 UTC |
 | [#69483](https://github.com/openclaw/openclaw/pull/69483) | feat(security): add GHSA detector-review pipeline and OpenGrep CI workflows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69483.md) | complete | Apr 29, 2026, 15:29 UTC |
 | [#74381](https://github.com/openclaw/openclaw/pull/74381) | refactor: centralize Discord and Slack DM access resolution | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74381.md) | complete | Apr 29, 2026, 15:29 UTC |
@@ -377,7 +378,6 @@ Latest review: Apr 29, 2026, 15:32 UTC. Latest close: Apr 29, 2026, 15:33 UTC. L
 | [#74442](https://github.com/openclaw/openclaw/pull/74442) | fix(gateway): persist hidden lifecycle session keys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74442.md) | complete | Apr 29, 2026, 15:26 UTC |
 | [#74441](https://github.com/openclaw/openclaw/pull/74441) | docs: add NOEMate ADNClaw analysis | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74441.md) | complete | Apr 29, 2026, 15:24 UTC |
 | [#74437](https://github.com/openclaw/openclaw/pull/74437) | ci: add local shell CodeQL security shard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74437.md) | complete | Apr 29, 2026, 15:24 UTC |
-| [#74397](https://github.com/openclaw/openclaw/pull/74397) | fix(feishu): repair stale channel state in doctor | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74397.md) | complete | Apr 29, 2026, 15:23 UTC |
 
 </details>
 
