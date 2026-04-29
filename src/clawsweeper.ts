@@ -3273,10 +3273,23 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const summary = sectionValue(markdown, "Summary");
   const bestSolution = sectionValue(markdown, "Best Possible Solution");
   const risks = sectionValue(markdown, "Risks / Open Questions");
+  const validation = frontMatterStringArray(markdown, "work_validation")
+    .slice(0, 5)
+    .map((step) => `- ${step}`);
+  const isPullRequest = frontMatterValue(markdown, "type") === "pull_request";
   const lines = [
-    "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
+    isPullRequest
+      ? "Codex review: needs changes before merge."
+      : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
     "",
     sentence(summary),
+    "",
+    isPullRequest ? "Required change before merge:" : "Required change / next step:",
+    "",
+    sentence(
+      bestSolution ||
+        "Continue tracking this item until the missing behavior is implemented or a maintainer decides the product direction.",
+    ),
     "",
     "Best possible solution:",
     "",
@@ -3285,6 +3298,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
         "Continue tracking this item until the missing behavior is implemented or a maintainer decides the product direction.",
     ),
   ];
+  if (validation.length) lines.push("", "Acceptance criteria:", "", ...validation);
   if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
   if (likelyOwners.length) lines.push("", "Likely related people:", "", ...likelyOwners);
   if (risks && risks !== "- none") lines.push("", "Remaining risk / open question:", "", risks);
@@ -3299,9 +3313,12 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
 
 function renderReviewCommentFromReport(markdown: string, reason: CloseReason): string {
   const decision = frontMatterValue(markdown, "decision");
-  if (decision === "close" && reason !== "none")
-    return renderCloseCommentFromReport(markdown, reason);
-  return renderKeepOpenCommentFromReport(markdown);
+  const body =
+    decision === "close" && reason !== "none"
+      ? renderCloseCommentFromReport(markdown, reason)
+      : renderKeepOpenCommentFromReport(markdown);
+  const markers = reviewAutomationMarkersFromReport(markdown);
+  return markers ? `${body.trimEnd()}\n\n${markers}` : body;
 }
 
 function hasUsableCloseComment(closeComment: string): boolean {
@@ -3467,6 +3484,50 @@ export function validateCloseDecision(
 
 function reviewCommentMarker(number: number): string {
   return `${REVIEW_COMMENT_MARKER_PREFIX} item=${number} -->`;
+}
+
+function pullHeadShaFromContext(context: ItemContext): string | null {
+  const pull = asRecord(context.pullRequest);
+  const head = asRecord(pull.head);
+  const sha = head.sha;
+  return typeof sha === "string" && sha.trim() ? sha.trim() : null;
+}
+
+function pullHeadShaFromReport(markdown: string): string | null {
+  const value = frontMatterValue(markdown, "pull_head_sha");
+  return value && value !== "unknown" ? value : null;
+}
+
+function markerAttributeValue(value: string): string {
+  return value.trim().replace(/[^\w./:@-]/g, "_") || "unknown";
+}
+
+export function reviewAutomationMarkersFromReport(markdown: string): string {
+  const itemKind = frontMatterValue(markdown, "type");
+  if (itemKind !== "pull_request") return "";
+  const number = frontMatterValue(markdown, "number") ?? "unknown";
+  const decision = frontMatterValue(markdown, "decision");
+  const confidence = frontMatterValue(markdown, "confidence") ?? "unknown";
+  const headSha = pullHeadShaFromReport(markdown) ?? "unknown";
+  const baseAttrs = [
+    `item=${markerAttributeValue(number)}`,
+    `sha=${markerAttributeValue(headSha)}`,
+    `confidence=${markerAttributeValue(confidence)}`,
+  ].join(" ");
+
+  if (frontMatterValue(markdown, "review_status") === "failed") {
+    return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
+  }
+  if (decision === "keep_open") {
+    return [
+      `<!-- clawsweeper-verdict:needs-changes ${baseAttrs} -->`,
+      `<!-- clawsweeper-action:fix-required ${baseAttrs} finding=review-feedback -->`,
+    ].join("\n");
+  }
+  if (decision === "close") {
+    return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
+  }
+  return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
 }
 
 function markedReviewCommentBody(number: number, body: string): string {
@@ -3721,6 +3782,7 @@ author_association: ${options.item.authorAssociation}
 labels: ${JSON.stringify(options.item.labels)}
 reviewed_at: ${new Date().toISOString()}
 main_sha: ${options.git.mainSha}
+pull_head_sha: ${pullHeadShaFromContext(options.context) ?? "unknown"}
 latest_release: ${options.git.latestRelease?.tagName ?? "unknown"}
 latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
 fixed_release: ${options.decision.fixedRelease ?? "unknown"}

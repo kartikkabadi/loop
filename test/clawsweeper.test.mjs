@@ -27,6 +27,7 @@ import {
   protectedLabels,
   relatedTitleSearchTerms,
   reviewArtifactDestination,
+  reviewAutomationMarkersFromReport,
   reviewActionForDecision,
   runtimeBudgetExceeded,
   safeOutputTail,
@@ -775,6 +776,31 @@ test("comment matcher recognizes old and new Codex review comments", () => {
     true,
   );
   assert.equal(isCodexReviewCommentBody("Thanks for the report, I can reproduce this."), false);
+});
+
+test("pull request review reports carry verdict and repair markers", () => {
+  const markdown = `${reportFrontMatter({
+    type: "pull_request",
+    number: "74065",
+    pull_head_sha: "abc123def456",
+    decision: "keep_open",
+    confidence: "high",
+  })}
+
+## Summary
+
+Needs one more repair.
+`;
+
+  const markers = reviewAutomationMarkersFromReport(markdown);
+  assert.match(markers, /clawsweeper-verdict:needs-changes/);
+  assert.match(markers, /clawsweeper-action:fix-required/);
+  assert.match(markers, /item=74065/);
+  assert.match(markers, /sha=abc123def456/);
+});
+
+test("non-PR review reports do not carry Clownfish repair markers", () => {
+  assert.equal(reviewAutomationMarkersFromReport(reportFrontMatter({ type: "issue" })), "");
 });
 
 test("item number args merge and sort workflow inputs", () => {
