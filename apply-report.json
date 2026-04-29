@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "number": 38661,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 38661,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 70434,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 70434,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 74033,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74033,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  }
+]
