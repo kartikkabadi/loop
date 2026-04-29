@@ -995,6 +995,50 @@ Land this docs-only PR after maintainer review.
   assert.doesNotMatch(comment, /Best possible solution:/);
 });
 
+test("pull request automerge review comments can emit pass verdicts", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74453",
+      decision: "keep_open",
+      close_reason: "none",
+      review_status: "complete",
+      labels: JSON.stringify(["clawsweeper:automerge"]),
+      work_candidate: "none",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+Keep this focused PR open for automerge.
+
+## What This Changes
+
+Closes the voice-call webhook limiter fail-open path.
+
+## Best Possible Solution
+
+Merge after required checks are green.
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`,
+    "none",
+  );
+
+  assert.match(comment, /Codex review: passed for ClawSweeper automerge\./);
+  assert.match(comment, /Automerge follow-up:\n\nMerge after required checks are green\./);
+  assert.match(comment, /<!-- clawsweeper-verdict:pass item=74453 sha=abc123def456/);
+  assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
+});
+
 test("pull request keep-open review comments suppress duplicate remaining risk text", () => {
   const duplicateRisk = "Run the automerge smoke after the repair lane is green.";
   const comment = renderReviewCommentFromReport(

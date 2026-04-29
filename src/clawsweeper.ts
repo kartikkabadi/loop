@@ -498,6 +498,7 @@ const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
 const REVIEW_POLICY_VERSION = "2026-04-29-policy-v12";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
+const AUTOMERGE_LABEL = "clawsweeper:automerge";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -3316,6 +3317,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     .map((step) => `- ${step}`);
   const isPullRequest = frontMatterValue(markdown, "type") === "pull_request";
   const isRepairCandidate = workCandidate === "queue_fix_pr";
+  const isAutomergePass = isPullRequest && isAutomergePassReport(markdown);
   const summaryLine = sentence(summary) || "_No summary provided._";
   const changeSummaryLine = sentence(changeSummary || summary) || "_No change summary provided._";
   const fallbackNextStep =
@@ -3325,13 +3327,15 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const details: string[] = [];
   const hasReviewFindings = isPullRequest && reviewFindings.length > 0;
   const lines = [
-    isPullRequest && isRepairCandidate
-      ? "Codex review: needs changes before merge."
-      : hasReviewFindings
-        ? "Codex review: found issues before merge."
-        : isPullRequest
-          ? "Codex review: needs maintainer review before merge."
-          : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
+    isAutomergePass
+      ? "Codex review: passed for ClawSweeper automerge."
+      : isPullRequest && isRepairCandidate
+        ? "Codex review: needs changes before merge."
+        : hasReviewFindings
+          ? "Codex review: found issues before merge."
+          : isPullRequest
+            ? "Codex review: needs maintainer review before merge."
+            : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
     "",
   ];
   if (isPullRequest) {
@@ -3340,11 +3344,13 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     lines.push(summaryLine, "");
   }
   lines.push(
-    isPullRequest && !isRepairCandidate
-      ? "Maintainer follow-up before merge:"
-      : isPullRequest
-        ? "Required change before merge:"
-        : "Required change / next step:",
+    isAutomergePass
+      ? "Automerge follow-up:"
+      : isPullRequest && !isRepairCandidate
+        ? "Maintainer follow-up before merge:"
+        : isPullRequest
+          ? "Required change before merge:"
+          : "Required change / next step:",
     "",
     nextStepLine,
   );
@@ -3599,6 +3605,9 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
     return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
   }
   if (decision === "keep_open") {
+    if (isAutomergePassReport(markdown)) {
+      return `<!-- clawsweeper-verdict:pass ${baseAttrs} -->`;
+    }
     if (frontMatterValue(markdown, "work_candidate") !== "queue_fix_pr") {
       return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
     }
@@ -3611,6 +3620,17 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
     return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
   }
   return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
+}
+
+function isAutomergePassReport(markdown: string): boolean {
+  return (
+    frontMatterStringArray(markdown, "labels").includes(AUTOMERGE_LABEL) &&
+    frontMatterValue(markdown, "review_status") === "complete" &&
+    frontMatterValue(markdown, "confidence") === "high" &&
+    frontMatterValue(markdown, "decision") === "keep_open" &&
+    reportOverallCorrectness(markdown) === "patch is correct" &&
+    reportReviewFindings(markdown).length === 0
+  );
 }
 
 function markedReviewCommentBody(number: number, body: string): string {

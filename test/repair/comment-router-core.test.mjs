@@ -324,6 +324,12 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
 });
 
+test("renderResponse gives command replies a lobster badge", () => {
+  const body = renderResponse({ comment_id: "456", intent: "help", target: {} }, null);
+
+  assert.match(body, /^<!-- clawsweeper-command:456:help:na -->\n🦞🦞\nClawSweeper is here/);
+});
+
 test("renderResponse reports automerge resume actions", () => {
   const body = renderResponse(
     {

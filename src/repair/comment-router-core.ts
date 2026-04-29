@@ -12,6 +12,7 @@ export const AUTOMERGE_LABEL = "clawsweeper:automerge";
 export const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
 export const MERGE_READY_LABEL = "clawsweeper:merge-ready";
 export const DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS = ["admin", "maintain", "write"];
+const CLAWSWEEPER_REPLY_BADGE = "🦞🦞";
 
 export function repoSlug(repo: string) {
   return String(repo ?? "")
@@ -217,7 +218,7 @@ export function parseTrustedAutomation(
 
 export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
   const markerId = command.comment_version_key ?? command.comment_id;
-  const marker = `<!-- clawsweeper-command:${markerId}:${command.intent}:${command.target?.head_sha ?? "na"} -->`;
+  const marker = `<!-- clawsweeper-command:${markerId}:${command.intent}:${command.target?.head_sha ?? "na"} -->\n${CLAWSWEEPER_REPLY_BADGE}`;
   if (command.intent === "help") {
     return [
       marker,
