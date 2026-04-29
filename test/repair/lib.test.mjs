@@ -1,7 +1,22 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { hasDeterministicSecuritySignal, hasSecuritySignalText } from "../../dist/repair/lib.js";
+import {
+  hasDeterministicSecuritySignal,
+  hasSecuritySignalText,
+  parseArgs,
+} from "../../dist/repair/lib.js";
+
+test("parseArgs ignores package-manager double dash separators", () => {
+  assert.deepEqual(parseArgs(["--", "jobs/openclaw/inbox/example.md"]), {
+    _: ["jobs/openclaw/inbox/example.md"],
+  });
+  assert.deepEqual(parseArgs(["--mode", "autonomous", "--", "job.md", "--latest"]), {
+    _: ["job.md"],
+    latest: true,
+    mode: "autonomous",
+  });
+});
 
 test("security signal detection ignores non-security advisory wording", () => {
   assert.equal(
