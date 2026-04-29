@@ -87,53 +87,55 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 08:31 UTC
+Last dashboard update: Apr 29, 2026, 08:33 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4238 |
-| Open PRs | 3294 |
-| Open items total | 7532 |
-| Reviewed files | 7532 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 1684 |
+| Open issues | 4417 |
+| Open PRs | 3487 |
+| Open items total | 7904 |
+| Reviewed files | 7530 |
+| Unreviewed open items | 374 |
+| Due now by cadence | 2056 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 590 |
 | Closed by Codex apply | 10737 |
 | Failed or stale reviews | 21 |
-| Archived closed files | 14129 |
+| Archived closed files | 14131 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6614 | 6614 | 0 | 1671 | 0 | 549 | 10730 | Apr 29, 2026, 08:30 UTC | Apr 29, 2026, 08:26 UTC | 789 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 918 | 918 | 0 | 13 | 0 | 41 | 7 | Apr 29, 2026, 08:25 UTC | Apr 29, 2026, 07:52 UTC | 904 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6980 | 6612 | 368 | 2037 | 0 | 549 | 10730 | Apr 29, 2026, 08:30 UTC | Apr 29, 2026, 08:32 UTC | 789 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 924 | 918 | 6 | 19 | 0 | 41 | 7 | Apr 29, 2026, 08:25 UTC | Apr 29, 2026, 07:52 UTC | 904 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 08:31 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25098798225) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 29, 2026, 08:33 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25098798225) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 08:27 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097826795) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 08:30 UTC. Latest close: Apr 29, 2026, 08:26 UTC. Latest comment sync: Apr 29, 2026, 08:30 UTC.
+Latest review: Apr 29, 2026, 08:30 UTC. Latest close: Apr 29, 2026, 08:32 UTC. Latest comment sync: Apr 29, 2026, 08:30 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 16 | 1 | 15 | 0 | 6 | 664 | 0 |
-| Last hour | 1007 | 10 | 997 | 12 | 25 | 1693 | 1 |
-| Last 24 hours | 6976 | 450 | 6526 | 17 | 746 | 2579 | 26 |
+| Last 15 minutes | 15 | 1 | 14 | 0 | 8 | 601 | 0 |
+| Last hour | 1000 | 10 | 990 | 11 | 27 | 1693 | 1 |
+| Last 24 hours | 6976 | 450 | 6526 | 17 | 748 | 2579 | 26 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73946](https://github.com/openclaw/openclaw/pull/73946) | fix(cron): preserve model overrides for text payloads | closed externally after review | Apr 29, 2026, 08:32 UTC | [records/openclaw-openclaw/closed/73946.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73946.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73933](https://github.com/openclaw/openclaw/pull/73933) | Improve pairing diagnostics without unsafe formatting | closed externally after review | Apr 29, 2026, 08:31 UTC | [records/openclaw-openclaw/closed/73933.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73933.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#40352](https://github.com/openclaw/openclaw/issues/40352) | [Bug]: Control UI Model Selection dropdown shows stale model after config reload | closed externally after review | Apr 29, 2026, 08:26 UTC | [records/openclaw-openclaw/closed/40352.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40352.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74000](https://github.com/openclaw/openclaw/pull/74000) | fix(ui): keep control UI select values stable on load | closed externally after review | Apr 29, 2026, 08:26 UTC | [records/openclaw-openclaw/closed/74000.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74000.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74208](https://github.com/openclaw/openclaw/issues/74208) | [Bug]: The 2026.4.26 version has difficulties in using the local model. | duplicate or superseded | Apr 29, 2026, 08:22 UTC | [records/openclaw-openclaw/closed/74208.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74208.md) |
@@ -142,8 +144,6 @@ Latest review: Apr 29, 2026, 08:30 UTC. Latest close: Apr 29, 2026, 08:26 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#69326](https://github.com/openclaw/openclaw/issues/69326) | [Bug] Replies not routed back to WeChat when message originates from webchat UI | duplicate or superseded | Apr 29, 2026, 08:22 UTC | [records/openclaw-openclaw/closed/69326.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/69326.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74206](https://github.com/openclaw/openclaw/issues/74206) | MiniMax API error 2013 'chat content is empty' on new session (v2026.4.26, regressed from v2026.4.23) | duplicate or superseded | Apr 29, 2026, 08:13 UTC | [records/openclaw-openclaw/closed/74206.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74206.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74067](https://github.com/openclaw/openclaw/pull/74067) | fix: Found one bug in the new compile-cache prune path: it removes a d | closed externally after review | Apr 29, 2026, 08:13 UTC | [records/openclaw-openclaw/closed/74067.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74067.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74201](https://github.com/openclaw/openclaw/pull/74201) | ci: add Knip dependency check | closed externally after review | Apr 29, 2026, 08:10 UTC | [records/openclaw-openclaw/closed/74201.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74201.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73983](https://github.com/openclaw/openclaw/pull/73983) | fix(browser): ignore Playwright dialog race rejections | kept open | Apr 29, 2026, 08:08 UTC | [records/openclaw-openclaw/closed/73983.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73983.md) |
 
 ### Work Candidates Across Repos
 
@@ -199,11 +199,11 @@ Latest review: Apr 29, 2026, 08:30 UTC. Latest close: Apr 29, 2026, 08:26 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 08:31 UTC
+Updated: Apr 29, 2026, 08:33 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25098798225](https://github.com/openclaw/clawsweeper/actions/runs/25098798225)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -212,12 +212,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25098798225](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3354 |
-| Open PRs | 3260 |
-| Open items total | 6614 |
-| Reviewed files | 6614 |
-| Unreviewed open items | 0 |
-| Archived closed files | 14107 |
+| Open issues | 3533 |
+| Open PRs | 3447 |
+| Open items total | 6980 |
+| Reviewed files | 6612 |
+| Unreviewed open items | 368 |
+| Archived closed files | 14109 |
 
 #### Review Outcomes
 
@@ -225,9 +225,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25098798225](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3352 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3250 |
+| Fresh reviewed PRs in the last 7 days | 3248 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6602 |
+| Fresh verified reviews in the last 7 days | 6600 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 549 |
 | Closed by Codex apply | 10730 |
@@ -237,13 +237,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25098798225](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 245/1024 current (779 due, 23.9%) |
-| Hourly hot item cadence (<7d) | 245/1024 current (779 due, 23.9%) |
-| Daily cadence coverage | 2895/3786 current (891 due, 76.5%) |
+| Hourly cadence coverage | 245/1022 current (777 due, 24%) |
+| Hourly hot item cadence (<7d) | 245/1022 current (777 due, 24%) |
+| Daily cadence coverage | 2894/3785 current (891 due, 76.5%) |
 | Daily PR cadence | 2174/2648 current (474 due, 82.1%) |
-| Daily new issue cadence (<30d) | 721/1138 current (417 due, 63.4%) |
-| Weekly older issue cadence | 1803/1804 current (1 due, 99.9%) |
-| Due now by cadence | 1671 |
+| Daily new issue cadence (<30d) | 720/1137 current (417 due, 63.3%) |
+| Weekly older issue cadence | 1804/1805 current (1 due, 99.9%) |
+| Due now by cadence | 2037 |
 
 ### Audit Health
 
@@ -279,18 +279,20 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 08:30 UTC. Latest close: Apr 29, 2026, 08:26 UTC. Latest comment sync: Apr 29, 2026, 08:30 UTC.
+Latest review: Apr 29, 2026, 08:30 UTC. Latest close: Apr 29, 2026, 08:32 UTC. Latest comment sync: Apr 29, 2026, 08:30 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 1 | 14 | 0 | 6 | 333 | 0 |
-| Last hour | 569 | 10 | 559 | 3 | 24 | 789 | 1 |
-| Last 24 hours | 6046 | 450 | 5596 | 8 | 734 | 1663 | 26 |
+| Last 15 minutes | 14 | 1 | 13 | 0 | 8 | 332 | 0 |
+| Last hour | 567 | 10 | 557 | 2 | 26 | 789 | 1 |
+| Last 24 hours | 6046 | 450 | 5596 | 8 | 736 | 1663 | 26 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#73946](https://github.com/openclaw/openclaw/pull/73946) | fix(cron): preserve model overrides for text payloads | closed externally after review | Apr 29, 2026, 08:32 UTC | [records/openclaw-openclaw/closed/73946.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73946.md) |
+| [#73933](https://github.com/openclaw/openclaw/pull/73933) | Improve pairing diagnostics without unsafe formatting | closed externally after review | Apr 29, 2026, 08:31 UTC | [records/openclaw-openclaw/closed/73933.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73933.md) |
 | [#40352](https://github.com/openclaw/openclaw/issues/40352) | [Bug]: Control UI Model Selection dropdown shows stale model after config reload | closed externally after review | Apr 29, 2026, 08:26 UTC | [records/openclaw-openclaw/closed/40352.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40352.md) |
 | [#74000](https://github.com/openclaw/openclaw/pull/74000) | fix(ui): keep control UI select values stable on load | closed externally after review | Apr 29, 2026, 08:26 UTC | [records/openclaw-openclaw/closed/74000.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74000.md) |
 | [#74208](https://github.com/openclaw/openclaw/issues/74208) | [Bug]: The 2026.4.26 version has difficulties in using the local model. | duplicate or superseded | Apr 29, 2026, 08:22 UTC | [records/openclaw-openclaw/closed/74208.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74208.md) |
@@ -299,8 +301,6 @@ Latest review: Apr 29, 2026, 08:30 UTC. Latest close: Apr 29, 2026, 08:26 UTC. L
 | [#69326](https://github.com/openclaw/openclaw/issues/69326) | [Bug] Replies not routed back to WeChat when message originates from webchat UI | duplicate or superseded | Apr 29, 2026, 08:22 UTC | [records/openclaw-openclaw/closed/69326.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/69326.md) |
 | [#74206](https://github.com/openclaw/openclaw/issues/74206) | MiniMax API error 2013 'chat content is empty' on new session (v2026.4.26, regressed from v2026.4.23) | duplicate or superseded | Apr 29, 2026, 08:13 UTC | [records/openclaw-openclaw/closed/74206.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74206.md) |
 | [#74067](https://github.com/openclaw/openclaw/pull/74067) | fix: Found one bug in the new compile-cache prune path: it removes a d | closed externally after review | Apr 29, 2026, 08:13 UTC | [records/openclaw-openclaw/closed/74067.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74067.md) |
-| [#74201](https://github.com/openclaw/openclaw/pull/74201) | ci: add Knip dependency check | closed externally after review | Apr 29, 2026, 08:10 UTC | [records/openclaw-openclaw/closed/74201.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74201.md) |
-| [#73983](https://github.com/openclaw/openclaw/pull/73983) | fix(browser): ignore Playwright dialog race rejections | kept open | Apr 29, 2026, 08:08 UTC | [records/openclaw-openclaw/closed/73983.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73983.md) |
 
 #### Work Candidates
 
@@ -360,10 +360,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25097826795](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 884 |
-| Open PRs | 34 |
-| Open items total | 918 |
+| Open PRs | 40 |
+| Open items total | 924 |
 | Reviewed files | 918 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 6 |
 | Archived closed files | 22 |
 
 #### Review Outcomes
@@ -386,11 +386,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25097826795](https://
 | --- | ---: |
 | Hourly cadence coverage | 53/57 current (4 due, 93%) |
 | Hourly hot item cadence (<7d) | 53/57 current (4 due, 93%) |
-| Daily cadence coverage | 215/218 current (3 due, 98.6%) |
+| Daily cadence coverage | 214/217 current (3 due, 98.6%) |
 | Daily PR cadence | 21/21 current (0 due, 100%) |
-| Daily new issue cadence (<30d) | 194/197 current (3 due, 98.5%) |
-| Weekly older issue cadence | 637/643 current (6 due, 99.1%) |
-| Due now by cadence | 13 |
+| Daily new issue cadence (<30d) | 193/196 current (3 due, 98.5%) |
+| Weekly older issue cadence | 638/644 current (6 due, 99.1%) |
+| Due now by cadence | 19 |
 
 ### Audit Health
 
@@ -428,8 +428,8 @@ Latest review: Apr 29, 2026, 08:25 UTC. Latest close: Apr 29, 2026, 07:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 331 | 0 |
-| Last hour | 438 | 0 | 438 | 9 | 1 | 904 | 0 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 269 | 0 |
+| Last hour | 433 | 0 | 433 | 9 | 1 | 904 | 0 |
 | Last 24 hours | 930 | 0 | 930 | 9 | 12 | 916 | 0 |
 
 #### Recently Closed
