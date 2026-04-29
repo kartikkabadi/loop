@@ -503,6 +503,42 @@ test("renderResponse gives command replies a lobster badge", () => {
   );
 });
 
+test("renderResponse avoids self-linking current item numbers in status replies", () => {
+  const prBody = renderResponse(
+    {
+      comment_id: "74578",
+      intent: "status",
+      issue_number: 74578,
+      target: {
+        kind: "pull_request",
+        head_sha: "abc74578",
+        branch: "fix/example",
+        labels: ["clawsweeper:automerge"],
+        checks: { counts: { SUCCESS: 3 }, blockers: [] },
+      },
+    },
+    null,
+  );
+  const issueBody = renderResponse(
+    {
+      comment_id: "74579",
+      intent: "status",
+      issue_number: 74579,
+      target: {
+        kind: "issue",
+        head_sha: null,
+        state: "open",
+      },
+    },
+    null,
+  );
+
+  assert.match(prBody, /- Current PR: `74578`/);
+  assert.doesNotMatch(prBody, /- PR: #74578/);
+  assert.match(issueBody, /- Current issue: `74579`/);
+  assert.doesNotMatch(issueBody, /- Issue: #74579/);
+});
+
 test("renderResponse reports automerge resume actions", () => {
   const body = renderResponse(
     {

@@ -668,7 +668,7 @@ function renderStatusBody(command: LooseRecord) {
   const lines = ["ClawSweeper status:"];
   if (target.kind === "pull_request") {
     const labelState = automergeLabelState(target.labels ?? []);
-    lines.push(`- PR: #${command.issue_number}`);
+    lines.push(`- Current PR: \`${command.issue_number ?? "unknown"}\``);
     lines.push(`- Branch: \`${target.branch ?? "unknown"}\``);
     lines.push(`- ClawSweeper PR: ${target.is_clawsweeper_pr ? "yes" : "no"}`);
     lines.push(`- Automerge: \`${labelState}\``);
@@ -680,7 +680,7 @@ function renderStatusBody(command: LooseRecord) {
     if (target.checks?.blockers?.length)
       lines.push(`- Check blockers: ${target.checks.blockers.slice(0, 5).join(", ")}`);
   } else {
-    lines.push(`- Issue: #${command.issue_number}`);
+    lines.push(`- Current issue: \`${command.issue_number ?? "unknown"}\``);
     lines.push(`- State: \`${target.state ?? "unknown"}\``);
     lines.push("- Existing PR repair: not applicable until a ClawSweeper PR exists.");
   }
