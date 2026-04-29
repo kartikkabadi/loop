@@ -162,15 +162,15 @@ Last dashboard update: Apr 29, 2026, 18:45 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6960 | 6612 | 348 | 3078 | 0 | 839 | 10849 | Apr 29, 2026, 18:42 UTC | Apr 29, 2026, 18:43 UTC | 466 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 925 | 920 | 5 | 17 | 0 | 46 | 8 | Apr 29, 2026, 18:17 UTC | Apr 29, 2026, 17:17 UTC | 672 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6960 | 6612 | 348 | 3078 | 0 | 839 | 10850 | Apr 29, 2026, 18:42 UTC | Apr 29, 2026, 18:43 UTC | 466 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 925 | 920 | 5 | 17 | 0 | 46 | 8 | Apr 29, 2026, 18:17 UTC | Apr 29, 2026, 17:17 UTC | 656 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Audit finished | Apr 29, 2026, 18:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25127347598) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 29, 2026, 18:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25127366699) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 18:26 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25125029414) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -180,9 +180,9 @@ Latest review: Apr 29, 2026, 18:42 UTC. Latest close: Apr 29, 2026, 18:43 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 13 | 1 | 12 | 1 | 5 | 15 | 0 |
-| Last hour | 993 | 19 | 974 | 12 | 21 | 1138 | 0 |
-| Last 24 hours | 5875 | 337 | 5538 | 13 | 737 | 2207 | 26 |
+| Last 15 minutes | 12 | 1 | 11 | 1 | 3 | 15 | 0 |
+| Last hour | 992 | 19 | 973 | 12 | 21 | 1122 | 0 |
+| Last 24 hours | 5875 | 337 | 5538 | 13 | 733 | 2207 | 26 |
 
 ### Recently Closed Across Repos
 
@@ -255,10 +255,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 18:45 UTC
 
-State: Audit finished
+State: Hot intake in progress
 
-Refreshed README Audit Health from a full live openclaw/openclaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25127347598](https://github.com/openclaw/clawsweeper/actions/runs/25127347598)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25127366699](https://github.com/openclaw/clawsweeper/actions/runs/25127366699)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -337,9 +337,9 @@ Latest review: Apr 29, 2026, 18:42 UTC. Latest close: Apr 29, 2026, 18:43 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 13 | 1 | 12 | 1 | 5 | 15 | 0 |
-| Last hour | 583 | 19 | 564 | 3 | 21 | 466 | 0 |
-| Last 24 hours | 4938 | 337 | 4601 | 4 | 721 | 1294 | 26 |
+| Last 15 minutes | 12 | 1 | 11 | 1 | 3 | 15 | 0 |
+| Last hour | 582 | 19 | 563 | 3 | 21 | 466 | 0 |
+| Last 24 hours | 4938 | 337 | 4601 | 4 | 717 | 1294 | 26 |
 
 #### Recently Closed
 
@@ -483,7 +483,7 @@ Latest review: Apr 29, 2026, 18:17 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 410 | 0 | 410 | 9 | 0 | 672 | 0 |
+| Last hour | 410 | 0 | 410 | 9 | 0 | 656 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 9 | 16 | 910 | 0 |
 
 #### Recently Closed
