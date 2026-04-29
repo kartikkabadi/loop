@@ -36,6 +36,7 @@ import {
 import {
   appendLedger,
   issueNumberFromUrl,
+  isAllowedMutationActor,
   readLedger,
   shouldSuppressProcessedCommentVersion,
   stripAnsi,
@@ -152,6 +153,7 @@ const report: LooseRecord = {
 };
 
 if (execute) {
+  assertMutationActorIsClawsweeperBot();
   const dispatchCount = actionable.filter((command: JsonValue) =>
     REPAIR_INTENTS.has(command.intent),
   ).length;
@@ -177,6 +179,15 @@ if (execute) {
 
 if (writeReport) writeReportFile(repoRoot(), report);
 console.log(JSON.stringify(report, null, 2));
+
+function assertMutationActorIsClawsweeperBot() {
+  const viewer = ghJson<LooseRecord>(["api", "user"]);
+  const login = String(viewer.login ?? "");
+  if (isAllowedMutationActor(login, trustedBots)) return;
+  throw new Error(
+    `refusing to execute ClawSweeper comment-router mutations as ${login || "unknown actor"}; set GH_TOKEN to the Clawsweeper GitHub App installation token`,
+  );
+}
 
 function classifyCommand(command: LooseRecord): JsonValue {
   if (command.trusted_bot) {

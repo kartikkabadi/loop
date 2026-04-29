@@ -38,6 +38,22 @@ export function shouldSuppressProcessedCommentVersion(entry: LooseRecord) {
   return true;
 }
 
+export function isAllowedMutationActor(login: JsonValue, trustedBots: Iterable<string>) {
+  const actor = normalizeGitHubActor(login);
+  if (!actor) return false;
+  for (const trustedBot of trustedBots) {
+    if (normalizeGitHubActor(trustedBot) === actor) return true;
+  }
+  return false;
+}
+
+export function normalizeGitHubActor(login: JsonValue) {
+  return String(login ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\[bot\]$/i, "");
+}
+
 function ignoredCheckNames() {
   return commaSet(
     process.env.CLAWSWEEPER_COMMENT_ROUTER_IGNORE_CHECKS ?? DEFAULT_IGNORED_CHECKS.join(","),

@@ -3,6 +3,8 @@ import test from "node:test";
 
 import {
   appendLedger,
+  isAllowedMutationActor,
+  normalizeGitHubActor,
   shouldSuppressProcessedCommentVersion,
   summarizeChecks,
 } from "../../dist/repair/comment-router-utils.js";
@@ -122,4 +124,15 @@ test("skipped automerge ledger entries stay retryable", () => {
     }),
     true,
   );
+});
+
+test("mutation actor guard accepts only trusted bot identities", () => {
+  const trustedBots = new Set(["clawsweeper[bot]", "openclaw-clawsweeper[bot]"]);
+
+  assert.equal(normalizeGitHubActor("ClawSweeper[bot]"), "clawsweeper");
+  assert.equal(isAllowedMutationActor("clawsweeper[bot]", trustedBots), true);
+  assert.equal(isAllowedMutationActor("clawsweeper", trustedBots), true);
+  assert.equal(isAllowedMutationActor("openclaw-clawsweeper[bot]", trustedBots), true);
+  assert.equal(isAllowedMutationActor("steipete", trustedBots), false);
+  assert.equal(isAllowedMutationActor("github-actions[bot]", trustedBots), false);
 });
