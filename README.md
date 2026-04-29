@@ -97,9 +97,9 @@ Last dashboard update: Apr 29, 2026, 11:07 UTC
 | Open issues | 4417 |
 | Open PRs | 3469 |
 | Open items total | 7886 |
-| Reviewed files | 7520 |
-| Unreviewed open items | 366 |
-| Due now by cadence | 2664 |
+| Reviewed files | 7521 |
+| Unreviewed open items | 365 |
+| Due now by cadence | 2663 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 626 |
 | Closed by Codex apply | 10760 |
@@ -110,25 +110,25 @@ Last dashboard update: Apr 29, 2026, 11:07 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6959 | 6599 | 360 | 2589 | 0 | 580 | 10752 | Apr 29, 2026, 11:02 UTC | Apr 29, 2026, 11:07 UTC | 52 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6959 | 6600 | 359 | 2588 | 0 | 580 | 10752 | Apr 29, 2026, 11:05 UTC | Apr 29, 2026, 11:00 UTC | 53 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 927 | 921 | 6 | 75 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 1 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review publish complete | Apr 29, 2026, 11:06 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105040549) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake publish complete | Apr 29, 2026, 11:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105070757) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 11:04 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105232314) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 11:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105232314) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 11:02 UTC. Latest close: Apr 29, 2026, 11:07 UTC. Latest comment sync: Apr 29, 2026, 11:03 UTC.
+Latest review: Apr 29, 2026, 11:05 UTC. Latest close: Apr 29, 2026, 11:00 UTC. Latest comment sync: Apr 29, 2026, 11:06 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 1 | 18 | 0 | 6 | 20 | 1 |
-| Last hour | 52 | 4 | 48 | 0 | 19 | 53 | 1 |
-| Last 24 hours | 6464 | 443 | 6021 | 23 | 745 | 2390 | 26 |
+| Last 15 minutes | 21 | 1 | 20 | 0 | 5 | 22 | 1 |
+| Last hour | 53 | 4 | 49 | 0 | 18 | 54 | 1 |
+| Last 24 hours | 6465 | 443 | 6022 | 23 | 744 | 2391 | 26 |
 
 ### Recently Closed Across Repos
 
@@ -172,16 +172,16 @@ Latest review: Apr 29, 2026, 11:02 UTC. Latest close: Apr 29, 2026, 11:07 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74276](https://github.com/openclaw/openclaw/pull/74276) | Fix GitHub Copilot model picker catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74276.md) | complete | Apr 29, 2026, 11:05 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72201](https://github.com/openclaw/openclaw/pull/72201) | feat(events): add audience field for hidden runtime-context system events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72201.md) | complete | Apr 29, 2026, 11:05 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74278](https://github.com/openclaw/openclaw/pull/74278) | fix(media): reject stranded media:// URIs before workspace resolve (#74123) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74278.md) | complete | Apr 29, 2026, 11:05 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73767](https://github.com/openclaw/openclaw/pull/73767) | [codex] Finalize RuntimePlan embedded-runner cleanup stack | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73767.md) | complete | Apr 29, 2026, 11:03 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74289](https://github.com/openclaw/openclaw/pull/74289) | fix: preserve K2.6 reasoning payload fields to prevent incomplete terminal replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74289.md) | complete | Apr 29, 2026, 11:02 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74287](https://github.com/openclaw/openclaw/pull/74287) | fix(providers): add moonshotai alias for moonshot provider | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74287.md) | complete | Apr 29, 2026, 11:02 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74288](https://github.com/openclaw/openclaw/pull/74288) | fix(cli): improve error messages for infer audio transcribe and image describe | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74288.md) | complete | Apr 29, 2026, 11:01 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74246](https://github.com/openclaw/openclaw/pull/74246) | fix(plugins): simplify bundled runtime deps staging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74246.md) | complete | Apr 29, 2026, 11:01 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74286](https://github.com/openclaw/openclaw/issues/74286) | Bug: sub-agent announce completion causes parent session to generate out-of-context replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74286.md) | complete | Apr 29, 2026, 11:01 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72724](https://github.com/openclaw/openclaw/pull/72724) | fix(status): add gateway delivery health telemetry | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72724.md) | complete | Apr 29, 2026, 11:01 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73749](https://github.com/openclaw/openclaw/pull/73749) | fix(tui): recover stale streaming status after unbound final | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73749.md) | complete | Apr 29, 2026, 11:00 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72677](https://github.com/openclaw/openclaw/pull/72677) | fix(cron): warn on main heartbeat handoff ghost runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72677.md) | complete | Apr 29, 2026, 10:59 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73959](https://github.com/openclaw/openclaw/pull/73959) | fix(amazon-bedrock): add modelContextWindowOverrides for per-model context window config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73959.md) | complete | Apr 29, 2026, 10:59 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74285](https://github.com/openclaw/openclaw/issues/74285) | Telegram: Assistant reply silently dropped after long audio transcription + subagent spawn | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74285.md) | complete | Apr 29, 2026, 10:58 UTC |
 
 </details>
 
@@ -215,9 +215,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25105040549](https://
 | Open issues | 3529 |
 | Open PRs | 3430 |
 | Open items total | 6959 |
-| Reviewed files | 6599 |
-| Unreviewed open items | 360 |
-| Archived closed files | 14199 |
+| Reviewed files | 6600 |
+| Unreviewed open items | 359 |
+| Archived closed files | 14198 |
 
 #### Review Outcomes
 
@@ -237,13 +237,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25105040549](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 35/1048 current (1013 due, 3.3%) |
-| Hourly hot item cadence (<7d) | 35/1048 current (1013 due, 3.3%) |
-| Daily cadence coverage | 2539/3750 current (1211 due, 67.7%) |
-| Daily PR cadence | 1903/2624 current (721 due, 72.5%) |
+| Hourly cadence coverage | 36/1048 current (1012 due, 3.4%) |
+| Hourly hot item cadence (<7d) | 36/1048 current (1012 due, 3.4%) |
+| Daily cadence coverage | 2539/3751 current (1212 due, 67.7%) |
+| Daily PR cadence | 1903/2625 current (722 due, 72.5%) |
 | Daily new issue cadence (<30d) | 636/1126 current (490 due, 56.5%) |
 | Weekly older issue cadence | 1796/1801 current (5 due, 99.7%) |
-| Due now by cadence | 2589 |
+| Due now by cadence | 2588 |
 
 ### Audit Health
 
@@ -279,13 +279,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 11:02 UTC. Latest close: Apr 29, 2026, 11:07 UTC. Latest comment sync: Apr 29, 2026, 11:03 UTC.
+Latest review: Apr 29, 2026, 11:05 UTC. Latest close: Apr 29, 2026, 11:00 UTC. Latest comment sync: Apr 29, 2026, 11:06 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 1 | 18 | 0 | 6 | 20 | 1 |
-| Last hour | 51 | 4 | 47 | 0 | 19 | 52 | 1 |
-| Last 24 hours | 5531 | 443 | 5088 | 12 | 732 | 1590 | 26 |
+| Last 15 minutes | 21 | 1 | 20 | 0 | 5 | 22 | 1 |
+| Last hour | 52 | 4 | 48 | 0 | 18 | 53 | 1 |
+| Last 24 hours | 5532 | 443 | 5089 | 12 | 731 | 1591 | 26 |
 
 #### Recently Closed
 
@@ -321,16 +321,16 @@ Latest review: Apr 29, 2026, 11:02 UTC. Latest close: Apr 29, 2026, 11:07 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74276](https://github.com/openclaw/openclaw/pull/74276) | Fix GitHub Copilot model picker catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74276.md) | complete | Apr 29, 2026, 11:05 UTC |
+| [#72201](https://github.com/openclaw/openclaw/pull/72201) | feat(events): add audience field for hidden runtime-context system events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72201.md) | complete | Apr 29, 2026, 11:05 UTC |
+| [#74278](https://github.com/openclaw/openclaw/pull/74278) | fix(media): reject stranded media:// URIs before workspace resolve (#74123) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74278.md) | complete | Apr 29, 2026, 11:05 UTC |
+| [#73767](https://github.com/openclaw/openclaw/pull/73767) | [codex] Finalize RuntimePlan embedded-runner cleanup stack | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73767.md) | complete | Apr 29, 2026, 11:03 UTC |
 | [#74289](https://github.com/openclaw/openclaw/pull/74289) | fix: preserve K2.6 reasoning payload fields to prevent incomplete terminal replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74289.md) | complete | Apr 29, 2026, 11:02 UTC |
 | [#74287](https://github.com/openclaw/openclaw/pull/74287) | fix(providers): add moonshotai alias for moonshot provider | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74287.md) | complete | Apr 29, 2026, 11:02 UTC |
 | [#74288](https://github.com/openclaw/openclaw/pull/74288) | fix(cli): improve error messages for infer audio transcribe and image describe | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74288.md) | complete | Apr 29, 2026, 11:01 UTC |
 | [#74246](https://github.com/openclaw/openclaw/pull/74246) | fix(plugins): simplify bundled runtime deps staging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74246.md) | complete | Apr 29, 2026, 11:01 UTC |
 | [#74286](https://github.com/openclaw/openclaw/issues/74286) | Bug: sub-agent announce completion causes parent session to generate out-of-context replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74286.md) | complete | Apr 29, 2026, 11:01 UTC |
 | [#72724](https://github.com/openclaw/openclaw/pull/72724) | fix(status): add gateway delivery health telemetry | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72724.md) | complete | Apr 29, 2026, 11:01 UTC |
-| [#73749](https://github.com/openclaw/openclaw/pull/73749) | fix(tui): recover stale streaming status after unbound final | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73749.md) | complete | Apr 29, 2026, 11:00 UTC |
-| [#72677](https://github.com/openclaw/openclaw/pull/72677) | fix(cron): warn on main heartbeat handoff ghost runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72677.md) | complete | Apr 29, 2026, 10:59 UTC |
-| [#73959](https://github.com/openclaw/openclaw/pull/73959) | fix(amazon-bedrock): add modelContextWindowOverrides for per-model context window config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73959.md) | complete | Apr 29, 2026, 10:59 UTC |
-| [#74285](https://github.com/openclaw/openclaw/issues/74285) | Telegram: Assistant reply silently dropped after long audio transcription + subagent spawn | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74285.md) | complete | Apr 29, 2026, 10:58 UTC |
 
 </details>
 
@@ -346,11 +346,11 @@ Latest review: Apr 29, 2026, 11:02 UTC. Latest close: Apr 29, 2026, 11:07 UTC. L
 
 Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
 
-Updated: Apr 29, 2026, 11:05 UTC
+Updated: Apr 29, 2026, 11:07 UTC
 
-State: Review in progress
+State: Review publish complete
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Merged review artifacts for run 25105232314. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25105232314](https://github.com/openclaw/clawsweeper/actions/runs/25105232314)
 <!-- clawsweeper-status:openclaw-clawhub:end -->
 
