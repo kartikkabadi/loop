@@ -529,6 +529,19 @@ const LIKELY_OWNER_SCHEMA_KEYS = new Set([
   "files",
   "confidence",
 ]);
+const REVIEW_SECTIONS = {
+  summary: "Summary",
+  changeSummary: "What This Changes",
+  bestSolution: "Best Possible Solution",
+  workCandidate: "Work Candidate",
+  repairWorkPrompt: "Repair Work Prompt",
+  evidence: "Evidence",
+  likelyOwners: "Likely Related People",
+  risks: "Risks / Open Questions",
+  closeComment: "Close Comment",
+} as const;
+
+type ReviewSection = keyof typeof REVIEW_SECTIONS;
 
 function targetProfile(): RepositoryProfile {
   return activeRepositoryProfile;
@@ -1385,7 +1398,7 @@ function localRelatedTitleIndex(): LocalRelatedTitleEntry[] {
         closeReason: frontMatterValue(markdown, "close_reason"),
         action: frontMatterValue(markdown, "action_taken"),
         reviewStatus: effectiveReviewStatus(markdown),
-        summary: sectionValue(markdown, "Summary"),
+        summary: reviewSectionValue(markdown, "summary"),
       });
     }
   }
@@ -1586,6 +1599,10 @@ function sectionValue(markdown: string, heading: string): string {
     new RegExp(`(?:^|\\n)## ${heading}\\n\\n([\\s\\S]*?)(?=\\n## |\\n?$)`),
   );
   return match?.[1]?.trim() ?? "";
+}
+
+function reviewSectionValue(markdown: string, section: ReviewSection): string {
+  return sectionValue(markdown, REVIEW_SECTIONS[section]);
 }
 
 function replaceSectionValue(markdown: string, heading: string, value: string): string {
@@ -2710,6 +2727,30 @@ function sentence(value: string): string {
   return /[.!?)]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 
+function normalizePublicReviewText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/[`*_~#[\]()>.,:;!?'"-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function publicReviewTextDiffers(left: string, right: string): boolean {
+  const normalizedLeft = normalizePublicReviewText(left);
+  const normalizedRight = normalizePublicReviewText(right);
+  if (!normalizedLeft || !normalizedRight) return normalizedLeft !== normalizedRight;
+  return (
+    normalizedLeft !== normalizedRight &&
+    !normalizedLeft.includes(normalizedRight) &&
+    !normalizedRight.includes(normalizedLeft)
+  );
+}
+
+function isReportNoneList(value: string): boolean {
+  return !value.trim() || value.trim() === "- none";
+}
+
 function isLinkableSourceRef(file: string): boolean {
   if (file.includes("/")) return true;
   return ["AGENTS.md", "CHANGELOG.md", "README.md", "VISION.md"].includes(file);
@@ -2830,7 +2871,7 @@ function closeOutro(reason: CloseReason): string {
 }
 
 function reportEvidence(markdown: string): Evidence[] {
-  const evidence = sectionValue(markdown, "Evidence");
+  const evidence = reviewSectionValue(markdown, "evidence");
   const entries: Evidence[] = [];
   let current: Evidence | null = null;
   for (const line of evidence.split("\n")) {
@@ -2861,7 +2902,7 @@ function reportEvidence(markdown: string): Evidence[] {
 }
 
 function reportLikelyOwners(markdown: string): LikelyOwner[] {
-  const section = sectionValue(markdown, "Likely Related People");
+  const section = reviewSectionValue(markdown, "likelyOwners");
   const owners: LikelyOwner[] = [];
   let current: LikelyOwner | null = null;
   for (const line of section.split("\n")) {
@@ -2915,23 +2956,23 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     decision: "close",
     closeReason,
     confidence: "high",
-    summary: sectionValue(markdown, "Summary"),
-    changeSummary: sectionValue(markdown, "What This Changes"),
+    summary: reviewSectionValue(markdown, "summary"),
+    changeSummary: reviewSectionValue(markdown, "changeSummary"),
     evidence: reportEvidence(markdown),
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
-    bestSolution: sectionValue(markdown, "Best Possible Solution"),
+    bestSolution: reviewSectionValue(markdown, "bestSolution"),
     fixedRelease: fixedRelease && fixedRelease !== "unknown" ? fixedRelease : null,
     fixedSha: fixedSha && fixedSha !== "unknown" ? fixedSha : null,
     fixedAt: fixedAt && fixedAt !== "unknown" ? fixedAt : null,
-    closeComment: sectionValue(markdown, "Close Comment"),
+    closeComment: reviewSectionValue(markdown, "closeComment"),
     workCandidate:
       (frontMatterValue(markdown, "work_candidate") as WorkCandidateKind | undefined) ?? "none",
     workConfidence:
       (frontMatterValue(markdown, "work_confidence") as Confidence | undefined) ?? "low",
     workPriority: (frontMatterValue(markdown, "work_priority") as Confidence | undefined) ?? "low",
-    workReason: sectionValue(markdown, "Work Candidate"),
-    workPrompt: sectionValue(markdown, "Repair Work Prompt"),
+    workReason: reviewSectionValue(markdown, "workCandidate"),
+    workPrompt: reviewSectionValue(markdown, "repairWorkPrompt"),
     workClusterRefs: frontMatterStringArray(markdown, "work_cluster_refs"),
     workValidation: frontMatterStringArray(markdown, "work_validation"),
     workLikelyFiles: frontMatterStringArray(markdown, "work_likely_files"),
@@ -2989,9 +3030,12 @@ function renderCloseComment(options: {
 }): string {
   const evidence = options.evidence.slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = (options.likelyOwners ?? []).slice(0, 5).map(likelyOwnerLine);
-  const lines = [closeIntro(options.reason), "", sentence(options.summary)];
-  const bestSolution = options.bestSolution?.trim();
-  if (bestSolution) lines.push("", "Best possible solution:", "", sentence(bestSolution));
+  const summaryLine = sentence(options.summary);
+  const lines = [closeIntro(options.reason), "", summaryLine];
+  const bestSolutionLine = sentence(options.bestSolution ?? "");
+  if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, summaryLine)) {
+    lines.push("", "Best possible solution:", "", bestSolutionLine);
+  }
   if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
   if (likelyOwners.length) lines.push("", "Likely related people:", "", ...likelyOwners);
 
@@ -3006,8 +3050,8 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
   return sanitizePublicSelfReferences(
     renderCloseComment({
       reason,
-      summary: sectionValue(markdown, "Summary"),
-      bestSolution: sectionValue(markdown, "Best Possible Solution"),
+      summary: reviewSectionValue(markdown, "summary"),
+      bestSolution: reviewSectionValue(markdown, "bestSolution"),
       evidence: reportEvidence(markdown),
       likelyOwners: reportLikelyOwners(markdown),
       reviewLine: closeReviewLineFromReport(markdown),
@@ -3057,13 +3101,24 @@ function normalizeComment(
   });
 }
 
+function reportWorkCandidateReason(markdown: string): string {
+  const workCandidate = reviewSectionValue(markdown, "workCandidate");
+  const match = workCandidate.match(
+    /(?:^|\n)Reason:\s*([\s\S]*?)(?=\n\n(?:Cluster refs:|Likely files:|Validation:)|$)/,
+  );
+  const reason = match?.[1]?.trim();
+  if (!reason || reason.startsWith("_No work-lane recommendation")) return "";
+  return reason;
+}
+
 function renderKeepOpenCommentFromReport(markdown: string): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
-  const summary = sectionValue(markdown, "Summary");
-  const changeSummary = sectionValue(markdown, "What This Changes");
-  const bestSolution = sectionValue(markdown, "Best Possible Solution");
-  const risks = sectionValue(markdown, "Risks / Open Questions");
+  const summary = reviewSectionValue(markdown, "summary");
+  const changeSummary = reviewSectionValue(markdown, "changeSummary");
+  const bestSolution = reviewSectionValue(markdown, "bestSolution");
+  const risks = reviewSectionValue(markdown, "risks");
+  const workReason = reportWorkCandidateReason(markdown);
   const workCandidate = frontMatterValue(markdown, "work_candidate");
   const validation = frontMatterStringArray(markdown, "work_validation")
     .slice(0, 5)
@@ -3072,6 +3127,10 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const isRepairCandidate = workCandidate === "queue_fix_pr";
   const summaryLine = sentence(summary) || "_No summary provided._";
   const changeSummaryLine = sentence(changeSummary || summary) || "_No change summary provided._";
+  const fallbackNextStep =
+    "Continue tracking this item until the missing behavior is implemented or a maintainer decides the product direction.";
+  const nextStepLine = sentence(workReason || bestSolution || fallbackNextStep);
+  const bestSolutionLine = sentence(bestSolution);
   const lines = [
     isPullRequest && isRepairCandidate
       ? "Codex review: needs changes before merge."
@@ -3092,22 +3151,21 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
         ? "Required change before merge:"
         : "Required change / next step:",
     "",
-    sentence(
-      bestSolution ||
-        "Continue tracking this item until the missing behavior is implemented or a maintainer decides the product direction.",
-    ),
-    "",
-    "Best possible solution:",
-    "",
-    sentence(
-      bestSolution ||
-        "Continue tracking this item until the missing behavior is implemented or a maintainer decides the product direction.",
-    ),
+    nextStepLine,
   );
+  if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, nextStepLine)) {
+    lines.push("", "Best possible solution:", "", bestSolutionLine);
+  }
   if (validation.length) lines.push("", "Acceptance criteria:", "", ...validation);
   if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
   if (likelyOwners.length) lines.push("", "Likely related people:", "", ...likelyOwners);
-  if (risks && risks !== "- none") lines.push("", "Remaining risk / open question:", "", risks);
+  if (
+    !isReportNoneList(risks) &&
+    publicReviewTextDiffers(risks, nextStepLine) &&
+    (!bestSolutionLine || publicReviewTextDiffers(risks, bestSolutionLine))
+  ) {
+    lines.push("", "Remaining risk / open question:", "", risks);
+  }
   const reviewLine = closeReviewLineFromReport(markdown);
   if (reviewLine) lines.push("", reviewLine);
   return sanitizePublicSelfReferences(
@@ -3521,6 +3579,41 @@ export function reviewActionForDecision(options: {
   return { actionTaken: "proposed_close", closeComment };
 }
 
+function markdownList(values: string[]): string {
+  return values.length ? values.map((value) => `- ${value}`).join("\n") : "- none";
+}
+
+function renderWorkCandidateReportSection(decision: Decision): string {
+  const lines = [
+    `Candidate: ${decision.workCandidate}`,
+    "",
+    `Confidence: ${decision.workConfidence}`,
+    "",
+    `Priority: ${decision.workPriority}`,
+    "",
+    `Status: ${workStatusForDecision(decision)}`,
+  ];
+  const workReason = decision.workReason.trim();
+  if (workReason) lines.push("", `Reason: ${workReason}`);
+
+  const includeDetails =
+    decision.workCandidate !== "none" ||
+    decision.workClusterRefs.length > 0 ||
+    decision.workLikelyFiles.length > 0 ||
+    decision.workValidation.length > 0;
+  if (includeDetails) {
+    lines.push("", "Cluster refs:", "", markdownList(decision.workClusterRefs));
+    lines.push("", "Likely files:", "", markdownList(decision.workLikelyFiles));
+    lines.push("", "Validation:", "", markdownList(decision.workValidation));
+  }
+  return lines.join("\n");
+}
+
+function renderRepairWorkPromptReportSection(decision: Decision): string {
+  const workPrompt = decision.workPrompt.trim();
+  return workPrompt ? `\n\n## ${REVIEW_SECTIONS.repairWorkPrompt}\n\n${workPrompt}` : "";
+}
+
 function markdownFor(options: {
   item: Item;
   context: ItemContext;
@@ -3566,17 +3659,8 @@ function markdownFor(options: {
         .join("\n")
     : "- none";
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
-  const workReason = options.decision.workReason.trim() || "_No work-lane recommendation._";
-  const workPrompt = options.decision.workPrompt.trim() || "_No repair prompt drafted._";
-  const workClusterRefs = options.decision.workClusterRefs.length
-    ? options.decision.workClusterRefs.map((ref) => `- ${ref}`).join("\n")
-    : "- none";
-  const workValidation = options.decision.workValidation.length
-    ? options.decision.workValidation.map((step) => `- ${step}`).join("\n")
-    : "- none";
-  const workLikelyFiles = options.decision.workLikelyFiles.length
-    ? options.decision.workLikelyFiles.map((file) => `- ${file}`).join("\n")
-    : "- none";
+  const workCandidateSection = renderWorkCandidateReportSection(options.decision);
+  const repairWorkPromptSection = renderRepairWorkPromptReportSection(options.decision);
   return `---
 number: ${options.item.number}
 repository: ${options.item.repo}
@@ -3661,59 +3745,35 @@ Confidence: ${options.decision.confidence}
 
 Action taken: ${options.action.actionTaken}
 
-## Summary
+## ${REVIEW_SECTIONS.summary}
 
 ${options.decision.summary}
 
-## What This Changes
+## ${REVIEW_SECTIONS.changeSummary}
 
 ${options.decision.changeSummary}
 
-## Best Possible Solution
+## ${REVIEW_SECTIONS.bestSolution}
 
 ${bestSolution}
 
-## Work Candidate
+## ${REVIEW_SECTIONS.workCandidate}
 
-Candidate: ${options.decision.workCandidate}
+${workCandidateSection}${repairWorkPromptSection}
 
-Confidence: ${options.decision.workConfidence}
-
-Priority: ${options.decision.workPriority}
-
-Status: ${workStatusForDecision(options.decision)}
-
-Reason: ${workReason}
-
-Cluster refs:
-
-${workClusterRefs}
-
-Likely files:
-
-${workLikelyFiles}
-
-Validation:
-
-${workValidation}
-
-## Repair Work Prompt
-
-${workPrompt}
-
-## Evidence
+## ${REVIEW_SECTIONS.evidence}
 
 ${evidence}
 
-## Likely Related People
+## ${REVIEW_SECTIONS.likelyOwners}
 
 ${likelyOwners}
 
-## Risks / Open Questions
+## ${REVIEW_SECTIONS.risks}
 
 ${risks}
 
-## Close Comment
+## ${REVIEW_SECTIONS.closeComment}
 
 ${options.action.closeComment ? options.action.closeComment : "_No close comment posted._"}
 
@@ -4010,7 +4070,7 @@ function applyDecisionsCommand(args: Args): void {
     const reviewComment = renderReviewCommentFromReport(markdown, closeReason ?? "none");
     const existingReviewComment = issueReviewComment(number, [
       reviewComment,
-      sectionValue(markdown, "Close Comment"),
+      reviewSectionValue(markdown, "closeComment"),
     ]);
     const markedReviewComment = markedReviewCommentBody(number, reviewComment);
     if (isProtectedItem(item)) {
@@ -4252,7 +4312,7 @@ function applyDecisionsCommand(args: Args): void {
     logProgress(`closing #${number}`);
     closeItem({ number, kind: item.kind, reason: closeReason });
     sleepMs(closeDelayMs);
-    markdown = replaceSectionValue(markdown, "Close Comment", reviewComment);
+    markdown = replaceSectionValue(markdown, REVIEW_SECTIONS.closeComment, reviewComment);
     markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(reviewComment));
     markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
     markdown = replaceFrontMatterValue(markdown, "applied_at", new Date().toISOString());

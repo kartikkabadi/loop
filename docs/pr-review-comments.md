@@ -33,15 +33,19 @@ For a PR that needs work, the visible comment starts with:
 Codex review: needs changes before merge.
 ```
 
-The body should include the strongest actionable sections the report has:
+The body should include the strongest actionable, non-overlapping sections the
+report has:
 
 - `What this changes:` from the typed `changeSummary` field, not from the
   merge verdict or maintainer follow-up summary
-- `Required change before merge:`
-- `Best possible solution:`
+- `Required change before merge:` or `Maintainer follow-up before merge:` from
+  the work-candidate reason or next action
+- `Best possible solution:` only when it adds a distinct end-state that is not
+  already covered by the required-change or maintainer-follow-up section
 - `Acceptance criteria:`
 - `What I checked:`
-- `Remaining risk:`
+- `Remaining risk:` only when it is not a restatement of the required change or
+  best solution
 
 Issues can use `Required change / next step:` instead of the PR-specific
 heading. Non-PR comments are never repair triggers.

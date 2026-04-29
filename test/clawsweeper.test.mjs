@@ -319,6 +319,20 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.match(action.closeComment, /Codex review notes: model gpt-5\.5, reasoning high;/);
 });
 
+test("close comments suppress duplicate best solution text", () => {
+  const action = reviewActionForDecision({
+    item: item(),
+    decision: closeDecision({
+      summary: "Keep the implementation as-is.",
+      bestSolution: "Keep the implementation as-is.",
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.doesNotMatch(action.closeComment, /Best possible solution:/);
+});
+
 test("ClawHub policy only allows implemented-on-main PR close proposals", () => {
   const implementedPr = validateCloseDecision(
     item({
@@ -831,6 +845,18 @@ Adds regression coverage for session-scoped model overrides.
 ## Best Possible Solution
 
 Land the tests after targeted validation is green.
+
+## Work Candidate
+
+Candidate: none
+
+Confidence: low
+
+Priority: low
+
+Status: none
+
+Reason: Maintainers should review the tests after the targeted lane is green.
 `,
     "none",
   );
@@ -841,7 +867,45 @@ Land the tests after targeted validation is green.
     /What this changes:\n\nAdds regression coverage for session-scoped model overrides\./,
   );
   assert.match(comment, /Maintainer follow-up before merge:/);
+  assert.match(comment, /Maintainers should review the tests after the targeted lane is green\./);
+  assert.match(
+    comment,
+    /Best possible solution:\n\nLand the tests after targeted validation is green\./,
+  );
   assert.match(comment, /<!-- clawsweeper-verdict:needs-human item=74265 sha=abc123def456/);
+});
+
+test("pull request keep-open review comments suppress duplicate best solution text", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74266",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "none",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+Keep this docs-only PR open for maintainer review.
+
+## What This Changes
+
+Documents ClawSweeper self-review smoke coverage.
+
+## Best Possible Solution
+
+Land this docs-only PR after maintainer review.
+`,
+    "none",
+  );
+
+  assert.match(
+    comment,
+    /Maintainer follow-up before merge:\n\nLand this docs-only PR after maintainer review\./,
+  );
+  assert.doesNotMatch(comment, /Best possible solution:/);
 });
 
 test("pull request review reports carry verdict and repair markers", () => {
