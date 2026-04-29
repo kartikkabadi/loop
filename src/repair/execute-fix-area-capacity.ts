@@ -81,7 +81,7 @@ function listOpenClawSweeperPrAreas({
         "--limit",
         "500",
         "--json",
-        "number,title,url,headRefName,labels",
+        "number,title,url,headRefName",
       ],
       { cwd: targetDir, env: ghEnv() },
     ),
@@ -89,8 +89,7 @@ function listOpenClawSweeperPrAreas({
   return pulls
     .filter((pull: JsonValue) => {
       const branch = String(pull.headRefName ?? "");
-      const labels = (pull.labels ?? []).map((label: JsonValue) => String(label.name ?? label));
-      return branch.startsWith("clawsweeper/") || labels.includes("clawsweeper");
+      return branch.startsWith("clawsweeper/");
     })
     .map((pull: JsonValue) => {
       const files = fetchPullRequestFilePaths({ targetDir, repo, number: pull.number });

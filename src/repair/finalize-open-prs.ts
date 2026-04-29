@@ -34,7 +34,6 @@ const repairRepo = String(
   args["repair-repo"] ?? process.env.CLAWSWEEPER_REPAIR_REPO ?? currentProjectRepo(),
 );
 const headPrefix = String(args["head-prefix"] ?? DEFAULT_HEAD_PREFIX);
-const label = String(args.label ?? process.env.CLAWSWEEPER_REPAIR_LABEL ?? "clawsweeper");
 const writeReport = Boolean(args["write-report"]);
 const execute = Boolean(args.execute);
 const dispatchRepairs = Boolean(args["dispatch-repairs"] || args.dispatch || execute);
@@ -74,7 +73,6 @@ const report: LooseRecord = {
   repo,
   repair_repo: repairRepo,
   head_prefix: headPrefix,
-  label,
   generated_at: new Date().toISOString(),
   count: prs.length,
   summary: summarize(prs),
@@ -98,41 +96,24 @@ if (writeReport) writeReports(report);
 console.log(JSON.stringify(report, null, 2));
 
 function listOpenPullRequests(targetRepo: JsonValue, prefix: JsonValue) {
-  const fields = ["number", "title", "url", "headRefName", "updatedAt", "labels"].join(",");
+  const fields = ["number", "title", "url", "headRefName", "updatedAt"].join(",");
   const pullsByNumber = new Map();
-  for (const pull of [
-    ...ghJson([
-      "pr",
-      "list",
-      "--repo",
-      targetRepo,
-      "--state",
-      "open",
-      "--label",
-      label,
-      "--limit",
-      "200",
-      "--json",
-      fields,
-    ]),
-    ...ghJson([
-      "pr",
-      "list",
-      "--repo",
-      targetRepo,
-      "--state",
-      "open",
-      "--limit",
-      "200",
-      "--json",
-      fields,
-    ]),
-  ]) {
+  for (const pull of ghJson([
+    "pr",
+    "list",
+    "--repo",
+    targetRepo,
+    "--state",
+    "open",
+    "--limit",
+    "200",
+    "--json",
+    fields,
+  ])) {
     pullsByNumber.set(pull.number, pull);
   }
-  return [...pullsByNumber.values()].filter(
-    (pull: JsonValue) =>
-      String(pull.headRefName ?? "").startsWith(prefix) || hasLabel(pull.labels ?? [], label),
+  return [...pullsByNumber.values()].filter((pull: JsonValue) =>
+    String(pull.headRefName ?? "").startsWith(prefix),
   );
 }
 
@@ -813,10 +794,4 @@ function markdownLink(label: string, url: string) {
 
 function uniqueStrings(values: LooseRecord[]) {
   return [...new Set(values.filter(Boolean).map(String))];
-}
-
-function hasLabel(labels: LooseRecord[], expected: JsonValue) {
-  return labels.some(
-    (item: JsonValue) => String(item.name ?? item).toLowerCase() === expected.toLowerCase(),
-  );
 }

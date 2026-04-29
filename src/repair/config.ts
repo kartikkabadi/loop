@@ -2,12 +2,11 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import { DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS } from "./comment-router-core.js";
 import { currentProjectRepo, readMaxLiveWorkers } from "./lib.js";
 import { assertRepo, commaSet, positiveInteger } from "./comment-router-utils.js";
-import { DEFAULT_HEAD_PREFIX, DEFAULT_LABEL, DEFAULT_TARGET_REPO } from "./constants.js";
-export { DEFAULT_HEAD_PREFIX, DEFAULT_LABEL, DEFAULT_TARGET_REPO } from "./constants.js";
+import { DEFAULT_HEAD_PREFIX, DEFAULT_TARGET_REPO } from "./constants.js";
+export { DEFAULT_HEAD_PREFIX, DEFAULT_TARGET_REPO } from "./constants.js";
 
 const DEFAULT_ALLOWED_ASSOCIATIONS = ["OWNER", "MEMBER", "COLLABORATOR"];
 const DEFAULT_TRUSTED_BOTS = ["clawsweeper[bot]", "openclaw-clawsweeper[bot]"];
-const DEFAULT_CLAWSWEEPER_REPAIR_AUTHORS = ["openclaw-clawsweeper", "openclaw-clawsweeper[bot]"];
 
 export type CommentRouterConfig = {
   targetRepo: string;
@@ -19,7 +18,6 @@ export type CommentRouterConfig = {
   executionRunner: string;
   model: string;
   headPrefix: string;
-  label: string;
   execute: boolean;
   writeReport: boolean;
   waitForCapacity: boolean;
@@ -33,7 +31,6 @@ export type CommentRouterConfig = {
   allowedAssociations: Set<string>;
   allowedRepositoryPermissions: Set<string>;
   trustedBots: Set<string>;
-  clawsweeperAuthors: Set<string>;
 };
 
 export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig {
@@ -72,7 +69,6 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     args["head-prefix"] ?? process.env.CLAWSWEEPER_REPAIR_HEAD_PREFIX,
     DEFAULT_HEAD_PREFIX,
   );
-  const label = stringSetting(args.label ?? process.env.CLAWSWEEPER_REPAIR_LABEL, DEFAULT_LABEL);
   const lookbackMinutes = positiveInteger(
     args["lookback-minutes"] ?? process.env.CLAWSWEEPER_REPAIR_COMMENT_LOOKBACK_MINUTES ?? 180,
     "lookback-minutes",
@@ -92,7 +88,6 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     executionRunner,
     model,
     headPrefix,
-    label,
     execute: Boolean(args.execute),
     writeReport: Boolean(args["write-report"] || args.execute),
     waitForCapacity: Boolean(args["wait-for-capacity"]),
@@ -131,11 +126,6 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
       args["trusted-bots"] ??
         process.env.CLAWSWEEPER_REPAIR_TRUSTED_BOTS ??
         DEFAULT_TRUSTED_BOTS.join(","),
-    ),
-    clawsweeperAuthors: commaSet(
-      args["clawsweeper-authors"] ??
-        process.env.CLAWSWEEPER_REPAIR_AUTHOR_LOGINS ??
-        DEFAULT_CLAWSWEEPER_REPAIR_AUTHORS.join(","),
     ),
   };
 }

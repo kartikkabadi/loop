@@ -70,12 +70,10 @@ approved, needs-human, failed, or inconclusive reviews.
 The router considers a PR to be from ClawSweeper when any of these are true:
 
 - branch starts with `clawsweeper/`;
-- the PR has the `clawsweeper` label;
-- PR author login is in `CLAWSWEEPER_REPAIR_AUTHOR_LOGINS`.
+- the branch maps to a committed ClawSweeper repair job.
 
 The branch prefix is the durable identity because it maps directly back to the
-cluster id and job path. The label and author checks are compatibility markers
-for already-open PRs and dashboard tools.
+cluster id and job path. Labels are state and reporting hints, not identity.
 
 ## Automerge Opt-In
 
@@ -242,7 +240,6 @@ Important knobs:
 
 - `CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE=1` enables scheduled writes and dispatches;
 - `CLAWSWEEPER_REPAIR_TRUSTED_BOTS` controls trusted automation authors;
-- `CLAWSWEEPER_REPAIR_AUTHOR_LOGINS` controls PR author identities treated as ClawSweeper;
 - `CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_PR` controls total automatic repair
   iterations per PR; default `5`.
 - `CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_HEAD` controls per-head repair caps;

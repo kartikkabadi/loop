@@ -311,8 +311,8 @@ Supported commands:
 
 `status` and `explain` post a short status reply. `fix ci`, `address review`,
 and `rebase` dispatch the normal `cluster-worker.yml` repair path, but only for
-existing ClawSweeper PRs identified by the `clawsweeper` label or `clawsweeper/*`
-branch. `stop` labels the item for human review.
+existing ClawSweeper PRs identified by the `clawsweeper/*` branch. `stop`
+labels the item for human review.
 
 The router writes an idempotency marker into each reply and records processed
 comments in `results/comment-router.json`. The scheduled workflow is dry by

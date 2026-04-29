@@ -189,8 +189,8 @@ Supported triggers:
 
 Repair commands apply to existing ClawSweeper PRs and to PRs opted into
 `clawsweeper:automerge`. Existing ClawSweeper PRs are identified by the
-`clawsweeper` label or `clawsweeper/*` branch prefix. Opted-in non-ClawSweeper PRs
-get an adopted job at `jobs/<owner>/inbox/automerge-<owner>-<repo>-<pr>.md`.
+`clawsweeper/*` branch prefix. Opted-in non-ClawSweeper PRs get an adopted job
+at `jobs/<owner>/inbox/automerge-<owner>-<repo>-<pr>.md`.
 The router posts one idempotent reply with a hidden marker and dispatches the
 normal `cluster-worker.yml` repair path. It records processed comment versions
 in `results/comment-router.json`. For durable ClawSweeper comments,

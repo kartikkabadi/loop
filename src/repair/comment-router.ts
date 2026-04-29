@@ -54,7 +54,6 @@ const {
   executionRunner,
   model,
   headPrefix,
-  label,
   execute,
   writeReport,
   waitForCapacity,
@@ -67,7 +66,6 @@ const {
   allowedAssociations,
   allowedRepositoryPermissions,
   trustedBots,
-  clawsweeperAuthors,
 } = config;
 
 const ledger = readLedger(ledgerPath());
@@ -1135,8 +1133,7 @@ function classifyPullTarget(pull: LooseRecord, issueNumber: JsonValue): JsonValu
     head_sha: pull.headRefOid ?? null,
     author,
     labels,
-    is_clawsweeper_pr:
-      branch.startsWith(headPrefix) || labels.includes(label) || clawsweeperAuthors.has(author),
+    is_clawsweeper_pr: branch.startsWith(headPrefix),
     cluster_id: clusterId ?? (adoptedJobPath ? automergeCluster : null),
     job_path: jobPath,
     automerge_cluster_id: automergeCluster,

@@ -167,8 +167,10 @@ rather than rejected.
 Generated ClawSweeper PRs are marked by:
 
 - branch prefix: `clawsweeper/`
-- `clawsweeper` label from `scripts/tag-clawsweeper-targets.ts`
-- author usually `app/openclaw-clawsweeper`
+- committed repair job metadata for the branch cluster id
+
+The `clawsweeper` label is a reporting hint from `scripts/tag-clawsweeper-targets.ts`,
+not a PR identity boundary.
 
 Current operational gotcha: OpenClaw's PR queue policy can close PRs when the
 ClawSweeper app author has more than 10 active PRs. That is a target-repo policy
@@ -270,7 +272,7 @@ Workflow: `.github/workflows/finalize-open-prs.yml`
 Script: `scripts/finalize-open-prs.ts`
 
 The finalizer scans open ClawSweeper PRs in the target repo. It finds PRs by the
-`clawsweeper` label and `clawsweeper/*` branch prefix. It classifies blockers:
+`clawsweeper/*` branch prefix. It classifies blockers:
 
 - draft
 - stale/conflicting branch
@@ -364,10 +366,9 @@ Behavior:
 - `stop`: label the item for human review.
 
 Repair commands apply to existing ClawSweeper PRs and PRs opted into
-`clawsweeper:automerge`. The router finds ClawSweeper PRs by `clawsweeper` label,
-`clawsweeper/*` branch, or configured ClawSweeper author login, resolves or creates
-the backing job, posts one idempotent response marker, and dispatches
-`cluster-worker.yml`.
+`clawsweeper:automerge`. The router finds ClawSweeper PRs by the
+`clawsweeper/*` branch, resolves or creates the backing job, posts one
+idempotent response marker, and dispatches `cluster-worker.yml`.
 
 Trusted ClawSweeper comments become `clawsweeper_auto_repair`. Preferred
 comments use hidden `clawsweeper-verdict:*` markers and include
