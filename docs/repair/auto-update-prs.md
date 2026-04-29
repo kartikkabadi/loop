@@ -162,8 +162,9 @@ ClawSweeper has three layers of duplicate protection:
 
 - job creation checks for an existing open PR or branch before writing a new
   job;
-- the comment router writes an idempotency marker in its reply and records
-  processed comment versions in `results/comment-router.json`;
+- the comment router writes an idempotency marker in its reply, records
+  processed comment versions in `results/comment-router.json`, and edits one
+  command-status reply in place per item, intent, and head SHA;
 - trusted ClawSweeper repairs are capped per PR and per PR head SHA.
 
 The default caps are five automatic repair iterations per PR and one

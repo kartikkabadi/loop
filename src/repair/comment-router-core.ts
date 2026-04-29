@@ -328,7 +328,11 @@ export function parseTrustedAutomation(
 
 export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
   const markerId = command.comment_version_key ?? command.comment_id;
-  const marker = `<!-- clawsweeper-command:${markerId}:${command.intent}:${command.target?.head_sha ?? "na"} -->\n${CLAWSWEEPER_REPLY_BADGE}`;
+  const marker = [
+    commandStatusMarker(command),
+    `<!-- clawsweeper-command:${markerId}:${command.intent}:${command.target?.head_sha ?? "na"} -->`,
+    CLAWSWEEPER_REPLY_BADGE,
+  ].join("\n");
   if (command.intent === "help") {
     return [
       marker,
@@ -556,6 +560,10 @@ function normalizeIntent(command: LooseRecord) {
   if (command === "autoclose" || command.startsWith("autoclose ")) return "autoclose";
   if (["stop", "pause", "human review", "handoff"].includes(command)) return "stop";
   return "help";
+}
+
+export function commandStatusMarker(command: LooseRecord) {
+  return `<!-- clawsweeper-command-status:${command.issue_number ?? "unknown"}:${command.intent}:${command.target?.head_sha ?? "na"} -->`;
 }
 
 function inlineQuote(value: JsonValue): string {

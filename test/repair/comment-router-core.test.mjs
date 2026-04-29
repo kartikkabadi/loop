@@ -479,7 +479,10 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
 test("renderResponse gives command replies a lobster badge", () => {
   const body = renderResponse({ comment_id: "456", intent: "help", target: {} }, null);
 
-  assert.match(body, /^<!-- clawsweeper-command:456:help:na -->\n🦞🦞\nClawSweeper is here/);
+  assert.match(
+    body,
+    /^<!-- clawsweeper-command-status:unknown:help:na -->\n<!-- clawsweeper-command:456:help:na -->\n🦞🦞\nClawSweeper is here/,
+  );
 });
 
 test("renderResponse reports automerge resume actions", () => {
@@ -507,6 +510,7 @@ test("renderResponse reports maintainer re-review dispatches", () => {
     {
       comment_id: "461",
       intent: "re_review",
+      issue_number: 74107,
       target: { head_sha: "def461" },
     },
     {
@@ -519,6 +523,7 @@ test("renderResponse reports maintainer re-review dispatches", () => {
 
   assert.match(body, /re-review requested/);
   assert.match(body, /review this item again/);
+  assert.match(body, /clawsweeper-command-status:74107:re_review:def461/);
   assert.doesNotMatch(body, /repair worker/);
 });
 

@@ -24,6 +24,7 @@ import {
   automergeClusterId,
   automergeJobPath,
   buildAutomergeMergeArgs,
+  commandStatusMarker,
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
@@ -807,11 +808,17 @@ function executeCommand(command: LooseRecord) {
     );
   }
 
-  postComment(command, renderResponse(command, dispatched));
+  const commentResult = postComment(command, renderResponse(command, dispatched));
   if (!command.trusted_bot) reactToComment(command, "+1");
   command.actions = command.actions.map((action: JsonValue) =>
     action.action === "comment"
-      ? { ...action, status: "executed", commented_at: new Date().toISOString() }
+      ? {
+          ...action,
+          status: "executed",
+          commented_at: new Date().toISOString(),
+          response_comment_id: commentResult.comment_id,
+          response_comment_mode: commentResult.mode,
+        }
       : action,
   );
   command.status = "executed";
@@ -1429,7 +1436,19 @@ function hasExistingResponse(
 }
 
 function postComment(command: LooseRecord, body: string) {
+  const existing = findExistingCommandStatusComment(command);
   const payloadPath = writePayload(repoRoot(), `comment-router-${command.comment_id}`, { body });
+  if (existing?.id) {
+    ghText([
+      "api",
+      `repos/${command.repo}/issues/comments/${existing.id}`,
+      "--method",
+      "PATCH",
+      "--input",
+      payloadPath,
+    ]);
+    return { mode: "updated", comment_id: String(existing.id) };
+  }
   ghText([
     "api",
     `repos/${command.repo}/issues/${command.issue_number}/comments`,
@@ -1438,6 +1457,18 @@ function postComment(command: LooseRecord, body: string) {
     "--input",
     payloadPath,
   ]);
+  return { mode: "created", comment_id: null };
+}
+
+function findExistingCommandStatusComment(command: LooseRecord) {
+  const marker = commandStatusMarker(command);
+  return ghPaged(`repos/${command.repo}/issues/${command.issue_number}/comments?per_page=100`).find(
+    (comment: JsonValue) => {
+      const author = String(comment.user?.login ?? "").toLowerCase();
+      if (author && author !== "clawsweeper" && !trustedBots.has(author)) return false;
+      return String(comment.body ?? "").includes(marker);
+    },
+  );
 }
 
 function reactToComment(command: LooseRecord, content: string) {

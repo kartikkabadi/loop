@@ -417,6 +417,10 @@ Ledgers:
 - `results/comment-router.json`: processed command ledger
 - `results/comment-router-latest.json`: latest scan report
 
+Command replies are marker-backed and edited in place per item, intent, and
+head SHA. Repeated maintainer nudges update the same small status comment
+instead of leaving duplicate crustacean notes.
+
 ## Label Backfill
 
 Script: `scripts/tag-clawsweeper-targets.ts`
