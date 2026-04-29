@@ -349,6 +349,7 @@ Supported commands:
 /clawsweeper address review
 /clawsweeper rebase
 /clawsweeper automerge
+/clawsweeper approve
 /clawsweeper explain
 /clawsweeper stop
 @openclaw-clawsweeper fix ci
@@ -363,6 +364,9 @@ Behavior:
 - `automerge`: label any open PR with `clawsweeper:automerge`, create an
   adopted job if needed, and dispatch a ClawSweeper review for the current
   head.
+- `approve`: maintainer-only exact-head approval after human review; clears
+  pause labels and merges only through the normal automerge readiness checks and
+  merge gates.
 - `stop`: label the item for human review.
 
 Repair commands apply to existing ClawSweeper PRs and PRs opted into

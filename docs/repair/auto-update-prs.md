@@ -38,8 +38,8 @@ Maintainer commands:
   router falls back to repository collaborator permission and accepts `admin`,
   `maintain`, or `write` by default;
 - supported commands are `/clawsweeper fix ci`, `/clawsweeper address review`,
-  `/clawsweeper rebase`, `/clawsweeper automerge`, `/clawsweeper status`,
-  `/clawsweeper explain`, and `/clawsweeper stop`;
+  `/clawsweeper rebase`, `/clawsweeper automerge`, `/clawsweeper approve`,
+  `/clawsweeper status`, `/clawsweeper explain`, and `/clawsweeper stop`;
 - commands from contributors are ignored without a reply.
 
 Trusted automation:
@@ -147,6 +147,10 @@ green. `needs-human`, `human-review`, and `/clawsweeper stop` pause automerge by
 adding `clawsweeper:human-review`. If ClawSweeper wants the bounded
 repair/rebase loop to continue, it must emit an accepted repair verdict or action
 marker.
+
+After a `needs-human` pause, `/clawsweeper approve` is a maintainer-only exact-head
+approval. It clears pause labels and uses the same merge readiness checks and
+merge gates as a trusted ClawSweeper pass marker.
 
 ## Duplicate Guards
 

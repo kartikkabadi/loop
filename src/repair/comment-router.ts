@@ -262,6 +262,8 @@ function classifyCommand(command: LooseRecord): JsonValue {
     };
   }
   if (!REPAIR_INTENTS.has(command.intent)) {
+    if (command.intent === "maintainer_approve_automerge")
+      return classifyMaintainerApprovedAutomerge(next, issue, pull);
     if (MERGE_INTENTS.has(command.intent)) return classifyAutomergePass(next, issue, pull);
     if (command.intent === "clawsweeper_needs_human") return classifyNeedsHuman(next, issue, pull);
     return {
@@ -408,6 +410,49 @@ function classifyAutomergePass(
     ...command,
     status: "ready",
     actions: [
+      { action: "merge", status: execute ? "pending" : "planned" },
+      { action: "comment", status: execute ? "pending" : "planned" },
+    ],
+  };
+}
+
+function classifyMaintainerApprovedAutomerge(
+  command: LooseRecord,
+  issue: LooseRecord,
+  pull: LooseRecord,
+): JsonValue {
+  if (String(issue.state ?? "").toLowerCase() !== "open")
+    return { ...command, status: "skipped", reason: "PR is not open" };
+  if (!pull) return { ...command, status: "skipped", reason: "maintainer approval is not on a PR" };
+  if (!hasLabel(command.target, AUTOMERGE_LABEL))
+    return { ...command, status: "skipped", reason: "PR is not opted into ClawSweeper automerge" };
+  const pauseLabels = pauseLabelsOn(command.target);
+  if (pauseLabels.length === 0) {
+    return {
+      ...command,
+      status: "skipped",
+      reason: "maintainer approval requires an active ClawSweeper pause label",
+    };
+  }
+  const expectedHeadSha = command.target?.head_sha ?? null;
+  if (!expectedHeadSha) {
+    return {
+      ...command,
+      status: "skipped",
+      reason: "maintainer approval could not resolve the current PR head SHA",
+    };
+  }
+  const removePauseLabelActions = pauseLabels.map((label) => ({
+    action: "remove_label",
+    label,
+    status: execute ? "pending" : "planned",
+  }));
+  return {
+    ...command,
+    expected_head_sha: expectedHeadSha,
+    status: "ready",
+    actions: [
+      ...removePauseLabelActions,
       { action: "merge", status: execute ? "pending" : "planned" },
       { action: "comment", status: execute ? "pending" : "planned" },
     ],
@@ -640,12 +685,34 @@ function executeCommand(command: LooseRecord) {
     );
   }
   if (MERGE_INTENTS.has(command.intent) && command.issue_number) {
+    if (command.intent === "maintainer_approve_automerge") {
+      const pauseLabels = pauseLabelsOn(command.target);
+      for (const pausedLabel of pauseLabels) {
+        ghBestEffort([
+          "issue",
+          "edit",
+          String(command.issue_number),
+          "--repo",
+          command.repo,
+          "--remove-label",
+          pausedLabel,
+        ]);
+      }
+      command.target = {
+        ...command.target,
+        labels: (command.target?.labels ?? []).filter(
+          (label: JsonValue) => !pauseLabels.includes(String(label)),
+        ),
+      };
+    }
     const merge = executeAutomerge(command);
     dispatched = { ...dispatched, merge };
     command.actions = command.actions.map((action: JsonValue) =>
-      action.action === "merge"
-        ? { ...action, ...merge, completed_at: new Date().toISOString() }
-        : action,
+      action.action === "remove_label"
+        ? { ...action, status: "executed", label: action.label }
+        : action.action === "merge"
+          ? { ...action, ...merge, completed_at: new Date().toISOString() }
+          : action,
     );
     if (merge.status === "waiting") {
       command.status = "waiting";

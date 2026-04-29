@@ -5,7 +5,7 @@ export const REPAIR_INTENTS = new Set([
   "rebase",
   "clawsweeper_auto_repair",
 ]);
-export const MERGE_INTENTS = new Set(["clawsweeper_auto_merge"]);
+export const MERGE_INTENTS = new Set(["clawsweeper_auto_merge", "maintainer_approve_automerge"]);
 export const AUTOCLOSE_INTENTS = new Set(["autoclose"]);
 export const AUTOMERGE_JOB_SOURCE = "pr_automerge";
 export const AUTOMERGE_LABEL = "clawsweeper:automerge";
@@ -222,7 +222,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       marker,
       "ClawSweeper is here and listening for maintainer commands.",
       "",
-      "Supported commands: `/clawsweeper status`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper automerge`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
+      "Supported commands: `/clawsweeper status`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
       "",
       "I only act for maintainers, or for trusted ClawSweeper feedback on a ClawSweeper PR or PR opted into `clawsweeper:automerge`.",
     ].join("\n");
@@ -316,6 +316,23 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
         : "I left the PR open for the remaining gate instead of bypassing it.",
     ].join("\n");
   }
+  if (command.intent === "maintainer_approve_automerge") {
+    return [
+      marker,
+      dispatched?.merge?.status === "executed"
+        ? "Maintainer-approved ClawSweeper automerge is complete."
+        : "Maintainer-approved ClawSweeper automerge is not merged yet.",
+      "",
+      `Approver: \`${command.author ?? "maintainer"}\``,
+      `Head: \`${command.expected_head_sha ?? command.target?.head_sha ?? "unknown"}\``,
+      ...(dispatched?.merge?.reason ? [`Merge status: ${dispatched.merge.reason}`] : []),
+      ...(dispatched?.merge?.merged_at ? [`Merged at: ${dispatched.merge.merged_at}`] : []),
+      "",
+      dispatched?.merge?.status === "executed"
+        ? "The automerge loop is complete."
+        : "I left the PR open for the remaining gate instead of bypassing it.",
+    ].join("\n");
+  }
   if (command.intent === "clawsweeper_needs_human") {
     return [
       marker,
@@ -384,6 +401,9 @@ function normalizeIntent(command: LooseRecord) {
     )
   ) {
     return "automerge";
+  }
+  if (["approve", "approve automerge", "approve merge"].includes(command)) {
+    return "maintainer_approve_automerge";
   }
   if (command === "autoclose" || command.startsWith("autoclose ")) return "autoclose";
   if (["stop", "pause", "human review", "handoff"].includes(command)) return "stop";

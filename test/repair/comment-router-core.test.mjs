@@ -41,6 +41,21 @@ test("parseCommand recognizes maintainer slash commands", () => {
     command: "automerge",
     intent: "automerge",
   });
+  assert.deepEqual(parseCommand("/clawsweeper approve"), {
+    trigger: "slash",
+    command: "approve",
+    intent: "maintainer_approve_automerge",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper approve automerge"), {
+    trigger: "slash",
+    command: "approve automerge",
+    intent: "maintainer_approve_automerge",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper merge"), {
+    trigger: "slash",
+    command: "merge",
+    intent: "help",
+  });
   assert.deepEqual(parseCommand("/automerge"), {
     trigger: "slash",
     command: "automerge",
@@ -397,6 +412,30 @@ test("renderResponse reports automerge completion", () => {
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
 });
 
+test("renderResponse reports maintainer-approved automerge completion", () => {
+  const body = renderResponse(
+    {
+      comment_id: "790",
+      intent: "maintainer_approve_automerge",
+      author: "steipete",
+      expected_head_sha: "abc790",
+      target: { head_sha: "abc790" },
+    },
+    {
+      merge: {
+        status: "executed",
+        reason: "merged by ClawSweeper automerge",
+        merged_at: "2026-04-29T05:00:00Z",
+      },
+    },
+  );
+
+  assert.match(body, /Maintainer-approved ClawSweeper automerge is complete/);
+  assert.match(body, /Approver: `steipete`/);
+  assert.match(body, /Head: `abc790`/);
+  assert.match(body, /automerge loop is complete/);
+});
+
 test("repair intent set documents executable repair commands", () => {
   assert.deepEqual([...REPAIR_INTENTS].sort(), [
     "address_review",
@@ -407,7 +446,7 @@ test("repair intent set documents executable repair commands", () => {
 });
 
 test("merge intent set documents ClawSweeper pass automerge", () => {
-  assert.deepEqual([...MERGE_INTENTS], ["clawsweeper_auto_merge"]);
+  assert.deepEqual([...MERGE_INTENTS], ["clawsweeper_auto_merge", "maintainer_approve_automerge"]);
 });
 
 test("autoclose intent set documents destructive maintainer commands", () => {

@@ -182,6 +182,8 @@ Supported triggers:
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
+/clawsweeper automerge
+/clawsweeper approve
 /clawsweeper explain
 /clawsweeper stop
 @openclaw-clawsweeper fix ci
@@ -230,6 +232,10 @@ present, and both `CLAWSWEEPER_REPAIR_ALLOW_MERGE=1` and
 `human-review` verdict on an opted-in PR adds `clawsweeper:human-review` and
 pauses the loop. ClawSweeper must emit an accepted repair verdict or action
 marker to dispatch the repair/rebase loop.
+
+After a pause, `/clawsweeper approve` is maintainer-only exact-head approval. It
+clears `clawsweeper:human-review`, then merges through the same readiness checks
+and merge gates as a trusted ClawSweeper pass marker.
 
 The scheduled workflow is dry by default. Set
 `CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE=1` in repo variables to let scheduled runs

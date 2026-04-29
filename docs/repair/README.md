@@ -304,6 +304,8 @@ Supported commands:
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
+/clawsweeper automerge
+/clawsweeper approve
 /clawsweeper explain
 /clawsweeper stop
 @openclaw-clawsweeper fix ci
@@ -311,8 +313,11 @@ Supported commands:
 
 `status` and `explain` post a short status reply. `fix ci`, `address review`,
 and `rebase` dispatch the normal `cluster-worker.yml` repair path, but only for
-existing ClawSweeper PRs identified by the `clawsweeper/*` branch. `stop`
-labels the item for human review.
+existing ClawSweeper PRs identified by the `clawsweeper/*` branch.
+`automerge` opts an open PR into the bounded review/fix/merge loop. `approve`
+is maintainer-only exact-head approval after a human-review pause; it clears
+pause labels and merges only when the normal automerge readiness checks and
+merge gates pass. `stop` labels the item for human review.
 
 The router writes an idempotency marker into each reply and records processed
 comments in `results/comment-router.json`. The scheduled workflow is dry by
