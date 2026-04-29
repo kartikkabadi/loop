@@ -1477,6 +1477,14 @@ function hasExistingResponse(
     (comment: JsonValue) => {
       const body = String(comment.body ?? "");
       if (!body.includes(marker)) return false;
+      if (
+        MERGE_INTENTS.has(String(intent)) &&
+        (body.includes("did not merge yet") ||
+          body.includes("is not merged yet") ||
+          body.includes("I left the PR open for the remaining gate"))
+      ) {
+        return false;
+      }
       if (intent === "maintainer_approve_automerge") {
         return !body.includes("Maintainer-approved ClawSweeper automerge is not merged yet.");
       }
