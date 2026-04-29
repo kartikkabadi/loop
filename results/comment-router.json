@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-29T13:38:41.642Z",
+  "updated_at": "2026-04-29T13:48:13.474Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74102:4341160275:2026-04-29T05:39:44Z:clawsweeper_auto_repair",
@@ -3994,7 +3994,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:19:10.776Z",
+      "processed_at": "2026-04-29T13:48:13.474Z",
       "target": null
     },
     {
@@ -4018,7 +4018,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:19:10.776Z",
+      "processed_at": "2026-04-29T13:48:13.474Z",
       "target": null
     },
     {
@@ -4042,7 +4042,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:38:41.642Z",
+      "processed_at": "2026-04-29T13:48:13.474Z",
       "target": null
     },
     {
@@ -4066,7 +4066,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:38:41.642Z",
+      "processed_at": "2026-04-29T13:48:13.474Z",
       "target": null
     },
     {
@@ -4090,7 +4090,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:38:41.642Z",
+      "processed_at": "2026-04-29T13:48:13.474Z",
       "target": null
     },
     {
@@ -4144,7 +4144,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:38:41.642Z",
+      "processed_at": "2026-04-29T13:48:13.474Z",
       "target": null
     },
     {
@@ -4168,7 +4168,7 @@
       "expected_head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:38:41.642Z",
+      "processed_at": "2026-04-29T13:48:13.474Z",
       "target": null
     },
     {
@@ -4191,8 +4191,32 @@
       "repair_reason": null,
       "expected_head_sha": null,
       "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-29T13:48:13.474Z",
+      "target": null
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/clawsweeper:19:4344273525:2026-04-29T13:41:26Z:clawsweeper_auto_repair",
+      "comment_id": "4344273525",
+      "comment_version_key": "4344273525:2026-04-29T13:41:26Z",
+      "comment_url": "https://github.com/openclaw/clawsweeper/pull/19#issuecomment-4344273525",
+      "comment_created_at": "2026-04-29T13:41:26Z",
+      "comment_updated_at": "2026-04-29T13:41:26Z",
+      "repo": "openclaw/clawsweeper",
+      "issue_number": 19,
+      "author": "clawsweeper[bot]",
+      "author_association": "NONE",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=d1572999c87e3bdede1933a417391e218ab32ddd)",
+      "expected_head_sha": "d1572999c87e3bdede1933a417391e218ab32ddd",
+      "finding_id": "review-feedback",
       "status": "executed",
-      "processed_at": "2026-04-29T13:38:41.642Z",
+      "processed_at": "2026-04-29T13:48:13.474Z",
       "target": {
         "kind": "pull_request",
         "branch": "smoke/automerge-review-fix-risk-dedupe",
