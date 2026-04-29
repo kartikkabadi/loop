@@ -148,7 +148,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 23:12 UTC
+Last dashboard update: Apr 29, 2026, 23:13 UTC
 
 ### Fleet
 
@@ -160,7 +160,7 @@ Last dashboard update: Apr 29, 2026, 23:12 UTC
 | Open items total | 7827 |
 | Reviewed files | 7428 |
 | Unreviewed open items | 402 |
-| Due now by cadence | 3171 |
+| Due now by cadence | 3177 |
 | Proposed closes awaiting apply | 2 |
 | Work candidates awaiting promotion | 1024 |
 | Closed by Codex apply | 10907 |
@@ -171,7 +171,7 @@ Last dashboard update: Apr 29, 2026, 23:12 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6880 | 6501 | 379 | 3074 | 2 | 978 | 10899 | Apr 29, 2026, 23:09 UTC | Apr 29, 2026, 23:10 UTC | 390 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6880 | 6501 | 379 | 3080 | 2 | 978 | 10899 | Apr 29, 2026, 23:10 UTC | Apr 29, 2026, 23:10 UTC | 390 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 947 | 924 | 23 | 94 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 1 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -179,19 +179,19 @@ Last dashboard update: Apr 29, 2026, 23:12 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 29, 2026, 23:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25138384761) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 23:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25138629377) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 23:09 UTC. Latest close: Apr 29, 2026, 23:10 UTC. Latest comment sync: Apr 29, 2026, 23:10 UTC.
+Latest review: Apr 29, 2026, 23:10 UTC. Latest close: Apr 29, 2026, 23:10 UTC. Latest comment sync: Apr 29, 2026, 23:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 29 | 4 | 25 | 0 | 4 | 29 | 0 |
-| Last hour | 45 | 4 | 41 | 5 | 18 | 391 | 0 |
-| Last 24 hours | 5894 | 305 | 5589 | 19 | 786 | 1648 | 22 |
+| Last 15 minutes | 30 | 4 | 26 | 0 | 4 | 30 | 0 |
+| Last hour | 43 | 4 | 39 | 5 | 18 | 391 | 0 |
+| Last 24 hours | 5886 | 304 | 5582 | 19 | 786 | 1648 | 22 |
 
 ### Recently Closed Across Repos
 
@@ -235,6 +235,7 @@ Latest review: Apr 29, 2026, 23:09 UTC. Latest close: Apr 29, 2026, 23:10 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74653](https://github.com/openclaw/openclaw/pull/74653) | fix(doctor): suppress false-positive embedding warning when probe skipped (#74608) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74653.md) | complete | Apr 29, 2026, 23:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74508](https://github.com/openclaw/openclaw/pull/74508) | fix(telegram): chain reasoning messages on overflow instead of stopping | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74508.md) | complete | Apr 29, 2026, 23:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74659](https://github.com/openclaw/openclaw/issues/74659) | [Bug]: http://127.0.0.1:18789/ | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74659.md) | complete | Apr 29, 2026, 23:07 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74578](https://github.com/openclaw/openclaw/pull/74578) | fix(pi-embedded): strip [tool calls omitted] from user-facing text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74578.md) | complete | Apr 29, 2026, 23:06 UTC |
@@ -244,7 +245,6 @@ Latest review: Apr 29, 2026, 23:09 UTC. Latest close: Apr 29, 2026, 23:10 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72338](https://github.com/openclaw/openclaw/issues/72338) | Gateway CPU spin causes Telegram replies to stall and status probe to time out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72338.md) | complete | Apr 29, 2026, 23:06 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#41351](https://github.com/openclaw/openclaw/pull/41351) | fix(skills): restore executable bit on bundled whisper script + release-time check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/41351.md) | complete | Apr 29, 2026, 23:05 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60868](https://github.com/openclaw/openclaw/pull/60868) | Agents: detect context overflow across error cause chains | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60868.md) | complete | Apr 29, 2026, 23:05 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74495](https://github.com/openclaw/openclaw/pull/74495) | fix(infer): report missing media providers clearly | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74495.md) | complete | Apr 29, 2026, 23:05 UTC |
 
 </details>
 
@@ -264,10 +264,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 23:12 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 1 items across 1 shards. Capacity is 1 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25138384761](https://github.com/openclaw/clawsweeper/actions/runs/25138384761)
+Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74658.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25138629377](https://github.com/openclaw/clawsweeper/actions/runs/25138629377)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -302,11 +302,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25138384761](https://
 | --- | ---: |
 | Hourly cadence coverage | 27/1108 current (1081 due, 2.4%) |
 | Hourly hot item cadence (<7d) | 27/1108 current (1081 due, 2.4%) |
-| Daily cadence coverage | 1987/3598 current (1611 due, 55.2%) |
-| Daily PR cadence | 1313/2501 current (1188 due, 52.5%) |
-| Daily new issue cadence (<30d) | 674/1097 current (423 due, 61.4%) |
+| Daily cadence coverage | 1981/3598 current (1617 due, 55.1%) |
+| Daily PR cadence | 1309/2501 current (1192 due, 52.3%) |
+| Daily new issue cadence (<30d) | 672/1097 current (425 due, 61.3%) |
 | Weekly older issue cadence | 1792/1795 current (3 due, 99.8%) |
-| Due now by cadence | 3074 |
+| Due now by cadence | 3080 |
 
 ### Audit Health
 
@@ -342,13 +342,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 23:09 UTC. Latest close: Apr 29, 2026, 23:10 UTC. Latest comment sync: Apr 29, 2026, 23:10 UTC.
+Latest review: Apr 29, 2026, 23:10 UTC. Latest close: Apr 29, 2026, 23:10 UTC. Latest comment sync: Apr 29, 2026, 23:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 29 | 4 | 25 | 0 | 4 | 29 | 0 |
-| Last hour | 35 | 4 | 31 | 0 | 18 | 390 | 0 |
-| Last 24 hours | 4954 | 305 | 4649 | 6 | 772 | 1234 | 22 |
+| Last 15 minutes | 30 | 4 | 26 | 0 | 4 | 30 | 0 |
+| Last hour | 34 | 4 | 30 | 0 | 18 | 390 | 0 |
+| Last 24 hours | 4946 | 304 | 4642 | 6 | 772 | 1234 | 22 |
 
 #### Recently Closed
 
@@ -384,6 +384,7 @@ Latest review: Apr 29, 2026, 23:09 UTC. Latest close: Apr 29, 2026, 23:10 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74653](https://github.com/openclaw/openclaw/pull/74653) | fix(doctor): suppress false-positive embedding warning when probe skipped (#74608) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74653.md) | complete | Apr 29, 2026, 23:10 UTC |
 | [#74508](https://github.com/openclaw/openclaw/pull/74508) | fix(telegram): chain reasoning messages on overflow instead of stopping | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74508.md) | complete | Apr 29, 2026, 23:09 UTC |
 | [#74659](https://github.com/openclaw/openclaw/issues/74659) | [Bug]: http://127.0.0.1:18789/ | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74659.md) | complete | Apr 29, 2026, 23:07 UTC |
 | [#74578](https://github.com/openclaw/openclaw/pull/74578) | fix(pi-embedded): strip [tool calls omitted] from user-facing text | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74578.md) | complete | Apr 29, 2026, 23:06 UTC |
@@ -393,7 +394,6 @@ Latest review: Apr 29, 2026, 23:09 UTC. Latest close: Apr 29, 2026, 23:10 UTC. L
 | [#72338](https://github.com/openclaw/openclaw/issues/72338) | Gateway CPU spin causes Telegram replies to stall and status probe to time out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72338.md) | complete | Apr 29, 2026, 23:06 UTC |
 | [#41351](https://github.com/openclaw/openclaw/pull/41351) | fix(skills): restore executable bit on bundled whisper script + release-time check | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/41351.md) | complete | Apr 29, 2026, 23:05 UTC |
 | [#60868](https://github.com/openclaw/openclaw/pull/60868) | Agents: detect context overflow across error cause chains | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60868.md) | complete | Apr 29, 2026, 23:05 UTC |
-| [#74495](https://github.com/openclaw/openclaw/pull/74495) | fix(infer): report missing media providers clearly | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74495.md) | complete | Apr 29, 2026, 23:05 UTC |
 
 </details>
 
@@ -492,7 +492,7 @@ Latest review: Apr 29, 2026, 22:22 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 10 | 0 | 10 | 5 | 0 | 1 | 0 |
+| Last hour | 9 | 0 | 9 | 5 | 0 | 1 | 0 |
 | Last 24 hours | 937 | 0 | 937 | 13 | 14 | 411 | 0 |
 
 #### Recently Closed
