@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-29T13:03:06.278Z",
+  "updated_at": "2026-04-29T13:04:23.039Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74102:4341160275:2026-04-29T05:39:44Z:clawsweeper_auto_repair",
@@ -3993,14 +3993,38 @@
       "repair_reason": null,
       "expected_head_sha": null,
       "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-29T13:04:23.039Z",
+      "target": null
+    },
+    {
+      "idempotency_key": "comment-router:openclaw/clawsweeper:17:4343899478:2026-04-29T13:03:39Z:automerge",
+      "comment_id": "4343899478",
+      "comment_version_key": "4343899478:2026-04-29T13:03:39Z",
+      "comment_url": "https://github.com/openclaw/clawsweeper/pull/17#issuecomment-4343899478",
+      "comment_created_at": "2026-04-29T13:03:39Z",
+      "comment_updated_at": "2026-04-29T13:03:39Z",
+      "repo": "openclaw/clawsweeper",
+      "issue_number": 17,
+      "author": "steipete",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "slash",
+      "command": "automerge",
+      "intent": "automerge",
+      "trusted_bot": false,
+      "trusted_bot_author": null,
+      "automation_source": null,
+      "repair_reason": null,
+      "expected_head_sha": null,
+      "finding_id": null,
       "status": "executed",
-      "processed_at": "2026-04-29T13:03:06.278Z",
+      "processed_at": "2026-04-29T13:04:23.039Z",
       "target": {
         "kind": "pull_request",
         "branch": "smoke/clawsweeper-e2e-20260429125755",
         "head_sha": "1026d67d87765898f7f939442fc457e4e075067f",
-        "cluster_id": null,
-        "job_path": null
+        "cluster_id": "automerge-openclaw-clawsweeper-17",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-17.md"
       }
     }
   ]
