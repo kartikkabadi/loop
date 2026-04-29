@@ -908,6 +908,50 @@ Land this docs-only PR after maintainer review.
   assert.doesNotMatch(comment, /Best possible solution:/);
 });
 
+test("pull request keep-open review comments suppress duplicate remaining risk text", () => {
+  const duplicateRisk = "Run the automerge smoke after the repair lane is green.";
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74267",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "none",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+Keep this smoke-test PR open for maintainer review.
+
+## What This Changes
+
+Adds regression coverage for automerge repair smoke comments.
+
+## Risks / Open Questions
+
+${duplicateRisk}
+
+## Work Candidate
+
+Candidate: none
+
+Confidence: low
+
+Priority: low
+
+Status: none
+
+Reason: ${duplicateRisk}
+`,
+    "none",
+  );
+
+  assert.ok(comment.includes(`Maintainer follow-up before merge:\n\n${duplicateRisk}`));
+  assert.doesNotMatch(comment, /Remaining risk \/ open question:/);
+  assert.equal(comment.split(duplicateRisk).length - 1, 1);
+});
+
 test("pull request review reports carry verdict and repair markers", () => {
   const markdown = `${reportFrontMatter({
     type: "pull_request",
