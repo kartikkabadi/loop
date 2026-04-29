@@ -55,6 +55,10 @@ It has two independent lanes:
   commit storage easy to review by time window without date folders.
 - **Optional commit checks:** commit reports are the source of truth; target
   commit Check Runs are disabled by default and can be enabled per run or repo.
+- **Clownfish repair dispatch:** commit reports with `result: findings` can
+  dispatch to Clownfish, where a separate intake writes an audit record and only
+  creates a PR when the finding is narrow, non-security, and still relevant on
+  latest `main`.
 
 ## Guardrails
 
@@ -582,6 +586,9 @@ items, writes comments, or fixes code.
 - Optional GitHub Checks use the `ClawSweeper Commit Review` name on the target
   commit. Clean or skipped reports are green; high-confidence high/critical
   findings fail; lower-severity, inconclusive, and failed reviews are neutral.
+- Finding reports are dispatched to Clownfish when
+  `CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED` is not `false`. Clownfish owns
+  the audit log and any repair PR.
 
 Use `pnpm commit-reports -- --since 24h` to review recent reports and add
 `--findings`, `--non-clean`, `--repo`, or `--author` to narrow the list. The

@@ -164,6 +164,27 @@ The prompt explicitly excludes style nits, broad refactor taste, generic
 cleanliness feedback, speculative security concerns without an executable path,
 and test coverage complaints without a concrete risk.
 
+## Clownfish Repair Dispatch
+
+After reports are committed, `.github/workflows/commit-review.yml` can dispatch
+actionable `result: findings` reports to `openclaw/clownfish` with
+`repository_dispatch` event type `clawsweeper_commit_finding`.
+
+The dispatch is intentionally report-based. ClawSweeper sends the target repo,
+commit SHA, report repo, report path, report URL, severity, check conclusion,
+and source run URL. Clownfish fetches the report from latest
+`openclaw/clawsweeper@main`, writes an audit record, and decides whether an
+automatic PR makes sense on latest target `main`.
+
+Disable this without code changes by setting:
+
+```text
+CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED=false
+```
+
+Clownfish still owns the PR lifecycle, validation, branch reuse, and no-merge
+gate. Security-sensitive findings should be audit-only on the Clownfish side.
+
 ## Optional GitHub Checks
 
 The check name is:

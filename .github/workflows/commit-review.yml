@@ -424,6 +424,31 @@ jobs:
             git push
           fi
 
+      - name: Create Clownfish dispatch token
+        id: clownfish-token
+        if: ${{ vars.CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED != 'false' }}
+        continue-on-error: true
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: clownfish
+          permission-contents: write
+
+      - name: Dispatch commit findings to Clownfish
+        if: ${{ vars.CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED != 'false' && steps.clownfish-token.outputs.token != '' }}
+        env:
+          GH_TOKEN: ${{ steps.clownfish-token.outputs.token }}
+          ENABLED: ${{ vars.CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED || 'true' }}
+        run: |
+          set -euo pipefail
+          node dist/commit-sweeper.js dispatch-findings \
+            --artifact-dir commit-artifacts \
+            --clownfish-repo openclaw/clownfish \
+            --report-repo "${{ github.repository }}" \
+            --enabled "$ENABLED"
+
       - name: Create target checks token
         id: target-checks-token
         if: ${{ needs.plan.outputs.create_checks == 'true' }}

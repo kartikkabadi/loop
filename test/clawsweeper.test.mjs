@@ -215,7 +215,7 @@ Co-authored-by: Alice Example <alice@example.com>
 Co-authored-by: Bob Example <bob@example.com>
 co-authored-by: Alice Example <alice@example.com>
 `),
-    ["Alice Example <alice@example.com>", "Bob Example <bob@example.com>"],
+    ["Alice Example", "Bob Example"],
   );
 });
 

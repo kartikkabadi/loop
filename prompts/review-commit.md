@@ -26,8 +26,8 @@ Required front matter:
 sha: <40-char commit sha>
 parent: <40-char base sha>
 repository: <owner/name>
-author: "<name <email>>"
-committer: "<name <email>>"
+author: "<name-or-login-without-email>"
+committer: "<name-or-login-without-email>"
 github_author: <login-or-unknown>
 github_committer: <login-or-unknown>
 co_authors: []

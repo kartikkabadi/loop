@@ -97,6 +97,19 @@ function yamlArray(values: string[]): string {
   return values.map((value) => `\n  - ${yamlScalar(value)}`).join("");
 }
 
+function stripEmailIdentity(value: string): string {
+  return value
+    .replace(/\s*<[^>\n]*@[^>\n]*>\s*/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function personLabel(name: string, githubLogin: string): string {
+  const login = githubLogin.trim();
+  if (login && login !== "unknown") return `@${login}`;
+  return stripEmailIdentity(name) || "unknown";
+}
+
 function shortSha(sha: string): string {
   return sha.slice(0, 12);
 }
@@ -163,11 +176,11 @@ export function skippedNonCodeReport(options: {
 sha: ${options.sha}
 parent: ${parent}
 repository: ${options.targetRepo}
-author: ${yamlScalar(`${options.metadata.authorName} <${options.metadata.authorEmail}>`)}
-committer: ${yamlScalar(`${options.metadata.committerName} <${options.metadata.committerEmail}>`)}
+author: ${yamlScalar(personLabel(options.metadata.authorName, options.metadata.githubAuthor))}
+committer: ${yamlScalar(personLabel(options.metadata.committerName, options.metadata.githubCommitter))}
 github_author: ${yamlScalar(options.metadata.githubAuthor || "unknown")}
 github_committer: ${yamlScalar(options.metadata.githubCommitter || "unknown")}
-co_authors: ${options.metadata.coAuthors.length ? yamlArray(options.metadata.coAuthors) : "[]"}
+co_authors: ${options.metadata.coAuthors.length ? yamlArray(options.metadata.coAuthors.map(stripEmailIdentity)) : "[]"}
 commit_authored_at: ${yamlScalar(options.metadata.authoredAt)}
 commit_committed_at: ${yamlScalar(options.metadata.committedAt)}
 result: skipped_non_code

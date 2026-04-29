@@ -110,10 +110,23 @@ function artifactReportRelativePath(targetRepo: string, sha: string): string {
   return join(repoSlug(targetRepo), "commits", `${assertSha(sha)}.md`);
 }
 
+function stripEmailIdentity(value: string): string {
+  return value
+    .replace(/\s*<[^>\n]*@[^>\n]*>\s*/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function personLabel(name: string, githubLogin: string): string {
+  const login = githubLogin.trim();
+  if (login && login !== "unknown") return `@${login}`;
+  return stripEmailIdentity(name) || "unknown";
+}
+
 export function parseCoAuthors(body: string): string[] {
   const coAuthors: string[] = [];
   for (const match of body.matchAll(/^Co-authored-by:\s*(.+?)\s*$/gim)) {
-    const value = match[1]?.trim();
+    const value = stripEmailIdentity(match[1]?.trim() ?? "");
     if (value && !coAuthors.includes(value)) coAuthors.push(value);
   }
   return coAuthors;
@@ -223,8 +236,8 @@ function promptForCommit(options: {
 - Base SHA: ${options.baseSha}
 - Range: ${options.baseSha}..${options.sha}
 - Subject: ${options.metadata.subject}
-- Author: ${options.metadata.authorName} <${options.metadata.authorEmail}>
-- Committer: ${options.metadata.committerName} <${options.metadata.committerEmail}>
+- Author: ${personLabel(options.metadata.authorName, options.metadata.githubAuthor)}
+- Committer: ${personLabel(options.metadata.committerName, options.metadata.githubCommitter)}
 - GitHub author: ${options.metadata.githubAuthor || "unknown"}
 - GitHub committer: ${options.metadata.githubCommitter || "unknown"}
 - Authored at: ${options.metadata.authoredAt}
@@ -254,8 +267,8 @@ function failureReport(options: {
 sha: ${options.sha}
 parent: ${options.baseSha}
 repository: ${options.targetRepo}
-author: ${yamlScalar(`${options.metadata.authorName} <${options.metadata.authorEmail}>`)}
-committer: ${yamlScalar(`${options.metadata.committerName} <${options.metadata.committerEmail}>`)}
+author: ${yamlScalar(personLabel(options.metadata.authorName, options.metadata.githubAuthor))}
+committer: ${yamlScalar(personLabel(options.metadata.committerName, options.metadata.githubCommitter))}
 github_author: ${yamlScalar(options.metadata.githubAuthor || "unknown")}
 github_committer: ${yamlScalar(options.metadata.githubCommitter || "unknown")}
 co_authors: ${options.metadata.coAuthors.length ? yamlArray(options.metadata.coAuthors) : "[]"}
@@ -508,6 +521,15 @@ interface CommitReportSummary {
   sortTime: number;
 }
 
+interface CommitFindingDispatch {
+  sha: string;
+  targetRepo: string;
+  reportPath: string;
+  reportUrl: string;
+  highestSeverity: string;
+  checkConclusion: string;
+}
+
 function parseDateMs(value: string | undefined): number | undefined {
   if (!value) return undefined;
   const ms = Date.parse(value);
@@ -639,6 +661,113 @@ function copyArtifactsCommand(args: Args): void {
   console.log(`copied=${copied}`);
 }
 
+function boolString(value: string): boolean {
+  return /^(?:true|1|yes|on)$/i.test(value.trim());
+}
+
+function githubRunUrl(): string {
+  const server = process.env.GITHUB_SERVER_URL || "https://github.com";
+  const repository = process.env.GITHUB_REPOSITORY || "";
+  const runId = process.env.GITHUB_RUN_ID || "";
+  return repository && runId ? `${server}/${repository}/actions/runs/${runId}` : "";
+}
+
+function dispatchPayload(dispatch: CommitFindingDispatch, reportRepo: string): string {
+  return `${JSON.stringify({
+    event_type: "clawsweeper_commit_finding",
+    client_payload: {
+      target_repo: dispatch.targetRepo,
+      commit_sha: dispatch.sha,
+      report_repo: reportRepo,
+      report_path: dispatch.reportPath,
+      report_url: dispatch.reportUrl,
+      highest_severity: dispatch.highestSeverity,
+      check_conclusion: dispatch.checkConclusion,
+      source_run_url: githubRunUrl(),
+      enabled: true,
+    },
+  })}\n`;
+}
+
+function dispatchCommitFinding(options: {
+  clownfishRepo: string;
+  dispatch: CommitFindingDispatch;
+  reportRepo: string;
+}): void {
+  const result = spawnSync(
+    "gh",
+    ["api", `repos/${options.clownfishRepo}/dispatches`, "--method", "POST", "--input", "-"],
+    {
+      input: dispatchPayload(options.dispatch, options.reportRepo),
+      encoding: "utf8",
+      env: process.env,
+    },
+  );
+  if (result.status !== 0) {
+    throw new Error(
+      `failed to dispatch ${options.dispatch.sha} to ${options.clownfishRepo}: ${
+        result.stderr || result.stdout || "unknown gh error"
+      }`,
+    );
+  }
+}
+
+function dispatchFindingsCommand(args: Args): void {
+  const enabled = stringArg(args, "enabled", "true");
+  if (!boolString(enabled)) {
+    console.log("commit finding dispatch disabled");
+    return;
+  }
+
+  const artifactDir = resolve(stringArg(args, "artifact_dir", "commit-artifacts"));
+  const clownfishRepo = stringArg(args, "clownfish_repo", "openclaw/clownfish");
+  const reportRepo = stringArg(
+    args,
+    "report_repo",
+    process.env.GITHUB_REPOSITORY || "openclaw/clawsweeper",
+  );
+  const reportBaseUrl = stringArg(
+    args,
+    "report_base_url",
+    `https://github.com/${reportRepo}/blob/main`,
+  );
+  const dryRun = boolArg(args, "dry_run");
+  const dispatches: CommitFindingDispatch[] = [];
+
+  for (const file of collectMarkdownFiles(artifactDir).filter(isCommitReportPath)) {
+    const markdown = readFileSync(file, "utf8");
+    const { frontMatter } = splitFrontMatter(markdown);
+    if (frontMatter.result !== "findings") continue;
+    const sha = frontMatter.sha;
+    const targetRepo = frontMatter.repository;
+    if (!sha || !/^[0-9a-f]{40}$/i.test(sha) || !targetRepo) continue;
+    const artifactRelativePath = relative(artifactDir, file).replaceAll("\\", "/");
+    const reportPath = `records/${artifactRelativePath}`;
+    dispatches.push({
+      sha: sha.toLowerCase(),
+      targetRepo,
+      reportPath,
+      reportUrl: `${reportBaseUrl.replace(/\/$/, "")}/${reportPath}`,
+      highestSeverity: frontMatter.highest_severity ?? "unknown",
+      checkConclusion: frontMatter.check_conclusion ?? "neutral",
+    });
+  }
+
+  if (!dispatches.length) {
+    console.log("No commit finding reports to dispatch.");
+    return;
+  }
+
+  for (const dispatch of dispatches) {
+    if (dryRun) {
+      console.log(dispatchPayload(dispatch, reportRepo).trim());
+    } else {
+      dispatchCommitFinding({ clownfishRepo, dispatch, reportRepo });
+      console.log(`dispatched ${dispatch.targetRepo}@${dispatch.sha} to ${clownfishRepo}`);
+    }
+  }
+}
+
 export function main(argv = process.argv.slice(2)): void {
   const args = parseArgs(argv);
   const command = args._[0] ?? "review";
@@ -647,6 +776,7 @@ export function main(argv = process.argv.slice(2)): void {
   else if (command === "publish-check") publishCheckCommand(args);
   else if (command === "reports") reportsCommand(args);
   else if (command === "copy-artifacts") copyArtifactsCommand(args);
+  else if (command === "dispatch-findings") dispatchFindingsCommand(args);
   else {
     console.error(`Unknown command: ${command}`);
     process.exit(1);
