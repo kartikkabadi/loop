@@ -386,15 +386,26 @@ jobs:
               return 0
             fi
             git commit -m "chore: apply event sweep result for $target_slug#$ITEM_NUMBER" || return
+            for push_attempt in 1 2 3; do
+              if git push; then
+                write_event_summary
+                return 0
+              fi
+              echo "Event push attempt $push_attempt lost the main-branch race; rebasing and retrying"
+              if ! git pull --rebase origin main; then
+                git rebase --abort || true
+                return 1
+              fi
+            done
             git push || return
             write_event_summary
           }
 
-          for attempt in 1 2 3 4 5; do
+          for attempt in $(seq 1 20); do
             if publish_once; then
               exit 0
             fi
-            sleep_seconds=$((attempt * 2 + RANDOM % 5))
+            sleep_seconds=$((attempt * 3 + RANDOM % 11))
             echo "Event publish attempt $attempt failed; retrying from origin/main in ${sleep_seconds}s"
             sleep "$sleep_seconds"
           done
