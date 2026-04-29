@@ -34,7 +34,7 @@ env:
 
 jobs:
   self-heal:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 20
     steps:
       - name: Create GitHub App token

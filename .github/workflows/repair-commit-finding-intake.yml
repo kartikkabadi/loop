@@ -34,6 +34,11 @@ on:
         required: false
         default: ""
         type: string
+      runner:
+        description: "Runner label for commit finding intake"
+        required: false
+        default: blacksmith-16vcpu-ubuntu-2404
+        type: string
 
 permissions:
   contents: write
@@ -66,7 +71,7 @@ concurrency:
 
 jobs:
   intake:
-    runs-on: ${{ vars.CLAWSWEEPER_COMMIT_FINDING_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
+    runs-on: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_COMMIT_FINDING_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v5
