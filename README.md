@@ -111,14 +111,14 @@ Last dashboard update: Apr 29, 2026, 08:03 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6981 | 6614 | 367 | 2150 | 0 | 512 | 10723 | Apr 29, 2026, 08:00 UTC | Apr 29, 2026, 08:00 UTC | 702 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6981 | 6614 | 367 | 2150 | 0 | 512 | 10723 | Apr 29, 2026, 08:00 UTC | Apr 29, 2026, 08:00 UTC | 697 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 923 | 917 | 6 | 63 | 0 | 39 | 7 | Apr 29, 2026, 07:57 UTC | Apr 29, 2026, 07:52 UTC | 515 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 08:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097595489) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 08:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097595489) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 29, 2026, 07:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097259798) |
 
 ### Fleet Activity
@@ -127,8 +127,8 @@ Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 41 | 3 | 38 | 0 | 5 | 288 | 1 |
-| Last hour | 1079 | 11 | 1068 | 16 | 23 | 1217 | 3 |
+| Last 15 minutes | 41 | 3 | 38 | 0 | 5 | 278 | 1 |
+| Last hour | 1079 | 11 | 1068 | 16 | 23 | 1212 | 3 |
 | Last 24 hours | 6962 | 446 | 6516 | 21 | 743 | 2631 | 28 |
 
 ### Recently Closed Across Repos
@@ -202,9 +202,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 08:03 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/2. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 2. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25097595489](https://github.com/openclaw/clawsweeper/actions/runs/25097595489)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -284,8 +284,8 @@ Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 3 | 16 | 0 | 4 | 117 | 1 |
-| Last hour | 559 | 11 | 548 | 4 | 22 | 702 | 3 |
+| Last 15 minutes | 19 | 3 | 16 | 0 | 4 | 113 | 1 |
+| Last hour | 559 | 11 | 548 | 4 | 22 | 697 | 3 |
 | Last 24 hours | 6033 | 446 | 5587 | 9 | 729 | 1810 | 28 |
 
 #### Recently Closed
@@ -429,7 +429,7 @@ Latest review: Apr 29, 2026, 07:57 UTC. Latest close: Apr 29, 2026, 07:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 22 | 0 | 22 | 0 | 1 | 171 | 0 |
+| Last 15 minutes | 22 | 0 | 22 | 0 | 1 | 165 | 0 |
 | Last hour | 520 | 0 | 520 | 12 | 1 | 515 | 0 |
 | Last 24 hours | 929 | 0 | 929 | 12 | 14 | 821 | 0 |
 
