@@ -1,6 +1,15 @@
 import { slug } from "./text-utils.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
 
+const RETIRED_REPAIR_ENV_PREFIX = "CLAWSWEEPER_" + "REPAIR_";
+const RETIRED_REPAIR_ENV_NAMES = [
+  [`${RETIRED_REPAIR_ENV_PREFIX}ALLOW_MERGE`, "CLAWSWEEPER_ALLOW_MERGE"],
+  [
+    `${RETIRED_REPAIR_ENV_PREFIX}ALLOW_BROAD_FIX_ARTIFACTS`,
+    "CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS",
+  ],
+] as const;
+
 export function clusterReportPath(record: LooseRecord) {
   const owner = String(record.repo ?? "").split("/")[0] || "openclaw";
   return `results/${owner}/${slug(record.cluster_id)}.md`;
@@ -13,12 +22,20 @@ export function markdownTableLink(label: string, url: string) {
 
 export function tableCell(value: JsonValue) {
   return truncate(
-    String(value ?? "")
+    normalizeRetiredRepairEnvNames(String(value ?? ""))
       .replaceAll("|", "\\|")
       .replace(/\s+/g, " ")
       .trim(),
     140,
   );
+}
+
+export function normalizeRetiredRepairEnvNames(value: string) {
+  let normalized = value;
+  for (const [retiredName, currentName] of RETIRED_REPAIR_ENV_NAMES) {
+    normalized = normalized.replaceAll(retiredName, currentName);
+  }
+  return normalized;
 }
 
 export function truncate(value: JsonValue, maxLength: number) {

@@ -3,6 +3,7 @@ import {
   clusterReportPath,
   formatTimestamp,
   markdownTableLink,
+  normalizeRetiredRepairEnvNames,
   tableCell,
   truncate,
 } from "./publish-markdown.js";
@@ -185,7 +186,7 @@ function inspectionRank(state: string): number {
 
 function compactReason(value: unknown): string {
   return truncate(
-    String(value ?? "")
+    normalizeRetiredRepairEnvNames(String(value ?? ""))
       .replace(/\s+/g, " ")
       .trim(),
     160,

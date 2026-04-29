@@ -16,7 +16,7 @@ import {
   readRunRecords,
   readSiblingJson,
 } from "./publish-files.js";
-import { formatTimestamp, tableCell } from "./publish-markdown.js";
+import { formatTimestamp, normalizeRetiredRepairEnvNames, tableCell } from "./publish-markdown.js";
 import {
   buildInspectionRows,
   renderBlockedReasonRows,
@@ -507,13 +507,13 @@ function postFlightToApplyAction(action: LooseRecord) {
 
 function normalizeNullableText(value: JsonValue) {
   if (typeof value !== "string") return value ?? null;
-  return value;
+  return normalizeRetiredRepairEnvNames(value);
 }
 
 function normalizeReportRow(row: LooseRecord): LooseRecord {
   const normalized: LooseRecord = {};
   for (const [key, value] of Object.entries(row)) {
-    normalized[key] = value;
+    normalized[key] = typeof value === "string" ? normalizeRetiredRepairEnvNames(value) : value;
   }
   return normalized;
 }
