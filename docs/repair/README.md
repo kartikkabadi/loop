@@ -230,12 +230,12 @@ For the ClawSweeper feedback loop that updates existing generated PRs, see
 That loop is marker-driven. ClawSweeper comments use hidden
 `clawsweeper-verdict:*` markers, and only actionable PR feedback includes
 `clawsweeper-action:fix-required`. ClawSweeper skips stale head SHAs and caps
-automatic repairs at five per PR and one per PR head SHA.
+automatic repairs at ten per PR and one per PR head SHA.
 
 Maintainers can opt an existing ClawSweeper PR into the bounded merge loop with
 `/clawsweeper automerge`. That adds `clawsweeper:automerge`, dispatches
 ClawSweeper for the current head, lets ClawSweeper repair trusted
-`needs-changes` findings for up to five rounds, and merges only after a trusted
+`needs-changes` findings for up to ten rounds, and merges only after a trusted
 pass verdict for the exact current head plus green checks, clean mergeability,
 and explicit `CLAWSWEEPER_ALLOW_MERGE=1` and `CLAWSWEEPER_ALLOW_AUTOMERGE=1`
 gates.
@@ -457,7 +457,7 @@ The workflow needs:
 - optional `CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS` and `CLAWSWEEPER_RESOLVE_REVIEW_THREADS` variables for agentic merge-prep review loops
 - optional `CLAWSWEEPER_MAX_REPAIRS_PER_PR` and
   `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD` variables for trusted
-  ClawSweeper review feedback; defaults are `5` automatic repair iterations per
+  ClawSweeper review feedback; defaults are `10` automatic repair iterations per
   PR and `1` repair per PR head SHA. The per-PR cap is total across changing
   head SHAs and stops the automatic review/repair loop.
 - optional `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` to let the scheduled comment

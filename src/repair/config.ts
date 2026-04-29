@@ -108,7 +108,7 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
       "max-auto-repairs-per-head",
     ),
     maxAutoRepairsPerPr: positiveInteger(
-      args["max-auto-repairs-per-pr"] ?? process.env.CLAWSWEEPER_MAX_REPAIRS_PER_PR ?? 5,
+      args["max-auto-repairs-per-pr"] ?? process.env.CLAWSWEEPER_MAX_REPAIRS_PER_PR ?? 10,
       "max-auto-repairs-per-pr",
     ),
     lookbackMinutes,

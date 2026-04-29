@@ -393,7 +393,7 @@ comments use hidden `clawsweeper-verdict:*` markers and include
 already opted into `clawsweeper:automerge`, trusted `needs-human` and
 `human-review` verdicts pause the loop with `clawsweeper:human-review`. Repair
 dispatch requires an accepted repair verdict or action marker. The default caps
-are five automatic repair iterations per PR and one
+are ten automatic repair iterations per PR and one
 dispatch per PR head SHA. The per-PR cap is total across head SHA changes, so
 repeated findings on the same commit do not stampede the branch and a single PR
 cannot loop forever.

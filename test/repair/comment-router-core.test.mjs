@@ -308,8 +308,8 @@ test("reviewedHeadShaBlockReason rejects stale trusted verdict heads", () => {
   );
 });
 
-test("auto repair cap allows five PR repair rounds and blocks the sixth", () => {
-  const entries = Array.from({ length: 5 }, (_, index) => ({
+test("auto repair cap allows ten PR repair rounds and blocks the eleventh", () => {
+  const entries = Array.from({ length: 10 }, (_, index) => ({
     repo: "openclaw/openclaw",
     issue_number: 74453,
     intent: "clawsweeper_auto_repair",
@@ -320,11 +320,11 @@ test("auto repair cap allows five PR repair rounds and blocks the sixth", () => 
 
   assert.equal(
     autoRepairBlockReason({
-      entries: entries.slice(0, 4),
+      entries: entries.slice(0, 9),
       repo: "openclaw/openclaw",
       issueNumber: 74453,
-      headSha: "sha-5",
-      maxRepairsPerPr: 5,
+      headSha: "sha-10",
+      maxRepairsPerPr: 10,
       maxRepairsPerHead: 1,
     }),
     null,
@@ -334,11 +334,11 @@ test("auto repair cap allows five PR repair rounds and blocks the sixth", () => 
       entries,
       repo: "openclaw/openclaw",
       issueNumber: 74453,
-      headSha: "sha-5",
-      maxRepairsPerPr: 5,
+      headSha: "sha-10",
+      maxRepairsPerPr: 10,
       maxRepairsPerHead: 1,
     }),
-    "ClawSweeper auto repair already dispatched 5 total time(s) for this PR",
+    "ClawSweeper auto repair already dispatched 10 total time(s) for this PR",
   );
 });
 

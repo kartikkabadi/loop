@@ -167,18 +167,18 @@ ClawSweeper has three layers of duplicate protection:
   command-status reply in place per item, intent, and head SHA;
 - trusted ClawSweeper repairs are capped per PR and per PR head SHA.
 
-The default caps are five automatic repair iterations per PR and one
+The default caps are ten automatic repair iterations per PR and one
 auto-repair dispatch per PR head SHA:
 
 ```bash
-CLAWSWEEPER_MAX_REPAIRS_PER_PR=5
+CLAWSWEEPER_MAX_REPAIRS_PER_PR=10
 CLAWSWEEPER_MAX_REPAIRS_PER_HEAD=1
 ```
 
 That means many ClawSweeper comments on the same commit trigger at most one
 repair run. If ClawSweeper pushes a new commit, the PR head SHA changes and a
 new ClawSweeper finding can trigger one more repair run, until the PR reaches
-five automatic ClawSweeper-triggered repair iterations. The per-PR cap is total
+ten automatic ClawSweeper-triggered repair iterations. The per-PR cap is total
 across all head SHAs and stops the automatic review/repair loop even when every
 iteration produces a new commit.
 
@@ -250,7 +250,7 @@ Important knobs:
 - `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` enables scheduled writes and dispatches;
 - `CLAWSWEEPER_TRUSTED_BOTS` controls trusted automation authors;
 - `CLAWSWEEPER_MAX_REPAIRS_PER_PR` controls total automatic repair
-  iterations per PR; default `5`.
+  iterations per PR; default `10`.
 - `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD` controls per-head repair caps;
   default `1`.
 

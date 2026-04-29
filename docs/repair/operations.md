@@ -221,11 +221,11 @@ are `clawsweeper[bot]` and `openclaw-clawsweeper[bot]`; override with
 `CLAWSWEEPER_TRUSTED_BOTS`. Preferred
 ClawSweeper comments include `clawsweeper-verdict:*` markers plus a
 `clawsweeper-action:fix-required` marker when ClawSweeper should wake up. The
-router dispatches at most five automatic repair iterations per PR and at most
+router dispatches at most ten automatic repair iterations per PR and at most
 one auto-repair per PR head SHA by default, controlled by
 `CLAWSWEEPER_MAX_REPAIRS_PER_PR` and
 `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD`. The per-PR cap is total across
-head SHA changes, so the automatic loop stops after five ClawSweeper-triggered
+head SHA changes, so the automatic loop stops after ten ClawSweeper-triggered
 repair passes.
 
 Maintainers can start the bounded review/fix/merge loop on any open PR with

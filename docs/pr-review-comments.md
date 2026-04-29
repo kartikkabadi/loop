@@ -109,13 +109,13 @@ moved.
 
 ClawSweeper caps trusted repair dispatches:
 
-- `CLAWSWEEPER_MAX_REPAIRS_PER_PR=5` total automatic repair
+- `CLAWSWEEPER_MAX_REPAIRS_PER_PR=10` total automatic repair
   iterations per PR by default.
 - `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD=1` repair dispatch per PR head
   SHA by default.
 
 The per-head cap prevents duplicate workers for the same commit. The per-PR
-cap stops an automatic review/repair loop after five ClawSweeper-triggered
+cap stops an automatic review/repair loop after ten ClawSweeper-triggered
 iterations even if each repair pushes a new head SHA.
 
 ## Operational Notes
