@@ -84,53 +84,55 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 05:11 UTC
+Last dashboard update: Apr 29, 2026, 05:13 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4228 |
-| Open PRs | 3285 |
-| Open items total | 7513 |
-| Reviewed files | 7513 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 1676 |
+| Open issues | 4410 |
+| Open PRs | 3483 |
+| Open items total | 7893 |
+| Reviewed files | 7511 |
+| Unreviewed open items | 382 |
+| Due now by cadence | 2077 |
 | Proposed closes awaiting apply | 22 |
 | Work candidates awaiting promotion | 465 |
 | Closed by Codex apply | 10660 |
 | Failed or stale reviews | 18 |
-| Archived closed files | 14011 |
+| Archived closed files | 14013 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6601 | 6601 | 0 | 1618 | 22 | 429 | 10654 | Apr 29, 2026, 05:07 UTC | Apr 29, 2026, 04:58 UTC | 1001 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 912 | 912 | 0 | 58 | 0 | 36 | 6 | Apr 29, 2026, 05:07 UTC | Apr 29, 2026, 04:24 UTC | 433 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6975 | 6599 | 376 | 2013 | 22 | 429 | 10654 | Apr 29, 2026, 05:07 UTC | Apr 29, 2026, 05:13 UTC | 1001 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 918 | 912 | 6 | 64 | 0 | 36 | 6 | Apr 29, 2026, 05:07 UTC | Apr 29, 2026, 04:24 UTC | 433 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 05:11 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25092032379) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 29, 2026, 05:13 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25092032379) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 29, 2026, 04:35 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25090130962) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 05:07 UTC. Latest close: Apr 29, 2026, 04:58 UTC. Latest comment sync: Apr 29, 2026, 05:10 UTC.
+Latest review: Apr 29, 2026, 05:07 UTC. Latest close: Apr 29, 2026, 05:13 UTC. Latest comment sync: Apr 29, 2026, 05:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 1 | 13 | 0 | 8 | 507 | 0 |
-| Last hour | 601 | 9 | 592 | 7 | 22 | 1434 | 0 |
-| Last 24 hours | 7183 | 443 | 6740 | 14 | 751 | 2577 | 29 |
+| Last 15 minutes | 12 | 0 | 12 | 0 | 2 | 505 | 0 |
+| Last hour | 572 | 9 | 563 | 2 | 24 | 1434 | 0 |
+| Last 24 hours | 7183 | 443 | 6740 | 14 | 753 | 2577 | 29 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#65370](https://github.com/openclaw/openclaw/pull/65370) | feat(ui): render per-message cost + savings badge from usage.cost | closed externally after review | Apr 29, 2026, 05:13 UTC | [records/openclaw-openclaw/closed/65370.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65370.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#49550](https://github.com/openclaw/openclaw/pull/49550) | fix: handle MiniMax HTTP 520 and api_error body without 'internal server error' | closed externally after review | Apr 29, 2026, 05:13 UTC | [records/openclaw-openclaw/closed/49550.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49550.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74080](https://github.com/openclaw/openclaw/issues/74080) | [Bug]: Subagent completion announce uses child agent's accountId instead of parent session's delivery context, causing Feishu \"open_id cross app\" 400 error | already implemented on main | Apr 29, 2026, 04:58 UTC | [records/openclaw-openclaw/closed/74080.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74080.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58995](https://github.com/openclaw/openclaw/pull/58995) | fix: preserve non-Latin characters in normalizeHyphenSlug and normalizeAtHashSlug | closed externally after review | Apr 29, 2026, 04:57 UTC | [records/openclaw-openclaw/closed/58995.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58995.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58942](https://github.com/openclaw/openclaw/pull/58942) | fix: preserve non-Latin characters in normalizeHyphenSlug | closed externally after review | Apr 29, 2026, 04:57 UTC | [records/openclaw-openclaw/closed/58942.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58942.md) |
@@ -139,8 +141,6 @@ Latest review: Apr 29, 2026, 05:07 UTC. Latest close: Apr 29, 2026, 04:58 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73559](https://github.com/openclaw/openclaw/issues/73559) | GPT-5.5 OAuth requests fail with 401 Missing bearer auth header | closed externally after review | Apr 29, 2026, 04:56 UTC | [records/openclaw-openclaw/closed/73559.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73559.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73588](https://github.com/openclaw/openclaw/pull/73588) | fix(agents): inject resolved OAuth bearer into boundary-aware embedded streams | kept open | Apr 29, 2026, 04:56 UTC | [records/openclaw-openclaw/closed/73588.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73588.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70495](https://github.com/openclaw/openclaw/pull/70495) | fix(cli): clarify mcp list registry scope | closed externally after proposed_close | Apr 29, 2026, 04:56 UTC | [records/openclaw-openclaw/closed/70495.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70495.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73903](https://github.com/openclaw/openclaw/issues/73903) | openclaw doctor: Claude CLI section reports irrelevant info for non-Claude-CLI agents | closed externally after review | Apr 29, 2026, 04:47 UTC | [records/openclaw-openclaw/closed/73903.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73903.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74065](https://github.com/openclaw/openclaw/pull/74065) | fix: Found one low-severity block-reply edge case in the new split-tag | kept open | Apr 29, 2026, 04:45 UTC | [records/openclaw-openclaw/closed/74065.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74065.md) |
 
 ### Work Candidates Across Repos
 
@@ -196,11 +196,11 @@ Latest review: Apr 29, 2026, 05:07 UTC. Latest close: Apr 29, 2026, 04:58 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 05:11 UTC
+Updated: Apr 29, 2026, 05:13 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25092032379](https://github.com/openclaw/clawsweeper/actions/runs/25092032379)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -209,12 +209,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25092032379](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3350 |
-| Open PRs | 3251 |
-| Open items total | 6601 |
-| Reviewed files | 6601 |
-| Unreviewed open items | 0 |
-| Archived closed files | 13992 |
+| Open issues | 3532 |
+| Open PRs | 3443 |
+| Open items total | 6975 |
+| Reviewed files | 6599 |
+| Unreviewed open items | 376 |
+| Archived closed files | 13994 |
 
 #### Review Outcomes
 
@@ -222,9 +222,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25092032379](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3348 |
 | Proposed issue closes | 9 (0.3% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3245 |
+| Fresh reviewed PRs in the last 7 days | 3243 |
 | Proposed PR closes | 13 (0.4% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6593 |
+| Fresh verified reviews in the last 7 days | 6591 |
 | Proposed closes awaiting apply | 22 (0.3% of fresh reviews) |
 | Work candidates awaiting promotion | 429 |
 | Closed by Codex apply | 10654 |
@@ -234,13 +234,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25092032379](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 99/990 current (891 due, 10%) |
-| Hourly hot item cadence (<7d) | 99/990 current (891 due, 10%) |
-| Daily cadence coverage | 3077/3802 current (725 due, 80.9%) |
-| Daily PR cadence | 2278/2660 current (382 due, 85.6%) |
+| Hourly cadence coverage | 79/990 current (911 due, 8%) |
+| Hourly hot item cadence (<7d) | 79/990 current (911 due, 8%) |
+| Daily cadence coverage | 3076/3800 current (724 due, 80.9%) |
+| Daily PR cadence | 2277/2658 current (381 due, 85.7%) |
 | Daily new issue cadence (<30d) | 799/1142 current (343 due, 70%) |
 | Weekly older issue cadence | 1807/1809 current (2 due, 99.9%) |
-| Due now by cadence | 1618 |
+| Due now by cadence | 2013 |
 
 ### Audit Health
 
@@ -276,18 +276,20 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 05:07 UTC. Latest close: Apr 29, 2026, 04:58 UTC. Latest comment sync: Apr 29, 2026, 05:10 UTC.
+Latest review: Apr 29, 2026, 05:07 UTC. Latest close: Apr 29, 2026, 05:13 UTC. Latest comment sync: Apr 29, 2026, 05:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 13 | 1 | 12 | 0 | 8 | 506 | 0 |
-| Last hour | 577 | 9 | 568 | 1 | 21 | 1001 | 0 |
-| Last 24 hours | 6258 | 443 | 5815 | 4 | 733 | 1653 | 29 |
+| Last 15 minutes | 11 | 0 | 11 | 0 | 2 | 504 | 0 |
+| Last hour | 556 | 9 | 547 | 1 | 23 | 1001 | 0 |
+| Last 24 hours | 6258 | 443 | 5815 | 4 | 735 | 1653 | 29 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#65370](https://github.com/openclaw/openclaw/pull/65370) | feat(ui): render per-message cost + savings badge from usage.cost | closed externally after review | Apr 29, 2026, 05:13 UTC | [records/openclaw-openclaw/closed/65370.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65370.md) |
+| [#49550](https://github.com/openclaw/openclaw/pull/49550) | fix: handle MiniMax HTTP 520 and api_error body without 'internal server error' | closed externally after review | Apr 29, 2026, 05:13 UTC | [records/openclaw-openclaw/closed/49550.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49550.md) |
 | [#74080](https://github.com/openclaw/openclaw/issues/74080) | [Bug]: Subagent completion announce uses child agent's accountId instead of parent session's delivery context, causing Feishu \"open_id cross app\" 400 error | already implemented on main | Apr 29, 2026, 04:58 UTC | [records/openclaw-openclaw/closed/74080.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74080.md) |
 | [#58995](https://github.com/openclaw/openclaw/pull/58995) | fix: preserve non-Latin characters in normalizeHyphenSlug and normalizeAtHashSlug | closed externally after review | Apr 29, 2026, 04:57 UTC | [records/openclaw-openclaw/closed/58995.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58995.md) |
 | [#58942](https://github.com/openclaw/openclaw/pull/58942) | fix: preserve non-Latin characters in normalizeHyphenSlug | closed externally after review | Apr 29, 2026, 04:57 UTC | [records/openclaw-openclaw/closed/58942.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58942.md) |
@@ -296,8 +298,6 @@ Latest review: Apr 29, 2026, 05:07 UTC. Latest close: Apr 29, 2026, 04:58 UTC. L
 | [#73559](https://github.com/openclaw/openclaw/issues/73559) | GPT-5.5 OAuth requests fail with 401 Missing bearer auth header | closed externally after review | Apr 29, 2026, 04:56 UTC | [records/openclaw-openclaw/closed/73559.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73559.md) |
 | [#73588](https://github.com/openclaw/openclaw/pull/73588) | fix(agents): inject resolved OAuth bearer into boundary-aware embedded streams | kept open | Apr 29, 2026, 04:56 UTC | [records/openclaw-openclaw/closed/73588.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73588.md) |
 | [#70495](https://github.com/openclaw/openclaw/pull/70495) | fix(cli): clarify mcp list registry scope | closed externally after proposed_close | Apr 29, 2026, 04:56 UTC | [records/openclaw-openclaw/closed/70495.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70495.md) |
-| [#73903](https://github.com/openclaw/openclaw/issues/73903) | openclaw doctor: Claude CLI section reports irrelevant info for non-Claude-CLI agents | closed externally after review | Apr 29, 2026, 04:47 UTC | [records/openclaw-openclaw/closed/73903.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73903.md) |
-| [#74065](https://github.com/openclaw/openclaw/pull/74065) | fix: Found one low-severity block-reply edge case in the new split-tag | kept open | Apr 29, 2026, 04:45 UTC | [records/openclaw-openclaw/closed/74065.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74065.md) |
 
 #### Work Candidates
 
@@ -357,10 +357,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25090130962](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 878 |
-| Open PRs | 34 |
-| Open items total | 912 |
+| Open PRs | 40 |
+| Open items total | 918 |
 | Reviewed files | 912 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 6 |
 | Archived closed files | 19 |
 
 #### Review Outcomes
@@ -387,7 +387,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25090130962](https://
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 201/201 current (0 due, 100%) |
 | Weekly older issue cadence | 626/636 current (10 due, 98.4%) |
-| Due now by cadence | 58 |
+| Due now by cadence | 64 |
 
 ### Audit Health
 
@@ -426,7 +426,7 @@ Latest review: Apr 29, 2026, 05:07 UTC. Latest close: Apr 29, 2026, 04:24 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last hour | 24 | 0 | 24 | 6 | 1 | 433 | 0 |
+| Last hour | 16 | 0 | 16 | 1 | 1 | 433 | 0 |
 | Last 24 hours | 925 | 0 | 925 | 10 | 18 | 924 | 0 |
 
 #### Recently Closed
