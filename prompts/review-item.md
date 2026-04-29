@@ -77,6 +77,32 @@ Close as implemented when current `main` solves the observable user problem well
 
 Keep open for everything else, including real bugs, unclear-but-salvageable reports, stale PRs that might still contain useful work, optional features that require a new core/plugin API first, or anything where the evidence is not high-confidence.
 
+For keep-open items, also decide whether this is a safe Clownfish fix-PR
+candidate. This is not permission to mutate GitHub; it only marks a manual work
+lane candidate for a maintainer to promote later. Set `workCandidate` to
+`queue_fix_pr` only when all of these are true:
+
+- the report appears valid and not already closed/superseded by a merged fix;
+- the requested fix is narrow enough for one focused PR;
+- the affected area, likely files, and validation path are reasonably clear;
+- any related reports can be handled by one canonical fix PR rather than many
+  duplicate PRs;
+- no security-sensitive, release-blocking, product-strategy, vague, or broad
+  architecture decision is required first.
+
+Set `workCandidate` to `manual_review` when the item may matter but needs human
+priority or product judgment before implementation. Set it to `none` for close
+decisions, stale/unclear reports, security-sensitive work, protected-label
+items, broad feature programs, pure administration, or items already paired
+with an open fix PR. When you choose `queue_fix_pr`, write `workPrompt` as the
+custom maintainer prompt that ProjectClownfish should give Codex: include the
+observable bug or feature, the expected fix boundary, related refs from
+`workClusterRefs`, likely files, validation commands, changelog expectation, and
+anything that must not be changed. Keep it concrete enough that a single
+autonomous PR can be attempted without reopening triage. Use `workValidation`
+for the exact tests or checks a fix PR should run, and `workLikelyFiles` for
+probable implementation/test/docs paths.
+
 Keep an issue open when an open PR specifically references it with GitHub closing
 syntax such as `Fixes #123`, `Closes #123`, or `Resolves #123`. That PR is an
 implementation candidate, not a reason to close the issue before merge. In this
@@ -154,3 +180,10 @@ most one such phrase per public comment, and never let the bit obscure the
 evidence or decision.
 
 Always fill `bestSolution`. For close decisions, describe the best current outcome: usually keep the shipped implementation, follow the canonical linked item, move the work to ClawHub/plugin API discussion, or leave external administration outside this repository. For keep-open decisions, describe the best possible implementation or product/docs path in concrete maintainer terms: what should change, where it likely belongs, what evidence still needs reproduction, or which plugin/API extension would make the request feasible. Make it useful for a visible Codex automated review comment.
+
+Always fill the work-lane fields too. For non-candidates, use
+`workCandidate: "none"`, low confidence/priority, an empty `workPrompt`, and
+empty arrays. For manual-review items, use `workCandidate: "manual_review"` and
+explain the blocker in `workReason`. For fix-PR candidates, use
+`workCandidate: "queue_fix_pr"` and include a complete `workPrompt`,
+`workClusterRefs`, `workValidation`, and `workLikelyFiles`.

@@ -118,6 +118,14 @@ function closeDecision(overrides = {}) {
     fixedSha: "abcdef1234567890",
     fixedAt: "2026-04-28T12:00:00Z",
     closeComment: "Closing this as implemented after Codex review.\n\n- Evidence.",
+    workCandidate: "none",
+    workConfidence: "low",
+    workPriority: "low",
+    workReason: "Close decisions do not need a fix PR.",
+    workPrompt: "",
+    workClusterRefs: [],
+    workValidation: [],
+    workLikelyFiles: [],
     ...overrides,
   };
 }
@@ -864,6 +872,31 @@ test("decision parser enforces required schema-shaped evidence", () => {
       }),
     /decision\.likelyOwners\[0\]\.role/,
   );
+  assert.throws(
+    () =>
+      parseDecision({
+        ...closeDecision(),
+        workCandidate: "auto_everything",
+      }),
+    /decision\.workCandidate/,
+  );
+  const workCandidate = parseDecision(
+    closeDecision({
+      decision: "keep_open",
+      closeReason: "none",
+      confidence: "medium",
+      workCandidate: "queue_fix_pr",
+      workConfidence: "high",
+      workPriority: "medium",
+      workReason: "The bug is narrow and reproducible.",
+      workPrompt: "Fix the narrow bug and add a regression test.",
+      workClusterRefs: ["#123", "#456"],
+      workValidation: ["pnpm test:unit"],
+      workLikelyFiles: ["src/example.ts", "test/example.test.ts"],
+    }),
+  );
+  assert.equal(workCandidate.workCandidate, "queue_fix_pr");
+  assert.deepEqual(workCandidate.workClusterRefs, ["#123", "#456"]);
 });
 
 test("review prompt routes PR likely owners through feature history", () => {

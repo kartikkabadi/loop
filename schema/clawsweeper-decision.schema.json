@@ -14,7 +14,15 @@
     "fixedRelease",
     "fixedSha",
     "fixedAt",
-    "closeComment"
+    "closeComment",
+    "workCandidate",
+    "workConfidence",
+    "workPriority",
+    "workReason",
+    "workPrompt",
+    "workClusterRefs",
+    "workValidation",
+    "workLikelyFiles"
   ],
   "properties": {
     "decision": {
@@ -133,6 +141,45 @@
     },
     "closeComment": {
       "type": "string"
+    },
+    "workCandidate": {
+      "type": "string",
+      "enum": ["none", "manual_review", "queue_fix_pr"],
+      "description": "Whether this item should become a manually promoted Clownfish fix-PR job."
+    },
+    "workConfidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "workPriority": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "workReason": {
+      "type": "string",
+      "description": "Short reason this item is or is not a safe fix-PR candidate."
+    },
+    "workPrompt": {
+      "type": "string",
+      "description": "Maintainer prompt to hand to ProjectClownfish if the item is promoted."
+    },
+    "workClusterRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "workValidation": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "workLikelyFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   }
 }

@@ -27,6 +27,7 @@ import {
 type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
+type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
 type CloseReason =
   | "implemented_on_main"
   | "cannot_reproduce"
@@ -146,6 +147,14 @@ interface Decision {
   fixedSha?: string | null;
   fixedAt?: string | null;
   closeComment: string;
+  workCandidate: WorkCandidateKind;
+  workConfidence: Confidence;
+  workPriority: Confidence;
+  workReason: string;
+  workPrompt: string;
+  workClusterRefs: string[];
+  workValidation: string[];
+  workLikelyFiles: string[];
 }
 
 interface ItemContext {
@@ -206,6 +215,9 @@ interface DashboardItem {
   action: string;
   reviewStatus: string;
   reportPath: string;
+  workCandidate: string;
+  workPriority: string;
+  workStatus: string;
 }
 
 interface DashboardClosedItem {
@@ -291,10 +303,12 @@ interface DashboardStats {
   archivedFiles: number;
   failed: number;
   stale: number;
+  workCandidates: number;
   byKind: Record<ItemKind, DashboardKindStats>;
   cadence: DashboardCadenceStats;
   activity: DashboardActivityStats;
   recent: DashboardItem[];
+  workQueue: DashboardItem[];
   recentClosed: DashboardClosedItem[];
 }
 
@@ -452,6 +466,7 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 ]);
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
+const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
 
 type ReviewArtifactDestination = "items" | "closed" | "skip_closed";
 const CONFIDENCES = new Set<Confidence>(["high", "medium", "low"]);
@@ -468,6 +483,14 @@ const DECISION_SCHEMA_KEYS = new Set([
   "fixedSha",
   "fixedAt",
   "closeComment",
+  "workCandidate",
+  "workConfidence",
+  "workPriority",
+  "workReason",
+  "workPrompt",
+  "workClusterRefs",
+  "workValidation",
+  "workLikelyFiles",
 ]);
 const EVIDENCE_SCHEMA_KEYS = new Set(["label", "detail", "file", "line", "command", "sha"]);
 const LIKELY_OWNER_SCHEMA_KEYS = new Set([
@@ -1041,6 +1064,14 @@ export function parseDecision(value: unknown): Decision {
     fixedSha: requireNullableString(record.fixedSha, "decision.fixedSha"),
     fixedAt: requireNullableString(record.fixedAt, "decision.fixedAt"),
     closeComment: requireString(record.closeComment, "decision.closeComment"),
+    workCandidate: requireEnum(record.workCandidate, WORK_CANDIDATES, "decision.workCandidate"),
+    workConfidence: requireEnum(record.workConfidence, CONFIDENCES, "decision.workConfidence"),
+    workPriority: requireEnum(record.workPriority, CONFIDENCES, "decision.workPriority"),
+    workReason: requireString(record.workReason, "decision.workReason"),
+    workPrompt: requireString(record.workPrompt, "decision.workPrompt"),
+    workClusterRefs: requireStringArray(record.workClusterRefs, "decision.workClusterRefs"),
+    workValidation: requireStringArray(record.workValidation, "decision.workValidation"),
+    workLikelyFiles: requireStringArray(record.workLikelyFiles, "decision.workLikelyFiles"),
   };
 }
 
@@ -2517,6 +2548,14 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     fixedSha: null,
     fixedAt: null,
     closeComment: "",
+    workCandidate: "none",
+    workConfidence: "low",
+    workPriority: "low",
+    workReason: "Review did not complete, so no work-lane recommendation was made.",
+    workPrompt: "",
+    workClusterRefs: [],
+    workValidation: [],
+    workLikelyFiles: [],
   };
 }
 
@@ -3093,6 +3132,16 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     fixedSha: fixedSha && fixedSha !== "unknown" ? fixedSha : null,
     fixedAt: fixedAt && fixedAt !== "unknown" ? fixedAt : null,
     closeComment: sectionValue(markdown, "Close Comment"),
+    workCandidate:
+      (frontMatterValue(markdown, "work_candidate") as WorkCandidateKind | undefined) ?? "none",
+    workConfidence:
+      (frontMatterValue(markdown, "work_confidence") as Confidence | undefined) ?? "low",
+    workPriority: (frontMatterValue(markdown, "work_priority") as Confidence | undefined) ?? "low",
+    workReason: sectionValue(markdown, "Work Candidate"),
+    workPrompt: sectionValue(markdown, "Clownfish Work Prompt"),
+    workClusterRefs: frontMatterStringArray(markdown, "work_cluster_refs"),
+    workValidation: frontMatterStringArray(markdown, "work_validation"),
+    workLikelyFiles: frontMatterStringArray(markdown, "work_likely_files"),
   };
 }
 
@@ -3644,6 +3693,17 @@ function markdownFor(options: {
         .join("\n")
     : "- none";
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
+  const workReason = options.decision.workReason.trim() || "_No work-lane recommendation._";
+  const workPrompt = options.decision.workPrompt.trim() || "_No Clownfish prompt drafted._";
+  const workClusterRefs = options.decision.workClusterRefs.length
+    ? options.decision.workClusterRefs.map((ref) => `- ${ref}`).join("\n")
+    : "- none";
+  const workValidation = options.decision.workValidation.length
+    ? options.decision.workValidation.map((step) => `- ${step}`).join("\n")
+    : "- none";
+  const workLikelyFiles = options.decision.workLikelyFiles.length
+    ? options.decision.workLikelyFiles.map((file) => `- ${file}`).join("\n")
+    : "- none";
   return `---
 number: ${options.item.number}
 repository: ${options.item.repo}
@@ -3680,6 +3740,15 @@ decision: ${options.decision.decision}
 close_reason: ${options.decision.closeReason}
 confidence: ${options.decision.confidence}
 action_taken: ${options.action.actionTaken}
+work_candidate: ${options.decision.workCandidate}
+work_confidence: ${options.decision.workConfidence}
+work_priority: ${options.decision.workPriority}
+work_status: ${workStatusForDecision(options.decision)}
+work_reason_sha256: ${options.decision.workReason ? sha256(options.decision.workReason) : "none"}
+work_prompt_sha256: ${options.decision.workPrompt ? sha256(options.decision.workPrompt) : "none"}
+work_cluster_refs: ${jsonFrontMatterValue(options.decision.workClusterRefs)}
+work_validation: ${jsonFrontMatterValue(options.decision.workValidation)}
+work_likely_files: ${jsonFrontMatterValue(options.decision.workLikelyFiles)}
 ---
 
 # ${markdownLink(`#${options.item.number}: ${options.item.title}`, options.item.url)}
@@ -3725,6 +3794,34 @@ ${options.decision.summary}
 ## Best Possible Solution
 
 ${bestSolution}
+
+## Work Candidate
+
+Candidate: ${options.decision.workCandidate}
+
+Confidence: ${options.decision.workConfidence}
+
+Priority: ${options.decision.workPriority}
+
+Status: ${workStatusForDecision(options.decision)}
+
+Reason: ${workReason}
+
+Cluster refs:
+
+${workClusterRefs}
+
+Likely files:
+
+${workLikelyFiles}
+
+Validation:
+
+${workValidation}
+
+## Clownfish Work Prompt
+
+${workPrompt}
 
 ## Evidence
 
@@ -4908,6 +5005,7 @@ function dashboardStats(
   let closed = 0;
   let failed = 0;
   let stale = 0;
+  let workCandidates = 0;
   const byKind: Record<ItemKind, DashboardKindStats> = {
     issue: emptyDashboardKindStats(),
     pull_request: emptyDashboardKindStats(),
@@ -4918,6 +5016,7 @@ function dashboardStats(
   const weeklyOlderIssues = emptyDashboardCadenceBucket();
   const activity = emptyDashboardActivityStats();
   const recent: DashboardItem[] = [];
+  const workQueue: DashboardItem[] = [];
   const recentClosed: DashboardClosedItem[] = [];
   for (const file of files) {
     const markdown = readFileSync(join(itemsDir, file), "utf8");
@@ -4928,6 +5027,9 @@ function dashboardStats(
     const reviewStatus = effectiveReviewStatus(markdown);
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     const decision = frontMatterValue(markdown, "decision") ?? "unknown";
+    const workCandidate = frontMatterValue(markdown, "work_candidate") ?? "none";
+    const workPriority = frontMatterValue(markdown, "work_priority") ?? "low";
+    const workStatus = frontMatterValue(markdown, "work_status") ?? "none";
     const kind = (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue";
     const freshReview = isFresh({ reviewedAt, reviewStatus });
     byKind[kind].total += 1;
@@ -4939,6 +5041,9 @@ function dashboardStats(
     if (action === "closed") closed += 1;
     if (reviewStatus === "failed") failed += 1;
     if (reviewStatus.startsWith("stale_")) stale += 1;
+    if (freshReview && workCandidate === "queue_fix_pr" && workStatus === "candidate") {
+      workCandidates += 1;
+    }
     recordDashboardActivity(markdown, activity, now);
     const cadence = cadenceBucketForReview(markdown, now);
     const cadenceBucket =
@@ -4954,7 +5059,7 @@ function dashboardStats(
       cadenceBucket.current += 1;
     }
     if (decision === "close" && action === "proposed_close") cadenceBucket.proposedClose += 1;
-    recent.push({
+    const dashboardItem = {
       repo,
       number,
       kind,
@@ -4964,7 +5069,14 @@ function dashboardStats(
       action,
       reviewStatus,
       reportPath: repoRelativePath(join(itemsDir, file)),
-    });
+      workCandidate,
+      workPriority,
+      workStatus,
+    };
+    recent.push(dashboardItem);
+    if (freshReview && workCandidate === "queue_fix_pr" && workStatus === "candidate") {
+      workQueue.push(dashboardItem);
+    }
   }
   for (const file of closedFiles) {
     const markdown = readFileSync(join(closedDir, file), "utf8");
@@ -4990,6 +5102,11 @@ function dashboardStats(
     recordDashboardActivity(markdown, activity, now);
   }
   recent.sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
+  workQueue.sort(
+    (a, b) =>
+      workPriorityScore(b.workPriority) - workPriorityScore(a.workPriority) ||
+      Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""),
+  );
   recentClosed.sort(
     (a, b) =>
       (timestampMs(b.closedAt ?? b.appliedAt) ?? Number.NEGATIVE_INFINITY) -
@@ -5035,6 +5152,7 @@ function dashboardStats(
     ).length,
     failed,
     stale,
+    workCandidates,
     byKind,
     cadence: {
       hourlyHotItems,
@@ -5049,12 +5167,30 @@ function dashboardStats(
     },
     activity,
     recent,
+    workQueue,
     recentClosed,
   };
 }
 
+function workPriorityScore(priority: string): number {
+  if (priority === "high") return 3;
+  if (priority === "medium") return 2;
+  if (priority === "low") return 1;
+  return 0;
+}
+
 function markdownTableCell(value: string): string {
   return value.replaceAll("|", "\\|");
+}
+
+function jsonFrontMatterValue(value: readonly string[]): string {
+  return JSON.stringify(value);
+}
+
+function workStatusForDecision(decision: Decision): string {
+  if (decision.workCandidate === "queue_fix_pr") return "candidate";
+  if (decision.workCandidate === "manual_review") return "manual_review";
+  return "none";
 }
 
 function displayCloseReason(reason: string | undefined): string {
@@ -5133,6 +5269,20 @@ function formatRecentReviewedRows(items: readonly DashboardItem[], limit = 10): 
   );
 }
 
+function formatWorkQueueRows(items: readonly DashboardItem[], limit = 10): string {
+  return (
+    items
+      .slice(0, limit)
+      .map((item) => {
+        const repo = item.repo ?? targetRepo();
+        const title = markdownTableCell(displayTitle(item.title));
+        const report = markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath));
+        return `| ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${item.workPriority} | ${item.workStatus} | ${formatTimestamp(item.reviewedAt)} | ${report} |`;
+      })
+      .join("\n") || "| _None_ |  |  |  |  |  |"
+  );
+}
+
 function formatFleetRecentClosedRows(items: readonly DashboardClosedItem[], limit = 10): string {
   return (
     items
@@ -5161,6 +5311,20 @@ function formatFleetRecentReviewedRows(items: readonly DashboardItem[], limit = 
         return `| ${markdownLink(repo, repoUrlFor(repo))} | ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${outcome} | ${item.reviewStatus} | ${formatTimestamp(item.reviewedAt)} |`;
       })
       .join("\n") || "| _None_ |  |  |  |  |  |"
+  );
+}
+
+function formatFleetWorkQueueRows(items: readonly DashboardItem[], limit = 15): string {
+  return (
+    items
+      .slice(0, limit)
+      .map((item) => {
+        const repo = item.repo ?? targetRepo();
+        const title = markdownTableCell(displayTitle(item.title));
+        const report = markdownLink(item.reportPath, reportFileUrl(item.number, item.reportPath));
+        return `| ${markdownLink(repo, repoUrlFor(repo))} | ${markdownLink(`#${item.number}`, itemUrlFor(repo, item.number, item.kind))} | ${title} | ${item.workPriority} | ${item.workStatus} | ${formatTimestamp(item.reviewedAt)} | ${report} |`;
+      })
+      .join("\n") || "| _None_ |  |  |  |  |  |  |"
   );
 }
 
@@ -5232,7 +5396,7 @@ function dashboardSnapshots(
 
 function formatRepositoryOverviewRow(snapshot: RepoDashboardSnapshot): string {
   const stats = snapshot.stats;
-  return `| ${markdownLink(snapshot.profile.displayName, repoUrlFor(snapshot.profile.targetRepo))} | ${stats.open.total} | ${stats.files} | ${stats.cadence.unreviewedOpen} | ${stats.cadence.due} | ${stats.proposedClose} | ${stats.closed} | ${formatTimestamp(stats.activity.latestReviewAt)} | ${formatTimestamp(stats.activity.latestCloseAt)} | ${stats.activity.lastHour.commentSyncs} |`;
+  return `| ${markdownLink(snapshot.profile.displayName, repoUrlFor(snapshot.profile.targetRepo))} | ${stats.open.total} | ${stats.files} | ${stats.cadence.unreviewedOpen} | ${stats.cadence.due} | ${stats.proposedClose} | ${stats.workCandidates} | ${stats.closed} | ${formatTimestamp(stats.activity.latestReviewAt)} | ${formatTimestamp(stats.activity.latestCloseAt)} | ${stats.activity.lastHour.commentSyncs} |`;
 }
 
 function formatWorkflowStatusRow(snapshot: RepoDashboardSnapshot): string {
@@ -5275,6 +5439,7 @@ ${snapshot.status}
 | Proposed PR closes | ${stats.byKind.pull_request.proposedClose} (${formatPercent(stats.byKind.pull_request.proposedClose, stats.byKind.pull_request.fresh)} of reviewed PRs) |
 | Fresh verified reviews in the last ${FRESH_DAYS} days | ${stats.fresh} |
 | Proposed closes awaiting apply | ${stats.proposedClose} (${formatPercent(stats.proposedClose, stats.fresh)} of fresh reviews) |
+| Work candidates awaiting promotion | ${stats.workCandidates} |
 | Closed by Codex apply | ${stats.closed} |
 | Failed or stale reviews | ${stats.failed + stats.stale} |
 
@@ -5308,6 +5473,12 @@ ${formatActivityRow("Last 24 hours", stats.activity.last24Hours)}
 | --- | --- | --- | --- | --- |
 ${formatRecentClosedRows(stats.recentClosed)}
 
+#### Work Candidates
+
+| Item | Title | Priority | Status | Reviewed | Report |
+| --- | --- | --- | --- | --- | --- |
+${formatWorkQueueRows(stats.workQueue)}
+
 #### Recently Reviewed
 
 | Item | Title | Outcome | Status | Reviewed |
@@ -5325,6 +5496,13 @@ function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosed
   const recent = snapshots
     .flatMap((snapshot) => snapshot.stats.recent)
     .sort((a, b) => Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""));
+  const workQueue = snapshots
+    .flatMap((snapshot) => snapshot.stats.workQueue)
+    .sort(
+      (a, b) =>
+        workPriorityScore(b.workPriority) - workPriorityScore(a.workPriority) ||
+        Date.parse(b.reviewedAt ?? "") - Date.parse(a.reviewedAt ?? ""),
+    );
   const recentClosed = snapshots
     .flatMap((snapshot) => snapshot.stats.recentClosed)
     .sort(
@@ -5342,6 +5520,7 @@ function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosed
       accumulator.unreviewedOpen += stats.cadence.unreviewedOpen;
       accumulator.due += stats.cadence.due;
       accumulator.proposedClose += stats.proposedClose;
+      accumulator.workCandidates += stats.workCandidates;
       accumulator.closed += stats.closed;
       accumulator.failedOrStale += stats.failed + stats.stale;
       accumulator.archivedFiles += stats.archivedFiles;
@@ -5354,6 +5533,7 @@ function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosed
       unreviewedOpen: 0,
       due: 0,
       proposedClose: 0,
+      workCandidates: 0,
       closed: 0,
       failedOrStale: 0,
       archivedFiles: 0,
@@ -5375,14 +5555,15 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 | Unreviewed open items | ${totals.unreviewedOpen} |
 | Due now by cadence | ${totals.due} |
 | Proposed closes awaiting apply | ${totals.proposedClose} |
+| Work candidates awaiting promotion | ${totals.workCandidates} |
 | Closed by Codex apply | ${totals.closed} |
 | Failed or stale reviews | ${totals.failedOrStale} |
 | Archived closed files | ${totals.archivedFiles} |
 
 ### Repositories
 
-| Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Closed | Latest review | Latest close | Comments synced, 1h |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
+| Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
 ${snapshots.map(formatRepositoryOverviewRow).join("\n")}
 
 ### Current Runs
@@ -5406,6 +5587,12 @@ ${formatActivityRow("Last 24 hours", activity.last24Hours)}
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
 ${formatFleetRecentClosedRows(recentClosed)}
+
+### Work Candidates Across Repos
+
+| Repository | Item | Title | Priority | Status | Reviewed | Report |
+| --- | --- | --- | --- | --- | --- | --- |
+${formatFleetWorkQueueRows(workQueue)}
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
