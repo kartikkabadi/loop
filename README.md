@@ -88,7 +88,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 07:12 UTC
+Last dashboard update: Apr 29, 2026, 07:13 UTC
 
 ### Fleet
 
@@ -98,9 +98,9 @@ Last dashboard update: Apr 29, 2026, 07:12 UTC
 | Open issues | 4409 |
 | Open PRs | 3485 |
 | Open items total | 7894 |
-| Reviewed files | 7517 |
-| Unreviewed open items | 377 |
-| Due now by cadence | 2232 |
+| Reviewed files | 7516 |
+| Unreviewed open items | 378 |
+| Due now by cadence | 2233 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 522 |
 | Closed by Codex apply | 10720 |
@@ -111,15 +111,15 @@ Last dashboard update: Apr 29, 2026, 07:12 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6972 | 6601 | 371 | 2181 | 0 | 485 | 10713 | Apr 29, 2026, 07:10 UTC | Apr 29, 2026, 07:06 UTC | 847 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6972 | 6600 | 372 | 2182 | 0 | 485 | 10713 | Apr 29, 2026, 07:09 UTC | Apr 29, 2026, 07:06 UTC | 845 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 922 | 916 | 6 | 51 | 0 | 37 | 7 | Apr 29, 2026, 06:57 UTC | Apr 29, 2026, 05:31 UTC | 406 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 07:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25095729293) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 07:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25095729293) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 29, 2026, 07:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25095686941) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 29, 2026, 07:08 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25095598945) |
 
 ### Fleet Activity
 
@@ -127,9 +127,9 @@ Latest review: Apr 29, 2026, 07:10 UTC. Latest close: Apr 29, 2026, 07:06 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 0 | 19 | 0 | 4 | 392 | 0 |
-| Last hour | 981 | 8 | 973 | 21 | 33 | 1253 | 3 |
-| Last 24 hours | 6934 | 437 | 6497 | 25 | 755 | 2651 | 28 |
+| Last 15 minutes | 17 | 0 | 17 | 0 | 4 | 391 | 0 |
+| Last hour | 959 | 8 | 951 | 21 | 33 | 1251 | 2 |
+| Last 24 hours | 6933 | 437 | 6496 | 25 | 755 | 2650 | 28 |
 
 ### Recently Closed Across Repos
 
@@ -202,10 +202,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 07:12 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095729293](https://github.com/openclaw/clawsweeper/actions/runs/25095729293)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095686941](https://github.com/openclaw/clawsweeper/actions/runs/25095686941)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -216,8 +216,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095729293](https://
 | Open issues | 3526 |
 | Open PRs | 3446 |
 | Open items total | 6972 |
-| Reviewed files | 6601 |
-| Unreviewed open items | 371 |
+| Reviewed files | 6600 |
+| Unreviewed open items | 372 |
 | Archived closed files | 14076 |
 
 #### Review Outcomes
@@ -238,13 +238,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095729293](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 101/1014 current (913 due, 10%) |
-| Hourly hot item cadence (<7d) | 101/1014 current (913 due, 10%) |
+| Hourly cadence coverage | 100/1013 current (913 due, 9.9%) |
+| Hourly hot item cadence (<7d) | 100/1013 current (913 due, 9.9%) |
 | Daily cadence coverage | 2894/3788 current (894 due, 76.4%) |
 | Daily PR cadence | 2172/2647 current (475 due, 82.1%) |
 | Daily new issue cadence (<30d) | 722/1141 current (419 due, 63.3%) |
 | Weekly older issue cadence | 1796/1799 current (3 due, 99.8%) |
-| Due now by cadence | 2181 |
+| Due now by cadence | 2182 |
 
 ### Audit Health
 
@@ -284,9 +284,9 @@ Latest review: Apr 29, 2026, 07:10 UTC. Latest close: Apr 29, 2026, 07:06 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 18 | 0 | 18 | 0 | 4 | 391 | 0 |
-| Last hour | 578 | 8 | 570 | 6 | 33 | 847 | 3 |
-| Last 24 hours | 6007 | 437 | 5570 | 10 | 741 | 1827 | 28 |
+| Last 15 minutes | 17 | 0 | 17 | 0 | 4 | 390 | 0 |
+| Last hour | 577 | 8 | 569 | 6 | 33 | 845 | 2 |
+| Last 24 hours | 6006 | 437 | 5569 | 10 | 741 | 1826 | 28 |
 
 #### Recently Closed
 
@@ -429,8 +429,8 @@ Latest review: Apr 29, 2026, 06:57 UTC. Latest close: Apr 29, 2026, 05:31 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last hour | 403 | 0 | 403 | 15 | 0 | 406 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+| Last hour | 382 | 0 | 382 | 15 | 0 | 406 | 0 |
 | Last 24 hours | 927 | 0 | 927 | 15 | 14 | 824 | 0 |
 
 #### Recently Closed
