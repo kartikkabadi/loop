@@ -25,6 +25,19 @@ export function summarizeChecks(checks: LooseRecord[]) {
   return { total: checks.length, counts, blockers };
 }
 
+export function shouldSuppressProcessedCommentVersion(entry: LooseRecord) {
+  const status = String(entry.status ?? "").toLowerCase();
+  if (!["executed", "skipped"].includes(status)) return false;
+  const intent = String(entry.intent ?? "");
+  if (
+    status === "skipped" &&
+    (intent === "clawsweeper_auto_merge" || intent === "maintainer_approve_automerge")
+  ) {
+    return false;
+  }
+  return true;
+}
+
 function ignoredCheckNames() {
   return commaSet(
     process.env.CLAWSWEEPER_COMMENT_ROUTER_IGNORE_CHECKS ?? DEFAULT_IGNORED_CHECKS.join(","),

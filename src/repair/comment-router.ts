@@ -37,6 +37,7 @@ import {
   appendLedger,
   issueNumberFromUrl,
   readLedger,
+  shouldSuppressProcessedCommentVersion,
   stripAnsi,
   summarizeChecks,
   writeLedger,
@@ -83,7 +84,10 @@ const {
 const ledger = readLedger(ledgerPath());
 const TARGET_LOOKUP_RETRY_ATTEMPTS = 3;
 const processedCommentVersions = new Set(
-  (ledger.commands ?? []).map(commentVersionKey).filter(Boolean),
+  (ledger.commands ?? [])
+    .filter((entry: JsonValue) => shouldSuppressProcessedCommentVersion(entry))
+    .map(commentVersionKey)
+    .filter(Boolean),
 );
 const plannedAutoRepairHeads = new Set<string>();
 const collaboratorPermissionCache = new Map();

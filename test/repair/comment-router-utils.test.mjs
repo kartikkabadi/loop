@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { appendLedger, summarizeChecks } from "../../dist/repair/comment-router-utils.js";
+import {
+  appendLedger,
+  shouldSuppressProcessedCommentVersion,
+  summarizeChecks,
+} from "../../dist/repair/comment-router-utils.js";
 
 test("appendLedger keeps edited comment versions separate", () => {
   const ledger = { updated_at: null, commands: [] };
@@ -87,4 +91,35 @@ test("summarizeChecks still blocks cancelled required checks", () => {
   ]);
 
   assert.deepEqual(checks.blockers, ["required-build:CANCELLED"]);
+});
+
+test("skipped automerge ledger entries stay retryable", () => {
+  assert.equal(
+    shouldSuppressProcessedCommentVersion({
+      status: "skipped",
+      intent: "clawsweeper_auto_merge",
+    }),
+    false,
+  );
+  assert.equal(
+    shouldSuppressProcessedCommentVersion({
+      status: "skipped",
+      intent: "maintainer_approve_automerge",
+    }),
+    false,
+  );
+  assert.equal(
+    shouldSuppressProcessedCommentVersion({
+      status: "executed",
+      intent: "clawsweeper_auto_merge",
+    }),
+    true,
+  );
+  assert.equal(
+    shouldSuppressProcessedCommentVersion({
+      status: "skipped",
+      intent: "clawsweeper_re_review",
+    }),
+    true,
+  );
 });
