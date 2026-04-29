@@ -3784,6 +3784,12 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
   if (frontMatterValue(markdown, "review_status") === "failed") {
     return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
   }
+  if (reportSecurityReview(markdown).status === "needs_attention") {
+    return [
+      `<!-- clawsweeper-security:security-sensitive ${baseAttrs} -->`,
+      `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`,
+    ].join("\n");
+  }
   if (decision === "keep_open") {
     if (isAutomergePassReport(markdown)) {
       return `<!-- clawsweeper-verdict:pass ${baseAttrs} -->`;

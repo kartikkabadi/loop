@@ -1005,6 +1005,8 @@ Reason: Normal maintainer review is sufficient.
   assert.match(comment, /Security review needs attention:/);
   assert.match(comment, /Confirm issue write scope/);
   assert.match(comment, /Review details/);
+  assert.match(comment, /<!-- clawsweeper-security:security-sensitive item=74265 sha=abc123def456/);
+  assert.match(comment, /<!-- clawsweeper-verdict:needs-human item=74265 sha=abc123def456/);
 });
 
 test("pull request keep-open review comments surface Codex-style findings", () => {
@@ -1143,6 +1145,65 @@ Full review comments:
   assert.match(comment, /Automerge follow-up:\n\nMerge after required checks are green\./);
   assert.match(comment, /<!-- clawsweeper-verdict:pass item=74453 sha=abc123def456/);
   assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
+});
+
+test("security-needs-attention reports block repair and automerge markers", () => {
+  const securitySection = `
+## Security Review
+
+Status: needs_attention
+
+Summary: The patch exposes a broader token scope and needs maintainer security review.
+
+Concerns:
+
+- **[high] Avoid broad token reuse:** \`src/auth/token.ts:42\`
+  - body: The patch can reuse a token with broader scopes than the caller requested.
+  - confidence: 0.91
+`;
+  const repairMarkers = reviewAutomationMarkersFromReport(`${reportFrontMatter({
+    type: "pull_request",
+    number: "74123",
+    pull_head_sha: "abc123def456",
+    decision: "keep_open",
+    confidence: "high",
+    work_candidate: "queue_fix_pr",
+  })}
+
+## Summary
+
+Needs a repair.
+
+${securitySection}
+`);
+
+  assert.match(repairMarkers, /clawsweeper-security:security-sensitive/);
+  assert.match(repairMarkers, /clawsweeper-verdict:needs-human/);
+  assert.doesNotMatch(repairMarkers, /clawsweeper-verdict:needs-changes/);
+  assert.doesNotMatch(repairMarkers, /clawsweeper-action:fix-required/);
+
+  const automergeMarkers = reviewAutomationMarkersFromReport(`${reportFrontMatter({
+    type: "pull_request",
+    number: "74124",
+    pull_head_sha: "def456abc123",
+    decision: "keep_open",
+    confidence: "high",
+    review_status: "complete",
+    labels: JSON.stringify(["clawsweeper:automerge"]),
+    work_candidate: "none",
+  })}
+
+## Summary
+
+Would otherwise pass automerge.
+
+${securitySection}
+`);
+
+  assert.match(automergeMarkers, /clawsweeper-security:security-sensitive/);
+  assert.match(automergeMarkers, /clawsweeper-verdict:needs-human/);
+  assert.doesNotMatch(automergeMarkers, /clawsweeper-verdict:pass/);
+  assert.doesNotMatch(automergeMarkers, /clawsweeper-action:fix-required/);
 });
 
 test("pull request keep-open review comments suppress duplicate remaining risk text", () => {

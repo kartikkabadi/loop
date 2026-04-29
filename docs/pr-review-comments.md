@@ -77,6 +77,15 @@ The verdict marker says what the review decided. The action marker is the
 permission for the repair lane to wake up. If the action marker is absent, the
 repair lane must not start a repair run.
 
+For a PR whose typed `securityReview.status` is `needs_attention`, ClawSweeper
+must emit a deterministic security marker and a human-only verdict, never a
+repair or pass marker:
+
+```html
+<!-- clawsweeper-security:security-sensitive item=<number> sha=<pull-head-sha> confidence=<confidence> -->
+<!-- clawsweeper-verdict:needs-human item=<number> sha=<pull-head-sha> confidence=<confidence> -->
+```
+
 For failed reviews, ambiguous reviews, or PR comments that should stay in human
 hands, ClawSweeper emits a human-only verdict:
 
