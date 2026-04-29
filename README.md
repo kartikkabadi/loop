@@ -117,8 +117,8 @@ Last dashboard update: Apr 29, 2026, 10:16 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 10:16 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103249874) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 10:14 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103109359) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 10:16 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103251293) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 10:15 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103109359) |
 
 ### Fleet Activity
 
@@ -204,7 +204,7 @@ Updated: Apr 29, 2026, 10:16 UTC
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103249874](https://github.com/openclaw/clawsweeper/actions/runs/25103249874)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103251293](https://github.com/openclaw/clawsweeper/actions/runs/25103251293)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
