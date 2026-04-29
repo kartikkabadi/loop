@@ -1,11 +1,60 @@
 # ClawSweeper
 
 ClawSweeper is the conservative maintenance bot for OpenClaw repositories. It
-currently sweeps `openclaw/openclaw` and `openclaw/clawhub`.
+currently covers `openclaw/openclaw` and `openclaw/clawhub`.
 
-It keeps one markdown report per open issue or PR, publishes one durable Codex
-automated review comment when useful, and only closes items when the evidence is
-strong.
+It has two independent lanes:
+
+- issue/PR sweeper: keeps one markdown report per open issue or PR, publishes
+  one durable Codex automated review comment when useful, and only closes items
+  when the evidence is strong
+- commit sweeper: reviews code-bearing commits that land on `main`, writes one
+  canonical markdown report per commit, and optionally publishes a GitHub Check
+  Run for that commit
+
+## Capabilities
+
+- **Repository profiles:** per-repository rules live in
+  `src/repository-profiles.ts`, so OpenClaw and ClawHub can share the same
+  engine while keeping different apply limits.
+- **Issue and PR intake:** scheduled runs scan open issues and pull requests,
+  while target repositories can forward exact issue/PR events with
+  `repository_dispatch` for low-latency one-item reviews.
+- **Codex review reports:** each issue or PR becomes
+  `records/<repo-slug>/items/<number>.md` with the decision, evidence, proposed
+  maintainer-facing comment, runtime metadata, and GitHub snapshot hash.
+- **Durable review comments:** ClawSweeper syncs one marker-backed public review
+  comment per item and edits it in place instead of posting repeated comments.
+- **Guarded apply:** apply mode re-fetches live GitHub state, checks labels,
+  maintainer authorship, paired issue/PR state, snapshot drift, and repository
+  profile rules before commenting or closing anything.
+- **Archive and reopen handling:** closed or already-closed reports move to
+  `records/<repo-slug>/closed/<number>.md`; reopened archived items move back to
+  `items/` as stale work.
+- **Dashboard:** this README contains the generated fleet dashboard with current
+  run state, cadence health, recent reviews, recent closes, and work candidates.
+- **Workflow status markers:** `pnpm run status` updates per-repository README
+  status blocks so long-running workflows can publish progress without changing
+  report data.
+- **Audit:** `pnpm run audit` compares live GitHub state with report storage and
+  can publish Audit Health into this README without mutating issues or PRs.
+- **Reconcile:** `pnpm run reconcile` repairs report placement drift such as
+  reopened archived records or closed items still sitting in `items/`.
+- **Work candidates:** valid, narrow items can be marked as
+  `queue_fix_pr` candidates for manual ProjectClownfish promotion; ClawSweeper
+  itself does not open implementation PRs.
+- **Commit review:** push events on target `main` branches can dispatch to
+  `.github/workflows/commit-review.yml`, which expands the commit range, skips
+  non-code-only commits cheaply, starts one Codex worker per code-bearing
+  commit, and writes `records/<repo-slug>/commits/<sha>.md`.
+- **Manual reruns and backfills:** both lanes support manual workflow dispatch.
+  Commit review supports exact SHAs, historic ranges with `before_sha`, and an
+  `additional_prompt` input for one-off review instructions.
+- **Commit report queries:** `pnpm commit-reports -- --since 24h`,
+  `--findings`, `--non-clean`, `--repo`, and `--author` make the flat per-SHA
+  commit storage easy to review by time window without date folders.
+- **Optional commit checks:** commit reports are the source of truth; target
+  commit Check Runs are disabled by default and can be enabled per run or repo.
 
 ## Guardrails
 
@@ -425,12 +474,18 @@ Latest review: Apr 29, 2026, 02:44 UTC. Latest close: Apr 29, 2026, 02:50 UTC. L
 
 ## How It Works
 
-ClawSweeper is split into a scheduler, a review lane, and an apply lane.
+ClawSweeper is split into two operational systems:
+
+- issue/PR sweeper: scheduler, review lane, apply lane, audit, reconcile, and
+  dashboard publishing
+- commit sweeper: main-branch commit dispatch, cheap code/non-code
+  classification, one Codex review worker per code-bearing commit, report
+  publishing, and optional target commit checks
 
 ### Scheduler
 
-The scheduler decides what to scan and how often. New and active items get more
-attention; older quiet items fall back to a slower cadence.
+The issue/PR scheduler decides what to scan and how often. New and active items
+get more attention; older quiet items fall back to a slower cadence.
 
 - hot/new and recently active items are checked hourly, with a 5-minute intake
   schedule for the newest queue edge
@@ -500,6 +555,39 @@ sync stale public review comments, but closing remains guarded by apply so a
 fresh GitHub snapshot, labels, maintainer-authorship, and unchanged item state
 are checked immediately before mutation.
 
+### Commit Review Lane
+
+Commit review is intentionally separate from issue/PR cleanup. It never closes
+items, writes comments, or fixes code.
+
+- Target repositories forward `push` events from `main` with
+  `repository_dispatch`.
+- Manual runs can pass `commit_sha`, optional `before_sha`, optional
+  `additional_prompt`, `enabled`, and `create_checks`.
+- The receiver verifies the selected commits are reachable from `origin/main`.
+- The plan job expands ranges, pages large backfills at GitHub's matrix limit,
+  and classifies each commit before Codex starts.
+- Pure documentation, changelog, README/license, and asset-only commits get a
+  skipped report without spending Codex time.
+- Mixed commits and code-bearing commits start one Codex worker per commit.
+- Codex is prompted to read beyond the diff: changed files, callers/callees,
+  runtime entry points, adjacent tests/docs, dependency manifests, release
+  notes, advisories, web sources, and focused live tests when useful.
+- Each commit writes exactly one report at
+  `records/<repo-slug>/commits/<40-char-sha>.md`.
+- Reruns overwrite the same report, including reruns with an
+  `additional_prompt`.
+- Report results are `nothing_found`, `findings`, `inconclusive`, `failed`, or
+  `skipped_non_code`.
+- Optional GitHub Checks use the `ClawSweeper Commit Review` name on the target
+  commit. Clean or skipped reports are green; high-confidence high/critical
+  findings fail; lower-severity, inconclusive, and failed reviews are neutral.
+
+Use `pnpm commit-reports -- --since 24h` to review recent reports and add
+`--findings`, `--non-clean`, `--repo`, or `--author` to narrow the list. The
+storage stays flat so a rerun can overwrite exactly one file for a commit
+without rediscovering a date bucket.
+
 ### Safety Model
 
 - Maintainer-authored items are excluded from automated closes.
@@ -508,12 +596,16 @@ are checked immediately before mutation.
   resolved.
 - Open same-author issue/PR pairs block one-sided closes.
 - Codex runs without GitHub write tokens.
-- Event jobs create target write and report-push credentials only after Codex
-  exits.
+- Issue/PR event jobs create target write and report-push credentials only after
+  Codex exits.
+- Commit review workers give Codex only a read-scoped target token as `GH_TOKEN`
+  so it can inspect mentioned issues, PRs, workflow runs, and commit metadata.
+- Commit write/check credentials are created only after Codex exits.
 - CI makes the target checkout read-only for reviews.
 - Reviews fail if Codex leaves tracked or untracked changes behind.
 - Snapshot changes block apply unless the only change is the bot’s own review
   comment.
+- Commit Check Runs are optional and disabled by default.
 
 ### Audit
 
@@ -535,6 +627,8 @@ be run manually with `audit_dashboard=true`.
 ## Local Run
 
 Requires Node 24.
+
+Issue/PR sweeper:
 
 ```bash
 source ~/.profile
@@ -564,7 +658,39 @@ corepack enable
 pnpm run apply-decisions -- --target-repo openclaw/openclaw --sync-comments-only --comment-sync-min-age-days 7 --processed-limit 1000 --limit 0
 ```
 
-Manual review runs are proposal-only even if `--apply-closures` or workflow input `apply_closures=true` is set. Use `apply_existing=true` to apply unchanged proposals later. Scheduled apply runs process both issues and pull requests by default, subject to the selected repository profile; pass `target_repo`, `apply_kind=issue`, or `apply_kind=pull_request` to narrow a manual run.
+List commit reports:
+
+```bash
+source ~/.profile
+corepack enable
+pnpm run build
+pnpm commit-reports -- --since 24h
+pnpm commit-reports -- --since 24h --findings
+pnpm commit-reports -- --repo openclaw/openclaw --author steipete --since 7d
+```
+
+Manually rerun commit review through GitHub Actions:
+
+```bash
+gh workflow run commit-review.yml \
+  --repo openclaw/clawsweeper \
+  --ref main \
+  -f target_repo=openclaw/openclaw \
+  -f commit_sha=<commit-sha> \
+  -f before_sha=<parent-or-range-start-sha> \
+  -f create_checks=false \
+  -f enabled=true \
+  -f additional_prompt='Optional extra review focus.'
+```
+
+Omit `before_sha` for a single-commit review. Pass `before_sha` to review the
+historic range `before_sha..commit_sha`.
+
+Manual review runs are proposal-only even if `--apply-closures` or workflow
+input `apply_closures=true` is set. Use `apply_existing=true` to apply unchanged
+proposals later. Scheduled apply runs process both issues and pull requests by
+default, subject to the selected repository profile; pass `target_repo`,
+`apply_kind=issue`, or `apply_kind=pull_request` to narrow a manual run.
 
 Scheduled runs cover both configured profiles. `openclaw/openclaw` keeps the
 existing cadence; `openclaw/clawhub` runs on offset review/apply/audit crons so
@@ -577,6 +703,11 @@ The dispatcher sends `repository_dispatch` events to this repository with the
 target repo and exact item number; ClawSweeper then runs one event job that
 reviews, comments, and checks immediate safe apply instead of waiting for the
 next hot-intake cron or bulk publish lane.
+
+Target repositories can opt into main-branch commit review with
+[docs/commit-dispatcher.md](docs/commit-dispatcher.md). That dispatcher sends
+push ranges to this repository, where ClawSweeper expands the range and writes
+one commit report per SHA.
 
 ## Checks
 
@@ -594,10 +725,18 @@ and manual dispatches.
 Required secrets:
 
 - `OPENAI_API_KEY`: OpenAI API key used to log Codex in before review shards run.
-- `CODEX_API_KEY`: optional compatibility alias for the same key during the login check.
-- `OPENCLAW_GH_TOKEN`: optional fallback GitHub token for read-heavy target scans and artifact publish reconciliation when the GitHub App token is unavailable.
-- `CLAWSWEEPER_APP_CLIENT_ID`: public GitHub App client ID for `openclaw-ci`. Currently `Iv23liOECG0slfuhz093`.
-- `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `openclaw-ci`; plan/review jobs use a short-lived GitHub App installation token for read-heavy target API calls, and apply/comment-sync jobs use the app token for comments and closes.
+- `CODEX_API_KEY`: optional compatibility alias for the same key during the
+  login check.
+- `OPENCLAW_GH_TOKEN`: optional fallback GitHub token for read-heavy target
+  scans and artifact publish reconciliation when the GitHub App token is
+  unavailable.
+- `CLAWSWEEPER_APP_CLIENT_ID`: public GitHub App client ID for `openclaw-ci`.
+  Currently `Iv23liOECG0slfuhz093`.
+- `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `openclaw-ci`; plan/review
+  jobs use a short-lived GitHub App installation token for read-heavy target API
+  calls, commit review uses a read-scoped target token while Codex runs, and
+  apply/comment-sync/check jobs use the app token for comments, closes, and
+  optional checks.
   Keep App credentials scoped to the `actions/create-github-app-token` step.
   Review shards run Codex over attacker-controlled issue/PR text, so
   `codexEnv()` also strips these App variables before spawning Codex.
@@ -610,11 +749,28 @@ Token flow:
   context, falling back to `OPENCLAW_GH_TOKEN` only if app secrets are absent.
 - Apply mode uses the app token for review comments and closes, so GitHub
   attributes mutations to `clawsweeper[bot]`.
+- Commit review passes Codex only a read-scoped target token as `GH_TOKEN` for
+  issue/PR/workflow/commit hydration, then creates write/check credentials only
+  after Codex exits.
 - The built-in `GITHUB_TOKEN` commits generated reports back to this repo.
 
 Required app permissions:
 
 - read access for target scan context
 - write access to target repository issues and pull requests
+- optional Checks write on target repositories for commit Check Runs
 - optional Actions write on `openclaw/clawsweeper` for app-token-based run
-  cancellation or dispatch
+  cancellation, dispatch, or commit-review continuations
+
+Target repository setup:
+
+- install the issue/PR dispatcher from
+  [docs/target-dispatcher.md](docs/target-dispatcher.md) for exact item event
+  reviews
+- install the commit dispatcher from
+  [docs/commit-dispatcher.md](docs/commit-dispatcher.md) for `main` commit
+  reviews
+- set `CLAWSWEEPER_COMMIT_REVIEW_ENABLED=false` to disable commit dispatch
+  without code changes
+- set `CLAWSWEEPER_COMMIT_REVIEW_CREATE_CHECKS=true` only if commit Check Runs
+  should be published
