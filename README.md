@@ -94,12 +94,12 @@ Last dashboard update: Apr 29, 2026, 13:10 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4418 |
+| Open issues | 4417 |
 | Open PRs | 3460 |
-| Open items total | 7878 |
+| Open items total | 7877 |
 | Reviewed files | 7517 |
-| Unreviewed open items | 361 |
-| Due now by cadence | 2747 |
+| Unreviewed open items | 360 |
+| Due now by cadence | 2746 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 642 |
 | Closed by Codex apply | 10778 |
@@ -110,8 +110,8 @@ Last dashboard update: Apr 29, 2026, 13:10 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6951 | 6595 | 356 | 2685 | 0 | 597 | 10770 | Apr 29, 2026, 13:08 UTC | Apr 29, 2026, 13:10 UTC | 416 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 922 | 5 | 62 | 0 | 45 | 8 | Apr 29, 2026, 12:54 UTC | Apr 29, 2026, 08:25 UTC | 503 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6950 | 6595 | 355 | 2684 | 0 | 597 | 10770 | Apr 29, 2026, 13:09 UTC | Apr 29, 2026, 13:10 UTC | 415 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 922 | 5 | 62 | 0 | 45 | 8 | Apr 29, 2026, 12:54 UTC | Apr 29, 2026, 08:25 UTC | 493 |
 
 ### Current Runs
 
@@ -122,12 +122,12 @@ Last dashboard update: Apr 29, 2026, 13:10 UTC
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 13:08 UTC. Latest close: Apr 29, 2026, 13:10 UTC. Latest comment sync: Apr 29, 2026, 13:09 UTC.
+Latest review: Apr 29, 2026, 13:09 UTC. Latest close: Apr 29, 2026, 13:10 UTC. Latest comment sync: Apr 29, 2026, 13:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 33 | 2 | 31 | 0 | 4 | 48 | 1 |
-| Last hour | 355 | 6 | 349 | 0 | 16 | 919 | 3 |
+| Last 15 minutes | 34 | 2 | 32 | 0 | 4 | 40 | 1 |
+| Last hour | 354 | 6 | 348 | 0 | 16 | 908 | 3 |
 | Last 24 hours | 6296 | 411 | 5885 | 11 | 745 | 2276 | 30 |
 
 ### Recently Closed Across Repos
@@ -172,6 +172,7 @@ Latest review: Apr 29, 2026, 13:08 UTC. Latest close: Apr 29, 2026, 13:10 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59118](https://github.com/openclaw/openclaw/pull/59118) | fix: suppress raw JSON parse errors from leaking to Discord channels (#59076) [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/59118.md) | complete | Apr 29, 2026, 13:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74335](https://github.com/openclaw/openclaw/pull/74335) | fix(codex/app-server): bound startup timeout independently of per-turn timeout | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74335.md) | complete | Apr 29, 2026, 13:08 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74344](https://github.com/openclaw/openclaw/issues/74344) | Telegram polling watchdog livelock: rebuild loop fires before runner first getUpdates | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74344.md) | complete | Apr 29, 2026, 13:08 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74343](https://github.com/openclaw/openclaw/issues/74343) | Slash command cross-routing when multiple Apps register same commands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74343.md) | complete | Apr 29, 2026, 13:05 UTC |
@@ -181,7 +182,6 @@ Latest review: Apr 29, 2026, 13:08 UTC. Latest close: Apr 29, 2026, 13:10 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74341](https://github.com/openclaw/openclaw/pull/74341) | fix(agents/harness): validate forced plugin harness support before pinning | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74341.md) | complete | Apr 29, 2026, 13:03 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73717](https://github.com/openclaw/openclaw/pull/73717) | fix(cli): canonicalize infer model run refs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73717.md) | complete | Apr 29, 2026, 13:02 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74246](https://github.com/openclaw/openclaw/pull/74246) | fix(plugins): simplify bundled runtime deps staging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74246.md) | complete | Apr 29, 2026, 13:00 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74159](https://github.com/openclaw/openclaw/issues/74159) | github-copilot: Gemini models route to unsupported /responses endpoint, and openai-completions transport bypasses Copilot IDE auth headers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74159.md) | complete | Apr 29, 2026, 12:59 UTC |
 
 </details>
 
@@ -203,7 +203,7 @@ Updated: Apr 29, 2026, 13:10 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74221.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25110729762](https://github.com/openclaw/clawsweeper/actions/runs/25110729762)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -212,11 +212,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25110729762](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3530 |
+| Open issues | 3529 |
 | Open PRs | 3421 |
-| Open items total | 6951 |
+| Open items total | 6950 |
 | Reviewed files | 6595 |
-| Unreviewed open items | 356 |
+| Unreviewed open items | 355 |
 | Archived closed files | 14258 |
 
 #### Review Outcomes
@@ -243,7 +243,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25110729762](https://
 | Daily PR cadence | 1783/2616 current (833 due, 68.2%) |
 | Daily new issue cadence (<30d) | 613/1123 current (510 due, 54.6%) |
 | Weekly older issue cadence | 1799/1802 current (3 due, 99.8%) |
-| Due now by cadence | 2685 |
+| Due now by cadence | 2684 |
 
 ### Audit Health
 
@@ -279,12 +279,12 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 13:08 UTC. Latest close: Apr 29, 2026, 13:10 UTC. Latest comment sync: Apr 29, 2026, 13:09 UTC.
+Latest review: Apr 29, 2026, 13:09 UTC. Latest close: Apr 29, 2026, 13:10 UTC. Latest comment sync: Apr 29, 2026, 13:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 33 | 2 | 31 | 0 | 4 | 32 | 1 |
-| Last hour | 93 | 6 | 87 | 0 | 16 | 416 | 3 |
+| Last 15 minutes | 34 | 2 | 32 | 0 | 4 | 33 | 1 |
+| Last hour | 92 | 6 | 86 | 0 | 16 | 415 | 3 |
 | Last 24 hours | 5362 | 411 | 4951 | 11 | 732 | 1497 | 30 |
 
 #### Recently Closed
@@ -321,6 +321,7 @@ Latest review: Apr 29, 2026, 13:08 UTC. Latest close: Apr 29, 2026, 13:10 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#59118](https://github.com/openclaw/openclaw/pull/59118) | fix: suppress raw JSON parse errors from leaking to Discord channels (#59076) [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/59118.md) | complete | Apr 29, 2026, 13:09 UTC |
 | [#74335](https://github.com/openclaw/openclaw/pull/74335) | fix(codex/app-server): bound startup timeout independently of per-turn timeout | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74335.md) | complete | Apr 29, 2026, 13:08 UTC |
 | [#74344](https://github.com/openclaw/openclaw/issues/74344) | Telegram polling watchdog livelock: rebuild loop fires before runner first getUpdates | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74344.md) | complete | Apr 29, 2026, 13:08 UTC |
 | [#74343](https://github.com/openclaw/openclaw/issues/74343) | Slash command cross-routing when multiple Apps register same commands | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74343.md) | complete | Apr 29, 2026, 13:05 UTC |
@@ -330,7 +331,6 @@ Latest review: Apr 29, 2026, 13:08 UTC. Latest close: Apr 29, 2026, 13:10 UTC. L
 | [#74341](https://github.com/openclaw/openclaw/pull/74341) | fix(agents/harness): validate forced plugin harness support before pinning | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74341.md) | complete | Apr 29, 2026, 13:03 UTC |
 | [#73717](https://github.com/openclaw/openclaw/pull/73717) | fix(cli): canonicalize infer model run refs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73717.md) | complete | Apr 29, 2026, 13:02 UTC |
 | [#74246](https://github.com/openclaw/openclaw/pull/74246) | fix(plugins): simplify bundled runtime deps staging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74246.md) | complete | Apr 29, 2026, 13:00 UTC |
-| [#74159](https://github.com/openclaw/openclaw/issues/74159) | github-copilot: Gemini models route to unsupported /responses endpoint, and openai-completions transport bypasses Copilot IDE auth headers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74159.md) | complete | Apr 29, 2026, 12:59 UTC |
 
 </details>
 
@@ -360,10 +360,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25110139540](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 888 |
-| Open PRs | 34 |
-| Open items total | 922 |
+| Open PRs | 39 |
+| Open items total | 927 |
 | Reviewed files | 922 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 5 |
 | Archived closed files | 23 |
 
 #### Review Outcomes
@@ -384,13 +384,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25110139540](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 0/60 current (60 due, 0%) |
-| Hourly hot item cadence (<7d) | 0/60 current (60 due, 0%) |
+| Hourly cadence coverage | 3/60 current (57 due, 5%) |
+| Hourly hot item cadence (<7d) | 3/60 current (57 due, 5%) |
 | Daily cadence coverage | 211/211 current (0 due, 100%) |
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 190/190 current (0 due, 100%) |
-| Weekly older issue cadence | 647/651 current (4 due, 99.4%) |
-| Due now by cadence | 64 |
+| Weekly older issue cadence | 651/651 current (0 due, 100%) |
+| Due now by cadence | 62 |
 
 ### Audit Health
 
@@ -428,8 +428,8 @@ Latest review: Apr 29, 2026, 12:54 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 16 | 0 |
-| Last hour | 262 | 0 | 262 | 0 | 0 | 503 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 7 | 0 |
+| Last hour | 262 | 0 | 262 | 0 | 0 | 493 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 0 | 13 | 779 | 0 |
 
 #### Recently Closed
