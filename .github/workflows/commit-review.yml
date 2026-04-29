@@ -434,7 +434,7 @@ jobs:
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: openclaw
           repositories: clownfish
-          permission-contents: write
+          permission-actions: write
 
       - name: Dispatch commit findings to Clownfish
         if: ${{ vars.CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED != 'false' && steps.clownfish-token.outputs.token != '' }}
@@ -446,6 +446,7 @@ jobs:
           node dist/commit-sweeper.js dispatch-findings \
             --artifact-dir commit-artifacts \
             --clownfish-repo openclaw/clownfish \
+            --dispatch-mode workflow_dispatch \
             --report-repo "${{ github.repository }}" \
             --enabled "$ENABLED"
 

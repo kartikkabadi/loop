@@ -689,20 +689,53 @@ function dispatchPayload(dispatch: CommitFindingDispatch, reportRepo: string): s
   })}\n`;
 }
 
+function workflowDispatchArgs(
+  dispatch: CommitFindingDispatch,
+  reportRepo: string,
+  workflow: string,
+): string[] {
+  return [
+    "workflow",
+    "run",
+    workflow,
+    "--repo",
+    "PLACEHOLDER",
+    "-f",
+    "enabled=true",
+    "-f",
+    `target_repo=${dispatch.targetRepo}`,
+    "-f",
+    `commit_sha=${dispatch.sha}`,
+    "-f",
+    `report_repo=${reportRepo}`,
+    "-f",
+    `report_path=${dispatch.reportPath}`,
+    "-f",
+    `report_url=${dispatch.reportUrl}`,
+  ];
+}
+
 function dispatchCommitFinding(options: {
   clownfishRepo: string;
   dispatch: CommitFindingDispatch;
+  mode: string;
   reportRepo: string;
+  workflow: string;
 }): void {
-  const result = spawnSync(
-    "gh",
-    ["api", `repos/${options.clownfishRepo}/dispatches`, "--method", "POST", "--input", "-"],
-    {
-      input: dispatchPayload(options.dispatch, options.reportRepo),
-      encoding: "utf8",
-      env: process.env,
-    },
-  );
+  const commandArgs =
+    options.mode === "repository_dispatch"
+      ? ["api", `repos/${options.clownfishRepo}/dispatches`, "--method", "POST", "--input", "-"]
+      : workflowDispatchArgs(options.dispatch, options.reportRepo, options.workflow).map((arg) =>
+          arg === "PLACEHOLDER" ? options.clownfishRepo : arg,
+        );
+  const result = spawnSync("gh", commandArgs, {
+    input:
+      options.mode === "repository_dispatch"
+        ? dispatchPayload(options.dispatch, options.reportRepo)
+        : undefined,
+    encoding: "utf8",
+    env: process.env,
+  });
   if (result.status !== 0) {
     throw new Error(
       `failed to dispatch ${options.dispatch.sha} to ${options.clownfishRepo}: ${
@@ -721,6 +754,8 @@ function dispatchFindingsCommand(args: Args): void {
 
   const artifactDir = resolve(stringArg(args, "artifact_dir", "commit-artifacts"));
   const clownfishRepo = stringArg(args, "clownfish_repo", "openclaw/clownfish");
+  const dispatchMode = stringArg(args, "dispatch_mode", "workflow_dispatch");
+  const clownfishWorkflow = stringArg(args, "clownfish_workflow", "commit-finding-intake.yml");
   const reportRepo = stringArg(
     args,
     "report_repo",
@@ -760,9 +795,22 @@ function dispatchFindingsCommand(args: Args): void {
 
   for (const dispatch of dispatches) {
     if (dryRun) {
-      console.log(dispatchPayload(dispatch, reportRepo).trim());
+      if (dispatchMode === "repository_dispatch") {
+        console.log(dispatchPayload(dispatch, reportRepo).trim());
+      } else {
+        const commandArgs = workflowDispatchArgs(dispatch, reportRepo, clownfishWorkflow).map(
+          (arg) => (arg === "PLACEHOLDER" ? clownfishRepo : arg),
+        );
+        console.log(`gh ${commandArgs.join(" ")}`);
+      }
     } else {
-      dispatchCommitFinding({ clownfishRepo, dispatch, reportRepo });
+      dispatchCommitFinding({
+        clownfishRepo,
+        dispatch,
+        mode: dispatchMode,
+        reportRepo,
+        workflow: clownfishWorkflow,
+      });
       console.log(`dispatched ${dispatch.targetRepo}@${dispatch.sha} to ${clownfishRepo}`);
     }
   }

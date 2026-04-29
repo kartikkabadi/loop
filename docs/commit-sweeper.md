@@ -168,7 +168,10 @@ and test coverage complaints without a concrete risk.
 
 After reports are committed, `.github/workflows/commit-review.yml` can dispatch
 actionable `result: findings` reports to `openclaw/clownfish` with
-`repository_dispatch` event type `clawsweeper_commit_finding`.
+Clownfish's `commit-finding-intake.yml` workflow dispatch. The older
+`repository_dispatch` mode is still available in the CLI for tests or future
+App-permission changes, but the workflow uses `workflow_dispatch` so the
+ClawSweeper App only needs Actions write access on `openclaw/clownfish`.
 
 The dispatch is intentionally report-based. ClawSweeper sends the target repo,
 commit SHA, report repo, report path, report URL, severity, check conclusion,
