@@ -148,30 +148,30 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 23:29 UTC
+Last dashboard update: Apr 29, 2026, 23:30 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4448 |
+| Open issues | 4449 |
 | Open PRs | 3385 |
-| Open items total | 7833 |
-| Reviewed files | 7430 |
-| Unreviewed open items | 406 |
-| Due now by cadence | 3201 |
+| Open items total | 7834 |
+| Reviewed files | 7429 |
+| Unreviewed open items | 408 |
+| Due now by cadence | 3202 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1025 |
 | Closed by Codex apply | 10910 |
 | Failed or stale reviews | 24 |
-| Archived closed files | 14639 |
+| Archived closed files | 14640 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6886 | 6503 | 383 | 3102 | 0 | 979 | 10902 | Apr 29, 2026, 23:27 UTC | Apr 29, 2026, 23:28 UTC | 62 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6887 | 6502 | 385 | 3103 | 0 | 979 | 10902 | Apr 29, 2026, 23:27 UTC | Apr 29, 2026, 23:29 UTC | 39 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 947 | 924 | 23 | 96 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -179,24 +179,25 @@ Last dashboard update: Apr 29, 2026, 23:29 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 29, 2026, 23:29 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25139160124) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 23:30 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25139190277) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:28 UTC. Latest comment sync: Apr 29, 2026, 23:28 UTC.
+Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:29 UTC. Latest comment sync: Apr 29, 2026, 23:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 0 | 11 | 0 | 4 | 11 | 0 |
-| Last hour | 39 | 4 | 35 | 0 | 16 | 62 | 0 |
-| Last 24 hours | 5840 | 300 | 5540 | 19 | 781 | 1647 | 21 |
+| Last 15 minutes | 11 | 0 | 11 | 0 | 5 | 11 | 0 |
+| Last hour | 39 | 4 | 35 | 0 | 11 | 39 | 0 |
+| Last 24 hours | 5840 | 300 | 5540 | 19 | 782 | 1646 | 21 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74439](https://github.com/openclaw/openclaw/issues/74439) | Feature: Centralized API key management | closed externally after review | Apr 29, 2026, 23:29 UTC | [records/openclaw-openclaw/closed/74439.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74439.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74581](https://github.com/openclaw/openclaw/issues/74581) | Telegram delivery: QUOTE_TEXT_INVALID not handled, drops messages instead of retrying without native quote | already implemented on main | Apr 29, 2026, 23:28 UTC | [records/openclaw-openclaw/closed/74581.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74581.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74569](https://github.com/openclaw/openclaw/issues/74569) | [Bug]: Matrix old room events replay as fresh inbound after gateway restart/reboot | already implemented on main | Apr 29, 2026, 23:28 UTC | [records/openclaw-openclaw/closed/74569.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74569.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74573](https://github.com/openclaw/openclaw/issues/74573) | [tool calls omitted] placeholder leaks into outgoing Telegram messages | closed externally after review | Apr 29, 2026, 23:20 UTC | [records/openclaw-openclaw/closed/74573.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74573.md) |
@@ -206,7 +207,6 @@ Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:28 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74162](https://github.com/openclaw/openclaw/pull/74162) | fix(providers): accept moonshotai as alias for direct moonshot provider (#73876) | closed externally after review | Apr 29, 2026, 23:08 UTC | [records/openclaw-openclaw/closed/74162.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74162.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74642](https://github.com/openclaw/openclaw/pull/74642) | fix(whatsapp): remove exposeErrorText config | closed externally after review | Apr 29, 2026, 23:03 UTC | [records/openclaw-openclaw/closed/74642.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74642.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74431](https://github.com/openclaw/openclaw/pull/74431) | fix(docker): validate every gpg key in signing-key file (#74234) | closed externally after review | Apr 29, 2026, 22:47 UTC | [records/openclaw-openclaw/closed/74431.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74431.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70626](https://github.com/openclaw/openclaw/pull/70626) | feat(plugin-sdk): add persistent keyed store helper | closed externally after review | Apr 29, 2026, 22:30 UTC | [records/openclaw-openclaw/closed/70626.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70626.md) |
 
 ### Work Candidates Across Repos
 
@@ -262,12 +262,12 @@ Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:28 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 23:29 UTC
+Updated: Apr 29, 2026, 23:30 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25139160124](https://github.com/openclaw/clawsweeper/actions/runs/25139160124)
+Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74569,74581.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25139190277](https://github.com/openclaw/clawsweeper/actions/runs/25139190277)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -275,22 +275,22 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25139160124](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3540 |
+| Open issues | 3541 |
 | Open PRs | 3346 |
-| Open items total | 6886 |
-| Reviewed files | 6503 |
-| Unreviewed open items | 383 |
-| Archived closed files | 14613 |
+| Open items total | 6887 |
+| Reviewed files | 6502 |
+| Unreviewed open items | 385 |
+| Archived closed files | 14614 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3346 |
+| Fresh reviewed issues in the last 7 days | 3345 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3146 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6492 |
+| Fresh verified reviews in the last 7 days | 6491 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 979 |
 | Closed by Codex apply | 10902 |
@@ -300,13 +300,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25139160124](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 30/1110 current (1080 due, 2.7%) |
-| Hourly hot item cadence (<7d) | 30/1110 current (1080 due, 2.7%) |
+| Hourly cadence coverage | 30/1109 current (1079 due, 2.7%) |
+| Hourly hot item cadence (<7d) | 30/1109 current (1079 due, 2.7%) |
 | Daily cadence coverage | 1962/3598 current (1636 due, 54.5%) |
 | Daily PR cadence | 1299/2501 current (1202 due, 51.9%) |
 | Daily new issue cadence (<30d) | 663/1097 current (434 due, 60.4%) |
 | Weekly older issue cadence | 1792/1795 current (3 due, 99.8%) |
-| Due now by cadence | 3102 |
+| Due now by cadence | 3103 |
 
 ### Audit Health
 
@@ -342,18 +342,19 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:28 UTC. Latest comment sync: Apr 29, 2026, 23:28 UTC.
+Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:29 UTC. Latest comment sync: Apr 29, 2026, 23:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 0 | 11 | 0 | 4 | 11 | 0 |
-| Last hour | 39 | 4 | 35 | 0 | 16 | 62 | 0 |
-| Last 24 hours | 4901 | 300 | 4601 | 6 | 768 | 1233 | 21 |
+| Last 15 minutes | 11 | 0 | 11 | 0 | 5 | 11 | 0 |
+| Last hour | 39 | 4 | 35 | 0 | 11 | 39 | 0 |
+| Last 24 hours | 4901 | 300 | 4601 | 6 | 769 | 1232 | 21 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74439](https://github.com/openclaw/openclaw/issues/74439) | Feature: Centralized API key management | closed externally after review | Apr 29, 2026, 23:29 UTC | [records/openclaw-openclaw/closed/74439.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74439.md) |
 | [#74581](https://github.com/openclaw/openclaw/issues/74581) | Telegram delivery: QUOTE_TEXT_INVALID not handled, drops messages instead of retrying without native quote | already implemented on main | Apr 29, 2026, 23:28 UTC | [records/openclaw-openclaw/closed/74581.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74581.md) |
 | [#74569](https://github.com/openclaw/openclaw/issues/74569) | [Bug]: Matrix old room events replay as fresh inbound after gateway restart/reboot | already implemented on main | Apr 29, 2026, 23:28 UTC | [records/openclaw-openclaw/closed/74569.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74569.md) |
 | [#74573](https://github.com/openclaw/openclaw/issues/74573) | [tool calls omitted] placeholder leaks into outgoing Telegram messages | closed externally after review | Apr 29, 2026, 23:20 UTC | [records/openclaw-openclaw/closed/74573.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74573.md) |
@@ -363,7 +364,6 @@ Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:28 UTC. L
 | [#74162](https://github.com/openclaw/openclaw/pull/74162) | fix(providers): accept moonshotai as alias for direct moonshot provider (#73876) | closed externally after review | Apr 29, 2026, 23:08 UTC | [records/openclaw-openclaw/closed/74162.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74162.md) |
 | [#74642](https://github.com/openclaw/openclaw/pull/74642) | fix(whatsapp): remove exposeErrorText config | closed externally after review | Apr 29, 2026, 23:03 UTC | [records/openclaw-openclaw/closed/74642.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74642.md) |
 | [#74431](https://github.com/openclaw/openclaw/pull/74431) | fix(docker): validate every gpg key in signing-key file (#74234) | closed externally after review | Apr 29, 2026, 22:47 UTC | [records/openclaw-openclaw/closed/74431.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74431.md) |
-| [#70626](https://github.com/openclaw/openclaw/pull/70626) | feat(plugin-sdk): add persistent keyed store helper | closed externally after review | Apr 29, 2026, 22:30 UTC | [records/openclaw-openclaw/closed/70626.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70626.md) |
 
 #### Work Candidates
 
