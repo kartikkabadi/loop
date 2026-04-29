@@ -94,46 +94,47 @@ Last dashboard update: Apr 29, 2026, 10:59 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4418 |
+| Open issues | 4417 |
 | Open PRs | 3469 |
-| Open items total | 7887 |
-| Reviewed files | 7521 |
-| Unreviewed open items | 366 |
+| Open items total | 7886 |
+| Reviewed files | 7517 |
+| Unreviewed open items | 369 |
 | Due now by cadence | 2672 |
-| Proposed closes awaiting apply | 1 |
+| Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 625 |
-| Closed by Codex apply | 10759 |
+| Closed by Codex apply | 10760 |
 | Failed or stale reviews | 28 |
-| Archived closed files | 14219 |
+| Archived closed files | 14220 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6600 | 6600 | 0 | 2237 | 1 | 579 | 10751 | Apr 29, 2026, 10:57 UTC | Apr 29, 2026, 10:48 UTC | 46 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 921 | 921 | 0 | 69 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 1 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6959 | 6596 | 363 | 2597 | 0 | 579 | 10752 | Apr 29, 2026, 10:58 UTC | Apr 29, 2026, 10:59 UTC | 46 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 921 | 6 | 75 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 1 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 10:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105003303) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 10:57 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25104851909) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 10:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25104943179) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 10:58 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25104969290) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 10:57 UTC. Latest close: Apr 29, 2026, 10:48 UTC. Latest comment sync: Apr 29, 2026, 10:58 UTC.
+Latest review: Apr 29, 2026, 10:58 UTC. Latest close: Apr 29, 2026, 10:59 UTC. Latest comment sync: Apr 29, 2026, 10:58 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 1 | 14 | 0 | 4 | 16 | 0 |
-| Last hour | 46 | 3 | 43 | 0 | 21 | 47 | 0 |
-| Last 24 hours | 6462 | 444 | 6018 | 23 | 744 | 2391 | 25 |
+| Last 15 minutes | 16 | 1 | 15 | 0 | 8 | 17 | 0 |
+| Last hour | 46 | 3 | 43 | 0 | 25 | 47 | 0 |
+| Last 24 hours | 6462 | 444 | 6018 | 23 | 748 | 2391 | 25 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74281](https://github.com/openclaw/openclaw/issues/74281) | [Bug]: Custom watchdog kills healthy gateway during slow startup (2026.4.26 + 20 plugin deps) | not actionable in this repository | Apr 29, 2026, 10:59 UTC | [records/openclaw-openclaw/closed/74281.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74281.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#66920](https://github.com/openclaw/openclaw/issues/66920) | WhatsApp group inbound messages silently drop after repeated 408 reconnect cycles (DMs survive) | closed externally after review | Apr 29, 2026, 10:55 UTC | [records/openclaw-openclaw/closed/66920.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/66920.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#63855](https://github.com/openclaw/openclaw/issues/63855) | WhatsApp: stale socket causes silent message loss (connection appears live but drops inbound messages) | closed externally after review | Apr 29, 2026, 10:55 UTC | [records/openclaw-openclaw/closed/63855.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63855.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60444](https://github.com/openclaw/openclaw/pull/60444) | fix: replace structuredClone with JSON cloning in session store cache | closed externally after review | Apr 29, 2026, 10:53 UTC | [records/openclaw-openclaw/closed/60444.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60444.md) |
@@ -143,7 +144,6 @@ Latest review: Apr 29, 2026, 10:57 UTC. Latest close: Apr 29, 2026, 10:48 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74267](https://github.com/openclaw/openclaw/pull/74267) | fix(ui): make control prompts real modals | closed externally after review | Apr 29, 2026, 10:46 UTC | [records/openclaw-openclaw/closed/74267.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74267.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71112](https://github.com/openclaw/openclaw/pull/71112) | feat(memory-lancedb): support query cmd for llm CLI | closed externally after review | Apr 29, 2026, 10:42 UTC | [records/openclaw-openclaw/closed/71112.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71112.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#48904](https://github.com/openclaw/openclaw/pull/48904) | feat(thinking): allow custom model compat to opt into xhigh | closed externally after review | Apr 29, 2026, 10:36 UTC | [records/openclaw-openclaw/closed/48904.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/48904.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74263](https://github.com/openclaw/openclaw/pull/74263) | ci: guard unused dead-code files | closed externally after review | Apr 29, 2026, 10:35 UTC | [records/openclaw-openclaw/closed/74263.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74263.md) |
 
 ### Work Candidates Across Repos
 
@@ -172,6 +172,7 @@ Latest review: Apr 29, 2026, 10:57 UTC. Latest close: Apr 29, 2026, 10:48 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74276](https://github.com/openclaw/openclaw/pull/74276) | Fix GitHub Copilot model picker catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74276.md) | complete | Apr 29, 2026, 10:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74246](https://github.com/openclaw/openclaw/pull/74246) | fix(plugins): simplify bundled runtime deps staging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74246.md) | complete | Apr 29, 2026, 10:57 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#45438](https://github.com/openclaw/openclaw/issues/45438) | perf: structuredClone in session store cache causes native memory leak (~1GB/min) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/45438.md) | complete | Apr 29, 2026, 10:57 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74284](https://github.com/openclaw/openclaw/issues/74284) | [Bug]: heartbeat session at agent:main:main pins model from creation time, ignores openclaw.json edits across runs (follow-up to #51677) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74284.md) | complete | Apr 29, 2026, 10:56 UTC |
@@ -179,7 +180,6 @@ Latest review: Apr 29, 2026, 10:57 UTC. Latest close: Apr 29, 2026, 10:48 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74274](https://github.com/openclaw/openclaw/pull/74274) | fix(control-ui): download assistant markdown attachments | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74274.md) | complete | Apr 29, 2026, 10:54 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73767](https://github.com/openclaw/openclaw/pull/73767) | [codex] Finalize RuntimePlan embedded-runner cleanup stack | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73767.md) | complete | Apr 29, 2026, 10:54 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74283](https://github.com/openclaw/openclaw/issues/74283) | delivery-recovery: post-approval follow-up dumps raw internal handler source to channel (related to #72184) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74283.md) | complete | Apr 29, 2026, 10:53 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74281](https://github.com/openclaw/openclaw/issues/74281) | [Bug]: Custom watchdog kills healthy gateway during slow startup (2026.4.26 + 20 plugin deps) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74281.md) | complete | Apr 29, 2026, 10:51 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74282](https://github.com/openclaw/openclaw/pull/74282) | fix: add Vercel AI Gateway thinking profile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74282.md) | complete | Apr 29, 2026, 10:50 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74256](https://github.com/openclaw/openclaw/pull/74256) | Add deepseek provider-policy-api.ts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74256.md) | complete | Apr 29, 2026, 10:49 UTC |
 
@@ -203,8 +203,8 @@ Updated: Apr 29, 2026, 10:59 UTC
 
 State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25105003303](https://github.com/openclaw/clawsweeper/actions/runs/25105003303)
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 1, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25104943179](https://github.com/openclaw/clawsweeper/actions/runs/25104943179)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -212,33 +212,33 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25105003303](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3530 |
+| Open issues | 3529 |
 | Open PRs | 3430 |
-| Open items total | 6960 |
-| Reviewed files | 6600 |
-| Unreviewed open items | 360 |
-| Archived closed files | 14193 |
+| Open items total | 6959 |
+| Reviewed files | 6596 |
+| Unreviewed open items | 363 |
+| Archived closed files | 14197 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3346 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3345 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3234 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6580 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 6579 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 579 |
-| Closed by Codex apply | 10751 |
+| Closed by Codex apply | 10752 |
 | Failed or stale reviews | 17 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 30/1047 current (1017 due, 2.9%) |
-| Hourly hot item cadence (<7d) | 30/1047 current (1017 due, 2.9%) |
+| Hourly cadence coverage | 29/1046 current (1017 due, 2.8%) |
+| Hourly hot item cadence (<7d) | 29/1046 current (1017 due, 2.8%) |
 | Daily cadence coverage | 2538/3750 current (1212 due, 67.7%) |
 | Daily PR cadence | 1902/2624 current (722 due, 72.5%) |
 | Daily new issue cadence (<30d) | 636/1126 current (490 due, 56.5%) |
@@ -279,18 +279,19 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 10:57 UTC. Latest close: Apr 29, 2026, 10:48 UTC. Latest comment sync: Apr 29, 2026, 10:58 UTC.
+Latest review: Apr 29, 2026, 10:58 UTC. Latest close: Apr 29, 2026, 10:59 UTC. Latest comment sync: Apr 29, 2026, 10:58 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 1 | 14 | 0 | 4 | 16 | 0 |
-| Last hour | 45 | 3 | 42 | 0 | 21 | 46 | 0 |
-| Last 24 hours | 5529 | 444 | 5085 | 12 | 731 | 1591 | 25 |
+| Last 15 minutes | 16 | 1 | 15 | 0 | 8 | 17 | 0 |
+| Last hour | 45 | 3 | 42 | 0 | 25 | 46 | 0 |
+| Last 24 hours | 5529 | 444 | 5085 | 12 | 735 | 1591 | 25 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74281](https://github.com/openclaw/openclaw/issues/74281) | [Bug]: Custom watchdog kills healthy gateway during slow startup (2026.4.26 + 20 plugin deps) | not actionable in this repository | Apr 29, 2026, 10:59 UTC | [records/openclaw-openclaw/closed/74281.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74281.md) |
 | [#66920](https://github.com/openclaw/openclaw/issues/66920) | WhatsApp group inbound messages silently drop after repeated 408 reconnect cycles (DMs survive) | closed externally after review | Apr 29, 2026, 10:55 UTC | [records/openclaw-openclaw/closed/66920.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/66920.md) |
 | [#63855](https://github.com/openclaw/openclaw/issues/63855) | WhatsApp: stale socket causes silent message loss (connection appears live but drops inbound messages) | closed externally after review | Apr 29, 2026, 10:55 UTC | [records/openclaw-openclaw/closed/63855.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63855.md) |
 | [#60444](https://github.com/openclaw/openclaw/pull/60444) | fix: replace structuredClone with JSON cloning in session store cache | closed externally after review | Apr 29, 2026, 10:53 UTC | [records/openclaw-openclaw/closed/60444.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60444.md) |
@@ -300,7 +301,6 @@ Latest review: Apr 29, 2026, 10:57 UTC. Latest close: Apr 29, 2026, 10:48 UTC. L
 | [#74267](https://github.com/openclaw/openclaw/pull/74267) | fix(ui): make control prompts real modals | closed externally after review | Apr 29, 2026, 10:46 UTC | [records/openclaw-openclaw/closed/74267.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74267.md) |
 | [#71112](https://github.com/openclaw/openclaw/pull/71112) | feat(memory-lancedb): support query cmd for llm CLI | closed externally after review | Apr 29, 2026, 10:42 UTC | [records/openclaw-openclaw/closed/71112.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71112.md) |
 | [#48904](https://github.com/openclaw/openclaw/pull/48904) | feat(thinking): allow custom model compat to opt into xhigh | closed externally after review | Apr 29, 2026, 10:36 UTC | [records/openclaw-openclaw/closed/48904.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/48904.md) |
-| [#74263](https://github.com/openclaw/openclaw/pull/74263) | ci: guard unused dead-code files | closed externally after review | Apr 29, 2026, 10:35 UTC | [records/openclaw-openclaw/closed/74263.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74263.md) |
 
 #### Work Candidates
 
@@ -321,6 +321,7 @@ Latest review: Apr 29, 2026, 10:57 UTC. Latest close: Apr 29, 2026, 10:48 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74276](https://github.com/openclaw/openclaw/pull/74276) | Fix GitHub Copilot model picker catalog | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74276.md) | complete | Apr 29, 2026, 10:58 UTC |
 | [#74246](https://github.com/openclaw/openclaw/pull/74246) | fix(plugins): simplify bundled runtime deps staging | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74246.md) | complete | Apr 29, 2026, 10:57 UTC |
 | [#45438](https://github.com/openclaw/openclaw/issues/45438) | perf: structuredClone in session store cache causes native memory leak (~1GB/min) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/45438.md) | complete | Apr 29, 2026, 10:57 UTC |
 | [#74284](https://github.com/openclaw/openclaw/issues/74284) | [Bug]: heartbeat session at agent:main:main pins model from creation time, ignores openclaw.json edits across runs (follow-up to #51677) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74284.md) | complete | Apr 29, 2026, 10:56 UTC |
@@ -328,7 +329,6 @@ Latest review: Apr 29, 2026, 10:57 UTC. Latest close: Apr 29, 2026, 10:48 UTC. L
 | [#74274](https://github.com/openclaw/openclaw/pull/74274) | fix(control-ui): download assistant markdown attachments | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74274.md) | complete | Apr 29, 2026, 10:54 UTC |
 | [#73767](https://github.com/openclaw/openclaw/pull/73767) | [codex] Finalize RuntimePlan embedded-runner cleanup stack | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73767.md) | complete | Apr 29, 2026, 10:54 UTC |
 | [#74283](https://github.com/openclaw/openclaw/issues/74283) | delivery-recovery: post-approval follow-up dumps raw internal handler source to channel (related to #72184) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74283.md) | complete | Apr 29, 2026, 10:53 UTC |
-| [#74281](https://github.com/openclaw/openclaw/issues/74281) | [Bug]: Custom watchdog kills healthy gateway during slow startup (2026.4.26 + 20 plugin deps) | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74281.md) | complete | Apr 29, 2026, 10:51 UTC |
 | [#74282](https://github.com/openclaw/openclaw/pull/74282) | fix: add Vercel AI Gateway thinking profile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74282.md) | complete | Apr 29, 2026, 10:50 UTC |
 | [#74256](https://github.com/openclaw/openclaw/pull/74256) | Add deepseek provider-policy-api.ts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74256.md) | complete | Apr 29, 2026, 10:49 UTC |
 
