@@ -88,7 +88,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 08:02 UTC
+Last dashboard update: Apr 29, 2026, 08:03 UTC
 
 ### Fleet
 
@@ -111,25 +111,25 @@ Last dashboard update: Apr 29, 2026, 08:02 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6981 | 6614 | 367 | 2150 | 0 | 512 | 10723 | Apr 29, 2026, 08:00 UTC | Apr 29, 2026, 08:00 UTC | 708 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6981 | 6614 | 367 | 2150 | 0 | 512 | 10723 | Apr 29, 2026, 08:00 UTC | Apr 29, 2026, 08:00 UTC | 702 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 923 | 917 | 6 | 63 | 0 | 39 | 7 | Apr 29, 2026, 07:57 UTC | Apr 29, 2026, 07:52 UTC | 515 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 08:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097595489) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 08:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097595489) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 29, 2026, 07:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097259798) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. Latest comment sync: Apr 29, 2026, 08:01 UTC.
+Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. Latest comment sync: Apr 29, 2026, 08:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 42 | 3 | 39 | 0 | 6 | 302 | 1 |
-| Last hour | 1078 | 11 | 1067 | 16 | 23 | 1223 | 3 |
-| Last 24 hours | 6962 | 446 | 6516 | 21 | 743 | 2630 | 28 |
+| Last 15 minutes | 41 | 3 | 38 | 0 | 5 | 288 | 1 |
+| Last hour | 1079 | 11 | 1068 | 16 | 23 | 1217 | 3 |
+| Last 24 hours | 6962 | 446 | 6516 | 21 | 743 | 2631 | 28 |
 
 ### Recently Closed Across Repos
 
@@ -173,6 +173,7 @@ Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#42400](https://github.com/openclaw/openclaw/pull/42400) | feat(channels): add neverReply config for group message suppression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/42400.md) | complete | Apr 29, 2026, 08:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74163](https://github.com/openclaw/openclaw/pull/74163) | WORKING: All Microsoft Issues and PRs (refresh) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74163.md) | complete | Apr 29, 2026, 08:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73499](https://github.com/openclaw/openclaw/pull/73499) | feat(agents): add mid-turn compaction precheck | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73499.md) | complete | Apr 29, 2026, 08:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74200](https://github.com/openclaw/openclaw/pull/74200) | fix(skills): never wipe target skills dir on sync to prevent data los… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74200.md) | complete | Apr 29, 2026, 08:00 UTC |
@@ -182,7 +183,6 @@ Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. L
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1551](https://github.com/openclaw/clawhub/issues/1551) | feishu-quick-setup skill incorrectly flagged as suspicious | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1551.md) | complete | Apr 29, 2026, 07:57 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1677](https://github.com/openclaw/clawhub/issues/1677) | False positive: valerii-baidak/figma-pixel flagged Suspicious after clarifying agent vs scripts roles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1677.md) | complete | Apr 29, 2026, 07:56 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1521](https://github.com/openclaw/clawhub/issues/1521) | Embedding failed 500 error blocks skill publication + request to remove flagged versions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1521.md) | complete | Apr 29, 2026, 07:56 UTC |
-| [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1366](https://github.com/openclaw/clawhub/issues/1366) | RevSec Shield — security scan dispute (revsec-shield v1.0.2) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1366.md) | complete | Apr 29, 2026, 07:56 UTC |
 
 </details>
 
@@ -200,11 +200,11 @@ Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 08:02 UTC
+Updated: Apr 29, 2026, 08:03 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=73952,74102.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/2. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25097595489](https://github.com/openclaw/clawsweeper/actions/runs/25097595489)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -280,13 +280,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. Latest comment sync: Apr 29, 2026, 08:01 UTC.
+Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. Latest comment sync: Apr 29, 2026, 08:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 3 | 17 | 0 | 5 | 123 | 1 |
-| Last hour | 558 | 11 | 547 | 4 | 22 | 708 | 3 |
-| Last 24 hours | 6033 | 446 | 5587 | 9 | 729 | 1809 | 28 |
+| Last 15 minutes | 19 | 3 | 16 | 0 | 4 | 117 | 1 |
+| Last hour | 559 | 11 | 548 | 4 | 22 | 702 | 3 |
+| Last 24 hours | 6033 | 446 | 5587 | 9 | 729 | 1810 | 28 |
 
 #### Recently Closed
 
@@ -322,6 +322,7 @@ Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#42400](https://github.com/openclaw/openclaw/pull/42400) | feat(channels): add neverReply config for group message suppression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/42400.md) | complete | Apr 29, 2026, 08:00 UTC |
 | [#74163](https://github.com/openclaw/openclaw/pull/74163) | WORKING: All Microsoft Issues and PRs (refresh) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74163.md) | complete | Apr 29, 2026, 08:00 UTC |
 | [#73499](https://github.com/openclaw/openclaw/pull/73499) | feat(agents): add mid-turn compaction precheck | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73499.md) | complete | Apr 29, 2026, 08:00 UTC |
 | [#74200](https://github.com/openclaw/openclaw/pull/74200) | fix(skills): never wipe target skills dir on sync to prevent data los… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74200.md) | complete | Apr 29, 2026, 08:00 UTC |
@@ -331,7 +332,6 @@ Latest review: Apr 29, 2026, 08:00 UTC. Latest close: Apr 29, 2026, 08:00 UTC. L
 | [#74192](https://github.com/openclaw/openclaw/issues/74192) | [Bug]: Delay in provider/transport path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74192.md) | complete | Apr 29, 2026, 07:55 UTC |
 | [#73079](https://github.com/openclaw/openclaw/pull/73079) | fix(minimax): request hex TTS output explicitly | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73079.md) | complete | Apr 29, 2026, 07:54 UTC |
 | [#73629](https://github.com/openclaw/openclaw/pull/73629) | fix(infra): resolve exec-approvals path under OPENCLAW_STATE_DIR | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73629.md) | complete | Apr 29, 2026, 07:53 UTC |
-| [#74134](https://github.com/openclaw/openclaw/pull/74134) | feat(file-transfer): add bundled plugin for binary file ops on nodes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74134.md) | complete | Apr 29, 2026, 07:53 UTC |
 
 </details>
 
@@ -429,7 +429,7 @@ Latest review: Apr 29, 2026, 07:57 UTC. Latest close: Apr 29, 2026, 07:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 22 | 0 | 22 | 0 | 1 | 179 | 0 |
+| Last 15 minutes | 22 | 0 | 22 | 0 | 1 | 171 | 0 |
 | Last hour | 520 | 0 | 520 | 12 | 1 | 515 | 0 |
 | Last 24 hours | 929 | 0 | 929 | 12 | 14 | 821 | 0 |
 
