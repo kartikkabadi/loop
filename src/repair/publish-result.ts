@@ -3,9 +3,33 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { githubActionsRunUrl, parseArgs, repoRoot } from "./lib.js";
-import { ghStdoutFromError, ghText } from "./github-cli.js";
 import { readJsonFile as readJson } from "./json-file.js";
 import { escapeRegExp, slug } from "./text-utils.js";
+import { renderClusterReport, writeClosedRecord } from "./publish-cluster-report.js";
+import {
+  findResultPaths,
+  inferRunId,
+  latestClusterRecords,
+  readArchivedClusters,
+  readExistingRunRecord,
+  readRunMetadata,
+  readRunRecords,
+  readSiblingJson,
+} from "./publish-files.js";
+import { formatTimestamp, tableCell } from "./publish-markdown.js";
+import {
+  buildInspectionRows,
+  renderBlockedReasonRows,
+  renderFinalizerRows,
+  renderFixFailureRows,
+  renderInspectionRows,
+  renderRecentClosureRows,
+} from "./publish-dashboard-rows.js";
+import {
+  buildTrackedPrRows,
+  hydrateClosureRows,
+  sortNewestClosureRowFirst,
+} from "./publish-tracked-rows.js";
 
 const DASHBOARD_START = "<!-- clawsweeper-repair-dashboard:start -->";
 const DASHBOARD_END = "<!-- clawsweeper-repair-dashboard:end -->";
@@ -20,14 +44,13 @@ const CLOSE_APPLICATOR_ACTIONS = new Set([
 const MERGE_APPLICATOR_ACTIONS = new Set(["merge_candidate", "merge_canonical"]);
 const APPLICATOR_ACTIONS = new Set([...CLOSE_APPLICATOR_ACTIONS, ...MERGE_APPLICATOR_ACTIONS]);
 const POST_FLIGHT_APPLY_ACTIONS = new Set(["finalize_fix_pr", "post_merge_closeout"]);
-const PR_INFO_CACHE = new Map();
-const ISSUE_INFO_CACHE = new Map();
-const archivedClusters = readArchivedClusters();
+const root = repoRoot();
+const archivedClusters = readArchivedClusters(root);
 
 const args = parseArgs(process.argv.slice(2));
-const inputs = args._.length > 0 ? args._ : [path.join(repoRoot(), ".clawsweeper-repair", "runs")];
+const inputs = args._.length > 0 ? args._ : [path.join(root, ".clawsweeper-repair", "runs")];
 const metadataByRunId = readRunMetadata(args["runs-json"]);
-const published: JsonValue[] = [];
+const published: LooseRecord[] = [];
 
 for (const input of inputs) {
   for (const resultPath of findResultPaths(path.resolve(input))) {
@@ -50,7 +73,7 @@ function publishResult(resultPath: string) {
   const clusterPlan = readSiblingJson(runDir, "cluster-plan.json");
   const runId = String(args["run-id"] ?? inferRunId(resultPath) ?? "");
   const metadata = runId ? metadataByRunId.get(runId) : undefined;
-  const previousRecord = runId ? readExistingRunRecord(runId) : null;
+  const previousRecord = runId ? readExistingRunRecord(root, runId) : null;
   const runUrl =
     String(args["run-url"] ?? metadata?.url ?? "") ||
     previousRecord?.run_url ||
@@ -108,7 +131,7 @@ function publishResult(resultPath: string) {
     apply_actions: applyActions.map(sanitizeApplyAction),
   };
 
-  const reportDir = path.join(repoRoot(), "results", owner);
+  const reportDir = path.join(root, "results", owner);
   fs.mkdirSync(reportDir, { recursive: true });
   fs.writeFileSync(
     path.join(reportDir, `${slug(clusterId)}.md`),
@@ -116,7 +139,7 @@ function publishResult(resultPath: string) {
     "utf8",
   );
 
-  const runDirOut = path.join(repoRoot(), "results", "runs");
+  const runDirOut = path.join(root, "results", "runs");
   fs.mkdirSync(runDirOut, { recursive: true });
   if (runId) {
     fs.writeFileSync(
@@ -129,7 +152,7 @@ function publishResult(resultPath: string) {
   for (const action of report.apply_actions.filter(
     (action: JsonValue) => action.status === "executed",
   )) {
-    writeClosedRecord(report, action, owner);
+    writeClosedRecord({ report, action, owner, root });
   }
 
   return {
@@ -142,135 +165,11 @@ function publishResult(resultPath: string) {
   };
 }
 
-function renderClusterReport(report: LooseRecord) {
-  const actions = report.actions
-    .slice(0, 80)
-    .map(
-      (action: JsonValue) =>
-        `| ${action.target || ""} | ${action.action || ""} | ${action.status || ""} | ${action.classification || ""} | ${action.reason || ""} |`,
-    )
-    .join("\n");
-  const applyActions = report.apply_actions
-    .map(
-      (action: JsonValue) =>
-        `| ${action.target || ""} | ${action.action || ""} | ${action.status || ""} | ${action.classification || ""} | ${action.reason || ""} |`,
-    )
-    .join("\n");
-  const fixActions = (report.fix_actions ?? [])
-    .map(
-      (action: JsonValue) =>
-        `| ${action.action || ""} | ${action.status || ""} | ${action.target || action.pr || ""} | ${action.branch || ""} | ${action.reason || ""} |`,
-    )
-    .join("\n");
-  const needsHuman =
-    report.needs_human.length > 0
-      ? report.needs_human.map((item: JsonValue) => `- ${item}`).join("\n")
-      : "- none";
-  return `---
-repo: ${quote(report.repo)}
-cluster_id: ${quote(report.cluster_id)}
-mode: ${quote(report.mode)}
-run_id: ${quote(report.run_id)}
-run_url: ${quote(report.run_url)}
-head_sha: ${quote(report.head_sha)}
-workflow_conclusion: ${quote(report.workflow_conclusion)}
-result_status: ${quote(report.result_status)}
-published_at: ${quote(report.published_at)}
-canonical: ${quote(report.canonical)}
-canonical_issue: ${quote(report.canonical_issue)}
-canonical_pr: ${quote(report.canonical_pr)}
-actions_total: ${report.actions.length}
-fix_executed: ${report.fix_counts.executed ?? 0}
-fix_failed: ${report.fix_counts.failed ?? 0}
-fix_blocked: ${report.fix_counts.blocked ?? 0}
-apply_executed: ${report.apply_counts.executed ?? 0}
-apply_blocked: ${report.apply_counts.blocked ?? 0}
-apply_skipped: ${report.apply_counts.skipped ?? 0}
-needs_human_count: ${report.needs_human.length}
----
-
-# ${report.cluster_id}
-
-Repo: ${report.repo}
-
-Run: ${report.run_url ? markdownLink(report.run_url, report.run_url) : "unknown"}
-
-Workflow conclusion: ${report.workflow_conclusion || "unknown"}
-
-Worker result: ${report.result_status || "unknown"}
-
-Canonical: ${report.canonical || report.canonical_issue || report.canonical_pr || "unknown"}
-
-## Summary
-
-${report.summary || "_No summary emitted._"}
-
-## Impact
-
-| Metric | Count |
-| --- | ---: |
-| Worker actions | ${report.actions.length} |
-| Fix executed | ${report.fix_counts.executed ?? 0} |
-| Fix failed | ${report.fix_counts.failed ?? 0} |
-| Fix blocked | ${report.fix_counts.blocked ?? 0} |
-| Applied executions | ${report.apply_counts.executed ?? 0} |
-| Apply blocked | ${report.apply_counts.blocked ?? 0} |
-| Apply skipped | ${report.apply_counts.skipped ?? 0} |
-| Needs human | ${report.needs_human.length} |
-
-## Fix Execution Actions
-
-| Action | Status | Target | Branch | Reason |
-| --- | --- | --- | --- | --- |
-${fixActions || "| _None_ |  |  |  |  |"}
-
-## Apply Actions
-
-| Target | Action | Status | Classification | Reason |
-| --- | --- | --- | --- | --- |
-${applyActions || "| _None_ |  |  |  |  |"}
-
-## Worker Action Matrix
-
-| Target | Action | Status | Classification | Reason |
-| --- | --- | --- | --- | --- |
-${actions || "| _None_ |  |  |  |  |"}
-
-## Needs Human
-
-${needsHuman}
-`;
-}
-
-function writeClosedRecord(report: LooseRecord, action: LooseRecord, owner: string) {
-  const targetNumber = String(action.target ?? "").replace(/^#/, "");
-  if (!/^\d+$/.test(targetNumber)) return;
-  const closedDir = path.join(repoRoot(), "jobs", owner, "closed");
-  fs.mkdirSync(closedDir, { recursive: true });
-  const body = `---
-repo: ${quote(report.repo)}
-cluster_id: ${quote(report.cluster_id)}
-run_id: ${quote(report.run_id)}
-target: ${quote(action.target)}
-action: ${quote(action.action)}
-classification: ${quote(action.classification)}
-closed_at: ${quote(report.published_at)}
----
-
-# ${action.target} closed by ${report.cluster_id}
-
-Run: ${report.run_url ? markdownLink(report.run_url, report.run_url) : "unknown"}
-
-Reason: ${action.reason || "closed by ClawSweeper Repair applicator"}
-`;
-  fs.writeFileSync(path.join(closedDir, `${targetNumber}.md`), body, "utf8");
-}
-
 function updateDashboard() {
-  const readmePath = path.join(repoRoot(), "docs", "repair", "README.md");
+  const readmePath = path.join(root, "docs", "repair", "README.md");
   if (!fs.existsSync(readmePath)) return;
   const readme = fs.readFileSync(readmePath, "utf8");
-  const records = readRunRecords();
+  const records = readRunRecords(root);
   const allLatestByCluster = latestClusterRecords(records).sort(sortNewestRecordFirst);
   const latestByCluster = allLatestByCluster.filter(
     (record: JsonValue) => !archivedClusters.has(record.cluster_id),
@@ -278,7 +177,7 @@ function updateDashboard() {
   const archivedLatestByCluster = allLatestByCluster.filter((record: JsonValue) =>
     archivedClusters.has(record.cluster_id),
   );
-  const trackedPrRows = buildTrackedPrRows(records);
+  const trackedPrRows = buildTrackedPrRows(records, MERGE_APPLICATOR_ACTIONS);
   const latestApplyRows = latestByCluster.flatMap((record: JsonValue) =>
     (record.apply_actions ?? [])
       .filter(isApplicatorAction)
@@ -498,7 +397,7 @@ ${DASHBOARD_END}`;
 }
 
 function writeAggregateApplyReport() {
-  const records = readRunRecords();
+  const records = readRunRecords(root);
   const rows = records.flatMap((record: JsonValue) =>
     (record.apply_actions ?? []).filter(isApplicatorAction).map((action: JsonValue) => ({
       repo: record.repo,
@@ -510,124 +409,10 @@ function writeAggregateApplyReport() {
     })),
   );
   fs.writeFileSync(
-    path.join(repoRoot(), "repair-apply-report.json"),
+    path.join(root, "repair-apply-report.json"),
     `${JSON.stringify(uniquePlainActionRows(rows), null, 2)}\n`,
     "utf8",
   );
-}
-
-function readRunRecords() {
-  const dir = path.join(repoRoot(), "results", "runs");
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
-    .filter((name: string) => name.endsWith(".json"))
-    .map((name: string) => readJson(path.join(dir, name)))
-    .sort((left: JsonValue, right: JsonValue) =>
-      String(left.run_id ?? "").localeCompare(String(right.run_id ?? "")),
-    );
-}
-
-function readExistingRunRecord(runId: string) {
-  const filePath = path.join(repoRoot(), "results", "runs", `${runId}.json`);
-  if (!fs.existsSync(filePath)) return null;
-  return readJson(filePath);
-}
-
-function readArchivedClusters() {
-  const filePath = path.join(repoRoot(), "results", "archived-clusters.json");
-  if (!fs.existsSync(filePath)) return new Set();
-  const data = readJson(filePath);
-  const rows = Array.isArray(data) ? data : data.archived_clusters;
-  return new Set(
-    (Array.isArray(rows) ? rows : [])
-      .map((row: JsonValue) => String(row.cluster_id ?? row))
-      .filter(Boolean),
-  );
-}
-
-function latestClusterRecords(records: LooseRecord[]) {
-  const byCluster = new Map();
-  for (const record of records) {
-    const previous = byCluster.get(record.cluster_id);
-    if (!previous || String(record.published_at).localeCompare(String(previous.published_at)) > 0) {
-      byCluster.set(record.cluster_id, record);
-    }
-  }
-  return [...byCluster.values()];
-}
-
-function findResultPaths(inputPath: string) {
-  if (!fs.existsSync(inputPath)) return [];
-  if (fs.statSync(inputPath).isFile()) {
-    return path.basename(inputPath) === "result.json" ? [inputPath] : [];
-  }
-  const out: JsonValue[] = [];
-  for (const entry of fs.readdirSync(inputPath, { recursive: true })) {
-    const candidate = path.join(inputPath, String(entry));
-    if (path.basename(candidate) === "result.json" && fs.statSync(candidate).isFile()) {
-      out.push(candidate);
-    }
-  }
-  return preferFinalResultPaths(out);
-}
-
-function preferFinalResultPaths(paths: JsonValue) {
-  const byRunAndCluster = new Map();
-  for (const resultPath of paths.sort()) {
-    const runId = inferRunId(resultPath);
-    const clusterId = readResultClusterId(resultPath);
-    const key = runId && clusterId ? `${runId}:${clusterId}` : resultPath;
-    const previous = byRunAndCluster.get(key);
-    if (!previous || resultPathScore(resultPath) > resultPathScore(previous)) {
-      byRunAndCluster.set(key, resultPath);
-    }
-  }
-  return [...byRunAndCluster.values()].sort();
-}
-
-function resultPathScore(resultPath: string) {
-  const runDir = path.dirname(resultPath);
-  let score = 0;
-  if (fs.existsSync(path.join(runDir, "fix-execution-report.json"))) score += 8;
-  if (fs.existsSync(path.join(runDir, "post-flight-report.json"))) score += 4;
-  if (fs.existsSync(path.join(runDir, "apply-report.json"))) score += 2;
-  if (!resultPath.includes("clawsweeper-repair-worker-")) score += 1;
-  return score;
-}
-
-function readResultClusterId(resultPath: string) {
-  try {
-    return String(readJson(resultPath).cluster_id ?? "");
-  } catch {
-    return "";
-  }
-}
-
-function readSiblingJson(runDir: string, filename: string) {
-  const direct = path.join(runDir, filename);
-  if (fs.existsSync(direct)) return readJson(direct);
-  for (const entry of fs.readdirSync(runDir, { recursive: true })) {
-    const candidate = path.join(runDir, String(entry));
-    if (path.basename(candidate) === filename && fs.statSync(candidate).isFile()) {
-      return readJson(candidate);
-    }
-  }
-  return null;
-}
-
-function readRunMetadata(filePath: string) {
-  if (!filePath || typeof filePath !== "string" || !fs.existsSync(filePath)) return new Map();
-  const data = readJson(filePath);
-  const rows = Array.isArray(data) ? data : [data];
-  return new Map(
-    rows.map((row: JsonValue) => [String(row.databaseId ?? row.run_id ?? row.id), row]),
-  );
-}
-
-function inferRunId(filePath: string) {
-  const match = String(filePath).match(/clawsweeper-repair(?:-worker)?-(\d+)-\d+/);
-  return match?.[1] ?? null;
 }
 
 function summarizeActions(actions: LooseRecord[]) {
@@ -722,189 +507,12 @@ function sortNewestRecordFirst(left: JsonValue, right: JsonValue) {
   return String(right.published_at ?? "").localeCompare(String(left.published_at ?? ""));
 }
 
-function countRows(rows: LooseRecord[], predicate: JsonValue) {
+function countRows(rows: LooseRecord[], predicate: (row: LooseRecord) => boolean) {
   return rows.filter(predicate).length;
 }
 
-function renderRecentClosureRows(rows: LooseRecord[]) {
-  if (rows.length === 0) return "| _None yet_ |  |  |  |  |  |  |  |";
-  return rows
-    .map((row: JsonValue) =>
-      [
-        markdownTableLink(row.action.target || "target", row.url),
-        tableCell(row.kind),
-        tableCell(row.title),
-        tableCell(row.closed_at ? formatTimestamp(row.closed_at) : "executed"),
-        tableCell(row.action.action),
-        markdownTableLink(row.record.cluster_id, clusterReportPath(row.record)),
-        markdownTableLink("report", clusterReportPath(row.record)),
-        markdownTableLink(row.record.run_id || "run", row.record.run_url),
-      ].join(" | "),
-    )
-    .map((row: JsonValue) => `| ${row} |`)
-    .join("\n");
-}
-
-function buildInspectionRows({
-  latestByCluster,
-  latestFailedFixRows,
-  latestBlockedRows,
-  latestSkippedRows,
-}: LooseRecord) {
-  const byCluster = new Map();
-  for (const record of latestByCluster) {
-    if (record.workflow_conclusion === "failure") {
-      addInspectionRow(
-        byCluster,
-        record,
-        "workflow failure",
-        record.summary || "cluster worker failed",
-      );
-    }
-    for (const item of record.needs_human ?? []) {
-      addInspectionRow(byCluster, record, "needs human", inspectionReason(item) || record.summary);
-    }
-  }
-  for (const row of latestFailedFixRows) {
-    addInspectionRow(byCluster, row.record, `fix ${row.action.status}`, actionReason(row.action));
-  }
-  for (const row of [...latestBlockedRows, ...latestSkippedRows]) {
-    addInspectionRow(byCluster, row.record, `apply ${row.action.status}`, actionReason(row.action));
-  }
-  return [...byCluster.values()].sort((left: JsonValue, right: JsonValue) =>
-    String(right.record.published_at ?? "").localeCompare(String(left.record.published_at ?? "")),
-  );
-}
-
-function addInspectionRow(
-  byCluster: JsonValue,
-  record: LooseRecord,
-  state: JsonValue,
-  reason: string,
-) {
-  if (!record?.cluster_id) return;
-  const current = byCluster.get(record.cluster_id);
-  const next = {
-    record,
-    state,
-    reason: compactReason(reason || record.summary || "inspection needed"),
-  };
-  if (!current || inspectionRank(next.state) > inspectionRank(current.state)) {
-    byCluster.set(record.cluster_id, next);
-  }
-}
-
-function inspectionRank(state: JsonValue) {
-  if (String(state).startsWith("workflow")) return 5;
-  if (String(state).startsWith("fix failed")) return 4;
-  if (String(state).startsWith("fix blocked")) return 3;
-  if (String(state).startsWith("apply blocked")) return 2;
-  return 1;
-}
-
-function renderInspectionRows(rows: LooseRecord[]) {
-  if (rows.length === 0) return "| _None_ |  |  |  |  |  |";
-  return rows
-    .map(({ record, state, reason }: LooseRecord) =>
-      [
-        markdownTableLink(record.cluster_id, clusterReportPath(record)),
-        tableCell(state),
-        tableCell(record.source_job ?? ""),
-        tableCell(reason),
-        markdownTableLink("report", clusterReportPath(record)),
-        markdownTableLink(record.run_id || "run", record.run_url),
-      ].join(" | "),
-    )
-    .map((row: JsonValue) => `| ${row} |`)
-    .join("\n");
-}
-
-function renderFixFailureRows(rows: LooseRecord[]) {
-  if (rows.length === 0) return "| _None_ |  |  |  |  |  |";
-  return rows
-    .map(({ record, action }: LooseRecord) =>
-      [
-        markdownTableLink(record.cluster_id, clusterReportPath(record)),
-        tableCell(action.status),
-        tableCell(action.target ?? ""),
-        tableCell(action.pr ?? action.url ?? action.branch ?? ""),
-        tableCell(actionReason(action)),
-        markdownTableLink(record.run_id || "run", record.run_url),
-      ].join(" | "),
-    )
-    .map((row: JsonValue) => `| ${row} |`)
-    .join("\n");
-}
-
-function renderBlockedReasonRows(rows: LooseRecord[]) {
-  const counts = new Map();
-  for (const row of rows) {
-    const reason = compactReason(actionReason(row.action) || "unknown");
-    const current = counts.get(reason);
-    counts.set(reason, {
-      reason,
-      count: (current?.count ?? 0) + 1,
-      record: current?.record ?? row.record,
-    });
-  }
-  const ranked = [...counts.values()].sort(
-    (left: JsonValue, right: JsonValue) =>
-      right.count - left.count || left.reason.localeCompare(right.reason),
-  );
-  if (ranked.length === 0) return "| _None_ | 0 |  |";
-  return ranked
-    .slice(0, 15)
-    .map((row: JsonValue) =>
-      [
-        tableCell(row.reason),
-        row.count,
-        markdownTableLink(row.record.cluster_id, clusterReportPath(row.record)),
-      ].join(" | "),
-    )
-    .map((row: JsonValue) => `| ${row} |`)
-    .join("\n");
-}
-
-function renderFinalizerRows(report: LooseRecord) {
-  const prs = Array.isArray(report?.prs) ? report.prs : [];
-  if (prs.length === 0) return "| _None_ |  |  |  |  |  |";
-  return prs
-    .slice(0, 25)
-    .map((pr: JsonValue) =>
-      [
-        markdownTableLink(`#${pr.number}`, pr.url),
-        tableCell(pr.title),
-        tableCell(pr.cluster_id ?? ""),
-        tableCell(pr.branch ?? ""),
-        tableCell((pr.blockers ?? []).join(", ") || "ready"),
-        tableCell(pr.recommended_next_action ?? ""),
-      ].join(" | "),
-    )
-    .map((row: JsonValue) => `| ${row} |`)
-    .join("\n");
-}
-
-function actionReason(action: LooseRecord) {
-  return compactReason([action?.code, action?.reason].filter(Boolean).join(": "));
-}
-
-function inspectionReason(item: LooseRecord) {
-  if (typeof item === "string") return item;
-  if (!item || typeof item !== "object") return "";
-  return item.reason ?? item.summary ?? item.title ?? item.ref ?? JSON.stringify(item);
-}
-
-function compactReason(value: JsonValue) {
-  return truncate(
-    String(value ?? "")
-      .replace(/\s+/g, " ")
-      .trim(),
-    160,
-  );
-}
-
 function readFinalizerReport() {
-  const filePath = path.join(repoRoot(), "results", "finalize-open-prs.json");
+  const filePath = path.join(root, "results", "finalize-open-prs.json");
   if (!fs.existsSync(filePath)) return null;
   try {
     return readJson(filePath);
@@ -913,190 +521,8 @@ function readFinalizerReport() {
   }
 }
 
-function buildTrackedPrRows(records: LooseRecord[]) {
-  const byPull = new Map();
-  for (const record of records) {
-    addTrackedPrRef(byPull, record, record.canonical_pr, {
-      source: "canonical_pr",
-      explicitPull: true,
-    });
-    addTrackedPrRef(byPull, record, record.canonical, {
-      source: "canonical",
-      explicitPull: isPullUrl(record.canonical),
-    });
-
-    for (const action of record.actions ?? []) {
-      const title = action.title ?? action.target_title ?? action.pr_title ?? null;
-      addTrackedPrRef(byPull, record, action.target, {
-        source: "target",
-        explicitPull: false,
-        title,
-      });
-      addTrackedPrRef(byPull, record, action.canonical, {
-        source: "canonical",
-        explicitPull: isPullUrl(action.canonical),
-        title,
-      });
-      addTrackedPrRef(byPull, record, action.candidate_fix, {
-        source: "candidate_fix",
-        explicitPull: isPullUrl(action.candidate_fix),
-        title,
-      });
-    }
-
-    for (const action of record.apply_actions ?? []) {
-      const actionName = String(action.action ?? "");
-      const title = action.title ?? action.target_title ?? action.pr_title ?? null;
-      const projectClawSweeperMerged =
-        MERGE_APPLICATOR_ACTIONS.has(actionName) && action.status === "executed";
-      addTrackedPrRef(byPull, record, action.target, {
-        source: "apply_target",
-        explicitPull: false,
-        title,
-        assumedMerged: projectClawSweeperMerged,
-        projectClawSweeperMerged,
-        projectClawSweeperMergedAt: action.merged_at ?? null,
-        merged_at: projectClawSweeperMerged ? (action.merged_at ?? null) : null,
-      });
-      addTrackedPrRef(byPull, record, action.canonical, {
-        source: "apply_canonical",
-        explicitPull: isPullUrl(action.canonical),
-        title,
-      });
-      addTrackedPrRef(byPull, record, action.candidate_fix, {
-        source: "apply_candidate_fix",
-        explicitPull: isPullUrl(action.candidate_fix),
-        title,
-      });
-    }
-  }
-
-  return hydrateTrackedPrRows([...byPull.values()]).sort(sortNewestPrRowFirst);
-}
-
-function addTrackedPrRef(
-  byPull: JsonValue,
-  record: LooseRecord,
-  value: JsonValue,
-  options: JsonValue = {},
-) {
-  const pull = parseGithubPullRef(record.repo, value);
-  if (!pull) return;
-  addTrackedPrRow(byPull, {
-    record,
-    repo: pull.repo,
-    number: pull.number,
-    title: options.title ?? null,
-    assumedMerged: Boolean(options.assumedMerged),
-    merged_at: options.merged_at ?? null,
-    first_seen_at: record.workflow_created_at ?? record.published_at ?? null,
-    projectClawSweeperMerged: Boolean(options.projectClawSweeperMerged),
-    projectClawSweeperMergedAt: options.projectClawSweeperMergedAt ?? null,
-    sources: new Set([options.source ?? "ref"]),
-    explicitPull: Boolean(options.explicitPull),
-  });
-}
-
-function addTrackedPrRow(byPull: JsonValue, row: LooseRecord) {
-  const key = `${row.repo}#${row.number}`;
-  const previous = byPull.get(key);
-  if (!previous || preferTrackedPrRow(row, previous)) {
-    byPull.set(key, mergeTrackedPrRows(row, previous));
-  } else if (previous) {
-    byPull.set(key, mergeTrackedPrRows(previous, row));
-  }
-}
-
-function mergeTrackedPrRows(primary: JsonValue, secondary: JsonValue) {
-  if (!secondary) return primary;
-  return {
-    ...primary,
-    title: primary.title ?? secondary.title ?? null,
-    assumedMerged: Boolean(primary.assumedMerged || secondary.assumedMerged),
-    merged_at: primary.merged_at ?? secondary.merged_at ?? null,
-    first_seen_at: earlierIso(primary.first_seen_at, secondary.first_seen_at),
-    projectClawSweeperMerged: Boolean(
-      primary.projectClawSweeperMerged || secondary.projectClawSweeperMerged,
-    ),
-    projectClawSweeperMergedAt:
-      primary.projectClawSweeperMergedAt ?? secondary.projectClawSweeperMergedAt ?? null,
-    sources: new Set([...(primary.sources ?? []), ...(secondary.sources ?? [])]),
-    explicitPull: Boolean(primary.explicitPull || secondary.explicitPull),
-  };
-}
-
-function preferTrackedPrRow(candidate: LooseRecord, current: LooseRecord) {
-  if (candidate.assumedMerged && !current.assumedMerged) return true;
-  if (!candidate.assumedMerged && current.assumedMerged) return false;
-  return (
-    String(candidate.record.published_at ?? "").localeCompare(
-      String(current.record.published_at ?? ""),
-    ) > 0
-  );
-}
-
-function hydrateTrackedPrRows(rows: LooseRecord[]) {
-  const infoByPull = githubPullInfo(rows);
-  return rows
-    .map((row: JsonValue) => {
-      const info: JsonValue = infoByPull.get(`${row.repo}#${row.number}`);
-      if (!info && !row.explicitPull) return null;
-      const projectClawSweeperMerged = Boolean(row.projectClawSweeperMerged);
-      const merged = Boolean(row.merged_at || info?.merged);
-      const mergedAt = row.merged_at ?? info?.merged_at ?? null;
-      const state = merged ? "merged" : (normalizePullState(info?.state) ?? "tracked");
-      return {
-        ...row,
-        title: row.title ?? info?.title ?? `PR #${row.number}`,
-        url: info?.html_url ?? githubPullUrl(row.repo, row.number),
-        state,
-        merged,
-        merged_at: mergedAt,
-        projectClawSweeperMerged,
-        projectClawSweeperMergedAt: row.projectClawSweeperMergedAt ?? null,
-      };
-    })
-    .filter(Boolean);
-}
-
-function sortNewestPrRowFirst(left: JsonValue, right: JsonValue) {
-  return String(right.merged_at ?? right.record.published_at ?? "").localeCompare(
-    String(left.merged_at ?? left.record.published_at ?? ""),
-  );
-}
-
-function hydrateClosureRows(rows: LooseRecord[]) {
-  const infoByIssue = githubIssueInfo(rows);
-  return rows.map((row: JsonValue) => {
-    const target = parseGithubIssueRef(row.record.repo, row.action.target);
-    const info: JsonValue = target ? infoByIssue.get(`${target.repo}#${target.number}`) : null;
-    return {
-      ...row,
-      kind: info?.kind ?? "issue_or_pr",
-      title:
-        info?.title ??
-        row.action.title ??
-        row.action.reason ??
-        String(row.action.target ?? "closed target"),
-      url: info?.html_url ?? (target ? githubIssueUrl(target.repo, target.number) : ""),
-      closed_at:
-        info?.closed_at ??
-        row.action.closed_at ??
-        row.record.workflow_updated_at ??
-        row.record.published_at ??
-        null,
-    };
-  });
-}
-
-function sortNewestClosureRowFirst(left: JsonValue, right: JsonValue) {
-  return String(right.closed_at ?? right.record.published_at ?? "").localeCompare(
-    String(left.closed_at ?? left.record.published_at ?? ""),
-  );
-}
-
 function uniqueActionRows(rows: LooseRecord[]) {
-  const byKey = new Map();
+  const byKey = new Map<string, LooseRecord>();
   for (const row of rows) {
     const record = row.record ?? row;
     const action = row.action ?? row;
@@ -1110,7 +536,7 @@ function uniqueActionRows(rows: LooseRecord[]) {
 }
 
 function uniquePlainActionRows(rows: LooseRecord[]) {
-  const byKey = new Map();
+  const byKey = new Map<string, LooseRecord>();
   for (const row of rows) {
     const key = [row.repo, row.cluster_id, row.target, row.action].join(":");
     const previous = byKey.get(key);
@@ -1122,7 +548,7 @@ function uniquePlainActionRows(rows: LooseRecord[]) {
 }
 
 function uniqueFixRows(rows: LooseRecord[]) {
-  const byKey = new Map();
+  const byKey = new Map<string, LooseRecord>();
   for (const row of rows) {
     const record = row.record ?? row;
     const action = row.action ?? row;
@@ -1182,199 +608,6 @@ function actionStatusRank(status: string) {
   }
 }
 
-function githubPullInfo(rows: LooseRecord[]) {
-  const byRepo = new Map();
-  for (const row of rows) {
-    if (!row.repo || !row.number) continue;
-    const key = `${row.repo}#${row.number}`;
-    if (PR_INFO_CACHE.has(key)) continue;
-    const numbers = byRepo.get(row.repo) ?? new Set();
-    numbers.add(String(row.number));
-    byRepo.set(row.repo, numbers);
-  }
-
-  for (const [repo, numbers] of byRepo) {
-    for (const batch of chunks([...numbers], 50)) {
-      for (const [key, info] of githubPullInfoBatch(repo, batch)) {
-        PR_INFO_CACHE.set(key, info);
-      }
-      for (const number of batch) {
-        const key = `${repo}#${number}`;
-        if (!PR_INFO_CACHE.has(key)) PR_INFO_CACHE.set(key, null);
-      }
-    }
-  }
-
-  return new Map(
-    rows.map((row: JsonValue) => [
-      `${row.repo}#${row.number}`,
-      PR_INFO_CACHE.get(`${row.repo}#${row.number}`),
-    ]),
-  );
-}
-
-function githubIssueInfo(rows: LooseRecord[]) {
-  const byRepo = new Map();
-  for (const row of rows) {
-    const target = parseGithubIssueRef(
-      row.record?.repo ?? row.repo,
-      row.action?.target ?? row.target,
-    );
-    if (!target) continue;
-    const key = `${target.repo}#${target.number}`;
-    if (ISSUE_INFO_CACHE.has(key)) continue;
-    const numbers = byRepo.get(target.repo) ?? new Set();
-    numbers.add(String(target.number));
-    byRepo.set(target.repo, numbers);
-  }
-
-  for (const [repo, numbers] of byRepo) {
-    for (const batch of chunks([...numbers], 50)) {
-      for (const [key, info] of githubIssueInfoBatch(repo, batch)) {
-        ISSUE_INFO_CACHE.set(key, info);
-      }
-      for (const number of batch) {
-        const key = `${repo}#${number}`;
-        if (!ISSUE_INFO_CACHE.has(key)) ISSUE_INFO_CACHE.set(key, null);
-      }
-    }
-  }
-
-  return new Map(
-    rows.map((row: JsonValue) => {
-      const target = parseGithubIssueRef(
-        row.record?.repo ?? row.repo,
-        row.action?.target ?? row.target,
-      );
-      return target
-        ? [
-            `${target.repo}#${target.number}`,
-            ISSUE_INFO_CACHE.get(`${target.repo}#${target.number}`),
-          ]
-        : ["", null];
-    }),
-  );
-}
-
-function githubIssueInfoBatch(repo: string, numbers: JsonValue) {
-  const [owner, name] = String(repo).split("/");
-  if (!owner || !name || numbers.length === 0) return new Map();
-  const fields = numbers
-    .map(
-      (number: string, index: JsonValue) =>
-        `i${index}: issueOrPullRequest(number: ${Number(number)}) { __typename ... on Issue { number title state closedAt url } ... on PullRequest { number title state closedAt merged mergedAt url } }`,
-    )
-    .join("\n");
-  const query = `query { repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }`;
-  const body = runGhGraphql(query);
-  if (!body) return new Map();
-  const data = JSON.parse(body);
-  const repository = data?.data?.repository ?? {};
-  const out = new Map();
-  numbers.forEach((number: string, index: JsonValue) => {
-    const info = repository[`i${index}`];
-    if (!info) return;
-    out.set(`${repo}#${number}`, {
-      html_url: info.url ?? githubIssueUrl(repo, number),
-      kind: info.__typename === "PullRequest" ? "pull_request" : "issue",
-      closed_at: info.closedAt ?? info.mergedAt ?? null,
-      merged: Boolean(info.merged),
-      merged_at: info.mergedAt ?? null,
-      state: normalizePullState(info.state),
-      title: info.title ?? null,
-    });
-  });
-  return out;
-}
-
-function githubPullInfoBatch(repo: string, numbers: JsonValue) {
-  const [owner, name] = String(repo).split("/");
-  if (!owner || !name || numbers.length === 0) return new Map();
-  const fields = numbers
-    .map(
-      (number: string, index: JsonValue) =>
-        `p${index}: pullRequest(number: ${Number(number)}) { number title state merged mergedAt url }`,
-    )
-    .join("\n");
-  const query = `query { repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }`;
-  const body = runGhGraphql(query);
-  if (!body) return new Map();
-  const data = JSON.parse(body);
-  const repository = data?.data?.repository ?? {};
-  const out = new Map();
-  numbers.forEach((number: string, index: JsonValue) => {
-    const info = repository[`p${index}`];
-    if (!info) return;
-    out.set(`${repo}#${number}`, {
-      html_url: info.url ?? githubPullUrl(repo, number),
-      merged: Boolean(info.merged),
-      merged_at: info.mergedAt ?? null,
-      state: normalizePullState(info.state),
-      title: info.title ?? null,
-    });
-  });
-  return out;
-}
-
-function runGhGraphql(query: string) {
-  try {
-    return ghText(["api", "graphql", "-f", `query=${query}`]);
-  } catch (error) {
-    return ghStdoutFromError(error);
-  }
-}
-
-function parseGithubPullRef(defaultRepo: string, value: JsonValue) {
-  const text = String(value ?? "").trim();
-  if (!text) return null;
-  let match = text.match(/^#?(\d+)$/);
-  if (match && defaultRepo) return { repo: defaultRepo, number: match[1] };
-  match = text.match(/^([^/\s]+\/[^#\s]+)#(\d+)$/);
-  if (match) return { repo: match[1], number: match[2] };
-  match = text.match(/github\.com\/([^/\s]+)\/([^/\s]+)\/pull\/(\d+)/);
-  if (match) return { repo: `${match[1]}/${match[2]}`, number: match[3] };
-  return null;
-}
-
-function parseGithubIssueRef(defaultRepo: string, value: JsonValue) {
-  const text = String(value ?? "").trim();
-  if (!text) return null;
-  let match = text.match(/^#?(\d+)$/);
-  if (match && defaultRepo) return { repo: defaultRepo, number: match[1] };
-  match = text.match(/^([^/\s]+\/[^#\s]+)#(\d+)$/);
-  if (match) return { repo: match[1], number: match[2] };
-  match = text.match(/github\.com\/([^/\s]+)\/([^/\s]+)\/(?:issues|pull)\/(\d+)/);
-  if (match) return { repo: `${match[1]}/${match[2]}`, number: match[3] };
-  return null;
-}
-
-function isPullUrl(value: JsonValue) {
-  return /github\.com\/[^/\s]+\/[^/\s]+\/pull\/\d+/.test(String(value ?? ""));
-}
-
-function normalizePullState(state: JsonValue) {
-  if (!state) return null;
-  return String(state).toLowerCase();
-}
-
-function githubPullUrl(repo: string, ref: JsonValue) {
-  const number = String(ref ?? "").replace(/^#/, "");
-  if (!/^\d+$/.test(number) || !repo) return "";
-  return `https://github.com/${repo}/pull/${number}`;
-}
-
-function githubIssueUrl(repo: string, ref: JsonValue) {
-  const number = String(ref ?? "").replace(/^#/, "");
-  if (!/^\d+$/.test(number) || !repo) return "";
-  return `https://github.com/${repo}/issues/${number}`;
-}
-
-function earlierIso(left: JsonValue, right: JsonValue) {
-  if (!left) return right ?? null;
-  if (!right) return left ?? null;
-  return String(left).localeCompare(String(right)) <= 0 ? left : right;
-}
-
 function renderMetricRow(metric: string, count: JsonValue, rate: string) {
   return `| ${tableCell(metric)} | ${count} | ${tableCell(rate)} |`;
 }
@@ -1384,69 +617,11 @@ function percent(count: JsonValue, total: JsonValue) {
   return `${((Number(count) / Number(total)) * 100).toFixed(1)}%`;
 }
 
-function chunks(values: LooseRecord[], size: JsonValue) {
-  const out: JsonValue[] = [];
-  for (let index = 0; index < values.length; index += size) {
-    out.push(values.slice(index, index + size));
-  }
-  return out;
-}
-
-function clusterReportPath(record: LooseRecord) {
-  const owner = String(record.repo ?? "").split("/")[0] || "openclaw";
-  return `results/${owner}/${slug(record.cluster_id)}.md`;
-}
-
-function markdownTableLink(label: string, url: string) {
-  const safeLabel = tableCell(label || "unknown");
-  return url ? `[${safeLabel}](${url})` : safeLabel;
-}
-
-function tableCell(value: JsonValue) {
-  return truncate(
-    String(value ?? "")
-      .replaceAll("|", "\\|")
-      .replace(/\s+/g, " ")
-      .trim(),
-    140,
-  );
-}
-
-function truncate(value: JsonValue, maxLength: number) {
-  const text = String(value ?? "");
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength - 3)}...`;
-}
-
-function countBy(values: LooseRecord[], keyFn: JsonValue) {
+function countBy(values: LooseRecord[], keyFn: (value: LooseRecord) => string) {
   const out: Record<string, number> = {};
   for (const value of Array.isArray(values) ? values : []) {
     const key = keyFn(value);
     out[key] = (out[key] ?? 0) + 1;
   }
   return out;
-}
-
-function quote(value: JsonValue) {
-  if (value === null || value === undefined || value === "") return "null";
-  return JSON.stringify(String(value));
-}
-
-function markdownLink(label: string, url: string) {
-  return `[${String(label).replaceAll("|", "\\|")}](${url})`;
-}
-
-function formatTimestamp(iso: string) {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "unknown";
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "UTC",
-    timeZoneName: "short",
-  }).format(date);
 }
