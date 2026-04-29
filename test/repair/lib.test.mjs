@@ -5,6 +5,7 @@ import {
   hasDeterministicSecuritySignal,
   hasSecuritySignalText,
   parseArgs,
+  renderPrompt,
 } from "../../dist/repair/lib.js";
 
 test("parseArgs ignores package-manager double dash separators", () => {
@@ -16,6 +17,23 @@ test("parseArgs ignores package-manager double dash separators", () => {
     latest: true,
     mode: "autonomous",
   });
+});
+
+test("renderPrompt loads tracked repair prompt templates", () => {
+  const prompt = renderPrompt(
+    {
+      raw: "---\nrepo: openclaw/clawsweeper\ncluster_id: smoke\nmode: autonomous\nrefs:\n  - 1\n---\nRepair smoke.",
+      frontmatter: {
+        repo: "openclaw/clawsweeper",
+        cluster_id: "smoke",
+        mode: "autonomous",
+        refs: [1],
+      },
+    },
+    "autonomous",
+  );
+  assert.match(prompt, /## Job file/);
+  assert.match(prompt, /Repair smoke\./);
 });
 
 test("security signal detection ignores non-security advisory wording", () => {

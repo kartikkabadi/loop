@@ -222,12 +222,12 @@ export function renderPrompt(
   const mode = requestedMode ?? job.frontmatter.mode;
   const modePrompt =
     mode === "autonomous"
-      ? "prompts/autonomous.md"
+      ? "prompts/repair/autonomous.md"
       : mode === "execute"
-        ? "prompts/execute.md"
-        : "prompts/plan-only.md";
+        ? "prompts/repair/execute.md"
+        : "prompts/repair/plan-only.md";
   const parts = [
-    readText("prompts/worker-system.md"),
+    readText("prompts/repair/worker-system.md"),
     readText(modePrompt),
     "## Security boundary",
     readText("instructions/security-boundary.md"),
