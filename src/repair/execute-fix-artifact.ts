@@ -41,13 +41,14 @@ import {
   type TargetValidationOptions,
 } from "./target-validation.js";
 import { uniqueStrings } from "./validation-command-utils.js";
+import { validateActivePrAreaCapacity } from "./execute-fix-area-capacity.js";
+import {
+  validateAutonomousFixScope,
+  validateFixArtifact,
+  validateFixSecurityScope,
+} from "./execute-fix-validation.js";
 
 const FIX_ACTIONS = new Set(["fix_needed", "build_fix_artifact", "open_fix_pr"]);
-const REPAIR_STRATEGIES = new Set([
-  "repair_contributor_branch",
-  "replace_uneditable_branch",
-  "new_fix_pr",
-]);
 const NON_EXECUTABLE_REPAIR_STRATEGIES = new Set(["already_fixed_on_main", "needs_human"]);
 const DEFAULT_BASE_BRANCH = "main";
 
@@ -238,7 +239,13 @@ if (securityBlock) {
   writeReport(report, resultPath);
   process.exit(0);
 }
-const scopeBlock = validateAutonomousFixScope({ job, fixArtifact });
+const scopeBlock = validateAutonomousFixScope({
+  job,
+  fixArtifact,
+  allowBroadFixArtifacts,
+  maxAutonomousFixFiles,
+  maxAutonomousFixSurfaces,
+});
 if (scopeBlock) {
   report.status = "blocked";
   report.reason = scopeBlock.reason;
@@ -574,7 +581,13 @@ function executeReplacementBranch({
   const baseBranch = String(process.env.CLAWSWEEPER_REPAIR_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
   const contributorCredits = sourceContributorCredits({ fixArtifact, targetDir });
   const branch = replacementBranchName(result.cluster_id);
-  const areaCapacityBlock = validateActivePrAreaCapacity({ fixArtifact, targetDir, branch });
+  const areaCapacityBlock = validateActivePrAreaCapacity({
+    fixArtifact,
+    targetDir,
+    branch,
+    repo: result.repo,
+    maxActivePrsPerArea,
+  });
   if (areaCapacityBlock) {
     return {
       action: "open_fix_pr",
@@ -1459,7 +1472,7 @@ function codexReviewSchemaPath() {
 }
 
 function sourceContributorCredits({ fixArtifact, targetDir }: LooseRecord) {
-  const byLogin = new Map();
+  const byLogin = new Map<string, LooseRecord>();
   for (const source of fixArtifact.source_prs ?? []) {
     const parsed = parsePullRequestUrl(source);
     if (!parsed || parsed.repo !== result.repo) continue;
@@ -1524,122 +1537,6 @@ function isBotLogin(login: JsonValue) {
   return /\[bot\]$|bot$/i.test(String(login ?? ""));
 }
 
-function validateActivePrAreaCapacity({ fixArtifact, targetDir, branch }: LooseRecord) {
-  if (!Number.isFinite(maxActivePrsPerArea) || maxActivePrsPerArea < 1) return null;
-  const areas = affectedAreasForFiles(fixArtifact.likely_files ?? []);
-  if (areas.length === 0) return null;
-
-  let activePrs;
-  try {
-    activePrs = listOpenClawSweeperPrAreas({ targetDir }).filter(
-      (pull: JsonValue) => pull.branch !== branch,
-    );
-  } catch (error) {
-    return {
-      code: "active_area_pr_cap_unverified",
-      reason: `could not verify active ClawSweeper PR area capacity: ${compactText(error.message, 500)}`,
-      areas,
-      max_active_prs_per_area: maxActivePrsPerArea,
-    };
-  }
-  const blockedAreas = areas
-    .map((area: JsonValue) => ({
-      area,
-      active: activePrs.filter((pull: JsonValue) => pull.areas.includes(area)),
-    }))
-    .filter((entry: JsonValue) => entry.active.length >= maxActivePrsPerArea);
-
-  if (blockedAreas.length === 0) return null;
-  const first = blockedAreas[0];
-  if (!first) return null;
-  return {
-    code: "active_area_pr_cap",
-    reason: `active ClawSweeper PR cap reached for ${first.area}: ${first.active.length}/${maxActivePrsPerArea} open PRs`,
-    areas,
-    max_active_prs_per_area: maxActivePrsPerArea,
-    active_area_prs: first.active.slice(0, 10).map((pull: JsonValue) => ({
-      pr: `#${pull.number}`,
-      url: pull.url,
-      title: pull.title,
-      branch: pull.branch,
-      areas: pull.areas,
-    })),
-  };
-}
-
-function listOpenClawSweeperPrAreas({ targetDir }: LooseRecord) {
-  const pulls = JSON.parse(
-    run(
-      "gh",
-      [
-        "pr",
-        "list",
-        "--repo",
-        result.repo,
-        "--state",
-        "open",
-        "--limit",
-        "500",
-        "--json",
-        "number,title,url,headRefName,labels",
-      ],
-      { cwd: targetDir, env: ghEnv() },
-    ),
-  );
-  return pulls
-    .filter((pull: JsonValue) => {
-      const branch = String(pull.headRefName ?? "");
-      const labels = (pull.labels ?? []).map((label: JsonValue) => String(label.name ?? label));
-      return branch.startsWith("clawsweeper/") || labels.includes("clawsweeper");
-    })
-    .map((pull: JsonValue) => {
-      const files = fetchPullRequestFilePaths({ targetDir, number: pull.number });
-      return {
-        number: pull.number,
-        title: pull.title,
-        url: pull.url,
-        branch: String(pull.headRefName ?? ""),
-        areas: affectedAreasForFiles(files),
-      };
-    });
-}
-
-function fetchPullRequestFilePaths({ targetDir, number }: LooseRecord) {
-  const view = JSON.parse(
-    run("gh", ["pr", "view", String(number), "--repo", result.repo, "--json", "files"], {
-      cwd: targetDir,
-      env: ghEnv(),
-    }),
-  );
-  return (view.files ?? []).map((file: JsonValue) => String(file.path ?? "")).filter(Boolean);
-}
-
-function affectedAreasForFiles(files: LooseRecord[]) {
-  return uniqueStrings(files.map(affectedAreaForFile).filter(Boolean));
-}
-
-function affectedAreaForFile(file: JsonValue) {
-  const normalized = String(file ?? "")
-    .replaceAll("\\", "/")
-    .replace(/^\.\/+/, "");
-  if (!normalized || normalized.includes("*")) return "";
-  if (isBackpressureIgnoredFile(normalized)) return "";
-  const parts = normalized.split("/").filter(Boolean);
-  if (parts.length === 0) return "";
-  const first = parts[0] ?? "";
-  if (["apps", "extensions", "packages"].includes(first) && parts[1]) return `${first}/${parts[1]}`;
-  if (first === "src" && parts[1]) return `src/${parts[1]}`;
-  if (first === "test" || first === "tests") return first;
-  if (first === "docs" || first === ".github" || first === "scripts") return first;
-  return parts[0];
-}
-
-function isBackpressureIgnoredFile(file: JsonValue) {
-  return /(^|\/)(CHANGELOG|CHANGES|HISTORY|RELEASES|RELEASE_NOTES)(\.[A-Za-z0-9_-]+)?$/i.test(
-    String(file ?? ""),
-  );
-}
-
 function supersededReplacementSources(fixArtifact: LooseRecord) {
   if (
     Array.isArray(fixArtifact.supersede_source_prs) &&
@@ -1663,147 +1560,6 @@ function supersededReplacementSources(fixArtifact: LooseRecord) {
   return directUneditableSources.length > 0
     ? directUneditableSources
     : (fixArtifact.source_prs ?? []).slice(0, 1);
-}
-
-function validateFixArtifact(fixArtifact: LooseRecord) {
-  if (!fixArtifact || typeof fixArtifact !== "object") {
-    throw new Error("fix execution requires fix_artifact");
-  }
-  for (const key of ["summary", "pr_title", "pr_body"]) {
-    if (typeof fixArtifact[key] !== "string" || !fixArtifact[key].trim()) {
-      throw new Error(`fix_artifact.${key} is required`);
-    }
-  }
-  for (const key of [
-    "affected_surfaces",
-    "likely_files",
-    "linked_refs",
-    "validation_commands",
-    "credit_notes",
-  ]) {
-    if (!Array.isArray(fixArtifact[key]) || fixArtifact[key].length === 0) {
-      throw new Error(`fix_artifact.${key} must be a non-empty list`);
-    }
-  }
-  if (typeof fixArtifact.changelog_required !== "boolean") {
-    throw new Error("fix_artifact.changelog_required must be boolean");
-  }
-  if (!REPAIR_STRATEGIES.has(fixArtifact.repair_strategy)) {
-    throw new Error("fix_artifact.repair_strategy is not executable");
-  }
-  if (
-    fixArtifact.repair_strategy !== "new_fix_pr" &&
-    (!Array.isArray(fixArtifact.source_prs) || fixArtifact.source_prs.length === 0)
-  ) {
-    throw new Error("repair/replacement fix_artifact must list source_prs");
-  }
-  return fixArtifact;
-}
-
-function validateFixSecurityScope({
-  job,
-  resultPath,
-  fixArtifact,
-  plannedFixActions,
-}: LooseRecord) {
-  if (job.frontmatter.security_sensitive === true) {
-    return {
-      reason: "job is marked security_sensitive; route to central security handling",
-      evidence: ["job.frontmatter.security_sensitive=true"],
-    };
-  }
-
-  const clusterPlan = readSiblingJson(resultPath, "cluster-plan.json");
-  const securityRefs = new Set(
-    (clusterPlan?.security_boundary?.security_sensitive_items ?? [])
-      .map(normalizeLocalRef)
-      .filter(Boolean),
-  );
-
-  for (const action of plannedFixActions) {
-    const target = normalizeLocalRef(action.target);
-    if (target && securityRefs.has(target)) {
-      return {
-        reason: `fix action targets security-sensitive ref ${target}`,
-        evidence: [`${target} appears in cluster-plan.security_boundary.security_sensitive_items`],
-      };
-    }
-  }
-
-  for (const source of fixArtifact.source_prs ?? []) {
-    const sourceRef = normalizeLocalRef(source);
-    if (sourceRef && securityRefs.has(sourceRef)) {
-      return {
-        reason: `fix artifact source PR ${sourceRef} is security-sensitive`,
-        evidence: [
-          `${sourceRef} appears in cluster-plan.security_boundary.security_sensitive_items`,
-        ],
-      };
-    }
-  }
-
-  return null;
-}
-
-function validateAutonomousFixScope({ job, fixArtifact }: LooseRecord) {
-  if (allowBroadFixArtifacts || job.frontmatter.allow_broad_fix_artifacts === true) return null;
-
-  const likelyFiles = fixArtifact.likely_files ?? [];
-  const affectedSurfaces = fixArtifact.affected_surfaces ?? [];
-  const text = [
-    fixArtifact.pr_title,
-    fixArtifact.summary,
-    fixArtifact.pr_body,
-    ...affectedSurfaces,
-    ...likelyFiles,
-  ].join("\n");
-  const featureSignal =
-    /\bfeat(?:\(|:)|\bfeature\b|add(?:s|ing)?\s+(?:a |an )?(?:new |explicit )?|new config|configuration surface|public .*docs?|schema/i.test(
-      text,
-    );
-  const crossesDocs = likelyFiles.some((file: JsonValue) => String(file).startsWith("docs/"));
-  const crossesConfig = likelyFiles.some((file: JsonValue) =>
-    /\bconfig\b|schema|labels|help/i.test(String(file)),
-  );
-  const crossesTests = likelyFiles.some((file: JsonValue) =>
-    /\.test\.[cm]?[jt]s$|\.spec\.[cm]?[jt]s$/i.test(String(file)),
-  );
-  const crossesCore = likelyFiles.some((file: JsonValue) => String(file).startsWith("src/"));
-  const crossSurfaceCount = [crossesDocs, crossesConfig, crossesTests, crossesCore].filter(
-    Boolean,
-  ).length;
-  const tooManyFiles = likelyFiles.length > maxAutonomousFixFiles;
-  const tooManySurfaces = affectedSurfaces.length > maxAutonomousFixSurfaces;
-
-  if (!featureSignal || (!tooManyFiles && !tooManySurfaces && crossSurfaceCount < 3)) return null;
-
-  return {
-    reason:
-      "fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_REPAIR_ALLOW_BROAD_FIX_ARTIFACTS=1",
-    evidence: [
-      `pr_title=${fixArtifact.pr_title}`,
-      `likely_files=${likelyFiles.length}/${maxAutonomousFixFiles}`,
-      `affected_surfaces=${affectedSurfaces.length}/${maxAutonomousFixSurfaces}`,
-      `cross_surface_count=${crossSurfaceCount}`,
-      `sample_files=${likelyFiles.slice(0, 8).join(", ")}`,
-    ],
-  };
-}
-
-function readSiblingJson(resultPath: string, name: string) {
-  const file = path.join(path.dirname(resultPath), name);
-  if (!fs.existsSync(file)) return null;
-  return JSON.parse(fs.readFileSync(file, "utf8"));
-}
-
-function normalizeLocalRef(value: JsonValue) {
-  const text = String(value ?? "").trim();
-  if (!text) return "";
-  const githubMatch = text.match(/github\.com\/[^/\s]+\/[^/\s]+\/(?:issues|pull)\/(\d+)/i);
-  if (githubMatch) return `#${githubMatch[1]}`;
-  const hashMatch = text.match(/^#?(\d+)$/);
-  if (hashMatch) return `#${hashMatch[1]}`;
-  return "";
 }
 
 function ensureTargetCheckout(repo: string, targetDir: string) {
