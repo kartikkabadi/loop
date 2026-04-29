@@ -102,4 +102,3 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - files: 16
 - body excerpt: ## Summary Extend ACP persistent bindings to Feishu and QQ bot channels, and add `acp.defaultChannels` for implicit catch-all ACP binding synthesis. This lets users route all messages on a channel through an external agent CLI (Claude Code,
 - changed files: README.md, docs/tools/acp-agents.md, extensions/feishu/src/bot.ts, src/acp/persistent-bindings.resolve.ts, src/acp/persistent-bindings.test.ts, src/acp/persistent-bindings.types.ts, src/auto-reply/reply/commands-subagents/action-agents.ts, src/config/plugin-auto-enable.test.ts, src/config/plugin-auto-enable.ts, src/config/schema.help.ts, src/config/schema.labels.ts, src/config/types.acp.ts, src/config/zod-schema.agents.ts, src/config/zod-schema.ts, src/plugin-sdk/feishu.ts, src/plugin-sdk/index.ts
-

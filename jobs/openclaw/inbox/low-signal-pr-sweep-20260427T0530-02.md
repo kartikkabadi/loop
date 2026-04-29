@@ -104,4 +104,3 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - files: 71
 - body excerpt: ## Summary - add staged OpenClaw harness workflow and dispatch tooling - add automatic session closeout plugin support - add public workspace export/install/package helpers - add public template agent role stubs and context bundle ## Includ
 - changed files: .gitignore, .openclaw/extensions/auto-session-closeout/index.js, .openclaw/extensions/auto-session-closeout/openclaw.plugin.json, agents/claude-style/README.md, agents/coordinator/AGENTS.md, agents/explore/AGENTS.md, agents/general-purpose/AGENTS.md, agents/general-purpose/BOOTSTRAP.md, agents/general-purpose/IDENTITY.md, agents/general-purpose/SOUL.md, agents/general-purpose/TOOLS.md, agents/general-purpose/USER.md, agents/plan/AGENTS.md, agents/plan/BOOTSTRAP.md, agents/plan/IDENTITY.md, agents/plan/SOUL.md, agents/plan/TOOLS.md, agents/plan/USER.md
-

@@ -70,7 +70,7 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - score: 2
 - signals: third_party_or_external_capability, dirty_branch
 - files: 20
-- body excerpt: ## Summary - add a Langfuse observability layer with safe no-op initialization and env-based config - trace inbound requests, model generations, tool executions, and subagent spawns - fix false-positive success for cron/subagent completion 
+- body excerpt: ## Summary - add a Langfuse observability layer with safe no-op initialization and env-based config - trace inbound requests, model generations, tool executions, and subagent spawns - fix false-positive success for cron/subagent completion
 - changed files: .env.example, package.json, pnpm-lock.yaml, src/agents/subagent-announce.delivery-confirmation.test.ts, src/agents/subagent-announce.ts, src/agents/tools/sessions-spawn-tool.test.ts, src/agents/tools/sessions-spawn-tool.ts, src/auto-reply/reply/agent-runner-execution.langfuse-tool-events.test.ts, src/auto-reply/reply/agent-runner-execution.ts, src/auto-reply/reply/agent-runner.ts, src/auto-reply/reply/get-reply.langfuse-trace.test.ts, src/auto-reply/reply/get-reply.ts, src/cli/run-main.ts, src/commands/agent/delivery.ts, src/index.ts, src/observability/langfuse-agent-hooks.test.ts, src/observability/langfuse-agent-hooks.ts, src/observability/langfuse-request-scope.ts
 
 ### #54685 Docs: add VPS admin hardening note
@@ -80,7 +80,7 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - score: 2
 - signals: docs_only, third_party_or_external_capability
 - files: 1
-- body excerpt: ## Summary - add a short VPS admin hardening note to the Linux Server guide - clarify that Tailscale-first admin access is optional, not required - explicitly separate VPS administration from OpenClaw Gateway access ## Why One common point 
+- body excerpt: ## Summary - add a short VPS admin hardening note to the Linux Server guide - clarify that Tailscale-first admin access is optional, not required - explicitly separate VPS administration from OpenClaw Gateway access ## Why One common point
 - changed files: docs/vps.md
 
 ### #54819 docs: add lesson routing guidance to AGENTS.md template
@@ -102,4 +102,3 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - files: 100
 - body excerpt: ## Summary Complete P5 by turning the harness into a role-scoped build loop with richer build-run artifacts, round-aware reporting, and evaluator packs. This PR adds the missing runtime, reporting, and docs pieces needed to support multi-ro
 - changed files: OPENCLAW.md, docs/automation/hooks.md, docs/automation/standing-orders.md, docs/concepts/agent-workspace.md, docs/concepts/context.md, docs/concepts/docs-index.md, docs/concepts/harness-roadmap.md, docs/concepts/role-scoped-build-walkthrough.md, docs/concepts/system-prompt.md, docs/exec-plans/README.md, docs/exec-plans/harness-agent-first-system.md, docs/exec-plans/role-scoped-build-loop-phase-1-backlog.md, docs/exec-plans/role-scoped-build-loop-phase-2-backlog.md, docs/exec-plans/role-scoped-build-loop.md, docs/reference/token-use.md, docs/start/openclaw.md, docs/tech-debt/README.md, docs/tech-debt/harness-platform-gaps.md
-

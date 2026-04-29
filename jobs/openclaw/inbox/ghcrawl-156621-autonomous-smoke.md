@@ -80,6 +80,6 @@ Open candidates:
 - #42218 feat(feishu): enhance interactive card parsing to extract markdown content
 - #45936 fix(feishu): improve interactive card text extraction for all card formats
 - #48313 feat(feishu): enhance interactive card content parsing
-- #56795 Feature Request: Add Feishu Interactive Card Parsing support #48281 
+- #56795 Feature Request: Add Feishu Interactive Card Parsing support #48281
 - #60380 [Bug] Feishu: parseInteractiveCardContent fails on fallback post-format content
 - #60383 fix(feishu): parse interactive card post-format fallback content

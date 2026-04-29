@@ -100,6 +100,5 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - score: 2
 - signals: docs_only, third_party_or_external_capability
 - files: 3
-- body excerpt: ## What Adds a **Connection architecture** section to `docs/channels/index.md` with a transport table covering all 22 supported channels across 10 transport categories. Also adds one-line transport notes to the Discord and Telegram channel 
+- body excerpt: ## What Adds a **Connection architecture** section to `docs/channels/index.md` with a transport table covering all 22 supported channels across 10 transport categories. Also adds one-line transport notes to the Discord and Telegram channel
 - changed files: docs/channels/discord.md, docs/channels/index.md, docs/channels/telegram.md
-

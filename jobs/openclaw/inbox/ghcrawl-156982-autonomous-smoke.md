@@ -43,7 +43,7 @@ Generated from local ghcrawl run cluster 156982 for `openclaw/openclaw`.
 
 Display title:
 
-> fix: normalize mangled tool names and IDs from OpenAI-compatible 
+> fix: normalize mangled tool names and IDs from OpenAI-compatible
 
 Cluster shape from ghcrawl:
 
@@ -66,5 +66,5 @@ Closed context refs:
 
 Open candidates:
 
-- #39091 fix: normalize mangled tool names and IDs from OpenAI-compatible 
+- #39091 fix: normalize mangled tool names and IDs from OpenAI-compatible
 - #39245 fix(agents): normalize mangled tool names and IDs from OpenAI-compati…

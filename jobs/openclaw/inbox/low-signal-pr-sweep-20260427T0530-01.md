@@ -82,7 +82,7 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - score: 2
 - signals: third_party_or_external_capability, dirty_branch
 - files: 39
-- body excerpt: ## Summary - Problem: MS Teams channel conversations still had rough edges around archive persistence, thread-default replies, JSON/media ingress handling, and DM follow-up context could only remember a raw recent channel target instead of 
+- body excerpt: ## Summary - Problem: MS Teams channel conversations still had rough edges around archive persistence, thread-default replies, JSON/media ingress handling, and DM follow-up context could only remember a raw recent channel target instead of
 - changed files: .github/labeler.yml, CHANGELOG.md, extensions/diffs/src/viewer-client.ts, extensions/msteams-channel-archive/index.test.ts, extensions/msteams-channel-archive/index.ts, extensions/msteams-channel-archive/openclaw.plugin.json, extensions/msteams-channel-archive/package.json, extensions/msteams-channel-archive/src/archive-store.test.ts, extensions/msteams-channel-archive/src/archive-store.ts, extensions/msteams-channel-archive/src/channel-cleanup.test.ts, extensions/msteams-channel-archive/src/channel-cleanup.ts, extensions/msteams-channel-archive/src/tools.ts, extensions/msteams-channel-archive/src/types.ts, extensions/msteams/src/__tests__/monitor-json-repair.test.ts, extensions/msteams/src/attachments.test.ts, extensions/msteams/src/attachments/graph.ts, extensions/msteams/src/attachments/html.ts, extensions/msteams/src/attachments/shared.ts
 
 ### #55104 feat: land harness engineering control plane
@@ -104,4 +104,3 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - files: 25
 - body excerpt: ## Summary Describe the problem and fix in 2–5 bullets: - Problem: Many open-source models (especially small or aggressively quantized ones) lack reliable native JSON tool-calling capabilities. Furthermore, reasoning models served via gener
 - changed files: CHANGELOG.md, docs/.generated/config-baseline.json, docs/.generated/config-baseline.jsonl, docs/.generated/plugin-sdk-api-baseline.json, docs/.generated/plugin-sdk-api-baseline.jsonl, docs/gateway/local-models.md, docs/providers/ollama.md, docs/rfc/local-tools-standardization.md, src/agents/local/capabilities-cache.ts, src/agents/local/capabilities-discovery.test.ts, src/agents/local/capabilities-discovery.ts, src/agents/local/capability-prober.test.ts, src/agents/local/capability-prober.ts, src/agents/local/react-fallback-stream-integration.test.ts, src/agents/local/react-fallback-stream.test.ts, src/agents/local/react-fallback-stream.ts, src/agents/pi-embedded-runner/run/attempt.ts, src/config/schema.base.generated.ts
-

@@ -92,7 +92,7 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - score: 2
 - signals: risky_infra, dirty_branch
 - files: 13
-- body excerpt: ## What Improve the OpenClaw Docker runtime path on macOS. ## Why Running OpenClaw in Docker on macOS needs a few runtime-focused fixes to stay reliable: reproducible tool installs, safer privilege dropping, writable runtime paths, browser 
+- body excerpt: ## What Improve the OpenClaw Docker runtime path on macOS. ## Why Running OpenClaw in Docker on macOS needs a few runtime-focused fixes to stay reliable: reproducible tool installs, safer privilege dropping, writable runtime paths, browser
 - changed files: Dockerfile, docker-compose.yml, docs/install/docker.md, docs/tools/browser.md, extensions/discord/src/monitor/native-command.model-picker.test.ts, scripts/docker/gateway-entrypoint.sh, scripts/docker/playwright-chromium.sh, scripts/docker/setup.sh, src/cli/plugin-registry.test.ts, src/docker-setup.e2e.test.ts, src/dockerfile.test.ts, src/gateway/server-startup-early.test.ts, src/plugins/channel-plugin-ids.test.ts
 
 ### #65692 tool result microcompress
@@ -104,4 +104,3 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - files: 15
 - body excerpt: Phase 1 of #65250. ## Summary - Problem: context pruning evaluated trim/clear thresholds against raw prunable tool-result text, so CRLF-heavy output, ANSI color codes, trailing whitespace, and repeated blank lines could inflate size and tri
 - changed files: docs/concepts/session-pruning.md, docs/gateway/configuration-reference.md, src/agents/pi-hooks/context-pruning.test.ts, src/agents/pi-hooks/context-pruning/extension.ts, src/agents/pi-hooks/context-pruning/pruner.test.ts, src/agents/pi-hooks/context-pruning/pruner.ts, src/agents/pi-hooks/context-pruning/settings.ts, src/config/schema.base.generated.ts, src/config/schema.help.ts, src/config/schema.labels.ts, src/config/types.agent-defaults.ts, src/config/zod-schema.agent-defaults.test.ts, src/config/zod-schema.agent-defaults.ts, src/plugins/public-surface-loader.test.ts, src/plugins/public-surface-loader.ts
-

@@ -104,4 +104,3 @@ The deterministic applicator will re-fetch live state, reject non-PRs, reject ma
 - files: 4
 - body excerpt: ## Summary - Problem: Docker WhatsApp setup could miss runtime env wiring for bundled plugins and Playwright cache. - Why it matters: Missing env propagation can break plugin resolution or browser install/login flows inside containers. - Wh
 - changed files: docker-compose.yml, docker-setup-web-whatsapp.sh, docker-teardown-web-whatsapp.sh, scripts/docker/setup.sh
-
