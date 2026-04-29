@@ -41,38 +41,38 @@ Last dashboard update: Apr 29, 2026, 02:03 UTC
 | Open issues | 4407 |
 | Open PRs | 3458 |
 | Open items total | 7865 |
-| Reviewed files | 7475 |
-| Unreviewed open items | 390 |
-| Due now by cadence | 2072 |
+| Reviewed files | 7476 |
+| Unreviewed open items | 389 |
+| Due now by cadence | 2071 |
 | Proposed closes awaiting apply | 1 |
 | Work candidates awaiting promotion | 123 |
 | Closed by Codex apply | 10610 |
 | Failed or stale reviews | 29 |
-| Archived closed files | 13895 |
+| Archived closed files | 13893 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6949 | 6565 | 384 | 2030 | 1 | 105 | 10605 | Apr 29, 2026, 02:01 UTC | Apr 29, 2026, 02:02 UTC | 45 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6949 | 6566 | 383 | 2029 | 1 | 105 | 10605 | Apr 29, 2026, 02:00 UTC | Apr 29, 2026, 02:01 UTC | 62 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 916 | 910 | 6 | 42 | 0 | 18 | 5 | Apr 29, 2026, 02:00 UTC | Apr 29, 2026, 01:22 UTC | 503 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 02:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25087236497) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 29, 2026, 02:03 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25087028028) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 02:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25087242097) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 02:01 UTC. Latest close: Apr 29, 2026, 02:02 UTC. Latest comment sync: Apr 29, 2026, 02:02 UTC.
+Latest review: Apr 29, 2026, 02:00 UTC. Latest close: Apr 29, 2026, 02:01 UTC. Latest comment sync: Apr 29, 2026, 02:03 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 80 | 3 | 77 | 2 | 14 | 515 | 1 |
-| Last hour | 977 | 7 | 970 | 21 | 34 | 548 | 1 |
-| Last 24 hours | 6503 | 389 | 6114 | 26 | 688 | 1803 | 27 |
+| Last 15 minutes | 79 | 3 | 76 | 2 | 12 | 532 | 1 |
+| Last hour | 978 | 7 | 971 | 21 | 32 | 565 | 1 |
+| Last 24 hours | 6502 | 389 | 6113 | 26 | 686 | 1820 | 27 |
 
 ### Recently Closed Across Repos
 
@@ -120,6 +120,7 @@ Latest review: Apr 29, 2026, 02:01 UTC. Latest close: Apr 29, 2026, 02:02 UTC. L
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1528](https://github.com/openclaw/clawhub/issues/1528) | Help, fit-converter skill is officially skill but flagged as suspicious after scanning | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1528.md) | failed | Apr 29, 2026, 02:00 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1575](https://github.com/openclaw/clawhub/issues/1575) | Skill search indexing issue and ownership transfer request: realestate-deep-research | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1575.md) | failed | Apr 29, 2026, 02:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73941](https://github.com/openclaw/openclaw/issues/73941) | [Feature Request] Auto-remove spaces between Chinese and English characters in file paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73941.md) | complete | Apr 29, 2026, 02:00 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73942](https://github.com/openclaw/openclaw/pull/73942) | fix(imessage): normalize leading echoed text corruption | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73942.md) | complete | Apr 29, 2026, 01:59 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73939](https://github.com/openclaw/openclaw/issues/73939) | [v1.4.9] skills.entries custom fields rejected by schema validation at runtime | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73939.md) | complete | Apr 29, 2026, 01:59 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72251](https://github.com/openclaw/openclaw/pull/72251) | fix(backup): retry on tar EOF race and skip known volatile files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72251.md) | complete | Apr 29, 2026, 01:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73875](https://github.com/openclaw/openclaw/issues/73875) | BUG: ACP runtime sends unsupported config options to Claude ACP adapter | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73875.md) | complete | Apr 29, 2026, 01:58 UTC |
@@ -145,10 +146,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 02:03 UTC
 
-State: Apply in progress
+State: Review comments checked
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25087236497](https://github.com/openclaw/clawsweeper/actions/runs/25087236497)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 19. Item numbers: 54306,55840,67472,68341,72251,73008,73334,73643,73671,73747,73768,73822,73853,73875,73876,73878,73880,73884,73886.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25087028028](https://github.com/openclaw/clawsweeper/actions/runs/25087028028)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -159,9 +160,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25087236497](https://
 | Open issues | 3531 |
 | Open PRs | 3418 |
 | Open items total | 6949 |
-| Reviewed files | 6565 |
-| Unreviewed open items | 384 |
-| Archived closed files | 13879 |
+| Reviewed files | 6566 |
+| Unreviewed open items | 383 |
+| Archived closed files | 13877 |
 
 #### Review Outcomes
 
@@ -169,9 +170,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25087236497](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3344 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3211 |
+| Fresh reviewed PRs in the last 7 days | 3212 |
 | Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6555 |
+| Fresh verified reviews in the last 7 days | 6556 |
 | Proposed closes awaiting apply | 1 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 105 |
 | Closed by Codex apply | 10605 |
@@ -181,13 +182,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25087236497](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 86/902 current (816 due, 9.5%) |
-| Hourly hot item cadence (<7d) | 86/902 current (816 due, 9.5%) |
+| Hourly cadence coverage | 87/903 current (816 due, 9.6%) |
+| Hourly hot item cadence (<7d) | 87/903 current (816 due, 9.6%) |
 | Daily cadence coverage | 3018/3845 current (827 due, 78.5%) |
 | Daily PR cadence | 2244/2687 current (443 due, 83.5%) |
 | Daily new issue cadence (<30d) | 774/1158 current (384 due, 66.8%) |
 | Weekly older issue cadence | 1815/1818 current (3 due, 99.8%) |
-| Due now by cadence | 2030 |
+| Due now by cadence | 2029 |
 
 ### Audit Health
 
@@ -223,13 +224,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 02:01 UTC. Latest close: Apr 29, 2026, 02:02 UTC. Latest comment sync: Apr 29, 2026, 02:02 UTC.
+Latest review: Apr 29, 2026, 02:00 UTC. Latest close: Apr 29, 2026, 02:01 UTC. Latest comment sync: Apr 29, 2026, 02:03 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 34 | 3 | 31 | 0 | 14 | 15 | 1 |
-| Last hour | 474 | 7 | 467 | 2 | 33 | 45 | 1 |
-| Last 24 hours | 5577 | 386 | 5191 | 7 | 672 | 960 | 27 |
+| Last 15 minutes | 33 | 3 | 30 | 0 | 12 | 32 | 1 |
+| Last hour | 475 | 7 | 468 | 2 | 31 | 62 | 1 |
+| Last 24 hours | 5576 | 386 | 5190 | 7 | 670 | 977 | 27 |
 
 #### Recently Closed
 
@@ -267,6 +268,7 @@ Latest review: Apr 29, 2026, 02:01 UTC. Latest close: Apr 29, 2026, 02:02 UTC. L
 | --- | --- | --- | --- | --- |
 | [#73943](https://github.com/openclaw/openclaw/pull/73943) | fix(acpx): bridge Codex ACP auth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73943.md) | complete | Apr 29, 2026, 02:01 UTC |
 | [#73941](https://github.com/openclaw/openclaw/issues/73941) | [Feature Request] Auto-remove spaces between Chinese and English characters in file paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73941.md) | complete | Apr 29, 2026, 02:00 UTC |
+| [#73942](https://github.com/openclaw/openclaw/pull/73942) | fix(imessage): normalize leading echoed text corruption | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73942.md) | complete | Apr 29, 2026, 01:59 UTC |
 | [#73939](https://github.com/openclaw/openclaw/issues/73939) | [v1.4.9] skills.entries custom fields rejected by schema validation at runtime | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73939.md) | complete | Apr 29, 2026, 01:59 UTC |
 | [#72251](https://github.com/openclaw/openclaw/pull/72251) | fix(backup): retry on tar EOF race and skip known volatile files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72251.md) | complete | Apr 29, 2026, 01:58 UTC |
 | [#73875](https://github.com/openclaw/openclaw/issues/73875) | BUG: ACP runtime sends unsupported config options to Claude ACP adapter | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73875.md) | complete | Apr 29, 2026, 01:58 UTC |
