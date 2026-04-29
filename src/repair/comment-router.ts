@@ -1098,6 +1098,16 @@ function executeAutomerge(command: LooseRecord) {
     }),
   );
   if (result.status !== 0) {
+    ensureMergeReadyLabel(command.repo);
+    ghBestEffort([
+      "issue",
+      "edit",
+      String(command.issue_number),
+      "--repo",
+      command.repo,
+      "--add-label",
+      MERGE_READY_LABEL,
+    ]);
     return {
       action: "merge",
       status: "blocked",
@@ -1310,7 +1320,14 @@ function hasExistingResponse(
 ) {
   const marker = `<!-- clawsweeper-command:${commentId}:${intent}:${headSha ?? "na"} -->`;
   return ghPaged(`repos/${targetRepo}/issues/${number}/comments?per_page=100`).some(
-    (comment: JsonValue) => String(comment.body ?? "").includes(marker),
+    (comment: JsonValue) => {
+      const body = String(comment.body ?? "");
+      if (!body.includes(marker)) return false;
+      if (intent === "maintainer_approve_automerge") {
+        return !body.includes("Maintainer-approved ClawSweeper automerge is not merged yet.");
+      }
+      return true;
+    },
   );
 }
 
