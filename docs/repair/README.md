@@ -357,13 +357,13 @@ CLAWSWEEPER_ALLOW_EXECUTE=1 CLAWSWEEPER_ALLOW_FIX_PR=1 pnpm run repair:execute-f
 # Rebuild the open ClawSweeper PR finalization report without mutating GitHub.
 pnpm run repair:finalize-open-prs -- --write-report
 
-# Dry-run maintainer comment routing. Recognizes `/clawsweeper ...` and
-# `@openclaw-clawsweeper ...` in recent issue/PR comments.
+# Dry-run maintainer comment routing. Recognizes `/clawsweeper ...`,
+# `@clawsweeper ...`, and `@openclaw-clawsweeper ...` in recent issue/PR comments.
 pnpm run repair:comment-router -- --repo openclaw/openclaw --lookback-minutes 180
 
-# Execute maintainer comment routing: post replies and dispatch repair workers
-# for existing ClawSweeper PRs when maintainers ask for `fix ci`,
-# `address review`, or `rebase`.
+# Execute maintainer comment routing: post replies, dispatch re-reviews, and
+# dispatch repair workers for existing ClawSweeper PRs when maintainers ask for
+# `fix ci`, `address review`, or `rebase`.
 pnpm run repair:comment-router -- --repo openclaw/openclaw --execute --wait-for-capacity
 
 # Dry-run job hygiene: classify old smoke jobs, outbox-ready jobs, unprocessed
@@ -432,7 +432,7 @@ The workflow needs:
   head SHAs and stops the automatic review/repair loop.
 - optional `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` to let the scheduled comment
   router respond to maintainer-only `/clawsweeper ...` and
-  `@openclaw-clawsweeper ...` commands. Without it, scheduled runs only write a
-  dry report.
+  `@clawsweeper ...` / `@openclaw-clawsweeper ...` commands. Without it,
+  scheduled runs only write a dry report.
 
 Keep exact secret names, token scopes, and execution-window procedures in private operations docs or repository settings notes. Do not put token values or live operational credentials in job files.

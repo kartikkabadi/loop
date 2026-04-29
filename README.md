@@ -87,6 +87,49 @@ are intentionally stricter: they review issues and PRs, but apply may close only
 PRs where current `main` already implements the proposed change with
 source-backed evidence.
 
+## Maintainer Commands
+
+Maintainers can steer ClawSweeper from target-repo issue and PR comments. The
+router accepts `/clawsweeper ...`, `/automerge`, `/autoclose <reason>`,
+`@clawsweeper ...`, `@clawsweeper[bot] ...`, `@openclaw-clawsweeper ...`, and
+`@openclaw-clawsweeper[bot] ...`.
+
+Common commands:
+
+```text
+/clawsweeper status
+/clawsweeper re-review
+/clawsweeper fix ci
+/clawsweeper address review
+/clawsweeper rebase
+/clawsweeper automerge
+/clawsweeper approve
+/clawsweeper explain
+/clawsweeper stop
+/automerge
+/autoclose <maintainer close reason>
+@clawsweeper re-review
+```
+
+- `status` and `explain` post a short target summary.
+- `re-review` dispatches a fresh ClawSweeper issue/PR review without starting
+  repair.
+- `fix ci`, `address review`, and `rebase` dispatch the repair worker only for
+  ClawSweeper PRs or PRs already opted into `clawsweeper:automerge`.
+- `automerge` labels an open PR, creates or reuses the adopted job, dispatches
+  review, and enters the bounded review/fix/merge loop.
+- `approve` lets a maintainer clear a ClawSweeper human-review pause and merge
+  only after the normal exact-head, checks, mergeability, and gate checks pass.
+- `stop` adds `clawsweeper:human-review`; `/autoclose <reason>` closes the
+  item and bounded linked same-repo targets with an explicit maintainer reason.
+
+Only maintainers are accepted. The router checks repository collaborator
+permission (`admin`, `maintain`, or `write`) and falls back to trusted
+`author_association` values when permission lookup is unavailable. Contributor
+commands are ignored without a reply. Scheduled comment routing is dry unless
+`CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1`; workflow dispatch with `execute=true`
+can be used for one-off live routing.
+
 ## Dashboard
 
 Last dashboard update: Apr 29, 2026, 15:25 UTC
