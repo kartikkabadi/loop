@@ -84,7 +84,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 03:18 UTC
+Last dashboard update: Apr 29, 2026, 03:20 UTC
 
 ### Fleet
 
@@ -99,7 +99,7 @@ Last dashboard update: Apr 29, 2026, 03:18 UTC
 | Due now by cadence | 1978 |
 | Proposed closes awaiting apply | 15 |
 | Work candidates awaiting promotion | 344 |
-| Closed by Codex apply | 10623 |
+| Closed by Codex apply | 10624 |
 | Failed or stale reviews | 35 |
 | Archived closed files | 13947 |
 
@@ -107,31 +107,30 @@ Last dashboard update: Apr 29, 2026, 03:18 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6990 | 6604 | 386 | 1917 | 15 | 307 | 10617 | Apr 29, 2026, 03:16 UTC | Apr 29, 2026, 03:16 UTC | 546 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6990 | 6604 | 386 | 1917 | 15 | 307 | 10618 | Apr 29, 2026, 03:17 UTC | Apr 29, 2026, 03:15 UTC | 548 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 918 | 910 | 8 | 61 | 0 | 37 | 6 | Apr 29, 2026, 03:09 UTC | Apr 29, 2026, 03:02 UTC | 429 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 29, 2026, 03:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25088933848) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 03:20 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25089186880) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 03:09 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25087398444) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. Latest comment sync: Apr 29, 2026, 03:18 UTC.
+Latest review: Apr 29, 2026, 03:17 UTC. Latest close: Apr 29, 2026, 03:15 UTC. Latest comment sync: Apr 29, 2026, 03:18 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 42 | 2 | 40 | 0 | 10 | 660 | 0 |
-| Last hour | 841 | 23 | 818 | 17 | 49 | 975 | 2 |
-| Last 24 hours | 6987 | 415 | 6572 | 32 | 726 | 1913 | 29 |
+| Last 15 minutes | 43 | 2 | 41 | 0 | 8 | 576 | 0 |
+| Last hour | 842 | 23 | 819 | 17 | 48 | 977 | 2 |
+| Last 24 hours | 6987 | 415 | 6572 | 32 | 726 | 1915 | 29 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#54564](https://github.com/openclaw/openclaw/pull/54564) | docs: add AllowTcpForwarding prerequisite to Hetzner SSH tunnel step | closed externally after review | Apr 29, 2026, 03:16 UTC | [records/openclaw-openclaw/closed/54564.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/54564.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#51596](https://github.com/openclaw/openclaw/pull/51596) | docs: fix custom skill naming example | closed externally after review | Apr 29, 2026, 03:15 UTC | [records/openclaw-openclaw/closed/51596.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/51596.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74031](https://github.com/openclaw/openclaw/issues/74031) | [Feature]: Accessibility: Add adjustable font size for elderly users and accessibility | duplicate or superseded | Apr 29, 2026, 03:15 UTC | [records/openclaw-openclaw/closed/74031.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74031.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#63325](https://github.com/openclaw/openclaw/issues/63325) | [Bug]: Gateway SSE streaming corrupts response when stripping <final> tags | closed externally after review | Apr 29, 2026, 03:13 UTC | [records/openclaw-openclaw/closed/63325.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63325.md) |
@@ -141,6 +140,7 @@ Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73847](https://github.com/openclaw/openclaw/pull/73847) | fix(plugins): key web-provider snapshot cache on config-content fingerprint (#73730) | closed externally after review | Apr 29, 2026, 03:06 UTC | [records/openclaw-openclaw/closed/73847.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73847.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73871](https://github.com/openclaw/openclaw/pull/73871) | Set up Codex Computer Use during onboarding | closed externally after review | Apr 29, 2026, 03:05 UTC | [records/openclaw-openclaw/closed/73871.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73871.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74018](https://github.com/openclaw/openclaw/issues/74018) | Feature request: Split chat from activity/workbench in Control UI | duplicate or superseded | Apr 29, 2026, 03:04 UTC | [records/openclaw-openclaw/closed/74018.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74018.md) |
+| [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1878](https://github.com/openclaw/clawhub/pull/1878) | feat: add ClawHub rescan guidance workflow | kept open | Apr 29, 2026, 03:02 UTC | [records/openclaw-clawhub/closed/1878.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/closed/1878.md) |
 
 ### Work Candidates Across Repos
 
@@ -169,6 +169,7 @@ Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73768](https://github.com/openclaw/openclaw/pull/73768) | fix(session-memory): sanitize chat-template tokens in persisted trans… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73768.md) | complete | Apr 29, 2026, 03:17 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73616](https://github.com/openclaw/openclaw/pull/73616) | fix(qqbot): unify slash command auth, c2cOnly gating, and file delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73616.md) | complete | Apr 29, 2026, 03:16 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72656](https://github.com/openclaw/openclaw/pull/72656) | fix(whatsapp): report transport activity so stale-socket health detection works | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72656.md) | complete | Apr 29, 2026, 03:16 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73483](https://github.com/openclaw/openclaw/pull/73483) | fix(message): preserve asVoice on shared sends | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73483.md) | complete | Apr 29, 2026, 03:15 UTC |
@@ -178,7 +179,6 @@ Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74025](https://github.com/openclaw/openclaw/issues/74025) | [Feature]: Explicit command for executing taskflows/lobster manually (slash command) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74025.md) | complete | Apr 29, 2026, 03:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74014](https://github.com/openclaw/openclaw/issues/74014) | [Bug]: Telegram channel in v2026.4.26 ignores HTTP_PROXY env vars | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74014.md) | complete | Apr 29, 2026, 03:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72153](https://github.com/openclaw/openclaw/pull/72153) | fix(gateway): use -FilePath instead of -LiteralPath in Start-Process [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72153.md) | complete | Apr 29, 2026, 03:13 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72351](https://github.com/openclaw/openclaw/pull/72351) | fix(tui): handle zero history limit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72351.md) | complete | Apr 29, 2026, 03:13 UTC |
 
 </details>
 
@@ -196,12 +196,12 @@ Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 03:18 UTC
+Updated: Apr 29, 2026, 03:20 UTC
 
-State: Review comments checked
+State: Apply in progress
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 19. Item numbers: 72108,72135,72138,72149,72153,72161,72163,72213,72215,72216,72218,72254,72281,72350,72351,72352,72361,73893,73945,74014.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25088933848](https://github.com/openclaw/clawsweeper/actions/runs/25088933848)
+Starting apply/comment-sync run for up to 15 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=11747,13175,13736,14207,23896,37855,38650,38781,39013,39457,69030,69126,69196,69423,74017.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25089186880](https://github.com/openclaw/clawsweeper/actions/runs/25089186880)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -227,7 +227,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25088933848](https://
 | Fresh verified reviews in the last 7 days | 6590 |
 | Proposed closes awaiting apply | 15 (0.2% of fresh reviews) |
 | Work candidates awaiting promotion | 307 |
-| Closed by Codex apply | 10617 |
+| Closed by Codex apply | 10618 |
 | Failed or stale reviews | 14 |
 
 #### Cadence
@@ -276,19 +276,18 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. Latest comment sync: Apr 29, 2026, 03:18 UTC.
+Latest review: Apr 29, 2026, 03:17 UTC. Latest close: Apr 29, 2026, 03:15 UTC. Latest comment sync: Apr 29, 2026, 03:18 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 41 | 2 | 39 | 0 | 10 | 468 | 0 |
-| Last hour | 613 | 23 | 590 | 8 | 47 | 546 | 2 |
-| Last 24 hours | 6059 | 412 | 5647 | 11 | 708 | 988 | 29 |
+| Last 15 minutes | 42 | 2 | 40 | 0 | 8 | 425 | 0 |
+| Last hour | 614 | 23 | 591 | 8 | 46 | 548 | 2 |
+| Last 24 hours | 6059 | 412 | 5647 | 11 | 708 | 990 | 29 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#54564](https://github.com/openclaw/openclaw/pull/54564) | docs: add AllowTcpForwarding prerequisite to Hetzner SSH tunnel step | closed externally after review | Apr 29, 2026, 03:16 UTC | [records/openclaw-openclaw/closed/54564.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/54564.md) |
 | [#51596](https://github.com/openclaw/openclaw/pull/51596) | docs: fix custom skill naming example | closed externally after review | Apr 29, 2026, 03:15 UTC | [records/openclaw-openclaw/closed/51596.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/51596.md) |
 | [#74031](https://github.com/openclaw/openclaw/issues/74031) | [Feature]: Accessibility: Add adjustable font size for elderly users and accessibility | duplicate or superseded | Apr 29, 2026, 03:15 UTC | [records/openclaw-openclaw/closed/74031.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74031.md) |
 | [#63325](https://github.com/openclaw/openclaw/issues/63325) | [Bug]: Gateway SSE streaming corrupts response when stripping <final> tags | closed externally after review | Apr 29, 2026, 03:13 UTC | [records/openclaw-openclaw/closed/63325.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63325.md) |
@@ -298,6 +297,7 @@ Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. L
 | [#73847](https://github.com/openclaw/openclaw/pull/73847) | fix(plugins): key web-provider snapshot cache on config-content fingerprint (#73730) | closed externally after review | Apr 29, 2026, 03:06 UTC | [records/openclaw-openclaw/closed/73847.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73847.md) |
 | [#73871](https://github.com/openclaw/openclaw/pull/73871) | Set up Codex Computer Use during onboarding | closed externally after review | Apr 29, 2026, 03:05 UTC | [records/openclaw-openclaw/closed/73871.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73871.md) |
 | [#74018](https://github.com/openclaw/openclaw/issues/74018) | Feature request: Split chat from activity/workbench in Control UI | duplicate or superseded | Apr 29, 2026, 03:04 UTC | [records/openclaw-openclaw/closed/74018.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74018.md) |
+| [#74011](https://github.com/openclaw/openclaw/issues/74011) | [Bug]: Slack channel provider crash-loops on Windows with ERR_UNSUPPORTED_ESM_URL_SCHEME ('Received protocol c:') after wizard-driven setup | already implemented on main | Apr 29, 2026, 02:57 UTC | [records/openclaw-openclaw/closed/74011.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74011.md) |
 
 #### Work Candidates
 
@@ -318,6 +318,7 @@ Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73768](https://github.com/openclaw/openclaw/pull/73768) | fix(session-memory): sanitize chat-template tokens in persisted trans… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73768.md) | complete | Apr 29, 2026, 03:17 UTC |
 | [#73616](https://github.com/openclaw/openclaw/pull/73616) | fix(qqbot): unify slash command auth, c2cOnly gating, and file delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73616.md) | complete | Apr 29, 2026, 03:16 UTC |
 | [#72656](https://github.com/openclaw/openclaw/pull/72656) | fix(whatsapp): report transport activity so stale-socket health detection works | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72656.md) | complete | Apr 29, 2026, 03:16 UTC |
 | [#73483](https://github.com/openclaw/openclaw/pull/73483) | fix(message): preserve asVoice on shared sends | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73483.md) | complete | Apr 29, 2026, 03:15 UTC |
@@ -327,7 +328,6 @@ Latest review: Apr 29, 2026, 03:16 UTC. Latest close: Apr 29, 2026, 03:16 UTC. L
 | [#74025](https://github.com/openclaw/openclaw/issues/74025) | [Feature]: Explicit command for executing taskflows/lobster manually (slash command) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74025.md) | complete | Apr 29, 2026, 03:14 UTC |
 | [#74014](https://github.com/openclaw/openclaw/issues/74014) | [Bug]: Telegram channel in v2026.4.26 ignores HTTP_PROXY env vars | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74014.md) | complete | Apr 29, 2026, 03:14 UTC |
 | [#72153](https://github.com/openclaw/openclaw/pull/72153) | fix(gateway): use -FilePath instead of -LiteralPath in Start-Process [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72153.md) | complete | Apr 29, 2026, 03:13 UTC |
-| [#72351](https://github.com/openclaw/openclaw/pull/72351) | fix(tui): handle zero history limit | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72351.md) | complete | Apr 29, 2026, 03:13 UTC |
 
 </details>
 
@@ -425,7 +425,7 @@ Latest review: Apr 29, 2026, 03:09 UTC. Latest close: Apr 29, 2026, 03:02 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 192 | 0 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 151 | 0 |
 | Last hour | 228 | 0 | 228 | 9 | 2 | 429 | 0 |
 | Last 24 hours | 928 | 3 | 925 | 21 | 18 | 925 | 0 |
 
