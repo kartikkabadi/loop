@@ -167,6 +167,7 @@ interface Decision {
   closeReason: CloseReason;
   confidence: Confidence;
   summary: string;
+  changeSummary: string;
   evidence: Evidence[];
   likelyOwners: LikelyOwner[];
   risks: string[];
@@ -501,6 +502,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "closeReason",
   "confidence",
   "summary",
+  "changeSummary",
   "evidence",
   "likelyOwners",
   "risks",
@@ -896,6 +898,7 @@ export function parseDecision(value: unknown): Decision {
     closeReason: requireEnum(record.closeReason, ALL_REASONS, "decision.closeReason"),
     confidence: requireEnum(record.confidence, CONFIDENCES, "decision.confidence"),
     summary: requireString(record.summary, "decision.summary"),
+    changeSummary: requireString(record.changeSummary, "decision.changeSummary"),
     evidence,
     likelyOwners,
     risks: requireStringArray(record.risks, "decision.risks").filter(
@@ -2342,6 +2345,7 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     closeReason: "none",
     confidence: "low",
     summary: `Codex review failed: ${reason}${status === null ? "" : ` (exit ${status})`}.`,
+    changeSummary: "Review failed before ClawSweeper could summarize the requested change.",
     evidence: [
       evidenceEntry({ label: "failure reason", detail: reason }),
       evidenceEntry({ label: "codex failure detail", detail: trimMiddle(detail, 4000) }),
@@ -2912,6 +2916,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     closeReason,
     confidence: "high",
     summary: sectionValue(markdown, "Summary"),
+    changeSummary: sectionValue(markdown, "What This Changes"),
     evidence: reportEvidence(markdown),
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
@@ -3056,6 +3061,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
   const summary = sectionValue(markdown, "Summary");
+  const changeSummary = sectionValue(markdown, "What This Changes");
   const bestSolution = sectionValue(markdown, "Best Possible Solution");
   const risks = sectionValue(markdown, "Risks / Open Questions");
   const workCandidate = frontMatterValue(markdown, "work_candidate");
@@ -3065,6 +3071,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const isPullRequest = frontMatterValue(markdown, "type") === "pull_request";
   const isRepairCandidate = workCandidate === "queue_fix_pr";
   const summaryLine = sentence(summary) || "_No summary provided._";
+  const changeSummaryLine = sentence(changeSummary || summary) || "_No change summary provided._";
   const lines = [
     isPullRequest && isRepairCandidate
       ? "Codex review: needs changes before merge."
@@ -3074,7 +3081,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     "",
   ];
   if (isPullRequest) {
-    lines.push("What this changes:", "", summaryLine, "");
+    lines.push("What this changes:", "", changeSummaryLine, "");
   } else {
     lines.push(summaryLine, "");
   }
@@ -3657,6 +3664,10 @@ Action taken: ${options.action.actionTaken}
 ## Summary
 
 ${options.decision.summary}
+
+## What This Changes
+
+${options.decision.changeSummary}
 
 ## Best Possible Solution
 

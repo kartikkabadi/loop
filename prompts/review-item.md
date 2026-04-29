@@ -31,6 +31,14 @@ addresses in `likelyOwners`, `person`, reasons, summaries, or public comments.
 Prefer GitHub handles from PR/commit metadata; otherwise use a display name
 without the `<email>` part.
 
+For PRs, set `changeSummary` to a neutral one-sentence summary of what the PR
+branch changes, based on the title, body, diff, files, and commits. Describe the
+actual code/docs/tests/workflow/package surface touched; do not use
+`changeSummary` for the merge verdict, maintainer follow-up, risk, or whether
+the PR is redundant. For issues, set `changeSummary` to the requested behavior,
+bug, or cleanup in one sentence. Keep `summary` for the review decision and
+rationale.
+
 For PRs, do not list the PR author solely because they opened the PR, reported
 the issue, or authored the proposed branch. `likelyOwners` should point to
 people connected to the current `main` history and merged feature history for

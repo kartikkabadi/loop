@@ -72,6 +72,7 @@ function closeDecision(overrides = {}) {
     closeReason: "implemented_on_main",
     confidence: "high",
     summary: "Current main already implements this.",
+    changeSummary: "Requests confirmation that the feature works on current main.",
     evidence: [
       {
         label: "implementation",
@@ -797,6 +798,10 @@ test("pull request keep-open review comments label the change summary", () => {
     })}
 
 ## Summary
+
+Keep this test-only PR open for maintainer review.
+
+## What This Changes
 
 Adds regression coverage for session-scoped model overrides.
 

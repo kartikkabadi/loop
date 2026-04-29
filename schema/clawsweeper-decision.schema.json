@@ -7,6 +7,7 @@
     "closeReason",
     "confidence",
     "summary",
+    "changeSummary",
     "evidence",
     "likelyOwners",
     "risks",
@@ -48,6 +49,10 @@
     },
     "summary": {
       "type": "string"
+    },
+    "changeSummary": {
+      "type": "string",
+      "description": "Neutral one-sentence summary of the requested change or PR diff. For pull requests, describe what the branch changes, not the merge verdict."
     },
     "evidence": {
       "type": "array",

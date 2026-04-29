@@ -35,7 +35,8 @@ Codex review: needs changes before merge.
 
 The body should include the strongest actionable sections the report has:
 
-- `What this changes:`
+- `What this changes:` from the typed `changeSummary` field, not from the
+  merge verdict or maintainer follow-up summary
 - `Required change before merge:`
 - `Best possible solution:`
 - `Acceptance criteria:`
