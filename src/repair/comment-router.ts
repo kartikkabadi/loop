@@ -428,10 +428,16 @@ function classifyAutomergePass(
     markerName: "pass",
   });
   if (headBlock) return { ...command, status: "skipped", reason: headBlock };
+  const pauseLabelActions = pauseLabelsOn(command.target).map((label) => ({
+    action: "remove_label",
+    label,
+    status: execute ? "pending" : "planned",
+  }));
   return {
     ...command,
     status: "ready",
     actions: [
+      ...pauseLabelActions,
       { action: "merge", status: execute ? "pending" : "planned" },
       { action: "comment", status: execute ? "pending" : "planned" },
     ],
@@ -722,8 +728,11 @@ function executeCommand(command: LooseRecord) {
     );
   }
   if (MERGE_INTENTS.has(command.intent) && command.issue_number) {
-    if (command.intent === "maintainer_approve_automerge") {
-      const pauseLabels = pauseLabelsOn(command.target);
+    const pauseLabels = command.actions
+      .filter((action: JsonValue) => action.action === "remove_label")
+      .map((action: JsonValue) => String(action.label ?? ""))
+      .filter(Boolean);
+    if (pauseLabels.length > 0) {
       for (const pausedLabel of pauseLabels) {
         ghBestEffort([
           "issue",
