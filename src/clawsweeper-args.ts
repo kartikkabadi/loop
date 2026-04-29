@@ -8,6 +8,7 @@ export function parseArgs(argv: string[]): Args {
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (!arg) continue;
+    if (arg === "--") continue;
     if (!arg.startsWith("--")) {
       args._.push(arg);
       continue;

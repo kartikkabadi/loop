@@ -103,7 +103,7 @@ jobs:
             echo "target_repo=$target_repo"
             echo "target_repo_owner=$target_owner"
             echo "target_repo_name=$target_name"
-            echo "target_checkout_dir=$target_name"
+            echo "target_checkout_dir=target-$target_name"
           } >> "$GITHUB_OUTPUT"
 
       - name: Create target read token

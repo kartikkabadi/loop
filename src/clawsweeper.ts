@@ -3944,6 +3944,7 @@ function applyDecisionsCommand(args: Args): void {
   const staleMinAgeDays = numberArg(args.stale_min_age_days, STALE_INSUFFICIENT_INFO_MIN_AGE_DAYS);
   const closeDelayMs = numberArg(args.close_delay_ms, 2_000);
   const progressEvery = Math.max(1, numberArg(args.progress_every, 10));
+  const dryRun = boolArg(args.dry_run);
   const skipDashboard = boolArg(args.skip_dashboard);
   const syncCommentsOnly = boolArg(args.sync_comments_only);
   const commentSyncMinAgeDays = numberArg(args.comment_sync_min_age_days, 0);
@@ -3997,7 +3998,7 @@ function applyDecisionsCommand(args: Args): void {
     .sort((left, right) => left.priority - right.priority || left.number - right.number)
     .map((entry) => entry.name);
   logProgress(
-    `starting apply: files=${files.length} apply_kind=${applyKind} min_age=${minAgeDescription} apply_close_reasons=${closeReasonFilterText(applyCloseReasons)} stale_min_age_days=${staleMinAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} comment_sync_min_age_days=${commentSyncMinAgeDays} max_runtime_ms=${maxRuntimeMs} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+    `starting apply: files=${files.length} dry_run=${dryRun} apply_kind=${applyKind} min_age=${minAgeDescription} apply_close_reasons=${closeReasonFilterText(applyCloseReasons)} stale_min_age_days=${staleMinAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} comment_sync_min_age_days=${commentSyncMinAgeDays} max_runtime_ms=${maxRuntimeMs} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
   );
   for (const file of files) {
     if (runtimeBudgetExceeded(startedAtMs, maxRuntimeMs, Date.now())) {
@@ -4021,6 +4022,7 @@ function applyDecisionsCommand(args: Args): void {
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
     const storedAuthorAssociation = frontMatterValue(markdown, "author_association");
     const archiveClosed = (nextMarkdown: string): void => {
+      if (dryRun) return;
       ensureDir(closedDir);
       writeFileSync(path, nextMarkdown, "utf8");
       renameSync(path, join(closedDir, file));
@@ -4028,7 +4030,7 @@ function applyDecisionsCommand(args: Args): void {
     const markApplySkipped = (actionTaken: ActionTaken, reason: string): boolean => {
       markdown = replaceFrontMatterValue(markdown, "action_taken", actionTaken);
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      writeFileSync(path, markdown, "utf8");
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
       results.push({ number, action: actionTaken, reason });
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: ${reason}`);
@@ -4092,7 +4094,7 @@ function applyDecisionsCommand(args: Args): void {
         markdown = replaceFrontMatterValue(markdown, "author_association", authorAssociation);
         markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_maintainer_authored");
         markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-        writeFileSync(path, markdown, "utf8");
+        if (!dryRun) writeFileSync(path, markdown, "utf8");
       }
       if (isCloseProposal) {
         results.push({
@@ -4149,7 +4151,7 @@ function applyDecisionsCommand(args: Args): void {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
       markdown = replaceFrontMatterValue(markdown, "current_item_updated_at", item.updatedAt);
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      writeFileSync(path, markdown, "utf8");
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
       results.push({
         number,
         action: "skipped_changed_since_review",
@@ -4170,7 +4172,7 @@ function applyDecisionsCommand(args: Args): void {
         );
         markdown = replaceFrontMatterValue(markdown, "current_item_snapshot_hash", currentHash);
         markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-        writeFileSync(path, markdown, "utf8");
+        if (!dryRun) writeFileSync(path, markdown, "utf8");
         results.push({
           number,
           action: "skipped_changed_since_review",
@@ -4231,23 +4233,29 @@ function applyDecisionsCommand(args: Args): void {
       let syncedComment = existingReviewComment;
       let syncReason = "recorded existing durable comment metadata";
       if (needsReviewCommentBodySync) {
-        try {
-          syncedComment = upsertReviewComment(number, reviewComment, existingReviewComment);
-          syncReason = "updated durable Codex review comment";
-        } catch (error) {
-          if (!isLockedConversationCommentError(error)) throw error;
-          if (
-            markApplySkipped(
-              "skipped_locked_conversation",
-              "conversation was locked while syncing review comment",
+        if (dryRun) {
+          syncReason = existingReviewComment
+            ? "would update durable Codex review comment"
+            : "would create durable Codex review comment";
+        } else {
+          try {
+            syncedComment = upsertReviewComment(number, reviewComment, existingReviewComment);
+            syncReason = "updated durable Codex review comment";
+          } catch (error) {
+            if (!isLockedConversationCommentError(error)) throw error;
+            if (
+              markApplySkipped(
+                "skipped_locked_conversation",
+                "conversation was locked while syncing review comment",
+              )
             )
-          )
-            break;
-          continue;
+              break;
+            continue;
+          }
         }
       }
       markdown = updateReviewCommentMetadata(markdown, syncedComment, markedReviewComment);
-      writeFileSync(path, markdown, "utf8");
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
       results.push({
         number,
         action: "review_comment_synced",
@@ -4310,6 +4318,18 @@ function applyDecisionsCommand(args: Args): void {
       continue;
     }
     logProgress(`closing #${number}`);
+    if (dryRun) {
+      closedCount += 1;
+      processedCount += 1;
+      results.push({
+        number,
+        action: "closed",
+        reason: `dry-run: would close as ${closeReasonText(closeReason)}`,
+      });
+      logProgress(`would close #${number}`);
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
     closeItem({ number, kind: item.kind, reason: closeReason });
     sleepMs(closeDelayMs);
     markdown = replaceSectionValue(markdown, REVIEW_SECTIONS.closeComment, reviewComment);
@@ -4325,7 +4345,7 @@ function applyDecisionsCommand(args: Args): void {
   }
   ensureDir(dirname(reportPath));
   writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
-  if (!skipDashboard) updateDashboard(itemsDir, closedDir);
+  if (!skipDashboard && !dryRun) updateDashboard(itemsDir, closedDir);
   logProgress("finished apply");
   console.log(JSON.stringify(results, null, 2));
 }

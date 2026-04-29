@@ -49,6 +49,7 @@ import {
   parseCommitReportSince,
   parseCoAuthors,
 } from "../dist/commit-sweeper.js";
+import { parseArgs as parseClawsweeperArgs } from "../dist/clawsweeper-args.js";
 
 function item(overrides = {}) {
   return {
@@ -134,6 +135,18 @@ function closeDecision(overrides = {}) {
     ...overrides,
   };
 }
+
+test("main CLI args ignore package-manager double dash separators", () => {
+  assert.deepEqual(parseClawsweeperArgs(["apply-decisions", "--", "--dry-run"]), {
+    _: ["apply-decisions"],
+    dry_run: true,
+  });
+  assert.deepEqual(parseClawsweeperArgs(["apply-decisions", "--limit", "1", "--", "--dry-run"]), {
+    _: ["apply-decisions"],
+    limit: "1",
+    dry_run: true,
+  });
+});
 
 const git = {
   mainSha: "abcdef1234567890",
