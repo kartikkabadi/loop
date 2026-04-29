@@ -122,7 +122,7 @@ jobs:
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
           working-directory: clawsweeper
-          build-script: build
+          build-script: build:all
 
       - name: Select commits
         id: select
