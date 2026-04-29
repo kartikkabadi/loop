@@ -139,7 +139,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 18:59 UTC
+Last dashboard update: Apr 29, 2026, 19:01 UTC
 
 ### Fleet
 
@@ -147,57 +147,57 @@ Last dashboard update: Apr 29, 2026, 18:59 UTC
 | --- | ---: |
 | Covered repositories | 3 |
 | Open issues | 4425 |
-| Open PRs | 3457 |
-| Open items total | 7882 |
-| Reviewed files | 7537 |
-| Unreviewed open items | 348 |
-| Due now by cadence | 3153 |
+| Open PRs | 3458 |
+| Open items total | 7883 |
+| Reviewed files | 7533 |
+| Unreviewed open items | 353 |
+| Due now by cadence | 3170 |
 | Proposed closes awaiting apply | 6 |
 | Work candidates awaiting promotion | 923 |
 | Closed by Codex apply | 10862 |
 | Failed or stale reviews | 14 |
-| Archived closed files | 14463 |
+| Archived closed files | 14467 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6957 | 6614 | 343 | 3136 | 6 | 876 | 10854 | Apr 29, 2026, 18:55 UTC | Apr 29, 2026, 18:54 UTC | 474 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 925 | 920 | 5 | 14 | 0 | 46 | 8 | Apr 29, 2026, 18:48 UTC | Apr 29, 2026, 17:17 UTC | 745 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6958 | 6610 | 348 | 3139 | 6 | 876 | 10854 | Apr 29, 2026, 18:55 UTC | Apr 29, 2026, 18:58 UTC | 474 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 925 | 920 | 5 | 28 | 0 | 46 | 8 | Apr 29, 2026, 18:48 UTC | Apr 29, 2026, 17:17 UTC | 745 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 18:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25127786715) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 19:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25128088907) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 18:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25127786715) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 18:55 UTC. Latest close: Apr 29, 2026, 18:54 UTC. Latest comment sync: Apr 29, 2026, 18:58 UTC.
+Latest review: Apr 29, 2026, 18:55 UTC. Latest close: Apr 29, 2026, 18:58 UTC. Latest comment sync: Apr 29, 2026, 18:58 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 40 | 4 | 36 | 1 | 4 | 382 | 0 |
-| Last hour | 1098 | 21 | 1077 | 9 | 22 | 1219 | 0 |
-| Last 24 hours | 5803 | 342 | 5461 | 10 | 731 | 1881 | 25 |
+| Last 15 minutes | 39 | 4 | 35 | 1 | 8 | 382 | 0 |
+| Last hour | 1031 | 21 | 1010 | 9 | 26 | 1219 | 0 |
+| Last 24 hours | 5803 | 342 | 5461 | 10 | 735 | 1881 | 25 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#63425](https://github.com/openclaw/openclaw/issues/63425) | modelByChannel override does not update session's persisted contextTokens — /status shows stale value | closed externally after review | Apr 29, 2026, 18:58 UTC | [records/openclaw-openclaw/closed/63425.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63425.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74534](https://github.com/openclaw/openclaw/pull/74534) | Fix status context window for channel model overrides | closed externally after review | Apr 29, 2026, 18:58 UTC | [records/openclaw-openclaw/closed/74534.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74534.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74551](https://github.com/openclaw/openclaw/pull/74551) | fix: One low-severity test-suite regression found. Runtime dotenv beha | kept open | Apr 29, 2026, 18:54 UTC | [records/openclaw-openclaw/closed/74551.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74551.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#63780](https://github.com/openclaw/openclaw/pull/63780) | fix(telegram): suppress recoverable uncaught network failures | closed externally after review | Apr 29, 2026, 18:54 UTC | [records/openclaw-openclaw/closed/63780.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63780.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60515](https://github.com/openclaw/openclaw/issues/60515) | Gateway crashes on transient ENETUNREACH — uncaughtException handler lacks isTransientNetworkError check | closed externally after review | Apr 29, 2026, 18:54 UTC | [records/openclaw-openclaw/closed/60515.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60515.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74550](https://github.com/openclaw/openclaw/issues/74550) | [Bug]: Telegram stuck session blocks processing — session stays in state=processing indefinitely (120s+), no auto-recovery | duplicate or superseded | Apr 29, 2026, 18:49 UTC | [records/openclaw-openclaw/closed/74550.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74550.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74549](https://github.com/openclaw/openclaw/pull/74549) | Fix Telegram EHOSTUNREACH gateway crash | kept open | Apr 29, 2026, 18:48 UTC | [records/openclaw-openclaw/closed/74549.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74549.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74538](https://github.com/openclaw/openclaw/pull/74538) | fix(device-pair): validate public setup urls | kept open | Apr 29, 2026, 18:47 UTC | [records/openclaw-openclaw/closed/74538.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74538.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74531](https://github.com/openclaw/openclaw/issues/74531) | Account Owner | not actionable in this repository | Apr 29, 2026, 18:43 UTC | [records/openclaw-openclaw/closed/74531.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74531.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74546](https://github.com/openclaw/openclaw/issues/74546) | [Bug]: memory_search vector fallback can OOM gateway when sqlite-vec is unavailable on large memory DBs | already implemented on main | Apr 29, 2026, 18:40 UTC | [records/openclaw-openclaw/closed/74546.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74546.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#62981](https://github.com/openclaw/openclaw/issues/62981) | session file locked when gateway times out and falls back to embedded runner | closed externally after review | Apr 29, 2026, 18:38 UTC | [records/openclaw-openclaw/closed/62981.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62981.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74499](https://github.com/openclaw/openclaw/pull/74499) | fix(ollama): normalize prefixed tool-call names before Ollama dispatch | closed externally after review | Apr 29, 2026, 18:30 UTC | [records/openclaw-openclaw/closed/74499.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74499.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74487](https://github.com/openclaw/openclaw/issues/74487) | [Bug]: Ollama Kimi tool call fails with \"Tool exec not found\" despite /tools showing exec | closed externally after review | Apr 29, 2026, 18:30 UTC | [records/openclaw-openclaw/closed/74487.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74487.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74540](https://github.com/openclaw/openclaw/issues/74540) | Gateway crashes on EHOSTUNREACH from Telegram API (uncaught exception) | duplicate or superseded | Apr 29, 2026, 18:29 UTC | [records/openclaw-openclaw/closed/74540.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74540.md) |
 
 ### Work Candidates Across Repos
 
@@ -253,12 +253,12 @@ Latest review: Apr 29, 2026, 18:55 UTC. Latest close: Apr 29, 2026, 18:54 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 18:59 UTC
+Updated: Apr 29, 2026, 19:00 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25127786715](https://github.com/openclaw/clawsweeper/actions/runs/25127786715)
+Starting apply/comment-sync run for up to 6 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=56383,68314,68683,72486,74486,74541.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25128088907](https://github.com/openclaw/clawsweeper/actions/runs/25128088907)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -267,21 +267,21 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25127786715](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3539 |
-| Open PRs | 3418 |
-| Open items total | 6957 |
-| Reviewed files | 6614 |
-| Unreviewed open items | 343 |
-| Archived closed files | 14437 |
+| Open PRs | 3419 |
+| Open items total | 6958 |
+| Reviewed files | 6610 |
+| Unreviewed open items | 348 |
+| Archived closed files | 14441 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3367 |
+| Fresh reviewed issues in the last 7 days | 3365 |
 | Proposed issue closes | 4 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3238 |
+| Fresh reviewed PRs in the last 7 days | 3236 |
 | Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6605 |
+| Fresh verified reviews in the last 7 days | 6601 |
 | Proposed closes awaiting apply | 6 (0.1% of fresh reviews) |
 | Work candidates awaiting promotion | 876 |
 | Closed by Codex apply | 10854 |
@@ -291,13 +291,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25127786715](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 99/1137 current (1038 due, 8.7%) |
-| Hourly hot item cadence (<7d) | 99/1137 current (1038 due, 8.7%) |
-| Daily cadence coverage | 1920/3672 current (1752 due, 52.3%) |
-| Daily PR cadence | 1262/2564 current (1302 due, 49.2%) |
-| Daily new issue cadence (<30d) | 658/1108 current (450 due, 59.4%) |
+| Hourly cadence coverage | 98/1136 current (1038 due, 8.6%) |
+| Hourly hot item cadence (<7d) | 98/1136 current (1038 due, 8.6%) |
+| Daily cadence coverage | 1919/3669 current (1750 due, 52.3%) |
+| Daily PR cadence | 1262/2563 current (1301 due, 49.2%) |
+| Daily new issue cadence (<30d) | 657/1106 current (449 due, 59.4%) |
 | Weekly older issue cadence | 1802/1805 current (3 due, 99.8%) |
-| Due now by cadence | 3136 |
+| Due now by cadence | 3139 |
 
 ### Audit Health
 
@@ -333,28 +333,28 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 18:55 UTC. Latest close: Apr 29, 2026, 18:54 UTC. Latest comment sync: Apr 29, 2026, 18:57 UTC.
+Latest review: Apr 29, 2026, 18:55 UTC. Latest close: Apr 29, 2026, 18:58 UTC. Latest comment sync: Apr 29, 2026, 18:57 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 39 | 4 | 35 | 0 | 4 | 38 | 0 |
-| Last hour | 595 | 21 | 574 | 4 | 22 | 474 | 0 |
-| Last 24 hours | 4866 | 342 | 4524 | 5 | 716 | 967 | 25 |
+| Last 15 minutes | 38 | 4 | 34 | 0 | 8 | 38 | 0 |
+| Last hour | 594 | 21 | 573 | 4 | 26 | 474 | 0 |
+| Last 24 hours | 4866 | 342 | 4524 | 5 | 720 | 967 | 25 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#63425](https://github.com/openclaw/openclaw/issues/63425) | modelByChannel override does not update session's persisted contextTokens — /status shows stale value | closed externally after review | Apr 29, 2026, 18:58 UTC | [records/openclaw-openclaw/closed/63425.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63425.md) |
+| [#74534](https://github.com/openclaw/openclaw/pull/74534) | Fix status context window for channel model overrides | closed externally after review | Apr 29, 2026, 18:58 UTC | [records/openclaw-openclaw/closed/74534.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74534.md) |
 | [#74551](https://github.com/openclaw/openclaw/pull/74551) | fix: One low-severity test-suite regression found. Runtime dotenv beha | kept open | Apr 29, 2026, 18:54 UTC | [records/openclaw-openclaw/closed/74551.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74551.md) |
+| [#63780](https://github.com/openclaw/openclaw/pull/63780) | fix(telegram): suppress recoverable uncaught network failures | closed externally after review | Apr 29, 2026, 18:54 UTC | [records/openclaw-openclaw/closed/63780.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63780.md) |
+| [#60515](https://github.com/openclaw/openclaw/issues/60515) | Gateway crashes on transient ENETUNREACH — uncaughtException handler lacks isTransientNetworkError check | closed externally after review | Apr 29, 2026, 18:54 UTC | [records/openclaw-openclaw/closed/60515.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60515.md) |
 | [#74550](https://github.com/openclaw/openclaw/issues/74550) | [Bug]: Telegram stuck session blocks processing — session stays in state=processing indefinitely (120s+), no auto-recovery | duplicate or superseded | Apr 29, 2026, 18:49 UTC | [records/openclaw-openclaw/closed/74550.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74550.md) |
 | [#74549](https://github.com/openclaw/openclaw/pull/74549) | Fix Telegram EHOSTUNREACH gateway crash | kept open | Apr 29, 2026, 18:48 UTC | [records/openclaw-openclaw/closed/74549.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74549.md) |
 | [#74538](https://github.com/openclaw/openclaw/pull/74538) | fix(device-pair): validate public setup urls | kept open | Apr 29, 2026, 18:47 UTC | [records/openclaw-openclaw/closed/74538.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74538.md) |
 | [#74531](https://github.com/openclaw/openclaw/issues/74531) | Account Owner | not actionable in this repository | Apr 29, 2026, 18:43 UTC | [records/openclaw-openclaw/closed/74531.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74531.md) |
 | [#74546](https://github.com/openclaw/openclaw/issues/74546) | [Bug]: memory_search vector fallback can OOM gateway when sqlite-vec is unavailable on large memory DBs | already implemented on main | Apr 29, 2026, 18:40 UTC | [records/openclaw-openclaw/closed/74546.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74546.md) |
-| [#62981](https://github.com/openclaw/openclaw/issues/62981) | session file locked when gateway times out and falls back to embedded runner | closed externally after review | Apr 29, 2026, 18:38 UTC | [records/openclaw-openclaw/closed/62981.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62981.md) |
-| [#74499](https://github.com/openclaw/openclaw/pull/74499) | fix(ollama): normalize prefixed tool-call names before Ollama dispatch | closed externally after review | Apr 29, 2026, 18:30 UTC | [records/openclaw-openclaw/closed/74499.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74499.md) |
-| [#74487](https://github.com/openclaw/openclaw/issues/74487) | [Bug]: Ollama Kimi tool call fails with \"Tool exec not found\" despite /tools showing exec | closed externally after review | Apr 29, 2026, 18:30 UTC | [records/openclaw-openclaw/closed/74487.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74487.md) |
-| [#74540](https://github.com/openclaw/openclaw/issues/74540) | Gateway crashes on EHOSTUNREACH from Telegram API (uncaught exception) | duplicate or superseded | Apr 29, 2026, 18:29 UTC | [records/openclaw-openclaw/closed/74540.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74540.md) |
 
 #### Work Candidates
 
@@ -438,13 +438,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25127786715](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 52/57 current (5 due, 91.2%) |
-| Hourly hot item cadence (<7d) | 52/57 current (5 due, 91.2%) |
+| Hourly cadence coverage | 38/57 current (19 due, 66.7%) |
+| Hourly hot item cadence (<7d) | 38/57 current (19 due, 66.7%) |
 | Daily cadence coverage | 210/210 current (0 due, 100%) |
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 189/189 current (0 due, 100%) |
 | Weekly older issue cadence | 649/653 current (4 due, 99.4%) |
-| Due now by cadence | 14 |
+| Due now by cadence | 28 |
 
 ### Audit Health
 
@@ -483,7 +483,7 @@ Latest review: Apr 29, 2026, 18:48 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 1 | 0 | 344 | 0 |
-| Last hour | 503 | 0 | 503 | 5 | 0 | 745 | 0 |
+| Last hour | 437 | 0 | 437 | 5 | 0 | 745 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 5 | 15 | 911 | 0 |
 
 #### Recently Closed
