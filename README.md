@@ -100,7 +100,7 @@ Last dashboard update: Apr 29, 2026, 08:24 UTC
 | Open items total | 7901 |
 | Reviewed files | 7530 |
 | Unreviewed open items | 371 |
-| Due now by cadence | 2003 |
+| Due now by cadence | 2004 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 590 |
 | Closed by Codex apply | 10737 |
@@ -111,14 +111,14 @@ Last dashboard update: Apr 29, 2026, 08:24 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6977 | 6613 | 364 | 1984 | 0 | 549 | 10730 | Apr 29, 2026, 08:23 UTC | Apr 29, 2026, 08:22 UTC | 474 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6977 | 6613 | 364 | 1985 | 0 | 549 | 10730 | Apr 29, 2026, 08:23 UTC | Apr 29, 2026, 08:22 UTC | 475 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 924 | 917 | 7 | 19 | 0 | 41 | 7 | Apr 29, 2026, 08:13 UTC | Apr 29, 2026, 07:52 UTC | 483 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 08:24 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25098465421) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 08:24 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25098465421) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 08:13 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097222195) |
 
 ### Fleet Activity
@@ -127,9 +127,9 @@ Latest review: Apr 29, 2026, 08:23 UTC. Latest close: Apr 29, 2026, 08:22 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 23 | 2 | 21 | 2 | 7 | 17 | 0 |
-| Last hour | 1119 | 13 | 1106 | 12 | 23 | 957 | 2 |
-| Last 24 hours | 6972 | 450 | 6522 | 17 | 744 | 1835 | 26 |
+| Last 15 minutes | 24 | 2 | 22 | 2 | 7 | 17 | 0 |
+| Last hour | 1112 | 12 | 1100 | 12 | 23 | 958 | 2 |
+| Last 24 hours | 6972 | 450 | 6522 | 17 | 744 | 1836 | 26 |
 
 ### Recently Closed Across Repos
 
@@ -173,6 +173,7 @@ Latest review: Apr 29, 2026, 08:23 UTC. Latest close: Apr 29, 2026, 08:22 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#39115](https://github.com/openclaw/openclaw/pull/39115) | feat(config): add reasoningDefault to agents.defaults | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/39115.md) | complete | Apr 29, 2026, 08:23 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams, fixtures, and host-hook recipes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 29, 2026, 08:23 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72276](https://github.com/openclaw/openclaw/pull/72276) | [codex] Consolidate embedded runner structural splits | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72276.md) | complete | Apr 29, 2026, 08:21 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74040](https://github.com/openclaw/openclaw/pull/74040) | fix: guard against empty prompt race in runEmbeddedPiAgent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74040.md) | complete | Apr 29, 2026, 08:21 UTC |
@@ -182,7 +183,6 @@ Latest review: Apr 29, 2026, 08:23 UTC. Latest close: Apr 29, 2026, 08:22 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71915](https://github.com/openclaw/openclaw/issues/71915) | [Bug]: Gateway 100% CPU / infinite loop with DeepSeek V4 models on 2026.4.24 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71915.md) | complete | Apr 29, 2026, 08:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74135](https://github.com/openclaw/openclaw/issues/74135) | Gateway intermittently stalls: WebSocket preauth handshakes time out late during model catalog/provider discovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74135.md) | complete | Apr 29, 2026, 08:13 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74205](https://github.com/openclaw/openclaw/issues/74205) | [Bug]: kimi/k2p6 returns incomplete terminal response and gateway status probe times out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74205.md) | complete | Apr 29, 2026, 08:13 UTC |
-| [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1662](https://github.com/openclaw/clawhub/issues/1662) | Appealing Suspicious Tag on Agent-Changelog Skill | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1662.md) | failed | Apr 29, 2026, 08:13 UTC |
 
 </details>
 
@@ -202,9 +202,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 08:24 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/3. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 3. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25098465421](https://github.com/openclaw/clawsweeper/actions/runs/25098465421)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -238,13 +238,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25098465421](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 294/1022 current (728 due, 28.8%) |
-| Hourly hot item cadence (<7d) | 294/1022 current (728 due, 28.8%) |
+| Hourly cadence coverage | 293/1022 current (729 due, 28.7%) |
+| Hourly hot item cadence (<7d) | 293/1022 current (729 due, 28.7%) |
 | Daily cadence coverage | 2895/3786 current (891 due, 76.5%) |
 | Daily PR cadence | 2174/2648 current (474 due, 82.1%) |
 | Daily new issue cadence (<30d) | 721/1138 current (417 due, 63.4%) |
 | Weekly older issue cadence | 1804/1805 current (1 due, 99.9%) |
-| Due now by cadence | 1984 |
+| Due now by cadence | 1985 |
 
 ### Audit Health
 
@@ -284,9 +284,9 @@ Latest review: Apr 29, 2026, 08:23 UTC. Latest close: Apr 29, 2026, 08:22 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 16 | 2 | 14 | 0 | 7 | 17 | 0 |
-| Last hour | 651 | 13 | 638 | 3 | 22 | 474 | 2 |
-| Last 24 hours | 6043 | 450 | 5593 | 8 | 732 | 1341 | 26 |
+| Last 15 minutes | 17 | 2 | 15 | 0 | 7 | 17 | 0 |
+| Last hour | 646 | 12 | 634 | 3 | 22 | 475 | 2 |
+| Last 24 hours | 6043 | 450 | 5593 | 8 | 732 | 1342 | 26 |
 
 #### Recently Closed
 
@@ -322,6 +322,7 @@ Latest review: Apr 29, 2026, 08:23 UTC. Latest close: Apr 29, 2026, 08:22 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#39115](https://github.com/openclaw/openclaw/pull/39115) | feat(config): add reasoningDefault to agents.defaults | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/39115.md) | complete | Apr 29, 2026, 08:23 UTC |
 | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams, fixtures, and host-hook recipes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 29, 2026, 08:23 UTC |
 | [#72276](https://github.com/openclaw/openclaw/pull/72276) | [codex] Consolidate embedded runner structural splits | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72276.md) | complete | Apr 29, 2026, 08:21 UTC |
 | [#74040](https://github.com/openclaw/openclaw/pull/74040) | fix: guard against empty prompt race in runEmbeddedPiAgent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74040.md) | complete | Apr 29, 2026, 08:21 UTC |
@@ -331,7 +332,6 @@ Latest review: Apr 29, 2026, 08:23 UTC. Latest close: Apr 29, 2026, 08:22 UTC. L
 | [#71915](https://github.com/openclaw/openclaw/issues/71915) | [Bug]: Gateway 100% CPU / infinite loop with DeepSeek V4 models on 2026.4.24 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71915.md) | complete | Apr 29, 2026, 08:14 UTC |
 | [#74135](https://github.com/openclaw/openclaw/issues/74135) | Gateway intermittently stalls: WebSocket preauth handshakes time out late during model catalog/provider discovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74135.md) | complete | Apr 29, 2026, 08:13 UTC |
 | [#74205](https://github.com/openclaw/openclaw/issues/74205) | [Bug]: kimi/k2p6 returns incomplete terminal response and gateway status probe times out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74205.md) | complete | Apr 29, 2026, 08:13 UTC |
-| [#69478](https://github.com/openclaw/openclaw/issues/69478) | [Bug]: enqueueSystemEvent not deduplicated by runId/contextKey — agents cascade duplicate exec approval prompts under new IDs, locking ecosystem | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69478.md) | complete | Apr 29, 2026, 08:12 UTC |
 
 </details>
 
@@ -430,7 +430,7 @@ Latest review: Apr 29, 2026, 08:13 UTC. Latest close: Apr 29, 2026, 07:52 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 7 | 0 | 7 | 2 | 0 | 0 | 0 |
-| Last hour | 468 | 0 | 468 | 9 | 1 | 483 | 0 |
+| Last hour | 466 | 0 | 466 | 9 | 1 | 483 | 0 |
 | Last 24 hours | 929 | 0 | 929 | 9 | 12 | 494 | 0 |
 
 #### Recently Closed
