@@ -89,7 +89,7 @@ source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 14:01 UTC
+Last dashboard update: Apr 29, 2026, 14:02 UTC
 
 ### Fleet
 
@@ -101,7 +101,7 @@ Last dashboard update: Apr 29, 2026, 14:01 UTC
 | Open items total | 7839 |
 | Reviewed files | 7485 |
 | Unreviewed open items | 356 |
-| Due now by cadence | 2848 |
+| Due now by cadence | 2847 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 649 |
 | Closed by Codex apply | 10786 |
@@ -112,7 +112,7 @@ Last dashboard update: Apr 29, 2026, 14:01 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6912 | 6561 | 351 | 2791 | 0 | 605 | 10778 | Apr 29, 2026, 13:59 UTC | Apr 29, 2026, 13:59 UTC | 432 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6912 | 6561 | 351 | 2790 | 0 | 605 | 10778 | Apr 29, 2026, 13:59 UTC | Apr 29, 2026, 13:59 UTC | 433 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 926 | 922 | 5 | 57 | 0 | 43 | 8 | Apr 29, 2026, 13:35 UTC | Apr 29, 2026, 08:25 UTC | 326 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 1 | 2 | 0 | 0 | 0 | 1 | 0 | Apr 29, 2026, 13:41 UTC | unknown | 2 |
 
@@ -130,9 +130,9 @@ Latest review: Apr 29, 2026, 13:59 UTC. Latest close: Apr 29, 2026, 13:59 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 24 | 2 | 22 | 0 | 12 | 127 | 0 |
-| Last hour | 975 | 9 | 966 | 17 | 68 | 760 | 1 |
-| Last 24 hours | 6109 | 394 | 5715 | 28 | 794 | 2001 | 28 |
+| Last 15 minutes | 25 | 2 | 23 | 0 | 12 | 119 | 0 |
+| Last hour | 968 | 9 | 959 | 17 | 68 | 761 | 1 |
+| Last 24 hours | 6109 | 394 | 5715 | 28 | 793 | 2000 | 28 |
 
 ### Recently Closed Across Repos
 
@@ -176,6 +176,8 @@ Latest review: Apr 29, 2026, 13:59 UTC. Latest close: Apr 29, 2026, 13:59 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73008](https://github.com/openclaw/openclaw/pull/73008) | fix(deepseek): expose V4 max thinking levels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73008.md) | complete | Apr 29, 2026, 13:59 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74235](https://github.com/openclaw/openclaw/pull/74235) | fix(googlechat): preserve thread reply target through delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74235.md) | complete | Apr 29, 2026, 13:59 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74359](https://github.com/openclaw/openclaw/pull/74359) | fix(docker): replace curl\|bash Bun install with pinned multi-stage COPY | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74359.md) | complete | Apr 29, 2026, 13:59 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#69483](https://github.com/openclaw/openclaw/pull/69483) | feat(security): add GHSA detector-review pipeline and OpenGrep CI workflows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69483.md) | complete | Apr 29, 2026, 13:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74374](https://github.com/openclaw/openclaw/issues/74374) | [Bug]: DeepSeek v4-pro: 400 \"reasoning_content must be passed back\" with thinking=disabled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74374.md) | complete | Apr 29, 2026, 13:58 UTC |
@@ -184,8 +186,6 @@ Latest review: Apr 29, 2026, 13:59 UTC. Latest close: Apr 29, 2026, 13:59 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74373](https://github.com/openclaw/openclaw/pull/74373) | feat(feishu): add explicit approval approvers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74373.md) | complete | Apr 29, 2026, 13:56 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74370](https://github.com/openclaw/openclaw/issues/74370) | [Bug] 消息在 memory flush + compaction 后被重复投递 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74370.md) | complete | Apr 29, 2026, 13:54 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74371](https://github.com/openclaw/openclaw/pull/74371) | Fix Control UI dashboard breadcrumb navigation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74371.md) | complete | Apr 29, 2026, 13:54 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74365](https://github.com/openclaw/openclaw/issues/74365) | [Feature]: Handle loading states, because commands are generally slow. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74365.md) | complete | Apr 29, 2026, 13:54 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74369](https://github.com/openclaw/openclaw/pull/74369) | fix(control-ui): preserve numeric chat input in composer | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74369.md) | complete | Apr 29, 2026, 13:53 UTC |
 
 </details>
 
@@ -207,7 +207,7 @@ Updated: Apr 29, 2026, 14:01 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74256,74287.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/2. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25113359314](https://github.com/openclaw/clawsweeper/actions/runs/25113359314)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -241,13 +241,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25113359314](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 104/1066 current (962 due, 9.8%) |
-| Hourly hot item cadence (<7d) | 104/1066 current (962 due, 9.8%) |
+| Hourly cadence coverage | 105/1066 current (961 due, 9.8%) |
+| Hourly hot item cadence (<7d) | 105/1066 current (961 due, 9.8%) |
 | Daily cadence coverage | 2218/3691 current (1473 due, 60.1%) |
 | Daily PR cadence | 1613/2570 current (957 due, 62.8%) |
 | Daily new issue cadence (<30d) | 605/1121 current (516 due, 54%) |
 | Weekly older issue cadence | 1799/1804 current (5 due, 99.7%) |
-| Due now by cadence | 2791 |
+| Due now by cadence | 2790 |
 
 ### Audit Health
 
@@ -287,9 +287,9 @@ Latest review: Apr 29, 2026, 13:59 UTC. Latest close: Apr 29, 2026, 13:59 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 24 | 2 | 22 | 0 | 12 | 127 | 0 |
-| Last hour | 571 | 9 | 562 | 2 | 68 | 432 | 1 |
-| Last 24 hours | 5173 | 394 | 4779 | 13 | 781 | 1384 | 28 |
+| Last 15 minutes | 25 | 2 | 23 | 0 | 12 | 119 | 0 |
+| Last hour | 572 | 9 | 563 | 2 | 68 | 433 | 1 |
+| Last 24 hours | 5173 | 394 | 4779 | 13 | 780 | 1383 | 28 |
 
 #### Recently Closed
 
@@ -325,6 +325,8 @@ Latest review: Apr 29, 2026, 13:59 UTC. Latest close: Apr 29, 2026, 13:59 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73008](https://github.com/openclaw/openclaw/pull/73008) | fix(deepseek): expose V4 max thinking levels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73008.md) | complete | Apr 29, 2026, 13:59 UTC |
+| [#74235](https://github.com/openclaw/openclaw/pull/74235) | fix(googlechat): preserve thread reply target through delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74235.md) | complete | Apr 29, 2026, 13:59 UTC |
 | [#74359](https://github.com/openclaw/openclaw/pull/74359) | fix(docker): replace curl\|bash Bun install with pinned multi-stage COPY | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74359.md) | complete | Apr 29, 2026, 13:59 UTC |
 | [#69483](https://github.com/openclaw/openclaw/pull/69483) | feat(security): add GHSA detector-review pipeline and OpenGrep CI workflows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/69483.md) | complete | Apr 29, 2026, 13:58 UTC |
 | [#74374](https://github.com/openclaw/openclaw/issues/74374) | [Bug]: DeepSeek v4-pro: 400 \"reasoning_content must be passed back\" with thinking=disabled | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74374.md) | complete | Apr 29, 2026, 13:58 UTC |
@@ -333,8 +335,6 @@ Latest review: Apr 29, 2026, 13:59 UTC. Latest close: Apr 29, 2026, 13:59 UTC. L
 | [#74373](https://github.com/openclaw/openclaw/pull/74373) | feat(feishu): add explicit approval approvers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74373.md) | complete | Apr 29, 2026, 13:56 UTC |
 | [#74370](https://github.com/openclaw/openclaw/issues/74370) | [Bug] 消息在 memory flush + compaction 后被重复投递 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74370.md) | complete | Apr 29, 2026, 13:54 UTC |
 | [#74371](https://github.com/openclaw/openclaw/pull/74371) | Fix Control UI dashboard breadcrumb navigation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74371.md) | complete | Apr 29, 2026, 13:54 UTC |
-| [#74365](https://github.com/openclaw/openclaw/issues/74365) | [Feature]: Handle loading states, because commands are generally slow. | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74365.md) | complete | Apr 29, 2026, 13:54 UTC |
-| [#74369](https://github.com/openclaw/openclaw/pull/74369) | fix(control-ui): preserve numeric chat input in composer | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74369.md) | complete | Apr 29, 2026, 13:53 UTC |
 
 </details>
 
@@ -433,7 +433,7 @@ Latest review: Apr 29, 2026, 13:35 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 402 | 0 | 402 | 15 | 0 | 326 | 0 |
+| Last hour | 394 | 0 | 394 | 15 | 0 | 326 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 15 | 13 | 615 | 0 |
 
 #### Recently Closed
