@@ -153,6 +153,9 @@ Every merge action must carry `merge_preflight`. Missing security clearance, unr
 ## Runner Strategy
 
 Use `ubuntu-latest` for ClawSweeper parity and correctness smoke tests.
+Use `openclaw/clawsweeper` as the target repo when you need a self-contained
+event, review, comment-router, or automerge smoke that should not touch product
+repositories.
 
 Use Blacksmith labels only when you intentionally want a non-parity hosted runner for bulk planning/execution:
 
