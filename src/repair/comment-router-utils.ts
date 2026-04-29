@@ -58,7 +58,7 @@ export function isGitHubAppIntegrationAuthError(message: JsonValue) {
   const text = String(message ?? "").toLowerCase();
   return (
     text.includes("resource not accessible by integration") &&
-    (text.includes("http 403") || text.includes('"status":"403"') || text.includes("status: 403"))
+    (text.includes("http 403") || /"status"\s*:\s*"403"/.test(text) || text.includes("status: 403"))
   );
 }
 

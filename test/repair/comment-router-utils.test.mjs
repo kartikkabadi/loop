@@ -149,6 +149,12 @@ test("mutation actor guard recognizes GitHub App integration auth shape", () => 
     ),
     true,
   );
+  assert.equal(
+    isGitHubAppIntegrationAuthError(
+      '{"message":"Resource not accessible by integration","status": "403"}',
+    ),
+    true,
+  );
   assert.equal(isGitHubAppIntegrationAuthError("gh: Resource not accessible (HTTP 403)"), false);
   assert.equal(isGitHubAppIntegrationAuthError("Resource not accessible by integration"), false);
 });
