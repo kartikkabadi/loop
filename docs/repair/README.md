@@ -45,7 +45,7 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 19:17 UTC
+Last dashboard update: Apr 29, 2026, 19:32 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
@@ -61,29 +61,29 @@ Scope: 264 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Latest successful clusters | 239 | 90.5% |
 | Latest failed clusters | 4 | 1.5% |
 | Latest cancelled clusters | 0 | 0.0% |
-| Run attempts archived | 506 | audit |
-| Fix action attempts | 176 | audit |
+| Run attempts archived | 507 | audit |
+| Fix action attempts | 177 | audit |
 | Fix actions executed | 0 | 0.0% |
-| Fix actions failed | 35 | 19.9% |
-| Fix actions blocked | 51 | 29.0% |
+| Fix actions failed | 35 | 19.8% |
+| Fix actions blocked | 51 | 28.8% |
 | Latest clusters with fix failures | 45 | 17.0% |
 | Distinct PRs touched | 837 | 100% |
 | Open PRs tracked | 273 | 32.6% |
 | Closed unmerged PRs tracked | 461 | 55.1% |
-| Completed close actions | 30 | 10.4% |
-| Completed merge actions | 23 | 8.0% |
+| Completed close actions | 30 | 10.3% |
+| Completed merge actions | 23 | 7.9% |
 | Duplicate closes | 22 | 73.3% |
 | Superseded closes | 0 | 0.0% |
 | Fixed-by-candidate closes | 0 | 0.0% |
 | Low-signal PR closes | 0 | 0.0% |
-| Blocked mutation attempts | 117 | 40.5% |
-| Skipped mutation attempts | 119 | 41.2% |
+| Blocked mutation attempts | 118 | 40.7% |
+| Skipped mutation attempts | 119 | 41.0% |
 
 ### Clusters Needing Inspection
 
 | Cluster | State | Source job | Reason | Report | Run |
 | --- | --- | --- | --- | --- | --- |
-| [automerge-openclaw-openclaw-74525](results/openclaw/automerge-openclaw-openclaw-74525.md) | apply blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-74525.md | job does not allow merge | [report](results/openclaw/automerge-openclaw-openclaw-74525.md) | [25127265443](https://github.com/openclaw/clawsweeper/actions/runs/25127265443) |
+| [automerge-openclaw-openclaw-74525](results/openclaw/automerge-openclaw-openclaw-74525.md) | apply blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-74525.md | job does not allow merge | [report](results/openclaw/automerge-openclaw-openclaw-74525.md) | [25129141344](https://github.com/openclaw/clawsweeper/actions/runs/25129141344) |
 | [clawsweeper-commit-openclaw-openclaw-dabf76b3defd](results/openclaw/clawsweeper-commit-openclaw-openclaw-dabf76b3defd.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-dabf76b3defd.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-dabf76b3defd.md) | [25127795681](https://github.com/openclaw/clawsweeper/actions/runs/25127795681) |
 | [clawsweeper-commit-openclaw-openclaw-57e4994caf6d](results/openclaw/clawsweeper-commit-openclaw-openclaw-57e4994caf6d.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-57e4994caf6d.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-57e4994caf6d.md) | [25128232401](https://github.com/openclaw/clawsweeper/actions/runs/25128232401) |
 | [clawsweeper-commit-openclaw-openclaw-0126692bf5f5](results/openclaw/clawsweeper-commit-openclaw-openclaw-0126692bf5f5.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-0126692bf5f5.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-0126692bf5f5.md) | [25126940543](https://github.com/openclaw/clawsweeper/actions/runs/25126940543) |
@@ -163,8 +163,8 @@ Scope: 264 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | PR | Title | Cluster | Branch | Blockers | Next action |
 | --- | --- | --- | --- | --- | --- |
-| [#74565](https://github.com/openclaw/openclaw/pull/74565) | fix: Found one concrete regression in the remote URL path: malformed ` | clawsweeper-commit-openclaw-openclaw-dabf76b3defd | clawsweeper/clawsweeper-commit-openclaw-openclaw-dabf76b3defd | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-auto-reply-reply-session:IN_PROGRESS; CI / check-lint:FAILURE; CI / checks-node... | repair failing checks or document unrelated main flake with touched-surface proof |
-| [#74564](https://github.com/openclaw/openclaw/pull/74564) | fix: use agent auth scope in /models provider data | automerge-openclaw-openclaw-74525 | clawsweeper/automerge-openclaw-openclaw-74525 | needs_merge_state:UNSTABLE, needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-bounda... | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#74565](https://github.com/openclaw/openclaw/pull/74565) | fix: Found one concrete regression in the remote URL path: malformed ` | clawsweeper-commit-openclaw-openclaw-dabf76b3defd | clawsweeper/clawsweeper-commit-openclaw-openclaw-dabf76b3defd | needs_merge_state:UNSTABLE, needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-bounda... | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#74564](https://github.com/openclaw/openclaw/pull/74564) | fix: use agent auth scope in /models provider data | automerge-openclaw-openclaw-74525 | clawsweeper/automerge-openclaw-openclaw-74525 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-n... | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
 | [#74563](https://github.com/openclaw/openclaw/pull/74563) | fix: Found one narrow regression risk in the new Ollama tool-call name | clawsweeper-commit-openclaw-openclaw-89f871679e8d | clawsweeper/clawsweeper-commit-openclaw-openclaw-89f871679e8d | needs_merge_state:UNSTABLE, needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-bounda... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74562](https://github.com/openclaw/openclaw/pull/74562) | fix: Found two release-validation regressions in the new focused live- | clawsweeper-commit-openclaw-openclaw-57e4994caf6d | clawsweeper/clawsweeper-commit-openclaw-openclaw-57e4994caf6d | needs_merge_state:UNSTABLE, needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-bounda... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74561](https://github.com/openclaw/openclaw/pull/74561) | fix: Found one low-severity diagnostics flag contract issue introduced | clawsweeper-commit-openclaw-openclaw-e69da9d5781c | clawsweeper/clawsweeper-commit-openclaw-openclaw-e69da9d5781c | needs_merge_state:UNSTABLE, needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-bounda... | repair failing checks or document unrelated main flake with touched-surface proof |
@@ -174,7 +174,7 @@ Scope: 264 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | [#74528](https://github.com/openclaw/openclaw/pull/74528) | fix: Found one compatibility regression in the new global Codex dynami | clawsweeper-commit-openclaw-openclaw-09baec68eac7 | clawsweeper/clawsweeper-commit-openclaw-openclaw-09baec68eac7 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-con... | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
 | [#74527](https://github.com/openclaw/openclaw/pull/74527) | fix(ci): Found three actionable i18n regressions: the touched i18n test fi | clawsweeper-commit-openclaw-openclaw-297f4c6e603b | clawsweeper/clawsweeper-commit-openclaw-openclaw-297f4c6e603b | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI ... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74526](https://github.com/openclaw/openclaw/pull/74526) | fix: Found two actionable issues in the bundled runtime-deps staging c | clawsweeper-commit-openclaw-openclaw-8cf724a381a3 | clawsweeper/clawsweeper-commit-openclaw-openclaw-8cf724a381a3 | needs_merge_state:UNSTABLE, needs_checks:CI / build-artifacts:FAILURE; CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agen... | repair failing checks or document unrelated main flake with touched-surface proof |
-| [#74525](https://github.com/openclaw/openclaw/pull/74525) | fix: Found one regression in the `/models` chat command path for agent | clawsweeper-commit-openclaw-openclaw-8a06db084d8a | clawsweeper/clawsweeper-commit-openclaw-openclaw-8a06db084d8a | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI ... | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#74525](https://github.com/openclaw/openclaw/pull/74525) | fix: Found one regression in the `/models` chat command path for agent | clawsweeper-commit-openclaw-openclaw-8a06db084d8a | clawsweeper/clawsweeper-commit-openclaw-openclaw-8a06db084d8a | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
 | [#74524](https://github.com/openclaw/openclaw/pull/74524) | fix: Found one regression in model-list availability heuristics for pr | clawsweeper-commit-openclaw-openclaw-b418c08a2297 | clawsweeper/clawsweeper-commit-openclaw-openclaw-b418c08a2297 | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI ... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74523](https://github.com/openclaw/openclaw/pull/74523) | fix: Found two heartbeat regressions in the changed behavior: default | clawsweeper-commit-openclaw-openclaw-3215ab6de5db | clawsweeper/clawsweeper-commit-openclaw-openclaw-3215ab6de5db | needs_merge_state:UNSTABLE, needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):FAILURE; CI / check-lint:FAILURE; CI / checks-... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74522](https://github.com/openclaw/openclaw/pull/74522) | fix: Found one concrete regression in the new lock-owner disambiguatio | clawsweeper-commit-openclaw-openclaw-2d885a240272 | clawsweeper/clawsweeper-commit-openclaw-openclaw-2d885a240272 | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI ... | repair failing checks or document unrelated main flake with touched-surface proof |

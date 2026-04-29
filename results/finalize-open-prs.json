@@ -2,15 +2,15 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-29T19:12:52.987Z",
+  "generated_at": "2026-04-29T19:32:16.586Z",
   "count": 23,
   "summary": {
     "open_prs": 23,
     "ready_candidates": 0,
     "security_hold": 0,
-    "needs_rebase": 3,
+    "needs_rebase": 5,
     "mergeability_unknown": 0,
-    "needs_checks": 23,
+    "needs_checks": 22,
     "needs_review": 0,
     "needs_merge_preflight": 23,
     "needs_result_backfill": 15
@@ -34,26 +34,25 @@
       "head_sha": "79b645f47e32bded05f3cadc6fe95258d4ffbdb3",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-dabf76b3defd",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-dabf76b3defd.md",
-      "updated_at": "2026-04-29T19:08:37Z",
+      "updated_at": "2026-04-29T19:13:24Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 83,
+        "total": 84,
         "counts": {
           "CANCELLED": 3,
           "SKIPPED": 14,
-          "SUCCESS": 61,
-          "IN_PROGRESS": 2,
-          "FAILURE": 3
+          "SUCCESS": 62,
+          "FAILURE": 5
         },
         "blockers": [
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
           "CI / check-lint:FAILURE",
           "CI / checks-node-channels:FAILURE",
-          "CI / checks-node-core-support-boundary:IN_PROGRESS",
-          "CI / check:FAILURE"
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / check:FAILURE",
+          "CI / checks-node-core:FAILURE"
         ]
       },
       "review_threads": {
@@ -63,8 +62,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74565#issuecomment-4346783704",
+            "submitted_at": "2026-04-29T19:13:24Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25127795681",
@@ -90,7 +96,7 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-auto-reply-reply-session:IN_PROGRESS; CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE",
+        "needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-boundary:FAILURE",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
@@ -103,16 +109,16 @@
       "head_sha": "ae050e64de94c93b68d7de58ff10315012d9b11a",
       "cluster_id": "automerge-openclaw-openclaw-74525",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74525.md",
-      "updated_at": "2026-04-29T19:07:53Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "updated_at": "2026-04-29T19:22:29Z",
+      "mergeable": "CONFLICTING",
+      "merge_state_status": "DIRTY",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 79,
+        "total": 80,
         "counts": {
           "CANCELLED": 2,
-          "SKIPPED": 9,
+          "SKIPPED": 10,
           "SUCCESS": 63,
           "FAILURE": 5
         },
@@ -131,37 +137,39 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74564#issuecomment-4346783107",
+            "submitted_at": "2026-04-29T19:13:19Z"
+          }
+        ]
       },
       "latest_record": {
-        "run_id": "25127265443",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25127265443",
+        "run_id": "25129141344",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25129141344",
         "cluster_id": "automerge-openclaw-openclaw-74525",
-        "published_at": "2026-04-29T19:10:40.486Z",
+        "published_at": "2026-04-29T19:30:32.871Z",
         "workflow_conclusion": "success",
         "apply_action": {
           "target": "#74564",
-          "action": "merge_canonical",
-          "status": "blocked",
-          "classification": "fix_pr",
-          "canonical": null,
-          "candidate_fix": null,
-          "title": null,
-          "idempotency_key": null,
-          "reason": "job does not allow merge",
-          "merged_at": null,
-          "merge_commit_sha": null,
-          "live_state": null,
-          "live_updated_at": null
+          "action": "fix_needed",
+          "status": "planned",
+          "classification": "canonical",
+          "canonical": "#74564",
+          "candidate_fix": "#74564",
+          "reason": "Canonical replacement PR needs a narrow branch repair before any finalization."
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
+        "needs_rebase:CONFLICTING",
+        "needs_merge_state:DIRTY",
         "needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-boundary:FAILURE",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     },
     {
       "number": 74563,
@@ -171,7 +179,7 @@
       "head_sha": "b1deca6b9cb76bab20d569086790e3ad685ab327",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-89f871679e8d",
       "job_path": null,
-      "updated_at": "2026-04-29T19:07:56Z",
+      "updated_at": "2026-04-29T19:12:21Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -199,8 +207,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74563#issuecomment-4346776582",
+            "submitted_at": "2026-04-29T19:12:21Z"
+          }
+        ]
       },
       "latest_record": null,
       "blockers": [
@@ -219,7 +234,7 @@
       "head_sha": "6724998efe4144fbb9e49020076c43e8262fdcbe",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-57e4994caf6d",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-57e4994caf6d.md",
-      "updated_at": "2026-04-29T19:07:39Z",
+      "updated_at": "2026-04-29T19:12:31Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -247,8 +262,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74562#issuecomment-4346777595",
+            "submitted_at": "2026-04-29T19:12:31Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25128232401",
@@ -368,10 +390,10 @@
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 80,
+        "total": 81,
         "counts": {
           "CANCELLED": 3,
-          "SKIPPED": 10,
+          "SKIPPED": 11,
           "SUCCESS": 62,
           "FAILURE": 5
         },
@@ -730,29 +752,21 @@
       "title": "fix: Found one regression in the `/models` chat command path for agent",
       "url": "https://github.com/openclaw/openclaw/pull/74525",
       "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-8a06db084d8a",
-      "head_sha": "f903668a6890f4938fb33583bf3e8aa191901867",
+      "head_sha": "e41fdc30bfea8a1dc1ce07671aff1d11507cf9c2",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-8a06db084d8a",
       "job_path": null,
-      "updated_at": "2026-04-29T19:07:45Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "updated_at": "2026-04-29T19:30:09Z",
+      "mergeable": "CONFLICTING",
+      "merge_state_status": "DIRTY",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 82,
+        "total": 6,
         "counts": {
-          "CANCELLED": 3,
-          "SKIPPED": 12,
-          "SUCCESS": 62,
-          "FAILURE": 5
+          "SUCCESS": 4,
+          "SKIPPED": 2
         },
-        "blockers": [
-          "CI / checks-node-core-runtime-infra:FAILURE",
-          "CI / checks-node-agentic-control-plane:FAILURE",
-          "CI / checks-node-channels:FAILURE",
-          "CI / checks-node-core-support-boundary:FAILURE",
-          "CI / checks-node-core:FAILURE"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -772,27 +786,33 @@
         ]
       },
       "latest_record": {
-        "run_id": "25127265443",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25127265443",
+        "run_id": "25129141344",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25129141344",
         "cluster_id": "automerge-openclaw-openclaw-74525",
-        "published_at": "2026-04-29T19:10:40.486Z",
+        "published_at": "2026-04-29T19:30:32.871Z",
         "workflow_conclusion": "success",
         "apply_action": {
           "target": "#74525",
-          "action": "fix_needed",
-          "status": "planned",
-          "classification": "canonical",
-          "canonical": "#74525",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
           "candidate_fix": null,
-          "reason": "Canonical PR is useful but not merge-ready, and the branch cannot be safely repaired in place because `maintainer_can_modify` is false."
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI / checks-node-channels:FAILURE",
+        "needs_rebase:CONFLICTING",
+        "needs_merge_state:DIRTY",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     },
     {
       "number": 74524,
@@ -802,7 +822,7 @@
       "head_sha": "d845eb08c056ae5706ab71c2ba4d302141af72bb",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-b418c08a2297",
       "job_path": null,
-      "updated_at": "2026-04-29T18:05:39Z",
+      "updated_at": "2026-04-29T19:30:29Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -857,17 +877,17 @@
       "head_sha": "0bcca947d5640a1e19c9effcdafb88905b83bb14",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-3215ab6de5db",
       "job_path": null,
-      "updated_at": "2026-04-29T19:07:58Z",
+      "updated_at": "2026-04-29T19:12:16Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 76,
+        "total": 77,
         "counts": {
           "FAILURE": 6,
           "SUCCESS": 62,
-          "SKIPPED": 8
+          "SKIPPED": 9
         },
         "blockers": [
           "OpenGrep — PR Diff / Scan changed paths (precise):FAILURE",
@@ -912,7 +932,7 @@
       "head_sha": "92982b948d53aae64f789eac33fcde7bff281c84",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-2d885a240272",
       "job_path": null,
-      "updated_at": "2026-04-29T18:04:34Z",
+      "updated_at": "2026-04-29T19:30:27Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -967,7 +987,7 @@
       "head_sha": "7d2eab8ef166151c4b4364ee127ae20d26583938",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-0519107bd3e2",
       "job_path": null,
-      "updated_at": "2026-04-29T18:04:47Z",
+      "updated_at": "2026-04-29T19:30:25Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -1022,7 +1042,7 @@
       "head_sha": "3c06a36dc7c37368f69f4e5b59c635cfd3480002",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-2dadc82cf453",
       "job_path": null,
-      "updated_at": "2026-04-29T18:05:03Z",
+      "updated_at": "2026-04-29T19:30:23Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -1134,7 +1154,7 @@
       "head_sha": "9d318b29021f260aca2b765d8bf1b2256fd1e29b",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-630629667c16",
       "job_path": null,
-      "updated_at": "2026-04-29T18:04:45Z",
+      "updated_at": "2026-04-29T19:30:21Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -1189,7 +1209,7 @@
       "head_sha": "2241503ce22dde2521857e8ba8238531dfcd2275",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-ca093d840292",
       "job_path": null,
-      "updated_at": "2026-04-29T18:04:20Z",
+      "updated_at": "2026-04-29T19:30:19Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -1300,7 +1320,7 @@
       "head_sha": "38d36bd369ae0a9a5e450f8531c7f4c6cafa1ded",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-9f213354628f",
       "job_path": null,
-      "updated_at": "2026-04-29T18:03:51Z",
+      "updated_at": "2026-04-29T19:30:16Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
