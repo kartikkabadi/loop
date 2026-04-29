@@ -40,7 +40,13 @@ import {
   writeReportFile,
 } from "./comment-router-utils.js";
 import { readCommentRouterConfig } from "./config.js";
-import { ghBestEffort, ghJson, ghPaged, ghSpawn, ghText } from "./github-cli.js";
+import {
+  ghBestEffort,
+  ghJsonWithRetry as ghJson,
+  ghPagedWithRetry as ghPaged,
+  ghSpawn,
+  ghTextWithRetry as ghText,
+} from "./github-cli.js";
 import { escapeRegExp } from "./text-utils.js";
 
 const args = parseArgs(process.argv.slice(2));
