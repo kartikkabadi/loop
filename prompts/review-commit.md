@@ -31,6 +31,8 @@ committer: "<name <email>>"
 github_author: <login-or-unknown>
 github_committer: <login-or-unknown>
 co_authors: []
+commit_authored_at: <ISO-8601 commit author timestamp>
+commit_committed_at: <ISO-8601 commit committer timestamp>
 result: nothing_found | findings | inconclusive
 confidence: high | medium | low
 highest_severity: critical | high | medium | low | none

@@ -15,6 +15,7 @@
     "dashboard": "node dist/clawsweeper.js dashboard",
     "status": "node dist/clawsweeper.js status",
     "commit-review": "node dist/commit-sweeper.js",
+    "commit-reports": "node dist/commit-sweeper.js reports",
     "test": "pnpm run build && node --test test/*.test.mjs",
     "test:unit": "node --test test/*.test.mjs",
     "lint": "oxlint src --tsconfig tsconfig.json",

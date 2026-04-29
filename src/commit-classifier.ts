@@ -6,6 +6,8 @@ export interface SkippedCommitMetadata {
   authorEmail: string;
   committerName: string;
   committerEmail: string;
+  authoredAt: string;
+  committedAt: string;
   coAuthors: string[];
   githubAuthor: string;
   githubCommitter: string;
@@ -166,6 +168,8 @@ committer: ${yamlScalar(`${options.metadata.committerName} <${options.metadata.c
 github_author: ${yamlScalar(options.metadata.githubAuthor || "unknown")}
 github_committer: ${yamlScalar(options.metadata.githubCommitter || "unknown")}
 co_authors: ${options.metadata.coAuthors.length ? yamlArray(options.metadata.coAuthors) : "[]"}
+commit_authored_at: ${yamlScalar(options.metadata.authoredAt)}
+commit_committed_at: ${yamlScalar(options.metadata.committedAt)}
 result: skipped_non_code
 confidence: high
 highest_severity: none

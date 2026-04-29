@@ -40,9 +40,11 @@ import {
   validateCloseDecision,
 } from "../dist/clawsweeper.js";
 import { checkConclusionForFrontMatter } from "../dist/commit-checks.js";
+import { skippedNonCodeReport } from "../dist/commit-classifier.js";
 import {
   commitReportRelativePath,
   isReviewableCommitPath,
+  parseCommitReportSince,
   parseCoAuthors,
 } from "../dist/commit-sweeper.js";
 
@@ -215,6 +217,38 @@ co-authored-by: Alice Example <alice@example.com>
 `),
     ["Alice Example <alice@example.com>", "Bob Example <bob@example.com>"],
   );
+});
+
+test("commit report since parser accepts compact and natural windows", () => {
+  const now = new Date("2026-04-29T12:00:00.000Z");
+  assert.equal(parseCommitReportSince("6h", now).toISOString(), "2026-04-29T06:00:00.000Z");
+  assert.equal(
+    parseCommitReportSince("24 hours ago", now).toISOString(),
+    "2026-04-28T12:00:00.000Z",
+  );
+  assert.equal(parseCommitReportSince("last 7d", now).toISOString(), "2026-04-22T12:00:00.000Z");
+});
+
+test("skipped non-code commit reports include commit timestamps for listing", () => {
+  const report = skippedNonCodeReport({
+    targetRepo: "openclaw/openclaw",
+    sha: "abcdef1234567890abcdef1234567890abcdef12",
+    metadata: {
+      parents: ["0123456789abcdef0123456789abcdef01234567"],
+      authorName: "Alice",
+      authorEmail: "alice@example.com",
+      committerName: "Bob",
+      committerEmail: "bob@example.com",
+      authoredAt: "2026-04-29T10:00:00Z",
+      committedAt: "2026-04-29T10:05:00Z",
+      coAuthors: [],
+      githubAuthor: "alice",
+      githubCommitter: "bob",
+    },
+    changedFiles: ["docs/usage.md"],
+  });
+  assert.match(report, /commit_authored_at: "2026-04-29T10:00:00Z"/);
+  assert.match(report, /commit_committed_at: "2026-04-29T10:05:00Z"/);
 });
 
 test("commit review cheaply skips documentation-only paths", () => {

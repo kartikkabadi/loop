@@ -28,9 +28,28 @@ records/<repo-slug>/commits/<40-char-sha>.md
 That path is the source of truth. Rerunning a commit review overwrites the same
 file. Manual reruns with an additional prompt also overwrite the same file.
 
+Report front matter includes both commit timestamps and review timestamps:
+
+- `commit_authored_at`: author timestamp from the target commit
+- `commit_committed_at`: committer timestamp from the target commit
+- `reviewed_at`: timestamp for the ClawSweeper report generation
+
 Skipped non-code commits still get a report at the same path with
 `result: skipped_non_code`. This preserves a complete audit trail without
 starting Codex for commits that cannot affect runtime behavior.
+
+Use the report lister for time windows instead of date-based storage folders:
+
+```bash
+pnpm run build
+pnpm commit-reports -- --since 6h
+pnpm commit-reports -- --since "24 hours ago" --findings
+pnpm commit-reports -- --since 7d --non-clean
+pnpm commit-reports -- --repo openclaw/openclaw --author steipete --since 7d
+```
+
+The canonical storage stays flat so a rerun can overwrite exactly one file for
+the commit without first rediscovering a date bucket.
 
 ## Triggers
 

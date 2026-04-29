@@ -259,6 +259,8 @@ committer: ${yamlScalar(`${options.metadata.committerName} <${options.metadata.c
 github_author: ${yamlScalar(options.metadata.githubAuthor || "unknown")}
 github_committer: ${yamlScalar(options.metadata.githubCommitter || "unknown")}
 co_authors: ${options.metadata.coAuthors.length ? yamlArray(options.metadata.coAuthors) : "[]"}
+commit_authored_at: ${yamlScalar(options.metadata.authoredAt)}
+commit_committed_at: ${yamlScalar(options.metadata.committedAt)}
 result: failed
 confidence: low
 highest_severity: none
@@ -276,6 +278,24 @@ Commit review failed before a reliable report could be produced.
 ${options.detail}
 \`\`\`
 `;
+}
+
+function ensureCommitReportTimestamps(markdown: string, metadata: CommitMetadata): string {
+  const match = markdown.match(/^---\n([\s\S]*?)\n---/);
+  if (!match) return markdown;
+  const fields = [
+    ["commit_authored_at", yamlScalar(metadata.authoredAt)],
+    ["commit_committed_at", yamlScalar(metadata.committedAt)],
+  ] as const;
+  let frontMatter = match[1] ?? "";
+  for (const [key, value] of fields) {
+    const line = `${key}: ${value}`;
+    const pattern = new RegExp(`^${key}:.*$`, "m");
+    frontMatter = pattern.test(frontMatter)
+      ? frontMatter.replace(pattern, line)
+      : frontMatter.replace(/^result:/m, `${line}\nresult:`);
+  }
+  return markdown.replace(/^---\n[\s\S]*?\n---/, `---\n${frontMatter}\n---`);
 }
 
 function runCodex(options: {
@@ -380,20 +400,23 @@ function reviewCommand(args: Args): void {
     "additional_prompt",
     process.env.COMMIT_SWEEPER_ADDITIONAL_PROMPT ?? "",
   );
-  const markdown = runCodex({
-    targetDir,
-    targetRepo,
-    sha,
-    baseSha,
+  const markdown = ensureCommitReportTimestamps(
+    runCodex({
+      targetDir,
+      targetRepo,
+      sha,
+      baseSha,
+      metadata,
+      model: stringArg(args, "codex_model", DEFAULT_CODEX_MODEL),
+      reasoningEffort: stringArg(args, "codex_reasoning_effort", DEFAULT_REASONING_EFFORT),
+      sandboxMode: stringArg(args, "codex_sandbox", "danger-full-access"),
+      serviceTier: stringArg(args, "codex_service_tier", DEFAULT_SERVICE_TIER),
+      timeoutMs: numberArg(args, "codex_timeout_ms", 1_800_000),
+      workDir: resolve(stringArg(args, "work_dir", join(reportDir, ".codex"))),
+      additionalPrompt,
+    }),
     metadata,
-    model: stringArg(args, "codex_model", DEFAULT_CODEX_MODEL),
-    reasoningEffort: stringArg(args, "codex_reasoning_effort", DEFAULT_REASONING_EFFORT),
-    sandboxMode: stringArg(args, "codex_sandbox", "danger-full-access"),
-    serviceTier: stringArg(args, "codex_service_tier", DEFAULT_SERVICE_TIER),
-    timeoutMs: numberArg(args, "codex_timeout_ms", 1_800_000),
-    workDir: resolve(stringArg(args, "work_dir", join(reportDir, ".codex"))),
-    additionalPrompt,
-  });
+  );
   ensureDir(dirname(outputPath));
   writeFileSync(outputPath, markdown.endsWith("\n") ? markdown : `${markdown}\n`, "utf8");
   console.log(outputPath);
@@ -470,6 +493,138 @@ function collectMarkdownFiles(dir: string): string[] {
   return files;
 }
 
+interface CommitReportSummary {
+  path: string;
+  sha: string;
+  repository: string;
+  author: string;
+  result: string;
+  confidence: string;
+  highestSeverity: string;
+  checkConclusion: string;
+  commitAuthoredAt: string;
+  commitCommittedAt: string;
+  reviewedAt: string;
+  sortTime: number;
+}
+
+function parseDateMs(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const ms = Date.parse(value);
+  return Number.isFinite(ms) ? ms : undefined;
+}
+
+export function parseCommitReportSince(value: string, now = new Date()): Date {
+  const trimmed = value
+    .trim()
+    .toLowerCase()
+    .replace(/^last\s+/, "");
+  if (!trimmed) throw new Error("Missing --since value");
+  const match = trimmed.match(
+    /^(\d+(?:\.\d+)?)\s*(m|min|mins|minute|minutes|h|hr|hrs|hour|hours|d|day|days|w|week|weeks)(?:\s+ago)?$/,
+  );
+  if (match) {
+    const amount = Number(match[1]);
+    const unit = match[2] ?? "";
+    const multiplier = unit.startsWith("m")
+      ? 60_000
+      : unit.startsWith("h")
+        ? 60 * 60_000
+        : unit.startsWith("d")
+          ? 24 * 60 * 60_000
+          : 7 * 24 * 60 * 60_000;
+    return new Date(now.getTime() - amount * multiplier);
+  }
+  const parsed = Date.parse(value);
+  if (Number.isFinite(parsed)) return new Date(parsed);
+  throw new Error(`Invalid --since value: ${value}`);
+}
+
+function commitReportTime(frontMatter: Record<string, string | string[] | undefined>): number {
+  return (
+    parseDateMs(frontMatter.commit_committed_at as string | undefined) ??
+    parseDateMs(frontMatter.commit_authored_at as string | undefined) ??
+    parseDateMs(frontMatter.reviewed_at as string | undefined) ??
+    0
+  );
+}
+
+function readCommitReportSummary(path: string): CommitReportSummary | undefined {
+  const markdown = readFileSync(path, "utf8");
+  const { frontMatter } = splitFrontMatter(markdown);
+  const sha = frontMatter.sha;
+  if (!sha || !/^[0-9a-f]{40}$/i.test(sha)) return undefined;
+  return {
+    path,
+    sha,
+    repository: frontMatter.repository ?? "unknown",
+    author: frontMatter.author ?? "unknown",
+    result: frontMatter.result ?? "unknown",
+    confidence: frontMatter.confidence ?? "unknown",
+    highestSeverity: frontMatter.highest_severity ?? "unknown",
+    checkConclusion: frontMatter.check_conclusion ?? "unknown",
+    commitAuthoredAt: frontMatter.commit_authored_at ?? "",
+    commitCommittedAt: frontMatter.commit_committed_at ?? "",
+    reviewedAt: frontMatter.reviewed_at ?? "",
+    sortTime: commitReportTime(frontMatter),
+  };
+}
+
+function isCommitReportPath(path: string): boolean {
+  return /(^|\/)commits\/[0-9a-f]{40}\.md$/i.test(path.replaceAll("\\", "/"));
+}
+
+function reportsCommand(args: Args): void {
+  const recordsDir = resolve(stringArg(args, "records_dir", "records"));
+  const since = typeof args.since === "string" ? parseCommitReportSince(args.since).getTime() : 0;
+  const repository = stringArg(args, "repo", "");
+  const author = stringArg(args, "author", "").toLowerCase();
+  const findingsOnly = boolArg(args, "findings");
+  const nonCleanOnly = boolArg(args, "non_clean");
+  const json = boolArg(args, "json");
+  const reports = collectMarkdownFiles(recordsDir)
+    .filter(isCommitReportPath)
+    .map(readCommitReportSummary)
+    .filter((report): report is CommitReportSummary => Boolean(report))
+    .filter((report) => !since || report.sortTime >= since)
+    .filter((report) => !repository || report.repository === repository)
+    .filter((report) => !author || report.author.toLowerCase().includes(author))
+    .filter((report) => !findingsOnly || report.result === "findings")
+    .filter(
+      (report) =>
+        !nonCleanOnly ||
+        (report.result !== "nothing_found" && report.result !== "skipped_non_code"),
+    )
+    .sort((left, right) => right.sortTime - left.sortTime || left.sha.localeCompare(right.sha));
+
+  if (json) {
+    console.log(JSON.stringify(reports, null, 2));
+    return;
+  }
+
+  if (!reports.length) {
+    console.log("No commit reports matched.");
+    return;
+  }
+
+  console.log(`Found ${reports.length} commit report(s).`);
+  for (const report of reports) {
+    const time =
+      report.commitCommittedAt || report.commitAuthoredAt || report.reviewedAt || "unknown";
+    console.log(
+      [
+        report.sha.slice(0, 12),
+        report.result.padEnd(16),
+        report.highestSeverity.padEnd(8),
+        report.checkConclusion.padEnd(9),
+        time,
+        report.author,
+        relative(process.cwd(), report.path),
+      ].join("  "),
+    );
+  }
+}
+
 function copyArtifactsCommand(args: Args): void {
   const artifactDir = resolve(stringArg(args, "artifact_dir", "commit-artifacts"));
   const recordsDir = resolve(stringArg(args, "records_dir", "records"));
@@ -490,6 +645,7 @@ export function main(argv = process.argv.slice(2)): void {
   if (command === "review") reviewCommand(args);
   else if (command === "classify") classifyCommand(args);
   else if (command === "publish-check") publishCheckCommand(args);
+  else if (command === "reports") reportsCommand(args);
   else if (command === "copy-artifacts") copyArtifactsCommand(args);
   else {
     console.error(`Unknown command: ${command}`);

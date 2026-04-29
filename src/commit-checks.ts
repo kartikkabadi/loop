@@ -8,10 +8,14 @@ export interface CommitReviewFrontMatter {
   [key: string]: string | string[] | undefined;
   sha?: string;
   repository?: string;
+  author?: string;
+  commit_authored_at?: string;
+  commit_committed_at?: string;
   result?: string;
   confidence?: string;
   highest_severity?: string;
   check_conclusion?: string;
+  reviewed_at?: string;
 }
 
 interface PublishCheckOptions {
