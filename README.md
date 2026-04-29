@@ -31,19 +31,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 00:57 UTC
+Last dashboard update: Apr 29, 2026, 00:59 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4221 |
-| Open PRs | 3257 |
-| Open items total | 7478 |
+| Open issues | 4401 |
+| Open PRs | 3468 |
+| Open items total | 7869 |
 | Reviewed files | 7478 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 1671 |
+| Unreviewed open items | 391 |
+| Due now by cadence | 2062 |
 | Proposed closes awaiting apply | 2 |
 | Work candidates awaiting promotion | 1 |
 | Closed by Codex apply | 10601 |
@@ -54,24 +54,24 @@ Last dashboard update: Apr 29, 2026, 00:57 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6568 | 6568 | 0 | 1629 | 2 | 1 | 10596 | Apr 29, 2026, 00:55 UTC | Apr 29, 2026, 00:49 UTC | 979 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 910 | 910 | 0 | 42 | 0 | 0 | 5 | Apr 29, 2026, 00:42 UTC | Apr 29, 2026, 00:32 UTC | 506 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6953 | 6568 | 385 | 2014 | 2 | 1 | 10596 | Apr 29, 2026, 00:56 UTC | Apr 29, 2026, 00:49 UTC | 978 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 916 | 910 | 6 | 48 | 0 | 0 | 5 | Apr 29, 2026, 00:42 UTC | Apr 29, 2026, 00:32 UTC | 451 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 00:57 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25085566309) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 29, 2026, 00:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25085566309) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 29, 2026, 00:31 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25083357498) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 00:55 UTC. Latest close: Apr 29, 2026, 00:49 UTC. Latest comment sync: Apr 29, 2026, 00:57 UTC.
+Latest review: Apr 29, 2026, 00:56 UTC. Latest close: Apr 29, 2026, 00:49 UTC. Latest comment sync: Apr 29, 2026, 00:57 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 17 | 3 | 14 | 0 | 3 | 481 | 2 |
-| Last hour | 1004 | 8 | 996 | 12 | 16 | 1485 | 3 |
+| Last 15 minutes | 15 | 3 | 12 | 0 | 2 | 480 | 2 |
+| Last hour | 1003 | 8 | 995 | 12 | 16 | 1429 | 3 |
 | Last 24 hours | 6470 | 384 | 6086 | 15 | 788 | 2271 | 27 |
 
 ### Recently Closed Across Repos
@@ -93,7 +93,7 @@ Latest review: Apr 29, 2026, 00:55 UTC. Latest close: Apr 29, 2026, 00:49 UTC. L
 
 | Repository | Item | Title | Priority | Status | Reviewed | Report |
 | --- | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | medium | candidate | Apr 29, 2026, 00:52 UTC | [records/openclaw-openclaw/items/73898.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | medium | candidate | Apr 29, 2026, 00:56 UTC | [records/openclaw-openclaw/items/73898.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -102,12 +102,12 @@ Latest review: Apr 29, 2026, 00:55 UTC. Latest close: Apr 29, 2026, 00:49 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) | complete | Apr 29, 2026, 00:56 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73566](https://github.com/openclaw/openclaw/pull/73566) | fix(cli): handle closed plugin uninstall prompt | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73566.md) | complete | Apr 29, 2026, 00:55 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 29, 2026, 00:55 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73901](https://github.com/openclaw/openclaw/issues/73901) | Feature Request: User approval gate for config.patch beyond allowlist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73901.md) | complete | Apr 29, 2026, 00:55 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73899](https://github.com/openclaw/openclaw/pull/73899) | feat(skills): add integration-notion skill for Notion setup | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73899.md) | complete | Apr 29, 2026, 00:52 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73900](https://github.com/openclaw/openclaw/issues/73900) | [Bug]: main/systemEvent cron heartbeat inherits global heartbeat.to and leaks topic reminder to DM | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73900.md) | complete | Apr 29, 2026, 00:52 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) | complete | Apr 29, 2026, 00:52 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73895](https://github.com/openclaw/openclaw/issues/73895) | Gateway v2 metadata: emit promotion-grade routing surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73895.md) | complete | Apr 29, 2026, 00:51 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73897](https://github.com/openclaw/openclaw/pull/73897) | Fix Android node system.run shell wrapper | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73897.md) | complete | Apr 29, 2026, 00:50 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73894](https://github.com/openclaw/openclaw/pull/73894) | Add Control UI notification controls and web push test fixes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73894.md) | complete | Apr 29, 2026, 00:49 UTC |
@@ -129,11 +129,11 @@ Latest review: Apr 29, 2026, 00:55 UTC. Latest close: Apr 29, 2026, 00:49 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 00:57 UTC
+Updated: Apr 29, 2026, 00:59 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085566309](https://github.com/openclaw/clawsweeper/actions/runs/25085566309)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -142,11 +142,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085566309](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3345 |
-| Open PRs | 3223 |
-| Open items total | 6568 |
+| Open issues | 3525 |
+| Open PRs | 3428 |
+| Open items total | 6953 |
 | Reviewed files | 6568 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 385 |
 | Archived closed files | 13844 |
 
 #### Review Outcomes
@@ -173,7 +173,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085566309](https://
 | Daily PR cadence | 2257/2701 current (444 due, 83.6%) |
 | Daily new issue cadence (<30d) | 778/1159 current (381 due, 67.1%) |
 | Weekly older issue cadence | 1815/1818 current (3 due, 99.8%) |
-| Due now by cadence | 1629 |
+| Due now by cadence | 2014 |
 
 ### Audit Health
 
@@ -209,12 +209,12 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 00:55 UTC. Latest close: Apr 29, 2026, 00:49 UTC. Latest comment sync: Apr 29, 2026, 00:57 UTC.
+Latest review: Apr 29, 2026, 00:56 UTC. Latest close: Apr 29, 2026, 00:49 UTC. Latest comment sync: Apr 29, 2026, 00:57 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 17 | 3 | 14 | 0 | 3 | 481 | 2 |
-| Last hour | 574 | 8 | 566 | 5 | 15 | 979 | 3 |
+| Last 15 minutes | 15 | 3 | 12 | 0 | 2 | 480 | 2 |
+| Last hour | 573 | 8 | 565 | 5 | 15 | 978 | 3 |
 | Last 24 hours | 5545 | 381 | 5164 | 8 | 773 | 1429 | 27 |
 
 #### Recently Closed
@@ -236,18 +236,18 @@ Latest review: Apr 29, 2026, 00:55 UTC. Latest close: Apr 29, 2026, 00:49 UTC. L
 
 | Item | Title | Priority | Status | Reviewed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | medium | candidate | Apr 29, 2026, 00:52 UTC | [records/openclaw-openclaw/items/73898.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) |
+| [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | medium | candidate | Apr 29, 2026, 00:56 UTC | [records/openclaw-openclaw/items/73898.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) |
 
 #### Recently Reviewed
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) | complete | Apr 29, 2026, 00:56 UTC |
 | [#73566](https://github.com/openclaw/openclaw/pull/73566) | fix(cli): handle closed plugin uninstall prompt | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73566.md) | complete | Apr 29, 2026, 00:55 UTC |
 | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 29, 2026, 00:55 UTC |
 | [#73901](https://github.com/openclaw/openclaw/issues/73901) | Feature Request: User approval gate for config.patch beyond allowlist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73901.md) | complete | Apr 29, 2026, 00:55 UTC |
 | [#73899](https://github.com/openclaw/openclaw/pull/73899) | feat(skills): add integration-notion skill for Notion setup | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73899.md) | complete | Apr 29, 2026, 00:52 UTC |
 | [#73900](https://github.com/openclaw/openclaw/issues/73900) | [Bug]: main/systemEvent cron heartbeat inherits global heartbeat.to and leaks topic reminder to DM | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73900.md) | complete | Apr 29, 2026, 00:52 UTC |
-| [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) | complete | Apr 29, 2026, 00:52 UTC |
 | [#73895](https://github.com/openclaw/openclaw/issues/73895) | Gateway v2 metadata: emit promotion-grade routing surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73895.md) | complete | Apr 29, 2026, 00:51 UTC |
 | [#73897](https://github.com/openclaw/openclaw/pull/73897) | Fix Android node system.run shell wrapper | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73897.md) | complete | Apr 29, 2026, 00:50 UTC |
 | [#73894](https://github.com/openclaw/openclaw/pull/73894) | Add Control UI notification controls and web push test fixes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73894.md) | complete | Apr 29, 2026, 00:49 UTC |
@@ -281,10 +281,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25083357498](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 876 |
-| Open PRs | 34 |
-| Open items total | 910 |
+| Open PRs | 40 |
+| Open items total | 916 |
 | Reviewed files | 910 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 6 |
 | Archived closed files | 15 |
 
 #### Review Outcomes
@@ -311,7 +311,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25083357498](https://
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 200/201 current (1 due, 99.5%) |
 | Weekly older issue cadence | 628/634 current (6 due, 99.1%) |
-| Due now by cadence | 42 |
+| Due now by cadence | 48 |
 
 ### Audit Health
 
@@ -350,7 +350,7 @@ Latest review: Apr 29, 2026, 00:42 UTC. Latest close: Apr 29, 2026, 00:32 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 430 | 0 | 430 | 7 | 1 | 506 | 0 |
+| Last hour | 430 | 0 | 430 | 7 | 1 | 451 | 0 |
 | Last 24 hours | 925 | 3 | 922 | 7 | 15 | 842 | 0 |
 
 #### Recently Closed
