@@ -42,6 +42,7 @@ import {
 import { readCommentRouterConfig } from "./config.js";
 import {
   ghBestEffort,
+  ghErrorText,
   ghJsonWithRetry as ghJson,
   ghPagedWithRetry as ghPaged,
   ghSpawn,
@@ -190,8 +191,9 @@ function classifyCommand(command: LooseRecord): JsonValue {
     return { ...command, status: "skipped", reason: "comment version already processed in ledger" };
   }
 
-  const issue = fetchIssue(command.issue_number);
-  const pull = issue.pull_request ? fetchPullRequestView(command.issue_number) : null;
+  const liveTarget = fetchLiveTarget(command);
+  if (liveTarget.status === "waiting") return liveTarget;
+  const { issue, pull } = liveTarget;
   const target = pull ? classifyPullTarget(pull, command.issue_number) : classifyIssueTarget(issue);
   const next = { ...command, target };
 
@@ -1295,6 +1297,20 @@ function listRecentComments() {
   );
 }
 
+function fetchLiveTarget(command: LooseRecord): LooseRecord {
+  try {
+    const issue = fetchIssue(command.issue_number);
+    const pull = issue.pull_request ? fetchPullRequestView(command.issue_number) : null;
+    return { issue, pull };
+  } catch (error) {
+    return {
+      ...command,
+      status: "waiting",
+      reason: `GitHub lookup failed; will retry later: ${compactGhError(error)}`,
+    };
+  }
+}
+
 function fetchIssue(number: JsonValue) {
   return ghJson(["api", `repos/${targetRepo}/issues/${number}`]);
 }
@@ -1326,6 +1342,11 @@ function fetchPullRequestView(number: JsonValue) {
       "title",
     ].join(","),
   ]);
+}
+
+function compactGhError(error: unknown): string {
+  const text = ghErrorText(error).replace(/\s+/g, " ").trim();
+  return text ? text.slice(0, 240) : "unknown GitHub CLI error";
 }
 
 function resolveMaintainerCommandAuthorization(command: LooseRecord) {
