@@ -14,6 +14,8 @@ test("security signal detection ignores non-security advisory wording", () => {
 
 test("security signal detection keeps explicit security advisory wording", () => {
   assert.equal(hasSecuritySignalText("security advisory triage for GHSA-1234-5678-abcd"), true);
+  assert.equal(hasSecuritySignalText("CVE-2026-12345 is routed to the security lane"), true);
+  assert.equal(hasSecuritySignalText({ name: "security:sensitive" }), true);
 });
 
 test("deterministic security signals ignore prose credential wording", () => {

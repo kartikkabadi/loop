@@ -1,22 +1,105 @@
 import type { JsonValue, LooseRecord } from "./json-types.js";
 
-const SECURITY_SIGNAL_PATTERN =
-  /\b(vulnerabilit(?:y|ies)|cve-\d+|ghsa|exploit|ssrf|xss|csrf|rce|(?:sql|command|code|prompt)\s*injection|auth(?:entication)?\s*bypass|privilege\s+escalation|sensitive\s+data|security\s+(?:issue|bug|fix|patch|advisory|triage)|(?:secretref|secret|credential|api[-_\s]?key|private[-_\s]?key|token).{0,80}(?:leak(?:ed|age)?|expos(?:e|ed|ure)|plaintext|plain[-_\s]?text)|(?:leak(?:ed|age)?|expos(?:e|ed|ure)|plaintext|plain[-_\s]?text).{0,80}(?:secretref|secret|credential|api[-_\s]?key|private[-_\s]?key|token))\b/i;
-const SECURITY_LABEL_PATTERN =
-  /^(?:security|security[-_: ]sensitive|security[:/].+|type:\s*security|kind:\s*security)$/i;
-const STRUCTURED_SECURITY_MARKER_PATTERN =
-  /<!--\s*clawsweeper-(?:security|route|verdict)\s*:\s*(?:security|security-sensitive|sensitive|route-security|central-security)\b[^>]*-->/i;
+export type SecuritySignalInput = {
+  labels?: LooseRecord[];
+  comments?: LooseRecord[];
+  text?: LooseRecord[];
+  frontmatter?: LooseRecord;
+};
+
+const SECURITY_LABELS = new Set([
+  "security",
+  "security-sensitive",
+  "security sensitive",
+  "type: security",
+  "type:security",
+  "kind: security",
+  "kind:security",
+]);
+
+const SECURITY_LABEL_PREFIXES = ["security:", "security/"];
+const SECURITY_MARKERS = [
+  "clawsweeper-security:security",
+  "clawsweeper-security:security-sensitive",
+  "clawsweeper-security:sensitive",
+  "clawsweeper-route:security",
+  "clawsweeper-route:route-security",
+  "clawsweeper-route:central-security",
+  "clawsweeper-verdict:security",
+  "clawsweeper-verdict:security-sensitive",
+];
 
 export function hasSecuritySignalText(...values: LooseRecord[]) {
-  const text = values.flatMap(flattenSecurityText).join("\n");
-  return SECURITY_SIGNAL_PATTERN.test(text);
+  return hasSecuritySignal({ text: values });
 }
 
 export function hasDeterministicSecuritySignal({ labels = [], comments = [] }: LooseRecord = {}) {
-  const labelTexts = flattenSecurityText(labels).map((label) => label.trim());
-  if (labelTexts.some((label) => SECURITY_LABEL_PATTERN.test(label))) return true;
-  const commentText = comments.flatMap(flattenSecurityText).join("\n");
-  return STRUCTURED_SECURITY_MARKER_PATTERN.test(commentText);
+  return hasSecuritySignal({ labels, comments });
+}
+
+export function hasSecuritySignal({
+  labels = [],
+  comments = [],
+  text = [],
+  frontmatter = {},
+}: SecuritySignalInput = {}) {
+  return (
+    hasSecurityFrontmatter(frontmatter) ||
+    hasSecurityLabel([...labels, ...text]) ||
+    [...comments, ...text].some(hasStructuredSecurityText)
+  );
+}
+
+function hasSecurityFrontmatter(frontmatter: LooseRecord) {
+  return (
+    frontmatter.security_sensitive === true ||
+    String(frontmatter.route ?? "").toLowerCase() === "security" ||
+    String(frontmatter.verdict ?? "").toLowerCase() === "security"
+  );
+}
+
+function hasSecurityLabel(labels: LooseRecord[]) {
+  return labels.flatMap(labelTexts).some(isSecurityLabel);
+}
+
+function labelTexts(value: JsonValue): string[] {
+  if (Array.isArray(value)) return value.flatMap(labelTexts);
+  if (value && typeof value === "object") {
+    const record = value as Record<string, JsonValue>;
+    return [record.name, record.label, record.value].flatMap(labelTexts);
+  }
+  return [String(value ?? "")];
+}
+
+function isSecurityLabel(value: string) {
+  const normalized = normalizeToken(value);
+  return (
+    SECURITY_LABELS.has(normalized) ||
+    SECURITY_LABEL_PREFIXES.some((prefix) => normalized.startsWith(prefix))
+  );
+}
+
+function hasStructuredSecurityText(value: JsonValue): boolean {
+  return flattenSecurityText(value).some((entry) => {
+    const normalized = normalizeToken(entry);
+    return (
+      SECURITY_MARKERS.some((marker) => normalized.includes(marker)) ||
+      containsAdvisoryIdentifier(normalized)
+    );
+  });
+}
+
+function containsAdvisoryIdentifier(value: string) {
+  return value.split(/[^a-z0-9-]+/i).some((part) => {
+    const token = part.toLowerCase();
+    return (
+      /^cve-\d{4}-\d{4,}$/.test(token) || /^ghsa-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/.test(token)
+    );
+  });
+}
+
+function normalizeToken(value: string) {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 function flattenSecurityText(value: JsonValue): string[] {
