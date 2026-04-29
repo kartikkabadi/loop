@@ -2,20 +2,33 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 
+const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
+const DEFAULT_IGNORED_CHECKS = ["auto-response", "Labeler", "Stale"];
+
 export function summarizeChecks(checks: LooseRecord[]) {
+  const ignored = ignoredCheckNames();
   const counts: Record<string, number> = {};
   const blockers: LooseRecord[] = [];
   for (const check of checks) {
     const name = String(check.name ?? check.context ?? "unknown check");
+    const workflow = String(check.workflowName ?? "");
+    const ignoredCheck = ignored.has(name.toLowerCase()) || ignored.has(workflow.toLowerCase());
     const status = String(check.status ?? check.state ?? "").toUpperCase();
     const conclusion = String(check.conclusion ?? "").toUpperCase();
     const key = conclusion || status || "UNKNOWN";
     counts[key] = (counts[key] ?? 0) + 1;
+    if (ignoredCheck) continue;
     if (status && !["COMPLETED", "SUCCESS"].includes(status)) blockers.push(`${name}:${status}`);
-    if (conclusion && !["SUCCESS", "SKIPPED", "NEUTRAL"].includes(conclusion))
+    if (conclusion && !PASSING_CHECK_CONCLUSIONS.has(conclusion))
       blockers.push(`${name}:${conclusion}`);
   }
   return { total: checks.length, counts, blockers };
+}
+
+function ignoredCheckNames() {
+  return commaSet(
+    process.env.CLAWSWEEPER_COMMENT_ROUTER_IGNORE_CHECKS ?? DEFAULT_IGNORED_CHECKS.join(","),
+  );
 }
 
 export function readLedger(file: JsonValue) {

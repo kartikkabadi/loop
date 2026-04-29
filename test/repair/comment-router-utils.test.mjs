@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { appendLedger } from "../../dist/repair/comment-router-utils.js";
+import { appendLedger, summarizeChecks } from "../../dist/repair/comment-router-utils.js";
 
 test("appendLedger keeps edited comment versions separate", () => {
   const ledger = { updated_at: null, commands: [] };
@@ -53,4 +53,38 @@ test("appendLedger leaves waiting commands retryable", () => {
   ]);
 
   assert.equal(ledger.commands.length, 0);
+});
+
+test("summarizeChecks ignores cancelled default non-gating checks", () => {
+  const checks = summarizeChecks([
+    {
+      name: "auto-response",
+      workflowName: "Auto response",
+      status: "COMPLETED",
+      conclusion: "CANCELLED",
+    },
+    {
+      name: "CI",
+      workflowName: "CI",
+      status: "COMPLETED",
+      conclusion: "SUCCESS",
+    },
+  ]);
+
+  assert.equal(checks.total, 2);
+  assert.deepEqual(checks.blockers, []);
+  assert.equal(checks.counts.CANCELLED, 1);
+});
+
+test("summarizeChecks still blocks cancelled required checks", () => {
+  const checks = summarizeChecks([
+    {
+      name: "required-build",
+      workflowName: "CI",
+      status: "COMPLETED",
+      conclusion: "CANCELLED",
+    },
+  ]);
+
+  assert.deepEqual(checks.blockers, ["required-build:CANCELLED"]);
 });
