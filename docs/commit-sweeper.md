@@ -66,7 +66,9 @@ Manual workflow dispatch supports:
 - `before_sha`: optional range start; when present, review every commit in
   `before_sha..commit_sha`
 - `additional_prompt`: appended to the Codex prompt for this run
-- `create_checks`: create/update GitHub Checks, default `false`
+- `create_checks`: create/update GitHub Checks. Leave blank to use the receiver
+  repo variable fallback; otherwise pass `true` or `false`. The effective
+  default is `false`.
 - `enabled`: emergency no-op switch
 - `commit_offset`: internal continuation offset
 

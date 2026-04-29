@@ -6,8 +6,15 @@ events with `repository_dispatch` so ClawSweeper can run a single-job exact
 one-item review, sync the durable review comment, and immediately apply a safe
 close proposal for that same item.
 
-Copy this workflow into each target repository as
-`.github/workflows/clawsweeper-dispatch.yml`:
+This document covers issue and PR item dispatch. Commit review dispatch is
+documented separately in [commit-dispatcher.md](commit-dispatcher.md). A target
+repository can keep the two lanes in separate workflow files or combine them in
+one `.github/workflows/clawsweeper-dispatch.yml`; `openclaw/openclaw` uses the
+combined form.
+
+For issue and PR dispatch, copy this workflow into each target repository as
+`.github/workflows/clawsweeper-dispatch.yml`, or merge these triggers and the
+`Dispatch exact ClawSweeper review` step into an existing combined dispatcher:
 
 ```yaml
 name: ClawSweeper Dispatch

@@ -16,7 +16,10 @@ That path is canonical. Rerunning a commit review overwrites the existing report
 for that SHA, including manual reruns with an additional prompt.
 
 Copy this workflow into each target repository as
-`.github/workflows/clawsweeper-commit-dispatch.yml`:
+`.github/workflows/clawsweeper-commit-dispatch.yml`, or merge the `push` trigger
+and `Dispatch commit review` step into the combined dispatcher from
+[target-dispatcher.md](target-dispatcher.md). `openclaw/openclaw` uses the
+combined `.github/workflows/clawsweeper-dispatch.yml` form.
 
 ```yaml
 name: ClawSweeper Commit Dispatch
@@ -98,7 +101,9 @@ this repository. Inputs:
 - `before_sha`: optional base SHA; when present, the workflow reviews every
   commit in `before_sha..commit_sha`
 - `additional_prompt`: appended to the commit-review prompt for that run
-- `create_checks`: create/update the target commit Check Run, default `false`
+- `create_checks`: create/update the target commit Check Run. Leave blank to
+  use the receiver repo variable fallback; otherwise pass `true` or `false`.
+  The effective default is `false`.
 - `enabled`: emergency no-op switch
 
 Large ranges are paged automatically. Each workflow run starts one matrix worker
