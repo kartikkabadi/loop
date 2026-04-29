@@ -649,7 +649,7 @@ jobs:
           working-directory: clawsweeper
           build-script: build
 
-      - uses: ./.github/actions/setup-codex
+      - uses: ./clawsweeper/.github/actions/setup-codex
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:

@@ -737,9 +737,9 @@ and manual dispatches.
 Required secrets:
 
 - `OPENAI_API_KEY`: OpenAI API key used to log Codex in before review shards run.
-- `CLAWSWEEPER_APP_CLIENT_ID`: public GitHub App client ID for `openclaw-ci`.
+- `CLAWSWEEPER_APP_CLIENT_ID`: public GitHub App client ID for `clawsweeper`.
   Currently `Iv23liOECG0slfuhz093`.
-- `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `openclaw-ci`; plan/review
+- `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `clawsweeper`; plan/review
   jobs use a short-lived GitHub App installation token for read-heavy target API
   calls, commit review uses a read-scoped target token while Codex runs, and
   apply/comment-sync/check jobs use the app token for comments, closes, and
@@ -752,7 +752,7 @@ Token flow:
 
 - Review shards log Codex in with `OPENAI_API_KEY`, then run without OpenAI or
   Codex token environment variables.
-- ClawSweeper uses the `openclaw-ci` GitHub App token for read-heavy target
+- ClawSweeper uses the `clawsweeper` GitHub App token for read-heavy target
   context.
 - Apply mode uses the same app token for review comments and closes, so GitHub
   attributes mutations to the app bot account instead of a PAT user.
@@ -761,7 +761,7 @@ Token flow:
   after Codex exits.
 - The built-in `GITHUB_TOKEN` commits generated reports back to this repo.
 
-Required `openclaw-ci` app permissions:
+Required `clawsweeper` app permissions:
 
 - Contents: read/write, for report commits, repair branches, and repository
   dispatch inputs that need a contents-scoped installation token.
