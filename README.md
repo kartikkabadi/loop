@@ -31,17 +31,17 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 01:14 UTC
+Last dashboard update: Apr 29, 2026, 01:15 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4400 |
+| Open issues | 4401 |
 | Open PRs | 3467 |
-| Open items total | 7867 |
-| Reviewed files | 7479 |
+| Open items total | 7868 |
+| Reviewed files | 7480 |
 | Unreviewed open items | 388 |
 | Due now by cadence | 2077 |
 | Proposed closes awaiting apply | 0 |
@@ -54,25 +54,25 @@ Last dashboard update: Apr 29, 2026, 01:14 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6951 | 6569 | 382 | 2012 | 0 | 7 | 10600 | Apr 29, 2026, 01:11 UTC | Apr 29, 2026, 01:12 UTC | 646 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6952 | 6570 | 382 | 2012 | 0 | 7 | 10600 | Apr 29, 2026, 01:13 UTC | Apr 29, 2026, 01:12 UTC | 631 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 916 | 910 | 6 | 65 | 0 | 0 | 5 | Apr 29, 2026, 00:42 UTC | Apr 29, 2026, 00:32 UTC | 429 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake publish complete | Apr 29, 2026, 01:13 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25085809775) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Audit finished | Apr 29, 2026, 01:08 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25085857207) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 29, 2026, 01:15 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25085809775) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 01:13 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25085973133) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 01:11 UTC. Latest close: Apr 29, 2026, 01:12 UTC. Latest comment sync: Apr 29, 2026, 01:11 UTC.
+Latest review: Apr 29, 2026, 01:13 UTC. Latest close: Apr 29, 2026, 01:12 UTC. Latest comment sync: Apr 29, 2026, 01:15 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 32 | 1 | 31 | 0 | 6 | 12 | 0 |
-| Last hour | 570 | 7 | 563 | 6 | 14 | 1075 | 3 |
-| Last 24 hours | 6477 | 385 | 6092 | 14 | 794 | 2262 | 27 |
+| Last 15 minutes | 34 | 1 | 33 | 0 | 6 | 34 | 0 |
+| Last hour | 569 | 7 | 562 | 6 | 14 | 1060 | 3 |
+| Last 24 hours | 6478 | 385 | 6093 | 14 | 794 | 2283 | 27 |
 
 ### Recently Closed Across Repos
 
@@ -108,6 +108,8 @@ Latest review: Apr 29, 2026, 01:11 UTC. Latest close: Apr 29, 2026, 01:12 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#43190](https://github.com/openclaw/openclaw/pull/43190) | MS Teams: add channel archive persistence and deleted-channel cleanup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/43190.md) | complete | Apr 29, 2026, 01:13 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73790](https://github.com/openclaw/openclaw/pull/73790) | fix(agent): do not persist fallback model as session runtime model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73790.md) | complete | Apr 29, 2026, 01:12 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73859](https://github.com/openclaw/openclaw/issues/73859) | [Bug]: Built-in plugins (minimax, google, talk-voice) fail with RangeError: Maximum call stack size exceeded on Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73859.md) | complete | Apr 29, 2026, 01:11 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73699](https://github.com/openclaw/openclaw/issues/73699) | Bridge Discord voice channel I/O to text-channel agent session (voice-as-IO) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73699.md) | complete | Apr 29, 2026, 01:11 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73865](https://github.com/openclaw/openclaw/issues/73865) | [Bug]: Gateway startup hangs indefinitely at pre-sidecar readiness path (never reaches 'ready') | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73865.md) | complete | Apr 29, 2026, 01:11 UTC |
@@ -116,8 +118,6 @@ Latest review: Apr 29, 2026, 01:11 UTC. Latest close: Apr 29, 2026, 01:12 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#66911](https://github.com/openclaw/openclaw/pull/66911) | feat(auth): add models auth clean command to prune stale auth profiles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/66911.md) | complete | Apr 29, 2026, 01:11 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#67174](https://github.com/openclaw/openclaw/pull/67174) | Teams: support separate graphTenantId for cross-tenant Graph API access | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/67174.md) | complete | Apr 29, 2026, 01:11 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73812](https://github.com/openclaw/openclaw/pull/73812) | Fix restart continuations after explicit restarts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73812.md) | complete | Apr 29, 2026, 01:11 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73836](https://github.com/openclaw/openclaw/issues/73836) | [Bug]: Control UI/Gateway responsiveness regression during active runs: UI reconnect stalls, Telegram typing gaps, heartbeat poll noise, and media mirror UX issues | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73836.md) | complete | Apr 29, 2026, 01:11 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73793](https://github.com/openclaw/openclaw/issues/73793) | Capability-provider lookups bypass cache when plugins.entries is non-empty (~25-30s latency per turn) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73793.md) | complete | Apr 29, 2026, 01:11 UTC |
 
 </details>
 
@@ -135,11 +135,11 @@ Latest review: Apr 29, 2026, 01:11 UTC. Latest close: Apr 29, 2026, 01:12 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 01:13 UTC
+Updated: Apr 29, 2026, 01:15 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 25085809775. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 66911,67174,73646,73699,73728,73738,73792,73793,73794,73798,73812,73836,73837,73859,73860,73861,73864,73865,73882,73894.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085809775](https://github.com/openclaw/clawsweeper/actions/runs/25085809775)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -148,10 +148,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085809775](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3524 |
+| Open issues | 3525 |
 | Open PRs | 3427 |
-| Open items total | 6951 |
-| Reviewed files | 6569 |
+| Open items total | 6952 |
+| Reviewed files | 6570 |
 | Unreviewed open items | 382 |
 | Archived closed files | 13850 |
 
@@ -161,9 +161,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085809775](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3340 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3219 |
+| Fresh reviewed PRs in the last 7 days | 3220 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6559 |
+| Fresh verified reviews in the last 7 days | 6560 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 7 |
 | Closed by Codex apply | 10600 |
@@ -173,8 +173,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085809775](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 90/892 current (802 due, 10.1%) |
-| Hourly hot item cadence (<7d) | 90/892 current (802 due, 10.1%) |
+| Hourly cadence coverage | 91/893 current (802 due, 10.2%) |
+| Hourly hot item cadence (<7d) | 91/893 current (802 due, 10.2%) |
 | Daily cadence coverage | 3034/3859 current (825 due, 78.6%) |
 | Daily PR cadence | 2257/2701 current (444 due, 83.6%) |
 | Daily new issue cadence (<30d) | 777/1158 current (381 due, 67.1%) |
@@ -215,13 +215,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 01:11 UTC. Latest close: Apr 29, 2026, 01:12 UTC. Latest comment sync: Apr 29, 2026, 01:11 UTC.
+Latest review: Apr 29, 2026, 01:13 UTC. Latest close: Apr 29, 2026, 01:12 UTC. Latest comment sync: Apr 29, 2026, 01:15 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 32 | 1 | 31 | 0 | 6 | 12 | 0 |
-| Last hour | 555 | 7 | 548 | 4 | 13 | 646 | 3 |
-| Last 24 hours | 5552 | 382 | 5170 | 7 | 779 | 1420 | 27 |
+| Last 15 minutes | 34 | 1 | 33 | 0 | 6 | 34 | 0 |
+| Last hour | 556 | 7 | 549 | 4 | 13 | 631 | 3 |
+| Last 24 hours | 5553 | 382 | 5171 | 7 | 779 | 1441 | 27 |
 
 #### Recently Closed
 
@@ -254,6 +254,8 @@ Latest review: Apr 29, 2026, 01:11 UTC. Latest close: Apr 29, 2026, 01:12 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#43190](https://github.com/openclaw/openclaw/pull/43190) | MS Teams: add channel archive persistence and deleted-channel cleanup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/43190.md) | complete | Apr 29, 2026, 01:13 UTC |
+| [#73790](https://github.com/openclaw/openclaw/pull/73790) | fix(agent): do not persist fallback model as session runtime model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73790.md) | complete | Apr 29, 2026, 01:12 UTC |
 | [#73859](https://github.com/openclaw/openclaw/issues/73859) | [Bug]: Built-in plugins (minimax, google, talk-voice) fail with RangeError: Maximum call stack size exceeded on Windows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73859.md) | complete | Apr 29, 2026, 01:11 UTC |
 | [#73699](https://github.com/openclaw/openclaw/issues/73699) | Bridge Discord voice channel I/O to text-channel agent session (voice-as-IO) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73699.md) | complete | Apr 29, 2026, 01:11 UTC |
 | [#73865](https://github.com/openclaw/openclaw/issues/73865) | [Bug]: Gateway startup hangs indefinitely at pre-sidecar readiness path (never reaches 'ready') | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73865.md) | complete | Apr 29, 2026, 01:11 UTC |
@@ -262,8 +264,6 @@ Latest review: Apr 29, 2026, 01:11 UTC. Latest close: Apr 29, 2026, 01:12 UTC. L
 | [#66911](https://github.com/openclaw/openclaw/pull/66911) | feat(auth): add models auth clean command to prune stale auth profiles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/66911.md) | complete | Apr 29, 2026, 01:11 UTC |
 | [#67174](https://github.com/openclaw/openclaw/pull/67174) | Teams: support separate graphTenantId for cross-tenant Graph API access | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/67174.md) | complete | Apr 29, 2026, 01:11 UTC |
 | [#73812](https://github.com/openclaw/openclaw/pull/73812) | Fix restart continuations after explicit restarts | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73812.md) | complete | Apr 29, 2026, 01:11 UTC |
-| [#73836](https://github.com/openclaw/openclaw/issues/73836) | [Bug]: Control UI/Gateway responsiveness regression during active runs: UI reconnect stalls, Telegram typing gaps, heartbeat poll noise, and media mirror UX issues | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73836.md) | complete | Apr 29, 2026, 01:11 UTC |
-| [#73793](https://github.com/openclaw/openclaw/issues/73793) | Capability-provider lookups bypass cache when plugins.entries is non-empty (~25-30s latency per turn) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73793.md) | complete | Apr 29, 2026, 01:11 UTC |
 
 </details>
 
@@ -362,7 +362,7 @@ Latest review: Apr 29, 2026, 00:42 UTC. Latest close: Apr 29, 2026, 00:32 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 15 | 0 | 15 | 2 | 1 | 429 | 0 |
+| Last hour | 13 | 0 | 13 | 2 | 1 | 429 | 0 |
 | Last 24 hours | 925 | 3 | 922 | 7 | 15 | 842 | 0 |
 
 #### Recently Closed
