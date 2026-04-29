@@ -87,53 +87,54 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 09:42 UTC
+Last dashboard update: Apr 29, 2026, 09:43 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4236 |
-| Open PRs | 3292 |
-| Open items total | 7528 |
+| Open issues | 4414 |
+| Open PRs | 3479 |
+| Open items total | 7893 |
 | Reviewed files | 7528 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 1967 |
+| Unreviewed open items | 365 |
+| Due now by cadence | 2332 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 623 |
 | Closed by Codex apply | 10752 |
 | Failed or stale reviews | 27 |
-| Archived closed files | 14181 |
+| Archived closed files | 14182 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6611 | 6611 | 0 | 1900 | 0 | 577 | 10744 | Apr 29, 2026, 09:40 UTC | Apr 29, 2026, 09:36 UTC | 412 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 917 | 917 | 0 | 67 | 0 | 46 | 8 | Apr 29, 2026, 08:51 UTC | Apr 29, 2026, 08:25 UTC | 376 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6969 | 6611 | 358 | 2258 | 0 | 577 | 10744 | Apr 29, 2026, 09:41 UTC | Apr 29, 2026, 09:41 UTC | 412 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 924 | 917 | 7 | 74 | 0 | 46 | 8 | Apr 29, 2026, 08:51 UTC | Apr 29, 2026, 08:25 UTC | 376 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
 | [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 09:42 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25101798197) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 09:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25101662889) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 09:43 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25101798197) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 09:40 UTC. Latest close: Apr 29, 2026, 09:36 UTC. Latest comment sync: Apr 29, 2026, 09:41 UTC.
+Latest review: Apr 29, 2026, 09:41 UTC. Latest close: Apr 29, 2026, 09:41 UTC. Latest comment sync: Apr 29, 2026, 09:41 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 1 | 18 | 0 | 1 | 22 | 0 |
-| Last hour | 307 | 12 | 295 | 10 | 45 | 788 | 2 |
-| Last 24 hours | 6904 | 452 | 6452 | 23 | 756 | 2366 | 25 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 2 | 20 | 1 |
+| Last hour | 295 | 12 | 283 | 10 | 46 | 788 | 3 |
+| Last 24 hours | 6905 | 452 | 6453 | 23 | 757 | 2366 | 26 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74259](https://github.com/openclaw/openclaw/issues/74259) | Update QA lab parity gate for GPT-5.5 vs Opus 4.7 and harden preflight | already closed before apply | Apr 29, 2026, 09:41 UTC | [records/openclaw-openclaw/closed/74259.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74259.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#65037](https://github.com/openclaw/openclaw/pull/65037) | fix(subagents): harden deferred completion delivery retry state | duplicate or superseded | Apr 29, 2026, 09:36 UTC | [records/openclaw-openclaw/closed/65037.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65037.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74244](https://github.com/openclaw/openclaw/issues/74244) | [Bug]: Gemini API error (400): missing `thought_signature` | already implemented on main | Apr 29, 2026, 09:23 UTC | [records/openclaw-openclaw/closed/74244.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74244.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74248](https://github.com/openclaw/openclaw/issues/74248) | [Bug]: Discord image attachments fail when sharp is missing from package runtime | duplicate or superseded | Apr 29, 2026, 09:21 UTC | [records/openclaw-openclaw/closed/74248.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74248.md) |
@@ -143,7 +144,6 @@ Latest review: Apr 29, 2026, 09:40 UTC. Latest close: Apr 29, 2026, 09:36 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#55231](https://github.com/openclaw/openclaw/issues/55231) | delivery-recovery flushes stale pending messages as batch on every restart | closed externally after review | Apr 29, 2026, 09:10 UTC | [records/openclaw-openclaw/closed/55231.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/55231.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#44068](https://github.com/openclaw/openclaw/pull/44068) | fix(media-understanding): skip legacy Word docs from text extraction | closed externally after review | Apr 29, 2026, 09:10 UTC | [records/openclaw-openclaw/closed/44068.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/44068.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#39138](https://github.com/openclaw/openclaw/issues/39138) | Gateway 重启后 delivery recovery 重新发送大量旧消息（包括 15 小时前的） | closed externally after review | Apr 29, 2026, 09:10 UTC | [records/openclaw-openclaw/closed/39138.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/39138.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#45592](https://github.com/openclaw/openclaw/pull/45592) | feat(anthropic): migrate 1M context from beta to GA | closed externally after review | Apr 29, 2026, 09:08 UTC | [records/openclaw-openclaw/closed/45592.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/45592.md) |
 
 ### Work Candidates Across Repos
 
@@ -212,12 +212,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25101798197](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3352 |
-| Open PRs | 3259 |
-| Open items total | 6611 |
+| Open issues | 3529 |
+| Open PRs | 3440 |
+| Open items total | 6969 |
 | Reviewed files | 6611 |
-| Unreviewed open items | 0 |
-| Archived closed files | 14158 |
+| Unreviewed open items | 358 |
+| Archived closed files | 14159 |
 
 #### Review Outcomes
 
@@ -243,7 +243,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25101798197](https://
 | Daily PR cadence | 2123/2631 current (508 due, 80.7%) |
 | Daily new issue cadence (<30d) | 715/1133 current (418 due, 63.1%) |
 | Weekly older issue cadence | 1793/1798 current (5 due, 99.7%) |
-| Due now by cadence | 1900 |
+| Due now by cadence | 2258 |
 
 ### Audit Health
 
@@ -279,18 +279,19 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 09:40 UTC. Latest close: Apr 29, 2026, 09:36 UTC. Latest comment sync: Apr 29, 2026, 09:41 UTC.
+Latest review: Apr 29, 2026, 09:41 UTC. Latest close: Apr 29, 2026, 09:41 UTC. Latest comment sync: Apr 29, 2026, 09:41 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 1 | 18 | 0 | 1 | 22 | 0 |
-| Last hour | 270 | 12 | 258 | 5 | 45 | 412 | 2 |
-| Last 24 hours | 5975 | 452 | 5523 | 12 | 743 | 1570 | 25 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 2 | 20 | 1 |
+| Last hour | 264 | 12 | 252 | 5 | 46 | 412 | 3 |
+| Last 24 hours | 5976 | 452 | 5524 | 12 | 744 | 1570 | 26 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74259](https://github.com/openclaw/openclaw/issues/74259) | Update QA lab parity gate for GPT-5.5 vs Opus 4.7 and harden preflight | already closed before apply | Apr 29, 2026, 09:41 UTC | [records/openclaw-openclaw/closed/74259.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74259.md) |
 | [#65037](https://github.com/openclaw/openclaw/pull/65037) | fix(subagents): harden deferred completion delivery retry state | duplicate or superseded | Apr 29, 2026, 09:36 UTC | [records/openclaw-openclaw/closed/65037.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65037.md) |
 | [#74244](https://github.com/openclaw/openclaw/issues/74244) | [Bug]: Gemini API error (400): missing `thought_signature` | already implemented on main | Apr 29, 2026, 09:23 UTC | [records/openclaw-openclaw/closed/74244.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74244.md) |
 | [#74248](https://github.com/openclaw/openclaw/issues/74248) | [Bug]: Discord image attachments fail when sharp is missing from package runtime | duplicate or superseded | Apr 29, 2026, 09:21 UTC | [records/openclaw-openclaw/closed/74248.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74248.md) |
@@ -300,7 +301,6 @@ Latest review: Apr 29, 2026, 09:40 UTC. Latest close: Apr 29, 2026, 09:36 UTC. L
 | [#55231](https://github.com/openclaw/openclaw/issues/55231) | delivery-recovery flushes stale pending messages as batch on every restart | closed externally after review | Apr 29, 2026, 09:10 UTC | [records/openclaw-openclaw/closed/55231.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/55231.md) |
 | [#44068](https://github.com/openclaw/openclaw/pull/44068) | fix(media-understanding): skip legacy Word docs from text extraction | closed externally after review | Apr 29, 2026, 09:10 UTC | [records/openclaw-openclaw/closed/44068.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/44068.md) |
 | [#39138](https://github.com/openclaw/openclaw/issues/39138) | Gateway 重启后 delivery recovery 重新发送大量旧消息（包括 15 小时前的） | closed externally after review | Apr 29, 2026, 09:10 UTC | [records/openclaw-openclaw/closed/39138.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/39138.md) |
-| [#45592](https://github.com/openclaw/openclaw/pull/45592) | feat(anthropic): migrate 1M context from beta to GA | closed externally after review | Apr 29, 2026, 09:08 UTC | [records/openclaw-openclaw/closed/45592.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/45592.md) |
 
 #### Work Candidates
 
@@ -346,12 +346,12 @@ Latest review: Apr 29, 2026, 09:40 UTC. Latest close: Apr 29, 2026, 09:36 UTC. L
 
 Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
 
-Updated: Apr 29, 2026, 09:41 UTC
+Updated: Apr 29, 2026, 09:43 UTC
 
-State: Review publish complete
+State: Review in progress
 
-Merged review artifacts for run 25101662889. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25101662889](https://github.com/openclaw/clawsweeper/actions/runs/25101662889)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25101798197](https://github.com/openclaw/clawsweeper/actions/runs/25101798197)
 <!-- clawsweeper-status:openclaw-clawhub:end -->
 
 #### Queue
@@ -359,11 +359,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25101662889](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues | 884 |
-| Open PRs | 33 |
-| Open items total | 917 |
+| Open issues | 885 |
+| Open PRs | 39 |
+| Open items total | 924 |
 | Reviewed files | 917 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 7 |
 | Archived closed files | 23 |
 
 #### Review Outcomes
@@ -390,7 +390,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25101662889](https://
 | Daily PR cadence | 20/21 current (1 due, 95.2%) |
 | Daily new issue cadence (<30d) | 190/194 current (4 due, 97.9%) |
 | Weekly older issue cadence | 640/646 current (6 due, 99.1%) |
-| Due now by cadence | 67 |
+| Due now by cadence | 74 |
 
 ### Audit Health
 
@@ -429,7 +429,7 @@ Latest review: Apr 29, 2026, 08:51 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 37 | 0 | 37 | 5 | 0 | 376 | 0 |
+| Last hour | 31 | 0 | 31 | 5 | 0 | 376 | 0 |
 | Last 24 hours | 929 | 0 | 929 | 11 | 13 | 796 | 0 |
 
 #### Recently Closed
