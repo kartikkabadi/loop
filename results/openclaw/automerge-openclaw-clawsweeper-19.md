@@ -2,12 +2,12 @@
 repo: "openclaw/clawsweeper"
 cluster_id: "automerge-openclaw-clawsweeper-19"
 mode: "autonomous"
-run_id: "25113069370"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25113069370"
-head_sha: "0f76d14a52f0fe27a4d0a56f913b058a45bcba21"
-workflow_conclusion: "cancelled"
+run_id: "25113267207"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25113267207"
+head_sha: "3584580b702705ac6df3fccf5daa08c91dd68e92"
+workflow_conclusion: "success"
 result_status: "planned"
-published_at: "2026-04-29T13:59:43.386Z"
+published_at: "2026-04-29T14:08:06.367Z"
 canonical: "https://github.com/openclaw/clawsweeper/pull/19"
 canonical_issue: null
 canonical_pr: "https://github.com/openclaw/clawsweeper/pull/19"
@@ -16,7 +16,7 @@ fix_executed: 0
 fix_failed: 0
 fix_blocked: 0
 apply_executed: 0
-apply_blocked: 0
+apply_blocked: 1
 apply_skipped: 0
 needs_human_count: 0
 ---
@@ -25,9 +25,9 @@ needs_human_count: 0
 
 Repo: openclaw/clawsweeper
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25113069370](https://github.com/openclaw/clawsweeper/actions/runs/25113069370)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25113267207](https://github.com/openclaw/clawsweeper/actions/runs/25113267207)
 
-Workflow conclusion: cancelled
+Workflow conclusion: success
 
 Worker result: planned
 
@@ -35,7 +35,7 @@ Canonical: https://github.com/openclaw/clawsweeper/pull/19
 
 ## Summary
 
-PR #19 is the canonical automerge smoke PR, but it is not merge-ready: the current head has an actionable Codex review finding and failing `pnpm check`. The branch cannot be safely repaired in place because `maintainer_can_modify` is false, so the planned path is a narrow credited replacement fix PR.
+PR #19 is the canonical automerge candidate, but it is not merge-ready: pnpm check is failing and Codex review identified an actionable test assertion fix. The source branch cannot be safely updated because maintainer_can_modify=false, so the automation-safe path is a narrow credited replacement fix PR.
 
 ## Impact
 
@@ -46,7 +46,7 @@ PR #19 is the canonical automerge smoke PR, but it is not merge-ready: the curre
 | Fix failed | 0 |
 | Fix blocked | 0 |
 | Applied executions | 0 |
-| Apply blocked | 0 |
+| Apply blocked | 1 |
 | Apply skipped | 0 |
 | Needs human | 0 |
 
@@ -54,20 +54,20 @@ PR #19 is the canonical automerge smoke PR, but it is not merge-ready: the curre
 
 | Action | Status | Target | Branch | Reason |
 | --- | --- | --- | --- | --- |
-| _None_ |  |  |  |  |
+| open_fix_pr | opened | https://github.com/openclaw/clawsweeper/pull/20 | clawsweeper/automerge-openclaw-clawsweeper-19 |  |
 
 ## Apply Actions
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| _None_ |  |  |  |  |
+| #20 | merge_canonical | blocked | fix_pr | job does not allow merge |
 
 ## Worker Action Matrix
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| #19 | fix_needed | planned | canonical | The canonical PR is useful and narrow, but failing validation and an actionable review-bot finding block automerge. Because the branch is not maintainer-editable, repair should proceed as a credited replacement PR rather than a branch push. |
-| cluster:automerge-openclaw-clawsweeper-19 | build_fix_artifact | planned |  | A narrow replacement fix PR is allowed by the job and preserves contributor credit while avoiding an unsafe push to a non-editable branch. |
+| #19 | fix_needed | planned | canonical | Canonical PR #19 needs a narrow test repair, but the branch is not maintainer-editable; create a credited replacement PR instead of merging or closing. |
+| cluster:automerge-openclaw-clawsweeper-19 | build_fix_artifact | planned |  | Build a narrow replacement PR that preserves #19's regression-test intent and contributor attribution. |
 
 ## Needs Human
 

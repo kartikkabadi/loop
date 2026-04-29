@@ -45,7 +45,7 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 14:00 UTC
+Last dashboard update: Apr 29, 2026, 14:09 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
@@ -58,31 +58,32 @@ Scope: 253 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Policy-archived clusters | 1 | audit |
 | Clean completed clusters | 99 | 39.1% |
 | Needs-human clusters | 40 | 15.8% |
-| Latest successful clusters | 227 | 89.7% |
+| Latest successful clusters | 228 | 90.1% |
 | Latest failed clusters | 4 | 1.6% |
-| Latest cancelled clusters | 1 | 0.4% |
-| Run attempts archived | 493 | audit |
-| Fix action attempts | 164 | audit |
+| Latest cancelled clusters | 0 | 0.0% |
+| Run attempts archived | 494 | audit |
+| Fix action attempts | 165 | audit |
 | Fix actions executed | 0 | 0.0% |
-| Fix actions failed | 35 | 21.3% |
-| Fix actions blocked | 50 | 30.5% |
+| Fix actions failed | 35 | 21.2% |
+| Fix actions blocked | 50 | 30.3% |
 | Latest clusters with fix failures | 44 | 17.4% |
-| Distinct PRs touched | 825 | 100% |
-| Open PRs tracked | 269 | 32.6% |
-| Closed unmerged PRs tracked | 457 | 55.4% |
+| Distinct PRs touched | 826 | 100% |
+| Open PRs tracked | 270 | 32.7% |
+| Closed unmerged PRs tracked | 457 | 55.3% |
 | Completed close actions | 30 | 10.8% |
-| Completed merge actions | 23 | 8.3% |
+| Completed merge actions | 23 | 8.2% |
 | Duplicate closes | 22 | 73.3% |
 | Superseded closes | 0 | 0.0% |
 | Fixed-by-candidate closes | 0 | 0.0% |
 | Low-signal PR closes | 0 | 0.0% |
-| Blocked mutation attempts | 106 | 38.1% |
-| Skipped mutation attempts | 119 | 42.8% |
+| Blocked mutation attempts | 107 | 38.4% |
+| Skipped mutation attempts | 119 | 42.7% |
 
 ### Clusters Needing Inspection
 
 | Cluster | State | Source job | Reason | Report | Run |
 | --- | --- | --- | --- | --- | --- |
+| [automerge-openclaw-clawsweeper-19](results/openclaw/automerge-openclaw-clawsweeper-19.md) | apply blocked | jobs/openclaw/inbox/automerge-openclaw-clawsweeper-19.md | job does not allow merge | [report](results/openclaw/automerge-openclaw-clawsweeper-19.md) | [25113267207](https://github.com/openclaw/clawsweeper/actions/runs/25113267207) |
 | [clawsweeper-commit-openclaw-openclaw-fda8cc2a9d9a](results/openclaw/clawsweeper-commit-openclaw-openclaw-fda8cc2a9d9a.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-fda8cc2a9d9a.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-fda8cc2a9d9a.md) | [25095715904](https://github.com/openclaw/clawsweeper/actions/runs/25095715904) |
 | [clawsweeper-commit-openclaw-openclaw-6a4c866b6a8b](results/openclaw/clawsweeper-commit-openclaw-openclaw-6a4c866b6a8b.md) | fix blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-6a4c866b6a8b.md | fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1 | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-6a4c866b6a8b.md) | [25094690632](https://github.com/openclaw/clawsweeper/actions/runs/25094690632) |
 | [clawsweeper-commit-openclaw-openclaw-4eba70b532f8](results/openclaw/clawsweeper-commit-openclaw-openclaw-4eba70b532f8.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-4eba70b532f8.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-4eba70b532f8.md) | [25093937673](https://github.com/openclaw/clawsweeper/actions/runs/25093937673) |
@@ -107,7 +108,6 @@ Scope: 253 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | [ghcrawl-156595-autonomous-smoke](results/openclaw/ghcrawl-156595-autonomous-smoke.md) | apply blocked | jobs/openclaw/inbox/ghcrawl-156595-autonomous-smoke.md | merge requires CLAWSWEEPER_ALLOW_MERGE=1; labeled for human review | [report](results/openclaw/ghcrawl-156595-autonomous-smoke.md) | [25069741964](https://github.com/openclaw/clawsweeper/actions/runs/25069741964) |
 | [ghcrawl-156860-autonomous-smoke](results/openclaw/ghcrawl-156860-autonomous-smoke.md) | fix failed | jobs/openclaw/inbox/ghcrawl-156860-autonomous-smoke.md | base branch advanced after validation and clawsweeper-repair/repair-ghcrawl-156860-autonomous-smoke-53667 needs a fresh rebase pass: Reba... | [report](results/openclaw/ghcrawl-156860-autonomous-smoke.md) | [25043323244](https://github.com/openclaw/clawsweeper/actions/runs/25043323244) |
 | [ghcrawl-156991-autonomous-smoke](results/openclaw/ghcrawl-156991-autonomous-smoke.md) | apply blocked | jobs/openclaw/inbox/ghcrawl-156991-autonomous-smoke.md | merge requires CLAWSWEEPER_ALLOW_MERGE=1; labeled for human review | [report](results/openclaw/ghcrawl-156991-autonomous-smoke.md) | [25040442199](https://github.com/openclaw/clawsweeper/actions/runs/25040442199) |
-| [ghcrawl-157006-autonomous-smoke](results/openclaw/ghcrawl-157006-autonomous-smoke.md) | fix failed | jobs/openclaw/inbox/ghcrawl-157006-autonomous-smoke.md | Codex /review failed: structured output was not written to repair-codex-review-1.json; stdout={"type":"thread.started","thread_id":"019dd... | [report](results/openclaw/ghcrawl-157006-autonomous-smoke.md) | [25040511075](https://github.com/openclaw/clawsweeper/actions/runs/25040511075) |
 
 ### Fix Failure Queue
 
@@ -148,7 +148,7 @@ Scope: 253 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | merge requires CLAWSWEEPER_ALLOW_MERGE=1; labeled for human review | 10 | [ghcrawl-156679-autonomous-smoke](results/openclaw/ghcrawl-156679-autonomous-smoke.md) |
 | merge state status is UNSTABLE | 10 | [ghcrawl-156647-autonomous-smoke](results/openclaw/ghcrawl-156647-autonomous-smoke.md) |
 | target changed since worker review | 9 | [ghcrawl-156624-autonomous-smoke](results/openclaw/ghcrawl-156624-autonomous-smoke.md) |
-| job does not allow merge | 5 | [clawsweeper-commit-openclaw-openclaw-fda8cc2a9d9a](results/openclaw/clawsweeper-commit-openclaw-openclaw-fda8cc2a9d9a.md) |
+| job does not allow merge | 6 | [automerge-openclaw-clawsweeper-19](results/openclaw/automerge-openclaw-clawsweeper-19.md) |
 | mergeable state is CONFLICTING | 5 | [ghcrawl-156651-autonomous-smoke](results/openclaw/ghcrawl-156651-autonomous-smoke.md) |
 | target is not listed in job candidates | 4 | [ghcrawl-156682-autonomous-smoke](results/openclaw/ghcrawl-156682-autonomous-smoke.md) |
 | canonical is not listed in job refs | 2 | [ghcrawl-156658-autonomous-smoke](results/openclaw/ghcrawl-156658-autonomous-smoke.md) |
