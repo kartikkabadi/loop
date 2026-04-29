@@ -77,6 +77,7 @@ const {
 } = config;
 
 const ledger = readLedger(ledgerPath());
+const TARGET_LOOKUP_RETRY_ATTEMPTS = 3;
 const processedCommentVersions = new Set(
   (ledger.commands ?? []).map(commentVersionKey).filter(Boolean),
 );
@@ -1312,36 +1313,41 @@ function fetchLiveTarget(command: LooseRecord): LooseRecord {
 }
 
 function fetchIssue(number: JsonValue) {
-  return ghJson(["api", `repos/${targetRepo}/issues/${number}`]);
+  return ghJson(["api", `repos/${targetRepo}/issues/${number}`], {
+    attempts: TARGET_LOOKUP_RETRY_ATTEMPTS,
+  });
 }
 
 function fetchPullRequestView(number: JsonValue) {
-  return ghJson([
-    "pr",
-    "view",
-    String(number),
-    "--repo",
-    targetRepo,
-    "--json",
+  return ghJson(
     [
-      "headRefName",
-      "headRefOid",
-      "author",
-      "baseRefName",
-      "body",
-      "closingIssuesReferences",
-      "isDraft",
-      "labels",
-      "mergeable",
-      "mergeCommit",
-      "mergeStateStatus",
-      "mergedAt",
-      "reviewDecision",
-      "state",
-      "statusCheckRollup",
-      "title",
-    ].join(","),
-  ]);
+      "pr",
+      "view",
+      String(number),
+      "--repo",
+      targetRepo,
+      "--json",
+      [
+        "headRefName",
+        "headRefOid",
+        "author",
+        "baseRefName",
+        "body",
+        "closingIssuesReferences",
+        "isDraft",
+        "labels",
+        "mergeable",
+        "mergeCommit",
+        "mergeStateStatus",
+        "mergedAt",
+        "reviewDecision",
+        "state",
+        "statusCheckRollup",
+        "title",
+      ].join(","),
+    ],
+    { attempts: TARGET_LOOKUP_RETRY_ATTEMPTS },
+  );
 }
 
 function compactGhError(error: unknown): string {
