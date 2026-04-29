@@ -10,6 +10,7 @@ import {
   repoRoot,
   validateJob,
 } from "./lib.js";
+import { ghText } from "./github-cli.js";
 
 const args = parseArgs(process.argv.slice(2));
 const command = args._[0] ?? "prepare";
@@ -639,13 +640,11 @@ function stripInlineCode(value: JsonValue) {
 }
 
 function fetchLatestMain(repo: string) {
-  const result = spawnSync("gh", ["api", `repos/${repo}/commits/main`, "--jq", ".sha"], {
-    cwd: repoRoot(),
-    encoding: "utf8",
-    stdio: "pipe",
-    env: process.env,
-  });
-  return result.status === 0 ? result.stdout.trim() : "";
+  try {
+    return ghText(["api", `repos/${repo}/commits/main`, "--jq", ".sha"]);
+  } catch {
+    return "";
+  }
 }
 
 function firstPrUrl(report: LooseRecord) {

@@ -1,0 +1,28 @@
+name: Setup pnpm workspace
+description: Setup Node, install pnpm dependencies, and optionally run a build script.
+inputs:
+  node-version:
+    description: Node.js version.
+    default: "24"
+  working-directory:
+    description: Directory containing package.json.
+    default: "."
+  build-script:
+    description: Optional pnpm script to run after install.
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        corepack enable
+        pnpm install --frozen-lockfile
+        if [[ -n "${{ inputs.build-script }}" ]]; then
+          pnpm run "${{ inputs.build-script }}"
+        fi

@@ -1,6 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
+import { sleepMs } from "./timing.js";
+import { ghJson } from "./github-cli.js";
+import { repoRoot } from "./paths.js";
+
+export { repoRoot } from "./paths.js";
 
 export type JsonValue = ReturnType<typeof JSON.parse>;
 export type LooseRecord = JsonValue;
@@ -30,10 +35,6 @@ const DEFAULT_MAX_LIVE_WORKERS = 50;
 const DEFAULT_CAPACITY_POLL_MS = 30_000;
 const DEFAULT_CAPACITY_TIMEOUT_MS = 30 * 60 * 1000;
 const ACTIVE_WORKFLOW_STATUSES = ["queued", "in_progress", "waiting", "requested", "pending"];
-
-export function repoRoot() {
-  return path.resolve(import.meta.dirname, "../..");
-}
 
 export function currentProjectRepo() {
   return (
@@ -181,23 +182,6 @@ function repoFromOriginRemote() {
   return null;
 }
 
-function ghJson(ghArgs: string[]): JsonValue {
-  const env: NodeJS.ProcessEnv = { ...process.env, NO_COLOR: "1", CLICOLOR: "0" };
-  delete env.FORCE_COLOR;
-  const text = execFileSync("gh", ghArgs, {
-    cwd: repoRoot(),
-    env,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-    maxBuffer: 64 * 1024 * 1024,
-  });
-  return JSON.parse(stripAnsi(text) || "null");
-}
-
-function stripAnsi(text: string) {
-  return text.replace(new RegExp(`${String.fromCharCode(27)}\\[[0-?]*[ -/]*[@-~]`, "g"), "");
-}
-
 function normalizeWorkflowRun(run: LooseRecord, fallbackStatus: string) {
   return {
     databaseId: run.databaseId ?? run.database_id ?? run.id,
@@ -223,10 +207,6 @@ function readNonNegativeInteger(value: JsonValue, name: string) {
     throw new Error(`${name} must be a non-negative integer`);
   }
   return number;
-}
-
-function sleepMs(milliseconds: number) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
 }
 
 export function readText(relativePath: string) {

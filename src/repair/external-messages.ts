@@ -80,7 +80,7 @@ const automergeNoChangeOpeners = [
   "ClawSweeper finished this automerge repair pass without changing the branch.",
   "No new branch changes from this pass. ClawSweeper left the branch untouched instead of making a noisy edit.",
   "This pass ended as a no-op: no narrow repair surfaced, so ClawSweeper left the branch untouched.",
-  "ClawSweeper took another look and did not find a safe branch change to make on this pass.",
+  "ClawSweeper took another look; no safe branch change was available on this pass.",
 ];
 
 const automergeNoChangeClosers = [

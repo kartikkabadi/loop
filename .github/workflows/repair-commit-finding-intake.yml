@@ -74,15 +74,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v5
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-          pnpm run build:repair
+          build-script: build:repair
 
       - name: Create GitHub App token
         id: app_token

@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { parseArgs, parseJob, repoRoot, validateJob } from "./lib.js";
+import { ghJsonBestEffort } from "./github-cli.js";
 
 const args = parseArgs(process.argv.slice(2));
 const fromReport = args["from-report"] ?? args.from_report;
@@ -278,32 +279,38 @@ function sectionValue(markdown: string, heading: string) {
 
 function findExistingWork({ repo, branch, clusterId }: LooseRecord) {
   const existing: JsonValue[] = [];
-  const branchPrs = ghJson([
-    "pr",
-    "list",
-    "--repo",
-    repo,
-    "--state",
-    "open",
-    "--head",
-    branch,
-    "--json",
-    "number,title,url,headRefName",
-  ]);
+  const branchPrs = ghJsonBestEffort<JsonValue[]>(
+    [
+      "pr",
+      "list",
+      "--repo",
+      repo,
+      "--state",
+      "open",
+      "--head",
+      branch,
+      "--json",
+      "number,title,url,headRefName",
+    ],
+    [],
+  );
   for (const pr of branchPrs ?? []) existing.push({ type: "open_pr_branch", ...pr });
 
-  const bodyPrs = ghJson([
-    "pr",
-    "list",
-    "--repo",
-    repo,
-    "--state",
-    "open",
-    "--search",
-    `${clusterId} in:body`,
-    "--json",
-    "number,title,url,headRefName",
-  ]);
+  const bodyPrs = ghJsonBestEffort<JsonValue[]>(
+    [
+      "pr",
+      "list",
+      "--repo",
+      repo,
+      "--state",
+      "open",
+      "--search",
+      `${clusterId} in:body`,
+      "--json",
+      "number,title,url,headRefName",
+    ],
+    [],
+  );
   for (const pr of bodyPrs ?? []) existing.push({ type: "open_pr_body", ...pr });
 
   const remoteBranch = spawnSync(
@@ -330,20 +337,6 @@ function uniqueExisting(existing: JsonValue) {
     seen.add(key);
     return true;
   });
-}
-
-function ghJson(ghArgs: string[]) {
-  const result = spawnSync("gh", ghArgs, {
-    cwd: repoRoot(),
-    encoding: "utf8",
-    stdio: "pipe",
-  });
-  if (result.status !== 0) return [];
-  try {
-    return JSON.parse(result.stdout || "[]");
-  } catch {
-    return [];
-  }
 }
 
 function assertDispatchable(relativePath: string) {

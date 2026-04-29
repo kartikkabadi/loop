@@ -12,6 +12,8 @@ import {
   replacementSourceCloseComment,
   replacementSourceLinkComment,
 } from "./external-messages.js";
+import { runCommand as run } from "./command-runner.js";
+import { parsePullRequestUrl, pullRequestNumberFromUrl } from "./github-ref.js";
 import { codexSubprocessEnv as codexEnv, repairGhEnv as ghEnv } from "./process-env.js";
 
 const FIX_ACTIONS = new Set(["fix_needed", "build_fix_artifact", "open_fix_pr"]);
@@ -790,12 +792,11 @@ function closeSupersededSourcePr({
     env: ghEnv(),
   });
 
-  const closed = spawnSync("gh", ["pr", "close", String(parsed.number), "--repo", result.repo], {
-    cwd: targetDir,
-    env: ghEnv(),
-    encoding: "utf8",
-  });
-  if (closed.status === 0) {
+  try {
+    run("gh", ["pr", "close", String(parsed.number), "--repo", result.repo], {
+      cwd: targetDir,
+      env: ghEnv(),
+    });
     return {
       ...base,
       status: "executed",
@@ -803,13 +804,13 @@ function closeSupersededSourcePr({
       replacement_pr: replacementPrUrl,
       contributor_credit: contributorCredits.map(publicContributorCredit),
     };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    if (/already merged|can't be closed because it was already merged/i.test(detail)) {
+      return { ...base, status: "skipped", reason: "already merged during close" };
+    }
+    throw error;
   }
-
-  const detail = `${closed.stderr ?? ""}\n${closed.stdout ?? ""}`.trim();
-  if (/already merged|can't be closed because it was already merged/i.test(detail)) {
-    return { ...base, status: "skipped", reason: "already merged during close" };
-  }
-  throw new Error(detail || `gh pr close exited ${closed.status}`);
 }
 
 function ensurePullRequestOpen({ number, targetDir }: LooseRecord) {
@@ -2381,23 +2382,6 @@ function firstSourcePullRequest(fixArtifact: LooseRecord) {
   throw new Error("fix_artifact.source_prs must include a source PR in the target repo");
 }
 
-function parsePullRequestUrl(value: JsonValue) {
-  const match = String(value ?? "").match(
-    /^https:\/\/github\.com\/([^/\s]+\/[^/\s]+)\/pull\/(\d+)/,
-  );
-  if (!match) return null;
-  return {
-    repo: match[1],
-    number: Number(match[2]),
-    url: `https://github.com/${match[1]}/pull/${match[2]}`,
-  };
-}
-
-function pullRequestNumberFromUrl(value: JsonValue) {
-  const parsed = parsePullRequestUrl(value);
-  return parsed?.number ?? 0;
-}
-
 function fetchPullRequest(number: JsonValue) {
   return JSON.parse(
     run("gh", ["api", `repos/${result.repo}/pulls/${number}`], { cwd: repoRoot(), env: ghEnv() }),
@@ -3110,18 +3094,4 @@ function copyFixDebugArtifacts(reportDir: JsonValue) {
 
 function ghAuthSetupGit(cwd: JsonValue) {
   run("gh", ["auth", "setup-git"], { cwd, env: ghEnv() });
-}
-
-function run(command: string, commandArgs: string[], options: JsonValue = {}) {
-  const child = spawnSync(command, commandArgs, {
-    cwd: options.cwd,
-    env: options.env ?? process.env,
-    input: options.input,
-    encoding: "utf8",
-  });
-  if (child.status !== 0) {
-    const detail = child.stderr || child.stdout || `${command} exited ${child.status}`;
-    throw new Error(detail.trim());
-  }
-  return child.stdout ?? "";
 }

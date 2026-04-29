@@ -12,6 +12,8 @@ import {
   validateJob,
   waitForLiveWorkerCapacity,
 } from "./lib.js";
+import { ghJson, ghText } from "./github-cli.js";
+import { sleepMs } from "./timing.js";
 
 const DEFAULT_REPO = currentProjectRepo();
 const DEFAULT_WORKFLOW = "cluster-worker.yml";
@@ -315,11 +317,7 @@ function readGate(name: string) {
 }
 
 function setGate(name: string, value: JsonValue) {
-  execFileSync("gh", ["variable", "set", name, "--repo", repo, "--body", value], {
-    cwd: repoRoot(),
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  ghText(["variable", "set", name, "--repo", repo, "--body", String(value ?? "")]);
   console.log(`${name}=${value}`);
 }
 
@@ -329,16 +327,6 @@ function currentHeadSha() {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
   }).trim();
-}
-
-function ghJson(ghArgs: string[]) {
-  const text = execFileSync("gh", ghArgs, {
-    cwd: repoRoot(),
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-    maxBuffer: 64 * 1024 * 1024,
-  });
-  return JSON.parse(text || "null");
 }
 
 function runSortKey(record: LooseRecord) {
@@ -356,8 +344,4 @@ function summarizeCandidate(candidate: LooseRecord) {
     result_status: candidate.result_status,
     run_url: candidate.run_url,
   };
-}
-
-function sleepMs(milliseconds: number) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
 }

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import {
   assertLiveWorkerCapacity,
   currentProjectRepo,
@@ -13,6 +12,8 @@ import {
   resolveJobPath,
   waitForLiveWorkerCapacity,
 } from "./lib.js";
+import { ghJson, ghText } from "./github-cli.js";
+import { sleepMs } from "./timing.js";
 
 const DEFAULT_TARGET_REPO = "openclaw/openclaw";
 const DEFAULT_HEAD_PREFIX = "clawsweeper/";
@@ -657,38 +658,23 @@ function executeDispatches(candidates: LooseRecord[], dispatchSummary: JsonValue
 }
 
 function dispatchRepair(candidate: LooseRecord) {
-  execFileSync(
-    "gh",
-    [
-      "workflow",
-      "run",
-      workflow,
-      "--repo",
-      repairRepo,
-      "-f",
-      `job=${candidate.job_path}`,
-      "-f",
-      `mode=${candidate.mode}`,
-      "-f",
-      `runner=${runner}`,
-      "-f",
-      `execution_runner=${executionRunner}`,
-      "-f",
-      `model=${model}`,
-    ],
-    {
-      cwd: repoRoot(),
-      encoding: "utf8",
-      env: ghEnv(),
-      stdio: ["ignore", "pipe", "pipe"],
-    },
-  );
-}
-
-function ghEnv() {
-  const env: NodeJS.ProcessEnv = { ...process.env, NO_COLOR: "1", CLICOLOR: "0" };
-  delete env.FORCE_COLOR;
-  return env;
+  ghText([
+    "workflow",
+    "run",
+    workflow,
+    "--repo",
+    repairRepo,
+    "-f",
+    `job=${candidate.job_path}`,
+    "-f",
+    `mode=${candidate.mode}`,
+    "-f",
+    `runner=${runner}`,
+    "-f",
+    `execution_runner=${executionRunner}`,
+    "-f",
+    `model=${model}`,
+  ]);
 }
 
 function readDispatchLedger() {
@@ -842,10 +828,6 @@ function compactText(value: JsonValue, maxLength: number) {
   return text.length > maxLength ? `${text.slice(0, maxLength - 3)}...` : text;
 }
 
-function sleepMs(milliseconds: number) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
-}
-
 function numberEnv(name: string, fallback: number) {
   const value = Number(process.env[name] ?? fallback);
   return Number.isFinite(value) && value >= 0 ? value : fallback;
@@ -853,21 +835,4 @@ function numberEnv(name: string, fallback: number) {
 
 function escapeRegExp(value: JsonValue) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function ghJson(ghArgs: string[]) {
-  const env: NodeJS.ProcessEnv = { ...process.env, NO_COLOR: "1", CLICOLOR: "0" };
-  delete env.FORCE_COLOR;
-  const text = execFileSync("gh", ghArgs, {
-    cwd: repoRoot(),
-    encoding: "utf8",
-    env,
-    maxBuffer: 64 * 1024 * 1024,
-    stdio: ["ignore", "pipe", "pipe"],
-  }).trim();
-  return JSON.parse(stripAnsi(text) || "null");
-}
-
-function stripAnsi(text: string) {
-  return text.replace(new RegExp(`${String.fromCharCode(27)}\\[[0-?]*[ -/]*[@-~]`, "g"), "");
 }

@@ -97,15 +97,9 @@ jobs:
             echo "allow_merge=${CLAWSWEEPER_REPAIR_ALLOW_MERGE}"
           } >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v5
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-          pnpm run build:repair
+          build-script: build:repair
 
       - name: Cache Codex CLI and npm downloads
         uses: actions/cache@v5
@@ -244,15 +238,9 @@ jobs:
           permission-pull-requests: write
           permission-workflows: write
 
-      - uses: actions/setup-node@v5
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-          pnpm run build:repair
+          build-script: build:repair
 
       - name: Cache Codex CLI, npm, and target pnpm downloads
         uses: actions/cache@v5

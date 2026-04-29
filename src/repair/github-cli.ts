@@ -1,7 +1,7 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { repoRoot } from "./lib.js";
 import { stripAnsi } from "./comment-router-utils.js";
 import { ghCliEnv } from "./process-env.js";
+import { repoRoot } from "./paths.js";
 
 export type GhRunOptions = {
   cwd?: string;
@@ -9,12 +9,44 @@ export type GhRunOptions = {
   input?: string;
 };
 
+export type GhRetryOptions = GhRunOptions & {
+  attempts?: number;
+};
+
 export function ghJson<T = JsonValue>(ghArgs: string[], options: GhRunOptions = {}): T {
   return JSON.parse(ghText(ghArgs, options) || "null") as T;
 }
 
+export function ghJsonWithRetry<T = JsonValue>(
+  ghArgs: string[],
+  options: GhRetryOptions | number = {},
+): T {
+  return JSON.parse(ghTextWithRetry(ghArgs, options) || "null") as T;
+}
+
+export function ghJsonBestEffort<T = JsonValue>(
+  ghArgs: string[],
+  fallback: T,
+  options: GhRunOptions = {},
+): T {
+  try {
+    return ghJson<T>(ghArgs, options);
+  } catch {
+    return fallback;
+  }
+}
+
 export function ghPaged<T = JsonValue>(apiPath: string, options: GhRunOptions = {}): T[] {
   const pages = ghJson<JsonValue[]>(["api", apiPath, "--paginate", "--slurp"], options);
+  if (!Array.isArray(pages)) return [];
+  return pages.flatMap((page: JsonValue) => (Array.isArray(page) ? (page as T[]) : []));
+}
+
+export function ghPagedWithRetry<T = JsonValue>(
+  apiPath: string,
+  options: GhRetryOptions | number = {},
+): T[] {
+  const pages = ghJsonWithRetry<JsonValue[]>(["api", apiPath, "--paginate", "--slurp"], options);
   if (!Array.isArray(pages)) return [];
   return pages.flatMap((page: JsonValue) => (Array.isArray(page) ? (page as T[]) : []));
 }
@@ -31,11 +63,38 @@ export function ghText(ghArgs: string[], options: GhRunOptions = {}): string {
   return stripAnsi(text).trim();
 }
 
+export function ghTextWithRetry(ghArgs: string[], options: GhRetryOptions | number = {}): string {
+  const resolved = resolveRetryOptions(options);
+  const attempts = Math.max(1, resolved.attempts ?? 6);
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return ghText(ghArgs, resolved);
+    } catch (error) {
+      lastError = error;
+      if (attempt >= attempts || !shouldRetryGh(error)) throw error;
+      sleepMs(Math.min(1000 * attempt, 5000));
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
+}
+
 export function ghBestEffort(ghArgs: string[], options: GhRunOptions = {}): void {
   try {
     ghText(ghArgs, options);
   } catch {
     // Helpful metadata should not block the primary command path.
+  }
+}
+
+export function ghBestEffortWithRetry(
+  ghArgs: string[],
+  options: GhRetryOptions | number = {},
+): string {
+  try {
+    return ghTextWithRetry(ghArgs, options);
+  } catch {
+    return "";
   }
 }
 
@@ -51,4 +110,67 @@ export function ghSpawn(ghArgs: string[], options: GhRunOptions = {}) {
 
 export function ghEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
   return ghCliEnv(overrides);
+}
+
+export function ghErrorText(error: unknown): string {
+  if (!error || typeof error !== "object") return String(error ?? "");
+  const commandError = error as {
+    message?: string;
+    output?: unknown[];
+    stderr?: Buffer | string;
+    stdout?: Buffer | string;
+  };
+  const parts = [
+    commandError.stderr,
+    commandError.stdout,
+    ...(Array.isArray(commandError.output) ? commandError.output : []),
+    commandError.message,
+  ].filter(Boolean);
+  return stripAnsi(parts.map((part) => bufferLikeToString(part)).join("\n")).trim();
+}
+
+export function ghStdoutFromError(error: unknown): string {
+  if (!error || typeof error !== "object") return "";
+  const commandError = error as {
+    output?: unknown[];
+    stdout?: Buffer | string;
+  };
+  return stripAnsi(
+    bufferLikeToString(commandError.stdout ?? commandError.output?.[1] ?? ""),
+  ).trim();
+}
+
+export function shouldRetryGh(error: unknown): boolean {
+  const text = ghErrorText(error).toLowerCase();
+  return (
+    text.includes("http 502") ||
+    text.includes("http 503") ||
+    text.includes("http 504") ||
+    text.includes("bad gateway") ||
+    text.includes("gateway timeout") ||
+    text.includes("service unavailable") ||
+    text.includes("timed out") ||
+    text.includes("timeout") ||
+    text.includes("connection reset") ||
+    text.includes("connection refused") ||
+    text.includes("could not resolve host") ||
+    text.includes("temporary failure") ||
+    text.includes("try again later") ||
+    text.includes("secondary rate limit") ||
+    text.includes("rate limit")
+  );
+}
+
+function resolveRetryOptions(options: GhRetryOptions | number): GhRetryOptions {
+  if (typeof options === "number") return { attempts: options };
+  return options;
+}
+
+function bufferLikeToString(value: unknown): string {
+  if (Buffer.isBuffer(value)) return value.toString("utf8");
+  return String(value ?? "");
+}
+
+function sleepMs(ms: number): void {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }

@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { githubActionsRunUrl, parseArgs, repoRoot } from "./lib.js";
-import { ghEnv } from "./github-cli.js";
+import { ghStdoutFromError, ghText } from "./github-cli.js";
 
 const DASHBOARD_START = "<!-- clawsweeper-repair-dashboard:start -->";
 const DASHBOARD_END = "<!-- clawsweeper-repair-dashboard:end -->";
@@ -1319,26 +1318,11 @@ function githubPullInfoBatch(repo: string, numbers: JsonValue) {
 }
 
 function runGhGraphql(query: string) {
-  const env = ghEnv();
-  if (!env.GH_TOKEN && env.GITHUB_TOKEN) env.GH_TOKEN = env.GITHUB_TOKEN;
   try {
-    const text = execFileSync("gh", ["api", "graphql", "-f", `query=${query}`], {
-      encoding: "utf8",
-      env,
-      maxBuffer: 8 * 1024 * 1024,
-      stdio: ["ignore", "pipe", "ignore"],
-    });
-    return stripAnsi(text);
+    return ghText(["api", "graphql", "-f", `query=${query}`]);
   } catch (error) {
-    return stripAnsi(error.stdout || error.output?.[1]?.toString() || "");
+    return ghStdoutFromError(error);
   }
-}
-
-function stripAnsi(text: string) {
-  return String(text ?? "").replace(
-    new RegExp(`${String.fromCharCode(27)}\\[[0-?]*[ -/]*[@-~]`, "g"),
-    "",
-  );
 }
 
 function parseGithubPullRef(defaultRepo: string, value: JsonValue) {

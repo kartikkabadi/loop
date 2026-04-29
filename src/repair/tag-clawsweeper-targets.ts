@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import { currentProjectRepo, parseArgs, parseSimpleYaml, repoRoot } from "./lib.js";
+import { ghJson, ghText } from "./github-cli.js";
+import { parseIssueOrPullRef } from "./github-ref.js";
 
 const DEFAULT_LABEL = "clawsweeper";
 const FIX_PR_STATUSES = new Set(["opened", "pushed", "executed", "blocked", "planned"]);
@@ -283,7 +284,7 @@ function collectOpenClawSweeperPullRequests() {
 }
 
 function addTarget(value: JsonValue, defaultRepo: string, source: LooseRecord) {
-  const parsed = parseGithubRef(value, defaultRepo);
+  const parsed = parseIssueOrPullRef(value, defaultRepo);
   if (!parsed) return;
   const key = `${parsed.repo}#${parsed.number}`;
   const existing = targets.get(key) ?? {
@@ -332,17 +333,15 @@ function labelTarget(target: LooseRecord) {
   }
 
   try {
-    execFileSync(
-      "gh",
-      ["issue", "edit", String(target.number), "--repo", target.repo, "--add-label", labelName],
-      {
-        cwd: repoRoot(),
-        encoding: "utf8",
-        env: process.env,
-        stdio: ["ignore", "pipe", "pipe"],
-        maxBuffer: 8 * 1024 * 1024,
-      },
-    );
+    ghText([
+      "issue",
+      "edit",
+      String(target.number),
+      "--repo",
+      target.repo,
+      "--add-label",
+      labelName,
+    ]);
     return { ...verified, status: "labeled", reason: `added ${labelName}` };
   } catch (error) {
     return { ...verified, status: "failed", reason: ghErrorMessage(error) };
@@ -360,17 +359,6 @@ function postFlightToApplyAction(action: LooseRecord) {
   };
 }
 
-function parseGithubRef(value: JsonValue, defaultRepo: string) {
-  const text = String(value ?? "").trim();
-  const urlMatch = text.match(
-    /^https:\/\/github\.com\/([^/]+\/[^/]+)\/(?:issues|pull)\/(\d+)(?:[/?#].*)?$/i,
-  );
-  if (urlMatch) return { repo: urlMatch[1], number: Number(urlMatch[2]) };
-  const refMatch = text.match(/^#?(\d+)$/);
-  if (refMatch && defaultRepo) return { repo: defaultRepo, number: Number(refMatch[1]) };
-  return null;
-}
-
 function githubLabelExists() {
   const repo = process.env.CLAWSWEEPER_REPAIR_TARGET_REPO ?? "openclaw/openclaw";
   const labels = ghJson(["label", "list", "--repo", repo, "--limit", "1000", "--json", "name"]);
@@ -379,21 +367,17 @@ function githubLabelExists() {
 
 function createGithubLabel() {
   const repo = process.env.CLAWSWEEPER_REPAIR_TARGET_REPO ?? "openclaw/openclaw";
-  execFileSync(
-    "gh",
-    [
-      "label",
-      "create",
-      labelName,
-      "--repo",
-      repo,
-      "--color",
-      "0E8A16",
-      "--description",
-      "Tracked by ClawSweeper automation",
-    ],
-    { cwd: repoRoot(), encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"] },
-  );
+  ghText([
+    "label",
+    "create",
+    labelName,
+    "--repo",
+    repo,
+    "--color",
+    "0E8A16",
+    "--description",
+    "Tracked by ClawSweeper automation",
+  ]);
 }
 
 function fetchIssue(repo: string, number: JsonValue) {
@@ -417,17 +401,6 @@ function readJson(filePath: string) {
   } catch {
     return null;
   }
-}
-
-function ghJson(ghArgs: string[]) {
-  const text = execFileSync("gh", ghArgs, {
-    cwd: repoRoot(),
-    encoding: "utf8",
-    env: process.env,
-    stdio: ["ignore", "pipe", "pipe"],
-    maxBuffer: 64 * 1024 * 1024,
-  });
-  return JSON.parse(text || "null");
 }
 
 function ghErrorMessage(error: JsonValue) {

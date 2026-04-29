@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import {
   assertAllowedOwner,
   hasDeterministicSecuritySignal,
@@ -10,7 +9,16 @@ import {
   repoRoot,
   validateJob,
 } from "./lib.js";
+import { stripAnsi } from "./comment-router-utils.js";
 import { externalMessageProvenance, postMergeCloseoutComment } from "./external-messages.js";
+import {
+  ghBestEffortWithRetry as ghBestEffort,
+  ghErrorText,
+  ghJsonWithRetry as ghJson,
+  ghTextWithRetry as ghWithRetry,
+} from "./github-cli.js";
+import { issueNumberFromRef, parsePullRequestUrl } from "./github-ref.js";
+import { sleepMs } from "./timing.js";
 
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
 const FIX_PR_MERGE_STATES = new Set(["CLEAN", "HAS_HOOKS", "UNSTABLE"]);
@@ -204,7 +212,7 @@ function finalizeFixPr(action: LooseRecord) {
   try {
     ghWithRetry(["pr", "merge", String(parsed.number), "--repo", result.repo, "--squash"]);
   } catch (error) {
-    const detail = commandErrorText(error);
+    const detail = ghErrorText(error);
     if (isRecoverableMergeRace(detail)) {
       const latestView = fetchPullRequestView(result.repo, parsed.number);
       return {
@@ -374,7 +382,7 @@ function ensureLabel(repo: string, name: string, color: JsonValue, description: 
       2,
     );
   } catch (error) {
-    if (!/already exists/i.test(commandErrorText(error))) return;
+    if (!/already exists/i.test(ghErrorText(error))) return;
   }
 }
 
@@ -623,63 +631,8 @@ function writeReport(report: LooseRecord, resultPath: string) {
   console.log(JSON.stringify(report, null, 2));
 }
 
-function parsePullRequestUrl(value: JsonValue) {
-  const match = String(value ?? "").match(
-    /^https:\/\/github\.com\/([^/]+\/[^/]+)\/pull\/(\d+)(?:[/?#].*)?$/i,
-  );
-  if (!match) return null;
-  return { repo: match[1], number: Number(match[2]) };
-}
-
-function ghJson(ghArgs: string[]) {
-  const text = ghWithRetry(ghArgs);
-  return JSON.parse(stripAnsi(text) || "null");
-}
-
-function ghWithRetry(ghArgs: string[], attempts = 6) {
-  const env: NodeJS.ProcessEnv = { ...process.env, NO_COLOR: "1", CLICOLOR: "0" };
-  delete env.FORCE_COLOR;
-  let lastError;
-  for (let attempt = 0; attempt < attempts; attempt += 1) {
-    try {
-      return execFileSync("gh", ghArgs, {
-        cwd: repoRoot(),
-        encoding: "utf8",
-        env,
-        maxBuffer: 64 * 1024 * 1024,
-        stdio: ["ignore", "pipe", "pipe"],
-      }).trim();
-    } catch (error) {
-      lastError = error;
-      if (!shouldRetryGh(error) || attempt === attempts - 1) throw error;
-      sleepMs(Math.min(120_000, 10_000 * 2 ** attempt));
-    }
-  }
-  throw lastError;
-}
-
-function ghBestEffort(ghArgs: string[]) {
-  try {
-    ghWithRetry(ghArgs, 2);
-  } catch {
-    // Labels are useful for operator visibility, but should not block a proven closeout.
-  }
-}
-
 function normalizeIssueRef(value: JsonValue) {
-  const text = String(value ?? "").trim();
-  const match =
-    text.match(/^#(\d+)$/) ??
-    text.match(/^(\d+)$/) ??
-    text.match(/github\.com\/[^/]+\/[^/]+\/(?:issues|pull)\/(\d+)(?:[/?#].*)?$/i);
-  return match ? Number(match[1]) : 0;
-}
-
-function stripAnsi(text: string) {
-  return String(text ?? "").replace(
-    new RegExp(`${String.fromCharCode(27)}\\[[0-?]*[ -/]*[@-~]`, "g"),
-    "",
-  );
+  return issueNumberFromRef(value);
 }
 
 function compactText(text: string, maxLength: number) {
@@ -690,37 +643,10 @@ function compactText(text: string, maxLength: number) {
   return `${value.slice(0, maxLength - 3)}...`;
 }
 
-function commandErrorText(error: JsonValue) {
-  return [
-    error?.stderr,
-    error?.stdout,
-    error instanceof Error ? error.message : String(error ?? ""),
-  ]
-    .filter(Boolean)
-    .join("\n")
-    .trim();
-}
-
 function isRecoverableMergeRace(message: string) {
   return /pull request has merge conflicts|merge conflict|base branch was modified|head branch was modified|not mergeable/i.test(
     String(message ?? ""),
   );
-}
-
-function shouldRetryGh(error: JsonValue) {
-  const stderr = String(error?.stderr ?? "");
-  const message = `${error instanceof Error ? error.message : String(error)}\n${stderr}`;
-  return (
-    message.includes("was submitted too quickly") ||
-    message.includes("secondary rate") ||
-    message.includes("API rate limit exceeded") ||
-    message.includes("Base branch was modified") ||
-    message.includes("Head branch was modified")
-  );
-}
-
-function sleepMs(milliseconds: number) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
 }
 
 function numberEnv(name: string, fallback: number) {

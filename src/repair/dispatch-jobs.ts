@@ -13,6 +13,7 @@ import {
   validateJob,
   waitForLiveWorkerCapacity,
 } from "./lib.js";
+import { sleepMs } from "./timing.js";
 
 const args = parseArgs(process.argv.slice(2));
 const defaultRunner =
@@ -129,10 +130,6 @@ function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue)
       `dispatched ${position}/${total} ${relative} (${mode}) on ${runner}; execution on ${executionRunner}`,
     );
   }
-}
-
-function sleepMs(milliseconds: number) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
 }
 
 if (failed) process.exit(1);

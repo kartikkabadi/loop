@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import {
   assertAllowedOwner,
   hasDeterministicSecuritySignal,
@@ -11,6 +10,7 @@ import {
   repoRoot,
   validateJob,
 } from "./lib.js";
+import { ghJson, ghPaged, ghText } from "./github-cli.js";
 
 const MAX_LINKED_REFS = Number(process.env.CLAWSWEEPER_REPAIR_MAX_LINKED_REFS ?? 0);
 const HYDRATE_COMMENTS = process.env.CLAWSWEEPER_REPAIR_HYDRATE_COMMENTS === "1";
@@ -636,36 +636,17 @@ function offlineItem(repo: string, number: JsonValue, job: LooseRecord) {
   };
 }
 
-function ghJson(ghArgs: string[]) {
-  const text = execFileSync("gh", ghArgs, {
-    cwd: repoRoot(),
-    encoding: "utf8",
-    env: process.env,
-    maxBuffer: 64 * 1024 * 1024,
-    stdio: ["ignore", "pipe", "pipe"],
-  }).trim();
-  return JSON.parse(text || "null");
-}
-
-function ghPaged(apiPath: string) {
-  const pages = ghJson(["api", apiPath, "--paginate", "--slurp"]);
-  if (!Array.isArray(pages)) return [];
-  return pages.flatMap((page: JsonValue) => (Array.isArray(page) ? page : []));
-}
-
 function ghPrChecks(repo: string, number: JsonValue) {
   try {
-    const text = execFileSync(
-      "gh",
-      ["pr", "checks", String(number), "--repo", repo, "--json", "name,state,bucket,link"],
-      {
-        cwd: repoRoot(),
-        encoding: "utf8",
-        env: process.env,
-        maxBuffer: 16 * 1024 * 1024,
-        stdio: ["ignore", "pipe", "pipe"],
-      },
-    ).trim();
+    const text = ghText([
+      "pr",
+      "checks",
+      String(number),
+      "--repo",
+      repo,
+      "--json",
+      "name,state,bucket,link",
+    ]).trim();
     return JSON.parse(text || "[]");
   } catch (error) {
     return [{ error: firstLine(error?.stderr || error?.message || String(error)) }];

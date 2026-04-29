@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   assertAllowedOwner,
@@ -12,6 +11,14 @@ import {
   validateJob,
 } from "./lib.js";
 import { defaultCloseComment, externalMessageProvenance } from "./external-messages.js";
+import {
+  ghBestEffortWithRetry as ghBestEffort,
+  ghErrorText,
+  ghJsonWithRetry as ghJson,
+  ghPagedWithRetry as ghPaged,
+  ghTextWithRetry as ghWithRetry,
+} from "./github-cli.js";
+import { issueNumberFromRef } from "./github-ref.js";
 
 const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 const CLOSE_ACTIONS = new Set([
@@ -599,19 +606,12 @@ function labelForClawSweeperReview(repo: string, target: LooseRecord) {
 
 function ensureLabel(repo: string, name: string, color: JsonValue, description: JsonValue) {
   try {
-    execFileSync(
-      "gh",
+    ghWithRetry(
       ["label", "create", name, "--repo", repo, "--color", color, "--description", description],
-      {
-        cwd: repoRoot(),
-        encoding: "utf8",
-        env: process.env,
-        stdio: ["ignore", "pipe", "pipe"],
-        maxBuffer: 8 * 1024 * 1024,
-      },
+      2,
     );
   } catch (error) {
-    const detail = commandErrorText(error);
+    const detail = ghErrorText(error);
     if (!/already exists/i.test(detail)) return;
   }
 }
@@ -779,17 +779,7 @@ function isApplicatorAction(action: LooseRecord) {
 }
 
 function normalizeIssueRef(value: JsonValue, expectedRepo: JsonValue = "") {
-  const text = String(value ?? "").trim();
-  const shorthand = text.match(/^#?(\d+)$/);
-  if (shorthand) return Number(shorthand[1]);
-
-  const url = text.match(
-    /^https:\/\/github\.com\/([^/]+\/[^/]+)\/(?:issues|pull)\/(\d+)(?:[/?#].*)?$/,
-  );
-  if (!url) return 0;
-  const repo = url[1] ?? "";
-  if (expectedRepo && repo.toLowerCase() !== expectedRepo.toLowerCase()) return 0;
-  return Number(url[2] ?? 0);
+  return issueNumberFromRef(value, String(expectedRepo ?? ""));
 }
 
 function normalizeClassification(action: LooseRecord) {
@@ -1002,66 +992,6 @@ function writePayload(name: string, value: JsonValue) {
   const file = path.join(dir, `${name}-${Date.now()}.json`);
   fs.writeFileSync(file, JSON.stringify(value), "utf8");
   return file;
-}
-
-function ghJson(ghArgs: string[]) {
-  const text = ghWithRetry(ghArgs);
-  return JSON.parse(text || "null");
-}
-
-function ghPaged(apiPath: string) {
-  const pages = ghJson(["api", apiPath, "--paginate", "--slurp"]);
-  if (!Array.isArray(pages)) return [];
-  return pages.flatMap((page: JsonValue) => (Array.isArray(page) ? page : []));
-}
-
-function ghWithRetry(ghArgs: string[], attempts = 6) {
-  let lastError;
-  for (let attempt = 0; attempt < attempts; attempt += 1) {
-    try {
-      return execFileSync("gh", ghArgs, {
-        cwd: repoRoot(),
-        encoding: "utf8",
-        env: process.env,
-        maxBuffer: 64 * 1024 * 1024,
-        stdio: ["ignore", "pipe", "pipe"],
-      }).trim();
-    } catch (error) {
-      lastError = error;
-      if (!shouldRetryGh(error) || attempt === attempts - 1) throw error;
-      sleepMs(Math.min(120_000, 10_000 * 2 ** attempt));
-    }
-  }
-  throw lastError;
-}
-
-function ghBestEffort(ghArgs: string[]) {
-  try {
-    return ghWithRetry(ghArgs);
-  } catch {
-    return "";
-  }
-}
-
-function commandErrorText(error: JsonValue) {
-  const stderr = String(error?.stderr ?? "").trim();
-  return stderr || error?.message || String(error);
-}
-
-function shouldRetryGh(error: JsonValue) {
-  const stderr = String(error?.stderr ?? "");
-  const message = `${error instanceof Error ? error.message : String(error)}\n${stderr}`;
-  return (
-    message.includes("was submitted too quickly") ||
-    message.includes("secondary rate") ||
-    message.includes("API rate limit exceeded") ||
-    message.includes("Base branch was modified") ||
-    message.includes("Head branch was modified")
-  );
-}
-
-function sleepMs(milliseconds: number) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
 }
 
 function normalizeAuthorAssociation(value: JsonValue) {

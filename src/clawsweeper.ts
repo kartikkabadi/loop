@@ -23,6 +23,23 @@ import {
   repositoryProfileForSlug,
   type RepositoryProfile,
 } from "./repository-profiles.js";
+import { codexEnv } from "./codex-env.js";
+import {
+  ghRetryKind,
+  ghRetryWaitMs,
+  isGitHubNotFoundError,
+  isLockedConversationCommentError,
+  shouldRetryGh,
+  summarizeGhArgs,
+} from "./github-retry.js";
+
+export { codexEnv } from "./codex-env.js";
+export {
+  ghRetryKind,
+  isGitHubNotFoundError,
+  isLockedConversationCommentError,
+  shouldRetryGh,
+} from "./github-retry.js";
 
 type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
@@ -697,83 +714,6 @@ function sleepMs(milliseconds: number): void {
 
 let lastThrottleHeartbeatAt = 0;
 let throttleHeartbeatContext: (() => string) | null = null;
-
-type GhRetryKind = "none" | "throttle" | "transient";
-
-const GH_THROTTLE_PATTERNS = [
-  /was submitted too quickly/i,
-  /secondary rate/i,
-  /API rate limit exceeded/i,
-];
-
-const GH_TRANSIENT_PATTERNS = [
-  /unexpected EOF/i,
-  /connection reset by peer/i,
-  /error connecting to api\.github\.com/i,
-  /\b(?:HTTP|status(?: code)?)\s*:?\s*(?:502|503|504)\b/i,
-  /bad gateway/i,
-  /service unavailable/i,
-  /gateway timeout/i,
-  /\bECONNRESET\b/i,
-  /\bETIMEDOUT\b/i,
-  /\bEAI_AGAIN\b/i,
-  /TLS handshake timeout/i,
-  /\bi\/o timeout\b/i,
-  /Client\.Timeout exceeded/i,
-  /temporary failure/i,
-];
-
-function errorField(error: unknown, field: "stdout" | "stderr"): string {
-  if (typeof error !== "object" || error === null || !(field in error)) return "";
-  const value = (error as Record<string, unknown>)[field];
-  if (Buffer.isBuffer(value)) return value.toString("utf8");
-  return typeof value === "string" ? value : "";
-}
-
-function ghErrorText(error: unknown): string {
-  return [
-    error instanceof Error ? error.message : String(error),
-    errorField(error, "stdout"),
-    errorField(error, "stderr"),
-  ].join("\n");
-}
-
-export function ghRetryKind(error: unknown): GhRetryKind {
-  const message = ghErrorText(error);
-  if (GH_THROTTLE_PATTERNS.some((pattern) => pattern.test(message))) return "throttle";
-  if (GH_TRANSIENT_PATTERNS.some((pattern) => pattern.test(message))) return "transient";
-  return "none";
-}
-
-export function shouldRetryGh(error: unknown): boolean {
-  return ghRetryKind(error) !== "none";
-}
-
-export function isLockedConversationCommentError(error: unknown): boolean {
-  const message = ghErrorText(error);
-  return (
-    /\bHTTP\s*403\b/i.test(message) &&
-    /(?:issue|conversation|discussion).{0,80}locked|locked.{0,80}(?:issue|conversation|discussion)/i.test(
-      message,
-    )
-  );
-}
-
-export function isGitHubNotFoundError(error: unknown): boolean {
-  const message = ghErrorText(error);
-  return /\b(?:HTTP\s*)?404\b/i.test(message) && /\bnot found\b/i.test(message);
-}
-
-function ghRetryWaitMs(kind: GhRetryKind, attempt: number): number {
-  if (kind === "throttle") return Math.min(600_000, 30_000 * 2 ** attempt);
-  if (kind === "transient") return Math.min(60_000, 2_000 * 2 ** attempt);
-  return 0;
-}
-
-function summarizeGhArgs(args: readonly string[]): string {
-  if (args[0] === "api" && args[1]) return `gh api ${args[1]}`;
-  return `gh ${args.slice(0, 3).join(" ")}`;
-}
 
 function maybePublishThrottleHeartbeat(options: {
   args: string[];
@@ -2557,21 +2497,6 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     workValidation: [],
     workLikelyFiles: [],
   };
-}
-
-export function codexEnv(options: { ghToken?: string | undefined } = {}): NodeJS.ProcessEnv {
-  const env = { ...process.env };
-  const ghToken = options.ghToken?.trim();
-  delete env.GH_TOKEN;
-  delete env.GITHUB_TOKEN;
-  delete env.COMMIT_SWEEPER_TARGET_GH_TOKEN;
-  delete env.CLAWSWEEPER_APP_ID;
-  delete env.CLAWSWEEPER_APP_PRIVATE_KEY;
-  delete env.OPENAI_API_KEY;
-  delete env.CODEX_API_KEY;
-  if (ghToken) env.GH_TOKEN = ghToken;
-  env.GIT_OPTIONAL_LOCKS = "0";
-  return env;
 }
 
 function openclawDirtyStatus(openclawDir: string): string {

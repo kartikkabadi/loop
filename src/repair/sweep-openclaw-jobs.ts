@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import { hasSecuritySignalText, parseArgs, parseJob, repoRoot, validateJob } from "./lib.js";
+import { ghJson } from "./github-cli.js";
 
 const args = parseArgs(process.argv.slice(2));
 const jobsDir = path.resolve(
@@ -330,17 +330,6 @@ function readJson(filePath: string) {
   } catch {
     return null;
   }
-}
-
-function ghJson(ghArgs: string[]) {
-  const text = execFileSync("gh", ghArgs, {
-    cwd: repoRoot(),
-    encoding: "utf8",
-    env: process.env,
-    stdio: ["ignore", "pipe", "pipe"],
-    maxBuffer: 64 * 1024 * 1024,
-  });
-  return JSON.parse(text || "null");
 }
 
 function writeMarkdownReport(report: LooseRecord, filePath: string) {

@@ -55,15 +55,9 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token }}
 
-      - uses: actions/setup-node@v5
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-          pnpm run build:repair
+          build-script: build:repair
 
       - name: Finalize open ClawSweeper Repair PRs
         env:
