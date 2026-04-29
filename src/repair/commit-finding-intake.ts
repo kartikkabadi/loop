@@ -34,7 +34,8 @@ function prepare() {
   const reportUrl =
     stringArg("report-url", stringArg("report_url", "")) ||
     `https://github.com/${reportRepo}/blob/main/${reportPath}`;
-  const reportMarkdown = readReport({ reportRepo, reportPath });
+  const active = truthy(enabled);
+  const reportMarkdown = active ? readReport({ reportRepo, reportPath }) : "";
   const report = parseCommitReport(reportMarkdown);
   const clusterId = slug(`clawsweeper-commit-${repoSlug(targetRepo)}-${sha.slice(0, 12)}`);
   const owner = targetRepo.split("/")[0];
@@ -377,7 +378,7 @@ ${runLine}
 
 ## Finding Summary
 
-${summaryFromReport(context.report.body)}
+${context.report.body ? summaryFromReport(context.report.body) : "Report was not fetched because commit finding intake is disabled."}
 `;
   fs.writeFileSync(context.auditPath, body, "utf8");
 }

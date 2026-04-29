@@ -39,6 +39,7 @@ const execute = Boolean(args.execute);
 const openExecuteWindow = Boolean(args["open-execute-window"] || args.live);
 const allowRepeat = Boolean(args["allow-repeat"]);
 const requestedMode = typeof args.mode === "string" ? args.mode : null;
+const skippedCandidates: LooseRecord[] = [];
 
 if (!Number.isInteger(maxJobs) || maxJobs < 1) {
   throw new Error("--max-jobs must be a positive integer");
@@ -55,6 +56,7 @@ const summary: LooseRecord = {
   max_jobs: maxJobs,
   max_live_workers: maxLiveWorkers,
   candidates: candidates.map((candidate: JsonValue) => summarizeCandidate(candidate)),
+  skipped_candidates: skippedCandidates,
 };
 
 if (candidates.length === 0) {
@@ -148,7 +150,10 @@ function selectCandidates() {
 
   for (const record of records) {
     const sourceJob = record.source_job;
-    if (!sourceJob) continue;
+    if (typeof sourceJob !== "string" || !sourceJob) {
+      skippedCandidates.push({ reason: "missing_source_job", run_id: record.run_id ?? null });
+      continue;
+    }
     const current = latestByJob.get(sourceJob);
     if (!current || runSortKey(record) > runSortKey(current)) {
       latestByJob.set(sourceJob, record);
@@ -159,7 +164,17 @@ function selectCandidates() {
     .filter((record: JsonValue) => record.workflow_conclusion === "failure")
     .filter((record: JsonValue) => allowRepeat || !attemptedJobs.has(record.source_job))
     .map((record: JsonValue) => {
-      const job = parseJob(record.source_job);
+      const sourceJob = String(record.source_job ?? "");
+      const jobPath = sourceJobPath(sourceJob);
+      if (!fs.existsSync(jobPath)) {
+        skippedCandidates.push({
+          reason: "missing_job_file",
+          run_id: record.run_id ?? null,
+          source_job: sourceJob,
+        });
+        return null;
+      }
+      const job = parseJob(jobPath);
       const errors = validateJob(job);
       if (errors.length > 0) {
         throw new Error(`invalid job ${record.source_job}: ${errors.join("; ")}`);
@@ -169,7 +184,12 @@ function selectCandidates() {
         mode: requestedMode ?? record.mode ?? job.frontmatter.mode,
       };
     })
+    .filter(Boolean)
     .sort((left: JsonValue, right: JsonValue) => runSortKey(right) - runSortKey(left));
+}
+
+function sourceJobPath(sourceJob: string) {
+  return path.isAbsolute(sourceJob) ? sourceJob : path.join(repoRoot(), sourceJob);
 }
 
 function dispatchCandidate(candidate: LooseRecord) {
