@@ -189,6 +189,9 @@ jobs:
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
+          permission-contents: read
+          permission-issues: read
+          permission-pull-requests: read
 
       - name: Create target write token
         id: target-write-token
@@ -493,6 +496,9 @@ jobs:
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
+          permission-contents: read
+          permission-issues: read
+          permission-pull-requests: read
 
       - uses: actions/setup-node@v6
         with:
@@ -570,7 +576,7 @@ jobs:
           ITEM_NUMBERS: ${{ github.event.inputs.item_numbers || github.event.client_payload.item_number || '' }}
           MAX_PAGES: ${{ steps.mode.outputs.max_pages }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
-          GH_TOKEN: ${{ steps.target-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
         run: |
           set -euo pipefail
           item_arg=()
@@ -610,7 +616,7 @@ jobs:
         continue-on-error: true
         working-directory: clawsweeper
         env:
-          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
           git config user.name "github-actions[bot]"
@@ -664,6 +670,9 @@ jobs:
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ needs.plan.outputs.target_repo_owner }}
           repositories: ${{ needs.plan.outputs.target_repo_name }}
+          permission-contents: read
+          permission-issues: read
+          permission-pull-requests: read
 
       - uses: actions/setup-node@v6
         with:
@@ -718,7 +727,7 @@ jobs:
         working-directory: clawsweeper
         env:
           CLAWSWEEPER_APPLY_CLOSURES: ${{ needs.plan.outputs.apply_closures }}
-          GH_TOKEN: ${{ steps.target-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
         run: |
           hot_intake_arg=()
           if [ "${{ needs.plan.outputs.hot_intake }}" = "true" ]; then
@@ -794,7 +803,7 @@ jobs:
 
       - name: Apply review artifacts
         env:
-          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           pnpm run apply-artifacts -- --target-repo "$TARGET_REPO" --artifact-dir artifacts
@@ -805,7 +814,7 @@ jobs:
 
       - name: Commit dashboard and review files
         env:
-          GH_TOKEN: ${{ secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           pnpm run reconcile -- --target-repo "$TARGET_REPO"
@@ -1004,6 +1013,9 @@ jobs:
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ steps.target.outputs.target_repo_owner }}
           repositories: ${{ steps.target.outputs.target_repo_name }}
+          permission-contents: read
+          permission-issues: read
+          permission-pull-requests: read
 
       - uses: actions/setup-node@v6
         with:
@@ -1019,7 +1031,7 @@ jobs:
 
       - name: Refresh Audit Health
         env:
-          GH_TOKEN: ${{ steps.target-read-token.outputs.token || secrets.OPENCLAW_GH_TOKEN || github.token }}
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
           set -euo pipefail

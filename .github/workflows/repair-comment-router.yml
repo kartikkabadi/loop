@@ -1,0 +1,136 @@
+name: repair comment router
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: "Post replies and dispatch repair workers"
+        required: true
+        default: false
+        type: boolean
+      target_repo:
+        description: "Repository to scan for ClawSweeper commands"
+        required: true
+        default: openclaw/openclaw
+        type: string
+      lookback_minutes:
+        description: "How far back to scan comments"
+        required: true
+        default: "180"
+        type: string
+      since:
+        description: "Optional ISO timestamp lower bound for scanned comments"
+        required: false
+        default: ""
+        type: string
+      max_comments:
+        description: "Maximum recent comments to inspect"
+        required: true
+        default: "100"
+        type: string
+      runner:
+        description: "Runner label for repair planning/review work"
+        required: true
+        default: blacksmith-4vcpu-ubuntu-2404
+        type: string
+      execution_runner:
+        description: "Runner label for fix/apply execution work"
+        required: true
+        default: blacksmith-16vcpu-ubuntu-2404
+        type: string
+  schedule:
+    - cron: "*/10 * * * *"
+
+permissions:
+  contents: write
+  actions: write
+  issues: write
+  pull-requests: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+
+jobs:
+  route-comments:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Create GitHub App token
+        id: app_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          permission-actions: write
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm run build:repair
+
+      - name: Route ClawSweeper comments
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE || '0' }}
+          CLAWSWEEPER_REPAIR_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_REPAIR_ALLOW_MERGE || '0' }}
+        run: |
+          set -euo pipefail
+          target_repo="${{ github.event_name == 'workflow_dispatch' && inputs.target_repo || vars.CLAWSWEEPER_REPAIR_TARGET_REPO || 'openclaw/openclaw' }}"
+          lookback_minutes="${{ github.event_name == 'workflow_dispatch' && inputs.lookback_minutes || vars.CLAWSWEEPER_REPAIR_COMMENT_LOOKBACK_MINUTES || '180' }}"
+          since="${{ github.event_name == 'workflow_dispatch' && inputs.since || '' }}"
+          max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_REPAIR_COMMENT_MAX_COMMENTS || '100' }}"
+          runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_REPAIR_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
+          execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_REPAIR_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
+
+          args=(
+            --write-report
+            --repo "$target_repo"
+            --lookback-minutes "$lookback_minutes"
+            --max-comments "$max_comments"
+            --runner "$runner"
+            --execution-runner "$execution_runner"
+            --wait-for-capacity
+          )
+          if [ -n "$since" ]; then
+            args+=(--since "$since")
+          fi
+          if { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.execute }}" = "true" ]; } ||
+             { [ "${{ github.event_name }}" = "schedule" ] && [ "${{ vars.CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE || '0' }}" = "1" ]; }; then
+            args+=(--execute)
+          fi
+          pnpm run repair:comment-router -- "${args[@]}"
+
+      - name: Commit comment router ledger
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/comment-router.json results/comment-router-latest.json jobs/ 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No comment router changes"
+            exit 0
+          fi
+          git commit -m "chore: record ClawSweeper comment routing"
+          for attempt in 1 2 3; do
+            echo "Push attempt ${attempt}"
+            if git push; then
+              exit 0
+            fi
+            git fetch origin main
+            git rebase -X theirs origin/main
+          done
+          git push

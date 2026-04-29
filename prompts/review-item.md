@@ -80,7 +80,7 @@ Close as implemented when current `main` solves the observable user problem well
 
 Keep open for everything else, including real bugs, unclear-but-salvageable reports, stale PRs that might still contain useful work, optional features that require a new core/plugin API first, or anything where the evidence is not high-confidence.
 
-For keep-open items, also decide whether this is a safe Clownfish fix-PR
+For keep-open items, also decide whether this is a safe ClawSweeper repair
 candidate. This is not permission to mutate GitHub; it only marks a manual work
 lane candidate for a maintainer to promote later. Set `workCandidate` to
 `queue_fix_pr` only when all of these are true:
@@ -98,7 +98,7 @@ priority or product judgment before implementation. Set it to `none` for close
 decisions, stale/unclear reports, security-sensitive work, protected-label
 items, broad feature programs, pure administration, or items already paired
 with an open fix PR. When you choose `queue_fix_pr`, write `workPrompt` as the
-custom maintainer prompt that ProjectClownfish should give Codex: include the
+custom maintainer prompt that the ClawSweeper repair lane should give Codex: include the
 observable bug or feature, the expected fix boundary, related refs from
 `workClusterRefs`, likely files, validation commands, changelog expectation, and
 anything that must not be changed. Keep it concrete enough that a single

@@ -828,7 +828,7 @@ Needs maintainer review.
   assert.match(markers, /sha=abc123def456/);
 });
 
-test("non-PR review reports do not carry Clownfish repair markers", () => {
+test("non-PR review reports do not carry repair markers", () => {
   assert.equal(reviewAutomationMarkersFromReport(reportFrontMatter({ type: "issue" })), "");
 });
 
@@ -1017,7 +1017,6 @@ test("codex subprocess env strips GitHub and App credentials", () => {
   try {
     process.env.GH_TOKEN = "gh";
     process.env.GITHUB_TOKEN = "github";
-    process.env.OPENCLAW_GH_TOKEN = "openclaw";
     process.env.COMMIT_SWEEPER_TARGET_GH_TOKEN = "target";
     process.env.CLAWSWEEPER_APP_ID = "123";
     process.env.CLAWSWEEPER_APP_PRIVATE_KEY = "private";
@@ -1028,7 +1027,6 @@ test("codex subprocess env strips GitHub and App credentials", () => {
 
     assert.equal(env.GH_TOKEN, undefined);
     assert.equal(env.GITHUB_TOKEN, undefined);
-    assert.equal(env.OPENCLAW_GH_TOKEN, undefined);
     assert.equal(env.COMMIT_SWEEPER_TARGET_GH_TOKEN, undefined);
     assert.equal(env.CLAWSWEEPER_APP_ID, undefined);
     assert.equal(env.CLAWSWEEPER_APP_PRIVATE_KEY, undefined);

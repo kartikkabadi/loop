@@ -27,7 +27,7 @@ It has two independent lanes:
   comment per item and edits it in place instead of posting repeated comments.
   Pull request comments include hidden verdict markers, and actionable PR
   follow-up includes a hidden `clawsweeper-action:fix-required` marker for the
-  trusted Clownfish repair loop. See
+  trusted ClawSweeper repair loop. See
   [`docs/pr-review-comments.md`](docs/pr-review-comments.md).
 - **Guarded apply:** apply mode re-fetches live GitHub state, checks labels,
   maintainer authorship, paired issue/PR state, snapshot drift, and repository
@@ -45,8 +45,7 @@ It has two independent lanes:
 - **Reconcile:** `pnpm run reconcile` repairs report placement drift such as
   reopened archived records or closed items still sitting in `items/`.
 - **Work candidates:** valid, narrow items can be marked as
-  `queue_fix_pr` candidates for manual ProjectClownfish promotion; ClawSweeper
-  itself does not open implementation PRs.
+  `queue_fix_pr` candidates for manual ClawSweeper repair promotion.
 - **Commit review:** push events on target `main` branches can dispatch to
   `.github/workflows/commit-review.yml`, which expands the commit range, skips
   non-code-only commits cheaply, starts one Codex worker per code-bearing
@@ -59,9 +58,9 @@ It has two independent lanes:
   commit storage easy to review by time window without date folders.
 - **Optional commit checks:** commit reports are the source of truth; target
   commit Check Runs are disabled by default and can be enabled per run or repo.
-- **Clownfish repair dispatch:** commit reports with `result: findings` can
-  dispatch to Clownfish, where a separate intake writes an audit record and only
-  creates a PR when the finding is narrow, non-security, and still relevant on
+- **ClawSweeper repair dispatch:** commit reports with `result: findings` can
+  dispatch to the repair intake, where an audit record is written and a PR is
+  created only when the finding is narrow, non-security, and still relevant on
   latest `main`.
 
 ## Guardrails
@@ -525,7 +524,7 @@ Review is proposal-only. It never closes items.
   review comment. Missing comments and missing metadata are synced immediately;
   existing comments are refreshed only when stale, currently weekly.
 - PR review comments use hidden verdict/action markers for the trusted
-  Clownfish repair loop; see
+  ClawSweeper repair loop; see
   [`docs/pr-review-comments.md`](docs/pr-review-comments.md).
 
 ### Apply Lane
@@ -593,8 +592,8 @@ items, writes comments, or fixes code.
 - Optional GitHub Checks use the `ClawSweeper Commit Review` name on the target
   commit. Clean or skipped reports are green; high-confidence high/critical
   findings fail; lower-severity, inconclusive, and failed reviews are neutral.
-- Finding reports are dispatched to Clownfish when
-  `CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED` is not `false`. Clownfish owns
+- Finding reports are dispatched to the repair intake when
+  `CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED` is not `false`. ClawSweeper owns
   the audit log and any repair PR.
 
 Use `pnpm commit-reports -- --since 24h` to review recent reports and add
@@ -741,9 +740,6 @@ Required secrets:
 - `OPENAI_API_KEY`: OpenAI API key used to log Codex in before review shards run.
 - `CODEX_API_KEY`: optional compatibility alias for the same key during the
   login check.
-- `OPENCLAW_GH_TOKEN`: optional fallback GitHub token for read-heavy target
-  scans and artifact publish reconciliation when the GitHub App token is
-  unavailable.
 - `CLAWSWEEPER_APP_CLIENT_ID`: public GitHub App client ID for `openclaw-ci`.
   Currently `Iv23liOECG0slfuhz093`.
 - `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `openclaw-ci`; plan/review
@@ -760,9 +756,9 @@ Token flow:
 - Review shards log Codex in with `OPENAI_API_KEY`, then run without OpenAI or
   Codex token environment variables.
 - ClawSweeper uses the `openclaw-ci` GitHub App token for read-heavy target
-  context, falling back to `OPENCLAW_GH_TOKEN` only if app secrets are absent.
-- Apply mode uses the app token for review comments and closes, so GitHub
-  attributes mutations to `clawsweeper[bot]`.
+  context.
+- Apply mode uses the same app token for review comments and closes, so GitHub
+  attributes mutations to the app bot account instead of a PAT user.
 - Commit review passes Codex only a read-scoped target token as `GH_TOKEN` for
   issue/PR/workflow/commit hydration, then creates write/check credentials only
   after Codex exits.

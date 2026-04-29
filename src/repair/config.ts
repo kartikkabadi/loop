@@ -1,0 +1,165 @@
+import { DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS } from "./comment-router-core.js";
+import { currentProjectRepo, readMaxLiveWorkers } from "./lib.js";
+import { assertRepo, commaSet, positiveInteger } from "./comment-router-utils.js";
+
+export const DEFAULT_TARGET_REPO = "openclaw/openclaw";
+export const DEFAULT_HEAD_PREFIX = "clawsweeper/";
+export const DEFAULT_LABEL = "clawsweeper";
+
+const DEFAULT_ALLOWED_ASSOCIATIONS = ["OWNER", "MEMBER", "COLLABORATOR"];
+const DEFAULT_TRUSTED_BOTS = ["clawsweeper[bot]", "openclaw-clawsweeper[bot]"];
+const DEFAULT_CLAWSWEEPER_REPAIR_AUTHORS = ["openclaw-clawsweeper", "openclaw-clawsweeper[bot]"];
+
+export type CommentRouterConfig = {
+  targetRepo: string;
+  repairRepo: string;
+  workflow: string;
+  reviewRepo: string;
+  reviewWorkflow: string;
+  runner: string;
+  executionRunner: string;
+  model: string;
+  headPrefix: string;
+  label: string;
+  execute: boolean;
+  writeReport: boolean;
+  waitForCapacity: boolean;
+  maxLiveWorkers: number;
+  maxComments: number;
+  maxAutocloseTargets: number;
+  maxAutoRepairsPerHead: number;
+  maxAutoRepairsPerPr: number;
+  lookbackMinutes: number;
+  since: string;
+  allowedAssociations: Set<string>;
+  allowedRepositoryPermissions: Set<string>;
+  trustedBots: Set<string>;
+  clawsweeperAuthors: Set<string>;
+};
+
+export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig {
+  const targetRepo = stringSetting(
+    args.repo ?? process.env.CLAWSWEEPER_REPAIR_TARGET_REPO,
+    DEFAULT_TARGET_REPO,
+  );
+  const repairRepo = stringSetting(
+    args["repair-repo"] ?? process.env.CLAWSWEEPER_REPAIR_REPO,
+    currentProjectRepo(),
+  );
+  const workflow = stringSetting(
+    args.workflow ?? process.env.CLAWSWEEPER_REPAIR_COMMENT_WORKFLOW,
+    "cluster-worker.yml",
+  );
+  const reviewRepo = stringSetting(
+    args["review-repo"] ?? process.env.CLAWSWEEPER_REVIEW_REPO,
+    currentProjectRepo(),
+  );
+  const reviewWorkflow = stringSetting(
+    args["review-workflow"] ?? process.env.CLAWSWEEPER_REVIEW_WORKFLOW,
+    "sweep.yml",
+  );
+  const runner = stringSetting(
+    args.runner ?? process.env.CLAWSWEEPER_REPAIR_WORKER_RUNNER,
+    "blacksmith-4vcpu-ubuntu-2404",
+  );
+  const executionRunner = stringSetting(
+    args["execution-runner"] ??
+      args.execution_runner ??
+      process.env.CLAWSWEEPER_REPAIR_EXECUTION_RUNNER,
+    "blacksmith-16vcpu-ubuntu-2404",
+  );
+  const model = stringSetting(args.model ?? process.env.CLAWSWEEPER_REPAIR_MODEL, "gpt-5.5");
+  const headPrefix = stringSetting(
+    args["head-prefix"] ?? process.env.CLAWSWEEPER_REPAIR_HEAD_PREFIX,
+    DEFAULT_HEAD_PREFIX,
+  );
+  const label = stringSetting(args.label ?? process.env.CLAWSWEEPER_REPAIR_LABEL, DEFAULT_LABEL);
+  const lookbackMinutes = positiveInteger(
+    args["lookback-minutes"] ?? process.env.CLAWSWEEPER_REPAIR_COMMENT_LOOKBACK_MINUTES ?? 180,
+    "lookback-minutes",
+  );
+
+  assertRepo(targetRepo, "repo");
+  assertRepo(repairRepo, "repair-repo");
+  assertRepo(reviewRepo, "review-repo");
+
+  return {
+    targetRepo,
+    repairRepo,
+    workflow,
+    reviewRepo,
+    reviewWorkflow,
+    runner,
+    executionRunner,
+    model,
+    headPrefix,
+    label,
+    execute: Boolean(args.execute),
+    writeReport: Boolean(args["write-report"] || args.execute),
+    waitForCapacity: Boolean(args["wait-for-capacity"]),
+    maxLiveWorkers: readMaxLiveWorkers(args),
+    maxComments: positiveInteger(
+      args["max-comments"] ?? process.env.CLAWSWEEPER_REPAIR_COMMENT_MAX_COMMENTS ?? 100,
+      "max-comments",
+    ),
+    maxAutocloseTargets: positiveInteger(
+      args["max-autoclose-targets"] ?? process.env.CLAWSWEEPER_REPAIR_AUTOCLOSE_MAX_TARGETS ?? 8,
+      "max-autoclose-targets",
+    ),
+    maxAutoRepairsPerHead: positiveInteger(
+      args["max-auto-repairs-per-head"] ?? process.env.CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_HEAD ?? 1,
+      "max-auto-repairs-per-head",
+    ),
+    maxAutoRepairsPerPr: positiveInteger(
+      args["max-auto-repairs-per-pr"] ?? process.env.CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_PR ?? 5,
+      "max-auto-repairs-per-pr",
+    ),
+    lookbackMinutes,
+    since: stringSetting(
+      args.since,
+      new Date(Date.now() - lookbackMinutes * 60 * 1000).toISOString(),
+    ),
+    allowedAssociations: upperCaseSet(
+      process.env.CLAWSWEEPER_REPAIR_COMMENT_ALLOWED_ASSOCIATIONS ??
+        DEFAULT_ALLOWED_ASSOCIATIONS.join(","),
+    ),
+    allowedRepositoryPermissions: lowerCaseSet(
+      args["allowed-repository-permissions"] ??
+        process.env.CLAWSWEEPER_REPAIR_COMMENT_ALLOWED_REPOSITORY_PERMISSIONS ??
+        DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS.join(","),
+    ),
+    trustedBots: commaSet(
+      args["trusted-bots"] ??
+        process.env.CLAWSWEEPER_REPAIR_TRUSTED_BOTS ??
+        DEFAULT_TRUSTED_BOTS.join(","),
+    ),
+    clawsweeperAuthors: commaSet(
+      args["clawsweeper-authors"] ??
+        process.env.CLAWSWEEPER_REPAIR_AUTHOR_LOGINS ??
+        DEFAULT_CLAWSWEEPER_REPAIR_AUTHORS.join(","),
+    ),
+  };
+}
+
+function stringSetting(value: JsonValue, fallback: string): string {
+  const text = String(value ?? fallback).trim();
+  return text || fallback;
+}
+
+function lowerCaseSet(value: JsonValue): Set<string> {
+  return new Set(
+    String(value ?? "")
+      .split(",")
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
+function upperCaseSet(value: JsonValue): Set<string> {
+  return new Set(
+    String(value ?? "")
+      .split(",")
+      .map((item) => item.trim().toUpperCase())
+      .filter(Boolean),
+  );
+}

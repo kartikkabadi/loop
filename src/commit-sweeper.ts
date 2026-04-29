@@ -716,17 +716,17 @@ function workflowDispatchArgs(
 }
 
 function dispatchCommitFinding(options: {
-  clownfishRepo: string;
   dispatch: CommitFindingDispatch;
   mode: string;
   reportRepo: string;
+  repairRepo: string;
   workflow: string;
 }): void {
   const commandArgs =
     options.mode === "repository_dispatch"
-      ? ["api", `repos/${options.clownfishRepo}/dispatches`, "--method", "POST", "--input", "-"]
+      ? ["api", `repos/${options.repairRepo}/dispatches`, "--method", "POST", "--input", "-"]
       : workflowDispatchArgs(options.dispatch, options.reportRepo, options.workflow).map((arg) =>
-          arg === "PLACEHOLDER" ? options.clownfishRepo : arg,
+          arg === "PLACEHOLDER" ? options.repairRepo : arg,
         );
   const result = spawnSync("gh", commandArgs, {
     input:
@@ -738,7 +738,7 @@ function dispatchCommitFinding(options: {
   });
   if (result.status !== 0) {
     throw new Error(
-      `failed to dispatch ${options.dispatch.sha} to ${options.clownfishRepo}: ${
+      `failed to dispatch ${options.dispatch.sha} to ${options.repairRepo}: ${
         result.stderr || result.stdout || "unknown gh error"
       }`,
     );
@@ -753,9 +753,9 @@ function dispatchFindingsCommand(args: Args): void {
   }
 
   const artifactDir = resolve(stringArg(args, "artifact_dir", "commit-artifacts"));
-  const clownfishRepo = stringArg(args, "clownfish_repo", "openclaw/clownfish");
+  const repairRepo = stringArg(args, "repair_repo", "openclaw/clawsweeper");
   const dispatchMode = stringArg(args, "dispatch_mode", "workflow_dispatch");
-  const clownfishWorkflow = stringArg(args, "clownfish_workflow", "commit-finding-intake.yml");
+  const repairWorkflow = stringArg(args, "repair_workflow", "repair-commit-finding-intake.yml");
   const reportRepo = stringArg(
     args,
     "report_repo",
@@ -798,20 +798,20 @@ function dispatchFindingsCommand(args: Args): void {
       if (dispatchMode === "repository_dispatch") {
         console.log(dispatchPayload(dispatch, reportRepo).trim());
       } else {
-        const commandArgs = workflowDispatchArgs(dispatch, reportRepo, clownfishWorkflow).map(
-          (arg) => (arg === "PLACEHOLDER" ? clownfishRepo : arg),
+        const commandArgs = workflowDispatchArgs(dispatch, reportRepo, repairWorkflow).map((arg) =>
+          arg === "PLACEHOLDER" ? repairRepo : arg,
         );
         console.log(`gh ${commandArgs.join(" ")}`);
       }
     } else {
       dispatchCommitFinding({
-        clownfishRepo,
         dispatch,
         mode: dispatchMode,
         reportRepo,
-        workflow: clownfishWorkflow,
+        repairRepo,
+        workflow: repairWorkflow,
       });
-      console.log(`dispatched ${dispatch.targetRepo}@${dispatch.sha} to ${clownfishRepo}`);
+      console.log(`dispatched ${dispatch.targetRepo}@${dispatch.sha} to ${repairRepo}`);
     }
   }
 }

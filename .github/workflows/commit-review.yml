@@ -329,7 +329,6 @@ jobs:
       - name: Create target checks token
         id: target-checks-token
         if: ${{ needs.plan.outputs.create_checks == 'true' }}
-        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -339,7 +338,7 @@ jobs:
           permission-checks: write
 
       - name: Publish commit check
-        if: ${{ needs.plan.outputs.create_checks == 'true' && steps.target-checks-token.outputs.token != '' }}
+        if: ${{ needs.plan.outputs.create_checks == 'true' }}
         working-directory: clawsweeper
         env:
           GH_TOKEN: ${{ steps.target-checks-token.outputs.token }}
@@ -424,28 +423,28 @@ jobs:
             git push
           fi
 
-      - name: Create Clownfish dispatch token
-        id: clownfish-token
-        if: ${{ vars.CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED != 'false' }}
-        continue-on-error: true
+      - name: Create repair dispatch token
+        id: clawsweeper-token
+        if: ${{ vars.CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED != 'false' }}
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: openclaw
-          repositories: clownfish
+          repositories: clawsweeper
           permission-actions: write
 
-      - name: Dispatch commit findings to Clownfish
-        if: ${{ vars.CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED != 'false' && steps.clownfish-token.outputs.token != '' }}
+      - name: Dispatch commit findings to repair lane
+        if: ${{ vars.CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED != 'false' }}
         env:
-          GH_TOKEN: ${{ steps.clownfish-token.outputs.token }}
-          ENABLED: ${{ vars.CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED || 'true' }}
+          GH_TOKEN: ${{ steps.clawsweeper-token.outputs.token }}
+          ENABLED: ${{ vars.CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED || 'true' }}
         run: |
           set -euo pipefail
           node dist/commit-sweeper.js dispatch-findings \
             --artifact-dir commit-artifacts \
-            --clownfish-repo openclaw/clownfish \
+            --repair-repo openclaw/clawsweeper \
+            --repair-workflow repair-commit-finding-intake.yml \
             --dispatch-mode workflow_dispatch \
             --report-repo "${{ github.repository }}" \
             --enabled "$ENABLED"
@@ -453,7 +452,6 @@ jobs:
       - name: Create target checks token
         id: target-checks-token
         if: ${{ needs.plan.outputs.create_checks == 'true' }}
-        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -463,7 +461,7 @@ jobs:
           permission-checks: write
 
       - name: Publish commit checks
-        if: ${{ needs.plan.outputs.create_checks == 'true' && steps.target-checks-token.outputs.token != '' }}
+        if: ${{ needs.plan.outputs.create_checks == 'true' }}
         env:
           GH_TOKEN: ${{ steps.target-checks-token.outputs.token }}
         run: |

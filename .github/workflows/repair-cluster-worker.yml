@@ -1,0 +1,336 @@
+name: repair cluster worker
+
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Job markdown path, for example jobs/openclaw/inbox/cluster-001.md"
+        required: true
+        type: string
+      mode:
+        description: "Worker mode"
+        required: true
+        default: plan
+        type: choice
+        options:
+          - plan
+          - execute
+          - autonomous
+      runner:
+        description: "Runner label for cluster planning/review work"
+        required: true
+        default: blacksmith-4vcpu-ubuntu-2404
+        type: string
+      execution_runner:
+        description: "Runner label for fix/apply execution work"
+        required: true
+        default: blacksmith-16vcpu-ubuntu-2404
+        type: string
+      model:
+        description: "Codex model"
+        required: true
+        default: gpt-5.5
+        type: string
+      dry_run:
+        description: "Render prompt and write a dry result without invoking Codex"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+
+concurrency:
+  group: clawsweeper-repair-${{ inputs.job }}-${{ inputs.mode }}
+  cancel-in-progress: false
+
+jobs:
+  cluster:
+    name: Plan and review cluster
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 90
+    outputs:
+      allow_execute: ${{ steps.capture_gates.outputs.allow_execute }}
+      allow_fix_pr: ${{ steps.capture_gates.outputs.allow_fix_pr }}
+      allow_merge: ${{ steps.capture_gates.outputs.allow_merge }}
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
+      CLAWSWEEPER_REPAIR_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || 'openclaw' }}
+      CLAWSWEEPER_REPAIR_ALLOW_EXECUTE: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && vars.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && '1' || '0' }}
+      CLAWSWEEPER_REPAIR_ALLOW_FIX_PR: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && vars.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' && '1' || '0' }}
+      CLAWSWEEPER_REPAIR_ALLOW_MERGE: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && (vars.CLAWSWEEPER_REPAIR_ALLOW_MERGE || '0') || '0' }}
+      CLAWSWEEPER_REPAIR_HYDRATE_CLUSTER_REFS: ${{ vars.CLAWSWEEPER_REPAIR_HYDRATE_CLUSTER_REFS || '1' }}
+      CLAWSWEEPER_REPAIR_HYDRATE_COMMENTS: ${{ vars.CLAWSWEEPER_REPAIR_HYDRATE_COMMENTS || '1' }}
+      CLAWSWEEPER_REPAIR_MAX_COMMENTS_PER_ITEM: ${{ vars.CLAWSWEEPER_REPAIR_MAX_COMMENTS_PER_ITEM || '30' }}
+      CLAWSWEEPER_REPAIR_MAX_LINKED_REFS: ${{ vars.CLAWSWEEPER_REPAIR_MAX_LINKED_REFS || '20' }}
+      CLAWSWEEPER_REPAIR_MAX_REVIEW_COMMENTS_PER_PR: ${{ vars.CLAWSWEEPER_REPAIR_MAX_REVIEW_COMMENTS_PER_PR || '50' }}
+      CLAWSWEEPER_REPAIR_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_TIMEOUT_MS || '1800000' }}
+      CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT || 'medium' }}
+      CLAWSWEEPER_REPAIR_MODEL: ${{ inputs.model || vars.CLAWSWEEPER_REPAIR_MODEL || 'gpt-5.5' }}
+      CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_CLI_VERSION || '0.125.0' }}
+      OPENCLAW_LOCAL_CHECK: "0"
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Create GitHub App token
+        id: app_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          permission-contents: read
+          permission-issues: read
+          permission-pull-requests: read
+
+      - name: Capture execution gates
+        id: capture_gates
+        run: |
+          {
+            echo "allow_execute=${CLAWSWEEPER_REPAIR_ALLOW_EXECUTE}"
+            echo "allow_fix_pr=${CLAWSWEEPER_REPAIR_ALLOW_FIX_PR}"
+            echo "allow_merge=${CLAWSWEEPER_REPAIR_ALLOW_MERGE}"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm run build:repair
+
+      - name: Cache Codex CLI and npm downloads
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.npm
+            ~/.clawsweeper-repair/codex
+          key: ${{ runner.os }}-node24-codex-${{ env.CODEX_CLI_VERSION }}-v1
+          restore-keys: |
+            ${{ runner.os }}-node24-codex-
+
+      - name: Verify GitHub read token
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+        run: |
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "GitHub App token is required"
+            exit 1
+          fi
+          gh auth status
+
+      - name: Install Codex CLI
+        run: |
+          set -euo pipefail
+          npm config set prefix "$HOME/.clawsweeper-repair/codex"
+          npm config set cache "$HOME/.npm"
+          echo "$HOME/.clawsweeper-repair/codex/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.clawsweeper-repair/codex/bin:$PATH"
+
+          if ! command -v codex >/dev/null 2>&1 || ! codex --version | grep -Fq "$CODEX_CLI_VERSION"; then
+            npm install -g "@openai/codex@$CODEX_CLI_VERSION" --prefer-offline --no-audit --no-fund
+          fi
+          codex --version
+
+      - name: Authenticate Codex
+        run: |
+          test -n "${OPENAI_API_KEY:-}"
+          test -n "${CODEX_API_KEY:-}"
+          printenv OPENAI_API_KEY | codex login --with-api-key >/dev/null
+
+      - name: Validate job
+        run: pnpm run repair:validate-job -- "${{ inputs.job }}"
+
+      - name: Run worker
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+        run: |
+          worker_mode="${{ inputs.mode }}"
+          if [ "$worker_mode" != "plan" ] && [ "${CLAWSWEEPER_REPAIR_ALLOW_EXECUTE}" != "1" ]; then
+            echo "CLAWSWEEPER_REPAIR_ALLOW_EXECUTE is not explicitly 1; rendering plan-only output for requested $worker_mode run"
+            worker_mode="plan"
+          fi
+          args=("${{ inputs.job }}" --mode "$worker_mode")
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            args+=(--dry-run)
+          fi
+          pnpm run repair:worker -- "${args[@]}"
+
+      - name: Review worker result
+        if: always()
+        run: |
+          if find .clawsweeper-repair/runs -name result.json -print -quit | grep -q .; then
+            pnpm run repair:review-results -- .clawsweeper-repair/runs
+          fi
+
+      - name: Upload worker transfer artifacts
+        if: ${{ always() && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: clawsweeper-repair-worker-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .clawsweeper-repair/runs
+          if-no-files-found: warn
+
+      - name: Upload final worker artifacts
+        if: ${{ always() && (!((inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run) || failure() || cancelled()) }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: clawsweeper-repair-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .clawsweeper-repair/runs/**
+          if-no-files-found: warn
+
+  execute:
+    name: Execute and apply cluster actions
+    needs: cluster
+    if: ${{ needs.cluster.result == 'success' && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
+    runs-on: ${{ inputs.execution_runner }}
+    timeout-minutes: 45
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
+      CLAWSWEEPER_REPAIR_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || 'openclaw' }}
+      CLAWSWEEPER_REPAIR_ALLOW_EXECUTE: ${{ needs.cluster.outputs.allow_execute == '1' && '1' || '0' }}
+      CLAWSWEEPER_REPAIR_ALLOW_FIX_PR: ${{ needs.cluster.outputs.allow_fix_pr == '1' && '1' || '0' }}
+      CLAWSWEEPER_REPAIR_ALLOW_MERGE: ${{ needs.cluster.outputs.allow_merge || '0' }}
+      CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT || 'medium' }}
+      CLAWSWEEPER_REPAIR_CODEX_REVIEW_ATTEMPTS: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_REVIEW_ATTEMPTS || '2' }}
+      CLAWSWEEPER_REPAIR_REBASE_REPAIR_ATTEMPTS: ${{ vars.CLAWSWEEPER_REPAIR_REBASE_REPAIR_ATTEMPTS || '4' }}
+      CLAWSWEEPER_REPAIR_FIX_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_CODEX_TIMEOUT_MS || '1200000' }}
+      CLAWSWEEPER_REPAIR_FIX_STEP_TIMEOUT_MS: "1500000"
+      CLAWSWEEPER_REPAIR_FIX_TIMEOUT_RESERVE_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_TIMEOUT_RESERVE_MS || '300000' }}
+      CLAWSWEEPER_REPAIR_FIX_PREFLIGHT_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_PREFLIGHT_TIMEOUT_MS || '120000' }}
+      CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS: ${{ vars.CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS || '1' }}
+      CLAWSWEEPER_REPAIR_MODEL: ${{ inputs.model || vars.CLAWSWEEPER_REPAIR_MODEL || 'gpt-5.5' }}
+      CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE: ${{ vars.CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE || 'changed-only' }}
+      CLAWSWEEPER_REPAIR_POST_FLIGHT_IGNORE_CHECKS: ${{ vars.CLAWSWEEPER_REPAIR_POST_FLIGHT_IGNORE_CHECKS || 'auto-response,Labeler,Stale' }}
+      CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA: ${{ vars.CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA || '50' }}
+      CLAWSWEEPER_REPAIR_CLOSE_SUPERSEDED_SOURCE_PRS: ${{ vars.CLAWSWEEPER_REPAIR_CLOSE_SUPERSEDED_SOURCE_PRS || '0' }}
+      CLAWSWEEPER_REPAIR_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_REPAIR_GIT_USER_NAME || 'clawsweeper-repair' }}
+      CLAWSWEEPER_REPAIR_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_REPAIR_GIT_USER_EMAIL || 'clawsweeper-repair@users.noreply.github.com' }}
+      CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_CLI_VERSION || '0.125.0' }}
+      OPENCLAW_LOCAL_CHECK: "0"
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Create GitHub App token
+        id: app_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+
+      - name: Create workflow-capable GitHub App token
+        id: workflow_app_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+          permission-workflows: write
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm run build:repair
+
+      - name: Cache Codex CLI, npm, and target pnpm downloads
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.npm
+            ~/.cache/node/corepack
+            ~/.local/share/pnpm/store
+            ~/.clawsweeper-repair/codex
+          key: ${{ runner.os }}-node24-codex-${{ env.CODEX_CLI_VERSION }}-target-pnpm-v1
+          restore-keys: |
+            ${{ runner.os }}-node24-codex-${{ env.CODEX_CLI_VERSION }}-target-pnpm-
+            ${{ runner.os }}-node24-codex-
+
+      - name: Install Codex CLI
+        run: |
+          set -euo pipefail
+          npm config set prefix "$HOME/.clawsweeper-repair/codex"
+          npm config set cache "$HOME/.npm"
+          echo "$HOME/.clawsweeper-repair/codex/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.clawsweeper-repair/codex/bin:$PATH"
+
+          if ! command -v codex >/dev/null 2>&1 || ! codex --version | grep -Fq "$CODEX_CLI_VERSION"; then
+            npm install -g "@openai/codex@$CODEX_CLI_VERSION" --prefer-offline --no-audit --no-fund
+          fi
+          codex --version
+
+      - name: Authenticate Codex
+        run: |
+          test -n "${OPENAI_API_KEY:-}"
+          test -n "${CODEX_API_KEY:-}"
+          printenv OPENAI_API_KEY | codex login --with-api-key >/dev/null
+
+      - name: Download worker artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: clawsweeper-repair-worker-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .clawsweeper-repair/runs
+
+      - name: Validate job
+        run: pnpm run repair:validate-job -- "${{ inputs.job }}"
+
+      - name: Execute credited fix artifact
+        if: ${{ env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' }}
+        timeout-minutes: 30
+        env:
+          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+        run: pnpm run repair:execute-fix -- "${{ inputs.job }}" --latest
+
+      - name: Apply safe closure actions
+        if: ${{ env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' }}
+        env:
+          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+        run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
+
+      - name: Post-flight finalize fix PRs
+        if: ${{ env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' }}
+        env:
+          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+        run: pnpm run repair:post-flight -- "${{ inputs.job }}" --latest
+
+      - name: Apply post-flight closeouts
+        if: ${{ env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' }}
+        env:
+          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+        run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
+
+      - name: Tag ClawSweeper targets
+        if: ${{ always() && env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' }}
+        env:
+          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+        run: pnpm run repair:tag-clawsweeper -- .clawsweeper-repair/runs --apply --live --open-branches false --report .clawsweeper-repair/runs/clawsweeper-label-report.json
+
+      - name: Upload final worker artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: clawsweeper-repair-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .clawsweeper-repair/runs/**
+          if-no-files-found: warn

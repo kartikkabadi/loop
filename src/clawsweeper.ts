@@ -997,7 +997,7 @@ function requireStringArray(value: unknown, path: string): string[] {
 }
 
 function isEnvironmentAccessCaveat(value: string): boolean {
-  return /(?:GH_TOKEN|GITHUB_TOKEN|OPENCLAW_GH_TOKEN|authenticated gh|gh (?:was |is )?unavailable|unauthenticated gh|shallow clone|GitHub auth(?:entication)? (?:was |is )?unavailable|could not use authenticated GitHub)/i.test(
+  return /(?:GH_TOKEN|GITHUB_TOKEN|authenticated gh|gh (?:was |is )?unavailable|unauthenticated gh|shallow clone|GitHub auth(?:entication)? (?:was |is )?unavailable|could not use authenticated GitHub)/i.test(
     value,
   );
 }
@@ -2564,7 +2564,6 @@ export function codexEnv(options: { ghToken?: string | undefined } = {}): NodeJS
   const ghToken = options.ghToken?.trim();
   delete env.GH_TOKEN;
   delete env.GITHUB_TOKEN;
-  delete env.OPENCLAW_GH_TOKEN;
   delete env.COMMIT_SWEEPER_TARGET_GH_TOKEN;
   delete env.CLAWSWEEPER_APP_ID;
   delete env.CLAWSWEEPER_APP_PRIVATE_KEY;
@@ -3141,7 +3140,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
       (frontMatterValue(markdown, "work_confidence") as Confidence | undefined) ?? "low",
     workPriority: (frontMatterValue(markdown, "work_priority") as Confidence | undefined) ?? "low",
     workReason: sectionValue(markdown, "Work Candidate"),
-    workPrompt: sectionValue(markdown, "Clownfish Work Prompt"),
+    workPrompt: sectionValue(markdown, "Repair Work Prompt"),
     workClusterRefs: frontMatterStringArray(markdown, "work_cluster_refs"),
     workValidation: frontMatterStringArray(markdown, "work_validation"),
     workLikelyFiles: frontMatterStringArray(markdown, "work_likely_files"),
@@ -3769,7 +3768,7 @@ function markdownFor(options: {
     : "- none";
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
   const workReason = options.decision.workReason.trim() || "_No work-lane recommendation._";
-  const workPrompt = options.decision.workPrompt.trim() || "_No Clownfish prompt drafted._";
+  const workPrompt = options.decision.workPrompt.trim() || "_No repair prompt drafted._";
   const workClusterRefs = options.decision.workClusterRefs.length
     ? options.decision.workClusterRefs.map((ref) => `- ${ref}`).join("\n")
     : "- none";
@@ -3895,7 +3894,7 @@ Validation:
 
 ${workValidation}
 
-## Clownfish Work Prompt
+## Repair Work Prompt
 
 ${workPrompt}
 

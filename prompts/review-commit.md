@@ -101,7 +101,7 @@ Review method:
 If something looks risky but you cannot tie it to a concrete failure mode, keep
 it out of `result: findings`. You may add a short `## Watchlist` section for
 unproven risks, clearly marked as not actionable and not suitable for automatic
-Clownfish repair.
+ClawSweeper repair.
 
 Clean report format:
 

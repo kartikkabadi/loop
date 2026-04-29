@@ -164,29 +164,29 @@ The prompt explicitly excludes style nits, broad refactor taste, generic
 cleanliness feedback, speculative security concerns without an executable path,
 and test coverage complaints without a concrete risk.
 
-## Clownfish Repair Dispatch
+## ClawSweeper Repair Dispatch
 
 After reports are committed, `.github/workflows/commit-review.yml` can dispatch
-actionable `result: findings` reports to `openclaw/clownfish` with
-Clownfish's `commit-finding-intake.yml` workflow dispatch. The older
+actionable `result: findings` reports to this repo's
+`repair-commit-finding-intake.yml` workflow. The older
 `repository_dispatch` mode is still available in the CLI for tests or future
 App-permission changes, but the workflow uses `workflow_dispatch` so the
-ClawSweeper App only needs Actions write access on `openclaw/clownfish`.
+ClawSweeper App only needs Actions write access on `openclaw/clawsweeper`.
 
 The dispatch is intentionally report-based. ClawSweeper sends the target repo,
 commit SHA, report repo, report path, report URL, severity, check conclusion,
-and source run URL. Clownfish fetches the report from latest
+and source run URL. The repair intake fetches the report from latest
 `openclaw/clawsweeper@main`, writes an audit record, and decides whether an
 automatic PR makes sense on latest target `main`.
 
 Disable this without code changes by setting:
 
 ```text
-CLAWSWEEPER_CLOWNFISH_COMMIT_FINDINGS_ENABLED=false
+CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED=false
 ```
 
-Clownfish still owns the PR lifecycle, validation, branch reuse, and no-merge
-gate. Security-sensitive findings should be audit-only on the Clownfish side.
+The ClawSweeper repair lane owns the PR lifecycle, validation, branch reuse, and
+no-merge gate. Security-sensitive findings should remain audit-only.
 
 ## Optional GitHub Checks
 
