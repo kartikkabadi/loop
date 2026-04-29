@@ -26,7 +26,10 @@ is shared or ambiguous. If the item is broad, sample the most central files
 rather than skipping provenance. If history is ambiguous, say so and mark
 confidence low. Phrase it neutrally in public prose: say `the behavior appears
 to date to commit ...` or `likely related by recent work on ...`, not `person X
-broke it`. The goal is maintainer routing, not blame.
+broke it`. The goal is maintainer routing, not blame. Do not include email
+addresses in `likelyOwners`, `person`, reasons, summaries, or public comments.
+Prefer GitHub handles from PR/commit metadata; otherwise use a display name
+without the `<email>` part.
 
 For PRs, do not list the PR author solely because they opened the PR, reported
 the issue, or authored the proposed branch. `likelyOwners` should point to
@@ -132,6 +135,7 @@ behavior. Each entry should include the person, neutral role, reason, relevant
 commits, files, and confidence. Prefer concrete git history over guesswork:
 `git blame`, `git log --follow -- <file>`, `git log -S`, `git log -G`, `git
 shortlog`, `git show`, PR metadata, and recent touches to the central files.
+Use GitHub handles when available; otherwise use names without email addresses.
 For PRs, route to feature-history owners from current `main`, not to the PR
 author merely for writing the proposal. Include at least one likely owner for
 every review; when the trail is weak, use low confidence and explain why.

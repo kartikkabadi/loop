@@ -941,6 +941,8 @@ test("review prompt routes PR likely owners through feature history", () => {
   assert.match(prompt, /git log --follow -- <file>/);
   assert.match(prompt, /do not list the PR author solely/);
   assert.match(prompt, /not to the PR\s+author merely for writing the proposal/);
+  assert.match(prompt, /Do not include email\s+addresses in `likelyOwners`/);
+  assert.match(prompt, /use names without email addresses/);
 });
 
 test("review parser strips environment access caveats from risks", () => {

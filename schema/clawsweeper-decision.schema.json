@@ -88,7 +88,7 @@
         "properties": {
           "person": {
             "type": "string",
-            "description": "GitHub login, commit author name/email, or maintainer handle. Use the most specific stable identifier available."
+            "description": "GitHub login, maintainer handle, or commit author display name. Do not include email addresses."
           },
           "role": {
             "type": "string",
