@@ -1,57 +1,102 @@
 [
   {
-    "number": 50762,
+    "number": 58808,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 50762,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 62024,
-    "action": "skipped_open_closing_pr",
-    "reason": "open PR #72580 (fix(discord): preserve explicit outbound target prefixes) is a closing reference"
-  },
-  {
-    "number": 64830,
+    "number": 60808,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 64830,
-    "action": "closed",
-    "reason": "duplicate or superseded"
-  },
-  {
-    "number": 65123,
+    "number": 60946,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 65123,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 65131,
+    "number": 63098,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 65131,
-    "action": "closed",
-    "reason": "already implemented on main"
-  },
-  {
-    "number": 72080,
+    "number": 63195,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
   },
   {
-    "number": 72080,
-    "action": "closed",
-    "reason": "already implemented on main"
+    "number": 63265,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 63279,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 63289,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 63295,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 63308,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 64316,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 72338,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74030,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74150,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74155,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74162,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74241,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74320,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74337,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 74346,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
   }
 ]
