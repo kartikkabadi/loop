@@ -88,7 +88,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 07:11 UTC
+Last dashboard update: Apr 29, 2026, 07:12 UTC
 
 ### Fleet
 
@@ -96,11 +96,11 @@ Last dashboard update: Apr 29, 2026, 07:11 UTC
 | --- | ---: |
 | Covered repositories | 2 |
 | Open issues | 4230 |
-| Open PRs | 3286 |
-| Open items total | 7516 |
-| Reviewed files | 7516 |
+| Open PRs | 3287 |
+| Open items total | 7517 |
+| Reviewed files | 7517 |
 | Unreviewed open items | 0 |
-| Due now by cadence | 1847 |
+| Due now by cadence | 1853 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 522 |
 | Closed by Codex apply | 10720 |
@@ -111,25 +111,25 @@ Last dashboard update: Apr 29, 2026, 07:11 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6600 | 6600 | 0 | 1802 | 0 | 485 | 10713 | Apr 29, 2026, 07:09 UTC | Apr 29, 2026, 07:06 UTC | 848 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6601 | 6601 | 0 | 1808 | 0 | 485 | 10713 | Apr 29, 2026, 07:10 UTC | Apr 29, 2026, 07:06 UTC | 847 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 916 | 916 | 0 | 45 | 0 | 37 | 7 | Apr 29, 2026, 06:57 UTC | Apr 29, 2026, 05:31 UTC | 406 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 07:11 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25095686941) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 07:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25095729293) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 29, 2026, 07:08 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25095598945) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 07:09 UTC. Latest close: Apr 29, 2026, 07:06 UTC. Latest comment sync: Apr 29, 2026, 07:10 UTC.
+Latest review: Apr 29, 2026, 07:10 UTC. Latest close: Apr 29, 2026, 07:06 UTC. Latest comment sync: Apr 29, 2026, 07:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 19 | 0 | 19 | 0 | 6 | 393 | 0 |
-| Last hour | 992 | 9 | 983 | 21 | 33 | 1254 | 3 |
-| Last 24 hours | 6934 | 438 | 6496 | 25 | 755 | 2650 | 28 |
+| Last 15 minutes | 19 | 0 | 19 | 0 | 4 | 392 | 0 |
+| Last hour | 983 | 8 | 975 | 21 | 33 | 1253 | 3 |
+| Last 24 hours | 6934 | 437 | 6497 | 25 | 755 | 2651 | 28 |
 
 ### Recently Closed Across Repos
 
@@ -173,6 +173,7 @@ Latest review: Apr 29, 2026, 07:09 UTC. Latest close: Apr 29, 2026, 07:06 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74170](https://github.com/openclaw/openclaw/pull/74170) | fix(media): fall back when image optimization fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74170.md) | complete | Apr 29, 2026, 07:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#63230](https://github.com/openclaw/openclaw/pull/63230) | feat: per-channel thread.requireExplicitMention override for Slack | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/63230.md) | complete | Apr 29, 2026, 07:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70936](https://github.com/openclaw/openclaw/pull/70936) | fix(pdf): resolve standard fonts from pdfjs package root | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70936.md) | complete | Apr 29, 2026, 07:08 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70888](https://github.com/openclaw/openclaw/pull/70888) | fix: restore explicit requester depth lookup without cfg | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70888.md) | complete | Apr 29, 2026, 07:08 UTC |
@@ -182,7 +183,6 @@ Latest review: Apr 29, 2026, 07:09 UTC. Latest close: Apr 29, 2026, 07:06 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74168](https://github.com/openclaw/openclaw/pull/74168) | fix(agents): add last-chance guard for blank user prompts in embedded runner | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74168.md) | complete | Apr 29, 2026, 07:07 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72276](https://github.com/openclaw/openclaw/pull/72276) | [codex] Consolidate embedded runner structural splits | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72276.md) | complete | Apr 29, 2026, 07:06 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#62359](https://github.com/openclaw/openclaw/pull/62359) | fix(cli): isolate compile cache by install version | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/62359.md) | complete | Apr 29, 2026, 07:05 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74160](https://github.com/openclaw/openclaw/pull/74160) | fix(session-repair): drop trailing errored assistant entries to break Anthropic prefill 400 loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74160.md) | complete | Apr 29, 2026, 07:00 UTC |
 
 </details>
 
@@ -200,12 +200,12 @@ Latest review: Apr 29, 2026, 07:09 UTC. Latest close: Apr 29, 2026, 07:06 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 07:11 UTC
+Updated: Apr 29, 2026, 07:12 UTC
 
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095686941](https://github.com/openclaw/clawsweeper/actions/runs/25095686941)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095729293](https://github.com/openclaw/clawsweeper/actions/runs/25095729293)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -214,9 +214,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095686941](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3347 |
-| Open PRs | 3253 |
-| Open items total | 6600 |
-| Reviewed files | 6600 |
+| Open PRs | 3254 |
+| Open items total | 6601 |
+| Reviewed files | 6601 |
 | Unreviewed open items | 0 |
 | Archived closed files | 14076 |
 
@@ -226,9 +226,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095686941](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3343 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3243 |
+| Fresh reviewed PRs in the last 7 days | 3244 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6586 |
+| Fresh verified reviews in the last 7 days | 6587 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 485 |
 | Closed by Codex apply | 10713 |
@@ -238,13 +238,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25095686941](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 108/1013 current (905 due, 10.7%) |
-| Hourly hot item cadence (<7d) | 108/1013 current (905 due, 10.7%) |
+| Hourly cadence coverage | 103/1014 current (911 due, 10.2%) |
+| Hourly hot item cadence (<7d) | 103/1014 current (911 due, 10.2%) |
 | Daily cadence coverage | 2894/3788 current (894 due, 76.4%) |
 | Daily PR cadence | 2172/2647 current (475 due, 82.1%) |
 | Daily new issue cadence (<30d) | 722/1141 current (419 due, 63.3%) |
 | Weekly older issue cadence | 1796/1799 current (3 due, 99.8%) |
-| Due now by cadence | 1802 |
+| Due now by cadence | 1808 |
 
 ### Audit Health
 
@@ -280,13 +280,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 07:09 UTC. Latest close: Apr 29, 2026, 07:06 UTC. Latest comment sync: Apr 29, 2026, 07:10 UTC.
+Latest review: Apr 29, 2026, 07:10 UTC. Latest close: Apr 29, 2026, 07:06 UTC. Latest comment sync: Apr 29, 2026, 07:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 18 | 0 | 18 | 0 | 6 | 392 | 0 |
-| Last hour | 585 | 9 | 576 | 6 | 33 | 848 | 3 |
-| Last 24 hours | 6007 | 438 | 5569 | 10 | 741 | 1826 | 28 |
+| Last 15 minutes | 18 | 0 | 18 | 0 | 4 | 391 | 0 |
+| Last hour | 580 | 8 | 572 | 6 | 33 | 847 | 3 |
+| Last 24 hours | 6007 | 437 | 5570 | 10 | 741 | 1827 | 28 |
 
 #### Recently Closed
 
@@ -322,6 +322,7 @@ Latest review: Apr 29, 2026, 07:09 UTC. Latest close: Apr 29, 2026, 07:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74170](https://github.com/openclaw/openclaw/pull/74170) | fix(media): fall back when image optimization fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74170.md) | complete | Apr 29, 2026, 07:10 UTC |
 | [#63230](https://github.com/openclaw/openclaw/pull/63230) | feat: per-channel thread.requireExplicitMention override for Slack | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/63230.md) | complete | Apr 29, 2026, 07:09 UTC |
 | [#70936](https://github.com/openclaw/openclaw/pull/70936) | fix(pdf): resolve standard fonts from pdfjs package root | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70936.md) | complete | Apr 29, 2026, 07:08 UTC |
 | [#70888](https://github.com/openclaw/openclaw/pull/70888) | fix: restore explicit requester depth lookup without cfg | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70888.md) | complete | Apr 29, 2026, 07:08 UTC |
@@ -331,7 +332,6 @@ Latest review: Apr 29, 2026, 07:09 UTC. Latest close: Apr 29, 2026, 07:06 UTC. L
 | [#74168](https://github.com/openclaw/openclaw/pull/74168) | fix(agents): add last-chance guard for blank user prompts in embedded runner | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74168.md) | complete | Apr 29, 2026, 07:07 UTC |
 | [#72276](https://github.com/openclaw/openclaw/pull/72276) | [codex] Consolidate embedded runner structural splits | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72276.md) | complete | Apr 29, 2026, 07:06 UTC |
 | [#62359](https://github.com/openclaw/openclaw/pull/62359) | fix(cli): isolate compile cache by install version | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/62359.md) | complete | Apr 29, 2026, 07:05 UTC |
-| [#74160](https://github.com/openclaw/openclaw/pull/74160) | fix(session-repair): drop trailing errored assistant entries to break Anthropic prefill 400 loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74160.md) | complete | Apr 29, 2026, 07:00 UTC |
 
 </details>
 
@@ -430,7 +430,7 @@ Latest review: Apr 29, 2026, 06:57 UTC. Latest close: Apr 29, 2026, 05:31 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 1 | 0 |
-| Last hour | 407 | 0 | 407 | 15 | 0 | 406 | 0 |
+| Last hour | 403 | 0 | 403 | 15 | 0 | 406 | 0 |
 | Last 24 hours | 927 | 0 | 927 | 15 | 14 | 824 | 0 |
 
 #### Recently Closed
