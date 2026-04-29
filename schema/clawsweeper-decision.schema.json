@@ -145,7 +145,7 @@
     "workCandidate": {
       "type": "string",
       "enum": ["none", "manual_review", "queue_fix_pr"],
-      "description": "Whether this item should become a manually promoted Clownfish fix-PR job."
+      "description": "Whether this item should become a manually promoted Clownfish fix-PR job. Use queue_fix_pr only for concrete actionable repairs; use manual_review or none for maintainer/product/security review or normal PR validation."
     },
     "workConfidence": {
       "type": "string",

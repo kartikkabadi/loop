@@ -106,6 +106,14 @@ autonomous PR can be attempted without reopening triage. Use `workValidation`
 for the exact tests or checks a fix PR should run, and `workLikelyFiles` for
 probable implementation/test/docs paths.
 
+For pull requests, `workCandidate` is also the automation contract. Use
+`queue_fix_pr` only when there is a concrete, actionable repair that an
+automated worker can attempt on the PR branch or a narrow replacement branch.
+Use `manual_review` or `none` when the remaining action is maintainer judgment,
+normal PR review, protected-label handling, ownership/product/security review,
+or validation without a specific code/docs/test defect. Do not mark an open
+implementation PR as `queue_fix_pr` merely because it needs maintainer review.
+
 Keep an issue open when an open PR specifically references it with GitHub closing
 syntax such as `Fixes #123`, `Closes #123`, or `Resolves #123`. That PR is an
 implementation candidate, not a reason to close the issue before merge. In this

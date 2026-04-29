@@ -3273,18 +3273,26 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const summary = sectionValue(markdown, "Summary");
   const bestSolution = sectionValue(markdown, "Best Possible Solution");
   const risks = sectionValue(markdown, "Risks / Open Questions");
+  const workCandidate = frontMatterValue(markdown, "work_candidate");
   const validation = frontMatterStringArray(markdown, "work_validation")
     .slice(0, 5)
     .map((step) => `- ${step}`);
   const isPullRequest = frontMatterValue(markdown, "type") === "pull_request";
+  const isRepairCandidate = workCandidate === "queue_fix_pr";
   const lines = [
-    isPullRequest
+    isPullRequest && isRepairCandidate
       ? "Codex review: needs changes before merge."
-      : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
+      : isPullRequest
+        ? "Codex review: needs maintainer review before merge."
+        : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
     "",
     sentence(summary),
     "",
-    isPullRequest ? "Required change before merge:" : "Required change / next step:",
+    isPullRequest && !isRepairCandidate
+      ? "Maintainer follow-up before merge:"
+      : isPullRequest
+        ? "Required change before merge:"
+        : "Required change / next step:",
     "",
     sentence(
       bestSolution ||
@@ -3519,6 +3527,9 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
     return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
   }
   if (decision === "keep_open") {
+    if (frontMatterValue(markdown, "work_candidate") !== "queue_fix_pr") {
+      return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
+    }
     return [
       `<!-- clawsweeper-verdict:needs-changes ${baseAttrs} -->`,
       `<!-- clawsweeper-action:fix-required ${baseAttrs} finding=review-feedback -->`,

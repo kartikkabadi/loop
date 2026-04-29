@@ -775,6 +775,12 @@ test("comment matcher recognizes old and new Codex review comments", () => {
     ),
     true,
   );
+  assert.equal(
+    isCodexReviewCommentBody(
+      "Codex review: needs maintainer review before merge.\n\nMaintainer follow-up before merge:\n\nShip it.",
+    ),
+    true,
+  );
   assert.equal(isCodexReviewCommentBody("Thanks for the report, I can reproduce this."), false);
 });
 
@@ -785,6 +791,7 @@ test("pull request review reports carry verdict and repair markers", () => {
     pull_head_sha: "abc123def456",
     decision: "keep_open",
     confidence: "high",
+    work_candidate: "queue_fix_pr",
   })}
 
 ## Summary
@@ -796,6 +803,28 @@ Needs one more repair.
   assert.match(markers, /clawsweeper-verdict:needs-changes/);
   assert.match(markers, /clawsweeper-action:fix-required/);
   assert.match(markers, /item=74065/);
+  assert.match(markers, /sha=abc123def456/);
+});
+
+test("pull request reports without a repair candidate pause for human review", () => {
+  const markers = reviewAutomationMarkersFromReport(`${reportFrontMatter({
+    type: "pull_request",
+    number: "74105",
+    pull_head_sha: "abc123def456",
+    decision: "keep_open",
+    confidence: "high",
+    work_candidate: "none",
+  })}
+
+## Summary
+
+Needs maintainer review.
+`);
+
+  assert.match(markers, /clawsweeper-verdict:needs-human/);
+  assert.doesNotMatch(markers, /clawsweeper-verdict:needs-changes/);
+  assert.doesNotMatch(markers, /clawsweeper-action:fix-required/);
+  assert.match(markers, /item=74105/);
   assert.match(markers, /sha=abc123def456/);
 });
 
