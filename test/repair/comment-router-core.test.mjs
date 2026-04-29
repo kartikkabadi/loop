@@ -6,6 +6,8 @@ import {
   MERGE_INTENTS,
   REPAIR_INTENTS,
   autocloseReasonFromCommand,
+  autoRepairBlockReason,
+  autoRepairHeadKey,
   automergeClusterId,
   automergeGateBlockReason,
   automergeJobBranch,
@@ -273,6 +275,111 @@ test("reviewedHeadShaBlockReason rejects stale trusted verdict heads", () => {
       markerName: "human-review",
     }),
     "ClawSweeper human-review marker targets a stale PR head SHA",
+  );
+});
+
+test("auto repair cap allows five PR repair rounds and blocks the sixth", () => {
+  const entries = Array.from({ length: 5 }, (_, index) => ({
+    repo: "openclaw/openclaw",
+    issue_number: 74453,
+    intent: "clawsweeper_auto_repair",
+    status: "executed",
+    target: { head_sha: `sha-${index}` },
+    comment_updated_at: `2026-04-29T10:0${index}:00Z`,
+  }));
+
+  assert.equal(
+    autoRepairBlockReason({
+      entries: entries.slice(0, 4),
+      repo: "openclaw/openclaw",
+      issueNumber: 74453,
+      headSha: "sha-5",
+      maxRepairsPerPr: 5,
+      maxRepairsPerHead: 1,
+    }),
+    null,
+  );
+  assert.equal(
+    autoRepairBlockReason({
+      entries,
+      repo: "openclaw/openclaw",
+      issueNumber: 74453,
+      headSha: "sha-5",
+      maxRepairsPerPr: 5,
+      maxRepairsPerHead: 1,
+    }),
+    "ClawSweeper auto repair already dispatched 5 total time(s) for this PR",
+  );
+});
+
+test("auto repair cap blocks duplicate head dispatches in the same review round", () => {
+  const entries = [
+    {
+      repo: "openclaw/openclaw",
+      issue_number: 74453,
+      intent: "clawsweeper_auto_repair",
+      status: "executed",
+      target: { head_sha: "same-head" },
+      comment_updated_at: "2026-04-29T10:00:00Z",
+    },
+  ];
+
+  assert.equal(
+    autoRepairHeadKey({
+      repo: "openclaw/openclaw",
+      issueNumber: 74453,
+      headSha: "same-head",
+    }),
+    "openclaw/openclaw#74453:same-head",
+  );
+  assert.equal(
+    autoRepairBlockReason({
+      entries,
+      repo: "openclaw/openclaw",
+      issueNumber: 74453,
+      headSha: "same-head",
+      maxRepairsPerPr: 5,
+      maxRepairsPerHead: 1,
+    }),
+    "ClawSweeper auto repair already dispatched 1 time(s) for this PR head",
+  );
+  assert.equal(
+    autoRepairBlockReason({
+      entries: [],
+      plannedHeads: new Set(["openclaw/openclaw#74453:same-head"]),
+      repo: "openclaw/openclaw",
+      issueNumber: 74453,
+      headSha: "same-head",
+      maxRepairsPerPr: 5,
+      maxRepairsPerHead: 1,
+    }),
+    "ClawSweeper auto repair already planned for this PR head in this scan",
+  );
+});
+
+test("auto repair cap resets after a fresh maintainer automerge command", () => {
+  const entries = [
+    {
+      repo: "openclaw/openclaw",
+      issue_number: 74453,
+      intent: "clawsweeper_auto_repair",
+      status: "executed",
+      target: { head_sha: "old-head" },
+      comment_updated_at: "2026-04-29T09:00:00Z",
+    },
+  ];
+
+  assert.equal(
+    autoRepairBlockReason({
+      entries,
+      repo: "openclaw/openclaw",
+      issueNumber: 74453,
+      headSha: "old-head",
+      maxRepairsPerPr: 5,
+      maxRepairsPerHead: 1,
+      resumeBoundary: Date.parse("2026-04-29T10:00:00Z"),
+    }),
+    null,
   );
 });
 

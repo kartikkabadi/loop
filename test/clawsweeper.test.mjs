@@ -1147,6 +1147,55 @@ Full review comments:
   assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
 });
 
+test("pull request automerge review comments with findings require repair", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "74454",
+    decision: "keep_open",
+    close_reason: "none",
+    confidence: "high",
+    review_status: "complete",
+    labels: JSON.stringify(["clawsweeper:automerge"]),
+    work_candidate: "queue_fix_pr",
+    pull_head_sha: "abc123def456",
+  })}
+
+## Summary
+
+Keep this focused PR open for automerge repair.
+
+## What This Changes
+
+Updates the webhook limiter.
+
+## Best Possible Solution
+
+Fix the missing limiter branch, then review again.
+
+## Review Findings
+
+Overall correctness: patch is incorrect
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- **[P1] Preserve the limiter guard:** \`src/webhooks/voice.ts:42\`
+  - body: The new branch can skip the limiter before accepting a webhook.
+  - confidence: 0.91
+`;
+
+  const comment = renderReviewCommentFromReport(report, "none");
+  const markers = reviewAutomationMarkersFromReport(report);
+
+  assert.match(comment, /Codex review: needs changes before merge\./);
+  assert.match(comment, /Review findings:/);
+  assert.doesNotMatch(comment, /clawsweeper-verdict:pass/);
+  assert.match(markers, /clawsweeper-verdict:needs-changes/);
+  assert.match(markers, /clawsweeper-action:fix-required/);
+  assert.doesNotMatch(markers, /clawsweeper-verdict:pass/);
+});
+
 test("security-needs-attention reports block repair and automerge markers", () => {
   const securitySection = `
 ## Security Review

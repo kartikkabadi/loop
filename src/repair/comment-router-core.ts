@@ -147,6 +147,97 @@ export function reviewedHeadShaBlockReason({
   return null;
 }
 
+type AutoRepairDispatchEntry = {
+  repo?: unknown;
+  issue_number?: unknown;
+  intent?: unknown;
+  status?: unknown;
+  target?: { head_sha?: unknown } | null;
+  comment_updated_at?: unknown;
+};
+
+export function autoRepairHeadKey({
+  repo,
+  issueNumber,
+  headSha,
+}: {
+  repo: unknown;
+  issueNumber: unknown;
+  headSha: unknown;
+}) {
+  const sha = String(headSha ?? "").trim();
+  if (!sha) return null;
+  return `${String(repo ?? "")}#${String(issueNumber ?? "")}:${sha}`;
+}
+
+export function autoRepairBlockReason({
+  entries = [],
+  plannedHeads = new Set<string>(),
+  repo,
+  issueNumber,
+  headSha,
+  maxRepairsPerPr,
+  maxRepairsPerHead,
+  resumeBoundary = 0,
+}: {
+  entries?: readonly AutoRepairDispatchEntry[];
+  plannedHeads?: ReadonlySet<string>;
+  repo: unknown;
+  issueNumber: unknown;
+  headSha: unknown;
+  maxRepairsPerPr: number;
+  maxRepairsPerHead: number;
+  resumeBoundary?: unknown;
+}) {
+  const headKey = autoRepairHeadKey({ repo, issueNumber, headSha });
+  if (!headKey) return null;
+
+  const priorPrDispatches = entries.filter(
+    (entry) =>
+      isAutoRepairDispatchForPr(entry, repo, issueNumber) &&
+      isAfterAutoRepairResumeBoundary(entry, resumeBoundary),
+  );
+  if (priorPrDispatches.length >= maxRepairsPerPr) {
+    return `ClawSweeper auto repair already dispatched ${priorPrDispatches.length} total time(s) for this PR`;
+  }
+
+  if (plannedHeads.has(headKey)) {
+    return "ClawSweeper auto repair already planned for this PR head in this scan";
+  }
+
+  const priorHeadDispatches = entries.filter(
+    (entry) =>
+      isAutoRepairDispatchForPr(entry, repo, issueNumber) &&
+      String(entry.target?.head_sha ?? "") === String(headSha ?? "") &&
+      isAfterAutoRepairResumeBoundary(entry, resumeBoundary),
+  );
+  if (priorHeadDispatches.length >= maxRepairsPerHead) {
+    return `ClawSweeper auto repair already dispatched ${priorHeadDispatches.length} time(s) for this PR head`;
+  }
+
+  return null;
+}
+
+function isAutoRepairDispatchForPr(
+  entry: AutoRepairDispatchEntry,
+  repo: unknown,
+  issueNumber: unknown,
+) {
+  return (
+    entry.repo === repo &&
+    Number(entry.issue_number) === Number(issueNumber) &&
+    entry.intent === "clawsweeper_auto_repair" &&
+    entry.status === "executed"
+  );
+}
+
+function isAfterAutoRepairResumeBoundary(entry: AutoRepairDispatchEntry, resumeBoundary: unknown) {
+  const boundary = Number(resumeBoundary) || 0;
+  if (!boundary) return true;
+  const updatedAt = Date.parse(String(entry.comment_updated_at ?? "")) || 0;
+  return updatedAt > boundary;
+}
+
 export function parseCommand(body: string) {
   for (const line of String(body ?? "").split(/\r?\n/)) {
     const automerge = line.match(/^\s*\/automerge\s*$/i);

@@ -18,6 +18,8 @@ import {
   MERGE_INTENTS,
   REPAIR_INTENTS,
   autocloseReasonFromCommand,
+  autoRepairBlockReason,
+  autoRepairHeadKey,
   automergeGateBlockReason,
   automergeClusterId,
   automergeJobPath,
@@ -81,7 +83,7 @@ const TARGET_LOOKUP_RETRY_ATTEMPTS = 3;
 const processedCommentVersions = new Set(
   (ledger.commands ?? []).map(commentVersionKey).filter(Boolean),
 );
-const plannedAutoRepairHeads = new Set();
+const plannedAutoRepairHeads = new Set<string>();
 const collaboratorPermissionCache = new Map();
 const comments = listRecentComments().slice(0, maxComments);
 const commands: LooseRecord[] = [];
@@ -547,40 +549,25 @@ function canRepairPullTarget(target: LooseRecord) {
 }
 
 function autoRepairAlreadyPlanned(command: LooseRecord) {
-  const headKey = autoRepairHeadKey(command);
-  if (!headKey) return null;
   const resumeBoundary = latestAutomergeResumeAt(command);
+  const block = autoRepairBlockReason({
+    entries: ledger.commands ?? [],
+    plannedHeads: plannedAutoRepairHeads,
+    repo: command.repo,
+    issueNumber: command.issue_number,
+    headSha: command.target?.head_sha,
+    maxRepairsPerPr: maxAutoRepairsPerPr,
+    maxRepairsPerHead: maxAutoRepairsPerHead,
+    resumeBoundary,
+  });
+  if (block) return block;
 
-  const priorPrDispatches = (ledger.commands ?? []).filter(
-    (entry: JsonValue) =>
-      entry.repo === command.repo &&
-      Number(entry.issue_number) === Number(command.issue_number) &&
-      entry.intent === "clawsweeper_auto_repair" &&
-      entry.status === "executed" &&
-      isAfterResumeBoundary(entry, resumeBoundary),
-  );
-  if (priorPrDispatches.length >= maxAutoRepairsPerPr) {
-    return `ClawSweeper auto repair already dispatched ${priorPrDispatches.length} total time(s) for this PR`;
-  }
-
-  if (plannedAutoRepairHeads.has(headKey)) {
-    return "ClawSweeper auto repair already planned for this PR head in this scan";
-  }
-
-  const priorDispatches = (ledger.commands ?? []).filter(
-    (entry: JsonValue) =>
-      entry.repo === command.repo &&
-      Number(entry.issue_number) === Number(command.issue_number) &&
-      entry.intent === "clawsweeper_auto_repair" &&
-      entry.status === "executed" &&
-      entry.target?.head_sha === command.target?.head_sha &&
-      isAfterResumeBoundary(entry, resumeBoundary),
-  );
-  if (priorDispatches.length >= maxAutoRepairsPerHead) {
-    return `ClawSweeper auto repair already dispatched ${priorDispatches.length} time(s) for this PR head`;
-  }
-
-  plannedAutoRepairHeads.add(headKey);
+  const headKey = autoRepairHeadKey({
+    repo: command.repo,
+    issueNumber: command.issue_number,
+    headSha: command.target?.head_sha,
+  });
+  if (headKey) plannedAutoRepairHeads.add(headKey);
   return null;
 }
 
@@ -597,18 +584,6 @@ function latestAutomergeResumeAt(command: LooseRecord) {
     }
   }
   return latest;
-}
-
-function isAfterResumeBoundary(entry: LooseRecord, boundary: JsonValue) {
-  if (!boundary) return true;
-  const updatedAt = Date.parse(entry.comment_updated_at ?? "") || 0;
-  return updatedAt > boundary;
-}
-
-function autoRepairHeadKey(command: LooseRecord) {
-  const sha = command.target?.head_sha;
-  if (!sha) return null;
-  return `${command.repo}#${command.issue_number}:${sha}`;
 }
 
 function executeCommand(command: LooseRecord) {
