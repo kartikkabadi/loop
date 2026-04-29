@@ -155,7 +155,7 @@ Last dashboard update: Apr 29, 2026, 15:33 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6934 | 6583 | 351 | 2816 | 0 | 673 | 10807 | Apr 29, 2026, 15:32 UTC | Apr 29, 2026, 15:33 UTC | 74 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6934 | 6583 | 351 | 2816 | 0 | 673 | 10807 | Apr 29, 2026, 15:32 UTC | Apr 29, 2026, 15:33 UTC | 73 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 926 | 921 | 5 | 66 | 0 | 47 | 8 | Apr 29, 2026, 15:25 UTC | Apr 29, 2026, 13:48 UTC | 394 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -173,8 +173,8 @@ Latest review: Apr 29, 2026, 15:32 UTC. Latest close: Apr 29, 2026, 15:33 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 135 | 3 | 132 | 9 | 8 | 24 | 2 |
-| Last hour | 1406 | 27 | 1379 | 11 | 27 | 468 | 5 |
+| Last 15 minutes | 128 | 3 | 125 | 9 | 8 | 24 | 2 |
+| Last hour | 1406 | 27 | 1379 | 11 | 27 | 467 | 5 |
 | Last 24 hours | 6028 | 368 | 5660 | 12 | 762 | 1030 | 28 |
 
 ### Recently Closed Across Repos
@@ -250,7 +250,7 @@ Updated: Apr 29, 2026, 15:33 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 5. Total fresh closes in this run: 5/6. Result records in checkpoint: 11, including durable review comment syncs.
+Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 5/6. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25118125689](https://github.com/openclaw/clawsweeper/actions/runs/25118125689)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -330,8 +330,8 @@ Latest review: Apr 29, 2026, 15:32 UTC. Latest close: Apr 29, 2026, 15:33 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 109 | 3 | 106 | 0 | 8 | 24 | 2 |
-| Last hour | 1067 | 27 | 1040 | 1 | 27 | 74 | 5 |
+| Last 15 minutes | 103 | 3 | 100 | 0 | 8 | 24 | 2 |
+| Last hour | 1067 | 27 | 1040 | 1 | 27 | 73 | 5 |
 | Last 24 hours | 5091 | 368 | 4723 | 2 | 748 | 620 | 28 |
 
 #### Recently Closed
@@ -475,7 +475,7 @@ Latest review: Apr 29, 2026, 15:25 UTC. Latest close: Apr 29, 2026, 13:48 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 26 | 0 | 26 | 9 | 0 | 0 | 0 |
+| Last 15 minutes | 25 | 0 | 25 | 9 | 0 | 0 | 0 |
 | Last hour | 339 | 0 | 339 | 10 | 0 | 394 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 10 | 14 | 407 | 0 |
 
