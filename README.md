@@ -26,9 +26,14 @@ It has two independent lanes:
   maintainer-facing comment, runtime metadata, and GitHub snapshot hash.
 - **Durable review comments:** ClawSweeper syncs one marker-backed public review
   comment per item and edits it in place instead of posting repeated comments.
-  Pull request comments include hidden verdict markers, and actionable PR
-  follow-up includes a hidden `clawsweeper-action:fix-required` marker for the
-  trusted ClawSweeper repair loop. See
+  When a review starts and no ClawSweeper comment exists yet, it posts a short
+  crustacean-friendly status placeholder first, then replaces that same comment
+  with the completed review. Completed comments include a dedicated security
+  review section for supply-chain, permission, secret-handling, and code
+  execution concerns. Pull request comments include hidden verdict markers, and
+  actionable PR follow-up includes a hidden
+  `clawsweeper-action:fix-required` marker for the trusted ClawSweeper repair
+  loop. See
   [`docs/pr-review-comments.md`](docs/pr-review-comments.md).
 - **Guarded apply:** apply mode re-fetches live GitHub state, checks labels,
   maintainer authorship, paired issue/PR state, snapshot drift, and repository

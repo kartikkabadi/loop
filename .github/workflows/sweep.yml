@@ -640,7 +640,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Create target read token
+      - name: Create target review token
         id: target-read-token
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
@@ -649,7 +649,7 @@ jobs:
           owner: ${{ needs.plan.outputs.target_repo_owner }}
           repositories: ${{ needs.plan.outputs.target_repo_name }}
           permission-contents: read
-          permission-issues: read
+          permission-issues: write
           permission-pull-requests: read
 
       - uses: ./clawsweeper/.github/actions/setup-pnpm

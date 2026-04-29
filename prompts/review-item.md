@@ -56,7 +56,7 @@ ownership beyond this PR. If the PR author is only the proposer/reporter, you
 may mention that in evidence or summary when useful, but do not make them a
 likely owner.
 
-For PRs, include a dedicated security review pass in addition to the functional review. Inspect whether the diff could introduce a security or supply-chain regression, especially when it touches CI workflows, GitHub Action refs, dependency sources, lockfiles, install/build/release scripts, package publishing metadata, secrets handling, permissions, downloaded artifacts, generated/vendor/minified files, or other code execution paths. Check whether those changes are consistent with the PR title, body, discussion, and stated purpose before deciding. Be cautious when a small or unrelated functional change also introduces new third-party code execution, broadens secret or permission access, changes package resolution, adds lifecycle hooks, downloads and executes artifacts, or mixes infrastructure changes into otherwise cosmetic work. Do not infer malicious intent without concrete evidence, but note unexplained security-sensitive changes in `risks` and `evidence` with the observable risk, relevant file/path, and why it matters.
+For PRs, include a dedicated security review pass in addition to the functional review. Inspect whether the diff could introduce a security or supply-chain regression, especially when it touches CI workflows, GitHub Action refs, dependency sources, lockfiles, install/build/release scripts, package publishing metadata, secrets handling, permissions, downloaded artifacts, generated/vendor/minified files, or other code execution paths. Check whether those changes are consistent with the PR title, body, discussion, and stated purpose before deciding. Be cautious when a small or unrelated functional change also introduces new third-party code execution, broadens secret or permission access, changes package resolution, adds lifecycle hooks, downloads and executes artifacts, or mixes infrastructure changes into otherwise cosmetic work. Do not infer malicious intent without concrete evidence. Always summarize this pass in `securityReview`; set `status: "cleared"` when the diff has no concrete security or supply-chain concern, `status: "needs_attention"` when there is a concrete concern, and `status: "not_applicable"` for non-PR items without a security-sensitive report. Put concrete security concerns in `securityReview.concerns` with file/line when possible, and also include blocking concerns in `risks` and `evidence` when they affect the merge/close decision.
 
 For PRs, also emit Codex `/review`-style findings in `reviewFindings`.
 Review the diff as another engineer's proposed patch and list every discrete,
@@ -230,6 +230,13 @@ proposed patch to review, use an empty `reviewFindings` array,
 For PRs, use these fields for the concise reviewer feedback that should appear
 near the top of the public ClawSweeper comment; the rest of the evidence can
 stay in the collapsed details.
+
+Always fill `securityReview`. This is the dedicated public security section,
+separate from functional findings. Use `cleared` with a concise summary when no
+security or supply-chain issue was found, `needs_attention` with one or more
+typed concerns when the patch or discussion raises a concrete security issue,
+and `not_applicable` for ordinary non-PR issue triage where no patch security
+review applies.
 
 Always fill the work-lane fields too. For non-candidates, use
 `workCandidate: "none"`, low confidence/priority, an empty `workPrompt`, and

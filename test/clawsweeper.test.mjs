@@ -28,6 +28,7 @@ import {
   parseDecision,
   protectedLabels,
   relatedTitleSearchTerms,
+  renderReviewStartStatusComment,
   reviewArtifactDestination,
   reviewAutomationMarkersFromReport,
   reviewActionForDecision,
@@ -123,6 +124,11 @@ function closeDecision(overrides = {}) {
     risks: [],
     bestSolution: "Keep the implementation as-is.",
     reviewFindings: [],
+    securityReview: {
+      status: "not_applicable",
+      summary: "No patch security review is needed for this issue cleanup decision.",
+      concerns: [],
+    },
     overallCorrectness: "not a patch",
     overallConfidenceScore: 0.75,
     fixedRelease: null,
@@ -843,9 +849,29 @@ test("comment matcher recognizes old and new Codex review comments", () => {
 });
 
 test("review comment patching only targets ClawSweeper-owned comments", () => {
+  assert.equal(canPatchReviewComment({ user: { login: "clawsweeper" } }), true);
+  assert.equal(canPatchReviewComment({ user: { login: "clawsweeper[bot]" } }), true);
   assert.equal(canPatchReviewComment({ user: { login: "openclaw-clawsweeper[bot]" } }), true);
   assert.equal(canPatchReviewComment({ user: { login: "steipete" } }), false);
   assert.equal(canPatchReviewComment(undefined), false);
+});
+
+test("review start status comment is marker-backed and crustacean-friendly", () => {
+  const comment = renderReviewStartStatusComment({
+    number: 74453,
+    kind: "pull_request",
+    title: "fix webhook limiter",
+    position: 1,
+    total: 3,
+    shardIndex: 0,
+    shardCount: 2,
+  });
+
+  assert.match(comment, /ClawSweeper status: review started\./);
+  assert.match(comment, /claws on keyboard/);
+  assert.match(comment, /<!-- clawsweeper-review-status:started item=74453 -->/);
+  assert.match(comment, /<!-- clawsweeper-review item=74453 -->/);
+  assert.doesNotMatch(comment, /Codex review:/);
 });
 
 test("pull request keep-open review comments label the change summary", () => {
@@ -899,6 +925,86 @@ Reason: Maintainers should review the tests after the targeted lane is green.
     /Best possible solution:\n\nLand the tests after targeted validation is green\./,
   );
   assert.match(comment, /<!-- clawsweeper-verdict:needs-human item=74265 sha=abc123def456/);
+});
+
+test("pull request review comments include dedicated security review", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74265",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "none",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+Keep this PR open for maintainer review.
+
+## What This Changes
+
+Updates a workflow permission for review comments.
+
+## Best Possible Solution
+
+Land the workflow permission change after normal CI.
+
+## Security Review
+
+Status: needs_attention
+
+Summary: The workflow now asks for issue write permission, so the permission scope needs maintainer confirmation.
+
+Concerns:
+
+- **[medium] Confirm issue write scope:** \`.github/workflows/sweep.yml:652\`
+  - body: The review shard now writes comments during review, so maintainers should confirm the app permission is intended.
+  - confidence: 0.82
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.85
+
+Full review comments:
+
+- none
+
+## Work Candidate
+
+Candidate: none
+
+Confidence: low
+
+Priority: low
+
+Reason: Normal maintainer review is sufficient.
+
+## Evidence
+
+- **workflow:** Review shard requests issue write permission.
+
+## Likely Related People
+
+- **@alice:** recent workflow maintainer
+  - reason: touched the workflow recently
+  - commits: abc123
+  - files: .github/workflows/sweep.yml
+  - confidence: high
+
+## Risks / Open Questions
+
+- none
+`,
+    "none",
+  );
+
+  assert.match(comment, /Security review:/);
+  assert.match(comment, /Security review needs attention:/);
+  assert.match(comment, /Confirm issue write scope/);
+  assert.match(comment, /Review details/);
 });
 
 test("pull request keep-open review comments surface Codex-style findings", () => {
@@ -1268,6 +1374,11 @@ test("decision parser enforces required schema-shaped evidence", () => {
       }),
     /decision\.workCandidate/,
   );
+  assert.throws(() => {
+    const decision = closeDecision();
+    delete decision.securityReview;
+    return parseDecision(decision);
+  }, /decision\.securityReview/);
   const workCandidate = parseDecision(
     closeDecision({
       decision: "keep_open",
@@ -1297,6 +1408,14 @@ test("review prompt routes PR likely owners through feature history", () => {
   assert.match(prompt, /not to the PR\s+author merely for writing the proposal/);
   assert.match(prompt, /Do not include email\s+addresses in `likelyOwners`/);
   assert.match(prompt, /use names without email addresses/);
+});
+
+test("review prompt requires a dedicated securityReview section", () => {
+  const prompt = readFileSync("prompts/review-item.md", "utf8");
+
+  assert.match(prompt, /Always summarize this pass in `securityReview`/);
+  assert.match(prompt, /Always fill `securityReview`/);
+  assert.match(prompt, /status: "needs_attention"/);
 });
 
 test("review parser strips environment access caveats from risks", () => {

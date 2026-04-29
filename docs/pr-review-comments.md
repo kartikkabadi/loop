@@ -27,6 +27,11 @@ Each synced comment includes the durable identity marker:
 ClawSweeper edits that comment in place instead of posting repeated comments.
 Report front matter stores the synced comment id, URL, hash, and sync time.
 
+When review starts and no ClawSweeper-owned comment exists yet, the review
+shard posts a short status placeholder with the same durable identity marker.
+The placeholder is intentionally light and crustacean-friendly, then the final
+review sync edits that exact comment in place.
+
 For a PR that needs work, the visible comment starts with:
 
 ```text
@@ -40,6 +45,9 @@ report has:
   merge verdict or maintainer follow-up summary
 - `Required change before merge:` or `Maintainer follow-up before merge:` from
   the work-candidate reason or next action
+- `Security review:` from the typed `securityReview` field, so supply-chain,
+  permission, secret-handling, and code-execution concerns have a dedicated
+  visible pass
 - `Review findings:` for Codex `/review`-style findings, using typed priority,
   confidence, file, and line-range data from the report
 - `Best possible solution:` only when it adds a distinct end-state that is not

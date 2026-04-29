@@ -64,6 +64,8 @@ type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
 type OverallCorrectness = "patch is correct" | "patch is incorrect" | "not a patch";
+type SecurityReviewStatus = "cleared" | "needs_attention" | "not_applicable";
+type SecurityConcernSeverity = "high" | "medium" | "low";
 type CloseReason =
   | "implemented_on_main"
   | "cannot_reproduce"
@@ -125,6 +127,16 @@ interface Item {
   activeLockReason?: string | null;
 }
 
+export interface ReviewStartStatusCommentOptions {
+  number: number;
+  kind: string;
+  title: string;
+  position?: number;
+  total?: number;
+  shardIndex?: number;
+  shardCount?: number;
+}
+
 interface ExistingReview {
   path: string;
   markdown: string;
@@ -176,6 +188,21 @@ interface ReviewFinding {
   lineEnd: number;
 }
 
+interface SecurityConcern {
+  title: string;
+  body: string;
+  severity: SecurityConcernSeverity;
+  confidenceScore: number;
+  file: string | null;
+  line: number | null;
+}
+
+interface SecurityReview {
+  status: SecurityReviewStatus;
+  summary: string;
+  concerns: SecurityConcern[];
+}
+
 interface Decision {
   decision: DecisionKind;
   closeReason: CloseReason;
@@ -187,6 +214,7 @@ interface Decision {
   risks: string[];
   bestSolution: string;
   reviewFindings: ReviewFinding[];
+  securityReview: SecurityReview;
   overallCorrectness: OverallCorrectness;
   overallConfidenceScore: number;
   fixedRelease?: string | null;
@@ -498,6 +526,7 @@ const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
 const REVIEW_POLICY_VERSION = "2026-04-29-policy-v12";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
+const REVIEW_START_STATUS_MARKER_PREFIX = "<!-- clawsweeper-review-status";
 const AUTOMERGE_LABEL = "clawsweeper:automerge";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
@@ -512,6 +541,12 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
 const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
+const SECURITY_REVIEW_STATUSES = new Set<SecurityReviewStatus>([
+  "cleared",
+  "needs_attention",
+  "not_applicable",
+]);
+const SECURITY_CONCERN_SEVERITIES = new Set<SecurityConcernSeverity>(["high", "medium", "low"]);
 const OVERALL_CORRECTNESS_VALUES = new Set<OverallCorrectness>([
   "patch is correct",
   "patch is incorrect",
@@ -531,6 +566,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "risks",
   "bestSolution",
   "reviewFindings",
+  "securityReview",
   "overallCorrectness",
   "overallConfidenceScore",
   "fixedRelease",
@@ -547,6 +583,15 @@ const DECISION_SCHEMA_KEYS = new Set([
   "workLikelyFiles",
 ]);
 const EVIDENCE_SCHEMA_KEYS = new Set(["label", "detail", "file", "line", "command", "sha"]);
+const SECURITY_REVIEW_SCHEMA_KEYS = new Set(["status", "summary", "concerns"]);
+const SECURITY_CONCERN_SCHEMA_KEYS = new Set([
+  "title",
+  "body",
+  "severity",
+  "confidenceScore",
+  "file",
+  "line",
+]);
 const REVIEW_FINDING_SCHEMA_KEYS = new Set([
   "title",
   "body",
@@ -569,6 +614,7 @@ const REVIEW_SECTIONS = {
   changeSummary: "What This Changes",
   bestSolution: "Best Possible Solution",
   reviewFindings: "Review Findings",
+  securityReview: "Security Review",
   workCandidate: "Work Candidate",
   repairWorkPrompt: "Repair Work Prompt",
   evidence: "Evidence",
@@ -961,6 +1007,38 @@ function parseReviewFinding(value: unknown, path: string): ReviewFinding {
   };
 }
 
+function parseSecurityConcern(value: unknown, path: string): SecurityConcern {
+  const record = requireRecord(value, path);
+  rejectUnexpectedKeys(record, SECURITY_CONCERN_SCHEMA_KEYS, path);
+  const line = requireNullableInteger(record.line, `${path}.line`);
+  if (line !== null && line <= 0) throw new Error(`${path}.line must be positive`);
+  return {
+    title: requireString(record.title, `${path}.title`),
+    body: requireString(record.body, `${path}.body`),
+    severity: requireEnum(record.severity, SECURITY_CONCERN_SEVERITIES, `${path}.severity`),
+    confidenceScore: requireConfidenceScore(record.confidenceScore, `${path}.confidenceScore`),
+    file: requireNullableString(record.file, `${path}.file`),
+    line,
+  };
+}
+
+function parseSecurityReview(value: unknown, path: string): SecurityReview {
+  const record = requireRecord(value, path);
+  rejectUnexpectedKeys(record, SECURITY_REVIEW_SCHEMA_KEYS, path);
+  const concerns = Array.isArray(record.concerns)
+    ? record.concerns.map((entry, index) =>
+        parseSecurityConcern(entry, `${path}.concerns[${index}]`),
+      )
+    : (() => {
+        throw new Error(`${path}.concerns must be an array`);
+      })();
+  return {
+    status: requireEnum(record.status, SECURITY_REVIEW_STATUSES, `${path}.status`),
+    summary: requireString(record.summary, `${path}.summary`),
+    concerns,
+  };
+}
+
 function requireEnum<T extends string>(value: unknown, allowed: Set<T>, path: string): T {
   if (typeof value === "string" && allowed.has(value as T)) return value as T;
   throw new Error(`${path} has invalid value`);
@@ -1002,6 +1080,7 @@ export function parseDecision(value: unknown): Decision {
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
     reviewFindings,
+    securityReview: parseSecurityReview(record.securityReview, "decision.securityReview"),
     overallCorrectness: requireEnum(
       record.overallCorrectness,
       OVERALL_CORRECTNESS_VALUES,
@@ -2474,6 +2553,11 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
     reviewFindings: [],
+    securityReview: {
+      status: "not_applicable",
+      summary: "Security review did not run because the Codex review failed before completion.",
+      concerns: [],
+    },
     overallCorrectness: "not a patch",
     overallConfidenceScore: 0,
     fixedRelease: null,
@@ -2962,6 +3046,30 @@ function reviewFindingDetailedLine(finding: ReviewFinding): string {
   ].join("\n");
 }
 
+function securityConcernSummaryLine(concern: SecurityConcern): string {
+  const location = securityConcernLocation(concern);
+  const suffix = location === "not tied to a single file" ? "" : ` — \`${location}\``;
+  return `- [${concern.severity}] ${concern.title.trim()}${suffix}`;
+}
+
+function securityConcernDetailedLine(concern: SecurityConcern): string {
+  return [
+    securityConcernSummaryLine(concern),
+    `  ${sentence(concern.body)}`,
+    `  Confidence: ${confidenceText(concern.confidenceScore)}`,
+  ].join("\n");
+}
+
+function securityReviewLine(review: SecurityReview): string {
+  const prefix =
+    review.status === "needs_attention"
+      ? "Security review needs attention"
+      : review.status === "cleared"
+        ? "Security review cleared"
+        : "Security review";
+  return `${prefix}: ${sentence(review.summary)}`;
+}
+
 function closeIntro(reason: CloseReason): string {
   switch (reason) {
     case "implemented_on_main":
@@ -3127,6 +3235,58 @@ function reportReviewFindings(markdown: string): ReviewFinding[] {
   return findings;
 }
 
+function defaultSecurityReview(markdown: string): SecurityReview {
+  const type = frontMatterValue(markdown, "type");
+  return {
+    status: type === "pull_request" ? "not_applicable" : "not_applicable",
+    summary:
+      type === "pull_request"
+        ? "No dedicated security review was recorded in this older report."
+        : "No patch security review is needed for this non-PR item.",
+    concerns: [],
+  };
+}
+
+function reportSecurityReview(markdown: string): SecurityReview {
+  const section = reviewSectionValue(markdown, "securityReview");
+  if (!section.trim()) return defaultSecurityReview(markdown);
+  const status = section.match(/^Status:\s*(cleared|needs_attention|not_applicable)$/m)?.[1] as
+    | SecurityReviewStatus
+    | undefined;
+  const summary = section.match(/^Summary:\s*(.+)$/m)?.[1]?.trim();
+  if (!status || !summary) return defaultSecurityReview(markdown);
+  const concerns: SecurityConcern[] = [];
+  let current: SecurityConcern | null = null;
+  for (const line of section.split("\n")) {
+    const heading = line.match(/^- \*\*\[(high|medium|low)\] (.*?):\*\*(?:\s*`([^`:]+):(\d+)`)?$/);
+    if (heading?.[1] && heading[2]) {
+      if (current) concerns.push(current);
+      current = {
+        title: heading[2],
+        body: "",
+        severity: heading[1] as SecurityConcernSeverity,
+        confidenceScore: 0,
+        file: heading[3] ?? null,
+        line: heading[4] ? Number(heading[4]) : null,
+      };
+      continue;
+    }
+    if (!current) continue;
+    const body = line.match(/^\s+- body: (.*)$/);
+    if (body?.[1]) {
+      current.body = body[1];
+      continue;
+    }
+    const confidence = line.match(/^\s+- confidence: ([0-9.]+)$/);
+    if (confidence?.[1]) {
+      const score = Number(confidence[1]);
+      current.confidenceScore = Number.isFinite(score) ? Math.min(1, Math.max(0, score)) : 0;
+    }
+  }
+  if (current) concerns.push(current);
+  return { status, summary, concerns };
+}
+
 function reportDecision(markdown: string, closeReason: CloseReason): Decision {
   const fixedRelease = frontMatterValue(markdown, "fixed_release");
   const fixedSha = frontMatterValue(markdown, "fixed_sha");
@@ -3142,6 +3302,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
     reviewFindings: reportReviewFindings(markdown),
+    securityReview: reportSecurityReview(markdown),
     overallCorrectness: reportOverallCorrectness(markdown),
     overallConfidenceScore: reportOverallConfidenceScore(markdown),
     fixedRelease: fixedRelease && fixedRelease !== "unknown" ? fixedRelease : null,
@@ -3208,6 +3369,7 @@ function renderCloseComment(options: {
   bestSolution?: string;
   evidence: Evidence[];
   likelyOwners?: LikelyOwner[];
+  securityReview?: SecurityReview;
   reviewLine: string;
 }): string {
   const evidence = options.evidence.slice(0, 6).map(closeEvidenceLine);
@@ -3218,6 +3380,12 @@ function renderCloseComment(options: {
   const bestSolutionLine = sentence(options.bestSolution ?? "");
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, summaryLine)) {
     details.push("Best possible solution:", "", bestSolutionLine);
+  }
+  if (options.securityReview) {
+    details.push("", "Security review:", "", securityReviewLine(options.securityReview));
+    if (options.securityReview.concerns.length) {
+      details.push("", ...options.securityReview.concerns.map(securityConcernDetailedLine));
+    }
   }
   if (evidence.length) details.push("", "What I checked:", "", ...evidence);
   if (likelyOwners.length) details.push("", "Likely related people:", "", ...likelyOwners);
@@ -3239,6 +3407,7 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
       bestSolution: reviewSectionValue(markdown, "bestSolution"),
       evidence: reportEvidence(markdown),
       likelyOwners: reportLikelyOwners(markdown),
+      securityReview: reportSecurityReview(markdown),
       reviewLine: closeReviewLineFromReport(markdown),
     }),
     Number(frontMatterValue(markdown, "number")),
@@ -3282,6 +3451,7 @@ function normalizeComment(
     bestSolution: decision.bestSolution,
     evidence: decision.evidence,
     likelyOwners: decision.likelyOwners,
+    securityReview: decision.securityReview,
     reviewLine: closeReviewLineFromDecision(decision, git, runtime),
   });
 }
@@ -3306,6 +3476,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
   const reviewFindings = reportReviewFindings(markdown);
+  const securityReview = reportSecurityReview(markdown);
   const summary = reviewSectionValue(markdown, "summary");
   const changeSummary = reviewSectionValue(markdown, "changeSummary");
   const bestSolution = reviewSectionValue(markdown, "bestSolution");
@@ -3354,6 +3525,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     "",
     nextStepLine,
   );
+  lines.push("", "Security review:", "", securityReviewLine(securityReview));
   if (isPullRequest && reviewFindings.length) {
     lines.push(
       "",
@@ -3374,6 +3546,14 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
       "",
       `Overall correctness: ${reportOverallCorrectness(markdown)}`,
       `Overall confidence: ${confidenceText(reportOverallConfidenceScore(markdown))}`,
+    );
+  }
+  if (securityReview.concerns.length) {
+    details.push(
+      "",
+      "Security concerns:",
+      "",
+      ...securityReview.concerns.map(securityConcernDetailedLine),
     );
   }
   if (validation.length) details.push("", "Acceptance criteria:", "", ...validation);
@@ -3639,6 +3819,40 @@ function markedReviewCommentBody(number: number, body: string): string {
     : `${body.trimEnd()}\n\n${reviewCommentMarker(number)}`;
 }
 
+function reviewStartStatusCommentMarker(number: number): string {
+  return `${REVIEW_START_STATUS_MARKER_PREFIX}:started item=${number} -->`;
+}
+
+export function renderReviewStartStatusComment(options: ReviewStartStatusCommentOptions): string {
+  const subject = options.kind === "pull_request" ? "pull request" : "issue";
+  const progress =
+    Number.isInteger(options.position) && Number.isInteger(options.total)
+      ? ` This is item ${options.position}/${options.total} in the current shard.`
+      : "";
+  const shard =
+    Number.isInteger(options.shardIndex) && Number.isInteger(options.shardCount)
+      ? ` Shard ${options.shardIndex}/${options.shardCount}.`
+      : "";
+  const title = options.title.trim();
+  const heading = title
+    ? `I am starting a fresh review of this ${subject}: ${title}`
+    : `I am starting a fresh review of this ${subject}.`;
+  return markedReviewCommentBody(
+    options.number,
+    [
+      "ClawSweeper status: review started.",
+      "",
+      `${heading}${progress}${shard}`,
+      "",
+      "This placeholder means the worker is alive and reading the current context. I will edit this same comment with the actual review when the claws are done clicking.",
+      "",
+      "Crustacean status: shell secured, claws on keyboard, evidence pebbles being sorted.",
+      "",
+      reviewStartStatusCommentMarker(options.number),
+    ].join("\n"),
+  );
+}
+
 export function isCodexReviewCommentBody(body: string): boolean {
   return (
     body.includes("Codex review:") ||
@@ -3709,9 +3923,12 @@ function commentBodyMatches(comment: Record<string, unknown> | undefined, body: 
 }
 
 const PATCHABLE_REVIEW_COMMENT_AUTHORS = new Set(
-  ["openclaw-clawsweeper[bot]", process.env.CLAWSWEEPER_COMMENT_AUTHOR_LOGIN].filter(
-    (login): login is string => typeof login === "string" && login.length > 0,
-  ),
+  [
+    "clawsweeper",
+    "clawsweeper[bot]",
+    "openclaw-clawsweeper[bot]",
+    process.env.CLAWSWEEPER_COMMENT_AUTHOR_LOGIN,
+  ].filter((login): login is string => typeof login === "string" && login.length > 0),
 );
 
 function commentAuthorLogin(comment: Record<string, unknown> | undefined): string | undefined {
@@ -3800,6 +4017,35 @@ function upsertReviewComment(
     ]);
   }
   return issueReviewComment(number, [markedBody]);
+}
+
+function postReviewStartStatusComment(options: {
+  item: Item;
+  position: number;
+  total: number;
+  shardIndex: number;
+  shardCount: number;
+}): "posted" | "existing" {
+  if (issueReviewComment(options.item.number)) return "existing";
+  const body = renderReviewStartStatusComment({
+    number: options.item.number,
+    kind: options.item.kind,
+    title: options.item.title,
+    position: options.position,
+    total: options.total,
+    shardIndex: options.shardIndex,
+    shardCount: options.shardCount,
+  });
+  const payload = writeCommentPayload(options.item.number, body);
+  ghWithRetry([
+    "api",
+    `repos/${targetRepo()}/issues/${options.item.number}/comments`,
+    "--method",
+    "POST",
+    "--input",
+    payload,
+  ]);
+  return "posted";
 }
 
 function closeItem(options: { number: number; kind: ItemKind; reason: CloseReason }): void {
@@ -3904,6 +4150,43 @@ function renderReviewFindingsReportSection(decision: Decision): string {
   return lines.join("\n");
 }
 
+function securityConcernLocation(concern: SecurityConcern): string {
+  if (!concern.file) return "not tied to a single file";
+  return `${concern.file}${concern.line ? `:${concern.line}` : ""}`;
+}
+
+function renderSecurityReviewReportSection(decision: Decision): string {
+  const lines = [
+    `Status: ${decision.securityReview.status}`,
+    "",
+    `Summary: ${sentence(decision.securityReview.summary)}`,
+    "",
+    "Concerns:",
+    "",
+  ];
+  if (!decision.securityReview.concerns.length) {
+    lines.push("- none");
+    return lines.join("\n");
+  }
+  lines.push(
+    decision.securityReview.concerns
+      .map((concern) => {
+        const location = securityConcernLocation(concern);
+        const heading =
+          location === "not tied to a single file"
+            ? `- **[${concern.severity}] ${concern.title}:**`
+            : `- **[${concern.severity}] ${concern.title}:** \`${location}\``;
+        return [
+          heading,
+          `  - body: ${sentence(concern.body)}`,
+          `  - confidence: ${confidenceText(concern.confidenceScore)}`,
+        ].join("\n");
+      })
+      .join("\n"),
+  );
+  return lines.join("\n");
+}
+
 function markdownFor(options: {
   item: Item;
   context: ItemContext;
@@ -3950,6 +4233,7 @@ function markdownFor(options: {
     : "- none";
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
   const reviewFindings = renderReviewFindingsReportSection(options.decision);
+  const securityReview = renderSecurityReviewReportSection(options.decision);
   const workCandidateSection = renderWorkCandidateReportSection(options.decision);
   const repairWorkPromptSection = renderRepairWorkPromptReportSection(options.decision);
   return `---
@@ -4051,6 +4335,10 @@ ${bestSolution}
 ## ${REVIEW_SECTIONS.reviewFindings}
 
 ${reviewFindings}
+
+## ${REVIEW_SECTIONS.securityReview}
+
+${securityReview}
 
 ## ${REVIEW_SECTIONS.workCandidate}
 
@@ -4175,6 +4463,24 @@ function reviewCommand(args: Args): void {
     );
     const context = collectItemContext(item);
     const snapshotHash = itemSnapshotHash(item, context);
+    try {
+      const startComment = postReviewStartStatusComment({
+        item,
+        position: completed + 1,
+        total: candidates.length,
+        shardIndex,
+        shardCount,
+      });
+      console.error(
+        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=${startComment} #${item.number}`,
+      );
+    } catch (error) {
+      console.error(
+        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=failed #${item.number}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
     let decision: Decision;
     try {
       decision = runCodex({

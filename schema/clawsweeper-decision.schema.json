@@ -13,6 +13,7 @@
     "risks",
     "bestSolution",
     "reviewFindings",
+    "securityReview",
     "overallCorrectness",
     "overallConfidenceScore",
     "fixedRelease",
@@ -181,6 +182,59 @@
           "lineEnd": {
             "type": "integer",
             "minimum": 1
+          }
+        }
+      }
+    },
+    "securityReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Dedicated security and supply-chain review for the item. For PRs, summarize whether the diff introduces security-sensitive concerns. For issues, use not_applicable unless the issue itself is security-sensitive.",
+      "required": ["status", "summary", "concerns"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["cleared", "needs_attention", "not_applicable"]
+        },
+        "summary": {
+          "type": "string",
+          "description": "One concise sentence explaining the security review result."
+        },
+        "concerns": {
+          "type": "array",
+          "description": "Concrete security or supply-chain concerns found during the dedicated pass. Empty when cleared or not applicable.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["title", "body", "severity", "confidenceScore", "file", "line"],
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Short concern title, at most 80 characters."
+              },
+              "body": {
+                "type": "string",
+                "description": "Brief explanation of the observable security risk and why it matters."
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              },
+              "confidenceScore": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "file": {
+                "type": ["string", "null"],
+                "description": "Repository-relative file path when tied to a file; null for issue-wide or discussion-only concerns."
+              },
+              "line": {
+                "type": ["integer", "null"],
+                "minimum": 1,
+                "description": "Relevant line when tied to a specific file; null when not applicable."
+              }
+            }
           }
         }
       }
