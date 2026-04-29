@@ -87,7 +87,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 12:08 UTC
+Last dashboard update: Apr 29, 2026, 12:09 UTC
 
 ### Fleet
 
@@ -110,24 +110,24 @@ Last dashboard update: Apr 29, 2026, 12:08 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6950 | 6590 | 360 | 2602 | 0 | 585 | 10762 | Apr 29, 2026, 12:07 UTC | Apr 29, 2026, 12:08 UTC | 81 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6950 | 6590 | 360 | 2602 | 0 | 585 | 10762 | Apr 29, 2026, 12:08 UTC | Apr 29, 2026, 12:08 UTC | 81 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 927 | 922 | 5 | 13 | 0 | 44 | 8 | Apr 29, 2026, 12:05 UTC | Apr 29, 2026, 08:25 UTC | 354 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 12:08 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25107884507) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 12:09 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25107884507) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 12:06 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25106895806) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 12:07 UTC. Latest close: Apr 29, 2026, 12:08 UTC. Latest comment sync: Apr 29, 2026, 12:08 UTC.
+Latest review: Apr 29, 2026, 12:08 UTC. Latest close: Apr 29, 2026, 12:08 UTC. Latest comment sync: Apr 29, 2026, 12:08 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 100 | 1 | 99 | 7 | 7 | 24 | 0 |
-| Last hour | 1003 | 7 | 996 | 7 | 35 | 435 | 3 |
+| Last 15 minutes | 92 | 1 | 91 | 7 | 7 | 25 | 0 |
+| Last hour | 1004 | 7 | 997 | 7 | 35 | 435 | 3 |
 | Last 24 hours | 6388 | 412 | 5976 | 17 | 736 | 1971 | 27 |
 
 ### Recently Closed Across Repos
@@ -172,6 +172,7 @@ Latest review: Apr 29, 2026, 12:07 UTC. Latest close: Apr 29, 2026, 12:08 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#67509](https://github.com/openclaw/openclaw/pull/67509) | fix: add root guard to prevent CLI execution as root (#67478) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/67509.md) | complete | Apr 29, 2026, 12:08 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58808](https://github.com/openclaw/openclaw/pull/58808) | feat: pass requesterSenderId and senderIsOwner to ChannelAgentToolFactory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58808.md) | complete | Apr 29, 2026, 12:07 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74321](https://github.com/openclaw/openclaw/issues/74321) | [Bug]: Delivery-recovery retries indefinitely on permanent HTTP 400 errors (message too long, auth, not-found) — should classify and halt on non-transient failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74321.md) | complete | Apr 29, 2026, 12:06 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1514](https://github.com/openclaw/clawhub/issues/1514) | False duplicate flag: claude-to-free is not a duplicate of model-migration | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1514.md) | complete | Apr 29, 2026, 12:05 UTC |
@@ -181,7 +182,6 @@ Latest review: Apr 29, 2026, 12:07 UTC. Latest close: Apr 29, 2026, 12:08 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72251](https://github.com/openclaw/openclaw/pull/72251) | fix(backup): retry on tar EOF race and skip known volatile files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72251.md) | complete | Apr 29, 2026, 12:03 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74254](https://github.com/openclaw/openclaw/pull/74254) | fix(docker): require single primary key before Docker apt GPG pin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74254.md) | complete | Apr 29, 2026, 12:03 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1452](https://github.com/openclaw/clawhub/issues/1452) | [Bug] Cannot sign in with GitHub after deleting account (OAuth binding not cleared) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1452.md) | failed | Apr 29, 2026, 12:03 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70805](https://github.com/openclaw/openclaw/pull/70805) | fix(gateway): restore runtime-postbuild sync in watch mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70805.md) | complete | Apr 29, 2026, 12:02 UTC |
 
 </details>
 
@@ -199,11 +199,11 @@ Latest review: Apr 29, 2026, 12:07 UTC. Latest close: Apr 29, 2026, 12:08 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 12:08 UTC
+Updated: Apr 29, 2026, 12:09 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 1. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25107884507](https://github.com/openclaw/clawsweeper/actions/runs/25107884507)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -279,12 +279,12 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 12:07 UTC. Latest close: Apr 29, 2026, 12:08 UTC. Latest comment sync: Apr 29, 2026, 12:08 UTC.
+Latest review: Apr 29, 2026, 12:08 UTC. Latest close: Apr 29, 2026, 12:08 UTC. Latest comment sync: Apr 29, 2026, 12:08 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 22 | 1 | 21 | 0 | 7 | 24 | 0 |
-| Last hour | 82 | 7 | 75 | 0 | 35 | 81 | 3 |
+| Last 15 minutes | 23 | 1 | 22 | 0 | 7 | 25 | 0 |
+| Last hour | 83 | 7 | 76 | 0 | 35 | 81 | 3 |
 | Last 24 hours | 5454 | 412 | 5042 | 10 | 723 | 1604 | 27 |
 
 #### Recently Closed
@@ -321,6 +321,7 @@ Latest review: Apr 29, 2026, 12:07 UTC. Latest close: Apr 29, 2026, 12:08 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#67509](https://github.com/openclaw/openclaw/pull/67509) | fix: add root guard to prevent CLI execution as root (#67478) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/67509.md) | complete | Apr 29, 2026, 12:08 UTC |
 | [#58808](https://github.com/openclaw/openclaw/pull/58808) | feat: pass requesterSenderId and senderIsOwner to ChannelAgentToolFactory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58808.md) | complete | Apr 29, 2026, 12:07 UTC |
 | [#74321](https://github.com/openclaw/openclaw/issues/74321) | [Bug]: Delivery-recovery retries indefinitely on permanent HTTP 400 errors (message too long, auth, not-found) — should classify and halt on non-transient failures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74321.md) | complete | Apr 29, 2026, 12:06 UTC |
 | [#49841](https://github.com/openclaw/openclaw/pull/49841) | config: add Nacos config source (file/nacos abstraction, reload subscribe, NACOS_NAMESPACE) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/49841.md) | complete | Apr 29, 2026, 12:03 UTC |
@@ -330,7 +331,6 @@ Latest review: Apr 29, 2026, 12:07 UTC. Latest close: Apr 29, 2026, 12:08 UTC. L
 | [#70805](https://github.com/openclaw/openclaw/pull/70805) | fix(gateway): restore runtime-postbuild sync in watch mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70805.md) | complete | Apr 29, 2026, 12:02 UTC |
 | [#74319](https://github.com/openclaw/openclaw/pull/74319) | fix(agents): keep PI telemetry on model provider | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74319.md) | complete | Apr 29, 2026, 12:02 UTC |
 | [#74317](https://github.com/openclaw/openclaw/pull/74317) | feat(extensions/guardrails): add a guardrails plugin for external channels | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74317.md) | complete | Apr 29, 2026, 12:01 UTC |
-| [#74068](https://github.com/openclaw/openclaw/pull/74068) | fix(cron): narrow croner parse error handling | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74068.md) | complete | Apr 29, 2026, 12:00 UTC |
 
 </details>
 
@@ -428,7 +428,7 @@ Latest review: Apr 29, 2026, 12:05 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 78 | 0 | 78 | 7 | 0 | 0 | 0 |
+| Last 15 minutes | 69 | 0 | 69 | 7 | 0 | 0 | 0 |
 | Last hour | 921 | 0 | 921 | 7 | 0 | 354 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 7 | 13 | 367 | 0 |
 
