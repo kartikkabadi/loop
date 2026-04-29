@@ -94,46 +94,47 @@ Last dashboard update: Apr 29, 2026, 10:29 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4239 |
-| Open PRs | 3287 |
-| Open items total | 7526 |
+| Open issues | 4415 |
+| Open PRs | 3476 |
+| Open items total | 7891 |
 | Reviewed files | 7526 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 2291 |
+| Unreviewed open items | 365 |
+| Due now by cadence | 2656 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 623 |
-| Closed by Codex apply | 10755 |
+| Closed by Codex apply | 10756 |
 | Failed or stale reviews | 28 |
-| Archived closed files | 14203 |
+| Archived closed files | 14204 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6605 | 6605 | 0 | 2225 | 0 | 577 | 10747 | Apr 29, 2026, 10:27 UTC | Apr 29, 2026, 10:19 UTC | 54 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 921 | 921 | 0 | 66 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 4 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6964 | 6605 | 359 | 2584 | 0 | 577 | 10748 | Apr 29, 2026, 10:27 UTC | Apr 29, 2026, 10:29 UTC | 55 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 921 | 6 | 72 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 4 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
 | [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 10:29 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103771941) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 10:28 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103653049) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 10:29 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103771941) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:19 UTC. Latest comment sync: Apr 29, 2026, 10:28 UTC.
+Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:29 UTC. Latest comment sync: Apr 29, 2026, 10:29 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 21 | 1 | 20 | 0 | 2 | 22 | 0 |
-| Last hour | 59 | 3 | 56 | 0 | 22 | 58 | 1 |
-| Last 24 hours | 6487 | 451 | 6036 | 24 | 750 | 2389 | 26 |
+| Last 15 minutes | 22 | 2 | 20 | 0 | 3 | 23 | 0 |
+| Last hour | 60 | 4 | 56 | 0 | 23 | 59 | 1 |
+| Last 24 hours | 6488 | 452 | 6036 | 24 | 751 | 2390 | 26 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74277](https://github.com/openclaw/openclaw/issues/74277) | [Bug]: npm install -g openclaw@latest crashes with V8 Fatal error in WSL2 Ubuntu 24.04 | duplicate or superseded | Apr 29, 2026, 10:29 UTC | [records/openclaw-openclaw/closed/74277.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74277.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73737](https://github.com/openclaw/openclaw/pull/73737) | fix(gateway): reduce session-store clone memory growth | closed externally after review | Apr 29, 2026, 10:19 UTC | [records/openclaw-openclaw/closed/73737.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73737.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74272](https://github.com/openclaw/openclaw/issues/74272) | [Bug]: openclaw gateway restart takes extremely long on Windows | already implemented on main | Apr 29, 2026, 10:17 UTC | [records/openclaw-openclaw/closed/74272.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74272.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73526](https://github.com/openclaw/openclaw/pull/73526) | [plugin sdk] sdk seam followups 6 seams stacked on #73384 | closed externally after review | Apr 29, 2026, 10:06 UTC | [records/openclaw-openclaw/closed/73526.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73526.md) |
@@ -143,7 +144,6 @@ Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:19 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#63121](https://github.com/openclaw/openclaw/pull/63121) | fix(tools): add acp-only guidance to sessions_spawn streamTo parameter | closed externally after review | Apr 29, 2026, 10:03 UTC | [records/openclaw-openclaw/closed/63121.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63121.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#67153](https://github.com/openclaw/openclaw/pull/67153) | Update creating-skills.md | closed externally after review | Apr 29, 2026, 10:03 UTC | [records/openclaw-openclaw/closed/67153.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/67153.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#65565](https://github.com/openclaw/openclaw/issues/65565) | [Bug]: Dashboard \"Set Default\" for agent fails with invalid config: agents: Unrecognized key: \"defaultId\" and default agent falls back to first agent in agents.list | closed externally after review | Apr 29, 2026, 10:03 UTC | [records/openclaw-openclaw/closed/65565.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65565.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72815](https://github.com/openclaw/openclaw/pull/72815) | fix: keep local assistant avatar overrides authoritative | closed externally after review | Apr 29, 2026, 09:59 UTC | [records/openclaw-openclaw/closed/72815.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72815.md) |
 
 ### Work Candidates Across Repos
 
@@ -212,12 +212,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103771941](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3351 |
-| Open PRs | 3254 |
-| Open items total | 6605 |
+| Open issues | 3527 |
+| Open PRs | 3437 |
+| Open items total | 6964 |
 | Reviewed files | 6605 |
-| Unreviewed open items | 0 |
-| Archived closed files | 14180 |
+| Unreviewed open items | 359 |
+| Archived closed files | 14181 |
 
 #### Review Outcomes
 
@@ -230,7 +230,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103771941](https://
 | Fresh verified reviews in the last 7 days | 6588 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 577 |
-| Closed by Codex apply | 10747 |
+| Closed by Codex apply | 10748 |
 | Failed or stale reviews | 17 |
 
 #### Cadence
@@ -243,7 +243,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103771941](https://
 | Daily PR cadence | 1907/2628 current (721 due, 72.6%) |
 | Daily new issue cadence (<30d) | 639/1130 current (491 due, 56.5%) |
 | Weekly older issue cadence | 1795/1800 current (5 due, 99.7%) |
-| Due now by cadence | 2225 |
+| Due now by cadence | 2584 |
 
 ### Audit Health
 
@@ -279,18 +279,19 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:19 UTC. Latest comment sync: Apr 29, 2026, 10:28 UTC.
+Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:29 UTC. Latest comment sync: Apr 29, 2026, 10:29 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 1 | 19 | 0 | 2 | 21 | 0 |
-| Last hour | 55 | 3 | 52 | 0 | 22 | 54 | 1 |
-| Last 24 hours | 5554 | 451 | 5103 | 13 | 737 | 1589 | 26 |
+| Last 15 minutes | 21 | 2 | 19 | 0 | 3 | 22 | 0 |
+| Last hour | 56 | 4 | 52 | 0 | 23 | 55 | 1 |
+| Last 24 hours | 5555 | 452 | 5103 | 13 | 738 | 1590 | 26 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74277](https://github.com/openclaw/openclaw/issues/74277) | [Bug]: npm install -g openclaw@latest crashes with V8 Fatal error in WSL2 Ubuntu 24.04 | duplicate or superseded | Apr 29, 2026, 10:29 UTC | [records/openclaw-openclaw/closed/74277.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74277.md) |
 | [#73737](https://github.com/openclaw/openclaw/pull/73737) | fix(gateway): reduce session-store clone memory growth | closed externally after review | Apr 29, 2026, 10:19 UTC | [records/openclaw-openclaw/closed/73737.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73737.md) |
 | [#74272](https://github.com/openclaw/openclaw/issues/74272) | [Bug]: openclaw gateway restart takes extremely long on Windows | already implemented on main | Apr 29, 2026, 10:17 UTC | [records/openclaw-openclaw/closed/74272.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74272.md) |
 | [#73526](https://github.com/openclaw/openclaw/pull/73526) | [plugin sdk] sdk seam followups 6 seams stacked on #73384 | closed externally after review | Apr 29, 2026, 10:06 UTC | [records/openclaw-openclaw/closed/73526.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73526.md) |
@@ -300,7 +301,6 @@ Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:19 UTC. L
 | [#63121](https://github.com/openclaw/openclaw/pull/63121) | fix(tools): add acp-only guidance to sessions_spawn streamTo parameter | closed externally after review | Apr 29, 2026, 10:03 UTC | [records/openclaw-openclaw/closed/63121.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/63121.md) |
 | [#67153](https://github.com/openclaw/openclaw/pull/67153) | Update creating-skills.md | closed externally after review | Apr 29, 2026, 10:03 UTC | [records/openclaw-openclaw/closed/67153.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/67153.md) |
 | [#65565](https://github.com/openclaw/openclaw/issues/65565) | [Bug]: Dashboard \"Set Default\" for agent fails with invalid config: agents: Unrecognized key: \"defaultId\" and default agent falls back to first agent in agents.list | closed externally after review | Apr 29, 2026, 10:03 UTC | [records/openclaw-openclaw/closed/65565.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65565.md) |
-| [#72815](https://github.com/openclaw/openclaw/pull/72815) | fix: keep local assistant avatar overrides authoritative | closed externally after review | Apr 29, 2026, 09:59 UTC | [records/openclaw-openclaw/closed/72815.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72815.md) |
 
 #### Work Candidates
 
@@ -346,12 +346,12 @@ Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:19 UTC. L
 
 Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
 
-Updated: Apr 29, 2026, 10:28 UTC
+Updated: Apr 29, 2026, 10:29 UTC
 
-State: Review publish complete
+State: Review in progress
 
-Merged review artifacts for run 25103653049. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103653049](https://github.com/openclaw/clawsweeper/actions/runs/25103653049)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103771941](https://github.com/openclaw/clawsweeper/actions/runs/25103771941)
 <!-- clawsweeper-status:openclaw-clawhub:end -->
 
 #### Queue
@@ -360,10 +360,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103653049](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 888 |
-| Open PRs | 33 |
-| Open items total | 921 |
+| Open PRs | 39 |
+| Open items total | 927 |
 | Reviewed files | 921 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 6 |
 | Archived closed files | 23 |
 
 #### Review Outcomes
@@ -390,7 +390,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103653049](https://
 | Daily PR cadence | 20/21 current (1 due, 95.2%) |
 | Daily new issue cadence (<30d) | 189/193 current (4 due, 97.9%) |
 | Weekly older issue cadence | 642/648 current (6 due, 99.1%) |
-| Due now by cadence | 66 |
+| Due now by cadence | 72 |
 
 ### Audit Health
 
