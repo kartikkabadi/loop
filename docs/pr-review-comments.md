@@ -35,6 +35,7 @@ Codex review: needs changes before merge.
 
 The body should include the strongest actionable sections the report has:
 
+- `What this changes:`
 - `Required change before merge:`
 - `Best possible solution:`
 - `Acceptance criteria:`

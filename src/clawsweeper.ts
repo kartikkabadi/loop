@@ -3064,6 +3064,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     .map((step) => `- ${step}`);
   const isPullRequest = frontMatterValue(markdown, "type") === "pull_request";
   const isRepairCandidate = workCandidate === "queue_fix_pr";
+  const summaryLine = sentence(summary) || "_No summary provided._";
   const lines = [
     isPullRequest && isRepairCandidate
       ? "Codex review: needs changes before merge."
@@ -3071,8 +3072,13 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
         ? "Codex review: needs maintainer review before merge."
         : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
     "",
-    sentence(summary),
-    "",
+  ];
+  if (isPullRequest) {
+    lines.push("What this changes:", "", summaryLine, "");
+  } else {
+    lines.push(summaryLine, "");
+  }
+  lines.push(
     isPullRequest && !isRepairCandidate
       ? "Maintainer follow-up before merge:"
       : isPullRequest
@@ -3090,7 +3096,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
       bestSolution ||
         "Continue tracking this item until the missing behavior is implemented or a maintainer decides the product direction.",
     ),
-  ];
+  );
   if (validation.length) lines.push("", "Acceptance criteria:", "", ...validation);
   if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
   if (likelyOwners.length) lines.push("", "Likely related people:", "", ...likelyOwners);
@@ -3104,7 +3110,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   );
 }
 
-function renderReviewCommentFromReport(markdown: string, reason: CloseReason): string {
+export function renderReviewCommentFromReport(markdown: string, reason: CloseReason): string {
   const decision = frontMatterValue(markdown, "decision");
   const body =
     decision === "close" && reason !== "none"

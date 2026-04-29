@@ -29,6 +29,7 @@ import {
   reviewArtifactDestination,
   reviewAutomationMarkersFromReport,
   reviewActionForDecision,
+  renderReviewCommentFromReport,
   runtimeBudgetExceeded,
   safeOutputTail,
   sameAuthorCounterpartApplyReason,
@@ -782,6 +783,37 @@ test("comment matcher recognizes old and new Codex review comments", () => {
     true,
   );
   assert.equal(isCodexReviewCommentBody("Thanks for the report, I can reproduce this."), false);
+});
+
+test("pull request keep-open review comments label the change summary", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74265",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "none",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+Adds regression coverage for session-scoped model overrides.
+
+## Best Possible Solution
+
+Land the tests after targeted validation is green.
+`,
+    "none",
+  );
+
+  assert.match(comment, /Codex review: needs maintainer review before merge\./);
+  assert.match(
+    comment,
+    /What this changes:\n\nAdds regression coverage for session-scoped model overrides\./,
+  );
+  assert.match(comment, /Maintainer follow-up before merge:/);
+  assert.match(comment, /<!-- clawsweeper-verdict:needs-human item=74265 sha=abc123def456/);
 });
 
 test("pull request review reports carry verdict and repair markers", () => {
