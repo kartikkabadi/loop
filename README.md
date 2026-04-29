@@ -94,46 +94,47 @@ Last dashboard update: Apr 29, 2026, 09:10 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4409 |
-| Open PRs | 3474 |
-| Open items total | 7883 |
+| Open issues | 4238 |
+| Open PRs | 3300 |
+| Open items total | 7538 |
 | Reviewed files | 7538 |
-| Unreviewed open items | 345 |
-| Due now by cadence | 2304 |
+| Unreviewed open items | 0 |
+| Due now by cadence | 1959 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 622 |
-| Closed by Codex apply | 10748 |
+| Closed by Codex apply | 10749 |
 | Failed or stale reviews | 27 |
-| Archived closed files | 14153 |
+| Archived closed files | 14154 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6960 | 6621 | 339 | 2234 | 0 | 576 | 10740 | Apr 29, 2026, 09:08 UTC | Apr 29, 2026, 09:08 UTC | 386 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 923 | 917 | 6 | 70 | 0 | 46 | 8 | Apr 29, 2026, 08:51 UTC | Apr 29, 2026, 08:25 UTC | 784 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6621 | 6621 | 0 | 1895 | 0 | 576 | 10741 | Apr 29, 2026, 09:09 UTC | Apr 29, 2026, 09:10 UTC | 386 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 917 | 917 | 0 | 64 | 0 | 46 | 8 | Apr 29, 2026, 08:51 UTC | Apr 29, 2026, 08:25 UTC | 784 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 09:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25100298158) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 09:10 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25100437954) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 09:10 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25100298158) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 09:08 UTC. Latest close: Apr 29, 2026, 09:08 UTC. Latest comment sync: Apr 29, 2026, 09:09 UTC.
+Latest review: Apr 29, 2026, 09:09 UTC. Latest close: Apr 29, 2026, 09:10 UTC. Latest comment sync: Apr 29, 2026, 09:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 21 | 1 | 20 | 1 | 13 | 187 | 0 |
-| Last hour | 1076 | 13 | 1063 | 16 | 32 | 1170 | 2 |
-| Last 24 hours | 6885 | 449 | 6436 | 23 | 729 | 2005 | 25 |
+| Last 15 minutes | 21 | 2 | 19 | 1 | 14 | 166 | 0 |
+| Last hour | 1076 | 14 | 1062 | 16 | 32 | 1170 | 2 |
+| Last 24 hours | 6886 | 450 | 6436 | 23 | 730 | 2006 | 25 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74240](https://github.com/openclaw/openclaw/issues/74240) | 2026.4.27: Gateway main event loop blocks at 100% CPU on Telegram message due to repeated filesystem/runtime-deps work | already implemented on main | Apr 29, 2026, 09:10 UTC | [records/openclaw-openclaw/closed/74240.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74240.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74239](https://github.com/openclaw/openclaw/issues/74239) | [Bug]: Bodyless Venice/Anthropic 400 misclassified as context-overflow → Pi triggers compaction recovery loop on sessions with nothing to compact | already implemented on main | Apr 29, 2026, 09:08 UTC | [records/openclaw-openclaw/closed/74239.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74239.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58534](https://github.com/openclaw/openclaw/issues/58534) | Session management performance degrades severely with subagent usage (100%+ CPU at ~400 sessions) | closed externally after review | Apr 29, 2026, 09:06 UTC | [records/openclaw-openclaw/closed/58534.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58534.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56516](https://github.com/openclaw/openclaw/issues/56516) | Subagent sessions persist in web UI after completion | closed externally after review | Apr 29, 2026, 09:06 UTC | [records/openclaw-openclaw/closed/56516.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56516.md) |
@@ -143,7 +144,6 @@ Latest review: Apr 29, 2026, 09:08 UTC. Latest close: Apr 29, 2026, 09:08 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#38547](https://github.com/openclaw/openclaw/issues/38547) | Feature: native remote session delegation via sessions_spawn with gatewayUrl | duplicate or superseded | Apr 29, 2026, 09:04 UTC | [records/openclaw-openclaw/closed/38547.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/38547.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73969](https://github.com/openclaw/openclaw/pull/73969) | fix(exec): prevent shell startup files from overriding daemon env | closed externally after review | Apr 29, 2026, 09:01 UTC | [records/openclaw-openclaw/closed/73969.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73969.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74222](https://github.com/openclaw/openclaw/issues/74222) | [Bug] transcript repair inserts 'missing tool result' after LCM compaction | belongs on ClawHub | Apr 29, 2026, 08:58 UTC | [records/openclaw-openclaw/closed/74222.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74222.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74007](https://github.com/openclaw/openclaw/pull/74007) | fix: canonicalize extra params model lookup keys | closed externally after review | Apr 29, 2026, 08:57 UTC | [records/openclaw-openclaw/closed/74007.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74007.md) |
 
 ### Work Candidates Across Repos
 
@@ -199,12 +199,12 @@ Latest review: Apr 29, 2026, 09:08 UTC. Latest close: Apr 29, 2026, 09:08 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 09:07 UTC
+Updated: Apr 29, 2026, 09:10 UTC
 
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100298158](https://github.com/openclaw/clawsweeper/actions/runs/25100298158)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100437954](https://github.com/openclaw/clawsweeper/actions/runs/25100437954)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -212,12 +212,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100298158](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3525 |
-| Open PRs | 3435 |
-| Open items total | 6960 |
+| Open issues | 3354 |
+| Open PRs | 3267 |
+| Open items total | 6621 |
 | Reviewed files | 6621 |
-| Unreviewed open items | 339 |
-| Archived closed files | 14130 |
+| Unreviewed open items | 0 |
+| Archived closed files | 14131 |
 
 #### Review Outcomes
 
@@ -230,7 +230,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100298158](https://
 | Fresh verified reviews in the last 7 days | 6605 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 576 |
-| Closed by Codex apply | 10740 |
+| Closed by Codex apply | 10741 |
 | Failed or stale reviews | 16 |
 
 #### Cadence
@@ -243,7 +243,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100298158](https://
 | Daily PR cadence | 2132/2646 current (514 due, 80.6%) |
 | Daily new issue cadence (<30d) | 716/1135 current (419 due, 63.1%) |
 | Weekly older issue cadence | 1798/1803 current (5 due, 99.7%) |
-| Due now by cadence | 2234 |
+| Due now by cadence | 1895 |
 
 ### Audit Health
 
@@ -279,18 +279,19 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 09:08 UTC. Latest close: Apr 29, 2026, 09:08 UTC. Latest comment sync: Apr 29, 2026, 09:09 UTC.
+Latest review: Apr 29, 2026, 09:09 UTC. Latest close: Apr 29, 2026, 09:10 UTC. Latest comment sync: Apr 29, 2026, 09:10 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 21 | 1 | 20 | 1 | 13 | 24 | 0 |
-| Last hour | 572 | 13 | 559 | 5 | 31 | 386 | 2 |
-| Last 24 hours | 5956 | 449 | 5507 | 12 | 716 | 1209 | 25 |
+| Last 15 minutes | 21 | 2 | 19 | 1 | 14 | 25 | 0 |
+| Last hour | 573 | 14 | 559 | 5 | 31 | 386 | 2 |
+| Last 24 hours | 5957 | 450 | 5507 | 12 | 717 | 1210 | 25 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74240](https://github.com/openclaw/openclaw/issues/74240) | 2026.4.27: Gateway main event loop blocks at 100% CPU on Telegram message due to repeated filesystem/runtime-deps work | already implemented on main | Apr 29, 2026, 09:10 UTC | [records/openclaw-openclaw/closed/74240.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74240.md) |
 | [#74239](https://github.com/openclaw/openclaw/issues/74239) | [Bug]: Bodyless Venice/Anthropic 400 misclassified as context-overflow → Pi triggers compaction recovery loop on sessions with nothing to compact | already implemented on main | Apr 29, 2026, 09:08 UTC | [records/openclaw-openclaw/closed/74239.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74239.md) |
 | [#58534](https://github.com/openclaw/openclaw/issues/58534) | Session management performance degrades severely with subagent usage (100%+ CPU at ~400 sessions) | closed externally after review | Apr 29, 2026, 09:06 UTC | [records/openclaw-openclaw/closed/58534.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58534.md) |
 | [#56516](https://github.com/openclaw/openclaw/issues/56516) | Subagent sessions persist in web UI after completion | closed externally after review | Apr 29, 2026, 09:06 UTC | [records/openclaw-openclaw/closed/56516.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56516.md) |
@@ -300,7 +301,6 @@ Latest review: Apr 29, 2026, 09:08 UTC. Latest close: Apr 29, 2026, 09:08 UTC. L
 | [#38547](https://github.com/openclaw/openclaw/issues/38547) | Feature: native remote session delegation via sessions_spawn with gatewayUrl | duplicate or superseded | Apr 29, 2026, 09:04 UTC | [records/openclaw-openclaw/closed/38547.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/38547.md) |
 | [#73969](https://github.com/openclaw/openclaw/pull/73969) | fix(exec): prevent shell startup files from overriding daemon env | closed externally after review | Apr 29, 2026, 09:01 UTC | [records/openclaw-openclaw/closed/73969.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73969.md) |
 | [#74222](https://github.com/openclaw/openclaw/issues/74222) | [Bug] transcript repair inserts 'missing tool result' after LCM compaction | belongs on ClawHub | Apr 29, 2026, 08:58 UTC | [records/openclaw-openclaw/closed/74222.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74222.md) |
-| [#74007](https://github.com/openclaw/openclaw/pull/74007) | fix: canonicalize extra params model lookup keys | closed externally after review | Apr 29, 2026, 08:57 UTC | [records/openclaw-openclaw/closed/74007.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74007.md) |
 
 #### Work Candidates
 
@@ -360,10 +360,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100298158](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 884 |
-| Open PRs | 39 |
-| Open items total | 923 |
+| Open PRs | 33 |
+| Open items total | 917 |
 | Reviewed files | 917 |
-| Unreviewed open items | 6 |
+| Unreviewed open items | 0 |
 | Archived closed files | 23 |
 
 #### Review Outcomes
@@ -390,7 +390,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100298158](https://
 | Daily PR cadence | 20/21 current (1 due, 95.2%) |
 | Daily new issue cadence (<30d) | 192/196 current (4 due, 98%) |
 | Weekly older issue cadence | 638/644 current (6 due, 99.1%) |
-| Due now by cadence | 70 |
+| Due now by cadence | 64 |
 
 ### Audit Health
 
@@ -428,8 +428,8 @@ Latest review: Apr 29, 2026, 08:51 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 163 | 0 |
-| Last hour | 504 | 0 | 504 | 11 | 1 | 784 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 141 | 0 |
+| Last hour | 503 | 0 | 503 | 11 | 1 | 784 | 0 |
 | Last 24 hours | 929 | 0 | 929 | 11 | 13 | 796 | 0 |
 
 #### Recently Closed
