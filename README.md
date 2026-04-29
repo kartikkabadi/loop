@@ -94,12 +94,12 @@ Last dashboard update: Apr 29, 2026, 10:23 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4415 |
-| Open PRs | 3475 |
-| Open items total | 7890 |
+| Open issues | 4239 |
+| Open PRs | 3286 |
+| Open items total | 7525 |
 | Reviewed files | 7525 |
-| Unreviewed open items | 365 |
-| Due now by cadence | 2654 |
+| Unreviewed open items | 0 |
+| Due now by cadence | 2289 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 623 |
 | Closed by Codex apply | 10755 |
@@ -110,15 +110,15 @@ Last dashboard update: Apr 29, 2026, 10:23 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6963 | 6604 | 359 | 2582 | 0 | 577 | 10747 | Apr 29, 2026, 10:21 UTC | Apr 29, 2026, 10:19 UTC | 55 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 921 | 6 | 72 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 4 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6604 | 6604 | 0 | 2223 | 0 | 577 | 10747 | Apr 29, 2026, 10:21 UTC | Apr 29, 2026, 10:19 UTC | 55 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 921 | 921 | 0 | 66 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 4 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review publish complete | Apr 29, 2026, 10:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103528481) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 10:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103528481) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 10:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103549161) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 10:22 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103390229) |
 
 ### Fleet Activity
 
@@ -201,10 +201,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 10:23 UTC
 
-State: Review publish complete
+State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103528481](https://github.com/openclaw/clawsweeper/actions/runs/25103528481)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103549161](https://github.com/openclaw/clawsweeper/actions/runs/25103549161)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -212,11 +212,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103528481](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3527 |
-| Open PRs | 3436 |
-| Open items total | 6963 |
+| Open issues | 3351 |
+| Open PRs | 3253 |
+| Open items total | 6604 |
 | Reviewed files | 6604 |
-| Unreviewed open items | 359 |
+| Unreviewed open items | 0 |
 | Archived closed files | 14180 |
 
 #### Review Outcomes
@@ -243,7 +243,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103528481](https://
 | Daily PR cadence | 1907/2628 current (721 due, 72.6%) |
 | Daily new issue cadence (<30d) | 639/1130 current (491 due, 56.5%) |
 | Weekly older issue cadence | 1795/1800 current (5 due, 99.7%) |
-| Due now by cadence | 2582 |
+| Due now by cadence | 2223 |
 
 ### Audit Health
 
@@ -360,10 +360,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103528481](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 888 |
-| Open PRs | 39 |
-| Open items total | 927 |
+| Open PRs | 33 |
+| Open items total | 921 |
 | Reviewed files | 921 |
-| Unreviewed open items | 6 |
+| Unreviewed open items | 0 |
 | Archived closed files | 23 |
 
 #### Review Outcomes
@@ -390,7 +390,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103528481](https://
 | Daily PR cadence | 20/21 current (1 due, 95.2%) |
 | Daily new issue cadence (<30d) | 189/193 current (4 due, 97.9%) |
 | Weekly older issue cadence | 642/648 current (6 due, 99.1%) |
-| Due now by cadence | 72 |
+| Due now by cadence | 66 |
 
 ### Audit Health
 
