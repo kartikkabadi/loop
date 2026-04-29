@@ -89,7 +89,7 @@ source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 13:38 UTC
+Last dashboard update: Apr 29, 2026, 13:39 UTC
 
 ### Fleet
 
@@ -112,16 +112,16 @@ Last dashboard update: Apr 29, 2026, 13:38 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6909 | 6560 | 349 | 2686 | 3 | 602 | 10771 | Apr 29, 2026, 13:37 UTC | Apr 29, 2026, 13:35 UTC | 66 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 922 | 5 | 54 | 0 | 43 | 8 | Apr 29, 2026, 13:35 UTC | Apr 29, 2026, 08:25 UTC | 484 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6909 | 6560 | 349 | 2686 | 3 | 602 | 10771 | Apr 29, 2026, 13:37 UTC | Apr 29, 2026, 13:35 UTC | 65 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 922 | 5 | 54 | 0 | 43 | 8 | Apr 29, 2026, 13:35 UTC | Apr 29, 2026, 08:25 UTC | 459 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 1 | 1 | 0 | 0 | 0 | 0 | 0 | Apr 29, 2026, 13:18 UTC | unknown | 1 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review publish complete | Apr 29, 2026, 13:38 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25112177089) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 13:38 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25112177089) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 29, 2026, 13:39 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25112198060) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 29, 2026, 13:37 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25111479288) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
@@ -130,8 +130,8 @@ Latest review: Apr 29, 2026, 13:37 UTC. Latest close: Apr 29, 2026, 13:35 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 131 | 3 | 128 | 2 | 24 | 342 | 0 |
-| Last hour | 1085 | 6 | 1079 | 16 | 60 | 551 | 2 |
+| Last 15 minutes | 96 | 2 | 94 | 2 | 22 | 341 | 0 |
+| Last hour | 1085 | 6 | 1079 | 16 | 59 | 525 | 2 |
 | Last 24 hours | 6249 | 402 | 5847 | 28 | 789 | 1645 | 29 |
 
 ### Recently Closed Across Repos
@@ -203,11 +203,11 @@ Latest review: Apr 29, 2026, 13:37 UTC. Latest close: Apr 29, 2026, 13:35 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 13:38 UTC
+Updated: Apr 29, 2026, 13:39 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25112198060](https://github.com/openclaw/clawsweeper/actions/runs/25112198060)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -287,8 +287,8 @@ Latest review: Apr 29, 2026, 13:37 UTC. Latest close: Apr 29, 2026, 13:35 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 111 | 3 | 108 | 1 | 24 | 16 | 0 |
-| Last hour | 564 | 6 | 558 | 1 | 60 | 66 | 2 |
+| Last 15 minutes | 76 | 2 | 74 | 1 | 22 | 15 | 0 |
+| Last hour | 564 | 6 | 558 | 1 | 59 | 65 | 2 |
 | Last 24 hours | 5314 | 402 | 4912 | 13 | 776 | 1029 | 29 |
 
 #### Recently Closed
@@ -433,7 +433,7 @@ Latest review: Apr 29, 2026, 13:35 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 20 | 0 | 20 | 1 | 0 | 326 | 0 |
-| Last hour | 520 | 0 | 520 | 15 | 0 | 484 | 0 |
+| Last hour | 520 | 0 | 520 | 15 | 0 | 459 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 15 | 13 | 615 | 0 |
 
 #### Recently Closed
