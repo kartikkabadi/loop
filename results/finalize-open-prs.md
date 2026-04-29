@@ -1,6 +1,6 @@
 # Open ClawSweeper Repair PR Finalizer
 
-Generated: 2026-04-29T14:08:46.900Z
+Generated: 2026-04-29T14:34:08.869Z
 
 ## Summary
 
@@ -18,9 +18,9 @@ Generated: 2026-04-29T14:08:46.900Z
 
 ## Dispatch
 
-Enabled: no
+Enabled: yes
 
-Status: report_only
+Status: dry_run
 
 | PR | Cluster | Job | Mode | Blockers |
 | --- | --- | --- | --- | --- |

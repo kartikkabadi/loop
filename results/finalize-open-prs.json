@@ -2,7 +2,7 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-29T14:08:46.900Z",
+  "generated_at": "2026-04-29T14:34:08.869Z",
   "count": 0,
   "summary": {
     "open_prs": 0,
@@ -16,13 +16,13 @@
     "needs_result_backfill": 0
   },
   "dispatch": {
-    "enabled": false,
+    "enabled": true,
     "execute": false,
     "workflow": "repair-cluster-worker.yml",
-    "runner": "blacksmith-4vcpu-ubuntu-2404",
+    "runner": "ubuntu-latest",
     "execution_runner": "blacksmith-16vcpu-ubuntu-2404",
     "model": "gpt-5.5",
-    "max_prs": 5,
+    "max_prs": 2,
     "candidates": []
   },
   "prs": []

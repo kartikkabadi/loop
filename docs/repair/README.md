@@ -45,7 +45,7 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 14:09 UTC
+Last dashboard update: Apr 29, 2026, 14:34 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
@@ -68,8 +68,8 @@ Scope: 253 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Fix actions blocked | 50 | 30.3% |
 | Latest clusters with fix failures | 44 | 17.4% |
 | Distinct PRs touched | 826 | 100% |
-| Open PRs tracked | 270 | 32.7% |
-| Closed unmerged PRs tracked | 457 | 55.3% |
+| Open PRs tracked | 268 | 32.4% |
+| Closed unmerged PRs tracked | 458 | 55.4% |
 | Completed close actions | 30 | 10.8% |
 | Completed merge actions | 23 | 8.2% |
 | Duplicate closes | 22 | 73.3% |
