@@ -87,7 +87,7 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 11:56 UTC
+Last dashboard update: Apr 29, 2026, 11:57 UTC
 
 ### Fleet
 
@@ -117,7 +117,7 @@ Last dashboard update: Apr 29, 2026, 11:56 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 11:56 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25107346067) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 11:57 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25107346067) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 11:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25106895806) |
 
 ### Fleet Activity
@@ -126,7 +126,7 @@ Latest review: Apr 29, 2026, 11:55 UTC. Latest close: Apr 29, 2026, 11:54 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 56 | 1 | 55 | 0 | 5 | 123 | 0 |
+| Last 15 minutes | 50 | 1 | 49 | 0 | 5 | 119 | 0 |
 | Last hour | 598 | 7 | 591 | 8 | 35 | 436 | 4 |
 | Last 24 hours | 6379 | 411 | 5968 | 21 | 753 | 2259 | 27 |
 
@@ -199,11 +199,11 @@ Latest review: Apr 29, 2026, 11:55 UTC. Latest close: Apr 29, 2026, 11:54 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 11:56 UTC
+Updated: Apr 29, 2026, 11:57 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 1. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25107346067](https://github.com/openclaw/clawsweeper/actions/runs/25107346067)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -283,7 +283,7 @@ Latest review: Apr 29, 2026, 11:55 UTC. Latest close: Apr 29, 2026, 11:54 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 43 | 1 | 42 | 0 | 5 | 43 | 0 |
+| Last 15 minutes | 42 | 1 | 41 | 0 | 5 | 43 | 0 |
 | Last hour | 81 | 7 | 74 | 0 | 35 | 78 | 4 |
 | Last 24 hours | 5446 | 411 | 5035 | 10 | 740 | 1617 | 27 |
 
@@ -428,7 +428,7 @@ Latest review: Apr 29, 2026, 11:43 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 13 | 0 | 13 | 0 | 0 | 80 | 0 |
+| Last 15 minutes | 8 | 0 | 8 | 0 | 0 | 76 | 0 |
 | Last hour | 517 | 0 | 517 | 8 | 0 | 358 | 0 |
 | Last 24 hours | 933 | 0 | 933 | 11 | 13 | 642 | 0 |
 
