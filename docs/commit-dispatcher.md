@@ -4,7 +4,7 @@
 `main` branch. The target repository forwards `push` events with
 `repository_dispatch`; ClawSweeper expands the pushed range into one worker per
 commit, writes one markdown report per commit, and optionally creates a GitHub
-Check Run on each reviewed commit.
+Check Run on each reviewed commit when checks are enabled.
 
 Reports are stored at:
 
@@ -56,17 +56,23 @@ jobs:
           TARGET_REPO: ${{ github.repository }}
           BEFORE_SHA: ${{ github.event.before }}
           AFTER_SHA: ${{ github.sha }}
+          CREATE_CHECKS: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_CREATE_CHECKS || 'false' }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
             echo "::notice::Skipping commit review dispatch because no dispatch credential is configured."
             exit 0
           fi
+          case "$CREATE_CHECKS" in
+            true|TRUE|1|yes|YES|on|ON) create_checks=true ;;
+            *) create_checks=false ;;
+          esac
           payload="$(jq -nc \
             --arg target_repo "$TARGET_REPO" \
             --arg before_sha "$BEFORE_SHA" \
             --arg after_sha "$AFTER_SHA" \
             --arg ref "refs/heads/main" \
-            '{event_type:"clawsweeper_commit_review",client_payload:{target_repo:$target_repo,before_sha:$before_sha,after_sha:$after_sha,ref:$ref,enabled:true,create_checks:true}}')"
+            --argjson create_checks "$create_checks" \
+            '{event_type:"clawsweeper_commit_review",client_payload:{target_repo:$target_repo,before_sha:$before_sha,after_sha:$after_sha,ref:$ref,enabled:true,create_checks:$create_checks}}')"
           gh api repos/openclaw/clawsweeper/dispatches \
             --method POST \
             --input - <<< "$payload"
@@ -78,6 +84,12 @@ Disable the lane per target repo with:
 CLAWSWEEPER_COMMIT_REVIEW_ENABLED=false
 ```
 
+Enable optional target commit check-runs with:
+
+```text
+CLAWSWEEPER_COMMIT_REVIEW_CREATE_CHECKS=true
+```
+
 Manual reviews can be started from the `ClawSweeper Commit Review` workflow in
 this repository. Inputs:
 
@@ -86,13 +98,13 @@ this repository. Inputs:
 - `before_sha`: optional base SHA; when present, the workflow reviews every
   commit in `before_sha..commit_sha`
 - `additional_prompt`: appended to the commit-review prompt for that run
-- `create_checks`: create/update the target commit Check Run
+- `create_checks`: create/update the target commit Check Run, default `false`
 - `enabled`: emergency no-op switch
 
 Large ranges are paged automatically. Each workflow run starts one matrix worker
 per commit for up to GitHub's matrix limit, then dispatches the next page until
 the whole range has one report per commit.
 
-The check name is `ClawSweeper Commit Review`. Clean high-confidence reports use
-`success`; high-confidence high/critical findings use `failure`; inconclusive
-or lower-confidence findings use `neutral`.
+When enabled, the check name is `ClawSweeper Commit Review`. Clean
+high-confidence reports use `success`; high-confidence high/critical findings
+use `failure`; inconclusive or lower-confidence findings use `neutral`.

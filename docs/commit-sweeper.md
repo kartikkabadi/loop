@@ -3,7 +3,8 @@
 Commit Sweeper reviews commits that land on a target repository's `main` branch.
 It is intentionally separate from the issue/PR cleanup sweeper: it does not
 close items, write comments, or try to fix code. It produces one markdown report
-per commit and publishes a GitHub Check Run for the commit.
+per commit. It can optionally publish a GitHub Check Run for the commit when
+`create_checks=true`.
 
 ## Goals
 
@@ -65,7 +66,7 @@ Manual workflow dispatch supports:
 - `before_sha`: optional range start; when present, review every commit in
   `before_sha..commit_sha`
 - `additional_prompt`: appended to the Codex prompt for this run
-- `create_checks`: create/update GitHub Checks
+- `create_checks`: create/update GitHub Checks, default `false`
 - `enabled`: emergency no-op switch
 - `commit_offset`: internal continuation offset
 
@@ -131,7 +132,8 @@ Codex reviews the provided commit range and is expected to read beyond the diff:
 The time budget is 30 minutes per commit.
 
 Codex returns markdown only. The front matter is small and stable so tooling can
-index results and publish checks, but the body is meant for maintainers to read.
+index results and optionally publish checks, but the body is meant for
+maintainers to read.
 
 ## Report Results
 
@@ -160,7 +162,7 @@ The prompt explicitly excludes style nits, broad refactor taste, generic
 cleanliness feedback, speculative security concerns without an executable path,
 and test coverage complaints without a concrete risk.
 
-## GitHub Checks
+## Optional GitHub Checks
 
 The check name is:
 
@@ -179,8 +181,20 @@ Checks are created on the target repository commit by the ClawSweeper GitHub
 App. They behave like CI in GitHub's UI, but are separate from the target
 repository's normal test workflows.
 
-Commit Sweeper does not post comments. Reports and checks are the only public
-surfaces.
+Checks are disabled by default to avoid spending GitHub App installation rate
+limit on status publishing. Enable them per run with `create_checks=true`, by
+sending `create_checks:true` in the dispatch payload, or by setting this
+variable in the target repository that runs the dispatch workflow:
+
+```text
+CLAWSWEEPER_COMMIT_REVIEW_CREATE_CHECKS=true
+```
+
+The receiver also honors the same variable on `openclaw/clawsweeper` when a
+manual or repository dispatch omits `create_checks`.
+
+Commit Sweeper does not post comments. Markdown reports are the primary public
+surface; checks are an optional secondary surface.
 
 ## Safety
 
@@ -202,8 +216,13 @@ CLAWSWEEPER_COMMIT_REVIEW_ENABLED=false
 
 Manual dispatch can also set `enabled=false`.
 
-Checks can be disabled per run with `create_checks=false`; reports are still
-written.
+Checks are disabled by default. Enable or disable them without changing code via:
+
+- manual dispatch input `create_checks=true|false`
+- repository dispatch payload `create_checks:true|false`
+- target repo variable `CLAWSWEEPER_COMMIT_REVIEW_CREATE_CHECKS=true|false`
+
+Reports are always written either way.
 
 ## Related Files
 
