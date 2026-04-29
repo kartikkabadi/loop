@@ -162,7 +162,8 @@ function githubIssueInfoBatch(repo: string, numbers: string[]): Map<string, Gith
   const query = `query { repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }`;
   const body = runGhGraphql(query);
   if (!body) return new Map<string, GithubIssueInfo>();
-  const data = JSON.parse(body);
+  const data = parseGithubResponse(body, `issue info for ${repo}`);
+  if (!data) return new Map<string, GithubIssueInfo>();
   const repository = data?.data?.repository ?? {};
   const out = new Map<string, GithubIssueInfo>();
   numbers.forEach((number: string, index: number) => {
@@ -193,7 +194,8 @@ function githubPullInfoBatch(repo: string, numbers: string[]): Map<string, Githu
   const query = `query { repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }`;
   const body = runGhGraphql(query);
   if (!body) return new Map<string, GithubPullInfo>();
-  const data = JSON.parse(body);
+  const data = parseGithubResponse(body, `pull info for ${repo}`);
+  if (!data) return new Map<string, GithubPullInfo>();
   const repository = data?.data?.repository ?? {};
   const out = new Map<string, GithubPullInfo>();
   numbers.forEach((number: string, index: number) => {
@@ -215,6 +217,22 @@ function runGhGraphql(query: string): string {
     return ghText(["api", "graphql", "-f", `query=${query}`]);
   } catch (error) {
     return ghStdoutFromError(error);
+  }
+}
+
+export function parseGithubResponse(body: unknown, context: string): LooseRecord | null {
+  const text = String(body ?? "").trim();
+  if (!text) return null;
+  if (!text.startsWith("{") && !text.startsWith("[")) {
+    console.warn(`warning: ignoring non-json GitHub response for ${context}`);
+    return null;
+  }
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`warning: could not parse GitHub response for ${context}: ${message}`);
+    return null;
   }
 }
 
