@@ -78,7 +78,7 @@ jobs:
 
       - name: Route ClawSweeper comments
         env:
-          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          GH_TOKEN: ${{ steps.app_token.outputs.token || secrets.OPENCLAW_GH_TOKEN }}
           CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE || '0' }}
           CLAWSWEEPER_REPAIR_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_REPAIR_ALLOW_MERGE || '0' }}
         run: |
