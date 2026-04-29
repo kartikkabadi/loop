@@ -146,30 +146,30 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 20:54 UTC
+Last dashboard update: Apr 29, 2026, 20:55 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4430 |
-| Open PRs | 3445 |
-| Open items total | 7875 |
-| Reviewed files | 7517 |
-| Unreviewed open items | 361 |
-| Due now by cadence | 3204 |
-| Proposed closes awaiting apply | 4 |
+| Open issues | 4428 |
+| Open PRs | 3444 |
+| Open items total | 7872 |
+| Reviewed files | 7513 |
+| Unreviewed open items | 362 |
+| Due now by cadence | 3206 |
+| Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 981 |
-| Closed by Codex apply | 10887 |
+| Closed by Codex apply | 10891 |
 | Failed or stale reviews | 26 |
-| Archived closed files | 14534 |
+| Archived closed files | 14538 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6947 | 6591 | 356 | 3172 | 4 | 937 | 10879 | Apr 29, 2026, 20:48 UTC | Apr 29, 2026, 20:49 UTC | 399 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6944 | 6587 | 357 | 3174 | 0 | 937 | 10883 | Apr 29, 2026, 20:48 UTC | Apr 29, 2026, 20:54 UTC | 402 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 928 | 923 | 5 | 29 | 0 | 43 | 8 | Apr 29, 2026, 20:25 UTC | Apr 29, 2026, 17:17 UTC | 385 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -177,34 +177,34 @@ Last dashboard update: Apr 29, 2026, 20:54 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 20:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25133253124) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 20:55 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25133253124) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 29, 2026, 20:44 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25132847826) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 20:48 UTC. Latest close: Apr 29, 2026, 20:49 UTC. Latest comment sync: Apr 29, 2026, 20:48 UTC.
+Latest review: Apr 29, 2026, 20:48 UTC. Latest close: Apr 29, 2026, 20:54 UTC. Latest comment sync: Apr 29, 2026, 20:54 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 115 | 2 | 113 | 4 | 3 | 8 | 0 |
-| Last hour | 1304 | 6 | 1298 | 19 | 30 | 784 | 1 |
-| Last 24 hours | 5714 | 317 | 5397 | 22 | 741 | 1661 | 27 |
+| Last 15 minutes | 83 | 2 | 81 | 3 | 6 | 12 | 0 |
+| Last hour | 1264 | 6 | 1258 | 19 | 34 | 787 | 1 |
+| Last 24 hours | 5713 | 317 | 5396 | 22 | 745 | 1664 | 27 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74548](https://github.com/openclaw/openclaw/issues/74548) | [Bug]: WebChat duplicate/collapsed messages after tool calls | duplicate or superseded | Apr 29, 2026, 20:54 UTC | [records/openclaw-openclaw/closed/74548.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74548.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74519](https://github.com/openclaw/openclaw/pull/74519) | fix: Found one remaining compatibility regression in the Discord publi | duplicate or superseded | Apr 29, 2026, 20:54 UTC | [records/openclaw-openclaw/closed/74519.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74519.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#40894](https://github.com/openclaw/openclaw/pull/40894) | Codex/fix 40880 media staging max bytes | duplicate or superseded | Apr 29, 2026, 20:54 UTC | [records/openclaw-openclaw/closed/40894.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40894.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#40848](https://github.com/openclaw/openclaw/issues/40848) | Add entities support to message tool for custom emoji | duplicate or superseded | Apr 29, 2026, 20:54 UTC | [records/openclaw-openclaw/closed/40848.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40848.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56562](https://github.com/openclaw/openclaw/issues/56562) | Feature Request: Add tools.validate_before_call and tools.retry_on_missing_params | closed externally after review | Apr 29, 2026, 20:49 UTC | [records/openclaw-openclaw/closed/56562.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56562.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74595](https://github.com/openclaw/openclaw/issues/74595) | [Bug]: async exec completion relay asks user for missing logs after No session found | closed externally after review | Apr 29, 2026, 20:42 UTC | [records/openclaw-openclaw/closed/74595.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74595.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59441](https://github.com/openclaw/openclaw/issues/59441) | [Bug]: cron add --at does not support HH:MM time-only strings; --tz has no effect on --at | closed externally after review | Apr 29, 2026, 20:39 UTC | [records/openclaw-openclaw/closed/59441.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59441.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#61100](https://github.com/openclaw/openclaw/pull/61100) | feat(discord): add upload-file action support [claude-generated] | closed externally after review | Apr 29, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/61100.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61100.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#61087](https://github.com/openclaw/openclaw/pull/61087) | fix(discord): advertise upload-file action so agents can discover file-send capability | closed externally after review | Apr 29, 2026, 20:37 UTC | [records/openclaw-openclaw/closed/61087.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61087.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#42261](https://github.com/openclaw/openclaw/issues/42261) | fix(gateway): webchat/WS clients never receive live thinking events | closed externally after review | Apr 29, 2026, 20:33 UTC | [records/openclaw-openclaw/closed/42261.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/42261.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#38069](https://github.com/openclaw/openclaw/issues/38069) | [Feature]: cron job execution retry with configurable delay after transient failure | closed externally after review | Apr 29, 2026, 20:26 UTC | [records/openclaw-openclaw/closed/38069.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/38069.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#40453](https://github.com/openclaw/openclaw/pull/40453) | Improve skill descriptions with trigger phrases and NOT FOR clauses | closed externally after review | Apr 29, 2026, 20:25 UTC | [records/openclaw-openclaw/closed/40453.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40453.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#46979](https://github.com/openclaw/openclaw/pull/46979) | docs(linux): add production setup guide for nvm, Tailscale, GPU, and firewall | closed externally after review | Apr 29, 2026, 20:25 UTC | [records/openclaw-openclaw/closed/46979.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/46979.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#53950](https://github.com/openclaw/openclaw/pull/53950) | docs: add hypervisorlaunchtype toggle recovery to WSL2+Windows remote CDP guide | closed externally after review | Apr 29, 2026, 20:25 UTC | [records/openclaw-openclaw/closed/53950.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/53950.md) |
 
 ### Work Candidates Across Repos
 
@@ -260,11 +260,11 @@ Latest review: Apr 29, 2026, 20:48 UTC. Latest close: Apr 29, 2026, 20:49 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 20:54 UTC
+Updated: Apr 29, 2026, 20:55 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 4 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=40848,40894,74519,74548.
+Checkpoint 1 finished. Fresh closes in checkpoint: 4. Total fresh closes in this run: 4/4. Result records in checkpoint: 8, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25133253124](https://github.com/openclaw/clawsweeper/actions/runs/25133253124)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -273,38 +273,38 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25133253124](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3541 |
-| Open PRs | 3406 |
-| Open items total | 6947 |
-| Reviewed files | 6591 |
-| Unreviewed open items | 356 |
-| Archived closed files | 14508 |
+| Open issues | 3539 |
+| Open PRs | 3405 |
+| Open items total | 6944 |
+| Reviewed files | 6587 |
+| Unreviewed open items | 357 |
+| Archived closed files | 14512 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3361 |
-| Proposed issue closes | 2 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3219 |
-| Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6580 |
-| Proposed closes awaiting apply | 4 (0.1% of fresh reviews) |
+| Fresh reviewed issues in the last 7 days | 3359 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3217 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6576 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 937 |
-| Closed by Codex apply | 10879 |
+| Closed by Codex apply | 10883 |
 | Failed or stale reviews | 11 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 89/1143 current (1054 due, 7.8%) |
-| Hourly hot item cadence (<7d) | 89/1143 current (1054 due, 7.8%) |
-| Daily cadence coverage | 1886/3646 current (1760 due, 51.7%) |
-| Daily PR cadence | 1268/2544 current (1276 due, 49.8%) |
+| Hourly cadence coverage | 87/1141 current (1054 due, 7.6%) |
+| Hourly hot item cadence (<7d) | 87/1141 current (1054 due, 7.6%) |
+| Daily cadence coverage | 1884/3645 current (1761 due, 51.7%) |
+| Daily PR cadence | 1266/2543 current (1277 due, 49.8%) |
 | Daily new issue cadence (<30d) | 618/1102 current (484 due, 56.1%) |
-| Weekly older issue cadence | 1800/1802 current (2 due, 99.9%) |
-| Due now by cadence | 3172 |
+| Weekly older issue cadence | 1799/1801 current (2 due, 99.9%) |
+| Due now by cadence | 3174 |
 
 ### Audit Health
 
@@ -340,28 +340,28 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 20:48 UTC. Latest close: Apr 29, 2026, 20:49 UTC. Latest comment sync: Apr 29, 2026, 20:48 UTC.
+Latest review: Apr 29, 2026, 20:48 UTC. Latest close: Apr 29, 2026, 20:54 UTC. Latest comment sync: Apr 29, 2026, 20:54 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 115 | 2 | 113 | 4 | 3 | 8 | 0 |
-| Last hour | 804 | 6 | 798 | 5 | 30 | 399 | 1 |
-| Last 24 hours | 4774 | 317 | 4457 | 7 | 726 | 875 | 27 |
+| Last 15 minutes | 83 | 2 | 81 | 3 | 6 | 12 | 0 |
+| Last hour | 764 | 6 | 758 | 5 | 34 | 402 | 1 |
+| Last 24 hours | 4773 | 317 | 4456 | 7 | 730 | 878 | 27 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74548](https://github.com/openclaw/openclaw/issues/74548) | [Bug]: WebChat duplicate/collapsed messages after tool calls | duplicate or superseded | Apr 29, 2026, 20:54 UTC | [records/openclaw-openclaw/closed/74548.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74548.md) |
+| [#74519](https://github.com/openclaw/openclaw/pull/74519) | fix: Found one remaining compatibility regression in the Discord publi | duplicate or superseded | Apr 29, 2026, 20:54 UTC | [records/openclaw-openclaw/closed/74519.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74519.md) |
+| [#40894](https://github.com/openclaw/openclaw/pull/40894) | Codex/fix 40880 media staging max bytes | duplicate or superseded | Apr 29, 2026, 20:54 UTC | [records/openclaw-openclaw/closed/40894.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40894.md) |
+| [#40848](https://github.com/openclaw/openclaw/issues/40848) | Add entities support to message tool for custom emoji | duplicate or superseded | Apr 29, 2026, 20:54 UTC | [records/openclaw-openclaw/closed/40848.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40848.md) |
 | [#56562](https://github.com/openclaw/openclaw/issues/56562) | Feature Request: Add tools.validate_before_call and tools.retry_on_missing_params | closed externally after review | Apr 29, 2026, 20:49 UTC | [records/openclaw-openclaw/closed/56562.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/56562.md) |
 | [#74595](https://github.com/openclaw/openclaw/issues/74595) | [Bug]: async exec completion relay asks user for missing logs after No session found | closed externally after review | Apr 29, 2026, 20:42 UTC | [records/openclaw-openclaw/closed/74595.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74595.md) |
 | [#59441](https://github.com/openclaw/openclaw/issues/59441) | [Bug]: cron add --at does not support HH:MM time-only strings; --tz has no effect on --at | closed externally after review | Apr 29, 2026, 20:39 UTC | [records/openclaw-openclaw/closed/59441.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59441.md) |
 | [#61100](https://github.com/openclaw/openclaw/pull/61100) | feat(discord): add upload-file action support [claude-generated] | closed externally after review | Apr 29, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/61100.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61100.md) |
 | [#61087](https://github.com/openclaw/openclaw/pull/61087) | fix(discord): advertise upload-file action so agents can discover file-send capability | closed externally after review | Apr 29, 2026, 20:37 UTC | [records/openclaw-openclaw/closed/61087.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61087.md) |
 | [#42261](https://github.com/openclaw/openclaw/issues/42261) | fix(gateway): webchat/WS clients never receive live thinking events | closed externally after review | Apr 29, 2026, 20:33 UTC | [records/openclaw-openclaw/closed/42261.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/42261.md) |
-| [#38069](https://github.com/openclaw/openclaw/issues/38069) | [Feature]: cron job execution retry with configurable delay after transient failure | closed externally after review | Apr 29, 2026, 20:26 UTC | [records/openclaw-openclaw/closed/38069.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/38069.md) |
-| [#40453](https://github.com/openclaw/openclaw/pull/40453) | Improve skill descriptions with trigger phrases and NOT FOR clauses | closed externally after review | Apr 29, 2026, 20:25 UTC | [records/openclaw-openclaw/closed/40453.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40453.md) |
-| [#46979](https://github.com/openclaw/openclaw/pull/46979) | docs(linux): add production setup guide for nvm, Tailscale, GPU, and firewall | closed externally after review | Apr 29, 2026, 20:25 UTC | [records/openclaw-openclaw/closed/46979.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/46979.md) |
-| [#53950](https://github.com/openclaw/openclaw/pull/53950) | docs: add hypervisorlaunchtype toggle recovery to WSL2+Windows remote CDP guide | closed externally after review | Apr 29, 2026, 20:25 UTC | [records/openclaw-openclaw/closed/53950.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/53950.md) |
 
 #### Work Candidates
 
