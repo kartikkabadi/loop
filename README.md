@@ -1,7 +1,8 @@
 # ClawSweeper
 
 ClawSweeper is the conservative maintenance bot for OpenClaw repositories. It
-currently covers `openclaw/openclaw` and `openclaw/clawhub`.
+currently covers `openclaw/openclaw`, `openclaw/clawhub`, and self-review for
+`openclaw/clawsweeper`.
 
 It has two independent lanes:
 
@@ -15,8 +16,8 @@ It has two independent lanes:
 ## Capabilities
 
 - **Repository profiles:** per-repository rules live in
-  `src/repository-profiles.ts`, so OpenClaw and ClawHub can share the same
-  engine while keeping different apply limits.
+  `src/repository-profiles.ts`, so OpenClaw, ClawHub, and ClawSweeper can share
+  the same engine while keeping different apply limits.
 - **Issue and PR intake:** scheduled runs scan open issues and pull requests,
   while target repositories can forward exact issue/PR events with
   `repository_dispatch` for low-latency one-item reviews.
@@ -81,9 +82,10 @@ Issues with an open PR that references them using GitHub closing syntax such as
 Open issue/PR pairs from the same author stay open together unless the paired
 item is already resolved or a maintainer explicitly asks to close one side.
 
-Repository profiles can further narrow apply. ClawHub is intentionally stricter:
-it reviews every issue and PR, but apply may close only PRs where current `main`
-already implements the proposed change with source-backed evidence.
+Repository profiles can further narrow apply. ClawHub and ClawSweeper self-review
+are intentionally stricter: they review issues and PRs, but apply may close only
+PRs where current `main` already implements the proposed change with
+source-backed evidence.
 
 ## Dashboard
 
@@ -704,10 +706,11 @@ proposals later. Scheduled apply runs process both issues and pull requests by
 default, subject to the selected repository profile; pass `target_repo`,
 `apply_kind=issue`, or `apply_kind=pull_request` to narrow a manual run.
 
-Scheduled runs cover both configured profiles. `openclaw/openclaw` keeps the
-existing cadence; `openclaw/clawhub` runs on offset review/apply/audit crons so
-its reports live under `records/openclaw-clawhub/` without colliding with
-default repo records.
+Scheduled runs cover the configured product profiles. `openclaw/openclaw` keeps
+the existing cadence; `openclaw/clawhub` runs on offset review/apply/audit crons
+so its reports live under `records/openclaw-clawhub/` without colliding with
+default repo records. `openclaw/clawsweeper` is available for manual and event
+self-review smoke tests.
 
 Target repositories can opt into event-level latency by installing the
 dispatcher workflow in [docs/target-dispatcher.md](docs/target-dispatcher.md).

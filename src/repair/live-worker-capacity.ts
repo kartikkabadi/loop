@@ -1,5 +1,6 @@
 import { ghJson } from "./github-cli.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
+import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 import { currentProjectRepo } from "./project-repo.js";
 import { sleepMs } from "./timing.js";
 
@@ -20,7 +21,7 @@ export function readMaxLiveWorkers(args: LooseRecord = {}) {
 
 export function liveWorkerCapacity({
   repo = currentProjectRepo(),
-  workflow = "cluster-worker.yml",
+  workflow = REPAIR_CLUSTER_WORKFLOW,
   requested = 1,
   maxLiveWorkers = DEFAULT_MAX_LIVE_WORKERS,
 }: LooseRecord = {}) {
@@ -61,7 +62,7 @@ export function waitForLiveWorkerCapacity(options: LooseRecord = {}) {
   );
   if (requestedCount > max) {
     throw new Error(
-      `refusing dispatch: requested ${requestedCount} ${options.workflow ?? "cluster-worker.yml"} workers exceeds max-live-workers=${max}`,
+      `refusing dispatch: requested ${requestedCount} ${options.workflow ?? REPAIR_CLUSTER_WORKFLOW} workers exceeds max-live-workers=${max}`,
     );
   }
   const pollMs = readPositiveInteger(
@@ -91,13 +92,13 @@ export function waitForLiveWorkerCapacity(options: LooseRecord = {}) {
   }
 
   throw new Error(
-    `timed out waiting for ${options.workflow ?? "cluster-worker.yml"} capacity: ${latest?.active ?? "unknown"} active + ${requestedCount} requested exceeds max-live-workers=${max}`,
+    `timed out waiting for ${options.workflow ?? REPAIR_CLUSTER_WORKFLOW} capacity: ${latest?.active ?? "unknown"} active + ${requestedCount} requested exceeds max-live-workers=${max}`,
   );
 }
 
 export function listActiveWorkflowRuns({
   repo = currentProjectRepo(),
-  workflow = "cluster-worker.yml",
+  workflow = REPAIR_CLUSTER_WORKFLOW,
 }: LooseRecord = {}) {
   const runs: LooseRecord[] = [];
   for (const status of ACTIVE_WORKFLOW_STATUSES) {

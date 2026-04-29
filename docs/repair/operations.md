@@ -5,7 +5,7 @@ commands, finalizers, self-heal, gates, and ledgers, see
 [`docs/INTERNAL_FEATURES.md`](INTERNAL_FEATURES.md).
 
 For the trusted ClawSweeper-to-ClawSweeper PR repair loop, see
-[`docs/auto-update-prs.md`](auto-update-prs.md).
+[`docs/repair/auto-update-prs.md`](auto-update-prs.md).
 
 For commit-review findings, ClawSweeper dispatches
 `clawsweeper_commit_finding` to this repository. ClawSweeper fetches the latest
@@ -194,7 +194,7 @@ Repair commands apply to existing ClawSweeper PRs and to PRs opted into
 `clawsweeper/*` branch prefix. Opted-in non-ClawSweeper PRs get an adopted job
 at `jobs/<owner>/inbox/automerge-<owner>-<repo>-<pr>.md`.
 The router posts one idempotent reply with a hidden marker and dispatches the
-normal `cluster-worker.yml` repair path. It records processed comment versions
+normal `repair-cluster-worker.yml` repair path. It records processed comment versions
 in `results/comment-router.json`. For durable ClawSweeper comments,
 idempotency is per comment id plus GitHub `updated_at`, and response markers
 include the target PR head SHA. That lets edited ClawSweeper comments wake

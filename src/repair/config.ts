@@ -2,7 +2,12 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import { DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS } from "./comment-router-core.js";
 import { currentProjectRepo, readMaxLiveWorkers } from "./lib.js";
 import { assertRepo, commaSet, positiveInteger } from "./comment-router-utils.js";
-import { DEFAULT_HEAD_PREFIX, DEFAULT_TARGET_REPO } from "./constants.js";
+import {
+  DEFAULT_HEAD_PREFIX,
+  DEFAULT_TARGET_REPO,
+  REPAIR_CLUSTER_WORKFLOW,
+  SWEEP_WORKFLOW,
+} from "./constants.js";
 export { DEFAULT_HEAD_PREFIX, DEFAULT_TARGET_REPO } from "./constants.js";
 
 const DEFAULT_ALLOWED_ASSOCIATIONS = ["OWNER", "MEMBER", "COLLABORATOR"];
@@ -44,7 +49,7 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
   );
   const workflow = stringSetting(
     args.workflow ?? process.env.CLAWSWEEPER_COMMENT_WORKFLOW,
-    "cluster-worker.yml",
+    REPAIR_CLUSTER_WORKFLOW,
   );
   const reviewRepo = stringSetting(
     args["review-repo"] ?? process.env.CLAWSWEEPER_REVIEW_REPO,
@@ -52,7 +57,7 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
   );
   const reviewWorkflow = stringSetting(
     args["review-workflow"] ?? process.env.CLAWSWEEPER_REVIEW_WORKFLOW,
-    "sweep.yml",
+    SWEEP_WORKFLOW,
   );
   const runner = stringSetting(
     args.runner ?? process.env.CLAWSWEEPER_WORKER_RUNNER,

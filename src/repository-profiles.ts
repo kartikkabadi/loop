@@ -60,6 +60,18 @@ export const REPOSITORY_PROFILES: readonly RepositoryProfile[] = [
       pull_request: ["implemented_on_main"],
     },
   },
+  {
+    targetRepo: "openclaw/clawsweeper",
+    slug: "openclaw-clawsweeper",
+    displayName: "ClawSweeper",
+    checkoutDir: "clawsweeper",
+    promptNote:
+      "Use the ClawSweeper source tree and current main branch. Review bot automation, workflow, and documentation changes conservatively. Only propose auto-close for pull requests that are certainly implemented on main; keep issues open for maintainer triage.",
+    applyCloseRules: {
+      issue: [],
+      pull_request: ["implemented_on_main"],
+    },
+  },
 ];
 
 export function repositoryProfileFor(targetRepo: string): RepositoryProfile {

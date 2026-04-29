@@ -15,6 +15,7 @@ import {
   waitForLiveWorkerCapacity,
 } from "./lib.js";
 import { sleepMs } from "./timing.js";
+import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 
 const args = parseArgs(process.argv.slice(2));
 const defaultRunner = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
@@ -23,7 +24,7 @@ const defaultExecutionRunner =
 const mode = args.mode ?? "plan";
 const runner = args.runner ?? defaultRunner;
 const executionRunner = args["execution-runner"] ?? args.execution_runner ?? defaultExecutionRunner;
-const workflow = args.workflow ?? "cluster-worker.yml";
+const workflow = args.workflow ?? REPAIR_CLUSTER_WORKFLOW;
 const repo = String(args.repo ?? currentProjectRepo());
 const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const maxLiveWorkers = readMaxLiveWorkers(args);

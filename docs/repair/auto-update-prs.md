@@ -21,7 +21,7 @@ The loop is intentionally small:
    to review that PR head.
 3. The comment router sees trusted ClawSweeper feedback.
 4. ClawSweeper dispatches the existing or adopted job through
-   `cluster-worker.yml`.
+   `repair-cluster-worker.yml`.
 5. The repair worker pushes another commit to the source branch if it finds a
    safe, narrow fix, or opens a credited replacement when the source branch
    cannot be safely updated.
@@ -177,7 +177,7 @@ five automatic ClawSweeper-triggered repair iterations. The per-PR cap is total
 across all head SHAs and stops the automatic review/repair loop even when every
 iteration produces a new commit.
 
-Runs for the same job path and mode share the `cluster-worker.yml` concurrency
+Runs for the same job path and mode share the `repair-cluster-worker.yml` concurrency
 group, so repeated dispatches queue instead of racing the same branch.
 
 ClawSweeper edits one durable review comment in place. The router keys its
@@ -227,13 +227,13 @@ as:
 
 Workflow:
 
-- `.github/workflows/comment-router.yml`
+- `.github/workflows/repair-comment-router.yml`
 
 Scripts:
 
-- `scripts/comment-router.ts`
-- `scripts/comment-router-core.ts`
-- `scripts/comment-router-utils.ts`
+- `src/repair/comment-router.ts`
+- `src/repair/comment-router-core.ts`
+- `src/repair/comment-router-utils.ts`
 
 Durable state:
 
@@ -255,7 +255,7 @@ Syntax and workflow checks:
 
 ```bash
 pnpm run check
-actionlint .github/workflows/comment-router.yml
+actionlint .github/workflows/repair-comment-router.yml
 ```
 
 Dry-run the router against live recent comments:

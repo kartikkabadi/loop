@@ -16,9 +16,10 @@ import {
 } from "./lib.js";
 import { ghJson, ghText } from "./github-cli.js";
 import { sleepMs } from "./timing.js";
+import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 
 const DEFAULT_REPO = currentProjectRepo();
-const DEFAULT_WORKFLOW = "cluster-worker.yml";
+const DEFAULT_WORKFLOW = REPAIR_CLUSTER_WORKFLOW;
 const DEFAULT_RUNNER = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
 const DEFAULT_EXECUTION_RUNNER =
   process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";

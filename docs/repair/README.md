@@ -226,7 +226,7 @@ For a maintainer-facing architecture map of the automation lanes, see
 [`docs/INTERNAL_FEATURES.md`](docs/INTERNAL_FEATURES.md).
 
 For the ClawSweeper feedback loop that updates existing generated PRs, see
-[`docs/auto-update-prs.md`](docs/auto-update-prs.md).
+[`docs/repair/auto-update-prs.md`](auto-update-prs.md).
 
 That loop is marker-driven. ClawSweeper comments use hidden
 `clawsweeper-verdict:*` markers, and only actionable PR feedback includes
@@ -312,7 +312,7 @@ Supported commands:
 ```
 
 `status` and `explain` post a short status reply. `fix ci`, `address review`,
-and `rebase` dispatch the normal `cluster-worker.yml` repair path, but only for
+and `rebase` dispatch the normal `repair-cluster-worker.yml` repair path, but only for
 existing ClawSweeper PRs identified by the `clawsweeper/*` branch.
 `automerge` opts an open PR into the bounded review/fix/merge loop. `approve`
 is maintainer-only exact-head approval after a human-review pause; it clears

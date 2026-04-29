@@ -289,7 +289,7 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
       target: { head_sha: "def456" },
     },
     {
-      workflow: "cluster-worker.yml",
+      workflow: "repair-cluster-worker.yml",
       job_path: "jobs/openclaw/inbox/example.md",
       mode: "autonomous",
       model: "gpt-5.5",
@@ -298,7 +298,7 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
 
   assert.match(body, /Thanks, ClawSweeper/);
   assert.match(body, /clawsweeper-command:456:2026-04-29T07:12:31Z:clawsweeper_auto_repair:def456/);
-  assert.match(body, /cluster-worker\.yml/);
+  assert.match(body, /repair-cluster-worker\.yml/);
   assert.match(body, /safe credited replacement/);
   assert.match(body, /narrow fix/);
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
@@ -359,7 +359,7 @@ test("renderResponse reports automerge repair dispatches", () => {
       target: { head_sha: "def457" },
     },
     {
-      workflow: "cluster-worker.yml",
+      workflow: "repair-cluster-worker.yml",
       job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-74156.md",
       mode: "autonomous",
       model: "gpt-5.5",
@@ -367,7 +367,7 @@ test("renderResponse reports automerge repair dispatches", () => {
   );
 
   assert.match(body, /picked up the repair feedback/);
-  assert.match(body, /cluster-worker\.yml/);
+  assert.match(body, /repair-cluster-worker\.yml/);
   assert.match(body, /automerge-openclaw-openclaw-74156/);
   assert.doesNotMatch(body, /did not dispatch/);
 });

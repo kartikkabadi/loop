@@ -2,6 +2,9 @@ export const DEFAULT_TARGET_REPO = "openclaw/openclaw";
 export const DEFAULT_HEAD_PREFIX = "clawsweeper/";
 export const DEFAULT_LABEL = "clawsweeper";
 
+export const REPAIR_CLUSTER_WORKFLOW = "repair-cluster-worker.yml";
+export const SWEEP_WORKFLOW = "sweep.yml";
+
 export const CLAWSWEEPER_LABEL = "clawsweeper";
 export const CLAWSWEEPER_LABEL_COLOR = "F97316";
 export const CLAWSWEEPER_LABEL_DESCRIPTION = "Tracked by ClawSweeper automation";

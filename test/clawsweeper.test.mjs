@@ -353,6 +353,29 @@ test("ClawHub policy only allows implemented-on-main PR close proposals", () => 
   assert.equal(nonImplementedPr.actionTaken, "skipped_invalid_decision");
 });
 
+test("ClawSweeper policy allows self PR review without issue auto-close", () => {
+  const implementedPr = validateCloseDecision(
+    item({
+      repo: "openclaw/clawsweeper",
+      kind: "pull_request",
+      url: "https://github.com/openclaw/clawsweeper/pull/17",
+    }),
+    closeDecision(),
+  );
+  assert.equal(implementedPr.ok, true);
+
+  const implementedIssue = validateCloseDecision(
+    item({
+      repo: "openclaw/clawsweeper",
+      kind: "issue",
+      url: "https://github.com/openclaw/clawsweeper/issues/17",
+    }),
+    closeDecision(),
+  );
+  assert.equal(implementedIssue.ok, false);
+  assert.equal(implementedIssue.actionTaken, "skipped_invalid_decision");
+});
+
 test("review policy changes force fresh complete reports back into planning", () => {
   const reviewedAt = new Date().toISOString();
   const review = {

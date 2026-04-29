@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { hasSecuritySignalText, parseArgs, parseJob, repoRoot, validateJob } from "./lib.js";
 import { ghJson } from "./github-cli.js";
+import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 import { readJsonFileIfExists as readJson } from "./json-file.js";
 
 const args = parseArgs(process.argv.slice(2));
@@ -291,7 +292,7 @@ function readActiveClusterRuns() {
           "--repo",
           repo,
           "--workflow",
-          "cluster-worker.yml",
+          REPAIR_CLUSTER_WORKFLOW,
           "--status",
           status,
           "--limit",

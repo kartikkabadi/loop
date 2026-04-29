@@ -106,7 +106,7 @@ replacement PR. Direct mutation still happens outside Codex.
 
 ## Cloud Worker Flow
 
-Workflow: `.github/workflows/cluster-worker.yml`
+Workflow: `.github/workflows/repair-cluster-worker.yml`
 
 The cluster worker has two jobs:
 
@@ -285,7 +285,7 @@ The finalizer scans open ClawSweeper PRs in the target repo. It finds PRs by the
 - security hold
 
 When `--dispatch-repairs --execute` is enabled, it dispatches the existing
-cluster job back through `cluster-worker.yml` instead of creating another PR.
+cluster job back through `repair-cluster-worker.yml` instead of creating another PR.
 The idempotency key includes target repo, PR number, and head SHA, so the same
 PR/head is not repeatedly repaired unless `--allow-repeat` is used.
 
@@ -295,8 +295,8 @@ clearly transient jobs, and pass branch-caused failures into the repair prompt.
 
 ## Self-Heal Failed ClawSweeper Runs
 
-Workflow: `.github/workflows/self-heal.yml`
-Script: `scripts/self-heal-failed-runs.ts`
+Workflow: `.github/workflows/repair-self-heal.yml`
+Script: `src/repair/self-heal-failed-runs.ts`
 
 Self-heal retries failed ClawSweeper cluster-worker runs. It reads published
 `results/runs/*.json`, selects the latest failed run per source job, skips jobs
@@ -309,11 +309,11 @@ finalizer/comment command repair path.
 
 ## Maintainer Comment Routing
 
-Workflow: `.github/workflows/comment-router.yml`
+Workflow: `.github/workflows/repair-comment-router.yml`
 Scripts:
 
-- `scripts/comment-router.ts`
-- `scripts/comment-router-core.ts`
+- `src/repair/comment-router.ts`
+- `src/repair/comment-router-core.ts`
 
 Comment routing scans recent target-repo issue/PR comments and accepts only
 maintainer-authored commands. Default allowed GitHub `author_association`
@@ -326,7 +326,7 @@ values:
 Contributor comments are ignored without a reply.
 
 The generated-PR auto-update design is documented in
-[`docs/auto-update-prs.md`](auto-update-prs.md). That lane lets trusted
+[`docs/repair/auto-update-prs.md`](auto-update-prs.md). That lane lets trusted
 ClawSweeper comments dispatch a repair run for an existing ClawSweeper PR or a
 PR explicitly opted into `clawsweeper:automerge` without allowing arbitrary
 comment authors to trigger work.
@@ -372,7 +372,7 @@ Behavior:
 Repair commands apply to existing ClawSweeper PRs and PRs opted into
 `clawsweeper:automerge`. The router finds ClawSweeper PRs by the
 `clawsweeper/*` branch, resolves or creates the backing job, posts one
-idempotent response marker, and dispatches `cluster-worker.yml`.
+idempotent response marker, and dispatches `repair-cluster-worker.yml`.
 
 Trusted ClawSweeper comments become `clawsweeper_auto_repair`. Preferred
 comments use hidden `clawsweeper-verdict:*` markers and include

@@ -169,11 +169,15 @@ jobs:
           esac
           target_owner="${target_repo%%/*}"
           target_name="${target_repo#*/}"
+          target_checkout_dir="$target_name"
+          if [ "$target_repo" = "${{ github.repository }}" ]; then
+            target_checkout_dir="${target_name}-target"
+          fi
           {
             echo "target_repo=$target_repo"
             echo "target_repo_owner=$target_owner"
             echo "target_repo_name=$target_name"
-            echo "target_checkout_dir=$target_name"
+            echo "target_checkout_dir=$target_checkout_dir"
             echo "item_number=$item_number"
           } >> "$GITHUB_OUTPUT"
 
@@ -461,11 +465,15 @@ jobs:
           fi
           target_owner="${target_repo%%/*}"
           target_name="${target_repo#*/}"
+          target_checkout_dir="$target_name"
+          if [ "$target_repo" = "${{ github.repository }}" ]; then
+            target_checkout_dir="${target_name}-target"
+          fi
           {
             echo "target_repo=$target_repo"
             echo "target_repo_owner=$target_owner"
             echo "target_repo_name=$target_name"
-            echo "target_checkout_dir=$target_name"
+            echo "target_checkout_dir=$target_checkout_dir"
           } >> "$GITHUB_OUTPUT"
 
       - name: Create target read token

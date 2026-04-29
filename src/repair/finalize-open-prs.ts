@@ -14,7 +14,7 @@ import {
 } from "./lib.js";
 import { ghJson, ghText } from "./github-cli.js";
 import { sleepMs } from "./timing.js";
-import { DEFAULT_TARGET_REPO, REVIEW_BOTS } from "./constants.js";
+import { DEFAULT_TARGET_REPO, REPAIR_CLUSTER_WORKFLOW, REVIEW_BOTS } from "./constants.js";
 import { numberEnv } from "./env-utils.js";
 import { compactText, escapeRegExp } from "./text-utils.js";
 
@@ -35,7 +35,7 @@ const writeReport = Boolean(args["write-report"]);
 const execute = Boolean(args.execute);
 const dispatchRepairs = Boolean(args["dispatch-repairs"] || args.dispatch || execute);
 const workflow = String(
-  args.workflow ?? process.env.CLAWSWEEPER_FINALIZER_WORKFLOW ?? "cluster-worker.yml",
+  args.workflow ?? process.env.CLAWSWEEPER_FINALIZER_WORKFLOW ?? REPAIR_CLUSTER_WORKFLOW,
 );
 const runner = String(
   args.runner ?? process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404",
