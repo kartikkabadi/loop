@@ -88,63 +88,63 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 08:00 UTC
+Last dashboard update: Apr 29, 2026, 08:01 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4415 |
-| Open PRs | 3490 |
-| Open items total | 7905 |
-| Reviewed files | 7531 |
-| Unreviewed open items | 374 |
-| Due now by cadence | 2213 |
-| Proposed closes awaiting apply | 2 |
+| Open issues | 4416 |
+| Open PRs | 3488 |
+| Open items total | 7904 |
+| Reviewed files | 7529 |
+| Unreviewed open items | 375 |
+| Due now by cadence | 2215 |
+| Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 550 |
-| Closed by Codex apply | 10726 |
+| Closed by Codex apply | 10730 |
 | Failed or stale reviews | 25 |
-| Archived closed files | 14113 |
+| Archived closed files | 14117 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6982 | 6614 | 368 | 2150 | 2 | 511 | 10719 | Apr 29, 2026, 07:55 UTC | Apr 29, 2026, 07:47 UTC | 782 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6981 | 6612 | 369 | 2152 | 0 | 511 | 10723 | Apr 29, 2026, 07:59 UTC | Apr 29, 2026, 08:00 UTC | 765 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 923 | 917 | 6 | 63 | 0 | 39 | 7 | Apr 29, 2026, 07:57 UTC | Apr 29, 2026, 07:52 UTC | 515 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 08:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097507588) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 08:01 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097507588) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 29, 2026, 07:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25097259798) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 07:57 UTC. Latest close: Apr 29, 2026, 07:52 UTC. Latest comment sync: Apr 29, 2026, 07:59 UTC.
+Latest review: Apr 29, 2026, 07:59 UTC. Latest close: Apr 29, 2026, 08:00 UTC. Latest comment sync: Apr 29, 2026, 08:00 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 38 | 1 | 37 | 0 | 4 | 477 | 1 |
-| Last hour | 1076 | 9 | 1067 | 16 | 19 | 1297 | 3 |
-| Last 24 hours | 6958 | 444 | 6514 | 21 | 739 | 2624 | 28 |
+| Last 15 minutes | 40 | 3 | 37 | 0 | 7 | 431 | 1 |
+| Last hour | 1076 | 11 | 1065 | 16 | 23 | 1280 | 3 |
+| Last 24 hours | 6960 | 446 | 6514 | 21 | 743 | 2628 | 28 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74102](https://github.com/openclaw/openclaw/pull/74102) | fix(announce): accept ANNOUNCE_SKIP on its own line in multi-line output | duplicate or superseded | Apr 29, 2026, 08:00 UTC | [records/openclaw-openclaw/closed/74102.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74102.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73952](https://github.com/openclaw/openclaw/pull/73952) | fix(auth): scope external CLI credential overlays | already implemented on main | Apr 29, 2026, 08:00 UTC | [records/openclaw-openclaw/closed/73952.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73952.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74198](https://github.com/openclaw/openclaw/issues/74198) | Memory flush write paths should be configurable (currently hardcoded to single daily log) | duplicate or superseded | Apr 29, 2026, 08:00 UTC | [records/openclaw-openclaw/closed/74198.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74198.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74197](https://github.com/openclaw/openclaw/issues/74197) | [Bug]: qmd collection add hangs under gateway init, triggers SIGKILL restart loop | already implemented on main | Apr 29, 2026, 07:59 UTC | [records/openclaw-openclaw/closed/74197.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74197.md) |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1889](https://github.com/openclaw/clawhub/pull/1889) | fix: restore ClawHub public UI | closed externally after review | Apr 29, 2026, 07:52 UTC | [records/openclaw-clawhub/closed/1889.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/closed/1889.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#67111](https://github.com/openclaw/openclaw/pull/67111) | docs(msteams): fix federated auth added-in date to 2026.4.11 | closed externally after review | Apr 29, 2026, 07:47 UTC | [records/openclaw-openclaw/closed/67111.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/67111.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74129](https://github.com/openclaw/openclaw/pull/74129) | fix: Found one CI/test regression from the comment-only SDK change. Th | closed externally after item changed | Apr 29, 2026, 07:46 UTC | [records/openclaw-openclaw/closed/74129.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74129.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74132](https://github.com/openclaw/openclaw/pull/74132) | fix: One low-severity documentation regression found. The workflow cha | closed externally after review | Apr 29, 2026, 07:45 UTC | [records/openclaw-openclaw/closed/74132.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74132.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74140](https://github.com/openclaw/openclaw/pull/74140) | fix: Found one generated-baseline regression. The code changes are JSD | closed externally after review | Apr 29, 2026, 07:45 UTC | [records/openclaw-openclaw/closed/74140.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74140.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74184](https://github.com/openclaw/openclaw/pull/74184) | fix: Found two low-severity regressions: the focused CLI log test file | closed externally after item changed | Apr 29, 2026, 07:43 UTC | [records/openclaw-openclaw/closed/74184.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74184.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74181](https://github.com/openclaw/openclaw/issues/74181) | [Bug]: Session compaction deadlock blocks child subagent SessionManager.open() | cannot reproduce on current main | Apr 29, 2026, 07:37 UTC | [records/openclaw-openclaw/closed/74181.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74181.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68365](https://github.com/openclaw/openclaw/pull/68365) | docs: fix broken links and display text consistency (fixes #50828) | closed externally after review | Apr 29, 2026, 07:34 UTC | [records/openclaw-openclaw/closed/68365.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/68365.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74133](https://github.com/openclaw/openclaw/pull/74133) | fix: Found one low-severity cancellation regression in the Ollama time | closed externally after review | Apr 29, 2026, 07:34 UTC | [records/openclaw-openclaw/closed/74133.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74133.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74180](https://github.com/openclaw/openclaw/pull/74180) | fix(ci): gate extension aggregate on shard matrix | already implemented on main | Apr 29, 2026, 07:24 UTC | [records/openclaw-openclaw/closed/74180.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74180.md) |
 
 ### Work Candidates Across Repos
 
@@ -200,11 +200,11 @@ Latest review: Apr 29, 2026, 07:57 UTC. Latest close: Apr 29, 2026, 07:52 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 08:00 UTC
+Updated: Apr 29, 2026, 08:01 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=73952,74102.
+Checkpoint 1 finished. Fresh closes in checkpoint: 2. Total fresh closes in this run: 2/2. Result records in checkpoint: 4, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25097507588](https://github.com/openclaw/clawsweeper/actions/runs/25097507588)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -213,12 +213,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25097507588](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3531 |
-| Open PRs | 3451 |
-| Open items total | 6982 |
-| Reviewed files | 6614 |
-| Unreviewed open items | 368 |
-| Archived closed files | 14091 |
+| Open issues | 3532 |
+| Open PRs | 3449 |
+| Open items total | 6981 |
+| Reviewed files | 6612 |
+| Unreviewed open items | 369 |
+| Archived closed files | 14095 |
 
 #### Review Outcomes
 
@@ -226,25 +226,25 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25097507588](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3348 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3253 |
-| Proposed PR closes | 2 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6601 |
-| Proposed closes awaiting apply | 2 (0% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 3251 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6599 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 511 |
-| Closed by Codex apply | 10719 |
+| Closed by Codex apply | 10723 |
 | Failed or stale reviews | 13 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 133/1023 current (890 due, 13%) |
-| Hourly hot item cadence (<7d) | 133/1023 current (890 due, 13%) |
+| Hourly cadence coverage | 130/1021 current (891 due, 12.7%) |
+| Hourly hot item cadence (<7d) | 130/1021 current (891 due, 12.7%) |
 | Daily cadence coverage | 2896/3786 current (890 due, 76.5%) |
 | Daily PR cadence | 2174/2648 current (474 due, 82.1%) |
 | Daily new issue cadence (<30d) | 722/1138 current (416 due, 63.4%) |
 | Weekly older issue cadence | 1803/1805 current (2 due, 99.9%) |
-| Due now by cadence | 2150 |
+| Due now by cadence | 2152 |
 
 ### Audit Health
 
@@ -280,28 +280,28 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 07:55 UTC. Latest close: Apr 29, 2026, 07:47 UTC. Latest comment sync: Apr 29, 2026, 07:56 UTC.
+Latest review: Apr 29, 2026, 07:59 UTC. Latest close: Apr 29, 2026, 08:00 UTC. Latest comment sync: Apr 29, 2026, 08:00 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 16 | 1 | 15 | 0 | 3 | 198 | 1 |
-| Last hour | 556 | 9 | 547 | 4 | 18 | 782 | 3 |
-| Last 24 hours | 6029 | 444 | 5585 | 9 | 725 | 1803 | 28 |
+| Last 15 minutes | 18 | 3 | 15 | 0 | 6 | 179 | 1 |
+| Last hour | 556 | 11 | 545 | 4 | 22 | 765 | 3 |
+| Last 24 hours | 6031 | 446 | 5585 | 9 | 729 | 1807 | 28 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74102](https://github.com/openclaw/openclaw/pull/74102) | fix(announce): accept ANNOUNCE_SKIP on its own line in multi-line output | duplicate or superseded | Apr 29, 2026, 08:00 UTC | [records/openclaw-openclaw/closed/74102.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74102.md) |
+| [#73952](https://github.com/openclaw/openclaw/pull/73952) | fix(auth): scope external CLI credential overlays | already implemented on main | Apr 29, 2026, 08:00 UTC | [records/openclaw-openclaw/closed/73952.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73952.md) |
+| [#74198](https://github.com/openclaw/openclaw/issues/74198) | Memory flush write paths should be configurable (currently hardcoded to single daily log) | duplicate or superseded | Apr 29, 2026, 08:00 UTC | [records/openclaw-openclaw/closed/74198.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74198.md) |
+| [#74197](https://github.com/openclaw/openclaw/issues/74197) | [Bug]: qmd collection add hangs under gateway init, triggers SIGKILL restart loop | already implemented on main | Apr 29, 2026, 07:59 UTC | [records/openclaw-openclaw/closed/74197.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74197.md) |
 | [#67111](https://github.com/openclaw/openclaw/pull/67111) | docs(msteams): fix federated auth added-in date to 2026.4.11 | closed externally after review | Apr 29, 2026, 07:47 UTC | [records/openclaw-openclaw/closed/67111.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/67111.md) |
 | [#74129](https://github.com/openclaw/openclaw/pull/74129) | fix: Found one CI/test regression from the comment-only SDK change. Th | closed externally after item changed | Apr 29, 2026, 07:46 UTC | [records/openclaw-openclaw/closed/74129.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74129.md) |
 | [#74132](https://github.com/openclaw/openclaw/pull/74132) | fix: One low-severity documentation regression found. The workflow cha | closed externally after review | Apr 29, 2026, 07:45 UTC | [records/openclaw-openclaw/closed/74132.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74132.md) |
 | [#74140](https://github.com/openclaw/openclaw/pull/74140) | fix: Found one generated-baseline regression. The code changes are JSD | closed externally after review | Apr 29, 2026, 07:45 UTC | [records/openclaw-openclaw/closed/74140.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74140.md) |
 | [#74184](https://github.com/openclaw/openclaw/pull/74184) | fix: Found two low-severity regressions: the focused CLI log test file | closed externally after item changed | Apr 29, 2026, 07:43 UTC | [records/openclaw-openclaw/closed/74184.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74184.md) |
 | [#74181](https://github.com/openclaw/openclaw/issues/74181) | [Bug]: Session compaction deadlock blocks child subagent SessionManager.open() | cannot reproduce on current main | Apr 29, 2026, 07:37 UTC | [records/openclaw-openclaw/closed/74181.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74181.md) |
-| [#68365](https://github.com/openclaw/openclaw/pull/68365) | docs: fix broken links and display text consistency (fixes #50828) | closed externally after review | Apr 29, 2026, 07:34 UTC | [records/openclaw-openclaw/closed/68365.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/68365.md) |
-| [#74133](https://github.com/openclaw/openclaw/pull/74133) | fix: Found one low-severity cancellation regression in the Ollama time | closed externally after review | Apr 29, 2026, 07:34 UTC | [records/openclaw-openclaw/closed/74133.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74133.md) |
-| [#74180](https://github.com/openclaw/openclaw/pull/74180) | fix(ci): gate extension aggregate on shard matrix | already implemented on main | Apr 29, 2026, 07:24 UTC | [records/openclaw-openclaw/closed/74180.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74180.md) |
-| [#74172](https://github.com/openclaw/openclaw/pull/74172) | fix: add sharp back to dependencies for image attachment processing | closed externally after skipped_invalid_decision | Apr 29, 2026, 07:22 UTC | [records/openclaw-openclaw/closed/74172.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74172.md) |
 
 #### Work Candidates
 
@@ -429,7 +429,7 @@ Latest review: Apr 29, 2026, 07:57 UTC. Latest close: Apr 29, 2026, 07:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 22 | 0 | 22 | 0 | 1 | 279 | 0 |
+| Last 15 minutes | 22 | 0 | 22 | 0 | 1 | 252 | 0 |
 | Last hour | 520 | 0 | 520 | 12 | 1 | 515 | 0 |
 | Last 24 hours | 929 | 0 | 929 | 12 | 14 | 821 | 0 |
 
