@@ -33,6 +33,19 @@ already implements the proposed change with source-backed evidence.
 
 Last dashboard update: Apr 29, 2026, 01:19 UTC
 
+<!-- clawsweeper-status:openclaw-openclaw:start -->
+**Workflow status**
+
+Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
+
+Updated: Apr 29, 2026, 01:23 UTC
+
+State: Apply throttled
+
+GitHub throttled while applying close decisions. Last throttled command: `gh api repos/openclaw/openclaw/issues?state=open&sort=created&direction=asc&per_page=100&page=1`. Retry 2/11 in 60s.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25086241054](https://github.com/openclaw/clawsweeper/actions/runs/25086241054)
+<!-- clawsweeper-status:openclaw-openclaw:end -->
+
 ### Fleet
 
 | Metric | Count |
