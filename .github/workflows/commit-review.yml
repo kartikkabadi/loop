@@ -201,16 +201,10 @@ jobs:
             --commit-shas "$selected_commits" \
             --artifact-dir skipped-commit-artifacts > classify.json
           cat classify.json
-          CLASSIFY_JSON="$(cat classify.json)" HAS_MORE="$has_more" NEXT_OFFSET="$next_offset" node - <<'NODE' >> "$GITHUB_OUTPUT"
-          const classified = JSON.parse(process.env.CLASSIFY_JSON || "{}");
-          const review = Array.isArray(classified.review) ? classified.review : [];
-          const skipped = Array.isArray(classified.skipped) ? classified.skipped : [];
-          console.log(`matrix=${JSON.stringify(review.map((sha) => ({ sha })))}`);
-          console.log(`planned_count=${review.length}`);
-          console.log(`skipped_count=${skipped.length}`);
-          console.log(`has_more=${process.env.HAS_MORE || "false"}`);
-          console.log(`next_offset=${process.env.NEXT_OFFSET || "0"}`);
-          NODE
+          node clawsweeper/dist/repair/workflow-utils.js classify-output \
+            --classify classify.json \
+            --has-more "$has_more" \
+            --next-offset "$next_offset" >> "$GITHUB_OUTPUT"
           echo "Selected $selected_count/$total_count commits at offset $COMMIT_OFFSET"
           printf 'Selected commits:\n%s\n' "$selected_commits"
 

@@ -24,6 +24,7 @@ function parseArgs(argv: readonly string[]): Args {
   const parsed: Args = { message: "", paths: [], restorePaths: [] };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
+    if (arg === "--") continue;
     if (arg === "--message") parsed.message = requiredValue(argv, ++index, arg);
     else if (arg === "--path") parsed.paths.push(requiredValue(argv, ++index, arg));
     else if (arg === "--restore") parsed.restorePaths.push(requiredValue(argv, ++index, arg));

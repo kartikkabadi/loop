@@ -105,6 +105,44 @@ test("publishMainCommit resolves apply record delete conflicts during rebase", (
   );
 });
 
+test("publish-main CLI accepts package-manager double dash separators", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
+  const origin = path.join(root, "origin.git");
+  const work = path.join(root, "work");
+  run("git", ["init", "--bare", origin], root);
+  run("git", ["clone", origin, work], root);
+  configureUser(work);
+  write(path.join(work, "results/initial.txt"), "initial\n");
+  run("git", ["add", "."], work);
+  run("git", ["commit", "-m", "initial"], work);
+  run("git", ["push", "origin", "HEAD:main"], work);
+  run("git", ["--git-dir", origin, "symbolic-ref", "HEAD", "refs/heads/main"], root);
+  run("git", ["checkout", "-B", "main", "origin/main"], work);
+
+  write(path.join(work, "results/from-cli.txt"), "from cli\n");
+  run(
+    process.execPath,
+    [
+      path.resolve("dist/repair/publish-main.js"),
+      "--",
+      "--message",
+      "chore: publish cli ledger",
+      "--path",
+      "results",
+      "--max-attempts",
+      "1",
+      "--push-attempts",
+      "1",
+    ],
+    work,
+  );
+
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "main:results/from-cli.txt"], root),
+    "from cli\n",
+  );
+});
+
 test("setTokenOrigin redacts tokens from command logs", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
   run("git", ["init"], root);

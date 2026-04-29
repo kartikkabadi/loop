@@ -17,7 +17,6 @@ import {
   readSiblingJson,
 } from "./publish-files.js";
 import { formatTimestamp, tableCell } from "./publish-markdown.js";
-import { normalizeRetiredTerms } from "./retired-terms.js";
 import {
   buildInspectionRows,
   renderBlockedReasonRows,
@@ -508,13 +507,13 @@ function postFlightToApplyAction(action: LooseRecord) {
 
 function normalizeNullableText(value: JsonValue) {
   if (typeof value !== "string") return value ?? null;
-  return normalizeRetiredTerms(value);
+  return value;
 }
 
 function normalizeReportRow(row: LooseRecord): LooseRecord {
   const normalized: LooseRecord = {};
   for (const [key, value] of Object.entries(row)) {
-    normalized[key] = typeof value === "string" ? normalizeRetiredTerms(value) : value;
+    normalized[key] = value;
   }
   return normalized;
 }

@@ -37,6 +37,7 @@
     "repair:commit-finding-intake": "node dist/repair/commit-finding-intake.js",
     "repair:publish-main": "node dist/repair/publish-main.js",
     "repair:publish-event-result": "node dist/repair/publish-event-result.js",
+    "workflow": "node dist/repair/workflow-utils.js",
     "repair:promote-stuck-jobs": "node dist/repair/promote-stuck-jobs.js",
     "repair:sweep-openclaw-jobs": "node dist/repair/sweep-openclaw-jobs.js",
     "repair:tag-clawsweeper": "node dist/repair/tag-clawsweeper-targets.js",

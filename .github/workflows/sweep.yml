@@ -464,14 +464,10 @@ jobs:
             --codex-service-tier fast \
             "${hot_intake_arg[@]}" \
             "${item_arg[@]}" > plan.json
-          node - <<'NODE' >> "$GITHUB_OUTPUT"
-          const fs = require("node:fs");
-          const plan = JSON.parse(fs.readFileSync("plan.json", "utf8"));
-          console.log(`matrix=${JSON.stringify(plan.matrix)}`);
-          console.log(`planned_count=${plan.candidates.length}`);
-          console.log(`planned_capacity=${Number(process.env.BATCH_SIZE || 5) * Number(process.env.SHARD_COUNT || 100)}`);
-          console.log(`planned_shards=${plan.matrix.length}`);
-          NODE
+          pnpm run --silent workflow -- plan-output \
+            --plan plan.json \
+            --batch-size "$BATCH_SIZE" \
+            --shard-count "$SHARD_COUNT" >> "$GITHUB_OUTPUT"
           cat plan.json
 
       - name: Publish planning status
@@ -661,20 +657,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$GH_TOKEN"
-          item_numbers="$(node - <<'NODE'
-          const fs = require("node:fs");
-          const path = require("node:path");
-          const files = fs.existsSync("artifacts")
-            ? fs.readdirSync("artifacts", { recursive: true }).filter((name) => String(name).endsWith(".md"))
-            : [];
-          const numbers = files
-            .map((name) => String(path.basename(String(name), ".md")).match(/(\d+)$/)?.[1])
-            .filter(Boolean)
-            .map(Number)
-            .sort((left, right) => left - right);
-          process.stdout.write(numbers.join(","));
-          NODE
-          )"
+          item_numbers="$(pnpm run --silent workflow -- artifact-item-numbers --artifact-dir artifacts)"
           if [ -z "$item_numbers" ]; then
             echo "No review artifacts to sync comments for."
             exit 0
@@ -690,7 +673,7 @@ jobs:
             --max-runtime-ms 720000 \
             --comment-sync-min-age-days 7 \
             --progress-every 25
-          synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)')"
+          synced_count="$(pnpm run --silent workflow -- count-actions --report apply-report.json --action review_comment_synced)"
           pnpm run status -- \
             --state "Review comments checked" \
             --detail "Checked selected durable Codex review comments and synced missing or stale comments. Synced: $synced_count. Item numbers: $item_numbers." \
@@ -711,25 +694,12 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$GH_TOKEN"
-          item_numbers="$(node - <<'NODE'
-          const fs = require("node:fs");
-          const path = require("node:path");
-          const files = fs.existsSync("artifacts")
-            ? fs.readdirSync("artifacts", { recursive: true }).filter((name) => String(name).endsWith(".md"))
-            : [];
-          const numbers = files
-            .map((name) => String(path.basename(String(name), ".md")).match(/(\d+)$/)?.[1])
-            .filter(Boolean)
-            .map(Number)
-            .sort((left, right) => left - right);
-          process.stdout.write(numbers.join(","));
-          NODE
-          )"
+          item_numbers="$(pnpm run --silent workflow -- artifact-item-numbers --artifact-dir artifacts)"
           if [ -z "$item_numbers" ]; then
             echo "No review artifacts to apply."
             exit 0
           fi
-          item_count="$(node -e 'const value = process.argv[1] || ""; console.log(value ? value.split(",").length : 0)' "$item_numbers")"
+          item_count="$(pnpm run --silent workflow -- count-csv --items "$item_numbers")"
           close_reasons="${{ github.event.inputs.apply_after_review_close_reasons || 'implemented_on_main,duplicate_or_superseded' }}"
           min_age_minutes="${{ github.event.inputs.apply_after_review_min_age_minutes || '0' }}"
           git pull --rebase
@@ -745,7 +715,7 @@ jobs:
             --close-delay-ms 1000 \
             --comment-sync-min-age-days 0 \
             --progress-every 1
-          closed_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync("apply-report.json","utf8")); console.log(r.filter((x)=>x.action==="closed").length)')"
+          closed_count="$(pnpm run --silent workflow -- count-actions --report apply-report.json --action closed)"
           pnpm run status -- \
             --state "Immediate apply checked" \
             --detail "Checked selected safe close proposals right after review publish. Closed: $closed_count/$item_count. Close reasons enabled: $close_reasons. Item numbers: $item_numbers." \
@@ -946,77 +916,18 @@ jobs:
               git restore README.md || true
             fi
           }
-          proposed_item_numbers() {
-            APPLY_KIND="$apply_kind" APPLY_CLOSE_REASONS="$apply_close_reasons" STALE_MIN_AGE_DAYS="$stale_min_age_days" MIN_AGE_DAYS="$min_age_days" MIN_AGE_MINUTES="$min_age_minutes" TARGET_REPO="$TARGET_REPO" node <<'NODE'
-          const fs = require("node:fs");
-          const path = require("node:path");
-
-          const allowedReasons = new Set([
-            "cannot_reproduce",
-            "clawhub",
-            "duplicate_or_superseded",
-            "incoherent",
-            "implemented_on_main",
-            "not_actionable_in_repo",
-            "stale_insufficient_info",
-          ]);
-
-          const applyKind = process.env.APPLY_KIND || "all";
-          const targetRepo = process.env.TARGET_REPO || "openclaw/openclaw";
-          const applyCloseReasonsRaw = process.env.APPLY_CLOSE_REASONS || "all";
-          const applyCloseReasons =
-            applyCloseReasonsRaw === "all"
-              ? null
-              : new Set(applyCloseReasonsRaw.split(",").map((reason) => reason.trim()).filter(Boolean));
-          const staleMinAgeDays = Number(process.env.STALE_MIN_AGE_DAYS || "30");
-          const minAgeMinutes = process.env.MIN_AGE_MINUTES ? Number(process.env.MIN_AGE_MINUTES) : null;
-          const minAgeMs = minAgeMinutes === null ? Number(process.env.MIN_AGE_DAYS || "0") * 24 * 60 * 60 * 1000 : minAgeMinutes * 60 * 1000;
-          const olderThan = (iso, milliseconds) => {
-            if (milliseconds <= 0) return true;
-            const parsed = Date.parse(iso || "");
-            return Number.isFinite(parsed) && Date.now() - parsed > milliseconds;
-          };
-          const targetSlug = targetRepo.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-          const itemsDir = path.join("records", targetSlug, "items");
-          const frontMatterValue = (markdown, key) =>
-            markdown.match(new RegExp(`^${key}:\\s*(.+)$`, "m"))?.[1]?.trim().replace(/^"|"$/g, "");
-          const repoFor = (markdown, name) => frontMatterValue(markdown, "repository") || (/^\d+\.md$/.test(name) ? "openclaw/openclaw" : "");
-          const numberFor = (name) => Number(name.match(/(\d+)\.md$/)?.[1] || 0);
-          const allowedForTarget = (type, reason) => {
-            if (targetRepo === "openclaw/clawhub") return type === "pull_request" && reason === "implemented_on_main";
-            if (type === "pull_request" && reason === "stale_insufficient_info") return false;
-            return allowedReasons.has(reason);
-          };
-
-          const names = fs.existsSync(itemsDir) ? fs.readdirSync(itemsDir) : [];
-          const numbers = names
-            .filter((name) => /(?:^|[a-z0-9-]-)\d+\.md$/.test(name))
-            .flatMap((name) => {
-              const markdown = fs.readFileSync(path.join(itemsDir, name), "utf8");
-              if (repoFor(markdown, name) !== targetRepo) return [];
-              const type = frontMatterValue(markdown, "type");
-              if (applyKind !== "all" && type && type !== applyKind) return [];
-              if (frontMatterValue(markdown, "decision") !== "close") return [];
-              if (frontMatterValue(markdown, "confidence") !== "high") return [];
-              if (frontMatterValue(markdown, "action_taken") !== "proposed_close") return [];
-              const reason = frontMatterValue(markdown, "close_reason");
-              if (!allowedForTarget(type, reason)) return [];
-              if (applyCloseReasons && !applyCloseReasons.has(reason)) return [];
-              if (reason === "stale_insufficient_info" && !olderThan(frontMatterValue(markdown, "item_created_at"), staleMinAgeDays * 24 * 60 * 60 * 1000)) return [];
-              if (!olderThan(frontMatterValue(markdown, "item_created_at"), minAgeMs)) return [];
-              return [numberFor(name)];
-            })
-            .sort((left, right) => left - right);
-
-          process.stdout.write(numbers.join(","));
-          NODE
-          }
           pnpm run reconcile -- --target-repo "$TARGET_REPO"
           pnpm run dashboard -- --target-repo "$TARGET_REPO"
           if [ "$sync_comments_only" != "true" ] && [ -z "$item_numbers" ]; then
-            item_numbers="$(proposed_item_numbers)"
+            item_numbers="$(pnpm run --silent workflow -- proposed-item-numbers \
+              --target-repo "$TARGET_REPO" \
+              --apply-kind "$apply_kind" \
+              --apply-close-reasons "$apply_close_reasons" \
+              --stale-min-age-days "$stale_min_age_days" \
+              --min-age-days "$min_age_days" \
+              --min-age-minutes "$min_age_minutes")"
             if [ -n "$item_numbers" ]; then
-              proposed_count="$(node -e 'const value = process.argv[1] || ""; console.log(value ? value.split(",").length : 0)' "$item_numbers")"
+              proposed_count="$(pnpm run --silent workflow -- count-csv --items "$item_numbers")"
               if [ "$proposed_count" -lt "$limit" ]; then
                 limit="$proposed_count"
               fi
@@ -1076,8 +987,8 @@ jobs:
               "${item_numbers_arg[@]}" \
               "${sync_comments_arg[@]}"
             cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
-            result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
-            synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)' "$checkpoint")"
+            result_count="$(pnpm run --silent workflow -- count-report --report ".artifacts/apply-reports/apply-report-$checkpoint.json")"
+            synced_count="$(pnpm run --silent workflow -- count-actions --report ".artifacts/apply-reports/apply-report-$checkpoint.json" --action review_comment_synced)"
             publish_changes "chore: sync sweep review comments checkpoint $checkpoint" records apply-report.json
             pnpm run dashboard -- --target-repo "$TARGET_REPO"
             pnpm run status -- \
@@ -1114,10 +1025,9 @@ jobs:
               "${item_numbers_arg[@]}" \
               "${sync_comments_arg[@]}"
             cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
-            # shellcheck disable=SC2016
-            node -e 'const fs=require("node:fs"); const path=require("node:path"); const dir=".artifacts/apply-reports"; const files=fs.readdirSync(dir).filter((name)=>/^apply-report-\d+\.json$/.test(name)).sort((left,right)=>Number(left.match(/\d+/)[0])-Number(right.match(/\d+/)[0])); const combined=files.flatMap((file)=>JSON.parse(fs.readFileSync(path.join(dir,file),"utf8"))); fs.writeFileSync("apply-report.json", `${JSON.stringify(combined,null,2)}\n`);'
-            closed_in_chunk="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.filter((x)=>x.action==="closed").length)' "$checkpoint")"
-            result_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(".artifacts/apply-reports/apply-report-" + process.argv[1] + ".json", "utf8")); console.log(r.length)' "$checkpoint")"
+            pnpm run workflow -- merge-apply-reports --dir .artifacts/apply-reports --output apply-report.json
+            closed_in_chunk="$(pnpm run --silent workflow -- count-actions --report ".artifacts/apply-reports/apply-report-$checkpoint.json" --action closed)"
+            result_count="$(pnpm run --silent workflow -- count-report --report ".artifacts/apply-reports/apply-report-$checkpoint.json")"
             closed_total=$((closed_total + closed_in_chunk))
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
             publish_changes "chore: apply sweep decisions checkpoint $checkpoint" records apply-report.json

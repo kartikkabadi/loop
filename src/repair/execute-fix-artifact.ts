@@ -47,6 +47,15 @@ import {
   validateFixArtifact,
   validateFixSecurityScope,
 } from "./execute-fix-validation.js";
+import {
+  coAuthorTrailers,
+  fetchPullRequest,
+  fetchSourcePullRequestView,
+  prepareReviewThreadsForMerge,
+  publicContributorCredit,
+  sourceContributorCredits,
+  supersededReplacementSources,
+} from "./execute-fix-github.js";
 
 const FIX_ACTIONS = new Set(["fix_needed", "build_fix_artifact", "open_fix_pr"]);
 const NON_EXECUTABLE_REPAIR_STRATEGIES = new Set(["already_fixed_on_main", "needs_human"]);
@@ -440,7 +449,7 @@ function shouldPromoteNeedsHumanReplacement(fixArtifact: LooseRecord, workerResu
 function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
   const sourcePr = firstSourcePullRequest(fixArtifact);
-  const pull = fetchPullRequest(sourcePr.number);
+  const pull = fetchPullRequest(result.repo, sourcePr.number);
   if (pull.state !== "open") throw new Error(`source PR #${sourcePr.number} is ${pull.state}`);
   if (!pull.head?.repo?.full_name || !pull.head?.ref)
     throw new Error(`source PR #${sourcePr.number} is missing head repo/ref`);
@@ -497,6 +506,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     repo: result.repo,
     number: sourcePr.number,
     targetDir,
+    resolveThreads: resolveReviewThreads,
   });
   const comment = repairContributorBranchComment({
     sourcePrUrl: sourcePr.url,
@@ -570,7 +580,11 @@ function executeReplacementBranch({
   fallbackReason,
 }: LooseRecord) {
   const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
-  const contributorCredits = sourceContributorCredits({ fixArtifact, targetDir });
+  const contributorCredits = sourceContributorCredits({
+    fixArtifact,
+    targetDir,
+    repo: result.repo,
+  });
   const branch = replacementBranchName(result.cluster_id);
   const areaCapacityBlock = validateActivePrAreaCapacity({
     fixArtifact,
@@ -658,11 +672,16 @@ function executeReplacementBranch({
   if (prNumber) labelReplacementPullRequest({ number: prNumber, targetDir });
   if (prNumber) (prep.merge_preflight as JsonValue).target = `#${prNumber}`;
   const threadResolution = prNumber
-    ? prepareReviewThreadsForMerge({ repo: result.repo, number: prNumber, targetDir })
+    ? prepareReviewThreadsForMerge({
+        repo: result.repo,
+        number: prNumber,
+        targetDir,
+        resolveThreads: resolveReviewThreads,
+      })
     : { status: "blocked", reason: "replacement PR URL did not include a PR number" };
 
   const supersededSources = supersedeSources
-    ? supersededReplacementSources(fixArtifact).filter(
+    ? supersededReplacementSources({ fixArtifact, repo: result.repo }).filter(
         (source: JsonValue) => pullRequestNumberFromUrl(source) !== prNumber,
       )
     : [];
@@ -854,19 +873,6 @@ function ensurePullRequestOpen({ number, targetDir }: LooseRecord) {
       env: ghEnv(),
     });
   }
-}
-
-function fetchSourcePullRequestView({ repo, number, targetDir }: LooseRecord) {
-  return JSON.parse(
-    run(
-      "gh",
-      ["pr", "view", String(number), "--repo", repo, "--json", "author,state,mergedAt,title,url"],
-      {
-        cwd: targetDir,
-        env: ghEnv(),
-      },
-    ),
-  );
 }
 
 function editValidatePrepareMerge({
@@ -1462,97 +1468,6 @@ function codexReviewSchemaPath() {
   return schemaPath;
 }
 
-function sourceContributorCredits({ fixArtifact, targetDir }: LooseRecord) {
-  const byLogin = new Map<string, LooseRecord>();
-  for (const source of fixArtifact.source_prs ?? []) {
-    const parsed = parsePullRequestUrl(source);
-    if (!parsed || parsed.repo !== result.repo) continue;
-    const view = fetchSourcePullRequestView({
-      repo: result.repo,
-      number: parsed.number,
-      targetDir,
-    });
-    const login = String(view.author?.login ?? "").trim();
-    if (!login || view.author?.is_bot || isBotLogin(login)) continue;
-    const key = login.toLowerCase();
-    const existing = byLogin.get(key) ?? {
-      login,
-      name: safeTrailerName(login, login),
-      email: `${login}@users.noreply.github.com`,
-      sources: [],
-    };
-    const user = fetchGitHubUser(login, targetDir);
-    if (user) {
-      existing.name = safeTrailerName(user.name || user.login || login, login);
-      existing.email = `${user.id}+${user.login}@users.noreply.github.com`;
-    }
-    existing.sources = uniqueStrings([...existing.sources, parsed.url]);
-    byLogin.set(key, existing);
-  }
-  return [...byLogin.values()];
-}
-
-function fetchGitHubUser(login: JsonValue, targetDir: string) {
-  try {
-    const user = JSON.parse(run("gh", ["api", `users/${login}`], { cwd: targetDir, env: ghEnv() }));
-    if (!user?.id || !user?.login) return null;
-    return user;
-  } catch {
-    return null;
-  }
-}
-
-function coAuthorTrailers(contributorCredits: LooseRecord[]) {
-  return contributorCredits.map(
-    (credit: JsonValue) => `Co-authored-by: ${credit.name} <${credit.email}>`,
-  );
-}
-
-function publicContributorCredit(credit: JsonValue) {
-  return {
-    login: credit.login,
-    name: credit.name,
-    sources: credit.sources,
-    co_authored_by: `Co-authored-by: ${credit.name} <${credit.email}>`,
-  };
-}
-
-function safeTrailerName(value: JsonValue, fallback: JsonValue = "Contributor") {
-  const name = String(value ?? "")
-    .replace(/[<>\r\n]/g, "")
-    .trim();
-  return name || fallback;
-}
-
-function isBotLogin(login: JsonValue) {
-  return /\[bot\]$|bot$/i.test(String(login ?? ""));
-}
-
-function supersededReplacementSources(fixArtifact: LooseRecord) {
-  if (
-    Array.isArray(fixArtifact.supersede_source_prs) &&
-    fixArtifact.supersede_source_prs.length > 0
-  ) {
-    return fixArtifact.supersede_source_prs.filter(
-      (source: JsonValue) => parsePullRequestUrl(source)?.repo === result.repo,
-    );
-  }
-
-  const blockerText = (fixArtifact.branch_update_blockers ?? []).join("\n");
-  const directUneditableSources = (fixArtifact.source_prs ?? []).filter((source: JsonValue) => {
-    const parsed = parsePullRequestUrl(source);
-    if (!parsed || parsed.repo !== result.repo) return false;
-    const sourcePattern = new RegExp(`(?:#|pull/)${parsed.number}(?!\\d)[\\s\\S]{0,220}`, "i");
-    const sourceBlocker = blockerText.match(sourcePattern)?.[0] ?? "";
-    return /maintainer_can_modify\s*=\s*false|uneditable|cannot safely update|branch is unsafe|mergeability unknown/i.test(
-      sourceBlocker,
-    );
-  });
-  return directUneditableSources.length > 0
-    ? directUneditableSources
-    : (fixArtifact.source_prs ?? []).slice(0, 1);
-}
-
 function ensureTargetCheckout(repo: string, targetDir: string) {
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(path.dirname(targetDir), { recursive: true });
@@ -1594,116 +1509,6 @@ function firstSourcePullRequest(fixArtifact: LooseRecord) {
     if (parsed && parsed.repo === result.repo) return parsed;
   }
   throw new Error("fix_artifact.source_prs must include a source PR in the target repo");
-}
-
-function fetchPullRequest(number: JsonValue) {
-  return JSON.parse(
-    run("gh", ["api", `repos/${result.repo}/pulls/${number}`], { cwd: repoRoot(), env: ghEnv() }),
-  );
-}
-
-function prepareReviewThreadsForMerge({ repo, number, targetDir }: LooseRecord) {
-  const before = fetchReviewThreads(repo, number);
-  if (before.hasNextPage)
-    return { status: "blocked", reason: "too many review threads to prove resolved" };
-  const unresolved = before.threads.filter((thread: JsonValue) => !thread.isResolved);
-  if (unresolved.length === 0) return { status: "resolved", unresolved_before: 0, resolved: 0 };
-  if (!resolveReviewThreads) {
-    return {
-      status: "blocked",
-      reason: "unresolved review threads remain and CLAWSWEEPER_RESOLVE_REVIEW_THREADS=0",
-      unresolved_before: unresolved.length,
-      examples: unresolved.slice(0, 3).map((thread: JsonValue) => thread.url ?? thread.id),
-    };
-  }
-  for (const thread of unresolved) {
-    resolveReviewThread(thread.id, targetDir);
-  }
-  const after = fetchReviewThreads(repo, number);
-  const remaining = after.threads.filter((thread: JsonValue) => !thread.isResolved);
-  if (remaining.length > 0) {
-    return {
-      status: "blocked",
-      reason: "some review threads remained unresolved after resolution attempt",
-      unresolved_before: unresolved.length,
-      unresolved_after: remaining.length,
-      examples: remaining.slice(0, 3).map((thread: JsonValue) => thread.url ?? thread.id),
-    };
-  }
-  return { status: "resolved", unresolved_before: unresolved.length, resolved: unresolved.length };
-}
-
-function fetchReviewThreads(repo: string, number: JsonValue) {
-  const [owner, name] = repo.split("/");
-  const query = `
-    query($owner: String!, $name: String!, $number: Int!) {
-      repository(owner: $owner, name: $name) {
-        pullRequest(number: $number) {
-          reviewThreads(first: 100) {
-            pageInfo { hasNextPage }
-            nodes {
-              id
-              isResolved
-              path
-              line
-              comments(first: 1) {
-                nodes {
-                  url
-                  author { login }
-                  body
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-  const data = JSON.parse(
-    run(
-      "gh",
-      [
-        "api",
-        "graphql",
-        "-f",
-        `owner=${owner}`,
-        "-f",
-        `name=${name}`,
-        "-F",
-        `number=${number}`,
-        "-f",
-        `query=${query}`,
-      ],
-      { cwd: repoRoot(), env: ghEnv() },
-    ),
-  );
-  const threads = data?.data?.repository?.pullRequest?.reviewThreads;
-  return {
-    hasNextPage: Boolean(threads?.pageInfo?.hasNextPage),
-    threads: (threads?.nodes ?? []).map((thread: JsonValue) => ({
-      id: thread.id,
-      isResolved: Boolean(thread.isResolved),
-      path: thread.path,
-      line: thread.line,
-      url: thread.comments?.nodes?.[0]?.url ?? null,
-      author: thread.comments?.nodes?.[0]?.author?.login ?? null,
-      body: thread.comments?.nodes?.[0]?.body ?? "",
-    })),
-  };
-}
-
-function resolveReviewThread(threadId: JsonValue, cwd: JsonValue) {
-  const mutation = `
-    mutation($threadId: ID!) {
-      resolveReviewThread(input: {threadId: $threadId}) {
-        thread { id isResolved }
-      }
-    }
-  `;
-  run("gh", ["api", "graphql", "-f", `threadId=${threadId}`, "-f", `query=${mutation}`], {
-    cwd,
-    env: ghEnv(),
-  });
 }
 
 function replacementBranchName(clusterId: string) {
