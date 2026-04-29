@@ -146,20 +146,20 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 21:04 UTC
+Last dashboard update: Apr 29, 2026, 21:05 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4251 |
-| Open PRs | 3262 |
-| Open items total | 7513 |
-| Reviewed files | 7513 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 2861 |
-| Proposed closes awaiting apply | 0 |
+| Open issues | 4429 |
+| Open PRs | 3418 |
+| Open items total | 7847 |
+| Reviewed files | 7517 |
+| Unreviewed open items | 333 |
+| Due now by cadence | 3206 |
+| Proposed closes awaiting apply | 4 |
 | Work candidates awaiting promotion | 981 |
 | Closed by Codex apply | 10892 |
 | Failed or stale reviews | 25 |
@@ -169,27 +169,27 @@ Last dashboard update: Apr 29, 2026, 21:04 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6587 | 6587 | 0 | 2843 | 0 | 937 | 10884 | Apr 29, 2026, 20:57 UTC | Apr 29, 2026, 20:54 UTC | 394 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 923 | 923 | 0 | 15 | 0 | 43 | 8 | Apr 29, 2026, 21:01 UTC | Apr 29, 2026, 17:17 UTC | 374 |
-| [ClawSweeper](https://github.com/openclaw/clawsweeper) | 3 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6919 | 6591 | 328 | 3172 | 4 | 937 | 10879 | Apr 29, 2026, 20:48 UTC | Apr 29, 2026, 20:49 UTC | 734 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 928 | 923 | 5 | 31 | 0 | 43 | 8 | Apr 29, 2026, 20:25 UTC | Apr 29, 2026, 17:17 UTC | 385 |
+| [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 21:04 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25133781272) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 21:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25132551774) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 29, 2026, 21:05 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25131933794) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 29, 2026, 20:44 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25132847826) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 21:01 UTC. Latest close: Apr 29, 2026, 20:54 UTC. Latest comment sync: Apr 29, 2026, 20:58 UTC.
+Latest review: Apr 29, 2026, 20:48 UTC. Latest close: Apr 29, 2026, 20:49 UTC. Latest comment sync: Apr 29, 2026, 21:05 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 34 | 0 | 34 | 11 | 4 | 6 | 0 |
-| Last hour | 1121 | 5 | 1116 | 19 | 33 | 768 | 1 |
-| Last 24 hours | 5714 | 317 | 5397 | 21 | 745 | 1268 | 27 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 346 | 0 |
+| Last hour | 712 | 4 | 708 | 18 | 28 | 1119 | 1 |
+| Last 24 hours | 5713 | 317 | 5396 | 22 | 740 | 2005 | 27 |
 
 ### Recently Closed Across Repos
 
@@ -260,12 +260,12 @@ Latest review: Apr 29, 2026, 21:01 UTC. Latest close: Apr 29, 2026, 20:54 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 21:04 UTC
+Updated: Apr 29, 2026, 21:05 UTC
 
-State: Planning review
+State: Review comments checked
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25133781272](https://github.com/openclaw/clawsweeper/actions/runs/25133781272)
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 346. Item numbers: 9865,10960,11517,12931,13593,13613,13616,13911,14438,15073,15591,17098,17213,17684,18160,22439,24107,28300,30389,32438,36630,38716,38817,39060,39137,39343,40207,40216,40218,40255,40355,40418,40427,40440,40447,40464,40485,40502,40578,40663,40723,40732,40764,40786,40808,40828,40846,40848,40873,40880,40894,40895,40919,40953,40958,40961,40970,41009,41013,41022,41031,41048,41140,41172,41204,41206,41254,41275,41284,41324,41351,41368,41421,41613,41614,41685,41716,41734,41737,41792,41807,41812,41880,41987,42026,42139,42165,42294,42350,42472,42480,42497,42504,42555,42591,42648,42652,42654,42803,42840,43239,43286,43357,43374,43440,43441,43462,43467,43493,43495,43549,43562,43563,43564,43568,43574,43588,43605,43673,43690,43712,43735,43760,43770,43775,43790,43794,43797,43803,43810,43816,43903,43910,43911,43938,43953,43976,43984,44011,44015,44027,44202,44625,44845,44859,44886,44897,44900,44930,44935,44972,44986,45011,45017,45044,45082,45102,45158,45200,45209,45216,45220,45228,45262,45276,45288,45290,45301,45438,45525,45686,45706,45930,45952,46058,46221,46423,46637,46698,46701,46733,46837,46844,47095,47335,47441,47487,47534,47540,47562,47613,47643,47651,47677,47690,47706,47710,47739,47814,47834,47840,47961,47975,47983,47992,47996,48045,48200,48260,48510,48512,48554,48684,48709,48786,48793,48908,49099,49145,49488,49692,49841,49944,50081,50090,50093,50126,50195,50248,50268,50274,50277,50287,50291,50374,50429,50442,50482,50490,50530,50561,50563,50565,50590,50619,50642,50677,50681,50690,50719,50739,50768,50776,50795,50798,50809,50818,50880,50900,50972,51088,51421,51455,51594,51849,51903,52005,52192,52207,52244,52276,52342,52365,52400,52434,52448,52457,52480,52515,52521,52601,52614,52627,52636,52640,52642,52727,52751,52762,52776,52801,52803,52832,52894,52912,52921,52928,52943,52972,52993,53008,53015,53021,53030,53088,53108,53242,53243,53250,53259,53262,53288,53321,53326,53329,53378,53408,53410,53441,53445,53454,53473,53486,53520,53524,53526,53528,53531,53533,53556,53590,53607,53629,53638,53641,53676,53678,53716,53718,53720,53738,53762,53779,53780,53784,53787,53852,53881,53922,53941,53942,53961,53965,53969,53998,54032,54132,54149,54153,54155,54157,54278,54289,54306,54308,54311,54342,54343,54354,54361,54375,54386,54405,54414,54439,54470,54471,54504,54518,54519,54524,54529,54549,54565,54574,54585,54591,54593,54600,54602,54622,54647,54732,54799,54812,54841,54878,54879,54918,54996,55027,55036,55044,55047,55121,55196,55654,55757,55943,56502,56651,56693,56798,57608,58070,58189,58775,58805,58823,58971,58987,59330,59859,60497,60542,60808,60824,60848,60946,61151,61443,62120,62364,62431,62891,62910,62924,62927,62937,62962,62985,62989,63037,63038,63050,63073,63082,63148,64383,65039,66551,66657,67363,67716,68779,68864,68893,72984,73323,73648,73735,73798,74320,74374,74392,74395,74453,74484,74490,74491,74494,74497,74498,74500,74502,74503,74504,74508,74509,74510,74512,74513,74517,74518,74519,74520,74521,74522,74523,74524,74547,74548,74552,74560,74561,74562,74563,74564,74572,74573.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25131933794](https://github.com/openclaw/clawsweeper/actions/runs/25131933794)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -273,12 +273,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25133781272](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3362 |
-| Open PRs | 3225 |
-| Open items total | 6587 |
-| Reviewed files | 6587 |
-| Unreviewed open items | 0 |
-| Archived closed files | 14513 |
+| Open issues | 3540 |
+| Open PRs | 3379 |
+| Open items total | 6919 |
+| Reviewed files | 6591 |
+| Unreviewed open items | 328 |
+| Archived closed files | 14508 |
 
 #### Review Outcomes
 
@@ -298,13 +298,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25133781272](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 60/1140 current (1080 due, 5.3%) |
-| Hourly hot item cadence (<7d) | 60/1140 current (1080 due, 5.3%) |
-| Daily cadence coverage | 1885/3646 current (1761 due, 51.7%) |
-| Daily PR cadence | 1267/2544 current (1277 due, 49.8%) |
+| Hourly cadence coverage | 61/1142 current (1081 due, 5.3%) |
+| Hourly hot item cadence (<7d) | 61/1142 current (1081 due, 5.3%) |
+| Daily cadence coverage | 1886/3647 current (1761 due, 51.7%) |
+| Daily PR cadence | 1268/2545 current (1277 due, 49.8%) |
 | Daily new issue cadence (<30d) | 618/1102 current (484 due, 56.1%) |
-| Weekly older issue cadence | 1799/1801 current (2 due, 99.9%) |
-| Due now by cadence | 2843 |
+| Weekly older issue cadence | 1800/1802 current (2 due, 99.9%) |
+| Due now by cadence | 3172 |
 
 ### Audit Health
 
@@ -340,13 +340,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 20:57 UTC. Latest close: Apr 29, 2026, 20:54 UTC. Latest comment sync: Apr 29, 2026, 20:58 UTC.
+Latest review: Apr 29, 2026, 20:48 UTC. Latest close: Apr 29, 2026, 20:49 UTC. Latest comment sync: Apr 29, 2026, 21:05 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 2 | 0 | 2 | 0 | 4 | 6 | 0 |
-| Last hour | 531 | 5 | 526 | 5 | 33 | 394 | 1 |
-| Last 24 hours | 4774 | 317 | 4457 | 7 | 730 | 878 | 27 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 346 | 0 |
+| Last hour | 528 | 4 | 524 | 5 | 28 | 734 | 1 |
+| Last 24 hours | 4773 | 317 | 4456 | 7 | 725 | 1219 | 27 |
 
 #### Recently Closed
 
@@ -445,13 +445,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25132551774](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 59/60 current (1 due, 98.3%) |
-| Hourly hot item cadence (<7d) | 59/60 current (1 due, 98.3%) |
+| Hourly cadence coverage | 47/60 current (13 due, 78.3%) |
+| Hourly hot item cadence (<7d) | 47/60 current (13 due, 78.3%) |
 | Daily cadence coverage | 207/209 current (2 due, 99%) |
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 186/188 current (2 due, 98.9%) |
-| Weekly older issue cadence | 642/654 current (12 due, 98.2%) |
-| Due now by cadence | 15 |
+| Weekly older issue cadence | 643/654 current (11 due, 98.3%) |
+| Due now by cadence | 31 |
 
 ### Audit Health
 
@@ -489,9 +489,9 @@ Latest review: Apr 29, 2026, 21:01 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 32 | 0 | 32 | 11 | 0 | 0 | 0 |
-| Last hour | 590 | 0 | 590 | 14 | 0 | 374 | 0 |
-| Last 24 hours | 937 | 0 | 937 | 14 | 15 | 387 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Last hour | 184 | 0 | 184 | 13 | 0 | 385 | 0 |
+| Last 24 hours | 937 | 0 | 937 | 15 | 15 | 783 | 0 |
 
 #### Recently Closed
 
