@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-29T21:53:33.766Z",
+  "updated_at": "2026-04-29T21:55:49.541Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:53410:4345804629:2026-04-29T16:56:46Z:clawsweeper_needs_human",
@@ -25090,7 +25090,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T21:53:33.766Z",
+      "processed_at": "2026-04-29T21:55:49.540Z",
       "target": null
     },
     {
@@ -25113,8 +25113,8 @@
       "repair_reason": "structured ClawSweeper verdict: pass (sha=8517f253e017f2ec611502466bb2dd1929a2c4d9)",
       "expected_head_sha": "8517f253e017f2ec611502466bb2dd1929a2c4d9",
       "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-29T21:53:33.766Z",
+      "status": "executed",
+      "processed_at": "2026-04-29T21:55:49.540Z",
       "target": {
         "kind": "pull_request",
         "branch": "fix/bundled-global-agent",
@@ -25144,7 +25144,7 @@
       "expected_head_sha": "f39963a9697ae8cdea71ba747686196fac64fcf0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T21:53:33.766Z",
+      "processed_at": "2026-04-29T21:55:49.540Z",
       "target": null
     },
     {
@@ -25168,7 +25168,7 @@
       "expected_head_sha": "e99ccc14f0e38b9ebc71752b02fdbd77e4357099",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T21:53:33.766Z",
+      "processed_at": "2026-04-29T21:55:49.540Z",
       "target": null
     },
     {
@@ -25192,7 +25192,7 @@
       "expected_head_sha": "e41fdc30bfea8a1dc1ce07671aff1d11507cf9c2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T21:53:33.766Z",
+      "processed_at": "2026-04-29T21:55:49.540Z",
       "target": null
     },
     {
@@ -25216,7 +25216,7 @@
       "expected_head_sha": "69b8aefce8da040315e0e389910491a2aef5431d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T21:53:33.766Z",
+      "processed_at": "2026-04-29T21:55:49.540Z",
       "target": null
     },
     {
@@ -25239,15 +25239,9 @@
       "repair_reason": "structured ClawSweeper verdict: pass (sha=a8a1e3c6541da1b58c8d0a969784abaa9aec1c7e)",
       "expected_head_sha": "a8a1e3c6541da1b58c8d0a969784abaa9aec1c7e",
       "finding_id": null,
-      "status": "executed",
-      "processed_at": "2026-04-29T21:53:33.766Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/74573-strip-tool-calls-omitted",
-        "head_sha": "a8a1e3c6541da1b58c8d0a969784abaa9aec1c7e",
-        "cluster_id": "automerge-openclaw-openclaw-74578",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74578.md"
-      }
+      "status": "skipped",
+      "processed_at": "2026-04-29T21:55:49.540Z",
+      "target": null
     }
   ]
 }
