@@ -100,7 +100,7 @@ Last dashboard update: Apr 29, 2026, 05:48 UTC
 | Open items total | 7872 |
 | Reviewed files | 7492 |
 | Unreviewed open items | 380 |
-| Due now by cadence | 2140 |
+| Due now by cadence | 2141 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 523 |
 | Closed by Codex apply | 10697 |
@@ -111,24 +111,24 @@ Last dashboard update: Apr 29, 2026, 05:48 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6955 | 6581 | 374 | 2077 | 0 | 487 | 10690 | Apr 29, 2026, 05:46 UTC | Apr 29, 2026, 05:48 UTC | 579 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6955 | 6581 | 374 | 2078 | 0 | 487 | 10690 | Apr 29, 2026, 05:47 UTC | Apr 29, 2026, 05:48 UTC | 579 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 917 | 911 | 6 | 63 | 0 | 36 | 7 | Apr 29, 2026, 05:28 UTC | Apr 29, 2026, 05:31 UTC | 22 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 05:48 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25092961339) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 05:48 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25092961339) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 05:34 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25092641218) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 05:46 UTC. Latest close: Apr 29, 2026, 05:48 UTC. Latest comment sync: Apr 29, 2026, 05:48 UTC.
+Latest review: Apr 29, 2026, 05:47 UTC. Latest close: Apr 29, 2026, 05:48 UTC. Latest comment sync: Apr 29, 2026, 05:48 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 37 | 4 | 33 | 2 | 21 | 50 | 3 |
-| Last hour | 587 | 27 | 560 | 7 | 51 | 601 | 8 |
+| Last hour | 585 | 27 | 558 | 7 | 51 | 601 | 8 |
 | Last 24 hours | 7050 | 453 | 6597 | 15 | 770 | 2499 | 37 |
 
 ### Recently Closed Across Repos
@@ -173,10 +173,10 @@ Latest review: Apr 29, 2026, 05:46 UTC. Latest close: Apr 29, 2026, 05:48 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#64673](https://github.com/openclaw/openclaw/pull/64673) | fix(ui): set input font-size to 16px to prevent iOS Safari auto-zoom on focus | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/64673.md) | complete | Apr 29, 2026, 05:47 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74009](https://github.com/openclaw/openclaw/pull/74009) | fix(agents): prefer sessionKey in sessions_send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74009.md) | complete | Apr 29, 2026, 05:46 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74107](https://github.com/openclaw/openclaw/pull/74107) | Keep Codex Computer Use hook relays live across turns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74107.md) | complete | Apr 29, 2026, 05:46 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73671](https://github.com/openclaw/openclaw/pull/73671) | fix(sandbox): gracefully handle Docker daemon unavailability when sandbox mode is off | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73671.md) | complete | Apr 29, 2026, 05:44 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#64673](https://github.com/openclaw/openclaw/pull/64673) | fix(ui): set input font-size to 16px to prevent iOS Safari auto-zoom on focus | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/64673.md) | complete | Apr 29, 2026, 05:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73860](https://github.com/openclaw/openclaw/issues/73860) | [Bug]: message tool returns 400 error for Feishu channel user targets | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73860.md) | complete | Apr 29, 2026, 05:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73822](https://github.com/openclaw/openclaw/pull/73822) | feat(config): support SecretRef for phone numbers in channel configs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73822.md) | complete | Apr 29, 2026, 05:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74106](https://github.com/openclaw/openclaw/pull/74106) | fix(memory-core): separate real recallCount from combined signalCount in promotion gates | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74106.md) | complete | Apr 29, 2026, 05:43 UTC |
@@ -202,9 +202,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 05:48 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 17/18. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 17 fresh closes out of requested limit 18. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25092961339](https://github.com/openclaw/clawsweeper/actions/runs/25092961339)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -238,13 +238,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25092961339](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 118/993 current (875 due, 11.9%) |
-| Hourly hot item cadence (<7d) | 118/993 current (875 due, 11.9%) |
+| Hourly cadence coverage | 117/993 current (876 due, 11.8%) |
+| Hourly hot item cadence (<7d) | 117/993 current (876 due, 11.8%) |
 | Daily cadence coverage | 2966/3790 current (824 due, 78.3%) |
 | Daily PR cadence | 2213/2650 current (437 due, 83.5%) |
 | Daily new issue cadence (<30d) | 753/1140 current (387 due, 66.1%) |
 | Weekly older issue cadence | 1794/1798 current (4 due, 99.8%) |
-| Due now by cadence | 2077 |
+| Due now by cadence | 2078 |
 
 ### Audit Health
 
@@ -280,12 +280,12 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 05:46 UTC. Latest close: Apr 29, 2026, 05:48 UTC. Latest comment sync: Apr 29, 2026, 05:48 UTC.
+Latest review: Apr 29, 2026, 05:47 UTC. Latest close: Apr 29, 2026, 05:48 UTC. Latest comment sync: Apr 29, 2026, 05:48 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 37 | 4 | 33 | 2 | 21 | 50 | 3 |
-| Last hour | 565 | 27 | 538 | 7 | 49 | 579 | 8 |
+| Last hour | 563 | 27 | 536 | 7 | 49 | 579 | 8 |
 | Last 24 hours | 6124 | 453 | 5671 | 10 | 755 | 1575 | 37 |
 
 #### Recently Closed
@@ -322,10 +322,10 @@ Latest review: Apr 29, 2026, 05:46 UTC. Latest close: Apr 29, 2026, 05:48 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#64673](https://github.com/openclaw/openclaw/pull/64673) | fix(ui): set input font-size to 16px to prevent iOS Safari auto-zoom on focus | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/64673.md) | complete | Apr 29, 2026, 05:47 UTC |
 | [#74009](https://github.com/openclaw/openclaw/pull/74009) | fix(agents): prefer sessionKey in sessions_send | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74009.md) | complete | Apr 29, 2026, 05:46 UTC |
 | [#74107](https://github.com/openclaw/openclaw/pull/74107) | Keep Codex Computer Use hook relays live across turns | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74107.md) | complete | Apr 29, 2026, 05:46 UTC |
 | [#73671](https://github.com/openclaw/openclaw/pull/73671) | fix(sandbox): gracefully handle Docker daemon unavailability when sandbox mode is off | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73671.md) | complete | Apr 29, 2026, 05:44 UTC |
-| [#64673](https://github.com/openclaw/openclaw/pull/64673) | fix(ui): set input font-size to 16px to prevent iOS Safari auto-zoom on focus | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/64673.md) | complete | Apr 29, 2026, 05:43 UTC |
 | [#73860](https://github.com/openclaw/openclaw/issues/73860) | [Bug]: message tool returns 400 error for Feishu channel user targets | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73860.md) | complete | Apr 29, 2026, 05:43 UTC |
 | [#73822](https://github.com/openclaw/openclaw/pull/73822) | feat(config): support SecretRef for phone numbers in channel configs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73822.md) | complete | Apr 29, 2026, 05:43 UTC |
 | [#74106](https://github.com/openclaw/openclaw/pull/74106) | fix(memory-core): separate real recallCount from combined signalCount in promotion gates | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74106.md) | complete | Apr 29, 2026, 05:43 UTC |
