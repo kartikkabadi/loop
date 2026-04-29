@@ -353,7 +353,7 @@ jobs:
 
       - uses: ./.github/actions/setup-pnpm
         with:
-          build-script: build
+          build-script: build:all
 
       - uses: actions/download-artifact@v4
         if: ${{ needs.plan.outputs.planned_count != '0' }}
@@ -373,22 +373,10 @@ jobs:
           set -euo pipefail
           git pull --rebase
           node dist/commit-sweeper.js copy-artifacts --artifact-dir commit-artifacts --records-dir records
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add records
-          if git diff --cached --quiet; then
-            echo "No commit report changes"
-          else
-            git commit -m "chore: update commit review reports"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase -X theirs origin/main
-            done
-            git push
-          fi
+          pnpm run repair:publish-main -- \
+            --message "chore: update commit review reports" \
+            --path records \
+            --rebase-strategy theirs
 
       - name: Create repair dispatch token
         id: clawsweeper-token

@@ -234,7 +234,7 @@ jobs:
 
       - uses: ./.github/actions/setup-pnpm
         with:
-          build-script: build
+          build-script: build:all
 
       - uses: ./.github/actions/setup-codex
         env:
@@ -295,121 +295,7 @@ jobs:
           ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
           CLOSE_REASONS: ${{ github.event.client_payload.apply_close_reasons || 'implemented_on_main,duplicate_or_superseded' }}
           MIN_AGE_MINUTES: ${{ github.event.client_payload.apply_min_age_minutes || '0' }}
-        run: |
-          set -euo pipefail
-          test -n "$GH_TOKEN"
-          test -n "$REPO_TOKEN"
-          git remote set-url origin "https://x-access-token:${REPO_TOKEN}@github.com/${{ github.repository }}.git"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          target_slug="${TARGET_REPO//\//-}"
-          report_path=".artifacts/event-apply-report.json"
-          snapshot_dir=".artifacts/event-record-snapshot"
-          item_record="records/$target_slug/items/$ITEM_NUMBER.md"
-          closed_record="records/$target_slug/closed/$ITEM_NUMBER.md"
-
-          write_event_summary() {
-            {
-              echo "### Event review applied"
-              echo "- Item: $TARGET_REPO#$ITEM_NUMBER"
-              echo "- Synced durable comments: $synced_count"
-              echo "- Closed safe proposals: $closed_count"
-              echo "- Close reasons enabled: $CLOSE_REASONS"
-            } >> "$GITHUB_STEP_SUMMARY"
-          }
-
-          rm -rf "$snapshot_dir"
-          mkdir -p "$snapshot_dir/items" "$snapshot_dir/closed"
-          rm -f "$report_path"
-          pnpm run apply-artifacts -- \
-            --target-repo "$TARGET_REPO" \
-            --artifact-dir artifacts/event \
-            --skip-reconcile \
-            --skip-dashboard \
-            --replay-closed-artifacts
-          pnpm run apply-decisions -- \
-            --target-repo "$TARGET_REPO" \
-            --item-numbers "$ITEM_NUMBER" \
-            --apply-kind all \
-            --apply-close-reasons "$CLOSE_REASONS" \
-            --stale-min-age-days 30 \
-            --limit 1 \
-            --processed-limit 20 \
-            --min-age-minutes "$MIN_AGE_MINUTES" \
-            --close-delay-ms 1000 \
-            --comment-sync-min-age-days 0 \
-            --progress-every 1 \
-            --skip-dashboard \
-            --report-path "$report_path"
-          synced_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(r.filter((x)=>x.action==="review_comment_synced").length)' "$report_path")"
-          closed_count="$(node -e 'const fs=require("node:fs"); const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(r.filter((x)=>x.action==="closed").length)' "$report_path")"
-          if [ -e "$item_record" ]; then
-            cp "$item_record" "$snapshot_dir/items/$ITEM_NUMBER.md"
-          fi
-          if [ -e "$closed_record" ]; then
-            cp "$closed_record" "$snapshot_dir/closed/$ITEM_NUMBER.md"
-          fi
-
-          publish_once() {
-            git fetch origin main || return
-            git reset --hard origin/main || return
-            if [ -e "$snapshot_dir/closed/$ITEM_NUMBER.md" ]; then
-              mkdir -p "$(dirname "$closed_record")" || return
-              rm -f "$item_record" || return
-              cp "$snapshot_dir/closed/$ITEM_NUMBER.md" "$closed_record" || return
-            elif [ -e "$snapshot_dir/items/$ITEM_NUMBER.md" ]; then
-              if [ -e "$closed_record" ]; then
-                echo "Remote already has closed record for $target_slug#$ITEM_NUMBER; skipping open-record publish"
-                write_event_summary
-                return 0
-              fi
-              mkdir -p "$(dirname "$item_record")" || return
-              cp "$snapshot_dir/items/$ITEM_NUMBER.md" "$item_record" || return
-            else
-              echo "No event record snapshot for $target_slug#$ITEM_NUMBER"
-              write_event_summary
-              return 0
-            fi
-            if [ -e "$item_record" ]; then
-              git add "$item_record" || return
-            else
-              git rm -f --ignore-unmatch "$item_record" || return
-            fi
-            if [ -e "$closed_record" ]; then
-              git add "$closed_record" || return
-            else
-              git rm -f --ignore-unmatch "$closed_record" || return
-            fi
-            if git diff --cached --quiet; then
-              echo "No event result changes"
-              write_event_summary
-              return 0
-            fi
-            git commit -m "chore: apply event sweep result for $target_slug#$ITEM_NUMBER" || return
-            for push_attempt in 1 2 3; do
-              if git push; then
-                write_event_summary
-                return 0
-              fi
-              echo "Event push attempt $push_attempt lost the main-branch race; rebasing and retrying"
-              if ! git pull --rebase origin main; then
-                git rebase --abort || true
-                return 1
-              fi
-            done
-            git push || return
-            write_event_summary
-          }
-
-          for attempt in $(seq 1 20); do
-            if publish_once; then
-              exit 0
-            fi
-            sleep_seconds=$((attempt * 3 + RANDOM % 11))
-            echo "Event publish attempt $attempt failed; retrying from origin/main in ${sleep_seconds}s"
-            sleep "$sleep_seconds"
-          done
-          publish_once
+        run: pnpm run repair:publish-event-result
 
       - name: React to target item completion
         if: ${{ success() }}
@@ -502,33 +388,21 @@ jobs:
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
           working-directory: clawsweeper
-          build-script: build
+          build-script: build:all
 
       - name: Publish planning-started status
         if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *'))) }}
         continue-on-error: true
         working-directory: clawsweeper
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           pnpm run status -- \
             --state "Planning review" \
             --detail "Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          git add README.md
-          if git diff --cached --quiet; then
-            echo "No status changes"
-          else
-            git commit -m "chore: mark sweep planning started"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase -X theirs origin/main
-            done
-            git push
-          fi
+          pnpm run repair:publish-main -- \
+            --message "chore: mark sweep planning started" \
+            --path README.md \
+            --rebase-strategy theirs
 
       - id: mode
         run: |
@@ -608,28 +482,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           pnpm run reconcile -- --target-repo "$TARGET_REPO"
           pnpm run dashboard -- --target-repo "$TARGET_REPO"
           pnpm run status -- \
             --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
             --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          git add README.md records
-          if git diff --cached --quiet; then
-            echo "No status changes"
-          else
-            git commit -m "chore: mark sweep review in progress"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase -X theirs origin/main
-            done
-            git push
-          fi
+          pnpm run repair:publish-main -- \
+            --message "chore: mark sweep review in progress" \
+            --path README.md \
+            --path records \
+            --rebase-strategy theirs
 
   review:
     name: Review shard ${{ matrix.shard }}
@@ -754,7 +617,7 @@ jobs:
 
       - uses: ./.github/actions/setup-pnpm
         with:
-          build-script: build
+          build-script: build:all
 
       - uses: actions/download-artifact@v4
         with:
@@ -783,22 +646,11 @@ jobs:
         run: |
           pnpm run reconcile -- --target-repo "$TARGET_REPO"
           pnpm run dashboard -- --target-repo "$TARGET_REPO"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md records
-          if git diff --cached --quiet; then
-            echo "No review changes"
-          else
-            git commit -m "chore: update sweep dashboard"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase -X theirs origin/main
-            done
-            git push
-          fi
+          pnpm run repair:publish-main -- \
+            --message "chore: update sweep dashboard" \
+            --path README.md \
+            --path records \
+            --rebase-strategy theirs
 
       - name: Sync selected review comments
         if: ${{ success() }}
@@ -843,20 +695,12 @@ jobs:
             --state "Review comments checked" \
             --detail "Checked selected durable Codex review comments and synced missing or stale comments. Synced: $synced_count. Item numbers: $item_numbers." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          git add README.md records apply-report.json
-          if git diff --cached --quiet; then
-            echo "No review comment metadata changes"
-          else
-            git commit -m "chore: sync selected review comments"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase -X theirs origin/main
-            done
-            git push
-          fi
+          pnpm run repair:publish-main -- \
+            --message "chore: sync selected review comments" \
+            --path README.md \
+            --path records \
+            --path apply-report.json \
+            --rebase-strategy theirs
 
       - name: Apply selected safe close proposals
         if: ${{ success() && github.event.inputs.apply_after_review == 'true' }}
@@ -906,22 +750,12 @@ jobs:
             --state "Immediate apply checked" \
             --detail "Checked selected safe close proposals right after review publish. Closed: $closed_count/$item_count. Close reasons enabled: $close_reasons. Item numbers: $item_numbers." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md records apply-report.json
-          if git diff --cached --quiet; then
-            echo "No immediate apply changes"
-          else
-            git commit -m "chore: apply selected sweep decisions"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase -X theirs origin/main
-            done
-            git push
-          fi
+          pnpm run repair:publish-main -- \
+            --message "chore: apply selected sweep decisions" \
+            --path README.md \
+            --path records \
+            --path apply-report.json \
+            --rebase-strategy theirs
 
       - name: Continue sweep
         if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
@@ -982,7 +816,7 @@ jobs:
 
       - uses: ./.github/actions/setup-pnpm
         with:
-          build-script: build
+          build-script: build:all
 
       - name: Refresh Audit Health
         env:
@@ -999,22 +833,10 @@ jobs:
 
       - name: Commit Audit Health
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          if git diff --cached --quiet; then
-            echo "No audit health changes"
-          else
-            git commit -m "chore: update sweep audit health"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase -X theirs origin/main
-            done
-            git push
-          fi
+          pnpm run repair:publish-main -- \
+            --message "chore: update sweep audit health" \
+            --path README.md \
+            --rebase-strategy theirs
 
   apply-existing:
     name: Apply close proposals
@@ -1061,7 +883,7 @@ jobs:
 
       - uses: ./.github/actions/setup-pnpm
         with:
-          build-script: build
+          build-script: build:all
 
       - name: Sync before applying decisions
         run: git pull --rebase
@@ -1096,8 +918,6 @@ jobs:
           if [ -n "$min_age_minutes" ]; then
             min_age_minutes_arg=(--min-age-minutes "$min_age_minutes")
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p .artifacts/apply-reports
           paths_include_readme() {
             for path in "$@"; do
@@ -1107,63 +927,17 @@ jobs:
             done
             return 1
           }
-          sync_for_publish_retry() {
-            if ! paths_include_readme "$@"; then
-              git restore --staged README.md || true
-              git restore README.md || true
-            fi
-            if ! git diff --quiet || ! git diff --cached --quiet; then
-              echo "Dirty worktree before publish retry:"
-              git status --short
-              return 1
-            fi
-            git fetch origin main
-            if git rebase -X theirs origin/main; then
-              return 0
-            fi
-            conflicts="$(git diff --name-only --diff-filter=U || true)"
-            if [ -z "$conflicts" ]; then
-              return 1
-            fi
-            unsupported_conflict=0
-            while IFS= read -r path; do
-              case "$path" in
-                records/*/items/*.md)
-                  git rm -f -- "$path" || true
-                  ;;
-                records/*/closed/*.md | README.md | apply-report.json)
-                  git add -- "$path"
-                  ;;
-                *)
-                  echo "Unsupported rebase conflict path: $path"
-                  unsupported_conflict=1
-                  ;;
-              esac
-            done <<< "$conflicts"
-            if [ "$unsupported_conflict" -ne 0 ]; then
-              return 1
-            fi
-            GIT_EDITOR=true git rebase --continue
-          }
           publish_changes() {
             message="$1"
             shift
-            git add "$@"
-            if git diff --cached --quiet; then
-              echo "No changes for: $message"
-              return 0
-            fi
-            git commit -m "$message"
-            for _attempt in 1 2 3; do
-              if git push; then
-                return 0
-              fi
-              if ! sync_for_publish_retry "$@"; then
-                git rebase --abort || true
-                return 1
-              fi
+            publish_args=(--message "$message" --rebase-strategy apply-records)
+            for path in "$@"; do
+              publish_args+=(--path "$path")
             done
-            git push
+            if ! paths_include_readme "$@"; then
+              publish_args+=(--restore README.md)
+            fi
+            pnpm run repair:publish-main -- "${publish_args[@]}"
           }
           publish_readme_status() {
             message="$1"
@@ -1392,22 +1166,12 @@ jobs:
             echo "No proposed closes were ready; no apply results to commit."
             exit 0
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md records apply-report.json
-          if git diff --cached --quiet; then
-            echo "No remaining apply changes"
-          else
-            git commit -m "chore: apply sweep decisions"
-            for _attempt in 1 2 3; do
-              if git push; then
-                exit 0
-              fi
-              git fetch origin main
-              git rebase -X theirs origin/main
-            done
-            git push
-          fi
+          pnpm run repair:publish-main -- \
+            --message "chore: apply sweep decisions" \
+            --path README.md \
+            --path records \
+            --path apply-report.json \
+            --rebase-strategy apply-records
 
       - name: Continue apply sweep
         if: ${{ success() }}

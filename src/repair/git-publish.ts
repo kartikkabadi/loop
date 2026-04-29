@@ -1,0 +1,208 @@
+import { spawnSync } from "node:child_process";
+
+export type GitRunResult = {
+  status: number;
+  stdout: string;
+  stderr: string;
+};
+
+export type GitPublishOptions = {
+  message: string;
+  paths: readonly string[];
+  restorePaths?: readonly string[];
+  maxAttempts?: number;
+  pushAttempts?: number;
+  remote?: string;
+  branch?: string;
+  rebaseStrategy?: RebaseStrategy;
+};
+
+export type RebaseStrategy = "normal" | "theirs" | "apply-records";
+
+export type GitRunOptions = {
+  allowFailure?: boolean;
+  displayArgs?: readonly string[];
+};
+
+export type PublishResult = "committed" | "unchanged";
+
+export function configureGitUser(): void {
+  runGit(["config", "user.name", process.env.CLAWSWEEPER_GIT_USER_NAME || "github-actions[bot]"]);
+  runGit([
+    "config",
+    "user.email",
+    process.env.CLAWSWEEPER_GIT_USER_EMAIL ||
+      "41898282+github-actions[bot]@users.noreply.github.com",
+  ]);
+}
+
+export function setTokenOrigin(token: string, repository: string): void {
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)) {
+    throw new Error(`Invalid repository for token origin: ${repository}`);
+  }
+  runGit(
+    ["remote", "set-url", "origin", `https://x-access-token:${token}@github.com/${repository}.git`],
+    {
+      displayArgs: [
+        "remote",
+        "set-url",
+        "origin",
+        `https://x-access-token:***@github.com/${repository}.git`,
+      ],
+    },
+  );
+}
+
+export function runGit(args: readonly string[], options: GitRunOptions = {}): string {
+  const result = spawnGit(args, options);
+  if (result.status !== 0 && !options.allowFailure) {
+    const detail =
+      result.stderr || result.stdout || `git ${args.join(" ")} exited ${result.status}`;
+    throw new Error(detail.trim());
+  }
+  return result.stdout;
+}
+
+export function spawnGit(args: readonly string[], options: GitRunOptions = {}): GitRunResult {
+  console.log(`$ git ${(options.displayArgs ?? args).join(" ")}`);
+  const child = spawnSync("git", [...args], {
+    env: process.env,
+    encoding: "utf8",
+  });
+  if (child.stdout) process.stdout.write(child.stdout);
+  if (child.stderr) process.stderr.write(child.stderr);
+  return {
+    status: child.status ?? 1,
+    stdout: child.stdout ?? "",
+    stderr: child.stderr ?? "",
+  };
+}
+
+export function stagePaths(paths: readonly string[]): void {
+  const uniquePaths = uniqueNonEmpty(paths);
+  if (uniquePaths.length === 0) throw new Error("No paths were provided for publishing");
+  for (const path of uniquePaths) {
+    if (hasWorktreePath(path) || spawnGit(["status", "--porcelain", "--", path]).stdout.trim()) {
+      runGit(["add", "-A", "--", path]);
+    } else {
+      console.log(`Skipping untracked missing publish path: ${path}`);
+    }
+  }
+}
+
+export function restoreWorktree(paths: readonly string[]): void {
+  const uniquePaths = uniqueNonEmpty(paths);
+  if (uniquePaths.length === 0) return;
+  for (const path of uniquePaths) {
+    if (hasWorktreePath(path)) runGit(["restore", "--worktree", "--", path]);
+    else console.log(`Skipping untracked restore path: ${path}`);
+  }
+}
+
+export function hasStagedChanges(): boolean {
+  return spawnGit(["diff", "--cached", "--quiet"]).status !== 0;
+}
+
+export function hasWorktreePath(path: string): boolean {
+  return spawnGit(["ls-files", "--error-unmatch", path]).status === 0;
+}
+
+export function publishMainCommit(options: GitPublishOptions): PublishResult {
+  const remote = options.remote ?? "origin";
+  const branch = options.branch ?? "main";
+  const maxAttempts = positiveInt(options.maxAttempts, 8);
+  const pushAttempts = positiveInt(options.pushAttempts, 3);
+  const rebaseStrategy = options.rebaseStrategy ?? "normal";
+
+  configureGitUser();
+  stagePaths(options.paths);
+  if (!hasStagedChanges()) {
+    console.log("No publish changes");
+    return "unchanged";
+  }
+
+  runGit(["commit", "-m", options.message]);
+  restoreWorktree(options.restorePaths ?? []);
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    if (pushCommit({ remote, branch, pushAttempts, rebaseStrategy })) return "committed";
+    const delaySeconds = attempt * 3 + Math.floor(Math.random() * 11);
+    console.log(
+      `Publish attempt ${attempt} failed; retrying from ${remote}/${branch} in ${delaySeconds}s`,
+    );
+    sleep(delaySeconds * 1000);
+  }
+
+  if (pushCommit({ remote, branch, pushAttempts, rebaseStrategy })) return "committed";
+  throw new Error(`Failed to publish commit after ${maxAttempts} attempts`);
+}
+
+export function pushCommit(options: {
+  remote?: string;
+  branch?: string;
+  pushAttempts?: number;
+  rebaseStrategy?: RebaseStrategy;
+}): boolean {
+  const remote = options.remote ?? "origin";
+  const branch = options.branch ?? "main";
+  const pushAttempts = positiveInt(options.pushAttempts, 3);
+  const rebaseStrategy = options.rebaseStrategy ?? "normal";
+
+  for (let pushAttempt = 1; pushAttempt <= pushAttempts; pushAttempt += 1) {
+    if (spawnGit(["push", remote, `HEAD:${branch}`]).status === 0) return true;
+    console.log(`Push attempt ${pushAttempt} lost the ${branch} race; rebasing`);
+    runGit(["fetch", remote, branch], { allowFailure: true });
+    const rebaseArgs =
+      rebaseStrategy === "theirs" || rebaseStrategy === "apply-records"
+        ? ["rebase", "-X", "theirs", `${remote}/${branch}`]
+        : ["rebase", `${remote}/${branch}`];
+    if (spawnGit(rebaseArgs).status !== 0) {
+      if (rebaseStrategy === "apply-records" && resolveApplyRecordConflicts()) continue;
+      runGit(["rebase", "--abort"], { allowFailure: true });
+      return false;
+    }
+  }
+  return spawnGit(["push", remote, `HEAD:${branch}`]).status === 0;
+}
+
+export function hardResetToRemoteMain(remote = "origin", branch = "main"): void {
+  runGit(["fetch", remote, branch]);
+  runGit(["reset", "--hard", `${remote}/${branch}`]);
+}
+
+export function uniqueNonEmpty(values: readonly string[]): string[] {
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+}
+
+function positiveInt(value: number | undefined, fallback: number): number {
+  return value !== undefined && Number.isInteger(value) && value > 0 ? value : fallback;
+}
+
+function resolveApplyRecordConflicts(): boolean {
+  const conflicts = runGit(["diff", "--name-only", "--diff-filter=U"], { allowFailure: true })
+    .split(/\r?\n/)
+    .map((path) => path.trim())
+    .filter(Boolean);
+  if (conflicts.length === 0) return false;
+
+  for (const path of conflicts) {
+    if (/^records\/[^/]+\/items\/[^/]+\.md$/.test(path)) {
+      runGit(["rm", "-f", "--", path], { allowFailure: true });
+    } else if (
+      /^records\/[^/]+\/closed\/[^/]+\.md$/.test(path) ||
+      path === "README.md" ||
+      path === "apply-report.json"
+    ) {
+      runGit(["add", "--", path]);
+    } else {
+      console.log(`Unsupported apply rebase conflict path: ${path}`);
+      return false;
+    }
+  }
+
+  return spawnGit(["-c", "core.editor=true", "rebase", "--continue"]).status === 0;
+}
+
+function sleep(milliseconds: number): void {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
+}

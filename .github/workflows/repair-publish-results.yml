@@ -70,9 +70,6 @@ jobs:
           CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           git fetch origin main
           git checkout -B main origin/main
           pnpm run repair:publish-result -- artifacts \
@@ -82,23 +79,11 @@ jobs:
             --conclusion "$CONCLUSION"
           pnpm run repair:finalize-open-prs -- --write-report
           pnpm run repair:publish-result
-          git add docs/repair/README.md results jobs/openclaw/closed repair-apply-report.json
-          if git diff --cached --quiet; then
-            echo "No result changes"
-            exit 0
-          fi
-          git commit -m "chore: publish cluster result"
-
-          for attempt in 1 2 3; do
-            if git push origin HEAD:main; then
-              exit 0
-            fi
-            echo "Push attempt ${attempt} failed; rebasing existing ledger commit onto origin/main"
-            git fetch origin main
-            if git rebase origin/main; then
-              continue
-            fi
-            git rebase --abort || true
-            exit 1
-          done
-          exit 1
+          pnpm run repair:publish-main -- \
+            --message "chore: publish cluster result" \
+            --path docs/repair/README.md \
+            --path results \
+            --path jobs/openclaw/closed \
+            --path repair-apply-report.json \
+            --max-attempts 12 \
+            --push-attempts 4
