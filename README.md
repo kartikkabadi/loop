@@ -94,12 +94,12 @@ Last dashboard update: Apr 29, 2026, 09:19 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4411 |
-| Open PRs | 3474 |
-| Open items total | 7885 |
+| Open issues | 4233 |
+| Open PRs | 3285 |
+| Open items total | 7518 |
 | Reviewed files | 7518 |
-| Unreviewed open items | 367 |
-| Due now by cadence | 2325 |
+| Unreviewed open items | 0 |
+| Due now by cadence | 1958 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 621 |
 | Closed by Codex apply | 10749 |
@@ -110,24 +110,24 @@ Last dashboard update: Apr 29, 2026, 09:19 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6962 | 6601 | 361 | 2254 | 0 | 575 | 10741 | Apr 29, 2026, 09:17 UTC | Apr 29, 2026, 09:12 UTC | 719 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 923 | 917 | 6 | 71 | 0 | 46 | 8 | Apr 29, 2026, 08:51 UTC | Apr 29, 2026, 08:25 UTC | 610 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6601 | 6601 | 0 | 1893 | 0 | 575 | 10741 | Apr 29, 2026, 09:17 UTC | Apr 29, 2026, 09:12 UTC | 718 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 917 | 917 | 0 | 65 | 0 | 46 | 8 | Apr 29, 2026, 08:51 UTC | Apr 29, 2026, 08:25 UTC | 608 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review publish complete | Apr 29, 2026, 09:17 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25100145946) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 09:19 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25100690776) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 09:19 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25100789445) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 09:17 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25100690776) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. Latest comment sync: Apr 29, 2026, 09:18 UTC.
+Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. Latest comment sync: Apr 29, 2026, 09:14 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 3 | 11 | 1 | 32 | 215 | 0 |
-| Last hour | 1069 | 14 | 1055 | 16 | 54 | 1329 | 2 |
+| Last 15 minutes | 14 | 3 | 11 | 1 | 32 | 213 | 0 |
+| Last hour | 1069 | 14 | 1055 | 16 | 54 | 1326 | 2 |
 | Last 24 hours | 6890 | 451 | 6439 | 23 | 754 | 2351 | 25 |
 
 ### Recently Closed Across Repos
@@ -173,7 +173,6 @@ Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. L
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74244](https://github.com/openclaw/openclaw/issues/74244) | [Bug]: Gemini API error (400): missing `thought_signature` | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74244.md) | complete | Apr 29, 2026, 09:17 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74214](https://github.com/openclaw/openclaw/pull/74214) | fix(agents): adopt peer-rotated OAuth credential from in-process cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74214.md) | complete | Apr 29, 2026, 09:17 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74040](https://github.com/openclaw/openclaw/pull/74040) | fix: guard against empty prompt race in runEmbeddedPiAgent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74040.md) | complete | Apr 29, 2026, 09:13 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74243](https://github.com/openclaw/openclaw/pull/74243) | media: keep sendable images when optimization fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74243.md) | complete | Apr 29, 2026, 09:13 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74038](https://github.com/openclaw/openclaw/pull/74038) | fix(gateway): skip pricing bootstrap in replace mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74038.md) | complete | Apr 29, 2026, 09:12 UTC |
@@ -182,6 +181,7 @@ Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#57608](https://github.com/openclaw/openclaw/pull/57608) | fix(channels): googlechat auth logging + Zalo mediaMaxBytes default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/57608.md) | complete | Apr 29, 2026, 09:12 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74224](https://github.com/openclaw/openclaw/pull/74224) | fix(tui): resync streaming watchdog after reconnect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74224.md) | complete | Apr 29, 2026, 09:11 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74241](https://github.com/openclaw/openclaw/issues/74241) | [Bug] Agent timezone desync causes perception drift in multi-timezone setups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74241.md) | complete | Apr 29, 2026, 09:10 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74234](https://github.com/openclaw/openclaw/issues/74234) | [Bug]: Possibly incorrect gpg key fingerprint validation in Dockerfile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74234.md) | failed | Apr 29, 2026, 09:08 UTC |
 
 </details>
 
@@ -199,12 +199,12 @@ Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 09:17 UTC
+Updated: Apr 29, 2026, 09:19 UTC
 
-State: Review publish complete
+State: Planning review
 
-Merged review artifacts for run 25100145946. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100145946](https://github.com/openclaw/clawsweeper/actions/runs/25100145946)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100789445](https://github.com/openclaw/clawsweeper/actions/runs/25100789445)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -212,11 +212,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100145946](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3527 |
-| Open PRs | 3435 |
-| Open items total | 6962 |
+| Open issues | 3349 |
+| Open PRs | 3252 |
+| Open items total | 6601 |
 | Reviewed files | 6601 |
-| Unreviewed open items | 361 |
+| Unreviewed open items | 0 |
 | Archived closed files | 14155 |
 
 #### Review Outcomes
@@ -243,7 +243,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100145946](https://
 | Daily PR cadence | 2122/2631 current (509 due, 80.7%) |
 | Daily new issue cadence (<30d) | 716/1134 current (418 due, 63.1%) |
 | Weekly older issue cadence | 1792/1797 current (5 due, 99.7%) |
-| Due now by cadence | 2254 |
+| Due now by cadence | 1893 |
 
 ### Audit Health
 
@@ -279,12 +279,12 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. Latest comment sync: Apr 29, 2026, 09:18 UTC.
+Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. Latest comment sync: Apr 29, 2026, 09:14 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 3 | 11 | 1 | 32 | 215 | 0 |
-| Last hour | 568 | 14 | 554 | 5 | 53 | 719 | 2 |
+| Last 15 minutes | 14 | 3 | 11 | 1 | 32 | 213 | 0 |
+| Last hour | 568 | 14 | 554 | 5 | 53 | 718 | 2 |
 | Last 24 hours | 5961 | 451 | 5510 | 12 | 741 | 1555 | 25 |
 
 #### Recently Closed
@@ -322,7 +322,6 @@ Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. L
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
 | [#74244](https://github.com/openclaw/openclaw/issues/74244) | [Bug]: Gemini API error (400): missing `thought_signature` | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74244.md) | complete | Apr 29, 2026, 09:17 UTC |
-| [#74214](https://github.com/openclaw/openclaw/pull/74214) | fix(agents): adopt peer-rotated OAuth credential from in-process cache | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74214.md) | complete | Apr 29, 2026, 09:17 UTC |
 | [#74040](https://github.com/openclaw/openclaw/pull/74040) | fix: guard against empty prompt race in runEmbeddedPiAgent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74040.md) | complete | Apr 29, 2026, 09:13 UTC |
 | [#74243](https://github.com/openclaw/openclaw/pull/74243) | media: keep sendable images when optimization fails | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74243.md) | complete | Apr 29, 2026, 09:13 UTC |
 | [#74038](https://github.com/openclaw/openclaw/pull/74038) | fix(gateway): skip pricing bootstrap in replace mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74038.md) | complete | Apr 29, 2026, 09:12 UTC |
@@ -331,6 +330,7 @@ Latest review: Apr 29, 2026, 09:17 UTC. Latest close: Apr 29, 2026, 09:12 UTC. L
 | [#57608](https://github.com/openclaw/openclaw/pull/57608) | fix(channels): googlechat auth logging + Zalo mediaMaxBytes default | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/57608.md) | complete | Apr 29, 2026, 09:12 UTC |
 | [#74224](https://github.com/openclaw/openclaw/pull/74224) | fix(tui): resync streaming watchdog after reconnect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74224.md) | complete | Apr 29, 2026, 09:11 UTC |
 | [#74241](https://github.com/openclaw/openclaw/issues/74241) | [Bug] Agent timezone desync causes perception drift in multi-timezone setups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74241.md) | complete | Apr 29, 2026, 09:10 UTC |
+| [#74234](https://github.com/openclaw/openclaw/issues/74234) | [Bug]: Possibly incorrect gpg key fingerprint validation in Dockerfile | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74234.md) | failed | Apr 29, 2026, 09:08 UTC |
 
 </details>
 
@@ -360,10 +360,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100690776](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 884 |
-| Open PRs | 39 |
-| Open items total | 923 |
+| Open PRs | 33 |
+| Open items total | 917 |
 | Reviewed files | 917 |
-| Unreviewed open items | 6 |
+| Unreviewed open items | 0 |
 | Archived closed files | 23 |
 
 #### Review Outcomes
@@ -390,7 +390,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25100690776](https://
 | Daily PR cadence | 20/21 current (1 due, 95.2%) |
 | Daily new issue cadence (<30d) | 191/195 current (4 due, 97.9%) |
 | Weekly older issue cadence | 639/645 current (6 due, 99.1%) |
-| Due now by cadence | 71 |
+| Due now by cadence | 65 |
 
 ### Audit Health
 
@@ -429,7 +429,7 @@ Latest review: Apr 29, 2026, 08:51 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 501 | 0 | 501 | 11 | 1 | 610 | 0 |
+| Last hour | 501 | 0 | 501 | 11 | 1 | 608 | 0 |
 | Last 24 hours | 929 | 0 | 929 | 11 | 13 | 796 | 0 |
 
 #### Recently Closed
