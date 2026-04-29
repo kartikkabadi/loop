@@ -95,23 +95,23 @@ Last dashboard update: Apr 29, 2026, 13:08 UTC
 | --- | ---: |
 | Covered repositories | 2 |
 | Open issues | 4421 |
-| Open PRs | 3460 |
-| Open items total | 7881 |
-| Reviewed files | 7520 |
+| Open PRs | 3459 |
+| Open items total | 7880 |
+| Reviewed files | 7519 |
 | Unreviewed open items | 361 |
-| Due now by cadence | 2729 |
-| Proposed closes awaiting apply | 1 |
+| Due now by cadence | 2731 |
+| Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 642 |
-| Closed by Codex apply | 10777 |
+| Closed by Codex apply | 10778 |
 | Failed or stale reviews | 17 |
-| Archived closed files | 14277 |
+| Archived closed files | 14278 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6954 | 6598 | 356 | 2667 | 1 | 597 | 10769 | Apr 29, 2026, 13:05 UTC | Apr 29, 2026, 12:54 UTC | 421 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 922 | 5 | 62 | 0 | 45 | 8 | Apr 29, 2026, 12:54 UTC | Apr 29, 2026, 08:25 UTC | 599 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6953 | 6597 | 356 | 2669 | 0 | 597 | 10770 | Apr 29, 2026, 13:05 UTC | Apr 29, 2026, 13:08 UTC | 421 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 922 | 5 | 62 | 0 | 45 | 8 | Apr 29, 2026, 12:54 UTC | Apr 29, 2026, 08:25 UTC | 584 |
 
 ### Current Runs
 
@@ -122,18 +122,19 @@ Last dashboard update: Apr 29, 2026, 13:08 UTC
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 13:05 UTC. Latest close: Apr 29, 2026, 12:54 UTC. Latest comment sync: Apr 29, 2026, 13:05 UTC.
+Latest review: Apr 29, 2026, 13:05 UTC. Latest close: Apr 29, 2026, 13:08 UTC. Latest comment sync: Apr 29, 2026, 13:05 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 49 | 1 | 48 | 0 | 2 | 52 | 0 |
-| Last hour | 443 | 6 | 437 | 0 | 15 | 1020 | 2 |
-| Last 24 hours | 6296 | 411 | 5885 | 11 | 741 | 2276 | 29 |
+| Last 15 minutes | 41 | 1 | 40 | 0 | 3 | 52 | 0 |
+| Last hour | 423 | 6 | 417 | 0 | 15 | 1005 | 2 |
+| Last 24 hours | 6296 | 411 | 5885 | 11 | 742 | 2276 | 29 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74221](https://github.com/openclaw/openclaw/pull/74221) | fix(openai-codex): show device-pairing code in SSH (#74212) | duplicate or superseded | Apr 29, 2026, 13:08 UTC | [records/openclaw-openclaw/closed/74221.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74221.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74311](https://github.com/openclaw/openclaw/pull/74311) | docs: classify media decode overhead as performance-only | closed externally after review | Apr 29, 2026, 12:54 UTC | [records/openclaw-openclaw/closed/74311.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74311.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74190](https://github.com/openclaw/openclaw/pull/74190) | feat(plugins): add SQLite plugin state store | kept open | Apr 29, 2026, 12:53 UTC | [records/openclaw-openclaw/closed/74190.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74190.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74086](https://github.com/openclaw/openclaw/issues/74086) | [Bug]: Regression: Telegram provider fails on Windows after 2026.4.23 (deleteWebhook / setMyCommands errors) | already implemented on main | Apr 29, 2026, 12:48 UTC | [records/openclaw-openclaw/closed/74086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74086.md) |
@@ -143,7 +144,6 @@ Latest review: Apr 29, 2026, 13:05 UTC. Latest close: Apr 29, 2026, 12:54 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74332](https://github.com/openclaw/openclaw/issues/74332) | v2026.4.24: Plugin synthetic operator client lacks `operator.admin` scope, breaking `subagent.deleteSession` for memory-core dreaming narrative cleanup | already implemented on main | Apr 29, 2026, 12:38 UTC | [records/openclaw-openclaw/closed/74332.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74332.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74333](https://github.com/openclaw/openclaw/issues/74333) | v2026.4.24: Agent's `memory_search` tool never invokes `recordShortTermRecalls`; only the human CLI does, leaving `recallCount=0` for all agent-driven recalls | already implemented on main | Apr 29, 2026, 12:38 UTC | [records/openclaw-openclaw/closed/74333.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74333.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74245](https://github.com/openclaw/openclaw/issues/74245) | [Bug]: deepseek extension missing provider-policy-api.ts — contextWindow and cost default to wrong values | closed externally after review | Apr 29, 2026, 12:38 UTC | [records/openclaw-openclaw/closed/74245.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74245.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74326](https://github.com/openclaw/openclaw/pull/74326) | fix(deepseek): add provider-policy-api to hydrate contextWindow and cost from catalog | closed externally after review | Apr 29, 2026, 12:38 UTC | [records/openclaw-openclaw/closed/74326.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74326.md) |
 
 ### Work Candidates Across Repos
 
@@ -203,7 +203,7 @@ Updated: Apr 29, 2026, 13:08 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74221.
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 1, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25110631504](https://github.com/openclaw/clawsweeper/actions/runs/25110631504)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -213,11 +213,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25110631504](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3533 |
-| Open PRs | 3421 |
-| Open items total | 6954 |
-| Reviewed files | 6598 |
+| Open PRs | 3420 |
+| Open items total | 6953 |
+| Reviewed files | 6597 |
 | Unreviewed open items | 356 |
-| Archived closed files | 14254 |
+| Archived closed files | 14255 |
 
 #### Review Outcomes
 
@@ -225,25 +225,25 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25110631504](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3354 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3227 |
-| Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6581 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 3226 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6580 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 597 |
-| Closed by Codex apply | 10769 |
+| Closed by Codex apply | 10770 |
 | Failed or stale reviews | 17 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 91/1056 current (965 due, 8.6%) |
-| Hourly hot item cadence (<7d) | 91/1056 current (965 due, 8.6%) |
+| Hourly cadence coverage | 88/1055 current (967 due, 8.3%) |
+| Hourly hot item cadence (<7d) | 88/1055 current (967 due, 8.3%) |
 | Daily cadence coverage | 2397/3740 current (1343 due, 64.1%) |
 | Daily PR cadence | 1783/2616 current (833 due, 68.2%) |
 | Daily new issue cadence (<30d) | 614/1124 current (510 due, 54.6%) |
 | Weekly older issue cadence | 1799/1802 current (3 due, 99.8%) |
-| Due now by cadence | 2667 |
+| Due now by cadence | 2669 |
 
 ### Audit Health
 
@@ -279,18 +279,19 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 13:05 UTC. Latest close: Apr 29, 2026, 12:54 UTC. Latest comment sync: Apr 29, 2026, 13:05 UTC.
+Latest review: Apr 29, 2026, 13:05 UTC. Latest close: Apr 29, 2026, 13:08 UTC. Latest comment sync: Apr 29, 2026, 13:05 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 32 | 1 | 31 | 0 | 2 | 32 | 0 |
-| Last hour | 181 | 6 | 175 | 0 | 15 | 421 | 2 |
-| Last 24 hours | 5362 | 411 | 4951 | 11 | 728 | 1497 | 29 |
+| Last 15 minutes | 32 | 1 | 31 | 0 | 3 | 32 | 0 |
+| Last hour | 161 | 6 | 155 | 0 | 15 | 421 | 2 |
+| Last 24 hours | 5362 | 411 | 4951 | 11 | 729 | 1497 | 29 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74221](https://github.com/openclaw/openclaw/pull/74221) | fix(openai-codex): show device-pairing code in SSH (#74212) | duplicate or superseded | Apr 29, 2026, 13:08 UTC | [records/openclaw-openclaw/closed/74221.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74221.md) |
 | [#74311](https://github.com/openclaw/openclaw/pull/74311) | docs: classify media decode overhead as performance-only | closed externally after review | Apr 29, 2026, 12:54 UTC | [records/openclaw-openclaw/closed/74311.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74311.md) |
 | [#74190](https://github.com/openclaw/openclaw/pull/74190) | feat(plugins): add SQLite plugin state store | kept open | Apr 29, 2026, 12:53 UTC | [records/openclaw-openclaw/closed/74190.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74190.md) |
 | [#74086](https://github.com/openclaw/openclaw/issues/74086) | [Bug]: Regression: Telegram provider fails on Windows after 2026.4.23 (deleteWebhook / setMyCommands errors) | already implemented on main | Apr 29, 2026, 12:48 UTC | [records/openclaw-openclaw/closed/74086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74086.md) |
@@ -300,7 +301,6 @@ Latest review: Apr 29, 2026, 13:05 UTC. Latest close: Apr 29, 2026, 12:54 UTC. L
 | [#74332](https://github.com/openclaw/openclaw/issues/74332) | v2026.4.24: Plugin synthetic operator client lacks `operator.admin` scope, breaking `subagent.deleteSession` for memory-core dreaming narrative cleanup | already implemented on main | Apr 29, 2026, 12:38 UTC | [records/openclaw-openclaw/closed/74332.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74332.md) |
 | [#74333](https://github.com/openclaw/openclaw/issues/74333) | v2026.4.24: Agent's `memory_search` tool never invokes `recordShortTermRecalls`; only the human CLI does, leaving `recallCount=0` for all agent-driven recalls | already implemented on main | Apr 29, 2026, 12:38 UTC | [records/openclaw-openclaw/closed/74333.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74333.md) |
 | [#74245](https://github.com/openclaw/openclaw/issues/74245) | [Bug]: deepseek extension missing provider-policy-api.ts — contextWindow and cost default to wrong values | closed externally after review | Apr 29, 2026, 12:38 UTC | [records/openclaw-openclaw/closed/74245.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74245.md) |
-| [#74326](https://github.com/openclaw/openclaw/pull/74326) | fix(deepseek): add provider-policy-api to hydrate contextWindow and cost from catalog | closed externally after review | Apr 29, 2026, 12:38 UTC | [records/openclaw-openclaw/closed/74326.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74326.md) |
 
 #### Work Candidates
 
@@ -428,8 +428,8 @@ Latest review: Apr 29, 2026, 12:54 UTC. Latest close: Apr 29, 2026, 08:25 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 17 | 0 | 17 | 0 | 0 | 20 | 0 |
-| Last hour | 262 | 0 | 262 | 0 | 0 | 599 | 0 |
+| Last 15 minutes | 9 | 0 | 9 | 0 | 0 | 20 | 0 |
+| Last hour | 262 | 0 | 262 | 0 | 0 | 584 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 0 | 13 | 779 | 0 |
 
 #### Recently Closed
