@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-29T13:19:10.777Z",
+  "updated_at": "2026-04-29T13:38:41.642Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74102:4341160275:2026-04-29T05:39:44Z:clawsweeper_auto_repair",
@@ -4042,7 +4042,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:19:10.776Z",
+      "processed_at": "2026-04-29T13:38:41.642Z",
       "target": null
     },
     {
@@ -4066,7 +4066,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:19:10.776Z",
+      "processed_at": "2026-04-29T13:38:41.642Z",
       "target": null
     },
     {
@@ -4090,7 +4090,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:19:10.776Z",
+      "processed_at": "2026-04-29T13:38:41.642Z",
       "target": null
     },
     {
@@ -4141,17 +4141,11 @@
       "trusted_bot_author": null,
       "automation_source": null,
       "repair_reason": null,
-      "expected_head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
+      "expected_head_sha": null,
       "finding_id": null,
-      "status": "executed",
-      "processed_at": "2026-04-29T13:19:10.776Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "smoke/clawsweeper-event-automerge-20260429131236",
-        "head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
-        "cluster_id": "automerge-openclaw-clawsweeper-18",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-18.md"
-      }
+      "status": "skipped",
+      "processed_at": "2026-04-29T13:38:41.642Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/clawsweeper:18:4343989790:2026-04-29T13:18:25Z:clawsweeper_needs_human",
@@ -4173,14 +4167,38 @@
       "repair_reason": "structured ClawSweeper verdict: needs-human (sha=dbdf7be991a3e3a7098a6f93e48d5fe049689380)",
       "expected_head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
       "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-29T13:38:41.642Z",
+      "target": null
+    },
+    {
+      "idempotency_key": "comment-router:openclaw/clawsweeper:19:4344234603:2026-04-29T13:37:51Z:automerge",
+      "comment_id": "4344234603",
+      "comment_version_key": "4344234603:2026-04-29T13:37:51Z",
+      "comment_url": "https://github.com/openclaw/clawsweeper/pull/19#issuecomment-4344234603",
+      "comment_created_at": "2026-04-29T13:37:51Z",
+      "comment_updated_at": "2026-04-29T13:37:51Z",
+      "repo": "openclaw/clawsweeper",
+      "issue_number": 19,
+      "author": "steipete",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "slash",
+      "command": "automerge",
+      "intent": "automerge",
+      "trusted_bot": false,
+      "trusted_bot_author": null,
+      "automation_source": null,
+      "repair_reason": null,
+      "expected_head_sha": null,
+      "finding_id": null,
       "status": "executed",
-      "processed_at": "2026-04-29T13:19:10.776Z",
+      "processed_at": "2026-04-29T13:38:41.642Z",
       "target": {
         "kind": "pull_request",
-        "branch": "smoke/clawsweeper-event-automerge-20260429131236",
-        "head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
-        "cluster_id": "automerge-openclaw-clawsweeper-18",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-18.md"
+        "branch": "smoke/automerge-review-fix-risk-dedupe",
+        "head_sha": "d1572999c87e3bdede1933a417391e218ab32ddd",
+        "cluster_id": "automerge-openclaw-clawsweeper-19",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-19.md"
       }
     }
   ]
