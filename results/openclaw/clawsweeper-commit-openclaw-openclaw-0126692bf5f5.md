@@ -2,16 +2,16 @@
 repo: "openclaw/openclaw"
 cluster_id: "clawsweeper-commit-openclaw-openclaw-0126692bf5f5"
 mode: "autonomous"
-run_id: "25124606198"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25124606198"
-head_sha: "7ea202eaffda8ccbd1ece766c421d4d04c50922e"
+run_id: "25126940543"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25126940543"
+head_sha: "44f2c0cf9df747654ac985fca09aa833ca00e21f"
 workflow_conclusion: "success"
-result_status: "planned"
-published_at: "2026-04-29T17:58:39.924Z"
+result_status: "blocked"
+published_at: "2026-04-29T19:07:29.479Z"
 canonical: null
 canonical_issue: null
 canonical_pr: null
-actions_total: 1
+actions_total: 2
 fix_executed: 0
 fix_failed: 0
 fix_blocked: 0
@@ -25,23 +25,23 @@ needs_human_count: 0
 
 Repo: openclaw/openclaw
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25124606198](https://github.com/openclaw/clawsweeper/actions/runs/25124606198)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25126940543](https://github.com/openclaw/clawsweeper/actions/runs/25126940543)
 
 Workflow conclusion: success
 
-Worker result: planned
+Worker result: blocked
 
 Canonical: unknown
 
 ## Summary
 
-Found one medium-confidence docs deployment compatibility risk: the checker now allows `th`, but current official Mintlify schema docs do not list `th` as a supported `navigation.languages[].language` code.
+Target checkout is unavailable in this worker workspace. The workspace is openclaw/clawsweeper, and no openclaw/openclaw checkout or target files were present, so I could not verify whether the reported Thai Mintlify navigation compatibility issue still exists on latest main. I am returning a blocked implementation result with a narrow fix artifact for an executor that has the target checkout.
 
 ## Impact
 
 | Metric | Count |
 | --- | ---: |
-| Worker actions | 1 |
+| Worker actions | 2 |
 | Fix executed | 0 |
 | Fix failed | 0 |
 | Fix blocked | 0 |
@@ -66,7 +66,8 @@ Found one medium-confidence docs deployment compatibility risk: the checker now 
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| cluster:clawsweeper-commit-openclaw-openclaw-0126692bf5f5 | build_fix_artifact | planned |  | ClawSweeper found an actionable commit-level bug/regression candidate. |
+| cluster:clawsweeper-commit-openclaw-openclaw-0126692bf5f5 | fix_needed | blocked |  | Implementation is blocked because the target openclaw/openclaw checkout is unavailable in this read-only ClawSweeper workspace. |
+| cluster:clawsweeper-commit-openclaw-openclaw-0126692bf5f5 | build_fix_artifact | planned |  | The artifact gives the executor a narrow repair plan, but code changes must wait for a target repository checkout. |
 
 ## Needs Human
 
