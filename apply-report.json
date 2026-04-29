@@ -1,7 +1,57 @@
 [
   {
-    "number": 16670,
+    "number": 50762,
     "action": "review_comment_synced",
     "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 50762,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 62024,
+    "action": "skipped_open_closing_pr",
+    "reason": "open PR #72580 (fix(discord): preserve explicit outbound target prefixes) is a closing reference"
+  },
+  {
+    "number": 64830,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 64830,
+    "action": "closed",
+    "reason": "duplicate or superseded"
+  },
+  {
+    "number": 65123,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 65123,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 65131,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 65131,
+    "action": "closed",
+    "reason": "already implemented on main"
+  },
+  {
+    "number": 72080,
+    "action": "review_comment_synced",
+    "reason": "updated durable Codex review comment"
+  },
+  {
+    "number": 72080,
+    "action": "closed",
+    "reason": "already implemented on main"
   }
 ]
