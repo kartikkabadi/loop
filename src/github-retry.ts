@@ -14,6 +14,7 @@ const GH_TRANSIENT_PATTERNS = [
   /bad gateway/i,
   /service unavailable/i,
   /gateway timeout/i,
+  /invalid character '<' looking for beginning of value/i,
   /\bECONNRESET\b/i,
   /\bETIMEDOUT\b/i,
   /\bEAI_AGAIN\b/i,

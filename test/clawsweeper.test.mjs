@@ -1477,6 +1477,12 @@ test("GitHub retry classifier distinguishes throttle and transient failures", ()
   const badGateway = Object.assign(new Error("gh: HTTP 502: Bad Gateway"), { stderr: "" });
   assert.equal(ghRetryKind(badGateway), "transient");
 
+  const htmlInsteadOfJson = Object.assign(
+    new Error("Command failed: gh api repos/openclaw/openclaw/issues?page=47"),
+    { stderr: "invalid character '<' looking for beginning of value\n" },
+  );
+  assert.equal(ghRetryKind(htmlInsteadOfJson), "transient");
+
   const authFailure = Object.assign(new Error("gh: HTTP 401: Bad credentials"), {
     stderr: "Bad credentials",
   });
