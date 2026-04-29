@@ -95,28 +95,25 @@ source-backed evidence.
 ## Maintainer Commands
 
 Maintainers can steer ClawSweeper from target-repo issue and PR comments. The
-router accepts `/clawsweeper ...`, `/automerge`, `/autoclose <reason>`,
-`@clawsweeper ...`, `@clawsweeper[bot] ...`, `@openclaw-clawsweeper ...`, and
-`@openclaw-clawsweeper[bot] ...`.
+preferred form is `@clawsweeper ...`. The router also accepts
+`@clawsweeper[bot] ...`, `@openclaw-clawsweeper ...`,
+`@openclaw-clawsweeper[bot] ...`, and legacy slash aliases such as
+`/clawsweeper ...`, `/review`, `/automerge`, and `/autoclose <reason>`.
 
 Common commands:
 
 ```text
-/review
-/clawsweeper status
-/clawsweeper re-review
-/clawsweeper fix ci
-/clawsweeper address review
-/clawsweeper rebase
-/clawsweeper autofix
-/clawsweeper automerge
-/clawsweeper approve
-/clawsweeper explain
-/clawsweeper stop
-/automerge
-/autoclose <maintainer close reason>
+@clawsweeper status
 @clawsweeper re-review
 @clawsweeper review
+@clawsweeper fix ci
+@clawsweeper address review
+@clawsweeper rebase
+@clawsweeper autofix
+@clawsweeper automerge
+@clawsweeper approve
+@clawsweeper explain
+@clawsweeper stop
 @clawsweeper why did automerge stop here?
 ```
 
