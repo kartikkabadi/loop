@@ -198,18 +198,6 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - name: Create workflow-capable GitHub App token
-        id: workflow_app_token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
-          permission-contents: write
-          permission-issues: write
-          permission-pull-requests: write
-          permission-workflows: write
-
       - uses: ./.github/actions/setup-pnpm
         with:
           build-script: build:repair
@@ -232,31 +220,31 @@ jobs:
         if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         timeout-minutes: 30
         env:
-          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:execute-fix -- "${{ inputs.job }}" --latest
 
       - name: Apply safe closure actions
         if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
-          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Post-flight finalize fix PRs
         if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         env:
-          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:post-flight -- "${{ inputs.job }}" --latest
 
       - name: Apply post-flight closeouts
         if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
-          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Tag ClawSweeper targets
         if: ${{ always() && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
-          GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:tag-clawsweeper -- .clawsweeper-repair/runs --apply --live --open-branches false --report .clawsweeper-repair/runs/clawsweeper-label-report.json
 
       - name: Upload final worker artifacts
