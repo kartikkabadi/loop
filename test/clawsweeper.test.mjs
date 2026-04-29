@@ -122,6 +122,9 @@ function closeDecision(overrides = {}) {
     ],
     risks: [],
     bestSolution: "Keep the implementation as-is.",
+    reviewFindings: [],
+    overallCorrectness: "not a patch",
+    overallConfidenceScore: 0.75,
     fixedRelease: null,
     fixedSha: "abcdef1234567890",
     fixedAt: "2026-04-28T12:00:00Z",
@@ -896,6 +899,67 @@ Reason: Maintainers should review the tests after the targeted lane is green.
     /Best possible solution:\n\nLand the tests after targeted validation is green\./,
   );
   assert.match(comment, /<!-- clawsweeper-verdict:needs-human item=74265 sha=abc123def456/);
+});
+
+test("pull request keep-open review comments surface Codex-style findings", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74268",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "queue_fix_pr",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+This PR needs one correctness fix before merge.
+
+## What This Changes
+
+Adds a config patch command for scripted config edits.
+
+## Best Possible Solution
+
+Reject misspelled replacement paths before writing the updated config.
+
+## Review Findings
+
+Overall correctness: patch is incorrect
+
+Overall confidence: 0.86
+
+Full review comments:
+
+- **[P1] Validate replace paths:** \`src/config/apply.ts:42-44\`
+  - body: A misspelled replace path is currently ignored, so the command can report success while leaving the intended setting unchanged.
+  - confidence: 0.9
+
+## Work Candidate
+
+Candidate: queue_fix_pr
+
+Confidence: high
+
+Priority: high
+
+Status: candidate
+
+Reason: The fix is narrow and can be made on the PR branch.
+`,
+    "none",
+  );
+
+  assert.match(comment, /Codex review: needs changes before merge\./);
+  assert.match(
+    comment,
+    /Review findings:\n\n- \[P1\] Validate replace paths — `src\/config\/apply\.ts:42-44`/,
+  );
+  assert.match(comment, /Full review comments:/);
+  assert.match(comment, /A misspelled replace path is currently ignored/);
+  assert.match(comment, /Overall correctness: patch is incorrect/);
+  assert.match(comment, /<!-- clawsweeper-action:fix-required/);
 });
 
 test("pull request keep-open review comments suppress duplicate best solution text", () => {

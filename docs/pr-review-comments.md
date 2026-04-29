@@ -40,12 +40,18 @@ report has:
   merge verdict or maintainer follow-up summary
 - `Required change before merge:` or `Maintainer follow-up before merge:` from
   the work-candidate reason or next action
+- `Review findings:` for Codex `/review`-style findings, using typed priority,
+  confidence, file, and line-range data from the report
 - `Best possible solution:` only when it adds a distinct end-state that is not
   already covered by the required-change or maintainer-follow-up section
 - `Acceptance criteria:`
 - `What I checked:`
 - `Remaining risk:` only when it is not a restatement of the required change or
   best solution
+
+Full review comments, source links, owner routing, acceptance criteria, and
+evidence stay under the collapsed `Review details` block so the top-level PR
+comment reads like a concise review.
 
 Issues can use `Required change / next step:` instead of the PR-specific
 heading. Non-PR comments are never repair triggers.

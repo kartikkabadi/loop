@@ -58,6 +58,22 @@ likely owner.
 
 For PRs, include a dedicated security review pass in addition to the functional review. Inspect whether the diff could introduce a security or supply-chain regression, especially when it touches CI workflows, GitHub Action refs, dependency sources, lockfiles, install/build/release scripts, package publishing metadata, secrets handling, permissions, downloaded artifacts, generated/vendor/minified files, or other code execution paths. Check whether those changes are consistent with the PR title, body, discussion, and stated purpose before deciding. Be cautious when a small or unrelated functional change also introduces new third-party code execution, broadens secret or permission access, changes package resolution, adds lifecycle hooks, downloads and executes artifacts, or mixes infrastructure changes into otherwise cosmetic work. Do not infer malicious intent without concrete evidence, but note unexplained security-sensitive changes in `risks` and `evidence` with the observable risk, relevant file/path, and why it matters.
 
+For PRs, also emit Codex `/review`-style findings in `reviewFindings`.
+Review the diff as another engineer's proposed patch and list every discrete,
+actionable bug the author would likely fix. Findings must be introduced by the
+PR, concrete enough to fix, and tied to the smallest useful changed line range.
+Prefer an empty finding list when nothing definite is wrong; do not pad with
+style preferences, broad speculation, missing tests without a real bug, or
+general praise. Use priorities as `0=P0 critical`, `1=P1 high`, `2=P2 normal`,
+and `3=P3 low`. Keep each title imperative and at most 80 characters. Keep each
+body brief, matter-of-fact, and focused on why this breaks current behavior.
+Use repository-relative `file`, `lineStart`, and `lineEnd`; the location should
+overlap the PR diff when possible. Set `overallCorrectness` to `patch is
+incorrect` when at least one P0/P1/P2 finding should block merge, `patch is
+correct` when the PR has no blocking correctness finding, and `not a patch` for
+issues and other non-PR reviews. Set `overallConfidenceScore` to a 0-1 number
+matching your confidence in the overall verdict.
+
 Use reason-specific anchors:
 
 - For `implemented_on_main`, verify the current behavior in source and,
@@ -206,6 +222,14 @@ most one such phrase per public comment, and never let the bit obscure the
 evidence or decision.
 
 Always fill `bestSolution`. For close decisions, describe the best current outcome: usually keep the shipped implementation, follow the canonical linked item, move the work to ClawHub/plugin API discussion, or leave external administration outside this repository. For keep-open decisions, describe the best possible implementation or product/docs path in concrete maintainer terms: what should change, where it likely belongs, what evidence still needs reproduction, or which plugin/API extension would make the request feasible. Do not repeat `workReason`; if the next action and best solution are the same, put the routing/action wording in `workReason` and keep `bestSolution` as the end state. Make it useful for a visible Codex automated review comment.
+
+Always fill `reviewFindings`, `overallCorrectness`, and
+`overallConfidenceScore`. For issues or close-only cleanup where there is no
+proposed patch to review, use an empty `reviewFindings` array,
+`overallCorrectness: "not a patch"`, and a low-but-honest confidence score.
+For PRs, use these fields for the concise reviewer feedback that should appear
+near the top of the public ClawSweeper comment; the rest of the evidence can
+stay in the collapsed details.
 
 Always fill the work-lane fields too. For non-candidates, use
 `workCandidate: "none"`, low confidence/priority, an empty `workPrompt`, and

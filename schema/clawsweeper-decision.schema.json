@@ -12,6 +12,9 @@
     "likelyOwners",
     "risks",
     "bestSolution",
+    "reviewFindings",
+    "overallCorrectness",
+    "overallConfidenceScore",
     "fixedRelease",
     "fixedSha",
     "fixedAt",
@@ -132,6 +135,65 @@
     "bestSolution": {
       "type": "string",
       "description": "The best possible product/code/docs direction for this item, whether the item should close or stay open. Do not repeat the change summary, workReason, or risk list."
+    },
+    "reviewFindings": {
+      "type": "array",
+      "description": "Codex /review-style PR findings introduced by the proposed patch. Use an empty array for issues, close decisions, or PRs where there is no discrete actionable bug.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "title",
+          "body",
+          "priority",
+          "confidenceScore",
+          "file",
+          "lineStart",
+          "lineEnd"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short imperative title, at most 80 characters."
+          },
+          "body": {
+            "type": "string",
+            "description": "Brief Markdown explanation of the concrete bug and why the author should fix it."
+          },
+          "priority": {
+            "type": "integer",
+            "enum": [0, 1, 2, 3],
+            "description": "0=P0 critical, 1=P1 high, 2=P2 normal, 3=P3 low."
+          },
+          "confidenceScore": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "file": {
+            "type": "string",
+            "description": "Repository-relative file path for the changed line."
+          },
+          "lineStart": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "lineEnd": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "overallCorrectness": {
+      "type": "string",
+      "enum": ["patch is correct", "patch is incorrect", "not a patch"],
+      "description": "Codex /review-style overall patch verdict. Use not a patch for issues and non-PR items."
+    },
+    "overallConfidenceScore": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
     },
     "fixedRelease": {
       "type": ["string", "null"],

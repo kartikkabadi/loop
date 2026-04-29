@@ -63,6 +63,7 @@ type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
+type OverallCorrectness = "patch is correct" | "patch is incorrect" | "not a patch";
 type CloseReason =
   | "implemented_on_main"
   | "cannot_reproduce"
@@ -165,6 +166,16 @@ interface LikelyOwner {
   confidence: Confidence;
 }
 
+interface ReviewFinding {
+  title: string;
+  body: string;
+  priority: 0 | 1 | 2 | 3;
+  confidenceScore: number;
+  file: string;
+  lineStart: number;
+  lineEnd: number;
+}
+
 interface Decision {
   decision: DecisionKind;
   closeReason: CloseReason;
@@ -175,6 +186,9 @@ interface Decision {
   likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
+  reviewFindings: ReviewFinding[];
+  overallCorrectness: OverallCorrectness;
+  overallConfidenceScore: number;
   fixedRelease?: string | null;
   fixedSha?: string | null;
   fixedAt?: string | null;
@@ -482,7 +496,7 @@ const STATUS_END = "<!-- clawsweeper-status:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
-const REVIEW_POLICY_VERSION = "2026-04-28-policy-v11";
+const REVIEW_POLICY_VERSION = "2026-04-29-policy-v12";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
@@ -497,6 +511,11 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
 const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
+const OVERALL_CORRECTNESS_VALUES = new Set<OverallCorrectness>([
+  "patch is correct",
+  "patch is incorrect",
+  "not a patch",
+]);
 
 type ReviewArtifactDestination = "items" | "closed" | "skip_closed";
 const CONFIDENCES = new Set<Confidence>(["high", "medium", "low"]);
@@ -510,6 +529,9 @@ const DECISION_SCHEMA_KEYS = new Set([
   "likelyOwners",
   "risks",
   "bestSolution",
+  "reviewFindings",
+  "overallCorrectness",
+  "overallConfidenceScore",
   "fixedRelease",
   "fixedSha",
   "fixedAt",
@@ -524,6 +546,15 @@ const DECISION_SCHEMA_KEYS = new Set([
   "workLikelyFiles",
 ]);
 const EVIDENCE_SCHEMA_KEYS = new Set(["label", "detail", "file", "line", "command", "sha"]);
+const REVIEW_FINDING_SCHEMA_KEYS = new Set([
+  "title",
+  "body",
+  "priority",
+  "confidenceScore",
+  "file",
+  "lineStart",
+  "lineEnd",
+]);
 const LIKELY_OWNER_SCHEMA_KEYS = new Set([
   "person",
   "role",
@@ -536,6 +567,7 @@ const REVIEW_SECTIONS = {
   summary: "Summary",
   changeSummary: "What This Changes",
   bestSolution: "Best Possible Solution",
+  reviewFindings: "Review Findings",
   workCandidate: "Work Candidate",
   repairWorkPrompt: "Repair Work Prompt",
   evidence: "Evidence",
@@ -851,6 +883,28 @@ function requireNullableInteger(value: unknown, path: string): number | null {
   throw new Error(`${path} must be an integer or null`);
 }
 
+function requireInteger(value: unknown, path: string): number {
+  if (typeof value === "number" && Number.isInteger(value)) return value;
+  throw new Error(`${path} must be an integer`);
+}
+
+function requireNumber(value: unknown, path: string): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  throw new Error(`${path} must be a finite number`);
+}
+
+function requireConfidenceScore(value: unknown, path: string): number {
+  const score = requireNumber(value, path);
+  if (score < 0 || score > 1) throw new Error(`${path} must be between 0 and 1`);
+  return score;
+}
+
+function requirePriority(value: unknown, path: string): ReviewFinding["priority"] {
+  const priority = requireInteger(value, path);
+  if (priority === 0 || priority === 1 || priority === 2 || priority === 3) return priority;
+  throw new Error(`${path} must be 0, 1, 2, or 3`);
+}
+
 function requireStringArray(value: unknown, path: string): string[] {
   if (!Array.isArray(value)) throw new Error(`${path} must be an array`);
   return value.map((entry, index) => requireString(entry, `${path}[${index}]`));
@@ -888,6 +942,24 @@ function parseLikelyOwner(value: unknown, path: string): LikelyOwner {
   };
 }
 
+function parseReviewFinding(value: unknown, path: string): ReviewFinding {
+  const record = requireRecord(value, path);
+  rejectUnexpectedKeys(record, REVIEW_FINDING_SCHEMA_KEYS, path);
+  const lineStart = requireInteger(record.lineStart, `${path}.lineStart`);
+  const lineEnd = requireInteger(record.lineEnd, `${path}.lineEnd`);
+  if (lineStart <= 0) throw new Error(`${path}.lineStart must be positive`);
+  if (lineEnd < lineStart) throw new Error(`${path}.lineEnd must be >= lineStart`);
+  return {
+    title: requireString(record.title, `${path}.title`),
+    body: requireString(record.body, `${path}.body`),
+    priority: requirePriority(record.priority, `${path}.priority`),
+    confidenceScore: requireConfidenceScore(record.confidenceScore, `${path}.confidenceScore`),
+    file: requireString(record.file, `${path}.file`),
+    lineStart,
+    lineEnd,
+  };
+}
+
 function requireEnum<T extends string>(value: unknown, allowed: Set<T>, path: string): T {
   if (typeof value === "string" && allowed.has(value as T)) return value as T;
   throw new Error(`${path} has invalid value`);
@@ -909,6 +981,13 @@ export function parseDecision(value: unknown): Decision {
         throw new Error("decision.likelyOwners must be an array");
       })();
   if (likelyOwners.length === 0) throw new Error("decision.likelyOwners must not be empty");
+  const reviewFindings = Array.isArray(record.reviewFindings)
+    ? record.reviewFindings.map((entry, index) =>
+        parseReviewFinding(entry, `decision.reviewFindings[${index}]`),
+      )
+    : (() => {
+        throw new Error("decision.reviewFindings must be an array");
+      })();
   return {
     decision: requireEnum(record.decision, DECISIONS, "decision.decision"),
     closeReason: requireEnum(record.closeReason, ALL_REASONS, "decision.closeReason"),
@@ -921,6 +1000,16 @@ export function parseDecision(value: unknown): Decision {
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
+    reviewFindings,
+    overallCorrectness: requireEnum(
+      record.overallCorrectness,
+      OVERALL_CORRECTNESS_VALUES,
+      "decision.overallCorrectness",
+    ),
+    overallConfidenceScore: requireConfidenceScore(
+      record.overallConfidenceScore,
+      "decision.overallConfidenceScore",
+    ),
     fixedRelease: requireNullableString(record.fixedRelease, "decision.fixedRelease"),
     fixedSha: requireNullableString(record.fixedSha, "decision.fixedSha"),
     fixedAt: requireNullableString(record.fixedAt, "decision.fixedAt"),
@@ -2383,6 +2472,9 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
+    reviewFindings: [],
+    overallCorrectness: "not a patch",
+    overallConfidenceScore: 0,
     fixedRelease: null,
     fixedSha: null,
     fixedAt: null,
@@ -2837,6 +2929,38 @@ function likelyOwnerLine(owner: LikelyOwner): string {
   return `- **${person}:** ${reason}${suffix.length ? ` (${suffix.join("; ")})` : ""}`;
 }
 
+function priorityLabel(priority: ReviewFinding["priority"]): string {
+  return `P${priority}`;
+}
+
+function confidenceText(score: number): string {
+  return score.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+}
+
+function reviewFindingLocation(
+  finding: Pick<ReviewFinding, "file" | "lineStart" | "lineEnd">,
+): string {
+  const line =
+    finding.lineStart === finding.lineEnd
+      ? `${finding.lineStart}`
+      : `${finding.lineStart}-${finding.lineEnd}`;
+  return `${finding.file}:${line}`;
+}
+
+function reviewFindingSummaryLine(finding: ReviewFinding): string {
+  return `- [${priorityLabel(finding.priority)}] ${finding.title.trim()} — \`${reviewFindingLocation(
+    finding,
+  )}\``;
+}
+
+function reviewFindingDetailedLine(finding: ReviewFinding): string {
+  return [
+    reviewFindingSummaryLine(finding),
+    `  ${sentence(finding.body)}`,
+    `  Confidence: ${confidenceText(finding.confidenceScore)}`,
+  ].join("\n");
+}
+
 function closeIntro(reason: CloseReason): string {
   switch (reason) {
     case "implemented_on_main":
@@ -2951,6 +3075,57 @@ function reportLikelyOwners(markdown: string): LikelyOwner[] {
   return owners;
 }
 
+function reportOverallCorrectness(markdown: string): OverallCorrectness {
+  const section = reviewSectionValue(markdown, "reviewFindings");
+  const value = section.match(/^Overall correctness:\s*(.+)$/m)?.[1]?.trim();
+  return value && OVERALL_CORRECTNESS_VALUES.has(value as OverallCorrectness)
+    ? (value as OverallCorrectness)
+    : "not a patch";
+}
+
+function reportOverallConfidenceScore(markdown: string): number {
+  const section = reviewSectionValue(markdown, "reviewFindings");
+  const raw = section.match(/^Overall confidence:\s*([0-9.]+)$/m)?.[1];
+  const score = raw ? Number(raw) : 0;
+  return Number.isFinite(score) && score >= 0 && score <= 1 ? score : 0;
+}
+
+function reportReviewFindings(markdown: string): ReviewFinding[] {
+  const section = reviewSectionValue(markdown, "reviewFindings");
+  const findings: ReviewFinding[] = [];
+  let current: ReviewFinding | null = null;
+  for (const line of section.split("\n")) {
+    const heading = line.match(/^- \*\*\[(P[0-3])\] (.*?):\*\*\s*`([^`:]+):(\d+)(?:-(\d+))?`$/);
+    if (heading?.[1] && heading[2] && heading[3] && heading[4]) {
+      if (current) findings.push(current);
+      const lineStart = Number(heading[4]);
+      current = {
+        title: heading[2],
+        body: "",
+        priority: Number(heading[1].slice(1)) as ReviewFinding["priority"],
+        confidenceScore: 0,
+        file: heading[3],
+        lineStart,
+        lineEnd: heading[5] ? Number(heading[5]) : lineStart,
+      };
+      continue;
+    }
+    if (!current) continue;
+    const body = line.match(/^\s+- body: (.*)$/);
+    if (body?.[1]) {
+      current.body = body[1];
+      continue;
+    }
+    const confidence = line.match(/^\s+- confidence: ([0-9.]+)$/);
+    if (confidence?.[1]) {
+      const score = Number(confidence[1]);
+      current.confidenceScore = Number.isFinite(score) ? Math.min(1, Math.max(0, score)) : 0;
+    }
+  }
+  if (current) findings.push(current);
+  return findings;
+}
+
 function reportDecision(markdown: string, closeReason: CloseReason): Decision {
   const fixedRelease = frontMatterValue(markdown, "fixed_release");
   const fixedSha = frontMatterValue(markdown, "fixed_sha");
@@ -2965,6 +3140,9 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
+    reviewFindings: reportReviewFindings(markdown),
+    overallCorrectness: reportOverallCorrectness(markdown),
+    overallConfidenceScore: reportOverallConfidenceScore(markdown),
     fixedRelease: fixedRelease && fixedRelease !== "unknown" ? fixedRelease : null,
     fixedSha: fixedSha && fixedSha !== "unknown" ? fixedSha : null,
     fixedAt: fixedAt && fixedAt !== "unknown" ? fixedAt : null,
@@ -3126,6 +3304,7 @@ function collapsedDetailsBlock(summary: string, lines: readonly string[]): strin
 function renderKeepOpenCommentFromReport(markdown: string): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
+  const reviewFindings = reportReviewFindings(markdown);
   const summary = reviewSectionValue(markdown, "summary");
   const changeSummary = reviewSectionValue(markdown, "changeSummary");
   const bestSolution = reviewSectionValue(markdown, "bestSolution");
@@ -3144,12 +3323,15 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const nextStepLine = sentence(workReason || bestSolution || fallbackNextStep);
   const bestSolutionLine = sentence(bestSolution);
   const details: string[] = [];
+  const hasReviewFindings = isPullRequest && reviewFindings.length > 0;
   const lines = [
     isPullRequest && isRepairCandidate
       ? "Codex review: needs changes before merge."
-      : isPullRequest
-        ? "Codex review: needs maintainer review before merge."
-        : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
+      : hasReviewFindings
+        ? "Codex review: found issues before merge."
+        : isPullRequest
+          ? "Codex review: needs maintainer review before merge."
+          : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
     "",
   ];
   if (isPullRequest) {
@@ -3166,8 +3348,27 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     "",
     nextStepLine,
   );
+  if (isPullRequest && reviewFindings.length) {
+    lines.push(
+      "",
+      "Review findings:",
+      "",
+      ...reviewFindings.slice(0, 3).map(reviewFindingSummaryLine),
+    );
+  }
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, nextStepLine)) {
     details.push("Best possible solution:", "", bestSolutionLine);
+  }
+  if (isPullRequest && reviewFindings.length) {
+    details.push(
+      "",
+      "Full review comments:",
+      "",
+      ...reviewFindings.map(reviewFindingDetailedLine),
+      "",
+      `Overall correctness: ${reportOverallCorrectness(markdown)}`,
+      `Overall confidence: ${confidenceText(reportOverallConfidenceScore(markdown))}`,
+    );
   }
   if (validation.length) details.push("", "Acceptance criteria:", "", ...validation);
   if (evidence.length) details.push("", "What I checked:", "", ...evidence);
@@ -3654,6 +3855,35 @@ function renderRepairWorkPromptReportSection(decision: Decision): string {
   return workPrompt ? `\n\n## ${REVIEW_SECTIONS.repairWorkPrompt}\n\n${workPrompt}` : "";
 }
 
+function renderReviewFindingsReportSection(decision: Decision): string {
+  const lines = [
+    `Overall correctness: ${decision.overallCorrectness}`,
+    "",
+    `Overall confidence: ${confidenceText(decision.overallConfidenceScore)}`,
+    "",
+    "Full review comments:",
+    "",
+  ];
+  if (!decision.reviewFindings.length) {
+    lines.push("- none");
+    return lines.join("\n");
+  }
+  lines.push(
+    decision.reviewFindings
+      .map((finding) =>
+        [
+          `- **[${priorityLabel(finding.priority)}] ${finding.title}:** \`${reviewFindingLocation(
+            finding,
+          )}\``,
+          `  - body: ${sentence(finding.body)}`,
+          `  - confidence: ${confidenceText(finding.confidenceScore)}`,
+        ].join("\n"),
+      )
+      .join("\n"),
+  );
+  return lines.join("\n");
+}
+
 function markdownFor(options: {
   item: Item;
   context: ItemContext;
@@ -3699,6 +3929,7 @@ function markdownFor(options: {
         .join("\n")
     : "- none";
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
+  const reviewFindings = renderReviewFindingsReportSection(options.decision);
   const workCandidateSection = renderWorkCandidateReportSection(options.decision);
   const repairWorkPromptSection = renderRepairWorkPromptReportSection(options.decision);
   return `---
@@ -3796,6 +4027,10 @@ ${options.decision.changeSummary}
 ## ${REVIEW_SECTIONS.bestSolution}
 
 ${bestSolution}
+
+## ${REVIEW_SECTIONS.reviewFindings}
+
+${reviewFindings}
 
 ## ${REVIEW_SECTIONS.workCandidate}
 

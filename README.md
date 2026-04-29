@@ -660,13 +660,15 @@ Review is proposal-only. It never closes items.
   10-minute per-item timeout.
 - Each item becomes a flat report under
   `records/<repo-slug>/items/<number>.md` with the decision, evidence,
-  suggested comment, runtime metadata, and GitHub snapshot hash.
+  Codex `/review`-style PR findings, suggested comment, runtime metadata, and
+  GitHub snapshot hash.
 - High-confidence allowed close decisions become `proposed_close`.
 - After publish, the lane checks the selected items' single marker-backed Codex
   review comment. Missing comments and missing metadata are synced immediately;
   existing comments are refreshed only when stale, currently weekly.
-- PR review comments use hidden verdict/action markers for the trusted
-  ClawSweeper repair loop; see
+- PR review comments keep the top-level note concise, put source links and full
+  evidence in collapsed details, and use hidden verdict/action markers for the
+  trusted ClawSweeper repair loop; see
   [`docs/pr-review-comments.md`](docs/pr-review-comments.md).
 
 ### Apply Lane
