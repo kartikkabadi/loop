@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-29T13:17:34.313Z",
+  "updated_at": "2026-04-29T13:19:10.777Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74102:4341160275:2026-04-29T05:39:44Z:clawsweeper_auto_repair",
@@ -3994,7 +3994,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:17:34.313Z",
+      "processed_at": "2026-04-29T13:19:10.776Z",
       "target": null
     },
     {
@@ -4018,7 +4018,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:17:34.313Z",
+      "processed_at": "2026-04-29T13:19:10.776Z",
       "target": null
     },
     {
@@ -4042,7 +4042,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:17:34.313Z",
+      "processed_at": "2026-04-29T13:19:10.776Z",
       "target": null
     },
     {
@@ -4066,7 +4066,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:17:34.313Z",
+      "processed_at": "2026-04-29T13:19:10.776Z",
       "target": null
     },
     {
@@ -4090,7 +4090,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T13:17:34.313Z",
+      "processed_at": "2026-04-29T13:19:10.776Z",
       "target": null
     },
     {
@@ -4115,6 +4115,66 @@
       "finding_id": null,
       "status": "executed",
       "processed_at": "2026-04-29T13:17:34.313Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "smoke/clawsweeper-event-automerge-20260429131236",
+        "head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
+        "cluster_id": "automerge-openclaw-clawsweeper-18",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-18.md"
+      }
+    },
+    {
+      "idempotency_key": "comment-router:openclaw/clawsweeper:18:4344007908:2026-04-29T13:18:08Z:maintainer_approve_automerge",
+      "comment_id": "4344007908",
+      "comment_version_key": "4344007908:2026-04-29T13:18:08Z",
+      "comment_url": "https://github.com/openclaw/clawsweeper/pull/18#issuecomment-4344007908",
+      "comment_created_at": "2026-04-29T13:18:08Z",
+      "comment_updated_at": "2026-04-29T13:18:08Z",
+      "repo": "openclaw/clawsweeper",
+      "issue_number": 18,
+      "author": "steipete",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "slash",
+      "command": "approve",
+      "intent": "maintainer_approve_automerge",
+      "trusted_bot": false,
+      "trusted_bot_author": null,
+      "automation_source": null,
+      "repair_reason": null,
+      "expected_head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
+      "finding_id": null,
+      "status": "executed",
+      "processed_at": "2026-04-29T13:19:10.776Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "smoke/clawsweeper-event-automerge-20260429131236",
+        "head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
+        "cluster_id": "automerge-openclaw-clawsweeper-18",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-18.md"
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/clawsweeper:18:4343989790:2026-04-29T13:18:25Z:clawsweeper_needs_human",
+      "comment_id": "4343989790",
+      "comment_version_key": "4343989790:2026-04-29T13:18:25Z",
+      "comment_url": "https://github.com/openclaw/clawsweeper/pull/18#issuecomment-4343989790",
+      "comment_created_at": "2026-04-29T13:16:07Z",
+      "comment_updated_at": "2026-04-29T13:18:25Z",
+      "repo": "openclaw/clawsweeper",
+      "issue_number": 18,
+      "author": "clawsweeper[bot]",
+      "author_association": "NONE",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=dbdf7be991a3e3a7098a6f93e48d5fe049689380)",
+      "expected_head_sha": "dbdf7be991a3e3a7098a6f93e48d5fe049689380",
+      "finding_id": null,
+      "status": "executed",
+      "processed_at": "2026-04-29T13:19:10.776Z",
       "target": {
         "kind": "pull_request",
         "branch": "smoke/clawsweeper-event-automerge-20260429131236",
