@@ -162,7 +162,7 @@ Last dashboard update: Apr 29, 2026, 18:16 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6960 | 6611 | 349 | 2788 | 0 | 842 | 10842 | Apr 29, 2026, 18:14 UTC | Apr 29, 2026, 18:15 UTC | 455 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6960 | 6611 | 349 | 2788 | 0 | 842 | 10842 | Apr 29, 2026, 18:15 UTC | Apr 29, 2026, 18:15 UTC | 456 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 925 | 920 | 5 | 15 | 0 | 46 | 8 | Apr 29, 2026, 18:12 UTC | Apr 29, 2026, 17:17 UTC | 471 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -170,18 +170,18 @@ Last dashboard update: Apr 29, 2026, 18:16 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 18:16 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25125928566) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 18:16 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25125928566) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 18:13 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25124947928) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 18:14 UTC. Latest close: Apr 29, 2026, 18:15 UTC. Latest comment sync: Apr 29, 2026, 18:16 UTC.
+Latest review: Apr 29, 2026, 18:15 UTC. Latest close: Apr 29, 2026, 18:15 UTC. Latest comment sync: Apr 29, 2026, 18:16 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 126 | 2 | 124 | 8 | 8 | 65 | 0 |
-| Last hour | 1524 | 12 | 1512 | 10 | 18 | 926 | 1 |
+| Last 15 minutes | 115 | 2 | 113 | 8 | 8 | 66 | 0 |
+| Last hour | 1521 | 12 | 1509 | 10 | 18 | 927 | 1 |
 | Last 24 hours | 6218 | 335 | 5883 | 11 | 736 | 1428 | 27 |
 
 ### Recently Closed Across Repos
@@ -226,6 +226,7 @@ Latest review: Apr 29, 2026, 18:14 UTC. Latest close: Apr 29, 2026, 18:15 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73611](https://github.com/openclaw/openclaw/pull/73611) | fix: gate startup context for sandboxed spawned sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73611.md) | complete | Apr 29, 2026, 18:15 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74533](https://github.com/openclaw/openclaw/pull/74533) | fix: Found one compatibility regression in the Discord public API barr | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74533.md) | complete | Apr 29, 2026, 18:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74532](https://github.com/openclaw/openclaw/pull/74532) | fix(security): resolve model aliases before audit classification | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74532.md) | complete | Apr 29, 2026, 18:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74088](https://github.com/openclaw/openclaw/pull/74088) | fix(memory-core): cap MEMORY.md size during dreaming promotions to pr… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74088.md) | complete | Apr 29, 2026, 18:14 UTC |
@@ -235,7 +236,6 @@ Latest review: Apr 29, 2026, 18:14 UTC. Latest close: Apr 29, 2026, 18:15 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70813](https://github.com/openclaw/openclaw/pull/70813) | feat(whatsapp): support edit and unsend actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70813.md) | complete | Apr 29, 2026, 18:12 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74495](https://github.com/openclaw/openclaw/pull/74495) | fix(infer): report missing media providers clearly | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74495.md) | complete | Apr 29, 2026, 18:12 UTC |
 | [openclaw/clawhub](https://github.com/openclaw/clawhub) | [#1865](https://github.com/openclaw/clawhub/issues/1865) | [False Positive] Request to remove \"suspicious\" flag for skill: bitopro-skills-hub | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-clawhub/items/1865.md) | complete | Apr 29, 2026, 18:12 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74519](https://github.com/openclaw/openclaw/pull/74519) | fix: Found one remaining compatibility regression in the Discord publi | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74519.md) | failed | Apr 29, 2026, 18:11 UTC |
 
 </details>
 
@@ -255,9 +255,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 18:16 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 4/5. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 4 fresh closes out of requested limit 5. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25125928566](https://github.com/openclaw/clawsweeper/actions/runs/25125928566)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -333,12 +333,12 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 18:14 UTC. Latest close: Apr 29, 2026, 18:15 UTC. Latest comment sync: Apr 29, 2026, 18:16 UTC.
+Latest review: Apr 29, 2026, 18:15 UTC. Latest close: Apr 29, 2026, 18:15 UTC. Latest comment sync: Apr 29, 2026, 18:16 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 61 | 2 | 59 | 1 | 8 | 65 | 0 |
-| Last hour | 622 | 12 | 610 | 2 | 17 | 455 | 1 |
+| Last 15 minutes | 62 | 2 | 60 | 1 | 8 | 66 | 0 |
+| Last hour | 619 | 12 | 607 | 2 | 17 | 456 | 1 |
 | Last 24 hours | 5281 | 335 | 4946 | 3 | 720 | 925 | 27 |
 
 #### Recently Closed
@@ -375,6 +375,7 @@ Latest review: Apr 29, 2026, 18:14 UTC. Latest close: Apr 29, 2026, 18:15 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73611](https://github.com/openclaw/openclaw/pull/73611) | fix: gate startup context for sandboxed spawned sessions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73611.md) | complete | Apr 29, 2026, 18:15 UTC |
 | [#74533](https://github.com/openclaw/openclaw/pull/74533) | fix: Found one compatibility regression in the Discord public API barr | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74533.md) | complete | Apr 29, 2026, 18:14 UTC |
 | [#74532](https://github.com/openclaw/openclaw/pull/74532) | fix(security): resolve model aliases before audit classification | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74532.md) | complete | Apr 29, 2026, 18:14 UTC |
 | [#74088](https://github.com/openclaw/openclaw/pull/74088) | fix(memory-core): cap MEMORY.md size during dreaming promotions to pr… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74088.md) | complete | Apr 29, 2026, 18:14 UTC |
@@ -384,7 +385,6 @@ Latest review: Apr 29, 2026, 18:14 UTC. Latest close: Apr 29, 2026, 18:15 UTC. L
 | [#70813](https://github.com/openclaw/openclaw/pull/70813) | feat(whatsapp): support edit and unsend actions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70813.md) | complete | Apr 29, 2026, 18:12 UTC |
 | [#74495](https://github.com/openclaw/openclaw/pull/74495) | fix(infer): report missing media providers clearly | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74495.md) | complete | Apr 29, 2026, 18:12 UTC |
 | [#74519](https://github.com/openclaw/openclaw/pull/74519) | fix: Found one remaining compatibility regression in the Discord publi | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74519.md) | failed | Apr 29, 2026, 18:11 UTC |
-| [#74508](https://github.com/openclaw/openclaw/pull/74508) | fix(telegram): chain reasoning messages on overflow instead of stopping | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74508.md) | complete | Apr 29, 2026, 18:10 UTC |
 
 </details>
 
@@ -482,7 +482,7 @@ Latest review: Apr 29, 2026, 18:12 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 65 | 0 | 65 | 7 | 0 | 0 | 0 |
+| Last 15 minutes | 53 | 0 | 53 | 7 | 0 | 0 | 0 |
 | Last hour | 902 | 0 | 902 | 8 | 1 | 471 | 0 |
 | Last 24 hours | 934 | 0 | 934 | 8 | 16 | 500 | 0 |
 
