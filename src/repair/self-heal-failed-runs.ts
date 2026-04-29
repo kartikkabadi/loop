@@ -18,10 +18,9 @@ import { sleepMs } from "./timing.js";
 
 const DEFAULT_REPO = currentProjectRepo();
 const DEFAULT_WORKFLOW = "cluster-worker.yml";
-const DEFAULT_RUNNER =
-  process.env.CLAWSWEEPER_REPAIR_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
+const DEFAULT_RUNNER = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
 const DEFAULT_EXECUTION_RUNNER =
-  process.env.CLAWSWEEPER_REPAIR_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
+  process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
 const QUEUED_STATUSES = new Set(["queued", "requested", "waiting", "pending"]);
 
 const args = parseArgs(process.argv.slice(2));
@@ -31,7 +30,7 @@ const runner = String(args.runner ?? DEFAULT_RUNNER);
 const executionRunner = String(
   args["execution-runner"] ?? args.execution_runner ?? DEFAULT_EXECUTION_RUNNER,
 );
-const model = String(args.model ?? process.env.CLAWSWEEPER_REPAIR_MODEL ?? "gpt-5.5");
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const maxJobs = Number(args["max-jobs"] ?? args.limit ?? 5);
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
@@ -91,8 +90,8 @@ const attempts: LooseRecord[] = candidates.map((candidate: JsonValue) => ({
 
 try {
   if (openExecuteWindow) {
-    openGate("CLAWSWEEPER_REPAIR_ALLOW_EXECUTE");
-    openGate("CLAWSWEEPER_REPAIR_ALLOW_FIX_PR");
+    openGate("CLAWSWEEPER_ALLOW_EXECUTE");
+    openGate("CLAWSWEEPER_ALLOW_FIX_PR");
   } else {
     assertExecuteGateOpenIfNeeded(candidates);
   }
@@ -232,13 +231,13 @@ function assertExecuteGateOpenIfNeeded(candidates: LooseRecord[]) {
   const current = readExecuteGate();
   if (current !== "1") {
     throw new Error(
-      "refusing write-mode self-heal: CLAWSWEEPER_REPAIR_ALLOW_EXECUTE is not 1; rerun with --open-execute-window or open the gate manually",
+      "refusing write-mode self-heal: CLAWSWEEPER_ALLOW_EXECUTE is not 1; rerun with --open-execute-window or open the gate manually",
     );
   }
   const fixCurrent = readFixGate();
   if (fixCurrent !== "1") {
     throw new Error(
-      "refusing write-mode self-heal: CLAWSWEEPER_REPAIR_ALLOW_FIX_PR is not 1; rerun with --open-execute-window or open both gates manually",
+      "refusing write-mode self-heal: CLAWSWEEPER_ALLOW_FIX_PR is not 1; rerun with --open-execute-window or open both gates manually",
     );
   }
 }
@@ -293,16 +292,16 @@ function listClusterRuns() {
 function readExecuteGate() {
   const variables = ghJson(["variable", "list", "--repo", repo, "--json", "name,value"]);
   return (
-    variables.find((variable: JsonValue) => variable.name === "CLAWSWEEPER_REPAIR_ALLOW_EXECUTE")
-      ?.value ?? ""
+    variables.find((variable: JsonValue) => variable.name === "CLAWSWEEPER_ALLOW_EXECUTE")?.value ??
+    ""
   );
 }
 
 function readFixGate() {
   const variables = ghJson(["variable", "list", "--repo", repo, "--json", "name,value"]);
   return (
-    variables.find((variable: JsonValue) => variable.name === "CLAWSWEEPER_REPAIR_ALLOW_FIX_PR")
-      ?.value ?? ""
+    variables.find((variable: JsonValue) => variable.name === "CLAWSWEEPER_ALLOW_FIX_PR")?.value ??
+    ""
   );
 }
 

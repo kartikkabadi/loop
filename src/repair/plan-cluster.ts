@@ -13,12 +13,10 @@ import {
 } from "./lib.js";
 import { ghJson, ghPaged, ghText } from "./github-cli.js";
 
-const MAX_LINKED_REFS = Number(process.env.CLAWSWEEPER_REPAIR_MAX_LINKED_REFS ?? 0);
-const HYDRATE_COMMENTS = process.env.CLAWSWEEPER_REPAIR_HYDRATE_COMMENTS === "1";
-const MAX_COMMENTS_PER_ITEM = Number(process.env.CLAWSWEEPER_REPAIR_MAX_COMMENTS_PER_ITEM ?? 30);
-const MAX_REVIEW_COMMENTS_PER_PR = Number(
-  process.env.CLAWSWEEPER_REPAIR_MAX_REVIEW_COMMENTS_PER_PR ?? 50,
-);
+const MAX_LINKED_REFS = Number(process.env.CLAWSWEEPER_MAX_LINKED_REFS ?? 0);
+const HYDRATE_COMMENTS = process.env.CLAWSWEEPER_HYDRATE_COMMENTS === "1";
+const MAX_COMMENTS_PER_ITEM = Number(process.env.CLAWSWEEPER_MAX_COMMENTS_PER_ITEM ?? 30);
+const MAX_REVIEW_COMMENTS_PER_PR = Number(process.env.CLAWSWEEPER_MAX_REVIEW_COMMENTS_PER_PR ?? 50);
 const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 const REVIEW_BOT_PATTERN =
   /\b(greptile|codex|asile|coderabbit|code rabbit|copilot|reviewdog|sonar|deepsource|codecov|github-actions)\b/i;
@@ -27,8 +25,7 @@ const args = parseArgs(process.argv.slice(2));
 const jobPath = args._[0];
 const offline = Boolean(args.offline);
 const hydrateClusterRefs =
-  Boolean(args["hydrate-cluster-refs"]) ||
-  process.env.CLAWSWEEPER_REPAIR_HYDRATE_CLUSTER_REFS === "1";
+  Boolean(args["hydrate-cluster-refs"]) || process.env.CLAWSWEEPER_HYDRATE_CLUSTER_REFS === "1";
 
 if (!jobPath) {
   console.error("usage: node scripts/plan-cluster.ts <job.md> [--run-dir dir] [--offline]");
@@ -42,7 +39,7 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_REPAIR_ALLOWED_OWNER);
+assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_ALLOWED_OWNER);
 
 const runDir = args["run-dir"]
   ? path.resolve(String(args["run-dir"]))

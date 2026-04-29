@@ -392,7 +392,7 @@ jobs:
 
       - name: Create repair dispatch token
         id: clawsweeper-token
-        if: ${{ vars.CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED != 'false' }}
+        if: ${{ vars.CLAWSWEEPER_COMMIT_FINDINGS_ENABLED != 'false' }}
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -402,10 +402,10 @@ jobs:
           permission-contents: write
 
       - name: Dispatch commit findings to repair lane
-        if: ${{ vars.CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED != 'false' }}
+        if: ${{ vars.CLAWSWEEPER_COMMIT_FINDINGS_ENABLED != 'false' }}
         env:
           GH_TOKEN: ${{ steps.clawsweeper-token.outputs.token }}
-          ENABLED: ${{ vars.CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED || 'true' }}
+          ENABLED: ${{ vars.CLAWSWEEPER_COMMIT_FINDINGS_ENABLED || 'true' }}
         run: |
           set -euo pipefail
           node dist/commit-sweeper.js dispatch-findings \

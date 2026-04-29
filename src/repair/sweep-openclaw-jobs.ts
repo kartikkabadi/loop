@@ -247,7 +247,7 @@ function latestClusterRecords(runRecords: JsonValue) {
 }
 
 function readOpenClawSweeperPrClusters() {
-  const repo = process.env.CLAWSWEEPER_REPAIR_TARGET_REPO ?? "openclaw/openclaw";
+  const repo = process.env.CLAWSWEEPER_TARGET_REPO ?? "openclaw/openclaw";
   const pulls = ghJson([
     "pr",
     "list",
@@ -279,7 +279,7 @@ function readOpenClawSweeperPrClusters() {
 }
 
 function readActiveClusterRuns() {
-  const repo = process.env.CLAWSWEEPER_REPAIR_REPO ?? "openclaw/clawsweeper";
+  const repo = process.env.CLAWSWEEPER_REPO ?? "openclaw/clawsweeper";
   const statuses = ["queued", "in_progress", "waiting", "requested", "pending"];
   const runs: LooseRecord[] = [];
   for (const status of statuses) {

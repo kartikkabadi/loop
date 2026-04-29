@@ -38,12 +38,11 @@ const retiredPatterns = [
   { label: "Clownfish product name", pattern: /\bclownfish\b/i },
   { label: "ProjectClownfish name", pattern: /\bProjectClownFish\b|\bProjectClownfish\b/i },
   { label: "old Clownfish env prefix", pattern: /\bCLAWSWEEPER_CLOWNFISH\b/ },
+  { label: "old repair env prefix", pattern: /\bCLAWSWEEPER_REPAIR_/ },
   { label: "retired OpenClaw token", pattern: /\bOPENCLAW_GH_TOKEN\b/ },
   { label: "retired ClawSweeper token", pattern: /\bCLAWSWEEPER_GH_TOKEN\b/ },
   { label: "retired ClawSweeper read token", pattern: /\bCLAWSWEEPER_READ_GH_TOKEN\b/ },
-  { label: "retired repair write token", pattern: /\bCLAWSWEEPER_REPAIR_GH_TOKEN\b/ },
-  { label: "retired repair read token", pattern: /\bCLAWSWEEPER_REPAIR_READ_GH_TOKEN\b/ },
-  { label: "retired repair Codex token", pattern: /\bCLAWSWEEPER_REPAIR_CODEX_GH_TOKEN\b/ },
+  { label: "retired repair Codex token", pattern: /\bCLAWSWEEPER_CODEX_GH_TOKEN\b/ },
   { label: "retired review token", pattern: /\bCLAWSWEEPER_REVIEW_GH_TOKEN\b/ },
 ];
 

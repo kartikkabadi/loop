@@ -129,7 +129,7 @@ export function validateAutonomousFixScope({
 
   return {
     reason:
-      "fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_REPAIR_ALLOW_BROAD_FIX_ARTIFACTS=1",
+      "fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1",
     evidence: [
       `pr_title=${fixArtifact.pr_title}`,
       `likely_files=${likelyFiles.length}/${maxAutonomousFixFiles}`,

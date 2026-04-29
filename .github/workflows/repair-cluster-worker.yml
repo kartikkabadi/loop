@@ -59,19 +59,19 @@ jobs:
       allow_merge: ${{ steps.capture_gates.outputs.allow_merge }}
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      CLAWSWEEPER_REPAIR_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || 'openclaw' }}
-      CLAWSWEEPER_REPAIR_ALLOW_EXECUTE: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && vars.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && '1' || '0' }}
-      CLAWSWEEPER_REPAIR_ALLOW_FIX_PR: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && vars.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' && '1' || '0' }}
-      CLAWSWEEPER_REPAIR_ALLOW_MERGE: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && (vars.CLAWSWEEPER_REPAIR_ALLOW_MERGE || '0') || '0' }}
-      CLAWSWEEPER_REPAIR_HYDRATE_CLUSTER_REFS: ${{ vars.CLAWSWEEPER_REPAIR_HYDRATE_CLUSTER_REFS || '1' }}
-      CLAWSWEEPER_REPAIR_HYDRATE_COMMENTS: ${{ vars.CLAWSWEEPER_REPAIR_HYDRATE_COMMENTS || '1' }}
-      CLAWSWEEPER_REPAIR_MAX_COMMENTS_PER_ITEM: ${{ vars.CLAWSWEEPER_REPAIR_MAX_COMMENTS_PER_ITEM || '30' }}
-      CLAWSWEEPER_REPAIR_MAX_LINKED_REFS: ${{ vars.CLAWSWEEPER_REPAIR_MAX_LINKED_REFS || '20' }}
-      CLAWSWEEPER_REPAIR_MAX_REVIEW_COMMENTS_PER_PR: ${{ vars.CLAWSWEEPER_REPAIR_MAX_REVIEW_COMMENTS_PER_PR || '50' }}
-      CLAWSWEEPER_REPAIR_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_TIMEOUT_MS || '1800000' }}
-      CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT || 'medium' }}
-      CLAWSWEEPER_REPAIR_MODEL: ${{ inputs.model || vars.CLAWSWEEPER_REPAIR_MODEL || 'gpt-5.5' }}
-      CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_CLI_VERSION || '0.125.0' }}
+      CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
+      CLAWSWEEPER_ALLOW_EXECUTE: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && vars.CLAWSWEEPER_ALLOW_EXECUTE == '1' && '1' || '0' }}
+      CLAWSWEEPER_ALLOW_FIX_PR: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && vars.CLAWSWEEPER_ALLOW_FIX_PR == '1' && '1' || '0' }}
+      CLAWSWEEPER_ALLOW_MERGE: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && (vars.CLAWSWEEPER_ALLOW_MERGE || '0') || '0' }}
+      CLAWSWEEPER_HYDRATE_CLUSTER_REFS: ${{ vars.CLAWSWEEPER_HYDRATE_CLUSTER_REFS || '1' }}
+      CLAWSWEEPER_HYDRATE_COMMENTS: ${{ vars.CLAWSWEEPER_HYDRATE_COMMENTS || '1' }}
+      CLAWSWEEPER_MAX_COMMENTS_PER_ITEM: ${{ vars.CLAWSWEEPER_MAX_COMMENTS_PER_ITEM || '30' }}
+      CLAWSWEEPER_MAX_LINKED_REFS: ${{ vars.CLAWSWEEPER_MAX_LINKED_REFS || '20' }}
+      CLAWSWEEPER_MAX_REVIEW_COMMENTS_PER_PR: ${{ vars.CLAWSWEEPER_MAX_REVIEW_COMMENTS_PER_PR || '50' }}
+      CLAWSWEEPER_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_CODEX_TIMEOUT_MS || '1800000' }}
+      CLAWSWEEPER_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_CODEX_REASONING_EFFORT || 'medium' }}
+      CLAWSWEEPER_MODEL: ${{ inputs.model || vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
+      CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_CODEX_CLI_VERSION || '0.125.0' }}
       OPENCLAW_LOCAL_CHECK: "0"
     steps:
       - uses: actions/checkout@v5
@@ -82,7 +82,7 @@ jobs:
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
           permission-contents: read
           permission-issues: read
           permission-pull-requests: read
@@ -91,9 +91,9 @@ jobs:
         id: capture_gates
         run: |
           {
-            echo "allow_execute=${CLAWSWEEPER_REPAIR_ALLOW_EXECUTE}"
-            echo "allow_fix_pr=${CLAWSWEEPER_REPAIR_ALLOW_FIX_PR}"
-            echo "allow_merge=${CLAWSWEEPER_REPAIR_ALLOW_MERGE}"
+            echo "allow_execute=${CLAWSWEEPER_ALLOW_EXECUTE}"
+            echo "allow_fix_pr=${CLAWSWEEPER_ALLOW_FIX_PR}"
+            echo "allow_merge=${CLAWSWEEPER_ALLOW_MERGE}"
           } >> "$GITHUB_OUTPUT"
 
       - uses: ./.github/actions/setup-pnpm
@@ -122,8 +122,8 @@ jobs:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
           worker_mode="${{ inputs.mode }}"
-          if [ "$worker_mode" != "plan" ] && [ "${CLAWSWEEPER_REPAIR_ALLOW_EXECUTE}" != "1" ]; then
-            echo "CLAWSWEEPER_REPAIR_ALLOW_EXECUTE is not explicitly 1; rendering plan-only output for requested $worker_mode run"
+          if [ "$worker_mode" != "plan" ] && [ "${CLAWSWEEPER_ALLOW_EXECUTE}" != "1" ]; then
+            echo "CLAWSWEEPER_ALLOW_EXECUTE is not explicitly 1; rendering plan-only output for requested $worker_mode run"
             worker_mode="plan"
           fi
           args=("${{ inputs.job }}" --mode "$worker_mode")
@@ -164,25 +164,25 @@ jobs:
     timeout-minutes: 45
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      CLAWSWEEPER_REPAIR_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || 'openclaw' }}
-      CLAWSWEEPER_REPAIR_ALLOW_EXECUTE: ${{ needs.cluster.outputs.allow_execute == '1' && '1' || '0' }}
-      CLAWSWEEPER_REPAIR_ALLOW_FIX_PR: ${{ needs.cluster.outputs.allow_fix_pr == '1' && '1' || '0' }}
-      CLAWSWEEPER_REPAIR_ALLOW_MERGE: ${{ needs.cluster.outputs.allow_merge || '0' }}
-      CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT || 'medium' }}
-      CLAWSWEEPER_REPAIR_CODEX_REVIEW_ATTEMPTS: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_REVIEW_ATTEMPTS || '2' }}
-      CLAWSWEEPER_REPAIR_FIX_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_CODEX_TIMEOUT_MS || '1200000' }}
-      CLAWSWEEPER_REPAIR_FIX_STEP_TIMEOUT_MS: "1500000"
-      CLAWSWEEPER_REPAIR_FIX_TIMEOUT_RESERVE_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_TIMEOUT_RESERVE_MS || '300000' }}
-      CLAWSWEEPER_REPAIR_FIX_PREFLIGHT_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_PREFLIGHT_TIMEOUT_MS || '120000' }}
-      CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS: ${{ vars.CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS || '1' }}
-      CLAWSWEEPER_REPAIR_MODEL: ${{ inputs.model || vars.CLAWSWEEPER_REPAIR_MODEL || 'gpt-5.5' }}
-      CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE: ${{ vars.CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE || 'changed-only' }}
-      CLAWSWEEPER_REPAIR_POST_FLIGHT_IGNORE_CHECKS: ${{ vars.CLAWSWEEPER_REPAIR_POST_FLIGHT_IGNORE_CHECKS || 'auto-response,Labeler,Stale' }}
-      CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA: ${{ vars.CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA || '50' }}
-      CLAWSWEEPER_REPAIR_CLOSE_SUPERSEDED_SOURCE_PRS: ${{ vars.CLAWSWEEPER_REPAIR_CLOSE_SUPERSEDED_SOURCE_PRS || '0' }}
-      CLAWSWEEPER_REPAIR_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_REPAIR_GIT_USER_NAME || 'clawsweeper-repair' }}
-      CLAWSWEEPER_REPAIR_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_REPAIR_GIT_USER_EMAIL || 'clawsweeper-repair@users.noreply.github.com' }}
-      CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_CLI_VERSION || '0.125.0' }}
+      CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
+      CLAWSWEEPER_ALLOW_EXECUTE: ${{ needs.cluster.outputs.allow_execute == '1' && '1' || '0' }}
+      CLAWSWEEPER_ALLOW_FIX_PR: ${{ needs.cluster.outputs.allow_fix_pr == '1' && '1' || '0' }}
+      CLAWSWEEPER_ALLOW_MERGE: ${{ needs.cluster.outputs.allow_merge || '0' }}
+      CLAWSWEEPER_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_CODEX_REASONING_EFFORT || 'medium' }}
+      CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS: ${{ vars.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS || '2' }}
+      CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS || '1200000' }}
+      CLAWSWEEPER_FIX_STEP_TIMEOUT_MS: "1500000"
+      CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS: ${{ vars.CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS || '300000' }}
+      CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS || '120000' }}
+      CLAWSWEEPER_RESOLVE_REVIEW_THREADS: ${{ vars.CLAWSWEEPER_RESOLVE_REVIEW_THREADS || '1' }}
+      CLAWSWEEPER_MODEL: ${{ inputs.model || vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
+      CLAWSWEEPER_TARGET_VALIDATION_MODE: ${{ vars.CLAWSWEEPER_TARGET_VALIDATION_MODE || 'changed-only' }}
+      CLAWSWEEPER_POST_FLIGHT_IGNORE_CHECKS: ${{ vars.CLAWSWEEPER_POST_FLIGHT_IGNORE_CHECKS || 'auto-response,Labeler,Stale' }}
+      CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA: ${{ vars.CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA || '50' }}
+      CLAWSWEEPER_CLOSE_SUPERSEDED_SOURCE_PRS: ${{ vars.CLAWSWEEPER_CLOSE_SUPERSEDED_SOURCE_PRS || '0' }}
+      CLAWSWEEPER_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_GIT_USER_NAME || 'clawsweeper-repair' }}
+      CLAWSWEEPER_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_GIT_USER_EMAIL || 'clawsweeper-repair@users.noreply.github.com' }}
+      CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_CODEX_CLI_VERSION || '0.125.0' }}
       OPENCLAW_LOCAL_CHECK: "0"
     steps:
       - uses: actions/checkout@v5
@@ -193,7 +193,7 @@ jobs:
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -204,7 +204,7 @@ jobs:
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -229,32 +229,32 @@ jobs:
         run: pnpm run repair:validate-job -- "${{ inputs.job }}"
 
       - name: Execute credited fix artifact
-        if: ${{ env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' }}
+        if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         timeout-minutes: 30
         env:
           GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
         run: pnpm run repair:execute-fix -- "${{ inputs.job }}" --latest
 
       - name: Apply safe closure actions
-        if: ${{ env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' }}
+        if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Post-flight finalize fix PRs
-        if: ${{ env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' }}
+        if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         env:
           GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
         run: pnpm run repair:post-flight -- "${{ inputs.job }}" --latest
 
       - name: Apply post-flight closeouts
-        if: ${{ env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' }}
+        if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Tag ClawSweeper targets
-        if: ${{ always() && env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' }}
+        if: ${{ always() && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.workflow_app_token.outputs.token }}
         run: pnpm run repair:tag-clawsweeper -- .clawsweeper-repair/runs --apply --live --open-branches false --report .clawsweeper-repair/runs/clawsweeper-label-report.json

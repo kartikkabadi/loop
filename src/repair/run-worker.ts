@@ -17,20 +17,18 @@ import { codexSubprocessEnv } from "./process-env.js";
 const args = parseArgs(process.argv.slice(2));
 const jobPath = args._[0];
 const mode = args.mode ?? "plan";
-const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_REPAIR_DRY_RUN === "1");
-const model = args.model ?? process.env.CLAWSWEEPER_REPAIR_MODEL ?? "gpt-5.5";
-const codexTimeoutMs = Number(process.env.CLAWSWEEPER_REPAIR_CODEX_TIMEOUT_MS ?? 30 * 60 * 1000);
+const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_DRY_RUN === "1");
+const model = args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5";
+const codexTimeoutMs = Number(process.env.CLAWSWEEPER_CODEX_TIMEOUT_MS ?? 30 * 60 * 1000);
 const resultRepairAttempts = Math.max(
   0,
-  Number(process.env.CLAWSWEEPER_REPAIR_RESULT_REPAIR_ATTEMPTS ?? 1),
+  Number(process.env.CLAWSWEEPER_RESULT_REPAIR_ATTEMPTS ?? 1),
 );
 const resultRepairTimeoutMs = Number(
-  process.env.CLAWSWEEPER_REPAIR_RESULT_REPAIR_TIMEOUT_MS ?? 10 * 60 * 1000,
+  process.env.CLAWSWEEPER_RESULT_REPAIR_TIMEOUT_MS ?? 10 * 60 * 1000,
 );
-const codexReasoningEffort = String(
-  process.env.CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT ?? "medium",
-);
-const codexServiceTier = String(process.env.CLAWSWEEPER_REPAIR_CODEX_SERVICE_TIER ?? "fast").trim();
+const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "medium");
+const codexServiceTier = String(process.env.CLAWSWEEPER_CODEX_SERVICE_TIER ?? "fast").trim();
 
 if (!jobPath) {
   console.error(
@@ -50,14 +48,14 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_REPAIR_ALLOWED_OWNER);
+assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_ALLOWED_OWNER);
 
 if ((mode === "execute" || mode === "autonomous") && !dryRun) {
   if (job.frontmatter.mode !== mode) {
     throw new Error(`refusing ${mode}: job frontmatter mode is not ${mode}`);
   }
-  if (process.env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE !== "1") {
-    throw new Error(`refusing ${mode}: CLAWSWEEPER_REPAIR_ALLOW_EXECUTE must be 1`);
+  if (process.env.CLAWSWEEPER_ALLOW_EXECUTE !== "1") {
+    throw new Error(`refusing ${mode}: CLAWSWEEPER_ALLOW_EXECUTE must be 1`);
   }
 }
 

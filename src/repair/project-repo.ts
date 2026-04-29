@@ -4,7 +4,7 @@ import { repoRoot } from "./paths.js";
 
 export function currentProjectRepo() {
   return (
-    process.env.CLAWSWEEPER_REPAIR_REPO ||
+    process.env.CLAWSWEEPER_REPO ||
     process.env.GITHUB_REPOSITORY ||
     repoFromOriginRemote() ||
     "openclaw/clawsweeper"

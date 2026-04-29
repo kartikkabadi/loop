@@ -90,10 +90,9 @@ ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop
 }
 
 export function automergeGateBlockReason(env: LooseRecord = process.env) {
-  if (env.CLAWSWEEPER_REPAIR_ALLOW_MERGE !== "1")
-    return "merge requires CLAWSWEEPER_REPAIR_ALLOW_MERGE=1";
-  if (env.CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE !== "1")
-    return "automerge requires CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE=1";
+  if (env.CLAWSWEEPER_ALLOW_MERGE !== "1") return "merge requires CLAWSWEEPER_ALLOW_MERGE=1";
+  if (env.CLAWSWEEPER_ALLOW_AUTOMERGE !== "1")
+    return "automerge requires CLAWSWEEPER_ALLOW_AUTOMERGE=1";
   return "";
 }
 

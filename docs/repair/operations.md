@@ -32,10 +32,10 @@ Security/privacy/supply-chain and broad findings are audit-only.
 5. Review artifacts from GitHub Actions.
 6. Require `pnpm run repair:review-results -- <artifact-dir>` to pass before promotion.
 7. Change selected jobs to `mode: execute` or `mode: autonomous`.
-8. Set repo variable `CLAWSWEEPER_REPAIR_ALLOW_EXECUTE=1` only for the execution window.
-9. Set `CLAWSWEEPER_REPAIR_ALLOW_FIX_PR=1` only when reviewed fix artifacts are allowed to repair branches or open credited replacement PRs.
+8. Set repo variable `CLAWSWEEPER_ALLOW_EXECUTE=1` only for the execution window.
+9. Set `CLAWSWEEPER_ALLOW_FIX_PR=1` only when reviewed fix artifacts are allowed to repair branches or open credited replacement PRs.
 10. Dispatch execute/autonomous jobs for reviewed clusters only. Workers still return JSON; `execute-fix-artifact` owns branch repair/replacement PR creation, and `apply-result` performs remaining safe GitHub mutations afterward.
-11. Reset `CLAWSWEEPER_REPAIR_ALLOW_EXECUTE=0` and `CLAWSWEEPER_REPAIR_ALLOW_FIX_PR=0`.
+11. Reset `CLAWSWEEPER_ALLOW_EXECUTE=0` and `CLAWSWEEPER_ALLOW_FIX_PR=0`.
 
 ## Manual Fix PR From Issue or PR Refs
 
@@ -81,7 +81,7 @@ co-author, credit the source PR in the replacement PR body, and close only that
 source PR after the replacement PR is opened.
 ```
 
-Keep `CLAWSWEEPER_REPAIR_ALLOW_MERGE=0` unless a human explicitly opens the merge gate.
+Keep `CLAWSWEEPER_ALLOW_MERGE=0` unless a human explicitly opens the merge gate.
 
 ## Manual Fix PR From Commit Finding
 
@@ -123,7 +123,7 @@ It only applies closure actions when all of these are true:
 
 - the job and result are both `mode: execute`;
 - or the job and result are both `mode: autonomous`;
-- `CLAWSWEEPER_REPAIR_ALLOW_EXECUTE=1`;
+- `CLAWSWEEPER_ALLOW_EXECUTE=1`;
 - the job allows both `comment` and `close`;
 - the action is `close_duplicate`, `close_superseded`, or `close_fixed_by_candidate`;
 - the action includes a canonical/candidate fix ref and live `target_updated_at`;
@@ -148,7 +148,7 @@ They still must not mutate GitHub directly. Missing checkout, failing checks, co
 
 When a canonical PR exists, autonomous follow-through must not skip the maintainer loop. The required path is: review current PR state, clear security-sensitive concerns, inspect actionable review comments, inspect review-bot comments from Greptile, Codex, Asile, CodeRabbit, Copilot, and similar reviewers, address findings or mark them blocked, run Codex `/review`, address every Codex review finding, rebase/refactor to the narrowest safe change, run targeted validation, confirm changelog/credit, then only recommend merge after checks and review state are clean. After the PR lands, rerun duplicate classification against the landed PR/commit before recommending closeout.
 
-Every merge action must carry `merge_preflight`. Missing security clearance, unresolved human or bot comments, missing/failed Codex `/review`, unaddressed findings, or missing validation commands blocks merge. The fix executor runs the agentic prep loop before pushing: edit, validation, Codex `/review`, address findings, revalidate, then resolve review threads when `CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS=1`. The applicator also checks live GitHub review threads immediately before squash merge.
+Every merge action must carry `merge_preflight`. Missing security clearance, unresolved human or bot comments, missing/failed Codex `/review`, unaddressed findings, or missing validation commands blocks merge. The fix executor runs the agentic prep loop before pushing: edit, validation, Codex `/review`, address findings, revalidate, then resolve review threads when `CLAWSWEEPER_RESOLVE_REVIEW_THREADS=1`. The applicator also checks live GitHub review threads immediately before squash merge.
 
 ## Runner Strategy
 
@@ -166,7 +166,7 @@ Codex runs in a read-only sandbox for classification and receives no GitHub toke
 
 Runs for the same job path and mode share a concurrency group. Different cluster jobs can still run in parallel.
 
-Live preflight hydrates job-provided refs by default and records linked refs without expanding them. Set repo variables `CLAWSWEEPER_REPAIR_MAX_LINKED_REFS` above `0` only for small clusters that need first-hop context and `CLAWSWEEPER_REPAIR_HYDRATE_COMMENTS=1` when comment bodies are necessary evidence; normal scale runs use issue/PR metadata, body excerpts, PR files, and PR checks.
+Live preflight hydrates job-provided refs by default and records linked refs without expanding them. Set repo variables `CLAWSWEEPER_MAX_LINKED_REFS` above `0` only for small clusters that need first-hop context and `CLAWSWEEPER_HYDRATE_COMMENTS=1` when comment bodies are necessary evidence; normal scale runs use issue/PR metadata, body excerpts, PR files, and PR checks.
 
 ## Maintainer Comment Routing
 
@@ -210,13 +210,13 @@ worker summary and actions.
 The router also has a trusted automation path for ClawSweeper comments on
 ClawSweeper PRs and PRs labeled `clawsweeper:automerge`. Default trusted authors
 are `clawsweeper[bot]` and `openclaw-clawsweeper[bot]`; override with
-`CLAWSWEEPER_REPAIR_TRUSTED_BOTS`. Preferred
+`CLAWSWEEPER_TRUSTED_BOTS`. Preferred
 ClawSweeper comments include `clawsweeper-verdict:*` markers plus a
 `clawsweeper-action:fix-required` marker when ClawSweeper should wake up. The
 router dispatches at most five automatic repair iterations per PR and at most
 one auto-repair per PR head SHA by default, controlled by
-`CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_PR` and
-`CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_HEAD`. The per-PR cap is total across
+`CLAWSWEEPER_MAX_REPAIRS_PER_PR` and
+`CLAWSWEEPER_MAX_REPAIRS_PER_HEAD`. The per-PR cap is total across
 head SHA changes, so the automatic loop stops after five ClawSweeper-triggered
 repair passes.
 
@@ -227,8 +227,8 @@ reacts to trusted ClawSweeper markers. `needs-changes` repairs the source
 branch when safe or opens a credited replacement when it is not; `pass`,
 `approved`, or `no-changes` may merge only when the marker SHA matches the
 current head, checks and mergeability are clean, no human-review label is
-present, and both `CLAWSWEEPER_REPAIR_ALLOW_MERGE=1` and
-`CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE=1` are set. A trusted `needs-human` or
+present, and both `CLAWSWEEPER_ALLOW_MERGE=1` and
+`CLAWSWEEPER_ALLOW_AUTOMERGE=1` are set. A trusted `needs-human` or
 `human-review` verdict on an opted-in PR adds `clawsweeper:human-review` and
 pauses the loop. ClawSweeper must emit an accepted repair verdict or action
 marker to dispatch the repair/rebase loop.
@@ -238,10 +238,10 @@ clears `clawsweeper:human-review`, then merges through the same readiness checks
 and merge gates as a trusted ClawSweeper pass marker.
 
 The scheduled workflow is dry by default. Set
-`CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE=1` in repo variables to let scheduled runs
+`CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` in repo variables to let scheduled runs
 post replies and dispatch workers. Manual workflow dispatch can also pass
 `execute=true`. Branch mutation still requires the downstream execution gates,
-including `CLAWSWEEPER_REPAIR_ALLOW_EXECUTE=1` and `CLAWSWEEPER_REPAIR_ALLOW_FIX_PR=1`.
+including `CLAWSWEEPER_ALLOW_EXECUTE=1` and `CLAWSWEEPER_ALLOW_FIX_PR=1`.
 
 ## Token Strategy
 

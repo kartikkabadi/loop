@@ -22,35 +22,32 @@ const DEFAULT_HEAD_PREFIX = "clawsweeper/";
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
 const CLEAN_MERGE_STATES = new Set(["CLEAN", "HAS_HOOKS"]);
 const DEFAULT_IGNORED_CHECKS = ["auto-response", "Labeler", "Stale"];
-const MERGEABILITY_POLL_MS = numberEnv("CLAWSWEEPER_REPAIR_FINALIZER_MERGEABILITY_POLL_MS", 5000);
-const MERGEABILITY_POLL_ATTEMPTS = numberEnv(
-  "CLAWSWEEPER_REPAIR_FINALIZER_MERGEABILITY_POLL_ATTEMPTS",
-  3,
-);
+const MERGEABILITY_POLL_MS = numberEnv("CLAWSWEEPER_FINALIZER_MERGEABILITY_POLL_MS", 5000);
+const MERGEABILITY_POLL_ATTEMPTS = numberEnv("CLAWSWEEPER_FINALIZER_MERGEABILITY_POLL_ATTEMPTS", 3);
 
 const args = parseArgs(process.argv.slice(2));
-const repo = String(args.repo ?? process.env.CLAWSWEEPER_REPAIR_TARGET_REPO ?? DEFAULT_TARGET_REPO);
+const repo = String(args.repo ?? process.env.CLAWSWEEPER_TARGET_REPO ?? DEFAULT_TARGET_REPO);
 const repairRepo = String(
-  args["repair-repo"] ?? process.env.CLAWSWEEPER_REPAIR_REPO ?? currentProjectRepo(),
+  args["repair-repo"] ?? process.env.CLAWSWEEPER_REPO ?? currentProjectRepo(),
 );
 const headPrefix = String(args["head-prefix"] ?? DEFAULT_HEAD_PREFIX);
 const writeReport = Boolean(args["write-report"]);
 const execute = Boolean(args.execute);
 const dispatchRepairs = Boolean(args["dispatch-repairs"] || args.dispatch || execute);
 const workflow = String(
-  args.workflow ?? process.env.CLAWSWEEPER_REPAIR_FINALIZER_WORKFLOW ?? "cluster-worker.yml",
+  args.workflow ?? process.env.CLAWSWEEPER_FINALIZER_WORKFLOW ?? "cluster-worker.yml",
 );
 const runner = String(
-  args.runner ?? process.env.CLAWSWEEPER_REPAIR_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404",
+  args.runner ?? process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404",
 );
 const executionRunner = String(
   args["execution-runner"] ??
     args.execution_runner ??
-    process.env.CLAWSWEEPER_REPAIR_EXECUTION_RUNNER ??
+    process.env.CLAWSWEEPER_EXECUTION_RUNNER ??
     "blacksmith-16vcpu-ubuntu-2404",
 );
 const requestedMode = typeof args.mode === "string" ? args.mode : null;
-const model = String(args.model ?? process.env.CLAWSWEEPER_REPAIR_MODEL ?? "gpt-5.5");
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const maxPrs = Number(args["max-prs"] ?? args.limit ?? 5);
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
@@ -583,11 +580,11 @@ function executeDispatches(candidates: LooseRecord[], dispatchSummary: JsonValue
     attempts: [],
   };
   if (candidates.length === 0) return summary;
-  if (process.env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE !== "1") {
-    throw new Error("refusing finalizer dispatch: CLAWSWEEPER_REPAIR_ALLOW_EXECUTE must be 1");
+  if (process.env.CLAWSWEEPER_ALLOW_EXECUTE !== "1") {
+    throw new Error("refusing finalizer dispatch: CLAWSWEEPER_ALLOW_EXECUTE must be 1");
   }
-  if (process.env.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR !== "1") {
-    throw new Error("refusing finalizer dispatch: CLAWSWEEPER_REPAIR_ALLOW_FIX_PR must be 1");
+  if (process.env.CLAWSWEEPER_ALLOW_FIX_PR !== "1") {
+    throw new Error("refusing finalizer dispatch: CLAWSWEEPER_ALLOW_FIX_PR must be 1");
   }
 
   const capacity = waitForCapacity
@@ -694,7 +691,7 @@ function isSecurityRoutedAction(action: LooseRecord) {
 
 function ignoredCheckNames() {
   const configured = String(
-    process.env.CLAWSWEEPER_REPAIR_FINALIZER_IGNORE_CHECKS ?? DEFAULT_IGNORED_CHECKS.join(","),
+    process.env.CLAWSWEEPER_FINALIZER_IGNORE_CHECKS ?? DEFAULT_IGNORED_CHECKS.join(","),
   );
   return new Set(
     configured

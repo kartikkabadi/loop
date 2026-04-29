@@ -182,7 +182,7 @@ automatic PR makes sense on latest target `main`.
 Disable this without code changes by setting:
 
 ```text
-CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED=false
+CLAWSWEEPER_COMMIT_FINDINGS_ENABLED=false
 ```
 
 The ClawSweeper repair lane owns the PR lifecycle, validation, branch reuse, and

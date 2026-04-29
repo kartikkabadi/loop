@@ -35,15 +35,15 @@ export type CommentRouterConfig = {
 
 export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig {
   const targetRepo = stringSetting(
-    args.repo ?? process.env.CLAWSWEEPER_REPAIR_TARGET_REPO,
+    args.repo ?? process.env.CLAWSWEEPER_TARGET_REPO,
     DEFAULT_TARGET_REPO,
   );
   const repairRepo = stringSetting(
-    args["repair-repo"] ?? process.env.CLAWSWEEPER_REPAIR_REPO,
+    args["repair-repo"] ?? process.env.CLAWSWEEPER_REPO,
     currentProjectRepo(),
   );
   const workflow = stringSetting(
-    args.workflow ?? process.env.CLAWSWEEPER_REPAIR_COMMENT_WORKFLOW,
+    args.workflow ?? process.env.CLAWSWEEPER_COMMENT_WORKFLOW,
     "cluster-worker.yml",
   );
   const reviewRepo = stringSetting(
@@ -55,22 +55,20 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     "sweep.yml",
   );
   const runner = stringSetting(
-    args.runner ?? process.env.CLAWSWEEPER_REPAIR_WORKER_RUNNER,
+    args.runner ?? process.env.CLAWSWEEPER_WORKER_RUNNER,
     "blacksmith-4vcpu-ubuntu-2404",
   );
   const executionRunner = stringSetting(
-    args["execution-runner"] ??
-      args.execution_runner ??
-      process.env.CLAWSWEEPER_REPAIR_EXECUTION_RUNNER,
+    args["execution-runner"] ?? args.execution_runner ?? process.env.CLAWSWEEPER_EXECUTION_RUNNER,
     "blacksmith-16vcpu-ubuntu-2404",
   );
-  const model = stringSetting(args.model ?? process.env.CLAWSWEEPER_REPAIR_MODEL, "gpt-5.5");
+  const model = stringSetting(args.model ?? process.env.CLAWSWEEPER_MODEL, "gpt-5.5");
   const headPrefix = stringSetting(
-    args["head-prefix"] ?? process.env.CLAWSWEEPER_REPAIR_HEAD_PREFIX,
+    args["head-prefix"] ?? process.env.CLAWSWEEPER_HEAD_PREFIX,
     DEFAULT_HEAD_PREFIX,
   );
   const lookbackMinutes = positiveInteger(
-    args["lookback-minutes"] ?? process.env.CLAWSWEEPER_REPAIR_COMMENT_LOOKBACK_MINUTES ?? 180,
+    args["lookback-minutes"] ?? process.env.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES ?? 180,
     "lookback-minutes",
   );
 
@@ -93,19 +91,19 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     waitForCapacity: Boolean(args["wait-for-capacity"]),
     maxLiveWorkers: readMaxLiveWorkers(args),
     maxComments: positiveInteger(
-      args["max-comments"] ?? process.env.CLAWSWEEPER_REPAIR_COMMENT_MAX_COMMENTS ?? 100,
+      args["max-comments"] ?? process.env.CLAWSWEEPER_COMMENT_MAX_COMMENTS ?? 100,
       "max-comments",
     ),
     maxAutocloseTargets: positiveInteger(
-      args["max-autoclose-targets"] ?? process.env.CLAWSWEEPER_REPAIR_AUTOCLOSE_MAX_TARGETS ?? 8,
+      args["max-autoclose-targets"] ?? process.env.CLAWSWEEPER_AUTOCLOSE_MAX_TARGETS ?? 8,
       "max-autoclose-targets",
     ),
     maxAutoRepairsPerHead: positiveInteger(
-      args["max-auto-repairs-per-head"] ?? process.env.CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_HEAD ?? 1,
+      args["max-auto-repairs-per-head"] ?? process.env.CLAWSWEEPER_MAX_REPAIRS_PER_HEAD ?? 1,
       "max-auto-repairs-per-head",
     ),
     maxAutoRepairsPerPr: positiveInteger(
-      args["max-auto-repairs-per-pr"] ?? process.env.CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_PR ?? 5,
+      args["max-auto-repairs-per-pr"] ?? process.env.CLAWSWEEPER_MAX_REPAIRS_PER_PR ?? 5,
       "max-auto-repairs-per-pr",
     ),
     lookbackMinutes,
@@ -114,17 +112,17 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
       new Date(Date.now() - lookbackMinutes * 60 * 1000).toISOString(),
     ),
     allowedAssociations: upperCaseSet(
-      process.env.CLAWSWEEPER_REPAIR_COMMENT_ALLOWED_ASSOCIATIONS ??
+      process.env.CLAWSWEEPER_COMMENT_ALLOWED_ASSOCIATIONS ??
         DEFAULT_ALLOWED_ASSOCIATIONS.join(","),
     ),
     allowedRepositoryPermissions: lowerCaseSet(
       args["allowed-repository-permissions"] ??
-        process.env.CLAWSWEEPER_REPAIR_COMMENT_ALLOWED_REPOSITORY_PERMISSIONS ??
+        process.env.CLAWSWEEPER_COMMENT_ALLOWED_REPOSITORY_PERMISSIONS ??
         DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS.join(","),
     ),
     trustedBots: commaSet(
       args["trusted-bots"] ??
-        process.env.CLAWSWEEPER_REPAIR_TRUSTED_BOTS ??
+        process.env.CLAWSWEEPER_TRUSTED_BOTS ??
         DEFAULT_TRUSTED_BOTS.join(","),
     ),
   };

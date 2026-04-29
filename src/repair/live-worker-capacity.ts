@@ -12,7 +12,7 @@ export function readMaxLiveWorkers(args: LooseRecord = {}) {
   return readPositiveInteger(
     args["max-live-workers"] ??
       args.max_live_workers ??
-      process.env.CLAWSWEEPER_REPAIR_MAX_LIVE_WORKERS ??
+      process.env.CLAWSWEEPER_MAX_LIVE_WORKERS ??
       DEFAULT_MAX_LIVE_WORKERS,
     "max-live-workers",
   );
@@ -66,13 +66,13 @@ export function waitForLiveWorkerCapacity(options: LooseRecord = {}) {
   }
   const pollMs = readPositiveInteger(
     options.pollMs ??
-      process.env.CLAWSWEEPER_REPAIR_LIVE_WORKER_CAPACITY_POLL_MS ??
+      process.env.CLAWSWEEPER_LIVE_WORKER_CAPACITY_POLL_MS ??
       DEFAULT_CAPACITY_POLL_MS,
     "capacity poll ms",
   );
   const timeoutMs = readPositiveInteger(
     options.timeoutMs ??
-      process.env.CLAWSWEEPER_REPAIR_LIVE_WORKER_CAPACITY_TIMEOUT_MS ??
+      process.env.CLAWSWEEPER_LIVE_WORKER_CAPACITY_TIMEOUT_MS ??
       DEFAULT_CAPACITY_TIMEOUT_MS,
     "capacity timeout ms",
   );

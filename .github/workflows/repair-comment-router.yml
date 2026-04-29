@@ -66,7 +66,7 @@ jobs:
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -78,16 +78,16 @@ jobs:
       - name: Route ClawSweeper comments
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
-          CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE || '0' }}
-          CLAWSWEEPER_REPAIR_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_REPAIR_ALLOW_MERGE || '0' }}
+          CLAWSWEEPER_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_ALLOW_AUTOMERGE || '0' }}
+          CLAWSWEEPER_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_ALLOW_MERGE || '0' }}
         run: |
           set -euo pipefail
-          target_repo="${{ github.event_name == 'workflow_dispatch' && inputs.target_repo || vars.CLAWSWEEPER_REPAIR_TARGET_REPO || 'openclaw/openclaw' }}"
-          lookback_minutes="${{ github.event_name == 'workflow_dispatch' && inputs.lookback_minutes || vars.CLAWSWEEPER_REPAIR_COMMENT_LOOKBACK_MINUTES || '180' }}"
+          target_repo="${{ github.event_name == 'workflow_dispatch' && inputs.target_repo || vars.CLAWSWEEPER_TARGET_REPO || 'openclaw/openclaw' }}"
+          lookback_minutes="${{ github.event_name == 'workflow_dispatch' && inputs.lookback_minutes || vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}"
           since="${{ github.event_name == 'workflow_dispatch' && inputs.since || '' }}"
-          max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_REPAIR_COMMENT_MAX_COMMENTS || '100' }}"
-          runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_REPAIR_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
-          execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_REPAIR_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
+          max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '100' }}"
+          runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
+          execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
 
           args=(
             --write-report
@@ -102,7 +102,7 @@ jobs:
             args+=(--since "$since")
           fi
           if { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.execute }}" = "true" ]; } ||
-             { [ "${{ github.event_name }}" = "schedule" ] && [ "${{ vars.CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE || '0' }}" = "1" ]; }; then
+             { [ "${{ github.event_name }}" = "schedule" ] && [ "${{ vars.CLAWSWEEPER_COMMENT_ROUTER_EXECUTE || '0' }}" = "1" ]; }; then
             args+=(--execute)
           fi
           pnpm run repair:comment-router -- "${args[@]}"

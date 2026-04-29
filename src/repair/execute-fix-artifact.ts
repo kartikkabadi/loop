@@ -25,9 +25,9 @@ import {
 import { parsePullRequestUrl, pullRequestNumberFromUrl } from "./github-ref.js";
 import { codexSubprocessEnv as codexEnv, repairGhEnv as ghEnv } from "./process-env.js";
 import {
-  CLAWSWEEPER_REPAIR_LABEL,
-  CLAWSWEEPER_REPAIR_LABEL_COLOR,
-  CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+  CLAWSWEEPER_LABEL,
+  CLAWSWEEPER_LABEL_COLOR,
+  CLAWSWEEPER_LABEL_DESCRIPTION,
   COMMIT_FINDING_LABEL,
   COMMIT_FINDING_LABEL_COLOR,
   COMMIT_FINDING_LABEL_DESCRIPTION,
@@ -56,67 +56,58 @@ const args = parseArgs(process.argv.slice(2));
 const jobPath = args._[0];
 const resultPathArg = args._[1];
 const latest = Boolean(args.latest);
-const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_REPAIR_FIX_DRY_RUN === "1");
-const model = String(args.model ?? process.env.CLAWSWEEPER_REPAIR_MODEL ?? "gpt-5.5");
+const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_FIX_DRY_RUN === "1");
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const requestedCodexTimeoutMs = Number(
-  process.env.CLAWSWEEPER_REPAIR_FIX_CODEX_TIMEOUT_MS ?? 25 * 60 * 1000,
+  process.env.CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS ?? 25 * 60 * 1000,
 );
-const fixStepTimeoutMs = Number(
-  process.env.CLAWSWEEPER_REPAIR_FIX_STEP_TIMEOUT_MS ?? 30 * 60 * 1000,
-);
-const fixTimeoutReserveMs = Number(
-  process.env.CLAWSWEEPER_REPAIR_FIX_TIMEOUT_RESERVE_MS ?? 5 * 60 * 1000,
-);
+const fixStepTimeoutMs = Number(process.env.CLAWSWEEPER_FIX_STEP_TIMEOUT_MS ?? 30 * 60 * 1000);
+const fixTimeoutReserveMs = Number(process.env.CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS ?? 5 * 60 * 1000);
 const codexTimeoutMs = Math.min(
   requestedCodexTimeoutMs,
   Math.max(60 * 1000, fixStepTimeoutMs - fixTimeoutReserveMs),
 );
 const codexPreflightTimeoutMs = Number(
-  process.env.CLAWSWEEPER_REPAIR_FIX_PREFLIGHT_TIMEOUT_MS ?? 2 * 60 * 1000,
+  process.env.CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS ?? 2 * 60 * 1000,
 );
-const codexReasoningEffort = String(
-  process.env.CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT ?? "medium",
-);
-const codexServiceTier = String(process.env.CLAWSWEEPER_REPAIR_CODEX_SERVICE_TIER ?? "fast").trim();
-const maxEditAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_REPAIR_FIX_EDIT_ATTEMPTS ?? 3));
-const maxReviewAttempts = Math.max(
-  1,
-  Number(process.env.CLAWSWEEPER_REPAIR_CODEX_REVIEW_ATTEMPTS ?? 2),
-);
-const resolveReviewThreads = process.env.CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS !== "0";
-const skipCodexWritePreflight = process.env.CLAWSWEEPER_REPAIR_SKIP_CODEX_WRITE_PREFLIGHT === "1";
-const allowExpensiveValidation = process.env.CLAWSWEEPER_REPAIR_ALLOW_EXPENSIVE_VALIDATION === "1";
-const installTargetDeps = process.env.CLAWSWEEPER_REPAIR_INSTALL_TARGET_DEPS !== "0";
-const allowBroadFixArtifacts = process.env.CLAWSWEEPER_REPAIR_ALLOW_BROAD_FIX_ARTIFACTS === "1";
-const closeSupersededSourcePrs = process.env.CLAWSWEEPER_REPAIR_CLOSE_SUPERSEDED_SOURCE_PRS === "1";
+const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "medium");
+const codexServiceTier = String(process.env.CLAWSWEEPER_CODEX_SERVICE_TIER ?? "fast").trim();
+const maxEditAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_FIX_EDIT_ATTEMPTS ?? 3));
+const maxReviewAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS ?? 2));
+const resolveReviewThreads = process.env.CLAWSWEEPER_RESOLVE_REVIEW_THREADS !== "0";
+const skipCodexWritePreflight = process.env.CLAWSWEEPER_SKIP_CODEX_WRITE_PREFLIGHT === "1";
+const allowExpensiveValidation = process.env.CLAWSWEEPER_ALLOW_EXPENSIVE_VALIDATION === "1";
+const installTargetDeps = process.env.CLAWSWEEPER_INSTALL_TARGET_DEPS !== "0";
+const allowBroadFixArtifacts = process.env.CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS === "1";
+const closeSupersededSourcePrs = process.env.CLAWSWEEPER_CLOSE_SUPERSEDED_SOURCE_PRS === "1";
 const maxAutonomousFixFiles = Math.max(
   1,
-  Number(process.env.CLAWSWEEPER_REPAIR_MAX_AUTONOMOUS_FIX_FILES ?? 8),
+  Number(process.env.CLAWSWEEPER_MAX_AUTONOMOUS_FIX_FILES ?? 8),
 );
 const maxAutonomousFixSurfaces = Math.max(
   1,
-  Number(process.env.CLAWSWEEPER_REPAIR_MAX_AUTONOMOUS_FIX_SURFACES ?? 4),
+  Number(process.env.CLAWSWEEPER_MAX_AUTONOMOUS_FIX_SURFACES ?? 4),
 );
-const maxActivePrsPerArea = Number(process.env.CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA ?? 50);
+const maxActivePrsPerArea = Number(process.env.CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA ?? 50);
 const strictTargetValidation =
-  process.env.CLAWSWEEPER_REPAIR_STRICT_TARGET_VALIDATION === "1" ||
-  String(process.env.CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE ?? "changed-only") === "strict";
+  process.env.CLAWSWEEPER_STRICT_TARGET_VALIDATION === "1" ||
+  String(process.env.CLAWSWEEPER_TARGET_VALIDATION_MODE ?? "changed-only") === "strict";
 const defaultCodexWriteSandbox =
   process.env.GITHUB_ACTIONS === "true" ? "danger-full-access" : "workspace-write";
 const codexWriteSandbox = String(
-  process.env.CLAWSWEEPER_REPAIR_CODEX_WRITE_SANDBOX ?? defaultCodexWriteSandbox,
+  process.env.CLAWSWEEPER_CODEX_WRITE_SANDBOX ?? defaultCodexWriteSandbox,
 );
 const defaultCodexReviewSandbox =
   process.env.GITHUB_ACTIONS === "true" ? "danger-full-access" : "read-only";
 const codexReviewSandbox = String(
-  process.env.CLAWSWEEPER_REPAIR_CODEX_REVIEW_SANDBOX ?? defaultCodexReviewSandbox,
+  process.env.CLAWSWEEPER_CODEX_REVIEW_SANDBOX ?? defaultCodexReviewSandbox,
 );
 const codexWriteNetworkAccess = parseBooleanEnv(
-  process.env.CLAWSWEEPER_REPAIR_CODEX_WRITE_NETWORK_ACCESS,
+  process.env.CLAWSWEEPER_CODEX_WRITE_NETWORK_ACCESS,
   process.env.GITHUB_ACTIONS === "true",
 );
 const codexReviewNetworkAccess = parseBooleanEnv(
-  process.env.CLAWSWEEPER_REPAIR_CODEX_REVIEW_NETWORK_ACCESS,
+  process.env.CLAWSWEEPER_CODEX_REVIEW_NETWORK_ACCESS,
   false,
 );
 let workRoot = "";
@@ -140,13 +131,13 @@ if (jobErrors.length > 0) {
   process.exit(1);
 }
 
-assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_REPAIR_ALLOWED_OWNER);
+assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_ALLOWED_OWNER);
 
 if (!["execute", "autonomous"].includes(job.frontmatter.mode)) {
   throw new Error("refusing fix execution: job frontmatter mode is not execute or autonomous");
 }
-if (process.env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE !== "1") {
-  throw new Error("refusing fix execution: CLAWSWEEPER_REPAIR_ALLOW_EXECUTE must be 1");
+if (process.env.CLAWSWEEPER_ALLOW_EXECUTE !== "1") {
+  throw new Error("refusing fix execution: CLAWSWEEPER_ALLOW_EXECUTE must be 1");
 }
 
 const resultPath = resultPathArg ? path.resolve(resultPathArg) : findLatestResultPath();
@@ -194,8 +185,8 @@ if (plannedFixActions.length === 0) {
   process.exit(0);
 }
 
-if (process.env.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR !== "1") {
-  throw new Error("refusing fix execution: CLAWSWEEPER_REPAIR_ALLOW_FIX_PR must be 1");
+if (process.env.CLAWSWEEPER_ALLOW_FIX_PR !== "1") {
+  throw new Error("refusing fix execution: CLAWSWEEPER_ALLOW_FIX_PR must be 1");
 }
 if (
   !job.frontmatter.allowed_actions.includes("fix") ||
@@ -447,7 +438,7 @@ function shouldPromoteNeedsHumanReplacement(fixArtifact: LooseRecord, workerResu
 }
 
 function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
-  const baseBranch = String(process.env.CLAWSWEEPER_REPAIR_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
+  const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
   const sourcePr = firstSourcePullRequest(fixArtifact);
   const pull = fetchPullRequest(sourcePr.number);
   if (pull.state !== "open") throw new Error(`source PR #${sourcePr.number} is ${pull.state}`);
@@ -578,7 +569,7 @@ function executeReplacementBranch({
   supersedeSources,
   fallbackReason,
 }: LooseRecord) {
-  const baseBranch = String(process.env.CLAWSWEEPER_REPAIR_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
+  const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
   const contributorCredits = sourceContributorCredits({ fixArtifact, targetDir });
   const branch = replacementBranchName(result.cluster_id);
   const areaCapacityBlock = validateActivePrAreaCapacity({
@@ -720,12 +711,12 @@ function executeReplacementBranch({
 function labelReplacementPullRequest({ number, targetDir }: LooseRecord) {
   ensureLabel(
     result.repo,
-    CLAWSWEEPER_REPAIR_LABEL,
-    CLAWSWEEPER_REPAIR_LABEL_COLOR,
-    CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+    CLAWSWEEPER_LABEL,
+    CLAWSWEEPER_LABEL_COLOR,
+    CLAWSWEEPER_LABEL_DESCRIPTION,
     targetDir,
   );
-  addLabel(result.repo, number, CLAWSWEEPER_REPAIR_LABEL, targetDir);
+  addLabel(result.repo, number, CLAWSWEEPER_LABEL, targetDir);
   if (job.frontmatter.source === "clawsweeper_commit" || job.frontmatter.commit_sha) {
     ensureLabel(
       result.repo,
@@ -1025,7 +1016,7 @@ function runCodexWritePreflight() {
   if (skipCodexWritePreflight) {
     return {
       status: "skipped",
-      reason: "CLAWSWEEPER_REPAIR_SKIP_CODEX_WRITE_PREFLIGHT=1",
+      reason: "CLAWSWEEPER_SKIP_CODEX_WRITE_PREFLIGHT=1",
       sandbox: codexWriteSandbox,
     };
   }
@@ -1581,7 +1572,7 @@ function ensureTargetCheckout(repo: string, targetDir: string) {
 function setupGitIdentity(cwd: JsonValue) {
   run(
     "git",
-    ["config", "user.name", process.env.CLAWSWEEPER_REPAIR_GIT_USER_NAME ?? "clawsweeper-repair"],
+    ["config", "user.name", process.env.CLAWSWEEPER_GIT_USER_NAME ?? "clawsweeper-repair"],
     {
       cwd,
     },
@@ -1591,8 +1582,7 @@ function setupGitIdentity(cwd: JsonValue) {
     [
       "config",
       "user.email",
-      process.env.CLAWSWEEPER_REPAIR_GIT_USER_EMAIL ??
-        "clawsweeper-repair@users.noreply.github.com",
+      process.env.CLAWSWEEPER_GIT_USER_EMAIL ?? "clawsweeper-repair@users.noreply.github.com",
     ],
     { cwd },
   );
@@ -1621,7 +1611,7 @@ function prepareReviewThreadsForMerge({ repo, number, targetDir }: LooseRecord) 
   if (!resolveReviewThreads) {
     return {
       status: "blocked",
-      reason: "unresolved review threads remain and CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS=0",
+      reason: "unresolved review threads remain and CLAWSWEEPER_RESOLVE_REVIEW_THREADS=0",
       unresolved_before: unresolved.length,
       examples: unresolved.slice(0, 3).map((thread: JsonValue) => thread.url ?? thread.id),
     };

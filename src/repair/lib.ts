@@ -35,11 +35,9 @@ export {
 export { hasDeterministicSecuritySignal, hasSecuritySignalText } from "./security-signals.js";
 
 const PROMPT_ARTIFACT_MAX_CHARS = Number(
-  process.env.CLAWSWEEPER_REPAIR_PROMPT_ARTIFACT_MAX_CHARS ?? 320_000,
+  process.env.CLAWSWEEPER_PROMPT_ARTIFACT_MAX_CHARS ?? 320_000,
 );
-const PROMPT_STRING_MAX_CHARS = Number(
-  process.env.CLAWSWEEPER_REPAIR_PROMPT_STRING_MAX_CHARS ?? 700,
-);
+const PROMPT_STRING_MAX_CHARS = Number(process.env.CLAWSWEEPER_PROMPT_STRING_MAX_CHARS ?? 700);
 
 export function readText(relativePath: string) {
   return fs.readFileSync(path.join(repoRoot(), relativePath), "utf8");
@@ -431,9 +429,7 @@ export function assertAllowedOwner(repo: string, allowedOwner?: string) {
   if (!allowedOwner) return;
   const owner = repo.split("/")[0];
   if (owner !== allowedOwner) {
-    throw new Error(
-      `repo owner ${owner} does not match CLAWSWEEPER_REPAIR_ALLOWED_OWNER=${allowedOwner}`,
-    );
+    throw new Error(`repo owner ${owner} does not match CLAWSWEEPER_ALLOWED_OWNER=${allowedOwner}`);
   }
 }
 

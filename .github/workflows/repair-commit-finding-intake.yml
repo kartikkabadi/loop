@@ -42,23 +42,23 @@ permissions:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
-  CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_CLI_VERSION || '0.125.0' }}
-  CLAWSWEEPER_REPAIR_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || 'openclaw' }}
-  CLAWSWEEPER_REPAIR_ALLOW_EXECUTE: ${{ vars.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && '1' || '0' }}
-  CLAWSWEEPER_REPAIR_ALLOW_FIX_PR: ${{ vars.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' && '1' || '0' }}
-  CLAWSWEEPER_REPAIR_ALLOW_MERGE: "0"
-  CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT || 'medium' }}
-  CLAWSWEEPER_REPAIR_CODEX_REVIEW_ATTEMPTS: ${{ vars.CLAWSWEEPER_REPAIR_CODEX_REVIEW_ATTEMPTS || '2' }}
-  CLAWSWEEPER_REPAIR_FIX_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_CODEX_TIMEOUT_MS || '1200000' }}
-  CLAWSWEEPER_REPAIR_FIX_STEP_TIMEOUT_MS: "1500000"
-  CLAWSWEEPER_REPAIR_FIX_TIMEOUT_RESERVE_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_TIMEOUT_RESERVE_MS || '300000' }}
-  CLAWSWEEPER_REPAIR_FIX_PREFLIGHT_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_REPAIR_FIX_PREFLIGHT_TIMEOUT_MS || '120000' }}
-  CLAWSWEEPER_REPAIR_MODEL: ${{ vars.CLAWSWEEPER_REPAIR_MODEL || 'gpt-5.5' }}
-  CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE: ${{ vars.CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE || 'changed-only' }}
-  CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS: ${{ vars.CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS || '1' }}
-  CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA: ${{ vars.CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA || '50' }}
-  CLAWSWEEPER_REPAIR_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_REPAIR_GIT_USER_NAME || 'openclaw-clawsweeper[bot]' }}
-  CLAWSWEEPER_REPAIR_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_REPAIR_GIT_USER_EMAIL || '280122609+openclaw-clawsweeper[bot]@users.noreply.github.com' }}
+  CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_CODEX_CLI_VERSION || '0.125.0' }}
+  CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
+  CLAWSWEEPER_ALLOW_EXECUTE: ${{ vars.CLAWSWEEPER_ALLOW_EXECUTE == '1' && '1' || '0' }}
+  CLAWSWEEPER_ALLOW_FIX_PR: ${{ vars.CLAWSWEEPER_ALLOW_FIX_PR == '1' && '1' || '0' }}
+  CLAWSWEEPER_ALLOW_MERGE: "0"
+  CLAWSWEEPER_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_CODEX_REASONING_EFFORT || 'medium' }}
+  CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS: ${{ vars.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS || '2' }}
+  CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS || '1200000' }}
+  CLAWSWEEPER_FIX_STEP_TIMEOUT_MS: "1500000"
+  CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS: ${{ vars.CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS || '300000' }}
+  CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS || '120000' }}
+  CLAWSWEEPER_MODEL: ${{ vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
+  CLAWSWEEPER_TARGET_VALIDATION_MODE: ${{ vars.CLAWSWEEPER_TARGET_VALIDATION_MODE || 'changed-only' }}
+  CLAWSWEEPER_RESOLVE_REVIEW_THREADS: ${{ vars.CLAWSWEEPER_RESOLVE_REVIEW_THREADS || '1' }}
+  CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA: ${{ vars.CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA || '50' }}
+  CLAWSWEEPER_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_GIT_USER_NAME || 'openclaw-clawsweeper[bot]' }}
+  CLAWSWEEPER_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_GIT_USER_EMAIL || '280122609+openclaw-clawsweeper[bot]@users.noreply.github.com' }}
 
 concurrency:
   group: commit-finding-${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}-${{ github.event.inputs.commit_sha || github.event.client_payload.commit_sha || github.run_id }}
@@ -66,7 +66,7 @@ concurrency:
 
 jobs:
   intake:
-    runs-on: ${{ vars.CLAWSWEEPER_REPAIR_COMMIT_FINDING_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
+    runs-on: ${{ vars.CLAWSWEEPER_COMMIT_FINDING_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v5
@@ -83,7 +83,7 @@ jobs:
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -94,7 +94,7 @@ jobs:
         id: prepare
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
-          ENABLED: ${{ github.event.inputs.enabled || github.event.client_payload.enabled || vars.CLAWSWEEPER_REPAIR_COMMIT_FINDING_INTAKE_ENABLED || 'true' }}
+          ENABLED: ${{ github.event.inputs.enabled || github.event.client_payload.enabled || vars.CLAWSWEEPER_COMMIT_FINDING_INTAKE_ENABLED || 'true' }}
           TARGET_REPO: ${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}
           COMMIT_SHA: ${{ github.event.inputs.commit_sha || github.event.client_payload.commit_sha }}
           REPORT_REPO: ${{ github.event.inputs.report_repo || github.event.client_payload.report_repo || 'openclaw/clawsweeper' }}
@@ -131,7 +131,7 @@ jobs:
 
       - name: Execute credited fix artifact
         id: execute
-        if: ${{ steps.prepare.outputs.should_repair == 'true' && env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' }}
+        if: ${{ steps.prepare.outputs.should_repair == 'true' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         continue-on-error: true
         timeout-minutes: 35
         env:
@@ -140,7 +140,7 @@ jobs:
         run: pnpm run repair:execute-fix -- "${{ steps.prepare.outputs.job_path }}" "${{ steps.prepare.outputs.result_path }}"
 
       - name: Post-flight finalize fix PRs
-        if: ${{ steps.prepare.outputs.should_repair == 'true' && steps.execute.outcome == 'success' && env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' }}
+        if: ${{ steps.prepare.outputs.should_repair == 'true' && steps.execute.outcome == 'success' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:post-flight -- "${{ steps.prepare.outputs.job_path }}" "${{ steps.prepare.outputs.result_path }}"

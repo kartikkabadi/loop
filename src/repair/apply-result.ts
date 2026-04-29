@@ -21,9 +21,9 @@ import {
 } from "./github-cli.js";
 import { issueNumberFromRef } from "./github-ref.js";
 import {
-  CLAWSWEEPER_REPAIR_LABEL,
-  CLAWSWEEPER_REPAIR_LABEL_COLOR,
-  CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+  CLAWSWEEPER_LABEL,
+  CLAWSWEEPER_LABEL_COLOR,
+  CLAWSWEEPER_LABEL_DESCRIPTION,
 } from "./constants.js";
 
 const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
@@ -49,7 +49,7 @@ const args = parseArgs(process.argv.slice(2));
 const jobPath = args._[0];
 const resultPathArg = args._[1];
 const latest = Boolean(args.latest);
-const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_REPAIR_APPLY_DRY_RUN === "1");
+const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_APPLY_DRY_RUN === "1");
 const allowMissingUpdatedAt = Boolean(args["allow-missing-updated-at"]);
 const reportPathArg = args["report"];
 
@@ -71,13 +71,13 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_REPAIR_ALLOWED_OWNER);
+assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_ALLOWED_OWNER);
 
 if (!["execute", "autonomous"].includes(job.frontmatter.mode)) {
   throw new Error("refusing apply: job frontmatter mode is not execute or autonomous");
 }
-if (process.env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE !== "1") {
-  throw new Error("refusing apply: CLAWSWEEPER_REPAIR_ALLOW_EXECUTE must be 1");
+if (process.env.CLAWSWEEPER_ALLOW_EXECUTE !== "1") {
+  throw new Error("refusing apply: CLAWSWEEPER_ALLOW_EXECUTE must be 1");
 }
 const resultPath = resultPathArg ? path.resolve(resultPathArg) : findLatestResultPath();
 const result = JSON.parse(fs.readFileSync(resultPath, "utf8"));
@@ -478,12 +478,12 @@ function applyMergeAction({
     };
   }
 
-  if (process.env.CLAWSWEEPER_REPAIR_ALLOW_MERGE !== "1") {
+  if (process.env.CLAWSWEEPER_ALLOW_MERGE !== "1") {
     if (!dryRun) labelForClawSweeperReview(result.repo, target);
     return {
       ...base,
       status: "blocked",
-      reason: "merge requires CLAWSWEEPER_REPAIR_ALLOW_MERGE=1; labeled clawsweeper",
+      reason: "merge requires CLAWSWEEPER_ALLOW_MERGE=1; labeled clawsweeper",
       live_state: live.state,
       live_updated_at: live.updated_at,
       merge_method: "squash",
@@ -590,21 +590,8 @@ function validateMergePolicy({ job, action }: LooseRecord) {
 }
 
 function labelForClawSweeperReview(repo: string, target: LooseRecord) {
-  ensureLabel(
-    repo,
-    CLAWSWEEPER_REPAIR_LABEL,
-    CLAWSWEEPER_REPAIR_LABEL_COLOR,
-    CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
-  );
-  ghBestEffort([
-    "issue",
-    "edit",
-    String(target),
-    "--repo",
-    repo,
-    "--add-label",
-    CLAWSWEEPER_REPAIR_LABEL,
-  ]);
+  ensureLabel(repo, CLAWSWEEPER_LABEL, CLAWSWEEPER_LABEL_COLOR, CLAWSWEEPER_LABEL_DESCRIPTION);
+  ghBestEffort(["issue", "edit", String(target), "--repo", repo, "--add-label", CLAWSWEEPER_LABEL]);
 }
 
 function ensureLabel(repo: string, name: string, color: JsonValue, description: JsonValue) {

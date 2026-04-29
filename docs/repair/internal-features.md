@@ -181,7 +181,7 @@ Replacement PR creation also has a per-area backpressure guard. Before opening a
 new `clawsweeper/*` replacement branch, `execute-fix-artifact` groups the proposed
 `likely_files` into touched areas such as `extensions/discord`, `src/core`, or
 `docs`, reads open ClawSweeper PRs in the target repo, and blocks if the same area
-already has `CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA` open ClawSweeper PRs. The default
+already has `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA` open ClawSweeper PRs. The default
 limit is `50`; set it to `0` only for a deliberately uncapped execution window.
 Common changelog and release-note files are ignored for this backpressure check
 because they are shared support files rather than a meaningful repair area.
@@ -240,7 +240,7 @@ Merging is intentionally hard. Merge requires:
 
 - job allows merge
 - `allow_merge: true`
-- `CLAWSWEEPER_REPAIR_ALLOW_MERGE=1`
+- `CLAWSWEEPER_ALLOW_MERGE=1`
 - clean merge state
 - clean relevant checks
 - resolved human review threads
@@ -389,15 +389,15 @@ For PRs labeled `clawsweeper:automerge`, trusted ClawSweeper `pass`, `approved`,
 or `no-changes` verdict markers become `clawsweeper_auto_merge`. The router
 merges only when the marker SHA matches the current PR head, checks are green,
 GitHub mergeability is clean, no human-review label is present, and both
-`CLAWSWEEPER_REPAIR_ALLOW_MERGE=1` and `CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE=1` are set. Otherwise
+`CLAWSWEEPER_ALLOW_MERGE=1` and `CLAWSWEEPER_ALLOW_AUTOMERGE=1` are set. Otherwise
 it leaves the PR open and labels it `clawsweeper:human-review` and
 `clawsweeper:merge-ready` when merge gates are closed.
 
 The scheduled workflow is dry by default. Set
-`CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE=1` to let scheduled runs post replies and
+`CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` to let scheduled runs post replies and
 dispatch workers. Manual workflow dispatch can also pass `execute=true`.
-Branch mutation still requires the downstream `CLAWSWEEPER_REPAIR_ALLOW_EXECUTE=1` and
-`CLAWSWEEPER_REPAIR_ALLOW_FIX_PR=1` gates.
+Branch mutation still requires the downstream `CLAWSWEEPER_ALLOW_EXECUTE=1` and
+`CLAWSWEEPER_ALLOW_FIX_PR=1` gates.
 
 Ledgers:
 
@@ -449,30 +449,30 @@ PR directly.
 
 Important gates:
 
-- `CLAWSWEEPER_REPAIR_ALLOW_EXECUTE`: allows deterministic write lanes. Workflows treat
+- `CLAWSWEEPER_ALLOW_EXECUTE`: allows deterministic write lanes. Workflows treat
   any value except literal `1` as closed.
-- `CLAWSWEEPER_REPAIR_ALLOW_FIX_PR`: allows branch repair and replacement PR creation.
+- `CLAWSWEEPER_ALLOW_FIX_PR`: allows branch repair and replacement PR creation.
   Workflows treat any value except literal `1` as closed.
-- `CLAWSWEEPER_REPAIR_ALLOW_MERGE`: allows ClawSweeper to merge. Keep this `0` unless a
+- `CLAWSWEEPER_ALLOW_MERGE`: allows ClawSweeper to merge. Keep this `0` unless a
   maintainer explicitly opens it.
-- `CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE`: allows the comment router to merge a
+- `CLAWSWEEPER_ALLOW_AUTOMERGE`: allows the comment router to merge a
   `clawsweeper:automerge` PR after ClawSweeper passes the exact current head.
   Keep this `0` unless a maintainer explicitly opens an automerge window.
-- `CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE`: lets scheduled comment routing post
+- `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE`: lets scheduled comment routing post
   replies and dispatch workers.
 
 Important defaults:
 
-- `CLAWSWEEPER_REPAIR_MODEL`: default worker model, usually `gpt-5.5`.
-- `CLAWSWEEPER_REPAIR_CODEX_REASONING_EFFORT`: model reasoning effort; use `xhigh` for
+- `CLAWSWEEPER_MODEL`: default worker model, usually `gpt-5.5`.
+- `CLAWSWEEPER_CODEX_REASONING_EFFORT`: model reasoning effort; use `xhigh` for
   difficult repair work.
-- `CLAWSWEEPER_REPAIR_MAX_LIVE_WORKERS`: dispatch capacity guard.
-- `CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA`: replacement PR area backpressure; default
+- `CLAWSWEEPER_MAX_LIVE_WORKERS`: dispatch capacity guard.
+- `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA`: replacement PR area backpressure; default
   is `50` open ClawSweeper PRs per touched area, and `0` disables the cap.
 - ClawSweeper commit-finding repair PRs get the `clawsweeper:commit-finding`
   label in addition to the standard `clawsweeper` tracking label.
-- `CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE`: changed-only validation by default.
-- `CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS`: lets fix execution resolve threads after
+- `CLAWSWEEPER_TARGET_VALIDATION_MODE`: changed-only validation by default.
+- `CLAWSWEEPER_RESOLVE_REVIEW_THREADS`: lets fix execution resolve threads after
   it addresses them.
 
 ## Where To Add New Behavior

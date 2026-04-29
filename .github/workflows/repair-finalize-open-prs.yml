@@ -44,7 +44,7 @@ jobs:
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_REPAIR_ALLOWED_OWNER || github.repository_owner }}
+          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
           permission-actions: write
           permission-contents: write
           permission-issues: read
@@ -62,8 +62,8 @@ jobs:
       - name: Finalize open ClawSweeper Repair PRs
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
-          CLAWSWEEPER_REPAIR_ALLOW_EXECUTE: ${{ inputs.execute && vars.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE == '1' && '1' || '0' }}
-          CLAWSWEEPER_REPAIR_ALLOW_FIX_PR: ${{ inputs.execute && vars.CLAWSWEEPER_REPAIR_ALLOW_FIX_PR == '1' && '1' || '0' }}
+          CLAWSWEEPER_ALLOW_EXECUTE: ${{ inputs.execute && vars.CLAWSWEEPER_ALLOW_EXECUTE == '1' && '1' || '0' }}
+          CLAWSWEEPER_ALLOW_FIX_PR: ${{ inputs.execute && vars.CLAWSWEEPER_ALLOW_FIX_PR == '1' && '1' || '0' }}
         run: |
           args=(
             --write-report
@@ -72,7 +72,7 @@ jobs:
             --runner "${{ inputs.runner }}"
             --execution-runner "${{ inputs.execution_runner }}"
           )
-          if [ "${{ inputs.execute }}" = "true" ] && [ "${CLAWSWEEPER_REPAIR_ALLOW_EXECUTE}" = "1" ] && [ "${CLAWSWEEPER_REPAIR_ALLOW_FIX_PR}" = "1" ]; then
+          if [ "${{ inputs.execute }}" = "true" ] && [ "${CLAWSWEEPER_ALLOW_EXECUTE}" = "1" ] && [ "${CLAWSWEEPER_ALLOW_FIX_PR}" = "1" ]; then
             args+=(--execute)
           elif [ "${{ inputs.execute }}" = "true" ]; then
             echo "execution requested, but ClawSweeper execute/fix gates are not explicitly 1; writing report without dispatching repairs"

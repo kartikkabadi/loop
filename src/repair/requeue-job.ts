@@ -19,10 +19,9 @@ import { sleepMs } from "./timing.js";
 
 const DEFAULT_REPO = currentProjectRepo();
 const DEFAULT_WORKFLOW = "cluster-worker.yml";
-const DEFAULT_RUNNER =
-  process.env.CLAWSWEEPER_REPAIR_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
+const DEFAULT_RUNNER = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
 const DEFAULT_EXECUTION_RUNNER =
-  process.env.CLAWSWEEPER_REPAIR_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
+  process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
 const QUEUED_STATUSES = new Set(["queued", "requested", "waiting", "pending"]);
 
 const args = parseArgs(process.argv.slice(2));
@@ -32,7 +31,7 @@ const runner = String(args.runner ?? DEFAULT_RUNNER);
 const executionRunner = String(
   args["execution-runner"] ?? args.execution_runner ?? DEFAULT_EXECUTION_RUNNER,
 );
-const model = String(args.model ?? process.env.CLAWSWEEPER_REPAIR_MODEL ?? "gpt-5.5");
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const execute = Boolean(args.execute || args.live);
@@ -88,9 +87,9 @@ const dispatchStartedAt = new Date(Date.now() - 5000).toISOString();
 
 try {
   if (openExecuteWindow && ["execute", "autonomous"].includes(mode)) {
-    openGate("CLAWSWEEPER_REPAIR_ALLOW_EXECUTE");
+    openGate("CLAWSWEEPER_ALLOW_EXECUTE");
     if (job.frontmatter.allow_fix_pr === true || job.frontmatter.allowed_actions.includes("fix")) {
-      openGate("CLAWSWEEPER_REPAIR_ALLOW_FIX_PR");
+      openGate("CLAWSWEEPER_ALLOW_FIX_PR");
     }
   }
 
@@ -206,9 +205,9 @@ function waitForStartedRuns({ expectedCount, headSha, since }: LooseRecord) {
 
 function assertGateOpenIfNeeded(mode: string) {
   if (!["execute", "autonomous"].includes(mode)) return;
-  if (readGate("CLAWSWEEPER_REPAIR_ALLOW_EXECUTE") !== "1") {
+  if (readGate("CLAWSWEEPER_ALLOW_EXECUTE") !== "1") {
     throw new Error(
-      "refusing write-mode requeue: CLAWSWEEPER_REPAIR_ALLOW_EXECUTE is not 1; use --open-execute-window",
+      "refusing write-mode requeue: CLAWSWEEPER_ALLOW_EXECUTE is not 1; use --open-execute-window",
     );
   }
 }

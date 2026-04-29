@@ -21,9 +21,9 @@ import {
 import { issueNumberFromRef, parsePullRequestUrl } from "./github-ref.js";
 import { sleepMs } from "./timing.js";
 import {
-  CLAWSWEEPER_REPAIR_LABEL,
-  CLAWSWEEPER_REPAIR_LABEL_COLOR,
-  CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+  CLAWSWEEPER_LABEL,
+  CLAWSWEEPER_LABEL_COLOR,
+  CLAWSWEEPER_LABEL_DESCRIPTION,
 } from "./constants.js";
 import { numberEnv } from "./env-utils.js";
 import { compactText as compactPlainText } from "./text-utils.js";
@@ -39,16 +39,14 @@ const POST_MERGE_CLOSE_ACTIONS = new Set([
   "post_merge_close",
 ]);
 const DEFAULT_IGNORED_CHECKS = ["auto-response", "Labeler", "Stale"];
-const POST_FLIGHT_WAIT_MS = numberEnv("CLAWSWEEPER_REPAIR_POST_FLIGHT_WAIT_MS", 10 * 60 * 1000);
-const POST_FLIGHT_POLL_MS = numberEnv("CLAWSWEEPER_REPAIR_POST_FLIGHT_POLL_MS", 15 * 1000);
+const POST_FLIGHT_WAIT_MS = numberEnv("CLAWSWEEPER_POST_FLIGHT_WAIT_MS", 10 * 60 * 1000);
+const POST_FLIGHT_POLL_MS = numberEnv("CLAWSWEEPER_POST_FLIGHT_POLL_MS", 15 * 1000);
 
 const args = parseArgs(process.argv.slice(2));
 const jobPath = args._[0];
 const resultPathArg = args._[1];
 const latest = Boolean(args.latest);
-const dryRun = Boolean(
-  args["dry-run"] || process.env.CLAWSWEEPER_REPAIR_POST_FLIGHT_DRY_RUN === "1",
-);
+const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_POST_FLIGHT_DRY_RUN === "1");
 
 if (!jobPath) {
   console.error("usage: node scripts/post-flight.ts <job.md> [result.json] [--latest] [--dry-run]");
@@ -66,13 +64,13 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_REPAIR_ALLOWED_OWNER);
+assertAllowedOwner(job.frontmatter.repo, process.env.CLAWSWEEPER_ALLOWED_OWNER);
 
 if (!["execute", "autonomous"].includes(job.frontmatter.mode)) {
   throw new Error("refusing post-flight: job frontmatter mode is not execute or autonomous");
 }
-if (process.env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE !== "1") {
-  throw new Error("refusing post-flight: CLAWSWEEPER_REPAIR_ALLOW_EXECUTE must be 1");
+if (process.env.CLAWSWEEPER_ALLOW_EXECUTE !== "1") {
+  throw new Error("refusing post-flight: CLAWSWEEPER_ALLOW_EXECUTE must be 1");
 }
 
 const resultPath = resultPathArg ? path.resolve(resultPathArg) : findLatestResultPath();
@@ -203,12 +201,12 @@ function finalizeFixPr(action: LooseRecord) {
     };
   }
 
-  if (process.env.CLAWSWEEPER_REPAIR_ALLOW_MERGE !== "1") {
+  if (process.env.CLAWSWEEPER_ALLOW_MERGE !== "1") {
     labelForClawSweeperReview(result.repo, parsed.number);
     return {
       ...prBase,
       status: "blocked",
-      reason: "merge requires CLAWSWEEPER_REPAIR_ALLOW_MERGE=1; labeled clawsweeper",
+      reason: "merge requires CLAWSWEEPER_ALLOW_MERGE=1; labeled clawsweeper",
       merge_method: "squash",
       waited_ms: waitedMs,
     };
@@ -363,21 +361,8 @@ function validateMergePolicy() {
 }
 
 function labelForClawSweeperReview(repo: string, number: JsonValue) {
-  ensureLabel(
-    repo,
-    CLAWSWEEPER_REPAIR_LABEL,
-    CLAWSWEEPER_REPAIR_LABEL_COLOR,
-    CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
-  );
-  ghBestEffort([
-    "issue",
-    "edit",
-    String(number),
-    "--repo",
-    repo,
-    "--add-label",
-    CLAWSWEEPER_REPAIR_LABEL,
-  ]);
+  ensureLabel(repo, CLAWSWEEPER_LABEL, CLAWSWEEPER_LABEL_COLOR, CLAWSWEEPER_LABEL_DESCRIPTION);
+  ghBestEffort(["issue", "edit", String(number), "--repo", repo, "--add-label", CLAWSWEEPER_LABEL]);
 }
 
 function ensureLabel(repo: string, name: string, color: JsonValue, description: JsonValue) {
@@ -511,7 +496,7 @@ function hasPendingChecks(checks: LooseRecord[]) {
 
 function ignoredCheckNames() {
   const configured = String(
-    process.env.CLAWSWEEPER_REPAIR_POST_FLIGHT_IGNORE_CHECKS ?? DEFAULT_IGNORED_CHECKS.join(","),
+    process.env.CLAWSWEEPER_POST_FLIGHT_IGNORE_CHECKS ?? DEFAULT_IGNORED_CHECKS.join(","),
   );
   return new Set(
     configured
@@ -522,7 +507,7 @@ function ignoredCheckNames() {
 }
 
 function shouldRequirePrChecks() {
-  return process.env.CLAWSWEEPER_REPAIR_POST_FLIGHT_REQUIRE_PR_CHECKS === "1";
+  return process.env.CLAWSWEEPER_POST_FLIGHT_REQUIRE_PR_CHECKS === "1";
 }
 
 function validateResolvedReviewThreads(repo: string, number: JsonValue) {

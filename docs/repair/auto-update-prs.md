@@ -44,7 +44,7 @@ Maintainer commands:
 
 Trusted automation:
 
-- author login must be in `CLAWSWEEPER_REPAIR_TRUSTED_BOTS`;
+- author login must be in `CLAWSWEEPER_TRUSTED_BOTS`;
 - default trusted bot logins are `clawsweeper[bot]` and
   `openclaw-clawsweeper[bot]`;
 - the target must be a ClawSweeper PR or a PR labeled `clawsweeper:automerge`;
@@ -99,8 +99,8 @@ was started, and includes the worker summary plus planned/skipped actions.
 Automerge has two explicit gates:
 
 ```bash
-CLAWSWEEPER_REPAIR_ALLOW_MERGE=1
-CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE=1
+CLAWSWEEPER_ALLOW_MERGE=1
+CLAWSWEEPER_ALLOW_AUTOMERGE=1
 ```
 
 If ClawSweeper passes the exact current head while either gate is closed,
@@ -166,8 +166,8 @@ The default caps are five automatic repair iterations per PR and one
 auto-repair dispatch per PR head SHA:
 
 ```bash
-CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_PR=5
-CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_HEAD=1
+CLAWSWEEPER_MAX_REPAIRS_PER_PR=5
+CLAWSWEEPER_MAX_REPAIRS_PER_HEAD=1
 ```
 
 That means many ClawSweeper comments on the same commit trigger at most one
@@ -207,7 +207,7 @@ Automerge also refuses to merge when:
 - the pass marker does not name the reviewed head SHA;
 - the PR is draft, not based on `main`, not mergeable, or has non-green checks;
 - GitHub reports requested changes or required review;
-- `CLAWSWEEPER_REPAIR_ALLOW_MERGE` or `CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE` is not `1`.
+- `CLAWSWEEPER_ALLOW_MERGE` or `CLAWSWEEPER_ALLOW_AUTOMERGE` is not `1`.
 
 For trusted automation comments, these blocked cases are silent skips. That
 keeps ClawSweeper from replying to every ordinary contributor PR that
@@ -242,11 +242,11 @@ Durable state:
 
 Important knobs:
 
-- `CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE=1` enables scheduled writes and dispatches;
-- `CLAWSWEEPER_REPAIR_TRUSTED_BOTS` controls trusted automation authors;
-- `CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_PR` controls total automatic repair
+- `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` enables scheduled writes and dispatches;
+- `CLAWSWEEPER_TRUSTED_BOTS` controls trusted automation authors;
+- `CLAWSWEEPER_MAX_REPAIRS_PER_PR` controls total automatic repair
   iterations per PR; default `5`.
-- `CLAWSWEEPER_REPAIR_MAX_REPAIRS_PER_HEAD` controls per-head repair caps;
+- `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD` controls per-head repair caps;
   default `1`.
 
 ## Verification
@@ -267,5 +267,5 @@ pnpm run repair:comment-router -- \
   --max-comments 100
 ```
 
-The scheduled workflow remains dry unless `CLAWSWEEPER_REPAIR_COMMENT_ROUTER_EXECUTE=1`
+The scheduled workflow remains dry unless `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1`
 is set or a maintainer manually dispatches the workflow with `execute=true`.

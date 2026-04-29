@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 import { sampleExternalMessages } from "./external-messages.js";
 
-const iterations = Math.max(
-  1,
-  Number(process.env.CLAWSWEEPER_REPAIR_MESSAGE_SAMPLE_ITERATIONS ?? 3),
-);
+const iterations = Math.max(1, Number(process.env.CLAWSWEEPER_MESSAGE_SAMPLE_ITERATIONS ?? 3));
 
 for (let iteration = 1; iteration <= iterations; iteration += 1) {
   console.log(`# Iteration ${iteration}`);

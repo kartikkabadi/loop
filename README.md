@@ -593,7 +593,7 @@ items, writes comments, or fixes code.
   commit. Clean or skipped reports are green; high-confidence high/critical
   findings fail; lower-severity, inconclusive, and failed reviews are neutral.
 - Finding reports are dispatched to the repair intake when
-  `CLAWSWEEPER_REPAIR_COMMIT_FINDINGS_ENABLED` is not `false`. ClawSweeper owns
+  `CLAWSWEEPER_COMMIT_FINDINGS_ENABLED` is not `false`. ClawSweeper owns
   the audit log and any repair PR.
 
 Use `pnpm commit-reports -- --since 24h` to review recent reports and add

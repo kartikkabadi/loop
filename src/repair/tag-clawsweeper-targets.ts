@@ -5,7 +5,7 @@ import path from "node:path";
 import { currentProjectRepo, parseArgs, parseSimpleYaml, repoRoot } from "./lib.js";
 import { ghJson, ghText } from "./github-cli.js";
 import { parseIssueOrPullRef } from "./github-ref.js";
-import { CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION, DEFAULT_LABEL } from "./constants.js";
+import { CLAWSWEEPER_LABEL_DESCRIPTION, DEFAULT_LABEL } from "./constants.js";
 import { readJsonFileIfExists as readJson } from "./json-file.js";
 
 const FIX_PR_STATUSES = new Set(["opened", "pushed", "executed", "blocked", "planned"]);
@@ -42,8 +42,8 @@ if (labelName !== DEFAULT_LABEL) {
     `refusing to use label ${labelName}; ClawSweeper Repair label is exactly "${DEFAULT_LABEL}"`,
   );
 }
-if (apply && process.env.CLAWSWEEPER_REPAIR_ALLOW_EXECUTE !== "1") {
-  throw new Error("refusing to label targets: CLAWSWEEPER_REPAIR_ALLOW_EXECUTE must be 1");
+if (apply && process.env.CLAWSWEEPER_ALLOW_EXECUTE !== "1") {
+  throw new Error("refusing to label targets: CLAWSWEEPER_ALLOW_EXECUTE must be 1");
 }
 
 const targets = new Map();
@@ -260,7 +260,7 @@ function collectFixActions(
 }
 
 function collectOpenClawSweeperPullRequests() {
-  const repo = process.env.CLAWSWEEPER_REPAIR_TARGET_REPO ?? "openclaw/openclaw";
+  const repo = process.env.CLAWSWEEPER_TARGET_REPO ?? "openclaw/openclaw";
   const pulls = ghJson([
     "pr",
     "list",
@@ -362,13 +362,13 @@ function postFlightToApplyAction(action: LooseRecord) {
 }
 
 function githubLabelExists() {
-  const repo = process.env.CLAWSWEEPER_REPAIR_TARGET_REPO ?? "openclaw/openclaw";
+  const repo = process.env.CLAWSWEEPER_TARGET_REPO ?? "openclaw/openclaw";
   const labels = ghJson(["label", "list", "--repo", repo, "--limit", "1000", "--json", "name"]);
   return (labels ?? []).some((label: JsonValue) => label.name === labelName);
 }
 
 function createGithubLabel() {
-  const repo = process.env.CLAWSWEEPER_REPAIR_TARGET_REPO ?? "openclaw/openclaw";
+  const repo = process.env.CLAWSWEEPER_TARGET_REPO ?? "openclaw/openclaw";
   ghText([
     "label",
     "create",
@@ -378,7 +378,7 @@ function createGithubLabel() {
     "--color",
     "0E8A16",
     "--description",
-    CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+    CLAWSWEEPER_LABEL_DESCRIPTION,
   ]);
 }
 

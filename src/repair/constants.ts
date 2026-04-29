@@ -2,9 +2,9 @@ export const DEFAULT_TARGET_REPO = "openclaw/openclaw";
 export const DEFAULT_HEAD_PREFIX = "clawsweeper/";
 export const DEFAULT_LABEL = "clawsweeper";
 
-export const CLAWSWEEPER_REPAIR_LABEL = "clawsweeper";
-export const CLAWSWEEPER_REPAIR_LABEL_COLOR = "F97316";
-export const CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION = "Tracked by ClawSweeper automation";
+export const CLAWSWEEPER_LABEL = "clawsweeper";
+export const CLAWSWEEPER_LABEL_COLOR = "F97316";
+export const CLAWSWEEPER_LABEL_DESCRIPTION = "Tracked by ClawSweeper automation";
 
 export const COMMIT_FINDING_LABEL = "clawsweeper:commit-finding";
 export const COMMIT_FINDING_LABEL_COLOR = "1D76DB";

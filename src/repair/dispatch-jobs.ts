@@ -17,16 +17,15 @@ import {
 import { sleepMs } from "./timing.js";
 
 const args = parseArgs(process.argv.slice(2));
-const defaultRunner =
-  process.env.CLAWSWEEPER_REPAIR_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
+const defaultRunner = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
 const defaultExecutionRunner =
-  process.env.CLAWSWEEPER_REPAIR_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
+  process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
 const mode = args.mode ?? "plan";
 const runner = args.runner ?? defaultRunner;
 const executionRunner = args["execution-runner"] ?? args.execution_runner ?? defaultExecutionRunner;
 const workflow = args.workflow ?? "cluster-worker.yml";
 const repo = String(args.repo ?? currentProjectRepo());
-const model = String(args.model ?? process.env.CLAWSWEEPER_REPAIR_MODEL ?? "gpt-5.5");
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const ref = args.ref ? String(args.ref) : "";

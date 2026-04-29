@@ -476,22 +476,22 @@ test("automerge merge args pin the reviewed head SHA", () => {
 test("automerge gate block only reports closed merge policy gates", () => {
   assert.equal(
     automergeGateBlockReason({
-      CLAWSWEEPER_REPAIR_ALLOW_MERGE: "0",
-      CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE: "1",
+      CLAWSWEEPER_ALLOW_MERGE: "0",
+      CLAWSWEEPER_ALLOW_AUTOMERGE: "1",
     }),
-    "merge requires CLAWSWEEPER_REPAIR_ALLOW_MERGE=1",
+    "merge requires CLAWSWEEPER_ALLOW_MERGE=1",
   );
   assert.equal(
     automergeGateBlockReason({
-      CLAWSWEEPER_REPAIR_ALLOW_MERGE: "1",
-      CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE: "0",
+      CLAWSWEEPER_ALLOW_MERGE: "1",
+      CLAWSWEEPER_ALLOW_AUTOMERGE: "0",
     }),
-    "automerge requires CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE=1",
+    "automerge requires CLAWSWEEPER_ALLOW_AUTOMERGE=1",
   );
   assert.equal(
     automergeGateBlockReason({
-      CLAWSWEEPER_REPAIR_ALLOW_MERGE: "1",
-      CLAWSWEEPER_REPAIR_ALLOW_AUTOMERGE: "1",
+      CLAWSWEEPER_ALLOW_MERGE: "1",
+      CLAWSWEEPER_ALLOW_AUTOMERGE: "1",
     }),
     "",
   );
