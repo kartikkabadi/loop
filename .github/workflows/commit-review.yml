@@ -258,18 +258,11 @@ jobs:
           working-directory: clawsweeper
           build-script: build
 
-      - name: Install Codex
-        run: npm install -g @openai/codex@0.125.0 --prefer-offline
-
-      - name: Authenticate Codex
+      - uses: ./clawsweeper/.github/actions/setup-codex
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
-        run: |
-          test -n "$OPENAI_API_KEY"
-          test -n "$CODEX_API_KEY"
-          printenv OPENAI_API_KEY | codex login --with-api-key
-          codex login status
+        with:
+          login-status: "true"
 
       - name: Check out target commit
         env:

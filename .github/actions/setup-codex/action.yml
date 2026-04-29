@@ -1,0 +1,51 @@
+name: Setup Codex CLI
+description: Cache, install, and authenticate the OpenAI Codex CLI.
+inputs:
+  version:
+    description: Codex CLI npm package version.
+    default: "0.125.0"
+  cache-suffix:
+    description: Extra cache key suffix for target-tool downloads.
+    default: ""
+  login-status:
+    description: Run `codex login status` after authentication.
+    default: "false"
+runs:
+  using: composite
+  steps:
+    - name: Cache Codex CLI and npm downloads
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.npm
+          ~/.cache/node/corepack
+          ~/.local/share/pnpm/store
+          ~/.clawsweeper-repair/codex
+        key: ${{ runner.os }}-node24-codex-${{ inputs.version }}-${{ inputs['cache-suffix'] || 'default' }}-v1
+        restore-keys: |
+          ${{ runner.os }}-node24-codex-${{ inputs.version }}-
+          ${{ runner.os }}-node24-codex-
+
+    - name: Install Codex CLI
+      shell: bash
+      run: |
+        set -euo pipefail
+        npm config set prefix "$HOME/.clawsweeper-repair/codex"
+        npm config set cache "$HOME/.npm"
+        echo "$HOME/.clawsweeper-repair/codex/bin" >> "$GITHUB_PATH"
+        export PATH="$HOME/.clawsweeper-repair/codex/bin:$PATH"
+
+        if ! command -v codex >/dev/null 2>&1 || ! codex --version | grep -Fq "${{ inputs.version }}"; then
+          npm install -g "@openai/codex@${{ inputs.version }}" --prefer-offline --no-audit --no-fund
+        fi
+        codex --version
+
+    - name: Authenticate Codex
+      shell: bash
+      run: |
+        set -euo pipefail
+        test -n "${OPENAI_API_KEY:-}"
+        printenv OPENAI_API_KEY | codex login --with-api-key >/dev/null
+        if [[ "${{ inputs['login-status'] }}" == "true" ]]; then
+          codex login status
+        fi

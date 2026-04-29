@@ -1,3 +1,4 @@
+import type { JsonValue, LooseRecord } from "./json-types.js";
 export const REPAIR_INTENTS = new Set([
   "fix_ci",
   "address_review",

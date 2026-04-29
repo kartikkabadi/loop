@@ -1,8 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
-import { sleepMs } from "./timing.js";
-import { ghJson } from "./github-cli.js";
 import { repoRoot } from "./paths.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import { isRepairMode, type RepairJobFrontmatter } from "./domain-types.js";
@@ -27,196 +24,22 @@ export type ParsedJob = {
   body: string;
   raw: string;
 };
+export { githubActionsRunUrl, currentProjectRepo } from "./project-repo.js";
+export {
+  assertLiveWorkerCapacity,
+  listActiveWorkflowRuns,
+  liveWorkerCapacity,
+  readMaxLiveWorkers,
+  waitForLiveWorkerCapacity,
+} from "./live-worker-capacity.js";
+export { hasDeterministicSecuritySignal, hasSecuritySignalText } from "./security-signals.js";
 
-const SECURITY_SIGNAL_PATTERN =
-  /\b(vulnerabilit(?:y|ies)|cve-\d+|ghsa|exploit|ssrf|xss|csrf|rce|(?:sql|command|code|prompt)\s*injection|auth(?:entication)?\s*bypass|privilege\s+escalation|sensitive\s+data|security\s+(?:issue|bug|fix|patch|advisory|triage)|(?:secretref|secret|credential|api[-_\s]?key|private[-_\s]?key|token).{0,80}(?:leak(?:ed|age)?|expos(?:e|ed|ure)|plaintext|plain[-_\s]?text)|(?:leak(?:ed|age)?|expos(?:e|ed|ure)|plaintext|plain[-_\s]?text).{0,80}(?:secretref|secret|credential|api[-_\s]?key|private[-_\s]?key|token))\b/i;
-const SECURITY_LABEL_PATTERN =
-  /^(?:security|security[-_: ]sensitive|security[:/].+|type:\s*security|kind:\s*security)$/i;
-const STRUCTURED_SECURITY_MARKER_PATTERN =
-  /<!--\s*clawsweeper-(?:security|route|verdict)\s*:\s*(?:security|security-sensitive|sensitive|route-security|central-security)\b[^>]*-->/i;
 const PROMPT_ARTIFACT_MAX_CHARS = Number(
   process.env.CLAWSWEEPER_REPAIR_PROMPT_ARTIFACT_MAX_CHARS ?? 320_000,
 );
 const PROMPT_STRING_MAX_CHARS = Number(
   process.env.CLAWSWEEPER_REPAIR_PROMPT_STRING_MAX_CHARS ?? 700,
 );
-const DEFAULT_MAX_LIVE_WORKERS = 50;
-const DEFAULT_CAPACITY_POLL_MS = 30_000;
-const DEFAULT_CAPACITY_TIMEOUT_MS = 30 * 60 * 1000;
-const ACTIVE_WORKFLOW_STATUSES = ["queued", "in_progress", "waiting", "requested", "pending"];
-
-export function currentProjectRepo() {
-  return (
-    process.env.CLAWSWEEPER_REPAIR_REPO ||
-    process.env.GITHUB_REPOSITORY ||
-    repoFromOriginRemote() ||
-    "openclaw/clawsweeper"
-  );
-}
-
-export function githubActionsRunUrl(runId: string) {
-  return `https://github.com/${currentProjectRepo()}/actions/runs/${runId}`;
-}
-
-export function readMaxLiveWorkers(args: LooseRecord = {}) {
-  return readPositiveInteger(
-    args["max-live-workers"] ??
-      args.max_live_workers ??
-      process.env.CLAWSWEEPER_REPAIR_MAX_LIVE_WORKERS ??
-      DEFAULT_MAX_LIVE_WORKERS,
-    "max-live-workers",
-  );
-}
-
-export function liveWorkerCapacity({
-  repo = currentProjectRepo(),
-  workflow = "cluster-worker.yml",
-  requested = 1,
-  maxLiveWorkers = DEFAULT_MAX_LIVE_WORKERS,
-}: LooseRecord = {}) {
-  const requestedCount = readNonNegativeInteger(requested, "requested");
-  const max = readPositiveInteger(maxLiveWorkers, "max-live-workers");
-  const activeRuns = listActiveWorkflowRuns({ repo, workflow });
-  return {
-    repo,
-    workflow,
-    active: activeRuns.length,
-    requested: requestedCount,
-    max_live_workers: max,
-    available: Math.max(0, max - activeRuns.length),
-    active_runs: activeRuns,
-  };
-}
-
-export function assertLiveWorkerCapacity(options: LooseRecord = {}) {
-  const capacity = liveWorkerCapacity(options);
-  if (capacity.requested > capacity.max_live_workers) {
-    throw new Error(
-      `refusing dispatch: requested ${capacity.requested} ${capacity.workflow} workers exceeds max-live-workers=${capacity.max_live_workers}`,
-    );
-  }
-  if (capacity.active + capacity.requested > capacity.max_live_workers) {
-    throw new Error(
-      `refusing dispatch: ${capacity.active} active ${capacity.workflow} workers + ${capacity.requested} requested would exceed max-live-workers=${capacity.max_live_workers}`,
-    );
-  }
-  return capacity;
-}
-
-export function waitForLiveWorkerCapacity(options: LooseRecord = {}) {
-  const requestedCount = readNonNegativeInteger(options.requested ?? 1, "requested");
-  const max = readPositiveInteger(
-    options.maxLiveWorkers ?? DEFAULT_MAX_LIVE_WORKERS,
-    "max-live-workers",
-  );
-  if (requestedCount > max) {
-    throw new Error(
-      `refusing dispatch: requested ${requestedCount} ${options.workflow ?? "cluster-worker.yml"} workers exceeds max-live-workers=${max}`,
-    );
-  }
-  const pollMs = readPositiveInteger(
-    options.pollMs ??
-      process.env.CLAWSWEEPER_REPAIR_LIVE_WORKER_CAPACITY_POLL_MS ??
-      DEFAULT_CAPACITY_POLL_MS,
-    "capacity poll ms",
-  );
-  const timeoutMs = readPositiveInteger(
-    options.timeoutMs ??
-      process.env.CLAWSWEEPER_REPAIR_LIVE_WORKER_CAPACITY_TIMEOUT_MS ??
-      DEFAULT_CAPACITY_TIMEOUT_MS,
-    "capacity timeout ms",
-  );
-  const deadline = Date.now() + timeoutMs;
-  let latest = null;
-
-  while (Date.now() <= deadline) {
-    latest = liveWorkerCapacity(options);
-    if (
-      latest.requested <= latest.max_live_workers &&
-      latest.active + latest.requested <= latest.max_live_workers
-    ) {
-      return latest;
-    }
-    sleepMs(Math.min(pollMs, Math.max(1, deadline - Date.now())));
-  }
-
-  throw new Error(
-    `timed out waiting for ${options.workflow ?? "cluster-worker.yml"} capacity: ${latest?.active ?? "unknown"} active + ${requestedCount} requested exceeds max-live-workers=${max}`,
-  );
-}
-
-export function listActiveWorkflowRuns({
-  repo = currentProjectRepo(),
-  workflow = "cluster-worker.yml",
-}: LooseRecord = {}) {
-  const runs: LooseRecord[] = [];
-  for (const status of ACTIVE_WORKFLOW_STATUSES) {
-    const workflowRuns = ghJson([
-      "api",
-      "--method",
-      "GET",
-      `repos/${repo}/actions/workflows/${encodeURIComponent(workflow)}/runs`,
-      "-f",
-      `status=${status}`,
-      "-f",
-      "per_page=100",
-      "--jq",
-      ".workflow_runs",
-    ]);
-    if (Array.isArray(workflowRuns))
-      runs.push(...workflowRuns.map((run: JsonValue) => normalizeWorkflowRun(run, status)));
-  }
-  return [
-    ...new Map(runs.map((run: JsonValue) => [String(run.databaseId ?? run.id), run])).values(),
-  ].sort(
-    (left: JsonValue, right: JsonValue) =>
-      Date.parse(right.createdAt ?? "") - Date.parse(left.createdAt ?? ""),
-  );
-}
-
-function repoFromOriginRemote() {
-  try {
-    const remote = execFileSync("git", ["config", "--get", "remote.origin.url"], {
-      cwd: repoRoot(),
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
-    const sshMatch = remote.match(/^git@github\.com:([^/]+\/[^/.]+)(?:\.git)?$/);
-    if (sshMatch) return sshMatch[1];
-    const httpsMatch = remote.match(/^https:\/\/github\.com\/([^/]+\/[^/.]+)(?:\.git)?$/);
-    if (httpsMatch) return httpsMatch[1];
-  } catch {
-    return null;
-  }
-  return null;
-}
-
-function normalizeWorkflowRun(run: LooseRecord, fallbackStatus: string) {
-  return {
-    databaseId: run.databaseId ?? run.database_id ?? run.id,
-    status: run.status ?? fallbackStatus,
-    conclusion: run.conclusion ?? null,
-    createdAt: run.createdAt ?? run.created_at ?? null,
-    url: run.url ?? run.html_url ?? null,
-    displayTitle: run.displayTitle ?? run.display_title ?? run.name ?? null,
-  };
-}
-
-function readPositiveInteger(value: JsonValue, name: string) {
-  const number = Number(value);
-  if (!Number.isInteger(number) || number < 1) {
-    throw new Error(`${name} must be a positive integer`);
-  }
-  return number;
-}
-
-function readNonNegativeInteger(value: JsonValue, name: string) {
-  const number = Number(value);
-  if (!Number.isInteger(number) || number < 0) {
-    throw new Error(`${name} must be a non-negative integer`);
-  }
-  return number;
-}
 
 export function readText(relativePath: string) {
   return fs.readFileSync(path.join(repoRoot(), relativePath), "utf8");
@@ -573,26 +396,6 @@ function compactDeep(value: JsonValue, options: LooseRecord = {}): JsonValue {
     );
   }
   return value;
-}
-
-export function hasSecuritySignalText(...values: LooseRecord[]) {
-  const text = values.flatMap(flattenSecurityText).join("\n");
-  return SECURITY_SIGNAL_PATTERN.test(text);
-}
-
-export function hasDeterministicSecuritySignal({ labels = [], comments = [] }: LooseRecord = {}) {
-  const labelTexts = flattenSecurityText(labels).map((label: JsonValue) => label.trim());
-  if (labelTexts.some((label: JsonValue) => SECURITY_LABEL_PATTERN.test(label))) return true;
-  const commentText = comments.flatMap(flattenSecurityText).join("\n");
-  return STRUCTURED_SECURITY_MARKER_PATTERN.test(commentText);
-}
-
-function flattenSecurityText(value: JsonValue): string[] {
-  if (Array.isArray(value)) return value.flatMap(flattenSecurityText);
-  if (value && typeof value === "object") {
-    return Object.values(value).flatMap(flattenSecurityText);
-  }
-  return [String(value ?? "")];
 }
 
 function isGithubRef(value: JsonValue) {

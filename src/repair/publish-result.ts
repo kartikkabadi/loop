@@ -1,8 +1,11 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { githubActionsRunUrl, parseArgs, repoRoot } from "./lib.js";
 import { ghStdoutFromError, ghText } from "./github-cli.js";
+import { readJsonFile as readJson } from "./json-file.js";
+import { escapeRegExp, slug } from "./text-utils.js";
 
 const DASHBOARD_START = "<!-- clawsweeper-repair-dashboard:start -->";
 const DASHBOARD_END = "<!-- clawsweeper-repair-dashboard:end -->";
@@ -599,10 +602,6 @@ function readResultClusterId(resultPath: string) {
   } catch {
     return "";
   }
-}
-
-function readJson(filePath: string) {
-  return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
 function readSiblingJson(runDir: string, filename: string) {
@@ -1433,16 +1432,6 @@ function quote(value: JsonValue) {
   return JSON.stringify(String(value));
 }
 
-function slug(value: JsonValue) {
-  return (
-    String(value)
-      .toLowerCase()
-      .replace(/[^a-z0-9_.-]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 120) || "unknown"
-  );
-}
-
 function markdownLink(label: string, url: string) {
   return `[${String(label).replaceAll("|", "\\|")}](${url})`;
 }
@@ -1460,8 +1449,4 @@ function formatTimestamp(iso: string) {
     timeZone: "UTC",
     timeZoneName: "short",
   }).format(date);
-}
-
-function escapeRegExp(value: JsonValue) {
-  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

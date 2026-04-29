@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -17,8 +18,6 @@ import {
   branchHasBaseDiff,
   currentHead,
   ensureMergeBaseAvailable,
-  gitChangedFiles,
-  gitLsFiles,
   isAncestor,
   remoteBranchExists,
   remoteBranchSha,
@@ -26,13 +25,22 @@ import {
 import { parsePullRequestUrl, pullRequestNumberFromUrl } from "./github-ref.js";
 import { codexSubprocessEnv as codexEnv, repairGhEnv as ghEnv } from "./process-env.js";
 import {
-  isExpensivePnpmValidation,
-  isTestFile,
-  looksLikePathArgument,
-  packageScriptRequirement,
-  parseAllowedValidationCommand,
-  uniqueStrings,
-} from "./validation-command-utils.js";
+  CLAWSWEEPER_REPAIR_LABEL,
+  CLAWSWEEPER_REPAIR_LABEL_COLOR,
+  CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+  COMMIT_FINDING_LABEL,
+  COMMIT_FINDING_LABEL_COLOR,
+  COMMIT_FINDING_LABEL_DESCRIPTION,
+} from "./constants.js";
+import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
+import { compactText } from "./text-utils.js";
+import {
+  prepareTargetToolchain,
+  preflightTargetValidationPlan,
+  runAllowedValidationCommands,
+  type TargetValidationOptions,
+} from "./target-validation.js";
+import { uniqueStrings } from "./validation-command-utils.js";
 
 const FIX_ACTIONS = new Set(["fix_needed", "build_fix_artifact", "open_fix_pr"]);
 const REPAIR_STRATEGIES = new Set([
@@ -89,12 +97,6 @@ const maxAutonomousFixSurfaces = Math.max(
   Number(process.env.CLAWSWEEPER_REPAIR_MAX_AUTONOMOUS_FIX_SURFACES ?? 4),
 );
 const maxActivePrsPerArea = Number(process.env.CLAWSWEEPER_REPAIR_MAX_ACTIVE_PRS_PER_AREA ?? 50);
-const CLAWSWEEPER_REPAIR_LABEL = "clawsweeper";
-const CLAWSWEEPER_REPAIR_LABEL_COLOR = "F97316";
-const CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION = "Tracked by ClawSweeper automation";
-const COMMIT_FINDING_LABEL = "clawsweeper:commit-finding";
-const COMMIT_FINDING_LABEL_COLOR = "1D76DB";
-const COMMIT_FINDING_LABEL_DESCRIPTION = "PR created from a ClawSweeper commit finding";
 const strictTargetValidation =
   process.env.CLAWSWEEPER_REPAIR_STRICT_TARGET_VALIDATION === "1" ||
   String(process.env.CLAWSWEEPER_REPAIR_TARGET_VALIDATION_MODE ?? "changed-only") === "strict";
@@ -160,6 +162,12 @@ if (result.mode !== job.frontmatter.mode) {
   throw new Error(`result mode ${result.mode} does not match job mode ${job.frontmatter.mode}`);
 }
 
+const targetValidationOptions: TargetValidationOptions = {
+  allowExpensiveValidation,
+  installTargetDeps,
+  strictTargetValidation,
+  targetRepo: result.repo,
+};
 const rawFixArtifact = result.fix_artifact;
 const executableFixArtifact = executableReplacementFixArtifact(rawFixArtifact, result);
 const promotedReplacement = executableFixArtifact !== rawFixArtifact;
@@ -258,11 +266,14 @@ fs.mkdirSync(workRoot, { recursive: true });
 ensureTargetCheckout(result.repo, targetDir);
 setupGitIdentity(targetDir);
 
-const validationPreflight = preflightTargetValidationPlan({
-  fixArtifact,
-  targetDir,
-  baseBranch: DEFAULT_BASE_BRANCH,
-});
+const validationPreflight = preflightTargetValidationPlan(
+  {
+    fixArtifact,
+    targetDir,
+    baseBranch: DEFAULT_BASE_BRANCH,
+  },
+  targetValidationOptions,
+);
 report.validation_preflight = validationPreflight;
 if (validationPreflight.status === "blocked") {
   report.status = "blocked";
@@ -454,7 +465,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   run("git", ["checkout", branch], { cwd: targetDir });
   ensureMergeBaseAvailable({ targetDir, baseBranch });
   const sourceHead = currentHead(targetDir);
-  prepareTargetToolchain(targetDir);
+  prepareTargetToolchain(targetDir, targetValidationOptions);
 
   const prep = editValidatePrepareMerge({
     fixArtifact,
@@ -575,7 +586,7 @@ function executeReplacementBranch({
   }
   run("git", ["fetch", "origin", baseBranch], { cwd: targetDir });
   const branchState = checkoutRecoverableReplacementBranch({ targetDir, branch, baseBranch });
-  prepareTargetToolchain(targetDir);
+  prepareTargetToolchain(targetDir, targetValidationOptions);
 
   if (!dryRun) ghAuthSetupGit(targetDir);
   const prep = editValidatePrepareMerge({
@@ -886,6 +897,7 @@ function editValidatePrepareMerge({
         repositoryContext,
         reconcileWithBase,
         sourceHead,
+        maxEditAttempts,
       });
       const summaryPath = path.join(workRoot, `${mode}-codex-summary-${attempt}.md`);
       const codexResult = spawnSync(
@@ -992,232 +1004,8 @@ function editValidatePrepareMerge({
   };
 }
 
-function buildFixPrompt({
-  fixArtifact,
-  branch,
-  mode,
-  fallbackReason,
-  attempt,
-  previousNoDiff,
-  previousSummary,
-  repositoryContext,
-  reconcileWithBase,
-  sourceHead,
-}: LooseRecord) {
-  return [
-    "You are editing the target repository for ClawSweeper Repair.",
-    "",
-    "Rules:",
-    "- this is a writable checkout; make concrete file edits before returning;",
-    "- make the narrowest code change that satisfies the fix artifact;",
-    "- start by inspecting the repository paths below with rg/git ls-files/sed;",
-    "- if likely_files are stale, missing, or glob-like, discover the real nearby files and edit those;",
-    "- you may run local git status/diff/log/rebase/merge commands needed to reconcile this branch with current origin/main;",
-    "- when git conflicts exist, resolve every conflict marker and leave the checkout in a normal non-rebasing state;",
-    "- preserve contributor credit in changelog/docs when the fix is user-facing;",
-    "- address review-bot concerns named in the artifact;",
-    "- resolve actionable human review comments, bot comments, and requested changes named in the artifact;",
-    "- prepare the PR so it can pass the ClawSweeper Repair merge_preflight gate;",
-    "- do not push, open PRs, close PRs, or call gh;",
-    "- do not create a final commit unless git rebase/merge conflict resolution requires it; ClawSweeper Repair checkpoints ordinary edits after you return;",
-    "- ClawSweeper Repair will checkpoint and push your edits to the recovery branch after you return;",
-    "- do not inspect or print environment variables, credentials, tokens, or secrets;",
-    "- do not change auth, approval, sandbox, or trust-boundary semantics unless the artifact explicitly asks for that boundary change;",
-    "- exec-adjacent bugs are allowed when the fix is ordinary correctness or hardening and does not redefine the security boundary;",
-    "- before returning, verify git status/diff/log show a merge-ready branch state.",
-    "",
-    `Mode: ${mode}`,
-    `Branch: ${branch}`,
-    `Edit attempt: ${attempt ?? 1} of ${maxEditAttempts}`,
-    reconcileWithBase
-      ? "Existing repair branch detected. Reconcile the existing branch diff with current origin/main before touching new code; rebase locally only when that is the cleanest path."
-      : "",
-    sourceHead ? `Source head before edit: ${sourceHead}` : "",
-    previousNoDiff
-      ? "Previous attempt produced no target repo diff. This time make the smallest concrete code/test change that satisfies the artifact; do not return analysis only."
-      : "",
-    previousSummary ? `Previous no-diff summary: ${compactText(previousSummary, 1200)}` : "",
-    fallbackReason ? `Fallback reason: ${fallbackReason}` : "",
-    "",
-    "Repository discovery context:",
-    "```text",
-    repositoryContext,
-    "```",
-    "",
-    "Fix artifact:",
-    "```json",
-    JSON.stringify(fixArtifact, null, 2),
-    "```",
-  ]
-    .filter(Boolean)
-    .join("\n");
-}
-
-function buildRepositoryContext({ fixArtifact, targetDir }: LooseRecord) {
-  const files = run("git", ["ls-files"], { cwd: targetDir })
-    .split("\n")
-    .map((line: JsonValue) => line.trim())
-    .filter(Boolean);
-  const scoredCandidates = scoreRepositoryFiles({ files, fixArtifact }).slice(0, 80);
-  const candidates = scoredCandidates.map((entry: JsonValue) => `${entry.file} (${entry.score})`);
-  const snippets = buildRepositorySnippets({
-    targetDir,
-    candidates: scoredCandidates.slice(0, 12),
-    fixArtifact,
-  });
-  const packageScripts = readPackageScripts(targetDir);
-  return [
-    `candidate_files (${candidates.length}):`,
-    ...(candidates.length > 0
-      ? candidates
-      : ["none matched; use rg across the repo to find the real implementation files"]),
-    "",
-    "candidate_file_excerpts:",
-    snippets || "none; inspect candidate files directly before editing",
-    "",
-    `validation_commands: ${(fixArtifact.validation_commands ?? []).join(" ; ")}`,
-    `package_scripts: ${packageScripts.join(", ") || "none"}`,
-  ].join("\n");
-}
-
-function buildRepositorySnippets({ targetDir, candidates, fixArtifact }: LooseRecord) {
-  const tokens = discoveryTokens(fixArtifact).slice(0, 40);
-  const out: JsonValue[] = [];
-  for (const candidate of candidates) {
-    const pathname = path.join(targetDir, candidate.file);
-    if (!fs.existsSync(pathname)) continue;
-    const stat = fs.statSync(pathname);
-    if (!stat.isFile() || stat.size > 220_000) continue;
-    const content = fs.readFileSync(pathname, "utf8");
-    const excerpt = focusedFileExcerpt(content, tokens);
-    if (!excerpt) continue;
-    out.push(`--- ${candidate.file} ---\n${excerpt}`);
-    if (out.join("\n\n").length > 18_000) break;
-  }
-  return out.join("\n\n").slice(0, 18_000);
-}
-
-function focusedFileExcerpt(content: JsonValue, tokens: JsonValue) {
-  const lines = content.split(/\r?\n/);
-  const matched = new Set<number>();
-  const lowerTokens = tokens
-    .map((token: JsonValue) => token.toLowerCase())
-    .filter((token: JsonValue) => token.length >= 4);
-  for (let index = 0; index < lines.length; index += 1) {
-    const lower = lines[index].toLowerCase();
-    if (lowerTokens.some((token: JsonValue) => lower.includes(token))) {
-      for (
-        let line = Math.max(0, index - 8);
-        line <= Math.min(lines.length - 1, index + 18);
-        line += 1
-      ) {
-        matched.add(line);
-      }
-    }
-  }
-  const selected =
-    matched.size > 0
-      ? [...matched].sort((a: JsonValue, b: JsonValue) => a - b)
-      : lines.map((_: JsonValue, index: JsonValue) => index).slice(0, 80);
-  const rendered: JsonValue[] = [];
-  let previous = -2;
-  for (const line of selected) {
-    if (line !== previous + 1) rendered.push("...");
-    rendered.push(`${line + 1}: ${lines[line]}`);
-    previous = line;
-    if (rendered.join("\n").length > 3_200) break;
-  }
-  return rendered.join("\n");
-}
-
-function scoreRepositoryFiles({ files, fixArtifact }: LooseRecord) {
-  const likelyFiles = (fixArtifact.likely_files ?? [])
-    .map((entry: JsonValue) => String(entry).trim())
-    .filter(Boolean);
-  const exactLikely = new Set(likelyFiles.filter((entry: JsonValue) => !entry.includes("*")));
-  const literalHints = likelyFiles
-    .map(literalPathHint)
-    .filter((entry: JsonValue) => entry.length >= 4);
-  const tokens = discoveryTokens(fixArtifact);
-  const out: JsonValue[] = [];
-  for (const file of files) {
-    const lower = file.toLowerCase();
-    let score = 0;
-    if (exactLikely.has(file)) score += 100;
-    for (const hint of literalHints) {
-      if (lower.includes(hint)) score += 15;
-    }
-    for (const token of tokens) {
-      if (lower.includes(token)) score += 3;
-    }
-    if (/\.(test|spec)\.[cm]?[jt]sx?$/i.test(file)) score += 2;
-    if (/\.(ts|tsx|js|jsx|mjs|cjs|md|mdx|json)$/i.test(file)) score += 1;
-    if (score > 0) out.push({ file, score });
-  }
-  out.sort(
-    (left: JsonValue, right: JsonValue) =>
-      right.score - left.score || left.file.localeCompare(right.file),
-  );
-  return out;
-}
-
-function literalPathHint(value: JsonValue) {
-  return String(value)
-    .toLowerCase()
-    .replace(/\*\*?.*$/, "")
-    .replace(/\/+$/, "");
-}
-
-function discoveryTokens(fixArtifact: LooseRecord) {
-  const common = new Set([
-    "support",
-    "supported",
-    "current",
-    "existing",
-    "validation",
-    "commands",
-    "summary",
-    "scope",
-    "error",
-    "errors",
-  ]);
-  const text = [
-    fixArtifact.summary,
-    fixArtifact.pr_title,
-    fixArtifact.pr_body,
-    ...(fixArtifact.affected_surfaces ?? []),
-    ...(fixArtifact.likely_files ?? []),
-  ].join("\n");
-  const tokens = new Set();
-  for (const match of text.toLowerCase().matchAll(/[a-z][a-z0-9_-]{3,}/g)) {
-    const token = match[0].replace(/[-_]/g, "");
-    if (token.length >= 4 && !common.has(token)) tokens.add(token);
-  }
-  return [...tokens].slice(0, 80);
-}
-
-function readPackageScripts(targetDir: string) {
-  const packagePath = path.join(targetDir, "package.json");
-  if (!fs.existsSync(packagePath)) return [];
-  try {
-    const pkg = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-    return Object.keys(pkg.scripts ?? {})
-      .sort()
-      .slice(0, 80);
-  } catch {
-    return [];
-  }
-}
-
 function readTextIfExists(filePath: string) {
   return fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf8") : "";
-}
-
-function compactText(value: JsonValue, maxLength: number) {
-  const text = String(value ?? "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return text.length > maxLength ? `${text.slice(0, maxLength - 3)}...` : text;
 }
 
 function runCodexWritePreflight() {
@@ -1365,6 +1153,7 @@ function validateAndReviewLoop({
     validationCommands = runAllowedValidationCommands(
       fixArtifact.validation_commands,
       targetDir,
+      targetValidationOptions,
       baseBranch,
     );
     runDiffCheck({ targetDir, baseBranch });
@@ -2033,59 +1822,6 @@ function ensureTargetCheckout(repo: string, targetDir: string) {
   if (status) throw new Error(`target checkout has uncommitted changes: ${targetDir}`);
 }
 
-function prepareTargetToolchain(cwd: JsonValue) {
-  if (!installTargetDeps) return;
-  const packagePath = path.join(cwd, "package.json");
-  if (!fs.existsSync(packagePath)) return;
-
-  const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-  const packageManager = String(packageJson.packageManager ?? "pnpm@10.33.0");
-  if (!packageManager.startsWith("pnpm@")) {
-    throw new Error(`unsupported target package manager: ${packageManager}`);
-  }
-
-  const validationEnv = targetValidationEnv();
-  run(
-    "node",
-    [
-      "-e",
-      "const major = Number(process.versions.node.split('.')[0]); if (major < 22) { console.error(`Node ${process.version} is too old for target validation`); process.exit(1); }",
-    ],
-    { cwd, env: validationEnv },
-  );
-  run("corepack", ["enable"], { cwd, env: validationEnv });
-  run("corepack", ["prepare", packageManager, "--activate"], { cwd, env: validationEnv });
-  const installArgs = [
-    "install",
-    "--frozen-lockfile",
-    "--prefer-offline",
-    "--config.engine-strict=false",
-    "--config.enable-pre-post-scripts=true",
-  ];
-  try {
-    run("pnpm", installArgs, { cwd, env: validationEnv });
-  } catch (error) {
-    if (!/ERR_PNPM_OUTDATED_LOCKFILE/i.test(String(error.message))) throw error;
-    run(
-      "pnpm",
-      installArgs.map((arg: JsonValue) =>
-        arg === "--frozen-lockfile" ? "--no-frozen-lockfile" : arg,
-      ),
-      {
-        cwd,
-        env: validationEnv,
-      },
-    );
-    restoreTargetLockfile(cwd);
-  }
-}
-
-function restoreTargetLockfile(cwd: JsonValue) {
-  const lockfile = "pnpm-lock.yaml";
-  if (!fs.existsSync(path.join(cwd, lockfile))) return;
-  run("git", ["checkout", "--", lockfile], { cwd });
-}
-
 function setupGitIdentity(cwd: JsonValue) {
   run(
     "git",
@@ -2104,230 +1840,6 @@ function setupGitIdentity(cwd: JsonValue) {
     ],
     { cwd },
   );
-}
-
-function runAllowedValidationCommands(
-  commands: LooseRecord[],
-  cwd: JsonValue,
-  baseBranch: string = DEFAULT_BASE_BRANCH,
-) {
-  ensureMergeBaseAvailable({ targetDir: cwd, baseBranch });
-  const validationEnv = targetValidationEnv();
-  const executed: JsonValue[] = [];
-  for (const command of commands) {
-    const resolvedCommands = resolveAllowedValidationCommands(command, cwd, baseBranch);
-    for (const parts of resolvedCommands) {
-      const rendered = parts.join(" ");
-      if (executed.includes(rendered)) continue;
-      try {
-        run(parts[0], parts.slice(1), { cwd, env: validationEnv });
-        executed.push(rendered);
-      } catch (error) {
-        const fallbackCommands = validationFallbackCommands({ parts, error, cwd, baseBranch });
-        if (fallbackCommands.length > 0) {
-          for (const fallbackParts of fallbackCommands) {
-            const fallbackRendered = fallbackParts.join(" ");
-            if (executed.includes(fallbackRendered)) continue;
-            run(fallbackParts[0], fallbackParts.slice(1), { cwd, env: validationEnv });
-            executed.push(fallbackRendered);
-          }
-          continue;
-        }
-        throw new Error(
-          `validation command failed (${parts.join(" ")}): ${compactText(error.message, 1200)}`,
-        );
-      }
-    }
-  }
-  return executed;
-}
-
-function preflightTargetValidationPlan({
-  fixArtifact,
-  targetDir,
-  baseBranch = DEFAULT_BASE_BRANCH,
-}: LooseRecord) {
-  const scripts = readPackageScriptSet(targetDir);
-  const availableScripts = [...scripts].sort();
-  const resolved: JsonValue[] = [];
-  const requiredScripts: LooseRecord[] = [];
-  for (const command of fixArtifact.validation_commands ?? []) {
-    const resolvedCommands = resolveAllowedValidationCommands(command, targetDir, baseBranch);
-    for (const parts of resolvedCommands) {
-      const rendered = parts.join(" ");
-      if (!resolved.includes(rendered)) resolved.push(rendered);
-      const script = packageScriptRequirement(parts);
-      if (script) requiredScripts.push(script);
-    }
-  }
-
-  const missing = requiredScripts.find((script: JsonValue) => !scripts.has(script.name));
-  if (!missing) {
-    return {
-      status: "passed",
-      resolved_commands: resolved,
-      available_scripts: availableScripts,
-    };
-  }
-
-  const sourcePr =
-    (fixArtifact.source_prs ?? []).find(
-      (source: JsonValue) => parsePullRequestUrl(source)?.repo === result.repo,
-    ) ?? null;
-  return {
-    status: "blocked",
-    code: "validation_script_missing",
-    required: missing.command,
-    missing_script: missing.name,
-    available_scripts: availableScripts,
-    target_branch: fixArtifact.branch ?? fixArtifact.head_branch ?? null,
-    source_pr: sourcePr,
-    resolved_commands: resolved,
-    reason: `validation_script_missing: required ${missing.command} is unavailable in target checkout`,
-  };
-}
-
-function validationFallbackCommands({ parts, error, cwd, baseBranch }: LooseRecord) {
-  if (strictTargetValidation) return [];
-  if (parts[0] !== "pnpm" || parts[1] !== "check:changed" || parts.length !== 2) return [];
-  if (/no merge base/i.test(String(error?.message ?? ""))) {
-    ensureMergeBaseAvailable({ targetDir: cwd, baseBranch });
-    return [parts];
-  }
-  if (!isChangedGateStall(error)) return [];
-  const changedTests = changedTestFiles(cwd, baseBranch);
-  return [
-    ["git", "diff", "--check", `origin/${baseBranch}...HEAD`],
-    ...(changedTests.length > 0 ? [["pnpm", "test:serial", ...changedTests]] : []),
-  ];
-}
-
-function isChangedGateStall(error: JsonValue) {
-  return /no output for \d+ms|terminating stalled Vitest|stalled Vitest process/i.test(
-    String(error?.message ?? ""),
-  );
-}
-
-function targetValidationEnv() {
-  return {
-    ...process.env,
-    CI: process.env.CI ?? "true",
-    OPENCLAW_LOCAL_CHECK: process.env.OPENCLAW_LOCAL_CHECK ?? "0",
-  };
-}
-
-function resolveAllowedValidationCommands(
-  command: LooseRecord,
-  cwd: JsonValue,
-  baseBranch: string = DEFAULT_BASE_BRANCH,
-) {
-  const parts = parseAllowedValidationCommand(command);
-  const scripts = readPackageScriptSet(cwd);
-  if (!strictTargetValidation && scripts.has("check:changed")) {
-    return [["pnpm", "check:changed"]];
-  }
-  if (parts[0] === "npm" && parts[1] === "run" && parts[2] === "validate") {
-    if (!scripts.has("validate") && scripts.has("check:changed")) {
-      return [["pnpm", "check:changed"]];
-    }
-  }
-  if (parts[0] === "pnpm") {
-    const commandStart = parts[1] === "-s" || parts[1] === "--silent" ? 2 : 1;
-    const pnpmScript = parts[commandStart];
-    if (isExpensivePnpmValidation(parts, commandStart, allowExpensiveValidation)) {
-      return [["pnpm", "check:changed"]];
-    }
-    if (pnpmScript === "vitest" && parts[commandStart + 1] === "run") {
-      return normalizePathValidationCommand(
-        ["pnpm", "test:serial", ...parts.slice(commandStart + 2)],
-        cwd,
-        baseBranch,
-      );
-    }
-    if (pnpmScript === "test" || pnpmScript === "test:serial") {
-      return normalizePathValidationCommand(
-        ["pnpm", pnpmScript, ...parts.slice(commandStart + 1)],
-        cwd,
-        baseBranch,
-      );
-    }
-  }
-  return [parts];
-}
-
-function normalizePathValidationCommand(
-  parts: JsonValue,
-  cwd: JsonValue,
-  baseBranch: string = DEFAULT_BASE_BRANCH,
-) {
-  const pathArgStart = 2;
-  const pathArgs = parts.slice(pathArgStart).filter(looksLikePathArgument);
-  if (pathArgs.length === 0) return [parts];
-
-  const normalized: JsonValue[] = [];
-  const missing: JsonValue[] = [];
-  for (const arg of pathArgs) {
-    const mapped = resolveRepoPathArgument(arg, cwd);
-    if (mapped) normalized.push(mapped);
-    else missing.push(arg);
-  }
-
-  if (missing.length === 0) {
-    return [[...parts.slice(0, pathArgStart), ...uniqueStrings(normalized)]];
-  }
-
-  const changedTests = changedTestFiles(cwd, baseBranch);
-  if (changedTests.length > 0) {
-    return [["pnpm", "test:serial", ...changedTests]];
-  }
-
-  const scripts = readPackageScriptSet(cwd);
-  if (scripts.has("check:changed")) {
-    return [["pnpm", "check:changed"]];
-  }
-
-  return [[...parts.slice(0, pathArgStart), ...uniqueStrings(normalized)]];
-}
-
-function resolveRepoPathArgument(arg: JsonValue, cwd: string): string {
-  const clean = String(arg ?? "").trim();
-  if (!clean || clean.startsWith("-")) return clean;
-  if (fs.existsSync(path.join(cwd, clean))) return clean;
-
-  const candidates = candidateRepoPaths(clean, cwd).filter((candidate: JsonValue) =>
-    fs.existsSync(path.join(cwd, candidate)),
-  );
-  return candidates[0] ?? "";
-}
-
-function candidateRepoPaths(filePath: string, cwd: string): string[] {
-  const out: string[] = [];
-  if (filePath.startsWith("src/web/")) {
-    out.push(`extensions/whatsapp/src/${filePath.slice("src/web/".length)}`);
-  }
-  const basename = path.basename(filePath);
-  if (basename) {
-    const files = gitLsFiles(cwd);
-    out.push(...files.filter((file: JsonValue) => path.basename(file) === basename));
-  }
-  return uniqueStrings(out);
-}
-
-function changedTestFiles(cwd: string, baseBranch: string = DEFAULT_BASE_BRANCH) {
-  return gitChangedFiles(cwd, baseBranch).filter(
-    (file: JsonValue) => isTestFile(file) && fs.existsSync(path.join(cwd, file)),
-  );
-}
-
-function readPackageScriptSet(cwd: JsonValue) {
-  const packagePath = path.join(cwd, "package.json");
-  if (!fs.existsSync(packagePath)) return new Set();
-  try {
-    const pkg = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-    return new Set(Object.keys(pkg.scripts ?? {}));
-  } catch {
-    return new Set();
-  }
 }
 
 function firstSourcePullRequest(fixArtifact: LooseRecord) {

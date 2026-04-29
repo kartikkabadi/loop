@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -19,6 +20,11 @@ import {
   ghTextWithRetry as ghWithRetry,
 } from "./github-cli.js";
 import { issueNumberFromRef } from "./github-ref.js";
+import {
+  CLAWSWEEPER_REPAIR_LABEL,
+  CLAWSWEEPER_REPAIR_LABEL_COLOR,
+  CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+} from "./constants.js";
 
 const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 const CLOSE_ACTIONS = new Set([
@@ -38,9 +44,6 @@ const CLOSE_CLASSIFICATIONS = new Set([
 ]);
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
 const CLEAN_MERGE_STATES = new Set(["CLEAN"]);
-const CLAWSWEEPER_REPAIR_LABEL = "clawsweeper";
-const CLAWSWEEPER_REPAIR_LABEL_COLOR = "F97316";
-const CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION = "Tracked by ClawSweeper automation";
 
 const args = parseArgs(process.argv.slice(2));
 const jobPath = args._[0];

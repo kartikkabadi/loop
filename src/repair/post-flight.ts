@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -19,6 +20,13 @@ import {
 } from "./github-cli.js";
 import { issueNumberFromRef, parsePullRequestUrl } from "./github-ref.js";
 import { sleepMs } from "./timing.js";
+import {
+  CLAWSWEEPER_REPAIR_LABEL,
+  CLAWSWEEPER_REPAIR_LABEL_COLOR,
+  CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+} from "./constants.js";
+import { numberEnv } from "./env-utils.js";
+import { compactText as compactPlainText } from "./text-utils.js";
 
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
 const FIX_PR_MERGE_STATES = new Set(["CLEAN", "HAS_HOOKS", "UNSTABLE"]);
@@ -31,9 +39,6 @@ const POST_MERGE_CLOSE_ACTIONS = new Set([
   "post_merge_close",
 ]);
 const DEFAULT_IGNORED_CHECKS = ["auto-response", "Labeler", "Stale"];
-const CLAWSWEEPER_REPAIR_LABEL = "clawsweeper";
-const CLAWSWEEPER_REPAIR_LABEL_COLOR = "F97316";
-const CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION = "Tracked by ClawSweeper automation";
 const POST_FLIGHT_WAIT_MS = numberEnv("CLAWSWEEPER_REPAIR_POST_FLIGHT_WAIT_MS", 10 * 60 * 1000);
 const POST_FLIGHT_POLL_MS = numberEnv("CLAWSWEEPER_REPAIR_POST_FLIGHT_POLL_MS", 15 * 1000);
 
@@ -636,21 +641,11 @@ function normalizeIssueRef(value: JsonValue) {
 }
 
 function compactText(text: string, maxLength: number) {
-  const value = stripAnsi(String(text ?? ""))
-    .replace(/\s+/g, " ")
-    .trim();
-  if (value.length <= maxLength) return value;
-  return `${value.slice(0, maxLength - 3)}...`;
+  return compactPlainText(stripAnsi(text), maxLength);
 }
 
 function isRecoverableMergeRace(message: string) {
   return /pull request has merge conflicts|merge conflict|base branch was modified|head branch was modified|not mergeable/i.test(
     String(message ?? ""),
   );
-}
-
-function numberEnv(name: string, fallback: number) {
-  const value = Number(process.env[name] ?? fallback);
-  if (!Number.isFinite(value) || value < 0) return fallback;
-  return value;
 }

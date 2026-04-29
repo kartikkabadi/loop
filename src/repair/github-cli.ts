@@ -1,3 +1,4 @@
+import type { JsonValue } from "./json-types.js";
 import { execFileSync, spawnSync } from "node:child_process";
 import { stripAnsi } from "./comment-router-utils.js";
 import { ghCliEnv } from "./process-env.js";

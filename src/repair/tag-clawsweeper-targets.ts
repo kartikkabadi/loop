@@ -1,11 +1,13 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { currentProjectRepo, parseArgs, parseSimpleYaml, repoRoot } from "./lib.js";
 import { ghJson, ghText } from "./github-cli.js";
 import { parseIssueOrPullRef } from "./github-ref.js";
+import { CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION, DEFAULT_LABEL } from "./constants.js";
+import { readJsonFileIfExists as readJson } from "./json-file.js";
 
-const DEFAULT_LABEL = "clawsweeper";
 const FIX_PR_STATUSES = new Set(["opened", "pushed", "executed", "blocked", "planned"]);
 const APPLY_STATUSES = new Set(["executed"]);
 const CLOSE_ACTIONS = new Set([
@@ -376,7 +378,7 @@ function createGithubLabel() {
     "--color",
     "0E8A16",
     "--description",
-    "Tracked by ClawSweeper automation",
+    CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
   ]);
 }
 
@@ -393,14 +395,6 @@ function readSiblingJson(runDir: string, filename: string) {
       return readJson(candidate);
   }
   return null;
-}
-
-function readJson(filePath: string) {
-  try {
-    return JSON.parse(fs.readFileSync(filePath, "utf8"));
-  } catch {
-    return null;
-  }
 }
 
 function ghErrorMessage(error: JsonValue) {

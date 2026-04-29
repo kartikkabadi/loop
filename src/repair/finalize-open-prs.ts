@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -13,13 +14,14 @@ import {
 } from "./lib.js";
 import { ghJson, ghText } from "./github-cli.js";
 import { sleepMs } from "./timing.js";
+import { DEFAULT_TARGET_REPO, REVIEW_BOTS } from "./constants.js";
+import { numberEnv } from "./env-utils.js";
+import { compactText, escapeRegExp } from "./text-utils.js";
 
-const DEFAULT_TARGET_REPO = "openclaw/openclaw";
 const DEFAULT_HEAD_PREFIX = "clawsweeper/";
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
 const CLEAN_MERGE_STATES = new Set(["CLEAN", "HAS_HOOKS"]);
 const DEFAULT_IGNORED_CHECKS = ["auto-response", "Labeler", "Stale"];
-const REVIEW_BOTS = ["Greptile", "Codex", "Asile", "CodeRabbit", "Copilot"];
 const MERGEABILITY_POLL_MS = numberEnv("CLAWSWEEPER_REPAIR_FINALIZER_MERGEABILITY_POLL_MS", 5000);
 const MERGEABILITY_POLL_ATTEMPTS = numberEnv(
   "CLAWSWEEPER_REPAIR_FINALIZER_MERGEABILITY_POLL_ATTEMPTS",
@@ -817,20 +819,4 @@ function hasLabel(labels: LooseRecord[], expected: JsonValue) {
   return labels.some(
     (item: JsonValue) => String(item.name ?? item).toLowerCase() === expected.toLowerCase(),
   );
-}
-
-function compactText(value: JsonValue, maxLength: number) {
-  const text = String(value ?? "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return text.length > maxLength ? `${text.slice(0, maxLength - 3)}...` : text;
-}
-
-function numberEnv(name: string, fallback: number) {
-  const value = Number(process.env[name] ?? fallback);
-  return Number.isFinite(value) && value >= 0 ? value : fallback;
-}
-
-function escapeRegExp(value: JsonValue) {
-  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

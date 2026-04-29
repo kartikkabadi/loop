@@ -9,16 +9,13 @@ import {
   skippedNonCodeReport,
 } from "./commit-classifier.js";
 import { publishCheckFromReport, splitFrontMatter } from "./commit-checks.js";
-import { codexEnv, safeOutputTail } from "./clawsweeper.js";
+import { argBool, argNumber, argString, parseArgs, type Args } from "./clawsweeper-args.js";
+import { safeOutputTail } from "./clawsweeper-text.js";
+import { codexEnv } from "./codex-env.js";
 import { runText } from "./command.js";
 import { DEFAULT_TARGET_REPO, repositoryProfileFor } from "./repository-profiles.js";
 
 export { isReviewableCommitPath } from "./commit-classifier.js";
-
-interface Args {
-  _: string[];
-  [key: string]: string | boolean | string[];
-}
 
 interface CommitMetadata {
   sha: string;
@@ -40,44 +37,6 @@ const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
 const COMMIT_REVIEW_CHECK_NAME = "ClawSweeper Commit Review";
-
-function parseArgs(argv: string[]): Args {
-  const args: Args = { _: [] };
-  for (let index = 0; index < argv.length; index += 1) {
-    const arg = argv[index];
-    if (!arg) continue;
-    if (!arg.startsWith("--")) {
-      args._.push(arg);
-      continue;
-    }
-    const key = arg.slice(2).replaceAll("-", "_");
-    const next = argv[index + 1];
-    if (!next || next.startsWith("--")) {
-      args[key] = true;
-    } else {
-      args[key] = next;
-      index += 1;
-    }
-  }
-  return args;
-}
-
-function stringArg(args: Args, key: string, fallback: string): string {
-  const value = args[key];
-  return typeof value === "string" && value.length ? value : fallback;
-}
-
-function numberArg(args: Args, key: string, fallback: number): number {
-  const value = Number(stringArg(args, key, String(fallback)));
-  if (!Number.isFinite(value) || value < 0)
-    throw new Error(`Invalid --${key.replaceAll("_", "-")}`);
-  return value;
-}
-
-function boolArg(args: Args, key: string): boolean {
-  const value = args[key];
-  return value === true || value === "true" || value === "1" || value === "yes";
-}
 
 function run(command: string, commandArgs: string[], options: { cwd?: string } = {}): string {
   return runText(command, commandArgs, { cwd: options.cwd });
@@ -390,19 +349,19 @@ function runCodex(options: {
 }
 
 function reviewCommand(args: Args): void {
-  const targetRepo = stringArg(args, "target_repo", DEFAULT_TARGET_REPO);
+  const targetRepo = argString(args, "target_repo", DEFAULT_TARGET_REPO);
   const targetDir = resolve(
-    stringArg(args, "target_dir", repositoryProfileFor(targetRepo).checkoutDir),
+    argString(args, "target_dir", repositoryProfileFor(targetRepo).checkoutDir),
   );
-  const sha = assertSha(stringArg(args, "commit_sha", ""));
+  const sha = assertSha(argString(args, "commit_sha", ""));
   const metadata = commitMetadata(targetDir, targetRepo, sha);
-  const baseSha = assertSha(stringArg(args, "base_sha", metadata.parents[0] ?? ""), "base sha");
-  const reportDir = resolve(stringArg(args, "report_dir", "records"));
-  const artifactMode = boolArg(args, "artifact_mode");
+  const baseSha = assertSha(argString(args, "base_sha", metadata.parents[0] ?? ""), "base sha");
+  const reportDir = resolve(argString(args, "report_dir", "records"));
+  const artifactMode = argBool(args, "artifact_mode");
   const outputPath = artifactMode
     ? join(reportDir, artifactReportRelativePath(targetRepo, sha))
     : resolve(commitReportRelativePath(targetRepo, sha));
-  const additionalPrompt = stringArg(
+  const additionalPrompt = argString(
     args,
     "additional_prompt",
     process.env.COMMIT_SWEEPER_ADDITIONAL_PROMPT ?? "",
@@ -414,12 +373,12 @@ function reviewCommand(args: Args): void {
       sha,
       baseSha,
       metadata,
-      model: stringArg(args, "codex_model", DEFAULT_CODEX_MODEL),
-      reasoningEffort: stringArg(args, "codex_reasoning_effort", DEFAULT_REASONING_EFFORT),
-      sandboxMode: stringArg(args, "codex_sandbox", "danger-full-access"),
-      serviceTier: stringArg(args, "codex_service_tier", DEFAULT_SERVICE_TIER),
-      timeoutMs: numberArg(args, "codex_timeout_ms", 1_800_000),
-      workDir: resolve(stringArg(args, "work_dir", join(reportDir, ".codex"))),
+      model: argString(args, "codex_model", DEFAULT_CODEX_MODEL),
+      reasoningEffort: argString(args, "codex_reasoning_effort", DEFAULT_REASONING_EFFORT),
+      sandboxMode: argString(args, "codex_sandbox", "danger-full-access"),
+      serviceTier: argString(args, "codex_service_tier", DEFAULT_SERVICE_TIER),
+      timeoutMs: argNumber(args, "codex_timeout_ms", 1_800_000),
+      workDir: resolve(argString(args, "work_dir", join(reportDir, ".codex"))),
       additionalPrompt,
     }),
     metadata,
@@ -438,12 +397,12 @@ function commitShasArg(value: string): string[] {
 }
 
 function classifyCommand(args: Args): void {
-  const targetRepo = stringArg(args, "target_repo", DEFAULT_TARGET_REPO);
+  const targetRepo = argString(args, "target_repo", DEFAULT_TARGET_REPO);
   const targetDir = resolve(
-    stringArg(args, "target_dir", repositoryProfileFor(targetRepo).checkoutDir),
+    argString(args, "target_dir", repositoryProfileFor(targetRepo).checkoutDir),
   );
-  const artifactDir = resolve(stringArg(args, "artifact_dir", "skipped-commit-artifacts"));
-  const commits = commitShasArg(stringArg(args, "commit_shas", ""));
+  const artifactDir = resolve(argString(args, "artifact_dir", "skipped-commit-artifacts"));
+  const commits = commitShasArg(argString(args, "commit_shas", ""));
   const review: string[] = [];
   const skipped: string[] = [];
   for (const sha of commits) {
@@ -466,26 +425,26 @@ function classifyCommand(args: Args): void {
 }
 
 function publishCheckCommand(args: Args): void {
-  const targetRepo = stringArg(args, "target_repo", DEFAULT_TARGET_REPO);
-  const reportRepo = stringArg(
+  const targetRepo = argString(args, "target_repo", DEFAULT_TARGET_REPO);
+  const reportRepo = argString(
     args,
     "report_repo",
     process.env.GITHUB_REPOSITORY ?? "openclaw/clawsweeper",
   );
-  const reportPath = stringArg(args, "report_path", "");
+  const reportPath = argString(args, "report_path", "");
   if (!reportPath) throw new Error("Missing --report-path");
   const markdown = readFileSync(reportPath, "utf8");
   const { frontMatter } = splitFrontMatter(markdown);
-  const sha = assertSha(stringArg(args, "commit_sha", frontMatter.sha ?? ""));
+  const sha = assertSha(argString(args, "commit_sha", frontMatter.sha ?? ""));
   const reportRelativePath =
-    stringArg(args, "report_relative_path", "") || commitReportRelativePath(targetRepo, sha);
+    argString(args, "report_relative_path", "") || commitReportRelativePath(targetRepo, sha);
   publishCheckFromReport({
     targetRepo,
     reportRepo,
     reportPath,
     reportRelativePath,
     sha,
-    checkName: stringArg(args, "check_name", COMMIT_REVIEW_CHECK_NAME),
+    checkName: argString(args, "check_name", COMMIT_REVIEW_CHECK_NAME),
   });
 }
 
@@ -591,13 +550,13 @@ function isCommitReportPath(path: string): boolean {
 }
 
 function reportsCommand(args: Args): void {
-  const recordsDir = resolve(stringArg(args, "records_dir", "records"));
+  const recordsDir = resolve(argString(args, "records_dir", "records"));
   const since = typeof args.since === "string" ? parseCommitReportSince(args.since).getTime() : 0;
-  const repository = stringArg(args, "repo", "");
-  const author = stringArg(args, "author", "").toLowerCase();
-  const findingsOnly = boolArg(args, "findings");
-  const nonCleanOnly = boolArg(args, "non_clean");
-  const json = boolArg(args, "json");
+  const repository = argString(args, "repo", "");
+  const author = argString(args, "author", "").toLowerCase();
+  const findingsOnly = argBool(args, "findings");
+  const nonCleanOnly = argBool(args, "non_clean");
+  const json = argBool(args, "json");
   const reports = collectMarkdownFiles(recordsDir)
     .filter(isCommitReportPath)
     .map(readCommitReportSummary)
@@ -642,8 +601,8 @@ function reportsCommand(args: Args): void {
 }
 
 function copyArtifactsCommand(args: Args): void {
-  const artifactDir = resolve(stringArg(args, "artifact_dir", "commit-artifacts"));
-  const recordsDir = resolve(stringArg(args, "records_dir", "records"));
+  const artifactDir = resolve(argString(args, "artifact_dir", "commit-artifacts"));
+  const recordsDir = resolve(argString(args, "records_dir", "records"));
   let copied = 0;
   for (const file of collectMarkdownFiles(artifactDir)) {
     const relativePath = relative(artifactDir, file);
@@ -740,27 +699,27 @@ function dispatchCommitFinding(options: {
 }
 
 function dispatchFindingsCommand(args: Args): void {
-  const enabled = stringArg(args, "enabled", "true");
+  const enabled = argString(args, "enabled", "true");
   if (!boolString(enabled)) {
     console.log("commit finding dispatch disabled");
     return;
   }
 
-  const artifactDir = resolve(stringArg(args, "artifact_dir", "commit-artifacts"));
-  const repairRepo = stringArg(args, "repair_repo", "openclaw/clawsweeper");
-  const dispatchMode = stringArg(args, "dispatch_mode", "workflow_dispatch");
-  const repairWorkflow = stringArg(args, "repair_workflow", "repair-commit-finding-intake.yml");
-  const reportRepo = stringArg(
+  const artifactDir = resolve(argString(args, "artifact_dir", "commit-artifacts"));
+  const repairRepo = argString(args, "repair_repo", "openclaw/clawsweeper");
+  const dispatchMode = argString(args, "dispatch_mode", "workflow_dispatch");
+  const repairWorkflow = argString(args, "repair_workflow", "repair-commit-finding-intake.yml");
+  const reportRepo = argString(
     args,
     "report_repo",
     process.env.GITHUB_REPOSITORY || "openclaw/clawsweeper",
   );
-  const reportBaseUrl = stringArg(
+  const reportBaseUrl = argString(
     args,
     "report_base_url",
     `https://github.com/${reportRepo}/blob/main`,
   );
-  const dryRun = boolArg(args, "dry_run");
+  const dryRun = argBool(args, "dry_run");
   const dispatches: CommitFindingDispatch[] = [];
 
   for (const file of collectMarkdownFiles(artifactDir).filter(isCommitReportPath)) {

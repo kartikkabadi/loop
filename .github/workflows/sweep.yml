@@ -11,10 +11,6 @@ on:
         description: "Repository to sweep"
         required: false
         default: "openclaw/openclaw"
-      apply_closures:
-        description: "Deprecated; review shards are proposal-only. Use apply_existing to close unchanged proposed decisions."
-        required: false
-        default: "false"
       apply_existing:
         description: "Apply existing proposed close decisions without rerunning Codex; skips items changed since review"
         required: false
@@ -236,18 +232,11 @@ jobs:
         with:
           build-script: build
 
-      - name: Install Codex
-        run: npm install -g @openai/codex@0.125.0 --prefer-offline
-
-      - name: Authenticate Codex
+      - uses: ./.github/actions/setup-codex
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
-        run: |
-          test -n "$OPENAI_API_KEY"
-          test -n "$CODEX_API_KEY"
-          printenv OPENAI_API_KEY | codex login --with-api-key
-          codex login status
+        with:
+          login-status: "true"
 
       - uses: actions/cache@v5
         with:
@@ -437,7 +426,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
-      apply_closures: ${{ steps.mode.outputs.apply_closures }}
       batch_size: ${{ steps.mode.outputs.batch_size }}
       codex_timeout_ms: ${{ steps.mode.outputs.codex_timeout_ms }}
       hot_intake: ${{ steps.mode.outputs.hot_intake }}
@@ -541,7 +529,6 @@ jobs:
             max_pages="250"
           fi
           {
-            echo "apply_closures=false"
             echo "batch_size=$batch_size"
             echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '600000' }}"
             echo "hot_intake=$hot_intake"
@@ -662,18 +649,11 @@ jobs:
           working-directory: clawsweeper
           build-script: build
 
-      - name: Install Codex
-        run: npm install -g @openai/codex@0.125.0 --prefer-offline
-
-      - name: Authenticate Codex
+      - uses: ./.github/actions/setup-codex
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
-        run: |
-          test -n "$OPENAI_API_KEY"
-          test -n "$CODEX_API_KEY"
-          printenv OPENAI_API_KEY | codex login --with-api-key
-          codex login status
+        with:
+          login-status: "true"
 
       - uses: actions/cache@v5
         with:
@@ -700,7 +680,6 @@ jobs:
       - name: Review shard
         working-directory: clawsweeper
         env:
-          CLAWSWEEPER_APPLY_CLOSURES: ${{ needs.plan.outputs.apply_closures }}
           GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
         run: |
           hot_intake_arg=()
@@ -926,13 +905,12 @@ jobs:
           fi
 
       - name: Continue sweep
-        if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && needs.plan.outputs.apply_closures != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
+        if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh workflow run sweep.yml \
             --ref main \
-            -f apply_closures=false \
             -f apply_existing=false \
             -f target_repo="${{ needs.plan.outputs.target_repo }}" \
             -f batch_size="${{ needs.plan.outputs.batch_size }}" \

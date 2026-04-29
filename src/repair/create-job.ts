@@ -1,9 +1,11 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { parseArgs, parseJob, repoRoot, validateJob } from "./lib.js";
 import { ghJsonBestEffort } from "./github-cli.js";
+import { escapeRegExp } from "./text-utils.js";
 
 const args = parseArgs(process.argv.slice(2));
 const fromReport = args["from-report"] ?? args.from_report;
@@ -357,10 +359,6 @@ function assertDispatchable(relativePath: string) {
 
 function shellQuote(value: JsonValue) {
   return `'${String(value).replaceAll("'", "'\\''")}'`;
-}
-
-function escapeRegExp(value: JsonValue) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function die(message: string) {

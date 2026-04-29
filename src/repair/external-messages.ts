@@ -1,3 +1,4 @@
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import { randomInt } from "node:crypto";
 
 const SIGNATURE = "ClawSweeper 🐠";

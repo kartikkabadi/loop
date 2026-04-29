@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -11,6 +12,8 @@ import {
   validateJob,
 } from "./lib.js";
 import { ghText } from "./github-cli.js";
+import { readJsonFileIfExists as readJsonIfExists } from "./json-file.js";
+import { escapeRegExp, slug } from "./text-utils.js";
 
 const args = parseArgs(process.argv.slice(2));
 const command = args._[0] ?? "prepare";
@@ -662,10 +665,6 @@ function firstPostFlightTarget(report: LooseRecord) {
   return "";
 }
 
-function readJsonIfExists(file: JsonValue) {
-  return file && fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null;
-}
-
 function writeStepOutputs(values: LooseRecord) {
   const output = process.env.GITHUB_OUTPUT;
   if (!output) return;
@@ -691,13 +690,6 @@ function repoSlug(repo: string) {
   return repo
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function slug(value: JsonValue) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9._-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
 
@@ -748,10 +740,6 @@ function unique(values: LooseRecord[]) {
 
 function relative(file: JsonValue) {
   return path.relative(repoRoot(), file).replaceAll("\\", "/");
-}
-
-function escapeRegExp(value: JsonValue) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function die(message: string) {

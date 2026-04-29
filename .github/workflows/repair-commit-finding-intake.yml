@@ -117,43 +117,13 @@ jobs:
           fi
           pnpm run repair:commit-finding-intake -- "${args[@]}"
 
-      - name: Cache Codex CLI, npm, and target pnpm downloads
+      - uses: ./.github/actions/setup-codex
         if: ${{ steps.prepare.outputs.should_repair == 'true' }}
-        uses: actions/cache@v5
         with:
-          path: |
-            ~/.npm
-            ~/.cache/node/corepack
-            ~/.local/share/pnpm/store
-            ~/.clawsweeper-repair/codex
-          key: ${{ runner.os }}-node24-codex-${{ env.CODEX_CLI_VERSION }}-target-pnpm-v1
-          restore-keys: |
-            ${{ runner.os }}-node24-codex-${{ env.CODEX_CLI_VERSION }}-target-pnpm-
-            ${{ runner.os }}-node24-codex-
-
-      - name: Install Codex CLI
-        if: ${{ steps.prepare.outputs.should_repair == 'true' }}
-        run: |
-          set -euo pipefail
-          npm config set prefix "$HOME/.clawsweeper-repair/codex"
-          npm config set cache "$HOME/.npm"
-          echo "$HOME/.clawsweeper-repair/codex/bin" >> "$GITHUB_PATH"
-          export PATH="$HOME/.clawsweeper-repair/codex/bin:$PATH"
-
-          if ! command -v codex >/dev/null 2>&1 || ! codex --version | grep -Fq "$CODEX_CLI_VERSION"; then
-            npm install -g "@openai/codex@$CODEX_CLI_VERSION" --prefer-offline --no-audit --no-fund
-          fi
-          codex --version
-
-      - name: Authenticate Codex
-        if: ${{ steps.prepare.outputs.should_repair == 'true' }}
+          version: ${{ env.CODEX_CLI_VERSION }}
+          cache-suffix: target-pnpm
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
-        run: |
-          test -n "${OPENAI_API_KEY:-}"
-          test -n "${CODEX_API_KEY:-}"
-          printenv OPENAI_API_KEY | codex login --with-api-key >/dev/null
 
       - name: Review synthetic result
         if: ${{ steps.prepare.outputs.should_repair == 'true' }}
@@ -166,7 +136,6 @@ jobs:
         timeout-minutes: 35
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CODEX_API_KEY: ${{ secrets.CODEX_API_KEY || secrets.OPENAI_API_KEY }}
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:execute-fix -- "${{ steps.prepare.outputs.job_path }}" "${{ steps.prepare.outputs.result_path }}"
 

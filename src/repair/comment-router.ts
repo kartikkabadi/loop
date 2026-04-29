@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -36,11 +37,14 @@ import {
 } from "./comment-router-utils.js";
 import { readCommentRouterConfig } from "./config.js";
 import { ghBestEffort, ghJson, ghPaged, ghSpawn, ghText } from "./github-cli.js";
+import { escapeRegExp } from "./text-utils.js";
+import {
+  CLAWSWEEPER_REPAIR_LABEL_COLOR,
+  CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
+} from "./constants.js";
 
 const AUTOMERGE_LABEL = "clawsweeper:automerge";
 const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
-const DEFAULT_LABEL_COLOR = "F97316";
-const DEFAULT_LABEL_DESCRIPTION = "Tracked by ClawSweeper automation";
 
 const args = parseArgs(process.argv.slice(2));
 const config = readCommentRouterConfig(args);
@@ -987,10 +991,6 @@ function closeIssueOrPullRequest(repo: string, number: number, kind: string) {
   ghText(["api", `repos/${repo}/issues/${number}`, "--method", "PATCH", "--input", payloadPath]);
 }
 
-function escapeRegExp(value: JsonValue) {
-  return String(value ?? "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
 function executeAutomerge(command: LooseRecord) {
   const view = fetchPullRequestView(command.issue_number);
   const labels = (view.labels ?? []).map((item: JsonValue) => item.name ?? item);
@@ -1295,9 +1295,9 @@ function ensureDefaultLabel(repo: string) {
     "--repo",
     repo,
     "--color",
-    DEFAULT_LABEL_COLOR,
+    CLAWSWEEPER_REPAIR_LABEL_COLOR,
     "--description",
-    DEFAULT_LABEL_DESCRIPTION,
+    CLAWSWEEPER_REPAIR_LABEL_DESCRIPTION,
   ]);
 }
 

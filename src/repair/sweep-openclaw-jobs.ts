@@ -1,8 +1,10 @@
 #!/usr/bin/env node
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { hasSecuritySignalText, parseArgs, parseJob, repoRoot, validateJob } from "./lib.js";
 import { ghJson } from "./github-cli.js";
+import { readJsonFileIfExists as readJson } from "./json-file.js";
 
 const args = parseArgs(process.argv.slice(2));
 const jobsDir = path.resolve(
@@ -322,14 +324,6 @@ function countBy(rows: LooseRecord[], keyFn: JsonValue) {
     out[key] = (out[key] ?? 0) + 1;
   }
   return out;
-}
-
-function readJson(filePath: string) {
-  try {
-    return JSON.parse(fs.readFileSync(filePath, "utf8"));
-  } catch {
-    return null;
-  }
 }
 
 function writeMarkdownReport(report: LooseRecord, filePath: string) {

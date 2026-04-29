@@ -1,10 +1,9 @@
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import { DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS } from "./comment-router-core.js";
 import { currentProjectRepo, readMaxLiveWorkers } from "./lib.js";
 import { assertRepo, commaSet, positiveInteger } from "./comment-router-utils.js";
-
-export const DEFAULT_TARGET_REPO = "openclaw/openclaw";
-export const DEFAULT_HEAD_PREFIX = "clawsweeper/";
-export const DEFAULT_LABEL = "clawsweeper";
+import { DEFAULT_HEAD_PREFIX, DEFAULT_LABEL, DEFAULT_TARGET_REPO } from "./constants.js";
+export { DEFAULT_HEAD_PREFIX, DEFAULT_LABEL, DEFAULT_TARGET_REPO } from "./constants.js";
 
 const DEFAULT_ALLOWED_ASSOCIATIONS = ["OWNER", "MEMBER", "COLLABORATOR"];
 const DEFAULT_TRUSTED_BOTS = ["clawsweeper[bot]", "openclaw-clawsweeper[bot]"];

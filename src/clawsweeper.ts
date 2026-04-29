@@ -35,9 +35,21 @@ import {
 import { parseGhJson, parseGhJsonLines } from "./github-json.js";
 import { stableJson } from "./stable-json.js";
 import { runText } from "./command.js";
+import {
+  boolArg,
+  itemNumbersArg,
+  numberArg,
+  optionalNumberArg,
+  parseArgs,
+  stringArg,
+  type Args,
+} from "./clawsweeper-args.js";
+import { escapeRegExp, safeOutputTail, trimMiddle, truncateText } from "./clawsweeper-text.js";
 
 export { codexEnv } from "./codex-env.js";
 export { parseGhJson, parseGhJsonLines } from "./github-json.js";
+export { itemNumbersArg } from "./clawsweeper-args.js";
+export { safeOutputTail } from "./clawsweeper-text.js";
 export {
   ghRetryKind,
   isGitHubNotFoundError,
@@ -75,11 +87,6 @@ type ActionTaken =
   | "skipped_runtime_budget";
 
 const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
-
-interface Args {
-  _: string[];
-  [key: string]: string | boolean | string[];
-}
 
 interface GitHubUser {
   login?: string;
@@ -627,65 +634,6 @@ function evidenceEntry(options: Partial<Evidence> & Pick<Evidence, "label" | "de
   };
 }
 
-function parseArgs(argv: string[]): Args {
-  const args: Args = { _: [] };
-  for (let i = 0; i < argv.length; i += 1) {
-    const arg = argv[i];
-    if (!arg) continue;
-    if (!arg.startsWith("--")) {
-      args._.push(arg);
-      continue;
-    }
-    const key = arg.slice(2).replaceAll("-", "_");
-    const next = argv[i + 1];
-    if (!next || next.startsWith("--")) {
-      args[key] = true;
-    } else {
-      args[key] = next;
-      i += 1;
-    }
-  }
-  return args;
-}
-
-function stringArg(value: string | boolean | string[] | undefined, fallback: string): string {
-  return typeof value === "string" ? value : fallback;
-}
-
-function numberArg(value: string | boolean | string[] | undefined, fallback: number): number {
-  if (typeof value !== "string") return fallback;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function optionalNumberArg(value: string | boolean | string[] | undefined): number | undefined {
-  if (typeof value !== "string" || value.trim() === "") return undefined;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : undefined;
-}
-
-function boolArg(value: string | boolean | string[] | undefined): boolean {
-  if (typeof value === "boolean") return value;
-  if (typeof value !== "string") return false;
-  return value === "1" || value === "true" || value === "yes";
-}
-
-export function itemNumbersArg(
-  itemNumbers: string | boolean | string[] | undefined,
-  itemNumber: string | boolean | string[] | undefined,
-): number[] {
-  const numbers = new Set<number>();
-  const add = (value: string): void => {
-    for (const part of value.split(",")) {
-      const parsed = Number(part.trim());
-      if (Number.isInteger(parsed) && parsed > 0) numbers.add(parsed);
-    }
-  };
-  if (typeof itemNumbers === "string") add(itemNumbers);
-  if (typeof itemNumber === "string") add(itemNumber);
-  return [...numbers].sort((left, right) => left - right);
-}
-
 function run(
   command: string,
   args: string[],
@@ -703,10 +651,6 @@ function run(
 function gh(args: string[]): string {
   if (args[0] === "api") return run("gh", args);
   return run("gh", ["--repo", targetRepo(), ...args]);
-}
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function sleepMs(milliseconds: number): void {
@@ -971,12 +915,6 @@ export function parseDecision(value: unknown): Decision {
     workValidation: requireStringArray(record.workValidation, "decision.workValidation"),
     workLikelyFiles: requireStringArray(record.workLikelyFiles, "decision.workLikelyFiles"),
   };
-}
-
-function truncateText(value: unknown, maxLength: number): string {
-  if (typeof value !== "string") return "";
-  if (value.length <= maxLength) return value;
-  return `${value.slice(0, maxLength)}\n\n[truncated ${value.length - maxLength} chars]`;
 }
 
 function login(value: unknown): string | undefined {
@@ -2385,21 +2323,6 @@ function promptFor(item: Item, context: ItemContext, git: GitInfo): string {
 ${JSON.stringify(context, null, 2)}
 \`\`\`
 `;
-}
-
-function trimMiddle(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  const edge = Math.floor((maxLength - 120) / 2);
-  return `${text.slice(0, edge)}\n\n... truncated ${text.length - edge * 2} chars ...\n\n${text.slice(-edge)}`;
-}
-
-export function safeOutputTail(
-  value: string | Buffer | null | undefined,
-  maxLength = 6000,
-): string {
-  if (value == null) return "";
-  const text = typeof value === "string" ? value : value.toString("utf8");
-  return text.slice(-maxLength);
 }
 
 function codexFailureReason(detail: string): string {
@@ -3850,11 +3773,6 @@ function reviewCommand(args: Args): void {
     ? itemNumbersArg(args.item_numbers, undefined)
     : undefined;
   const readonlyOpenclaw = boolArg(args.readonly_openclaw);
-  const requestedApplyClosures =
-    boolArg(args.apply_closures) || process.env.CLAWSWEEPER_APPLY_CLOSURES === "true";
-  if (requestedApplyClosures) {
-    console.error("[review] apply_closures is disabled; review shards are proposal-only");
-  }
   ensureDir(artifactDir);
   const git = gitInfo(openclawDir);
   const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, sandboxMode, serviceTier });

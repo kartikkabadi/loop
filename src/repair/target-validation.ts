@@ -1,0 +1,312 @@
+import fs from "node:fs";
+import path from "node:path";
+
+import { runCommand as run } from "./command-runner.js";
+import { ensureMergeBaseAvailable, gitChangedFiles, gitLsFiles } from "./git-repo-utils.js";
+import { parsePullRequestUrl } from "./github-ref.js";
+import type { JsonValue, LooseRecord } from "./json-types.js";
+import { compactText } from "./text-utils.js";
+import {
+  isExpensivePnpmValidation,
+  isTestFile,
+  looksLikePathArgument,
+  packageScriptRequirement,
+  parseAllowedValidationCommand,
+  uniqueStrings,
+} from "./validation-command-utils.js";
+
+const DEFAULT_BASE_BRANCH = "main";
+
+export type TargetValidationOptions = {
+  allowExpensiveValidation: boolean;
+  installTargetDeps: boolean;
+  strictTargetValidation: boolean;
+  targetRepo: string;
+};
+
+export function prepareTargetToolchain(cwd: string, options: TargetValidationOptions) {
+  if (!options.installTargetDeps) return;
+  const packagePath = path.join(cwd, "package.json");
+  if (!fs.existsSync(packagePath)) return;
+
+  const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+  const packageManager = String(packageJson.packageManager ?? "pnpm@10.33.0");
+  if (!packageManager.startsWith("pnpm@")) {
+    throw new Error(`unsupported target package manager: ${packageManager}`);
+  }
+
+  const validationEnv = targetValidationEnv();
+  run(
+    "node",
+    [
+      "-e",
+      "const major = Number(process.versions.node.split('.')[0]); if (major < 22) { console.error(`Node ${process.version} is too old for target validation`); process.exit(1); }",
+    ],
+    { cwd, env: validationEnv },
+  );
+  run("corepack", ["enable"], { cwd, env: validationEnv });
+  run("corepack", ["prepare", packageManager, "--activate"], { cwd, env: validationEnv });
+  const installArgs = [
+    "install",
+    "--frozen-lockfile",
+    "--prefer-offline",
+    "--config.engine-strict=false",
+    "--config.enable-pre-post-scripts=true",
+  ];
+  try {
+    run("pnpm", installArgs, { cwd, env: validationEnv });
+  } catch (error) {
+    if (!/ERR_PNPM_OUTDATED_LOCKFILE/i.test(String(error.message))) throw error;
+    run(
+      "pnpm",
+      installArgs.map((arg) => (arg === "--frozen-lockfile" ? "--no-frozen-lockfile" : arg)),
+      {
+        cwd,
+        env: validationEnv,
+      },
+    );
+    restoreTargetLockfile(cwd);
+  }
+}
+
+export function runAllowedValidationCommands(
+  commands: LooseRecord[],
+  cwd: string,
+  options: TargetValidationOptions,
+  baseBranch: string = DEFAULT_BASE_BRANCH,
+) {
+  ensureMergeBaseAvailable({ targetDir: cwd, baseBranch });
+  const validationEnv = targetValidationEnv();
+  const executed: string[] = [];
+  for (const command of commands) {
+    const resolvedCommands = resolveAllowedValidationCommands(command, cwd, baseBranch, options);
+    for (const parts of resolvedCommands) {
+      const rendered = parts.join(" ");
+      if (executed.includes(rendered)) continue;
+      try {
+        run(parts[0], parts.slice(1), { cwd, env: validationEnv });
+        executed.push(rendered);
+      } catch (error) {
+        const fallbackCommands = validationFallbackCommands({
+          parts,
+          error,
+          cwd,
+          baseBranch,
+          options,
+        });
+        if (fallbackCommands.length > 0) {
+          for (const fallbackParts of fallbackCommands) {
+            const fallbackRendered = fallbackParts.join(" ");
+            if (executed.includes(fallbackRendered)) continue;
+            run(fallbackParts[0], fallbackParts.slice(1), { cwd, env: validationEnv });
+            executed.push(fallbackRendered);
+          }
+          continue;
+        }
+        throw new Error(
+          `validation command failed (${parts.join(" ")}): ${compactText(error.message, 1200)}`,
+        );
+      }
+    }
+  }
+  return executed;
+}
+
+export function preflightTargetValidationPlan(
+  { fixArtifact, targetDir, baseBranch = DEFAULT_BASE_BRANCH }: LooseRecord,
+  options: TargetValidationOptions,
+) {
+  const scripts = readPackageScriptSet(targetDir);
+  const availableScripts = [...scripts].sort();
+  const resolved: string[] = [];
+  const requiredScripts: LooseRecord[] = [];
+  for (const command of fixArtifact.validation_commands ?? []) {
+    const resolvedCommands = resolveAllowedValidationCommands(
+      command,
+      targetDir,
+      baseBranch,
+      options,
+    );
+    for (const parts of resolvedCommands) {
+      const rendered = parts.join(" ");
+      if (!resolved.includes(rendered)) resolved.push(rendered);
+      const script = packageScriptRequirement(parts);
+      if (script) requiredScripts.push(script);
+    }
+  }
+
+  const missing = requiredScripts.find((script: JsonValue) => !scripts.has(script.name));
+  if (!missing) {
+    return {
+      status: "passed",
+      resolved_commands: resolved,
+      available_scripts: availableScripts,
+    };
+  }
+
+  const sourcePr =
+    (fixArtifact.source_prs ?? []).find(
+      (source: JsonValue) => parsePullRequestUrl(source)?.repo === options.targetRepo,
+    ) ?? null;
+  return {
+    status: "blocked",
+    code: "validation_script_missing",
+    required: missing.command,
+    missing_script: missing.name,
+    available_scripts: availableScripts,
+    target_branch: fixArtifact.branch ?? fixArtifact.head_branch ?? null,
+    source_pr: sourcePr,
+    resolved_commands: resolved,
+    reason: `validation_script_missing: required ${missing.command} is unavailable in target checkout`,
+  };
+}
+
+function restoreTargetLockfile(cwd: string) {
+  const lockfile = "pnpm-lock.yaml";
+  if (!fs.existsSync(path.join(cwd, lockfile))) return;
+  run("git", ["checkout", "--", lockfile], { cwd });
+}
+
+function validationFallbackCommands({ parts, error, cwd, baseBranch, options }: LooseRecord) {
+  if (options.strictTargetValidation) return [];
+  if (parts[0] !== "pnpm" || parts[1] !== "check:changed" || parts.length !== 2) return [];
+  if (/no merge base/i.test(String(error?.message ?? ""))) {
+    ensureMergeBaseAvailable({ targetDir: cwd, baseBranch });
+    return [parts];
+  }
+  if (!isChangedGateStall(error)) return [];
+  const changedTests = changedTestFiles(cwd, baseBranch);
+  return [
+    ["git", "diff", "--check", `origin/${baseBranch}...HEAD`],
+    ...(changedTests.length > 0 ? [["pnpm", "test:serial", ...changedTests]] : []),
+  ];
+}
+
+function isChangedGateStall(error: JsonValue) {
+  return /no output for \d+ms|terminating stalled Vitest|stalled Vitest process/i.test(
+    String(error?.message ?? ""),
+  );
+}
+
+function targetValidationEnv() {
+  return {
+    ...process.env,
+    CI: process.env.CI ?? "true",
+    OPENCLAW_LOCAL_CHECK: process.env.OPENCLAW_LOCAL_CHECK ?? "0",
+  };
+}
+
+function resolveAllowedValidationCommands(
+  command: LooseRecord,
+  cwd: string,
+  baseBranch: string = DEFAULT_BASE_BRANCH,
+  options: TargetValidationOptions,
+) {
+  const parts = parseAllowedValidationCommand(command);
+  const scripts = readPackageScriptSet(cwd);
+  if (!options.strictTargetValidation && scripts.has("check:changed")) {
+    return [["pnpm", "check:changed"]];
+  }
+  if (parts[0] === "npm" && parts[1] === "run" && parts[2] === "validate") {
+    if (!scripts.has("validate") && scripts.has("check:changed")) {
+      return [["pnpm", "check:changed"]];
+    }
+  }
+  if (parts[0] === "pnpm") {
+    const commandStart = parts[1] === "-s" || parts[1] === "--silent" ? 2 : 1;
+    const pnpmScript = parts[commandStart];
+    if (isExpensivePnpmValidation(parts, commandStart, options.allowExpensiveValidation)) {
+      return [["pnpm", "check:changed"]];
+    }
+    if (pnpmScript === "vitest" && parts[commandStart + 1] === "run") {
+      return normalizePathValidationCommand(
+        ["pnpm", "test:serial", ...parts.slice(commandStart + 2)],
+        cwd,
+        baseBranch,
+      );
+    }
+    if (pnpmScript === "test" || pnpmScript === "test:serial") {
+      return normalizePathValidationCommand(
+        ["pnpm", pnpmScript, ...parts.slice(commandStart + 1)],
+        cwd,
+        baseBranch,
+      );
+    }
+  }
+  return [parts];
+}
+
+function normalizePathValidationCommand(
+  parts: string[],
+  cwd: string,
+  baseBranch: string = DEFAULT_BASE_BRANCH,
+) {
+  const pathArgStart = 2;
+  const pathArgs = parts.slice(pathArgStart).filter(looksLikePathArgument);
+  if (pathArgs.length === 0) return [parts];
+
+  const normalized: string[] = [];
+  const missing: string[] = [];
+  for (const arg of pathArgs) {
+    const mapped = resolveRepoPathArgument(arg, cwd);
+    if (mapped) normalized.push(mapped);
+    else missing.push(arg);
+  }
+
+  if (missing.length === 0) {
+    return [[...parts.slice(0, pathArgStart), ...uniqueStrings(normalized)]];
+  }
+
+  const changedTests = changedTestFiles(cwd, baseBranch);
+  if (changedTests.length > 0) {
+    return [["pnpm", "test:serial", ...changedTests]];
+  }
+
+  const scripts = readPackageScriptSet(cwd);
+  if (scripts.has("check:changed")) {
+    return [["pnpm", "check:changed"]];
+  }
+
+  return [[...parts.slice(0, pathArgStart), ...uniqueStrings(normalized)]];
+}
+
+function resolveRepoPathArgument(arg: JsonValue, cwd: string): string {
+  const clean = String(arg ?? "").trim();
+  if (!clean || clean.startsWith("-")) return clean;
+  if (fs.existsSync(path.join(cwd, clean))) return clean;
+
+  const candidates = candidateRepoPaths(clean, cwd).filter((candidate) =>
+    fs.existsSync(path.join(cwd, candidate)),
+  );
+  return candidates[0] ?? "";
+}
+
+function candidateRepoPaths(filePath: string, cwd: string): string[] {
+  const out: string[] = [];
+  if (filePath.startsWith("src/web/")) {
+    out.push(`extensions/whatsapp/src/${filePath.slice("src/web/".length)}`);
+  }
+  const basename = path.basename(filePath);
+  if (basename) {
+    const files = gitLsFiles(cwd);
+    out.push(...files.filter((file) => path.basename(file) === basename));
+  }
+  return uniqueStrings(out);
+}
+
+function changedTestFiles(cwd: string, baseBranch: string = DEFAULT_BASE_BRANCH) {
+  return gitChangedFiles(cwd, baseBranch).filter(
+    (file) => isTestFile(file) && fs.existsSync(path.join(cwd, file)),
+  );
+}
+
+function readPackageScriptSet(cwd: string) {
+  const packagePath = path.join(cwd, "package.json");
+  if (!fs.existsSync(packagePath)) return new Set<string>();
+  try {
+    const pkg = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+    return new Set<string>(Object.keys(pkg.scripts ?? {}));
+  } catch {
+    return new Set<string>();
+  }
+}

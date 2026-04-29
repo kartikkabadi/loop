@@ -699,8 +699,7 @@ gh workflow run commit-review.yml \
 Omit `before_sha` for a single-commit review. Pass `before_sha` to review the
 historic range `before_sha..commit_sha`.
 
-Manual review runs are proposal-only even if `--apply-closures` or workflow
-input `apply_closures=true` is set. Use `apply_existing=true` to apply unchanged
+Manual review runs are proposal-only. Use `apply_existing=true` to apply unchanged
 proposals later. Scheduled apply runs process both issues and pull requests by
 default, subject to the selected repository profile; pass `target_repo`,
 `apply_kind=issue`, or `apply_kind=pull_request` to narrow a manual run.
@@ -738,8 +737,6 @@ and manual dispatches.
 Required secrets:
 
 - `OPENAI_API_KEY`: OpenAI API key used to log Codex in before review shards run.
-- `CODEX_API_KEY`: optional compatibility alias for the same key during the
-  login check.
 - `CLAWSWEEPER_APP_CLIENT_ID`: public GitHub App client ID for `openclaw-ci`.
   Currently `Iv23liOECG0slfuhz093`.
 - `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `openclaw-ci`; plan/review
