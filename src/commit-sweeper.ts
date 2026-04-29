@@ -352,7 +352,7 @@ function runCodex(options: {
     {
       cwd: options.targetDir,
       encoding: "utf8",
-      env: codexEnv(),
+      env: codexEnv({ ghToken: process.env.COMMIT_SWEEPER_TARGET_GH_TOKEN }),
       input: readFileSync(promptPath, "utf8"),
       maxBuffer: 128 * 1024 * 1024,
       timeout: options.timeoutMs,

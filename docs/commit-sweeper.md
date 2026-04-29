@@ -200,7 +200,9 @@ surface; checks are an optional secondary surface.
 
 ## Safety
 
-The review worker receives only target read credentials while Codex runs.
+The review worker receives only target read credentials while Codex runs. The
+Codex subprocess gets that read token as `GH_TOKEN` so it can hydrate mentioned
+issues, PRs, workflow runs, and commit metadata during review.
 Write/check credentials are created only after Codex exits.
 
 The Codex environment strips GitHub and app secrets before subprocess launch.
