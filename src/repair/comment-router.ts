@@ -115,6 +115,7 @@ for (const comment of comments) {
     trusted_bot_author: parsed.trusted_bot_author ?? null,
     automation_source: parsed.automation_source ?? null,
     repair_reason: parsed.repair_reason ?? null,
+    freeform_prompt: parsed.freeform_prompt ?? null,
     expected_head_sha: parsed.expected_head_sha ?? null,
     finding_id: parsed.finding_id ?? null,
     status: "pending",
@@ -220,6 +221,28 @@ function classifyCommand(command: LooseRecord): JsonValue {
       ...next,
       status: "ready",
       actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
+    };
+  }
+  if (command.intent === "freeform_assist") {
+    if (String(issue.state ?? "").toLowerCase() !== "open") {
+      return {
+        ...next,
+        status: "ready",
+        reason: "freeform assist requires an open issue or PR",
+        actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
+      };
+    }
+    return {
+      ...next,
+      status: "ready",
+      actions: [
+        {
+          action: "dispatch_clawsweeper",
+          workflow: reviewWorkflow,
+          status: execute ? "pending" : "planned",
+        },
+        { action: "comment", status: execute ? "pending" : "planned" },
+      ],
     };
   }
   if (AUTOCLOSE_INTENTS.has(command.intent)) {
@@ -683,7 +706,7 @@ function executeCommand(command: LooseRecord) {
       return action;
     });
   }
-  if (command.intent === "re_review" && command.issue_number) {
+  if (["freeform_assist", "re_review"].includes(command.intent) && command.issue_number) {
     const clawsweeper = dispatchClawSweeperReview(command);
     dispatched = { ...dispatched, clawsweeper };
     command.actions = command.actions.map((action: JsonValue) => {
@@ -847,6 +870,7 @@ function dispatchClawSweeperReview(command: LooseRecord) {
       target_repo: command.repo,
       item_number: String(command.issue_number),
       item_kind: command.target?.kind ?? "",
+      additional_prompt: freeformReviewPrompt(command),
     },
   });
   const result = ghSpawn(
@@ -868,6 +892,8 @@ function dispatchClawSweeperReview(command: LooseRecord) {
       `item_number=${command.issue_number}`,
       "-f",
       `item_numbers=${command.issue_number}`,
+      "-f",
+      `additional_prompt=${freeformReviewPrompt(command)}`,
       "-f",
       "batch_size=1",
       "-f",
@@ -894,6 +920,23 @@ function dispatchClawSweeperReview(command: LooseRecord) {
     repo: reviewRepo,
     item_number: command.issue_number,
   };
+}
+
+function freeformReviewPrompt(command: LooseRecord): string {
+  const prompt = String(command.freeform_prompt ?? "").trim();
+  if (!prompt) return "";
+  return [
+    "Maintainer freeform @clawsweeper request.",
+    "",
+    `Author: ${command.author ?? "unknown"}`,
+    `Comment: ${command.comment_url ?? "unknown"}`,
+    "",
+    "Request:",
+    prompt.slice(0, 3000),
+    "",
+    "Answer this request in the public ClawSweeper review comment. Keep the answer concise and evidence-based.",
+    "This is a read-only assist pass: do not merge, close, label, or push code from the model. If the request asks for an action, map it to existing ClawSweeper structured recommendations only when the normal evidence, security, review, and repair gates support it.",
+  ].join("\n");
 }
 
 function dispatchRepair(command: LooseRecord) {

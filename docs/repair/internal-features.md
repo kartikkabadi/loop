@@ -359,6 +359,7 @@ Supported commands:
 @clawsweeper re-review
 @clawsweeper review
 @openclaw-clawsweeper fix ci
+@clawsweeper why did automerge stop here?
 ```
 
 Behavior:
@@ -366,6 +367,10 @@ Behavior:
 - `status` and `explain`: post a short status response.
 - `review` and `re-review`: dispatch ClawSweeper review again for an open issue
   or PR.
+- Freeform `@clawsweeper ...` maintainer mentions: dispatch a read-only assist
+  review with the mention text as one-off instructions. The model can answer or
+  recommend existing structured safe actions, but cannot directly merge, close,
+  label, or push code.
 - `fix ci`: dispatch the existing ClawSweeper PR's job for repair.
 - `address review`: dispatch the existing ClawSweeper PR's job for repair.
 - `rebase`: dispatch the existing ClawSweeper PR's job for repair.

@@ -239,7 +239,9 @@ function isAfterAutoRepairResumeBoundary(entry: AutoRepairDispatchEntry, resumeB
 }
 
 export function parseCommand(body: string) {
-  for (const line of String(body ?? "").split(/\r?\n/)) {
+  const lines = String(body ?? "").split(/\r?\n/);
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index] ?? "";
     const automerge = line.match(/^\s*\/automerge\s*$/i);
     if (automerge) return commandFromText("slash", "automerge");
     const autoclose = line.match(/^\s*\/autoclose(?:\s+(.+))?\s*$/i);
@@ -249,9 +251,24 @@ export function parseCommand(body: string) {
     const slash = line.match(/^\s*\/clawsweeper(?:\s+(.+))?\s*$/i);
     if (slash) return commandFromText("slash", slash[1] ?? "status");
     const mention = line.match(
-      /^\s*@(?:clawsweeper|openclaw-clawsweeper)(?:\[bot\])?(?:\s+(.+))?\s*$/i,
+      /^\s*@(?:clawsweeper|openclaw-clawsweeper)(?:\[bot\])?(?:(?:\s*[:,]\s*|\s+)(.+))?\s*$/i,
     );
-    if (mention) return commandFromText("mention", mention[1] ?? "status");
+    if (mention) {
+      const command = commandFromText("mention", mention[1] ?? "status");
+      if (command.intent !== "freeform_assist") {
+        const rest = lines
+          .slice(index + 1)
+          .join("\n")
+          .trim();
+        if (command.command === "status" && rest) return commandFromText("mention", rest);
+        return command;
+      }
+      const rest = lines
+        .slice(index + 1)
+        .join("\n")
+        .trim();
+      return rest ? commandFromText("mention", `${mention[1]}\n${rest}`) : command;
+    }
   }
   return null;
 }
@@ -324,6 +341,20 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
   }
   if (["status", "explain"].includes(command.intent)) {
     return [marker, renderStatusBody(command)].join("\n");
+  }
+  if (command.intent === "freeform_assist") {
+    return [
+      marker,
+      dispatched?.clawsweeper
+        ? "ClawSweeper is taking a look at your question."
+        : "ClawSweeper could not start a freeform assist pass for this item.",
+      "",
+      dispatched?.clawsweeper
+        ? "I asked ClawSweeper to answer this maintainer mention in the next review comment. Tiny claws, bounded scope: this is a read-only assist pass unless it produces one of the existing structured safe-action markers."
+        : `Reason: ${command.reason ?? "freeform assist requires an open issue or PR"}.`,
+      "",
+      `Request: ${inlineQuote(command.freeform_prompt ?? command.command ?? "No request text provided.")}`,
+    ].join("\n");
   }
   if (command.intent === "stop") {
     return [
@@ -481,9 +512,13 @@ function commandFromText(trigger: JsonValue, value: JsonValue) {
     .trim()
     .replace(/\s+/g, " ");
   const command = rawCommand.toLowerCase();
-  const intent = normalizeIntent(command);
+  let intent = normalizeIntent(command);
+  if (trigger === "mention" && intent === "help" && !["", "help", "?"].includes(command)) {
+    intent = "freeform_assist";
+  }
   const parsed: LooseRecord = { trigger, command, intent };
   if (intent === "autoclose") parsed.autoclose_message = autocloseReasonFromCommand(rawCommand);
+  if (intent === "freeform_assist") parsed.freeform_prompt = rawCommand;
   return parsed;
 }
 
@@ -521,6 +556,15 @@ function normalizeIntent(command: LooseRecord) {
   if (command === "autoclose" || command.startsWith("autoclose ")) return "autoclose";
   if (["stop", "pause", "human review", "handoff"].includes(command)) return "stop";
   return "help";
+}
+
+function inlineQuote(value: JsonValue): string {
+  const text = String(value ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text
+    ? `_${text.slice(0, 500)}${text.length > 500 ? "..." : ""}_`
+    : "_No request text provided._";
 }
 
 function trustedRepair({ author, reason, marker = null }: LooseRecord) {

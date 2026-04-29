@@ -166,6 +166,36 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
     command: "rerun review",
     intent: "re_review",
   });
+  assert.deepEqual(parseCommand("@clawsweeper why did automerge stop here?"), {
+    trigger: "mention",
+    command: "why did automerge stop here?",
+    intent: "freeform_assist",
+    freeform_prompt: "why did automerge stop here?",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper: why did automerge stop here?"), {
+    trigger: "mention",
+    command: "why did automerge stop here?",
+    intent: "freeform_assist",
+    freeform_prompt: "why did automerge stop here?",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper, why did automerge stop here?"), {
+    trigger: "mention",
+    command: "why did automerge stop here?",
+    intent: "freeform_assist",
+    freeform_prompt: "why did automerge stop here?",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper fix this if it is safe"), {
+    trigger: "mention",
+    command: "fix this if it is safe",
+    intent: "freeform_assist",
+    freeform_prompt: "fix this if it is safe",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper\nwhy did automerge stop here?"), {
+    trigger: "mention",
+    command: "why did automerge stop here?",
+    intent: "freeform_assist",
+    freeform_prompt: "why did automerge stop here?",
+  });
 });
 
 test("parseCommand ignores unrelated comments", () => {
@@ -489,6 +519,28 @@ test("renderResponse reports maintainer re-review dispatches", () => {
 
   assert.match(body, /re-review requested/);
   assert.match(body, /review this item again/);
+  assert.doesNotMatch(body, /repair worker/);
+});
+
+test("renderResponse reports freeform assist dispatches as read-only", () => {
+  const body = renderResponse(
+    {
+      comment_id: "462",
+      intent: "freeform_assist",
+      freeform_prompt: "why did automerge stop here?",
+      target: { head_sha: "def462" },
+    },
+    {
+      clawsweeper: {
+        workflow: "sweep.yml",
+        event: "repository_dispatch",
+      },
+    },
+  );
+
+  assert.match(body, /taking a look at your question/);
+  assert.match(body, /read-only assist pass/);
+  assert.match(body, /why did automerge stop here/);
   assert.doesNotMatch(body, /repair worker/);
 });
 

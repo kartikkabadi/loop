@@ -41,6 +41,9 @@ Maintainer commands:
   `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper automerge`,
   `/clawsweeper approve`, `/clawsweeper status`, `/clawsweeper explain`, and
   `/clawsweeper stop`;
+- freeform maintainer mentions like `@clawsweeper why did automerge stop here?`
+  dispatch a read-only assist review; action-looking prose still has to become
+  an existing structured recommendation and pass deterministic gates;
 - commands from contributors are ignored without a reply.
 
 Trusted automation:

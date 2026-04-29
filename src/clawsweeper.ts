@@ -2490,8 +2490,16 @@ function gitInfo(openclawDir: string): GitInfo {
   return { mainSha, latestRelease };
 }
 
-function promptFor(item: Item, context: ItemContext, git: GitInfo): string {
+function promptFor(item: Item, context: ItemContext, git: GitInfo, additionalPrompt = ""): string {
   const prompt = readFileSync(join(ROOT, "prompts", "review-item.md"), "utf8");
+  const extra = additionalPrompt.trim()
+    ? `
+
+## Maintainer Request
+
+${additionalPrompt.trim()}
+`
+    : "";
   return `${prompt}
 
 ## Repository State
@@ -2514,6 +2522,7 @@ function promptFor(item: Item, context: ItemContext, git: GitInfo): string {
 \`\`\`json
 ${JSON.stringify(context, null, 2)}
 \`\`\`
+${extra}
 `;
 }
 
@@ -2603,11 +2612,16 @@ function runCodex(options: {
   serviceTier: string;
   timeoutMs: number;
   workDir: string;
+  additionalPrompt?: string;
 }): Decision {
   ensureDir(options.workDir);
   const promptPath = join(options.workDir, `${options.item.number}.prompt.md`);
   const outputPath = join(options.workDir, `${options.item.number}.json`);
-  writeFileSync(promptPath, promptFor(options.item, options.context, options.git), "utf8");
+  writeFileSync(
+    promptPath,
+    promptFor(options.item, options.context, options.git, options.additionalPrompt),
+    "utf8",
+  );
   const dirtyBefore = openclawDirtyStatus(options.openclawDir);
   if (dirtyBefore) {
     throw new Error(
@@ -4430,6 +4444,10 @@ function reviewCommand(args: Args): void {
   const sandboxMode = stringArg(args.codex_sandbox, "read-only");
   const serviceTier = stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER);
   const timeoutMs = numberArg(args.codex_timeout_ms, 600_000);
+  const additionalPrompt = stringArg(
+    args.additional_prompt,
+    process.env.CLAWSWEEPER_ADDITIONAL_PROMPT ?? "",
+  );
   const shardIndex = numberArg(args.shard_index, 0);
   const shardCount = numberArg(args.shard_count, 1);
   const itemNumber = numberArg(args.item_number, 0) || undefined;
@@ -4500,6 +4518,7 @@ function reviewCommand(args: Args): void {
         serviceTier,
         timeoutMs,
         workDir: join(artifactDir, "codex"),
+        additionalPrompt,
       });
     } catch (error) {
       decision = codexFailureDecision(

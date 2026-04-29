@@ -116,11 +116,15 @@ Common commands:
 /autoclose <maintainer close reason>
 @clawsweeper re-review
 @clawsweeper review
+@clawsweeper why did automerge stop here?
 ```
 
 - `status` and `explain` post a short target summary.
 - `review` and `re-review` dispatch a fresh ClawSweeper issue/PR review without
   starting repair.
+- Freeform `@clawsweeper ...` mentions dispatch a read-only assist review that
+  answers the maintainer request in the next ClawSweeper comment. Action-looking
+  prose still maps through existing safe markers and deterministic gates.
 - `fix ci`, `address review`, and `rebase` dispatch the repair worker only for
   ClawSweeper PRs or PRs already opted into `clawsweeper:automerge`.
 - `automerge` labels an open PR, creates or reuses the adopted job, dispatches

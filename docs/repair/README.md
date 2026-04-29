@@ -313,12 +313,17 @@ Supported commands:
 @clawsweeper re-review
 @clawsweeper review
 @openclaw-clawsweeper fix ci
+@clawsweeper why did automerge stop here?
 ```
 
 `status` and `explain` post a short status reply. `review` and `re-review`
 dispatch ClawSweeper review again for an open issue or PR. `fix ci`, `address review`,
 and `rebase` dispatch the normal `repair-cluster-worker.yml` repair path, but only for
 existing ClawSweeper PRs identified by the `clawsweeper/*` branch.
+Freeform maintainer mentions such as `@clawsweeper why did automerge stop here?`
+dispatch a read-only assist review. The answer lands in the next ClawSweeper
+comment; action-looking prose can only become existing structured
+recommendations and still passes the normal deterministic gates.
 `automerge` opts an open PR into the bounded review/fix/merge loop. `approve`
 is maintainer-only exact-head approval after a human-review pause; it clears
 pause labels and merges only when the normal automerge readiness checks and
