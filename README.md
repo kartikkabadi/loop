@@ -139,7 +139,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 20:15 UTC
+Last dashboard update: Apr 29, 2026, 20:17 UTC
 
 ### Fleet
 
@@ -149,20 +149,20 @@ Last dashboard update: Apr 29, 2026, 20:15 UTC
 | Open issues | 4428 |
 | Open PRs | 3448 |
 | Open items total | 7876 |
-| Reviewed files | 7533 |
-| Unreviewed open items | 346 |
-| Due now by cadence | 3242 |
+| Reviewed files | 7532 |
+| Unreviewed open items | 347 |
+| Due now by cadence | 3244 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 976 |
 | Closed by Codex apply | 10886 |
 | Failed or stale reviews | 16 |
-| Archived closed files | 14512 |
+| Archived closed files | 14513 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6948 | 6607 | 341 | 3178 | 0 | 930 | 10878 | Apr 29, 2026, 20:12 UTC | Apr 29, 2026, 20:14 UTC | 447 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6948 | 6606 | 342 | 3180 | 0 | 930 | 10878 | Apr 29, 2026, 20:12 UTC | Apr 29, 2026, 20:14 UTC | 447 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 928 | 923 | 5 | 61 | 0 | 45 | 8 | Apr 29, 2026, 19:56 UTC | Apr 29, 2026, 17:17 UTC | 386 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -170,7 +170,7 @@ Last dashboard update: Apr 29, 2026, 20:15 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 20:15 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25131415882) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 20:17 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25131539479) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 29, 2026, 19:58 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25130496183) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -180,9 +180,9 @@ Latest review: Apr 29, 2026, 20:12 UTC. Latest close: Apr 29, 2026, 20:14 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 56 | 1 | 55 | 4 | 7 | 35 | 1 |
-| Last hour | 790 | 8 | 782 | 8 | 29 | 833 | 3 |
-| Last 24 hours | 5701 | 329 | 5372 | 12 | 744 | 1851 | 28 |
+| Last 15 minutes | 40 | 1 | 39 | 2 | 8 | 34 | 1 |
+| Last hour | 705 | 8 | 697 | 7 | 29 | 833 | 3 |
+| Last 24 hours | 5701 | 329 | 5372 | 12 | 745 | 1851 | 28 |
 
 ### Recently Closed Across Repos
 
@@ -191,13 +191,13 @@ Latest review: Apr 29, 2026, 20:12 UTC. Latest close: Apr 29, 2026, 20:14 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#64639](https://github.com/openclaw/openclaw/issues/64639) | Feature: allow disabling specific skill source directories (e.g. agents-skills-personal) | duplicate or superseded | Apr 29, 2026, 20:14 UTC | [records/openclaw-openclaw/closed/64639.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64639.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#41598](https://github.com/openclaw/openclaw/pull/41598) | fix(chat-bash): inherit tools.exec security settings | duplicate or superseded | Apr 29, 2026, 20:14 UTC | [records/openclaw-openclaw/closed/41598.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/41598.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#19859](https://github.com/openclaw/openclaw/issues/19859) | [Feature Request] WebChat: Add option to control Enter key sending behavior | duplicate or superseded | Apr 29, 2026, 20:14 UTC | [records/openclaw-openclaw/closed/19859.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/19859.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#40210](https://github.com/openclaw/openclaw/issues/40210) | [Bug]: Workspace bootstrap files reported as [MISSING] when they are symlinks pointing outside workspace | closed externally after review | Apr 29, 2026, 20:14 UTC | [records/openclaw-openclaw/closed/40210.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40210.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72919](https://github.com/openclaw/openclaw/pull/72919) | fix(auth): bound bootstrap handoff scopes | already closed before apply | Apr 29, 2026, 20:11 UTC | [records/openclaw-openclaw/closed/72919.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72919.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74591](https://github.com/openclaw/openclaw/pull/74591) | chore(ci): add network SSRF CodeQL shard | kept open | Apr 29, 2026, 20:08 UTC | [records/openclaw-openclaw/closed/74591.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74591.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74590](https://github.com/openclaw/openclaw/issues/74590) | Slack Socket Mode: expose clientPingTimeout config to prevent false disconnects on high-latency networks | already implemented on main | Apr 29, 2026, 20:06 UTC | [records/openclaw-openclaw/closed/74590.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74590.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#62917](https://github.com/openclaw/openclaw/issues/62917) | fix: exec-approvals does not respect OPENCLAW_STATE_DIR, causing duplicate state-dir doctor warning | closed externally after review | Apr 29, 2026, 20:05 UTC | [records/openclaw-openclaw/closed/62917.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62917.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74536](https://github.com/openclaw/openclaw/pull/74536) | test: align Codex provider payload test | closed externally after review | Apr 29, 2026, 19:56 UTC | [records/openclaw-openclaw/closed/74536.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74536.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#54774](https://github.com/openclaw/openclaw/pull/54774) | fix(gateway): ignore transient pre-hello close in one-shot calls | closed externally after review | Apr 29, 2026, 19:50 UTC | [records/openclaw-openclaw/closed/54774.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/54774.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#61433](https://github.com/openclaw/openclaw/issues/61433) | [Bug]: internal completion/announce payloads can leak raw runtime metadata into user chat | closed externally after review | Apr 29, 2026, 19:50 UTC | [records/openclaw-openclaw/closed/61433.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61433.md) |
 
 ### Work Candidates Across Repos
 
@@ -253,12 +253,12 @@ Latest review: Apr 29, 2026, 20:12 UTC. Latest close: Apr 29, 2026, 20:14 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 20:15 UTC
+Updated: Apr 29, 2026, 20:17 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 3 fresh closes out of requested limit 3. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25131415882](https://github.com/openclaw/clawsweeper/actions/runs/25131415882)
+Starting apply/comment-sync run for up to 3 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=19859,41598,64639.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25131539479](https://github.com/openclaw/clawsweeper/actions/runs/25131539479)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -269,19 +269,19 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25131415882](https://
 | Open issues | 3539 |
 | Open PRs | 3409 |
 | Open items total | 6948 |
-| Reviewed files | 6607 |
-| Unreviewed open items | 341 |
-| Archived closed files | 14486 |
+| Reviewed files | 6606 |
+| Unreviewed open items | 342 |
+| Archived closed files | 14487 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3365 |
+| Fresh reviewed issues in the last 7 days | 3364 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3231 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6596 |
+| Fresh verified reviews in the last 7 days | 6595 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 930 |
 | Closed by Codex apply | 10878 |
@@ -291,13 +291,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25131415882](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 86/1145 current (1059 due, 7.5%) |
-| Hourly hot item cadence (<7d) | 86/1145 current (1059 due, 7.5%) |
+| Hourly cadence coverage | 85/1145 current (1060 due, 7.4%) |
+| Hourly hot item cadence (<7d) | 85/1145 current (1060 due, 7.4%) |
 | Daily cadence coverage | 1883/3657 current (1774 due, 51.5%) |
 | Daily PR cadence | 1265/2555 current (1290 due, 49.5%) |
 | Daily new issue cadence (<30d) | 618/1102 current (484 due, 56.1%) |
-| Weekly older issue cadence | 1801/1805 current (4 due, 99.8%) |
-| Due now by cadence | 3178 |
+| Weekly older issue cadence | 1800/1804 current (4 due, 99.8%) |
+| Due now by cadence | 3180 |
 
 ### Audit Health
 
@@ -337,9 +337,9 @@ Latest review: Apr 29, 2026, 20:12 UTC. Latest close: Apr 29, 2026, 20:14 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 56 | 1 | 55 | 4 | 7 | 35 | 1 |
-| Last hour | 746 | 8 | 738 | 6 | 29 | 447 | 3 |
-| Last 24 hours | 4761 | 329 | 4432 | 7 | 729 | 950 | 28 |
+| Last 15 minutes | 40 | 1 | 39 | 2 | 8 | 34 | 1 |
+| Last hour | 665 | 8 | 657 | 6 | 29 | 447 | 3 |
+| Last 24 hours | 4761 | 329 | 4432 | 7 | 730 | 950 | 28 |
 
 #### Recently Closed
 
@@ -348,13 +348,13 @@ Latest review: Apr 29, 2026, 20:12 UTC. Latest close: Apr 29, 2026, 20:14 UTC. L
 | [#64639](https://github.com/openclaw/openclaw/issues/64639) | Feature: allow disabling specific skill source directories (e.g. agents-skills-personal) | duplicate or superseded | Apr 29, 2026, 20:14 UTC | [records/openclaw-openclaw/closed/64639.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64639.md) |
 | [#41598](https://github.com/openclaw/openclaw/pull/41598) | fix(chat-bash): inherit tools.exec security settings | duplicate or superseded | Apr 29, 2026, 20:14 UTC | [records/openclaw-openclaw/closed/41598.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/41598.md) |
 | [#19859](https://github.com/openclaw/openclaw/issues/19859) | [Feature Request] WebChat: Add option to control Enter key sending behavior | duplicate or superseded | Apr 29, 2026, 20:14 UTC | [records/openclaw-openclaw/closed/19859.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/19859.md) |
+| [#40210](https://github.com/openclaw/openclaw/issues/40210) | [Bug]: Workspace bootstrap files reported as [MISSING] when they are symlinks pointing outside workspace | closed externally after review | Apr 29, 2026, 20:14 UTC | [records/openclaw-openclaw/closed/40210.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/40210.md) |
 | [#72919](https://github.com/openclaw/openclaw/pull/72919) | fix(auth): bound bootstrap handoff scopes | already closed before apply | Apr 29, 2026, 20:11 UTC | [records/openclaw-openclaw/closed/72919.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72919.md) |
 | [#74591](https://github.com/openclaw/openclaw/pull/74591) | chore(ci): add network SSRF CodeQL shard | kept open | Apr 29, 2026, 20:08 UTC | [records/openclaw-openclaw/closed/74591.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74591.md) |
 | [#74590](https://github.com/openclaw/openclaw/issues/74590) | Slack Socket Mode: expose clientPingTimeout config to prevent false disconnects on high-latency networks | already implemented on main | Apr 29, 2026, 20:06 UTC | [records/openclaw-openclaw/closed/74590.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74590.md) |
 | [#62917](https://github.com/openclaw/openclaw/issues/62917) | fix: exec-approvals does not respect OPENCLAW_STATE_DIR, causing duplicate state-dir doctor warning | closed externally after review | Apr 29, 2026, 20:05 UTC | [records/openclaw-openclaw/closed/62917.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62917.md) |
 | [#74536](https://github.com/openclaw/openclaw/pull/74536) | test: align Codex provider payload test | closed externally after review | Apr 29, 2026, 19:56 UTC | [records/openclaw-openclaw/closed/74536.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74536.md) |
 | [#54774](https://github.com/openclaw/openclaw/pull/54774) | fix(gateway): ignore transient pre-hello close in one-shot calls | closed externally after review | Apr 29, 2026, 19:50 UTC | [records/openclaw-openclaw/closed/54774.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/54774.md) |
-| [#61433](https://github.com/openclaw/openclaw/issues/61433) | [Bug]: internal completion/announce payloads can leak raw runtime metadata into user chat | closed externally after review | Apr 29, 2026, 19:50 UTC | [records/openclaw-openclaw/closed/61433.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61433.md) |
 
 #### Work Candidates
 
@@ -483,7 +483,7 @@ Latest review: Apr 29, 2026, 19:56 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 44 | 0 | 44 | 2 | 0 | 386 | 0 |
+| Last hour | 40 | 0 | 40 | 1 | 0 | 386 | 0 |
 | Last 24 hours | 937 | 0 | 937 | 5 | 15 | 898 | 0 |
 
 #### Recently Closed
