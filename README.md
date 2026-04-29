@@ -172,14 +172,14 @@ Last dashboard update: Apr 29, 2026, 22:05 UTC
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
 | [OpenClaw](https://github.com/openclaw/openclaw) | 6513 | 6513 | 0 | 2774 | 0 | 954 | 10890 | Apr 29, 2026, 21:51 UTC | Apr 29, 2026, 21:49 UTC | 365 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 923 | 923 | 0 | 25 | 0 | 44 | 8 | Apr 29, 2026, 21:44 UTC | Apr 29, 2026, 17:17 UTC | 702 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 923 | 923 | 0 | 25 | 0 | 44 | 8 | Apr 29, 2026, 21:44 UTC | Apr 29, 2026, 17:17 UTC | 682 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 3 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 22:05 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25136279971) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 22:05 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25136304336) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review in progress | Apr 29, 2026, 21:57 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -189,8 +189,8 @@ Latest review: Apr 29, 2026, 21:51 UTC. Latest close: Apr 29, 2026, 21:49 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 192 | 0 |
-| Last hour | 917 | 8 | 909 | 12 | 50 | 1067 | 1 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 170 | 0 |
+| Last hour | 917 | 8 | 909 | 12 | 50 | 1047 | 1 |
 | Last 24 hours | 5799 | 308 | 5491 | 14 | 795 | 2007 | 26 |
 
 ### Recently Closed Across Repos
@@ -267,7 +267,7 @@ Updated: Apr 29, 2026, 22:05 UTC
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25136279971](https://github.com/openclaw/clawsweeper/actions/runs/25136279971)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25136304336](https://github.com/openclaw/clawsweeper/actions/runs/25136304336)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -491,8 +491,8 @@ Latest review: Apr 29, 2026, 21:44 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 191 | 0 |
-| Last hour | 427 | 0 | 427 | 9 | 0 | 702 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 169 | 0 |
+| Last hour | 427 | 0 | 427 | 9 | 0 | 682 | 0 |
 | Last 24 hours | 936 | 0 | 936 | 9 | 15 | 790 | 0 |
 
 #### Recently Closed
