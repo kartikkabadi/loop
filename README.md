@@ -117,8 +117,8 @@ Last dashboard update: Apr 29, 2026, 11:01 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 29, 2026, 11:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105003303) |
-| [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 11:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25104969290) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 29, 2026, 11:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105070757) |
+| [ClawHub](https://github.com/openclaw/clawhub) | Hot intake in progress | Apr 29, 2026, 11:01 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25105070757) |
 
 ### Fleet Activity
 
@@ -346,12 +346,12 @@ Latest review: Apr 29, 2026, 10:59 UTC. Latest close: Apr 29, 2026, 10:59 UTC. L
 
 Repository: [openclaw/clawhub](https://github.com/openclaw/clawhub)
 
-Updated: Apr 29, 2026, 11:00 UTC
+Updated: Apr 29, 2026, 11:01 UTC
 
-State: Review publish complete
+State: Hot intake in progress
 
-Merged review artifacts for run 25104969290. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25104969290](https://github.com/openclaw/clawsweeper/actions/runs/25104969290)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25105070757](https://github.com/openclaw/clawsweeper/actions/runs/25105070757)
 <!-- clawsweeper-status:openclaw-clawhub:end -->
 
 #### Queue
