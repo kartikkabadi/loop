@@ -181,6 +181,7 @@ Contributor comments are ignored without a reply.
 Supported triggers:
 
 ```text
+/review
 /clawsweeper status
 /clawsweeper re-review
 /clawsweeper fix ci
@@ -191,10 +192,11 @@ Supported triggers:
 /clawsweeper explain
 /clawsweeper stop
 @clawsweeper re-review
+@clawsweeper review
 @openclaw-clawsweeper fix ci
 ```
 
-`re-review` dispatches ClawSweeper review again for an open issue or PR.
+`review` and `re-review` dispatch ClawSweeper review again for an open issue or PR.
 Repair commands apply to existing ClawSweeper PRs and to PRs opted into
 `clawsweeper:automerge`. Existing ClawSweeper PRs are identified by the
 `clawsweeper/*` branch prefix. Opted-in non-ClawSweeper PRs get an adopted job

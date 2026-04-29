@@ -102,6 +102,7 @@ router accepts `/clawsweeper ...`, `/automerge`, `/autoclose <reason>`,
 Common commands:
 
 ```text
+/review
 /clawsweeper status
 /clawsweeper re-review
 /clawsweeper fix ci
@@ -114,11 +115,12 @@ Common commands:
 /automerge
 /autoclose <maintainer close reason>
 @clawsweeper re-review
+@clawsweeper review
 ```
 
 - `status` and `explain` post a short target summary.
-- `re-review` dispatches a fresh ClawSweeper issue/PR review without starting
-  repair.
+- `review` and `re-review` dispatch a fresh ClawSweeper issue/PR review without
+  starting repair.
 - `fix ci`, `address review`, and `rebase` dispatch the repair worker only for
   ClawSweeper PRs or PRs already opted into `clawsweeper:automerge`.
 - `automerge` labels an open PR, creates or reuses the adopted job, dispatches

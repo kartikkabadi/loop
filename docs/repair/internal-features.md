@@ -346,6 +346,7 @@ Accepted mentions are `@clawsweeper`, `@clawsweeper[bot]`,
 Supported commands:
 
 ```text
+/review
 /clawsweeper status
 /clawsweeper re-review
 /clawsweeper fix ci
@@ -356,13 +357,15 @@ Supported commands:
 /clawsweeper explain
 /clawsweeper stop
 @clawsweeper re-review
+@clawsweeper review
 @openclaw-clawsweeper fix ci
 ```
 
 Behavior:
 
 - `status` and `explain`: post a short status response.
-- `re-review`: dispatch ClawSweeper review again for an open issue or PR.
+- `review` and `re-review`: dispatch ClawSweeper review again for an open issue
+  or PR.
 - `fix ci`: dispatch the existing ClawSweeper PR's job for repair.
 - `address review`: dispatch the existing ClawSweeper PR's job for repair.
 - `rebase`: dispatch the existing ClawSweeper PR's job for repair.

@@ -46,6 +46,16 @@ test("parseCommand recognizes maintainer slash commands", () => {
     command: "re-review",
     intent: "re_review",
   });
+  assert.deepEqual(parseCommand("/review"), {
+    trigger: "slash",
+    command: "review",
+    intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper review"), {
+    trigger: "slash",
+    command: "review",
+    intent: "re_review",
+  });
   assert.deepEqual(parseCommand("/clawsweeper review again"), {
     trigger: "slash",
     command: "review again",
@@ -142,6 +152,11 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
   assert.deepEqual(parseCommand("@clawsweeper re-review"), {
     trigger: "mention",
     command: "re-review",
+    intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper review"), {
+    trigger: "mention",
+    command: "review",
     intent: "re_review",
   });
   assert.deepEqual(parseCommand("@clawsweeper[bot] rerun review"), {

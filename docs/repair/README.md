@@ -277,6 +277,7 @@ unknown comments are ignored without a reply.
 Supported commands:
 
 ```text
+/review
 /clawsweeper status
 /clawsweeper re-review
 /clawsweeper fix ci
@@ -287,11 +288,12 @@ Supported commands:
 /clawsweeper explain
 /clawsweeper stop
 @clawsweeper re-review
+@clawsweeper review
 @openclaw-clawsweeper fix ci
 ```
 
-`status` and `explain` post a short status reply. `re-review` dispatches
-ClawSweeper review again for an open issue or PR. `fix ci`, `address review`,
+`status` and `explain` post a short status reply. `review` and `re-review`
+dispatch ClawSweeper review again for an open issue or PR. `fix ci`, `address review`,
 and `rebase` dispatch the normal `repair-cluster-worker.yml` repair path, but only for
 existing ClawSweeper PRs identified by the `clawsweeper/*` branch.
 `automerge` opts an open PR into the bounded review/fix/merge loop. `approve`
