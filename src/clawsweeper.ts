@@ -3422,21 +3422,28 @@ function issueReviewComment(
   const comments = ghPaged<unknown>(`repos/${targetRepo()}/issues/${number}/comments`).map(
     asRecord,
   );
-  const marked = comments.find((candidate) => {
+  const markedComments = comments.filter((candidate) => {
     const body = candidate.body;
     return typeof body === "string" && body.includes(marker);
   });
+  const patchableMarked = markedComments.find(canPatchReviewComment);
+  if (patchableMarked) return patchableMarked;
+  const marked = markedComments[0];
   if (marked) return marked;
   const exactBodies = new Set(fallbackBodies.map((body) => body.trim()).filter(Boolean));
-  const exact = comments.find((candidate) => {
+  const exactComments = comments.filter((candidate) => {
     const body = candidate.body;
     return typeof body === "string" && exactBodies.has(body.trim());
   });
+  const patchableExact = exactComments.find(canPatchReviewComment);
+  if (patchableExact) return patchableExact;
+  const exact = exactComments[0];
   if (exact) return exact;
-  return comments.find((candidate) => {
+  const codexComments = comments.filter((candidate) => {
     const body = candidate.body;
     return typeof body === "string" && isCodexReviewCommentBody(body);
   });
+  return codexComments.find(canPatchReviewComment) ?? codexComments[0];
 }
 
 function commentUpdatedAt(comment: Record<string, unknown> | undefined): string | undefined {
@@ -3463,6 +3470,24 @@ function commentBody(comment: Record<string, unknown> | undefined): string | und
 
 function commentBodyMatches(comment: Record<string, unknown> | undefined, body: string): boolean {
   return commentBody(comment)?.trim() === body.trim();
+}
+
+const PATCHABLE_REVIEW_COMMENT_AUTHORS = new Set(
+  ["openclaw-clawsweeper[bot]", process.env.CLAWSWEEPER_COMMENT_AUTHOR_LOGIN].filter(
+    (login): login is string => typeof login === "string" && login.length > 0,
+  ),
+);
+
+function commentAuthorLogin(comment: Record<string, unknown> | undefined): string | undefined {
+  const user = comment?.user;
+  if (!user || typeof user !== "object" || Array.isArray(user)) return undefined;
+  const login = (user as Record<string, unknown>).login;
+  return typeof login === "string" ? login : undefined;
+}
+
+export function canPatchReviewComment(comment: Record<string, unknown> | undefined): boolean {
+  const login = commentAuthorLogin(comment);
+  return Boolean(login && PATCHABLE_REVIEW_COMMENT_AUTHORS.has(login));
 }
 
 export function lockedConversationApplyReason(
@@ -3519,7 +3544,7 @@ function upsertReviewComment(
   const markedBody = markedReviewCommentBody(number, body);
   const id = commentId(existing);
   const payload = writeCommentPayload(number, markedBody);
-  if (id !== null) {
+  if (id !== null && canPatchReviewComment(existing)) {
     ghWithRetry([
       "api",
       `repos/${targetRepo()}/issues/comments/${id}`,

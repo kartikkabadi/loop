@@ -7,6 +7,7 @@ import {
   auditFromSnapshot,
   auditHasStrictFailures,
   auditHealthSection,
+  canPatchReviewComment,
   closeReasonApplyAgeSkipReason,
   closeReasonsArg,
   closingPullRequestReferenceTarget,
@@ -834,6 +835,12 @@ test("comment matcher recognizes old and new Codex review comments", () => {
     true,
   );
   assert.equal(isCodexReviewCommentBody("Thanks for the report, I can reproduce this."), false);
+});
+
+test("review comment patching only targets ClawSweeper-owned comments", () => {
+  assert.equal(canPatchReviewComment({ user: { login: "openclaw-clawsweeper[bot]" } }), true);
+  assert.equal(canPatchReviewComment({ user: { login: "steipete" } }), false);
+  assert.equal(canPatchReviewComment(undefined), false);
 });
 
 test("pull request keep-open review comments label the change summary", () => {
