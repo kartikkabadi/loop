@@ -25,6 +25,7 @@ import {
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
+  reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderResponse,
 } from "./comment-router-core.js";
@@ -397,25 +398,12 @@ function classifyAutomergePass(
     return { ...command, status: "skipped", reason: "ClawSweeper pass marker is not on a PR" };
   if (!hasLabel(command.target, AUTOMERGE_LABEL))
     return { ...command, status: "skipped", reason: "PR is not opted into ClawSweeper automerge" };
-  if (!command.expected_head_sha || command.expected_head_sha === "unknown") {
-    return {
-      ...command,
-      status: "skipped",
-      reason: "ClawSweeper pass marker must include the reviewed PR head SHA",
-    };
-  }
-  if (
-    command.expected_head_sha &&
-    command.expected_head_sha !== "unknown" &&
-    command.target?.head_sha &&
-    command.expected_head_sha !== command.target.head_sha
-  ) {
-    return {
-      ...command,
-      status: "skipped",
-      reason: "ClawSweeper pass marker targets a stale PR head SHA",
-    };
-  }
+  const headBlock = reviewedHeadShaBlockReason({
+    expectedHeadSha: command.expected_head_sha,
+    currentHeadSha: command.target?.head_sha,
+    markerName: "pass",
+  });
+  if (headBlock) return { ...command, status: "skipped", reason: headBlock };
   return {
     ...command,
     status: "ready",
@@ -436,6 +424,12 @@ function classifyNeedsHuman(
   if (!pull) return { ...command, status: "skipped", reason: "human-review marker is not on a PR" };
   if (!hasLabel(command.target, AUTOMERGE_LABEL))
     return { ...command, status: "skipped", reason: "PR is not opted into ClawSweeper automerge" };
+  const headBlock = reviewedHeadShaBlockReason({
+    expectedHeadSha: command.expected_head_sha,
+    currentHeadSha: command.target?.head_sha,
+    markerName: "human-review",
+  });
+  if (headBlock) return { ...command, status: "skipped", reason: headBlock };
   return {
     ...command,
     status: "ready",
@@ -1062,17 +1056,12 @@ function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
     return `pull request is ${String(view.state).toLowerCase()}`;
   if (view.isDraft) return "pull request is draft";
   if (String(view.baseRefName ?? "") !== "main") return "pull request base is not main";
-  if (!command.expected_head_sha || command.expected_head_sha === "unknown") {
-    return "ClawSweeper pass marker must include the reviewed PR head SHA";
-  }
-  if (
-    command.expected_head_sha &&
-    command.expected_head_sha !== "unknown" &&
-    view.headRefOid &&
-    command.expected_head_sha !== view.headRefOid
-  ) {
-    return "ClawSweeper pass marker targets a stale PR head SHA";
-  }
+  const headBlock = reviewedHeadShaBlockReason({
+    expectedHeadSha: command.expected_head_sha,
+    currentHeadSha: view.headRefOid,
+    markerName: "pass",
+  });
+  if (headBlock) return headBlock;
   if (view.mergeable !== "MERGEABLE") return `mergeable state is ${view.mergeable || "unknown"}`;
   if (!["CLEAN", "HAS_HOOKS"].includes(String(view.mergeStateStatus ?? ""))) {
     return `merge state status is ${view.mergeStateStatus || "unknown"}`;

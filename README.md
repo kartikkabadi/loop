@@ -761,13 +761,22 @@ Token flow:
   after Codex exits.
 - The built-in `GITHUB_TOKEN` commits generated reports back to this repo.
 
-Required app permissions:
+Required `openclaw-ci` app permissions:
 
-- read access for target scan context
-- write access to target repository issues and pull requests
-- optional Checks write on target repositories for commit Check Runs
-- optional Actions write on `openclaw/clawsweeper` for app-token-based run
-  cancellation, dispatch, or commit-review continuations
+- Contents: read/write, for report commits, repair branches, and repository
+  dispatch inputs that need a contents-scoped installation token.
+- Issues: read/write, for issue comments, labels, closes, and maintainer command
+  authorization context.
+- Pull requests: read/write, for PR comments, labels, merge readiness, repair PRs,
+  and guarded automerge.
+- Actions: read/write on `openclaw/clawsweeper`, for run cancellation, manual
+  dispatch, self-heal, and commit-review continuations.
+- Checks: write on target repositories when commit Check Runs should be
+  published.
+
+ClawSweeper no longer falls back to PAT-based write tokens. If the GitHub App
+installation does not grant the requested permission set, the workflow fails at
+token creation instead of silently switching identity.
 
 Target repository setup:
 

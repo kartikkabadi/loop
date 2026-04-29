@@ -132,6 +132,21 @@ export function buildAutomergeMergeArgs({ issueNumber, repo, expectedHeadSha }: 
   return args;
 }
 
+export function reviewedHeadShaBlockReason({
+  expectedHeadSha,
+  currentHeadSha,
+  markerName,
+}: LooseRecord) {
+  const marker = String(markerName ?? "review");
+  if (!expectedHeadSha || expectedHeadSha === "unknown") {
+    return `ClawSweeper ${marker} marker must include the reviewed PR head SHA`;
+  }
+  if (currentHeadSha && expectedHeadSha !== currentHeadSha) {
+    return `ClawSweeper ${marker} marker targets a stale PR head SHA`;
+  }
+  return null;
+}
+
 export function parseCommand(body: string) {
   for (const line of String(body ?? "").split(/\r?\n/)) {
     const automerge = line.match(/^\s*\/automerge\s*$/i);

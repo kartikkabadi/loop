@@ -14,6 +14,7 @@ import {
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
+  reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderResponse,
 } from "../../dist/repair/comment-router-core.js";
@@ -196,6 +197,33 @@ test("parseTrustedAutomation preserves explicit human-review verdicts as pauses"
 
   assert.equal(parsed.intent, "clawsweeper_needs_human");
   assert.equal(parsed.expected_head_sha, "abc123");
+});
+
+test("reviewedHeadShaBlockReason rejects stale trusted verdict heads", () => {
+  assert.equal(
+    reviewedHeadShaBlockReason({
+      expectedHeadSha: "abc123",
+      currentHeadSha: "abc123",
+      markerName: "human-review",
+    }),
+    null,
+  );
+  assert.equal(
+    reviewedHeadShaBlockReason({
+      expectedHeadSha: null,
+      currentHeadSha: "def456",
+      markerName: "human-review",
+    }),
+    "ClawSweeper human-review marker must include the reviewed PR head SHA",
+  );
+  assert.equal(
+    reviewedHeadShaBlockReason({
+      expectedHeadSha: "abc123",
+      currentHeadSha: "def456",
+      markerName: "human-review",
+    }),
+    "ClawSweeper human-review marker targets a stale PR head SHA",
+  );
 });
 
 test("parseTrustedAutomation ignores prose-only ClawSweeper review text", () => {
