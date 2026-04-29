@@ -171,7 +171,7 @@ Last dashboard update: Apr 29, 2026, 23:28 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6886 | 6503 | 383 | 3102 | 0 | 979 | 10902 | Apr 29, 2026, 23:26 UTC | Apr 29, 2026, 23:28 UTC | 96 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6886 | 6503 | 383 | 3102 | 0 | 979 | 10902 | Apr 29, 2026, 23:27 UTC | Apr 29, 2026, 23:28 UTC | 91 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 947 | 924 | 23 | 96 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -179,18 +179,18 @@ Last dashboard update: Apr 29, 2026, 23:28 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 29, 2026, 23:28 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25139111603) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 29, 2026, 23:28 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25139111603) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 23:26 UTC. Latest close: Apr 29, 2026, 23:28 UTC. Latest comment sync: Apr 29, 2026, 23:27 UTC.
+Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:28 UTC. Latest comment sync: Apr 29, 2026, 23:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 11 | 0 | 11 | 0 | 4 | 12 | 0 |
-| Last hour | 39 | 4 | 35 | 0 | 16 | 96 | 0 |
+| Last hour | 39 | 4 | 35 | 0 | 16 | 91 | 0 |
 | Last 24 hours | 5841 | 300 | 5541 | 19 | 782 | 1648 | 21 |
 
 ### Recently Closed Across Repos
@@ -235,6 +235,7 @@ Latest review: Apr 29, 2026, 23:26 UTC. Latest close: Apr 29, 2026, 23:28 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74657](https://github.com/openclaw/openclaw/pull/74657) | fix(google-vertex): support authorized_user ADC credentials | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74657.md) | complete | Apr 29, 2026, 23:27 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74667](https://github.com/openclaw/openclaw/pull/74667) | fix: configs that used the previously documented WhatsApp exposeErrorText key now fail valida... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74667.md) | complete | Apr 29, 2026, 23:26 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74653](https://github.com/openclaw/openclaw/pull/74653) | fix(doctor): suppress false-positive embedding warning when probe skipped (#74608) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74653.md) | complete | Apr 29, 2026, 23:26 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74665](https://github.com/openclaw/openclaw/issues/74665) | [Bug]: OpenAI Responses replay can send overlong tool call_id values after tool use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74665.md) | complete | Apr 29, 2026, 23:26 UTC |
@@ -244,7 +245,6 @@ Latest review: Apr 29, 2026, 23:26 UTC. Latest close: Apr 29, 2026, 23:28 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71817](https://github.com/openclaw/openclaw/pull/71817) | fix(telegram,feishu): enable Claude CLI reasoning via reasoningDefault config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71817.md) | complete | Apr 29, 2026, 23:17 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74508](https://github.com/openclaw/openclaw/pull/74508) | fix(telegram): chain reasoning messages on overflow instead of stopping | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74508.md) | complete | Apr 29, 2026, 23:17 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74661](https://github.com/openclaw/openclaw/pull/74661) | fix(feishu): skip empty-text messages with no media to prevent blank session turns (#74634) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74661.md) | complete | Apr 29, 2026, 23:16 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74657](https://github.com/openclaw/openclaw/pull/74657) | fix(google-vertex): support authorized_user ADC credentials | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74657.md) | complete | Apr 29, 2026, 23:14 UTC |
 
 </details>
 
@@ -264,9 +264,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 29, 2026, 23:28 UTC
 
-State: Planning review
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 2. Total fresh closes in this run: 2/2. Result records in checkpoint: 2, including durable review comment syncs.
+Apply/comment-sync run finished with 2 fresh closes out of requested limit 2. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25139111603](https://github.com/openclaw/clawsweeper/actions/runs/25139111603)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -300,8 +300,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25139111603](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 32/1113 current (1081 due, 2.9%) |
-| Hourly hot item cadence (<7d) | 32/1113 current (1081 due, 2.9%) |
+| Hourly cadence coverage | 30/1110 current (1080 due, 2.7%) |
+| Hourly hot item cadence (<7d) | 30/1110 current (1080 due, 2.7%) |
 | Daily cadence coverage | 1962/3598 current (1636 due, 54.5%) |
 | Daily PR cadence | 1299/2501 current (1202 due, 51.9%) |
 | Daily new issue cadence (<30d) | 663/1097 current (434 due, 60.4%) |
@@ -342,12 +342,12 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 23:26 UTC. Latest close: Apr 29, 2026, 23:28 UTC. Latest comment sync: Apr 29, 2026, 23:27 UTC.
+Latest review: Apr 29, 2026, 23:27 UTC. Latest close: Apr 29, 2026, 23:28 UTC. Latest comment sync: Apr 29, 2026, 23:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 11 | 0 | 11 | 0 | 4 | 12 | 0 |
-| Last hour | 39 | 4 | 35 | 0 | 16 | 96 | 0 |
+| Last hour | 39 | 4 | 35 | 0 | 16 | 91 | 0 |
 | Last 24 hours | 4902 | 300 | 4602 | 6 | 769 | 1234 | 21 |
 
 #### Recently Closed
@@ -384,6 +384,7 @@ Latest review: Apr 29, 2026, 23:26 UTC. Latest close: Apr 29, 2026, 23:28 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74657](https://github.com/openclaw/openclaw/pull/74657) | fix(google-vertex): support authorized_user ADC credentials | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74657.md) | complete | Apr 29, 2026, 23:27 UTC |
 | [#74667](https://github.com/openclaw/openclaw/pull/74667) | fix: configs that used the previously documented WhatsApp exposeErrorText key now fail valida... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74667.md) | complete | Apr 29, 2026, 23:26 UTC |
 | [#74653](https://github.com/openclaw/openclaw/pull/74653) | fix(doctor): suppress false-positive embedding warning when probe skipped (#74608) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74653.md) | complete | Apr 29, 2026, 23:26 UTC |
 | [#74665](https://github.com/openclaw/openclaw/issues/74665) | [Bug]: OpenAI Responses replay can send overlong tool call_id values after tool use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74665.md) | complete | Apr 29, 2026, 23:26 UTC |
@@ -393,7 +394,6 @@ Latest review: Apr 29, 2026, 23:26 UTC. Latest close: Apr 29, 2026, 23:28 UTC. L
 | [#71817](https://github.com/openclaw/openclaw/pull/71817) | fix(telegram,feishu): enable Claude CLI reasoning via reasoningDefault config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71817.md) | complete | Apr 29, 2026, 23:17 UTC |
 | [#74508](https://github.com/openclaw/openclaw/pull/74508) | fix(telegram): chain reasoning messages on overflow instead of stopping | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74508.md) | complete | Apr 29, 2026, 23:17 UTC |
 | [#74661](https://github.com/openclaw/openclaw/pull/74661) | fix(feishu): skip empty-text messages with no media to prevent blank session turns (#74634) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74661.md) | complete | Apr 29, 2026, 23:16 UTC |
-| [#74657](https://github.com/openclaw/openclaw/pull/74657) | fix(google-vertex): support authorized_user ADC credentials | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74657.md) | complete | Apr 29, 2026, 23:14 UTC |
 
 </details>
 
@@ -422,11 +422,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25135463730](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues | 890 |
-| Open PRs | 34 |
-| Open items total | 924 |
+| Open issues | 908 |
+| Open PRs | 39 |
+| Open items total | 947 |
 | Reviewed files | 924 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 23 |
 | Archived closed files | 26 |
 
 #### Review Outcomes
@@ -453,7 +453,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25135463730](https://
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 181/186 current (5 due, 97.3%) |
 | Weekly older issue cadence | 649/656 current (7 due, 98.9%) |
-| Due now by cadence | 73 |
+| Due now by cadence | 96 |
 
 ### Audit Health
 
@@ -567,8 +567,8 @@ No workflow status has been published yet.
 | --- | ---: |
 | Target repository | [openclaw/clawsweeper](https://github.com/openclaw/clawsweeper) |
 | Open issues | 0 |
-| Open PRs | 3 |
-| Open items total | 3 |
+| Open PRs | 0 |
+| Open items total | 0 |
 | Reviewed files | 3 |
 | Unreviewed open items | 0 |
 | Archived closed files | 0 |
