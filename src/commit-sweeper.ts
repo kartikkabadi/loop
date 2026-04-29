@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execFileSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,6 +10,7 @@ import {
 } from "./commit-classifier.js";
 import { publishCheckFromReport, splitFrontMatter } from "./commit-checks.js";
 import { codexEnv, safeOutputTail } from "./clawsweeper.js";
+import { runText } from "./command.js";
 import { DEFAULT_TARGET_REPO, repositoryProfileFor } from "./repository-profiles.js";
 
 export { isReviewableCommitPath } from "./commit-classifier.js";
@@ -79,13 +80,7 @@ function boolArg(args: Args, key: string): boolean {
 }
 
 function run(command: string, commandArgs: string[], options: { cwd?: string } = {}): string {
-  const executable = command === "git" ? (process.env.GIT_BIN ?? "/usr/bin/git") : command;
-  return execFileSync(executable, commandArgs, {
-    cwd: options.cwd,
-    encoding: "utf8",
-    maxBuffer: 64 * 1024 * 1024,
-    env: { ...process.env, GIT_OPTIONAL_LOCKS: "0" },
-  }).trimEnd();
+  return runText(command, commandArgs, { cwd: options.cwd });
 }
 
 function ensureDir(path: string): void {
@@ -134,11 +129,10 @@ export function parseCoAuthors(body: string): string[] {
 
 function optionalGhJson(path: string, jq: string): string {
   try {
-    return execFileSync("gh", ["api", path, "--jq", jq], {
-      encoding: "utf8",
+    return runText("gh", ["api", path, "--jq", jq], {
       maxBuffer: 1024 * 1024,
-      env: process.env,
-    }).trim();
+      trim: "both",
+    });
   } catch {
     return "";
   }

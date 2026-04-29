@@ -232,17 +232,9 @@ jobs:
           }
           react "eyes"
 
-      - uses: actions/setup-node@v6
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        run: pnpm run build
+          build-script: build
 
       - name: Install Codex
         run: npm install -g @openai/codex@0.125.0 --prefer-offline
@@ -500,19 +492,10 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - uses: actions/setup-node@v6
+      - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        working-directory: clawsweeper
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        working-directory: clawsweeper
-        run: pnpm run build
+          working-directory: clawsweeper
+          build-script: build
 
       - name: Publish planning-started status
         if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *'))) }}
@@ -674,19 +657,10 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - uses: actions/setup-node@v6
+      - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        working-directory: clawsweeper
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        working-directory: clawsweeper
-        run: pnpm run build
+          working-directory: clawsweeper
+          build-script: build
 
       - name: Install Codex
         run: npm install -g @openai/codex@0.125.0 --prefer-offline
@@ -780,17 +754,9 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - uses: actions/setup-node@v6
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        run: pnpm run build
+          build-script: build
 
       - uses: actions/download-artifact@v4
         with:
@@ -1017,17 +983,9 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - uses: actions/setup-node@v6
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        run: pnpm run build
+          build-script: build
 
       - name: Refresh Audit Health
         env:
@@ -1104,17 +1062,9 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - uses: actions/setup-node@v6
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        run: pnpm run build
+          build-script: build
 
       - name: Sync before applying decisions
         run: git pull --rebase

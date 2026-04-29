@@ -4,13 +4,22 @@ import { execFileSync } from "node:child_process";
 import { sleepMs } from "./timing.js";
 import { ghJson } from "./github-cli.js";
 import { repoRoot } from "./paths.js";
+import type { JsonValue, LooseRecord } from "./json-types.js";
+import { isRepairMode, type RepairJobFrontmatter } from "./domain-types.js";
 
 export { repoRoot } from "./paths.js";
-
-export type JsonValue = ReturnType<typeof JSON.parse>;
-export type LooseRecord = JsonValue;
+export type {
+  JsonArray,
+  JsonObject,
+  JsonPrimitive,
+  JsonValue,
+  LooseRecord,
+  StrictJsonArray,
+  StrictJsonObject,
+  StrictJsonValue,
+} from "./json-types.js";
 export type CliArgs = LooseRecord & { _: string[] };
-export type JobFrontmatter = LooseRecord;
+export type JobFrontmatter = RepairJobFrontmatter;
 export type ParsedJob = {
   path: string;
   relativePath: string;
@@ -214,24 +223,7 @@ export function readText(relativePath: string) {
 }
 
 export function resolveJobPath(filePath: string) {
-  const absolute = path.resolve(filePath);
-  if (fs.existsSync(absolute)) return absolute;
-
-  const normalized = String(filePath).replace(/\\/g, "/");
-  const legacy = normalized.match(/(?:^|\/)jobs\/([^/]+)\/([^/]+\.md)$/);
-  const legacyRepo = legacy?.[1];
-  const legacyFile = legacy?.[2];
-  if (legacyRepo && legacyFile && !["inbox", "outbox"].includes(legacyFile)) {
-    for (const candidate of [
-      path.join(repoRoot(), "jobs", legacyRepo, "inbox", legacyFile),
-      path.join(repoRoot(), "jobs", legacyRepo, "outbox", "finalized", legacyFile),
-      path.join(repoRoot(), "jobs", legacyRepo, "outbox", "stuck", legacyFile),
-    ]) {
-      if (fs.existsSync(candidate)) return candidate;
-    }
-  }
-
-  return absolute;
+  return path.resolve(filePath);
 }
 
 export function parseJob(filePath: string): ParsedJob {
@@ -244,7 +236,7 @@ export function parseJob(filePath: string): ParsedJob {
   return {
     path: absolute,
     relativePath: path.relative(repoRoot(), absolute),
-    frontmatter: parseSimpleYaml(match[1] ?? ""),
+    frontmatter: parseSimpleYaml(match[1] ?? "") as JobFrontmatter,
     body: (match[2] ?? "").trim(),
     raw,
   };
@@ -312,7 +304,7 @@ export function validateJob(job: ParsedJob | LooseRecord) {
   if (typeof fm.repo === "string" && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(fm.repo)) {
     errors.push("repo must be owner/repo");
   }
-  if (fm.mode && !["plan", "execute", "autonomous"].includes(fm.mode)) {
+  if (fm.mode && !isRepairMode(fm.mode)) {
     errors.push("mode must be plan, execute, or autonomous");
   }
   for (const key of [

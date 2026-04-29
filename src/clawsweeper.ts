@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execFileSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   chmodSync,
@@ -32,8 +32,12 @@ import {
   shouldRetryGh,
   summarizeGhArgs,
 } from "./github-retry.js";
+import { parseGhJson, parseGhJsonLines } from "./github-json.js";
+import { stableJson } from "./stable-json.js";
+import { runText } from "./command.js";
 
 export { codexEnv } from "./codex-env.js";
+export { parseGhJson, parseGhJsonLines } from "./github-json.js";
 export {
   ghRetryKind,
   isGitHubNotFoundError,
@@ -464,8 +468,6 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const RECENT_MISSING_OPEN_MS = DAY_MS;
 const STATUS_START = "<!-- clawsweeper-status:start -->";
 const STATUS_END = "<!-- clawsweeper-status:end -->";
-const AUDIT_HEALTH_START = "<!-- clawsweeper-audit:start -->";
-const AUDIT_HEALTH_END = "<!-- clawsweeper-audit:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
@@ -587,8 +589,8 @@ function reportFileName(repo: string, number: number): string {
 }
 
 function parseReportFileName(file: string): { repo: string | undefined; number: number } | null {
-  const legacy = file.match(/^(\d+)\.md$/);
-  if (legacy?.[1]) return { repo: undefined, number: Number(legacy[1]) };
+  const numeric = file.match(/^(\d+)\.md$/);
+  if (numeric?.[1]) return { repo: undefined, number: Number(numeric[1]) };
   const prefixed = file.match(/^([a-z0-9][a-z0-9-]*)-(\d+)\.md$/);
   if (!prefixed?.[1] || !prefixed[2]) return null;
   return { repo: repositoryProfileForSlug(prefixed[1])?.targetRepo, number: Number(prefixed[2]) };
@@ -689,13 +691,13 @@ function run(
   args: string[],
   options: { cwd?: string; env?: NodeJS.ProcessEnv } = {},
 ): string {
-  return execFileSync(command, args, {
+  return runText(command, args, {
     cwd: options.cwd ?? ROOT,
-    encoding: "utf8",
-    env: { ...process.env, ...options.env },
+    env: options.env,
     maxBuffer: 128 * 1024 * 1024,
     stdio: ["ignore", "pipe", "pipe"],
-  }).trim();
+    trim: "both",
+  });
 }
 
 function gh(args: string[]): string {
@@ -803,36 +805,6 @@ function ghWithRetry(args: string[], attempts = 12): string {
   throw lastError;
 }
 
-function formatParseError(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
-
-export function parseGhJson<T>(text: string, args: readonly string[]): T {
-  try {
-    return JSON.parse(text) as T;
-  } catch (error) {
-    throw new Error(
-      `Failed to parse JSON from ${summarizeGhArgs(args)}: ${formatParseError(error)}`,
-    );
-  }
-}
-
-export function parseGhJsonLines<T>(text: string, args: readonly string[]): T[] {
-  if (!text) return [];
-  return text
-    .split("\n")
-    .filter(Boolean)
-    .map((line, index) => {
-      try {
-        return JSON.parse(line) as T;
-      } catch (error) {
-        throw new Error(
-          `Failed to parse JSON line ${index + 1} from ${summarizeGhArgs(args)}: ${formatParseError(error)}`,
-        );
-      }
-    });
-}
-
 function ghJson<T>(args: string[]): T {
   return parseGhJson<T>(ghWithRetry(args), args);
 }
@@ -843,20 +815,6 @@ function ghJsonLines<T>(args: string[]): T[] {
 
 function sha256(text: string): string {
   return createHash("sha256").update(text).digest("hex");
-}
-
-function stableJson(value: unknown): string {
-  return JSON.stringify(sortStable(value));
-}
-
-function sortStable(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(sortStable);
-  if (!value || typeof value !== "object") return value;
-  return Object.fromEntries(
-    Object.entries(value)
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([key, item]) => [key, sortStable(item)]),
-  );
 }
 
 function itemSnapshotHash(item: Item, context: ItemContext): string {
@@ -1717,12 +1675,6 @@ function existingReview(
   itemsDir: string,
 ): ExistingReview | null {
   const candidates = [join(itemsDir, reportFileName(item.repo, item.number))];
-  for (const legacy of [
-    join(itemsDir, `${item.number}.md`),
-    join(ROOT, "items", `${item.number}.md`),
-  ]) {
-    if (!candidates.includes(legacy)) candidates.push(legacy);
-  }
   const path = candidates.find((candidate) => {
     if (!existsSync(candidate)) return false;
     const markdown = readFileSync(candidate, "utf8");
@@ -2780,20 +2732,6 @@ function currentWorkflowStatusBlock(readme: string, profile = targetProfile()): 
       return workflowStatusBlock({ profile, updatedAt: "unknown" });
     }
     return profileMatch;
-  }
-  if (profile.targetRepo === DEFAULT_TARGET_REPO) {
-    const legacyPattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
-    const legacyMatch = readme.match(legacyPattern)?.[0];
-    if (legacyMatch) {
-      const summary = workflowStatusSummary(legacyMatch);
-      return workflowStatusBlock({
-        state: summary.state,
-        detail: summary.detail,
-        ...(summary.runUrl ? { runUrl: summary.runUrl } : {}),
-        ...(summary.updatedAt ? { updatedAt: summary.updatedAt } : {}),
-        profile,
-      });
-    }
   }
   return workflowStatusBlock({ profile, updatedAt: "unknown" });
 }
@@ -4795,20 +4733,6 @@ function currentAuditHealthSection(readme: string, profile = targetProfile()): s
     ),
   );
   if (profileMatch?.[0]) return profileMatch[0];
-  if (profile.targetRepo === DEFAULT_TARGET_REPO) {
-    const legacyMatch = readme.match(
-      new RegExp(`### Audit Health\\n\\n${AUDIT_HEALTH_START}[\\s\\S]*?${AUDIT_HEALTH_END}`),
-    );
-    if (legacyMatch?.[0]) {
-      const withProfileMarkers = legacyMatch[0]
-        .replace(AUDIT_HEALTH_START, profileAuditStart(profile))
-        .replace(AUDIT_HEALTH_END, profileAuditEnd(profile));
-      return withProfileMarkers.replace(
-        profileAuditStart(profile),
-        `${profileAuditStart(profile)}\nRepository: ${markdownLink(profile.targetRepo, repoUrlFor(profile.targetRepo))}\n`,
-      );
-    }
-  }
   return withTargetProfile(profile, () => auditHealthSection(null));
 }
 
@@ -4820,14 +4744,9 @@ function updateAuditHealthDashboard(result: AuditResult): void {
   const profilePattern = new RegExp(
     `### Audit Health\\n\\n${escapeRegExp(profileAuditStart(profile))}[\\s\\S]*?${escapeRegExp(profileAuditEnd(profile))}`,
   );
-  const legacyPattern = new RegExp(
-    `### Audit Health\\n\\n${AUDIT_HEALTH_START}[\\s\\S]*?${AUDIT_HEALTH_END}`,
-  );
   let updated = readme;
   if (profilePattern.test(updated)) {
     updated = updated.replace(profilePattern, section);
-  } else if (profile.targetRepo === DEFAULT_TARGET_REPO && legacyPattern.test(updated)) {
-    updated = updated.replace(legacyPattern, section);
   } else {
     updated = updated.replace(/\n## How It Works/, `\n${section}\n\n## How It Works`);
   }
@@ -5628,12 +5547,9 @@ function statusCommand(args: Args): void {
   const profilePattern = new RegExp(
     `${escapeRegExp(profileStatusStart(profile))}[\\s\\S]*?${escapeRegExp(profileStatusEnd(profile))}`,
   );
-  const legacyPattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
   let updated = readme;
   if (profilePattern.test(updated)) {
     updated = updated.replace(profilePattern, block);
-  } else if (profile.targetRepo === DEFAULT_TARGET_REPO && legacyPattern.test(updated)) {
-    updated = updated.replace(legacyPattern, block);
   } else {
     updated = updated.replace(/Last dashboard update: .+/, `$&\n\n${block}`);
   }

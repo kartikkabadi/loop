@@ -119,19 +119,10 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - uses: actions/setup-node@v6
+      - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        working-directory: clawsweeper
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        working-directory: clawsweeper
-        run: pnpm run build
+          working-directory: clawsweeper
+          build-script: build
 
       - name: Select commits
         id: select
@@ -262,19 +253,10 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - uses: actions/setup-node@v6
+      - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        working-directory: clawsweeper
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        working-directory: clawsweeper
-        run: pnpm run build
+          working-directory: clawsweeper
+          build-script: build
 
       - name: Install Codex
         run: npm install -g @openai/codex@0.125.0 --prefer-offline
@@ -376,17 +358,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v6
+      - uses: ./.github/actions/setup-pnpm
         with:
-          node-version: "24"
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
-
-      - name: Build ClawSweeper
-        run: pnpm run build
+          build-script: build
 
       - uses: actions/download-artifact@v4
         if: ${{ needs.plan.outputs.planned_count != '0' }}

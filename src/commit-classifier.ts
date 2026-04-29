@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { runText } from "./command.js";
 
 export interface SkippedCommitMetadata {
   parents: string[];
@@ -79,13 +79,7 @@ const REVIEWABLE_BASENAMES = new Set([
 ]);
 
 function run(command: string, commandArgs: string[], options: { cwd?: string } = {}): string {
-  const executable = command === "git" ? (process.env.GIT_BIN ?? "/usr/bin/git") : command;
-  return execFileSync(executable, commandArgs, {
-    cwd: options.cwd,
-    encoding: "utf8",
-    maxBuffer: 64 * 1024 * 1024,
-    env: { ...process.env, GIT_OPTIONAL_LOCKS: "0" },
-  }).trimEnd();
+  return runText(command, commandArgs, { cwd: options.cwd });
 }
 
 function yamlScalar(value: string): string {

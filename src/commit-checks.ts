@@ -1,6 +1,6 @@
-import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
+import { runText } from "./command.js";
 
 type CheckConclusion = "success" | "failure" | "neutral" | "timed_out";
 
@@ -28,11 +28,7 @@ interface PublishCheckOptions {
 }
 
 function run(command: string, commandArgs: string[]): string {
-  return execFileSync(command, commandArgs, {
-    encoding: "utf8",
-    maxBuffer: 64 * 1024 * 1024,
-    env: { ...process.env, GIT_OPTIONAL_LOCKS: "0" },
-  }).trimEnd();
+  return runText(command, commandArgs);
 }
 
 export function splitFrontMatter(markdown: string): {

@@ -13,8 +13,26 @@ import {
   replacementSourceLinkComment,
 } from "./external-messages.js";
 import { runCommand as run } from "./command-runner.js";
+import {
+  branchHasBaseDiff,
+  currentHead,
+  ensureMergeBaseAvailable,
+  gitChangedFiles,
+  gitLsFiles,
+  isAncestor,
+  remoteBranchExists,
+  remoteBranchSha,
+} from "./git-repo-utils.js";
 import { parsePullRequestUrl, pullRequestNumberFromUrl } from "./github-ref.js";
 import { codexSubprocessEnv as codexEnv, repairGhEnv as ghEnv } from "./process-env.js";
+import {
+  isExpensivePnpmValidation,
+  isTestFile,
+  looksLikePathArgument,
+  packageScriptRequirement,
+  parseAllowedValidationCommand,
+  uniqueStrings,
+} from "./validation-command-utils.js";
 
 const FIX_ACTIONS = new Set(["fix_needed", "build_fix_artifact", "open_fix_pr"]);
 const REPAIR_STRATEGIES = new Set([
@@ -55,10 +73,6 @@ const maxEditAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_REPAIR_FIX_ED
 const maxReviewAttempts = Math.max(
   1,
   Number(process.env.CLAWSWEEPER_REPAIR_CODEX_REVIEW_ATTEMPTS ?? 2),
-);
-const maxRebaseAttempts = Math.max(
-  4,
-  Number(process.env.CLAWSWEEPER_REPAIR_REBASE_REPAIR_ATTEMPTS ?? 4),
 );
 const resolveReviewThreads = process.env.CLAWSWEEPER_REPAIR_RESOLVE_REVIEW_THREADS !== "0";
 const skipCodexWritePreflight = process.env.CLAWSWEEPER_REPAIR_SKIP_CODEX_WRITE_PREFLIGHT === "1";
@@ -341,7 +355,7 @@ report.actions.push(outcome);
 writeReport(report, resultPath);
 
 function isBlockedFixError(error: JsonValue) {
-  return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|rebase-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|rebase-fix worker|\/review) failed|could not repair rebase conflicts|validation command failed|base branch advanced after validation/i.test(
+  return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed/i.test(
     String(error?.message ?? error),
   );
 }
@@ -439,11 +453,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   );
   run("git", ["checkout", branch], { cwd: targetDir });
   ensureMergeBaseAvailable({ targetDir, baseBranch });
-  let rebased = rebaseRecoverableReplacementBranch({ targetDir, branch, baseBranch, fixArtifact });
-  if (!sameRepoBranch && !dryRun) {
-    ghAuthSetupGit(targetDir);
-    assertRepairBranchWritable({ targetDir, pull, rebased });
-  }
+  const sourceHead = currentHead(targetDir);
   prepareTargetToolchain(targetDir);
 
   const prep = editValidatePrepareMerge({
@@ -453,24 +463,26 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     mode: "repair",
     baseBranch,
     fallbackReason: null,
+    sourceHead,
   });
-  if (refreshValidatedBranchBase({ targetDir, branch, baseBranch })) {
-    rebased = true;
-    prep.commit = currentHead(targetDir);
-  }
   (prep.merge_preflight as JsonValue).target = `#${sourcePr.number}`;
+  const branchUpdate = branchUpdateState({ targetDir, sourceHead });
   if (dryRun) {
     return {
       action: "repair_contributor_branch",
       status: "planned",
       target: sourcePr.url,
       commit: prep.commit,
+      branch_rewritten: branchUpdate.rewritten,
       merge_preflight: prep.merge_preflight,
     };
   }
 
   ghAuthSetupGit(targetDir);
-  const pushArgs = repairBranchPushArgs({ pull, rebased });
+  if (!sameRepoBranch) {
+    assertRepairBranchWritable({ targetDir, pull, rewritten: branchUpdate.rewritten });
+  }
+  const pushArgs = repairBranchPushArgs({ pull, rewritten: branchUpdate.rewritten });
   run("git", pushArgs, { cwd: targetDir });
   const threadResolution = prepareReviewThreadsForMerge({
     repo: result.repo,
@@ -496,16 +508,23 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     target: sourcePr.url,
     head_repo: pull.head.repo.full_name,
     head_ref: pull.head.ref,
-    rebased,
+    branch_rewritten: branchUpdate.rewritten,
     commit: prep.commit,
     merge_preflight: prep.merge_preflight,
     review_threads: threadResolution,
   };
 }
 
-function repairBranchPushArgs({ pull, rebased }: LooseRecord) {
+function branchUpdateState({ targetDir, sourceHead }: LooseRecord) {
+  const rewritten =
+    /^[0-9a-f]{40}$/i.test(String(sourceHead ?? "")) &&
+    !isAncestor({ targetDir, ancestor: sourceHead, descendant: "HEAD" });
+  return { rewritten };
+}
+
+function repairBranchPushArgs({ pull, rewritten }: LooseRecord) {
   const remote = `https://github.com/${pull.head.repo.full_name}.git`;
-  if (!rebased) return ["push", remote, `HEAD:${pull.head.ref}`];
+  if (!rewritten) return ["push", remote, `HEAD:${pull.head.ref}`];
   const headSha = String(pull.head?.sha ?? "");
   if (!/^[0-9a-f]{40}$/i.test(headSha)) {
     throw new Error(
@@ -520,8 +539,8 @@ function repairBranchPushArgs({ pull, rebased }: LooseRecord) {
   ];
 }
 
-function assertRepairBranchWritable({ targetDir, pull, rebased }: LooseRecord) {
-  const args = repairBranchPushArgs({ pull, rebased });
+function assertRepairBranchWritable({ targetDir, pull, rewritten }: LooseRecord) {
+  const args = repairBranchPushArgs({ pull, rewritten });
   run("git", ["push", "--dry-run", ...args.slice(1)], { cwd: targetDir });
 }
 
@@ -556,8 +575,6 @@ function executeReplacementBranch({
   }
   run("git", ["fetch", "origin", baseBranch], { cwd: targetDir });
   const branchState = checkoutRecoverableReplacementBranch({ targetDir, branch, baseBranch });
-  if (branchState.resumed)
-    rebaseRecoverableReplacementBranch({ targetDir, branch, baseBranch, fixArtifact });
   prepareTargetToolchain(targetDir);
 
   if (!dryRun) ghAuthSetupGit(targetDir);
@@ -570,11 +587,9 @@ function executeReplacementBranch({
     baseBranch,
     contributorCredits,
     allowExistingChanges: branchState.resumed && branchHasBaseDiff({ targetDir, baseBranch }),
+    reconcileWithBase: branchState.resumed,
     pushCheckpoint: dryRun ? null : () => pushRecoverableBranch({ targetDir, branch }),
   });
-  if (refreshValidatedBranchBase({ targetDir, branch, baseBranch })) {
-    prep.commit = currentHead(targetDir);
-  }
   const provenance = externalMessageProvenance({
     model,
     reasoning: codexReasoningEffort,
@@ -848,14 +863,18 @@ function editValidatePrepareMerge({
   baseBranch = DEFAULT_BASE_BRANCH,
   contributorCredits = [],
   allowExistingChanges = false,
+  reconcileWithBase = false,
   pushCheckpoint = null,
+  sourceHead = null,
 }: LooseRecord) {
   let producedChanges = allowExistingChanges;
   let previousSummary = "";
   const checkpointCommits: JsonValue[] = [];
   const repositoryContext = buildRepositoryContext({ fixArtifact, targetDir });
-  if (!producedChanges) {
+  const shouldRunCodexEdit = !producedChanges || reconcileWithBase;
+  if (shouldRunCodexEdit) {
     for (let attempt = 1; attempt <= maxEditAttempts; attempt += 1) {
+      const headBeforeAttempt = currentHead(targetDir);
       const prompt = buildFixPrompt({
         fixArtifact,
         branch,
@@ -865,6 +884,8 @@ function editValidatePrepareMerge({
         previousNoDiff: attempt > 1,
         previousSummary,
         repositoryContext,
+        reconcileWithBase,
+        sourceHead,
       });
       const summaryPath = path.join(workRoot, `${mode}-codex-summary-${attempt}.md`);
       const codexResult = spawnSync(
@@ -909,7 +930,11 @@ function editValidatePrepareMerge({
         throw new Error(codexResult.stderr || codexResult.stdout || "Codex fix worker failed");
       }
 
-      producedChanges = Boolean(run("git", ["status", "--porcelain"], { cwd: targetDir }).trim());
+      const hasWorkingTreeChanges = Boolean(
+        run("git", ["status", "--porcelain"], { cwd: targetDir }).trim(),
+      );
+      const hasHeadChanges = currentHead(targetDir) !== headBeforeAttempt;
+      producedChanges = producedChanges || hasWorkingTreeChanges || hasHeadChanges;
       if (producedChanges) break;
       previousSummary = readTextIfExists(summaryPath).trim();
     }
@@ -976,6 +1001,8 @@ function buildFixPrompt({
   previousNoDiff,
   previousSummary,
   repositoryContext,
+  reconcileWithBase,
+  sourceHead,
 }: LooseRecord) {
   return [
     "You are editing the target repository for ClawSweeper Repair.",
@@ -985,21 +1012,27 @@ function buildFixPrompt({
     "- make the narrowest code change that satisfies the fix artifact;",
     "- start by inspecting the repository paths below with rg/git ls-files/sed;",
     "- if likely_files are stale, missing, or glob-like, discover the real nearby files and edit those;",
-    "- if the branch is stale or conflicts with current main, you may narrowly refactor/rebase touched implementation and tests to match current main;",
+    "- you may run local git status/diff/log/rebase/merge commands needed to reconcile this branch with current origin/main;",
+    "- when git conflicts exist, resolve every conflict marker and leave the checkout in a normal non-rebasing state;",
     "- preserve contributor credit in changelog/docs when the fix is user-facing;",
     "- address review-bot concerns named in the artifact;",
     "- resolve actionable human review comments, bot comments, and requested changes named in the artifact;",
     "- prepare the PR so it can pass the ClawSweeper Repair merge_preflight gate;",
-    "- do not commit, push, open PRs, close PRs, or call gh;",
+    "- do not push, open PRs, close PRs, or call gh;",
+    "- do not create a final commit unless git rebase/merge conflict resolution requires it; ClawSweeper Repair checkpoints ordinary edits after you return;",
     "- ClawSweeper Repair will checkpoint and push your edits to the recovery branch after you return;",
     "- do not inspect or print environment variables, credentials, tokens, or secrets;",
     "- do not change auth, approval, sandbox, or trust-boundary semantics unless the artifact explicitly asks for that boundary change;",
     "- exec-adjacent bugs are allowed when the fix is ordinary correctness or hardening and does not redefine the security boundary;",
-    "- before returning, verify `git status --porcelain` would show changed files.",
+    "- before returning, verify git status/diff/log show a merge-ready branch state.",
     "",
     `Mode: ${mode}`,
     `Branch: ${branch}`,
     `Edit attempt: ${attempt ?? 1} of ${maxEditAttempts}`,
+    reconcileWithBase
+      ? "Existing repair branch detected. Reconcile the existing branch diff with current origin/main before touching new code; rebase locally only when that is the cleanest path."
+      : "",
+    sourceHead ? `Source head before edit: ${sourceHead}` : "",
     previousNoDiff
       ? "Previous attempt produced no target repo diff. This time make the smallest concrete code/test change that satisfies the artifact; do not return analysis only."
       : "",
@@ -2154,19 +2187,6 @@ function preflightTargetValidationPlan({
   };
 }
 
-function packageScriptRequirement(parts: JsonValue) {
-  if (parts[0] === "npm" && parts[1] === "run" && parts[2]) {
-    return { name: parts[2], command: parts.slice(0, 3).join(" ") };
-  }
-  if (parts[0] !== "pnpm") return null;
-  let index = 1;
-  if (parts[index] === "-s" || parts[index] === "--silent") index += 1;
-  if (parts[index] === "run") index += 1;
-  const script = parts[index];
-  if (!script || ["exec", "dlx", "install", "add", "remove"].includes(script)) return null;
-  return { name: script, command: ["pnpm", script].join(" ") };
-}
-
 function validationFallbackCommands({ parts, error, cwd, baseBranch }: LooseRecord) {
   if (strictTargetValidation) return [];
   if (parts[0] !== "pnpm" || parts[1] !== "check:changed" || parts.length !== 2) return [];
@@ -2214,7 +2234,7 @@ function resolveAllowedValidationCommands(
   if (parts[0] === "pnpm") {
     const commandStart = parts[1] === "-s" || parts[1] === "--silent" ? 2 : 1;
     const pnpmScript = parts[commandStart];
-    if (isExpensivePnpmValidation(parts, commandStart)) {
+    if (isExpensivePnpmValidation(parts, commandStart, allowExpensiveValidation)) {
       return [["pnpm", "check:changed"]];
     }
     if (pnpmScript === "vitest" && parts[commandStart + 1] === "run") {
@@ -2233,18 +2253,6 @@ function resolveAllowedValidationCommands(
     }
   }
   return [parts];
-}
-
-function isExpensivePnpmValidation(parts: JsonValue, commandStart: JsonValue) {
-  if (allowExpensiveValidation) return false;
-  const script = String(parts[commandStart] ?? "");
-  if (script === "check" || script === "test:all") return true;
-  if (script === "test" || script === "test:serial") {
-    return !parts.slice(commandStart + 1).some(looksLikePathArgument);
-  }
-  return /^(?:test:(?:e2e|live|docker|install:e2e|parallels)(?::|$)|qa:e2e$|android:test:integration$)/.test(
-    script,
-  );
 }
 
 function normalizePathValidationCommand(
@@ -2309,58 +2317,6 @@ function changedTestFiles(cwd: string, baseBranch: string = DEFAULT_BASE_BRANCH)
   return gitChangedFiles(cwd, baseBranch).filter(
     (file: JsonValue) => isTestFile(file) && fs.existsSync(path.join(cwd, file)),
   );
-}
-
-function gitChangedFiles(cwd: JsonValue, baseBranch: string = DEFAULT_BASE_BRANCH) {
-  const baseRef = `origin/${baseBranch}`;
-  const committed = run("git", ["diff", "--name-only", `${baseRef}...HEAD`], { cwd })
-    .split("\n")
-    .map((line: JsonValue) => line.trim())
-    .filter(Boolean);
-  const uncommitted = run("git", ["status", "--porcelain"], { cwd })
-    .split("\n")
-    .map((line: JsonValue) => line.trim())
-    .map((line: JsonValue) => line.replace(/^.. /, ""))
-    .map((line: JsonValue) => line.split(" -> ").pop())
-    .filter(Boolean);
-  return uniqueStrings([...committed, ...uncommitted]);
-}
-
-function gitLsFiles(cwd: JsonValue) {
-  return run("git", ["ls-files"], { cwd })
-    .split("\n")
-    .map((line: JsonValue) => line.trim())
-    .filter(Boolean);
-}
-
-function looksLikePathArgument(value: JsonValue) {
-  const text = String(value ?? "");
-  return (
-    !text.startsWith("-") &&
-    (text.includes("/") || /\.(?:[cm]?[jt]sx?|json|md|yml|yaml)$/.test(text))
-  );
-}
-
-function isTestFile(value: JsonValue) {
-  return /(?:^|\/)[^/]*(?:test|spec|e2e)\.[cm]?[jt]sx?$/.test(String(value));
-}
-
-function uniqueStrings(values: LooseRecord[]): string[] {
-  return [...new Set(values.filter(Boolean).map(String))];
-}
-
-function parseAllowedValidationCommand(command: LooseRecord) {
-  const text = String(command ?? "").trim();
-  if (!text) throw new Error("empty validation command");
-  if (/[`$;&|<>()[\]{}*?~]/.test(text)) {
-    throw new Error(`unsafe validation command: ${text}`);
-  }
-  const parts = text.split(/\s+/);
-  const executable = parts[0];
-  if (!executable || !["pnpm", "npm", "node", "git"].includes(executable)) {
-    throw new Error(`unsupported validation command: ${text}`);
-  }
-  return parts;
 }
 
 function readPackageScriptSet(cwd: JsonValue) {
@@ -2508,278 +2464,6 @@ function checkoutRecoverableReplacementBranch({ targetDir, branch, baseBranch }:
   return { resumed: false, branch };
 }
 
-function rebaseRecoverableReplacementBranch({
-  targetDir,
-  branch,
-  baseBranch,
-  fixArtifact,
-}: LooseRecord) {
-  const baseRef = `origin/${baseBranch}`;
-  if (!branchHasBaseDiff({ targetDir, baseBranch })) return false;
-  if (isAncestor({ targetDir, ancestor: baseRef, descendant: "HEAD" })) return false;
-  if (fs.existsSync(path.join(targetDir, ".git", "shallow"))) {
-    run("git", ["fetch", "--unshallow", "origin"], { cwd: targetDir });
-  }
-  try {
-    run("git", ["rebase", baseRef], { cwd: targetDir });
-    return true;
-  } catch (error) {
-    try {
-      resolveRecoverableRebaseConflicts({
-        targetDir,
-        branch,
-        baseRef,
-        fixArtifact,
-        initialError: error.message,
-      });
-    } catch (repairError) {
-      spawnSync("git", ["rebase", "--abort"], {
-        cwd: targetDir,
-        env: process.env,
-        encoding: "utf8",
-      });
-      throw new Error(
-        `branch ${branch} could not rebase onto ${baseRef}: ${compactText(repairError.message, 1200)}`,
-      );
-    }
-    return true;
-  }
-}
-
-function refreshValidatedBranchBase({ targetDir, branch, baseBranch }: LooseRecord) {
-  run("git", ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], {
-    cwd: targetDir,
-  });
-  const baseRef = `origin/${baseBranch}`;
-  if (isAncestor({ targetDir, ancestor: baseRef, descendant: "HEAD" })) return false;
-  try {
-    run("git", ["rebase", baseRef], { cwd: targetDir });
-    return true;
-  } catch (error) {
-    spawnSync("git", ["rebase", "--abort"], { cwd: targetDir, env: process.env, encoding: "utf8" });
-    throw new Error(
-      `base branch advanced after validation and ${branch} needs a fresh rebase pass: ${compactText(error.message, 1200)}`,
-    );
-  }
-}
-
-function resolveRecoverableRebaseConflicts({
-  targetDir,
-  branch,
-  baseRef,
-  fixArtifact,
-  initialError,
-}: LooseRecord) {
-  let lastError = initialError;
-  for (let attempt = 1; attempt <= maxRebaseAttempts; attempt += 1) {
-    const prompt = buildRebaseConflictPrompt({
-      targetDir,
-      branch,
-      baseRef,
-      fixArtifact,
-      attempt,
-      lastError,
-    });
-    const summaryPath = path.join(workRoot, `replacement-codex-rebase-fix-${attempt}.md`);
-    const child = spawnSync(
-      "codex",
-      [
-        "exec",
-        "--cd",
-        targetDir,
-        "--model",
-        model,
-        "--sandbox",
-        codexWriteSandbox,
-        ...codexWriteSandboxConfigArgs(),
-        ...codexConfigArgs(),
-        "--output-last-message",
-        summaryPath,
-        "--ephemeral",
-        "--json",
-        "-",
-      ],
-      {
-        cwd: targetDir,
-        input: prompt,
-        encoding: "utf8",
-        env: codexEnv(),
-        timeout: codexTimeoutMs,
-      },
-    );
-    fs.writeFileSync(
-      path.join(workRoot, `replacement-codex-rebase-fix-${attempt}.jsonl`),
-      child.stdout ?? "",
-    );
-    if (child.stderr) {
-      fs.writeFileSync(
-        path.join(workRoot, `replacement-codex-rebase-fix-${attempt}.stderr.log`),
-        child.stderr,
-      );
-    }
-    if ((child.error as JsonValue)?.code === "ETIMEDOUT") {
-      throw new Error(`Codex rebase-fix worker timed out after ${codexTimeoutMs}ms`);
-    }
-    if (child.status !== 0) {
-      throw new Error(child.stderr || child.stdout || "Codex rebase-fix worker failed");
-    }
-
-    run("git", ["add", "--all"], { cwd: targetDir });
-    const continued = spawnSync("git", ["rebase", "--continue"], {
-      cwd: targetDir,
-      env: { ...process.env, GIT_EDITOR: "true", EDITOR: "true" },
-      encoding: "utf8",
-    });
-    if (continued.status === 0) return;
-    lastError = `${continued.stderr ?? ""}\n${continued.stdout ?? ""}`.trim();
-  }
-  throw new Error(
-    `Codex could not repair rebase conflicts after ${maxRebaseAttempts} attempt(s): ${compactText(lastError, 1200)}`,
-  );
-}
-
-function buildRebaseConflictPrompt({
-  targetDir,
-  branch,
-  baseRef,
-  fixArtifact,
-  attempt,
-  lastError,
-}: LooseRecord) {
-  return [
-    "You are resolving a ClawSweeper Repair rebase conflict in the target repository.",
-    "",
-    "Rules:",
-    "- inspect `git status --short`, conflicted files, and nearby current-main code before editing;",
-    "- resolve every conflict marker and preserve the narrow ClawSweeper Repair fix intent;",
-    "- you may refactor touched implementation/tests when current main moved or renamed the code;",
-    "- prefer current main structure over stale branch structure;",
-    "- if the same implementation or test files conflict repeatedly, synthesize the final current-main-compatible version instead of preserving old checkpoint shape;",
-    "- keep contributor credit/changelog entries from the fix artifact when still applicable;",
-    "- for CHANGELOG.md conflicts, keep the current active-version structure, preserve one relevant single-line entry with credit, and remove stale duplicate conflict sides;",
-    "- do not commit, push, open PRs, close PRs, call gh, or run `git rebase --continue`; ClawSweeper Repair handles that after your edits;",
-    "- do not inspect or print environment variables, credentials, tokens, or secrets;",
-    "- before returning, ensure no conflict markers remain.",
-    "",
-    `Branch: ${branch}`,
-    `Rebase target: ${baseRef}`,
-    `Rebase repair attempt: ${attempt} of ${maxRebaseAttempts}`,
-    "",
-    "Current git status:",
-    "```text",
-    safeGitStatus(targetDir),
-    "```",
-    "",
-    "Previous rebase error:",
-    "```text",
-    compactText(lastError, 4000),
-    "```",
-    "",
-    "Fix artifact:",
-    "```json",
-    JSON.stringify(fixArtifact, null, 2),
-    "```",
-  ].join("\n");
-}
-
-function safeGitStatus(targetDir: string) {
-  const child = spawnSync("git", ["status", "--short"], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  });
-  return child.status === 0
-    ? child.stdout.trim() || "(clean)"
-    : `${child.stderr ?? ""}\n${child.stdout ?? ""}`.trim();
-}
-
-function isAncestor({ targetDir, ancestor, descendant }: LooseRecord) {
-  const child = spawnSync("git", ["merge-base", "--is-ancestor", ancestor, descendant], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  });
-  return child.status === 0;
-}
-
-function remoteBranchExists({ targetDir, branch }: LooseRecord) {
-  return Boolean(remoteBranchSha({ targetDir, branch }));
-}
-
-function remoteBranchSha({ targetDir, branch }: LooseRecord) {
-  const child = spawnSync("git", ["ls-remote", "--heads", "origin", branch], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  });
-  if (child.status !== 0) return "";
-  const [sha] = child.stdout.trim().split(/\s+/);
-  return /^[0-9a-f]{40}$/.test(sha ?? "") ? sha : "";
-}
-
-function branchHasBaseDiff({ targetDir, baseBranch }: LooseRecord) {
-  const range = `origin/${baseBranch}...HEAD`;
-  const first = spawnSync("git", ["diff", "--name-only", range], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  });
-  if (first.status === 0) return Boolean(first.stdout.trim());
-  const detail = `${first.stderr ?? ""}\n${first.stdout ?? ""}`;
-  if (!/no merge base/i.test(detail)) throw new Error(detail.trim());
-
-  fetchDeeperHistory({ targetDir, baseBranch });
-  const retry = spawnSync("git", ["diff", "--name-only", range], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  });
-  if (retry.status === 0) return Boolean(retry.stdout.trim());
-  const retryDetail = `${retry.stderr ?? ""}\n${retry.stdout ?? ""}`;
-  if (/no merge base/i.test(retryDetail)) return true;
-  throw new Error(retryDetail.trim());
-}
-
-function ensureMergeBaseAvailable({ targetDir, baseBranch }: LooseRecord) {
-  run("git", ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], {
-    cwd: targetDir,
-  });
-  const baseRef = `origin/${baseBranch}`;
-  const first = spawnSync("git", ["merge-base", baseRef, "HEAD"], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  });
-  if (first.status === 0 && first.stdout.trim()) return first.stdout.trim();
-
-  fetchDeeperHistory({ targetDir, baseBranch });
-  const retry = spawnSync("git", ["merge-base", baseRef, "HEAD"], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  });
-  if (retry.status === 0 && retry.stdout.trim()) return retry.stdout.trim();
-
-  const detail = `${retry.stderr ?? ""}\n${retry.stdout ?? ""}`.trim();
-  throw new Error(detail || `no merge base between ${baseRef} and HEAD`);
-}
-
-function fetchDeeperHistory({ targetDir, baseBranch }: LooseRecord) {
-  const shallow = spawnSync("git", ["rev-parse", "--is-shallow-repository"], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  }).stdout.trim();
-  if (shallow === "true" || fs.existsSync(path.join(targetDir, ".git", "shallow"))) {
-    run("git", ["fetch", "--unshallow", "origin"], { cwd: targetDir });
-  } else {
-    run("git", ["fetch", "origin", "--prune"], { cwd: targetDir });
-  }
-  run("git", ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], {
-    cwd: targetDir,
-  });
-}
-
 function commitCheckpointIfNeeded({ targetDir, message, trailers = [] }: LooseRecord) {
   if (!run("git", ["status", "--porcelain"], { cwd: targetDir }).trim()) return "";
   run("git", ["add", "--all"], { cwd: targetDir });
@@ -2789,55 +2473,15 @@ function commitCheckpointIfNeeded({ targetDir, message, trailers = [] }: LooseRe
   return run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
 }
 
-function currentHead(targetDir: string) {
-  return run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
-}
-
 function pushRecoverableBranch({ targetDir, branch }: LooseRecord) {
-  let lastDetail = "";
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const remoteSha = remoteBranchSha({ targetDir, branch });
-    const targetRef = `refs/heads/${branch}`;
-    const args = remoteSha
-      ? ["push", `--force-with-lease=${targetRef}:${remoteSha}`, "origin", `HEAD:${targetRef}`]
-      : ["push", "origin", `HEAD:${targetRef}`];
-    const pushed = spawnSync("git", args, {
-      cwd: targetDir,
-      env: process.env,
-      encoding: "utf8",
-    });
-    if (pushed.status === 0) {
-      if (fetchRemoteRecoverableBranch({ targetDir, branch, required: false })) return;
-      lastDetail = `git push reported success, but refs/heads/${branch} was not visible on origin`;
-      continue;
-    }
-
-    const detail = `${pushed.stderr ?? ""}\n${pushed.stdout ?? ""}`.trim();
-    lastDetail = detail;
-    if (!isRecoverablePushRejection(detail)) throw new Error(detail);
-
-    if (!fetchRemoteRecoverableBranch({ targetDir, branch, required: false })) continue;
-    const remoteRef = `refs/remotes/origin/${branch}`;
-    if (isAncestor({ targetDir, ancestor: "HEAD", descendant: remoteRef })) return;
-    if (!isAncestor({ targetDir, ancestor: remoteRef, descendant: "HEAD" })) {
-      try {
-        run("git", ["rebase", remoteRef], { cwd: targetDir });
-      } catch (error) {
-        spawnSync("git", ["rebase", "--abort"], {
-          cwd: targetDir,
-          env: process.env,
-          encoding: "utf8",
-        });
-        throw new Error(
-          `recoverable branch ${branch} diverged during push: ${compactText(error.message, 1200)}`,
-        );
-      }
-    }
-  }
-  throw new Error(
-    lastDetail ||
-      `recoverable branch ${branch} push was rejected after retrying against the latest remote tip`,
-  );
+  const remoteSha = remoteBranchSha({ targetDir, branch });
+  const targetRef = `refs/heads/${branch}`;
+  const args = remoteSha
+    ? ["push", `--force-with-lease=${targetRef}:${remoteSha}`, "origin", `HEAD:${targetRef}`]
+    : ["push", "origin", `HEAD:${targetRef}`];
+  run("git", args, { cwd: targetDir });
+  if (fetchRemoteRecoverableBranch({ targetDir, branch, required: false })) return;
+  throw new Error(`git push reported success, but refs/heads/${branch} was not visible on origin`);
 }
 
 function fetchRemoteRecoverableBranch({ targetDir, branch, required = true }: LooseRecord) {
@@ -2855,12 +2499,6 @@ function fetchRemoteRecoverableBranch({ targetDir, branch, required = true }: Lo
   if (!required && /couldn't find remote ref|could not find remote ref|not found/i.test(detail))
     return false;
   throw new Error(detail || `failed to fetch remote branch ${branch}`);
-}
-
-function isRecoverablePushRejection(detail: string) {
-  return /(?:non-fast-forward|fetch first|stale info|would clobber existing tag|rejected)/i.test(
-    detail,
-  );
 }
 
 function findOpenPullRequestForBranch(branch: string, cwd: JsonValue) {

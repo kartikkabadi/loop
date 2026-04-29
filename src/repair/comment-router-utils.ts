@@ -76,7 +76,7 @@ export function appendLedger(current: LooseRecord, entries: LooseRecord[]) {
 function ledgerEntryKey(entry: LooseRecord) {
   return (
     entry.comment_version_key ??
-    `${entry.comment_id ?? "unknown"}:${entry.comment_updated_at ?? "legacy"}`
+    `${entry.comment_id ?? "unknown"}:${entry.comment_updated_at ?? "unknown"}`
   );
 }
 

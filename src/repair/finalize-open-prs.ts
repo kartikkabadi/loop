@@ -9,7 +9,6 @@ import {
   parseJob,
   readMaxLiveWorkers,
   repoRoot,
-  resolveJobPath,
   waitForLiveWorkerCapacity,
 } from "./lib.js";
 import { ghJson, ghText } from "./github-cli.js";
@@ -515,11 +514,10 @@ function loadPublishedRecords() {
 function existingJobPath(clusterId: string) {
   for (const relative of [
     path.join("jobs", "openclaw", "inbox", `${clusterId}.md`),
-    path.join("jobs", "openclaw", `${clusterId}.md`),
     path.join("jobs", "openclaw", "outbox", "finalized", `${clusterId}.md`),
     path.join("jobs", "openclaw", "outbox", "stuck", `${clusterId}.md`),
   ]) {
-    const resolved = resolveJobPath(relative);
+    const resolved = path.resolve(relative);
     if (fs.existsSync(resolved)) return path.relative(repoRoot(), resolved);
   }
   return null;
