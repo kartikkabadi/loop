@@ -180,7 +180,7 @@ Latest review: Apr 29, 2026, 19:39 UTC. Latest close: Apr 29, 2026, 19:41 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 0 | 15 | 0 | 11 | 141 | 2 |
+| Last 15 minutes | 15 | 0 | 15 | 0 | 9 | 132 | 2 |
 | Last hour | 971 | 12 | 959 | 10 | 36 | 1188 | 2 |
 | Last 24 hours | 5917 | 350 | 5567 | 11 | 758 | 1888 | 27 |
 
@@ -257,7 +257,7 @@ Updated: Apr 29, 2026, 19:41 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 4. Total fresh closes in this run: 4/5. Result records in checkpoint: 9, including durable review comment syncs.
+Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 4/5. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25129887909](https://github.com/openclaw/clawsweeper/actions/runs/25129887909)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -337,7 +337,7 @@ Latest review: Apr 29, 2026, 19:39 UTC. Latest close: Apr 29, 2026, 19:41 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 0 | 15 | 0 | 11 | 25 | 2 |
+| Last 15 minutes | 15 | 0 | 15 | 0 | 9 | 25 | 2 |
 | Last hour | 584 | 12 | 572 | 3 | 36 | 478 | 2 |
 | Last 24 hours | 4977 | 350 | 4627 | 4 | 743 | 987 | 27 |
 
@@ -482,7 +482,7 @@ Latest review: Apr 29, 2026, 19:18 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 116 | 0 |
+| Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 107 | 0 |
 | Last hour | 387 | 0 | 387 | 7 | 0 | 710 | 0 |
 | Last 24 hours | 937 | 0 | 937 | 7 | 15 | 898 | 0 |
 
