@@ -87,19 +87,19 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 10:28 UTC
+Last dashboard update: Apr 29, 2026, 10:29 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4416 |
-| Open PRs | 3476 |
-| Open items total | 7892 |
+| Open issues | 4239 |
+| Open PRs | 3287 |
+| Open items total | 7526 |
 | Reviewed files | 7526 |
-| Unreviewed open items | 366 |
-| Due now by cadence | 2657 |
+| Unreviewed open items | 0 |
+| Due now by cadence | 2291 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 623 |
 | Closed by Codex apply | 10755 |
@@ -110,23 +110,23 @@ Last dashboard update: Apr 29, 2026, 10:28 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6965 | 6605 | 360 | 2585 | 0 | 577 | 10747 | Apr 29, 2026, 10:26 UTC | Apr 29, 2026, 10:19 UTC | 54 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 927 | 921 | 6 | 72 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 4 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6605 | 6605 | 0 | 2225 | 0 | 577 | 10747 | Apr 29, 2026, 10:27 UTC | Apr 29, 2026, 10:19 UTC | 54 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 921 | 921 | 0 | 66 | 0 | 46 | 8 | Apr 29, 2026, 10:19 UTC | Apr 29, 2026, 08:25 UTC | 4 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 10:26 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103653049) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 10:29 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103771941) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 10:28 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25103653049) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 10:26 UTC. Latest close: Apr 29, 2026, 10:19 UTC. Latest comment sync: Apr 29, 2026, 10:27 UTC.
+Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:19 UTC. Latest comment sync: Apr 29, 2026, 10:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 22 | 1 | 21 | 0 | 2 | 22 | 0 |
+| Last 15 minutes | 21 | 1 | 20 | 0 | 2 | 22 | 0 |
 | Last hour | 59 | 3 | 56 | 0 | 22 | 58 | 1 |
 | Last 24 hours | 6487 | 451 | 6036 | 24 | 750 | 2389 | 26 |
 
@@ -172,6 +172,7 @@ Latest review: Apr 29, 2026, 10:26 UTC. Latest close: Apr 29, 2026, 10:19 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74190](https://github.com/openclaw/openclaw/pull/74190) | feat(plugins): add SQLite plugin state store | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74190.md) | complete | Apr 29, 2026, 10:27 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74276](https://github.com/openclaw/openclaw/pull/74276) | Fix GitHub Copilot model picker discovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74276.md) | complete | Apr 29, 2026, 10:26 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74156](https://github.com/openclaw/openclaw/pull/74156) | fix(auth): scope external CLI auth status overlays | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74156.md) | complete | Apr 29, 2026, 10:26 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74273](https://github.com/openclaw/openclaw/pull/74273) | fix: honor configured xhigh thinking compat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74273.md) | complete | Apr 29, 2026, 10:24 UTC |
@@ -180,7 +181,6 @@ Latest review: Apr 29, 2026, 10:26 UTC. Latest close: Apr 29, 2026, 10:19 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74263](https://github.com/openclaw/openclaw/pull/74263) | ci: guard unused dead-code files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74263.md) | complete | Apr 29, 2026, 10:24 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74216](https://github.com/openclaw/openclaw/pull/74216) | fix(plugins): install runtime deps for library extensions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74216.md) | complete | Apr 29, 2026, 10:23 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#39115](https://github.com/openclaw/openclaw/pull/39115) | feat(config): add reasoningDefault to agents.defaults | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/39115.md) | complete | Apr 29, 2026, 10:23 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74190](https://github.com/openclaw/openclaw/pull/74190) | feat(plugins): add SQLite plugin state store | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74190.md) | complete | Apr 29, 2026, 10:21 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74254](https://github.com/openclaw/openclaw/pull/74254) | fix(docker): require single primary key before Docker apt GPG pin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74254.md) | complete | Apr 29, 2026, 10:20 UTC |
 
 </details>
@@ -199,12 +199,12 @@ Latest review: Apr 29, 2026, 10:26 UTC. Latest close: Apr 29, 2026, 10:19 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 10:26 UTC
+Updated: Apr 29, 2026, 10:29 UTC
 
 State: Planning review
 
 Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103653049](https://github.com/openclaw/clawsweeper/actions/runs/25103653049)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103771941](https://github.com/openclaw/clawsweeper/actions/runs/25103771941)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -212,11 +212,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103653049](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3528 |
-| Open PRs | 3437 |
-| Open items total | 6965 |
+| Open issues | 3351 |
+| Open PRs | 3254 |
+| Open items total | 6605 |
 | Reviewed files | 6605 |
-| Unreviewed open items | 360 |
+| Unreviewed open items | 0 |
 | Archived closed files | 14180 |
 
 #### Review Outcomes
@@ -243,7 +243,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103653049](https://
 | Daily PR cadence | 1907/2628 current (721 due, 72.6%) |
 | Daily new issue cadence (<30d) | 639/1130 current (491 due, 56.5%) |
 | Weekly older issue cadence | 1795/1800 current (5 due, 99.7%) |
-| Due now by cadence | 2585 |
+| Due now by cadence | 2225 |
 
 ### Audit Health
 
@@ -279,11 +279,11 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 10:26 UTC. Latest close: Apr 29, 2026, 10:19 UTC. Latest comment sync: Apr 29, 2026, 10:27 UTC.
+Latest review: Apr 29, 2026, 10:27 UTC. Latest close: Apr 29, 2026, 10:19 UTC. Latest comment sync: Apr 29, 2026, 10:28 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 21 | 1 | 20 | 0 | 2 | 21 | 0 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 2 | 21 | 0 |
 | Last hour | 55 | 3 | 52 | 0 | 22 | 54 | 1 |
 | Last 24 hours | 5554 | 451 | 5103 | 13 | 737 | 1589 | 26 |
 
@@ -321,6 +321,7 @@ Latest review: Apr 29, 2026, 10:26 UTC. Latest close: Apr 29, 2026, 10:19 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74190](https://github.com/openclaw/openclaw/pull/74190) | feat(plugins): add SQLite plugin state store | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74190.md) | complete | Apr 29, 2026, 10:27 UTC |
 | [#74276](https://github.com/openclaw/openclaw/pull/74276) | Fix GitHub Copilot model picker discovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74276.md) | complete | Apr 29, 2026, 10:26 UTC |
 | [#74156](https://github.com/openclaw/openclaw/pull/74156) | fix(auth): scope external CLI auth status overlays | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74156.md) | complete | Apr 29, 2026, 10:26 UTC |
 | [#74273](https://github.com/openclaw/openclaw/pull/74273) | fix: honor configured xhigh thinking compat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74273.md) | complete | Apr 29, 2026, 10:24 UTC |
@@ -329,7 +330,6 @@ Latest review: Apr 29, 2026, 10:26 UTC. Latest close: Apr 29, 2026, 10:19 UTC. L
 | [#74263](https://github.com/openclaw/openclaw/pull/74263) | ci: guard unused dead-code files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74263.md) | complete | Apr 29, 2026, 10:24 UTC |
 | [#74216](https://github.com/openclaw/openclaw/pull/74216) | fix(plugins): install runtime deps for library extensions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74216.md) | complete | Apr 29, 2026, 10:23 UTC |
 | [#39115](https://github.com/openclaw/openclaw/pull/39115) | feat(config): add reasoningDefault to agents.defaults | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/39115.md) | complete | Apr 29, 2026, 10:23 UTC |
-| [#74190](https://github.com/openclaw/openclaw/pull/74190) | feat(plugins): add SQLite plugin state store | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74190.md) | complete | Apr 29, 2026, 10:21 UTC |
 | [#74254](https://github.com/openclaw/openclaw/pull/74254) | fix(docker): require single primary key before Docker apt GPG pin | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74254.md) | complete | Apr 29, 2026, 10:20 UTC |
 
 </details>
@@ -360,10 +360,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103653049](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 888 |
-| Open PRs | 39 |
-| Open items total | 927 |
+| Open PRs | 33 |
+| Open items total | 921 |
 | Reviewed files | 921 |
-| Unreviewed open items | 6 |
+| Unreviewed open items | 0 |
 | Archived closed files | 23 |
 
 #### Review Outcomes
@@ -390,7 +390,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25103653049](https://
 | Daily PR cadence | 20/21 current (1 due, 95.2%) |
 | Daily new issue cadence (<30d) | 189/193 current (4 due, 97.9%) |
 | Weekly older issue cadence | 642/648 current (6 due, 99.1%) |
-| Due now by cadence | 72 |
+| Due now by cadence | 66 |
 
 ### Audit Health
 
