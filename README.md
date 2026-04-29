@@ -31,21 +31,21 @@ already implements the proposed change with source-backed evidence.
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 00:59 UTC
+Last dashboard update: Apr 29, 2026, 01:06 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 2 |
-| Open issues | 4401 |
-| Open PRs | 3468 |
-| Open items total | 7869 |
-| Reviewed files | 7478 |
-| Unreviewed open items | 391 |
-| Due now by cadence | 2062 |
+| Open issues | 4223 |
+| Open PRs | 3260 |
+| Open items total | 7483 |
+| Reviewed files | 7483 |
+| Unreviewed open items | 0 |
+| Due now by cadence | 1686 |
 | Proposed closes awaiting apply | 2 |
-| Work candidates awaiting promotion | 1 |
+| Work candidates awaiting promotion | 3 |
 | Closed by Codex apply | 10601 |
 | Failed or stale reviews | 18 |
 | Archived closed files | 13859 |
@@ -54,25 +54,25 @@ Last dashboard update: Apr 29, 2026, 00:59 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6953 | 6568 | 385 | 2014 | 2 | 1 | 10596 | Apr 29, 2026, 00:56 UTC | Apr 29, 2026, 00:49 UTC | 978 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 916 | 910 | 6 | 48 | 0 | 0 | 5 | Apr 29, 2026, 00:42 UTC | Apr 29, 2026, 00:32 UTC | 451 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6573 | 6573 | 0 | 1643 | 2 | 3 | 10596 | Apr 29, 2026, 01:05 UTC | Apr 29, 2026, 00:49 UTC | 968 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 910 | 910 | 0 | 43 | 0 | 0 | 5 | Apr 29, 2026, 00:42 UTC | Apr 29, 2026, 00:32 UTC | 429 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 29, 2026, 00:59 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25085566309) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 29, 2026, 01:06 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25085809775) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review comments checked | Apr 29, 2026, 00:31 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25083357498) |
 
 ### Fleet Activity
 
-Latest review: Apr 29, 2026, 00:56 UTC. Latest close: Apr 29, 2026, 00:49 UTC. Latest comment sync: Apr 29, 2026, 00:57 UTC.
+Latest review: Apr 29, 2026, 01:05 UTC. Latest close: Apr 29, 2026, 00:49 UTC. Latest comment sync: Apr 29, 2026, 01:06 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 3 | 12 | 0 | 2 | 480 | 2 |
-| Last hour | 1003 | 8 | 995 | 12 | 16 | 1429 | 3 |
-| Last 24 hours | 6470 | 384 | 6086 | 15 | 788 | 2271 | 27 |
+| Last 15 minutes | 14 | 1 | 13 | 0 | 0 | 224 | 1 |
+| Last hour | 766 | 8 | 758 | 12 | 15 | 1397 | 3 |
+| Last 24 hours | 6475 | 384 | 6091 | 15 | 788 | 2278 | 27 |
 
 ### Recently Closed Across Repos
 
@@ -93,6 +93,8 @@ Latest review: Apr 29, 2026, 00:56 UTC. Latest close: Apr 29, 2026, 00:49 UTC. L
 
 | Repository | Item | Title | Priority | Status | Reviewed | Report |
 | --- | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73905](https://github.com/openclaw/openclaw/issues/73905) | Feature: Configurable subagent notify policy for cron jobs | medium | candidate | Apr 29, 2026, 01:03 UTC | [records/openclaw-openclaw/items/73905.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73905.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73903](https://github.com/openclaw/openclaw/issues/73903) | openclaw doctor: Claude CLI section reports irrelevant info for non-Claude-CLI agents | medium | candidate | Apr 29, 2026, 01:01 UTC | [records/openclaw-openclaw/items/73903.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73903.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | medium | candidate | Apr 29, 2026, 00:56 UTC | [records/openclaw-openclaw/items/73898.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) |
 
 <details>
@@ -102,16 +104,16 @@ Latest review: Apr 29, 2026, 00:56 UTC. Latest close: Apr 29, 2026, 00:49 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73788](https://github.com/openclaw/openclaw/pull/73788) | feat(memory-lancedb): add memory_refresh tool for atomic replace and conflict preview | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73788.md) | complete | Apr 29, 2026, 01:05 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68280](https://github.com/openclaw/openclaw/pull/68280) | fix(gateway): fail fast on missing local probe auth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68280.md) | complete | Apr 29, 2026, 01:04 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73905](https://github.com/openclaw/openclaw/issues/73905) | Feature: Configurable subagent notify policy for cron jobs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73905.md) | complete | Apr 29, 2026, 01:03 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73904](https://github.com/openclaw/openclaw/pull/73904) | [AI-assisted] fix(agents): initialize context engines before subagent spawn prep | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73904.md) | complete | Apr 29, 2026, 01:01 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73823](https://github.com/openclaw/openclaw/pull/73823) | fix(whatsapp): gate pairing access-control on extractable inbound user content (#73797) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73823.md) | complete | Apr 29, 2026, 01:01 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73903](https://github.com/openclaw/openclaw/issues/73903) | openclaw doctor: Claude CLI section reports irrelevant info for non-Claude-CLI agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73903.md) | complete | Apr 29, 2026, 01:01 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73892](https://github.com/openclaw/openclaw/pull/73892) | fix(agents/process): honor AbortSignal in process.poll busy-wait loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73892.md) | complete | Apr 29, 2026, 01:01 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73902](https://github.com/openclaw/openclaw/pull/73902) | fix(update): skip disabled plugins during post-update sync | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73902.md) | complete | Apr 29, 2026, 01:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) | complete | Apr 29, 2026, 00:56 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73566](https://github.com/openclaw/openclaw/pull/73566) | fix(cli): handle closed plugin uninstall prompt | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73566.md) | complete | Apr 29, 2026, 00:55 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 29, 2026, 00:55 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73901](https://github.com/openclaw/openclaw/issues/73901) | Feature Request: User approval gate for config.patch beyond allowlist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73901.md) | complete | Apr 29, 2026, 00:55 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73899](https://github.com/openclaw/openclaw/pull/73899) | feat(skills): add integration-notion skill for Notion setup | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73899.md) | complete | Apr 29, 2026, 00:52 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73900](https://github.com/openclaw/openclaw/issues/73900) | [Bug]: main/systemEvent cron heartbeat inherits global heartbeat.to and leaks topic reminder to DM | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73900.md) | complete | Apr 29, 2026, 00:52 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73895](https://github.com/openclaw/openclaw/issues/73895) | Gateway v2 metadata: emit promotion-grade routing surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73895.md) | complete | Apr 29, 2026, 00:51 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73897](https://github.com/openclaw/openclaw/pull/73897) | Fix Android node system.run shell wrapper | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73897.md) | complete | Apr 29, 2026, 00:50 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73894](https://github.com/openclaw/openclaw/pull/73894) | Add Control UI notification controls and web push test fixes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73894.md) | complete | Apr 29, 2026, 00:49 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73892](https://github.com/openclaw/openclaw/pull/73892) | fix(agents/process): honor AbortSignal in process.poll busy-wait loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73892.md) | complete | Apr 29, 2026, 00:48 UTC |
 
 </details>
 
@@ -129,12 +131,12 @@ Latest review: Apr 29, 2026, 00:56 UTC. Latest close: Apr 29, 2026, 00:49 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 29, 2026, 00:59 UTC
+Updated: Apr 29, 2026, 01:06 UTC
 
-State: Review in progress
+State: Planning review
 
-Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085566309](https://github.com/openclaw/clawsweeper/actions/runs/25085566309)
+Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085809775](https://github.com/openclaw/clawsweeper/actions/runs/25085809775)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -142,24 +144,24 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085566309](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3525 |
-| Open PRs | 3428 |
-| Open items total | 6953 |
-| Reviewed files | 6568 |
-| Unreviewed open items | 385 |
+| Open issues | 3347 |
+| Open PRs | 3226 |
+| Open items total | 6573 |
+| Reviewed files | 6573 |
+| Unreviewed open items | 0 |
 | Archived closed files | 13844 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3340 |
+| Fresh reviewed issues in the last 7 days | 3342 |
 | Proposed issue closes | 2 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3217 |
+| Fresh reviewed PRs in the last 7 days | 3220 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6557 |
+| Fresh verified reviews in the last 7 days | 6562 |
 | Proposed closes awaiting apply | 2 (0% of fresh reviews) |
-| Work candidates awaiting promotion | 1 |
+| Work candidates awaiting promotion | 3 |
 | Closed by Codex apply | 10596 |
 | Failed or stale reviews | 11 |
 
@@ -167,13 +169,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25085566309](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 89/890 current (801 due, 10%) |
-| Hourly hot item cadence (<7d) | 89/890 current (801 due, 10%) |
+| Hourly cadence coverage | 80/895 current (815 due, 8.9%) |
+| Hourly hot item cadence (<7d) | 80/895 current (815 due, 8.9%) |
 | Daily cadence coverage | 3035/3860 current (825 due, 78.6%) |
 | Daily PR cadence | 2257/2701 current (444 due, 83.6%) |
 | Daily new issue cadence (<30d) | 778/1159 current (381 due, 67.1%) |
 | Weekly older issue cadence | 1815/1818 current (3 due, 99.8%) |
-| Due now by cadence | 2014 |
+| Due now by cadence | 1643 |
 
 ### Audit Health
 
@@ -209,13 +211,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72536,72537,72
 
 #### Latest Run Activity
 
-Latest review: Apr 29, 2026, 00:56 UTC. Latest close: Apr 29, 2026, 00:49 UTC. Latest comment sync: Apr 29, 2026, 00:57 UTC.
+Latest review: Apr 29, 2026, 01:05 UTC. Latest close: Apr 29, 2026, 00:49 UTC. Latest comment sync: Apr 29, 2026, 01:06 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 3 | 12 | 0 | 2 | 480 | 2 |
-| Last hour | 573 | 8 | 565 | 5 | 15 | 978 | 3 |
-| Last 24 hours | 5545 | 381 | 5164 | 8 | 773 | 1429 | 27 |
+| Last 15 minutes | 14 | 1 | 13 | 0 | 0 | 224 | 1 |
+| Last hour | 551 | 8 | 543 | 5 | 14 | 968 | 3 |
+| Last 24 hours | 5550 | 381 | 5169 | 8 | 773 | 1436 | 27 |
 
 #### Recently Closed
 
@@ -236,22 +238,24 @@ Latest review: Apr 29, 2026, 00:56 UTC. Latest close: Apr 29, 2026, 00:49 UTC. L
 
 | Item | Title | Priority | Status | Reviewed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [#73905](https://github.com/openclaw/openclaw/issues/73905) | Feature: Configurable subagent notify policy for cron jobs | medium | candidate | Apr 29, 2026, 01:03 UTC | [records/openclaw-openclaw/items/73905.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73905.md) |
+| [#73903](https://github.com/openclaw/openclaw/issues/73903) | openclaw doctor: Claude CLI section reports irrelevant info for non-Claude-CLI agents | medium | candidate | Apr 29, 2026, 01:01 UTC | [records/openclaw-openclaw/items/73903.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73903.md) |
 | [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | medium | candidate | Apr 29, 2026, 00:56 UTC | [records/openclaw-openclaw/items/73898.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) |
 
 #### Recently Reviewed
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#73788](https://github.com/openclaw/openclaw/pull/73788) | feat(memory-lancedb): add memory_refresh tool for atomic replace and conflict preview | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73788.md) | complete | Apr 29, 2026, 01:05 UTC |
+| [#68280](https://github.com/openclaw/openclaw/pull/68280) | fix(gateway): fail fast on missing local probe auth | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68280.md) | complete | Apr 29, 2026, 01:04 UTC |
+| [#73905](https://github.com/openclaw/openclaw/issues/73905) | Feature: Configurable subagent notify policy for cron jobs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73905.md) | complete | Apr 29, 2026, 01:03 UTC |
+| [#73904](https://github.com/openclaw/openclaw/pull/73904) | [AI-assisted] fix(agents): initialize context engines before subagent spawn prep | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73904.md) | complete | Apr 29, 2026, 01:01 UTC |
+| [#73823](https://github.com/openclaw/openclaw/pull/73823) | fix(whatsapp): gate pairing access-control on extractable inbound user content (#73797) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73823.md) | complete | Apr 29, 2026, 01:01 UTC |
+| [#73903](https://github.com/openclaw/openclaw/issues/73903) | openclaw doctor: Claude CLI section reports irrelevant info for non-Claude-CLI agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73903.md) | complete | Apr 29, 2026, 01:01 UTC |
+| [#73892](https://github.com/openclaw/openclaw/pull/73892) | fix(agents/process): honor AbortSignal in process.poll busy-wait loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73892.md) | complete | Apr 29, 2026, 01:01 UTC |
+| [#73902](https://github.com/openclaw/openclaw/pull/73902) | fix(update): skip disabled plugins during post-update sync | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73902.md) | complete | Apr 29, 2026, 01:00 UTC |
 | [#73898](https://github.com/openclaw/openclaw/issues/73898) | [Feature]: Control app option to auto-play assistant TTS audio | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73898.md) | complete | Apr 29, 2026, 00:56 UTC |
 | [#73566](https://github.com/openclaw/openclaw/pull/73566) | fix(cli): handle closed plugin uninstall prompt | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73566.md) | complete | Apr 29, 2026, 00:55 UTC |
-| [#72645](https://github.com/openclaw/openclaw/pull/72645) | feat(diagnostics-otel): add per-message end-to-end OTel tracing across run/skill/tool/model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72645.md) | complete | Apr 29, 2026, 00:55 UTC |
-| [#73901](https://github.com/openclaw/openclaw/issues/73901) | Feature Request: User approval gate for config.patch beyond allowlist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73901.md) | complete | Apr 29, 2026, 00:55 UTC |
-| [#73899](https://github.com/openclaw/openclaw/pull/73899) | feat(skills): add integration-notion skill for Notion setup | [close / skipped_changed_since_review](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73899.md) | complete | Apr 29, 2026, 00:52 UTC |
-| [#73900](https://github.com/openclaw/openclaw/issues/73900) | [Bug]: main/systemEvent cron heartbeat inherits global heartbeat.to and leaks topic reminder to DM | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73900.md) | complete | Apr 29, 2026, 00:52 UTC |
-| [#73895](https://github.com/openclaw/openclaw/issues/73895) | Gateway v2 metadata: emit promotion-grade routing surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73895.md) | complete | Apr 29, 2026, 00:51 UTC |
-| [#73897](https://github.com/openclaw/openclaw/pull/73897) | Fix Android node system.run shell wrapper | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73897.md) | complete | Apr 29, 2026, 00:50 UTC |
-| [#73894](https://github.com/openclaw/openclaw/pull/73894) | Add Control UI notification controls and web push test fixes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73894.md) | complete | Apr 29, 2026, 00:49 UTC |
-| [#73892](https://github.com/openclaw/openclaw/pull/73892) | fix(agents/process): honor AbortSignal in process.poll busy-wait loop | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73892.md) | complete | Apr 29, 2026, 00:48 UTC |
 
 </details>
 
@@ -281,10 +285,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25083357498](https://
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
 | Open issues | 876 |
-| Open PRs | 40 |
-| Open items total | 916 |
+| Open PRs | 34 |
+| Open items total | 910 |
 | Reviewed files | 910 |
-| Unreviewed open items | 6 |
+| Unreviewed open items | 0 |
 | Archived closed files | 15 |
 
 #### Review Outcomes
@@ -305,13 +309,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25083357498](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 19/54 current (35 due, 35.2%) |
-| Hourly hot item cadence (<7d) | 19/54 current (35 due, 35.2%) |
+| Hourly cadence coverage | 18/54 current (36 due, 33.3%) |
+| Hourly hot item cadence (<7d) | 18/54 current (36 due, 33.3%) |
 | Daily cadence coverage | 221/222 current (1 due, 99.5%) |
 | Daily PR cadence | 21/21 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 200/201 current (1 due, 99.5%) |
 | Weekly older issue cadence | 628/634 current (6 due, 99.1%) |
-| Due now by cadence | 48 |
+| Due now by cadence | 43 |
 
 ### Audit Health
 
@@ -350,7 +354,7 @@ Latest review: Apr 29, 2026, 00:42 UTC. Latest close: Apr 29, 2026, 00:32 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last hour | 430 | 0 | 430 | 7 | 1 | 451 | 0 |
+| Last hour | 215 | 0 | 215 | 7 | 1 | 429 | 0 |
 | Last 24 hours | 925 | 3 | 922 | 7 | 15 | 842 | 0 |
 
 #### Recently Closed
