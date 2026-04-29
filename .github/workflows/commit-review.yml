@@ -128,7 +128,7 @@ jobs:
         id: select
         env:
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
-          TARGET_NAME: ${{ steps.target.outputs.target_repo_name }}
+          TARGET_NAME: ${{ steps.target.outputs.target_checkout_dir }}
           TARGET_TOKEN: ${{ steps.target-read-token.outputs.token }}
           COMMIT_SHA: ${{ github.event.inputs.commit_sha || github.event.client_payload.after_sha || github.event.client_payload.commit_sha || '' }}
           BEFORE_SHA: ${{ github.event.inputs.before_sha || github.event.client_payload.before_sha || '' }}
