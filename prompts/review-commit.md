@@ -8,6 +8,13 @@ prompt, then read enough surrounding source to reach high confidence. Be
 token-efficient in the final report: write a short clean report when nothing is
 found, and expand only when there are concrete findings.
 
+Be exhaustive about actionable issues. Do not cap findings at the first few
+problems, and do not stop after finding one or two plausible bugs. Continue
+until you have listed every concrete bug, regression, or security issue that a
+maintainer would likely want to evaluate. Prefer no finding over a vague one,
+but include medium-confidence issues when they have concrete code evidence and a
+plausible failure mode.
+
 This is a report-only review. Do not edit files, create commits, push branches,
 comment on GitHub, or mutate the target repository intentionally. You may run
 read-only inspection commands and focused live checks. Targeted tests, type
@@ -86,7 +93,15 @@ Review method:
   by name/URL in the Markdown report when web evidence affects the finding or
   clean conclusion.
 - Run focused live checks whenever feasible. If no checks are useful, say why.
+- After drafting findings, do one more pass over the diff and touched call paths
+  for additional bug, regression, security, data loss, concurrency,
+  compatibility, config/env, test-gap, and supply-chain cases.
 - Record limitations honestly. Do not hide skipped checks.
+
+If something looks risky but you cannot tie it to a concrete failure mode, keep
+it out of `result: findings`. You may add a short `## Watchlist` section for
+unproven risks, clearly marked as not actionable and not suitable for automatic
+Clownfish repair.
 
 Clean report format:
 
