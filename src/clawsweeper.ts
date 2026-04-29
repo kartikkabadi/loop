@@ -28,6 +28,7 @@ import {
   ghRetryKind,
   ghRetryWaitMs,
   isGitHubNotFoundError,
+  isGitHubRequiresAuthenticationError,
   isLockedConversationCommentError,
   shouldRetryGh,
   summarizeGhArgs,
@@ -53,6 +54,7 @@ export { safeOutputTail } from "./clawsweeper-text.js";
 export {
   ghRetryKind,
   isGitHubNotFoundError,
+  isGitHubRequiresAuthenticationError,
   isLockedConversationCommentError,
   shouldRetryGh,
 } from "./github-retry.js";
@@ -76,6 +78,7 @@ type ActionTaken =
   | "kept_open"
   | "proposed_close"
   | "review_comment_synced"
+  | "skipped_comment_auth"
   | "skipped_locked_conversation"
   | "skipped_changed_since_review"
   | "skipped_open_closing_pr"
@@ -3032,16 +3035,19 @@ function renderCloseComment(options: {
   const likelyOwners = (options.likelyOwners ?? []).slice(0, 5).map(likelyOwnerLine);
   const summaryLine = sentence(options.summary);
   const lines = [closeIntro(options.reason), "", summaryLine];
+  const details: string[] = [];
   const bestSolutionLine = sentence(options.bestSolution ?? "");
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, summaryLine)) {
-    lines.push("", "Best possible solution:", "", bestSolutionLine);
+    details.push("Best possible solution:", "", bestSolutionLine);
   }
-  if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
-  if (likelyOwners.length) lines.push("", "Likely related people:", "", ...likelyOwners);
+  if (evidence.length) details.push("", "What I checked:", "", ...evidence);
+  if (likelyOwners.length) details.push("", "Likely related people:", "", ...likelyOwners);
 
   const outro = closeOutro(options.reason);
   if (outro) lines.push("", outro);
-  if (options.reviewLine) lines.push("", options.reviewLine);
+  if (options.reviewLine) details.push("", options.reviewLine);
+  const detailsBlock = collapsedDetailsBlock("Review details", details);
+  if (detailsBlock) lines.push("", detailsBlock);
 
   return lines.join("\n");
 }
@@ -3111,6 +3117,12 @@ function reportWorkCandidateReason(markdown: string): string {
   return reason;
 }
 
+function collapsedDetailsBlock(summary: string, lines: readonly string[]): string {
+  const body = lines.join("\n").replace(/^\s+|\s+$/g, "");
+  if (!body) return "";
+  return ["<details>", `<summary>${summary}</summary>`, "", body, "", "</details>"].join("\n");
+}
+
 function renderKeepOpenCommentFromReport(markdown: string): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
@@ -3131,6 +3143,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     "Continue tracking this item until the missing behavior is implemented or a maintainer decides the product direction.";
   const nextStepLine = sentence(workReason || bestSolution || fallbackNextStep);
   const bestSolutionLine = sentence(bestSolution);
+  const details: string[] = [];
   const lines = [
     isPullRequest && isRepairCandidate
       ? "Codex review: needs changes before merge."
@@ -3154,20 +3167,22 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     nextStepLine,
   );
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, nextStepLine)) {
-    lines.push("", "Best possible solution:", "", bestSolutionLine);
+    details.push("Best possible solution:", "", bestSolutionLine);
   }
-  if (validation.length) lines.push("", "Acceptance criteria:", "", ...validation);
-  if (evidence.length) lines.push("", "What I checked:", "", ...evidence);
-  if (likelyOwners.length) lines.push("", "Likely related people:", "", ...likelyOwners);
+  if (validation.length) details.push("", "Acceptance criteria:", "", ...validation);
+  if (evidence.length) details.push("", "What I checked:", "", ...evidence);
+  if (likelyOwners.length) details.push("", "Likely related people:", "", ...likelyOwners);
   if (
     !isReportNoneList(risks) &&
     publicReviewTextDiffers(risks, nextStepLine) &&
     (!bestSolutionLine || publicReviewTextDiffers(risks, bestSolutionLine))
   ) {
-    lines.push("", "Remaining risk / open question:", "", risks);
+    details.push("", "Remaining risk / open question:", "", risks);
   }
   const reviewLine = closeReviewLineFromReport(markdown);
-  if (reviewLine) lines.push("", reviewLine);
+  if (reviewLine) details.push("", reviewLine);
+  const detailsBlock = collapsedDetailsBlock("Review details", details);
+  if (detailsBlock) lines.push("", detailsBlock);
   return sanitizePublicSelfReferences(
     lines.join("\n"),
     Number(frontMatterValue(markdown, "number")),
@@ -4267,14 +4282,15 @@ function applyDecisionsCommand(args: Args): void {
             syncedComment = upsertReviewComment(number, reviewComment, existingReviewComment);
             syncReason = "updated durable Codex review comment";
           } catch (error) {
-            if (!isLockedConversationCommentError(error)) throw error;
-            if (
-              markApplySkipped(
-                "skipped_locked_conversation",
-                "conversation was locked while syncing review comment",
-              )
-            )
-              break;
+            const commentAuthError = isGitHubRequiresAuthenticationError(error);
+            if (!commentAuthError && !isLockedConversationCommentError(error)) throw error;
+            const actionTaken = commentAuthError
+              ? "skipped_comment_auth"
+              : "skipped_locked_conversation";
+            const reason = commentAuthError
+              ? "GitHub rejected durable review comment write with Requires authentication"
+              : "conversation was locked while syncing review comment";
+            if (markApplySkipped(actionTaken, reason)) break;
             continue;
           }
         }

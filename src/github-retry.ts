@@ -50,6 +50,11 @@ export function isGitHubNotFoundError(error: unknown): boolean {
   return /\b(?:HTTP\s*)?404\b/i.test(message) && /\bnot found\b/i.test(message);
 }
 
+export function isGitHubRequiresAuthenticationError(error: unknown): boolean {
+  const message = ghErrorText(error);
+  return /\bHTTP\s*401\b/i.test(message) && /\brequires authentication\b/i.test(message);
+}
+
 export function ghRetryWaitMs(kind: GhRetryKind, attempt: number): number {
   if (kind === "throttle") return Math.min(600_000, 30_000 * 2 ** attempt);
   if (kind === "transient") return Math.min(60_000, 2_000 * 2 ** attempt);

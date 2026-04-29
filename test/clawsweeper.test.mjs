@@ -17,6 +17,7 @@ import {
   ghRetryKind,
   isCodexReviewCommentBody,
   isGitHubNotFoundError,
+  isGitHubRequiresAuthenticationError,
   isLockedConversationCommentError,
   isProtectedItem,
   itemNumbersArg,
@@ -327,6 +328,7 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.match(action.closeComment, /Thanks for the context here/);
   assert.match(action.closeComment, /shell check/);
   assert.match(action.closeComment, /already implemented/);
+  assert.match(action.closeComment, /<details>\n<summary>Review details<\/summary>/);
   assert.match(action.closeComment, /Likely related people:/);
   assert.match(action.closeComment, /@alice/);
   assert.match(action.closeComment, /@bob/);
@@ -888,6 +890,7 @@ Reason: Maintainers should review the tests after the targeted lane is green.
   );
   assert.match(comment, /Maintainer follow-up before merge:/);
   assert.match(comment, /Maintainers should review the tests after the targeted lane is green\./);
+  assert.match(comment, /<details>\n<summary>Review details<\/summary>/);
   assert.match(
     comment,
     /Best possible solution:\n\nLand the tests after targeted validation is green\./,
@@ -1530,6 +1533,19 @@ test("closing pull request references preserve fork repository identity", () => 
     number: 40756,
   });
   assert.equal(closingPullRequestReferenceTarget({ number: "228" }, "openclaw/openclaw"), null);
+});
+
+test("GitHub requires-authentication write errors are recognizable apply skips", () => {
+  const error = Object.assign(
+    new Error("Command failed: gh api repos/openclaw/openclaw/issues/74425/comments"),
+    {
+      stdout:
+        '{\n  "message": "Requires authentication",\n  "documentation_url": "https://docs.github.com/rest",\n  "status": "401"\n}',
+      stderr: "gh: Requires authentication (HTTP 401)\n",
+    },
+  );
+  assert.equal(isGitHubRequiresAuthenticationError(error), true);
+  assert.equal(shouldRetryGh(error), false);
 });
 
 test("locked conversation failures are non-retryable but recognizable apply skips", () => {
