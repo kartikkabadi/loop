@@ -145,6 +145,19 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
   assert.match(job.body, /router owns final merge/);
 });
 
+test("renderAutomergeJob documents autofix as repair-only", () => {
+  const raw = renderAutomergeJob({
+    repo: "openclaw/openclaw",
+    issueNumber: 74610,
+    title: "Add SDK package",
+    repairMode: "autofix",
+  });
+
+  assert.match(raw, /Maintainer opted #74610 into ClawSweeper autofix/);
+  assert.match(raw, /Final merge is disabled for autofix/);
+  assert.doesNotMatch(raw, /opted #74610 into ClawSweeper automerge/);
+});
+
 test("parseCommand recognizes ClawSweeper bot mentions", () => {
   assert.deepEqual(parseCommand("@openclaw-clawsweeper[bot] rebase"), {
     trigger: "mention",

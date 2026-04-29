@@ -31,9 +31,9 @@ target_branch: clawsweeper/automerge-openclaw-openclaw-74610
 source: pr_automerge
 ---
 
-# ClawSweeper automerge repair candidate
+# ClawSweeper adopted PR repair candidate
 
-Maintainer opted #74610 into ClawSweeper automerge.
+Maintainer opted #74610 into ClawSweeper autofix.
 
 Source PR: https://github.com/openclaw/openclaw/pull/74610
 Title: [codex] add OpenClaw SDK package
@@ -42,5 +42,5 @@ ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop
 
 - If ClawSweeper emits an explicit repair marker, requests changes, or finds failing checks/rebase work, and the PR branch is safe to update, emit a fix artifact with `repair_strategy: "repair_contributor_branch"` and `source_prs: ["https://github.com/openclaw/openclaw/pull/74610"]`.
 - If the PR branch cannot be safely updated, emit a narrow credited replacement only when the artifact can preserve the original contributor credit; otherwise return `needs_human`.
-- Do not merge, close, or bypass review gates from the worker. The comment router owns final merge only after a passing ClawSweeper verdict for the exact current head.
+- Final merge is disabled for autofix. Keep the PR open after a passing ClawSweeper verdict unless a maintainer explicitly changes mode.
 - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.

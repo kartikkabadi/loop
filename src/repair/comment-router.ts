@@ -884,6 +884,7 @@ function ensureAutomergeJob(command: LooseRecord) {
         repo: command.repo,
         issueNumber: command.issue_number,
         title: command.target.title,
+        repairMode: repairJobModeForCommand(command),
       }),
     );
     statusDetail = "written";
@@ -904,6 +905,11 @@ function ensureAutomergeJob(command: LooseRecord) {
     cluster_id: command.target.cluster_id,
     status_detail: statusDetail,
   };
+}
+
+function repairJobModeForCommand(command: LooseRecord) {
+  if (command.intent === "autofix" || hasLabel(command.target, AUTOFIX_LABEL)) return "autofix";
+  return "automerge";
 }
 
 function dispatchClawSweeperReview(command: LooseRecord) {

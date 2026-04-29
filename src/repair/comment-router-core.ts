@@ -36,12 +36,22 @@ export function automergeJobPath(repo: string, issueNumber: JsonValue) {
   return `jobs/${owner}/inbox/${automergeClusterId(repo, issueNumber)}.md`;
 }
 
-export function renderAutomergeJob({ repo, issueNumber, title = null }: LooseRecord) {
+export function renderAutomergeJob({
+  repo,
+  issueNumber,
+  title = null,
+  repairMode: rawRepairMode = "automerge",
+}: LooseRecord) {
   const clusterId = automergeClusterId(repo, issueNumber);
   const branch = automergeJobBranch(repo, issueNumber);
   const ref = `#${Number(issueNumber)}`;
   const prUrl = `https://github.com/${repo}/pull/${Number(issueNumber)}`;
   const safeTitle = String(title ?? `PR ${ref}`).trim() || `PR ${ref}`;
+  const repairMode = String(rawRepairMode) === "autofix" ? "autofix" : "automerge";
+  const finalMergeLine =
+    repairMode === "autofix"
+      ? "Final merge is disabled for autofix. Keep the PR open after a passing ClawSweeper verdict unless a maintainer explicitly changes mode."
+      : "Do not merge, close, or bypass review gates from the worker. The comment router owns final merge only after a passing ClawSweeper verdict for the exact current head.";
   return `---
 repo: ${repo}
 cluster_id: ${clusterId}
@@ -75,9 +85,9 @@ target_branch: ${branch}
 source: ${AUTOMERGE_JOB_SOURCE}
 ---
 
-# ClawSweeper automerge repair candidate
+# ClawSweeper adopted PR repair candidate
 
-Maintainer opted ${ref} into ClawSweeper automerge.
+Maintainer opted ${ref} into ClawSweeper ${repairMode}.
 
 Source PR: ${prUrl}
 Title: ${safeTitle}
@@ -86,7 +96,7 @@ ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop
 
 - If ClawSweeper emits an explicit repair marker, requests changes, or finds failing checks/rebase work, and the PR branch is safe to update, emit a fix artifact with \`repair_strategy: "repair_contributor_branch"\` and \`source_prs: ["${prUrl}"]\`.
 - If the PR branch cannot be safely updated, emit a narrow credited replacement only when the artifact can preserve the original contributor credit; otherwise return \`needs_human\`.
-- Do not merge, close, or bypass review gates from the worker. The comment router owns final merge only after a passing ClawSweeper verdict for the exact current head.
+- ${finalMergeLine}
 - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.
 `;
 }
