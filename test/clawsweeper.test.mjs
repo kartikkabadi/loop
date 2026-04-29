@@ -1147,6 +1147,50 @@ Full review comments:
   assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
 });
 
+test("pull request autofix review comments can emit pass verdicts without merge copy", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74610",
+      decision: "keep_open",
+      close_reason: "none",
+      review_status: "complete",
+      labels: JSON.stringify(["clawsweeper:autofix"]),
+      work_candidate: "none",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+Keep this draft PR open for autofix.
+
+## What This Changes
+
+Adds the SDK package scaffolding.
+
+## Best Possible Solution
+
+Leave this draft open after fixes are complete.
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`,
+    "none",
+  );
+
+  assert.match(comment, /Codex review: passed for ClawSweeper autofix\./);
+  assert.match(comment, /Autofix follow-up:\n\nLeave this draft open after fixes are complete\./);
+  assert.match(comment, /<!-- clawsweeper-verdict:pass item=74610 sha=abc123def456/);
+  assert.doesNotMatch(comment, /Codex review: passed for ClawSweeper automerge/);
+});
+
 test("pull request automerge review comments with findings require repair", () => {
   const report = `${reportFrontMatter({
     type: "pull_request",

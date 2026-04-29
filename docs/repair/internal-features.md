@@ -352,6 +352,7 @@ Supported commands:
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
+/clawsweeper autofix
 /clawsweeper automerge
 /clawsweeper approve
 /clawsweeper explain
@@ -374,6 +375,9 @@ Behavior:
 - `fix ci`: dispatch the existing ClawSweeper PR's job for repair.
 - `address review`: dispatch the existing ClawSweeper PR's job for repair.
 - `rebase`: dispatch the existing ClawSweeper PR's job for repair.
+- `autofix`: label any open PR with `clawsweeper:autofix`, create an adopted
+  job if needed, and dispatch a ClawSweeper review for the current head without
+  allowing merge.
 - `automerge`: label any open PR with `clawsweeper:automerge`, create an
   adopted job if needed, and dispatch a ClawSweeper review for the current
   head.
@@ -383,27 +387,28 @@ Behavior:
 - `stop`: label the item for human review.
 
 Repair commands apply to existing ClawSweeper PRs and PRs opted into
-`clawsweeper:automerge`. The router finds ClawSweeper PRs by the
+`clawsweeper:autofix` or `clawsweeper:automerge`. The router finds ClawSweeper PRs by the
 `clawsweeper/*` branch, resolves or creates the backing job, posts one
 idempotent response marker, and dispatches `repair-cluster-worker.yml`.
 
 Trusted ClawSweeper comments become `clawsweeper_auto_repair`. Preferred
 comments use hidden `clawsweeper-verdict:*` markers and include
 `clawsweeper-action:fix-required` only when ClawSweeper should wake up. For PRs
-already opted into `clawsweeper:automerge`, trusted `needs-human` and
-`human-review` verdicts pause the loop with `clawsweeper:human-review`. Repair
-dispatch requires an accepted repair verdict or action marker. The default caps
-are ten automatic repair iterations per PR and one
-dispatch per PR head SHA. The per-PR cap is total across head SHA changes, so
-repeated findings on the same commit do not stampede the branch and a single PR
-cannot loop forever.
+already opted into `clawsweeper:autofix` or `clawsweeper:automerge`, trusted
+`needs-human` and `human-review` verdicts pause the loop with
+`clawsweeper:human-review`. Repair dispatch requires an accepted repair verdict
+or action marker. The default caps are ten automatic repair iterations per PR
+and one dispatch per PR head SHA. The per-PR cap is total across head SHA
+changes, so repeated findings on the same commit do not stampede the branch and
+a single PR cannot loop forever.
 
-For PRs labeled `clawsweeper:automerge`, trusted ClawSweeper `pass`, `approved`,
-or `no-changes` verdict markers become `clawsweeper_auto_merge`. The router
-merges only when the marker SHA matches the current PR head, checks are green,
-GitHub mergeability is clean, no human-review label is present, and both
-`CLAWSWEEPER_ALLOW_MERGE=1` and `CLAWSWEEPER_ALLOW_AUTOMERGE=1` are set. Otherwise
-it leaves the PR open and labels it `clawsweeper:human-review` and
+For PRs labeled `clawsweeper:autofix` or `clawsweeper:automerge`, trusted
+ClawSweeper `pass`, `approved`, or `no-changes` verdict markers become
+`clawsweeper_auto_merge`. Autofix and draft PRs never merge. Automerge merges
+only when the marker SHA matches the current PR head, checks are green, GitHub
+mergeability is clean, no human-review label is present, the PR is not draft,
+and both `CLAWSWEEPER_ALLOW_MERGE=1` and `CLAWSWEEPER_ALLOW_AUTOMERGE=1` are set.
+Otherwise it leaves the PR open and labels it `clawsweeper:human-review` and
 `clawsweeper:merge-ready` when merge gates are closed.
 
 The scheduled workflow is dry by default. Set

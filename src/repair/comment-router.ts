@@ -11,6 +11,7 @@ import {
   waitForLiveWorkerCapacity,
 } from "./lib.js";
 import {
+  AUTOFIX_LABEL,
   AUTOMERGE_LABEL,
   AUTOCLOSE_INTENTS,
   HUMAN_REVIEW_LABEL,
@@ -271,18 +272,28 @@ function classifyCommand(command: LooseRecord): JsonValue {
       ],
     };
   }
-  if (command.intent === "automerge") {
+  if (["autofix", "automerge"].includes(command.intent)) {
+    const mode = command.intent === "autofix" ? "autofix" : "automerge";
+    const modeLabel = command.intent === "autofix" ? AUTOFIX_LABEL : AUTOMERGE_LABEL;
+    const oppositeModeLabel = command.intent === "autofix" ? AUTOMERGE_LABEL : AUTOFIX_LABEL;
     if (String(issue.state ?? "").toLowerCase() !== "open") {
-      return automergeBlocked(next, "automerge requires an open PR");
+      return automergeBlocked(next, `${mode} requires an open PR`);
     }
     if (!pull) {
-      return automergeBlocked(next, "automerge requires a pull request");
+      return automergeBlocked(next, `${mode} requires a pull request`);
     }
     const actions: LooseRecord[] = [];
     if (!target.job_path) {
       actions.push({
         action: "ensure_automerge_job",
         job_path: target.automerge_job_path,
+        status: execute ? "pending" : "planned",
+      });
+    }
+    if (hasLabel(target, oppositeModeLabel)) {
+      actions.push({
+        action: "remove_label",
+        label: oppositeModeLabel,
         status: execute ? "pending" : "planned",
       });
     }
@@ -298,7 +309,7 @@ function classifyCommand(command: LooseRecord): JsonValue {
       status: "ready",
       actions: [
         ...actions,
-        { action: "label", label: AUTOMERGE_LABEL, status: execute ? "pending" : "planned" },
+        { action: "label", label: modeLabel, status: execute ? "pending" : "planned" },
         {
           action: "dispatch_clawsweeper",
           workflow: reviewWorkflow,
@@ -338,7 +349,7 @@ function classifyCommand(command: LooseRecord): JsonValue {
   if (!canRepairPullTarget(target)) {
     return repairBlocked(
       next,
-      "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper automerge",
+      "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge",
     );
   }
   if (command.trusted_bot && hasLabel(target, HUMAN_REVIEW_LABEL)) {
@@ -455,8 +466,12 @@ function classifyAutomergePass(
     return { ...command, status: "skipped", reason: "PR is not open" };
   if (!pull)
     return { ...command, status: "skipped", reason: "ClawSweeper pass marker is not on a PR" };
-  if (!hasLabel(command.target, AUTOMERGE_LABEL))
-    return { ...command, status: "skipped", reason: "PR is not opted into ClawSweeper automerge" };
+  if (!hasRepairLoopLabel(command.target))
+    return {
+      ...command,
+      status: "skipped",
+      reason: "PR is not opted into ClawSweeper autofix or automerge",
+    };
   const headBlock = reviewedHeadShaBlockReason({
     expectedHeadSha: command.expected_head_sha,
     currentHeadSha: command.target?.head_sha,
@@ -530,8 +545,12 @@ function classifyNeedsHuman(
   if (String(issue.state ?? "").toLowerCase() !== "open")
     return { ...command, status: "skipped", reason: "target is not open" };
   if (!pull) return { ...command, status: "skipped", reason: "human-review marker is not on a PR" };
-  if (!hasLabel(command.target, AUTOMERGE_LABEL))
-    return { ...command, status: "skipped", reason: "PR is not opted into ClawSweeper automerge" };
+  if (!hasRepairLoopLabel(command.target))
+    return {
+      ...command,
+      status: "skipped",
+      reason: "PR is not opted into ClawSweeper autofix or automerge",
+    };
   const headBlock = reviewedHeadShaBlockReason({
     expectedHeadSha: command.expected_head_sha,
     currentHeadSha: command.target?.head_sha,
@@ -569,7 +588,11 @@ function repairBlocked(command: LooseRecord, reason: string) {
 
 function canRepairPullTarget(target: LooseRecord) {
   if (target?.kind !== "pull_request") return false;
-  return Boolean(target.job_path || target.is_clawsweeper_pr || hasLabel(target, AUTOMERGE_LABEL));
+  return Boolean(target.job_path || target.is_clawsweeper_pr || hasRepairLoopLabel(target));
+}
+
+function hasRepairLoopLabel(target: LooseRecord) {
+  return hasLabel(target, AUTOFIX_LABEL) || hasLabel(target, AUTOMERGE_LABEL);
 }
 
 function autoRepairAlreadyPlanned(command: LooseRecord) {
@@ -601,7 +624,7 @@ function latestAutomergeResumeAt(command: LooseRecord) {
     if (
       entry.repo === command.repo &&
       Number(entry.issue_number) === Number(command.issue_number) &&
-      entry.intent === "automerge" &&
+      ["autofix", "automerge"].includes(entry.intent) &&
       entry.status === "executed"
     ) {
       latest = Math.max(latest, Date.parse(entry.comment_updated_at ?? "") || 0);
@@ -664,9 +687,11 @@ function executeCommand(command: LooseRecord) {
       return action;
     });
   }
-  if (command.intent === "automerge" && command.issue_number) {
+  if (["autofix", "automerge"].includes(command.intent) && command.issue_number) {
+    const modeLabel = command.intent === "autofix" ? AUTOFIX_LABEL : AUTOMERGE_LABEL;
+    const oppositeModeLabel = command.intent === "autofix" ? AUTOMERGE_LABEL : AUTOFIX_LABEL;
     const job = ensureAutomergeJob(command);
-    ensureAutomergeLabel(command.repo);
+    ensureRepairLoopLabel(command.repo, modeLabel);
     for (const pausedLabel of pauseLabelsOn(command.target)) {
       ghBestEffort([
         "issue",
@@ -678,6 +703,17 @@ function executeCommand(command: LooseRecord) {
         pausedLabel,
       ]);
     }
+    if (hasLabel(command.target, oppositeModeLabel)) {
+      ghBestEffort([
+        "issue",
+        "edit",
+        String(command.issue_number),
+        "--repo",
+        command.repo,
+        "--remove-label",
+        oppositeModeLabel,
+      ]);
+    }
     ghBestEffort([
       "issue",
       "edit",
@@ -685,13 +721,13 @@ function executeCommand(command: LooseRecord) {
       "--repo",
       command.repo,
       "--add-label",
-      AUTOMERGE_LABEL,
+      modeLabel,
     ]);
     const clawsweeper = dispatchClawSweeperReview(command);
     dispatched = { ...dispatched, clawsweeper };
     command.actions = command.actions.map((action: JsonValue) => {
       if (action.action === "label")
-        return { ...action, status: "executed", label: AUTOMERGE_LABEL };
+        return { ...action, status: "executed", label: action.label ?? modeLabel };
       if (action.action === "remove_label")
         return { ...action, status: "executed", label: action.label };
       if (action.action === "ensure_automerge_job")
@@ -1207,7 +1243,11 @@ function executeAutomerge(command: LooseRecord) {
 }
 
 function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
-  if (!hasLabel(target, AUTOMERGE_LABEL)) return "PR is not opted into ClawSweeper automerge";
+  if (hasLabel(target, AUTOFIX_LABEL))
+    return "PR is in ClawSweeper autofix mode; merge is disabled";
+  if (!hasLabel(target, AUTOMERGE_LABEL)) {
+    return "PR is not opted into ClawSweeper automerge";
+  }
   if (hasLabel(target, HUMAN_REVIEW_LABEL)) return "PR is paused for human review";
   if (view.state && view.state !== "OPEN")
     return `pull request is ${String(view.state).toLowerCase()}`;
@@ -1508,6 +1548,28 @@ function ensureAutomergeLabel(repo: string) {
     "--description",
     "Maintainer opted this ClawSweeper PR into bounded ClawSweeper-reviewed automerge",
   ]);
+}
+
+function ensureAutofixLabel(repo: string) {
+  ghBestEffort([
+    "label",
+    "create",
+    AUTOFIX_LABEL,
+    "--repo",
+    repo,
+    "--color",
+    "1D76DB",
+    "--description",
+    "Maintainer opted this PR into bounded ClawSweeper-reviewed autofix without merge",
+  ]);
+}
+
+function ensureRepairLoopLabel(repo: string, label: string) {
+  if (label === AUTOFIX_LABEL) {
+    ensureAutofixLabel(repo);
+    return;
+  }
+  ensureAutomergeLabel(repo);
 }
 
 function ensureHumanReviewLabel(repo: string) {

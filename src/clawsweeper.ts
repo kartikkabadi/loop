@@ -528,6 +528,7 @@ const REVIEW_POLICY_VERSION = "2026-04-29-policy-v12";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const REVIEW_START_STATUS_MARKER_PREFIX = "<!-- clawsweeper-review-status";
 const AUTOMERGE_LABEL = "clawsweeper:automerge";
+const AUTOFIX_LABEL = "clawsweeper:autofix";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -3502,7 +3503,8 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     .map((step) => `- ${step}`);
   const isPullRequest = frontMatterValue(markdown, "type") === "pull_request";
   const isRepairCandidate = workCandidate === "queue_fix_pr";
-  const isAutomergePass = isPullRequest && isAutomergePassReport(markdown);
+  const repairLoopPassMode = isPullRequest ? repairLoopPassModeFromReport(markdown) : "";
+  const isRepairLoopPass = Boolean(repairLoopPassMode);
   const summaryLine = sentence(summary) || "_No summary provided._";
   const changeSummaryLine = sentence(changeSummary || summary) || "_No change summary provided._";
   const fallbackNextStep =
@@ -3512,8 +3514,8 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const details: string[] = [];
   const hasReviewFindings = isPullRequest && reviewFindings.length > 0;
   const lines = [
-    isAutomergePass
-      ? "Codex review: passed for ClawSweeper automerge."
+    isRepairLoopPass
+      ? `Codex review: passed for ClawSweeper ${repairLoopPassMode}.`
       : isPullRequest && isRepairCandidate
         ? "Codex review: needs changes before merge."
         : hasReviewFindings
@@ -3529,8 +3531,8 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     lines.push(summaryLine, "");
   }
   lines.push(
-    isAutomergePass
-      ? "Automerge follow-up:"
+    isRepairLoopPass
+      ? `${capitalize(repairLoopPassMode)} follow-up:`
       : isPullRequest && !isRepairCandidate
         ? "Maintainer follow-up before merge:"
         : isPullRequest
@@ -3805,7 +3807,7 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
     ].join("\n");
   }
   if (decision === "keep_open") {
-    if (isAutomergePassReport(markdown)) {
+    if (repairLoopPassModeFromReport(markdown)) {
       return `<!-- clawsweeper-verdict:pass ${baseAttrs} -->`;
     }
     if (frontMatterValue(markdown, "work_candidate") !== "queue_fix_pr") {
@@ -3822,15 +3824,27 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
   return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
 }
 
-function isAutomergePassReport(markdown: string): boolean {
+function repairLoopPassModeFromReport(markdown: string): "" | "autofix" | "automerge" {
+  if (!isRepairLoopPassReport(markdown)) return "";
+  return frontMatterStringArray(markdown, "labels").includes(AUTOFIX_LABEL)
+    ? "autofix"
+    : "automerge";
+}
+
+function isRepairLoopPassReport(markdown: string): boolean {
+  const labels = frontMatterStringArray(markdown, "labels");
   return (
-    frontMatterStringArray(markdown, "labels").includes(AUTOMERGE_LABEL) &&
+    (labels.includes(AUTOMERGE_LABEL) || labels.includes(AUTOFIX_LABEL)) &&
     frontMatterValue(markdown, "review_status") === "complete" &&
     frontMatterValue(markdown, "confidence") === "high" &&
     frontMatterValue(markdown, "decision") === "keep_open" &&
     reportOverallCorrectness(markdown) === "patch is correct" &&
     reportReviewFindings(markdown).length === 0
   );
+}
+
+function capitalize(value: string): string {
+  return value ? `${value.slice(0, 1).toUpperCase()}${value.slice(1)}` : value;
 }
 
 function markedReviewCommentBody(number: number, body: string): string {

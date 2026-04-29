@@ -108,6 +108,7 @@ Common commands:
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
+/clawsweeper autofix
 /clawsweeper automerge
 /clawsweeper approve
 /clawsweeper explain
@@ -129,9 +130,13 @@ Common commands:
   answers the maintainer request in the next ClawSweeper comment. Action-looking
   prose still maps through existing safe markers and deterministic gates.
 - `fix ci`, `address review`, and `rebase` dispatch the repair worker only for
-  ClawSweeper PRs or PRs already opted into `clawsweeper:automerge`.
+  ClawSweeper PRs or PRs already opted into `clawsweeper:autofix` or
+  `clawsweeper:automerge`.
+- `autofix` labels an open PR, creates or reuses the adopted job, dispatches
+  review, and enters the bounded review/fix loop without merging.
 - `automerge` labels an open PR, creates or reuses the adopted job, dispatches
-  review, and enters the bounded review/fix/merge loop.
+  review, and enters the bounded review/fix/merge loop. Draft PRs are fix-only
+  until GitHub marks them ready for review.
 - `approve` lets a maintainer clear a ClawSweeper human-review pause and merge
   only after the normal exact-head, checks, mergeability, and gate checks pass.
 - `stop` adds `clawsweeper:human-review`; `/autoclose <reason>` closes the

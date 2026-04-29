@@ -43,6 +43,11 @@ test("parseCommand recognizes maintainer slash commands", () => {
     command: "automerge",
     intent: "automerge",
   });
+  assert.deepEqual(parseCommand("/clawsweeper autofix"), {
+    trigger: "slash",
+    command: "autofix",
+    intent: "autofix",
+  });
   assert.deepEqual(parseCommand("/clawsweeper re-review"), {
     trigger: "slash",
     command: "re-review",
@@ -501,8 +506,30 @@ test("renderResponse reports automerge resume actions", () => {
     },
   );
 
-  assert.match(body, /cleared `clawsweeper:human-review`/);
+  assert.match(body, /cleared pause labels/);
   assert.match(body, /repair\/rebase/);
+});
+
+test("renderResponse reports autofix repair-only opt-in", () => {
+  const body = renderResponse(
+    {
+      comment_id: "459",
+      intent: "autofix",
+      target: { head_sha: "def459" },
+      actions: [{ action: "remove_label", label: "clawsweeper:merge-ready", status: "executed" }],
+    },
+    {
+      clawsweeper: {
+        workflow: "sweep.yml",
+        event: "repository_dispatch",
+      },
+    },
+  );
+
+  assert.match(body, /ClawSweeper autofix is enabled/);
+  assert.match(body, /`clawsweeper:autofix`/);
+  assert.match(body, /fix-only/);
+  assert.doesNotMatch(body, /will merge/);
 });
 
 test("renderResponse reports maintainer re-review dispatches", () => {
@@ -609,7 +636,7 @@ test("renderResponse reports explicit human-review pause actions", () => {
     null,
   );
 
-  assert.match(body, /pausing automerge/);
+  assert.match(body, /pausing this repair loop/);
   assert.match(body, /`clawsweeper:human-review`/);
   assert.doesNotMatch(body, /did not dispatch/);
 });

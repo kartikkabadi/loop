@@ -187,6 +187,7 @@ Supported triggers:
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
+/clawsweeper autofix
 /clawsweeper automerge
 /clawsweeper approve
 /clawsweeper explain
@@ -198,9 +199,9 @@ Supported triggers:
 
 `review` and `re-review` dispatch ClawSweeper review again for an open issue or PR.
 Repair commands apply to existing ClawSweeper PRs and to PRs opted into
-`clawsweeper:automerge`. Existing ClawSweeper PRs are identified by the
-`clawsweeper/*` branch prefix. Opted-in non-ClawSweeper PRs get an adopted job
-at `jobs/<owner>/inbox/automerge-<owner>-<repo>-<pr>.md`.
+`clawsweeper:autofix` or `clawsweeper:automerge`. Existing ClawSweeper PRs are
+identified by the `clawsweeper/*` branch prefix. Opted-in non-ClawSweeper PRs
+get an adopted job at `jobs/<owner>/inbox/automerge-<owner>-<repo>-<pr>.md`.
 The router posts one idempotent reply with a hidden marker and dispatches the
 normal `repair-cluster-worker.yml` repair path. It records processed comment versions
 in `results/comment-router.json`. For durable ClawSweeper comments,
@@ -216,8 +217,9 @@ replacement PR, merge, or new ClawSweeper review was started, then lists the
 worker summary and actions.
 
 The router also has a trusted automation path for ClawSweeper comments on
-ClawSweeper PRs and PRs labeled `clawsweeper:automerge`. Default trusted authors
-are `clawsweeper[bot]` and `openclaw-clawsweeper[bot]`; override with
+ClawSweeper PRs and PRs labeled `clawsweeper:autofix` or
+`clawsweeper:automerge`. Default trusted authors are `clawsweeper[bot]` and
+`openclaw-clawsweeper[bot]`; override with
 `CLAWSWEEPER_TRUSTED_BOTS`. Preferred
 ClawSweeper comments include `clawsweeper-verdict:*` markers plus a
 `clawsweeper-action:fix-required` marker when ClawSweeper should wake up. The
@@ -228,14 +230,16 @@ one auto-repair per PR head SHA by default, controlled by
 head SHA changes, so the automatic loop stops after ten ClawSweeper-triggered
 repair passes.
 
-Maintainers can start the bounded review/fix/merge loop on any open PR with
-`/clawsweeper automerge`. The router adds `clawsweeper:automerge`, creates an
-adopted job when needed, dispatches ClawSweeper for the current head, and then
-reacts to trusted ClawSweeper markers. `needs-changes` repairs the source
-branch when safe or opens a credited replacement when it is not; `pass`,
-`approved`, or `no-changes` may merge only when the marker SHA matches the
+Maintainers can start the bounded review/fix loop on any open PR with
+`/clawsweeper autofix`, or the bounded review/fix/merge loop with
+`/clawsweeper automerge`. The router adds `clawsweeper:autofix` or
+`clawsweeper:automerge`, creates an adopted job when needed, dispatches
+ClawSweeper for the current head, and then reacts to trusted ClawSweeper
+markers. `needs-changes` repairs the source branch when safe or opens a credited
+replacement when it is not. `pass`, `approved`, or `no-changes` never merge
+autofix or draft PRs. Automerge may merge only when the marker SHA matches the
 current head, checks and mergeability are clean, no human-review label is
-present, and both `CLAWSWEEPER_ALLOW_MERGE=1` and
+present, the PR is not draft, and both `CLAWSWEEPER_ALLOW_MERGE=1` and
 `CLAWSWEEPER_ALLOW_AUTOMERGE=1` are set. A trusted `needs-human` or
 `human-review` verdict on an opted-in PR adds `clawsweeper:human-review` and
 pauses the loop. ClawSweeper must emit an accepted repair verdict or action

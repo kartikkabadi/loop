@@ -9,6 +9,7 @@ export const MERGE_INTENTS = new Set(["clawsweeper_auto_merge", "maintainer_appr
 export const AUTOCLOSE_INTENTS = new Set(["autoclose"]);
 export const AUTOMERGE_JOB_SOURCE = "pr_automerge";
 export const AUTOMERGE_LABEL = "clawsweeper:automerge";
+export const AUTOFIX_LABEL = "clawsweeper:autofix";
 export const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
 export const MERGE_READY_LABEL = "clawsweeper:merge-ready";
 export const DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS = ["admin", "maintain", "write"];
@@ -338,9 +339,9 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       marker,
       "ClawSweeper is here and listening for maintainer commands.",
       "",
-      "Supported commands: `/review`, `/clawsweeper status`, `/clawsweeper re-review`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
+      "Supported commands: `/review`, `/clawsweeper status`, `/clawsweeper re-review`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper autofix`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
       "",
-      "I only act for maintainers, or for trusted ClawSweeper feedback on a ClawSweeper PR or PR opted into `clawsweeper:automerge`.",
+      "I only act for maintainers, or for trusted ClawSweeper feedback on a ClawSweeper PR or PR opted into `clawsweeper:autofix` or `clawsweeper:automerge`.",
     ].join("\n");
   }
   if (["status", "explain"].includes(command.intent)) {
@@ -368,21 +369,26 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       `I added \`${HUMAN_REVIEW_LABEL}\` and paused the automation trail until a maintainer asks again.`,
     ].join("\n");
   }
-  if (command.intent === "automerge") {
+  if (["autofix", "automerge"].includes(command.intent)) {
+    const repairOnly = command.intent === "autofix";
+    const mode = repairOnly ? "autofix" : "automerge";
+    const label = repairOnly ? AUTOFIX_LABEL : AUTOMERGE_LABEL;
     const clearedHumanReview = (command.actions ?? []).some(
       (action: JsonValue) => action.action === "remove_label",
     );
     return [
       marker,
       dispatched?.clawsweeper
-        ? "ClawSweeper automerge is enabled for this PR."
-        : "ClawSweeper could not enable automerge for this PR.",
+        ? `ClawSweeper ${mode} is enabled for this PR.`
+        : `ClawSweeper could not enable ${mode} for this PR.`,
       "",
       dispatched?.clawsweeper
-        ? `I ${clearedHumanReview ? `cleared \`${HUMAN_REVIEW_LABEL}\`, ` : ""}added \`${AUTOMERGE_LABEL}\` and asked ClawSweeper to review this head. If ClawSweeper emits a repair marker or requests changes, I will repair/rebase the branch and ask for another review, up to the configured round limit.`
-        : `Reason: ${command.reason ?? "automerge requires a pull request"}.`,
+        ? `I ${clearedHumanReview ? "cleared pause labels, " : ""}added \`${label}\` and asked ClawSweeper to review this head. If ClawSweeper emits a repair marker or requests changes, I will repair/rebase the branch and ask for another review, up to the configured round limit.`
+        : `Reason: ${command.reason ?? `${mode} requires a pull request`}.`,
       "",
-      "A maintainer can pause this with `/clawsweeper stop`.",
+      repairOnly
+        ? "This is fix-only: I will not merge this PR. Tiny claw oath."
+        : "Draft PRs stay fix-only until GitHub marks them ready for review. A maintainer can pause this with `/clawsweeper stop`.",
     ].join("\n");
   }
   if (command.intent === "re_review") {
@@ -478,7 +484,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
   if (command.intent === "clawsweeper_needs_human") {
     return [
       marker,
-      "ClawSweeper is pausing automerge for human review.",
+      "ClawSweeper is pausing this repair loop for human review.",
       "",
       `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
       `Reason: ${command.repair_reason ?? "ClawSweeper requested human review."}`,
@@ -494,8 +500,8 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       `Reason: ${command.reason ?? "unsupported command or target"}.`,
       "",
       "Supported re-review commands work on open issues and PRs: `/review`, `/clawsweeper re-review`, or `@clawsweeper re-review`.",
-      "Supported repair commands work on existing ClawSweeper PRs and PRs opted into `clawsweeper:automerge`: `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`.",
-      "A maintainer can opt a PR in with `/clawsweeper automerge` and I can take another pass.",
+      "Supported repair commands work on existing ClawSweeper PRs and PRs opted into `clawsweeper:autofix` or `clawsweeper:automerge`: `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`.",
+      "A maintainer can opt a PR in with `/clawsweeper autofix` or `/clawsweeper automerge` and I can take another pass.",
       "A maintainer can close unsupported or declined work with `/autoclose <reason>`.",
     ].join("\n");
   }
@@ -547,6 +553,9 @@ function normalizeIntent(command: LooseRecord) {
   )
     return "re_review";
   if (["rebase", "update branch", "sync"].includes(command)) return "rebase";
+  if (["autofix", "auto fix", "fix when needed", "repair only", "autofix on"].includes(command)) {
+    return "autofix";
+  }
   if (
     ["automerge", "auto merge", "merge when clean", "merge when ready", "automerge on"].includes(
       command,
@@ -673,6 +682,7 @@ function automergeLabelState(labels: JsonValue[]) {
   if (normalized.has(HUMAN_REVIEW_LABEL)) return "paused-human-review";
   if (normalized.has(MERGE_READY_LABEL)) return "merge-ready-human-gate";
   if (normalized.has(AUTOMERGE_LABEL)) return "enabled";
+  if (normalized.has(AUTOFIX_LABEL)) return "autofix-only";
   return "not-enabled";
 }
 

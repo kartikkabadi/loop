@@ -232,13 +232,14 @@ That loop is marker-driven. ClawSweeper comments use hidden
 `clawsweeper-action:fix-required`. ClawSweeper skips stale head SHAs and caps
 automatic repairs at ten per PR and one per PR head SHA.
 
-Maintainers can opt an existing ClawSweeper PR into the bounded merge loop with
-`/clawsweeper automerge`. That adds `clawsweeper:automerge`, dispatches
-ClawSweeper for the current head, lets ClawSweeper repair trusted
-`needs-changes` findings for up to ten rounds, and merges only after a trusted
-pass verdict for the exact current head plus green checks, clean mergeability,
-and explicit `CLAWSWEEPER_ALLOW_MERGE=1` and `CLAWSWEEPER_ALLOW_AUTOMERGE=1`
-gates.
+Maintainers can opt an existing PR into the bounded repair-only loop with
+`/clawsweeper autofix`, or into the bounded merge loop with
+`/clawsweeper automerge`. Autofix adds `clawsweeper:autofix`, dispatches
+ClawSweeper for the current head, and lets ClawSweeper repair trusted
+`needs-changes` findings for up to ten rounds without merging. Automerge adds
+`clawsweeper:automerge` and can merge only after a trusted pass verdict for the
+exact current head plus a non-draft PR, green checks, clean mergeability, and
+explicit `CLAWSWEEPER_ALLOW_MERGE=1` and `CLAWSWEEPER_ALLOW_AUTOMERGE=1` gates.
 
 ClawSweeper commit findings have a separate intake lane. A
 `clawsweeper_commit_finding` dispatch fetches the latest markdown commit report,
@@ -306,6 +307,7 @@ Supported commands:
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
+/clawsweeper autofix
 /clawsweeper automerge
 /clawsweeper approve
 /clawsweeper explain
@@ -324,10 +326,12 @@ Freeform maintainer mentions such as `@clawsweeper why did automerge stop here?`
 dispatch a read-only assist review. The answer lands in the next ClawSweeper
 comment; action-looking prose can only become existing structured
 recommendations and still passes the normal deterministic gates.
-`automerge` opts an open PR into the bounded review/fix/merge loop. `approve`
-is maintainer-only exact-head approval after a human-review pause; it clears
-pause labels and merges only when the normal automerge readiness checks and
-merge gates pass. `stop` labels the item for human review.
+`autofix` opts an open PR into the bounded review/fix loop and never merges.
+`automerge` opts an open PR into the bounded review/fix/merge loop, but draft
+PRs stay fix-only until GitHub marks them ready for review. `approve` is
+maintainer-only exact-head approval after a human-review pause; it clears pause
+labels and merges only when the normal automerge readiness checks and merge
+gates pass. `stop` labels the item for human review.
 
 The router writes an idempotency marker into each reply and records processed
 comments in `results/comment-router.json`. The scheduled workflow is dry by

@@ -16,7 +16,7 @@ react to ordinary contributor comments.
 The loop is intentionally small:
 
 1. ClawSweeper opens `clawsweeper/<cluster-id>` or a maintainer comments
-   `/clawsweeper automerge` on any open PR.
+   `/clawsweeper autofix` or `/clawsweeper automerge` on any open PR.
 2. ClawSweeper dispatches ClawSweeper's item-specific `repository_dispatch` lane
    to review that PR head.
 3. The comment router sees trusted ClawSweeper feedback.
@@ -38,9 +38,9 @@ Maintainer commands:
   router falls back to repository collaborator permission and accepts `admin`,
   `maintain`, or `write` by default;
 - supported commands are `/clawsweeper re-review`, `/clawsweeper fix ci`,
-  `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper automerge`,
-  `/clawsweeper approve`, `/clawsweeper status`, `/clawsweeper explain`, and
-  `/clawsweeper stop`;
+  `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper autofix`,
+  `/clawsweeper automerge`, `/clawsweeper approve`, `/clawsweeper status`,
+  `/clawsweeper explain`, and `/clawsweeper stop`;
 - freeform maintainer mentions like `@clawsweeper why did automerge stop here?`
   dispatch a read-only assist review; action-looking prose still has to become
   an existing structured recommendation and pass deterministic gates;
@@ -51,7 +51,8 @@ Trusted automation:
 - author login must be in `CLAWSWEEPER_TRUSTED_BOTS`;
 - default trusted bot logins are `clawsweeper[bot]` and
   `openclaw-clawsweeper[bot]`;
-- the target must be a ClawSweeper PR or a PR labeled `clawsweeper:automerge`;
+- the target must be a ClawSweeper PR or a PR labeled `clawsweeper:autofix` or
+  `clawsweeper:automerge`;
 - the action becomes `clawsweeper_auto_repair`.
 
 The trusted automation lane exists only for review bots we control. It does
@@ -79,7 +80,19 @@ The router considers a PR to be from ClawSweeper when any of these are true:
 The branch prefix is the durable identity because it maps directly back to the
 cluster id and job path. Labels are state and reporting hints, not identity.
 
-## Automerge Opt-In
+## Autofix And Automerge Opt-In
+
+Maintainers can opt any open PR into the bounded repair-only loop with:
+
+```text
+/clawsweeper autofix
+```
+
+The command adds `clawsweeper:autofix`, asks ClawSweeper to review the current
+PR head, creates a durable adopted ClawSweeper job when the PR is not already
+backed by one, and leaves an idempotent comment. Trusted repair markers can
+repair or rebase the branch up to the configured round limit. Trusted pass
+markers only report completion; autofix never merges.
 
 Maintainers can opt any open PR into the bounded merge loop with:
 
@@ -110,6 +123,10 @@ CLAWSWEEPER_ALLOW_AUTOMERGE=1
 If ClawSweeper passes the exact current head while either gate is closed,
 ClawSweeper labels the PR `clawsweeper:merge-ready` and comments instead of
 merging.
+
+Draft PRs can use either autofix or automerge for repair. A draft PR never
+merges; an automerge-labeled draft remains fix-only until GitHub marks it ready
+for review.
 
 ## ClawSweeper Trigger
 
@@ -145,12 +162,13 @@ Accepted repair verdicts:
 - `repair-required`
 
 `pass`, `approved`, and `no-changes` verdicts never repair. On a PR opted into
-`clawsweeper:automerge`, a pass verdict for the exact current head can merge only
-after required checks, mergeability, review state, and both merge gates are
-green. `needs-human`, `human-review`, and `/clawsweeper stop` pause automerge by
-adding `clawsweeper:human-review`. If ClawSweeper wants the bounded
-repair/rebase loop to continue, it must emit an accepted repair verdict or action
-marker.
+`clawsweeper:autofix` or `clawsweeper:automerge`, a pass verdict for the exact
+current head ends the current repair round. Autofix never merges. Automerge can
+merge only after required checks, mergeability, review state, non-draft status,
+and both merge gates are green. `needs-human`, `human-review`, and
+`/clawsweeper stop` pause the loop by adding `clawsweeper:human-review`. If
+ClawSweeper wants the bounded repair/rebase loop to continue, it must emit an
+accepted repair verdict or action marker.
 
 After a `needs-human` pause, `/clawsweeper approve` is a maintainer-only exact-head
 approval. It clears pause labels and uses the same merge readiness checks and
@@ -198,7 +216,8 @@ The router does not dispatch when:
 - the comment author is not trusted automation and is not a maintainer;
 - the issue or PR is closed;
 - the target is not a PR;
-- the PR is neither a ClawSweeper PR nor labeled `clawsweeper:automerge`;
+- the PR is neither a ClawSweeper PR nor labeled `clawsweeper:autofix` or
+  `clawsweeper:automerge`;
 - the PR cannot be mapped to or adopted into a job file;
 - the same comment version was already processed;
 - the same PR already reached the total auto-repair cap;
