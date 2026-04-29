@@ -214,6 +214,28 @@ function classifyCommand(command: LooseRecord): JsonValue {
   if (AUTOCLOSE_INTENTS.has(command.intent)) {
     return classifyAutoclose(next, issue, pull);
   }
+  if (command.intent === "re_review") {
+    if (String(issue.state ?? "").toLowerCase() !== "open") {
+      return {
+        ...next,
+        status: "ready",
+        reason: "re-review requires an open issue or PR",
+        actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
+      };
+    }
+    return {
+      ...next,
+      status: "ready",
+      actions: [
+        {
+          action: "dispatch_clawsweeper",
+          workflow: reviewWorkflow,
+          status: execute ? "pending" : "planned",
+        },
+        { action: "comment", status: execute ? "pending" : "planned" },
+      ],
+    };
+  }
   if (command.intent === "automerge") {
     if (String(issue.state ?? "").toLowerCase() !== "open") {
       return automergeBlocked(next, "automerge requires an open PR");
@@ -671,6 +693,21 @@ function executeCommand(command: LooseRecord) {
       return action;
     });
   }
+  if (command.intent === "re_review" && command.issue_number) {
+    const clawsweeper = dispatchClawSweeperReview(command);
+    dispatched = { ...dispatched, clawsweeper };
+    command.actions = command.actions.map((action: JsonValue) => {
+      if (action.action === "dispatch_clawsweeper") {
+        return {
+          ...action,
+          status: "executed",
+          dispatched_at: new Date().toISOString(),
+          ...clawsweeper,
+        };
+      }
+      return action;
+    });
+  }
   if (
     AUTOCLOSE_INTENTS.has(command.intent) &&
     command.issue_number &&
@@ -816,7 +853,7 @@ function dispatchClawSweeperReview(command: LooseRecord) {
     client_payload: {
       target_repo: command.repo,
       item_number: String(command.issue_number),
-      item_kind: "pull_request",
+      item_kind: command.target?.kind ?? "",
     },
   });
   const result = ghSpawn(

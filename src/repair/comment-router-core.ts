@@ -154,7 +154,9 @@ export function parseCommand(body: string) {
     if (autoclose) return commandFromText("slash", `autoclose ${autoclose[1] ?? ""}`.trim());
     const slash = line.match(/^\s*\/clawsweeper(?:\s+(.+))?\s*$/i);
     if (slash) return commandFromText("slash", slash[1] ?? "status");
-    const mention = line.match(/^\s*@openclaw-clawsweeper(?:\[bot\])?(?:\s+(.+))?\s*$/i);
+    const mention = line.match(
+      /^\s*@(?:clawsweeper|openclaw-clawsweeper)(?:\[bot\])?(?:\s+(.+))?\s*$/i,
+    );
     if (mention) return commandFromText("mention", mention[1] ?? "status");
   }
   return null;
@@ -221,7 +223,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       marker,
       "ClawSweeper is here and listening for maintainer commands.",
       "",
-      "Supported commands: `/clawsweeper status`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
+      "Supported commands: `/clawsweeper status`, `/clawsweeper re-review`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
       "",
       "I only act for maintainers, or for trusted ClawSweeper feedback on a ClawSweeper PR or PR opted into `clawsweeper:automerge`.",
     ].join("\n");
@@ -252,6 +254,18 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
         : `Reason: ${command.reason ?? "automerge requires a pull request"}.`,
       "",
       "A maintainer can pause this with `/clawsweeper stop`.",
+    ].join("\n");
+  }
+  if (command.intent === "re_review") {
+    return [
+      marker,
+      dispatched?.clawsweeper
+        ? "ClawSweeper re-review requested."
+        : "ClawSweeper could not start a re-review for this item.",
+      "",
+      dispatched?.clawsweeper
+        ? "I asked ClawSweeper to review this item again."
+        : `Reason: ${command.reason ?? "re-review requires an open issue or PR"}.`,
     ].join("\n");
   }
   if (command.intent === "autoclose") {
@@ -350,6 +364,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       "",
       `Reason: ${command.reason ?? "unsupported command or target"}.`,
       "",
+      "Supported re-review commands work on open issues and PRs: `/clawsweeper re-review` or `@clawsweeper re-review`.",
       "Supported repair commands work on existing ClawSweeper PRs and PRs opted into `clawsweeper:automerge`: `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`.",
       "A maintainer can opt a PR in with `/clawsweeper automerge` and I can take another pass.",
       "A maintainer can close unsupported or declined work with `/autoclose <reason>`.",
@@ -393,6 +408,8 @@ function normalizeIntent(command: LooseRecord) {
     return "fix_ci";
   if (["address review", "address-review", "fix review", "review"].includes(command))
     return "address_review";
+  if (["re-review", "rereview", "review again", "rerun review", "run review"].includes(command))
+    return "re_review";
   if (["rebase", "update branch", "sync"].includes(command)) return "rebase";
   if (
     ["automerge", "auto merge", "merge when clean", "merge when ready", "automerge on"].includes(

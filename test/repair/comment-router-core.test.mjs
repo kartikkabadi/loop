@@ -41,6 +41,16 @@ test("parseCommand recognizes maintainer slash commands", () => {
     command: "automerge",
     intent: "automerge",
   });
+  assert.deepEqual(parseCommand("/clawsweeper re-review"), {
+    trigger: "slash",
+    command: "re-review",
+    intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper review again"), {
+    trigger: "slash",
+    command: "review again",
+    intent: "re_review",
+  });
   assert.deepEqual(parseCommand("/clawsweeper approve"), {
     trigger: "slash",
     command: "approve",
@@ -128,6 +138,16 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
     trigger: "mention",
     command: "explain",
     intent: "explain",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper re-review"), {
+    trigger: "mention",
+    command: "re-review",
+    intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper[bot] rerun review"), {
+    trigger: "mention",
+    command: "rerun review",
+    intent: "re_review",
   });
 });
 
@@ -322,6 +342,26 @@ test("renderResponse reports automerge resume actions", () => {
 
   assert.match(body, /cleared `clawsweeper:human-review`/);
   assert.match(body, /repair\/rebase/);
+});
+
+test("renderResponse reports maintainer re-review dispatches", () => {
+  const body = renderResponse(
+    {
+      comment_id: "461",
+      intent: "re_review",
+      target: { head_sha: "def461" },
+    },
+    {
+      clawsweeper: {
+        workflow: "sweep.yml",
+        event: "repository_dispatch",
+      },
+    },
+  );
+
+  assert.match(body, /re-review requested/);
+  assert.match(body, /review this item again/);
+  assert.doesNotMatch(body, /repair worker/);
 });
 
 test("renderResponse reports maintainer autoclose results", () => {

@@ -182,6 +182,7 @@ Supported triggers:
 
 ```text
 /clawsweeper status
+/clawsweeper re-review
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
@@ -189,9 +190,11 @@ Supported triggers:
 /clawsweeper approve
 /clawsweeper explain
 /clawsweeper stop
+@clawsweeper re-review
 @openclaw-clawsweeper fix ci
 ```
 
+`re-review` dispatches ClawSweeper review again for an open issue or PR.
 Repair commands apply to existing ClawSweeper PRs and to PRs opted into
 `clawsweeper:automerge`. Existing ClawSweeper PRs are identified by the
 `clawsweeper/*` branch prefix. Opted-in non-ClawSweeper PRs get an adopted job

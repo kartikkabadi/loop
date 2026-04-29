@@ -335,16 +335,19 @@ Accepted command styles:
 
 ```text
 /clawsweeper status
+@clawsweeper status
 @openclaw-clawsweeper status
 @openclaw-clawsweeper[bot] status
 ```
 
-Do not use `@clawsweeper`; that is a separate GitHub user.
+Accepted mentions are `@clawsweeper`, `@clawsweeper[bot]`,
+`@openclaw-clawsweeper`, and `@openclaw-clawsweeper[bot]`.
 
 Supported commands:
 
 ```text
 /clawsweeper status
+/clawsweeper re-review
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
@@ -352,12 +355,14 @@ Supported commands:
 /clawsweeper approve
 /clawsweeper explain
 /clawsweeper stop
+@clawsweeper re-review
 @openclaw-clawsweeper fix ci
 ```
 
 Behavior:
 
 - `status` and `explain`: post a short status response.
+- `re-review`: dispatch ClawSweeper review again for an open issue or PR.
 - `fix ci`: dispatch the existing ClawSweeper PR's job for repair.
 - `address review`: dispatch the existing ClawSweeper PR's job for repair.
 - `rebase`: dispatch the existing ClawSweeper PR's job for repair.

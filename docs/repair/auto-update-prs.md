@@ -37,9 +37,10 @@ Maintainer commands:
 - when GitHub App tokens return a weaker association for a maintainer, the
   router falls back to repository collaborator permission and accepts `admin`,
   `maintain`, or `write` by default;
-- supported commands are `/clawsweeper fix ci`, `/clawsweeper address review`,
-  `/clawsweeper rebase`, `/clawsweeper automerge`, `/clawsweeper approve`,
-  `/clawsweeper status`, `/clawsweeper explain`, and `/clawsweeper stop`;
+- supported commands are `/clawsweeper re-review`, `/clawsweeper fix ci`,
+  `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper automerge`,
+  `/clawsweeper approve`, `/clawsweeper status`, `/clawsweeper explain`, and
+  `/clawsweeper stop`;
 - commands from contributors are ignored without a reply.
 
 Trusted automation:

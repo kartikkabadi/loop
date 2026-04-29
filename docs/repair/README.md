@@ -264,10 +264,11 @@ cloud repair workflow. It recognizes both command styles:
 ```text
 /clawsweeper status
 @openclaw-clawsweeper status
+@clawsweeper status
 ```
 
-Do not use `@clawsweeper`; that is a separate GitHub user. The accepted mention is
-`@openclaw-clawsweeper` or `@openclaw-clawsweeper[bot]`.
+Accepted mentions are `@clawsweeper`, `@clawsweeper[bot]`,
+`@openclaw-clawsweeper`, or `@openclaw-clawsweeper[bot]`.
 
 Only maintainers can trigger it. The router checks GitHub `author_association`
 and accepts `OWNER`, `MEMBER`, and `COLLABORATOR` by default. Contributor and
@@ -277,6 +278,7 @@ Supported commands:
 
 ```text
 /clawsweeper status
+/clawsweeper re-review
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
@@ -284,10 +286,12 @@ Supported commands:
 /clawsweeper approve
 /clawsweeper explain
 /clawsweeper stop
+@clawsweeper re-review
 @openclaw-clawsweeper fix ci
 ```
 
-`status` and `explain` post a short status reply. `fix ci`, `address review`,
+`status` and `explain` post a short status reply. `re-review` dispatches
+ClawSweeper review again for an open issue or PR. `fix ci`, `address review`,
 and `rebase` dispatch the normal `repair-cluster-worker.yml` repair path, but only for
 existing ClawSweeper PRs identified by the `clawsweeper/*` branch.
 `automerge` opts an open PR into the bounded review/fix/merge loop. `approve`
