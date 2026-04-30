@@ -2,12 +2,12 @@
 repo: "openclaw/openclaw"
 cluster_id: "automerge-openclaw-openclaw-74134"
 mode: "autonomous"
-run_id: "25145015721"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25145015721"
-head_sha: "3014dd725b08204c81c0b8f91cb1327228272722"
-workflow_conclusion: "failure"
+run_id: "25145498736"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25145498736"
+head_sha: "3e105f9a12f02748e33a10272f5e0ea3ca0f722e"
+workflow_conclusion: "success"
 result_status: "planned"
-published_at: "2026-04-30T03:11:33.462Z"
+published_at: "2026-04-30T03:29:11.455Z"
 canonical: "https://github.com/openclaw/openclaw/pull/74742"
 canonical_issue: null
 canonical_pr: "https://github.com/openclaw/openclaw/pull/74742"
@@ -16,8 +16,8 @@ fix_executed: 0
 fix_failed: 0
 fix_blocked: 0
 apply_executed: 0
-apply_blocked: 0
-apply_skipped: 0
+apply_blocked: 1
+apply_skipped: 1
 needs_human_count: 0
 ---
 
@@ -25,9 +25,9 @@ needs_human_count: 0
 
 Repo: openclaw/openclaw
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25145015721](https://github.com/openclaw/clawsweeper/actions/runs/25145015721)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25145498736](https://github.com/openclaw/clawsweeper/actions/runs/25145498736)
 
-Workflow conclusion: failure
+Workflow conclusion: success
 
 Worker result: planned
 
@@ -35,7 +35,7 @@ Canonical: https://github.com/openclaw/openclaw/pull/74742
 
 ## Summary
 
-#74742 is the canonical repair path for the adopted #74134 work. Merge and close remain blocked by job policy. The hydrated artifact shows #74742 is open, dirty against current main, and has a fresh maintainer rebase request after prior ClawSweeper branch repairs, so the next executable action is a narrow branch refresh of #74742 with no feature-scope expansion.
+#74742 is the canonical repair path for the adopted #74134 file-transfer work. Merge and close are disabled for this job; the next safe action is a bounded repair of the existing #74742 branch because the hydrated artifact shows it is open, dirty/conflicting against main, and has a fresh ClawSweeper pass with merge blocked only by conflict state.
 
 ## Impact
 
@@ -46,29 +46,30 @@ Canonical: https://github.com/openclaw/openclaw/pull/74742
 | Fix failed | 0 |
 | Fix blocked | 0 |
 | Applied executions | 0 |
-| Apply blocked | 0 |
-| Apply skipped | 0 |
+| Apply blocked | 1 |
+| Apply skipped | 1 |
 | Needs human | 0 |
 
 ## Fix Execution Actions
 
 | Action | Status | Target | Branch | Reason |
 | --- | --- | --- | --- | --- |
-| _None_ |  |  |  |  |
+| repair_contributor_branch | pushed | https://github.com/openclaw/openclaw/pull/74742 |  |  |
 
 ## Apply Actions
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| _None_ |  |  |  |  |
+| #74134 | close_superseded | skipped | superseded | Superseded closeout is clear, but closure is blocked by this job's policy and requires human approval. |
+| #74742 | merge_canonical | blocked | fix_pr | job does not allow merge |
 
 ## Worker Action Matrix
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| #74134 | close_superseded | blocked | superseded | Superseded closeout is blocked by job policy (`blocked_actions: close`, `require_human_for: close`) and should wait for maintainer approval after the canonical path is finalized. |
-| #74742 | fix_needed | planned | canonical | Refresh the existing canonical ClawSweeper repair branch against current main and rerun the required review/check gate before any later maintainer merge decision. |
-| cluster:automerge-openclaw-openclaw-74134 | build_fix_artifact | planned |  | A narrow repair artifact is needed because #74742 is canonical but dirty/stale and final merge is disabled. |
+| #74134 | close_superseded | blocked | superseded | Superseded closeout is clear, but closure is blocked by this job's policy and requires human approval. |
+| #74742 | fix_needed | planned | canonical | Repair the existing canonical ClawSweeper branch; do not merge from this job. |
+| cluster:automerge-openclaw-openclaw-74134 | build_fix_artifact | planned |  | Emit an executable branch repair artifact for the existing canonical PR. |
 
 ## Needs Human
 
