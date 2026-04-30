@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 13:18 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 30, 2026, 13:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25167540540) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 13:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25167504185) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,9 +194,9 @@ Latest review: Apr 30, 2026, 13:14 UTC. Latest close: Apr 30, 2026, 13:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 10 | 1 | 9 | 0 | 7 | 411 | 2 |
-| Last hour | 532 | 11 | 521 | 6 | 18 | 775 | 3 |
-| Last 24 hours | 5618 | 307 | 5311 | 34 | 678 | 1675 | 23 |
+| Last 15 minutes | 10 | 1 | 9 | 0 | 7 | 412 | 2 |
+| Last hour | 532 | 11 | 521 | 6 | 18 | 776 | 3 |
+| Last 24 hours | 5617 | 307 | 5310 | 34 | 678 | 1675 | 23 |
 
 ### Recently Closed Across Repos
 
@@ -250,7 +250,6 @@ Latest review: Apr 30, 2026, 13:14 UTC. Latest close: Apr 30, 2026, 13:17 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60860](https://github.com/openclaw/openclaw/pull/60860) | feat(google): add Google Vertex AI provider with ADC auth and global endpoint routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60860.md) | complete | Apr 30, 2026, 13:07 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74035](https://github.com/openclaw/openclaw/pull/74035) | feat(skills): add persist flag and trustedSources config for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74035.md) | complete | Apr 30, 2026, 13:03 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75081](https://github.com/openclaw/openclaw/pull/75081) | fix(gateway): show config recovery validation details | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75081.md) | complete | Apr 30, 2026, 13:01 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#61616](https://github.com/openclaw/openclaw/issues/61616) | [Bug]: [WSL2] Global 30-min gateway stall (:29/:59) affects Telegram + Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/61616.md) | complete | Apr 30, 2026, 13:01 UTC |
 
 </details>
 
@@ -270,10 +269,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 13:18 UTC
 
-State: Hot intake in progress
+State: Apply finished
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167540540](https://github.com/openclaw/clawsweeper/actions/runs/25167540540)
+Apply/comment-sync run finished with 1 fresh closes out of requested limit 1. See apply-report.json for per-item results.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167504185](https://github.com/openclaw/clawsweeper/actions/runs/25167504185)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -352,9 +351,9 @@ Latest review: Apr 30, 2026, 13:14 UTC. Latest close: Apr 30, 2026, 13:17 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 10 | 1 | 9 | 0 | 7 | 411 | 2 |
-| Last hour | 532 | 11 | 521 | 6 | 18 | 775 | 3 |
-| Last 24 hours | 4690 | 307 | 4383 | 21 | 675 | 1272 | 23 |
+| Last 15 minutes | 10 | 1 | 9 | 0 | 7 | 412 | 2 |
+| Last hour | 532 | 11 | 521 | 6 | 18 | 776 | 3 |
+| Last 24 hours | 4690 | 307 | 4383 | 21 | 675 | 1273 | 23 |
 
 #### Recently Closed
 
@@ -400,7 +399,6 @@ Latest review: Apr 30, 2026, 13:14 UTC. Latest close: Apr 30, 2026, 13:17 UTC. L
 | [#60860](https://github.com/openclaw/openclaw/pull/60860) | feat(google): add Google Vertex AI provider with ADC auth and global endpoint routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60860.md) | complete | Apr 30, 2026, 13:07 UTC |
 | [#74035](https://github.com/openclaw/openclaw/pull/74035) | feat(skills): add persist flag and trustedSources config for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74035.md) | complete | Apr 30, 2026, 13:03 UTC |
 | [#75081](https://github.com/openclaw/openclaw/pull/75081) | fix(gateway): show config recovery validation details | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75081.md) | complete | Apr 30, 2026, 13:01 UTC |
-| [#61616](https://github.com/openclaw/openclaw/issues/61616) | [Bug]: [WSL2] Global 30-min gateway stall (:29/:59) affects Telegram + Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/61616.md) | complete | Apr 30, 2026, 13:01 UTC |
 
 </details>
 
@@ -620,7 +618,7 @@ Latest review: Apr 29, 2026, 14:08 UTC. Latest close: unknown. Latest comment sy
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Last hour | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last 24 hours | 3 | 0 | 3 | 0 | 0 | 3 | 0 |
+| Last 24 hours | 2 | 0 | 2 | 0 | 0 | 2 | 0 |
 
 #### Recently Closed
 
