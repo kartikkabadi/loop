@@ -12,6 +12,7 @@ import {
   looksLikePathArgument,
   packageScriptRequirement,
   parseAllowedValidationCommand,
+  stripEnvPrefix,
   uniqueStrings,
 } from "./validation-command-utils.js";
 
@@ -217,31 +218,32 @@ function resolveAllowedValidationCommands(
   options: TargetValidationOptions,
 ) {
   const parts = parseAllowedValidationCommand(command);
+  const commandParts = stripEnvPrefix(parts);
   const scripts = readPackageScriptSet(cwd);
   if (!options.strictTargetValidation && scripts.has("check:changed")) {
     return [["pnpm", "check:changed"]];
   }
-  if (parts[0] === "npm" && parts[1] === "run" && parts[2] === "validate") {
+  if (commandParts[0] === "npm" && commandParts[1] === "run" && commandParts[2] === "validate") {
     if (!scripts.has("validate") && scripts.has("check:changed")) {
       return [["pnpm", "check:changed"]];
     }
   }
-  if (parts[0] === "pnpm") {
-    const commandStart = parts[1] === "-s" || parts[1] === "--silent" ? 2 : 1;
-    const pnpmScript = parts[commandStart];
-    if (isExpensivePnpmValidation(parts, commandStart, options.allowExpensiveValidation)) {
+  if (commandParts[0] === "pnpm") {
+    const commandStart = commandParts[1] === "-s" || commandParts[1] === "--silent" ? 2 : 1;
+    const pnpmScript = commandParts[commandStart];
+    if (isExpensivePnpmValidation(commandParts, commandStart, options.allowExpensiveValidation)) {
       return [["pnpm", "check:changed"]];
     }
-    if (pnpmScript === "vitest" && parts[commandStart + 1] === "run") {
+    if (pnpmScript === "vitest" && commandParts[commandStart + 1] === "run") {
       return normalizePathValidationCommand(
-        ["pnpm", "test:serial", ...parts.slice(commandStart + 2)],
+        ["pnpm", "test:serial", ...commandParts.slice(commandStart + 2)],
         cwd,
         baseBranch,
       );
     }
     if (pnpmScript === "test" || pnpmScript === "test:serial") {
       return normalizePathValidationCommand(
-        ["pnpm", pnpmScript, ...parts.slice(commandStart + 1)],
+        ["pnpm", pnpmScript, ...commandParts.slice(commandStart + 1)],
         cwd,
         baseBranch,
       );

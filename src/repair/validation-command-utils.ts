@@ -6,14 +6,15 @@ export type PackageScriptRequirement = {
 export function packageScriptRequirement(
   parts: readonly string[],
 ): PackageScriptRequirement | null {
-  if (parts[0] === "npm" && parts[1] === "run" && parts[2]) {
-    return { name: parts[2], command: parts.slice(0, 3).join(" ") };
+  const commandParts = stripEnvPrefix(parts);
+  if (commandParts[0] === "npm" && commandParts[1] === "run" && commandParts[2]) {
+    return { name: commandParts[2], command: commandParts.slice(0, 3).join(" ") };
   }
-  if (parts[0] !== "pnpm") return null;
+  if (commandParts[0] !== "pnpm") return null;
   let index = 1;
-  if (parts[index] === "-s" || parts[index] === "--silent") index += 1;
-  if (parts[index] === "run") index += 1;
-  const script = parts[index];
+  if (commandParts[index] === "-s" || commandParts[index] === "--silent") index += 1;
+  if (commandParts[index] === "run") index += 1;
+  const script = commandParts[index];
   if (!script || ["exec", "dlx", "install", "add", "remove"].includes(script)) return null;
   return { name: script, command: ["pnpm", script].join(" ") };
 }
@@ -26,6 +27,7 @@ export function isExpensivePnpmValidation(
   if (allowExpensiveValidation) return false;
   const script = String(parts[commandStart] ?? "");
   if (script === "check" || script === "test:all") return true;
+  if (script === "openclaw" && parts[commandStart + 1] === "qa") return true;
   if (script === "test" || script === "test:serial") {
     return !parts.slice(commandStart + 1).some(looksLikePathArgument);
   }
@@ -57,9 +59,27 @@ export function parseAllowedValidationCommand(command: unknown): string[] {
     throw new Error(`unsafe validation command: ${text}`);
   }
   const parts = text.split(/\s+/);
-  const executable = parts[0];
+  const executable = validationExecutable(parts);
   if (!executable || !["pnpm", "npm", "node", "git"].includes(executable)) {
     throw new Error(`unsupported validation command: ${text}`);
   }
   return parts;
+}
+
+export function stripEnvPrefix(parts: readonly string[]): string[] {
+  if (parts[0] !== "env") return [...parts];
+  let index = 1;
+  while (index < parts.length && isEnvAssignment(parts[index])) index += 1;
+  return parts.slice(index);
+}
+
+function validationExecutable(parts: readonly string[]) {
+  if (parts[0] !== "env") return parts[0] ?? "";
+  const commandParts = stripEnvPrefix(parts);
+  if (commandParts.length === parts.length - 1) return "";
+  return commandParts[0] ?? "";
+}
+
+function isEnvAssignment(value: unknown) {
+  return /^[A-Za-z_][A-Za-z0-9_]*=.*/.test(String(value ?? ""));
 }
