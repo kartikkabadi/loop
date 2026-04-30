@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 22:11 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 22:11 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25191743099) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 22:11 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25191743099) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -196,7 +196,7 @@ Latest review: Apr 30, 2026, 22:11 UTC. Latest close: Apr 30, 2026, 22:10 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 110 | 2 | 108 | 1 | 6 | 486 | 1 |
 | Last hour | 862 | 15 | 847 | 8 | 28 | 847 | 3 |
-| Last 24 hours | 6300 | 456 | 5844 | 20 | 667 | 3369 | 26 |
+| Last 24 hours | 6298 | 456 | 5842 | 20 | 667 | 3369 | 26 |
 
 ### Recently Closed Across Repos
 
@@ -269,9 +269,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 22:11 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 4/5. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 4 fresh closes out of requested limit 5. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25191743099](https://github.com/openclaw/clawsweeper/actions/runs/25191743099)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -498,7 +498,7 @@ Latest review: Apr 29, 2026, 22:22 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Last hour | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last 24 hours | 16 | 0 | 16 | 7 | 0 | 1 | 0 |
+| Last 24 hours | 14 | 0 | 14 | 7 | 0 | 1 | 0 |
 
 #### Recently Closed
 
