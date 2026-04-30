@@ -1,96 +1,6 @@
 {
-  "updated_at": "2026-04-30T00:05:45.822Z",
+  "updated_at": "2026-04-30T00:17:43.921Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:53262:4341197749:2026-04-29T18:12:51Z:clawsweeper_needs_human",
-      "comment_id": "4341197749",
-      "comment_version_key": "4341197749:2026-04-29T18:12:51Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/53262#issuecomment-4341197749",
-      "comment_created_at": "2026-04-29T05:47:51Z",
-      "comment_updated_at": "2026-04-29T18:12:51Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 53262,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=4b529989d71f8ff77abfd6e956c3c30443362be5)",
-      "expected_head_sha": "4b529989d71f8ff77abfd6e956c3c30443362be5",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-29T19:37:11.585Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix-require-agentid-sessions-spawn-pr",
-        "head_sha": "4b529989d71f8ff77abfd6e956c3c30443362be5",
-        "cluster_id": null,
-        "job_path": null
-      }
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:53259:4341197650:2026-04-29T18:12:49Z:clawsweeper_needs_human",
-      "comment_id": "4341197650",
-      "comment_version_key": "4341197650:2026-04-29T18:12:49Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/53259#issuecomment-4341197650",
-      "comment_created_at": "2026-04-29T05:47:50Z",
-      "comment_updated_at": "2026-04-29T18:12:49Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 53259,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=00ddb0a1cb1dcdf4544735696f1bf7b0c7aa3cc2)",
-      "expected_head_sha": "00ddb0a1cb1dcdf4544735696f1bf7b0c7aa3cc2",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-29T19:37:11.585Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/53198-discord-elevated-fallback",
-        "head_sha": "00ddb0a1cb1dcdf4544735696f1bf7b0c7aa3cc2",
-        "cluster_id": null,
-        "job_path": null
-      }
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:53243:4341197552:2026-04-29T18:12:47Z:clawsweeper_needs_human",
-      "comment_id": "4341197552",
-      "comment_version_key": "4341197552:2026-04-29T18:12:47Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/53243#issuecomment-4341197552",
-      "comment_created_at": "2026-04-29T05:47:48Z",
-      "comment_updated_at": "2026-04-29T18:12:47Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 53243,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=df04b818de867d82899c6269f676384d92362f77)",
-      "expected_head_sha": "df04b818de867d82899c6269f676384d92362f77",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-29T19:37:11.585Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/fix-chat-history-truncation",
-        "head_sha": "df04b818de867d82899c6269f676384d92362f77",
-        "cluster_id": null,
-        "job_path": null
-      }
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:53209:4341197430:2026-04-29T18:56:32Z:clawsweeper_needs_human",
       "comment_id": "4341197430",
@@ -8320,7 +8230,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T23:20:23.754Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -8344,7 +8254,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T23:20:23.754Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -8416,7 +8326,7 @@
       "expected_head_sha": "3795269b225ddb9353b17c9c38f8880e018efdb2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T23:20:23.754Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -8440,7 +8350,7 @@
       "expected_head_sha": "b2cb9be4130195219bdefb14b561ff3c0393cd7b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T23:20:23.754Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -8464,7 +8374,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T22:53:27.912Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -8488,7 +8398,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T22:53:27.912Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": {
         "kind": "pull_request",
         "branch": "fix/bundled-global-agent",
@@ -11014,7 +10924,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T23:41:43.165Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -11038,7 +10948,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T23:41:43.165Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -11062,7 +10972,7 @@
       "expected_head_sha": "089b7f74ec52223b1fa0f98ddfe688dd21daa852",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T23:41:43.165Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": {
         "kind": "pull_request",
         "branch": "codex/simplify-runtime-deps-mirror",
@@ -11092,7 +11002,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-29T23:20:31.467Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": {
         "kind": "pull_request",
         "branch": "feat/config-apply-patch",
@@ -14632,7 +14542,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -15652,7 +15562,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -15676,7 +15586,7 @@
       "expected_head_sha": "8517f253e017f2ec611502466bb2dd1929a2c4d9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": {
         "kind": "pull_request",
         "branch": "fix/bundled-global-agent",
@@ -17860,7 +17770,7 @@
       "expected_head_sha": "7994f908c5f11dde3df828e1f845ac534721d545",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -17884,7 +17794,7 @@
       "expected_head_sha": "13ea1953f536e969715632e1fdccafe853e6074e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -17908,7 +17818,7 @@
       "expected_head_sha": "c29e54d735f66f23615e2dc3956d1d9f5bc47cce",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -22786,7 +22696,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -22810,7 +22720,7 @@
       "expected_head_sha": "71895f4a5ececbf0eeb2bb32726fcbf2921f8fe0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -22834,7 +22744,7 @@
       "expected_head_sha": "19e8a94d26bcbb51cc21be89434b4187100b2c63",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -22888,7 +22798,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -22912,7 +22822,7 @@
       "expected_head_sha": "0d67847c75b6104818103bd50e71af35c14d26ad",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -22936,7 +22846,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -22960,7 +22870,7 @@
       "expected_head_sha": "d3deb00c52697e2852f4ac6e1c39458a9aca9a59",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -22984,7 +22894,7 @@
       "expected_head_sha": "343cf86194c97e0ec2235c778023cdfc10832e67",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23038,7 +22948,7 @@
       "expected_head_sha": "02ff01c3c511c54e4501fc1f76339bf6e7f1182c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23062,7 +22972,7 @@
       "expected_head_sha": "9a43c0f989607adb296ee73f4e62a2eca4069386",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23086,7 +22996,7 @@
       "expected_head_sha": "8f3629f9668ffdfbb544e02b18683d194c6ade48",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": {
         "kind": "pull_request",
         "branch": "codex/openclaw-sdk-public-contract",
@@ -23116,7 +23026,7 @@
       "expected_head_sha": "dbfc44134bad007c43761d8ef36cf7a57a9a6303",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23140,7 +23050,7 @@
       "expected_head_sha": "70ac0101fd74ef0f1bb06dbf5f6481a1222c8fb0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23194,7 +23104,7 @@
       "expected_head_sha": "874d0a6f9b01d981351bb5b85df256cd854e2ff0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23218,7 +23128,7 @@
       "expected_head_sha": "511c1069ac48e42240df53447946af8f8b4a212e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23242,7 +23152,7 @@
       "expected_head_sha": "41682ac71d11457e4e6bd375aa6177a4def3db7b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23266,7 +23176,7 @@
       "expected_head_sha": "a6680790ff5b613397d3b6d62edf643fd45afbdf",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23290,7 +23200,7 @@
       "expected_head_sha": "aa8017e26869f6bb9d30371e43fd84053a84bfc6",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23314,7 +23224,7 @@
       "expected_head_sha": "000645a75213a1c30033c74fcd849a0a7246af41",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23338,7 +23248,7 @@
       "expected_head_sha": "60b04426ea7ec4aa7f7aa4115207c59c3800b217",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -23392,7 +23302,7 @@
       "expected_head_sha": "0ff41a0d108896e2c5ddb62f89b32d9534bf306f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
+      "processed_at": "2026-04-30T00:17:43.920Z",
       "target": null
     },
     {
@@ -24148,14 +24058,8 @@
       "expected_head_sha": "da09972241b7a474ce00b188806ab56f6ec9ea71",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/channel-restart-recovery",
-        "head_sha": "da09972241b7a474ce00b188806ab56f6ec9ea71",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T00:17:43.920Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74686:4348420100:2026-04-30T00:02:30Z:clawsweeper_needs_human",
@@ -24178,14 +24082,8 @@
       "expected_head_sha": "8a271119a677981d6fce253a05825fc74425a3b6",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/cron-list-transport-timing-diagnostics",
-        "head_sha": "8a271119a677981d6fce253a05825fc74425a3b6",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T00:17:43.920Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74685:4348412233:2026-04-30T00:01:42Z:clawsweeper_needs_human",
@@ -24208,14 +24106,8 @@
       "expected_head_sha": "b193f52823b4033780d216d2c37fbcf63d2985c6",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/chrome-mcp-screenshot-enoent",
-        "head_sha": "b193f52823b4033780d216d2c37fbcf63d2985c6",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T00:17:43.920Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74641:4348258353:2026-04-29T23:51:41Z:clawsweeper_needs_human",
@@ -24238,14 +24130,8 @@
       "expected_head_sha": "cf2d4a9021f1b4b93d972057e09865590c3ce1dd",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix-66299-acp-resolver-fallback",
-        "head_sha": "cf2d4a9021f1b4b93d972057e09865590c3ce1dd",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T00:17:43.920Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74657:4348187874:2026-04-29T23:46:13Z:clawsweeper_needs_human",
@@ -24268,14 +24154,8 @@
       "expected_head_sha": "035b7308ba436515d41c223d2f9d1fac608278b4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T00:05:45.821Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/google-vertex-authorized-user-adc",
-        "head_sha": "035b7308ba436515d41c223d2f9d1fac608278b4",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T00:17:43.920Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:6457:4345441318:2026-04-30T00:04:46Z:clawsweeper_auto_repair",
@@ -24933,6 +24813,96 @@
         "kind": "pull_request",
         "branch": "fix/respect-reasoning-default-config",
         "head_sha": "97b4e7e97092eaf258a9106109f50aea70dd0ba3",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74690:4348495822:2026-04-30T00:13:26Z:clawsweeper_needs_human",
+      "comment_id": "4348495822",
+      "comment_version_key": "4348495822:2026-04-30T00:13:26Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74690#issuecomment-4348495822",
+      "comment_created_at": "2026-04-30T00:13:26Z",
+      "comment_updated_at": "2026-04-30T00:13:26Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 74690,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=a2c237228d792835aced2208612db3062993e566)",
+      "expected_head_sha": "a2c237228d792835aced2208612db3062993e566",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T00:17:43.920Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/control-ui-refresh-active-run",
+        "head_sha": "a2c237228d792835aced2208612db3062993e566",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74689:4348494082:2026-04-30T00:13:00Z:clawsweeper_needs_human",
+      "comment_id": "4348494082",
+      "comment_version_key": "4348494082:2026-04-30T00:13:00Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74689#issuecomment-4348494082",
+      "comment_created_at": "2026-04-30T00:13:00Z",
+      "comment_updated_at": "2026-04-30T00:13:00Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 74689,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=044da5ce13f87bc53823625ef28df0b06aa4b52c)",
+      "expected_head_sha": "044da5ce13f87bc53823625ef28df0b06aa4b52c",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T00:17:43.920Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "update/openclaw-main-clean",
+        "head_sha": "f100be60a06ebb2795fabbb1032dadc9df9715e2",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71411:4348486411:2026-04-30T00:11:19Z:clawsweeper_needs_human",
+      "comment_id": "4348486411",
+      "comment_version_key": "4348486411:2026-04-30T00:11:19Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/71411#issuecomment-4348486411",
+      "comment_created_at": "2026-04-30T00:11:19Z",
+      "comment_updated_at": "2026-04-30T00:11:19Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 71411,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=1e2d2f8c5504b8a912ae5c2281c684127314c995)",
+      "expected_head_sha": "1e2d2f8c5504b8a912ae5c2281c684127314c995",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T00:17:43.920Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "feat/lifecycle-moderation-hooks",
+        "head_sha": "1e2d2f8c5504b8a912ae5c2281c684127314c995",
         "cluster_id": null,
         "job_path": null
       }
