@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 23:30 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 23:29 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25194360314) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 23:30 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25194360314) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,8 +194,8 @@ Latest review: Apr 30, 2026, 23:28 UTC. Latest close: Apr 30, 2026, 23:29 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 81 | 3 | 78 | 4 | 14 | 19 | 0 |
-| Last hour | 898 | 19 | 879 | 7 | 24 | 457 | 1 |
+| Last 15 minutes | 65 | 3 | 62 | 4 | 14 | 19 | 0 |
+| Last hour | 898 | 19 | 879 | 7 | 23 | 457 | 1 |
 | Last 24 hours | 6677 | 476 | 6201 | 13 | 667 | 3178 | 26 |
 
 ### Recently Closed Across Repos
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 23:28 UTC. Latest close: Apr 30, 2026, 23:29 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 23:29 UTC
+Updated: Apr 30, 2026, 23:30 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 12. Total fresh closes in this run: 12/12. Result records in checkpoint: 24, including durable review comment syncs.
+Apply/comment-sync run finished with 12 fresh closes out of requested limit 12. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25194360314](https://github.com/openclaw/clawsweeper/actions/runs/25194360314)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,8 +351,8 @@ Latest review: Apr 30, 2026, 23:28 UTC. Latest close: Apr 30, 2026, 23:29 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 81 | 3 | 78 | 4 | 14 | 19 | 0 |
-| Last hour | 898 | 19 | 879 | 7 | 24 | 457 | 1 |
+| Last 15 minutes | 65 | 3 | 62 | 4 | 14 | 19 | 0 |
+| Last hour | 898 | 19 | 879 | 7 | 23 | 457 | 1 |
 | Last 24 hours | 6677 | 476 | 6201 | 13 | 667 | 3178 | 26 |
 
 #### Recently Closed
