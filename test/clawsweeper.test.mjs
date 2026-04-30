@@ -32,6 +32,7 @@ import {
   reviewArtifactDestination,
   reviewAutomationMarkersFromReport,
   reviewActionForDecision,
+  reviewPriority,
   renderReviewCommentFromReport,
   runtimeBudgetExceeded,
   safeOutputTail,
@@ -507,6 +508,118 @@ test("hot new items review hourly before falling back to daily or weekly cadence
       now,
       "current",
     ),
+    true,
+  );
+});
+
+test("hot new item priority is protected from older activity churn", () => {
+  const now = Date.parse("2026-04-30T12:00:00Z");
+  const review = (reviewedAt, itemUpdatedAt) => ({
+    path: "items/123.md",
+    markdown: "",
+    reviewedAt,
+    itemUpdatedAt,
+    decision: "keep_open",
+    reviewStatus: "complete",
+    reviewPolicy: "current",
+  });
+
+  const hotIssue = item({
+    createdAt: "2026-04-28T13:38:22Z",
+    updatedAt: "2026-04-29T05:46:35Z",
+  });
+  const olderActiveIssue = item({
+    createdAt: "2026-03-01T00:00:00Z",
+    updatedAt: "2026-04-30T11:00:00Z",
+  });
+
+  assert.equal(
+    reviewPriority(
+      hotIssue,
+      review("2026-04-29T07:24:53Z", "2026-04-29T05:46:35Z"),
+      now,
+      "current",
+    ) <
+      reviewPriority(
+        olderActiveIssue,
+        review("2026-04-30T10:00:00Z", "2026-04-29T00:00:00Z"),
+        now,
+        "current",
+      ),
+    true,
+  );
+});
+
+test("hot issue priority is protected from hot PR backlog", () => {
+  const now = Date.parse("2026-04-30T12:00:00Z");
+  const review = {
+    path: "items/123.md",
+    markdown: "",
+    reviewedAt: "2026-04-29T07:24:53Z",
+    itemUpdatedAt: "2026-04-29T05:46:35Z",
+    decision: "keep_open",
+    reviewStatus: "complete",
+    reviewPolicy: "current",
+  };
+
+  assert.equal(
+    reviewPriority(
+      item({
+        kind: "issue",
+        createdAt: "2026-04-28T13:38:22Z",
+        updatedAt: "2026-04-29T05:46:35Z",
+      }),
+      review,
+      now,
+      "current",
+    ) <
+      reviewPriority(
+        item({
+          kind: "pull_request",
+          createdAt: "2026-04-28T13:38:22Z",
+          updatedAt: "2026-04-29T05:46:35Z",
+        }),
+        review,
+        now,
+        "current",
+      ),
+    true,
+  );
+});
+
+test("hot issue priority is protected from policy mismatch backlog", () => {
+  const now = Date.parse("2026-04-30T12:00:00Z");
+  const review = (reviewPolicy) => ({
+    path: "items/123.md",
+    markdown: "",
+    reviewedAt: "2026-04-29T07:24:53Z",
+    itemUpdatedAt: "2026-04-29T05:46:35Z",
+    decision: "keep_open",
+    reviewStatus: "complete",
+    reviewPolicy,
+  });
+
+  assert.equal(
+    reviewPriority(
+      item({
+        kind: "issue",
+        createdAt: "2026-04-28T13:38:22Z",
+        updatedAt: "2026-04-29T05:46:35Z",
+      }),
+      review("old-policy"),
+      now,
+      "current",
+    ) <
+      reviewPriority(
+        item({
+          kind: "issue",
+          createdAt: "2026-03-01T00:00:00Z",
+          updatedAt: "2026-03-01T00:00:00Z",
+        }),
+        review("old-policy"),
+        now,
+        "current",
+      ),
     true,
   );
 });

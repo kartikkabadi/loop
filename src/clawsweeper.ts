@@ -1980,19 +1980,20 @@ export function shouldReviewItem(
   return now - reviewedAt >= reviewCadenceMs(item, review, now);
 }
 
-function reviewPriority(
+export function reviewPriority(
   item: Item,
   review: ExistingReview | null,
   now = Date.now(),
   reviewPolicy?: string,
 ): number {
-  if (hasActivitySinceReview(item, review)) return 0;
+  if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now) && item.kind === "issue") return 0;
   if (hasReviewPolicyMismatch(review, reviewPolicy)) return 1;
   if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now)) return 2;
-  if (item.kind === "pull_request") return 3;
+  if (hasActivitySinceReview(item, review)) return 3;
+  if (item.kind === "pull_request") return 4;
   const createdAt = Date.parse(item.createdAt);
-  if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) return 4;
-  return 5;
+  if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) return 5;
+  return 6;
 }
 
 function dueCandidate(
