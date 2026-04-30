@@ -2,18 +2,18 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T17:13:14.884Z",
-  "count": 8,
+  "generated_at": "2026-04-30T17:47:50.829Z",
+  "count": 5,
   "summary": {
-    "open_prs": 8,
+    "open_prs": 5,
     "ready_candidates": 0,
     "security_hold": 0,
-    "needs_rebase": 4,
+    "needs_rebase": 2,
     "mergeability_unknown": 0,
-    "needs_checks": 5,
+    "needs_checks": 1,
     "needs_review": 0,
-    "needs_merge_preflight": 8,
-    "needs_result_backfill": 2
+    "needs_merge_preflight": 5,
+    "needs_result_backfill": 0
   },
   "dispatch": {
     "enabled": false,
@@ -34,29 +34,20 @@
       "head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
       "cluster_id": "automerge-openclaw-openclaw-74506",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
-      "updated_at": "2026-04-30T17:08:52Z",
+      "updated_at": "2026-04-30T17:31:56Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "merge_state_status": "CLEAN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 97,
+        "total": 101,
         "counts": {
           "CANCELLED": 4,
           "SKIPPED": 26,
-          "SUCCESS": 59,
-          "IN_PROGRESS": 8
+          "SUCCESS": 70,
+          "NEUTRAL": 1
         },
-        "blockers": [
-          "CI / checks-fast-bundled:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-d:IN_PROGRESS",
-          "CodeQL Critical Quality / Critical Quality (channel-runtime-boundary):IN_PROGRESS",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-agentic-control-plane:IN_PROGRESS",
-          "CI / check-lint:IN_PROGRESS",
-          "CI / check-test-types:IN_PROGRESS"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -98,11 +89,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-fast-bundled:IN_PROGRESS; CI / checks-fast-contracts-plugins-a:IN_PROGRESS; CI / checks-fast-contracts-plugins-d:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 75148,
@@ -358,193 +347,6 @@
         "needs_merge_state:DIRTY",
         "needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-node-core-support-boundary:FAILURE",
         "needs_merge_preflight"
-      ],
-      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
-    },
-    {
-      "number": 74528,
-      "title": "fix: Found one compatibility regression in the new global Codex dynami",
-      "url": "https://github.com/openclaw/openclaw/pull/74528",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-09baec68eac7",
-      "head_sha": "01629fa95f5f354b41d19ccb8e3a619175042ee8",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-09baec68eac7",
-      "job_path": null,
-      "updated_at": "2026-04-29T23:52:42Z",
-      "mergeable": "CONFLICTING",
-      "merge_state_status": "DIRTY",
-      "review_decision": "",
-      "security_hold": false,
-      "checks": {
-        "total": 82,
-        "counts": {
-          "CANCELLED": 1,
-          "SKIPPED": 14,
-          "SUCCESS": 62,
-          "FAILURE": 5
-        },
-        "blockers": [
-          "CI / checks-node-core-runtime-infra:FAILURE",
-          "CI / checks-node-agentic-control-plane:FAILURE",
-          "CI / checks-node-channels:FAILURE",
-          "CI / checks-node-core-support-boundary:FAILURE",
-          "CI / checks-node-core:FAILURE"
-        ]
-      },
-      "review_threads": {
-        "status": "clean",
-        "reason": null,
-        "unresolved_count": 0,
-        "examples": []
-      },
-      "review_bots": {
-        "count": 2,
-        "latest": [
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74528#issuecomment-4346290058",
-            "submitted_at": "2026-04-29T18:08:11Z"
-          },
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74528#issuecomment-4348331581",
-            "submitted_at": "2026-04-29T23:52:42Z"
-          }
-        ]
-      },
-      "latest_record": {
-        "run_id": "25139586999",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25139586999",
-        "cluster_id": "automerge-openclaw-openclaw-74528",
-        "published_at": "2026-04-29T23:53:22.970Z",
-        "workflow_conclusion": "success",
-        "apply_action": {
-          "target": "#74528",
-          "action": "fix_needed",
-          "status": "planned",
-          "classification": "canonical",
-          "canonical": "#74528",
-          "candidate_fix": null,
-          "reason": "Canonical PR needs repair, but branch update is blocked; replacement fix PR is the automation-safe path."
-        }
-      },
-      "blockers": [
-        "needs_rebase:CONFLICTING",
-        "needs_merge_state:DIRTY",
-        "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI / checks-node-channels:FAILURE",
-        "needs_merge_preflight"
-      ],
-      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
-    },
-    {
-      "number": 74522,
-      "title": "fix: Found one concrete regression in the new lock-owner disambiguatio",
-      "url": "https://github.com/openclaw/openclaw/pull/74522",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-2d885a240272",
-      "head_sha": "92982b948d53aae64f789eac33fcde7bff281c84",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-2d885a240272",
-      "job_path": null,
-      "updated_at": "2026-04-29T21:11:49Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
-      "review_decision": "",
-      "security_hold": false,
-      "checks": {
-        "total": 82,
-        "counts": {
-          "CANCELLED": 3,
-          "SKIPPED": 12,
-          "SUCCESS": 62,
-          "FAILURE": 5
-        },
-        "blockers": [
-          "CI / checks-node-core-runtime-infra:FAILURE",
-          "CI / checks-node-agentic-control-plane:FAILURE",
-          "CI / checks-node-channels:FAILURE",
-          "CI / checks-node-core-support-boundary:FAILURE",
-          "CI / checks-node-core:FAILURE"
-        ]
-      },
-      "review_threads": {
-        "status": "clean",
-        "reason": null,
-        "unresolved_count": 0,
-        "examples": []
-      },
-      "review_bots": {
-        "count": 1,
-        "latest": [
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74522#issuecomment-4346265116",
-            "submitted_at": "2026-04-29T18:04:34Z"
-          }
-        ]
-      },
-      "latest_record": null,
-      "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI / checks-node-channels:FAILURE",
-        "needs_merge_preflight",
-        "needs_result_backfill"
-      ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
-    },
-    {
-      "number": 74521,
-      "title": "fix: Found two concrete regressions in the shared helper extraction. T",
-      "url": "https://github.com/openclaw/openclaw/pull/74521",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-0519107bd3e2",
-      "head_sha": "7d2eab8ef166151c4b4364ee127ae20d26583938",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-0519107bd3e2",
-      "job_path": null,
-      "updated_at": "2026-04-29T21:10:06Z",
-      "mergeable": "CONFLICTING",
-      "merge_state_status": "DIRTY",
-      "review_decision": "",
-      "security_hold": false,
-      "checks": {
-        "total": 83,
-        "counts": {
-          "CANCELLED": 2,
-          "SKIPPED": 13,
-          "SUCCESS": 63,
-          "FAILURE": 5
-        },
-        "blockers": [
-          "CI / checks-node-core-runtime-infra:FAILURE",
-          "CI / checks-node-agentic-control-plane:FAILURE",
-          "CI / checks-node-channels:FAILURE",
-          "CI / checks-node-core-support-boundary:FAILURE",
-          "CI / checks-node-core:FAILURE"
-        ]
-      },
-      "review_threads": {
-        "status": "clean",
-        "reason": null,
-        "unresolved_count": 0,
-        "examples": []
-      },
-      "review_bots": {
-        "count": 1,
-        "latest": [
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74521#issuecomment-4346266469",
-            "submitted_at": "2026-04-29T18:04:47Z"
-          }
-        ]
-      },
-      "latest_record": null,
-      "blockers": [
-        "needs_rebase:CONFLICTING",
-        "needs_merge_state:DIRTY",
-        "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI / checks-node-channels:FAILURE",
-        "needs_merge_preflight",
-        "needs_result_backfill"
       ],
       "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     }
