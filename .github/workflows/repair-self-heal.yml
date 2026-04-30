@@ -23,6 +23,8 @@ on:
         required: true
         default: blacksmith-16vcpu-ubuntu-2404
         type: string
+  schedule:
+    - cron: "17,47 * * * *"
 
 permissions:
   contents: write
@@ -60,14 +62,23 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
-          args=(--max-jobs "${{ inputs.max_jobs }}" --runner "${{ inputs.runner }}" --execution-runner "${{ inputs.execution_runner }}")
-          if [ "${{ inputs.execute }}" = "true" ]; then
+          execute="false"
+          max_jobs="${{ github.event_name == 'workflow_dispatch' && inputs.max_jobs || vars.CLAWSWEEPER_SELF_HEAL_MAX_JOBS || '5' }}"
+          runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
+          execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
+          if { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.execute }}" = "true" ]; } ||
+             { [ "${{ github.event_name }}" = "schedule" ] && [ "${{ vars.CLAWSWEEPER_SELF_HEAL_EXECUTE || '0' }}" = "1" ]; }; then
+            execute="true"
+          fi
+
+          args=(--max-jobs "$max_jobs" --runner "$runner" --execution-runner "$execution_runner" --wait-for-capacity)
+          if [ "$execute" = "true" ]; then
             args+=(--execute)
           fi
           pnpm run repair:self-heal -- "${args[@]}"
 
       - name: Commit self-heal ledger
-        if: ${{ inputs.execute }}
+        if: ${{ always() && ((github.event_name == 'workflow_dispatch' && inputs.execute) || (github.event_name == 'schedule' && vars.CLAWSWEEPER_SELF_HEAL_EXECUTE == '1')) }}
         run: |
           if [ ! -f results/self-heal.json ]; then
             echo "No self-heal ledger"

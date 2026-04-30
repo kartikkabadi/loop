@@ -5,17 +5,17 @@ import { currentProjectRepo } from "./project-repo.js";
 import { sleepMs } from "./timing.js";
 
 const DEFAULT_MAX_LIVE_WORKERS = 50;
+export const MAX_LIVE_WORKERS = 100;
 const DEFAULT_CAPACITY_POLL_MS = 30_000;
 const DEFAULT_CAPACITY_TIMEOUT_MS = 30 * 60 * 1000;
 const ACTIVE_WORKFLOW_STATUSES = ["queued", "in_progress", "waiting", "requested", "pending"];
 
 export function readMaxLiveWorkers(args: LooseRecord = {}) {
-  return readPositiveInteger(
+  return readMaxLiveWorkerLimit(
     args["max-live-workers"] ??
       args.max_live_workers ??
       process.env.CLAWSWEEPER_MAX_LIVE_WORKERS ??
       DEFAULT_MAX_LIVE_WORKERS,
-    "max-live-workers",
   );
 }
 
@@ -26,7 +26,7 @@ export function liveWorkerCapacity({
   maxLiveWorkers = DEFAULT_MAX_LIVE_WORKERS,
 }: LooseRecord = {}) {
   const requestedCount = readNonNegativeInteger(requested, "requested");
-  const max = readPositiveInteger(maxLiveWorkers, "max-live-workers");
+  const max = readMaxLiveWorkerLimit(maxLiveWorkers);
   const activeRuns = listActiveWorkflowRuns({ repo, workflow });
   return {
     repo,
@@ -56,10 +56,7 @@ export function assertLiveWorkerCapacity(options: LooseRecord = {}) {
 
 export function waitForLiveWorkerCapacity(options: LooseRecord = {}) {
   const requestedCount = readNonNegativeInteger(options.requested ?? 1, "requested");
-  const max = readPositiveInteger(
-    options.maxLiveWorkers ?? DEFAULT_MAX_LIVE_WORKERS,
-    "max-live-workers",
-  );
+  const max = readMaxLiveWorkerLimit(options.maxLiveWorkers ?? DEFAULT_MAX_LIVE_WORKERS);
   if (requestedCount > max) {
     throw new Error(
       `refusing dispatch: requested ${requestedCount} ${options.workflow ?? REPAIR_CLUSTER_WORKFLOW} workers exceeds max-live-workers=${max}`,
@@ -142,6 +139,14 @@ function readPositiveInteger(value: JsonValue, name: string) {
     throw new Error(`${name} must be a positive integer`);
   }
   return number;
+}
+
+function readMaxLiveWorkerLimit(value: JsonValue) {
+  const max = readPositiveInteger(value, "max-live-workers");
+  if (max > MAX_LIVE_WORKERS) {
+    throw new Error(`max-live-workers must be <= ${MAX_LIVE_WORKERS}`);
+  }
+  return max;
 }
 
 function readNonNegativeInteger(value: JsonValue, name: string) {
