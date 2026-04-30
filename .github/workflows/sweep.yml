@@ -609,7 +609,7 @@ jobs:
   publish:
     name: Publish review artifacts
     needs: [plan, review]
-    if: ${{ always() && github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
+    if: ${{ always() && needs.plan.result == 'success' && needs.plan.outputs.target_repo != '' && github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
