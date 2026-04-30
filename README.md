@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 12:51 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6930 | 6565 | 365 | 2881 | 0 | 1259 | 11076 | Apr 30, 2026, 12:46 UTC | Apr 30, 2026, 12:49 UTC | 433 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6930 | 6565 | 365 | 2881 | 0 | 1259 | 11076 | Apr 30, 2026, 12:46 UTC | Apr 30, 2026, 12:49 UTC | 425 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -194,8 +194,8 @@ Latest review: Apr 30, 2026, 12:46 UTC. Latest close: Apr 30, 2026, 12:49 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 8 | 1 | 7 | 0 | 6 | 12 | 0 |
-| Last hour | 546 | 8 | 538 | 4 | 17 | 433 | 0 |
+| Last 15 minutes | 7 | 1 | 6 | 0 | 6 | 12 | 0 |
+| Last hour | 546 | 8 | 538 | 4 | 17 | 425 | 0 |
 | Last 24 hours | 5506 | 299 | 5207 | 31 | 691 | 1624 | 20 |
 
 ### Recently Closed Across Repos
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 12:51 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 5 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=43752,55550,60849,61840,75072.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/5. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25166302498](https://github.com/openclaw/clawsweeper/actions/runs/25166302498)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,8 +351,8 @@ Latest review: Apr 30, 2026, 12:46 UTC. Latest close: Apr 30, 2026, 12:49 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 8 | 1 | 7 | 0 | 6 | 12 | 0 |
-| Last hour | 546 | 8 | 538 | 4 | 17 | 433 | 0 |
+| Last 15 minutes | 7 | 1 | 6 | 0 | 6 | 12 | 0 |
+| Last hour | 546 | 8 | 538 | 4 | 17 | 425 | 0 |
 | Last 24 hours | 4578 | 299 | 4279 | 18 | 688 | 1221 | 20 |
 
 #### Recently Closed
