@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 15:22 UTC
+Last dashboard update: Apr 30, 2026, 15:23 UTC
 
 ### Fleet
 
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 15:22 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6834 | 6653 | 181 | 2940 | 0 | 1308 | 11148 | Apr 30, 2026, 15:18 UTC | Apr 30, 2026, 15:20 UTC | 446 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6834 | 6653 | 181 | 2940 | 0 | 1308 | 11148 | Apr 30, 2026, 15:21 UTC | Apr 30, 2026, 15:20 UTC | 444 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 356 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,18 +184,18 @@ Last dashboard update: Apr 30, 2026, 15:22 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 15:22 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25173781687) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 15:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25173781687) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 15:18 UTC. Latest close: Apr 30, 2026, 15:20 UTC. Latest comment sync: Apr 30, 2026, 15:19 UTC.
+Latest review: Apr 30, 2026, 15:21 UTC. Latest close: Apr 30, 2026, 15:20 UTC. Latest comment sync: Apr 30, 2026, 15:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 1 | 13 | 0 | 9 | 66 | 0 |
-| Last hour | 152 | 11 | 141 | 2 | 57 | 446 | 6 |
+| Last 15 minutes | 14 | 1 | 13 | 0 | 9 | 59 | 0 |
+| Last hour | 152 | 11 | 141 | 2 | 57 | 444 | 6 |
 | Last 24 hours | 5396 | 343 | 5053 | 34 | 696 | 1998 | 27 |
 
 ### Recently Closed Across Repos
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 15:18 UTC. Latest close: Apr 30, 2026, 15:20 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74556](https://github.com/openclaw/openclaw/pull/74556) | Isolate Codex app-server state per agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74556.md) | complete | Apr 30, 2026, 15:21 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams and fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74483](https://github.com/openclaw/openclaw/pull/74483) | [plugin sdk] Add generic SDK seam followups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74483.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#52365](https://github.com/openclaw/openclaw/pull/52365) | fix(cron): stop fallback attempts when cron budget is exhausted | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/52365.md) | complete | Apr 30, 2026, 15:18 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 15:18 UTC. Latest close: Apr 30, 2026, 15:20 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73554](https://github.com/openclaw/openclaw/pull/73554) | fix(cli): reject missing plugin ids before config writes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73554.md) | complete | Apr 30, 2026, 15:16 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75067](https://github.com/openclaw/openclaw/pull/75067) | feat(gateway): pricing fetch timeout reduction, disk cache, and circuit breaker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75067.md) | complete | Apr 30, 2026, 15:15 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75122](https://github.com/openclaw/openclaw/issues/75122) | WhatsApp 408 disconnects in 2026.4.27 are caused by event-loop blocking up to 100s, not Baileys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75122.md) | complete | Apr 30, 2026, 15:11 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74733](https://github.com/openclaw/openclaw/pull/74733) | fix(ui): stabilize WebChat message ordering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74733.md) | complete | Apr 30, 2026, 15:09 UTC |
 
 </details>
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 15:18 UTC. Latest close: Apr 30, 2026, 15:20 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 15:22 UTC
+Updated: Apr 30, 2026, 15:23 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 3 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74844,75000,75123.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/3. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25173781687](https://github.com/openclaw/clawsweeper/actions/runs/25173781687)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -347,12 +347,12 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 15:18 UTC. Latest close: Apr 30, 2026, 15:20 UTC. Latest comment sync: Apr 30, 2026, 15:19 UTC.
+Latest review: Apr 30, 2026, 15:21 UTC. Latest close: Apr 30, 2026, 15:20 UTC. Latest comment sync: Apr 30, 2026, 15:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 1 | 13 | 0 | 9 | 66 | 0 |
-| Last hour | 152 | 11 | 141 | 2 | 57 | 446 | 6 |
+| Last 15 minutes | 14 | 1 | 13 | 0 | 9 | 59 | 0 |
+| Last hour | 152 | 11 | 141 | 2 | 57 | 444 | 6 |
 | Last 24 hours | 4471 | 343 | 4128 | 21 | 694 | 1598 | 27 |
 
 #### Recently Closed
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 15:18 UTC. Latest close: Apr 30, 2026, 15:20 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74556](https://github.com/openclaw/openclaw/pull/74556) | Isolate Codex app-server state per agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74556.md) | complete | Apr 30, 2026, 15:21 UTC |
 | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams and fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [#74483](https://github.com/openclaw/openclaw/pull/74483) | [plugin sdk] Add generic SDK seam followups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74483.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [#52365](https://github.com/openclaw/openclaw/pull/52365) | fix(cron): stop fallback attempts when cron budget is exhausted | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/52365.md) | complete | Apr 30, 2026, 15:18 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 15:18 UTC. Latest close: Apr 30, 2026, 15:20 UTC. L
 | [#73554](https://github.com/openclaw/openclaw/pull/73554) | fix(cli): reject missing plugin ids before config writes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73554.md) | complete | Apr 30, 2026, 15:16 UTC |
 | [#75067](https://github.com/openclaw/openclaw/pull/75067) | feat(gateway): pricing fetch timeout reduction, disk cache, and circuit breaker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75067.md) | complete | Apr 30, 2026, 15:15 UTC |
 | [#75122](https://github.com/openclaw/openclaw/issues/75122) | WhatsApp 408 disconnects in 2026.4.27 are caused by event-loop blocking up to 100s, not Baileys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75122.md) | complete | Apr 30, 2026, 15:11 UTC |
-| [#74733](https://github.com/openclaw/openclaw/pull/74733) | fix(ui): stabilize WebChat message ordering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74733.md) | complete | Apr 30, 2026, 15:09 UTC |
 
 </details>
 
