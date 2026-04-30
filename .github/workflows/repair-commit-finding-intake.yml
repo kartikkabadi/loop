@@ -70,7 +70,18 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  disabled-target:
+    name: Skip disabled target commit finding
+    if: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain skipped commit finding
+        run: |
+          echo "Skipping commit finding repair for ${{ github.event.client_payload.target_repo }}."
+          echo "Set CLAWSWEEPER_ENABLE_CLAWHUB=1 after installing the ClawSweeper GitHub App on openclaw/clawhub."
+
   intake:
+    if: ${{ !(github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_COMMIT_FINDING_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
     timeout-minutes: 75
     steps:

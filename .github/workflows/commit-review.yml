@@ -47,8 +47,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  disabled-target:
+    name: Skip disabled target commit review
+    if: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain skipped commit review
+        run: |
+          echo "Skipping commit review for ${{ github.event.client_payload.target_repo }}."
+          echo "Set CLAWSWEEPER_ENABLE_CLAWHUB=1 after installing the ClawSweeper GitHub App on openclaw/clawhub."
+
   plan:
     name: Plan commits
+    if: ${{ !(github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:

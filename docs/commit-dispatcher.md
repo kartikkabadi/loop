@@ -93,6 +93,11 @@ Enable optional target commit check-runs with:
 CLAWSWEEPER_COMMIT_REVIEW_CREATE_CHECKS=true
 ```
 
+`openclaw/clawhub` commit dispatches are skipped while
+`CLAWSWEEPER_ENABLE_CLAWHUB` is not `1`. Turn that receiver variable on only
+after the ClawSweeper GitHub App is installed on `openclaw/clawhub`; otherwise
+the receiver cannot mint a target read token for commit review.
+
 Manual reviews can be started from the `ClawSweeper Commit Review` workflow in
 this repository. Inputs:
 

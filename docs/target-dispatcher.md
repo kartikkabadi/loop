@@ -94,6 +94,11 @@ selected item with only immediate-safe close reasons enabled:
 still handles the broader backlog, with `stale_insufficient_info` blocked until
 the item is at least 30 days old.
 
+`openclaw/clawhub` dispatches are intentionally skipped while the receiver
+variable `CLAWSWEEPER_ENABLE_CLAWHUB` is not `1`. Enable it only after the
+ClawSweeper GitHub App is installed on `openclaw/clawhub`; otherwise the
+receiver cannot mint the target read/write tokens.
+
 The event job creates only a target read token before Codex runs. The target
 write token and the repository push token are introduced after Codex exits, and
 the same `apply-decisions` guard path still re-fetches the item before any

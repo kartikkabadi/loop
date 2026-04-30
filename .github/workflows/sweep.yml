@@ -135,9 +135,19 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'repository_dispatch' && (github.event.client_payload.supersedes_in_progress == true || github.event.client_payload.supersedes_in_progress == 'true') }}
 
 jobs:
+  event-disabled-target:
+    name: Skip disabled target event
+    if: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain skipped event
+        run: |
+          echo "Skipping ${{ github.event.client_payload.target_repo }}#${{ github.event.client_payload.item_number || '?' }}."
+          echo "Set CLAWSWEEPER_ENABLE_CLAWHUB=1 after installing the ClawSweeper GitHub App on openclaw/clawhub."
+
   event-review-apply:
     name: Review, comment, and apply event item
-    if: ${{ github.event_name == 'repository_dispatch' }}
+    if: ${{ github.event_name == 'repository_dispatch' && !(github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
