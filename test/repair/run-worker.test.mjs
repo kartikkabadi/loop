@@ -19,6 +19,20 @@ test("run-worker starts Codex in the target checkout when one is available", () 
   fs.mkdirSync(targetCheckout, { recursive: true });
   fs.writeFileSync(path.join(targetCheckout, "target-marker.txt"), "target\n");
   fs.writeFileSync(
+    path.join(fakeBin, "gh"),
+    [
+      "#!/usr/bin/env node",
+      "const args = process.argv.slice(2);",
+      "if (args[0] === 'api' && args[1] === 'repos/openclaw/openclaw/branches/main') {",
+      "  process.stdout.write(JSON.stringify({ commit: { sha: '1111111111111111111111111111111111111111' } }));",
+      "  process.exit(0);",
+      "}",
+      "process.stderr.write(`unexpected gh args: ${args.join(' ')}\\n`);",
+      "process.exit(1);",
+    ].join("\n"),
+    { mode: 0o755 },
+  );
+  fs.writeFileSync(
     path.join(fakeBin, "codex"),
     [
       "#!/usr/bin/env node",
@@ -56,9 +70,8 @@ test("run-worker starts Codex in the target checkout when one is available", () 
       "mode: plan",
       "allowed_actions:",
       "  - fix",
-      "candidates:",
-      "  - '#1'",
-      "source: manual",
+      "source: clawsweeper_commit",
+      "commit_sha: 1111111111111111111111111111111111111111",
       "security_policy: central_security_only",
       "security_sensitive: false",
       "---",
