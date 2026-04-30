@@ -1,19 +1,19 @@
 # Open ClawSweeper Repair PR Finalizer
 
-Generated: 2026-04-30T02:03:04.013Z
+Generated: 2026-04-30T02:18:59.628Z
 
 ## Summary
 
 | Metric | Count |
 | --- | ---: |
-| open_prs | 12 |
+| open_prs | 13 |
 | ready_candidates | 0 |
 | security_hold | 1 |
 | needs_rebase | 7 |
 | mergeability_unknown | 0 |
 | needs_checks | 7 |
 | needs_review | 0 |
-| needs_merge_preflight | 12 |
+| needs_merge_preflight | 13 |
 | needs_result_backfill | 2 |
 
 ## Dispatch
@@ -30,7 +30,8 @@ Status: report_only
 
 | PR | Title | Cluster | Mergeable | Merge State | Checks | Blockers | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [#74742](https://github.com/openclaw/openclaw/pull/74742) | fix(file-transfer): require canonical node policy authorization | automerge-openclaw-openclaw-74134 | CONFLICTING | DIRTY | CANCELLED:2 SKIPPED:8 SUCCESS:5 | security_hold, needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | route to central security triage |
+| [#74746](https://github.com/openclaw/openclaw/pull/74746) | fix(ci): committed Plugin SDK API baseline hash does not match the public SDK surface generat... | clawsweeper-commit-openclaw-openclaw-02ebac6250bf | MERGEABLE | CLEAN | CANCELLED:2 SKIPPED:29 SUCCESS:13 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74742](https://github.com/openclaw/openclaw/pull/74742) | fix(file-transfer): require canonical node policy authorization | automerge-openclaw-openclaw-74134 | CONFLICTING | DIRTY | SUCCESS:4 SKIPPED:2 | security_hold, needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | route to central security triage |
 | [#74714](https://github.com/openclaw/openclaw/pull/74714) | fix: Google Vertex manifest evidence accepts the Windows %APPDATA% ADC path, but the Google V... | clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a | MERGEABLE | CLEAN | CANCELLED:3 SKIPPED:12 SUCCESS:67 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74703](https://github.com/openclaw/openclaw/pull/74703) | fix: Windows-specific reliability gap in the new timeout cleanup path | clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa | MERGEABLE | UNSTABLE | CANCELLED:4 SKIPPED:13 SUCCESS:65 FAILURE:2; blockers:2 | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-core-support-boundary:FAILURE; CI / checks-node-core:FAILURE, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74699](https://github.com/openclaw/openclaw/pull/74699) | fix: Codex app-server steering path regression | clawsweeper-commit-openclaw-openclaw-30a2b3049ae0 | CONFLICTING | DIRTY | SUCCESS:68 SKIPPED:10 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |

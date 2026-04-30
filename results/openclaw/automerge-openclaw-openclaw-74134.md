@@ -2,16 +2,16 @@
 repo: "openclaw/openclaw"
 cluster_id: "automerge-openclaw-openclaw-74134"
 mode: "autonomous"
-run_id: "25142978529"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25142978529"
-head_sha: "ef11aa16ac959a50abe9336e22afa34d0cfbcb7e"
+run_id: "25143626464"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25143626464"
+head_sha: "ed2ff985f73cf1a7c95152d0920900a1c3e128f8"
 workflow_conclusion: "success"
 result_status: "planned"
-published_at: "2026-04-30T01:55:10.506Z"
-canonical: "https://github.com/openclaw/openclaw/pull/74134"
+published_at: "2026-04-30T02:18:26.956Z"
+canonical: "https://github.com/openclaw/openclaw/pull/74742"
 canonical_issue: null
-canonical_pr: "https://github.com/openclaw/openclaw/pull/74134"
-actions_total: 2
+canonical_pr: "https://github.com/openclaw/openclaw/pull/74742"
+actions_total: 3
 fix_executed: 0
 fix_failed: 0
 fix_blocked: 0
@@ -25,23 +25,23 @@ needs_human_count: 0
 
 Repo: openclaw/openclaw
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25142978529](https://github.com/openclaw/clawsweeper/actions/runs/25142978529)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25143626464](https://github.com/openclaw/clawsweeper/actions/runs/25143626464)
 
 Workflow conclusion: success
 
 Worker result: planned
 
-Canonical: https://github.com/openclaw/openclaw/pull/74134
+Canonical: https://github.com/openclaw/openclaw/pull/74742
 
 ## Summary
 
-#74134 remains the canonical adopted autofix PR. The hydrated artifact shows an explicit ClawSweeper fix-required marker for a remaining file-transfer canonical-path policy finding, merge and close are disabled for this job, and the PR branch is not maintainer-modifiable. Plan a credited replacement repair artifact limited to the actionable file-transfer node-invoke policy finding and validation surface.
+#74742 is now the canonical repair path for the adopted #74134 file-transfer work. The hydrated artifact shows #74742 has an unresolved ClawSweeper P1 review finding for dir.fetch post-fetch archive authorization and is dirty against main, so merge remains blocked and the next deterministic action should repair the existing ClawSweeper branch, re-review, and validate. #74134 should remain open as the credited source PR because close and merge are disabled in this job.
 
 ## Impact
 
 | Metric | Count |
 | --- | ---: |
-| Worker actions | 2 |
+| Worker actions | 3 |
 | Fix executed | 0 |
 | Fix failed | 0 |
 | Fix blocked | 0 |
@@ -54,7 +54,7 @@ Canonical: https://github.com/openclaw/openclaw/pull/74134
 
 | Action | Status | Target | Branch | Reason |
 | --- | --- | --- | --- | --- |
-| open_fix_pr | opened | https://github.com/openclaw/openclaw/pull/74742 | clawsweeper/automerge-openclaw-openclaw-74134 |  |
+| repair_contributor_branch | pushed | https://github.com/openclaw/openclaw/pull/74742 |  |  |
 
 ## Apply Actions
 
@@ -66,8 +66,9 @@ Canonical: https://github.com/openclaw/openclaw/pull/74134
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| #74134 | fix_needed | planned | canonical | The PR is useful and canonical, but ClawSweeper cannot safely update the source branch because maintainer_can_modify=false. Final merge is disabled by job policy, so the executable path is a credited replacement repair artifact rather than merge, close, or security quarantine. |
-| cluster:automerge-openclaw-openclaw-74134 | build_fix_artifact | planned |  | Build a replacement repair plan that the deterministic executor can apply on clawsweeper/automerge-openclaw-openclaw-74134 without mutating the uneditable contributor branch. |
+| #74134 | keep_related | planned | superseded | Keep the source PR open and credited while #74742 carries the current repair path. |
+| #74742 | fix_needed | planned | canonical | Repair the existing ClawSweeper replacement branch before another review or any later maintainer-controlled merge path. |
+| cluster:automerge-openclaw-openclaw-74134 | build_fix_artifact | planned |  | Emit an executable repair plan for the deterministic executor. |
 
 ## Needs Human
 

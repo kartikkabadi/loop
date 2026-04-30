@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T02:03:04.013Z",
-  "count": 12,
+  "generated_at": "2026-04-30T02:18:59.628Z",
+  "count": 13,
   "summary": {
-    "open_prs": 12,
+    "open_prs": 13,
     "ready_candidates": 0,
     "security_hold": 1,
     "needs_rebase": 7,
     "mergeability_unknown": 0,
     "needs_checks": 7,
     "needs_review": 0,
-    "needs_merge_preflight": 12,
+    "needs_merge_preflight": 13,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -27,24 +27,89 @@
   },
   "prs": [
     {
+      "number": 74746,
+      "title": "fix(ci): committed Plugin SDK API baseline hash does not match the public SDK surface generat...",
+      "url": "https://github.com/openclaw/openclaw/pull/74746",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-02ebac6250bf",
+      "head_sha": "4bcbf827713a43fb6566ef97332e4a354ea73f19",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-02ebac6250bf",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-02ebac6250bf.md",
+      "updated_at": "2026-04-30T02:18:15Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "CLEAN",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 44,
+        "counts": {
+          "CANCELLED": 2,
+          "SKIPPED": 29,
+          "SUCCESS": 13
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74746#issuecomment-4349236214",
+            "submitted_at": "2026-04-30T02:16:52Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25143676983",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25143676983",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-02ebac6250bf",
+        "published_at": "2026-04-30T02:12:52.854Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74746",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+    },
+    {
       "number": 74742,
       "title": "fix(file-transfer): require canonical node policy authorization",
       "url": "https://github.com/openclaw/openclaw/pull/74742",
       "branch": "clawsweeper/automerge-openclaw-openclaw-74134",
-      "head_sha": "e371eeacb8652df4f04d7b61c683f2183cd81c20",
+      "head_sha": "2094b8436e9831e5fc1371a95c225ab25a38c7d1",
       "cluster_id": "automerge-openclaw-openclaw-74134",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74134.md",
-      "updated_at": "2026-04-30T02:00:02Z",
+      "updated_at": "2026-04-30T02:18:06Z",
       "mergeable": "CONFLICTING",
       "merge_state_status": "DIRTY",
       "review_decision": "",
       "security_hold": true,
       "checks": {
-        "total": 15,
+        "total": 6,
         "counts": {
-          "CANCELLED": 2,
-          "SKIPPED": 8,
-          "SUCCESS": 5
+          "SUCCESS": 4,
+          "SKIPPED": 2
         },
         "blockers": []
       },
@@ -66,10 +131,10 @@
         ]
       },
       "latest_record": {
-        "run_id": "25142978529",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25142978529",
+        "run_id": "25143626464",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25143626464",
         "cluster_id": "automerge-openclaw-openclaw-74134",
-        "published_at": "2026-04-30T01:55:10.506Z",
+        "published_at": "2026-04-30T02:18:26.956Z",
         "workflow_conclusion": "success",
         "apply_action": {
           "target": "#74742",
