@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import {
@@ -64,6 +65,10 @@ const promptPath = path.join(runDir, "prompt.md");
 const resultPath = path.join(runDir, "result.json");
 const transcriptPath = path.join(runDir, "codex.jsonl");
 const promptContext: Record<string, string> = {};
+const targetCheckout = dryRun ? "" : prepareTargetCheckout(job);
+if (targetCheckout) {
+  process.env.CLAWSWEEPER_TARGET_CHECKOUT = targetCheckout;
+}
 
 if (!dryRun) {
   const plannerArgs = [
@@ -264,6 +269,39 @@ function reviewResult() {
 
 function codexEnv() {
   return codexSubprocessEnv();
+}
+
+function prepareTargetCheckout(job: LooseRecord): string {
+  const explicit = stringValue(job.frontmatter.target_checkout);
+  if (explicit) return explicit;
+
+  const fromEnv = stringValue(process.env.CLAWSWEEPER_TARGET_CHECKOUT);
+  if (fromEnv) return fromEnv;
+
+  const targetRepo = String(job.frontmatter.repo ?? "");
+  if (process.env.GITHUB_REPOSITORY === targetRepo) return repoRoot();
+
+  const targetRoot = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-target-"));
+  const targetDir = path.join(targetRoot, targetRepo.replace(/[^A-Za-z0-9_.-]+/g, "-"));
+  runCommand("gh", ["repo", "clone", targetRepo, targetDir, "--", "--depth=1"]);
+  return targetDir;
+}
+
+function stringValue(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function runCommand(command: string, commandArgs: string[]) {
+  const result = spawnSync(command, commandArgs, {
+    cwd: repoRoot(),
+    encoding: "utf8",
+    env: process.env,
+  });
+  if (result.status !== 0) {
+    throw new Error(
+      `${command} ${commandArgs.join(" ")} failed: ${result.stderr || result.stdout}`,
+    );
+  }
 }
 
 function writeBlockedResult(summary: LooseRecord) {

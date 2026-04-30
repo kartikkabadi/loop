@@ -101,12 +101,14 @@ const itemList = [...items.values()].sort(
 const securitySensitiveItems = itemList.filter((item: JsonValue) =>
   itemSecuritySensitive(item, job),
 );
+const targetCheckout = resolveTargetCheckout(job);
 const plan = {
   repo: job.frontmatter.repo,
   cluster_id: job.frontmatter.cluster_id,
   mode: job.frontmatter.mode,
   triage_policy: job.frontmatter.triage_policy ?? null,
   source_job: job.relativePath,
+  target_checkout: targetCheckout,
   generated_at: new Date().toISOString(),
   offline,
   main: branch,
@@ -374,7 +376,7 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
     mode: plan.mode,
     generated_at: plan.generated_at,
     source_job: plan.source_job,
-    target_checkout: job.frontmatter.target_checkout ?? null,
+    target_checkout: plan.target_checkout ?? null,
     permissions: {
       allow_instant_close: job.frontmatter.allow_instant_close === true,
       allow_low_signal_pr_close: job.frontmatter.allow_low_signal_pr_close === true,
@@ -437,6 +439,17 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
       "include full GitHub URLs in closure rationale",
     ],
   };
+}
+
+function resolveTargetCheckout(job: LooseRecord): string | null {
+  const explicit = stringValue(job.frontmatter.target_checkout);
+  if (explicit) return explicit;
+  const fromEnv = stringValue(process.env.CLAWSWEEPER_TARGET_CHECKOUT);
+  return fromEnv || null;
+}
+
+function stringValue(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
 }
 
 function canonicalCandidates(items: LooseRecord[], job: LooseRecord) {

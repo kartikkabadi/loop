@@ -311,6 +311,7 @@ function compactClusterPlan(plan: LooseRecord) {
     cluster_id: plan.cluster_id,
     mode: plan.mode,
     source_job: plan.source_job,
+    target_checkout: plan.target_checkout,
     generated_at: plan.generated_at,
     offline: plan.offline,
     main: plan.main,
