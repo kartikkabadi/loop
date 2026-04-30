@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 23:51 UTC
+Last dashboard update: Apr 30, 2026, 23:53 UTC
 
 ### Fleet
 
@@ -165,7 +165,7 @@ Last dashboard update: Apr 30, 2026, 23:51 UTC
 | Open items total | 7017 |
 | Reviewed files | 7644 |
 | Unreviewed open items | 54 |
-| Due now by cadence | 1241 |
+| Due now by cadence | 1278 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1897 |
 | Closed by Codex apply | 11355 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 23:51 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6771 | 6717 | 54 | 985 | 0 | 1851 | 11347 | Apr 30, 2026, 23:50 UTC | Apr 30, 2026, 23:51 UTC | 522 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6771 | 6717 | 54 | 1022 | 0 | 1851 | 11347 | Apr 30, 2026, 23:52 UTC | Apr 30, 2026, 23:51 UTC | 521 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 246 | 924 | 0 | 253 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,19 +184,19 @@ Last dashboard update: Apr 30, 2026, 23:51 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 23:51 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25195075802) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 23:53 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25195150626) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 23:50 UTC. Latest close: Apr 30, 2026, 23:51 UTC. Latest comment sync: Apr 30, 2026, 23:51 UTC.
+Latest review: Apr 30, 2026, 23:52 UTC. Latest close: Apr 30, 2026, 23:51 UTC. Latest comment sync: Apr 30, 2026, 23:52 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 110 | 2 | 108 | 1 | 3 | 11 | 0 |
-| Last hour | 973 | 18 | 955 | 3 | 16 | 522 | 1 |
-| Last 24 hours | 6675 | 475 | 6200 | 9 | 656 | 3483 | 26 |
+| Last hour | 898 | 18 | 880 | 3 | 12 | 521 | 0 |
+| Last 24 hours | 6674 | 474 | 6200 | 9 | 656 | 3482 | 26 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 23:50 UTC. Latest close: Apr 30, 2026, 23:51 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75299](https://github.com/openclaw/openclaw/pull/75299) | feat(process): add priority support to command queue | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75299.md) | complete | Apr 30, 2026, 23:52 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68982](https://github.com/openclaw/openclaw/pull/68982) | fix: stream reasoning in live chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68982.md) | complete | Apr 30, 2026, 23:50 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71324](https://github.com/openclaw/openclaw/pull/71324) | fix(webchat): hide legacy runtime transcript wrappers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71324.md) | complete | Apr 30, 2026, 23:49 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74787](https://github.com/openclaw/openclaw/pull/74787) | [codex] Reap orphaned acpx Codex ACP processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74787.md) | complete | Apr 30, 2026, 23:49 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 23:50 UTC. Latest close: Apr 30, 2026, 23:51 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73163](https://github.com/openclaw/openclaw/pull/73163) | fix(gateway): warn for insecure Control UI access | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73163.md) | complete | Apr 30, 2026, 23:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75305](https://github.com/openclaw/openclaw/issues/75305) | [Bug]: Pre- compaction memory flush sends empty user message to Anthropic API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75305.md) | complete | Apr 30, 2026, 23:42 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75306](https://github.com/openclaw/openclaw/pull/75306) | fix(acpx): ignore Claude ACP timeout config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75306.md) | complete | Apr 30, 2026, 23:42 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73387](https://github.com/openclaw/openclaw/issues/73387) | Discord: channels block should be additive overrides, not an implicit allowlist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73387.md) | complete | Apr 30, 2026, 23:41 UTC |
 
 </details>
 
@@ -267,12 +267,12 @@ Latest review: Apr 30, 2026, 23:50 UTC. Latest close: Apr 30, 2026, 23:51 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 23:51 UTC
+Updated: Apr 30, 2026, 23:53 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 1 fresh closes out of requested limit 1. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25195075802](https://github.com/openclaw/clawsweeper/actions/runs/25195075802)
+Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=71227.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25195150626](https://github.com/openclaw/clawsweeper/actions/runs/25195150626)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25195075802](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 577/1446 current (869 due, 39.9%) |
-| Hourly hot item cadence (<7d) | 577/1446 current (869 due, 39.9%) |
+| Hourly cadence coverage | 540/1446 current (906 due, 37.3%) |
+| Hourly hot item cadence (<7d) | 540/1446 current (906 due, 37.3%) |
 | Daily cadence coverage | 3428/3487 current (59 due, 98.3%) |
 | Daily PR cadence | 2395/2449 current (54 due, 97.8%) |
 | Daily new issue cadence (<30d) | 1033/1038 current (5 due, 99.5%) |
 | Weekly older issue cadence | 1781/1784 current (3 due, 99.8%) |
-| Due now by cadence | 985 |
+| Due now by cadence | 1022 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `51947,61960,62112,63037,73342`
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 23:50 UTC. Latest close: Apr 30, 2026, 23:51 UTC. Latest comment sync: Apr 30, 2026, 23:51 UTC.
+Latest review: Apr 30, 2026, 23:52 UTC. Latest close: Apr 30, 2026, 23:51 UTC. Latest comment sync: Apr 30, 2026, 23:52 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 110 | 2 | 108 | 1 | 3 | 11 | 0 |
-| Last hour | 973 | 18 | 955 | 3 | 16 | 522 | 1 |
-| Last 24 hours | 6675 | 475 | 6200 | 9 | 656 | 3483 | 26 |
+| Last hour | 898 | 18 | 880 | 3 | 12 | 521 | 0 |
+| Last 24 hours | 6674 | 474 | 6200 | 9 | 656 | 3482 | 26 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 23:50 UTC. Latest close: Apr 30, 2026, 23:51 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75299](https://github.com/openclaw/openclaw/pull/75299) | feat(process): add priority support to command queue | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75299.md) | complete | Apr 30, 2026, 23:52 UTC |
 | [#68982](https://github.com/openclaw/openclaw/pull/68982) | fix: stream reasoning in live chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68982.md) | complete | Apr 30, 2026, 23:50 UTC |
 | [#71324](https://github.com/openclaw/openclaw/pull/71324) | fix(webchat): hide legacy runtime transcript wrappers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71324.md) | complete | Apr 30, 2026, 23:49 UTC |
 | [#74787](https://github.com/openclaw/openclaw/pull/74787) | [codex] Reap orphaned acpx Codex ACP processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74787.md) | complete | Apr 30, 2026, 23:49 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 23:50 UTC. Latest close: Apr 30, 2026, 23:51 UTC. L
 | [#73163](https://github.com/openclaw/openclaw/pull/73163) | fix(gateway): warn for insecure Control UI access | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73163.md) | complete | Apr 30, 2026, 23:43 UTC |
 | [#75305](https://github.com/openclaw/openclaw/issues/75305) | [Bug]: Pre- compaction memory flush sends empty user message to Anthropic API | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75305.md) | complete | Apr 30, 2026, 23:42 UTC |
 | [#75306](https://github.com/openclaw/openclaw/pull/75306) | fix(acpx): ignore Claude ACP timeout config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75306.md) | complete | Apr 30, 2026, 23:42 UTC |
-| [#73387](https://github.com/openclaw/openclaw/issues/73387) | Discord: channels block should be additive overrides, not an implicit allowlist | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73387.md) | complete | Apr 30, 2026, 23:41 UTC |
 
 </details>
 
