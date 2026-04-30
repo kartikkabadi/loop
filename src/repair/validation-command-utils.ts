@@ -55,7 +55,11 @@ export function uniqueStrings(values: Iterable<unknown>): string[] {
 export function parseAllowedValidationCommand(command: unknown): string[] {
   const text = String(command ?? "").trim();
   if (!text) throw new Error("empty validation command");
-  if (/[`$;&|<>()[\]{}*?~]/.test(text)) {
+  const safetyText = text.replace(
+    /\$\{[A-Z_][A-Z0-9_]*(?::-[A-Za-z0-9_./:-]+)?\}/g,
+    "SHELL_DEFAULT",
+  );
+  if (/[`$;&|<>()[\]{}*?~]/.test(safetyText)) {
     throw new Error(`unsafe validation command: ${text}`);
   }
   const parts = text.split(/\s+/);
