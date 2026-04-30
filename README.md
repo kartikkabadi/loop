@@ -163,11 +163,11 @@ Last dashboard update: Apr 30, 2026, 13:20 UTC
 | Open issues | 3902 |
 | Open PRs | 3383 |
 | Open items total | 7285 |
-| Reviewed files | 7494 |
-| Unreviewed open items | 365 |
-| Due now by cadence | 2895 |
+| Reviewed files | 7492 |
+| Unreviewed open items | 367 |
+| Due now by cadence | 2897 |
 | Proposed closes awaiting apply | 0 |
-| Work candidates awaiting promotion | 1329 |
+| Work candidates awaiting promotion | 1327 |
 | Closed by Codex apply | 11090 |
 | Failed or stale reviews | 36 |
 | Archived closed files | 14995 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 13:20 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6932 | 6567 | 365 | 2821 | 0 | 1283 | 11082 | Apr 30, 2026, 13:18 UTC | Apr 30, 2026, 13:17 UTC | 776 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6932 | 6565 | 367 | 2823 | 0 | 1281 | 11082 | Apr 30, 2026, 13:16 UTC | Apr 30, 2026, 13:18 UTC | 774 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,25 +184,25 @@ Last dashboard update: Apr 30, 2026, 13:20 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 13:20 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25167636706) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 30, 2026, 13:20 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25167578652) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 13:18 UTC. Latest close: Apr 30, 2026, 13:17 UTC. Latest comment sync: Apr 30, 2026, 13:19 UTC.
+Latest review: Apr 30, 2026, 13:16 UTC. Latest close: Apr 30, 2026, 13:18 UTC. Latest comment sync: Apr 30, 2026, 13:17 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 12 | 1 | 11 | 0 | 7 | 407 | 2 |
-| Last hour | 532 | 11 | 521 | 6 | 16 | 776 | 3 |
-| Last 24 hours | 5619 | 307 | 5312 | 34 | 674 | 1677 | 23 |
+| Last 15 minutes | 10 | 1 | 9 | 0 | 7 | 405 | 2 |
+| Last hour | 530 | 11 | 519 | 6 | 16 | 774 | 3 |
+| Last 24 hours | 5617 | 307 | 5310 | 34 | 674 | 1675 | 23 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75086](https://github.com/openclaw/openclaw/issues/75086) | [Audit] Theme Factory color accuracy: brand-inspired themes use wrong colors | belongs on ClawHub | Apr 30, 2026, 13:17 UTC | [records/openclaw-openclaw/closed/75086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75086.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75086](https://github.com/openclaw/openclaw/issues/75086) | [Audit] Theme Factory color accuracy: brand-inspired themes use wrong colors | belongs on ClawHub | Apr 30, 2026, 13:18 UTC | [records/openclaw-openclaw/closed/75086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75086.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75083](https://github.com/openclaw/openclaw/pull/75083) | feat(feishu): add segment streaming mode | closed externally after review | Apr 30, 2026, 13:13 UTC | [records/openclaw-openclaw/closed/75083.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75083.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#62802](https://github.com/openclaw/openclaw/pull/62802) | fix: subagent runTimeoutSeconds default fallback resolves to infinite timeout | already implemented on main | Apr 30, 2026, 13:09 UTC | [records/openclaw-openclaw/closed/62802.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62802.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#62665](https://github.com/openclaw/openclaw/pull/62665) | config: fix silent failures and misleading log in config recovery | duplicate or superseded | Apr 30, 2026, 13:09 UTC | [records/openclaw-openclaw/closed/62665.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62665.md) |
@@ -269,10 +269,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 13:20 UTC
 
-State: Apply in progress
+State: Review in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=75086.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167636706](https://github.com/openclaw/clawsweeper/actions/runs/25167636706)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167578652](https://github.com/openclaw/clawsweeper/actions/runs/25167578652)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -297,7 +297,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167636706](https://
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6544 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Work candidates awaiting promotion | 1283 |
+| Work candidates awaiting promotion | 1281 |
 | Closed by Codex apply | 11082 |
 | Failed or stale reviews | 23 |
 
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167636706](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 54/1237 current (1183 due, 4.4%) |
-| Hourly hot item cadence (<7d) | 54/1237 current (1183 due, 4.4%) |
+| Hourly cadence coverage | 52/1235 current (1183 due, 4.2%) |
+| Hourly hot item cadence (<7d) | 52/1235 current (1183 due, 4.2%) |
 | Daily cadence coverage | 2275/3543 current (1268 due, 64.2%) |
 | Daily PR cadence | 1508/2466 current (958 due, 61.2%) |
 | Daily new issue cadence (<30d) | 767/1077 current (310 due, 71.2%) |
 | Weekly older issue cadence | 1782/1787 current (5 due, 99.7%) |
-| Due now by cadence | 2821 |
+| Due now by cadence | 2823 |
 
 ### Audit Health
 
@@ -347,19 +347,19 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 13:18 UTC. Latest close: Apr 30, 2026, 13:17 UTC. Latest comment sync: Apr 30, 2026, 13:19 UTC.
+Latest review: Apr 30, 2026, 13:16 UTC. Latest close: Apr 30, 2026, 13:18 UTC. Latest comment sync: Apr 30, 2026, 13:17 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 12 | 1 | 11 | 0 | 7 | 407 | 2 |
-| Last hour | 532 | 11 | 521 | 6 | 16 | 776 | 3 |
-| Last 24 hours | 4692 | 307 | 4385 | 21 | 671 | 1275 | 23 |
+| Last 15 minutes | 10 | 1 | 9 | 0 | 7 | 405 | 2 |
+| Last hour | 530 | 11 | 519 | 6 | 16 | 774 | 3 |
+| Last 24 hours | 4690 | 307 | 4383 | 21 | 671 | 1273 | 23 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#75086](https://github.com/openclaw/openclaw/issues/75086) | [Audit] Theme Factory color accuracy: brand-inspired themes use wrong colors | belongs on ClawHub | Apr 30, 2026, 13:17 UTC | [records/openclaw-openclaw/closed/75086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75086.md) |
+| [#75086](https://github.com/openclaw/openclaw/issues/75086) | [Audit] Theme Factory color accuracy: brand-inspired themes use wrong colors | belongs on ClawHub | Apr 30, 2026, 13:18 UTC | [records/openclaw-openclaw/closed/75086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75086.md) |
 | [#75083](https://github.com/openclaw/openclaw/pull/75083) | feat(feishu): add segment streaming mode | closed externally after review | Apr 30, 2026, 13:13 UTC | [records/openclaw-openclaw/closed/75083.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75083.md) |
 | [#62802](https://github.com/openclaw/openclaw/pull/62802) | fix: subagent runTimeoutSeconds default fallback resolves to infinite timeout | already implemented on main | Apr 30, 2026, 13:09 UTC | [records/openclaw-openclaw/closed/62802.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62802.md) |
 | [#62665](https://github.com/openclaw/openclaw/pull/62665) | config: fix silent failures and misleading log in config recovery | duplicate or superseded | Apr 30, 2026, 13:09 UTC | [records/openclaw-openclaw/closed/62665.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62665.md) |
