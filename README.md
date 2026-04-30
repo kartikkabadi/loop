@@ -153,55 +153,56 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 14:47 UTC
+Last dashboard update: Apr 30, 2026, 14:48 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4405 |
-| Open PRs | 3225 |
-| Open items total | 7630 |
-| Reviewed files | 7630 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 2446 |
+| Open issues | 3862 |
+| Open PRs | 3375 |
+| Open items total | 7237 |
+| Reviewed files | 7629 |
+| Unreviewed open items | 182 |
+| Due now by cadence | 2630 |
 | Proposed closes awaiting apply | 47 |
-| Work candidates awaiting promotion | 1357 |
+| Work candidates awaiting promotion | 1356 |
 | Closed by Codex apply | 11111 |
 | Failed or stale reviews | 43 |
-| Archived closed files | 15058 |
+| Archived closed files | 15059 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6703 | 6703 | 0 | 2372 | 47 | 1311 | 11103 | Apr 30, 2026, 14:44 UTC | Apr 30, 2026, 14:45 UTC | 317 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 924 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
-| [ClawSweeper](https://github.com/openclaw/clawsweeper) | 3 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6884 | 6702 | 182 | 2556 | 47 | 1310 | 11103 | Apr 30, 2026, 14:44 UTC | Apr 30, 2026, 14:46 UTC | 304 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
+| [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 30, 2026, 14:47 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25172013509) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 30, 2026, 14:48 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25172013509) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 14:44 UTC. Latest close: Apr 30, 2026, 14:45 UTC. Latest comment sync: Apr 30, 2026, 14:45 UTC.
+Latest review: Apr 30, 2026, 14:44 UTC. Latest close: Apr 30, 2026, 14:46 UTC. Latest comment sync: Apr 30, 2026, 14:45 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 12 | 1 | 11 | 1 | 11 | 9 | 0 |
-| Last hour | 539 | 70 | 469 | 8 | 57 | 317 | 1 |
-| Last 24 hours | 5466 | 348 | 5118 | 40 | 670 | 1599 | 24 |
+| Last 15 minutes | 11 | 1 | 10 | 0 | 6 | 8 | 0 |
+| Last hour | 539 | 70 | 469 | 8 | 58 | 304 | 1 |
+| Last 24 hours | 5460 | 348 | 5112 | 40 | 671 | 1599 | 24 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75088](https://github.com/openclaw/openclaw/issues/75088) | web_search tool description says Brave API even when DuckDuckGo is active | closed externally after review | Apr 30, 2026, 14:46 UTC | [records/openclaw-openclaw/closed/75088.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75088.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75084](https://github.com/openclaw/openclaw/issues/75084) | [Bug]: echoTranscript works in Telegram forum group but not in direct chat (DM) | closed externally after review | Apr 30, 2026, 14:45 UTC | [records/openclaw-openclaw/closed/75084.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75084.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75087](https://github.com/openclaw/openclaw/issues/75087) | [Bug]: Browser runtime ignores configured executablePath (regression, original #73617 bot-closed prematurely) | closed externally after review | Apr 30, 2026, 14:36 UTC | [records/openclaw-openclaw/closed/75087.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75087.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73489](https://github.com/openclaw/openclaw/pull/73489) | fix(signal): harden signal-cli archive download with SSRF guard, timeout, and size cap (#54153) | closed externally after review | Apr 30, 2026, 14:35 UTC | [records/openclaw-openclaw/closed/73489.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73489.md) |
@@ -211,7 +212,6 @@ Latest review: Apr 30, 2026, 14:44 UTC. Latest close: Apr 30, 2026, 14:45 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72906](https://github.com/openclaw/openclaw/issues/72906) | [Bug]: status channel summary is empty while Telegram health probe is OK on v2026.4.25 | duplicate or superseded | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72906.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72906.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72861](https://github.com/openclaw/openclaw/issues/72861) | [Bug]: Control UI / webchat duplicates user message and leaks `Sender (untrusted metadata)` as `openclaw-control-ui` | already implemented on main | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72861.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72861.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75112](https://github.com/openclaw/openclaw/issues/75112) | Feature Request: 飞书频道流式卡片展示工具调用过程 | duplicate or superseded | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/75112.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75112.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72578](https://github.com/openclaw/openclaw/issues/72578) | [Bug]: Chat messages duplicated in Control UI — both user and assistant messages appear twice | already implemented on main | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72578.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72578.md) |
 
 ### Work Candidates Across Repos
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 14:44 UTC. Latest close: Apr 30, 2026, 14:45 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 14:47 UTC
+Updated: Apr 30, 2026, 14:48 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Hot intake planned 96 items across 96 shards. Capacity is 96 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25172013509](https://github.com/openclaw/clawsweeper/actions/runs/25172013509)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -280,24 +280,24 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25172013509](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3515 |
-| Open PRs | 3188 |
-| Open items total | 6703 |
-| Reviewed files | 6703 |
-| Unreviewed open items | 0 |
-| Archived closed files | 15032 |
+| Open issues | 3526 |
+| Open PRs | 3358 |
+| Open items total | 6884 |
+| Reviewed files | 6702 |
+| Unreviewed open items | 182 |
+| Archived closed files | 15033 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3501 |
+| Fresh reviewed issues in the last 7 days | 3500 |
 | Proposed issue closes | 47 (1.3% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3172 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6673 |
+| Fresh verified reviews in the last 7 days | 6672 |
 | Proposed closes awaiting apply | 47 (0.7% of fresh reviews) |
-| Work candidates awaiting promotion | 1311 |
+| Work candidates awaiting promotion | 1310 |
 | Closed by Codex apply | 11103 |
 | Failed or stale reviews | 30 |
 
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25172013509](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 510/1383 current (873 due, 36.9%) |
-| Hourly hot item cadence (<7d) | 510/1383 current (873 due, 36.9%) |
-| Daily cadence coverage | 2043/3537 current (1494 due, 57.8%) |
-| Daily PR cadence | 1383/2466 current (1083 due, 56.1%) |
-| Daily new issue cadence (<30d) | 660/1071 current (411 due, 61.6%) |
+| Hourly cadence coverage | 510/1382 current (872 due, 36.9%) |
+| Hourly hot item cadence (<7d) | 510/1382 current (872 due, 36.9%) |
+| Daily cadence coverage | 2040/3537 current (1497 due, 57.7%) |
+| Daily PR cadence | 1381/2466 current (1085 due, 56%) |
+| Daily new issue cadence (<30d) | 659/1071 current (412 due, 61.5%) |
 | Weekly older issue cadence | 1778/1783 current (5 due, 99.7%) |
-| Due now by cadence | 2372 |
+| Due now by cadence | 2556 |
 
 ### Audit Health
 
@@ -347,18 +347,19 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 14:44 UTC. Latest close: Apr 30, 2026, 14:45 UTC. Latest comment sync: Apr 30, 2026, 14:45 UTC.
+Latest review: Apr 30, 2026, 14:44 UTC. Latest close: Apr 30, 2026, 14:46 UTC. Latest comment sync: Apr 30, 2026, 14:45 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 12 | 1 | 11 | 1 | 11 | 9 | 0 |
-| Last hour | 539 | 70 | 469 | 8 | 57 | 317 | 1 |
-| Last 24 hours | 4541 | 348 | 4193 | 27 | 668 | 1199 | 24 |
+| Last 15 minutes | 11 | 1 | 10 | 0 | 6 | 8 | 0 |
+| Last hour | 539 | 70 | 469 | 8 | 58 | 304 | 1 |
+| Last 24 hours | 4535 | 348 | 4187 | 27 | 669 | 1199 | 24 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#75088](https://github.com/openclaw/openclaw/issues/75088) | web_search tool description says Brave API even when DuckDuckGo is active | closed externally after review | Apr 30, 2026, 14:46 UTC | [records/openclaw-openclaw/closed/75088.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75088.md) |
 | [#75084](https://github.com/openclaw/openclaw/issues/75084) | [Bug]: echoTranscript works in Telegram forum group but not in direct chat (DM) | closed externally after review | Apr 30, 2026, 14:45 UTC | [records/openclaw-openclaw/closed/75084.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75084.md) |
 | [#75087](https://github.com/openclaw/openclaw/issues/75087) | [Bug]: Browser runtime ignores configured executablePath (regression, original #73617 bot-closed prematurely) | closed externally after review | Apr 30, 2026, 14:36 UTC | [records/openclaw-openclaw/closed/75087.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75087.md) |
 | [#73489](https://github.com/openclaw/openclaw/pull/73489) | fix(signal): harden signal-cli archive download with SSRF guard, timeout, and size cap (#54153) | closed externally after review | Apr 30, 2026, 14:35 UTC | [records/openclaw-openclaw/closed/73489.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73489.md) |
@@ -368,7 +369,6 @@ Latest review: Apr 30, 2026, 14:44 UTC. Latest close: Apr 30, 2026, 14:45 UTC. L
 | [#72906](https://github.com/openclaw/openclaw/issues/72906) | [Bug]: status channel summary is empty while Telegram health probe is OK on v2026.4.25 | duplicate or superseded | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72906.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72906.md) |
 | [#72861](https://github.com/openclaw/openclaw/issues/72861) | [Bug]: Control UI / webchat duplicates user message and leaks `Sender (untrusted metadata)` as `openclaw-control-ui` | already implemented on main | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72861.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72861.md) |
 | [#75112](https://github.com/openclaw/openclaw/issues/75112) | Feature Request: 飞书频道流式卡片展示工具调用过程 | duplicate or superseded | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/75112.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75112.md) |
-| [#72578](https://github.com/openclaw/openclaw/issues/72578) | [Bug]: Chat messages duplicated in Control UI — both user and assistant messages appear twice | already implemented on main | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72578.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72578.md) |
 
 #### Work Candidates
 
@@ -427,9 +427,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25135463730](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues | 890 |
-| Open PRs | 34 |
-| Open items total | 924 |
+| Open issues | 336 |
+| Open PRs | 17 |
+| Open items total | 353 |
 | Reviewed files | 924 |
 | Unreviewed open items | 0 |
 | Archived closed files | 26 |
@@ -454,8 +454,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25135463730](https://
 | --- | ---: |
 | Hourly cadence coverage | 0/59 current (59 due, 0%) |
 | Hourly hot item cadence (<7d) | 0/59 current (59 due, 0%) |
-| Daily cadence coverage | 194/199 current (5 due, 97.5%) |
-| Daily PR cadence | 21/21 current (0 due, 100%) |
+| Daily cadence coverage | 190/195 current (5 due, 97.4%) |
+| Daily PR cadence | 17/17 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 173/178 current (5 due, 97.2%) |
 | Weekly older issue cadence | 659/666 current (7 due, 98.9%) |
 | Due now by cadence | 71 |
@@ -572,8 +572,8 @@ No workflow status has been published yet.
 | --- | ---: |
 | Target repository | [openclaw/clawsweeper](https://github.com/openclaw/clawsweeper) |
 | Open issues | 0 |
-| Open PRs | 3 |
-| Open items total | 3 |
+| Open PRs | 0 |
+| Open items total | 0 |
 | Reviewed files | 3 |
 | Unreviewed open items | 0 |
 | Archived closed files | 0 |
