@@ -153,55 +153,56 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 09:49 UTC
+Last dashboard update: Apr 30, 2026, 09:51 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4262 |
-| Open PRs | 3218 |
-| Open items total | 7480 |
-| Reviewed files | 7480 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 2752 |
+| Open issues | 4363 |
+| Open PRs | 3377 |
+| Open items total | 7740 |
+| Reviewed files | 7479 |
+| Unreviewed open items | 370 |
+| Due now by cadence | 3122 |
 | Proposed closes awaiting apply | 1 |
 | Work candidates awaiting promotion | 1186 |
 | Closed by Codex apply | 11044 |
 | Failed or stale reviews | 27 |
-| Archived closed files | 14928 |
+| Archived closed files | 14929 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6553 | 6553 | 0 | 2677 | 1 | 1140 | 11036 | Apr 30, 2026, 09:45 UTC | Apr 30, 2026, 09:43 UTC | 728 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 924 | 924 | 0 | 72 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
-| [ClawSweeper](https://github.com/openclaw/clawsweeper) | 3 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6922 | 6552 | 370 | 3047 | 1 | 1140 | 11036 | Apr 30, 2026, 09:45 UTC | Apr 30, 2026, 09:50 UTC | 727 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 818 | 924 | 0 | 72 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
+| [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 30, 2026, 09:49 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25158840156) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 30, 2026, 09:51 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25158840156) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 09:45 UTC. Latest close: Apr 30, 2026, 09:43 UTC. Latest comment sync: Apr 30, 2026, 09:48 UTC.
+Latest review: Apr 30, 2026, 09:45 UTC. Latest close: Apr 30, 2026, 09:50 UTC. Latest comment sync: Apr 30, 2026, 09:48 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 13 | 0 | 13 | 0 | 1 | 356 | 1 |
-| Last hour | 544 | 6 | 538 | 5 | 19 | 728 | 1 |
+| Last 15 minutes | 12 | 0 | 12 | 0 | 2 | 350 | 1 |
+| Last hour | 540 | 6 | 534 | 5 | 19 | 727 | 1 |
 | Last 24 hours | 5195 | 273 | 4922 | 24 | 715 | 1610 | 24 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74972](https://github.com/openclaw/openclaw/pull/74972) | fix: yuanbao alias resolves to a catalog id that does not match the pinned npm package’s actu... | closed externally after review | Apr 30, 2026, 09:50 UTC | [records/openclaw-openclaw/closed/74972.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74972.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75006](https://github.com/openclaw/openclaw/pull/75006) | ci: shallow checkout OpenGrep PR scan | already closed before apply | Apr 30, 2026, 09:43 UTC | [records/openclaw-openclaw/closed/75006.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75006.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74997](https://github.com/openclaw/openclaw/pull/74997) | Add documentation note for technical fix | not actionable | Apr 30, 2026, 09:21 UTC | [records/openclaw-openclaw/closed/74997.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74997.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74991](https://github.com/openclaw/openclaw/issues/74991) | Bug: conversation-logger timestamp timezone error - local time incorrectly marked as UTC | cannot reproduce on current main | Apr 30, 2026, 09:21 UTC | [records/openclaw-openclaw/closed/74991.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74991.md) |
@@ -211,7 +212,6 @@ Latest review: Apr 30, 2026, 09:45 UTC. Latest close: Apr 30, 2026, 09:43 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#25789](https://github.com/openclaw/openclaw/pull/25789) | tools(exec): add configurable approval timeout | closed externally after review | Apr 30, 2026, 09:17 UTC | [records/openclaw-openclaw/closed/25789.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/25789.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#34581](https://github.com/openclaw/openclaw/pull/34581) | fix(msteams): handle invalid JSON escape sequences in Bot Framework activities | closed externally after review | Apr 30, 2026, 09:17 UTC | [records/openclaw-openclaw/closed/34581.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/34581.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#53565](https://github.com/openclaw/openclaw/pull/53565) | fix(sandbox): allow cron tool in sandbox mode (gateway-routed, not containerized) | closed externally after review | Apr 30, 2026, 09:17 UTC | [records/openclaw-openclaw/closed/53565.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/53565.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#48914](https://github.com/openclaw/openclaw/pull/48914) | Fix false warning for core tool groups in allowlists | closed externally after review | Apr 30, 2026, 09:17 UTC | [records/openclaw-openclaw/closed/48914.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/48914.md) |
 
 ### Work Candidates Across Repos
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 09:45 UTC. Latest close: Apr 30, 2026, 09:43 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 09:49 UTC
+Updated: Apr 30, 2026, 09:51 UTC
 
-State: Planning review
+State: Review in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158840156](https://github.com/openclaw/clawsweeper/actions/runs/25158840156)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -280,12 +280,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158840156](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3372 |
-| Open PRs | 3181 |
-| Open items total | 6553 |
-| Reviewed files | 6553 |
-| Unreviewed open items | 0 |
-| Archived closed files | 14902 |
+| Open issues | 3562 |
+| Open PRs | 3360 |
+| Open items total | 6922 |
+| Reviewed files | 6552 |
+| Unreviewed open items | 370 |
+| Archived closed files | 14903 |
 
 #### Review Outcomes
 
@@ -293,9 +293,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158840156](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3369 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3170 |
+| Fresh reviewed PRs in the last 7 days | 3169 |
 | Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6539 |
+| Fresh verified reviews in the last 7 days | 6538 |
 | Proposed closes awaiting apply | 1 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1140 |
 | Closed by Codex apply | 11036 |
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158840156](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 101/1203 current (1102 due, 8.4%) |
-| Hourly hot item cadence (<7d) | 101/1203 current (1102 due, 8.4%) |
+| Hourly cadence coverage | 100/1202 current (1102 due, 8.3%) |
+| Hourly hot item cadence (<7d) | 100/1202 current (1102 due, 8.3%) |
 | Daily cadence coverage | 1989/3561 current (1572 due, 55.9%) |
 | Daily PR cadence | 1311/2478 current (1167 due, 52.9%) |
 | Daily new issue cadence (<30d) | 678/1083 current (405 due, 62.6%) |
 | Weekly older issue cadence | 1786/1789 current (3 due, 99.8%) |
-| Due now by cadence | 2677 |
+| Due now by cadence | 3047 |
 
 ### Audit Health
 
@@ -347,18 +347,19 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 09:45 UTC. Latest close: Apr 30, 2026, 09:43 UTC. Latest comment sync: Apr 30, 2026, 09:48 UTC.
+Latest review: Apr 30, 2026, 09:45 UTC. Latest close: Apr 30, 2026, 09:50 UTC. Latest comment sync: Apr 30, 2026, 09:48 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 13 | 0 | 13 | 0 | 1 | 356 | 1 |
-| Last hour | 544 | 6 | 538 | 5 | 19 | 728 | 1 |
+| Last 15 minutes | 12 | 0 | 12 | 0 | 2 | 350 | 1 |
+| Last hour | 540 | 6 | 534 | 5 | 19 | 727 | 1 |
 | Last 24 hours | 4266 | 273 | 3993 | 11 | 712 | 1207 | 24 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74972](https://github.com/openclaw/openclaw/pull/74972) | fix: yuanbao alias resolves to a catalog id that does not match the pinned npm package’s actu... | closed externally after review | Apr 30, 2026, 09:50 UTC | [records/openclaw-openclaw/closed/74972.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74972.md) |
 | [#75006](https://github.com/openclaw/openclaw/pull/75006) | ci: shallow checkout OpenGrep PR scan | already closed before apply | Apr 30, 2026, 09:43 UTC | [records/openclaw-openclaw/closed/75006.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75006.md) |
 | [#74997](https://github.com/openclaw/openclaw/pull/74997) | Add documentation note for technical fix | not actionable | Apr 30, 2026, 09:21 UTC | [records/openclaw-openclaw/closed/74997.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74997.md) |
 | [#74991](https://github.com/openclaw/openclaw/issues/74991) | Bug: conversation-logger timestamp timezone error - local time incorrectly marked as UTC | cannot reproduce on current main | Apr 30, 2026, 09:21 UTC | [records/openclaw-openclaw/closed/74991.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74991.md) |
@@ -368,7 +369,6 @@ Latest review: Apr 30, 2026, 09:45 UTC. Latest close: Apr 30, 2026, 09:43 UTC. L
 | [#25789](https://github.com/openclaw/openclaw/pull/25789) | tools(exec): add configurable approval timeout | closed externally after review | Apr 30, 2026, 09:17 UTC | [records/openclaw-openclaw/closed/25789.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/25789.md) |
 | [#34581](https://github.com/openclaw/openclaw/pull/34581) | fix(msteams): handle invalid JSON escape sequences in Bot Framework activities | closed externally after review | Apr 30, 2026, 09:17 UTC | [records/openclaw-openclaw/closed/34581.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/34581.md) |
 | [#53565](https://github.com/openclaw/openclaw/pull/53565) | fix(sandbox): allow cron tool in sandbox mode (gateway-routed, not containerized) | closed externally after review | Apr 30, 2026, 09:17 UTC | [records/openclaw-openclaw/closed/53565.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/53565.md) |
-| [#48914](https://github.com/openclaw/openclaw/pull/48914) | Fix false warning for core tool groups in allowlists | closed externally after review | Apr 30, 2026, 09:17 UTC | [records/openclaw-openclaw/closed/48914.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/48914.md) |
 
 #### Work Candidates
 
@@ -427,9 +427,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25135463730](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues | 890 |
-| Open PRs | 34 |
-| Open items total | 924 |
+| Open issues | 801 |
+| Open PRs | 17 |
+| Open items total | 818 |
 | Reviewed files | 924 |
 | Unreviewed open items | 0 |
 | Archived closed files | 26 |
@@ -454,8 +454,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25135463730](https://
 | --- | ---: |
 | Hourly cadence coverage | 0/60 current (60 due, 0%) |
 | Hourly hot item cadence (<7d) | 0/60 current (60 due, 0%) |
-| Daily cadence coverage | 194/199 current (5 due, 97.5%) |
-| Daily PR cadence | 21/21 current (0 due, 100%) |
+| Daily cadence coverage | 190/195 current (5 due, 97.4%) |
+| Daily PR cadence | 17/17 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 173/178 current (5 due, 97.2%) |
 | Weekly older issue cadence | 658/665 current (7 due, 98.9%) |
 | Due now by cadence | 72 |
@@ -572,8 +572,8 @@ No workflow status has been published yet.
 | --- | ---: |
 | Target repository | [openclaw/clawsweeper](https://github.com/openclaw/clawsweeper) |
 | Open issues | 0 |
-| Open PRs | 3 |
-| Open items total | 3 |
+| Open PRs | 0 |
+| Open items total | 0 |
 | Reviewed files | 3 |
 | Unreviewed open items | 0 |
 | Archived closed files | 0 |
