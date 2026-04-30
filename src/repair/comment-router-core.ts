@@ -102,7 +102,7 @@ ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop
 
 - If ClawSweeper emits an explicit repair marker, requests changes, or finds failing checks/rebase work, and the PR branch is safe to update, emit a fix artifact with \`repair_strategy: "repair_contributor_branch"\` and \`source_prs: ["${prUrl}"]\`.
 - If the PR branch cannot be safely updated, emit a narrow credited replacement only when the artifact can preserve the original contributor credit; otherwise return \`needs_human\`.
-- For user-facing OpenClaw \`fix\`, \`feat\`, or \`perf\` changes, inspect the changelog policy. If a changelog is required, emit \`changelog_required: true\`, include \`CHANGELOG.md\` in \`likely_files\`, and tell the Codex edit pass to add or repair the \`CHANGELOG.md\` entry with contributor attribution before declaring the branch merge-ready.
+- For user-facing OpenClaw \`fix\`, \`feat\`, or \`perf\` changes, inspect the changelog policy. If a changelog is required, emit \`changelog_required: true\`, include \`CHANGELOG.md\` in \`likely_files\`, and tell the Codex edit pass to add or repair the \`CHANGELOG.md\` entry with allowed contributor attribution before declaring the branch merge-ready. Never add forbidden \`Thanks @codex\`, \`Thanks @openclaw\`, or \`Thanks @steipete\`; if only those authors are known, keep the required changelog entry without a \`Thanks @...\` line and preserve credit in PR history/source links.
 - ${finalMergeLine}
 - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.
 `;

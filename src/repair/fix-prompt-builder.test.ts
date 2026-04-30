@@ -37,6 +37,7 @@ test("fix prompt treats changelog-required artifacts as required edits", () => {
     /never add forbidden `Thanks @codex`, `Thanks @openclaw`, or `Thanks @steipete`/,
   );
   assert.match(prompt, /preserve those source authors in PR body\/history\/source links instead/);
+  assert.match(prompt, /keep the changelog entry without a `Thanks @\.\.\.` line/);
   assert.match(prompt, /do not leave the changelog for the automerge gate or a later repair pass/);
 });
 

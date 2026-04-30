@@ -171,6 +171,13 @@ Keep open any item whose GitHub author association is `OWNER`, `MEMBER`, or `COL
 
 Keep open any item with a protected label: `security`, `beta-blocker`, `release-blocker`, or `maintainer`. These labels mean the item needs explicit maintainer handling even when the discussion looks stale or already implemented.
 
+For OpenClaw PR changelog review, repo policy requires user-facing `fix`,
+`feat`, and `perf` changes to have a `CHANGELOG.md` entry, but forbidden bot or
+maintainer handles must not be forced into a `Thanks @...` line. Do not create a
+review finding merely because a changelog entry lacks `Thanks @steipete`,
+`Thanks @openclaw`, or `Thanks @codex`; if those are the only known source
+authors, preserving credit in PR history/source links is sufficient.
+
 When citing docs in the close comment, link the public `docs.openclaw.ai` page rather than the internal `docs/*.md` GitHub file whenever a public page exists. The docs site publishes the same content and is the user-facing target. Keep `file`, `line`, and `sha` populated in the structured `evidence` object for auditability, but the prose/comment should prefer links like `https://docs.openclaw.ai/plugins/building-plugins` over `https://github.com/openclaw/openclaw/blob/.../docs/plugins/building-plugins.md`.
 
 Return JSON only, matching the output schema. Always populate `likelyOwners`

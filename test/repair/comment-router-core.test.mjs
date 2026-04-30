@@ -147,6 +147,8 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
   assert.match(job.body, /emit `changelog_required: true`/);
   assert.match(job.body, /include `CHANGELOG\.md` in `likely_files`/);
   assert.match(job.body, /tell the Codex edit pass to add or repair/);
+  assert.match(job.body, /Never add forbidden `Thanks @codex`/);
+  assert.match(job.body, /without a `Thanks @\.\.\.` line/);
   assert.match(job.body, /router owns final merge/);
 });
 
