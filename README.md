@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 23:53 UTC
+Last dashboard update: Apr 30, 2026, 23:54 UTC
 
 ### Fleet
 
@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 23:53 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 23:53 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25195150626) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 23:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25195150626) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 23:52 UTC. Latest close: Apr 30, 2026, 23:51 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 23:53 UTC
+Updated: Apr 30, 2026, 23:54 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=71227.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25195150626](https://github.com/openclaw/clawsweeper/actions/runs/25195150626)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
