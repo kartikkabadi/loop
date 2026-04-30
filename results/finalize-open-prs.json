@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T04:20:56.399Z",
-  "count": 24,
+  "generated_at": "2026-04-30T04:24:40.274Z",
+  "count": 25,
   "summary": {
-    "open_prs": 24,
+    "open_prs": 25,
     "ready_candidates": 0,
     "security_hold": 0,
     "needs_rebase": 8,
-    "mergeability_unknown": 0,
+    "mergeability_unknown": 1,
     "needs_checks": 11,
     "needs_review": 0,
-    "needs_merge_preflight": 24,
+    "needs_merge_preflight": 25,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -27,31 +27,43 @@
   },
   "prs": [
     {
-      "number": 74830,
-      "title": "fix: abort/wait semantics this commit is trying to stabilize regression",
-      "url": "https://github.com/openclaw/openclaw/pull/74830",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-1f1f70a23f86",
-      "head_sha": "599447862d2382741ddc9cf1b214af25916b7d5d",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-1f1f70a23f86",
-      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-1f1f70a23f86.md",
-      "updated_at": "2026-04-30T04:15:05Z",
+      "number": 74836,
+      "title": "fix: guard is tested against a direct mock shape, but the real openclaw doctor call path drop...",
+      "url": "https://github.com/openclaw/openclaw/pull/74836",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-45082aaed3d0",
+      "head_sha": "da8ebeef71e42652bdf0b01bbcfdf05a12da5f82",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-45082aaed3d0",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-45082aaed3d0.md",
+      "updated_at": "2026-04-30T04:20:42Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 89,
+        "total": 82,
         "counts": {
           "CANCELLED": 3,
-          "IN_PROGRESS": 4,
-          "SKIPPED": 12,
-          "SUCCESS": 69,
+          "SKIPPED": 11,
+          "SUCCESS": 53,
+          "IN_PROGRESS": 13,
+          "FAILURE": 1,
           "NEUTRAL": 1
         },
         "blockers": [
-          "Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-          "CI / checks-node-agentic-control-plane:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+          "CodeQL / Security High (network-ssrf-boundary):IN_PROGRESS",
+          "CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS",
+          "CI / build-artifacts:IN_PROGRESS",
+          "CI / checks-fast-contracts-channels-a:IN_PROGRESS",
+          "CI / checks-fast-contracts-channels-c:IN_PROGRESS",
+          "CI / checks-node-core-fast-support:IN_PROGRESS",
+          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
+          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
+          "CI / checks-node-agentic-control-plane:FAILURE",
+          "CI / checks-node-agentic-commands-status-tools:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
+          "CI / check-additional-extension-bundled:IN_PROGRESS",
+          "CI / check-additional-extension-package-boundary:IN_PROGRESS"
         ]
       },
       "review_threads": {
@@ -63,6 +75,78 @@
       "review_bots": {
         "count": 0,
         "latest": []
+      },
+      "latest_record": {
+        "run_id": "25147029786",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25147029786",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-45082aaed3d0",
+        "published_at": "2026-04-30T04:20:38.148Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74836",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CodeQL / Security High (network-ssrf-boundary):IN_PROGRESS; CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74830,
+      "title": "fix: abort/wait semantics this commit is trying to stabilize regression",
+      "url": "https://github.com/openclaw/openclaw/pull/74830",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-1f1f70a23f86",
+      "head_sha": "599447862d2382741ddc9cf1b214af25916b7d5d",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-1f1f70a23f86",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-1f1f70a23f86.md",
+      "updated_at": "2026-04-30T04:21:15Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 91,
+        "counts": {
+          "CANCELLED": 4,
+          "IN_PROGRESS": 1,
+          "SKIPPED": 12,
+          "SUCCESS": 73,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74830#issuecomment-4349657866",
+            "submitted_at": "2026-04-30T04:20:04Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25146667745",
@@ -88,7 +172,7 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS; CI / checks-node-agentic-control-plane:IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
@@ -101,22 +185,19 @@
       "head_sha": "ecd378dc93840a128f665e3c50ff70ed0bf5426a",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-56155e5048a2",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-56155e5048a2.md",
-      "updated_at": "2026-04-30T04:15:02Z",
+      "updated_at": "2026-04-30T04:21:19Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "merge_state_status": "CLEAN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 82,
+        "total": 84,
         "counts": {
-          "CANCELLED": 2,
-          "IN_PROGRESS": 2,
+          "CANCELLED": 3,
           "SKIPPED": 14,
-          "SUCCESS": 64
+          "SUCCESS": 67
         },
-        "blockers": [
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -125,8 +206,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74829#issuecomment-4349657028",
+            "submitted_at": "2026-04-30T04:19:52Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25146885048",
@@ -151,11 +239,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 74828,
@@ -165,23 +251,22 @@
       "head_sha": "99a6a311a9aa9ead957658af27f28538e8245ed9",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-d80a8eb3adb6",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-d80a8eb3adb6.md",
-      "updated_at": "2026-04-30T04:14:38Z",
+      "updated_at": "2026-04-30T04:19:04Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 90,
+        "total": 91,
         "counts": {
           "CANCELLED": 3,
-          "IN_PROGRESS": 2,
+          "IN_PROGRESS": 1,
           "SKIPPED": 13,
-          "SUCCESS": 71,
+          "SUCCESS": 73,
           "NEUTRAL": 1
         },
         "blockers": [
-          "Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+          "Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS"
         ]
       },
       "review_threads": {
@@ -191,8 +276,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74828#issuecomment-4349654459",
+            "submitted_at": "2026-04-30T04:19:04Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25146726523",
@@ -218,7 +310,7 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
@@ -237,17 +329,16 @@
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 87,
+        "total": 88,
         "counts": {
           "CANCELLED": 3,
-          "IN_PROGRESS": 2,
+          "IN_PROGRESS": 1,
           "SKIPPED": 12,
-          "SUCCESS": 69,
+          "SUCCESS": 71,
           "NEUTRAL": 1
         },
         "blockers": [
-          "OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+          "OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS"
         ]
       },
       "review_threads": {
@@ -291,7 +382,7 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
@@ -1542,8 +1633,8 @@
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-2d885a240272",
       "job_path": null,
       "updated_at": "2026-04-29T21:11:49Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "mergeable": "UNKNOWN",
+      "merge_state_status": "UNKNOWN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
@@ -1581,12 +1672,13 @@
       },
       "latest_record": null,
       "blockers": [
-        "needs_merge_state:UNSTABLE",
+        "mergeability_unknown",
+        "merge_state_unknown",
         "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-agentic-control-plane:FAILURE; CI / checks-node-channels:FAILURE",
         "needs_merge_preflight",
         "needs_result_backfill"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "refresh exact PR mergeability before deciding; do not merge while GitHub reports unknown"
     },
     {
       "number": 74521,
