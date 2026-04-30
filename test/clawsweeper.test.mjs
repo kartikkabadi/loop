@@ -15,6 +15,7 @@ import {
   dashboardClosedAt,
   formatRecentClosedRows,
   ghRetryKind,
+  hotIntakeRecencyMs,
   isCodexReviewCommentBody,
   isGitHubNotFoundError,
   isGitHubRequiresAuthenticationError,
@@ -621,6 +622,33 @@ test("hot issue priority is protected from policy mismatch backlog", () => {
         "current",
       ),
     true,
+  );
+});
+
+test("hot intake recency prefers newly updated or created issues", () => {
+  assert.equal(
+    hotIntakeRecencyMs(
+      item({
+        createdAt: "2026-04-29T21:28:12Z",
+        updatedAt: "2026-04-29T21:28:12Z",
+      }),
+    ) >
+      hotIntakeRecencyMs(
+        item({
+          createdAt: "2026-04-27T02:40:44Z",
+          updatedAt: "2026-04-27T02:40:44Z",
+        }),
+      ),
+    true,
+  );
+  assert.equal(
+    hotIntakeRecencyMs(
+      item({
+        createdAt: "2026-04-27T02:40:44Z",
+        updatedAt: "2026-04-29T22:30:00Z",
+      }),
+    ),
+    Date.parse("2026-04-29T22:30:00Z"),
   );
 });
 

@@ -2020,6 +2020,23 @@ function compareDueCandidates(left: DueCandidate, right: DueCandidate): number {
   );
 }
 
+function compareHotIntakeDueCandidates(left: DueCandidate, right: DueCandidate): number {
+  return (
+    left.priority - right.priority ||
+    hotIntakeRecencyMs(right.item) - hotIntakeRecencyMs(left.item) ||
+    right.item.number - left.item.number
+  );
+}
+
+export function hotIntakeRecencyMs(item: Pick<Item, "createdAt" | "updatedAt">): number {
+  const updatedAt = Date.parse(item.updatedAt);
+  const createdAt = Date.parse(item.createdAt);
+  return Math.max(
+    Number.isFinite(updatedAt) ? updatedAt : 0,
+    Number.isFinite(createdAt) ? createdAt : 0,
+  );
+}
+
 function fetchOpenItemPage(
   page: number,
   sort: "created" | "updated" = "created",
@@ -2322,7 +2339,7 @@ function selectCandidates(options: {
       if (candidate) due.push(candidate);
     }
     const candidates = due
-      .sort(compareDueCandidates)
+      .sort(compareHotIntakeDueCandidates)
       .slice(0, options.batchSize)
       .map(({ item }) => item);
     return { candidates, scannedPages: pagesScanned };
@@ -2412,7 +2429,7 @@ function planCandidates(options: {
       if (candidate) due.push(candidate);
     }
     const candidates = due
-      .sort(compareDueCandidates)
+      .sort(compareHotIntakeDueCandidates)
       .slice(0, limit)
       .map(({ item }) => item);
     const shards = Array.from(
