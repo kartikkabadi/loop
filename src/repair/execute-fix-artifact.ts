@@ -35,6 +35,10 @@ import {
 import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
 import { compactText } from "./text-utils.js";
 import {
+  checkoutSourcePullRequestHead,
+  firstTargetSourcePullRequest,
+} from "./source-pr-checkout.js";
+import {
   prepareTargetToolchain,
   preflightTargetValidationPlan,
   runAllowedValidationCommands,
@@ -603,7 +607,12 @@ function executeReplacementBranch({
     };
   }
   run("git", ["fetch", "origin", baseBranch], { cwd: targetDir });
-  const branchState = checkoutRecoverableReplacementBranch({ targetDir, branch, baseBranch });
+  const branchState = checkoutRecoverableReplacementBranch({
+    targetDir,
+    branch,
+    baseBranch,
+    fixArtifact,
+  });
   prepareTargetToolchain(targetDir, targetValidationOptions);
 
   if (!dryRun) ghAuthSetupGit(targetDir);
@@ -1515,13 +1524,36 @@ function replacementBranchName(clusterId: string) {
   return safeBranchName(`clawsweeper/${clusterId}`);
 }
 
-function checkoutRecoverableReplacementBranch({ targetDir, branch, baseBranch }: LooseRecord) {
+function checkoutRecoverableReplacementBranch({
+  targetDir,
+  branch,
+  baseBranch,
+  fixArtifact,
+}: LooseRecord) {
   if (remoteBranchExists({ targetDir, branch })) {
     run("git", ["fetch", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`], {
       cwd: targetDir,
     });
     run("git", ["checkout", "-B", branch, `origin/${branch}`], { cwd: targetDir });
     return { resumed: true, branch };
+  }
+  const sourcePr = firstTargetSourcePullRequest(fixArtifact.source_prs ?? [], result.repo);
+  if (sourcePr) {
+    const pull = fetchPullRequest(result.repo, sourcePr.number);
+    if (pull.state !== "open") throw new Error(`source PR #${sourcePr.number} is ${pull.state}`);
+    const checkout = checkoutSourcePullRequestHead({
+      targetDir,
+      repo: result.repo,
+      branch,
+      sourcePr,
+      pull,
+    });
+    return {
+      resumed: false,
+      branch,
+      source_pr: checkout.sourcePr.url,
+      source_head_sha: checkout.sourceHeadSha,
+    };
   }
   run("git", ["checkout", "-B", branch, `origin/${baseBranch}`], { cwd: targetDir });
   return { resumed: false, branch };
