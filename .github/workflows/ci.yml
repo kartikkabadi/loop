@@ -6,8 +6,12 @@ on:
       - main
     paths-ignore:
       - "README.md"
+      - "apply-report.json"
+      - "repair-apply-report.json"
+      - "docs/repair/README.md"
       - "jobs/**"
       - "records/**"
+      - "results/**"
   pull_request:
   workflow_dispatch:
 
