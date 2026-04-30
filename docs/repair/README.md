@@ -45,28 +45,28 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 29, 2026, 23:54 UTC
+Last dashboard update: Apr 30, 2026, 00:18 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
 
-Scope: 279 active latest cluster reports. 1 policy-archived cluster(s) are excluded from health stats; run attempts are tracked as audit history only.
+Scope: 280 active latest cluster reports. 1 policy-archived cluster(s) are excluded from health stats; run attempts are tracked as audit history only.
 
 | Metric | Count | Rate |
 | --- | ---: | ---: |
-| Latest clusters reviewed | 279 | 100% |
+| Latest clusters reviewed | 280 | 100% |
 | Policy-archived clusters | 1 | audit |
-| Clean completed clusters | 101 | 36.2% |
+| Clean completed clusters | 102 | 36.4% |
 | Needs-human clusters | 40 | 14.3% |
-| Latest successful clusters | 254 | 91.0% |
+| Latest successful clusters | 255 | 91.1% |
 | Latest failed clusters | 4 | 1.4% |
 | Latest cancelled clusters | 0 | 0.0% |
-| Run attempts archived | 523 | audit |
-| Fix action attempts | 193 | audit |
+| Run attempts archived | 525 | audit |
+| Fix action attempts | 194 | audit |
 | Fix actions executed | 1 | 0.5% |
-| Fix actions failed | 35 | 18.1% |
-| Fix actions blocked | 52 | 26.9% |
-| Latest clusters with fix failures | 46 | 16.5% |
+| Fix actions failed | 35 | 18.0% |
+| Fix actions blocked | 53 | 27.3% |
+| Latest clusters with fix failures | 46 | 16.4% |
 | Distinct PRs touched | 851 | 100% |
 | Open PRs tracked | 263 | 30.9% |
 | Closed unmerged PRs tracked | 475 | 55.8% |
