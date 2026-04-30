@@ -39,6 +39,7 @@ import {
   safeOutputTail,
   sameAuthorCounterpartApplyReason,
   sanitizePublicSelfReferences,
+  selectDueCandidateNumbersForTest,
   shardItemNumbers,
   shouldSyncReviewComment,
   shouldReviewItem,
@@ -513,6 +514,57 @@ test("hot new items review hourly before falling back to daily or weekly cadence
   );
 });
 
+test("scheduler ignores ClawSweeper-owned updated_at churn after review", () => {
+  const reviewedAt = "2026-04-30T12:52:57Z";
+  const review = {
+    path: "items/123.md",
+    markdown: "",
+    reviewedAt,
+    itemUpdatedAt: "2026-04-30T11:17:05Z",
+    decision: "keep_open",
+    reviewStatus: "complete",
+    reviewPolicy: "current",
+  };
+  const now = Date.parse("2026-04-30T14:10:00Z");
+
+  assert.equal(
+    shouldReviewItem(
+      item({
+        createdAt: "2026-03-01T11:12:04Z",
+        updatedAt: "2026-04-30T12:52:56Z",
+      }),
+      review,
+      now,
+      "current",
+    ),
+    false,
+  );
+  assert.equal(
+    shouldReviewItem(
+      item({
+        createdAt: "2026-03-01T11:12:04Z",
+        updatedAt: "2026-04-30T13:05:00Z",
+      }),
+      { ...review, reviewCommentSyncedAt: "2026-04-30T13:04:59Z" },
+      now,
+      "current",
+    ),
+    true,
+  );
+  assert.equal(
+    shouldReviewItem(
+      item({
+        createdAt: "2026-03-01T11:12:04Z",
+        updatedAt: "2026-04-30T13:04:58Z",
+      }),
+      { ...review, reviewCommentSyncedAt: "2026-04-30T13:04:59Z" },
+      now,
+      "current",
+    ),
+    false,
+  );
+});
+
 test("hot new item priority is protected from older activity churn", () => {
   const now = Date.parse("2026-04-30T12:00:00Z");
   const review = (reviewedAt, itemUpdatedAt) => ({
@@ -623,6 +675,48 @@ test("hot issue priority is protected from policy mismatch backlog", () => {
       ),
     true,
   );
+});
+
+test("normal scheduler reserves throughput for PR and older buckets", () => {
+  const due = [];
+  for (let number = 1; number <= 12; number += 1) {
+    due.push({
+      item: item({ number, kind: "issue", createdAt: "2026-04-30T00:00:00Z" }),
+      bucket: "hot_issue",
+      priority: 0,
+      nextDueAt: number,
+    });
+  }
+  due.push(
+    {
+      item: item({
+        number: 101,
+        kind: "pull_request",
+        createdAt: "2026-04-30T00:00:00Z",
+      }),
+      bucket: "hot_pull_request",
+      priority: 1,
+      nextDueAt: 1,
+    },
+    {
+      item: item({
+        number: 201,
+        kind: "pull_request",
+        createdAt: "2026-03-01T00:00:00Z",
+      }),
+      bucket: "daily_pull_request",
+      priority: 3,
+      nextDueAt: 1,
+    },
+    {
+      item: item({ number: 301, kind: "issue", createdAt: "2026-03-01T00:00:00Z" }),
+      bucket: "weekly_issue",
+      priority: 6,
+      nextDueAt: 1,
+    },
+  );
+
+  assert.deepEqual(selectDueCandidateNumbersForTest(due, 8), [1, 2, 3, 4, 101, 201, 301, 5]);
 });
 
 test("hot intake recency prefers newly updated or created issues", () => {

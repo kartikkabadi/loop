@@ -66,7 +66,7 @@ on:
       batch_size:
         description: "Items per worker job"
         required: false
-        default: "5"
+        default: "4"
       codex_timeout_ms:
         description: "Per-item Codex timeout in milliseconds"
         required: false
@@ -74,7 +74,7 @@ on:
       shard_count:
         description: "Parallel shards"
         required: false
-        default: "100"
+        default: "180"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -435,11 +435,11 @@ jobs:
             max_pages="1"
           elif [ "$hot_intake" = "true" ]; then
             batch_size="1"
-            shard_count="20"
-            max_pages="2"
+            shard_count="48"
+            max_pages="5"
           else
-            batch_size="${{ github.event.inputs.batch_size || '5' }}"
-            shard_count="${{ github.event.inputs.shard_count || '100' }}"
+            batch_size="${{ github.event.inputs.batch_size || '4' }}"
+            shard_count="${{ github.event.inputs.shard_count || '180' }}"
             max_pages="250"
           fi
           {
@@ -755,13 +755,14 @@ jobs:
             --rebase-strategy theirs
 
       - name: Continue sweep
-        if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
+        if: ${{ success() && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh workflow run sweep.yml \
             --ref main \
             -f apply_existing=false \
+            -f hot_intake="${{ needs.plan.outputs.hot_intake }}" \
             -f target_repo="${{ needs.plan.outputs.target_repo }}" \
             -f batch_size="${{ needs.plan.outputs.batch_size }}" \
             -f shard_count="${{ needs.plan.outputs.shard_count }}" \

@@ -142,6 +142,7 @@ interface ExistingReview {
   markdown: string;
   reviewedAt: string | undefined;
   itemUpdatedAt: string | undefined;
+  reviewCommentSyncedAt: string | undefined;
   decision: string | undefined;
   reviewStatus: string | undefined;
   reviewPolicy: string | undefined;
@@ -408,11 +409,21 @@ interface PlanShard {
   itemNumbers: number[];
 }
 
+type SchedulerBucket =
+  | "hot_issue"
+  | "hot_pull_request"
+  | "activity"
+  | "daily_pull_request"
+  | "recent_issue"
+  | "weekly_issue";
+
 interface DueCandidate {
   item: Item;
   review: ExistingReview | null;
   priority: number;
   reviewedAt: number;
+  nextDueAt: number;
+  bucket: SchedulerBucket;
 }
 
 interface ApplyResult {
@@ -1877,10 +1888,51 @@ function existingReview(
     markdown,
     reviewedAt: frontMatterValue(markdown, "reviewed_at"),
     itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
+    reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
     decision: frontMatterValue(markdown, "decision"),
     reviewStatus: effectiveReviewStatus(markdown),
     reviewPolicy: frontMatterValue(markdown, "review_policy"),
   };
+}
+
+interface ExistingReviewIndex {
+  byKey: Map<string, ExistingReview>;
+}
+
+function existingReviewKey(repo: string, number: number): string {
+  return `${repo}#${number}`;
+}
+
+function buildExistingReviewIndex(itemsDir: string): ExistingReviewIndex {
+  const byKey = new Map<string, ExistingReview>();
+  for (const file of markdownFiles(itemsDir)) {
+    const path = join(itemsDir, file);
+    const markdown = readFileSync(path, "utf8");
+    const repo = markdownRepository(markdown, path);
+    const number = numberForMarkdownFile(file);
+    byKey.set(existingReviewKey(repo, number), {
+      path,
+      markdown,
+      reviewedAt: frontMatterValue(markdown, "reviewed_at"),
+      itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
+      reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+      decision: frontMatterValue(markdown, "decision"),
+      reviewStatus: effectiveReviewStatus(markdown),
+      reviewPolicy: frontMatterValue(markdown, "review_policy"),
+    });
+  }
+  return { byKey };
+}
+
+function indexedExistingReview(
+  item: Pick<Item, "number" | "repo">,
+  itemsDir: string,
+  reviewIndex?: ExistingReviewIndex,
+): ExistingReview | null {
+  return (
+    reviewIndex?.byKey.get(existingReviewKey(item.repo, item.number)) ??
+    existingReview(item, itemsDir)
+  );
 }
 
 function inferReviewStatus(markdown: string): string {
@@ -1938,9 +1990,28 @@ function reviewedAtMs(review: ExistingReview | null): number | null {
 
 function hasActivitySinceReview(item: Item, review: ExistingReview | null): boolean {
   if (!review) return false;
-  if (review.itemUpdatedAt) return item.updatedAt !== review.itemUpdatedAt;
-  const reviewedAt = reviewedAtMs(review);
   const updatedAt = Date.parse(item.updatedAt);
+  const reviewedAt = reviewedAtMs(review);
+  const reviewCommentSyncedAt = timestampMs(review.reviewCommentSyncedAt);
+  if (review.itemUpdatedAt) {
+    if (item.updatedAt === review.itemUpdatedAt) return false;
+    if (Number.isFinite(updatedAt) && reviewedAt !== null && updatedAt <= reviewedAt) return false;
+    if (
+      Number.isFinite(updatedAt) &&
+      reviewCommentSyncedAt !== null &&
+      updatedAt <= reviewCommentSyncedAt
+    ) {
+      return false;
+    }
+    return true;
+  }
+  if (
+    Number.isFinite(updatedAt) &&
+    reviewCommentSyncedAt !== null &&
+    updatedAt <= reviewCommentSyncedAt
+  ) {
+    return false;
+  }
   return reviewedAt !== null && Number.isFinite(updatedAt) && updatedAt > reviewedAt;
 }
 
@@ -1987,13 +2058,42 @@ export function reviewPriority(
   reviewPolicy?: string,
 ): number {
   if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now) && item.kind === "issue") return 0;
-  if (hasReviewPolicyMismatch(review, reviewPolicy)) return 1;
-  if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now)) return 2;
-  if (hasActivitySinceReview(item, review)) return 3;
-  if (item.kind === "pull_request") return 4;
+  if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now)) return 1;
+  if (hasActivitySinceReview(item, review)) return 2;
+  if (item.kind === "pull_request") return 3;
   const createdAt = Date.parse(item.createdAt);
-  if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) return 5;
+  if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) return 4;
+  if (hasReviewPolicyMismatch(review, reviewPolicy)) return 5;
   return 6;
+}
+
+function schedulerBucket(
+  item: Item,
+  review: ExistingReview | null,
+  now = Date.now(),
+): SchedulerBucket {
+  if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now)) {
+    return item.kind === "issue" ? "hot_issue" : "hot_pull_request";
+  }
+  if (hasActivitySinceReview(item, review)) return "activity";
+  if (item.kind === "pull_request") return "daily_pull_request";
+  const createdAt = Date.parse(item.createdAt);
+  if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) {
+    return "recent_issue";
+  }
+  return "weekly_issue";
+}
+
+function nextReviewDueAtMs(
+  item: Item,
+  review: ExistingReview | null,
+  now = Date.now(),
+  reviewPolicy?: string,
+): number {
+  if (hasReviewPolicyMismatch(review, reviewPolicy)) return 0;
+  const reviewedAt = reviewedAtMs(review);
+  if (reviewedAt === null) return 0;
+  return reviewedAt + reviewCadenceMs(item, review, now);
 }
 
 function dueCandidate(
@@ -2001,23 +2101,96 @@ function dueCandidate(
   itemsDir: string,
   now = Date.now(),
   reviewPolicy?: string,
+  reviewIndex?: ExistingReviewIndex,
 ): DueCandidate | null {
-  const review = existingReview(item, itemsDir);
+  const review = indexedExistingReview(item, itemsDir, reviewIndex);
   if (!shouldReviewItem(item, review, now, reviewPolicy)) return null;
   return {
     item,
     review,
     priority: reviewPriority(item, review, now, reviewPolicy),
     reviewedAt: reviewedAtMs(review) ?? 0,
+    nextDueAt: nextReviewDueAtMs(item, review, now, reviewPolicy),
+    bucket: schedulerBucket(item, review, now),
   };
 }
 
 function compareDueCandidates(left: DueCandidate, right: DueCandidate): number {
   return (
     left.priority - right.priority ||
+    left.nextDueAt - right.nextDueAt ||
     left.reviewedAt - right.reviewedAt ||
     left.item.number - right.item.number
   );
+}
+
+const SCHEDULER_BUCKET_WEIGHTS: ReadonlyArray<readonly [SchedulerBucket, number]> = [
+  ["hot_issue", 4],
+  ["hot_pull_request", 2],
+  ["activity", 2],
+  ["daily_pull_request", 3],
+  ["recent_issue", 2],
+  ["weekly_issue", 1],
+];
+
+function selectDueCandidates(
+  due: DueCandidate[],
+  limit: number,
+  compare: (left: DueCandidate, right: DueCandidate) => number = compareDueCandidates,
+): DueCandidate[] {
+  const capacity = Math.max(0, limit);
+  if (capacity === 0) return [];
+  const buckets = new Map<SchedulerBucket, DueCandidate[]>();
+  for (const [bucket] of SCHEDULER_BUCKET_WEIGHTS) buckets.set(bucket, []);
+  for (const candidate of due) buckets.get(candidate.bucket)?.push(candidate);
+  for (const candidates of buckets.values()) candidates.sort(compare);
+
+  const selected: DueCandidate[] = [];
+  const selectedKeys = new Set<string>();
+  const take = (candidate: DueCandidate | undefined): void => {
+    if (!candidate || selected.length >= capacity) return;
+    const key = existingReviewKey(candidate.item.repo, candidate.item.number);
+    if (selectedKeys.has(key)) return;
+    selectedKeys.add(key);
+    selected.push(candidate);
+  };
+
+  while (selected.length < capacity) {
+    const before = selected.length;
+    for (const [bucket, weight] of SCHEDULER_BUCKET_WEIGHTS) {
+      const candidates = buckets.get(bucket);
+      if (!candidates?.length) continue;
+      for (let i = 0; i < weight && candidates.length && selected.length < capacity; i += 1) {
+        take(candidates.shift());
+      }
+    }
+    if (selected.length === before) break;
+  }
+
+  return selected;
+}
+
+export function selectDueCandidateNumbersForTest(
+  due: Array<{
+    item: Item;
+    bucket: SchedulerBucket;
+    priority?: number;
+    reviewedAt?: number;
+    nextDueAt?: number;
+  }>,
+  limit: number,
+): number[] {
+  return selectDueCandidates(
+    due.map((candidate) => ({
+      item: candidate.item,
+      review: null,
+      priority: candidate.priority ?? reviewPriority(candidate.item, null),
+      reviewedAt: candidate.reviewedAt ?? 0,
+      nextDueAt: candidate.nextDueAt ?? 0,
+      bucket: candidate.bucket,
+    })),
+    limit,
+  ).map((candidate) => candidate.item.number);
 }
 
 function compareHotIntakeDueCandidates(left: DueCandidate, right: DueCandidate): number {
@@ -2330,18 +2503,26 @@ function selectCandidates(options: {
   }
   const due: DueCandidate[] = [];
   const now = Date.now();
+  const reviewIndex = buildExistingReviewIndex(options.itemsDir);
   if (options.hotIntake) {
     const { items, pagesScanned } = fetchHotIntakeItems(options.maxPages);
     for (const item of items) {
       if (item.number % options.shardCount !== options.shardIndex) continue;
       if (!shouldPlanItem(item)) continue;
-      const candidate = dueCandidate(item, options.itemsDir, now, options.reviewPolicy);
+      const candidate = dueCandidate(
+        item,
+        options.itemsDir,
+        now,
+        options.reviewPolicy,
+        reviewIndex,
+      );
       if (candidate) due.push(candidate);
     }
-    const candidates = due
-      .sort(compareHotIntakeDueCandidates)
-      .slice(0, options.batchSize)
-      .map(({ item }) => item);
+    const candidates = selectDueCandidates(
+      due,
+      options.batchSize,
+      compareHotIntakeDueCandidates,
+    ).map(({ item }) => item);
     return { candidates, scannedPages: pagesScanned };
   }
   let scannedPages = 0;
@@ -2352,12 +2533,17 @@ function selectCandidates(options: {
     for (const item of items) {
       if (item.number % options.shardCount !== options.shardIndex) continue;
       if (!shouldPlanItem(item)) continue;
-      const candidate = dueCandidate(item, options.itemsDir, now, options.reviewPolicy);
+      const candidate = dueCandidate(
+        item,
+        options.itemsDir,
+        now,
+        options.reviewPolicy,
+        reviewIndex,
+      );
       if (candidate) due.push(candidate);
     }
   }
-  const candidates = due
-    .sort(compareDueCandidates)
+  const candidates = selectDueCandidates(due, options.batchSize)
     .slice(0, options.batchSize)
     .map(({ item }) => item);
   return { candidates, scannedPages };
@@ -2421,17 +2607,23 @@ function planCandidates(options: {
   const due: DueCandidate[] = [];
   const limit = Math.max(1, options.batchSize) * Math.max(1, options.shardCount);
   const now = Date.now();
+  const reviewIndex = buildExistingReviewIndex(options.itemsDir);
   if (options.hotIntake) {
     const { items, pagesScanned } = fetchHotIntakeItems(options.maxPages);
     for (const item of items) {
       if (!shouldPlanItem(item)) continue;
-      const candidate = dueCandidate(item, options.itemsDir, now, options.reviewPolicy);
+      const candidate = dueCandidate(
+        item,
+        options.itemsDir,
+        now,
+        options.reviewPolicy,
+        reviewIndex,
+      );
       if (candidate) due.push(candidate);
     }
-    const candidates = due
-      .sort(compareHotIntakeDueCandidates)
-      .slice(0, limit)
-      .map(({ item }) => item);
+    const candidates = selectDueCandidates(due, limit, compareHotIntakeDueCandidates).map(
+      ({ item }) => item,
+    );
     const shards = Array.from(
       { length: Math.max(1, Math.min(options.shardCount, candidates.length || 1)) },
       (_, shard) => ({ shard, itemNumbers: [] as number[] }),
@@ -2448,14 +2640,17 @@ function planCandidates(options: {
     if (items.length === 0) break;
     for (const item of items) {
       if (!shouldPlanItem(item)) continue;
-      const candidate = dueCandidate(item, options.itemsDir, now, options.reviewPolicy);
+      const candidate = dueCandidate(
+        item,
+        options.itemsDir,
+        now,
+        options.reviewPolicy,
+        reviewIndex,
+      );
       if (candidate) due.push(candidate);
     }
   }
-  const candidates = due
-    .sort(compareDueCandidates)
-    .slice(0, limit)
-    .map(({ item }) => item);
+  const candidates = selectDueCandidates(due, limit).map(({ item }) => item);
 
   return {
     shards: shardItemNumbers(
