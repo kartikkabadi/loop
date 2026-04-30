@@ -36,7 +36,7 @@ import {
 } from "./constants.js";
 import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
 import { compactText } from "./text-utils.js";
-import { replacementAutomationLabel } from "./replacement-labels.js";
+import { replacementLabelsToCopy } from "./replacement-labels.js";
 import {
   checkoutSourcePullRequestHead,
   fetchSourcePullRequestHead,
@@ -754,9 +754,9 @@ function labelReplacementPullRequest({ number, targetDir, fixArtifact }: LooseRe
     CLAWSWEEPER_LABEL_DESCRIPTION,
     targetDir,
   );
-  addLabel(result.repo, number, CLAWSWEEPER_LABEL, targetDir);
-  const automationLabel = replacementSourceAutomationLabel({ fixArtifact, targetDir });
-  if (automationLabel) addLabel(result.repo, number, automationLabel, targetDir);
+  for (const label of replacementSourceLabels({ fixArtifact, targetDir })) {
+    addLabel(result.repo, number, label, targetDir);
+  }
   if (job.frontmatter.source === "clawsweeper_commit" || job.frontmatter.commit_sha) {
     ensureLabel(
       result.repo,
@@ -769,14 +769,19 @@ function labelReplacementPullRequest({ number, targetDir, fixArtifact }: LooseRe
   }
 }
 
-function replacementSourceAutomationLabel({ fixArtifact, targetDir }: LooseRecord) {
+function replacementSourceLabels({ fixArtifact, targetDir }: LooseRecord) {
+  const sourceLabelSets = replacementSourceLabelSets({ fixArtifact, targetDir });
+  return replacementLabelsToCopy(sourceLabelSets, [CLAWSWEEPER_LABEL]);
+}
+
+function replacementSourceLabelSets({ fixArtifact, targetDir }: LooseRecord) {
   const sourceLabelSets: string[][] = [];
   for (const source of fixArtifact.source_prs ?? []) {
     const parsed = parsePullRequestUrl(source);
     if (!parsed || parsed.repo !== result.repo) continue;
     sourceLabelSets.push(sourcePullRequestLabels({ number: parsed.number, targetDir }));
   }
-  return replacementAutomationLabel(sourceLabelSets);
+  return sourceLabelSets;
 }
 
 function sourcePullRequestLabels({ number, targetDir }: LooseRecord) {

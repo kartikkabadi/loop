@@ -229,6 +229,9 @@ function hydrateItem(repo: string, number: JsonValue) {
           head_repo_owner: pullRequest.head?.repo?.owner?.login,
           head_sha: pullRequest.head?.sha,
           maintainer_can_modify: pullRequest.maintainer_can_modify,
+          same_repo_head: pullRequest.head?.repo?.full_name === repo,
+          branch_writable: branchWritableByAutomation(repo, pullRequest),
+          branch_write_reason: branchWriteReason(repo, pullRequest),
           requested_reviewers: (pullRequest.requested_reviewers ?? [])
             .map((reviewer: JsonValue) => reviewer.login)
             .filter(Boolean),
@@ -347,6 +350,9 @@ function summarizeItem(item: LooseRecord, job: LooseRecord) {
           head_repo_owner: item.pull_request.head_repo_owner,
           head_sha: item.pull_request.head_sha,
           maintainer_can_modify: item.pull_request.maintainer_can_modify,
+          same_repo_head: item.pull_request.same_repo_head,
+          branch_writable: item.pull_request.branch_writable,
+          branch_write_reason: item.pull_request.branch_write_reason,
           requested_reviewers: item.pull_request.requested_reviewers,
           requested_teams: item.pull_request.requested_teams,
           changed_files: item.pull_request.changed_files,
@@ -416,7 +422,7 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
           : "Disabled by job frontmatter.",
       canonical_fix:
         job.frontmatter.allow_fix_pr === true
-          ? "If no viable canonical PR exists, first repair a useful contributor PR when maintainer_can_modify is true. If it is false, draft/unmergeable, stale, unsafe, or too broad, replace it with fix_needed plus build_fix_artifact/open_fix_pr using repair_strategy=replace_uneditable_branch, narrow files, tests, changelog, branch_update_blockers, and source PR credit. Do not ask whether to wait when fix PRs are allowed."
+          ? "If no viable canonical PR exists, first repair a useful contributor PR when branch_writable is true. A same-repo head branch is writable even when GitHub reports maintainer_can_modify=false, so do not replace same-repo PRs for that raw flag alone. If branch_writable is false, draft/unmergeable, stale, unsafe, or too broad, replace it with fix_needed plus build_fix_artifact/open_fix_pr using repair_strategy=replace_uneditable_branch, narrow files, tests, changelog, branch_update_blockers, and source PR credit. Do not ask whether to wait when fix PRs are allowed."
           : "Worker may identify canonical fixes but must not plan a fix PR.",
       merge:
         job.frontmatter.allow_merge === true
@@ -652,6 +658,20 @@ function formatNormalizedRef(ref: JsonValue) {
   return ref.repo === job.frontmatter.repo
     ? `#${ref.number}`
     : `https://github.com/${ref.repo}/issues/${ref.number}`;
+}
+
+function branchWritableByAutomation(repo: string, pullRequest: LooseRecord) {
+  return pullRequest.head?.repo?.full_name === repo || pullRequest.maintainer_can_modify === true;
+}
+
+function branchWriteReason(repo: string, pullRequest: LooseRecord) {
+  if (pullRequest.head?.repo?.full_name === repo) {
+    return "same-repo head branch is writable by the GitHub App contents permission";
+  }
+  if (pullRequest.maintainer_can_modify === true) {
+    return "fork branch allows maintainer edits";
+  }
+  return "fork branch does not allow maintainer edits";
 }
 
 function fetchMainBranch(repo: string) {

@@ -236,7 +236,7 @@ Each cluster job:
 4. Runs Codex with repo-local policy prompts and JSON output schema in a read-only sandbox.
 5. Writes structured run artifacts under `.clawsweeper-repair/runs/`.
 6. Reviews the worker artifact with deterministic safety checks.
-7. Executes credited fix artifacts through `scripts/execute-fix-artifact.ts` when the fix gate is open: repair a maintainer-editable contributor branch first, otherwise raise a narrow replacement PR, add non-bot source PR authors as replacement co-authors, and close the uneditable source PR after the replacement push succeeds.
+7. Executes credited fix artifacts through `scripts/execute-fix-artifact.ts` when the fix gate is open: repair a writable contributor branch first, treating same-repo head branches as writable even when GitHub reports `maintainer_can_modify=false`; otherwise raise a narrow replacement PR, copy source labels, add non-bot source PR authors as replacement co-authors, and close the uneditable source PR after the replacement push succeeds.
 8. Applies guarded close/comment and explicit merge actions through `scripts/apply-result.ts`.
 9. Publishes a sanitized result ledger back to this repo under `results/`, `jobs/openclaw/closed/`, `repair-apply-report.json`, and this repair dashboard.
 
@@ -260,7 +260,7 @@ Full worker prompts, Codex transcripts, and raw artifacts stay in GitHub Actions
 - Automated reviewer feedback must be cleared during autonomous PR work. Greptile, Codex, Asile, CodeRabbit, Copilot, and similar bot comments must be addressed, proven non-actionable, or escalated before any merge or post-merge closeout recommendation.
 - Merge preflight: no PR can merge until `CLAWSWEEPER_ALLOW_MERGE=1`, security issues are cleared, comments are resolved, Codex `/review` has passed, findings are addressed, and changed-surface validation is clean. With the merge gate closed, ClawSweeper Repair labels merge-ready targets for human review instead of merging.
 - Final base sync: before pushing a repaired branch, ClawSweeper fetches latest `origin/main`. If main moved after validation, the worker rebases again; conflict resolution goes back through Codex, then validation and Codex `/review` rerun before the branch can be pushed.
-- Repair ladder: make the useful contributor PR mergeable when its branch is maintainer-editable; otherwise replace draft, stale, unmergeable, uneditable, or unsafe branches with a narrow credited fix PR. When fix PR mode is enabled, "wait or replace" is already answered: replace, preserve credit, then supersede only the source PR that could not be safely updated.
+- Repair ladder: make the useful contributor PR mergeable when its branch is writable; same-repo PRs are writable by the GitHub App contents permission even when the raw maintainer-edit flag is false. Otherwise replace draft, stale, unmergeable, uneditable, or unsafe branches with a narrow credited fix PR. When fix PR mode is enabled, "wait or replace" is already answered: replace, preserve credit and labels, then supersede only the source PR that could not be safely updated.
 
 ## Maintainer Comment Commands
 

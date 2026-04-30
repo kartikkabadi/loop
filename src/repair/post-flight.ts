@@ -25,6 +25,7 @@ import {
   CLAWSWEEPER_LABEL_COLOR,
   CLAWSWEEPER_LABEL_DESCRIPTION,
 } from "./constants.js";
+import { AUTOMERGE_LABEL } from "./comment-router-core.js";
 import { numberEnv } from "./env-utils.js";
 import { compactText as compactPlainText } from "./text-utils.js";
 
@@ -147,10 +148,6 @@ function finalizeFixPr(action: LooseRecord) {
     return { ...base, status: "blocked", reason: "fix PR URL is missing or outside target repo" };
   }
 
-  const policyBlock = validateMergePolicy();
-  if (policyBlock)
-    return { ...base, status: "blocked", pr: `#${parsed.number}`, reason: policyBlock };
-
   const deadline = Date.now() + POST_FLIGHT_WAIT_MS;
   let pull;
   let view;
@@ -161,6 +158,9 @@ function finalizeFixPr(action: LooseRecord) {
     pull = fetchPullRequest(result.repo, parsed.number);
     view = fetchPullRequestView(result.repo, parsed.number);
     prBase = { ...base, pr: `#${parsed.number}`, title: view.title ?? pull.title ?? null };
+    const policyBlock = validateMergePolicy(action, pull);
+    if (policyBlock) return { ...prBase, status: "blocked", reason: policyBlock };
+
     const mergedAt = pull.merged_at ?? view.mergedAt ?? null;
     if (mergedAt) {
       return {
@@ -352,12 +352,28 @@ function finalizePostMergeCloseout({
   };
 }
 
-function validateMergePolicy() {
+function validateMergePolicy(action: LooseRecord, pull: LooseRecord) {
+  if (isAutomergeReplacementMerge(action, pull)) return "";
   if (!job.frontmatter.allowed_actions.includes("merge")) return "job does not allow merge";
   if ((job.frontmatter.blocked_actions ?? []).includes("merge"))
     return "merge is blocked by job frontmatter";
   if (job.frontmatter.allow_merge !== true) return "merge requires allow_merge: true";
   return "";
+}
+
+function isAutomergeReplacementMerge(action: LooseRecord, pull: LooseRecord) {
+  return (
+    job.frontmatter.source === "pr_automerge" &&
+    action.action === "open_fix_pr" &&
+    result.fix_artifact?.repair_strategy === "replace_uneditable_branch" &&
+    hasLabel(pull.labels, AUTOMERGE_LABEL)
+  );
+}
+
+function hasLabel(labels: LooseRecord[], wanted: string) {
+  return (labels ?? []).some(
+    (label: JsonValue) => String(label?.name ?? label).toLowerCase() === wanted.toLowerCase(),
+  );
 }
 
 function labelForClawSweeperReview(repo: string, number: JsonValue) {

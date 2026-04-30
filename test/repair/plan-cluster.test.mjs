@@ -166,6 +166,62 @@ test("plan-cluster allows security repair for linked PRs with automation opt-in 
   assert.deepEqual(clusterPlan.security_boundary.security_repair_allowed_items, ["#74742"]);
 });
 
+test("plan-cluster treats same-repo PR branches as writable despite raw maintainer flag", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-plan-same-repo-writable-"));
+  const binDir = path.join(tmp, "bin");
+  const jobPath = path.join(tmp, "job.md");
+  const runDir = path.join(tmp, "run");
+  fs.mkdirSync(binDir);
+  fs.writeFileSync(path.join(binDir, "gh"), fakeGhScript(), { mode: 0o755 });
+
+  fs.writeFileSync(
+    jobPath,
+    [
+      "---",
+      "repo: openclaw/openclaw",
+      "cluster_id: automerge-openclaw-openclaw-74134",
+      "mode: autonomous",
+      "allowed_actions:",
+      "  - comment",
+      "  - fix",
+      "  - raise_pr",
+      "blocked_actions:",
+      "  - close",
+      "  - merge",
+      "source: pr_automerge",
+      "canonical:",
+      "  - #74134",
+      "candidates:",
+      "  - #74134",
+      "allow_fix_pr: true",
+      "allow_merge: false",
+      "security_policy: central_security_only",
+      "security_sensitive: false",
+      "---",
+      "Maintainer opted #74134 into ClawSweeper automerge.",
+      "",
+    ].join("\n"),
+  );
+
+  execFileSync(process.execPath, ["dist/repair/plan-cluster.js", jobPath, "--run-dir", runDir], {
+    cwd: process.cwd(),
+    env: {
+      ...process.env,
+      PATH: `${binDir}${path.delimiter}${process.env.PATH}`,
+      FAKE_GH_MAINTAINER_CAN_MODIFY: "false",
+    },
+    stdio: "pipe",
+  });
+
+  const clusterPlan = JSON.parse(fs.readFileSync(path.join(runDir, "cluster-plan.json"), "utf8"));
+  const pull = clusterPlan.items[0].pull_request;
+
+  assert.equal(pull.maintainer_can_modify, false);
+  assert.equal(pull.same_repo_head, true);
+  assert.equal(pull.branch_writable, true);
+  assert.match(pull.branch_write_reason, /same-repo head branch/);
+});
+
 function fakeGhScript() {
   return `#!/usr/bin/env node
 const args = process.argv.slice(2);
@@ -239,7 +295,7 @@ function pull(number, sha) {
       sha,
       repo: { full_name: "openclaw/openclaw", owner: { login: "openclaw" } },
     },
-    maintainer_can_modify: true,
+    maintainer_can_modify: process.env.FAKE_GH_MAINTAINER_CAN_MODIFY === "false" ? false : true,
     requested_reviewers: [],
     requested_teams: [],
     additions: 1,

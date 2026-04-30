@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { replacementAutomationLabel } from "../../dist/repair/replacement-labels.js";
+import {
+  replacementAutomationLabel,
+  replacementLabelsToCopy,
+} from "../../dist/repair/replacement-labels.js";
 
 test("replacement PRs inherit autofix intent from source PR labels", () => {
   assert.equal(
@@ -19,4 +22,17 @@ test("replacement PRs prefer automerge intent over autofix", () => {
 
 test("replacement PRs without source automation labels stay unlabeled", () => {
   assert.equal(replacementAutomationLabel([["docs"], ["clawsweeper"]]), null);
+});
+
+test("replacement PRs preserve source labels and required labels without duplicates", () => {
+  assert.deepEqual(
+    replacementLabelsToCopy(
+      [
+        ["gateway", "maintainer", "size: S", "clawsweeper:automerge"],
+        ["Gateway", "bug"],
+      ],
+      ["clawsweeper"],
+    ),
+    ["gateway", "maintainer", "size: S", "clawsweeper:automerge", "bug", "clawsweeper"],
+  );
 });
