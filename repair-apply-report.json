@@ -7041,10 +7041,10 @@
   },
   {
     "repo": "openclaw/openclaw",
-    "run_id": "25146885048",
-    "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25146885048",
+    "run_id": "25147192444",
+    "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25147192444",
     "cluster_id": "clawsweeper-commit-openclaw-openclaw-56155e5048a2",
-    "published_at": "2026-04-30T04:14:51.753Z",
+    "published_at": "2026-04-30T04:30:09.383Z",
     "target": "#74829",
     "action": "merge_canonical",
     "status": "blocked",

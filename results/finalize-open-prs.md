@@ -1,6 +1,6 @@
 # Open ClawSweeper Repair PR Finalizer
 
-Generated: 2026-04-30T04:28:09.911Z
+Generated: 2026-04-30T04:31:01.673Z
 
 ## Summary
 
@@ -11,7 +11,7 @@ Generated: 2026-04-30T04:28:09.911Z
 | security_hold | 0 |
 | needs_rebase | 8 |
 | mergeability_unknown | 0 |
-| needs_checks | 11 |
+| needs_checks | 10 |
 | needs_review | 0 |
 | needs_merge_preflight | 25 |
 | needs_result_backfill | 2 |
@@ -30,9 +30,9 @@ Status: report_only
 
 | PR | Title | Cluster | Mergeable | Merge State | Checks | Blockers | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [#74843](https://github.com/openclaw/openclaw/pull/74843) | fix: commit updates the implementation shape to include skipped: false on gateway-probe error... | clawsweeper-commit-openclaw-openclaw-549624ffb204 | MERGEABLE | UNSTABLE | CANCELLED:4 SKIPPED:13 SUCCESS:56 IN_PROGRESS:11 QUEUED:1 NEUTRAL:1; blockers:12 | needs_merge_state:UNSTABLE, needs_checks:CodeQL / Security High (channel-runtime-boundary):IN_PROGRESS; CodeQL / Security High (network-ssrf-boundary):IN_PROGRESS; CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
-| [#74830](https://github.com/openclaw/openclaw/pull/74830) | fix: abort/wait semantics this commit is trying to stabilize regression | clawsweeper-commit-openclaw-openclaw-1f1f70a23f86 | MERGEABLE | UNSTABLE | CANCELLED:4 IN_PROGRESS:1 SKIPPED:12 SUCCESS:73 NEUTRAL:1; blockers:1 | needs_merge_state:UNSTABLE, needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
-| [#74829](https://github.com/openclaw/openclaw/pull/74829) | fix: test-harness regression risk | clawsweeper-commit-openclaw-openclaw-56155e5048a2 | MERGEABLE | CLEAN | CANCELLED:3 SKIPPED:14 SUCCESS:67 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74843](https://github.com/openclaw/openclaw/pull/74843) | fix: commit updates the implementation shape to include skipped: false on gateway-probe error... | clawsweeper-commit-openclaw-openclaw-549624ffb204 | MERGEABLE | CLEAN | CANCELLED:4 SKIPPED:13 SUCCESS:73 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74830](https://github.com/openclaw/openclaw/pull/74830) | fix: abort/wait semantics this commit is trying to stabilize regression | clawsweeper-commit-openclaw-openclaw-1f1f70a23f86 | MERGEABLE | CLEAN | CANCELLED:4 SKIPPED:12 SUCCESS:74 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74829](https://github.com/openclaw/openclaw/pull/74829) | fix: test-harness regression risk | clawsweeper-commit-openclaw-openclaw-56155e5048a2 | MERGEABLE | UNSTABLE | SUCCESS:16 SKIPPED:10 IN_PROGRESS:43; blockers:43 | needs_merge_state:UNSTABLE, needs_checks:CI / build-artifacts:IN_PROGRESS; CI / checks-fast-bundled:IN_PROGRESS; CI / checks-fast-contracts-plugins-a:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74828](https://github.com/openclaw/openclaw/pull/74828) | fix: regression/data-loss edge case in the new metadata-only assistant drop path | clawsweeper-commit-openclaw-openclaw-d80a8eb3adb6 | MERGEABLE | UNSTABLE | FAILURE:1 CANCELLED:3 SKIPPED:13 SUCCESS:73 NEUTRAL:1; blockers:1 | needs_merge_state:UNSTABLE, needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:FAILURE, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74827](https://github.com/openclaw/openclaw/pull/74827) | fix: chat-only projection fallback sdk event-contract bug | clawsweeper-commit-openclaw-openclaw-e6abd9e3d8c4 | MERGEABLE | UNSTABLE | CANCELLED:3 IN_PROGRESS:1 SKIPPED:12 SUCCESS:71 NEUTRAL:1; blockers:1 | needs_merge_state:UNSTABLE, needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74826](https://github.com/openclaw/openclaw/pull/74826) | fix: unconditional runtime-deps install opt-out for capability-provider fallback loads likely... | clawsweeper-commit-openclaw-openclaw-94cb213544bd | MERGEABLE | UNSTABLE | FAILURE:1 CANCELLED:1 SKIPPED:24 SUCCESS:74 NEUTRAL:1 | needs_merge_state:UNSTABLE, needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
