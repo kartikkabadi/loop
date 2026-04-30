@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 22:53 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 22:52 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25193182240) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 22:53 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25193182240) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,7 +194,7 @@ Latest review: Apr 30, 2026, 22:51 UTC. Latest close: Apr 30, 2026, 22:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 2 | 18 | 1 | 7 | 443 | 1 |
+| Last 15 minutes | 18 | 2 | 16 | 1 | 7 | 443 | 1 |
 | Last hour | 906 | 17 | 889 | 7 | 18 | 682 | 2 |
 | Last 24 hours | 6517 | 470 | 6047 | 11 | 664 | 3460 | 27 |
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 22:51 UTC. Latest close: Apr 30, 2026, 22:52 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 22:52 UTC
+Updated: Apr 30, 2026, 22:53 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 5/6. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 5 fresh closes out of requested limit 6. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25193182240](https://github.com/openclaw/clawsweeper/actions/runs/25193182240)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,7 +351,7 @@ Latest review: Apr 30, 2026, 22:51 UTC. Latest close: Apr 30, 2026, 22:52 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 2 | 18 | 1 | 7 | 443 | 1 |
+| Last 15 minutes | 18 | 2 | 16 | 1 | 7 | 443 | 1 |
 | Last hour | 906 | 17 | 889 | 7 | 18 | 682 | 2 |
 | Last 24 hours | 6517 | 470 | 6047 | 11 | 664 | 3460 | 27 |
 
