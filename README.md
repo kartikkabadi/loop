@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 05:21 UTC
+Last dashboard update: Apr 30, 2026, 05:22 UTC
 
 ### Fleet
 
@@ -165,7 +165,7 @@ Last dashboard update: Apr 30, 2026, 05:21 UTC
 | Open items total | 7852 |
 | Reviewed files | 7458 |
 | Unreviewed open items | 397 |
-| Due now by cadence | 3200 |
+| Due now by cadence | 3199 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1113 |
 | Closed by Codex apply | 10986 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 05:21 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6903 | 6531 | 372 | 3099 | 0 | 1067 | 10978 | Apr 30, 2026, 05:17 UTC | Apr 30, 2026, 05:19 UTC | 650 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6903 | 6531 | 372 | 3098 | 0 | 1067 | 10978 | Apr 30, 2026, 05:19 UTC | Apr 30, 2026, 05:19 UTC | 639 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 949 | 924 | 25 | 98 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -190,13 +190,13 @@ Last dashboard update: Apr 30, 2026, 05:21 UTC
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. Latest comment sync: Apr 30, 2026, 05:19 UTC.
+Latest review: Apr 30, 2026, 05:19 UTC. Latest close: Apr 30, 2026, 05:19 UTC. Latest comment sync: Apr 30, 2026, 05:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 30 | 2 | 28 | 0 | 12 | 131 | 0 |
-| Last hour | 573 | 12 | 561 | 2 | 37 | 650 | 1 |
-| Last 24 hours | 5303 | 283 | 5020 | 24 | 748 | 1696 | 20 |
+| Last 15 minutes | 30 | 2 | 28 | 0 | 12 | 123 | 0 |
+| Last hour | 573 | 12 | 561 | 2 | 37 | 639 | 1 |
+| Last 24 hours | 5303 | 283 | 5020 | 24 | 748 | 1697 | 20 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74686](https://github.com/openclaw/openclaw/pull/74686) | fix(gateway): add cron-list transport timing diagnostics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74686.md) | complete | Apr 30, 2026, 05:19 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68982](https://github.com/openclaw/openclaw/pull/68982) | fix: stream reasoning in live chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68982.md) | complete | Apr 30, 2026, 05:17 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74868](https://github.com/openclaw/openclaw/issues/74868) | bug: visibleReplies message_tool mode silently drops replies when message tool is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74868.md) | complete | Apr 30, 2026, 05:17 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#61443](https://github.com/openclaw/openclaw/pull/61443) | feat: add configurable retry for LLM provider API calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/61443.md) | complete | Apr 30, 2026, 05:17 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74716](https://github.com/openclaw/openclaw/pull/74716) | Route Codex Computer Use through the Mac app node host | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74716.md) | complete | Apr 30, 2026, 05:13 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74220](https://github.com/openclaw/openclaw/pull/74220) | Fix CLI text command hangs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74220.md) | complete | Apr 30, 2026, 05:12 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74733](https://github.com/openclaw/openclaw/pull/74733) | fix(ui): stabilize WebChat message ordering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74733.md) | complete | Apr 30, 2026, 05:10 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#41637](https://github.com/openclaw/openclaw/pull/41637) | fix(feishu): share webhook server across accounts on same host:port | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/41637.md) | complete | Apr 30, 2026, 05:09 UTC |
 
 </details>
 
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 05:21 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 7 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=45210,55815,55878,55942,68621,74726,74770.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/7. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25148825570](https://github.com/openclaw/clawsweeper/actions/runs/25148825570)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25148825570](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 83/1164 current (1081 due, 7.1%) |
-| Hourly hot item cadence (<7d) | 83/1164 current (1081 due, 7.1%) |
+| Hourly cadence coverage | 84/1164 current (1080 due, 7.2%) |
+| Hourly hot item cadence (<7d) | 84/1164 current (1080 due, 7.2%) |
 | Daily cadence coverage | 1929/3573 current (1644 due, 54%) |
 | Daily PR cadence | 1264/2487 current (1223 due, 50.8%) |
 | Daily new issue cadence (<30d) | 665/1086 current (421 due, 61.2%) |
 | Weekly older issue cadence | 1792/1794 current (2 due, 99.9%) |
-| Due now by cadence | 3099 |
+| Due now by cadence | 3098 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. Latest comment sync: Apr 30, 2026, 05:19 UTC.
+Latest review: Apr 30, 2026, 05:19 UTC. Latest close: Apr 30, 2026, 05:19 UTC. Latest comment sync: Apr 30, 2026, 05:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 30 | 2 | 28 | 0 | 12 | 131 | 0 |
-| Last hour | 573 | 12 | 561 | 2 | 37 | 650 | 1 |
-| Last 24 hours | 4371 | 283 | 4088 | 11 | 742 | 1290 | 20 |
+| Last 15 minutes | 30 | 2 | 28 | 0 | 12 | 123 | 0 |
+| Last hour | 573 | 12 | 561 | 2 | 37 | 639 | 1 |
+| Last 24 hours | 4371 | 283 | 4088 | 11 | 742 | 1291 | 20 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74686](https://github.com/openclaw/openclaw/pull/74686) | fix(gateway): add cron-list transport timing diagnostics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74686.md) | complete | Apr 30, 2026, 05:19 UTC |
 | [#68982](https://github.com/openclaw/openclaw/pull/68982) | fix: stream reasoning in live chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68982.md) | complete | Apr 30, 2026, 05:17 UTC |
 | [#74868](https://github.com/openclaw/openclaw/issues/74868) | bug: visibleReplies message_tool mode silently drops replies when message tool is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74868.md) | complete | Apr 30, 2026, 05:17 UTC |
 | [#61443](https://github.com/openclaw/openclaw/pull/61443) | feat: add configurable retry for LLM provider API calls | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/61443.md) | complete | Apr 30, 2026, 05:17 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 | [#74716](https://github.com/openclaw/openclaw/pull/74716) | Route Codex Computer Use through the Mac app node host | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74716.md) | complete | Apr 30, 2026, 05:13 UTC |
 | [#74220](https://github.com/openclaw/openclaw/pull/74220) | Fix CLI text command hangs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74220.md) | complete | Apr 30, 2026, 05:12 UTC |
 | [#74733](https://github.com/openclaw/openclaw/pull/74733) | fix(ui): stabilize WebChat message ordering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74733.md) | complete | Apr 30, 2026, 05:10 UTC |
-| [#41637](https://github.com/openclaw/openclaw/pull/41637) | fix(feishu): share webhook server across accounts on same host:port | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/41637.md) | complete | Apr 30, 2026, 05:09 UTC |
 
 </details>
 
