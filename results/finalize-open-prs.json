@@ -2,7 +2,7 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T01:32:54.966Z",
+  "generated_at": "2026-04-30T01:42:20.518Z",
   "count": 11,
   "summary": {
     "open_prs": 11,
@@ -379,7 +379,7 @@
       "head_sha": "60b04426ea7ec4aa7f7aa4115207c59c3800b217",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-4cba08df01ea",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-4cba08df01ea.md",
-      "updated_at": "2026-04-29T23:27:33Z",
+      "updated_at": "2026-04-30T01:38:49Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
