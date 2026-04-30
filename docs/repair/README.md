@@ -45,7 +45,7 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 02:55 UTC
+Last dashboard update: Apr 30, 2026, 02:59 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
@@ -57,16 +57,16 @@ Scope: 293 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Latest clusters reviewed | 293 | 100% |
 | Policy-archived clusters | 1 | audit |
 | Clean completed clusters | 101 | 34.5% |
-| Needs-human clusters | 40 | 13.7% |
+| Needs-human clusters | 41 | 14.0% |
 | Latest successful clusters | 268 | 91.5% |
 | Latest failed clusters | 4 | 1.4% |
 | Latest cancelled clusters | 0 | 0.0% |
-| Run attempts archived | 546 | audit |
+| Run attempts archived | 547 | audit |
 | Fix action attempts | 214 | audit |
 | Fix actions executed | 3 | 1.4% |
 | Fix actions failed | 36 | 16.8% |
 | Fix actions blocked | 57 | 26.6% |
-| Latest clusters with fix failures | 49 | 16.7% |
+| Latest clusters with fix failures | 48 | 16.4% |
 | Distinct PRs touched | 864 | 100% |
 | Open PRs tracked | 270 | 31.3% |
 | Closed unmerged PRs tracked | 479 | 55.4% |
@@ -83,7 +83,7 @@ Scope: 293 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | Cluster | State | Source job | Reason | Report | Run |
 | --- | --- | --- | --- | --- | --- |
-| [automerge-openclaw-openclaw-74134](results/openclaw/automerge-openclaw-openclaw-74134.md) | fix blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-74134.md | fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1 | [report](results/openclaw/automerge-openclaw-openclaw-74134.md) | [25144807072](https://github.com/openclaw/clawsweeper/actions/runs/25144807072) |
+| [automerge-openclaw-openclaw-74134](results/openclaw/automerge-openclaw-openclaw-74134.md) | needs human | jobs/openclaw/inbox/automerge-openclaw-openclaw-74134.md | Codex worker completed without a structured result.json artifact. | [report](results/openclaw/automerge-openclaw-openclaw-74134.md) | [25144928205](https://github.com/openclaw/clawsweeper/actions/runs/25144928205) |
 | [clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0](results/openclaw/clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0.md) | [25144600047](https://github.com/openclaw/clawsweeper/actions/runs/25144600047) |
 | [clawsweeper-commit-openclaw-openclaw-6421e1f36a3c](results/openclaw/clawsweeper-commit-openclaw-openclaw-6421e1f36a3c.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-6421e1f36a3c.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-6421e1f36a3c.md) | [25144539236](https://github.com/openclaw/clawsweeper/actions/runs/25144539236) |
 | [clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59](results/openclaw/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59.md) | [25144167747](https://github.com/openclaw/clawsweeper/actions/runs/25144167747) |
@@ -113,7 +113,6 @@ Scope: 293 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | Cluster | Status | Target | Branch/PR | Reason | Run |
 | --- | --- | --- | --- | --- | --- |
-| [automerge-openclaw-openclaw-74134](results/openclaw/automerge-openclaw-openclaw-74134.md) | blocked |  |  | fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1 | [25144807072](https://github.com/openclaw/clawsweeper/actions/runs/25144807072) |
 | [clawsweeper-commit-openclaw-openclaw-58153d38af57](results/openclaw/clawsweeper-commit-openclaw-openclaw-58153d38af57.md) | blocked |  |  | validation command failed (pnpm check:changed): [check:changed] lanes=core, coreTests, extensions, extensionTests [check:changed] extensi... | [25143847817](https://github.com/openclaw/clawsweeper/actions/runs/25143847817) |
 | [clawsweeper-commit-openclaw-openclaw-0b59964ec945](results/openclaw/clawsweeper-commit-openclaw-openclaw-0b59964ec945.md) | blocked |  |  | Codex /review failed: structured output was not written to replacement-codex-review-1.json; stdout={"type":"thread.started","thread_id":"... | [25140762037](https://github.com/openclaw/clawsweeper/actions/runs/25140762037) |
 | [automerge-openclaw-openclaw-74528](results/openclaw/automerge-openclaw-openclaw-74528.md) | blocked |  |  | Codex /review failed: structured output was not written to replacement-codex-review-1.json; stdout={"type":"thread.started","thread_id":"... | [25139586999](https://github.com/openclaw/clawsweeper/actions/runs/25139586999) |
@@ -138,6 +137,7 @@ Scope: 293 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | [ghcrawl-156832-autonomous-smoke](results/openclaw/ghcrawl-156832-autonomous-smoke.md) | blocked |  |  | Codex /review did not pass after 2 attempt(s): Blocked: the branch is narrow and `pnpm check:changed` plus `git diff --check` pass, but t... | [25039623993](https://github.com/openclaw/clawsweeper/actions/runs/25039623993) |
 | [ghcrawl-156946-autonomous-smoke](results/openclaw/ghcrawl-156946-autonomous-smoke.md) | blocked |  |  | fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1 | [25040211577](https://github.com/openclaw/clawsweeper/actions/runs/25040211577) |
 | [ghcrawl-156879-autonomous-smoke](results/openclaw/ghcrawl-156879-autonomous-smoke.md) | blocked |  |  | fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1 | [25039930706](https://github.com/openclaw/clawsweeper/actions/runs/25039930706) |
+| [ghcrawl-156868-autonomous-smoke](results/openclaw/ghcrawl-156868-autonomous-smoke.md) | blocked |  |  | fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1 | [25039867359](https://github.com/openclaw/clawsweeper/actions/runs/25039867359) |
 
 ### Top Blocked Reasons
 

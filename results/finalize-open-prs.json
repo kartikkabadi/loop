@@ -2,7 +2,7 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T02:54:49.073Z",
+  "generated_at": "2026-04-30T02:59:20.951Z",
   "count": 16,
   "summary": {
     "open_prs": 16,
@@ -341,20 +341,12 @@
         ]
       },
       "latest_record": {
-        "run_id": "25144807072",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144807072",
+        "run_id": "25144928205",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144928205",
         "cluster_id": "automerge-openclaw-openclaw-74134",
-        "published_at": "2026-04-30T02:53:36.526Z",
+        "published_at": "2026-04-30T02:57:25.682Z",
         "workflow_conclusion": "success",
-        "apply_action": {
-          "target": "#74742",
-          "action": "fix_needed",
-          "status": "planned",
-          "classification": "canonical",
-          "canonical": "#74742",
-          "candidate_fix": "#74742",
-          "reason": "Canonical PR is useful but dirty/stale and has a fresh rebase request; repair the existing ClawSweeper branch and rerun validation/review."
-        }
+        "apply_action": null
       },
       "blockers": [
         "needs_rebase:CONFLICTING",
