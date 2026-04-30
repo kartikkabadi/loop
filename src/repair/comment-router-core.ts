@@ -483,9 +483,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     ].join("\n");
   }
   if (command.intent === "clawsweeper_auto_repair") {
-    const runLink = dispatched?.run_url
-      ? `[GitHub Actions run](${dispatched.run_url})`
-      : null;
+    const runLink = dispatched?.run_url ? `[GitHub Actions run](${dispatched.run_url})` : null;
     return [
       marker,
       "Thanks, ClawSweeper. ClawSweeper picked up the repair feedback.",
