@@ -105,6 +105,60 @@ test("publishMainCommit resolves apply record delete conflicts during rebase", (
   );
 });
 
+test("publishMainCommit rebuilds generated commits after rebase conflicts", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
+  const origin = path.join(root, "origin.git");
+  const work = path.join(root, "work");
+  const other = path.join(root, "other");
+  run("git", ["init", "--bare", origin], root);
+  run("git", ["clone", origin, work], root);
+  configureUser(work);
+  write(path.join(work, "README.md"), "dashboard old\n");
+  write(path.join(work, "records/openclaw-openclaw/items/1.md"), "record old\n");
+  write(path.join(work, "keep.txt"), "keep old\n");
+  run("git", ["add", "."], work);
+  run("git", ["commit", "-m", "initial"], work);
+  run("git", ["push", "origin", "HEAD:main"], work);
+  run("git", ["--git-dir", origin, "symbolic-ref", "HEAD", "refs/heads/main"], root);
+  run("git", ["checkout", "-B", "main", "origin/main"], work);
+
+  run("git", ["clone", origin, other], root);
+  configureUser(other);
+  write(path.join(other, "README.md"), "dashboard remote\n");
+  write(path.join(other, "records/openclaw-openclaw/items/1.md"), "record remote\n");
+  write(path.join(other, "records/openclaw-openclaw/items/2.md"), "remote only\n");
+  write(path.join(other, "keep.txt"), "keep remote\n");
+  run("git", ["add", "."], other);
+  run("git", ["commit", "-m", "remote dashboard update"], other);
+  run("git", ["push", "origin", "HEAD:main"], other);
+
+  write(path.join(work, "README.md"), "dashboard local\n");
+  write(path.join(work, "records/openclaw-openclaw/items/1.md"), "record local\n");
+
+  const result = withCwd(work, () =>
+    publishMainCommit({
+      message: "chore: update sweep dashboard",
+      paths: ["README.md", "records"],
+      maxAttempts: 1,
+      pushAttempts: 1,
+    }),
+  );
+
+  assert.equal(result, "committed");
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "main:README.md"], root),
+    "dashboard local\n",
+  );
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "main:records/openclaw-openclaw/items/1.md"], root),
+    "record local\n",
+  );
+  assert.throws(() =>
+    run("git", ["--git-dir", origin, "show", "main:records/openclaw-openclaw/items/2.md"], root),
+  );
+  assert.equal(run("git", ["--git-dir", origin, "show", "main:keep.txt"], root), "keep remote\n");
+});
+
 test("publish-main CLI accepts package-manager double dash separators", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
   const origin = path.join(root, "origin.git");

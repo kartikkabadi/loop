@@ -91,11 +91,15 @@ function safeGitDisplayAction(action: string | undefined): string {
     case "config":
     case "diff":
     case "fetch":
+    case "checkout":
+    case "cat-file":
     case "ls-files":
     case "push":
     case "rebase":
     case "remote":
     case "restore":
+    case "reset":
+    case "rev-parse":
     case "rm":
     case "status":
       return action;
@@ -148,10 +152,20 @@ export function publishMainCommit(options: GitPublishOptions): PublishResult {
   }
 
   runGit(["commit", "-m", options.message]);
+  const sourceCommit = runGit(["rev-parse", "HEAD"]).trim();
   restoreWorktree(options.restorePaths ?? []);
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     if (pushCommit({ remote, branch, pushAttempts, rebaseStrategy })) return "committed";
+    const rebuildResult = rebuildPublishCommit({
+      remote,
+      branch,
+      message: options.message,
+      paths: options.paths,
+      sourceCommit,
+    });
+    if (rebuildResult === "unchanged") return "unchanged";
+    if (attempt === maxAttempts) break;
     const delaySeconds = attempt * 3 + Math.floor(Math.random() * 11);
     console.log(
       `Publish attempt ${attempt} failed; retrying from ${remote}/${branch} in ${delaySeconds}s`,
@@ -189,6 +203,42 @@ export function pushCommit(options: {
     }
   }
   return spawnGit(["push", remote, `HEAD:${branch}`]).status === 0;
+}
+
+function rebuildPublishCommit(options: {
+  remote: string;
+  branch: string;
+  message: string;
+  paths: readonly string[];
+  sourceCommit: string;
+}): PublishResult {
+  console.log(`Rebuilding publish commit on ${options.remote}/${options.branch}`);
+  runGit(["fetch", options.remote, options.branch]);
+  runGit(["reset", "--hard", `${options.remote}/${options.branch}`]);
+
+  for (const path of uniqueNonEmpty(options.paths)) {
+    runGit(["rm", "-r", "--ignore-unmatch", "--", path], { allowFailure: true });
+    if (commitHasPath(options.sourceCommit, path)) {
+      runGit(["checkout", options.sourceCommit, "--", path]);
+    }
+  }
+
+  stagePaths(options.paths);
+  if (!hasStagedChanges()) {
+    console.log("No publish changes after syncing remote");
+    return "unchanged";
+  }
+
+  runGit(["commit", "-m", options.message]);
+  return "committed";
+}
+
+function commitHasPath(commit: string, path: string): boolean {
+  return (
+    spawnGit(["cat-file", "-e", `${commit}:${path}`], {
+      displayArgs: ["cat-file", "-e", "<commit>:<path>"],
+    }).status === 0
+  );
 }
 
 export function hardResetToRemoteMain(remote = "origin", branch = "main"): void {
