@@ -33,6 +33,7 @@ export function buildFixPrompt({
     "- address review-bot concerns named in the artifact;",
     "- resolve actionable human review comments, bot comments, and requested changes named in the artifact;",
     "- fix relevant failing CI/check output named in the artifact; do not leave known changed-surface CI failures for a later pass;",
+    renderChangelogRule(fixArtifact),
     "- prepare the PR so it can pass the ClawSweeper Repair merge_preflight gate;",
     "- do not push, open PRs, close PRs, or call gh;",
     "- do not create a final commit unless git rebase/merge conflict resolution requires it; ClawSweeper Repair checkpoints ordinary edits after you return;",
@@ -68,6 +69,17 @@ export function buildFixPrompt({
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+function renderChangelogRule(fixArtifact: LooseRecord) {
+  if (fixArtifact.changelog_required !== true) {
+    return "- if you discover the target repository requires a changelog for this user-facing repair, add or repair that changelog entry before returning;";
+  }
+  return [
+    "- changelog_required is true: you must inspect CHANGELOG.md and add or repair the required entry before returning;",
+    "- the changelog entry must describe the user-facing change and preserve contributor/source PR attribution when available;",
+    "- do not leave the changelog for the automerge gate or a later repair pass.",
+  ].join("\n");
 }
 
 function renderRebaseResult(rebaseResult: LooseRecord) {
