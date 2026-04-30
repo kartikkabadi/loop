@@ -167,8 +167,8 @@ Last dashboard update: Apr 30, 2026, 13:18 UTC
 | Unreviewed open items | 367 |
 | Due now by cadence | 2895 |
 | Proposed closes awaiting apply | 0 |
-| Work candidates awaiting promotion | 1327 |
-| Closed by Codex apply | 11090 |
+| Work candidates awaiting promotion | 1328 |
+| Closed by Codex apply | 11089 |
 | Failed or stale reviews | 36 |
 | Archived closed files | 14995 |
 
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 13:18 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6932 | 6565 | 367 | 2821 | 0 | 1281 | 11082 | Apr 30, 2026, 13:16 UTC | Apr 30, 2026, 13:18 UTC | 776 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6932 | 6565 | 367 | 2821 | 0 | 1282 | 11081 | Apr 30, 2026, 13:14 UTC | Apr 30, 2026, 13:17 UTC | 775 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,25 +184,25 @@ Last dashboard update: Apr 30, 2026, 13:18 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 13:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25167504185) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 30, 2026, 13:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25167540540) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 13:16 UTC. Latest close: Apr 30, 2026, 13:18 UTC. Latest comment sync: Apr 30, 2026, 13:17 UTC.
+Latest review: Apr 30, 2026, 13:14 UTC. Latest close: Apr 30, 2026, 13:17 UTC. Latest comment sync: Apr 30, 2026, 13:17 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 1 | 10 | 0 | 7 | 412 | 2 |
-| Last hour | 532 | 11 | 521 | 6 | 18 | 776 | 3 |
-| Last 24 hours | 5618 | 307 | 5311 | 34 | 678 | 1676 | 23 |
+| Last 15 minutes | 10 | 1 | 9 | 0 | 7 | 411 | 2 |
+| Last hour | 532 | 11 | 521 | 6 | 18 | 775 | 3 |
+| Last 24 hours | 5618 | 307 | 5311 | 34 | 678 | 1675 | 23 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75086](https://github.com/openclaw/openclaw/issues/75086) | [Audit] Theme Factory color accuracy: brand-inspired themes use wrong colors | belongs on ClawHub | Apr 30, 2026, 13:18 UTC | [records/openclaw-openclaw/closed/75086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75086.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75086](https://github.com/openclaw/openclaw/issues/75086) | [Audit] Theme Factory color accuracy: brand-inspired themes use wrong colors | closed externally after proposed_close | Apr 30, 2026, 13:17 UTC | [records/openclaw-openclaw/closed/75086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75086.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75083](https://github.com/openclaw/openclaw/pull/75083) | feat(feishu): add segment streaming mode | closed externally after review | Apr 30, 2026, 13:13 UTC | [records/openclaw-openclaw/closed/75083.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75083.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#62802](https://github.com/openclaw/openclaw/pull/62802) | fix: subagent runTimeoutSeconds default fallback resolves to infinite timeout | already implemented on main | Apr 30, 2026, 13:09 UTC | [records/openclaw-openclaw/closed/62802.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62802.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#62665](https://github.com/openclaw/openclaw/pull/62665) | config: fix silent failures and misleading log in config recovery | duplicate or superseded | Apr 30, 2026, 13:09 UTC | [records/openclaw-openclaw/closed/62665.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62665.md) |
@@ -248,8 +248,9 @@ Latest review: Apr 30, 2026, 13:16 UTC. Latest close: Apr 30, 2026, 13:18 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#63230](https://github.com/openclaw/openclaw/pull/63230) | feat: per-channel thread.requireExplicitMention override for Slack | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/63230.md) | complete | Apr 30, 2026, 13:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75084](https://github.com/openclaw/openclaw/issues/75084) | [Bug]: echoTranscript works in Telegram forum group but not in direct chat (DM) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75084.md) | complete | Apr 30, 2026, 13:08 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60860](https://github.com/openclaw/openclaw/pull/60860) | feat(google): add Google Vertex AI provider with ADC auth and global endpoint routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60860.md) | complete | Apr 30, 2026, 13:07 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75083](https://github.com/openclaw/openclaw/pull/75083) | feat(feishu): add segment streaming mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75083.md) | complete | Apr 30, 2026, 13:07 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74035](https://github.com/openclaw/openclaw/pull/74035) | feat(skills): add persist flag and trustedSources config for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74035.md) | complete | Apr 30, 2026, 13:03 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75081](https://github.com/openclaw/openclaw/pull/75081) | fix(gateway): show config recovery validation details | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75081.md) | complete | Apr 30, 2026, 13:01 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#61616](https://github.com/openclaw/openclaw/issues/61616) | [Bug]: [WSL2] Global 30-min gateway stall (:29/:59) affects Telegram + Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/61616.md) | complete | Apr 30, 2026, 13:01 UTC |
 
 </details>
 
@@ -269,10 +270,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 13:18 UTC
 
-State: Planning review
+State: Hot intake in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 1, including durable review comment syncs.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167504185](https://github.com/openclaw/clawsweeper/actions/runs/25167504185)
+Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167540540](https://github.com/openclaw/clawsweeper/actions/runs/25167540540)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -297,8 +298,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25167504185](https://
 | Proposed PR closes | 0 (0% of reviewed PRs) |
 | Fresh verified reviews in the last 7 days | 6542 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Work candidates awaiting promotion | 1281 |
-| Closed by Codex apply | 11082 |
+| Work candidates awaiting promotion | 1282 |
+| Closed by Codex apply | 11081 |
 | Failed or stale reviews | 23 |
 
 #### Cadence
@@ -347,19 +348,19 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 13:16 UTC. Latest close: Apr 30, 2026, 13:18 UTC. Latest comment sync: Apr 30, 2026, 13:17 UTC.
+Latest review: Apr 30, 2026, 13:14 UTC. Latest close: Apr 30, 2026, 13:17 UTC. Latest comment sync: Apr 30, 2026, 13:17 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 1 | 10 | 0 | 7 | 412 | 2 |
-| Last hour | 532 | 11 | 521 | 6 | 18 | 776 | 3 |
-| Last 24 hours | 4690 | 307 | 4383 | 21 | 675 | 1273 | 23 |
+| Last 15 minutes | 10 | 1 | 9 | 0 | 7 | 411 | 2 |
+| Last hour | 532 | 11 | 521 | 6 | 18 | 775 | 3 |
+| Last 24 hours | 4690 | 307 | 4383 | 21 | 675 | 1272 | 23 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#75086](https://github.com/openclaw/openclaw/issues/75086) | [Audit] Theme Factory color accuracy: brand-inspired themes use wrong colors | belongs on ClawHub | Apr 30, 2026, 13:18 UTC | [records/openclaw-openclaw/closed/75086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75086.md) |
+| [#75086](https://github.com/openclaw/openclaw/issues/75086) | [Audit] Theme Factory color accuracy: brand-inspired themes use wrong colors | closed externally after proposed_close | Apr 30, 2026, 13:17 UTC | [records/openclaw-openclaw/closed/75086.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75086.md) |
 | [#75083](https://github.com/openclaw/openclaw/pull/75083) | feat(feishu): add segment streaming mode | closed externally after review | Apr 30, 2026, 13:13 UTC | [records/openclaw-openclaw/closed/75083.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75083.md) |
 | [#62802](https://github.com/openclaw/openclaw/pull/62802) | fix: subagent runTimeoutSeconds default fallback resolves to infinite timeout | already implemented on main | Apr 30, 2026, 13:09 UTC | [records/openclaw-openclaw/closed/62802.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62802.md) |
 | [#62665](https://github.com/openclaw/openclaw/pull/62665) | config: fix silent failures and misleading log in config recovery | duplicate or superseded | Apr 30, 2026, 13:09 UTC | [records/openclaw-openclaw/closed/62665.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62665.md) |
@@ -397,8 +398,9 @@ Latest review: Apr 30, 2026, 13:16 UTC. Latest close: Apr 30, 2026, 13:18 UTC. L
 | [#63230](https://github.com/openclaw/openclaw/pull/63230) | feat: per-channel thread.requireExplicitMention override for Slack | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/63230.md) | complete | Apr 30, 2026, 13:09 UTC |
 | [#75084](https://github.com/openclaw/openclaw/issues/75084) | [Bug]: echoTranscript works in Telegram forum group but not in direct chat (DM) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75084.md) | complete | Apr 30, 2026, 13:08 UTC |
 | [#60860](https://github.com/openclaw/openclaw/pull/60860) | feat(google): add Google Vertex AI provider with ADC auth and global endpoint routing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/60860.md) | complete | Apr 30, 2026, 13:07 UTC |
-| [#75083](https://github.com/openclaw/openclaw/pull/75083) | feat(feishu): add segment streaming mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75083.md) | complete | Apr 30, 2026, 13:07 UTC |
 | [#74035](https://github.com/openclaw/openclaw/pull/74035) | feat(skills): add persist flag and trustedSources config for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74035.md) | complete | Apr 30, 2026, 13:03 UTC |
+| [#75081](https://github.com/openclaw/openclaw/pull/75081) | fix(gateway): show config recovery validation details | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75081.md) | complete | Apr 30, 2026, 13:01 UTC |
+| [#61616](https://github.com/openclaw/openclaw/issues/61616) | [Bug]: [WSL2] Global 30-min gateway stall (:29/:59) affects Telegram + Control UI | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/61616.md) | complete | Apr 30, 2026, 13:01 UTC |
 
 </details>
 
