@@ -410,8 +410,8 @@ interface PlanShard {
 }
 
 const DEFAULT_PLAN_BATCH_SIZE = 3;
-const DEFAULT_PLAN_SHARD_COUNT = 240;
-const MAX_PLAN_SHARD_COUNT = 256;
+const DEFAULT_PLAN_SHARD_COUNT = 100;
+const MAX_PLAN_SHARD_COUNT = 100;
 
 type SchedulerBucket =
   | "hot_issue"
@@ -4974,6 +4974,7 @@ function reviewCommand(args: Args): void {
     JSON.stringify({ shardIndex, shardCount, scannedPages, candidates, reviewPolicy }, null, 2),
   );
   let completed = 0;
+  let codexFailures = 0;
   for (const item of candidates) {
     console.error(
       `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start #${item.number} (${completed + 1}/${candidates.length})`,
@@ -5014,6 +5015,7 @@ function reviewCommand(args: Args): void {
         additionalPrompt,
       });
     } catch (error) {
+      codexFailures += 1;
       decision = codexFailureDecision(
         null,
         error instanceof Error ? error.message : String(error),
@@ -5045,6 +5047,11 @@ function reviewCommand(args: Args): void {
   console.error(
     `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} complete reviewed=${completed}`,
   );
+  if (codexFailures > 0) {
+    throw new Error(
+      `Codex failed for ${codexFailures} item${codexFailures === 1 ? "" : "s"}; review artifacts were written and the workflow recovery lane can requeue the planned set.`,
+    );
+  }
 }
 
 function applyDecisionsCommand(args: Args): void {

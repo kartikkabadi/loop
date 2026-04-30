@@ -8,6 +8,7 @@ import {
   artifactItemNumbers,
   countActions,
   mergeApplyReports,
+  plannedItemNumberCsv,
   proposedItemNumbers,
 } from "../../dist/repair/workflow-utils.js";
 
@@ -38,6 +39,15 @@ test("workflow utilities merge checkpoint reports in numeric order", () => {
     { action: "second" },
     { action: "tenth" },
   ]);
+});
+
+test("workflow utilities expose planned item numbers for recovery dispatches", () => {
+  assert.equal(
+    plannedItemNumberCsv({
+      candidates: [{ number: 42 }, { number: "7" }, { number: 0 }, { title: "missing" }],
+    }),
+    "42,7",
+  );
 });
 
 test("workflow utilities select eligible proposed close records", () => {

@@ -72,9 +72,13 @@ on:
         required: false
         default: "600000"
       shard_count:
-        description: "Parallel shards"
+        description: "Parallel shards (capped at 100)"
         required: false
-        default: "240"
+        default: "100"
+      recovery_attempt:
+        description: "Internal one-shot retry marker for failed review matrices"
+        required: false
+        default: "0"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -355,6 +359,7 @@ jobs:
       max_pages: ${{ steps.mode.outputs.max_pages }}
       planned_count: ${{ steps.select.outputs.planned_count }}
       planned_capacity: ${{ steps.select.outputs.planned_capacity }}
+      planned_item_numbers: ${{ steps.select.outputs.planned_item_numbers }}
       planned_shards: ${{ steps.select.outputs.planned_shards }}
       shard_count: ${{ steps.mode.outputs.shard_count }}
       target_checkout_dir: ${{ steps.target.outputs.target_checkout_dir }}
@@ -435,12 +440,18 @@ jobs:
             max_pages="1"
           elif [ "$hot_intake" = "true" ]; then
             batch_size="1"
-            shard_count="192"
+            shard_count="100"
             max_pages="10"
           else
             batch_size="${{ github.event.inputs.batch_size || '3' }}"
-            shard_count="${{ github.event.inputs.shard_count || '240' }}"
+            shard_count="${{ github.event.inputs.shard_count || '100' }}"
             max_pages="250"
+          fi
+          if ! [[ "$shard_count" =~ ^[0-9]+$ ]]; then
+            shard_count="100"
+          fi
+          if [ "$shard_count" -gt 100 ]; then
+            shard_count="100"
           fi
           {
             echo "batch_size=$batch_size"
@@ -784,6 +795,40 @@ jobs:
             sleep "$((attempt * 10))"
           done
           echo "::warning::Unable to dispatch the next sweep after three attempts; the scheduled backstop will pick it up."
+
+  recover-review-failures:
+    name: Recover failed review shards
+    needs: [plan, review, publish]
+    if: ${{ always() && needs.plan.result == 'success' && (needs.review.result == 'failure' || needs.review.result == 'cancelled') && (github.event.inputs.recovery_attempt || '0') == '0' && needs.plan.outputs.planned_item_numbers != '' && github.event_name != 'repository_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Requeue planned review items once
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ADDITIONAL_PROMPT: ${{ github.event.inputs.additional_prompt || '' }}
+          ITEM_NUMBERS: ${{ needs.plan.outputs.planned_item_numbers }}
+        run: |
+          set -euo pipefail
+          args=(
+            workflow run sweep.yml
+            --ref main
+            -f apply_existing=false
+            -f hot_intake=false
+            -f target_repo="${{ needs.plan.outputs.target_repo }}"
+            -f batch_size="${{ needs.plan.outputs.batch_size }}"
+            -f shard_count=100
+            -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
+            -f item_numbers="$ITEM_NUMBERS"
+            -f recovery_attempt=1
+          )
+          if [ -n "$ADDITIONAL_PROMPT" ]; then
+            args+=(-f additional_prompt="$ADDITIONAL_PROMPT")
+          fi
+          gh "${args[@]}"
 
   audit-dashboard:
     name: Audit dashboard
@@ -1197,7 +1242,7 @@ jobs:
               -f hot_intake=true \
               -f target_repo=openclaw/openclaw \
               -f batch_size=1 \
-              -f shard_count=192 \
+              -f shard_count=100 \
               -f codex_timeout_ms=600000
           fi
 
@@ -1209,6 +1254,6 @@ jobs:
               -f hot_intake=false \
               -f target_repo=openclaw/openclaw \
               -f batch_size=3 \
-              -f shard_count=240 \
+              -f shard_count=100 \
               -f codex_timeout_ms=600000
           fi

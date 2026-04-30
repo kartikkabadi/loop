@@ -59,8 +59,23 @@ function printPlanOutput(): void {
     matrix: JSON.stringify(matrix),
     planned_count: String(candidates.length),
     planned_capacity: String(Number.isFinite(planCapacity) ? planCapacity : batchSize * shardCount),
+    planned_item_numbers: plannedItemNumberCsv(plan),
     planned_shards: String(matrix.length),
   });
+}
+
+export function plannedItemNumberCsv(plan: LooseRecord): string {
+  const candidates: JsonValue[] = Array.isArray(plan.candidates) ? plan.candidates : [];
+  return candidates
+    .map((candidate) => candidateItemNumber(candidate))
+    .filter((number): number is number => typeof number === "number")
+    .join(",");
+}
+
+function candidateItemNumber(candidate: JsonValue): number | null {
+  if (!isJsonObject(candidate)) return null;
+  const number = Number(candidate.number);
+  return Number.isInteger(number) && number > 0 ? number : null;
 }
 
 function printClassifyOutput(): void {
