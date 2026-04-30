@@ -64,6 +64,41 @@ test("appendLedger leaves waiting commands retryable", () => {
   assert.equal(ledger.commands.length, 0);
 });
 
+test("appendLedger preserves compact executed actions for repair caps", () => {
+  const ledger = { updated_at: null, commands: [] };
+
+  appendLedger(ledger, [
+    {
+      idempotency_key: "automerge-pass-repair",
+      comment_id: "125",
+      comment_version_key: "125:2026-04-30T01:12:00Z",
+      comment_updated_at: "2026-04-30T01:12:00Z",
+      status: "executed",
+      intent: "clawsweeper_auto_merge",
+      issue_number: 74506,
+      repo: "openclaw/openclaw",
+      actions: [
+        {
+          action: "dispatch_repair",
+          status: "executed",
+          job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
+          workflow: "repair-cluster-worker.yml",
+          ignored_detail: "not persisted",
+        },
+      ],
+    },
+  ]);
+
+  assert.deepEqual(ledger.commands[0].actions, [
+    {
+      action: "dispatch_repair",
+      status: "executed",
+      label: null,
+      job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
+    },
+  ]);
+});
+
 test("sortCommentsForRouting prioritizes edited durable review comments", () => {
   const sorted = sortCommentsForRouting([
     {

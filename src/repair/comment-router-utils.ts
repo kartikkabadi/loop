@@ -125,38 +125,42 @@ export function readLedger(file: JsonValue) {
 export function appendLedger(current: LooseRecord, entries: LooseRecord[]) {
   const compact = entries
     .filter((entry: JsonValue) => ["executed", "skipped"].includes(entry.status))
-    .map((entry: JsonValue) => ({
-      idempotency_key: entry.idempotency_key,
-      comment_id: entry.comment_id,
-      comment_version_key: entry.comment_version_key ?? null,
-      comment_url: entry.comment_url,
-      comment_created_at: entry.comment_created_at ?? null,
-      comment_updated_at: entry.comment_updated_at ?? null,
-      repo: entry.repo,
-      issue_number: entry.issue_number,
-      author: entry.author,
-      author_association: entry.author_association,
-      trigger: entry.trigger,
-      command: entry.command,
-      intent: entry.intent,
-      trusted_bot: Boolean(entry.trusted_bot),
-      trusted_bot_author: entry.trusted_bot_author ?? null,
-      automation_source: entry.automation_source ?? null,
-      repair_reason: entry.repair_reason ?? null,
-      expected_head_sha: entry.expected_head_sha ?? null,
-      finding_id: entry.finding_id ?? null,
-      status: entry.status,
-      processed_at: new Date().toISOString(),
-      target: entry.target
-        ? {
-            kind: entry.target.kind,
-            branch: entry.target.branch,
-            head_sha: entry.target.head_sha,
-            cluster_id: entry.target.cluster_id,
-            job_path: entry.target.job_path,
-          }
-        : null,
-    }));
+    .map((entry: JsonValue) => {
+      const actions = compactLedgerActions(entry.actions);
+      return {
+        idempotency_key: entry.idempotency_key,
+        comment_id: entry.comment_id,
+        comment_version_key: entry.comment_version_key ?? null,
+        comment_url: entry.comment_url,
+        comment_created_at: entry.comment_created_at ?? null,
+        comment_updated_at: entry.comment_updated_at ?? null,
+        repo: entry.repo,
+        issue_number: entry.issue_number,
+        author: entry.author,
+        author_association: entry.author_association,
+        trigger: entry.trigger,
+        command: entry.command,
+        intent: entry.intent,
+        trusted_bot: Boolean(entry.trusted_bot),
+        trusted_bot_author: entry.trusted_bot_author ?? null,
+        automation_source: entry.automation_source ?? null,
+        repair_reason: entry.repair_reason ?? null,
+        expected_head_sha: entry.expected_head_sha ?? null,
+        finding_id: entry.finding_id ?? null,
+        status: entry.status,
+        processed_at: new Date().toISOString(),
+        target: entry.target
+          ? {
+              kind: entry.target.kind,
+              branch: entry.target.branch,
+              head_sha: entry.target.head_sha,
+              cluster_id: entry.target.cluster_id,
+              job_path: entry.target.job_path,
+            }
+          : null,
+        ...(actions.length > 0 ? { actions } : {}),
+      };
+    });
   const byCommentVersion = new Map(
     (current.commands ?? []).map((entry: JsonValue) => [ledgerEntryKey(entry), entry]),
   );
@@ -170,6 +174,18 @@ function ledgerEntryKey(entry: LooseRecord) {
     entry.comment_version_key ??
     `${entry.comment_id ?? "unknown"}:${entry.comment_updated_at ?? "unknown"}`
   );
+}
+
+function compactLedgerActions(actions: JsonValue) {
+  if (!Array.isArray(actions)) return [];
+  return actions
+    .map((action: JsonValue) => ({
+      action: action?.action ?? null,
+      status: action?.status ?? null,
+      label: action?.label ?? null,
+      job_path: action?.job_path ?? null,
+    }))
+    .filter((action: LooseRecord) => action.action || action.status);
 }
 
 export function writeLedger(file: JsonValue, current: LooseRecord) {
