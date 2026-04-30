@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 15:46 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6827 | 6723 | 104 | 2432 | 0 | 1380 | 11166 | Apr 30, 2026, 15:44 UTC | Apr 30, 2026, 15:44 UTC | 643 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6827 | 6723 | 104 | 2432 | 0 | 1380 | 11166 | Apr 30, 2026, 15:44 UTC | Apr 30, 2026, 15:44 UTC | 635 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 356 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -194,8 +194,8 @@ Latest review: Apr 30, 2026, 15:44 UTC. Latest close: Apr 30, 2026, 15:44 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 57 | 1 | 56 | 2 | 10 | 271 | 0 |
-| Last hour | 717 | 27 | 690 | 7 | 64 | 643 | 6 |
+| Last 15 minutes | 33 | 1 | 32 | 2 | 8 | 262 | 0 |
+| Last hour | 717 | 27 | 690 | 7 | 64 | 635 | 6 |
 | Last 24 hours | 5721 | 362 | 5359 | 29 | 710 | 2200 | 27 |
 
 ### Recently Closed Across Repos
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 15:44 UTC. Latest close: Apr 30, 2026, 15:44 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75111](https://github.com/openclaw/openclaw/pull/75111) | [codex] fix OpenAI Codex OAuth transport | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75111.md) | complete | Apr 30, 2026, 15:44 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68982](https://github.com/openclaw/openclaw/pull/68982) | fix: stream reasoning in live chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68982.md) | complete | Apr 30, 2026, 15:44 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74168](https://github.com/openclaw/openclaw/pull/74168) | fix(agents): add last-chance guard for blank user prompts in embedded runner | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74168.md) | complete | Apr 30, 2026, 15:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75121](https://github.com/openclaw/openclaw/pull/75121) | fix(telegram): preserve forwarded context in agent body | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75121.md) | complete | Apr 30, 2026, 15:43 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 15:44 UTC. Latest close: Apr 30, 2026, 15:44 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74787](https://github.com/openclaw/openclaw/pull/74787) | [codex] Reap orphaned acpx Codex ACP processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74787.md) | complete | Apr 30, 2026, 15:42 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74768](https://github.com/openclaw/openclaw/pull/74768) | codex: support native app-server background spawns for Codex harness agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74768.md) | complete | Apr 30, 2026, 15:41 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75130](https://github.com/openclaw/openclaw/issues/75130) | [Bug]: gateway accepts agent runs before plugin tool registration completes; pre-ready window produces spurious 'No callable tools remain' | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75130.md) | complete | Apr 30, 2026, 15:41 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75131](https://github.com/openclaw/openclaw/issues/75131) | [Bug]: delivery-queue: send-retry creates fresh UUIDs (not idempotent); recovery should fail-permanent on Telegram 400 'too long'; send-message should pre-split at 4096 chars | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75131.md) | complete | Apr 30, 2026, 15:40 UTC |
 
 </details>
 
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 15:46 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=73718.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25174984215](https://github.com/openclaw/clawsweeper/actions/runs/25174984215)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,8 +351,8 @@ Latest review: Apr 30, 2026, 15:44 UTC. Latest close: Apr 30, 2026, 15:44 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 57 | 1 | 56 | 2 | 10 | 271 | 0 |
-| Last hour | 717 | 27 | 690 | 7 | 64 | 643 | 6 |
+| Last 15 minutes | 33 | 1 | 32 | 2 | 8 | 262 | 0 |
+| Last hour | 717 | 27 | 690 | 7 | 64 | 635 | 6 |
 | Last 24 hours | 4796 | 362 | 4434 | 16 | 708 | 1800 | 27 |
 
 #### Recently Closed
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 15:44 UTC. Latest close: Apr 30, 2026, 15:44 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75111](https://github.com/openclaw/openclaw/pull/75111) | [codex] fix OpenAI Codex OAuth transport | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75111.md) | complete | Apr 30, 2026, 15:44 UTC |
 | [#68982](https://github.com/openclaw/openclaw/pull/68982) | fix: stream reasoning in live chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68982.md) | complete | Apr 30, 2026, 15:44 UTC |
 | [#74168](https://github.com/openclaw/openclaw/pull/74168) | fix(agents): add last-chance guard for blank user prompts in embedded runner | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74168.md) | complete | Apr 30, 2026, 15:43 UTC |
 | [#75121](https://github.com/openclaw/openclaw/pull/75121) | fix(telegram): preserve forwarded context in agent body | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75121.md) | complete | Apr 30, 2026, 15:43 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 15:44 UTC. Latest close: Apr 30, 2026, 15:44 UTC. L
 | [#74787](https://github.com/openclaw/openclaw/pull/74787) | [codex] Reap orphaned acpx Codex ACP processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74787.md) | complete | Apr 30, 2026, 15:42 UTC |
 | [#74768](https://github.com/openclaw/openclaw/pull/74768) | codex: support native app-server background spawns for Codex harness agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74768.md) | complete | Apr 30, 2026, 15:41 UTC |
 | [#75130](https://github.com/openclaw/openclaw/issues/75130) | [Bug]: gateway accepts agent runs before plugin tool registration completes; pre-ready window produces spurious 'No callable tools remain' | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75130.md) | complete | Apr 30, 2026, 15:41 UTC |
-| [#75131](https://github.com/openclaw/openclaw/issues/75131) | [Bug]: delivery-queue: send-retry creates fresh UUIDs (not idempotent); recovery should fail-permanent on Telegram 400 'too long'; send-message should pre-split at 4096 chars | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75131.md) | complete | Apr 30, 2026, 15:40 UTC |
 
 </details>
 
