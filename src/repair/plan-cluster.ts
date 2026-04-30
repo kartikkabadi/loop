@@ -101,6 +101,9 @@ const itemList = [...items.values()].sort(
 const securitySensitiveItems = itemList.filter((item: JsonValue) =>
   itemSecuritySensitive(item, job),
 );
+const securityRepairAllowedItems = itemList.filter((item: JsonValue) =>
+  itemSecurityRepairAllowed(item, job),
+);
 const targetCheckout = resolveTargetCheckout(job);
 const plan = {
   repo: job.frontmatter.repo,
@@ -115,10 +118,13 @@ const plan = {
   security_boundary: {
     policy: job.frontmatter.security_policy ?? "central_security_only",
     security_sensitive_items: securitySensitiveItems.map((item: JsonValue) => item.ref),
+    security_repair_allowed_items: securityRepairAllowedItems.map((item: JsonValue) => item.ref),
     action:
-      securitySensitiveItems.length > 0
-        ? "Quarantine only listed security-sensitive refs with route_security; continue non-security classification and narrow bug/fix work."
-        : "No security-sensitive signal detected in hydrated job refs.",
+      securityRepairAllowedItems.length > 0
+        ? "Explicit adopted PR repair opt-in allows bounded fix actions for listed security-sensitive refs; merge remains blocked until a clean later review."
+        : securitySensitiveItems.length > 0
+          ? "Quarantine only listed security-sensitive refs with route_security; continue non-security classification and narrow bug/fix work."
+          : "No security-sensitive signal detected in hydrated job refs.",
   },
   scope: {
     seed_refs: seedRefs.map(formatNormalizedRef),
@@ -139,7 +145,9 @@ const plan = {
   canonical_candidates: canonicalCandidates(itemList, job),
   safety_gates: [
     "re-fetch live state before every close/comment/label/merge/fix action",
-    "security-sensitive refs are out of scope and must route to central OpenClaw security handling without poisoning unrelated items",
+    securityRepairAllowedItems.length > 0
+      ? "only refs listed in security_repair_allowed_items may receive bounded security-sensitive repair; never merge or close them from this job"
+      : "security-sensitive refs are out of scope and must route to central OpenClaw security handling without poisoning unrelated items",
     "closed context refs are evidence only; do not emit closure actions for already-closed refs",
     "use needs_human only for the specific unresolved maintainer or product decision",
     "checks, conflicts, or changed state block only the affected merge/fixed-by-candidate mutation",
@@ -308,6 +316,7 @@ function summarizeItem(item: LooseRecord, job: LooseRecord) {
     hydration_error: item.hydration_error ?? null,
     body_excerpt: item.body_excerpt,
     security_sensitive: itemSecuritySensitive(item, job),
+    security_repair_allowed: itemSecurityRepairAllowed(item, job),
     comments_count: item.comments_count ?? item.comments.length,
     comments_hydrated: item.comments.length,
     comments_truncated: Math.max(0, item.comments.length - MAX_COMMENTS_PER_ITEM),
@@ -392,6 +401,7 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
       state: item.state,
       updated_at: item.updated_at,
       security_sensitive: item.security_sensitive,
+      security_repair_allowed: item.security_repair_allowed,
       hint: item.classification_hint,
     })),
     drive_plan: {
@@ -421,7 +431,9 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
           : "Close actions may run independently when their own safety gates pass.",
     },
     required_validation: [
-      "route security-sensitive refs with route_security and keep processing unrelated non-security items",
+      plan.security_boundary.security_repair_allowed_items.length > 0
+        ? "security-sensitive refs listed in security_repair_allowed_items may receive bounded fix actions, but merge and close remain blocked until later human/router gates clear"
+        : "route security-sensitive refs with route_security and keep processing unrelated non-security items",
       "use OpenClaw SECURITY.md posture: trusted-operator exec behavior, provider gaps, feature gaps, and hardening-only parity drift are not vulnerabilities without a boundary bypass",
       "prove current main behavior before fix, merge, fixed-by-candidate, or post-merge closeout actions",
       "for pure issue-dedupe closeout, prove the canonical issue and duplicate targets are live and current",
@@ -472,6 +484,7 @@ function canonicalCandidates(items: LooseRecord[], job: LooseRecord) {
 }
 
 function classificationHint(item: LooseRecord, job: LooseRecord) {
+  if (itemSecurityRepairAllowed(item, job)) return "security_sensitive_fix_allowed_by_opt_in";
   if (itemSecuritySensitive(item, job)) return "security_sensitive_route_only";
   const canonicalNumbers = new Set(
     (job.frontmatter.canonical ?? []).map(
@@ -491,14 +504,47 @@ function classificationHint(item: LooseRecord, job: LooseRecord) {
 
 function itemSecuritySensitive(item: LooseRecord, job: LooseRecord) {
   if (securityOverrideRefs(job).has(`#${item.number}`)) return false;
+  if (itemSecurityRepairAllowed(item, job)) return false;
+  return itemSecuritySignal(item);
+}
+
+function itemSecurityRepairAllowed(item: LooseRecord, job: LooseRecord) {
+  return (
+    itemSecuritySignal(item) &&
+    jobAllowsSecurityRepair(job) &&
+    jobTargetRefs(job).has(`#${item.number}`)
+  );
+}
+
+function itemSecuritySignal(item: LooseRecord) {
   return hasDeterministicSecuritySignal({
     labels: item.labels,
     comments: [
+      item.body,
       item.comments.map((comment: JsonValue) => comment.body),
       item.pull_request?.reviews?.map((review: JsonValue) => review.body ?? review.body_excerpt),
       item.pull_request?.review_comments?.map((comment: JsonValue) => comment.body),
     ],
   });
+}
+
+function jobAllowsSecurityRepair(job: LooseRecord) {
+  const allowedActions = new Set(job.frontmatter.allowed_actions ?? []);
+  const blockedActions = new Set(job.frontmatter.blocked_actions ?? []);
+  return (
+    job.frontmatter.source === "pr_automerge" &&
+    job.frontmatter.allow_fix_pr === true &&
+    allowedActions.has("fix") &&
+    blockedActions.has("merge")
+  );
+}
+
+function jobTargetRefs(job: LooseRecord) {
+  return new Set(
+    [...(job.frontmatter.canonical ?? []), ...(job.frontmatter.candidates ?? [])].map(
+      (ref: JsonValue) => `#${normalizeRef(job.frontmatter.repo, ref).number}`,
+    ),
+  );
 }
 
 function securityOverrideRefs(job: LooseRecord) {
