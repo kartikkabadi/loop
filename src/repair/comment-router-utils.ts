@@ -38,6 +38,15 @@ export function shouldSuppressProcessedCommentVersion(entry: LooseRecord) {
   return true;
 }
 
+export function sortCommentsForRouting(comments: LooseRecord[]) {
+  return [...comments].sort((left: LooseRecord, right: LooseRecord) => {
+    const leftTime = commentRoutingTime(left);
+    const rightTime = commentRoutingTime(right);
+    if (rightTime !== leftTime) return rightTime - leftTime;
+    return Number(right.id ?? 0) - Number(left.id ?? 0);
+  });
+}
+
 export function isAllowedMutationActor(login: JsonValue, trustedBots: Iterable<string>) {
   const actor = normalizeGitHubActor(login);
   if (!actor) return false;
@@ -60,6 +69,13 @@ export function isGitHubAppIntegrationAuthError(message: JsonValue) {
     text.includes("resource not accessible by integration") &&
     (text.includes("http 403") || /"status"\s*:\s*"403"/.test(text) || text.includes("status: 403"))
   );
+}
+
+function commentRoutingTime(comment: LooseRecord) {
+  const updated = Date.parse(String(comment.updated_at ?? ""));
+  if (Number.isFinite(updated)) return updated;
+  const created = Date.parse(String(comment.created_at ?? ""));
+  return Number.isFinite(created) ? created : 0;
 }
 
 function ignoredCheckNames() {

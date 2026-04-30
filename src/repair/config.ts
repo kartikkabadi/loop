@@ -31,6 +31,7 @@ export type CommentRouterConfig = {
   maxAutocloseTargets: number;
   maxAutoRepairsPerHead: number;
   maxAutoRepairsPerPr: number;
+  lookupConcurrency: number;
   lookbackMinutes: number;
   since: string;
   allowedAssociations: Set<string>;
@@ -110,6 +111,10 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     maxAutoRepairsPerPr: positiveInteger(
       args["max-auto-repairs-per-pr"] ?? process.env.CLAWSWEEPER_MAX_REPAIRS_PER_PR ?? 10,
       "max-auto-repairs-per-pr",
+    ),
+    lookupConcurrency: positiveInteger(
+      args["lookup-concurrency"] ?? process.env.CLAWSWEEPER_COMMENT_LOOKUP_CONCURRENCY ?? 8,
+      "lookup-concurrency",
     ),
     lookbackMinutes,
     since: stringSetting(

@@ -52,7 +52,9 @@ import {
   ghBestEffort,
   ghErrorText,
   ghJsonWithRetry as ghJson,
+  ghJsonWithRetryAsync as ghJsonAsync,
   ghPagedWithRetry as ghPaged,
+  ghPagedWithRetryAsync as ghPagedAsync,
   ghSpawn,
   ghTextWithRetry as ghText,
 } from "./github-cli.js";
@@ -78,6 +80,7 @@ const {
   maxAutocloseTargets,
   maxAutoRepairsPerHead,
   maxAutoRepairsPerPr,
+  lookupConcurrency,
   since,
   allowedAssociations,
   allowedRepositoryPermissions,
@@ -94,8 +97,10 @@ const processedCommentVersions = new Set(
 );
 const plannedAutoRepairHeads = new Set<string>();
 const collaboratorPermissionCache = new Map();
+const liveTargetCache = new Map<number, LooseRecord>();
+const issueCommentsCache = new Map<number, JsonValue[]>();
 const comments = listRecentComments().slice(0, maxComments);
-const commands: LooseRecord[] = [];
+const rawCommands: LooseRecord[] = [];
 
 for (const comment of comments) {
   const parsed: LooseRecord =
@@ -130,8 +135,11 @@ for (const comment of comments) {
     status: "pending",
     actions: [],
   };
-  commands.push(classifyCommand(command));
+  rawCommands.push(command);
 }
+
+await prehydrateCommandLookups(rawCommands);
+const commands = rawCommands.map((command) => classifyCommand(command));
 
 const actionable = commands.filter((command: JsonValue) => command.status === "ready");
 const report: LooseRecord = {
@@ -151,6 +159,7 @@ const report: LooseRecord = {
   allowed_repository_permissions: [...allowedRepositoryPermissions],
   max_auto_repairs_per_head: maxAutoRepairsPerHead,
   max_auto_repairs_per_pr: maxAutoRepairsPerPr,
+  lookup_concurrency: lookupConcurrency,
   commands,
 };
 
@@ -203,7 +212,39 @@ function isExpectedGitHubAppIntegrationToken(error: unknown) {
   );
 }
 
+async function prehydrateCommandLookups(commands: LooseRecord[]) {
+  const pending = commands.filter(
+    (command) =>
+      command.issue_number &&
+      !(command.comment_version_key && processedCommentVersions.has(command.comment_version_key)),
+  );
+  const logins = unique(
+    pending
+      .filter((command) => !command.trusted_bot)
+      .map((command) => String(command.author ?? "").trim())
+      .filter(Boolean),
+  );
+  const issueNumbers = unique(
+    pending
+      .map((command) => Number(command.issue_number))
+      .filter((number) => Number.isInteger(number) && number > 0),
+  );
+
+  await Promise.all([
+    mapLimit(logins, lookupConcurrency, (login) => fetchCollaboratorPermissionAsync(login)),
+    mapLimit(issueNumbers, lookupConcurrency, async (number) => {
+      liveTargetCache.set(number, await fetchLiveTargetAsync(number));
+    }),
+    mapLimit(issueNumbers, lookupConcurrency, async (number) => {
+      issueCommentsCache.set(number, await fetchIssueCommentsAsync(number));
+    }),
+  ]);
+}
+
 function classifyCommand(command: LooseRecord): JsonValue {
+  if (command.comment_version_key && processedCommentVersions.has(command.comment_version_key)) {
+    return { ...command, status: "skipped", reason: "comment version already processed in ledger" };
+  }
   if (command.trusted_bot) {
     if (!trustedBots.has(String(command.author ?? "").toLowerCase())) {
       return { ...command, status: "ignored", reason: "trusted automation author is not allowed" };
@@ -221,9 +262,6 @@ function classifyCommand(command: LooseRecord): JsonValue {
   }
   if (!command.issue_number) {
     return { ...command, status: "ignored", reason: "could not resolve issue or PR number" };
-  }
-  if (command.comment_version_key && processedCommentVersions.has(command.comment_version_key)) {
-    return { ...command, status: "skipped", reason: "comment version already processed in ledger" };
   }
 
   const liveTarget = fetchLiveTarget(command);
@@ -1405,6 +1443,8 @@ function listRecentComments() {
 }
 
 function fetchLiveTarget(command: LooseRecord): LooseRecord {
+  const cached = liveTargetCache.get(Number(command.issue_number));
+  if (cached) return cached.status === "waiting" ? { ...command, ...cached } : cached;
   try {
     const issue = fetchIssue(command.issue_number);
     const pull = issue.pull_request ? fetchPullRequestView(command.issue_number) : null;
@@ -1418,14 +1458,67 @@ function fetchLiveTarget(command: LooseRecord): LooseRecord {
   }
 }
 
+async function fetchLiveTargetAsync(number: number): Promise<LooseRecord> {
+  try {
+    const issue = await fetchIssueAsync(number);
+    const pull = issue.pull_request ? await fetchPullRequestViewAsync(number) : null;
+    return { issue, pull };
+  } catch (error) {
+    return {
+      issue_number: number,
+      status: "waiting",
+      reason: `GitHub lookup failed; will retry later: ${compactGhError(error)}`,
+    };
+  }
+}
+
 function fetchIssue(number: JsonValue) {
   return ghJson(["api", `repos/${targetRepo}/issues/${number}`], {
     attempts: TARGET_LOOKUP_RETRY_ATTEMPTS,
   });
 }
 
+function fetchIssueAsync(number: JsonValue) {
+  return ghJsonAsync<LooseRecord>(["api", `repos/${targetRepo}/issues/${number}`], {
+    attempts: TARGET_LOOKUP_RETRY_ATTEMPTS,
+  });
+}
+
 function fetchPullRequestView(number: JsonValue) {
   return ghJson(
+    [
+      "pr",
+      "view",
+      String(number),
+      "--repo",
+      targetRepo,
+      "--json",
+      [
+        "headRefName",
+        "headRefOid",
+        "author",
+        "baseRefName",
+        "body",
+        "closingIssuesReferences",
+        "files",
+        "isDraft",
+        "labels",
+        "mergeable",
+        "mergeCommit",
+        "mergeStateStatus",
+        "mergedAt",
+        "reviewDecision",
+        "state",
+        "statusCheckRollup",
+        "title",
+      ].join(","),
+    ],
+    { attempts: TARGET_LOOKUP_RETRY_ATTEMPTS },
+  );
+}
+
+function fetchPullRequestViewAsync(number: JsonValue) {
+  return ghJsonAsync<LooseRecord>(
     [
       "pr",
       "view",
@@ -1498,6 +1591,23 @@ function fetchCollaboratorPermission(login: JsonValue) {
   return permission;
 }
 
+async function fetchCollaboratorPermissionAsync(login: JsonValue) {
+  const key = login.toLowerCase();
+  if (collaboratorPermissionCache.has(key)) return collaboratorPermissionCache.get(key);
+  let permission = null;
+  try {
+    const result = await ghJsonAsync<LooseRecord>([
+      "api",
+      `repos/${targetRepo}/collaborators/${encodeURIComponent(login)}/permission`,
+    ]);
+    permission = result?.permission ? String(result.permission).toLowerCase() : null;
+  } catch {
+    permission = null;
+  }
+  collaboratorPermissionCache.set(key, permission);
+  return permission;
+}
+
 function hasExistingResponse(
   number: JsonValue,
   commentId: JsonValue,
@@ -1505,24 +1615,29 @@ function hasExistingResponse(
   headSha: JsonValue,
 ) {
   const marker = `<!-- clawsweeper-command:${commentId}:${intent}:${headSha ?? "na"} -->`;
-  return ghPaged(`repos/${targetRepo}/issues/${number}/comments?per_page=100`).some(
-    (comment: JsonValue) => {
-      const body = String(comment.body ?? "");
-      if (!body.includes(marker)) return false;
-      if (
-        MERGE_INTENTS.has(String(intent)) &&
-        (body.includes("did not merge yet") ||
-          body.includes("is not merged yet") ||
-          body.includes("I left the PR open for the remaining gate"))
-      ) {
-        return false;
-      }
-      if (intent === "maintainer_approve_automerge") {
-        return !body.includes("Maintainer-approved ClawSweeper automerge is not merged yet.");
-      }
-      return true;
-    },
-  );
+  const comments =
+    issueCommentsCache.get(Number(number)) ??
+    ghPaged(`repos/${targetRepo}/issues/${number}/comments?per_page=100`);
+  return comments.some((comment: JsonValue) => {
+    const body = String(comment.body ?? "");
+    if (!body.includes(marker)) return false;
+    if (
+      MERGE_INTENTS.has(String(intent)) &&
+      (body.includes("did not merge yet") ||
+        body.includes("is not merged yet") ||
+        body.includes("I left the PR open for the remaining gate"))
+    ) {
+      return false;
+    }
+    if (intent === "maintainer_approve_automerge") {
+      return !body.includes("Maintainer-approved ClawSweeper automerge is not merged yet.");
+    }
+    return true;
+  });
+}
+
+async function fetchIssueCommentsAsync(number: JsonValue) {
+  return ghPagedAsync<JsonValue>(`repos/${targetRepo}/issues/${number}/comments?per_page=100`);
 }
 
 function postComment(command: LooseRecord, body: string) {
@@ -1658,6 +1773,28 @@ function hasLabel(target: LooseRecord, name: string) {
 
 function pauseLabelsOn(target: LooseRecord) {
   return [HUMAN_REVIEW_LABEL, MERGE_READY_LABEL].filter((name) => hasLabel(target, name));
+}
+
+function unique<T>(items: T[]): T[] {
+  return [...new Set(items)];
+}
+
+async function mapLimit<T, R>(
+  items: T[],
+  limit: number,
+  mapper: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results = Array.from<R>({ length: items.length });
+  let next = 0;
+  const workers = Array.from({ length: Math.min(Math.max(limit, 1), items.length) }, async () => {
+    while (next < items.length) {
+      const index = next;
+      next += 1;
+      results[index] = await mapper(items[index]);
+    }
+  });
+  await Promise.all(workers);
+  return results;
 }
 
 function ledgerPath() {

@@ -1,8 +1,11 @@
 import type { JsonValue } from "./json-types.js";
-import { execFileSync, spawnSync } from "node:child_process";
+import { execFile, execFileSync, spawnSync } from "node:child_process";
+import { promisify } from "node:util";
 import { stripAnsi } from "./comment-router-utils.js";
 import { ghCliEnv } from "./process-env.js";
 import { repoRoot } from "./paths.js";
+
+const execFileAsync = promisify(execFile);
 
 export type GhRunOptions = {
   cwd?: string;
@@ -23,6 +26,13 @@ export function ghJsonWithRetry<T = JsonValue>(
   options: GhRetryOptions | number = {},
 ): T {
   return JSON.parse(ghTextWithRetry(ghArgs, options) || "null") as T;
+}
+
+export async function ghJsonWithRetryAsync<T = JsonValue>(
+  ghArgs: string[],
+  options: GhRetryOptions | number = {},
+): Promise<T> {
+  return JSON.parse((await ghTextWithRetryAsync(ghArgs, options)) || "null") as T;
 }
 
 export function ghJsonBestEffort<T = JsonValue>(
@@ -48,6 +58,18 @@ export function ghPagedWithRetry<T = JsonValue>(
   options: GhRetryOptions | number = {},
 ): T[] {
   const pages = ghJsonWithRetry<JsonValue[]>(["api", apiPath, "--paginate", "--slurp"], options);
+  if (!Array.isArray(pages)) return [];
+  return pages.flatMap((page: JsonValue) => (Array.isArray(page) ? (page as T[]) : []));
+}
+
+export async function ghPagedWithRetryAsync<T = JsonValue>(
+  apiPath: string,
+  options: GhRetryOptions | number = {},
+): Promise<T[]> {
+  const pages = await ghJsonWithRetryAsync<JsonValue[]>(
+    ["api", apiPath, "--paginate", "--slurp"],
+    options,
+  );
   if (!Array.isArray(pages)) return [];
   return pages.flatMap((page: JsonValue) => (Array.isArray(page) ? (page as T[]) : []));
 }
@@ -78,6 +100,36 @@ export function ghTextWithRetry(ghArgs: string[], options: GhRetryOptions | numb
     }
   }
   throw lastError instanceof Error ? lastError : new Error(String(lastError));
+}
+
+export async function ghTextWithRetryAsync(
+  ghArgs: string[],
+  options: GhRetryOptions | number = {},
+): Promise<string> {
+  const resolved = resolveRetryOptions(options);
+  const attempts = Math.max(1, resolved.attempts ?? 6);
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await ghTextAsync(ghArgs, resolved);
+    } catch (error) {
+      lastError = error;
+      if (attempt >= attempts || !shouldRetryGh(error)) throw error;
+      await sleepAsync(Math.min(1000 * attempt, 5000));
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
+}
+
+export async function ghTextAsync(ghArgs: string[], options: GhRunOptions = {}): Promise<string> {
+  if (options.input !== undefined) return ghText(ghArgs, options);
+  const { stdout } = await execFileAsync("gh", ghArgs, {
+    cwd: options.cwd ?? repoRoot(),
+    env: ghEnv(options.env),
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  return stripAnsi(String(stdout)).trim();
 }
 
 export function ghBestEffort(ghArgs: string[], options: GhRunOptions = {}): void {
@@ -174,4 +226,8 @@ function bufferLikeToString(value: unknown): string {
 
 function sleepMs(ms: number): void {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+function sleepAsync(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -7,6 +7,7 @@ import {
   isAllowedMutationActor,
   normalizeGitHubActor,
   shouldSuppressProcessedCommentVersion,
+  sortCommentsForRouting,
   summarizeChecks,
 } from "../../dist/repair/comment-router-utils.js";
 
@@ -60,6 +61,28 @@ test("appendLedger leaves waiting commands retryable", () => {
   ]);
 
   assert.equal(ledger.commands.length, 0);
+});
+
+test("sortCommentsForRouting prioritizes edited durable review comments", () => {
+  const sorted = sortCommentsForRouting([
+    {
+      id: 2,
+      body: "@clawsweeper rebase",
+      created_at: "2026-04-30T03:40:00Z",
+      updated_at: "2026-04-30T03:40:00Z",
+    },
+    {
+      id: 1,
+      body: "<!-- clawsweeper-verdict:pass item=74742 sha=abc confidence=high -->",
+      created_at: "2026-04-30T02:00:00Z",
+      updated_at: "2026-04-30T03:45:00Z",
+    },
+  ]);
+
+  assert.deepEqual(
+    sorted.map((comment) => comment.id),
+    [1, 2],
+  );
 });
 
 test("summarizeChecks ignores cancelled default non-gating checks", () => {
