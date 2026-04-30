@@ -148,19 +148,19 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 01:06 UTC
+Last dashboard update: Apr 30, 2026, 01:07 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4463 |
-| Open PRs | 3381 |
-| Open items total | 7844 |
-| Reviewed files | 7446 |
-| Unreviewed open items | 401 |
-| Due now by cadence | 2980 |
+| Open issues | 4459 |
+| Open PRs | 3378 |
+| Open items total | 7837 |
+| Reviewed files | 7448 |
+| Unreviewed open items | 392 |
+| Due now by cadence | 2992 |
 | Proposed closes awaiting apply | 12 |
 | Work candidates awaiting promotion | 1095 |
 | Closed by Codex apply | 10925 |
@@ -171,7 +171,7 @@ Last dashboard update: Apr 30, 2026, 01:06 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6897 | 6519 | 378 | 2881 | 12 | 1049 | 10917 | Apr 30, 2026, 01:03 UTC | Apr 30, 2026, 01:06 UTC | 924 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6890 | 6521 | 369 | 2893 | 12 | 1049 | 10917 | Apr 30, 2026, 01:05 UTC | Apr 30, 2026, 01:06 UTC | 883 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 947 | 924 | 23 | 96 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -179,19 +179,19 @@ Last dashboard update: Apr 30, 2026, 01:06 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 01:06 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25142029397) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Audit finished | Apr 30, 2026, 01:07 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25142065856) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 01:03 UTC. Latest close: Apr 30, 2026, 01:06 UTC. Latest comment sync: Apr 30, 2026, 01:04 UTC.
+Latest review: Apr 30, 2026, 01:05 UTC. Latest close: Apr 30, 2026, 01:06 UTC. Latest comment sync: Apr 30, 2026, 01:06 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 25 | 2 | 23 | 0 | 9 | 439 | 0 |
-| Last hour | 556 | 20 | 536 | 7 | 20 | 924 | 0 |
-| Last 24 hours | 5913 | 312 | 5601 | 22 | 780 | 1954 | 19 |
+| Last 15 minutes | 26 | 2 | 24 | 0 | 8 | 406 | 0 |
+| Last hour | 557 | 19 | 538 | 7 | 20 | 883 | 0 |
+| Last 24 hours | 5863 | 312 | 5551 | 22 | 778 | 1956 | 19 |
 
 ### Recently Closed Across Repos
 
@@ -235,6 +235,9 @@ Latest review: Apr 30, 2026, 01:03 UTC. Latest close: Apr 30, 2026, 01:06 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74714](https://github.com/openclaw/openclaw/pull/74714) | fix: Google Vertex manifest evidence accepts the Windows %APPDATA% ADC path, but the Google V... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74714.md) | complete | Apr 30, 2026, 01:05 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74713](https://github.com/openclaw/openclaw/pull/74713) | fix(plugins): repair configured provider runtime deps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74713.md) | complete | Apr 30, 2026, 01:05 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74699](https://github.com/openclaw/openclaw/pull/74699) | fix: Codex app-server steering path regression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74699.md) | complete | Apr 30, 2026, 01:05 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74702](https://github.com/openclaw/openclaw/issues/74702) | openclaw-lark plugin fails to load after OpenClaw 2026.4.27: Cannot find module openclaw/plugin-sdk/zalouser | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74702.md) | complete | Apr 30, 2026, 01:03 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74706](https://github.com/openclaw/openclaw/issues/74706) | Gateway RPC: add SDK-facing artifacts APIs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74706.md) | complete | Apr 30, 2026, 01:03 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74711](https://github.com/openclaw/openclaw/pull/74711) | fix(memory): mirror sqlite-vec into plugin runtime deps snapshot | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74711.md) | complete | Apr 30, 2026, 01:03 UTC |
@@ -242,9 +245,6 @@ Latest review: Apr 30, 2026, 01:03 UTC. Latest close: Apr 30, 2026, 01:06 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74708](https://github.com/openclaw/openclaw/issues/74708) | Gateway RPC: add SDK-facing environment discovery APIs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74708.md) | complete | Apr 30, 2026, 01:03 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74709](https://github.com/openclaw/openclaw/issues/74709) | Docs: clarify app SDK vs plugin SDK boundary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74709.md) | complete | Apr 30, 2026, 01:03 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74707](https://github.com/openclaw/openclaw/issues/74707) | Gateway RPC: add SDK-facing task ledger APIs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74707.md) | complete | Apr 30, 2026, 01:03 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74134](https://github.com/openclaw/openclaw/pull/74134) | feat(file-transfer): add bundled plugin for binary file ops on nodes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74134.md) | complete | Apr 30, 2026, 01:02 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74704](https://github.com/openclaw/openclaw/issues/74704) | SDK: stabilize app-client happy path for agents, sessions, runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74704.md) | complete | Apr 30, 2026, 01:02 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68433](https://github.com/openclaw/openclaw/pull/68433) | Prewarm mirrored outbound sessions before first callback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68433.md) | complete | Apr 30, 2026, 01:02 UTC |
 
 </details>
 
@@ -262,12 +262,12 @@ Latest review: Apr 30, 2026, 01:03 UTC. Latest close: Apr 30, 2026, 01:06 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 01:06 UTC
+Updated: Apr 30, 2026, 01:07 UTC
 
-State: Apply in progress
+State: Audit finished
 
-Starting apply/comment-sync run for up to 12 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=46268,46858,47029,55224,55363,56837,59050,63981,65229,67394,70371,74574.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25142029397](https://github.com/openclaw/clawsweeper/actions/runs/25142029397)
+Refreshed README Audit Health from a full live openclaw/openclaw state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25142065856](https://github.com/openclaw/clawsweeper/actions/runs/25142065856)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -275,11 +275,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25142029397](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3555 |
-| Open PRs | 3342 |
-| Open items total | 6897 |
-| Reviewed files | 6519 |
-| Unreviewed open items | 378 |
+| Open issues | 3551 |
+| Open PRs | 3339 |
+| Open items total | 6890 |
+| Reviewed files | 6521 |
+| Unreviewed open items | 369 |
 | Archived closed files | 14644 |
 
 #### Review Outcomes
@@ -288,9 +288,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25142029397](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3359 |
 | Proposed issue closes | 7 (0.2% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3146 |
+| Fresh reviewed PRs in the last 7 days | 3148 |
 | Proposed PR closes | 5 (0.2% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6505 |
+| Fresh verified reviews in the last 7 days | 6507 |
 | Proposed closes awaiting apply | 12 (0.2% of fresh reviews) |
 | Work candidates awaiting promotion | 1049 |
 | Closed by Codex apply | 10917 |
@@ -300,20 +300,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25142029397](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 124/1125 current (1001 due, 11%) |
-| Hourly hot item cadence (<7d) | 124/1125 current (1001 due, 11%) |
-| Daily cadence coverage | 2095/3595 current (1500 due, 58.3%) |
-| Daily PR cadence | 1410/2501 current (1091 due, 56.4%) |
-| Daily new issue cadence (<30d) | 685/1094 current (409 due, 62.6%) |
+| Hourly cadence coverage | 126/1126 current (1000 due, 11.2%) |
+| Hourly hot item cadence (<7d) | 126/1126 current (1000 due, 11.2%) |
+| Daily cadence coverage | 2074/3596 current (1522 due, 57.7%) |
+| Daily PR cadence | 1388/2501 current (1113 due, 55.5%) |
+| Daily new issue cadence (<30d) | 686/1095 current (409 due, 62.6%) |
 | Weekly older issue cadence | 1797/1799 current (2 due, 99.9%) |
-| Due now by cadence | 2881 |
+| Due now by cadence | 2893 |
 
 ### Audit Health
 
 <!-- clawsweeper-audit:openclaw-openclaw:start -->
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Last audit: Apr 29, 2026, 18:45 UTC
+Last audit: Apr 30, 2026, 01:07 UTC
 
 Status: **Action needed**
 
@@ -322,13 +322,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 | Metric | Count |
 | --- | ---: |
 | Scan complete | yes |
-| Open items seen | 6960 |
-| Missing eligible open records | 262 |
+| Open items seen | 6891 |
+| Missing eligible open records | 273 |
 | Missing maintainer-authored open records | 35 |
 | Missing protected open records | 23 |
-| Missing recently-created open records | 28 |
+| Missing recently-created open records | 45 |
 | Archived records that are open again | 0 |
-| Stale item records | 0 |
+| Stale item records | 6 |
 | Duplicate records | 0 |
 | Protected proposed closes | 0 |
 | Stale reviews | 4 |
@@ -342,13 +342,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 01:03 UTC. Latest close: Apr 30, 2026, 01:06 UTC. Latest comment sync: Apr 30, 2026, 01:04 UTC.
+Latest review: Apr 30, 2026, 01:05 UTC. Latest close: Apr 30, 2026, 01:06 UTC. Latest comment sync: Apr 30, 2026, 01:06 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 25 | 2 | 23 | 0 | 9 | 439 | 0 |
-| Last hour | 556 | 20 | 536 | 7 | 20 | 924 | 0 |
-| Last 24 hours | 4975 | 312 | 4663 | 9 | 769 | 1542 | 19 |
+| Last 15 minutes | 26 | 2 | 24 | 0 | 8 | 406 | 0 |
+| Last hour | 557 | 19 | 538 | 7 | 20 | 883 | 0 |
+| Last 24 hours | 4925 | 312 | 4613 | 9 | 767 | 1544 | 19 |
 
 #### Recently Closed
 
@@ -384,6 +384,9 @@ Latest review: Apr 30, 2026, 01:03 UTC. Latest close: Apr 30, 2026, 01:06 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74714](https://github.com/openclaw/openclaw/pull/74714) | fix: Google Vertex manifest evidence accepts the Windows %APPDATA% ADC path, but the Google V... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74714.md) | complete | Apr 30, 2026, 01:05 UTC |
+| [#74713](https://github.com/openclaw/openclaw/pull/74713) | fix(plugins): repair configured provider runtime deps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74713.md) | complete | Apr 30, 2026, 01:05 UTC |
+| [#74699](https://github.com/openclaw/openclaw/pull/74699) | fix: Codex app-server steering path regression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74699.md) | complete | Apr 30, 2026, 01:05 UTC |
 | [#74702](https://github.com/openclaw/openclaw/issues/74702) | openclaw-lark plugin fails to load after OpenClaw 2026.4.27: Cannot find module openclaw/plugin-sdk/zalouser | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74702.md) | complete | Apr 30, 2026, 01:03 UTC |
 | [#74706](https://github.com/openclaw/openclaw/issues/74706) | Gateway RPC: add SDK-facing artifacts APIs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74706.md) | complete | Apr 30, 2026, 01:03 UTC |
 | [#74711](https://github.com/openclaw/openclaw/pull/74711) | fix(memory): mirror sqlite-vec into plugin runtime deps snapshot | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74711.md) | complete | Apr 30, 2026, 01:03 UTC |
@@ -391,9 +394,6 @@ Latest review: Apr 30, 2026, 01:03 UTC. Latest close: Apr 30, 2026, 01:06 UTC. L
 | [#74708](https://github.com/openclaw/openclaw/issues/74708) | Gateway RPC: add SDK-facing environment discovery APIs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74708.md) | complete | Apr 30, 2026, 01:03 UTC |
 | [#74709](https://github.com/openclaw/openclaw/issues/74709) | Docs: clarify app SDK vs plugin SDK boundary | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74709.md) | complete | Apr 30, 2026, 01:03 UTC |
 | [#74707](https://github.com/openclaw/openclaw/issues/74707) | Gateway RPC: add SDK-facing task ledger APIs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74707.md) | complete | Apr 30, 2026, 01:03 UTC |
-| [#74134](https://github.com/openclaw/openclaw/pull/74134) | feat(file-transfer): add bundled plugin for binary file ops on nodes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74134.md) | complete | Apr 30, 2026, 01:02 UTC |
-| [#74704](https://github.com/openclaw/openclaw/issues/74704) | SDK: stabilize app-client happy path for agents, sessions, runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74704.md) | complete | Apr 30, 2026, 01:02 UTC |
-| [#68433](https://github.com/openclaw/openclaw/pull/68433) | Prewarm mirrored outbound sessions before first callback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68433.md) | complete | Apr 30, 2026, 01:02 UTC |
 
 </details>
 
