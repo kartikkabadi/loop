@@ -72,12 +72,18 @@ export function buildFixPrompt({
 }
 
 function renderChangelogRule(fixArtifact: LooseRecord) {
+  const policyRule =
+    "- target repository changelog policy wins over fix artifact credit notes: for openclaw/openclaw, never add forbidden `Thanks @codex`, `Thanks @openclaw`, or `Thanks @steipete` changelog attribution; preserve those source authors in PR body/history/source links instead, and use only allowed external GitHub usernames when a changelog thanks line is required;";
   if (fixArtifact.changelog_required !== true) {
-    return "- if you discover the target repository requires a changelog for this user-facing repair, add or repair that changelog entry before returning;";
+    return [
+      "- if you discover the target repository requires a changelog for this user-facing repair, add or repair that changelog entry before returning;",
+      policyRule,
+    ].join("\n");
   }
   return [
     "- changelog_required is true: you must inspect CHANGELOG.md and add or repair the required entry before returning;",
     "- the changelog entry must describe the user-facing change and preserve contributor/source PR attribution when available;",
+    policyRule,
     "- do not leave the changelog for the automerge gate or a later repair pass.",
   ].join("\n");
 }

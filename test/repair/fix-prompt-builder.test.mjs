@@ -22,10 +22,16 @@ test("fix prompt treats changelog-required artifacts as required edits", () => {
     source_prs: ["https://github.com/openclaw/openclaw/pull/74506"],
     changelog_required: true,
     likely_files: ["CHANGELOG.md"],
+    credit_notes: ["Preserve @steipete as source PR author."],
   });
 
   assert.match(prompt, /changelog_required is true/);
   assert.match(prompt, /must inspect CHANGELOG\.md and add or repair the required entry/);
+  assert.match(
+    prompt,
+    /never add forbidden `Thanks @codex`, `Thanks @openclaw`, or `Thanks @steipete`/,
+  );
+  assert.match(prompt, /preserve those source authors in PR body\/history\/source links instead/);
   assert.match(prompt, /do not leave the changelog for the automerge gate or a later repair pass/);
 });
 
