@@ -165,12 +165,12 @@ export function completeRebaseIfResolved({ targetDir }: TargetDir): CompleteReba
     };
   }
 
+  assertNoConflictMarkers({ targetDir, paths: unmergedPaths(targetDir) });
+  run("git", ["add", "--all"], { cwd: targetDir });
   const unresolved = unmergedPaths(targetDir);
   if (unresolved.length > 0) {
     throw new Error(`rebase conflicts remain unresolved: ${unresolved.join(", ")}`);
   }
-
-  run("git", ["add", "--all"], { cwd: targetDir });
   let detail = "";
   while (hasRebaseInProgress(targetDir)) {
     const child = spawnSync("git", ["-c", "core.editor=true", "rebase", "--continue"], {
@@ -194,6 +194,18 @@ export function completeRebaseIfResolved({ targetDir }: TargetDir): CompleteReba
     current_head: currentHead(targetDir),
     detail,
   };
+}
+
+function assertNoConflictMarkers({ targetDir, paths }: TargetDir & { paths: string[] }): void {
+  const unresolved = paths.filter((filePath) => {
+    const absolute = path.join(targetDir, filePath);
+    if (!fs.existsSync(absolute) || !fs.statSync(absolute).isFile()) return false;
+    const text = fs.readFileSync(absolute, "utf8");
+    return /^<{7} |^={7}$|^>{7} /m.test(text);
+  });
+  if (unresolved.length > 0) {
+    throw new Error(`rebase conflicts remain unresolved: ${unresolved.join(", ")}`);
+  }
 }
 
 export function hasRebaseInProgress(targetDir: string): boolean {
