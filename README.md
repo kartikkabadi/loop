@@ -165,7 +165,7 @@ Last dashboard update: Apr 30, 2026, 22:11 UTC
 | Open items total | 7043 |
 | Reviewed files | 7648 |
 | Unreviewed open items | 56 |
-| Due now by cadence | 1597 |
+| Due now by cadence | 1598 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1657 |
 | Closed by Codex apply | 11329 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 22:11 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6777 | 6721 | 56 | 1341 | 0 | 1611 | 11321 | Apr 30, 2026, 22:10 UTC | Apr 30, 2026, 22:10 UTC | 847 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6777 | 6721 | 56 | 1342 | 0 | 1611 | 11321 | Apr 30, 2026, 22:11 UTC | Apr 30, 2026, 22:10 UTC | 847 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 266 | 924 | 0 | 253 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -190,13 +190,13 @@ Last dashboard update: Apr 30, 2026, 22:11 UTC
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 22:10 UTC. Latest close: Apr 30, 2026, 22:10 UTC. Latest comment sync: Apr 30, 2026, 22:10 UTC.
+Latest review: Apr 30, 2026, 22:11 UTC. Latest close: Apr 30, 2026, 22:10 UTC. Latest comment sync: Apr 30, 2026, 22:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 109 | 2 | 107 | 1 | 6 | 485 | 1 |
+| Last 15 minutes | 110 | 2 | 108 | 1 | 6 | 486 | 1 |
 | Last hour | 862 | 15 | 847 | 8 | 28 | 847 | 3 |
-| Last 24 hours | 6301 | 456 | 5845 | 20 | 667 | 3369 | 26 |
+| Last 24 hours | 6300 | 456 | 5844 | 20 | 667 | 3369 | 26 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 22:10 UTC. Latest close: Apr 30, 2026, 22:10 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75258](https://github.com/openclaw/openclaw/pull/75258) | fix: drop reasoning payloads before reply delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75258.md) | complete | Apr 30, 2026, 22:11 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#67509](https://github.com/openclaw/openclaw/pull/67509) | fix: add root guard to prevent CLI execution as root (#67478) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/67509.md) | complete | Apr 30, 2026, 22:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58808](https://github.com/openclaw/openclaw/pull/58808) | feat: pass requesterSenderId and senderIsOwner to ChannelAgentToolFactory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58808.md) | complete | Apr 30, 2026, 22:10 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75282](https://github.com/openclaw/openclaw/pull/75282) | fix: TTS fallback fix removes the global plugin-disable guard for every capability provider... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75282.md) | complete | Apr 30, 2026, 22:09 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 22:10 UTC. Latest close: Apr 30, 2026, 22:10 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75172](https://github.com/openclaw/openclaw/pull/75172) | fix(gateway): guard against undefined channelLogs entry in async channel lifecycle handlers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75172.md) | complete | Apr 30, 2026, 22:06 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74946](https://github.com/openclaw/openclaw/pull/74946) | fix(moonshot): accept moonshotai/<model> as direct-API alias | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74946.md) | complete | Apr 30, 2026, 22:04 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75280](https://github.com/openclaw/openclaw/pull/75280) | Feat/main session durable delivery pr | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75280.md) | complete | Apr 30, 2026, 22:03 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75281](https://github.com/openclaw/openclaw/pull/75281) | fix(agents): repair malformed tool-call args on Codex/Responses transports | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75281.md) | complete | Apr 30, 2026, 22:02 UTC |
 
 </details>
 
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 22:11 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 4. Total fresh closes in this run: 4/5. Result records in checkpoint: 7, including durable review comment syncs.
+Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 4/5. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25191743099](https://github.com/openclaw/clawsweeper/actions/runs/25191743099)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -307,11 +307,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25191743099](https://
 | --- | ---: |
 | Hourly cadence coverage | 524/1447 current (923 due, 36.2%) |
 | Hourly hot item cadence (<7d) | 524/1447 current (923 due, 36.2%) |
-| Daily cadence coverage | 3130/3490 current (360 due, 89.7%) |
-| Daily PR cadence | 2154/2448 current (294 due, 88%) |
+| Daily cadence coverage | 3129/3490 current (361 due, 89.7%) |
+| Daily PR cadence | 2153/2448 current (295 due, 87.9%) |
 | Daily new issue cadence (<30d) | 976/1042 current (66 due, 93.7%) |
 | Weekly older issue cadence | 1782/1784 current (2 due, 99.9%) |
-| Due now by cadence | 1341 |
+| Due now by cadence | 1342 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `51947,61960,62112,63037,73342`
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 22:10 UTC. Latest close: Apr 30, 2026, 22:10 UTC. Latest comment sync: Apr 30, 2026, 22:10 UTC.
+Latest review: Apr 30, 2026, 22:11 UTC. Latest close: Apr 30, 2026, 22:10 UTC. Latest comment sync: Apr 30, 2026, 22:11 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 109 | 2 | 107 | 1 | 6 | 485 | 1 |
+| Last 15 minutes | 110 | 2 | 108 | 1 | 6 | 486 | 1 |
 | Last hour | 862 | 15 | 847 | 8 | 28 | 847 | 3 |
-| Last 24 hours | 6285 | 456 | 5829 | 13 | 667 | 3368 | 26 |
+| Last 24 hours | 6284 | 456 | 5828 | 13 | 667 | 3368 | 26 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 22:10 UTC. Latest close: Apr 30, 2026, 22:10 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75258](https://github.com/openclaw/openclaw/pull/75258) | fix: drop reasoning payloads before reply delivery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75258.md) | complete | Apr 30, 2026, 22:11 UTC |
 | [#67509](https://github.com/openclaw/openclaw/pull/67509) | fix: add root guard to prevent CLI execution as root (#67478) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/67509.md) | complete | Apr 30, 2026, 22:10 UTC |
 | [#58808](https://github.com/openclaw/openclaw/pull/58808) | feat: pass requesterSenderId and senderIsOwner to ChannelAgentToolFactory | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58808.md) | complete | Apr 30, 2026, 22:10 UTC |
 | [#75282](https://github.com/openclaw/openclaw/pull/75282) | fix: TTS fallback fix removes the global plugin-disable guard for every capability provider... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75282.md) | complete | Apr 30, 2026, 22:09 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 22:10 UTC. Latest close: Apr 30, 2026, 22:10 UTC. L
 | [#75172](https://github.com/openclaw/openclaw/pull/75172) | fix(gateway): guard against undefined channelLogs entry in async channel lifecycle handlers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75172.md) | complete | Apr 30, 2026, 22:06 UTC |
 | [#74946](https://github.com/openclaw/openclaw/pull/74946) | fix(moonshot): accept moonshotai/<model> as direct-API alias | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74946.md) | complete | Apr 30, 2026, 22:04 UTC |
 | [#75280](https://github.com/openclaw/openclaw/pull/75280) | Feat/main session durable delivery pr | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75280.md) | complete | Apr 30, 2026, 22:03 UTC |
-| [#75281](https://github.com/openclaw/openclaw/pull/75281) | fix(agents): repair malformed tool-call args on Codex/Responses transports | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75281.md) | complete | Apr 30, 2026, 22:02 UTC |
 
 </details>
 
