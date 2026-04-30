@@ -81,11 +81,27 @@ export function spawnGit(args: readonly string[], options: GitRunOptions = {}): 
 }
 
 function formatGitDisplayCommand(args: readonly string[]): string {
-  return `git ${args.map(redactGitDisplayArg).join(" ")}`;
+  return `git ${safeGitDisplayAction(args[0])} <redacted-args>`;
 }
 
-function redactGitDisplayArg(arg: string): string {
-  return arg.replace(/x-access-token:[^@]+@/g, "x-access-token:***@");
+function safeGitDisplayAction(action: string | undefined): string {
+  switch (action) {
+    case "add":
+    case "commit":
+    case "config":
+    case "diff":
+    case "fetch":
+    case "ls-files":
+    case "push":
+    case "rebase":
+    case "remote":
+    case "restore":
+    case "rm":
+    case "status":
+      return action;
+    default:
+      return "command";
+  }
 }
 
 export function stagePaths(paths: readonly string[]): void {

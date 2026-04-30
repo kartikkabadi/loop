@@ -156,7 +156,7 @@ test("setTokenOrigin redacts tokens from command logs", () => {
     false,
   );
   assert.equal(
-    lines.some((line) => line.includes("x-access-token:***")),
+    lines.some((line) => line.includes("git remote <redacted-args>")),
     true,
   );
 });
