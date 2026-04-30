@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 02:47 UTC
+Last dashboard update: Apr 30, 2026, 02:48 UTC
 
 ### Fleet
 
@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 02:47 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 02:47 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25144688934) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 02:48 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25144688934) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -195,8 +195,8 @@ Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:46 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 17 | 1 | 16 | 0 | 14 | 38 | 0 |
-| Last hour | 563 | 4 | 559 | 1 | 28 | 558 | 1 |
-| Last 24 hours | 5263 | 308 | 4955 | 19 | 760 | 1963 | 20 |
+| Last hour | 546 | 4 | 542 | 1 | 28 | 558 | 1 |
+| Last 24 hours | 5261 | 306 | 4955 | 19 | 760 | 1963 | 20 |
 
 ### Recently Closed Across Repos
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:46 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 02:47 UTC
+Updated: Apr 30, 2026, 02:48 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74078,74758.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/2. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25144688934](https://github.com/openclaw/clawsweeper/actions/runs/25144688934)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -352,8 +352,8 @@ Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:46 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 17 | 1 | 16 | 0 | 14 | 38 | 0 |
-| Last hour | 563 | 4 | 559 | 1 | 28 | 558 | 1 |
-| Last 24 hours | 4327 | 308 | 4019 | 6 | 750 | 1553 | 20 |
+| Last hour | 546 | 4 | 542 | 1 | 28 | 558 | 1 |
+| Last 24 hours | 4325 | 306 | 4019 | 6 | 750 | 1553 | 20 |
 
 #### Recently Closed
 
