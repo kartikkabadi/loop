@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 10:01 UTC
+Last dashboard update: Apr 30, 2026, 10:02 UTC
 
 ### Fleet
 
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 10:01 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6919 | 6553 | 366 | 3029 | 1 | 1139 | 11039 | Apr 30, 2026, 09:58 UTC | Apr 30, 2026, 09:55 UTC | 541 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6919 | 6553 | 366 | 3029 | 1 | 1139 | 11039 | Apr 30, 2026, 10:00 UTC | Apr 30, 2026, 09:55 UTC | 536 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 793 | 924 | 0 | 72 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,19 +184,19 @@ Last dashboard update: Apr 30, 2026, 10:01 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake publish complete | Apr 30, 2026, 10:00 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25158976456) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 30, 2026, 10:02 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25158976456) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 09:58 UTC. Latest close: Apr 30, 2026, 09:55 UTC. Latest comment sync: Apr 30, 2026, 09:57 UTC.
+Latest review: Apr 30, 2026, 10:00 UTC. Latest close: Apr 30, 2026, 09:55 UTC. Latest comment sync: Apr 30, 2026, 10:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 37 | 4 | 33 | 0 | 6 | 64 | 0 |
-| Last hour | 560 | 10 | 550 | 4 | 21 | 541 | 1 |
-| Last 24 hours | 5201 | 276 | 4925 | 23 | 717 | 1604 | 24 |
+| Last 15 minutes | 38 | 4 | 34 | 0 | 6 | 60 | 0 |
+| Last hour | 560 | 10 | 550 | 4 | 21 | 536 | 1 |
+| Last 24 hours | 5201 | 276 | 4925 | 23 | 717 | 1623 | 24 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,9 @@ Latest review: Apr 30, 2026, 09:58 UTC. Latest close: Apr 30, 2026, 09:55 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74998](https://github.com/openclaw/openclaw/pull/74998) | feat(google): surface Gemini subscription path in onboard wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74998.md) | complete | Apr 30, 2026, 10:00 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75003](https://github.com/openclaw/openclaw/pull/75003) | fix(cli): avoid progress spinners in active TUI input | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75003.md) | complete | Apr 30, 2026, 09:59 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75011](https://github.com/openclaw/openclaw/pull/75011) | pairing.md documents that commands are dropped during the pending st… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75011.md) | complete | Apr 30, 2026, 09:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#66478](https://github.com/openclaw/openclaw/pull/66478) | fix(feishu): normalize unicode emojis to Feishu emoji type strings for reactions API (#66406) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/66478.md) | complete | Apr 30, 2026, 09:58 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74205](https://github.com/openclaw/openclaw/issues/74205) | [Bug]: kimi/k2p6 returns incomplete terminal response and gateway status probe times out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74205.md) | complete | Apr 30, 2026, 09:57 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74654](https://github.com/openclaw/openclaw/pull/74654) | fix(cron): validate cron expression before mutating stored job on update (#74459) | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74654.md) | complete | Apr 30, 2026, 09:57 UTC |
@@ -247,9 +250,6 @@ Latest review: Apr 30, 2026, 09:58 UTC. Latest close: Apr 30, 2026, 09:55 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74966](https://github.com/openclaw/openclaw/pull/74966) | fix(plugins): always include dependencies field in isolated package.json for npm v11 compatibility | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74966.md) | complete | Apr 30, 2026, 09:57 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74680](https://github.com/openclaw/openclaw/pull/74680) | chore: remove bundled last30days skill | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74680.md) | complete | Apr 30, 2026, 09:57 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74963](https://github.com/openclaw/openclaw/issues/74963) | [BUG] 4.27 multi-instance: plugin-runtime-deps hash mismatch causes ENOENT on bundled channel dist files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74963.md) | complete | Apr 30, 2026, 09:57 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74950](https://github.com/openclaw/openclaw/pull/74950) | fix(plugins): expire legacy runtime-deps locks in Docker when lock dir is stale | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74950.md) | complete | Apr 30, 2026, 09:57 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74659](https://github.com/openclaw/openclaw/issues/74659) | [Bug]: http://127.0.0.1:18789/ | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74659.md) | complete | Apr 30, 2026, 09:57 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74953](https://github.com/openclaw/openclaw/issues/74953) | [Bug]: Both web and CLI are super laggy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74953.md) | complete | Apr 30, 2026, 09:57 UTC |
 
 </details>
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 09:58 UTC. Latest close: Apr 30, 2026, 09:55 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 10:00 UTC
+Updated: Apr 30, 2026, 10:02 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 25158976456. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 19. Item numbers: 56391,66478,74205,74654,74656,74659,74680,74687,74945,74950,74951,74953,74960,74962,74963,74966,74970,74971,74980,74982.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158976456](https://github.com/openclaw/clawsweeper/actions/runs/25158976456)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -347,13 +347,13 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 09:58 UTC. Latest close: Apr 30, 2026, 09:55 UTC. Latest comment sync: Apr 30, 2026, 09:57 UTC.
+Latest review: Apr 30, 2026, 10:00 UTC. Latest close: Apr 30, 2026, 09:55 UTC. Latest comment sync: Apr 30, 2026, 10:02 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 37 | 4 | 33 | 0 | 6 | 64 | 0 |
-| Last hour | 560 | 10 | 550 | 4 | 21 | 541 | 1 |
-| Last 24 hours | 4272 | 276 | 3996 | 10 | 714 | 1201 | 24 |
+| Last 15 minutes | 38 | 4 | 34 | 0 | 6 | 60 | 0 |
+| Last hour | 560 | 10 | 550 | 4 | 21 | 536 | 1 |
+| Last 24 hours | 4272 | 276 | 3996 | 10 | 714 | 1220 | 24 |
 
 #### Recently Closed
 
@@ -389,6 +389,9 @@ Latest review: Apr 30, 2026, 09:58 UTC. Latest close: Apr 30, 2026, 09:55 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74998](https://github.com/openclaw/openclaw/pull/74998) | feat(google): surface Gemini subscription path in onboard wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74998.md) | complete | Apr 30, 2026, 10:00 UTC |
+| [#75003](https://github.com/openclaw/openclaw/pull/75003) | fix(cli): avoid progress spinners in active TUI input | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75003.md) | complete | Apr 30, 2026, 09:59 UTC |
+| [#75011](https://github.com/openclaw/openclaw/pull/75011) | pairing.md documents that commands are dropped during the pending st… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75011.md) | complete | Apr 30, 2026, 09:58 UTC |
 | [#66478](https://github.com/openclaw/openclaw/pull/66478) | fix(feishu): normalize unicode emojis to Feishu emoji type strings for reactions API (#66406) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/66478.md) | complete | Apr 30, 2026, 09:58 UTC |
 | [#74205](https://github.com/openclaw/openclaw/issues/74205) | [Bug]: kimi/k2p6 returns incomplete terminal response and gateway status probe times out | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74205.md) | complete | Apr 30, 2026, 09:57 UTC |
 | [#74654](https://github.com/openclaw/openclaw/pull/74654) | fix(cron): validate cron expression before mutating stored job on update (#74459) | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74654.md) | complete | Apr 30, 2026, 09:57 UTC |
@@ -396,9 +399,6 @@ Latest review: Apr 30, 2026, 09:58 UTC. Latest close: Apr 30, 2026, 09:55 UTC. L
 | [#74966](https://github.com/openclaw/openclaw/pull/74966) | fix(plugins): always include dependencies field in isolated package.json for npm v11 compatibility | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74966.md) | complete | Apr 30, 2026, 09:57 UTC |
 | [#74680](https://github.com/openclaw/openclaw/pull/74680) | chore: remove bundled last30days skill | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74680.md) | complete | Apr 30, 2026, 09:57 UTC |
 | [#74963](https://github.com/openclaw/openclaw/issues/74963) | [BUG] 4.27 multi-instance: plugin-runtime-deps hash mismatch causes ENOENT on bundled channel dist files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74963.md) | complete | Apr 30, 2026, 09:57 UTC |
-| [#74950](https://github.com/openclaw/openclaw/pull/74950) | fix(plugins): expire legacy runtime-deps locks in Docker when lock dir is stale | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74950.md) | complete | Apr 30, 2026, 09:57 UTC |
-| [#74659](https://github.com/openclaw/openclaw/issues/74659) | [Bug]: http://127.0.0.1:18789/ | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74659.md) | complete | Apr 30, 2026, 09:57 UTC |
-| [#74953](https://github.com/openclaw/openclaw/issues/74953) | [Bug]: Both web and CLI are super laggy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74953.md) | complete | Apr 30, 2026, 09:57 UTC |
 
 </details>
 
