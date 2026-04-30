@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T02:18:59.628Z",
-  "count": 13,
+  "generated_at": "2026-04-30T02:37:25.616Z",
+  "count": 14,
   "summary": {
-    "open_prs": 13,
+    "open_prs": 14,
     "ready_candidates": 0,
-    "security_hold": 1,
+    "security_hold": 0,
     "needs_rebase": 7,
     "mergeability_unknown": 0,
-    "needs_checks": 7,
+    "needs_checks": 8,
     "needs_review": 0,
-    "needs_merge_preflight": 13,
+    "needs_merge_preflight": 14,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -26,6 +26,70 @@
     "candidates": []
   },
   "prs": [
+    {
+      "number": 74755,
+      "title": "fix: Slack select value cap likely regression",
+      "url": "https://github.com/openclaw/openclaw/pull/74755",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59",
+      "head_sha": "3d568a91c26f3d9567f3ebeb73edcf2866b21d05",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59.md",
+      "updated_at": "2026-04-30T02:32:30Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 82,
+        "counts": {
+          "CANCELLED": 3,
+          "SKIPPED": 13,
+          "SUCCESS": 65,
+          "IN_PROGRESS": 1
+        },
+        "blockers": [
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 0,
+        "latest": []
+      },
+      "latest_record": {
+        "run_id": "25144167747",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144167747",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59",
+        "published_at": "2026-04-30T02:32:17.576Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74755",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
     {
       "number": 74746,
       "title": "fix(ci): committed Plugin SDK API baseline hash does not match the public SDK surface generat...",
@@ -100,16 +164,16 @@
       "head_sha": "2094b8436e9831e5fc1371a95c225ab25a38c7d1",
       "cluster_id": "automerge-openclaw-openclaw-74134",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74134.md",
-      "updated_at": "2026-04-30T02:18:06Z",
+      "updated_at": "2026-04-30T02:35:01Z",
       "mergeable": "CONFLICTING",
       "merge_state_status": "DIRTY",
       "review_decision": "",
-      "security_hold": true,
+      "security_hold": false,
       "checks": {
-        "total": 6,
+        "total": 8,
         "counts": {
-          "SUCCESS": 4,
-          "SKIPPED": 2
+          "SKIPPED": 3,
+          "SUCCESS": 5
         },
         "blockers": []
       },
@@ -120,45 +184,44 @@
         "examples": []
       },
       "review_bots": {
-        "count": 1,
+        "count": 2,
         "latest": [
           {
             "source": "comment",
             "author": "clawsweeper",
             "url": "https://github.com/openclaw/openclaw/pull/74742#issuecomment-4349164824",
             "submitted_at": "2026-04-30T02:00:02Z"
+          },
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74742#issuecomment-4349296846",
+            "submitted_at": "2026-04-30T02:35:01Z"
           }
         ]
       },
       "latest_record": {
-        "run_id": "25143626464",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25143626464",
+        "run_id": "25144208742",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144208742",
         "cluster_id": "automerge-openclaw-openclaw-74134",
-        "published_at": "2026-04-30T02:18:26.956Z",
+        "published_at": "2026-04-30T02:35:49.299Z",
         "workflow_conclusion": "success",
         "apply_action": {
           "target": "#74742",
-          "action": "merge_canonical",
-          "status": "blocked",
-          "classification": "fix_pr",
-          "canonical": null,
-          "candidate_fix": null,
-          "title": null,
-          "idempotency_key": null,
-          "reason": "job does not allow merge",
-          "merged_at": null,
-          "merge_commit_sha": null,
-          "live_state": null,
-          "live_updated_at": null
+          "action": "fix_needed",
+          "status": "planned",
+          "classification": "canonical",
+          "canonical": "#74742",
+          "candidate_fix": "#74742",
+          "reason": "The remaining repair scope is narrow and actionable: update the node invoke redirect error wording for dedicated file-transfer/media actions, add or adjust the focused agent-tool test, then rerun focused validation and `pnpm check:changed`."
         }
       },
       "blockers": [
-        "security_hold",
         "needs_rebase:CONFLICTING",
         "needs_merge_state:DIRTY",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "route to central security triage"
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     },
     {
       "number": 74714,
@@ -168,7 +231,7 @@
       "head_sha": "29dbb217f28051ccb988274fd94c0ccf91d39402",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a.md",
-      "updated_at": "2026-04-30T01:06:32Z",
+      "updated_at": "2026-04-30T02:36:13Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "CLEAN",
       "review_decision": "",
@@ -234,7 +297,7 @@
       "head_sha": "1c205f0df64214b3fbb4dfebced70c25e1dfc5cc",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa.md",
-      "updated_at": "2026-04-30T01:02:54Z",
+      "updated_at": "2026-04-30T02:36:12Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
@@ -306,7 +369,7 @@
       "head_sha": "39498ba26f38634f7225f83388159b03b1745fe9",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-30a2b3049ae0",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-30a2b3049ae0.md",
-      "updated_at": "2026-04-30T01:06:16Z",
+      "updated_at": "2026-04-30T02:36:07Z",
       "mergeable": "CONFLICTING",
       "merge_state_status": "DIRTY",
       "review_decision": "",
@@ -373,7 +436,7 @@
       "head_sha": "eb3cd642c025ab38cfc68301c46d8810384050c3",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-29de89a8d98c",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-29de89a8d98c.md",
-      "updated_at": "2026-04-30T00:46:33Z",
+      "updated_at": "2026-04-30T02:36:05Z",
       "mergeable": "CONFLICTING",
       "merge_state_status": "DIRTY",
       "review_decision": "",
