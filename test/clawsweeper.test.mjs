@@ -1736,6 +1736,16 @@ test("explicit item numbers shard targeted review runs", () => {
   assert.deepEqual(shardItemNumbers([], 50), [{ shard: 0, itemNumbers: [] }]);
 });
 
+test("planned review shards stay within GitHub matrix limits", () => {
+  const itemNumbers = Array.from({ length: 300 }, (_, index) => index + 1);
+  const shards = shardItemNumbers(itemNumbers, 400);
+  assert.equal(shards.length, 256);
+  assert.equal(
+    shards.reduce((total, shard) => total + shard.itemNumbers.length, 0),
+    itemNumbers.length,
+  );
+});
+
 test("apply mode prioritizes matching close proposals before comment sync", () => {
   const issueClose = reportFrontMatter({
     decision: "close",

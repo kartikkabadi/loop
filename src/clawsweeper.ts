@@ -409,6 +409,10 @@ interface PlanShard {
   itemNumbers: number[];
 }
 
+const DEFAULT_PLAN_BATCH_SIZE = 3;
+const DEFAULT_PLAN_SHARD_COUNT = 240;
+const MAX_PLAN_SHARD_COUNT = 256;
+
 type SchedulerBucket =
   | "hot_issue"
   | "hot_pull_request"
@@ -2561,8 +2565,13 @@ function openExplicitItems(itemNumbers: readonly number[]): Item[] {
   return candidates;
 }
 
+function planShardCount(shardCount: number): number {
+  if (!Number.isFinite(shardCount)) return 1;
+  return Math.max(1, Math.min(MAX_PLAN_SHARD_COUNT, Math.floor(shardCount)));
+}
+
 export function shardItemNumbers(itemNumbers: readonly number[], shardCount: number): PlanShard[] {
-  const count = Math.max(1, Math.min(Math.max(1, shardCount), itemNumbers.length || 1));
+  const count = Math.max(1, Math.min(planShardCount(shardCount), itemNumbers.length || 1));
   const shards = Array.from({ length: count }, (_, shard) => ({
     shard,
     itemNumbers: [] as number[],
@@ -2582,16 +2591,20 @@ function planCandidates(options: {
   itemNumbers?: number[];
   reviewPolicy: string;
   hotIntake?: boolean;
-}): { shards: PlanShard[]; scannedPages: number; candidates: Item[] } {
+}): { shards: PlanShard[]; scannedPages: number; candidates: Item[]; capacity: number } {
+  const shardCount = planShardCount(options.shardCount);
+  const batchSize = Math.max(1, options.batchSize);
+  const capacity = batchSize * shardCount;
   if (options.itemNumbers) {
     const candidates = openExplicitItems(options.itemNumbers);
     return {
       shards: shardItemNumbers(
         candidates.map((item) => item.number),
-        options.shardCount,
+        shardCount,
       ),
       scannedPages: 0,
       candidates,
+      capacity,
     };
   }
   if (options.itemNumber) {
@@ -2601,11 +2614,11 @@ function planCandidates(options: {
       shards: [{ shard: 0, itemNumbers: shouldReview ? [item.number] : [] }],
       scannedPages: 0,
       candidates: shouldReview ? [item] : [],
+      capacity,
     };
   }
 
   const due: DueCandidate[] = [];
-  const limit = Math.max(1, options.batchSize) * Math.max(1, options.shardCount);
   const now = Date.now();
   const reviewIndex = buildExistingReviewIndex(options.itemsDir);
   if (options.hotIntake) {
@@ -2621,17 +2634,17 @@ function planCandidates(options: {
       );
       if (candidate) due.push(candidate);
     }
-    const candidates = selectDueCandidates(due, limit, compareHotIntakeDueCandidates).map(
+    const candidates = selectDueCandidates(due, capacity, compareHotIntakeDueCandidates).map(
       ({ item }) => item,
     );
     const shards = Array.from(
-      { length: Math.max(1, Math.min(options.shardCount, candidates.length || 1)) },
+      { length: Math.max(1, Math.min(shardCount, candidates.length || 1)) },
       (_, shard) => ({ shard, itemNumbers: [] as number[] }),
     );
     candidates.forEach((item, index) => {
       shards[index % shards.length]?.itemNumbers.push(item.number);
     });
-    return { shards, scannedPages: pagesScanned, candidates };
+    return { shards, scannedPages: pagesScanned, candidates, capacity };
   }
   let scannedPages = 0;
   for (let page = 1; page <= options.maxPages; page += 1) {
@@ -2650,15 +2663,16 @@ function planCandidates(options: {
       if (candidate) due.push(candidate);
     }
   }
-  const candidates = selectDueCandidates(due, limit).map(({ item }) => item);
+  const candidates = selectDueCandidates(due, capacity).map(({ item }) => item);
 
   return {
     shards: shardItemNumbers(
       candidates.map((item) => item.number),
-      options.shardCount,
+      shardCount,
     ),
     scannedPages,
     candidates,
+    capacity,
   };
 }
 
@@ -4872,9 +4886,9 @@ ${options.action.closeComment ? options.action.closeComment : "_No close comment
 function planCommand(args: Args): void {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
-  const batchSize = numberArg(args.batch_size, 5);
+  const batchSize = numberArg(args.batch_size, DEFAULT_PLAN_BATCH_SIZE);
   const maxPages = numberArg(args.max_pages, 250);
-  const shardCount = numberArg(args.shard_count, 100);
+  const shardCount = numberArg(args.shard_count, DEFAULT_PLAN_SHARD_COUNT);
   const itemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const hasItemNumbersInput = typeof args.item_numbers === "string" && args.item_numbers.trim();
   const hotIntake = boolArg(args.hot_intake);
@@ -4916,7 +4930,7 @@ function reviewCommand(args: Args): void {
   );
   const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts/reviews"));
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
-  const batchSize = numberArg(args.batch_size, 5);
+  const batchSize = numberArg(args.batch_size, DEFAULT_PLAN_BATCH_SIZE);
   const maxPages = numberArg(args.max_pages, 250);
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);

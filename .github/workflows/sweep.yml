@@ -66,7 +66,7 @@ on:
       batch_size:
         description: "Items per worker job"
         required: false
-        default: "4"
+        default: "3"
       codex_timeout_ms:
         description: "Per-item Codex timeout in milliseconds"
         required: false
@@ -74,7 +74,7 @@ on:
       shard_count:
         description: "Parallel shards"
         required: false
-        default: "180"
+        default: "240"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -435,11 +435,11 @@ jobs:
             max_pages="1"
           elif [ "$hot_intake" = "true" ]; then
             batch_size="1"
-            shard_count="48"
-            max_pages="5"
+            shard_count="96"
+            max_pages="10"
           else
-            batch_size="${{ github.event.inputs.batch_size || '4' }}"
-            shard_count="${{ github.event.inputs.shard_count || '180' }}"
+            batch_size="${{ github.event.inputs.batch_size || '3' }}"
+            shard_count="${{ github.event.inputs.shard_count || '240' }}"
             max_pages="250"
           fi
           {
@@ -514,7 +514,7 @@ jobs:
   review:
     name: Review shard ${{ matrix.shard }}
     needs: plan
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.CLAWSWEEPER_REVIEW_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
     timeout-minutes: 75
     permissions:
       contents: read
@@ -1146,3 +1146,52 @@ jobs:
             -f apply_close_delay_ms="$APPLY_CLOSE_DELAY_MS" \
             -f apply_progress_every="$APPLY_PROGRESS_EVERY" \
             -f apply_checkpoint_size="$APPLY_CHECKPOINT_SIZE"
+
+      - name: Queue review backstops
+        if: ${{ success() && steps.target.outputs.target_repo == 'openclaw/openclaw' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          runs_json="$(gh run list --repo "${{ github.repository }}" --workflow sweep.yml --limit 80 --json displayTitle,status,createdAt)"
+          eval "$(
+            RUNS_JSON="$runs_json" node <<'NODE'
+          const runs = JSON.parse(process.env.RUNS_JSON || "[]");
+          const now = Date.now();
+          const active = new Set(["in_progress", "pending", "queued", "waiting", "requested"]);
+          function recent(title, windowMs) {
+            return runs.some((run) => {
+              if (run.displayTitle !== title) return false;
+              if (active.has(String(run.status))) return true;
+              const createdAt = Date.parse(String(run.createdAt || ""));
+              return Number.isFinite(createdAt) && now - createdAt < windowMs;
+            });
+          }
+          console.log(`HOT_RECENT=${recent("Review hot ClawSweeper items", 10 * 60 * 1000) ? "true" : "false"}`);
+          console.log(`REVIEW_RECENT=${recent("Review ClawSweeper items", 70 * 60 * 1000) ? "true" : "false"}`);
+          NODE
+          )"
+
+          if [ "$HOT_RECENT" != "true" ]; then
+            echo "No recent hot-intake run found; queueing backstop."
+            gh workflow run sweep.yml \
+              --ref main \
+              -f apply_existing=false \
+              -f hot_intake=true \
+              -f target_repo=openclaw/openclaw \
+              -f batch_size=1 \
+              -f shard_count=96 \
+              -f codex_timeout_ms=600000
+          fi
+
+          if [ "$REVIEW_RECENT" != "true" ]; then
+            echo "No recent normal review run found; queueing backstop."
+            gh workflow run sweep.yml \
+              --ref main \
+              -f apply_existing=false \
+              -f hot_intake=false \
+              -f target_repo=openclaw/openclaw \
+              -f batch_size=3 \
+              -f shard_count=240 \
+              -f codex_timeout_ms=600000
+          fi

@@ -54,10 +54,11 @@ function printPlanOutput(): void {
   const candidates = Array.isArray(plan.candidates) ? plan.candidates : [];
   const batchSize = positiveNumber(optionalString("batch-size"), 5);
   const shardCount = positiveNumber(optionalString("shard-count"), 100);
+  const planCapacity = Number(plan.capacity);
   printOutput({
     matrix: JSON.stringify(matrix),
     planned_count: String(candidates.length),
-    planned_capacity: String(batchSize * shardCount),
+    planned_capacity: String(Number.isFinite(planCapacity) ? planCapacity : batchSize * shardCount),
     planned_shards: String(matrix.length),
   });
 }
