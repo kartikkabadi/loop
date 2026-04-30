@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 02:45 UTC
+Last dashboard update: Apr 30, 2026, 02:47 UTC
 
 ### Fleet
 
@@ -163,20 +163,20 @@ Last dashboard update: Apr 30, 2026, 02:45 UTC
 | Open issues | 4461 |
 | Open PRs | 3381 |
 | Open items total | 7842 |
-| Reviewed files | 7446 |
-| Unreviewed open items | 399 |
+| Reviewed files | 7445 |
+| Unreviewed open items | 400 |
 | Due now by cadence | 3217 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1099 |
 | Closed by Codex apply | 10951 |
 | Failed or stale reviews | 24 |
-| Archived closed files | 14719 |
+| Archived closed files | 14720 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6893 | 6519 | 374 | 3116 | 0 | 1053 | 10943 | Apr 30, 2026, 02:44 UTC | Apr 30, 2026, 02:45 UTC | 559 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6893 | 6518 | 375 | 3116 | 0 | 1053 | 10943 | Apr 30, 2026, 02:44 UTC | Apr 30, 2026, 02:46 UTC | 558 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 949 | 924 | 25 | 98 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,24 +184,25 @@ Last dashboard update: Apr 30, 2026, 02:45 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 02:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25144623714) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 02:47 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25144688934) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:45 UTC. Latest comment sync: Apr 30, 2026, 02:45 UTC.
+Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:46 UTC. Latest comment sync: Apr 30, 2026, 02:45 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 38 | 2 | 36 | 0 | 13 | 39 | 0 |
-| Last hour | 564 | 4 | 560 | 1 | 27 | 559 | 1 |
-| Last 24 hours | 5263 | 308 | 4955 | 19 | 759 | 1963 | 20 |
+| Last 15 minutes | 17 | 1 | 16 | 0 | 14 | 38 | 0 |
+| Last hour | 563 | 4 | 559 | 1 | 28 | 558 | 1 |
+| Last 24 hours | 5263 | 308 | 4955 | 19 | 760 | 1963 | 20 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74242](https://github.com/openclaw/openclaw/pull/74242) | fix(bonjour): cap advertiser restarts in a sliding window (#74209) | closed externally after review | Apr 30, 2026, 02:46 UTC | [records/openclaw-openclaw/closed/74242.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74242.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74758](https://github.com/openclaw/openclaw/issues/74758) | macOS host integration: `launchd` plugin for installing/managing LaunchAgents from agent code | belongs on ClawHub | Apr 30, 2026, 02:45 UTC | [records/openclaw-openclaw/closed/74758.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74758.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74078](https://github.com/openclaw/openclaw/issues/74078) | [Bug]: 4.26 version cutdown connection to local model in few minites | already implemented on main | Apr 30, 2026, 02:45 UTC | [records/openclaw-openclaw/closed/74078.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74078.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#46647](https://github.com/openclaw/openclaw/issues/46647) | Slack system prompt incorrectly checks inlineButtons instead of interactiveReplies | closed externally after review | Apr 30, 2026, 02:42 UTC | [records/openclaw-openclaw/closed/46647.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/46647.md) |
@@ -211,7 +212,6 @@ Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:45 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74701](https://github.com/openclaw/openclaw/issues/74701) | amazon-bedrock: `xhigh` thinking level missing for Claude Opus 4.7 (and adaptive for sonnet-4.6) | closed externally after review | Apr 30, 2026, 02:37 UTC | [records/openclaw-openclaw/closed/74701.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74701.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70821](https://github.com/openclaw/openclaw/pull/70821) | fix(amazon-bedrock): expose xhigh thinking for Claude Opus 4.7 | closed externally after review | Apr 30, 2026, 02:37 UTC | [records/openclaw-openclaw/closed/70821.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70821.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73937](https://github.com/openclaw/openclaw/pull/73937) | fix(feishu): fallback to media when file download returns 502 | closed externally after review | Apr 30, 2026, 02:36 UTC | [records/openclaw-openclaw/closed/73937.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73937.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#49855](https://github.com/openclaw/openclaw/issues/49855) | Feishu: 502 Bad Gateway when downloading video files sent as 'file' type (type=file) | closed externally after review | Apr 30, 2026, 02:36 UTC | [records/openclaw-openclaw/closed/49855.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49855.md) |
 
 ### Work Candidates Across Repos
 
@@ -267,12 +267,12 @@ Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:45 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 02:45 UTC
+Updated: Apr 30, 2026, 02:47 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 2 fresh closes out of requested limit 2. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25144623714](https://github.com/openclaw/clawsweeper/actions/runs/25144623714)
+Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74078,74758.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25144688934](https://github.com/openclaw/clawsweeper/actions/runs/25144688934)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -283,9 +283,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25144623714](https://
 | Open issues | 3551 |
 | Open PRs | 3342 |
 | Open items total | 6893 |
-| Reviewed files | 6519 |
-| Unreviewed open items | 374 |
-| Archived closed files | 14693 |
+| Reviewed files | 6518 |
+| Unreviewed open items | 375 |
+| Archived closed files | 14694 |
 
 #### Review Outcomes
 
@@ -293,9 +293,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25144623714](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3355 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3153 |
+| Fresh reviewed PRs in the last 7 days | 3152 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6508 |
+| Fresh verified reviews in the last 7 days | 6507 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1053 |
 | Closed by Codex apply | 10943 |
@@ -305,8 +305,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25144623714](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 111/1144 current (1033 due, 9.7%) |
-| Hourly hot item cadence (<7d) | 111/1144 current (1033 due, 9.7%) |
+| Hourly cadence coverage | 111/1143 current (1032 due, 9.7%) |
+| Hourly hot item cadence (<7d) | 111/1143 current (1032 due, 9.7%) |
 | Daily cadence coverage | 1874/3581 current (1707 due, 52.3%) |
 | Daily PR cadence | 1214/2489 current (1275 due, 48.8%) |
 | Daily new issue cadence (<30d) | 660/1092 current (432 due, 60.4%) |
@@ -347,18 +347,19 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:45 UTC. Latest comment sync: Apr 30, 2026, 02:45 UTC.
+Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:46 UTC. Latest comment sync: Apr 30, 2026, 02:45 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 38 | 2 | 36 | 0 | 13 | 39 | 0 |
-| Last hour | 564 | 4 | 560 | 1 | 27 | 559 | 1 |
-| Last 24 hours | 4327 | 308 | 4019 | 6 | 749 | 1553 | 20 |
+| Last 15 minutes | 17 | 1 | 16 | 0 | 14 | 38 | 0 |
+| Last hour | 563 | 4 | 559 | 1 | 28 | 558 | 1 |
+| Last 24 hours | 4327 | 308 | 4019 | 6 | 750 | 1553 | 20 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74242](https://github.com/openclaw/openclaw/pull/74242) | fix(bonjour): cap advertiser restarts in a sliding window (#74209) | closed externally after review | Apr 30, 2026, 02:46 UTC | [records/openclaw-openclaw/closed/74242.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74242.md) |
 | [#74758](https://github.com/openclaw/openclaw/issues/74758) | macOS host integration: `launchd` plugin for installing/managing LaunchAgents from agent code | belongs on ClawHub | Apr 30, 2026, 02:45 UTC | [records/openclaw-openclaw/closed/74758.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74758.md) |
 | [#74078](https://github.com/openclaw/openclaw/issues/74078) | [Bug]: 4.26 version cutdown connection to local model in few minites | already implemented on main | Apr 30, 2026, 02:45 UTC | [records/openclaw-openclaw/closed/74078.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74078.md) |
 | [#46647](https://github.com/openclaw/openclaw/issues/46647) | Slack system prompt incorrectly checks inlineButtons instead of interactiveReplies | closed externally after review | Apr 30, 2026, 02:42 UTC | [records/openclaw-openclaw/closed/46647.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/46647.md) |
@@ -368,7 +369,6 @@ Latest review: Apr 30, 2026, 02:44 UTC. Latest close: Apr 30, 2026, 02:45 UTC. L
 | [#74701](https://github.com/openclaw/openclaw/issues/74701) | amazon-bedrock: `xhigh` thinking level missing for Claude Opus 4.7 (and adaptive for sonnet-4.6) | closed externally after review | Apr 30, 2026, 02:37 UTC | [records/openclaw-openclaw/closed/74701.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74701.md) |
 | [#70821](https://github.com/openclaw/openclaw/pull/70821) | fix(amazon-bedrock): expose xhigh thinking for Claude Opus 4.7 | closed externally after review | Apr 30, 2026, 02:37 UTC | [records/openclaw-openclaw/closed/70821.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70821.md) |
 | [#73937](https://github.com/openclaw/openclaw/pull/73937) | fix(feishu): fallback to media when file download returns 502 | closed externally after review | Apr 30, 2026, 02:36 UTC | [records/openclaw-openclaw/closed/73937.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73937.md) |
-| [#49855](https://github.com/openclaw/openclaw/issues/49855) | Feishu: 502 Bad Gateway when downloading video files sent as 'file' type (type=file) | closed externally after review | Apr 30, 2026, 02:36 UTC | [records/openclaw-openclaw/closed/49855.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49855.md) |
 
 #### Work Candidates
 
