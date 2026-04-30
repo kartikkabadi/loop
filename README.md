@@ -153,22 +153,22 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 07:42 UTC
+Last dashboard update: Apr 30, 2026, 07:54 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4381 |
-| Open PRs | 3372 |
-| Open items total | 7753 |
-| Reviewed files | 7467 |
-| Unreviewed open items | 370 |
-| Due now by cadence | 3093 |
-| Proposed closes awaiting apply | 5 |
+| Open issues | 4380 |
+| Open PRs | 3374 |
+| Open items total | 7754 |
+| Reviewed files | 7468 |
+| Unreviewed open items | 372 |
+| Due now by cadence | 3116 |
+| Proposed closes awaiting apply | 3 |
 | Work candidates awaiting promotion | 1179 |
-| Closed by Codex apply | 11013 |
+| Closed by Codex apply | 11014 |
 | Failed or stale reviews | 33 |
 | Archived closed files | 14877 |
 
@@ -176,34 +176,34 @@ Last dashboard update: Apr 30, 2026, 07:42 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6910 | 6540 | 370 | 3017 | 5 | 1133 | 11005 | Apr 30, 2026, 07:39 UTC | Apr 30, 2026, 07:38 UTC | 385 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 843 | 924 | 0 | 73 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6913 | 6541 | 372 | 3040 | 3 | 1133 | 11006 | Apr 30, 2026, 07:40 UTC | Apr 30, 2026, 07:38 UTC | 826 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 841 | 924 | 0 | 73 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review publish complete | Apr 30, 2026, 07:41 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25152557529) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 30, 2026, 07:54 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25152557529) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 07:39 UTC. Latest close: Apr 30, 2026, 07:38 UTC. Latest comment sync: Apr 30, 2026, 07:39 UTC.
+Latest review: Apr 30, 2026, 07:40 UTC. Latest close: Apr 30, 2026, 07:38 UTC. Latest comment sync: Apr 30, 2026, 07:54 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 219 | 6 | 213 | 4 | 5 | 13 | 0 |
-| Last hour | 838 | 13 | 825 | 6 | 23 | 385 | 2 |
-| Last 24 hours | 5329 | 274 | 5055 | 29 | 751 | 1379 | 21 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 445 | 2 |
+| Last hour | 549 | 9 | 540 | 4 | 19 | 826 | 4 |
+| Last 24 hours | 5327 | 274 | 5053 | 29 | 745 | 1819 | 23 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#51455](https://github.com/openclaw/openclaw/issues/51455) | bug: pdf extraction fallback renderer omits standardFontDataUrl and emits PDF.js warnings in Node | closed externally after review | Apr 30, 2026, 07:38 UTC | [records/openclaw-openclaw/closed/51455.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/51455.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70936](https://github.com/openclaw/openclaw/pull/70936) | fix(pdf): resolve standard fonts from pdfjs package root | closed externally after review | Apr 30, 2026, 07:38 UTC | [records/openclaw-openclaw/closed/70936.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70936.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70936](https://github.com/openclaw/openclaw/pull/70936) | fix(pdf): resolve standard fonts from pdfjs package root | kept open | Apr 30, 2026, 07:38 UTC | [records/openclaw-openclaw/closed/70936.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70936.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74938](https://github.com/openclaw/openclaw/pull/74938) | fix(security): sanitize QQBot debug log values | closed externally after review | Apr 30, 2026, 07:37 UTC | [records/openclaw-openclaw/closed/74938.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74938.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#42999](https://github.com/openclaw/openclaw/issues/42999) | Feature: Dynamic Context Window Token Budget (Metabolic Token Management) | closed externally after review | Apr 30, 2026, 07:33 UTC | [records/openclaw-openclaw/closed/42999.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/42999.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74936](https://github.com/openclaw/openclaw/issues/74936) | qmd-manager imports chokidar but it's not declared as a dependency in plugin-runtime-deps (2026.4.27) | already implemented on main | Apr 30, 2026, 07:30 UTC | [records/openclaw-openclaw/closed/74936.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74936.md) |
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 07:39 UTC. Latest close: Apr 30, 2026, 07:38 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74942](https://github.com/openclaw/openclaw/pull/74942) | fix: bounded directory scan actionable regression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74942.md) | complete | Apr 30, 2026, 07:40 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74686](https://github.com/openclaw/openclaw/pull/74686) | fix(gateway): add cron-list transport timing diagnostics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74686.md) | complete | Apr 30, 2026, 07:39 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56880](https://github.com/openclaw/openclaw/issues/56880) | Concurrent message handling per session (async agent turns) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/56880.md) | complete | Apr 30, 2026, 07:39 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58765](https://github.com/openclaw/openclaw/issues/58765) | Feature: Support output dimensionality truncation for local GGUF embedding models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58765.md) | complete | Apr 30, 2026, 07:38 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 07:39 UTC. Latest close: Apr 30, 2026, 07:38 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56705](https://github.com/openclaw/openclaw/pull/56705) | Config: centralize known plugin ID resolution for validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/56705.md) | complete | Apr 30, 2026, 07:36 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56778](https://github.com/openclaw/openclaw/issues/56778) | cron list: add --agent filter for multi-agent isolation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/56778.md) | complete | Apr 30, 2026, 07:36 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#56199](https://github.com/openclaw/openclaw/issues/56199) | [Bug]: 401 The API key format is incorrect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/56199.md) | failed | Apr 30, 2026, 07:36 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#54315](https://github.com/openclaw/openclaw/pull/54315) | feat(runtime): prioritize bootstrap files to reduce truncation regressions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/54315.md) | complete | Apr 30, 2026, 07:35 UTC |
 
 </details>
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 07:39 UTC. Latest close: Apr 30, 2026, 07:38 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 07:41 UTC
+Updated: Apr 30, 2026, 07:54 UTC
 
-State: Review publish complete
+State: Review comments checked
 
-Merged review artifacts for run 25152557529. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 444. Item numbers: 6457,6615,7057,7359,7379,7403,7406,7433,7661,9394,9465,9607,9865,10029,10137,10213,10354,10467,10872,11040,11055,11414,11473,11489,11517,11655,11703,11955,11960,12047,12505,12508,12512,12554,12602,12756,12831,13219,13241,13271,13304,13362,13387,13417,13479,13487,13543,13570,13583,13613,13615,13616,13617,13620,13634,13700,13744,13751,13911,13948,14079,14151,14206,14251,14317,14344,14438,14526,14601,14629,14785,14804,14850,14861,14874,14968,15073,15828,16121,16142,16387,16555,16896,17098,17213,17810,17876,17925,18548,18985,19680,20237,20321,22439,23585,24107,25295,27061,28300,29736,30389,32188,32438,33845,34581,36314,36630,38501,38716,38729,38780,38817,39038,39060,39137,39343,40207,40218,40220,40236,40238,40255,40289,40290,40332,40355,40418,40421,40427,40438,40447,40481,40485,40502,40527,40530,40534,40540,40578,40618,40644,40654,40663,40665,40678,40703,40723,40732,40747,40756,40782,40786,40791,40808,40820,40840,40846,40847,40864,40880,40895,40919,40950,40958,40961,40970,40982,41009,41013,41037,41048,41067,41165,41172,41201,41204,41268,41275,41284,41320,41324,41332,41351,41421,41559,41581,41613,41614,41621,41659,41660,41685,41696,41734,41737,41792,41807,41812,41851,41880,41956,41987,42026,42139,42165,42350,42472,42480,42504,42544,42555,42591,42652,42803,42819,42824,42840,42856,42867,43095,43239,43246,43291,43357,43374,43383,43390,43404,43410,43416,43443,43455,43467,43480,43481,43493,43512,43529,43549,43563,43564,43570,43574,43585,43605,43614,43618,43673,43690,43712,43730,43737,43752,43765,43775,43790,43791,43797,43808,43816,43827,43848,43866,43895,43912,43935,43938,43975,43976,43996,44011,44395,44833,44845,44896,44910,44925,44935,44993,45011,45016,45020,45028,45031,45044,45082,45102,45179,45184,45200,45475,45505,45706,45870,45899,45925,45937,46055,46377,46544,46559,46585,46656,46693,46740,46881,47069,47235,47393,47613,47834,47910,47940,48133,48183,48200,48238,48406,48476,50081,50090,50145,50186,50481,50779,51067,51270,51421,51869,52759,52824,53738,53784,53922,53997,54159,54242,54308,54315,54392,54585,54647,54805,55550,55723,55767,55768,55789,55826,56176,56197,56199,56215,56217,56222,56227,56263,56284,56286,56308,56318,56319,56340,56352,56362,56368,56370,56386,56391,56401,56403,56415,56419,56420,56435,56457,56497,56498,56499,56509,56523,56530,56544,56545,56574,56580,56581,56583,56597,56609,56615,56619,56624,56635,56650,56653,56668,56672,56674,56697,56699,56705,56720,56726,56733,56736,56741,56752,56768,56771,56778,56781,56785,56793,56795,56796,56806,56818,56827,56830,56831,56839,56845,56850,56856,56869,56876,56880,56881,56898,56973,56974,56979,57053,57100,57142,57148,57355,57713,58057,58063,58067,58088,58106,58139,58147,58161,58272,58284,58289,58351,58398,58407,58411,58414,58433,58443,58498,58514,58523,58537,58558,58570,58580,58608,58626,58660,58702,58713,58726,58730,58737,58765,58776,58777,58832,58887,58890,63893,68982,69822,71324,71940,73583,73984,74288,74397,74509,74529,74686,74831,74870,74871,74873,74876,74877,74879,74886,74890,74921.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25152557529](https://github.com/openclaw/clawsweeper/actions/runs/25152557529)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -281,10 +281,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25152557529](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3556 |
-| Open PRs | 3354 |
-| Open items total | 6910 |
-| Reviewed files | 6540 |
-| Unreviewed open items | 370 |
+| Open PRs | 3357 |
+| Open items total | 6913 |
+| Reviewed files | 6541 |
+| Unreviewed open items | 372 |
 | Archived closed files | 14851 |
 
 #### Review Outcomes
@@ -292,26 +292,26 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25152557529](https://
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3358 |
-| Proposed issue closes | 5 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3162 |
+| Proposed issue closes | 3 (0.1% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3163 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6520 |
-| Proposed closes awaiting apply | 5 (0.1% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 6521 |
+| Proposed closes awaiting apply | 3 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1133 |
-| Closed by Codex apply | 11005 |
+| Closed by Codex apply | 11006 |
 | Failed or stale reviews | 20 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 71/1176 current (1105 due, 6%) |
-| Hourly hot item cadence (<7d) | 71/1176 current (1105 due, 6%) |
-| Daily cadence coverage | 2037/3574 current (1537 due, 57%) |
+| Hourly cadence coverage | 50/1176 current (1126 due, 4.3%) |
+| Hourly hot item cadence (<7d) | 50/1176 current (1126 due, 4.3%) |
+| Daily cadence coverage | 2038/3575 current (1537 due, 57%) |
 | Daily PR cadence | 1347/2491 current (1144 due, 54.1%) |
-| Daily new issue cadence (<30d) | 690/1083 current (393 due, 63.7%) |
+| Daily new issue cadence (<30d) | 691/1084 current (393 due, 63.7%) |
 | Weekly older issue cadence | 1785/1790 current (5 due, 99.7%) |
-| Due now by cadence | 3017 |
+| Due now by cadence | 3040 |
 
 ### Audit Health
 
@@ -347,20 +347,20 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 07:39 UTC. Latest close: Apr 30, 2026, 07:38 UTC. Latest comment sync: Apr 30, 2026, 07:39 UTC.
+Latest review: Apr 30, 2026, 07:40 UTC. Latest close: Apr 30, 2026, 07:38 UTC. Latest comment sync: Apr 30, 2026, 07:54 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 219 | 6 | 213 | 4 | 5 | 13 | 0 |
-| Last hour | 838 | 13 | 825 | 6 | 23 | 385 | 2 |
-| Last 24 hours | 4398 | 274 | 4124 | 16 | 746 | 974 | 21 |
+| Last 15 minutes | 1 | 0 | 1 | 0 | 0 | 445 | 2 |
+| Last hour | 549 | 9 | 540 | 4 | 19 | 826 | 4 |
+| Last 24 hours | 4397 | 274 | 4123 | 16 | 741 | 1415 | 23 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
 | [#51455](https://github.com/openclaw/openclaw/issues/51455) | bug: pdf extraction fallback renderer omits standardFontDataUrl and emits PDF.js warnings in Node | closed externally after review | Apr 30, 2026, 07:38 UTC | [records/openclaw-openclaw/closed/51455.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/51455.md) |
-| [#70936](https://github.com/openclaw/openclaw/pull/70936) | fix(pdf): resolve standard fonts from pdfjs package root | closed externally after review | Apr 30, 2026, 07:38 UTC | [records/openclaw-openclaw/closed/70936.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70936.md) |
+| [#70936](https://github.com/openclaw/openclaw/pull/70936) | fix(pdf): resolve standard fonts from pdfjs package root | kept open | Apr 30, 2026, 07:38 UTC | [records/openclaw-openclaw/closed/70936.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70936.md) |
 | [#74938](https://github.com/openclaw/openclaw/pull/74938) | fix(security): sanitize QQBot debug log values | closed externally after review | Apr 30, 2026, 07:37 UTC | [records/openclaw-openclaw/closed/74938.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74938.md) |
 | [#42999](https://github.com/openclaw/openclaw/issues/42999) | Feature: Dynamic Context Window Token Budget (Metabolic Token Management) | closed externally after review | Apr 30, 2026, 07:33 UTC | [records/openclaw-openclaw/closed/42999.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/42999.md) |
 | [#74936](https://github.com/openclaw/openclaw/issues/74936) | qmd-manager imports chokidar but it's not declared as a dependency in plugin-runtime-deps (2026.4.27) | already implemented on main | Apr 30, 2026, 07:30 UTC | [records/openclaw-openclaw/closed/74936.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74936.md) |
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 07:39 UTC. Latest close: Apr 30, 2026, 07:38 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74942](https://github.com/openclaw/openclaw/pull/74942) | fix: bounded directory scan actionable regression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74942.md) | complete | Apr 30, 2026, 07:40 UTC |
 | [#74686](https://github.com/openclaw/openclaw/pull/74686) | fix(gateway): add cron-list transport timing diagnostics | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74686.md) | complete | Apr 30, 2026, 07:39 UTC |
 | [#56880](https://github.com/openclaw/openclaw/issues/56880) | Concurrent message handling per session (async agent turns) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/56880.md) | complete | Apr 30, 2026, 07:39 UTC |
 | [#58765](https://github.com/openclaw/openclaw/issues/58765) | Feature: Support output dimensionality truncation for local GGUF embedding models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58765.md) | complete | Apr 30, 2026, 07:38 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 07:39 UTC. Latest close: Apr 30, 2026, 07:38 UTC. L
 | [#56705](https://github.com/openclaw/openclaw/pull/56705) | Config: centralize known plugin ID resolution for validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/56705.md) | complete | Apr 30, 2026, 07:36 UTC |
 | [#56778](https://github.com/openclaw/openclaw/issues/56778) | cron list: add --agent filter for multi-agent isolation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/56778.md) | complete | Apr 30, 2026, 07:36 UTC |
 | [#56199](https://github.com/openclaw/openclaw/issues/56199) | [Bug]: 401 The API key format is incorrect | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/56199.md) | failed | Apr 30, 2026, 07:36 UTC |
-| [#54315](https://github.com/openclaw/openclaw/pull/54315) | feat(runtime): prioritize bootstrap files to reduce truncation regressions | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/54315.md) | complete | Apr 30, 2026, 07:35 UTC |
 
 </details>
 
@@ -427,9 +427,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25135463730](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/clawhub](https://github.com/openclaw/clawhub) |
-| Open issues | 825 |
-| Open PRs | 18 |
-| Open items total | 843 |
+| Open issues | 824 |
+| Open PRs | 17 |
+| Open items total | 841 |
 | Reviewed files | 924 |
 | Unreviewed open items | 0 |
 | Archived closed files | 26 |
@@ -454,8 +454,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25135463730](https://
 | --- | ---: |
 | Hourly cadence coverage | 0/61 current (61 due, 0%) |
 | Hourly hot item cadence (<7d) | 0/61 current (61 due, 0%) |
-| Daily cadence coverage | 191/196 current (5 due, 97.4%) |
-| Daily PR cadence | 18/18 current (0 due, 100%) |
+| Daily cadence coverage | 190/195 current (5 due, 97.4%) |
+| Daily PR cadence | 17/17 current (0 due, 100%) |
 | Daily new issue cadence (<30d) | 173/178 current (5 due, 97.2%) |
 | Weekly older issue cadence | 657/664 current (7 due, 98.9%) |
 | Due now by cadence | 73 |
@@ -498,7 +498,7 @@ Latest review: Apr 29, 2026, 22:22 UTC. Latest close: Apr 29, 2026, 17:17 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Last hour | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| Last 24 hours | 928 | 0 | 928 | 13 | 5 | 402 | 0 |
+| Last 24 hours | 927 | 0 | 927 | 13 | 4 | 401 | 0 |
 
 #### Recently Closed
 
