@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 12:43 UTC
+Last dashboard update: Apr 30, 2026, 12:48 UTC
 
 ### Fleet
 
@@ -161,10 +161,10 @@ Last dashboard update: Apr 30, 2026, 12:43 UTC
 | --- | ---: |
 | Covered repositories | 3 |
 | Open issues | 3904 |
-| Open PRs | 3382 |
-| Open items total | 7286 |
+| Open PRs | 3383 |
+| Open items total | 7287 |
 | Reviewed files | 7497 |
-| Unreviewed open items | 363 |
+| Unreviewed open items | 364 |
 | Due now by cadence | 2955 |
 | Proposed closes awaiting apply | 5 |
 | Work candidates awaiting promotion | 1306 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 12:43 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6933 | 6570 | 363 | 2881 | 5 | 1260 | 11071 | Apr 30, 2026, 12:40 UTC | Apr 30, 2026, 12:39 UTC | 654 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6934 | 6570 | 364 | 2881 | 5 | 1260 | 11071 | Apr 30, 2026, 12:43 UTC | Apr 30, 2026, 12:39 UTC | 511 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,19 +184,19 @@ Last dashboard update: Apr 30, 2026, 12:43 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 30, 2026, 12:43 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25165913211) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 12:48 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25166167557) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 12:40 UTC. Latest close: Apr 30, 2026, 12:39 UTC. Latest comment sync: Apr 30, 2026, 12:41 UTC.
+Latest review: Apr 30, 2026, 12:43 UTC. Latest close: Apr 30, 2026, 12:39 UTC. Latest comment sync: Apr 30, 2026, 12:44 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 9 | 1 | 8 | 0 | 1 | 219 | 0 |
-| Last hour | 544 | 8 | 536 | 4 | 12 | 654 | 0 |
-| Last 24 hours | 5507 | 299 | 5208 | 31 | 689 | 1622 | 20 |
+| Last 15 minutes | 10 | 1 | 9 | 0 | 1 | 70 | 0 |
+| Last hour | 545 | 8 | 537 | 4 | 12 | 511 | 0 |
+| Last 24 hours | 5506 | 299 | 5207 | 31 | 687 | 1624 | 20 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,9 @@ Latest review: Apr 30, 2026, 12:40 UTC. Latest close: Apr 30, 2026, 12:39 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74035](https://github.com/openclaw/openclaw/pull/74035) | feat(skills): add persist flag and trustedSources config for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74035.md) | complete | Apr 30, 2026, 12:43 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74990](https://github.com/openclaw/openclaw/pull/74990) | feat(anthropic): surface Claude subscription path in onboard wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74990.md) | complete | Apr 30, 2026, 12:42 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75022](https://github.com/openclaw/openclaw/pull/75022) | fix(infer): load model catalog metadata-only for list/inspect/providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75022.md) | complete | Apr 30, 2026, 12:41 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75078](https://github.com/openclaw/openclaw/pull/75078) | fix(feishu): media-aware dedupe key prevents dropping audio with reused message_id | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75078.md) | complete | Apr 30, 2026, 12:40 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75031](https://github.com/openclaw/openclaw/pull/75031) | fix(backup): use resolvePreferredOpenClawTmpDir for temp archive dir (#75007) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75031.md) | complete | Apr 30, 2026, 12:39 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75076](https://github.com/openclaw/openclaw/pull/75076) | Harden Control UI auth, status warnings, and build provenance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75076.md) | complete | Apr 30, 2026, 12:36 UTC |
@@ -247,9 +250,6 @@ Latest review: Apr 30, 2026, 12:40 UTC. Latest close: Apr 30, 2026, 12:39 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75046](https://github.com/openclaw/openclaw/pull/75046) | feat: add Cursor SDK agent harness plugin (extensions/cursor-sdk) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75046.md) | complete | Apr 30, 2026, 12:34 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75075](https://github.com/openclaw/openclaw/pull/75075) | feat(gateway): surface built-in tool calls as function_call output items on /v1/responses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75075.md) | complete | Apr 30, 2026, 12:34 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75074](https://github.com/openclaw/openclaw/issues/75074) | [Feature]: /v1/responses drops every built-in tool call from `output`; add opt-in flag to surface them | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75074.md) | complete | Apr 30, 2026, 12:33 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72724](https://github.com/openclaw/openclaw/pull/72724) | fix(status): add gateway delivery health telemetry | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72724.md) | complete | Apr 30, 2026, 12:28 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75030](https://github.com/openclaw/openclaw/pull/75030) | fix(auth): explain masked oauth profiles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75030.md) | complete | Apr 30, 2026, 12:27 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75072](https://github.com/openclaw/openclaw/issues/75072) | Feature request: PII sanitization skill for privacy compliance before LLM calls | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75072.md) | complete | Apr 30, 2026, 12:25 UTC |
 
 </details>
 
@@ -267,12 +267,12 @@ Latest review: Apr 30, 2026, 12:40 UTC. Latest close: Apr 30, 2026, 12:39 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 12:43 UTC
+Updated: Apr 30, 2026, 12:48 UTC
 
-State: Hot intake in progress
+State: Apply in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25165913211](https://github.com/openclaw/clawsweeper/actions/runs/25165913211)
+Starting apply/comment-sync run for up to 5 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=43752,55550,60849,61840,75072.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25166167557](https://github.com/openclaw/clawsweeper/actions/runs/25166167557)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -281,10 +281,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25165913211](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3568 |
-| Open PRs | 3365 |
-| Open items total | 6933 |
+| Open PRs | 3366 |
+| Open items total | 6934 |
 | Reviewed files | 6570 |
-| Unreviewed open items | 363 |
+| Unreviewed open items | 364 |
 | Archived closed files | 14956 |
 
 #### Review Outcomes
@@ -305,8 +305,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25165913211](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 71/1231 current (1160 due, 5.8%) |
-| Hourly hot item cadence (<7d) | 71/1231 current (1160 due, 5.8%) |
+| Hourly cadence coverage | 72/1231 current (1159 due, 5.8%) |
+| Hourly hot item cadence (<7d) | 72/1231 current (1159 due, 5.8%) |
 | Daily cadence coverage | 2199/3552 current (1353 due, 61.9%) |
 | Daily PR cadence | 1475/2471 current (996 due, 59.7%) |
 | Daily new issue cadence (<30d) | 724/1081 current (357 due, 67%) |
@@ -347,13 +347,13 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 12:40 UTC. Latest close: Apr 30, 2026, 12:39 UTC. Latest comment sync: Apr 30, 2026, 12:41 UTC.
+Latest review: Apr 30, 2026, 12:43 UTC. Latest close: Apr 30, 2026, 12:39 UTC. Latest comment sync: Apr 30, 2026, 12:44 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 9 | 1 | 8 | 0 | 1 | 219 | 0 |
-| Last hour | 544 | 8 | 536 | 4 | 12 | 654 | 0 |
-| Last 24 hours | 4579 | 299 | 4280 | 18 | 686 | 1219 | 20 |
+| Last 15 minutes | 10 | 1 | 9 | 0 | 1 | 70 | 0 |
+| Last hour | 545 | 8 | 537 | 4 | 12 | 511 | 0 |
+| Last 24 hours | 4578 | 299 | 4279 | 18 | 684 | 1221 | 20 |
 
 #### Recently Closed
 
@@ -389,6 +389,9 @@ Latest review: Apr 30, 2026, 12:40 UTC. Latest close: Apr 30, 2026, 12:39 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74035](https://github.com/openclaw/openclaw/pull/74035) | feat(skills): add persist flag and trustedSources config for commercial use | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74035.md) | complete | Apr 30, 2026, 12:43 UTC |
+| [#74990](https://github.com/openclaw/openclaw/pull/74990) | feat(anthropic): surface Claude subscription path in onboard wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74990.md) | complete | Apr 30, 2026, 12:42 UTC |
+| [#75022](https://github.com/openclaw/openclaw/pull/75022) | fix(infer): load model catalog metadata-only for list/inspect/providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75022.md) | complete | Apr 30, 2026, 12:41 UTC |
 | [#75078](https://github.com/openclaw/openclaw/pull/75078) | fix(feishu): media-aware dedupe key prevents dropping audio with reused message_id | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75078.md) | complete | Apr 30, 2026, 12:40 UTC |
 | [#75031](https://github.com/openclaw/openclaw/pull/75031) | fix(backup): use resolvePreferredOpenClawTmpDir for temp archive dir (#75007) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75031.md) | complete | Apr 30, 2026, 12:39 UTC |
 | [#75076](https://github.com/openclaw/openclaw/pull/75076) | Harden Control UI auth, status warnings, and build provenance | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75076.md) | complete | Apr 30, 2026, 12:36 UTC |
@@ -396,9 +399,6 @@ Latest review: Apr 30, 2026, 12:40 UTC. Latest close: Apr 30, 2026, 12:39 UTC. L
 | [#75046](https://github.com/openclaw/openclaw/pull/75046) | feat: add Cursor SDK agent harness plugin (extensions/cursor-sdk) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75046.md) | complete | Apr 30, 2026, 12:34 UTC |
 | [#75075](https://github.com/openclaw/openclaw/pull/75075) | feat(gateway): surface built-in tool calls as function_call output items on /v1/responses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75075.md) | complete | Apr 30, 2026, 12:34 UTC |
 | [#75074](https://github.com/openclaw/openclaw/issues/75074) | [Feature]: /v1/responses drops every built-in tool call from `output`; add opt-in flag to surface them | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75074.md) | complete | Apr 30, 2026, 12:33 UTC |
-| [#72724](https://github.com/openclaw/openclaw/pull/72724) | fix(status): add gateway delivery health telemetry | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72724.md) | complete | Apr 30, 2026, 12:28 UTC |
-| [#75030](https://github.com/openclaw/openclaw/pull/75030) | fix(auth): explain masked oauth profiles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75030.md) | complete | Apr 30, 2026, 12:27 UTC |
-| [#75072](https://github.com/openclaw/openclaw/issues/75072) | Feature request: PII sanitization skill for privacy compliance before LLM calls | [close / proposed_close](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75072.md) | complete | Apr 30, 2026, 12:25 UTC |
 
 </details>
 
