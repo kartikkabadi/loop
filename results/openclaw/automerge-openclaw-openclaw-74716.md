@@ -2,12 +2,12 @@
 repo: "openclaw/openclaw"
 cluster_id: "automerge-openclaw-openclaw-74716"
 mode: "autonomous"
-run_id: "25191019426"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25191019426"
-head_sha: "30b3ea82b065e538b829d73fcd7fc8ecb9ff5315"
+run_id: "25191767273"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25191767273"
+head_sha: "7ad40719e34ca8ab7fcc5eb8a768e5bd11ee88f8"
 workflow_conclusion: "success"
 result_status: "planned"
-published_at: "2026-04-30T21:55:35.289Z"
+published_at: "2026-04-30T22:14:48.755Z"
 canonical: "https://github.com/openclaw/openclaw/pull/74716"
 canonical_issue: null
 canonical_pr: "https://github.com/openclaw/openclaw/pull/74716"
@@ -25,7 +25,7 @@ needs_human_count: 0
 
 Repo: openclaw/openclaw
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25191019426](https://github.com/openclaw/clawsweeper/actions/runs/25191019426)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25191767273](https://github.com/openclaw/clawsweeper/actions/runs/25191767273)
 
 Workflow conclusion: success
 
@@ -35,7 +35,7 @@ Canonical: https://github.com/openclaw/openclaw/pull/74716
 
 ## Summary
 
-PR #74716 is the canonical repair target. The branch is same-repo and writable, CI/checks in the hydrated artifact are green, security-sensitive signals are absent, and the only current ClawSweeper blocker is the required active-version changelog entry. Merge and close are blocked by job policy, so the executable outcome is a repair-contributor-branch fix artifact.
+PR #74716 is the canonical automerge repair target. The hydrated artifact shows the PR is open, same-repo branch-writable, mergeable, non-draft, security-cleared, and CI-green; the remaining actionable ClawSweeper blocker is the required active-version changelog entry for a user-facing Codex/macOS Computer Use routing change. Merge and close are blocked by job policy, so the executable outcome is a repair-contributor-branch fix artifact.
 
 ## Impact
 
@@ -69,7 +69,7 @@ PR #74716 is the canonical repair target. The branch is same-repo and writable, 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
 | #74716 | fix_needed | planned | canonical | Canonical PR is useful and repairable, but not merge-ready because the active ClawSweeper review still has an actionable changelog blocker. |
-| cluster:automerge-openclaw-openclaw-74716 | build_fix_artifact | planned |  | Build a narrow repair artifact for the existing writable contributor branch instead of replacement. |
+| cluster:automerge-openclaw-openclaw-74716 | build_fix_artifact | planned |  | Build a branch repair plan for the same contributor PR branch so the deterministic executor can add the missing changelog entry and request a fresh ClawSweeper review. |
 
 ## Needs Human
 
