@@ -1,174 +1,6 @@
 {
-  "updated_at": "2026-04-30T22:26:09.464Z",
+  "updated_at": "2026-04-30T22:30:03.757Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72404:4325141005:2026-04-30T19:09:59Z:clawsweeper_needs_human",
-      "comment_id": "4325141005",
-      "comment_version_key": "4325141005:2026-04-30T19:09:59Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72404#issuecomment-4325141005",
-      "comment_created_at": "2026-04-27T07:46:26Z",
-      "comment_updated_at": "2026-04-30T19:09:59Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72404,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=10a52ac2749356327e12e9b8613310d73a302ad1)",
-      "expected_head_sha": "10a52ac2749356327e12e9b8613310d73a302ad1",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T21:15:26.029Z",
-      "target": null
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72358:4323944930:2026-04-30T19:09:58Z:clawsweeper_needs_human",
-      "comment_id": "4323944930",
-      "comment_version_key": "4323944930:2026-04-30T19:09:58Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72358#issuecomment-4323944930",
-      "comment_created_at": "2026-04-27T03:29:55Z",
-      "comment_updated_at": "2026-04-30T19:09:58Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72358,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=60c2e95575aa8c8a4e6adf09dbc3a8850aec2468)",
-      "expected_head_sha": "60c2e95575aa8c8a4e6adf09dbc3a8850aec2468",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T21:15:26.029Z",
-      "target": null
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72343:4323012918:2026-04-30T19:09:56Z:clawsweeper_needs_human",
-      "comment_id": "4323012918",
-      "comment_version_key": "4323012918:2026-04-30T19:09:56Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72343#issuecomment-4323012918",
-      "comment_created_at": "2026-04-26T21:12:16Z",
-      "comment_updated_at": "2026-04-30T19:09:56Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72343,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=84e7aac24af4c30545db5c9bb03bb144f8082768)",
-      "expected_head_sha": "84e7aac24af4c30545db5c9bb03bb144f8082768",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T21:15:26.029Z",
-      "target": null
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72306:4322677524:2026-04-30T19:09:54Z:clawsweeper_needs_human",
-      "comment_id": "4322677524",
-      "comment_version_key": "4322677524:2026-04-30T19:09:54Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72306#issuecomment-4322677524",
-      "comment_created_at": "2026-04-26T18:15:08Z",
-      "comment_updated_at": "2026-04-30T19:09:54Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72306,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=0fe85c1fba85effb4e3c77c8b05d34b47fcca943)",
-      "expected_head_sha": "0fe85c1fba85effb4e3c77c8b05d34b47fcca943",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T20:49:18.865Z",
-      "target": null
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72267:4340804451:2026-04-30T19:09:52Z:clawsweeper_needs_human",
-      "comment_id": "4340804451",
-      "comment_version_key": "4340804451:2026-04-30T19:09:52Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72267#issuecomment-4340804451",
-      "comment_created_at": "2026-04-29T04:31:38Z",
-      "comment_updated_at": "2026-04-30T19:09:52Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72267,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=0be71c5d8152c0e0f87a395d422785c12184ec9d)",
-      "expected_head_sha": "0be71c5d8152c0e0f87a395d422785c12184ec9d",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T20:49:18.865Z",
-      "target": null
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72253:4322597753:2026-04-30T19:09:51Z:clawsweeper_needs_human",
-      "comment_id": "4322597753",
-      "comment_version_key": "4322597753:2026-04-30T19:09:51Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72253#issuecomment-4322597753",
-      "comment_created_at": "2026-04-26T17:32:19Z",
-      "comment_updated_at": "2026-04-30T19:09:51Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72253,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=93609bc605bd057de20cf9195ce7c265a4f4a972)",
-      "expected_head_sha": "93609bc605bd057de20cf9195ce7c265a4f4a972",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T20:49:18.865Z",
-      "target": null
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72251:4322597702:2026-04-30T19:09:49Z:clawsweeper_needs_human",
-      "comment_id": "4322597702",
-      "comment_version_key": "4322597702:2026-04-30T19:09:49Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72251#issuecomment-4322597702",
-      "comment_created_at": "2026-04-26T17:32:17Z",
-      "comment_updated_at": "2026-04-30T19:09:49Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72251,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=463428dd3d2cb244ef14f10cd276676428151e86)",
-      "expected_head_sha": "463428dd3d2cb244ef14f10cd276676428151e86",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T20:49:18.865Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72201:4322433229:2026-04-30T19:09:48Z:clawsweeper_needs_human",
       "comment_id": "4322433229",
@@ -9714,7 +9546,7 @@
       "expected_head_sha": "b62721f04f5213b41bf749dbb3a539ab169fe24a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -9738,7 +9570,7 @@
       "expected_head_sha": "03dde6b00ae172d4e2ddd3358b7c29dd53b3237f",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -10103,29 +9935,9 @@
       "repair_reason": "structured ClawSweeper verdict: pass (sha=18e6250b97c270c36e7b4dff7f9a465cd60e5674)",
       "expected_head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
       "finding_id": null,
-      "status": "executed",
-      "processed_at": "2026-04-30T22:26:09.464Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "clawsweeper/automerge-openclaw-openclaw-74506",
-        "head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
-        "cluster_id": "automerge-openclaw-openclaw-74506",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md"
-      },
-      "actions": [
-        {
-          "action": "merge",
-          "status": "blocked",
-          "label": null,
-          "job_path": null
-        },
-        {
-          "action": "comment",
-          "status": "executed",
-          "label": null,
-          "job_path": null
-        }
-      ]
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75254:4355954020:2026-04-30T20:32:43Z:clawsweeper_needs_human",
@@ -14054,7 +13866,7 @@
       "expected_head_sha": "594d2be35dc3948d98749bfe67832defe54e9a3a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14078,7 +13890,7 @@
       "expected_head_sha": "423b32190f95f9e02d74c7b5076cca286cdf81d7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14102,7 +13914,7 @@
       "expected_head_sha": "d9a1309de20a107aab8b2ec696d8f76790585ca8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14306,7 +14118,7 @@
       "expected_head_sha": "925708f1005d48da9d9e667fa2fa4c2aa590e4c5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14330,7 +14142,7 @@
       "expected_head_sha": "9c0e0c52260164f0acc1ac1ddc4daafe1daffdc7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14384,7 +14196,7 @@
       "expected_head_sha": "2f8d6cebf1cadd76d4207f1813ba58fef6168d6b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14408,7 +14220,7 @@
       "expected_head_sha": "71b9256380993d2b66d608a5f9cb3bd2bc77b4c3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14480,7 +14292,7 @@
       "expected_head_sha": "88051ef6ab5b97da8d767c59712456a24992e6bc",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14504,7 +14316,7 @@
       "expected_head_sha": "9d584e9c89d1e73b25098b6f335c57679c2702d4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14528,7 +14340,7 @@
       "expected_head_sha": "e9d91de3fbcebd86b3dddbf5611e6e51f9a933ec",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14552,7 +14364,7 @@
       "expected_head_sha": "aeb92e0929d41523375786721c0ecb144d880307",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14600,7 +14412,7 @@
       "expected_head_sha": "0488992e23132bb8f916c27e75d134b1e151fb25",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14624,7 +14436,7 @@
       "expected_head_sha": "268b469fd09aa1ae81d5e591f371b6bc3ef0bb65",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14648,7 +14460,7 @@
       "expected_head_sha": "6ad5316d33eaffaeb5bc400ce49f277f05e440b3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14672,7 +14484,7 @@
       "expected_head_sha": "0fd1daaaafc78ff62c9b2d7a12e52aa4eb09dc24",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14696,7 +14508,7 @@
       "expected_head_sha": "39498ba26f38634f7225f83388159b03b1745fe9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14720,7 +14532,7 @@
       "expected_head_sha": "1d04355326bea4c3dc5c4f53a5b1d08339946e74",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14744,7 +14556,7 @@
       "expected_head_sha": "dffc2fe79e5b2106243a5450d74d096512346851",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14768,7 +14580,7 @@
       "expected_head_sha": "09253bf6919743e65d5709cf31abf2bd9166cda5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14792,7 +14604,7 @@
       "expected_head_sha": "bdb5df8499a64333b715ee3d150f60bbffd85729",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14816,7 +14628,7 @@
       "expected_head_sha": "d23ff05386566f4f4e2f1eb48311e814fc5faf79",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14840,7 +14652,7 @@
       "expected_head_sha": "243b68958acfd1a0d7cd01a96c27af7aff48b953",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14864,7 +14676,7 @@
       "expected_head_sha": "62a2a33cb2b937b21f7281f569156f65eb9eefe1",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14888,7 +14700,7 @@
       "expected_head_sha": "bc1f47c342ef5b1c5f17bcf3859db0e0104f7c97",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14936,7 +14748,7 @@
       "expected_head_sha": "0224044d171585c3ca05623f43d9330192287d19",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14960,7 +14772,7 @@
       "expected_head_sha": "a41c7d84ece164b8cd2db380d4c50356c04a64bf",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -14984,7 +14796,7 @@
       "expected_head_sha": "0b2239142e05ffda294763b73798842fe751e5d2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15008,7 +14820,7 @@
       "expected_head_sha": "dee59cf653ef7b4a0ffdafe2e04adc1a2337173f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15032,7 +14844,7 @@
       "expected_head_sha": "b78cf5a75c99b588c91eedf2611a72d217674369",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15056,7 +14868,7 @@
       "expected_head_sha": "5d19030888d5b4171456bb0476faa5bc5fd27cac",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15080,7 +14892,7 @@
       "expected_head_sha": "d5b83dace46bf65f6df437b8cc3951929e45c7b9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15104,7 +14916,7 @@
       "expected_head_sha": "3d9b757d2dbfdd1e090a661627358600d9a4108c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15128,7 +14940,7 @@
       "expected_head_sha": "150ed765a68110acdaa4ece02723d8c049845f11",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15152,7 +14964,7 @@
       "expected_head_sha": "3884f64b38424c7ca26a7791922c9e9efb7a1a15",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15176,7 +14988,7 @@
       "expected_head_sha": "f17db88f1b48511491c5efd477b545c03c373456",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15200,7 +15012,7 @@
       "expected_head_sha": "85e6e9374e4efb462ab34d67315892aad978d7ea",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15224,7 +15036,7 @@
       "expected_head_sha": "0d730f2c1c3a9097c4f6c26535a8bcf94d73f07b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15248,7 +15060,7 @@
       "expected_head_sha": "f3f0f2c6bcff28e71fb3fd6714c1229a33b0be1f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15272,7 +15084,7 @@
       "expected_head_sha": "9e8cf8cb7170d44168f400219cfcf60573a3540f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15296,7 +15108,7 @@
       "expected_head_sha": "eb53471ae91821f038146ef7a0ee0d83ebba317b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15320,7 +15132,7 @@
       "expected_head_sha": "9a0bb18dc977b5bdd5ebd94a95e51e592250b412",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15344,7 +15156,7 @@
       "expected_head_sha": "1ea28ef72c400bb20bb8b727a01c623510f52f8f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15368,7 +15180,7 @@
       "expected_head_sha": "90f35a5136eef12c8a36a23b8d301cb2950bf4a3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15392,7 +15204,7 @@
       "expected_head_sha": "3b628ffbaa68385db297035f2ea472fa069daaea",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15416,7 +15228,7 @@
       "expected_head_sha": "7699175a0d2393b29135372df73edb490fa7b2e2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15440,7 +15252,7 @@
       "expected_head_sha": "257b940e4eef8a9139b7a08a781085b1590005ca",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15464,7 +15276,7 @@
       "expected_head_sha": "3ba56a39547b0874d385ba12f16c8dd1f5a17603",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15488,7 +15300,7 @@
       "expected_head_sha": "5ea3ba6e90cf57bd3e98c3742d62fbd04e20f297",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15512,7 +15324,7 @@
       "expected_head_sha": "fe15aa5e14b79b51ebf56c2b098eb95754601d6f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15536,7 +15348,7 @@
       "expected_head_sha": "b4a2aac6305e2f5f5fdddf3b410a6ba88aecfc3e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15560,7 +15372,7 @@
       "expected_head_sha": "64608a1d0e4de6c8f09ce8f385c2425a30a814da",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15584,7 +15396,7 @@
       "expected_head_sha": "ce3d943908aeb6093950859657728b6a7d84feba",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15608,7 +15420,7 @@
       "expected_head_sha": "b4e94bbb8063b70653258ba51e77362e8a9dc212",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15632,7 +15444,7 @@
       "expected_head_sha": "b9b45d899e8851f54bab1e54b82201552b81a9a5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15656,7 +15468,7 @@
       "expected_head_sha": "3334e04c0eace67d67991848707d0df91b50ce44",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15680,7 +15492,7 @@
       "expected_head_sha": "d24156304ee5fc39ae90f2e90c7560611ee514c1",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15704,7 +15516,7 @@
       "expected_head_sha": "496e84293e48b049fe3c50f94c38b6e2c30ae464",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15728,7 +15540,7 @@
       "expected_head_sha": "079384fb93c7b7db5981fd3aeaef3a84550667a8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15752,7 +15564,7 @@
       "expected_head_sha": "11ddfda40405b1e2006b817f68390f234433f490",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15776,7 +15588,7 @@
       "expected_head_sha": "3669b5f99dbc0cfdbbf83194bdd8246a2d4ebab5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15800,7 +15612,7 @@
       "expected_head_sha": "ff7cee4529303d254fed402bef6db2cc32e3627e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15824,7 +15636,7 @@
       "expected_head_sha": "89a2e63bf5e646cf0f1a966ae8c51ff74f7cf73f",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15848,7 +15660,7 @@
       "expected_head_sha": "529882d562a9ef795f4e5040396ccf4e86a982b2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15872,7 +15684,7 @@
       "expected_head_sha": "00f6e9a968e810ba986e6e1009dd661468aef630",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15896,7 +15708,7 @@
       "expected_head_sha": "198a6181fc8a4db0d6a7cd5cee45e27aef054eb8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15920,7 +15732,7 @@
       "expected_head_sha": "53849c6c993cc12d1e7745c31ca179314e3a05ea",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15944,7 +15756,7 @@
       "expected_head_sha": "2acc40ad395dc65cc982ded96f37e28905aeee1b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -15968,7 +15780,7 @@
       "expected_head_sha": "a6758c8c7545fdd478198c82886ee77e5fc0cb60",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16022,7 +15834,7 @@
       "expected_head_sha": "a828b468ee29484de4138587930c9eacac333222",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16046,7 +15858,7 @@
       "expected_head_sha": "4ffc764154c2405e91b97af2465733afcac20237",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16070,7 +15882,7 @@
       "expected_head_sha": "b4c70da60f007e2e5ad996a566b1e2d35b07d2e3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16094,7 +15906,7 @@
       "expected_head_sha": "7fc017afd90cb2d8c91f0d78320a21d07915998a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16118,7 +15930,7 @@
       "expected_head_sha": "7003203ae3485bd309ac06e6a05217343d72ce54",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16142,7 +15954,7 @@
       "expected_head_sha": "4f3cd1ec8a18d5e7a708cbb77a788e376c909cb0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16166,7 +15978,7 @@
       "expected_head_sha": "824b3b79f13f09017721155bd8c007288f44e560",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16190,7 +16002,7 @@
       "expected_head_sha": "bc77d9500fc3254ed287f47f2371c3447855fe75",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16214,7 +16026,7 @@
       "expected_head_sha": "cb08be8a00cfe94635855781ad84d4b04ceeb5aa",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16238,7 +16050,7 @@
       "expected_head_sha": "96894d7d545afeb1afd1c35e53ddb010b643820d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16262,7 +16074,7 @@
       "expected_head_sha": "def311abe57bf5a2cbc4471dca12b3d6e3ec935f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16286,7 +16098,7 @@
       "expected_head_sha": "342ee6e40f69ad48e7beb37c837aa03ff9aae784",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16310,7 +16122,7 @@
       "expected_head_sha": "6c42105c1ec3f4f8adf859b7c79e5f16ae82b99b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16334,7 +16146,7 @@
       "expected_head_sha": "b5183932bbfa7a562291e743ba79c973b7aea1ba",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16358,7 +16170,7 @@
       "expected_head_sha": "ac43fa510e4360f7d01f64ead78c59b471c4eee0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16382,7 +16194,7 @@
       "expected_head_sha": "8f08a85bb95ca50de101cadf64fdf0eefdfbffc2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16406,7 +16218,7 @@
       "expected_head_sha": "2923a0bd36de2df74fc531f49d67cca23b2160f6",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16460,7 +16272,7 @@
       "expected_head_sha": "6ae87072fc1e770aea3ec05133d4c4a7dd77162f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16484,7 +16296,7 @@
       "expected_head_sha": "81cec8be2643da2e92f9d60f6bae996c4b36a1be",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16508,7 +16320,7 @@
       "expected_head_sha": "065f3b26402dfdb3a8569d1d4808447729bf8558",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16532,7 +16344,7 @@
       "expected_head_sha": "04d8a5680744d85ba9d0f230bf00e9830909a805",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16556,7 +16368,7 @@
       "expected_head_sha": "d6bb240491cd53763ec654fc0449a79dfed6d664",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16580,7 +16392,7 @@
       "expected_head_sha": "b0c49a1a7cf7af7c05f84cea9e4fa2bfeb70a1da",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16604,7 +16416,7 @@
       "expected_head_sha": "292909ac37f34952713eeba532fda8d6260f50fd",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16628,7 +16440,7 @@
       "expected_head_sha": "6ffa8dbaed3094d686704b680c26bdab2caa4560",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16652,7 +16464,7 @@
       "expected_head_sha": "648fe6c298dc22a8c38e388e9dd32444e1b9245c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16676,7 +16488,7 @@
       "expected_head_sha": "c369c59917269840702ff6011dab280cae350002",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16700,7 +16512,7 @@
       "expected_head_sha": "782e3f3eb513901492adaac80acdaae84c885766",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16724,7 +16536,7 @@
       "expected_head_sha": "0124f81922a13d40d1577a4d3fd6f8eac4b1cc81",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16748,7 +16560,7 @@
       "expected_head_sha": "62790766988a09c37f7ce5fc5f2ec2009b850965",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16772,7 +16584,7 @@
       "expected_head_sha": "5f5c2a9bb2b39e2bbe162bd6e5fe2c3d4e21a055",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16796,7 +16608,7 @@
       "expected_head_sha": "617a98288541b66132e4b8d0e7bd2443d6dbaba9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16820,7 +16632,7 @@
       "expected_head_sha": "cc931a427f37f640acd20e1f5e51eb91d3af2514",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16844,7 +16656,7 @@
       "expected_head_sha": "71123fff34f158cd46bc06551a20786d0d7a575a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16868,7 +16680,7 @@
       "expected_head_sha": "b73cb61249da9f22410bce86ea5d44530077237d",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16892,7 +16704,7 @@
       "expected_head_sha": "97e7b247a139b55ba1ac6c1cafdb8cf370398194",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16916,7 +16728,7 @@
       "expected_head_sha": "3cb06f1f01b3b4d743a52d4c33087afba1d110bf",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16940,7 +16752,7 @@
       "expected_head_sha": "ad01350203b6e0a20f7f2558cf2dfb0af6ed9512",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16964,7 +16776,7 @@
       "expected_head_sha": "ca6d932022ee9de8d39faafd88586820521be013",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -16988,7 +16800,7 @@
       "expected_head_sha": "97d45c292f68f70f6031f7864a041e792a8d1e37",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17012,7 +16824,7 @@
       "expected_head_sha": "fc897fcca6c23f4835c33db725e9e3e01549fa04",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17036,7 +16848,7 @@
       "expected_head_sha": "51fa1666480cca3b1f6245d8aee6b9b4174fc204",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17060,7 +16872,7 @@
       "expected_head_sha": "69b015e1dcd36cda81c4c4fadaa88e5aec75a9f3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17084,7 +16896,7 @@
       "expected_head_sha": "04b517ba601c9aeace2b7f565b5716ef7149c5ab",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17108,7 +16920,7 @@
       "expected_head_sha": "7f594cbde8310f4d75874ed57ff1d562cfd78100",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17132,7 +16944,7 @@
       "expected_head_sha": "933bd47dce4da9dd3478a4ca0d5adcaec06c47f3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17156,7 +16968,7 @@
       "expected_head_sha": "4de906a72f10a4d219e29a88a48ba9a0167ac19d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17180,7 +16992,7 @@
       "expected_head_sha": "65e68832247b4104ff41659c20a4a9d4c456cb42",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17204,7 +17016,7 @@
       "expected_head_sha": "8f23db6aed4656fc89a186f239f4bd3466c0b974",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17228,7 +17040,7 @@
       "expected_head_sha": "e2f117ac479b0c3c2cc23958bb2485e7a2f3fde2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17252,7 +17064,7 @@
       "expected_head_sha": "74d72cf22651bbc072ffca6d80acdab6804041fb",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17276,7 +17088,7 @@
       "expected_head_sha": "4fa45d2b073f40cce144df755027da3397b32d31",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17300,7 +17112,7 @@
       "expected_head_sha": "bbea5f521c1021af7a5ce8bc6a511d9036f66837",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17324,7 +17136,7 @@
       "expected_head_sha": "fa7ee73d35b7cdfa52e57d217fb74e098cdd98b4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17348,7 +17160,7 @@
       "expected_head_sha": "a6e73a0d1f8c4ac0b8c2a4780d4e6b130b2ab2ee",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17372,7 +17184,7 @@
       "expected_head_sha": "0dab57fd6361cd21af44937e1e29bc61305288da",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17396,7 +17208,7 @@
       "expected_head_sha": "6571e1a873581c697bd73b0e2cf020863054c5ef",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17420,7 +17232,7 @@
       "expected_head_sha": "4210d37d08dec39802b5494adf9d6e98836106fd",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17444,7 +17256,7 @@
       "expected_head_sha": "747d0fb32864e8ff5f38464cc4ad2f944bfa81d7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17468,7 +17280,7 @@
       "expected_head_sha": "35b27aa65a1f909806e202a71613e4a4940bca6e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17492,7 +17304,7 @@
       "expected_head_sha": "dcd8723748ac02f52348794567e18d6ec82d2458",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17516,7 +17328,7 @@
       "expected_head_sha": "eb6af9e8fbcebc1b963fa3253f66b6d8365d5781",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17540,7 +17352,7 @@
       "expected_head_sha": "8575cb782951fcd6b5effa963b4f9446d7506918",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17564,7 +17376,7 @@
       "expected_head_sha": "890e1a6804af9be86588c19e8090f32d38485372",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17588,7 +17400,7 @@
       "expected_head_sha": "ae7ea492a9ba4bd76981fc6522c6657a47b2a565",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17612,7 +17424,7 @@
       "expected_head_sha": "465fcb5cd60b90ca091e32bb58716ad8ca583940",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17636,7 +17448,7 @@
       "expected_head_sha": "2cc4878d1b50eb624928fdfed60a97f2c27435e9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17660,7 +17472,7 @@
       "expected_head_sha": "d8a265df9d92e7159b34e7e0190720e7b1180ef7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17684,7 +17496,7 @@
       "expected_head_sha": "605eb32438dba7630db5caa4463fbd2ef1c324ba",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17708,7 +17520,7 @@
       "expected_head_sha": "64242455e166611fa0f1dee1c83ee674995bcae5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17732,7 +17544,7 @@
       "expected_head_sha": "5341b0e07efde540e05c564d2ce7b8fe9db8bdf8",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17756,7 +17568,7 @@
       "expected_head_sha": "af87803b8c64ba3905844d8952a506dcc1519a64",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17780,7 +17592,7 @@
       "expected_head_sha": "40af4dc59959b14b5dd3094c67ec3618975cbf95",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17804,7 +17616,7 @@
       "expected_head_sha": "19ee682413692bf7ca0f6d02b94c4b4e057513e7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17828,7 +17640,7 @@
       "expected_head_sha": "09fb2032517c05bdc6e67e3d34810eaf61c8a1d5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17852,7 +17664,7 @@
       "expected_head_sha": "b1b60d55c37167d4f64fdcdf9119ea5f7fc429e1",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17876,7 +17688,7 @@
       "expected_head_sha": "7eeaa4059384080db426078f89b5f20812af5d57",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17900,7 +17712,7 @@
       "expected_head_sha": "e9c9a5fc45e9e8b33e6301360bdeb95f59f662b1",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17924,7 +17736,7 @@
       "expected_head_sha": "f9768193a3da0a751cd26b45a066026f861c0a61",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17948,7 +17760,7 @@
       "expected_head_sha": "65ced469b884b5d67b99d73a12dd83f331693bb8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17972,7 +17784,7 @@
       "expected_head_sha": "f68bc81fc8d1314bcc0d6948174ceb249c5dc615",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -17996,7 +17808,7 @@
       "expected_head_sha": "6df7365048da2ce6384f1744c282f80fc7417b08",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18020,7 +17832,7 @@
       "expected_head_sha": "090371d0f694cb9dffc6f38ac3fb884c90828dba",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18044,7 +17856,7 @@
       "expected_head_sha": "4f1e7460553362b736049d75f1c66ae20cb1fdc0",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18068,7 +17880,7 @@
       "expected_head_sha": "f9bd76f41edcb4ca1f24fbe3949a9b7d529618e6",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18092,7 +17904,7 @@
       "expected_head_sha": "dd2c48fe37263cf406593b06e420bf372a5215a0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18116,7 +17928,7 @@
       "expected_head_sha": "166fc81f96ea6c1d5cffcf75e55368f2cc152937",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18140,7 +17952,7 @@
       "expected_head_sha": "4992e3d52a164a97d95f172e53ec0e3ab9bd30d0",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18164,7 +17976,7 @@
       "expected_head_sha": "58020c5d96bc3a374f37bd9484566e71c8037647",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18188,7 +18000,7 @@
       "expected_head_sha": "5edd2bece86fb95d53334ff1fca67e5f3bc532ad",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18212,7 +18024,7 @@
       "expected_head_sha": "91a9a55a39278e14d79fdc74feb97b1fa6d89d95",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18236,7 +18048,7 @@
       "expected_head_sha": "cbe0b69784d472d0e5b1b5ecc84928efce4f40c4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18260,7 +18072,7 @@
       "expected_head_sha": "d4d6950786390ab30f34edc6afe06c5e416aebac",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18284,7 +18096,7 @@
       "expected_head_sha": "d019bf0b4df96d7cbc56ad27f717232365d38835",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18308,7 +18120,7 @@
       "expected_head_sha": "a2e7ca3a402f72fe3b591a7b2371decde9a9805c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18356,7 +18168,7 @@
       "expected_head_sha": "dd0113097340e58f3fe172627a25db84ba674529",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18380,7 +18192,7 @@
       "expected_head_sha": "f20ca8f734de66e6a0d93c32c98b38db3178b096",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18404,7 +18216,7 @@
       "expected_head_sha": "df2473c40e5686790e986ee75baeec601a72eed0",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18428,7 +18240,7 @@
       "expected_head_sha": "660a2ce5475739c667092268c27a725b77ecdf99",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18452,7 +18264,7 @@
       "expected_head_sha": "f7d941e1d093999255692b201b6062e2fc92ed60",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18476,7 +18288,7 @@
       "expected_head_sha": "788a8f6afd6165de255472e555db6e867f93cfc2",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18500,7 +18312,7 @@
       "expected_head_sha": "9c72b9be8b3561479ca157a58beed8542f965f01",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18524,7 +18336,7 @@
       "expected_head_sha": "45501017f90f43a42bd1581d1c2933be3d9c9a7a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18548,7 +18360,7 @@
       "expected_head_sha": "07144d57ae5527da3aee0c9b1e924f8b43937f07",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18572,7 +18384,7 @@
       "expected_head_sha": "b51886cbf0036d996076d752d13cfd208e4a6164",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18596,7 +18408,7 @@
       "expected_head_sha": "286bd4c6575364dca00c40ddc08fcbacc71e293b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18620,7 +18432,7 @@
       "expected_head_sha": "cca5cb34f39c3bff6e240be3eb6ffd7498389f8f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18644,7 +18456,7 @@
       "expected_head_sha": "5b534628f342fb9b5a2ec28b3ac526c889542b1e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18668,7 +18480,7 @@
       "expected_head_sha": "7e45868cdc3af72746dc09f14934028f0d983a1e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18692,7 +18504,7 @@
       "expected_head_sha": "d46b3e703d06c0f0d9f821ba5521f344a188f72b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18716,7 +18528,7 @@
       "expected_head_sha": "7398a23fc53e791f9b4d6440962e69881b8f6028",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18740,7 +18552,7 @@
       "expected_head_sha": "5662ce704a910e8fc646cd4ead3f5bf077422aac",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18794,7 +18606,7 @@
       "expected_head_sha": "0d0a566af87749153d71a46c0985cd5522a1ae1d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18818,7 +18630,7 @@
       "expected_head_sha": "5da7f39eef798b4be8e80917f45e294a3e33aec6",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18842,7 +18654,7 @@
       "expected_head_sha": "dd1af28dcb11b1270c12589999780ba61d5622b9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18866,7 +18678,7 @@
       "expected_head_sha": "c80087ffaf1cd7e2d6cc9f551fdca8077613f077",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18890,7 +18702,7 @@
       "expected_head_sha": "ef33fbad294b8ef7981f185dfd70d105cf23e54c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18914,7 +18726,7 @@
       "expected_head_sha": "792311545edfe18520724a6a448f248f3c0155ee",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18938,7 +18750,7 @@
       "expected_head_sha": "b7be91006af7d2d920ba99f228ab53a4e8d01968",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18962,7 +18774,7 @@
       "expected_head_sha": "272e949377848c0bb1fef8fcc5b4077ab1cafa41",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -18986,7 +18798,7 @@
       "expected_head_sha": "2519841cd5bd112abd6f5ad980c533a19fe500d6",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.062Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19010,7 +18822,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19034,7 +18846,7 @@
       "expected_head_sha": "ee814763accabeb5a5eca511ac26d253988b7306",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19058,7 +18870,7 @@
       "expected_head_sha": "89c1af2ec3dfddcedc3ffc3de381d28ead80b575",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19106,7 +18918,7 @@
       "expected_head_sha": "42b46024cd2b1ea808d24b8673994c5aaf36ad7e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19130,7 +18942,7 @@
       "expected_head_sha": "ec7d1307fb9614426ac9e1312b5fb85a931be43d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19154,7 +18966,7 @@
       "expected_head_sha": "715de767f1f9b69dca3fbef67037b509dd972a36",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19178,7 +18990,7 @@
       "expected_head_sha": "d3b91c5325ca3285811a447ec94580c05a9329b9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19202,7 +19014,7 @@
       "expected_head_sha": "caa60a1c8dc1f62ca6c91537f18dec358f57e100",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19250,7 +19062,7 @@
       "expected_head_sha": "83b975e80b6361a26533d613f662695a616d4315",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19274,7 +19086,7 @@
       "expected_head_sha": "fff34f27289d442a9b7843a3f2a367aa91a6234a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19298,7 +19110,7 @@
       "expected_head_sha": "60880875bd986a97165a452ef5aaef273fd9e587",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19322,7 +19134,7 @@
       "expected_head_sha": "516b18f96ca278de76819ffa3367d65820462757",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19346,7 +19158,7 @@
       "expected_head_sha": "e84ec68d6c2fda585020284cd1eada391ed6cea2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19370,7 +19182,7 @@
       "expected_head_sha": "b1887bebb12882f414b6e55a4109db616681ea29",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19394,7 +19206,7 @@
       "expected_head_sha": "09e8dd5dc3ff07618faf19fe0b6be61a023fdb2a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19418,7 +19230,7 @@
       "expected_head_sha": "3daa8bab68d47afe1161a3cc6d79d9fada6f45c6",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19442,7 +19254,7 @@
       "expected_head_sha": "032b0bc4af3d34758779807aa7d960e44a8dfb16",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19466,7 +19278,7 @@
       "expected_head_sha": "1974d4c66ad95376a51f6726aac34a49920ef682",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19490,7 +19302,7 @@
       "expected_head_sha": "05145eb5026ae87227f611bf02b11d56a46e5d70",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19514,7 +19326,7 @@
       "expected_head_sha": "7b99c62e614032f6b4dbe0678e80eeeeab3fe24d",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19538,7 +19350,7 @@
       "expected_head_sha": "bbe562a87f214783f44497af2e276aabbe8777ff",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19562,7 +19374,7 @@
       "expected_head_sha": "cc30c6e80a99669ad108e89716b8094c946fba26",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19586,7 +19398,7 @@
       "expected_head_sha": "3590f11d3f2d13ff1cdc446b1d82f8f771245173",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19610,7 +19422,7 @@
       "expected_head_sha": "7fdd2cf6ed7a58dc17e7ec7784faca3201e3c445",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19634,7 +19446,7 @@
       "expected_head_sha": "a68555a0951be2fc1f8aae2f2a4d71827df8cf99",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19658,7 +19470,7 @@
       "expected_head_sha": "bcf80d2f38edae33d4bce71bb44f0ca7f1118dd4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19682,7 +19494,7 @@
       "expected_head_sha": "f17a550bcfdfbac0a2e69090b4d791bf4762bad9",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -19706,7 +19518,7 @@
       "expected_head_sha": "e67e93d319568fcac7fc03b8b855aad58b56f33d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19730,7 +19542,7 @@
       "expected_head_sha": "a00d688c97ec6dffc704acfbb68c37c3a09fde5e",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19754,7 +19566,7 @@
       "expected_head_sha": "7cd774a665097b9c21eea4744fb97f9441bd499e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19778,7 +19590,7 @@
       "expected_head_sha": "bc0384e5e23da722584e63358f570ebc595b9dd0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19802,7 +19614,7 @@
       "expected_head_sha": "53bfd6d292da09d9c4c5aec1e1f9660cab78a994",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19826,7 +19638,7 @@
       "expected_head_sha": "032c878673783faa9717941c21287c01aecb691f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19850,7 +19662,7 @@
       "expected_head_sha": "71d3e1a73dbb94bce2acb011aff83a1fa02ea0d0",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19874,7 +19686,7 @@
       "expected_head_sha": "30e1cf53ecca64c2f48a3e4d59ff775e8edf0fa2",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19898,7 +19710,7 @@
       "expected_head_sha": "da73902466db36f393d7b34fc3e8f61a3e733b4d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19922,7 +19734,7 @@
       "expected_head_sha": "ad91332923eaa70cd20573fd891eea887002b25e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19946,7 +19758,7 @@
       "expected_head_sha": "4294b8f99c843b39f6df63bedbe8ee815b725cf0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19970,7 +19782,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -19994,7 +19806,7 @@
       "expected_head_sha": "7616f297b092ed4144e3b4d242e367d8087298ee",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20018,7 +19830,7 @@
       "expected_head_sha": "0d3c187339abff45106617f6ce44c3c88e491c30",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20042,7 +19854,7 @@
       "expected_head_sha": "ea95a633413417708bea543ba8d3100173b779ff",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20066,7 +19878,7 @@
       "expected_head_sha": "3dc35ade7e38520b48b2f468ecadd479eabf3d3d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20090,7 +19902,7 @@
       "expected_head_sha": "e6b91fa1d31581a910662e6beb1baab2c8455d00",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20114,7 +19926,7 @@
       "expected_head_sha": "edda1215ace2b25a5257204b4020f04b0616237d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20138,7 +19950,7 @@
       "expected_head_sha": "48532c86169c0c2f95db80b8942a7e3a946899ae",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20162,7 +19974,7 @@
       "expected_head_sha": "d2c28080e78ba9b2fb353b4b7117434b2ad24631",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20186,7 +19998,7 @@
       "expected_head_sha": "709231a440155253e3b386bd137d70c3fdeb0e9a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20210,7 +20022,7 @@
       "expected_head_sha": "8726d35aa3eb474ab811ad7f4629aaa215bb6171",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20234,7 +20046,7 @@
       "expected_head_sha": "0646e9f7acccb400d1db25b1a888fe0a0520aa5b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20258,7 +20070,7 @@
       "expected_head_sha": "b3392f307a95bce657d7f524f8bbf471eaebdcfd",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20282,7 +20094,7 @@
       "expected_head_sha": "49e2a8de7f6e08ed15b63bc971c4cfc62fea7df7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20306,7 +20118,7 @@
       "expected_head_sha": "012aa8c09559adcd7b92f6faff98b4c08441c4f4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20330,7 +20142,7 @@
       "expected_head_sha": "bbe272f7dd243b367ca71457276498b182da995b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20354,7 +20166,7 @@
       "expected_head_sha": "9b45481d62fda4b23b7ebf7b0231c2d0cfb51383",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20378,7 +20190,7 @@
       "expected_head_sha": "2a40587010544e59392690fcd0312add57f8d50d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20402,7 +20214,7 @@
       "expected_head_sha": "6c662d834c4c58501729f8f5842d38822573b358",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20426,7 +20238,7 @@
       "expected_head_sha": "df39148bb829f79f7b2b71dc368a423d7c82a611",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20450,7 +20262,7 @@
       "expected_head_sha": "cfb1e861ae8b1644ab5a4faa08ebf309a5e7bd4b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20474,7 +20286,7 @@
       "expected_head_sha": "f0e017d7bb8686addd8a26ca22f919dd51034ee8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20498,7 +20310,7 @@
       "expected_head_sha": "a706762bb3ce863bf36857703c5cef4ebc07f12a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20522,7 +20334,7 @@
       "expected_head_sha": "1b4012f73154c2bb1df6648ca5d42f02dd00ccff",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
+      "processed_at": "2026-04-30T22:30:03.756Z",
       "target": null
     },
     {
@@ -20546,14 +20358,8 @@
       "expected_head_sha": "10361a0569b1272e2ce4a16284034e22bce04632",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "perf/models-config-target-provider-short-circuit",
-        "head_sha": "10361a0569b1272e2ce4a16284034e22bce04632",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73260:4356478369:2026-04-30T22:05:15Z:clawsweeper_needs_human",
@@ -20576,14 +20382,8 @@
       "expected_head_sha": "beb1807de2e0d4d694fcc77dd0f93c75a2c47a18",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "perf/models-config-cache-fingerprint",
-        "head_sha": "beb1807de2e0d4d694fcc77dd0f93c75a2c47a18",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73257:4356478128:2026-04-30T22:05:13Z:clawsweeper_needs_human",
@@ -20606,14 +20406,8 @@
       "expected_head_sha": "f44a88c38c6fc435c7c9690f1c99720fe8259069",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/bug-72872",
-        "head_sha": "f44a88c38c6fc435c7c9690f1c99720fe8259069",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73252:4356477926:2026-04-30T22:05:11Z:clawsweeper_needs_human",
@@ -20636,14 +20430,8 @@
       "expected_head_sha": "896e5423bb85242db7bd6945a832a4d66ddf5c0c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/mattermost-streaming-mode-73211",
-        "head_sha": "896e5423bb85242db7bd6945a832a4d66ddf5c0c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73214:4356477639:2026-04-30T22:05:08Z:clawsweeper_needs_human",
@@ -20666,14 +20454,8 @@
       "expected_head_sha": "f3e66f98309e480ac77efec5c615ff146a48aa08",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/pricing-fetch-timeout",
-        "head_sha": "f3e66f98309e480ac77efec5c615ff146a48aa08",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73203:4338058884:2026-04-30T22:05:04Z:clawsweeper_needs_human",
@@ -20696,14 +20478,8 @@
       "expected_head_sha": "bf6f95446e931da3c8b8db73868493d5ec86e71d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/feishu-interactive-card-text-extraction",
-        "head_sha": "bf6f95446e931da3c8b8db73868493d5ec86e71d",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73199:4356477256:2026-04-30T22:05:03Z:clawsweeper_needs_human",
@@ -20726,14 +20502,8 @@
       "expected_head_sha": "ac822553b0850311fc704e321a35bbfcbf981339",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "rex/hook-capability-smoke-20260427",
-        "head_sha": "ac822553b0850311fc704e321a35bbfcbf981339",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73194:4356477109:2026-04-30T22:05:01Z:clawsweeper_needs_human",
@@ -20756,14 +20526,8 @@
       "expected_head_sha": "01953970094e98259be7bce1267ee64cd5e79762",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "main",
-        "head_sha": "01953970094e98259be7bce1267ee64cd5e79762",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73171:4338114596:2026-04-30T22:04:59Z:clawsweeper_needs_human",
@@ -20786,14 +20550,8 @@
       "expected_head_sha": "c6f78b71259557d02fda95b9aee64668ff42aa04",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "rex/status-reliability-52563c3a",
-        "head_sha": "c6f78b71259557d02fda95b9aee64668ff42aa04",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73168:4356476755:2026-04-30T22:04:57Z:clawsweeper_needs_human",
@@ -20876,14 +20634,8 @@
       "expected_head_sha": "ffd486722b2e6c9e776c25271800acea47128dc8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/slack-socket-reconnect-no-cap",
-        "head_sha": "ffd486722b2e6c9e776c25271800acea47128dc8",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73161:4356476161:2026-04-30T22:04:52Z:clawsweeper_needs_human",
@@ -20906,14 +20658,8 @@
       "expected_head_sha": "29e8de654717df0552fb05501e5a7e7165dc9f38",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/stale-task-cancel-runtime-and-liveness",
-        "head_sha": "29e8de654717df0552fb05501e5a7e7165dc9f38",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73154:4356476040:2026-04-30T22:04:50Z:clawsweeper_needs_human",
@@ -20936,14 +20682,8 @@
       "expected_head_sha": "949d6e7cee8783c219288ea5e89371d6ebe93f28",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/chat-queue-persistence-v2",
-        "head_sha": "949d6e7cee8783c219288ea5e89371d6ebe93f28",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73153:4356475893:2026-04-30T22:04:48Z:clawsweeper_auto_repair",
@@ -20966,14 +20706,8 @@
       "expected_head_sha": "8cc647de786dfb6f897f7afa34aee36f6e95ea63",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/silent-reply-and-incomplete-turn",
-        "head_sha": "8cc647de786dfb6f897f7afa34aee36f6e95ea63",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73101:4335934909:2026-04-30T22:04:40Z:clawsweeper_needs_human",
@@ -20996,14 +20730,8 @@
       "expected_head_sha": "dd19afda88e8508490f5d382389453aa5fad6011",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/slack-configured-acp-bindings",
-        "head_sha": "dd19afda88e8508490f5d382389453aa5fad6011",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72866:4336324799:2026-04-30T22:04:26Z:clawsweeper_auto_repair",
@@ -21026,14 +20754,8 @@
       "expected_head_sha": "a41eb7aa6feb6a62193e108d82d61cc7ba9c6972",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/get-reply-bare-reset-inbound-context",
-        "head_sha": "a41eb7aa6feb6a62193e108d82d61cc7ba9c6972",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72802:4353870541:2026-04-30T22:04:23Z:clawsweeper_needs_human",
@@ -21056,14 +20778,8 @@
       "expected_head_sha": "f6d0f71f8131865d22a53b7be3bfe567bcbaeef0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/dashboard-tokenized-url-fallback-72081",
-        "head_sha": "f6d0f71f8131865d22a53b7be3bfe567bcbaeef0",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71839:4321829832:2026-04-30T22:04:17Z:clawsweeper_needs_human",
@@ -21086,14 +20802,8 @@
       "expected_head_sha": "48465665d4117de2bbbb0546810089c10fecf80a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/telegram-reply-quote-directive",
-        "head_sha": "48465665d4117de2bbbb0546810089c10fecf80a",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:70584:4323356496:2026-04-30T22:04:09Z:clawsweeper_needs_human",
@@ -21116,14 +20826,8 @@
       "expected_head_sha": "587c70c90ff3fc2e082829598db8a1e8cb177aad",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/opus-4-7-effort-low-rejection",
-        "head_sha": "587c70c90ff3fc2e082829598db8a1e8cb177aad",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:70518:4323356309:2026-04-30T22:04:08Z:clawsweeper_needs_human",
@@ -21146,14 +20850,8 @@
       "expected_head_sha": "dac907548c310556dcb11a9e280fe3d6c98aa41f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/heartbeat-allow-skills-v2",
-        "head_sha": "dac907548c310556dcb11a9e280fe3d6c98aa41f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:70479:4325128777:2026-04-30T22:04:06Z:clawsweeper_needs_human",
@@ -21176,14 +20874,8 @@
       "expected_head_sha": "74a145f6de620ecd870fa652646becc9d4e4b89c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/preserve-session-on-compaction-failure",
-        "head_sha": "74a145f6de620ecd870fa652646becc9d4e4b89c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:70368:4323355936:2026-04-30T22:04:04Z:clawsweeper_needs_human",
@@ -21206,14 +20898,8 @@
       "expected_head_sha": "3c76882520104406ead3626335fdc45dcd09ea32",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/70357-trusted-proxies-loopback-severity",
-        "head_sha": "3c76882520104406ead3626335fdc45dcd09ea32",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:70056:4323355345:2026-04-30T22:04:03Z:clawsweeper_needs_human",
@@ -21236,14 +20922,8 @@
       "expected_head_sha": "75c83f8d8597781a514ded1d82563ff6066ba4af",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/channel-stop-timeout-permanent-death",
-        "head_sha": "75c83f8d8597781a514ded1d82563ff6066ba4af",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:69961:4340573557:2026-04-30T22:04:01Z:clawsweeper_needs_human",
@@ -21266,14 +20946,8 @@
       "expected_head_sha": "c0c143eee270d7e9e276ad6bf4e5747ba31322b1",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/session-memory-sanitize-control-tokens",
-        "head_sha": "c0c143eee270d7e9e276ad6bf4e5747ba31322b1",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:69608:4340572958:2026-04-30T22:04:00Z:clawsweeper_needs_human",
@@ -21296,14 +20970,8 @@
       "expected_head_sha": "85991445e1962a9bbbd9a3c1a1d381844f123d0a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/daily-memory-gateway-watch",
-        "head_sha": "85991445e1962a9bbbd9a3c1a1d381844f123d0a",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:69426:4340572480:2026-04-30T22:03:58Z:clawsweeper_needs_human",
@@ -21326,14 +20994,8 @@
       "expected_head_sha": "3d9c39f0e13d47949796876d87fb34fb57878758",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/context1m-proxied-anthropic",
-        "head_sha": "3d9c39f0e13d47949796876d87fb34fb57878758",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:69340:4356470984:2026-04-30T22:03:57Z:clawsweeper_needs_human",
@@ -21356,14 +21018,8 @@
       "expected_head_sha": "11eccb3ec6f20f10639680779f9be9e1c6ead174",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/tui-code-block-token-split",
-        "head_sha": "11eccb3ec6f20f10639680779f9be9e1c6ead174",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68909:4356470851:2026-04-30T22:03:55Z:clawsweeper_auto_repair",
@@ -21386,14 +21042,8 @@
       "expected_head_sha": "48b763e731f260a6932954d6566a5542cfb5ae5f",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/status-system-bus-fallback",
-        "head_sha": "48b763e731f260a6932954d6566a5542cfb5ae5f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68844:4356470416:2026-04-30T22:03:50Z:clawsweeper_needs_human",
@@ -21416,14 +21066,8 @@
       "expected_head_sha": "c3ceae12442f508931bc751678caeced7476d2e0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/whatsapp-newline-chunk-replacement",
-        "head_sha": "c3ceae12442f508931bc751678caeced7476d2e0",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68819:4356470151:2026-04-30T22:03:49Z:clawsweeper_needs_human",
@@ -21446,14 +21090,8 @@
       "expected_head_sha": "192c46a80262f582bb0e2c52dab5e980c34445a9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/windows-spawn-claude",
-        "head_sha": "192c46a80262f582bb0e2c52dab5e980c34445a9",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68785:4356469959:2026-04-30T22:03:47Z:clawsweeper_auto_repair",
@@ -21476,14 +21114,8 @@
       "expected_head_sha": "f45af773e8b919882e477fea91a4ef06f365f289",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "upstream-pr/0045-circuit-breaker",
-        "head_sha": "f45af773e8b919882e477fea91a4ef06f365f289",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68765:4356469712:2026-04-30T22:03:43Z:clawsweeper_needs_human",
@@ -21506,14 +21138,8 @@
       "expected_head_sha": "711c0d1c2357c2a20578227ebcce6fb63ae907c7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/read-session-messages-compaction-chain",
-        "head_sha": "711c0d1c2357c2a20578227ebcce6fb63ae907c7",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68750:4356469568:2026-04-30T22:03:42Z:clawsweeper_needs_human",
@@ -21536,14 +21162,8 @@
       "expected_head_sha": "31a504202750d112a74f030e96acfe7d2576df83",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/minimax-token-double-count",
-        "head_sha": "31a504202750d112a74f030e96acfe7d2576df83",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75165:4354345667:2026-04-30T22:03:42Z:clawsweeper_auto_repair",
@@ -21596,14 +21216,8 @@
       "expected_head_sha": "b59fa24b7651fb9e9fb4a3182d47844cdb56c731",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/tools-allow-hook-v2",
-        "head_sha": "b59fa24b7651fb9e9fb4a3182d47844cdb56c731",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68718:4356469250:2026-04-30T22:03:38Z:clawsweeper_needs_human",
@@ -21626,14 +21240,8 @@
       "expected_head_sha": "b45d69976d32ec957a78788af1b206385390d7e5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "minions",
-        "head_sha": "b45d69976d32ec957a78788af1b206385390d7e5",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68717:4356469068:2026-04-30T22:03:36Z:clawsweeper_needs_human",
@@ -21656,14 +21264,8 @@
       "expected_head_sha": "526962b55d8976c15797f6b22062143cceec6a66",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/cron-failure-alert-default",
-        "head_sha": "526962b55d8976c15797f6b22062143cceec6a66",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68716:4356468849:2026-04-30T22:03:35Z:clawsweeper_needs_human",
@@ -21686,14 +21288,8 @@
       "expected_head_sha": "dea0d8a4390175c644b11c998084f0e60f93109b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/aa-uig-discord-guild-admin-actions-clean",
-        "head_sha": "dea0d8a4390175c644b11c998084f0e60f93109b",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68701:4356468572:2026-04-30T22:03:33Z:clawsweeper_needs_human",
@@ -21716,14 +21312,8 @@
       "expected_head_sha": "0da725cc5cd66378076d32779a02b2a58601c865",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/webchat-strip-invalid-recipient",
-        "head_sha": "0da725cc5cd66378076d32779a02b2a58601c865",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68687:4356468358:2026-04-30T22:03:31Z:clawsweeper_auto_repair",
@@ -21746,14 +21336,8 @@
       "expected_head_sha": "01e0041094ada0178456a9b8a541ed65ce9c3235",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/taskflow-hook",
-        "head_sha": "01e0041094ada0178456a9b8a541ed65ce9c3235",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68686:4356468217:2026-04-30T22:03:30Z:clawsweeper_needs_human",
@@ -21776,14 +21360,8 @@
       "expected_head_sha": "a422b46c1033f4ce0c07cea69aeba79426db034a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/auth-profile-session-invalidation",
-        "head_sha": "a422b46c1033f4ce0c07cea69aeba79426db034a",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68685:4356468113:2026-04-30T22:03:28Z:clawsweeper_needs_human",
@@ -21806,14 +21384,8 @@
       "expected_head_sha": "a112bfff2ce9072e175540ef614955154862a587",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/config-migration-order-68664",
-        "head_sha": "a112bfff2ce9072e175540ef614955154862a587",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68673:4356467947:2026-04-30T22:03:26Z:clawsweeper_needs_human",
@@ -21836,14 +21408,8 @@
       "expected_head_sha": "dd60ea89888fa646525eb4c9a0b4d49e97e8289f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/update-plan-loop-detection",
-        "head_sha": "dd60ea89888fa646525eb4c9a0b4d49e97e8289f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68648:4356467807:2026-04-30T22:03:25Z:clawsweeper_needs_human",
@@ -21866,14 +21432,8 @@
       "expected_head_sha": "a3654ee79df09f9920798b2788cee72f65a146b7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/exec-approval-followup-pr",
-        "head_sha": "a3654ee79df09f9920798b2788cee72f65a146b7",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68645:4356467648:2026-04-30T22:03:23Z:clawsweeper_needs_human",
@@ -21896,14 +21456,8 @@
       "expected_head_sha": "5fffc41f8c95b824d914123e7ad846dad16d362f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/cron-timeout-registry-close",
-        "head_sha": "5fffc41f8c95b824d914123e7ad846dad16d362f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68637:4356467422:2026-04-30T22:03:21Z:clawsweeper_needs_human",
@@ -21926,14 +21480,8 @@
       "expected_head_sha": "82e16e60c0aa74526c7077954d9eb609ef637ff0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/write-tool-allow-empty-content",
-        "head_sha": "82e16e60c0aa74526c7077954d9eb609ef637ff0",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68614:4356467155:2026-04-30T22:03:19Z:clawsweeper_auto_repair",
@@ -21956,14 +21504,8 @@
       "expected_head_sha": "43631f6eea48c18c63850490a0608a55b1e08d89",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/google-chat-deferred-response-timeout",
-        "head_sha": "43631f6eea48c18c63850490a0608a55b1e08d89",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68599:4356466972:2026-04-30T22:03:18Z:clawsweeper_auto_repair",
@@ -21986,14 +21528,8 @@
       "expected_head_sha": "763dc77b47d0fb2bff301bdc66f192498249e87c",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "compaction/tool-result-overflow-hint",
-        "head_sha": "763dc77b47d0fb2bff301bdc66f192498249e87c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68597:4356466836:2026-04-30T22:03:16Z:clawsweeper_needs_human",
@@ -22016,14 +21552,8 @@
       "expected_head_sha": "2c2890c518e6fff416932418232ee4969a67dd5f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/memory-get-symlink-boundary",
-        "head_sha": "2c2890c518e6fff416932418232ee4969a67dd5f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75280:4356466821:2026-04-30T22:03:16Z:clawsweeper_auto_repair",
@@ -22046,14 +21576,8 @@
       "expected_head_sha": "19e9015b8cd1be31a845b8d8d852d089a75e5f3c",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/main-session-durable-delivery-pr",
-        "head_sha": "19e9015b8cd1be31a845b8d8d852d089a75e5f3c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68590:4356466684:2026-04-30T22:03:14Z:clawsweeper_auto_repair",
@@ -22076,14 +21600,8 @@
       "expected_head_sha": "b9ad3fee3ab78c45f9ac2db2692c8ff378025a8c",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/qmd-manager-index-writer",
-        "head_sha": "b9ad3fee3ab78c45f9ac2db2692c8ff378025a8c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68575:4356466580:2026-04-30T22:03:13Z:clawsweeper_needs_human",
@@ -22106,14 +21624,8 @@
       "expected_head_sha": "74097433727223bec6da4df20e3f0255a8ed7514",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/68494-telegram-context-overflow-reset",
-        "head_sha": "74097433727223bec6da4df20e3f0255a8ed7514",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68566:4356466446:2026-04-30T22:03:11Z:clawsweeper_auto_repair",
@@ -22136,14 +21648,8 @@
       "expected_head_sha": "2c67f047940e8b2ea1d74d9d2bcd726494011a28",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/auth-profile-cooldown-400-guard",
-        "head_sha": "2c67f047940e8b2ea1d74d9d2bcd726494011a28",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68565:4356466318:2026-04-30T22:03:09Z:clawsweeper_needs_human",
@@ -22166,14 +21672,8 @@
       "expected_head_sha": "4c5401dccb5fdd5f6138e66bcea5e12c64702157",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/preserve-signed-thinking-blocks-across-models",
-        "head_sha": "4c5401dccb5fdd5f6138e66bcea5e12c64702157",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68560:4356466183:2026-04-30T22:03:07Z:clawsweeper_needs_human",
@@ -22196,14 +21696,8 @@
       "expected_head_sha": "8c2852fbe69f70461ea9a721b94862208c1cf566",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/strip-base64-images-from-tool-results",
-        "head_sha": "8c2852fbe69f70461ea9a721b94862208c1cf566",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68543:4356466018:2026-04-30T22:03:06Z:clawsweeper_needs_human",
@@ -22226,14 +21720,8 @@
       "expected_head_sha": "acc85fe0ff449d7a486a3d6c12a4766f749fad5f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/retry-after-lower-bound",
-        "head_sha": "acc85fe0ff449d7a486a3d6c12a4766f749fad5f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68538:4356465843:2026-04-30T22:03:04Z:clawsweeper_auto_repair",
@@ -22256,14 +21744,8 @@
       "expected_head_sha": "e8fdffc88f8490601c64e887aa395150dbafc31f",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/discord-native-command-defer-timeout",
-        "head_sha": "e8fdffc88f8490601c64e887aa395150dbafc31f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68537:4356465637:2026-04-30T22:03:02Z:clawsweeper_needs_human",
@@ -22286,14 +21768,8 @@
       "expected_head_sha": "9a3b775a1e327a13a3a12856f03b7424a4620fd6",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/telegram-acp-dm-binding",
-        "head_sha": "9a3b775a1e327a13a3a12856f03b7424a4620fd6",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68503:4356465428:2026-04-30T22:03:01Z:clawsweeper_auto_repair",
@@ -22316,14 +21792,8 @@
       "expected_head_sha": "e8ed259c6da59512e97aa22f7be873d17e5578ce",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/status-diagnosis-cleanup",
-        "head_sha": "e8ed259c6da59512e97aa22f7be873d17e5578ce",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68462:4356465281:2026-04-30T22:02:59Z:clawsweeper_auto_repair",
@@ -22346,14 +21816,8 @@
       "expected_head_sha": "e9798b7af66a33311987c998b455393a9730bd00",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/issue-68423-validate-backup-not-polluted",
-        "head_sha": "e9798b7af66a33311987c998b455393a9730bd00",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68455:4356465159:2026-04-30T22:02:57Z:clawsweeper_auto_repair",
@@ -22376,14 +21840,8 @@
       "expected_head_sha": "8ea58c317b43aea085d85a5454d685258911fe77",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/feishu-custom-accountid",
-        "head_sha": "8ea58c317b43aea085d85a5454d685258911fe77",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68444:4356465055:2026-04-30T22:02:56Z:clawsweeper_needs_human",
@@ -22406,14 +21864,8 @@
       "expected_head_sha": "ded9833240227a5d93c80c64136bf25a3b01a25a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/feishu-disable-auto-mention-forward",
-        "head_sha": "ded9833240227a5d93c80c64136bf25a3b01a25a",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68435:4356464931:2026-04-30T22:02:54Z:clawsweeper_needs_human",
@@ -22436,14 +21888,8 @@
       "expected_head_sha": "44f27d9b4416dda4db935b1232ba5b40625544d3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/multimodal-content-blocks",
-        "head_sha": "44f27d9b4416dda4db935b1232ba5b40625544d3",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68422:4356464771:2026-04-30T22:02:52Z:clawsweeper_auto_repair",
@@ -22466,14 +21912,8 @@
       "expected_head_sha": "8e3336539b37e753696bc81ab00473dbfbc1bf51",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/issue-68369-web-chat-width",
-        "head_sha": "8e3336539b37e753696bc81ab00473dbfbc1bf51",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68418:4356464652:2026-04-30T22:02:51Z:clawsweeper_needs_human",
@@ -22496,14 +21936,8 @@
       "expected_head_sha": "06b26221735bae89cb922ee38160b5cce0906395",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/openai-completions-array-content-coercion",
-        "head_sha": "06b26221735bae89cb922ee38160b5cce0906395",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68416:4356464504:2026-04-30T22:02:49Z:clawsweeper_needs_human",
@@ -22526,14 +21960,8 @@
       "expected_head_sha": "448598049fd763ca7d9a126cc0bae6c45cc10e7b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/issue-67888-v2",
-        "head_sha": "448598049fd763ca7d9a126cc0bae6c45cc10e7b",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68408:4345527811:2026-04-30T22:02:47Z:clawsweeper_needs_human",
@@ -22556,14 +21984,8 @@
       "expected_head_sha": "b20b72e61d67c05c6f387e2496ea06732c4aa95c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/strip-dreaming-blocks-on-read",
-        "head_sha": "b20b72e61d67c05c6f387e2496ea06732c4aa95c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68389:4345526667:2026-04-30T22:02:46Z:clawsweeper_needs_human",
@@ -22586,14 +22008,8 @@
       "expected_head_sha": "8386a311a2b547e077939f4b6a5f993880031349",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/plugin-allowlist-warning-clarity",
-        "head_sha": "8386a311a2b547e077939f4b6a5f993880031349",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68257:4324235533:2026-04-30T22:02:44Z:clawsweeper_needs_human",
@@ -22616,14 +22032,8 @@
       "expected_head_sha": "fb4be859aaa25175189a0e1878076e89da96011a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/config-reload-auth-prefix-unmatched-triggers-restart",
-        "head_sha": "fb4be859aaa25175189a0e1878076e89da96011a",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68240:4324235321:2026-04-30T22:02:43Z:clawsweeper_needs_human",
@@ -22646,14 +22056,8 @@
       "expected_head_sha": "d71c889cf44d5098725dc4efc692ae3522f4b01a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/daemon-env-flag",
-        "head_sha": "d71c889cf44d5098725dc4efc692ae3522f4b01a",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68197:4324233861:2026-04-30T22:02:41Z:clawsweeper_needs_human",
@@ -22676,14 +22080,8 @@
       "expected_head_sha": "e28d6eb1036efbb335a5529b8894dda9c3aaf6f3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/line-require-mention-for-non-text",
-        "head_sha": "e28d6eb1036efbb335a5529b8894dda9c3aaf6f3",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68155:4324231285:2026-04-30T22:02:40Z:clawsweeper_needs_human",
@@ -22706,14 +22104,8 @@
       "expected_head_sha": "9c66276de1794bf86177a230e0f38dd7232c1555",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "dev-67594",
-        "head_sha": "9c66276de1794bf86177a230e0f38dd7232c1555",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68152:4324230413:2026-04-30T22:02:39Z:clawsweeper_needs_human",
@@ -22736,14 +22128,8 @@
       "expected_head_sha": "6a2f35f48243e2a1b0b2e9ff633f9b4f84235057",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix-i18n-node-option",
-        "head_sha": "6a2f35f48243e2a1b0b2e9ff633f9b4f84235057",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68149:4324230243:2026-04-30T22:02:37Z:clawsweeper_needs_human",
@@ -22766,14 +22152,8 @@
       "expected_head_sha": "667be5122af3959a72cf89f70b7c5f6d8afe5fc8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/windows-scheduled-task-powershell",
-        "head_sha": "667be5122af3959a72cf89f70b7c5f6d8afe5fc8",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64820:4323776632:2026-04-30T22:00:29Z:clawsweeper_auto_repair",
@@ -22796,14 +22176,8 @@
       "expected_head_sha": "cdebe5e30b8d5430fbb27436bb6f546e5dc3fef8",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/feishu-circular-import-reference-error",
-        "head_sha": "cdebe5e30b8d5430fbb27436bb6f546e5dc3fef8",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64813:4323776498:2026-04-30T22:00:27Z:clawsweeper_needs_human",
@@ -22826,14 +22200,8 @@
       "expected_head_sha": "b219c810c1882242a18c14333431c1913fe39601",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/user-field-passthrough",
-        "head_sha": "b219c810c1882242a18c14333431c1913fe39601",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64805:4323776298:2026-04-30T22:00:26Z:clawsweeper_needs_human",
@@ -22856,14 +22224,8 @@
       "expected_head_sha": "020c6544da83336f709aa4f7ca6321d780017196",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/feishu-card-footer-tokens",
-        "head_sha": "020c6544da83336f709aa4f7ca6321d780017196",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64800:4323776255:2026-04-30T22:00:24Z:clawsweeper_auto_repair",
@@ -22886,14 +22248,8 @@
       "expected_head_sha": "63df5c7299b9c138013de1b2f074252d671b4071",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/wrap-stream-fn-iterate-all-providers",
-        "head_sha": "63df5c7299b9c138013de1b2f074252d671b4071",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64782:4323775862:2026-04-30T22:00:21Z:clawsweeper_needs_human",
@@ -22916,14 +22272,8 @@
       "expected_head_sha": "67f27ff36115ca287b670aa603aff0126553f593",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/codex-cli-chat-history-imports",
-        "head_sha": "67f27ff36115ca287b670aa603aff0126553f593",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64734:4323775003:2026-04-30T22:00:20Z:clawsweeper_needs_human",
@@ -22946,14 +22296,8 @@
       "expected_head_sha": "985d8c5f0970f0ab48dc4d1e9ebf03a10368dba0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/discord-thread-title-reasoning-tuning",
-        "head_sha": "985d8c5f0970f0ab48dc4d1e9ebf03a10368dba0",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64720:4323774794:2026-04-30T22:00:18Z:clawsweeper_needs_human",
@@ -22976,14 +22320,8 @@
       "expected_head_sha": "d4def59775834bd8be1a393e15cd442baa3c946d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/channel-inbound-external-content",
-        "head_sha": "d4def59775834bd8be1a393e15cd442baa3c946d",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64611:4323772330:2026-04-30T21:59:58Z:clawsweeper_needs_human",
@@ -23006,14 +22344,8 @@
       "expected_head_sha": "903a00950f0a74a2fc6a5176c4436864b936d253",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/heartbeat-task-due-clock-skew",
-        "head_sha": "903a00950f0a74a2fc6a5176c4436864b936d253",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64316:4341452748:2026-04-30T21:59:46Z:clawsweeper_needs_human",
@@ -23036,14 +22368,8 @@
       "expected_head_sha": "3015b844d398bd93c0673457b380ce31562cefa5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/mcp-session-reset-leak",
-        "head_sha": "3015b844d398bd93c0673457b380ce31562cefa5",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63193:4340768189:2026-04-30T21:59:19Z:clawsweeper_needs_human",
@@ -23066,14 +22392,8 @@
       "expected_head_sha": "0397f979c62b1fd309c9a972523a3a30ff770c1f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/android-release-handoff",
-        "head_sha": "0397f979c62b1fd309c9a972523a3a30ff770c1f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63062:4323634613:2026-04-30T21:59:17Z:clawsweeper_needs_human",
@@ -23096,14 +22416,8 @@
       "expected_head_sha": "ed48aadb33772ee68d8aaea53f3e885b2ee21ef7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/openrouter-conversation-cache-markers",
-        "head_sha": "ed48aadb33772ee68d8aaea53f3e885b2ee21ef7",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63025:4323633787:2026-04-30T21:59:15Z:clawsweeper_needs_human",
@@ -23126,14 +22440,8 @@
       "expected_head_sha": "7b583d2f5c02e12d1700d59f60a335c13af8ab4f",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/fix-empty-run-fallback",
-        "head_sha": "7b583d2f5c02e12d1700d59f60a335c13af8ab4f",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:41398:4326312830:2026-04-30T21:57:55Z:clawsweeper_needs_human",
@@ -23156,14 +22464,8 @@
       "expected_head_sha": "5d83b40b70a7d8e79ba4319737dc75d2f8cf643e",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/google-model-prefix-strip",
-        "head_sha": "5d83b40b70a7d8e79ba4319737dc75d2f8cf643e",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:38932:4321024021:2026-04-30T21:57:53Z:clawsweeper_needs_human",
@@ -23186,14 +22488,8 @@
       "expected_head_sha": "3027dcf5fe673572877ba0ed64cadf079b0e396d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "docs/windows-no-docker-hardening",
-        "head_sha": "3027dcf5fe673572877ba0ed64cadf079b0e396d",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72290:4331695683:2026-04-30T21:57:24Z:clawsweeper_auto_repair",
@@ -23216,14 +22512,8 @@
       "expected_head_sha": "b637f549a8e71192d1763f471f42364ccc63d439",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/72176-duplicate-message-delivery",
-        "head_sha": "b637f549a8e71192d1763f471f42364ccc63d439",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75274:4356392286:2026-04-30T21:49:39Z:clawsweeper_auto_repair",
@@ -23246,14 +22536,8 @@
       "expected_head_sha": "0ea68139c5ca24dca9d6d0f2ebc8ab22b201aabe",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:05:39.061Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/ollama-streamfn-per-request-url",
-        "head_sha": "0ea68139c5ca24dca9d6d0f2ebc8ab22b201aabe",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.756Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74649:4356501250:2026-04-30T22:08:24Z:clawsweeper_needs_human",
@@ -23276,7 +22560,7 @@
       "expected_head_sha": "941ddb055750454fcbcb3880f0dd9dba23af1fac",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -23300,7 +22584,7 @@
       "expected_head_sha": "f7c2300f1fc098dc3182c715cd30297cea33c6ec",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -23324,7 +22608,7 @@
       "expected_head_sha": "cc261d6374f01ef98c44b1d1eee239cb033ca219",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -23348,7 +22632,7 @@
       "expected_head_sha": "0c4ec29f63c5fa3d307afe7f1d102918fb6e94f4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -23372,7 +22656,7 @@
       "expected_head_sha": "5402881760c99630c66c7675d9ec8e77697da030",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -23396,7 +22680,7 @@
       "expected_head_sha": "a67a2db0fff57e3742dfdb2c20969ca3dd356933",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -23420,7 +22704,7 @@
       "expected_head_sha": "99fe790ea9f2b63b6045563248239165562ada66",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -23444,7 +22728,7 @@
       "expected_head_sha": "2c9c06b20d7e40535c25392d24a2d388048dc6ed",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -23468,14 +22752,8 @@
       "expected_head_sha": "cf259387483e811d8748b5d09e20560aed250e7d",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/73956-assistant-media-duplicates",
-        "head_sha": "cf259387483e811d8748b5d09e20560aed250e7d",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73958:4356494867:2026-04-30T22:07:09Z:clawsweeper_needs_human",
@@ -23498,14 +22776,8 @@
       "expected_head_sha": "a709f84643e40227ca0b236d0832013ff53e871c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "clownfish/ghcrawl-157004-autonomous-smoke",
-        "head_sha": "a709f84643e40227ca0b236d0832013ff53e871c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73955:4356494541:2026-04-30T22:07:07Z:clawsweeper_needs_human",
@@ -23528,14 +22800,8 @@
       "expected_head_sha": "b85882a313aec0178797b79f4772c909e76c84fe",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/68893-homebrew-freebsd-v2",
-        "head_sha": "b85882a313aec0178797b79f4772c909e76c84fe",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73917:4356494195:2026-04-30T22:07:05Z:clawsweeper_needs_human",
@@ -23558,14 +22824,8 @@
       "expected_head_sha": "59c740d679a3ebce4f50364616c866033e5637e4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "clownfish/ghcrawl-156657-autonomous-smoke",
-        "head_sha": "59c740d679a3ebce4f50364616c866033e5637e4",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73904:4340160852:2026-04-30T22:07:03Z:clawsweeper_needs_human",
@@ -23588,14 +22848,8 @@
       "expected_head_sha": "771aa01c2a790fb3266f29b99284dc84718f2efb",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix-context-engine-spawn-init",
-        "head_sha": "771aa01c2a790fb3266f29b99284dc84718f2efb",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73887:4340050069:2026-04-30T22:07:02Z:clawsweeper_needs_human",
@@ -23618,14 +22872,8 @@
       "expected_head_sha": "a9e87f659ecb6923655551f2c47da0d80eea48b7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/pr48940-replay-test-mocks",
-        "head_sha": "a9e87f659ecb6923655551f2c47da0d80eea48b7",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73834:4339474292:2026-04-30T22:06:53Z:clawsweeper_needs_human",
@@ -23648,14 +22896,8 @@
       "expected_head_sha": "5fda0a66ab8e5948f1615b403a37e862c9efe8d0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/google-meet-human-barge-in",
-        "head_sha": "5fda0a66ab8e5948f1615b403a37e862c9efe8d0",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73817:4339310958:2026-04-30T22:06:50Z:clawsweeper_needs_human",
@@ -23678,14 +22920,8 @@
       "expected_head_sha": "28e4ec8171ac2916c787a685a1988d0e8afac0e1",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "main",
-        "head_sha": "28e4ec8171ac2916c787a685a1988d0e8afac0e1",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73809:4356491004:2026-04-30T22:06:47Z:clawsweeper_needs_human",
@@ -23708,14 +22944,8 @@
       "expected_head_sha": "b9a723021510ecbf643e3c79ac380a2c583fc3b7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/heartbeat-isolated-session-archive-on-rotation",
-        "head_sha": "b9a723021510ecbf643e3c79ac380a2c583fc3b7",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73807:4356490769:2026-04-30T22:06:45Z:clawsweeper_needs_human",
@@ -23738,14 +22968,8 @@
       "expected_head_sha": "267c0577c0cba22a5f8389afed0ef7ed0e254393",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "krang/codex-oauth-jwt-skip-refresh-20260428",
-        "head_sha": "267c0577c0cba22a5f8389afed0ef7ed0e254393",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74716:4348776466:2026-04-30T22:06:43Z:clawsweeper_auto_repair",
@@ -23792,14 +23016,8 @@
       "expected_head_sha": "042130f1f717efeb946cb5dc1b3f1dac2e6fa245",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/subagent-announce-pause-during-compaction",
-        "head_sha": "042130f1f717efeb946cb5dc1b3f1dac2e6fa245",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73771:4338537808:2026-04-30T22:06:37Z:clawsweeper_needs_human",
@@ -23822,14 +23040,8 @@
       "expected_head_sha": "316755a30b9de1c910564b87c41df6489e097ba7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "chenmuting/memory-index-namespace-knn-qmd",
-        "head_sha": "316755a30b9de1c910564b87c41df6489e097ba7",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73770:4338527756:2026-04-30T22:06:35Z:clawsweeper_needs_human",
@@ -23852,14 +23064,8 @@
       "expected_head_sha": "7f73fc612a49d3db8c392a0664ad1efc230bf164",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "chenmuting/memory-search-scope-provenance",
-        "head_sha": "7f73fc612a49d3db8c392a0664ad1efc230bf164",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73769:4338532597:2026-04-30T22:06:34Z:clawsweeper_needs_human",
@@ -23882,14 +23088,8 @@
       "expected_head_sha": "9d5e42d39c0971586d0b3b7cc4754ad9d5b59d9c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "chenmuting/memory-provider-registration",
-        "head_sha": "9d5e42d39c0971586d0b3b7cc4754ad9d5b59d9c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73768:4338506801:2026-04-30T22:06:32Z:clawsweeper_needs_human",
@@ -23912,14 +23112,8 @@
       "expected_head_sha": "5b9bec02d19e7166aaa39bc933a04c4f57c4313c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/session-memory-sanitize-chat-template-tokens",
-        "head_sha": "5b9bec02d19e7166aaa39bc933a04c4f57c4313c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73766:4356488119:2026-04-30T22:06:31Z:clawsweeper_needs_human",
@@ -23942,14 +23136,8 @@
       "expected_head_sha": "a60514c146499225ccd8ffc5c7107a594295e337",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/spellcheck-unbound-write-flag",
-        "head_sha": "a60514c146499225ccd8ffc5c7107a594295e337",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73757:4338516469:2026-04-30T22:06:27Z:clawsweeper_needs_human",
@@ -23972,14 +23160,8 @@
       "expected_head_sha": "0cb95305182d265e4fe2317ed9e4a27ce4f2e61c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "docs/exec-host-node-sandbox-caveat",
-        "head_sha": "0cb95305182d265e4fe2317ed9e4a27ce4f2e61c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73722:4337984241:2026-04-30T22:06:21Z:clawsweeper_needs_human",
@@ -24002,14 +23184,8 @@
       "expected_head_sha": "8764153e91c9b78acf6d048db9d1265b52d907f0",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "IshanG97/73574-wiki-lint-normalization",
-        "head_sha": "8764153e91c9b78acf6d048db9d1265b52d907f0",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73694:4337468811:2026-04-30T22:06:13Z:clawsweeper_needs_human",
@@ -24032,14 +23208,8 @@
       "expected_head_sha": "df684af936b3808c56c450d7d43c676d5a8e0928",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "restore-gpt53-spark-model",
-        "head_sha": "df684af936b3808c56c450d7d43c676d5a8e0928",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75172:4354530609:2026-04-30T22:06:08Z:clawsweeper_auto_repair",
@@ -24062,14 +23232,8 @@
       "expected_head_sha": "304ed75e1ff740719260330c774c6ee66064f15d",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/75168-channel-log-undefined-crash",
-        "head_sha": "304ed75e1ff740719260330c774c6ee66064f15d",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73642:4336821037:2026-04-30T22:06:02Z:clawsweeper_auto_repair",
@@ -24092,14 +23256,8 @@
       "expected_head_sha": "99feb42ba173a7b4f145844ddb291120dd93b61a",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:08:52.563Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/infer-model-run-thinking",
-        "head_sha": "99feb42ba173a7b4f145844ddb291120dd93b61a",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "comment-router:openclaw/openclaw:74716:4356541524:2026-04-30T22:17:23Z:automerge",
@@ -24122,7 +23280,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.463Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24146,7 +23304,7 @@
       "expected_head_sha": "1f34f4981da4f8e8ef4a87af45ad6b841cc13ba3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.463Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24200,7 +23358,7 @@
       "expected_head_sha": "3e4c1741b74ecf945a165783ac503f79584729d5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.463Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24224,7 +23382,7 @@
       "expected_head_sha": "34ca4a2e894a3ef9215e6865857d16bc84c15acc",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.463Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24248,7 +23406,7 @@
       "expected_head_sha": "1d2bdadb49c9cf93d655b0a4e7c6dd478c3666d3",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.463Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24272,7 +23430,7 @@
       "expected_head_sha": "f3545c524e3607534a400e1349cd00d9c208e940",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.463Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24296,7 +23454,7 @@
       "expected_head_sha": "03349d3beeb8510025938ca43defe09410f2a4aa",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24320,7 +23478,7 @@
       "expected_head_sha": "2533bb6aeda2701feb9d591b850cbb8115d67e0c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24344,7 +23502,7 @@
       "expected_head_sha": "32da9d65c54046af7a3913c80041cbd517a65bf1",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24368,7 +23526,7 @@
       "expected_head_sha": "3902457c74d18a6f1d0f2496845725e4f781c558",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24392,7 +23550,7 @@
       "expected_head_sha": "15ff20ee6d54ba806e7b8506588543e59fa52cb5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24416,7 +23574,7 @@
       "expected_head_sha": "3ae7a912d66345813707556072a196b57c2dc9da",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24440,7 +23598,7 @@
       "expected_head_sha": "8f78dfdfdaaa672347ad728edd596ed79dea2f13",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24464,7 +23622,7 @@
       "expected_head_sha": "9032d7342452ac66b154f21f2e78cffce4a80896",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24488,7 +23646,7 @@
       "expected_head_sha": "ef8f23fd2767835a83f21b292e101cce52c265f9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24512,7 +23670,7 @@
       "expected_head_sha": "305e38c68e330cef48cbecae86db68eddeb231f7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24536,7 +23694,7 @@
       "expected_head_sha": "64e564b7b44c43a0c0d7cba5fe8ca9931bd4ad4c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24560,7 +23718,7 @@
       "expected_head_sha": "1f4e13e56bb2931e7ab0e46e9e00a146790a2132",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24584,7 +23742,7 @@
       "expected_head_sha": "1b842f1de36930331a1445878a7fc29149cfe56b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24608,7 +23766,7 @@
       "expected_head_sha": "b46c4408f9ee17983e2fb683e58842c3be4bf188",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24632,7 +23790,7 @@
       "expected_head_sha": "39c603d5b67ea524b7279dc4a9941c1a8bc1c686",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24656,7 +23814,7 @@
       "expected_head_sha": "39334777b7d0b0f114966476a2e59ae290ff2b39",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24680,7 +23838,7 @@
       "expected_head_sha": "85316e5eb352c2bb88eb2aaf07294ec6efe48081",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24704,7 +23862,7 @@
       "expected_head_sha": "496cfcbddc04ed226c74a30a55c46e01b6e032b8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24728,7 +23886,7 @@
       "expected_head_sha": "29a537c8cc3c34e97883fbb6388ced6d2d7f31a4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24752,7 +23910,7 @@
       "expected_head_sha": "a95b977cc7df1f30a64224fc12dd301b3abc8065",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24776,7 +23934,7 @@
       "expected_head_sha": "25bbf0f29df9022d230c67c89c0069d68b952685",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24800,7 +23958,7 @@
       "expected_head_sha": "4cef144bc9e40340e49104dbf8b70e5775e3b344",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.464Z",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": null
     },
     {
@@ -24824,14 +23982,8 @@
       "expected_head_sha": "940013cf1a810b15b2a260f78b08c8dec0b37c8d",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.463Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/issue-75154-codex-repair",
-        "head_sha": "940013cf1a810b15b2a260f78b08c8dec0b37c8d",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75258:4356023030:2026-04-30T22:23:12Z:clawsweeper_needs_human",
@@ -24854,14 +24006,8 @@
       "expected_head_sha": "2899fa63c3662f5c0d6fa8a1f86469da1572b106",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:26:09.463Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/drop-reasoning-reply-payloads",
-        "head_sha": "2899fa63c3662f5c0d6fa8a1f86469da1572b106",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74716:4348776466:2026-04-30T22:22:46Z:clawsweeper_auto_repair",
@@ -24883,29 +24029,219 @@
       "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=7d81a72937ec9954acacb6085352c1e68a8d6113)",
       "expected_head_sha": "7d81a72937ec9954acacb6085352c1e68a8d6113",
       "finding_id": "review-feedback",
-      "status": "executed",
-      "processed_at": "2026-04-30T22:26:09.463Z",
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": null
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75285:4356586048:2026-04-30T22:27:12Z:clawsweeper_needs_human",
+      "comment_id": "4356586048",
+      "comment_version_key": "4356586048:2026-04-30T22:27:12Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75285#issuecomment-4356586048",
+      "comment_created_at": "2026-04-30T22:27:12Z",
+      "comment_updated_at": "2026-04-30T22:27:12Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75285,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=d34fd499bd732e432f3ba575e7b3c79f1346be45)",
+      "expected_head_sha": "d34fd499bd732e432f3ba575e7b3c79f1346be45",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.755Z",
       "target": {
         "kind": "pull_request",
-        "branch": "codex/native-mcp-capability-host",
-        "head_sha": "7d81a72937ec9954acacb6085352c1e68a8d6113",
-        "cluster_id": "automerge-openclaw-openclaw-74716",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74716.md"
-      },
-      "actions": [
-        {
-          "action": "dispatch_repair",
-          "status": "executed",
-          "label": null,
-          "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74716.md"
-        },
-        {
-          "action": "comment",
-          "status": "executed",
-          "label": null,
-          "job_path": null
-        }
-      ]
+        "branch": "prf/pr-factory-scaffold/war-room-c80-20260430t203717z",
+        "head_sha": "d34fd499bd732e432f3ba575e7b3c79f1346be45",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73163:4356476515:2026-04-30T22:26:38Z:clawsweeper_needs_human",
+      "comment_id": "4356476515",
+      "comment_version_key": "4356476515:2026-04-30T22:26:38Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73163#issuecomment-4356476515",
+      "comment_created_at": "2026-04-30T22:04:55Z",
+      "comment_updated_at": "2026-04-30T22:26:38Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 73163,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=684764a0ffb62aeec6b86988a2a22b8d926d5875)",
+      "expected_head_sha": "684764a0ffb62aeec6b86988a2a22b8d926d5875",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/control-ui-insecure-warning",
+        "head_sha": "2834cd8390ccb9a26139b949a8dd4bb91013eb18",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73465:4334133706:2026-04-30T22:05:35Z:clawsweeper_needs_human",
+      "comment_id": "4334133706",
+      "comment_version_key": "4334133706:2026-04-30T22:05:35Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73465#issuecomment-4334133706",
+      "comment_created_at": "2026-04-28T09:48:54Z",
+      "comment_updated_at": "2026-04-30T22:05:35Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 73465,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b4b67c2eb7d00c39bdff16f7dbda65738ea9295d)",
+      "expected_head_sha": "b4b67c2eb7d00c39bdff16f7dbda65738ea9295d",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "docs/add-cerebras-provider-nav",
+        "head_sha": "b4b67c2eb7d00c39bdff16f7dbda65738ea9295d",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73458:4334113498:2026-04-30T22:05:34Z:clawsweeper_needs_human",
+      "comment_id": "4334113498",
+      "comment_version_key": "4334113498:2026-04-30T22:05:34Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73458#issuecomment-4334113498",
+      "comment_created_at": "2026-04-28T09:45:55Z",
+      "comment_updated_at": "2026-04-30T22:05:34Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 73458,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=0d3a4eadd8439611f5a8250720904368e6d0ec93)",
+      "expected_head_sha": "0d3a4eadd8439611f5a8250720904368e6d0ec93",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "feat/acp-session-lineage-meta",
+        "head_sha": "0d3a4eadd8439611f5a8250720904368e6d0ec93",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73369:4333263461:2026-04-30T22:05:25Z:clawsweeper_needs_human",
+      "comment_id": "4333263461",
+      "comment_version_key": "4333263461:2026-04-30T22:05:25Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73369#issuecomment-4333263461",
+      "comment_created_at": "2026-04-28T07:40:01Z",
+      "comment_updated_at": "2026-04-30T22:05:25Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 73369,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=38a87f64a6122588aa46daaf857e37c949c34ffd)",
+      "expected_head_sha": "38a87f64a6122588aa46daaf857e37c949c34ffd",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/discord-autothread-duplicate-reply",
+        "head_sha": "38a87f64a6122588aa46daaf857e37c949c34ffd",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73311:4356479111:2026-04-30T22:05:23Z:clawsweeper_needs_human",
+      "comment_id": "4356479111",
+      "comment_version_key": "4356479111:2026-04-30T22:05:23Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73311#issuecomment-4356479111",
+      "comment_created_at": "2026-04-30T22:05:23Z",
+      "comment_updated_at": "2026-04-30T22:05:23Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 73311,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=207c7157cb76dfbc5b58654b6b82465f857fcdbe)",
+      "expected_head_sha": "207c7157cb76dfbc5b58654b6b82465f857fcdbe",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "shawn/control-ui-session-kind-filter",
+        "head_sha": "207c7157cb76dfbc5b58654b6b82465f857fcdbe",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73279:4356478978:2026-04-30T22:05:21Z:clawsweeper_needs_human",
+      "comment_id": "4356478978",
+      "comment_version_key": "4356478978:2026-04-30T22:05:21Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73279#issuecomment-4356478978",
+      "comment_created_at": "2026-04-30T22:05:21Z",
+      "comment_updated_at": "2026-04-30T22:05:21Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 73279,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=28f11d76b0b9d2cdcbe9ee132a3fb612b8dce175)",
+      "expected_head_sha": "28f11d76b0b9d2cdcbe9ee132a3fb612b8dce175",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:30:03.755Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/discord-final-reply-routing",
+        "head_sha": "28f11d76b0b9d2cdcbe9ee132a3fb612b8dce175",
+        "cluster_id": null,
+        "job_path": null
+      }
     }
   ]
 }
