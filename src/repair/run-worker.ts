@@ -30,6 +30,8 @@ const resultRepairTimeoutMs = Number(
 );
 const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "medium");
 const codexServiceTier = String(process.env.CLAWSWEEPER_CODEX_SERVICE_TIER ?? "fast").trim();
+const codexStdioMaxBuffer =
+  Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB ?? 128)) * 1024 * 1024;
 
 if (!jobPath) {
   console.error(
@@ -143,6 +145,13 @@ if ((child.error as JsonValue)?.code === "ETIMEDOUT") {
   process.exit(0);
 }
 
+if (child.error) {
+  const detail = child.error.message || String(child.error);
+  writeBlockedResult(`Codex worker failed: ${detail}`);
+  console.error(detail);
+  process.exit(0);
+}
+
 if (child.status !== 0) {
   const detail = child.stderr || child.stdout || `Codex worker exited ${child.status}`;
   writeBlockedResult(detail.trim());
@@ -188,6 +197,7 @@ function runCodex({
     encoding: "utf8",
     env: codexEnv(),
     timeout: timeoutMs,
+    maxBuffer: codexStdioMaxBuffer,
   });
 
   fs.writeFileSync(codexTranscriptPath, child.stdout ?? "");
