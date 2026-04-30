@@ -153,22 +153,22 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 20:16 UTC
+Last dashboard update: Apr 30, 2026, 20:18 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 3783 |
+| Open issues | 3784 |
 | Open PRs | 3369 |
-| Open items total | 7152 |
+| Open items total | 7153 |
 | Reviewed files | 7666 |
-| Unreviewed open items | 56 |
-| Due now by cadence | 1987 |
+| Unreviewed open items | 57 |
+| Due now by cadence | 2003 |
 | Proposed closes awaiting apply | 3 |
 | Work candidates awaiting promotion | 1637 |
-| Closed by Codex apply | 11287 |
+| Closed by Codex apply | 11288 |
 | Failed or stale reviews | 33 |
 | Archived closed files | 15280 |
 
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 20:16 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6795 | 6739 | 56 | 1827 | 3 | 1591 | 11279 | Apr 30, 2026, 20:14 UTC | Apr 30, 2026, 20:15 UTC | 348 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6796 | 6739 | 57 | 1843 | 3 | 1591 | 11280 | Apr 30, 2026, 20:14 UTC | Apr 30, 2026, 20:15 UTC | 348 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 357 | 924 | 0 | 157 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 20:16 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake publish complete | Apr 30, 2026, 20:15 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25186559424) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 20:18 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25187191715) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,15 +194,15 @@ Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 106 | 3 | 103 | 2 | 4 | 6 | 0 |
-| Last hour | 804 | 21 | 783 | 8 | 29 | 348 | 1 |
-| Last 24 hours | 6681 | 429 | 6252 | 32 | 717 | 3165 | 22 |
+| Last 15 minutes | 106 | 3 | 103 | 2 | 2 | 6 | 0 |
+| Last hour | 789 | 21 | 768 | 8 | 27 | 348 | 1 |
+| Last 24 hours | 6681 | 429 | 6252 | 32 | 715 | 3163 | 22 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#38836](https://github.com/openclaw/openclaw/issues/38836) | Gateway restart silently drops in-flight Feishu sessions — no user notification | closed externally after proposed_close | Apr 30, 2026, 20:15 UTC | [records/openclaw-openclaw/closed/38836.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/38836.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#38836](https://github.com/openclaw/openclaw/issues/38836) | Gateway restart silently drops in-flight Feishu sessions — no user notification | duplicate or superseded | Apr 30, 2026, 20:15 UTC | [records/openclaw-openclaw/closed/38836.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/38836.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75240](https://github.com/openclaw/openclaw/issues/75240) | [Bug]: OpenAI Codex attribution transport causes ChatGPT auth 401 | closed externally after review | Apr 30, 2026, 20:06 UTC | [records/openclaw-openclaw/closed/75240.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75240.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75241](https://github.com/openclaw/openclaw/pull/75241) | fix(openai): keep Codex attribution on provider transport | kept open | Apr 30, 2026, 20:02 UTC | [records/openclaw-openclaw/closed/75241.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75241.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75242](https://github.com/openclaw/openclaw/pull/75242) | Add Vesicle native OpenClaw channel | belongs on ClawHub | Apr 30, 2026, 20:01 UTC | [records/openclaw-openclaw/closed/75242.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75242.md) |
@@ -267,12 +267,12 @@ Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 20:15 UTC
+Updated: Apr 30, 2026, 20:18 UTC
 
-State: Hot intake publish complete
+State: Apply in progress
 
-Merged hot intake artifacts for run 25186559424 without full folder reconciliation, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25186559424](https://github.com/openclaw/clawsweeper/actions/runs/25186559424)
+Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=38836.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25187191715](https://github.com/openclaw/clawsweeper/actions/runs/25187191715)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -280,11 +280,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25186559424](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3444 |
+| Open issues | 3445 |
 | Open PRs | 3351 |
-| Open items total | 6795 |
+| Open items total | 6796 |
 | Reviewed files | 6739 |
-| Unreviewed open items | 56 |
+| Unreviewed open items | 57 |
 | Archived closed files | 15254 |
 
 #### Review Outcomes
@@ -298,20 +298,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25186559424](https://
 | Fresh verified reviews in the last 7 days | 6719 |
 | Proposed closes awaiting apply | 3 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1591 |
-| Closed by Codex apply | 11279 |
+| Closed by Codex apply | 11280 |
 | Failed or stale reviews | 20 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 499/1460 current (961 due, 34.2%) |
-| Hourly hot item cadence (<7d) | 499/1460 current (961 due, 34.2%) |
+| Hourly cadence coverage | 484/1460 current (976 due, 33.2%) |
+| Hourly hot item cadence (<7d) | 484/1460 current (976 due, 33.2%) |
 | Daily cadence coverage | 2697/3499 current (802 due, 77.1%) |
 | Daily PR cadence | 1876/2451 current (575 due, 76.5%) |
 | Daily new issue cadence (<30d) | 821/1048 current (227 due, 78.3%) |
 | Weekly older issue cadence | 1772/1780 current (8 due, 99.6%) |
-| Due now by cadence | 1827 |
+| Due now by cadence | 1843 |
 
 ### Audit Health
 
@@ -351,15 +351,15 @@ Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 106 | 3 | 103 | 2 | 4 | 6 | 0 |
-| Last hour | 804 | 21 | 783 | 8 | 29 | 348 | 1 |
-| Last 24 hours | 5852 | 429 | 5423 | 19 | 717 | 2766 | 22 |
+| Last 15 minutes | 106 | 3 | 103 | 2 | 2 | 6 | 0 |
+| Last hour | 789 | 21 | 768 | 8 | 27 | 348 | 1 |
+| Last 24 hours | 5852 | 429 | 5423 | 19 | 715 | 2764 | 22 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#38836](https://github.com/openclaw/openclaw/issues/38836) | Gateway restart silently drops in-flight Feishu sessions — no user notification | closed externally after proposed_close | Apr 30, 2026, 20:15 UTC | [records/openclaw-openclaw/closed/38836.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/38836.md) |
+| [#38836](https://github.com/openclaw/openclaw/issues/38836) | Gateway restart silently drops in-flight Feishu sessions — no user notification | duplicate or superseded | Apr 30, 2026, 20:15 UTC | [records/openclaw-openclaw/closed/38836.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/38836.md) |
 | [#75240](https://github.com/openclaw/openclaw/issues/75240) | [Bug]: OpenAI Codex attribution transport causes ChatGPT auth 401 | closed externally after review | Apr 30, 2026, 20:06 UTC | [records/openclaw-openclaw/closed/75240.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75240.md) |
 | [#75241](https://github.com/openclaw/openclaw/pull/75241) | fix(openai): keep Codex attribution on provider transport | kept open | Apr 30, 2026, 20:02 UTC | [records/openclaw-openclaw/closed/75241.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75241.md) |
 | [#75242](https://github.com/openclaw/openclaw/pull/75242) | Add Vesicle native OpenClaw channel | belongs on ClawHub | Apr 30, 2026, 20:01 UTC | [records/openclaw-openclaw/closed/75242.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75242.md) |
