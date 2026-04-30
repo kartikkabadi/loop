@@ -412,7 +412,7 @@ jobs:
           build-script: build:all
 
       - name: Publish planning-started status
-        if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *'))) }}
+        if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *'))) && !((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true' && github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) }}
         continue-on-error: true
         working-directory: clawsweeper
         run: |
@@ -492,7 +492,7 @@ jobs:
           cat plan.json
 
       - name: Publish planning status
-        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true' }}
+        if: ${{ (github.event_name != 'workflow_dispatch' || github.event.inputs.apply_existing != 'true') && (steps.mode.outputs.hot_intake != 'true' || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
         continue-on-error: true
         working-directory: clawsweeper
         env:
