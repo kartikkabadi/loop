@@ -1,78 +1,6 @@
 {
-  "updated_at": "2026-04-30T22:18:26.701Z",
+  "updated_at": "2026-04-30T22:26:09.464Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72439:4325141400:2026-04-30T19:10:05Z:clawsweeper_needs_human",
-      "comment_id": "4325141400",
-      "comment_version_key": "4325141400:2026-04-30T19:10:05Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72439#issuecomment-4325141400",
-      "comment_created_at": "2026-04-27T07:46:29Z",
-      "comment_updated_at": "2026-04-30T19:10:05Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72439,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=7ba1a58a4688ba2adb80489611ff6e843c840153)",
-      "expected_head_sha": "7ba1a58a4688ba2adb80489611ff6e843c840153",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T21:15:26.029Z",
-      "target": null
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72428:4324825545:2026-04-30T19:10:03Z:clawsweeper_needs_human",
-      "comment_id": "4324825545",
-      "comment_version_key": "4324825545:2026-04-30T19:10:03Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72428#issuecomment-4324825545",
-      "comment_created_at": "2026-04-27T06:48:26Z",
-      "comment_updated_at": "2026-04-30T19:10:03Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72428,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=5d30dd4428ef655a5f134ccdb5a07fa64b980207)",
-      "expected_head_sha": "5d30dd4428ef655a5f134ccdb5a07fa64b980207",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T21:15:26.029Z",
-      "target": null
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72419:4324471805:2026-04-30T19:10:01Z:clawsweeper_needs_human",
-      "comment_id": "4324471805",
-      "comment_version_key": "4324471805:2026-04-30T19:10:01Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72419#issuecomment-4324471805",
-      "comment_created_at": "2026-04-27T05:49:08Z",
-      "comment_updated_at": "2026-04-30T19:10:01Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72419,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e54b516e8869a3daef19ae4dac47d16ea506c527)",
-      "expected_head_sha": "e54b516e8869a3daef19ae4dac47d16ea506c527",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T21:15:26.029Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72404:4325141005:2026-04-30T19:09:59Z:clawsweeper_needs_human",
       "comment_id": "4325141005",
@@ -9786,7 +9714,7 @@
       "expected_head_sha": "b62721f04f5213b41bf749dbb3a539ab169fe24a",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -9810,7 +9738,7 @@
       "expected_head_sha": "03dde6b00ae172d4e2ddd3358b7c29dd53b3237f",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -10175,9 +10103,29 @@
       "repair_reason": "structured ClawSweeper verdict: pass (sha=18e6250b97c270c36e7b4dff7f9a465cd60e5674)",
       "expected_head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
       "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": null
+      "status": "executed",
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "clawsweeper/automerge-openclaw-openclaw-74506",
+        "head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
+        "cluster_id": "automerge-openclaw-openclaw-74506",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md"
+      },
+      "actions": [
+        {
+          "action": "merge",
+          "status": "blocked",
+          "label": null,
+          "job_path": null
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "label": null,
+          "job_path": null
+        }
+      ]
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75254:4355954020:2026-04-30T20:32:43Z:clawsweeper_needs_human",
@@ -23328,7 +23276,7 @@
       "expected_head_sha": "941ddb055750454fcbcb3880f0dd9dba23af1fac",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -23352,7 +23300,7 @@
       "expected_head_sha": "f7c2300f1fc098dc3182c715cd30297cea33c6ec",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -23376,7 +23324,7 @@
       "expected_head_sha": "cc261d6374f01ef98c44b1d1eee239cb033ca219",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -23400,7 +23348,7 @@
       "expected_head_sha": "0c4ec29f63c5fa3d307afe7f1d102918fb6e94f4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -23424,7 +23372,7 @@
       "expected_head_sha": "5402881760c99630c66c7675d9ec8e77697da030",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -23448,7 +23396,7 @@
       "expected_head_sha": "a67a2db0fff57e3742dfdb2c20969ca3dd356933",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -23472,7 +23420,7 @@
       "expected_head_sha": "99fe790ea9f2b63b6045563248239165562ada66",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -23496,7 +23444,7 @@
       "expected_head_sha": "2c9c06b20d7e40535c25392d24a2d388048dc6ed",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
       "target": null
     },
     {
@@ -24173,35 +24121,9 @@
       "repair_reason": null,
       "expected_head_sha": null,
       "finding_id": null,
-      "status": "executed",
-      "processed_at": "2026-04-30T22:18:26.700Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/native-mcp-capability-host",
-        "head_sha": "7d81a72937ec9954acacb6085352c1e68a8d6113",
-        "cluster_id": "automerge-openclaw-openclaw-74716",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74716.md"
-      },
-      "actions": [
-        {
-          "action": "label",
-          "status": "executed",
-          "label": "clawsweeper:automerge",
-          "job_path": null
-        },
-        {
-          "action": "dispatch_clawsweeper",
-          "status": "executed",
-          "label": null,
-          "job_path": null
-        },
-        {
-          "action": "comment",
-          "status": "executed",
-          "label": null,
-          "job_path": null
-        }
-      ]
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:26:09.463Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73168:4356476755:2026-04-30T22:17:03Z:clawsweeper_needs_human",
@@ -24224,14 +24146,8 @@
       "expected_head_sha": "1f34f4981da4f8e8ef4a87af45ad6b841cc13ba3",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.700Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "dab-android-changes",
-        "head_sha": "1f34f4981da4f8e8ef4a87af45ad6b841cc13ba3",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.463Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75258:4356023030:2026-04-30T22:15:46Z:clawsweeper_needs_human",
@@ -24284,14 +24200,8 @@
       "expected_head_sha": "3e4c1741b74ecf945a165783ac503f79584729d5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.700Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/75271-session-repair-trailing-assistant",
-        "head_sha": "3e4c1741b74ecf945a165783ac503f79584729d5",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.463Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75076:4352505101:2026-04-30T22:11:53Z:clawsweeper_needs_human",
@@ -24314,14 +24224,8 @@
       "expected_head_sha": "34ca4a2e894a3ef9215e6865857d16bc84c15acc",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.700Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/control-ui-status-provenance",
-        "head_sha": "34ca4a2e894a3ef9215e6865857d16bc84c15acc",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.463Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:69310:4323271398:2026-04-30T22:11:52Z:clawsweeper_auto_repair",
@@ -24344,14 +24248,8 @@
       "expected_head_sha": "1d2bdadb49c9cf93d655b0a4e7c6dd478c3666d3",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.700Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/media-silent-failure",
-        "head_sha": "1d2bdadb49c9cf93d655b0a4e7c6dd478c3666d3",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.463Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:69312:4323234896:2026-04-30T22:11:44Z:clawsweeper_auto_repair",
@@ -24374,14 +24272,8 @@
       "expected_head_sha": "f3545c524e3607534a400e1349cd00d9c208e940",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.700Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/media-parse-false-positive",
-        "head_sha": "f3545c524e3607534a400e1349cd00d9c208e940",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.463Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:67509:4322676890:2026-04-30T22:10:54Z:clawsweeper_needs_human",
@@ -24404,14 +24296,8 @@
       "expected_head_sha": "03349d3beeb8510025938ca43defe09410f2a4aa",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.700Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/root-guard-67478",
-        "head_sha": "03349d3beeb8510025938ca43defe09410f2a4aa",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73560:4348728125:2026-04-30T22:10:48Z:clawsweeper_needs_human",
@@ -24434,14 +24320,8 @@
       "expected_head_sha": "2533bb6aeda2701feb9d591b850cbb8115d67e0c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.700Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/stuck-session-abort",
-        "head_sha": "2533bb6aeda2701feb9d591b850cbb8115d67e0c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58808:4322676832:2026-04-30T22:10:38Z:clawsweeper_needs_human",
@@ -24464,14 +24344,8 @@
       "expected_head_sha": "32da9d65c54046af7a3913c80041cbd517a65bf1",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feat/channel-agent-tools-sender-context",
-        "head_sha": "32da9d65c54046af7a3913c80041cbd517a65bf1",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75094:4352936112:2026-04-30T22:09:52Z:clawsweeper_needs_human",
@@ -24494,14 +24368,8 @@
       "expected_head_sha": "3902457c74d18a6f1d0f2496845725e4f781c558",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/70830-assistant-media-tickets",
-        "head_sha": "3902457c74d18a6f1d0f2496845725e4f781c558",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75089:4352796333:2026-04-30T22:09:51Z:clawsweeper_needs_human",
@@ -24524,14 +24392,8 @@
       "expected_head_sha": "15ff20ee6d54ba806e7b8506588543e59fa52cb5",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/fix-gateway-buffer-cleanup",
-        "head_sha": "15ff20ee6d54ba806e7b8506588543e59fa52cb5",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75036:4351863291:2026-04-30T22:09:42Z:clawsweeper_needs_human",
@@ -24554,14 +24416,8 @@
       "expected_head_sha": "3ae7a912d66345813707556072a196b57c2dc9da",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/tasks-recover-terminal-lost-cron",
-        "head_sha": "3ae7a912d66345813707556072a196b57c2dc9da",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75033:4351803001:2026-04-30T22:09:40Z:clawsweeper_needs_human",
@@ -24584,14 +24440,8 @@
       "expected_head_sha": "8f78dfdfdaaa672347ad728edd596ed79dea2f13",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/redact-http-error-secrets",
-        "head_sha": "8f78dfdfdaaa672347ad728edd596ed79dea2f13",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75024:4351697153:2026-04-30T22:09:36Z:clawsweeper_needs_human",
@@ -24614,14 +24464,8 @@
       "expected_head_sha": "9032d7342452ac66b154f21f2e78cffce4a80896",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/feishu-thread-root-fallback",
-        "head_sha": "9032d7342452ac66b154f21f2e78cffce4a80896",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74999:4351247032:2026-04-30T22:09:33Z:clawsweeper_needs_human",
@@ -24644,14 +24488,8 @@
       "expected_head_sha": "ef8f23fd2767835a83f21b292e101cce52c265f9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "feature/models-namespaced-groups",
-        "head_sha": "ef8f23fd2767835a83f21b292e101cce52c265f9",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74984:4351165062:2026-04-30T22:09:28Z:clawsweeper_needs_human",
@@ -24674,14 +24512,8 @@
       "expected_head_sha": "305e38c68e330cef48cbecae86db68eddeb231f7",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "dependabot/github_actions/pnpm/action-setup-6.0.3",
-        "head_sha": "305e38c68e330cef48cbecae86db68eddeb231f7",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74974:4350959887:2026-04-30T22:09:27Z:clawsweeper_needs_human",
@@ -24704,14 +24536,8 @@
       "expected_head_sha": "64e564b7b44c43a0c0d7cba5fe8ca9931bd4ad4c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/agent-params-accept-paperclip-metadata-74635",
-        "head_sha": "64e564b7b44c43a0c0d7cba5fe8ca9931bd4ad4c",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74970:4350933773:2026-04-30T22:09:25Z:clawsweeper_needs_human",
@@ -24734,14 +24560,8 @@
       "expected_head_sha": "1f4e13e56bb2931e7ab0e46e9e00a146790a2132",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "test/sessions-list-fastpath-coverage",
-        "head_sha": "1f4e13e56bb2931e7ab0e46e9e00a146790a2132",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74962:4350764703:2026-04-30T22:09:24Z:clawsweeper_needs_human",
@@ -24764,14 +24584,8 @@
       "expected_head_sha": "1b842f1de36930331a1445878a7fc29149cfe56b",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix-web-fetch-external-webfetchproviders",
-        "head_sha": "1b842f1de36930331a1445878a7fc29149cfe56b",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75282:4356505294:2026-04-30T22:09:20Z:clawsweeper_needs_human",
@@ -24794,14 +24608,8 @@
       "expected_head_sha": "b46c4408f9ee17983e2fb683e58842c3be4bf188",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-1d74ecd71f0f",
-        "head_sha": "b46c4408f9ee17983e2fb683e58842c3be4bf188",
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-1d74ecd71f0f",
-        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-1d74ecd71f0f.md"
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74950:4350683335:2026-04-30T22:09:20Z:clawsweeper_needs_human",
@@ -24824,14 +24632,8 @@
       "expected_head_sha": "39c603d5b67ea524b7279dc4a9941c1a8bc1c686",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/hang-on-legacy-lock",
-        "head_sha": "39c603d5b67ea524b7279dc4a9941c1a8bc1c686",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74941:4350565742:2026-04-30T22:09:18Z:clawsweeper_auto_repair",
@@ -24854,14 +24656,8 @@
       "expected_head_sha": "39334777b7d0b0f114966476a2e59ae290ff2b39",
       "finding_id": "review-feedback",
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/heartbeat-deferred-events",
-        "head_sha": "39334777b7d0b0f114966476a2e59ae290ff2b39",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74940:4350593201:2026-04-30T22:09:17Z:clawsweeper_needs_human",
@@ -24884,14 +24680,8 @@
       "expected_head_sha": "85316e5eb352c2bb88eb2aaf07294ec6efe48081",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/agent-llm-timeout-legacy-diagnostics",
-        "head_sha": "85316e5eb352c2bb88eb2aaf07294ec6efe48081",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74925:4350369909:2026-04-30T22:09:14Z:clawsweeper_needs_human",
@@ -24914,14 +24704,8 @@
       "expected_head_sha": "496cfcbddc04ed226c74a30a55c46e01b6e032b8",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/whatsapp-outbound-lid-resolution",
-        "head_sha": "496cfcbddc04ed226c74a30a55c46e01b6e032b8",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74919:4350333062:2026-04-30T22:09:11Z:clawsweeper_needs_human",
@@ -24944,14 +24728,8 @@
       "expected_head_sha": "29a537c8cc3c34e97883fbb6388ced6d2d7f31a4",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "perf/fast-abort-cleanup",
-        "head_sha": "29a537c8cc3c34e97883fbb6388ced6d2d7f31a4",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74901:4350135152:2026-04-30T22:09:04Z:clawsweeper_needs_human",
@@ -24974,14 +24752,8 @@
       "expected_head_sha": "a95b977cc7df1f30a64224fc12dd301b3abc8065",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/tts-tool-spoken-no-voice",
-        "head_sha": "a95b977cc7df1f30a64224fc12dd301b3abc8065",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74870:4349905351:2026-04-30T22:08:58Z:clawsweeper_needs_human",
@@ -25004,14 +24776,8 @@
       "expected_head_sha": "25bbf0f29df9022d230c67c89c0069d68b952685",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/issue-74754-auto-update-homebrew-skip",
-        "head_sha": "25bbf0f29df9022d230c67c89c0069d68b952685",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74756:4349311422:2026-04-30T22:08:38Z:clawsweeper_needs_human",
@@ -25034,14 +24800,112 @@
       "expected_head_sha": "4cef144bc9e40340e49104dbf8b70e5775e3b344",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-04-30T22:18:26.701Z",
+      "processed_at": "2026-04-30T22:26:09.464Z",
+      "target": null
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75281:4356462953:2026-04-30T22:24:55Z:clawsweeper_auto_repair",
+      "comment_id": "4356462953",
+      "comment_version_key": "4356462953:2026-04-30T22:24:55Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75281#issuecomment-4356462953",
+      "comment_created_at": "2026-04-30T22:02:33Z",
+      "comment_updated_at": "2026-04-30T22:24:55Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75281,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=940013cf1a810b15b2a260f78b08c8dec0b37c8d)",
+      "expected_head_sha": "940013cf1a810b15b2a260f78b08c8dec0b37c8d",
+      "finding_id": "review-feedback",
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:26:09.463Z",
       "target": {
         "kind": "pull_request",
-        "branch": "feat/issue-74684",
-        "head_sha": "4cef144bc9e40340e49104dbf8b70e5775e3b344",
+        "branch": "fix/issue-75154-codex-repair",
+        "head_sha": "940013cf1a810b15b2a260f78b08c8dec0b37c8d",
         "cluster_id": null,
         "job_path": null
       }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75258:4356023030:2026-04-30T22:23:12Z:clawsweeper_needs_human",
+      "comment_id": "4356023030",
+      "comment_version_key": "4356023030:2026-04-30T22:23:12Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75258#issuecomment-4356023030",
+      "comment_created_at": "2026-04-30T20:44:10Z",
+      "comment_updated_at": "2026-04-30T22:23:12Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75258,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=2899fa63c3662f5c0d6fa8a1f86469da1572b106)",
+      "expected_head_sha": "2899fa63c3662f5c0d6fa8a1f86469da1572b106",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-04-30T22:26:09.463Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/drop-reasoning-reply-payloads",
+        "head_sha": "2899fa63c3662f5c0d6fa8a1f86469da1572b106",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74716:4348776466:2026-04-30T22:22:46Z:clawsweeper_auto_repair",
+      "comment_id": "4348776466",
+      "comment_version_key": "4348776466:2026-04-30T22:22:46Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74716#issuecomment-4348776466",
+      "comment_created_at": "2026-04-30T01:09:53Z",
+      "comment_updated_at": "2026-04-30T22:22:46Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 74716,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=7d81a72937ec9954acacb6085352c1e68a8d6113)",
+      "expected_head_sha": "7d81a72937ec9954acacb6085352c1e68a8d6113",
+      "finding_id": "review-feedback",
+      "status": "executed",
+      "processed_at": "2026-04-30T22:26:09.463Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "codex/native-mcp-capability-host",
+        "head_sha": "7d81a72937ec9954acacb6085352c1e68a8d6113",
+        "cluster_id": "automerge-openclaw-openclaw-74716",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74716.md"
+      },
+      "actions": [
+        {
+          "action": "dispatch_repair",
+          "status": "executed",
+          "label": null,
+          "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74716.md"
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "label": null,
+          "job_path": null
+        }
+      ]
     }
   ]
 }
