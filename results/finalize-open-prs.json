@@ -2,12 +2,12 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T01:56:25.762Z",
+  "generated_at": "2026-04-30T02:03:04.013Z",
   "count": 12,
   "summary": {
     "open_prs": 12,
     "ready_candidates": 0,
-    "security_hold": 0,
+    "security_hold": 1,
     "needs_rebase": 7,
     "mergeability_unknown": 0,
     "needs_checks": 7,
@@ -34,17 +34,17 @@
       "head_sha": "e371eeacb8652df4f04d7b61c683f2183cd81c20",
       "cluster_id": "automerge-openclaw-openclaw-74134",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74134.md",
-      "updated_at": "2026-04-30T01:54:37Z",
+      "updated_at": "2026-04-30T02:00:02Z",
       "mergeable": "CONFLICTING",
       "merge_state_status": "DIRTY",
       "review_decision": "",
-      "security_hold": false,
+      "security_hold": true,
       "checks": {
-        "total": 13,
+        "total": 15,
         "counts": {
           "CANCELLED": 2,
-          "SKIPPED": 7,
-          "SUCCESS": 4
+          "SKIPPED": 8,
+          "SUCCESS": 5
         },
         "blockers": []
       },
@@ -55,8 +55,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74742#issuecomment-4349164824",
+            "submitted_at": "2026-04-30T02:00:02Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25142978529",
@@ -81,11 +88,12 @@
         }
       },
       "blockers": [
+        "security_hold",
         "needs_rebase:CONFLICTING",
         "needs_merge_state:DIRTY",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
+      "recommended_next_action": "route to central security triage"
     },
     {
       "number": 74714,
