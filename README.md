@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 21:31 UTC
+Last dashboard update: Apr 30, 2026, 21:32 UTC
 
 ### Fleet
 
@@ -194,7 +194,7 @@ Latest review: Apr 30, 2026, 21:30 UTC. Latest close: Apr 30, 2026, 21:31 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 0 | 11 | 1 | 13 | 415 | 2 |
+| Last 15 minutes | 11 | 0 | 11 | 1 | 13 | 409 | 1 |
 | Last hour | 881 | 24 | 857 | 8 | 36 | 777 | 4 |
 | Last 24 hours | 6568 | 453 | 6115 | 25 | 667 | 3461 | 26 |
 
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 21:31 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 10. Total fresh closes in this run: 10/11. Result records in checkpoint: 12, including durable review comment syncs.
+Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 10/11. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25190229102](https://github.com/openclaw/clawsweeper/actions/runs/25190229102)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,7 +351,7 @@ Latest review: Apr 30, 2026, 21:30 UTC. Latest close: Apr 30, 2026, 21:31 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 11 | 0 | 11 | 1 | 13 | 415 | 2 |
+| Last 15 minutes | 11 | 0 | 11 | 1 | 13 | 409 | 1 |
 | Last hour | 881 | 24 | 857 | 8 | 36 | 777 | 4 |
 | Last 24 hours | 6143 | 453 | 5690 | 12 | 667 | 3063 | 26 |
 
