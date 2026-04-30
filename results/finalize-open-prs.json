@@ -2,13 +2,13 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T20:18:25.812Z",
+  "generated_at": "2026-04-30T21:56:21.866Z",
   "count": 6,
   "summary": {
     "open_prs": 6,
     "ready_candidates": 0,
     "security_hold": 0,
-    "needs_rebase": 1,
+    "needs_rebase": 2,
     "mergeability_unknown": 0,
     "needs_checks": 0,
     "needs_review": 0,
@@ -35,8 +35,8 @@
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-581fbea1d653",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-581fbea1d653.md",
       "updated_at": "2026-04-30T19:09:09Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "CLEAN",
+      "mergeable": "CONFLICTING",
+      "merge_state_status": "DIRTY",
       "review_decision": "",
       "security_hold": false,
       "checks": {
@@ -89,9 +89,11 @@
         }
       },
       "blockers": [
+        "needs_rebase:CONFLICTING",
+        "needs_merge_state:DIRTY",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     },
     {
       "number": 75213,
@@ -167,7 +169,7 @@
       "head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
       "cluster_id": "automerge-openclaw-openclaw-74506",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
-      "updated_at": "2026-04-30T19:53:29Z",
+      "updated_at": "2026-04-30T21:42:08Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "CLEAN",
       "review_decision": "",
@@ -354,7 +356,7 @@
       "head_sha": "39498ba26f38634f7225f83388159b03b1745fe9",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-30a2b3049ae0",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-30a2b3049ae0.md",
-      "updated_at": "2026-04-30T02:36:07Z",
+      "updated_at": "2026-04-30T21:27:00Z",
       "mergeable": "CONFLICTING",
       "merge_state_status": "DIRTY",
       "review_decision": "",
