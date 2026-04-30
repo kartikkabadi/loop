@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T02:37:25.616Z",
-  "count": 14,
+  "generated_at": "2026-04-30T02:48:55.304Z",
+  "count": 16,
   "summary": {
-    "open_prs": 14,
+    "open_prs": 16,
     "ready_candidates": 0,
     "security_hold": 0,
     "needs_rebase": 7,
     "mergeability_unknown": 0,
-    "needs_checks": 8,
+    "needs_checks": 9,
     "needs_review": 0,
-    "needs_merge_preflight": 14,
+    "needs_merge_preflight": 16,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -27,28 +27,35 @@
   },
   "prs": [
     {
-      "number": 74755,
-      "title": "fix: Slack select value cap likely regression",
-      "url": "https://github.com/openclaw/openclaw/pull/74755",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59",
-      "head_sha": "3d568a91c26f3d9567f3ebeb73edcf2866b21d05",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59",
-      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59.md",
-      "updated_at": "2026-04-30T02:32:30Z",
+      "number": 74764,
+      "title": "fix: commit exposes max in the Bedrock Opus 4.7 thinking profile, but the current runtime pat...",
+      "url": "https://github.com/openclaw/openclaw/pull/74764",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0",
+      "head_sha": "ef7c6eecc6bb5151734f2440bf8aaa667fde30a2",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0.md",
+      "updated_at": "2026-04-30T02:46:31Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 82,
+        "total": 77,
         "counts": {
-          "CANCELLED": 3,
-          "SKIPPED": 13,
-          "SUCCESS": 65,
-          "IN_PROGRESS": 1
+          "IN_PROGRESS": 7,
+          "SKIPPED": 12,
+          "SUCCESS": 56,
+          "QUEUED": 2
         },
         "blockers": [
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+          "CI / checks-node-core-fast-support:IN_PROGRESS",
+          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
+          "CI / check-additional-extension-package-boundary:IN_PROGRESS",
+          "CI / checks-node-channels:IN_PROGRESS",
+          "CI / checks-node-core-support-boundary:QUEUED",
+          "CI / build-smoke:QUEUED"
         ]
       },
       "review_threads": {
@@ -60,6 +67,146 @@
       "review_bots": {
         "count": 0,
         "latest": []
+      },
+      "latest_record": {
+        "run_id": "25144600047",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144600047",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0",
+        "published_at": "2026-04-30T02:46:19.317Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74764",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CI / checks-node-core-fast-support:IN_PROGRESS; CI / checks-node-core-runtime-media-ui:IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74762,
+      "title": "fix: gateway model catalog cache regression",
+      "url": "https://github.com/openclaw/openclaw/pull/74762",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-6421e1f36a3c",
+      "head_sha": "da5e171ffab1d451ff4d266adafca9557eb44eca",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-6421e1f36a3c",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-6421e1f36a3c.md",
+      "updated_at": "2026-04-30T02:48:15Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 85,
+        "counts": {
+          "IN_PROGRESS": 3,
+          "SKIPPED": 11,
+          "SUCCESS": 70,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74762#issuecomment-4349347762",
+            "submitted_at": "2026-04-30T02:48:15Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25144539236",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144539236",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-6421e1f36a3c",
+        "published_at": "2026-04-30T02:44:50.340Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74762",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74755,
+      "title": "fix: Slack select value cap likely regression",
+      "url": "https://github.com/openclaw/openclaw/pull/74755",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59",
+      "head_sha": "3d568a91c26f3d9567f3ebeb73edcf2866b21d05",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59.md",
+      "updated_at": "2026-04-30T02:36:53Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "CLEAN",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 83,
+        "counts": {
+          "CANCELLED": 3,
+          "SKIPPED": 13,
+          "SUCCESS": 67
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74755#issuecomment-4349303976",
+            "submitted_at": "2026-04-30T02:36:53Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25144167747",
@@ -84,11 +231,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 74746,
@@ -161,19 +306,19 @@
       "title": "fix(file-transfer): require canonical node policy authorization",
       "url": "https://github.com/openclaw/openclaw/pull/74742",
       "branch": "clawsweeper/automerge-openclaw-openclaw-74134",
-      "head_sha": "2094b8436e9831e5fc1371a95c225ab25a38c7d1",
+      "head_sha": "caaecfd7b1c94342009658d3c0f8681ae0894f22",
       "cluster_id": "automerge-openclaw-openclaw-74134",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74134.md",
-      "updated_at": "2026-04-30T02:35:01Z",
+      "updated_at": "2026-04-30T02:47:45Z",
       "mergeable": "CONFLICTING",
       "merge_state_status": "DIRTY",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 8,
+        "total": 5,
         "counts": {
-          "SKIPPED": 3,
-          "SUCCESS": 5
+          "SUCCESS": 4,
+          "SKIPPED": 1
         },
         "blockers": []
       },
@@ -201,19 +346,25 @@
         ]
       },
       "latest_record": {
-        "run_id": "25144208742",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144208742",
+        "run_id": "25144466987",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144466987",
         "cluster_id": "automerge-openclaw-openclaw-74134",
-        "published_at": "2026-04-30T02:35:49.299Z",
+        "published_at": "2026-04-30T02:48:14.552Z",
         "workflow_conclusion": "success",
         "apply_action": {
           "target": "#74742",
-          "action": "fix_needed",
-          "status": "planned",
-          "classification": "canonical",
-          "canonical": "#74742",
-          "candidate_fix": "#74742",
-          "reason": "The remaining repair scope is narrow and actionable: update the node invoke redirect error wording for dedicated file-transfer/media actions, add or adjust the focused agent-tool test, then rerun focused validation and `pnpm check:changed`."
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
         }
       },
       "blockers": [
