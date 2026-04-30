@@ -161,11 +161,11 @@ Last dashboard update: Apr 30, 2026, 15:23 UTC
 | --- | ---: |
 | Covered repositories | 3 |
 | Open issues | 3818 |
-| Open PRs | 3372 |
-| Open items total | 7190 |
+| Open PRs | 3373 |
+| Open items total | 7191 |
 | Reviewed files | 7580 |
-| Unreviewed open items | 181 |
-| Due now by cadence | 3014 |
+| Unreviewed open items | 182 |
+| Due now by cadence | 3017 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1354 |
 | Closed by Codex apply | 11156 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 15:23 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6834 | 6653 | 181 | 2940 | 0 | 1308 | 11148 | Apr 30, 2026, 15:21 UTC | Apr 30, 2026, 15:20 UTC | 444 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6835 | 6653 | 182 | 2943 | 0 | 1308 | 11148 | Apr 30, 2026, 15:22 UTC | Apr 30, 2026, 15:20 UTC | 443 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 356 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,18 +184,18 @@ Last dashboard update: Apr 30, 2026, 15:23 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 15:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25173781687) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 15:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25173781687) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 15:21 UTC. Latest close: Apr 30, 2026, 15:20 UTC. Latest comment sync: Apr 30, 2026, 15:21 UTC.
+Latest review: Apr 30, 2026, 15:22 UTC. Latest close: Apr 30, 2026, 15:20 UTC. Latest comment sync: Apr 30, 2026, 15:23 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 1 | 13 | 0 | 9 | 59 | 0 |
-| Last hour | 152 | 11 | 141 | 2 | 57 | 444 | 6 |
+| Last 15 minutes | 14 | 1 | 13 | 0 | 9 | 54 | 0 |
+| Last hour | 150 | 11 | 139 | 2 | 57 | 443 | 6 |
 | Last 24 hours | 5396 | 343 | 5053 | 34 | 696 | 1998 | 27 |
 
 ### Recently Closed Across Repos
@@ -240,12 +240,12 @@ Latest review: Apr 30, 2026, 15:21 UTC. Latest close: Apr 30, 2026, 15:20 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75124](https://github.com/openclaw/openclaw/issues/75124) | [Bug]: `command-dispatch: tool` skill slash commands bypass effective tool policy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75124.md) | complete | Apr 30, 2026, 15:22 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74556](https://github.com/openclaw/openclaw/pull/74556) | Isolate Codex app-server state per agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74556.md) | complete | Apr 30, 2026, 15:21 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams and fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74483](https://github.com/openclaw/openclaw/pull/74483) | [plugin sdk] Add generic SDK seam followups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74483.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#52365](https://github.com/openclaw/openclaw/pull/52365) | fix(cron): stop fallback attempts when cron budget is exhausted | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/52365.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74853](https://github.com/openclaw/openclaw/pull/74853) | [docs][plugin sdk] Split host-hook recipes from workflow follow-ups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74853.md) | complete | Apr 30, 2026, 15:18 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75124](https://github.com/openclaw/openclaw/issues/75124) | [Bug]: `command-dispatch: tool` skill slash commands bypass effective tool policy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75124.md) | complete | Apr 30, 2026, 15:17 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74337](https://github.com/openclaw/openclaw/pull/74337) | refactor(usage): add precise token buckets for Usage Mosaic | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74337.md) | complete | Apr 30, 2026, 15:16 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73554](https://github.com/openclaw/openclaw/pull/73554) | fix(cli): reject missing plugin ids before config writes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73554.md) | complete | Apr 30, 2026, 15:16 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75067](https://github.com/openclaw/openclaw/pull/75067) | feat(gateway): pricing fetch timeout reduction, disk cache, and circuit breaker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75067.md) | complete | Apr 30, 2026, 15:15 UTC |
@@ -269,9 +269,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 15:23 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/3. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 3. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25173781687](https://github.com/openclaw/clawsweeper/actions/runs/25173781687)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -281,10 +281,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25173781687](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3480 |
-| Open PRs | 3354 |
-| Open items total | 6834 |
+| Open PRs | 3355 |
+| Open items total | 6835 |
 | Reviewed files | 6653 |
-| Unreviewed open items | 181 |
+| Unreviewed open items | 182 |
 | Archived closed files | 15092 |
 
 #### Review Outcomes
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25173781687](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 129/1337 current (1208 due, 9.6%) |
-| Hourly hot item cadence (<7d) | 129/1337 current (1208 due, 9.6%) |
+| Hourly cadence coverage | 127/1337 current (1210 due, 9.5%) |
+| Hourly hot item cadence (<7d) | 127/1337 current (1210 due, 9.5%) |
 | Daily cadence coverage | 1987/3533 current (1546 due, 56.2%) |
 | Daily PR cadence | 1352/2463 current (1111 due, 54.9%) |
 | Daily new issue cadence (<30d) | 635/1070 current (435 due, 59.3%) |
 | Weekly older issue cadence | 1778/1783 current (5 due, 99.7%) |
-| Due now by cadence | 2940 |
+| Due now by cadence | 2943 |
 
 ### Audit Health
 
@@ -347,12 +347,12 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 15:21 UTC. Latest close: Apr 30, 2026, 15:20 UTC. Latest comment sync: Apr 30, 2026, 15:21 UTC.
+Latest review: Apr 30, 2026, 15:22 UTC. Latest close: Apr 30, 2026, 15:20 UTC. Latest comment sync: Apr 30, 2026, 15:23 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 1 | 13 | 0 | 9 | 59 | 0 |
-| Last hour | 152 | 11 | 141 | 2 | 57 | 444 | 6 |
+| Last 15 minutes | 14 | 1 | 13 | 0 | 9 | 54 | 0 |
+| Last hour | 150 | 11 | 139 | 2 | 57 | 443 | 6 |
 | Last 24 hours | 4471 | 343 | 4128 | 21 | 694 | 1598 | 27 |
 
 #### Recently Closed
@@ -389,12 +389,12 @@ Latest review: Apr 30, 2026, 15:21 UTC. Latest close: Apr 30, 2026, 15:20 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75124](https://github.com/openclaw/openclaw/issues/75124) | [Bug]: `command-dispatch: tool` skill slash commands bypass effective tool policy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75124.md) | complete | Apr 30, 2026, 15:22 UTC |
 | [#74556](https://github.com/openclaw/openclaw/pull/74556) | Isolate Codex app-server state per agent | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74556.md) | complete | Apr 30, 2026, 15:21 UTC |
 | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams and fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [#74483](https://github.com/openclaw/openclaw/pull/74483) | [plugin sdk] Add generic SDK seam followups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74483.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [#52365](https://github.com/openclaw/openclaw/pull/52365) | fix(cron): stop fallback attempts when cron budget is exhausted | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/52365.md) | complete | Apr 30, 2026, 15:18 UTC |
 | [#74853](https://github.com/openclaw/openclaw/pull/74853) | [docs][plugin sdk] Split host-hook recipes from workflow follow-ups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74853.md) | complete | Apr 30, 2026, 15:18 UTC |
-| [#75124](https://github.com/openclaw/openclaw/issues/75124) | [Bug]: `command-dispatch: tool` skill slash commands bypass effective tool policy | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75124.md) | complete | Apr 30, 2026, 15:17 UTC |
 | [#74337](https://github.com/openclaw/openclaw/pull/74337) | refactor(usage): add precise token buckets for Usage Mosaic | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74337.md) | complete | Apr 30, 2026, 15:16 UTC |
 | [#73554](https://github.com/openclaw/openclaw/pull/73554) | fix(cli): reject missing plugin ids before config writes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73554.md) | complete | Apr 30, 2026, 15:16 UTC |
 | [#75067](https://github.com/openclaw/openclaw/pull/75067) | feat(gateway): pricing fetch timeout reduction, disk cache, and circuit breaker | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75067.md) | complete | Apr 30, 2026, 15:15 UTC |
