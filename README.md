@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 18:48 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6797 | 6741 | 56 | 2145 | 0 | 1543 | 11243 | Apr 30, 2026, 18:48 UTC | Apr 30, 2026, 18:46 UTC | 398 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6797 | 6741 | 56 | 2145 | 0 | 1543 | 11243 | Apr 30, 2026, 18:48 UTC | Apr 30, 2026, 18:46 UTC | 396 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 357 | 924 | 0 | 92 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 18:48 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 18:48 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25183272598) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 18:48 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25183272598) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,8 +194,8 @@ Latest review: Apr 30, 2026, 18:48 UTC. Latest close: Apr 30, 2026, 18:46 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 111 | 2 | 109 | 0 | 18 | 17 | 0 |
-| Last hour | 795 | 31 | 764 | 5 | 40 | 398 | 1 |
+| Last 15 minutes | 112 | 2 | 110 | 0 | 18 | 18 | 0 |
+| Last hour | 791 | 30 | 761 | 5 | 38 | 396 | 1 |
 | Last 24 hours | 6395 | 401 | 5994 | 35 | 730 | 2748 | 23 |
 
 ### Recently Closed Across Repos
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 18:48 UTC. Latest close: Apr 30, 2026, 18:46 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74716](https://github.com/openclaw/openclaw/pull/74716) | Route Codex Computer Use through the Mac app node host | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74716.md) | complete | Apr 30, 2026, 18:48 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72813](https://github.com/openclaw/openclaw/pull/72813) | fix(auto-reply): keep stale-runtime imports from dropping replies across all lazy loaders | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72813.md) | complete | Apr 30, 2026, 18:48 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74472](https://github.com/openclaw/openclaw/pull/74472) | fix(gateway): keep native approvals off stale pairing baselines | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74472.md) | complete | Apr 30, 2026, 18:48 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68982](https://github.com/openclaw/openclaw/pull/68982) | fix: stream reasoning in live chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68982.md) | complete | Apr 30, 2026, 18:45 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 18:48 UTC. Latest close: Apr 30, 2026, 18:46 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74787](https://github.com/openclaw/openclaw/pull/74787) | [codex] Reap orphaned acpx Codex ACP processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74787.md) | complete | Apr 30, 2026, 18:43 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#64318](https://github.com/openclaw/openclaw/pull/64318) | feat: Add unified Amazon plugin — Polly TTS, Transcribe STT, Nova Sonic realtime voice | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/64318.md) | complete | Apr 30, 2026, 18:39 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50090](https://github.com/openclaw/openclaw/issues/50090) | Community Skill Development & ClawHub | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/50090.md) | complete | Apr 30, 2026, 18:38 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59077](https://github.com/openclaw/openclaw/issues/59077) | Default status reaction emoji are unclear (🥱😨 for stalls) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/59077.md) | complete | Apr 30, 2026, 18:38 UTC |
 
 </details>
 
@@ -269,9 +269,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 18:48 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/15. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 15. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25183272598](https://github.com/openclaw/clawsweeper/actions/runs/25183272598)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,8 +351,8 @@ Latest review: Apr 30, 2026, 18:48 UTC. Latest close: Apr 30, 2026, 18:46 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 111 | 2 | 109 | 0 | 18 | 17 | 0 |
-| Last hour | 795 | 31 | 764 | 5 | 40 | 398 | 1 |
+| Last 15 minutes | 112 | 2 | 110 | 0 | 18 | 18 | 0 |
+| Last hour | 791 | 30 | 761 | 5 | 38 | 396 | 1 |
 | Last 24 hours | 5493 | 401 | 5092 | 22 | 730 | 2349 | 23 |
 
 #### Recently Closed
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 18:48 UTC. Latest close: Apr 30, 2026, 18:46 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74716](https://github.com/openclaw/openclaw/pull/74716) | Route Codex Computer Use through the Mac app node host | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74716.md) | complete | Apr 30, 2026, 18:48 UTC |
 | [#72813](https://github.com/openclaw/openclaw/pull/72813) | fix(auto-reply): keep stale-runtime imports from dropping replies across all lazy loaders | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72813.md) | complete | Apr 30, 2026, 18:48 UTC |
 | [#74472](https://github.com/openclaw/openclaw/pull/74472) | fix(gateway): keep native approvals off stale pairing baselines | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74472.md) | complete | Apr 30, 2026, 18:48 UTC |
 | [#68982](https://github.com/openclaw/openclaw/pull/68982) | fix: stream reasoning in live chat | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68982.md) | complete | Apr 30, 2026, 18:45 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 18:48 UTC. Latest close: Apr 30, 2026, 18:46 UTC. L
 | [#74787](https://github.com/openclaw/openclaw/pull/74787) | [codex] Reap orphaned acpx Codex ACP processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74787.md) | complete | Apr 30, 2026, 18:43 UTC |
 | [#64318](https://github.com/openclaw/openclaw/pull/64318) | feat: Add unified Amazon plugin — Polly TTS, Transcribe STT, Nova Sonic realtime voice | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/64318.md) | complete | Apr 30, 2026, 18:39 UTC |
 | [#50090](https://github.com/openclaw/openclaw/issues/50090) | Community Skill Development & ClawHub | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/50090.md) | complete | Apr 30, 2026, 18:38 UTC |
-| [#59077](https://github.com/openclaw/openclaw/issues/59077) | Default status reaction emoji are unclear (🥱😨 for stalls) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/59077.md) | complete | Apr 30, 2026, 18:38 UTC |
 
 </details>
 
