@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 11:24 UTC
+Last dashboard update: Apr 30, 2026, 11:25 UTC
 
 ### Fleet
 
@@ -163,9 +163,9 @@ Last dashboard update: Apr 30, 2026, 11:24 UTC
 | Open issues | 3901 |
 | Open PRs | 3378 |
 | Open items total | 7279 |
-| Reviewed files | 7484 |
-| Unreviewed open items | 369 |
-| Due now by cadence | 2945 |
+| Reviewed files | 7485 |
+| Unreviewed open items | 368 |
+| Due now by cadence | 2944 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1250 |
 | Closed by Codex apply | 11070 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 11:24 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6926 | 6557 | 369 | 2870 | 0 | 1204 | 11062 | Apr 30, 2026, 11:21 UTC | Apr 30, 2026, 11:24 UTC | 550 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6926 | 6558 | 368 | 2869 | 0 | 1204 | 11062 | Apr 30, 2026, 11:23 UTC | Apr 30, 2026, 11:24 UTC | 549 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 72 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,19 +184,19 @@ Last dashboard update: Apr 30, 2026, 11:24 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake publish complete | Apr 30, 2026, 11:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25162313323) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | Apr 30, 2026, 11:25 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25162313323) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 11:21 UTC. Latest close: Apr 30, 2026, 11:24 UTC. Latest comment sync: Apr 30, 2026, 11:21 UTC.
+Latest review: Apr 30, 2026, 11:23 UTC. Latest close: Apr 30, 2026, 11:24 UTC. Latest comment sync: Apr 30, 2026, 11:25 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 31 | 1 | 30 | 0 | 13 | 62 | 0 |
-| Last hour | 554 | 14 | 540 | 2 | 20 | 550 | 0 |
-| Last 24 hours | 5467 | 292 | 5175 | 26 | 698 | 1636 | 21 |
+| Last 15 minutes | 32 | 1 | 31 | 0 | 12 | 59 | 0 |
+| Last hour | 555 | 14 | 541 | 2 | 19 | 549 | 0 |
+| Last 24 hours | 5468 | 292 | 5176 | 26 | 698 | 1656 | 21 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 11:21 UTC. Latest close: Apr 30, 2026, 11:24 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75048](https://github.com/openclaw/openclaw/pull/75048) | fix(plugins): canonicalize packageRoot before hashing runtime-deps stage key | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75048.md) | complete | Apr 30, 2026, 11:23 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#46377](https://github.com/openclaw/openclaw/pull/46377) | fix: add SSRF guard to Anthropic/Gemini PDF providers and move Gemini API key to header | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/46377.md) | complete | Apr 30, 2026, 11:21 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75031](https://github.com/openclaw/openclaw/pull/75031) | fix(backup): use resolvePreferredOpenClawTmpDir for temp archive dir (#75007) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75031.md) | complete | Apr 30, 2026, 11:20 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74949](https://github.com/openclaw/openclaw/issues/74949) | 🐛 [Bug] Gateway crashing on plugin initialization due to empty dependencies in isolated package.json (npm v11 / Node v25) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74949.md) | complete | Apr 30, 2026, 11:20 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 11:21 UTC. Latest close: Apr 30, 2026, 11:24 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74698](https://github.com/openclaw/openclaw/issues/74698) | [Bug]: Telegram group /status silently no-replies on 2026.4.27 while normal messages work | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74698.md) | complete | Apr 30, 2026, 11:20 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74999](https://github.com/openclaw/openclaw/pull/74999) | Group namespaced models in /models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74999.md) | complete | Apr 30, 2026, 11:20 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74982](https://github.com/openclaw/openclaw/pull/74982) | fix(telegram): preserve audioAsVoice flag through all outbound send paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74982.md) | complete | Apr 30, 2026, 11:20 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75044](https://github.com/openclaw/openclaw/issues/75044) | [Feature]: Add Cursor SDK (`@cursor/sdk`) as a core agent backend | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75044.md) | complete | Apr 30, 2026, 11:20 UTC |
 
 </details>
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 11:21 UTC. Latest close: Apr 30, 2026, 11:24 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 11:23 UTC
+Updated: Apr 30, 2026, 11:25 UTC
 
-State: Hot intake publish complete
+State: Review comments checked
 
-Merged hot intake artifacts for run 25162313323. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
+Checked selected durable Codex review comments and synced missing or stale comments. Synced: 20. Item numbers: 45016,46377,48260,70707,71063,74698,74802,74853,74949,74970,74971,74979,74982,74990,74994,74999,75000,75007,75025,75031.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25162313323](https://github.com/openclaw/clawsweeper/actions/runs/25162313323)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -283,8 +283,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25162313323](https://
 | Open issues | 3565 |
 | Open PRs | 3361 |
 | Open items total | 6926 |
-| Reviewed files | 6557 |
-| Unreviewed open items | 369 |
+| Reviewed files | 6558 |
+| Unreviewed open items | 368 |
 | Archived closed files | 14938 |
 
 #### Review Outcomes
@@ -293,9 +293,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25162313323](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3369 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3172 |
+| Fresh reviewed PRs in the last 7 days | 3173 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6541 |
+| Fresh verified reviews in the last 7 days | 6542 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1204 |
 | Closed by Codex apply | 11062 |
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25162313323](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 97/1216 current (1119 due, 8%) |
-| Hourly hot item cadence (<7d) | 97/1216 current (1119 due, 8%) |
+| Hourly cadence coverage | 98/1217 current (1119 due, 8.1%) |
+| Hourly hot item cadence (<7d) | 98/1217 current (1119 due, 8.1%) |
 | Daily cadence coverage | 2174/3553 current (1379 due, 61.2%) |
 | Daily PR cadence | 1449/2470 current (1021 due, 58.7%) |
 | Daily new issue cadence (<30d) | 725/1083 current (358 due, 66.9%) |
 | Weekly older issue cadence | 1785/1788 current (3 due, 99.8%) |
-| Due now by cadence | 2870 |
+| Due now by cadence | 2869 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 11:21 UTC. Latest close: Apr 30, 2026, 11:24 UTC. Latest comment sync: Apr 30, 2026, 11:21 UTC.
+Latest review: Apr 30, 2026, 11:23 UTC. Latest close: Apr 30, 2026, 11:24 UTC. Latest comment sync: Apr 30, 2026, 11:25 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 31 | 1 | 30 | 0 | 13 | 62 | 0 |
-| Last hour | 554 | 14 | 540 | 2 | 20 | 550 | 0 |
-| Last 24 hours | 4539 | 292 | 4247 | 13 | 695 | 1233 | 21 |
+| Last 15 minutes | 32 | 1 | 31 | 0 | 12 | 59 | 0 |
+| Last hour | 555 | 14 | 541 | 2 | 19 | 549 | 0 |
+| Last 24 hours | 4540 | 292 | 4248 | 13 | 695 | 1253 | 21 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 11:21 UTC. Latest close: Apr 30, 2026, 11:24 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75048](https://github.com/openclaw/openclaw/pull/75048) | fix(plugins): canonicalize packageRoot before hashing runtime-deps stage key | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75048.md) | complete | Apr 30, 2026, 11:23 UTC |
 | [#46377](https://github.com/openclaw/openclaw/pull/46377) | fix: add SSRF guard to Anthropic/Gemini PDF providers and move Gemini API key to header | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/46377.md) | complete | Apr 30, 2026, 11:21 UTC |
 | [#75031](https://github.com/openclaw/openclaw/pull/75031) | fix(backup): use resolvePreferredOpenClawTmpDir for temp archive dir (#75007) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75031.md) | complete | Apr 30, 2026, 11:20 UTC |
 | [#74949](https://github.com/openclaw/openclaw/issues/74949) | 🐛 [Bug] Gateway crashing on plugin initialization due to empty dependencies in isolated package.json (npm v11 / Node v25) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74949.md) | complete | Apr 30, 2026, 11:20 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 11:21 UTC. Latest close: Apr 30, 2026, 11:24 UTC. L
 | [#74698](https://github.com/openclaw/openclaw/issues/74698) | [Bug]: Telegram group /status silently no-replies on 2026.4.27 while normal messages work | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74698.md) | complete | Apr 30, 2026, 11:20 UTC |
 | [#74999](https://github.com/openclaw/openclaw/pull/74999) | Group namespaced models in /models | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74999.md) | complete | Apr 30, 2026, 11:20 UTC |
 | [#74982](https://github.com/openclaw/openclaw/pull/74982) | fix(telegram): preserve audioAsVoice flag through all outbound send paths | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74982.md) | complete | Apr 30, 2026, 11:20 UTC |
-| [#75044](https://github.com/openclaw/openclaw/issues/75044) | [Feature]: Add Cursor SDK (`@cursor/sdk`) as a core agent backend | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75044.md) | complete | Apr 30, 2026, 11:20 UTC |
 
 </details>
 
