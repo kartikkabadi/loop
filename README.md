@@ -153,30 +153,30 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 14:33 UTC
+Last dashboard update: Apr 30, 2026, 14:35 UTC
 
 ### Fleet
 
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 3865 |
+| Open issues | 3863 |
 | Open PRs | 3377 |
-| Open items total | 7242 |
+| Open items total | 7240 |
 | Reviewed files | 7479 |
-| Unreviewed open items | 337 |
-| Due now by cadence | 2928 |
+| Unreviewed open items | 335 |
+| Due now by cadence | 2942 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1336 |
-| Closed by Codex apply | 11110 |
+| Closed by Codex apply | 11111 |
 | Failed or stale reviews | 36 |
-| Archived closed files | 15053 |
+| Archived closed files | 15054 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6889 | 6552 | 337 | 2854 | 0 | 1290 | 11102 | Apr 30, 2026, 14:31 UTC | Apr 30, 2026, 14:32 UTC | 337 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6887 | 6552 | 335 | 2868 | 0 | 1290 | 11103 | Apr 30, 2026, 14:31 UTC | Apr 30, 2026, 14:33 UTC | 338 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 71 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,24 +184,25 @@ Last dashboard update: Apr 30, 2026, 14:33 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 14:33 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25171173865) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 14:35 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25171346676) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:32 UTC. Latest comment sync: Apr 30, 2026, 14:32 UTC.
+Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:33 UTC. Latest comment sync: Apr 30, 2026, 14:33 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 3 | 11 | 0 | 13 | 33 | 1 |
-| Last hour | 146 | 17 | 129 | 3 | 53 | 337 | 1 |
-| Last 24 hours | 5494 | 311 | 5183 | 33 | 669 | 1612 | 24 |
+| Last 15 minutes | 12 | 4 | 8 | 0 | 11 | 31 | 1 |
+| Last hour | 83 | 16 | 67 | 2 | 54 | 338 | 1 |
+| Last 24 hours | 5495 | 312 | 5183 | 33 | 670 | 1612 | 24 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75113](https://github.com/openclaw/openclaw/issues/75113) | Feature Request: 飞书频道流式卡片展示工具调用过程 | already implemented on main | Apr 30, 2026, 14:33 UTC | [records/openclaw-openclaw/closed/75113.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75113.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72908](https://github.com/openclaw/openclaw/issues/72908) | [Bug]: `openclaw update --tag 2026.4.25` can leave the old Gateway running against replaced package files, causing mixed-version runtime/import failures | already implemented on main | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72908.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72908.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72906](https://github.com/openclaw/openclaw/issues/72906) | [Bug]: status channel summary is empty while Telegram health probe is OK on v2026.4.25 | duplicate or superseded | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72906.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72906.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72861](https://github.com/openclaw/openclaw/issues/72861) | [Bug]: Control UI / webchat duplicates user message and leaks `Sender (untrusted metadata)` as `openclaw-control-ui` | already implemented on main | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72861.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72861.md) |
@@ -211,7 +212,6 @@ Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:32 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74877](https://github.com/openclaw/openclaw/pull/74877) | fix(auto-reply): fall back to automatic delivery when message tool is unavailable | closed externally after review | Apr 30, 2026, 14:27 UTC | [records/openclaw-openclaw/closed/74877.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74877.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74868](https://github.com/openclaw/openclaw/issues/74868) | bug: visibleReplies message_tool mode silently drops replies when message tool is unavailable | closed externally after review | Apr 30, 2026, 14:27 UTC | [records/openclaw-openclaw/closed/74868.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74868.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75110](https://github.com/openclaw/openclaw/pull/75110) | fix(feishu): include audio file_key in dedupe key for distinct uploads (#75057) | duplicate or superseded | Apr 30, 2026, 14:25 UTC | [records/openclaw-openclaw/closed/75110.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75110.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74777](https://github.com/openclaw/openclaw/issues/74777) | Local memorySearch runtime deps are not retained/resolved in plugin-runtime-deps | closed externally after review | Apr 30, 2026, 14:23 UTC | [records/openclaw-openclaw/closed/74777.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74777.md) |
 
 ### Work Candidates Across Repos
 
@@ -267,12 +267,12 @@ Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:32 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 14:33 UTC
+Updated: Apr 30, 2026, 14:35 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 5 fresh closes out of requested limit 5. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25171173865](https://github.com/openclaw/clawsweeper/actions/runs/25171173865)
+Starting apply/comment-sync run for up to 5 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=72539,72578,72861,72906,72908.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25171346676](https://github.com/openclaw/clawsweeper/actions/runs/25171346676)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -280,12 +280,12 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25171173865](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3529 |
+| Open issues | 3527 |
 | Open PRs | 3360 |
-| Open items total | 6889 |
+| Open items total | 6887 |
 | Reviewed files | 6552 |
-| Unreviewed open items | 337 |
-| Archived closed files | 15027 |
+| Unreviewed open items | 335 |
+| Archived closed files | 15028 |
 
 #### Review Outcomes
 
@@ -298,20 +298,20 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25171173865](https://
 | Fresh verified reviews in the last 7 days | 6529 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1290 |
-| Closed by Codex apply | 11102 |
+| Closed by Codex apply | 11103 |
 | Failed or stale reviews | 23 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 65/1232 current (1167 due, 5.3%) |
-| Hourly hot item cadence (<7d) | 65/1232 current (1167 due, 5.3%) |
+| Hourly cadence coverage | 49/1232 current (1183 due, 4%) |
+| Hourly hot item cadence (<7d) | 49/1232 current (1183 due, 4%) |
 | Daily cadence coverage | 2191/3536 current (1345 due, 62%) |
 | Daily PR cadence | 1492/2466 current (974 due, 60.5%) |
 | Daily new issue cadence (<30d) | 699/1070 current (371 due, 65.3%) |
 | Weekly older issue cadence | 1779/1784 current (5 due, 99.7%) |
-| Due now by cadence | 2854 |
+| Due now by cadence | 2868 |
 
 ### Audit Health
 
@@ -347,18 +347,19 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:32 UTC. Latest comment sync: Apr 30, 2026, 14:32 UTC.
+Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:33 UTC. Latest comment sync: Apr 30, 2026, 14:33 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 3 | 11 | 0 | 13 | 33 | 1 |
-| Last hour | 146 | 17 | 129 | 3 | 53 | 337 | 1 |
-| Last 24 hours | 4569 | 311 | 4258 | 20 | 667 | 1212 | 24 |
+| Last 15 minutes | 12 | 4 | 8 | 0 | 11 | 31 | 1 |
+| Last hour | 83 | 16 | 67 | 2 | 54 | 338 | 1 |
+| Last 24 hours | 4570 | 312 | 4258 | 20 | 668 | 1212 | 24 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#75113](https://github.com/openclaw/openclaw/issues/75113) | Feature Request: 飞书频道流式卡片展示工具调用过程 | already implemented on main | Apr 30, 2026, 14:33 UTC | [records/openclaw-openclaw/closed/75113.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75113.md) |
 | [#72908](https://github.com/openclaw/openclaw/issues/72908) | [Bug]: `openclaw update --tag 2026.4.25` can leave the old Gateway running against replaced package files, causing mixed-version runtime/import failures | already implemented on main | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72908.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72908.md) |
 | [#72906](https://github.com/openclaw/openclaw/issues/72906) | [Bug]: status channel summary is empty while Telegram health probe is OK on v2026.4.25 | duplicate or superseded | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72906.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72906.md) |
 | [#72861](https://github.com/openclaw/openclaw/issues/72861) | [Bug]: Control UI / webchat duplicates user message and leaks `Sender (untrusted metadata)` as `openclaw-control-ui` | already implemented on main | Apr 30, 2026, 14:32 UTC | [records/openclaw-openclaw/closed/72861.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72861.md) |
@@ -368,7 +369,6 @@ Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:32 UTC. L
 | [#74877](https://github.com/openclaw/openclaw/pull/74877) | fix(auto-reply): fall back to automatic delivery when message tool is unavailable | closed externally after review | Apr 30, 2026, 14:27 UTC | [records/openclaw-openclaw/closed/74877.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74877.md) |
 | [#74868](https://github.com/openclaw/openclaw/issues/74868) | bug: visibleReplies message_tool mode silently drops replies when message tool is unavailable | closed externally after review | Apr 30, 2026, 14:27 UTC | [records/openclaw-openclaw/closed/74868.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74868.md) |
 | [#75110](https://github.com/openclaw/openclaw/pull/75110) | fix(feishu): include audio file_key in dedupe key for distinct uploads (#75057) | duplicate or superseded | Apr 30, 2026, 14:25 UTC | [records/openclaw-openclaw/closed/75110.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75110.md) |
-| [#74777](https://github.com/openclaw/openclaw/issues/74777) | Local memorySearch runtime deps are not retained/resolved in plugin-runtime-deps | closed externally after review | Apr 30, 2026, 14:23 UTC | [records/openclaw-openclaw/closed/74777.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74777.md) |
 
 #### Work Candidates
 
