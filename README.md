@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 14:35 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 14:35 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25171346676) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 14:35 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25171346676) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -196,7 +196,7 @@ Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:33 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 12 | 4 | 8 | 0 | 11 | 31 | 1 |
 | Last hour | 78 | 16 | 62 | 2 | 54 | 338 | 1 |
-| Last 24 hours | 5492 | 312 | 5180 | 33 | 670 | 1612 | 24 |
+| Last 24 hours | 5486 | 312 | 5174 | 33 | 670 | 1612 | 24 |
 
 ### Recently Closed Across Repos
 
@@ -269,9 +269,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 14:35 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/5. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 5. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25171346676](https://github.com/openclaw/clawsweeper/actions/runs/25171346676)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -353,7 +353,7 @@ Latest review: Apr 30, 2026, 14:31 UTC. Latest close: Apr 30, 2026, 14:33 UTC. L
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 12 | 4 | 8 | 0 | 11 | 31 | 1 |
 | Last hour | 78 | 16 | 62 | 2 | 54 | 338 | 1 |
-| Last 24 hours | 4567 | 312 | 4255 | 20 | 668 | 1212 | 24 |
+| Last 24 hours | 4561 | 312 | 4249 | 20 | 668 | 1212 | 24 |
 
 #### Recently Closed
 
