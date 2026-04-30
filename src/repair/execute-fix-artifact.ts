@@ -1213,14 +1213,29 @@ function validateAndReviewLoop({
       baseBranch,
     );
     runDiffCheck({ targetDir, baseBranch });
-    lastReview = runCodexReview({
-      fixArtifact,
-      targetDir,
-      mode,
-      attempt,
-      baseBranch,
-      validationCommands,
-    });
+    try {
+      lastReview = runCodexReview({
+        fixArtifact,
+        targetDir,
+        mode,
+        attempt,
+        baseBranch,
+        validationCommands,
+      });
+    } catch (error) {
+      if (attempt < maxReviewAttempts && isRetryableCodexReviewError(error)) {
+        lastReview = {
+          status: "retrying",
+          summary: String(error?.message ?? error),
+          findings: [],
+          findings_addressed: false,
+          evidence: [],
+          validation_commands_run: validationCommands,
+        };
+        continue;
+      }
+      throw error;
+    }
     lastReview.validation_commands_run = validationCommands;
     if (isCleanCodexReview(lastReview)) return lastReview;
     if (attempt === maxReviewAttempts) break;
@@ -1233,6 +1248,12 @@ function validateAndReviewLoop({
       ? lastReview.findings.map((finding: JsonValue) => finding.summary ?? finding).join("; ")
       : "unknown");
   throw new Error(`Codex /review did not pass after ${maxReviewAttempts} attempt(s): ${summary}`);
+}
+
+function isRetryableCodexReviewError(error: JsonValue) {
+  return /structured output was not written|invalid structured output/i.test(
+    String(error?.message ?? error),
+  );
 }
 
 function runDiffCheck({ targetDir, baseBranch }: LooseRecord) {
