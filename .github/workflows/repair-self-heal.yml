@@ -41,7 +41,7 @@ env:
 
 jobs:
   self-heal:
-    runs-on: ${{ inputs.runner }}
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
     timeout-minutes: 20
     steps:
       - name: Create GitHub App token
