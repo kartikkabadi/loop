@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 21:14 UTC
+Last dashboard update: Apr 30, 2026, 21:16 UTC
 
 ### Fleet
 
@@ -163,20 +163,20 @@ Last dashboard update: Apr 30, 2026, 21:14 UTC
 | Open issues | 3776 |
 | Open PRs | 3363 |
 | Open items total | 7139 |
-| Reviewed files | 7655 |
-| Unreviewed open items | 54 |
-| Due now by cadence | 1677 |
-| Proposed closes awaiting apply | 12 |
-| Work candidates awaiting promotion | 1624 |
-| Closed by Codex apply | 11309 |
-| Failed or stale reviews | 25 |
-| Archived closed files | 15307 |
+| Reviewed files | 7654 |
+| Unreviewed open items | 55 |
+| Due now by cadence | 2103 |
+| Proposed closes awaiting apply | 0 |
+| Work candidates awaiting promotion | 1625 |
+| Closed by Codex apply | 11312 |
+| Failed or stale reviews | 22 |
+| Archived closed files | 15309 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6782 | 6728 | 54 | 1505 | 12 | 1578 | 11301 | Apr 30, 2026, 21:11 UTC | Apr 30, 2026, 21:14 UTC | 377 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6782 | 6727 | 55 | 1931 | 0 | 1579 | 11304 | Apr 30, 2026, 21:13 UTC | Apr 30, 2026, 21:14 UTC | 383 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 357 | 924 | 0 | 169 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 21:14 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review publish complete | Apr 30, 2026, 21:13 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25188392114) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 21:16 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25189675757) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,24 +194,24 @@ Latest review: Apr 30, 2026, 21:11 UTC. Latest close: Apr 30, 2026, 21:14 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 148 | 10 | 138 | 6 | 4 | 7 | 0 |
-| Last hour | 892 | 30 | 862 | 7 | 25 | 377 | 2 |
-| Last 24 hours | 7037 | 460 | 6577 | 24 | 657 | 3083 | 24 |
+| Last 15 minutes | 9 | 0 | 9 | 1 | 6 | 10 | 0 |
+| Last hour | 422 | 9 | 413 | 4 | 26 | 383 | 3 |
+| Last 24 hours | 6794 | 446 | 6348 | 21 | 656 | 3107 | 25 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73845](https://github.com/openclaw/openclaw/issues/73845) | Feature: onSessionEnd agent turn — let the agent run cleanup before session reset | closed externally after proposed_close | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/73845.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73845.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71495](https://github.com/openclaw/openclaw/issues/71495) | [Bug]: /subagents list returns empty in 2026.4.23 despite gateway tracking active subagents (regression from 4.22) | closed externally after proposed_close | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/71495.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71495.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59125](https://github.com/openclaw/openclaw/issues/59125) | [Bug]: approvals.exec.mode accepts invalid value, approvals/subagents unreliable on main and channels | closed externally after review | Apr 30, 2026, 21:13 UTC | [records/openclaw-openclaw/closed/59125.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59125.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75060](https://github.com/openclaw/openclaw/issues/75060) | [Bug]: execution \"direct\" config silently reverted when gateway.bind=\"lan\ | closed externally after review | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/75060.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75060.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75081](https://github.com/openclaw/openclaw/pull/75081) | fix(gateway): show config recovery validation details | closed externally after review | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/75081.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75081.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73845](https://github.com/openclaw/openclaw/issues/73845) | Feature: onSessionEnd agent turn — let the agent run cleanup before session reset | duplicate or superseded | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/73845.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73845.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71495](https://github.com/openclaw/openclaw/issues/71495) | [Bug]: /subagents list returns empty in 2026.4.23 despite gateway tracking active subagents (regression from 4.22) | already implemented on main | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/71495.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71495.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59125](https://github.com/openclaw/openclaw/issues/59125) | [Bug]: approvals.exec.mode accepts invalid value, approvals/subagents unreliable on main and channels | already implemented on main | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/59125.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59125.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75263](https://github.com/openclaw/openclaw/issues/75263) | [Bug] 2026.4.27 regression: Telegram provider logs \"starting\" but never begins long-poll; inbound silently dropped, outbound still works (regression of #45714 / #69064) | closed externally after review | Apr 30, 2026, 21:07 UTC | [records/openclaw-openclaw/closed/75263.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75263.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75174](https://github.com/openclaw/openclaw/issues/75174) | [Bug]: diagnostics-otel spans don't share evt.trace.traceId — orphan root traces, broken Cloud Logging trace links | already implemented on main | Apr 30, 2026, 20:39 UTC | [records/openclaw-openclaw/closed/75174.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75174.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74895](https://github.com/openclaw/openclaw/pull/74895) | fix(telegram): remove strict SecretRef resolve in read-only token inspection | already implemented on main | Apr 30, 2026, 20:39 UTC | [records/openclaw-openclaw/closed/74895.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74895.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74856](https://github.com/openclaw/openclaw/pull/74856) | fix(plugins): normalize undefined handler return to prevent TypeError on Telegram plugin commands | duplicate or superseded | Apr 30, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/74856.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74856.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74852](https://github.com/openclaw/openclaw/pull/74852) | feat(gateway): add environment discovery RPCs | duplicate or superseded | Apr 30, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/74852.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74852.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74838](https://github.com/openclaw/openclaw/pull/74838) | fix(plugins): guard against undefined plugin command handler result | duplicate or superseded | Apr 30, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/74838.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74838.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74815](https://github.com/openclaw/openclaw/pull/74815) | feat(gateway): add task ledger RPCs | duplicate or superseded | Apr 30, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/74815.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74815.md) |
 
 ### Work Candidates Across Repos
 
@@ -267,12 +267,12 @@ Latest review: Apr 30, 2026, 21:11 UTC. Latest close: Apr 30, 2026, 21:14 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 21:13 UTC
+Updated: Apr 30, 2026, 21:16 UTC
 
-State: Review publish complete
+State: Apply in progress
 
-Merged review artifacts for run 25188392114. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25188392114](https://github.com/openclaw/clawsweeper/actions/runs/25188392114)
+Starting apply/comment-sync run for up to 3 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=59125,71495,73845.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25189675757](https://github.com/openclaw/clawsweeper/actions/runs/25189675757)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -283,35 +283,35 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25188392114](https://
 | Open issues | 3437 |
 | Open PRs | 3345 |
 | Open items total | 6782 |
-| Reviewed files | 6728 |
-| Unreviewed open items | 54 |
-| Archived closed files | 15281 |
+| Reviewed files | 6727 |
+| Unreviewed open items | 55 |
+| Archived closed files | 15283 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3424 |
-| Proposed issue closes | 6 (0.2% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3292 |
-| Proposed PR closes | 6 (0.2% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6716 |
-| Proposed closes awaiting apply | 12 (0.2% of fresh reviews) |
-| Work candidates awaiting promotion | 1578 |
-| Closed by Codex apply | 11301 |
-| Failed or stale reviews | 12 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3294 |
+| Proposed PR closes | 0 (0% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6718 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Work candidates awaiting promotion | 1579 |
+| Closed by Codex apply | 11304 |
+| Failed or stale reviews | 9 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 443/1455 current (1012 due, 30.4%) |
-| Hourly hot item cadence (<7d) | 443/1455 current (1012 due, 30.4%) |
-| Daily cadence coverage | 3055/3493 current (438 due, 87.5%) |
-| Daily PR cadence | 2093/2448 current (355 due, 85.5%) |
-| Daily new issue cadence (<30d) | 962/1045 current (83 due, 92.1%) |
+| Hourly cadence coverage | 216/1454 current (1238 due, 14.9%) |
+| Hourly hot item cadence (<7d) | 216/1454 current (1238 due, 14.9%) |
+| Daily cadence coverage | 2856/3493 current (637 due, 81.8%) |
+| Daily PR cadence | 1975/2448 current (473 due, 80.7%) |
+| Daily new issue cadence (<30d) | 881/1045 current (164 due, 84.3%) |
 | Weekly older issue cadence | 1779/1780 current (1 due, 99.9%) |
-| Due now by cadence | 1505 |
+| Due now by cadence | 1931 |
 
 ### Audit Health
 
@@ -351,24 +351,24 @@ Latest review: Apr 30, 2026, 21:11 UTC. Latest close: Apr 30, 2026, 21:14 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 148 | 10 | 138 | 6 | 4 | 7 | 0 |
-| Last hour | 892 | 30 | 862 | 7 | 25 | 377 | 2 |
-| Last 24 hours | 6221 | 460 | 5761 | 11 | 657 | 2685 | 24 |
+| Last 15 minutes | 9 | 0 | 9 | 1 | 6 | 10 | 0 |
+| Last hour | 422 | 9 | 413 | 4 | 26 | 383 | 3 |
+| Last 24 hours | 5978 | 446 | 5532 | 8 | 656 | 2709 | 25 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#73845](https://github.com/openclaw/openclaw/issues/73845) | Feature: onSessionEnd agent turn — let the agent run cleanup before session reset | closed externally after proposed_close | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/73845.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73845.md) |
-| [#71495](https://github.com/openclaw/openclaw/issues/71495) | [Bug]: /subagents list returns empty in 2026.4.23 despite gateway tracking active subagents (regression from 4.22) | closed externally after proposed_close | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/71495.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71495.md) |
-| [#59125](https://github.com/openclaw/openclaw/issues/59125) | [Bug]: approvals.exec.mode accepts invalid value, approvals/subagents unreliable on main and channels | closed externally after review | Apr 30, 2026, 21:13 UTC | [records/openclaw-openclaw/closed/59125.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59125.md) |
+| [#75060](https://github.com/openclaw/openclaw/issues/75060) | [Bug]: execution \"direct\" config silently reverted when gateway.bind=\"lan\ | closed externally after review | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/75060.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75060.md) |
+| [#75081](https://github.com/openclaw/openclaw/pull/75081) | fix(gateway): show config recovery validation details | closed externally after review | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/75081.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75081.md) |
+| [#73845](https://github.com/openclaw/openclaw/issues/73845) | Feature: onSessionEnd agent turn — let the agent run cleanup before session reset | duplicate or superseded | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/73845.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/73845.md) |
+| [#71495](https://github.com/openclaw/openclaw/issues/71495) | [Bug]: /subagents list returns empty in 2026.4.23 despite gateway tracking active subagents (regression from 4.22) | already implemented on main | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/71495.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/71495.md) |
+| [#59125](https://github.com/openclaw/openclaw/issues/59125) | [Bug]: approvals.exec.mode accepts invalid value, approvals/subagents unreliable on main and channels | already implemented on main | Apr 30, 2026, 21:14 UTC | [records/openclaw-openclaw/closed/59125.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59125.md) |
 | [#75263](https://github.com/openclaw/openclaw/issues/75263) | [Bug] 2026.4.27 regression: Telegram provider logs \"starting\" but never begins long-poll; inbound silently dropped, outbound still works (regression of #45714 / #69064) | closed externally after review | Apr 30, 2026, 21:07 UTC | [records/openclaw-openclaw/closed/75263.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75263.md) |
 | [#75174](https://github.com/openclaw/openclaw/issues/75174) | [Bug]: diagnostics-otel spans don't share evt.trace.traceId — orphan root traces, broken Cloud Logging trace links | already implemented on main | Apr 30, 2026, 20:39 UTC | [records/openclaw-openclaw/closed/75174.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75174.md) |
 | [#74895](https://github.com/openclaw/openclaw/pull/74895) | fix(telegram): remove strict SecretRef resolve in read-only token inspection | already implemented on main | Apr 30, 2026, 20:39 UTC | [records/openclaw-openclaw/closed/74895.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74895.md) |
 | [#74856](https://github.com/openclaw/openclaw/pull/74856) | fix(plugins): normalize undefined handler return to prevent TypeError on Telegram plugin commands | duplicate or superseded | Apr 30, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/74856.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74856.md) |
 | [#74852](https://github.com/openclaw/openclaw/pull/74852) | feat(gateway): add environment discovery RPCs | duplicate or superseded | Apr 30, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/74852.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74852.md) |
-| [#74838](https://github.com/openclaw/openclaw/pull/74838) | fix(plugins): guard against undefined plugin command handler result | duplicate or superseded | Apr 30, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/74838.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74838.md) |
-| [#74815](https://github.com/openclaw/openclaw/pull/74815) | feat(gateway): add task ledger RPCs | duplicate or superseded | Apr 30, 2026, 20:38 UTC | [records/openclaw-openclaw/closed/74815.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74815.md) |
 
 #### Work Candidates
 
