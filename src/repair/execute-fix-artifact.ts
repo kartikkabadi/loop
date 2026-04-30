@@ -36,6 +36,7 @@ import {
 } from "./constants.js";
 import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
 import { compactText } from "./text-utils.js";
+import { shouldCloseSupersededSourcePrs } from "./execute-fix-policy.js";
 import { replacementLabelsToCopy } from "./replacement-labels.js";
 import {
   checkoutSourcePullRequestHead,
@@ -98,7 +99,9 @@ const skipCodexWritePreflight = process.env.CLAWSWEEPER_SKIP_CODEX_WRITE_PREFLIG
 const allowExpensiveValidation = process.env.CLAWSWEEPER_ALLOW_EXPENSIVE_VALIDATION === "1";
 const installTargetDeps = process.env.CLAWSWEEPER_INSTALL_TARGET_DEPS !== "0";
 const allowBroadFixArtifacts = process.env.CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS === "1";
-const closeSupersededSourcePrs = process.env.CLAWSWEEPER_CLOSE_SUPERSEDED_SOURCE_PRS === "1";
+const closeSupersededSourcePrs = shouldCloseSupersededSourcePrs(
+  process.env.CLAWSWEEPER_CLOSE_SUPERSEDED_SOURCE_PRS,
+);
 const maxAutonomousFixFiles = Math.max(
   1,
   Number(process.env.CLAWSWEEPER_MAX_AUTONOMOUS_FIX_FILES ?? 8),
