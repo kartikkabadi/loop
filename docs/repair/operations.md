@@ -249,6 +249,11 @@ After a pause, `/clawsweeper approve` is maintainer-only exact-head approval. It
 clears `clawsweeper:human-review`, then merges through the same readiness checks
 and merge gates as a trusted ClawSweeper pass marker.
 
+Repair workers do one final latest-`main` sync before pushing a repaired branch.
+If `main` advanced after validation, the worker rebases again; any conflicts are
+handed back to Codex for resolution, then validation and Codex `/review` rerun
+before push.
+
 The scheduled workflow is dry by default. Set
 `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` in repo variables to let scheduled runs
 post replies and dispatch workers. Manual workflow dispatch can also pass

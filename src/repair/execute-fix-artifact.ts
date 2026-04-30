@@ -1026,23 +1026,53 @@ function editValidatePrepareMerge({
     pushCheckpoint?.();
   }
 
-  const codexReview = validateAndReviewLoop({
-    fixArtifact,
-    targetDir,
-    mode,
-    baseBranch,
-    onReviewFix: (attempt: JsonValue) => {
-      const checkpoint = commitCheckpointIfNeeded({
-        targetDir,
-        message: `fix(clawsweeper): address review for ${result.cluster_id} (${attempt})`,
-        trailers: mode === "replacement" ? coAuthorTrailers(contributorCredits) : [],
-      });
-      if (checkpoint) {
-        checkpointCommits.push(checkpoint);
-        pushCheckpoint?.();
-      }
-    },
-  });
+  let codexReview = null;
+  const maxFinalBaseSyncAttempts = 2;
+  for (let attempt = 1; attempt <= maxFinalBaseSyncAttempts; attempt += 1) {
+    codexReview = validateAndReviewLoop({
+      fixArtifact,
+      targetDir,
+      mode,
+      baseBranch,
+      onReviewFix: (reviewAttempt: JsonValue) => {
+        const checkpoint = commitCheckpointIfNeeded({
+          targetDir,
+          message: `fix(clawsweeper): address review for ${result.cluster_id} (${reviewAttempt})`,
+          trailers: mode === "replacement" ? coAuthorTrailers(contributorCredits) : [],
+        });
+        if (checkpoint) {
+          checkpointCommits.push(checkpoint);
+          pushCheckpoint?.();
+        }
+      },
+    });
+    const sync = reconcileLatestBaseBeforePush({
+      fixArtifact,
+      targetDir,
+      branch,
+      mode,
+      baseBranch,
+      contributorCredits,
+      attempt,
+      repositoryContext,
+      sourceHead,
+    });
+    if (sync.status === "already-current") break;
+    const checkpoint = commitCheckpointIfNeeded({
+      targetDir,
+      message: `fix(clawsweeper): reconcile ${result.cluster_id} with main (${attempt})`,
+      trailers: mode === "replacement" ? coAuthorTrailers(contributorCredits) : [],
+    });
+    if (checkpoint) {
+      checkpointCommits.push(checkpoint);
+      pushCheckpoint?.();
+    }
+    if (attempt === maxFinalBaseSyncAttempts) {
+      throw new Error(
+        `origin/${baseBranch} moved during final validation after ${maxFinalBaseSyncAttempts} reconciliation attempts; retry repair`,
+      );
+    }
+  }
   const finalCheckpoint = commitCheckpointIfNeeded({
     targetDir,
     message: `fix(clawsweeper): finalize ${result.cluster_id}`,
@@ -1058,6 +1088,131 @@ function editValidatePrepareMerge({
     checkpoint_commits: checkpointCommits,
     merge_preflight: buildMergePreflight({ fixArtifact, codexReview }),
   };
+}
+
+function reconcileLatestBaseBeforePush({
+  fixArtifact,
+  targetDir,
+  branch,
+  mode,
+  baseBranch,
+  attempt,
+  repositoryContext,
+  sourceHead,
+}: LooseRecord) {
+  run("git", ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], {
+    cwd: targetDir,
+  });
+  const baseRef = `origin/${baseBranch}`;
+  if (isAncestor({ targetDir, ancestor: baseRef, descendant: "HEAD" })) {
+    return { status: "already-current" };
+  }
+
+  const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
+  if (rebaseResult.status !== "conflicts") return rebaseResult;
+
+  runCodexBaseReconcile({
+    fixArtifact,
+    targetDir,
+    branch,
+    mode,
+    baseBranch,
+    attempt,
+    repositoryContext,
+    sourceHead,
+    rebaseResult,
+  });
+  const completed = completeRebaseIfResolved({ targetDir });
+  return {
+    status: "codex-reconciled",
+    rebase_result: rebaseResult,
+    completed_rebase: completed,
+  };
+}
+
+function runCodexBaseReconcile({
+  fixArtifact,
+  targetDir,
+  branch,
+  mode,
+  attempt,
+  repositoryContext,
+  sourceHead,
+  rebaseResult,
+}: LooseRecord) {
+  let previousSummary = "";
+  for (let codexAttempt = 1; codexAttempt <= maxEditAttempts; codexAttempt += 1) {
+    const prompt = buildFixPrompt({
+      fixArtifact,
+      branch,
+      mode,
+      fallbackReason:
+        "origin/main advanced after validation. Resolve this final rebase so the branch is mergeable on current main, then leave the checkout in a normal non-rebasing state.",
+      attempt: codexAttempt,
+      previousNoDiff: codexAttempt > 1,
+      previousSummary,
+      repositoryContext,
+      reconcileWithBase: true,
+      sourceHead,
+      rebaseResult,
+      maxEditAttempts,
+    });
+    const summaryPath = path.join(
+      workRoot,
+      `${mode}-final-base-reconcile-summary-${attempt}-${codexAttempt}.md`,
+    );
+    const codexResult = spawnSync(
+      "codex",
+      [
+        "exec",
+        "--cd",
+        targetDir,
+        "--model",
+        model,
+        "--sandbox",
+        codexWriteSandbox,
+        ...codexWriteSandboxConfigArgs(),
+        ...codexConfigArgs(),
+        "--output-last-message",
+        summaryPath,
+        "--ephemeral",
+        "--json",
+        "-",
+      ],
+      {
+        cwd: targetDir,
+        input: prompt,
+        encoding: "utf8",
+        env: codexEnv(),
+        timeout: codexTimeoutMs,
+      },
+    );
+    fs.writeFileSync(
+      path.join(workRoot, `${mode}-final-base-reconcile-${attempt}-${codexAttempt}.jsonl`),
+      codexResult.stdout ?? "",
+    );
+    if (codexResult.stderr)
+      fs.writeFileSync(
+        path.join(workRoot, `${mode}-final-base-reconcile-${attempt}-${codexAttempt}.stderr.log`),
+        codexResult.stderr,
+      );
+    if ((codexResult.error as JsonValue)?.code === "ETIMEDOUT") {
+      throw new Error(`Codex final rebase worker timed out after ${codexTimeoutMs}ms`);
+    }
+    if (codexResult.status !== 0) {
+      throw new Error(
+        codexResult.stderr || codexResult.stdout || "Codex final rebase worker failed",
+      );
+    }
+    try {
+      completeRebaseIfResolved({ targetDir });
+      return;
+    } catch (error) {
+      if (codexAttempt === maxEditAttempts) throw error;
+      previousSummary = readTextIfExists(summaryPath).trim();
+    }
+  }
+  throw new Error(`Codex did not finish final rebase after ${maxEditAttempts} attempt(s)`);
 }
 
 function readTextIfExists(filePath: string) {
