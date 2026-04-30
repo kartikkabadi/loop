@@ -269,7 +269,11 @@ function resolveAllowedValidationCommands(
   const parts = parseAllowedValidationCommand(command);
   const commandParts = stripEnvPrefix(parts);
   const scripts = readPackageScriptSet(cwd);
-  if (!options.strictTargetValidation && scripts.has("check:changed")) {
+  if (
+    !options.strictTargetValidation &&
+    scripts.has("check:changed") &&
+    commandParts[0] !== "git"
+  ) {
     return [["pnpm", "check:changed"]];
   }
   if (commandParts[0] === "npm" && commandParts[1] === "run" && commandParts[2] === "validate") {

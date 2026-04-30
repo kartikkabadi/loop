@@ -70,6 +70,31 @@ test("validation preflight accepts env-prefixed OpenClaw QA commands", () => {
   );
 });
 
+test("validation preflight preserves scoped git diff checks", () => {
+  const cwd = packageFixture({ "check:changed": "node check.js" });
+  const sourceHead = "0123456789abcdef0123456789abcdef01234567";
+
+  assert.deepEqual(
+    preflightTargetValidationPlan(
+      {
+        fixArtifact: {
+          validation_commands: [`git diff --check ${sourceHead}..HEAD`],
+        },
+        targetDir: cwd,
+      },
+      {
+        ...validationOptions("openclaw/openclaw"),
+        skipOpenClawChangedGate: true,
+      },
+    ),
+    {
+      status: "passed",
+      resolved_commands: [`git diff --check ${sourceHead}..HEAD`],
+      available_scripts: ["check:changed"],
+    },
+  );
+});
+
 test("adopted OpenClaw PR repairs validate changelog-only repair deltas without full changed gate", () => {
   const cwd = gitPackageFixture({ "check:changed": "node check.js" });
   fs.writeFileSync(path.join(cwd, "CHANGELOG.md"), "# Changelog\n");
