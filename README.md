@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 06:44 UTC
+Last dashboard update: Apr 30, 2026, 06:45 UTC
 
 ### Fleet
 
@@ -165,7 +165,7 @@ Last dashboard update: Apr 30, 2026, 06:44 UTC
 | Open items total | 7771 |
 | Reviewed files | 7463 |
 | Unreviewed open items | 368 |
-| Due now by cadence | 3047 |
+| Due now by cadence | 3057 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1181 |
 | Closed by Codex apply | 11004 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 06:44 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6904 | 6536 | 368 | 2971 | 0 | 1135 | 10996 | Apr 30, 2026, 06:40 UTC | Apr 30, 2026, 06:43 UTC | 695 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6904 | 6536 | 368 | 2981 | 0 | 1135 | 10996 | Apr 30, 2026, 06:40 UTC | Apr 30, 2026, 06:43 UTC | 638 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 867 | 924 | 0 | 73 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 06:44 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 06:44 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25151327127) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 06:45 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25151427994) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,9 +194,9 @@ Latest review: Apr 30, 2026, 06:40 UTC. Latest close: Apr 30, 2026, 06:43 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 16 | 3 | 13 | 0 | 11 | 134 | 0 |
-| Last hour | 567 | 12 | 555 | 8 | 25 | 695 | 0 |
-| Last 24 hours | 5431 | 276 | 5155 | 30 | 754 | 1946 | 21 |
+| Last 15 minutes | 13 | 3 | 10 | 0 | 10 | 75 | 0 |
+| Last hour | 564 | 12 | 552 | 8 | 25 | 638 | 0 |
+| Last 24 hours | 5410 | 275 | 5135 | 30 | 753 | 1946 | 21 |
 
 ### Recently Closed Across Repos
 
@@ -267,12 +267,12 @@ Latest review: Apr 30, 2026, 06:40 UTC. Latest close: Apr 30, 2026, 06:43 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 06:44 UTC
+Updated: Apr 30, 2026, 06:45 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 4 fresh closes out of requested limit 4. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25151327127](https://github.com/openclaw/clawsweeper/actions/runs/25151327127)
+Starting apply/comment-sync run for up to 4 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=56174,59592,74869,74887.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25151427994](https://github.com/openclaw/clawsweeper/actions/runs/25151427994)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25151327127](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 78/1169 current (1091 due, 6.7%) |
-| Hourly hot item cadence (<7d) | 78/1169 current (1091 due, 6.7%) |
-| Daily cadence coverage | 2068/3575 current (1507 due, 57.8%) |
-| Daily PR cadence | 1373/2492 current (1119 due, 55.1%) |
-| Daily new issue cadence (<30d) | 695/1083 current (388 due, 64.2%) |
+| Hourly cadence coverage | 77/1169 current (1092 due, 6.6%) |
+| Hourly hot item cadence (<7d) | 77/1169 current (1092 due, 6.6%) |
+| Daily cadence coverage | 2059/3575 current (1516 due, 57.6%) |
+| Daily PR cadence | 1367/2492 current (1125 due, 54.9%) |
+| Daily new issue cadence (<30d) | 692/1083 current (391 due, 63.9%) |
 | Weekly older issue cadence | 1787/1792 current (5 due, 99.7%) |
-| Due now by cadence | 2971 |
+| Due now by cadence | 2981 |
 
 ### Audit Health
 
@@ -351,9 +351,9 @@ Latest review: Apr 30, 2026, 06:40 UTC. Latest close: Apr 30, 2026, 06:43 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 16 | 3 | 13 | 0 | 11 | 134 | 0 |
-| Last hour | 567 | 12 | 555 | 8 | 25 | 695 | 0 |
-| Last 24 hours | 4500 | 276 | 4224 | 17 | 749 | 1541 | 21 |
+| Last 15 minutes | 13 | 3 | 10 | 0 | 10 | 75 | 0 |
+| Last hour | 564 | 12 | 552 | 8 | 25 | 638 | 0 |
+| Last 24 hours | 4479 | 275 | 4204 | 17 | 748 | 1541 | 21 |
 
 #### Recently Closed
 
