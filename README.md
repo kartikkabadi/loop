@@ -165,7 +165,7 @@ Last dashboard update: Apr 30, 2026, 11:56 UTC
 | Open items total | 7274 |
 | Reviewed files | 7482 |
 | Unreviewed open items | 366 |
-| Due now by cadence | 2917 |
+| Due now by cadence | 2918 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1273 |
 | Closed by Codex apply | 11076 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 11:56 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6921 | 6555 | 366 | 2842 | 0 | 1227 | 11068 | Apr 30, 2026, 11:53 UTC | Apr 30, 2026, 11:54 UTC | 745 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6921 | 6555 | 366 | 2843 | 0 | 1227 | 11064 | Apr 30, 2026, 11:49 UTC | Apr 30, 2026, 11:54 UTC | 741 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 72 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,28 +184,28 @@ Last dashboard update: Apr 30, 2026, 11:56 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake in progress | Apr 30, 2026, 11:56 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25163913827) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | Apr 30, 2026, 11:56 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25163871634) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 11:53 UTC. Latest close: Apr 30, 2026, 11:54 UTC. Latest comment sync: Apr 30, 2026, 11:54 UTC.
+Latest review: Apr 30, 2026, 11:49 UTC. Latest close: Apr 30, 2026, 11:54 UTC. Latest comment sync: Apr 30, 2026, 11:52 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 6 | 0 | 6 | 0 | 4 | 348 | 0 |
-| Last hour | 531 | 8 | 523 | 6 | 23 | 745 | 0 |
-| Last 24 hours | 5543 | 296 | 5247 | 30 | 696 | 1641 | 21 |
+| Last 15 minutes | 4 | 0 | 4 | 0 | 4 | 341 | 0 |
+| Last hour | 530 | 8 | 522 | 6 | 23 | 741 | 0 |
+| Last 24 hours | 5543 | 296 | 5247 | 30 | 696 | 1638 | 21 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#61089](https://github.com/openclaw/openclaw/pull/61089) | fix (web-ui): prevent Node-only modules leaking into browser bundle. | already implemented on main | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/61089.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61089.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59897](https://github.com/openclaw/openclaw/pull/59897) | fix(amazon-bedrock): enable assistant-first ordering fix for non-Claude models [AI-assisted] | already implemented on main | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/59897.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59897.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59786](https://github.com/openclaw/openclaw/issues/59786) | Feature: subcommand-level exec allowlisting | duplicate or superseded | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/59786.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59786.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#43286](https://github.com/openclaw/openclaw/issues/43286) | Add session.threadIsolation: false to allow shared session across Slack threads | duplicate or superseded | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/43286.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/43286.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#61089](https://github.com/openclaw/openclaw/pull/61089) | fix (web-ui): prevent Node-only modules leaking into browser bundle. | closed externally after proposed_close | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/61089.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61089.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59897](https://github.com/openclaw/openclaw/pull/59897) | fix(amazon-bedrock): enable assistant-first ordering fix for non-Claude models [AI-assisted] | closed externally after proposed_close | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/59897.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59897.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59786](https://github.com/openclaw/openclaw/issues/59786) | Feature: subcommand-level exec allowlisting | closed externally after proposed_close | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/59786.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59786.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#43286](https://github.com/openclaw/openclaw/issues/43286) | Add session.threadIsolation: false to allow shared session across Slack threads | closed externally after proposed_close | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/43286.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/43286.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#64028](https://github.com/openclaw/openclaw/pull/64028) | feat(config): add session.reset.mode=off to disable daily session resets | closed externally after review | Apr 30, 2026, 11:30 UTC | [records/openclaw-openclaw/closed/64028.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64028.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#59312](https://github.com/openclaw/openclaw/pull/59312) | feat(plugins): add executeTool(toolName, params) to OpenClawPluginApi | closed externally after review | Apr 30, 2026, 11:30 UTC | [records/openclaw-openclaw/closed/59312.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59312.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58791](https://github.com/openclaw/openclaw/pull/58791) | feat(plugins): add registerStreamFnWrapper for per-call stream wrapping | closed externally after review | Apr 30, 2026, 11:30 UTC | [records/openclaw-openclaw/closed/58791.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58791.md) |
@@ -269,10 +269,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 11:56 UTC
 
-State: Hot intake in progress
+State: Review in progress
 
-Hot intake planned 20 items across 20 shards. Capacity is 20 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25163913827](https://github.com/openclaw/clawsweeper/actions/runs/25163913827)
+Planned 500 items across 100 shards. Capacity is 500 items. Review shards are starting; publish will merge artifacts when they finish.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25163871634](https://github.com/openclaw/clawsweeper/actions/runs/25163871634)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25163913827](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 61/1218 current (1157 due, 5%) |
-| Hourly hot item cadence (<7d) | 61/1218 current (1157 due, 5%) |
+| Hourly cadence coverage | 60/1218 current (1158 due, 4.9%) |
+| Hourly hot item cadence (<7d) | 60/1218 current (1158 due, 4.9%) |
 | Daily cadence coverage | 2235/3549 current (1314 due, 63%) |
 | Daily PR cadence | 1490/2468 current (978 due, 60.4%) |
 | Daily new issue cadence (<30d) | 745/1081 current (336 due, 68.9%) |
 | Weekly older issue cadence | 1783/1788 current (5 due, 99.7%) |
-| Due now by cadence | 2842 |
+| Due now by cadence | 2843 |
 
 ### Audit Health
 
@@ -347,22 +347,22 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 11:53 UTC. Latest close: Apr 30, 2026, 11:54 UTC. Latest comment sync: Apr 30, 2026, 11:54 UTC.
+Latest review: Apr 30, 2026, 11:49 UTC. Latest close: Apr 30, 2026, 11:54 UTC. Latest comment sync: Apr 30, 2026, 11:52 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 6 | 0 | 6 | 0 | 4 | 348 | 0 |
-| Last hour | 531 | 8 | 523 | 6 | 23 | 745 | 0 |
-| Last 24 hours | 4615 | 296 | 4319 | 17 | 693 | 1238 | 21 |
+| Last 15 minutes | 4 | 0 | 4 | 0 | 4 | 341 | 0 |
+| Last hour | 530 | 8 | 522 | 6 | 23 | 741 | 0 |
+| Last 24 hours | 4615 | 296 | 4319 | 17 | 693 | 1235 | 21 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
-| [#61089](https://github.com/openclaw/openclaw/pull/61089) | fix (web-ui): prevent Node-only modules leaking into browser bundle. | already implemented on main | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/61089.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61089.md) |
-| [#59897](https://github.com/openclaw/openclaw/pull/59897) | fix(amazon-bedrock): enable assistant-first ordering fix for non-Claude models [AI-assisted] | already implemented on main | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/59897.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59897.md) |
-| [#59786](https://github.com/openclaw/openclaw/issues/59786) | Feature: subcommand-level exec allowlisting | duplicate or superseded | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/59786.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59786.md) |
-| [#43286](https://github.com/openclaw/openclaw/issues/43286) | Add session.threadIsolation: false to allow shared session across Slack threads | duplicate or superseded | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/43286.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/43286.md) |
+| [#61089](https://github.com/openclaw/openclaw/pull/61089) | fix (web-ui): prevent Node-only modules leaking into browser bundle. | closed externally after proposed_close | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/61089.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/61089.md) |
+| [#59897](https://github.com/openclaw/openclaw/pull/59897) | fix(amazon-bedrock): enable assistant-first ordering fix for non-Claude models [AI-assisted] | closed externally after proposed_close | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/59897.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59897.md) |
+| [#59786](https://github.com/openclaw/openclaw/issues/59786) | Feature: subcommand-level exec allowlisting | closed externally after proposed_close | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/59786.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59786.md) |
+| [#43286](https://github.com/openclaw/openclaw/issues/43286) | Add session.threadIsolation: false to allow shared session across Slack threads | closed externally after proposed_close | Apr 30, 2026, 11:54 UTC | [records/openclaw-openclaw/closed/43286.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/43286.md) |
 | [#64028](https://github.com/openclaw/openclaw/pull/64028) | feat(config): add session.reset.mode=off to disable daily session resets | closed externally after review | Apr 30, 2026, 11:30 UTC | [records/openclaw-openclaw/closed/64028.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/64028.md) |
 | [#59312](https://github.com/openclaw/openclaw/pull/59312) | feat(plugins): add executeTool(toolName, params) to OpenClawPluginApi | closed externally after review | Apr 30, 2026, 11:30 UTC | [records/openclaw-openclaw/closed/59312.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/59312.md) |
 | [#58791](https://github.com/openclaw/openclaw/pull/58791) | feat(plugins): add registerStreamFnWrapper for per-call stream wrapping | closed externally after review | Apr 30, 2026, 11:30 UTC | [records/openclaw-openclaw/closed/58791.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58791.md) |
