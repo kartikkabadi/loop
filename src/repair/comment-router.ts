@@ -30,6 +30,7 @@ import {
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
+  repairableCheckBlockers,
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderResponse,
@@ -551,6 +552,37 @@ function classifyAutomergePass(
     label,
     status: execute ? "pending" : "planned",
   }));
+  const failedCheckBlockers = repairableCheckBlockers(command.target?.checks);
+  if (failedCheckBlockers.length > 0) {
+    const alreadyPlanned = autoRepairAlreadyPlanned(command);
+    if (alreadyPlanned) return { ...command, status: "skipped", reason: alreadyPlanned };
+    const repairJobPath = command.target?.job_path ?? command.target?.automerge_job_path;
+    return {
+      ...command,
+      repair_reason: `${command.repair_reason ?? "structured ClawSweeper verdict: pass"}; current checks are failing: ${failedCheckBlockers.slice(0, 5).join(", ")}`,
+      status: "ready",
+      actions: [
+        ...pauseLabelActions,
+        ...(command.target?.job_path
+          ? []
+          : [
+              {
+                action: "ensure_automerge_job",
+                job_path: repairJobPath,
+                status: execute ? "pending" : "planned",
+              },
+            ]),
+        {
+          action: "dispatch_repair",
+          workflow,
+          job_path: repairJobPath,
+          mode: command.target?.mode,
+          status: execute ? "pending" : "planned",
+        },
+        { action: "comment", status: execute ? "pending" : "planned" },
+      ],
+    };
+  }
   return {
     ...command,
     status: "ready",
@@ -703,8 +735,11 @@ function latestAutomergeResumeAt(command: LooseRecord) {
 
 function executeCommand(command: LooseRecord) {
   let dispatched = null;
+  const shouldDispatchRepair = command.actions?.some(
+    (action: JsonValue) => action.action === "dispatch_repair",
+  );
   if (!command.trusted_bot) reactToComment(command, "eyes");
-  if (REPAIR_INTENTS.has(command.intent) && canRepairPullTarget(command.target)) {
+  if (shouldDispatchRepair && canRepairPullTarget(command.target)) {
     const job = ensureAutomergeJob(command);
     if (job.status_detail === "written") {
       command.actions = command.actions.map((action: JsonValue) => {
@@ -724,19 +759,22 @@ function executeCommand(command: LooseRecord) {
       command.status = "waiting";
       return;
     }
-    dispatched = dispatchRepair(command);
-    if (!command.trusted_bot) {
-      for (const pausedLabel of pauseLabelsOn(command.target)) {
-        ghBestEffort([
-          "issue",
-          "edit",
-          String(command.issue_number),
-          "--repo",
-          command.repo,
-          "--remove-label",
-          pausedLabel,
-        ]);
-      }
+    const repair = dispatchRepair(command);
+    dispatched = REPAIR_INTENTS.has(command.intent) ? repair : { repair };
+    const labelsToRemove = command.actions
+      .filter((action: JsonValue) => action.action === "remove_label")
+      .map((action: JsonValue) => String(action.label ?? ""))
+      .filter(Boolean);
+    for (const pausedLabel of labelsToRemove) {
+      ghBestEffort([
+        "issue",
+        "edit",
+        String(command.issue_number),
+        "--repo",
+        command.repo,
+        "--remove-label",
+        pausedLabel,
+      ]);
     }
     command.actions = command.actions.map((action: JsonValue) => {
       if (action.action === "ensure_automerge_job")
@@ -839,7 +877,7 @@ function executeCommand(command: LooseRecord) {
         : action,
     );
   }
-  if (MERGE_INTENTS.has(command.intent) && command.issue_number) {
+  if (MERGE_INTENTS.has(command.intent) && !shouldDispatchRepair && command.issue_number) {
     const pauseLabels = command.actions
       .filter((action: JsonValue) => action.action === "remove_label")
       .map((action: JsonValue) => String(action.label ?? ""))

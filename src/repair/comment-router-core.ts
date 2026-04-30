@@ -14,6 +14,12 @@ export const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
 export const MERGE_READY_LABEL = "clawsweeper:merge-ready";
 export const DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS = ["admin", "maintain", "write"];
 const CLAWSWEEPER_REPLY_BADGE = "🦞🦞";
+const REPAIRABLE_CHECK_BLOCKER_CONCLUSIONS = new Set([
+  "ACTION_REQUIRED",
+  "ERROR",
+  "FAILURE",
+  "TIMED_OUT",
+]);
 
 export function repoSlug(repo: string) {
   return String(repo ?? "")
@@ -146,6 +152,17 @@ export function automergeGateBlockReason(env: LooseRecord = process.env) {
   return "";
 }
 
+export function repairableCheckBlockers(checks: LooseRecord = {}) {
+  return (checks.blockers ?? []).filter((blocker: JsonValue) => {
+    const conclusion = String(blocker ?? "")
+      .split(":")
+      .pop()
+      ?.trim()
+      .toUpperCase();
+    return conclusion ? REPAIRABLE_CHECK_BLOCKER_CONCLUSIONS.has(conclusion) : false;
+  });
+}
+
 export function isMaintainerCommandAllowed({
   authorAssociation,
   repositoryPermission = null,
@@ -272,11 +289,14 @@ function isAutoRepairDispatchForPr(
   repo: unknown,
   issueNumber: unknown,
 ) {
+  const hasRepairDispatchAction = (entry as LooseRecord).actions?.some(
+    (action: JsonValue) => action?.action === "dispatch_repair" && action?.status === "executed",
+  );
   return (
     entry.repo === repo &&
     Number(entry.issue_number) === Number(issueNumber) &&
-    entry.intent === "clawsweeper_auto_repair" &&
-    entry.status === "executed"
+    entry.status === "executed" &&
+    (entry.intent === "clawsweeper_auto_repair" || hasRepairDispatchAction)
   );
 }
 
@@ -497,6 +517,20 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     ].join("\n");
   }
   if (command.intent === "clawsweeper_auto_merge") {
+    if (dispatched?.repair) {
+      const workflow = dispatchedWorkflowLink(dispatched.repair);
+      return [
+        marker,
+        "Thanks, ClawSweeper. ClawSweeper saw the passing review, but current checks are failing.",
+        "",
+        `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
+        `Feedback: ${command.repair_reason ?? "ClawSweeper reported a passing review."}`,
+        `Action: dispatched ${workflow} for \`${dispatched.repair.job_path}\` in \`${dispatched.repair.mode}\` mode.`,
+        `Model: \`${dispatched.repair.model}\``,
+        "",
+        "I will update this PR branch, or open a safe credited replacement, if the repair worker finds a narrow CI fix.",
+      ].join("\n");
+    }
     return [
       marker,
       dispatched?.merge?.status === "executed"

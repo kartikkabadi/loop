@@ -17,6 +17,7 @@ import {
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
+  repairableCheckBlockers,
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderResponse,
@@ -449,6 +450,32 @@ test("auto repair cap blocks duplicate head dispatches in the same review round"
   );
 });
 
+test("auto repair cap counts pass-marker CI repair dispatches", () => {
+  const entries = [
+    {
+      repo: "openclaw/openclaw",
+      issue_number: 74506,
+      intent: "clawsweeper_auto_merge",
+      status: "executed",
+      target: { head_sha: "same-head" },
+      actions: [{ action: "dispatch_repair", status: "executed" }],
+      comment_updated_at: "2026-04-30T01:12:00Z",
+    },
+  ];
+
+  assert.equal(
+    autoRepairBlockReason({
+      entries,
+      repo: "openclaw/openclaw",
+      issueNumber: 74506,
+      headSha: "same-head",
+      maxRepairsPerPr: 10,
+      maxRepairsPerHead: 1,
+    }),
+    "ClawSweeper auto repair already dispatched 1 time(s) for this PR head",
+  );
+});
+
 test("auto repair cap resets after a fresh maintainer automerge command", () => {
   const entries = [
     {
@@ -721,6 +748,32 @@ test("renderResponse reports automerge repair dispatches", () => {
   assert.doesNotMatch(body, /did not dispatch/);
 });
 
+test("renderResponse reports automerge pass with failing checks as repair dispatch", () => {
+  const body = renderResponse(
+    {
+      comment_id: "788",
+      intent: "clawsweeper_auto_merge",
+      trusted_bot_author: "clawsweeper[bot]",
+      repair_reason:
+        "structured ClawSweeper verdict: pass; current checks are failing: checks-node-core:FAILURE",
+      target: { head_sha: "abc788" },
+    },
+    {
+      repair: {
+        workflow: "repair cluster worker",
+        job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
+        mode: "autonomous",
+        model: "gpt-5.5",
+      },
+    },
+  );
+
+  assert.match(body, /current checks are failing/);
+  assert.match(body, /dispatched `repair cluster worker`/);
+  assert.match(body, /automerge-openclaw-openclaw-74506/);
+  assert.doesNotMatch(body, /did not merge yet/);
+});
+
 test("renderResponse reports explicit human-review pause actions", () => {
   const body = renderResponse(
     {
@@ -796,6 +849,21 @@ test("repair intent set documents executable repair commands", () => {
 
 test("merge intent set documents ClawSweeper pass automerge", () => {
   assert.deepEqual([...MERGE_INTENTS], ["clawsweeper_auto_merge", "maintainer_approve_automerge"]);
+});
+
+test("repairable check blockers only include completed failures", () => {
+  assert.deepEqual(
+    repairableCheckBlockers({
+      blockers: [
+        "checks-node-core:FAILURE",
+        "checks-node-channels:TIMED_OUT",
+        "checks-node-docs:IN_PROGRESS",
+        "auto-response:CANCELLED",
+        "label:SKIPPED",
+      ],
+    }),
+    ["checks-node-core:FAILURE", "checks-node-channels:TIMED_OUT"],
+  );
 });
 
 test("autoclose intent set documents destructive maintainer commands", () => {
