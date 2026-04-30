@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 08:23 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 08:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25155151672) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 08:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25155151672) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -195,7 +195,7 @@ Latest review: Apr 30, 2026, 08:22 UTC. Latest close: Apr 30, 2026, 08:23 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 13 | 0 | 13 | 0 | 3 | 30 | 1 |
-| Last hour | 430 | 15 | 415 | 3 | 23 | 508 | 4 |
+| Last hour | 414 | 15 | 399 | 3 | 23 | 508 | 4 |
 | Last 24 hours | 5183 | 274 | 4909 | 30 | 751 | 1833 | 25 |
 
 ### Recently Closed Across Repos
@@ -269,9 +269,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 08:23 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 2. Total fresh closes in this run: 2/2. Result records in checkpoint: 2, including durable review comment syncs.
+Apply/comment-sync run finished with 2 fresh closes out of requested limit 2. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25155151672](https://github.com/openclaw/clawsweeper/actions/runs/25155151672)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -352,7 +352,7 @@ Latest review: Apr 30, 2026, 08:22 UTC. Latest close: Apr 30, 2026, 08:23 UTC. L
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Last 15 minutes | 13 | 0 | 13 | 0 | 3 | 30 | 1 |
-| Last hour | 430 | 15 | 415 | 3 | 23 | 508 | 4 |
+| Last hour | 414 | 15 | 399 | 3 | 23 | 508 | 4 |
 | Last 24 hours | 4253 | 274 | 3979 | 17 | 747 | 1429 | 25 |
 
 #### Recently Closed
