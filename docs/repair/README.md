@@ -45,44 +45,47 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 03:30 UTC
+Last dashboard update: Apr 30, 2026, 04:09 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
 
-Scope: 299 active latest cluster reports. 1 policy-archived cluster(s) are excluded from health stats; run attempts are tracked as audit history only.
+Scope: 302 active latest cluster reports. 1 policy-archived cluster(s) are excluded from health stats; run attempts are tracked as audit history only.
 
 | Metric | Count | Rate |
 | --- | ---: | ---: |
-| Latest clusters reviewed | 299 | 100% |
+| Latest clusters reviewed | 302 | 100% |
 | Policy-archived clusters | 1 | audit |
-| Clean completed clusters | 101 | 33.8% |
-| Needs-human clusters | 40 | 13.4% |
-| Latest successful clusters | 272 | 91.0% |
+| Clean completed clusters | 101 | 33.4% |
+| Needs-human clusters | 41 | 13.6% |
+| Latest successful clusters | 275 | 91.1% |
 | Latest failed clusters | 6 | 2.0% |
 | Latest cancelled clusters | 0 | 0.0% |
-| Run attempts archived | 555 | audit |
-| Fix action attempts | 218 | audit |
-| Fix actions executed | 3 | 1.4% |
-| Fix actions failed | 36 | 16.5% |
-| Fix actions blocked | 58 | 26.6% |
-| Latest clusters with fix failures | 49 | 16.4% |
-| Distinct PRs touched | 867 | 100% |
-| Open PRs tracked | 272 | 31.4% |
-| Closed unmerged PRs tracked | 479 | 55.2% |
-| Completed close actions | 30 | 9.4% |
+| Run attempts archived | 558 | audit |
+| Fix action attempts | 221 | audit |
+| Fix actions executed | 4 | 1.8% |
+| Fix actions failed | 36 | 16.3% |
+| Fix actions blocked | 58 | 26.2% |
+| Latest clusters with fix failures | 49 | 16.2% |
+| Distinct PRs touched | 870 | 100% |
+| Open PRs tracked | 272 | 31.3% |
+| Closed unmerged PRs tracked | 481 | 55.3% |
+| Completed close actions | 30 | 9.3% |
 | Completed merge actions | 23 | 7.2% |
 | Duplicate closes | 22 | 73.3% |
 | Superseded closes | 0 | 0.0% |
 | Fixed-by-candidate closes | 0 | 0.0% |
 | Low-signal PR closes | 0 | 0.0% |
-| Blocked mutation attempts | 146 | 45.8% |
-| Skipped mutation attempts | 120 | 37.6% |
+| Blocked mutation attempts | 148 | 46.1% |
+| Skipped mutation attempts | 120 | 37.4% |
 
 ### Clusters Needing Inspection
 
 | Cluster | State | Source job | Reason | Report | Run |
 | --- | --- | --- | --- | --- | --- |
+| [automerge-openclaw-openclaw-74126](results/openclaw/automerge-openclaw-openclaw-74126.md) | needs human | jobs/openclaw/inbox/automerge-openclaw-openclaw-74126.md | #74126: maintainer must finish the Clownfish/ClawSweeper live automerge adoption check and close the empty smoke PR manually without merg... | [report](results/openclaw/automerge-openclaw-openclaw-74126.md) | [25146727705](https://github.com/openclaw/clawsweeper/actions/runs/25146727705) |
+| [clawsweeper-commit-openclaw-openclaw-bbf932fd7d69](results/openclaw/clawsweeper-commit-openclaw-openclaw-bbf932fd7d69.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-bbf932fd7d69.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-bbf932fd7d69.md) | [25145746019](https://github.com/openclaw/clawsweeper/actions/runs/25145746019) |
+| [clawsweeper-commit-openclaw-openclaw-6877360218c9](results/openclaw/clawsweeper-commit-openclaw-openclaw-6877360218c9.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-6877360218c9.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-6877360218c9.md) | [25145621234](https://github.com/openclaw/clawsweeper/actions/runs/25145621234) |
 | [automerge-openclaw-openclaw-74134](results/openclaw/automerge-openclaw-openclaw-74134.md) | apply blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-74134.md | job does not allow merge | [report](results/openclaw/automerge-openclaw-openclaw-74134.md) | [25145498736](https://github.com/openclaw/clawsweeper/actions/runs/25145498736) |
 | [clawsweeper-commit-openclaw-openclaw-09310931cf94](results/openclaw/clawsweeper-commit-openclaw-openclaw-09310931cf94.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-09310931cf94.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-09310931cf94.md) | [25145620497](https://github.com/openclaw/clawsweeper/actions/runs/25145620497) |
 | [clawsweeper-commit-openclaw-openclaw-db1832355101](results/openclaw/clawsweeper-commit-openclaw-openclaw-db1832355101.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-db1832355101.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-db1832355101.md) | [25145621962](https://github.com/openclaw/clawsweeper/actions/runs/25145621962) |
@@ -105,9 +108,6 @@ Scope: 299 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | [clawsweeper-commit-openclaw-openclaw-70ddeef0e8cd](results/openclaw/clawsweeper-commit-openclaw-openclaw-70ddeef0e8cd.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-70ddeef0e8cd.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-70ddeef0e8cd.md) | [25140829821](https://github.com/openclaw/clawsweeper/actions/runs/25140829821) |
 | [automerge-openclaw-openclaw-74528](results/openclaw/automerge-openclaw-openclaw-74528.md) | fix blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-74528.md | Codex /review failed: structured output was not written to replacement-codex-review-1.json; stdout={"type":"thread.started","thread_id":"... | [report](results/openclaw/automerge-openclaw-openclaw-74528.md) | [25139586999](https://github.com/openclaw/clawsweeper/actions/runs/25139586999) |
 | [clawsweeper-commit-openclaw-openclaw-9307affe595f](results/openclaw/clawsweeper-commit-openclaw-openclaw-9307affe595f.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-9307affe595f.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-9307affe595f.md) | [25139000471](https://github.com/openclaw/clawsweeper/actions/runs/25139000471) |
-| [clawsweeper-commit-openclaw-openclaw-dec5de8a2cda](results/openclaw/clawsweeper-commit-openclaw-openclaw-dec5de8a2cda.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-dec5de8a2cda.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-dec5de8a2cda.md) | [25139002791](https://github.com/openclaw/clawsweeper/actions/runs/25139002791) |
-| [clawsweeper-commit-openclaw-openclaw-78f347036848](results/openclaw/clawsweeper-commit-openclaw-openclaw-78f347036848.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-78f347036848.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-78f347036848.md) | [25138999673](https://github.com/openclaw/clawsweeper/actions/runs/25138999673) |
-| [clawsweeper-commit-openclaw-openclaw-1db2e63519e1](results/openclaw/clawsweeper-commit-openclaw-openclaw-1db2e63519e1.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-1db2e63519e1.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-1db2e63519e1.md) | [25138997932](https://github.com/openclaw/clawsweeper/actions/runs/25138997932) |
 
 ### Fix Failure Queue
 
@@ -144,7 +144,7 @@ Scope: 299 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Reason | Latest count | Example cluster |
 | --- | ---: | --- |
 | action status is blocked | 89 | [ghcrawl-156636-autonomous-smoke](results/openclaw/ghcrawl-156636-autonomous-smoke.md) |
-| job does not allow merge | 43 | [automerge-openclaw-openclaw-74134](results/openclaw/automerge-openclaw-openclaw-74134.md) |
+| job does not allow merge | 45 | [clawsweeper-commit-openclaw-openclaw-bbf932fd7d69](results/openclaw/clawsweeper-commit-openclaw-openclaw-bbf932fd7d69.md) |
 | close requires ClawSweeper Repair fix PR opened/pushed or merge executed first | 13 | [ghcrawl-156593-autonomous-smoke](results/openclaw/ghcrawl-156593-autonomous-smoke.md) |
 | merge requires CLAWSWEEPER_ALLOW_MERGE=1; labeled for human review | 10 | [ghcrawl-156679-autonomous-smoke](results/openclaw/ghcrawl-156679-autonomous-smoke.md) |
 | merge state status is UNSTABLE | 10 | [ghcrawl-156647-autonomous-smoke](results/openclaw/ghcrawl-156647-autonomous-smoke.md) |
@@ -163,14 +163,15 @@ Scope: 299 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | PR | Title | Cluster | Branch | Blockers | Next action |
 | --- | --- | --- | --- | --- | --- |
-| [#74792](https://github.com/openclaw/openclaw/pull/74792) | fix: provider-based bundled runtime dependency selection regression | clawsweeper-commit-openclaw-openclaw-09310931cf94 | clawsweeper/clawsweeper-commit-openclaw-openclaw-09310931cf94 | needs_merge_state:UNSTABLE, needs_checks:CodeQL / Security High (channel-runtime-boundary):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS;... | repair failing checks or document unrelated main flake with touched-surface proof |
-| [#74789](https://github.com/openclaw/openclaw/pull/74789) | fix(ci): committed Plugin SDK API baseline hash is not reproducible from the committed source... | clawsweeper-commit-openclaw-openclaw-db1832355101 | clawsweeper/clawsweeper-commit-openclaw-openclaw-db1832355101 | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
-| [#74770](https://github.com/openclaw/openclaw/pull/74770) | fix: package entry-file validation regression | clawsweeper-commit-openclaw-openclaw-df4faac71fd9 | clawsweeper/clawsweeper-commit-openclaw-openclaw-df4faac71fd9 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74805](https://github.com/openclaw/openclaw/pull/74805) | fix: production/test-runtime contract mismatch in the observe-only prepared-turn path | clawsweeper-commit-openclaw-openclaw-bbf932fd7d69 | clawsweeper/clawsweeper-commit-openclaw-openclaw-bbf932fd7d69 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74795](https://github.com/openclaw/openclaw/pull/74795) | fix: fixed condition order prefers a top-level require export before a node condition, which... | clawsweeper-commit-openclaw-openclaw-6877360218c9 | clawsweeper/clawsweeper-commit-openclaw-openclaw-6877360218c9 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74792](https://github.com/openclaw/openclaw/pull/74792) | fix: provider-based bundled runtime dependency selection regression | clawsweeper-commit-openclaw-openclaw-09310931cf94 | clawsweeper/clawsweeper-commit-openclaw-openclaw-09310931cf94 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74789](https://github.com/openclaw/openclaw/pull/74789) | fix(ci): committed Plugin SDK API baseline hash is not reproducible from the committed source... | clawsweeper-commit-openclaw-openclaw-db1832355101 | clawsweeper/clawsweeper-commit-openclaw-openclaw-db1832355101 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
+| [#74770](https://github.com/openclaw/openclaw/pull/74770) | fix: package entry-file validation regression | clawsweeper-commit-openclaw-openclaw-df4faac71fd9 | clawsweeper/clawsweeper-commit-openclaw-openclaw-df4faac71fd9 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
 | [#74764](https://github.com/openclaw/openclaw/pull/74764) | fix: commit exposes max in the Bedrock Opus 4.7 thinking profile, but the current runtime pat... | clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0 | clawsweeper/clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74762](https://github.com/openclaw/openclaw/pull/74762) | fix: gateway model catalog cache regression | clawsweeper-commit-openclaw-openclaw-6421e1f36a3c | clawsweeper/clawsweeper-commit-openclaw-openclaw-6421e1f36a3c | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74755](https://github.com/openclaw/openclaw/pull/74755) | fix: Slack select value cap likely regression | clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59 | clawsweeper/clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74746](https://github.com/openclaw/openclaw/pull/74746) | fix(ci): committed Plugin SDK API baseline hash does not match the public SDK surface generat... | clawsweeper-commit-openclaw-openclaw-02ebac6250bf | clawsweeper/clawsweeper-commit-openclaw-openclaw-02ebac6250bf | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
-| [#74742](https://github.com/openclaw/openclaw/pull/74742) | fix(file-transfer): require canonical node policy authorization | automerge-openclaw-openclaw-74134 | clawsweeper/automerge-openclaw-openclaw-74134 | needs_merge_state:UNSTABLE, needs_checks:CodeQL / Security High (core-auth-secrets):IN_PROGRESS; Parity gate / Run the OpenAI / Opus 4.6 ... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74714](https://github.com/openclaw/openclaw/pull/74714) | fix: Google Vertex manifest evidence accepts the Windows %APPDATA% ADC path, but the Google V... | clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a | clawsweeper/clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74703](https://github.com/openclaw/openclaw/pull/74703) | fix: Windows-specific reliability gap in the new timeout cleanup path | clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa | clawsweeper/clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-core-support-boundary:FAILURE; CI / checks-node-core:FAILURE, needs_merge_prefl... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74699](https://github.com/openclaw/openclaw/pull/74699) | fix: Codex app-server steering path regression | clawsweeper-commit-openclaw-openclaw-30a2b3049ae0 | clawsweeper/clawsweeper-commit-openclaw-openclaw-30a2b3049ae0 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
