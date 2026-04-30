@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 import test from "node:test";
 
 import {
+  commitMessageForPublishedPaths,
   publishMainCommit,
   setTokenOrigin,
   uniqueNonEmpty,
@@ -16,6 +17,21 @@ test("uniqueNonEmpty trims, drops blanks, and deduplicates paths", () => {
     "jobs",
     "results",
   ]);
+});
+
+test("commitMessageForPublishedPaths skips CI for generated-only publishes", () => {
+  assert.equal(
+    commitMessageForPublishedPaths("chore: update sweep dashboard", ["README.md", "records"]),
+    "chore: update sweep dashboard\n\n[skip ci]",
+  );
+  assert.equal(
+    commitMessageForPublishedPaths("chore: publish\n\n[skip ci]", ["results"]),
+    "chore: publish\n\n[skip ci]",
+  );
+  assert.equal(
+    commitMessageForPublishedPaths("fix: update scheduler", ["src/repair/git-publish.ts"]),
+    "fix: update scheduler",
+  );
 });
 
 test("publishMainCommit commits selected paths and restores volatile tracked files", () => {
@@ -56,6 +72,10 @@ test("publishMainCommit commits selected paths and restores volatile tracked fil
   assert.equal(
     run("git", ["--git-dir", origin, "show", "main:docs/volatile.txt"], root),
     "before\n",
+  );
+  assert.equal(
+    run("git", ["--git-dir", origin, "log", "-1", "--format=%B", "main"], root),
+    "chore: publish ledger\n\n[skip ci]\n\n",
   );
 });
 

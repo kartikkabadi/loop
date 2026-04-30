@@ -26,6 +26,18 @@ export type GitRunOptions = {
 
 export type PublishResult = "committed" | "unchanged";
 
+const GENERATED_PUBLISH_PATHS = [
+  "README.md",
+  "apply-report.json",
+  "repair-apply-report.json",
+  "docs/repair/README.md",
+  "jobs",
+  "records",
+  "results",
+] as const;
+const SKIP_CI_DIRECTIVE_PATTERN =
+  /\[(?:skip ci|ci skip|no ci|skip actions|actions skip)\]|^skip-checks:\s*true$/im;
+
 export function configureGitUser(): void {
   runGit(["config", "user.name", process.env.CLAWSWEEPER_GIT_USER_NAME || "github-actions[bot]"]);
   runGit([
@@ -151,7 +163,8 @@ export function publishMainCommit(options: GitPublishOptions): PublishResult {
     return "unchanged";
   }
 
-  runGit(["commit", "-m", options.message]);
+  const commitMessage = commitMessageForPublishedPaths(options.message, options.paths);
+  runGit(["commit", "-m", commitMessage]);
   const sourceCommit = runGit(["rev-parse", "HEAD"]).trim();
   restoreWorktree(options.restorePaths ?? []);
 
@@ -160,7 +173,7 @@ export function publishMainCommit(options: GitPublishOptions): PublishResult {
     const rebuildResult = rebuildPublishCommit({
       remote,
       branch,
-      message: options.message,
+      message: commitMessage,
       paths: options.paths,
       sourceCommit,
     });
@@ -248,6 +261,25 @@ export function hardResetToRemoteMain(remote = "origin", branch = "main"): void 
 
 export function uniqueNonEmpty(values: readonly string[]): string[] {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+}
+
+export function commitMessageForPublishedPaths(message: string, paths: readonly string[]): string {
+  if (SKIP_CI_DIRECTIVE_PATTERN.test(message) || !onlyGeneratedPublishPaths(paths)) {
+    return message;
+  }
+  return `${message.trimEnd()}\n\n[skip ci]`;
+}
+
+function onlyGeneratedPublishPaths(paths: readonly string[]): boolean {
+  const uniquePaths = uniqueNonEmpty(paths);
+  return (
+    uniquePaths.length > 0 &&
+    uniquePaths.every((path) =>
+      GENERATED_PUBLISH_PATHS.some(
+        (generatedPath) => path === generatedPath || path.startsWith(`${generatedPath}/`),
+      ),
+    )
+  );
 }
 
 function positiveInt(value: number | undefined, fallback: number): number {

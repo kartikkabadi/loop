@@ -8,6 +8,7 @@ import {
   resetEventSnapshot,
 } from "./event-record-store.js";
 import {
+  commitMessageForPublishedPaths,
   configureGitUser,
   hardResetToRemoteMain,
   hasStagedChanges,
@@ -155,10 +156,14 @@ function publishSnapshot({
       return true;
     }
 
+    const commitPaths = [paths.itemRecord, paths.closedRecord];
     runGit([
       "commit",
       "-m",
-      `chore: apply event sweep result for ${paths.targetSlug}#${options.itemNumber}`,
+      commitMessageForPublishedPaths(
+        `chore: apply event sweep result for ${paths.targetSlug}#${options.itemNumber}`,
+        commitPaths,
+      ),
     ]);
     if (!pushCommit({ pushAttempts: 3 })) return false;
     summary();
