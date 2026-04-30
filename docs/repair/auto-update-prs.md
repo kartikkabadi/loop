@@ -239,13 +239,19 @@ ClawSweeper reviews.
 
 Security-sensitive reports stay out of this lane. Those should be routed to the
 central OpenClaw security process rather than auto-repaired from review
-comments. The automerge planner does not infer security status from prose; it
-uses explicit security labels or structured ClawSweeper security markers such
-as:
+comments unless the PR itself has an explicit maintainer `clawsweeper:autofix`
+or `clawsweeper:automerge` opt-in. The automerge planner does not infer
+security status from prose; it uses explicit security labels or structured
+ClawSweeper security markers such as:
 
 ```html
 <!-- clawsweeper-security:security-sensitive item=<pr> sha=<head-sha> -->
 ```
+
+Opted-in security-sensitive PRs may receive bounded repair commits, including
+linked replacement PRs that carry the same automation label. Merge still
+requires a later clean exact-head ClawSweeper review and the normal automerge
+gates.
 
 ## Implementation Map
 

@@ -106,3 +106,150 @@ test("plan-cluster allows security repair for adopted PR autofix jobs", () => {
   );
   assert.equal(fixArtifact.item_matrix[0].security_repair_allowed, true);
 });
+
+test("plan-cluster allows security repair for linked PRs with automation opt-in labels", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-plan-linked-security-"));
+  const binDir = path.join(tmp, "bin");
+  const jobPath = path.join(tmp, "job.md");
+  const runDir = path.join(tmp, "run");
+  fs.mkdirSync(binDir);
+  fs.writeFileSync(path.join(binDir, "gh"), fakeGhScript(), { mode: 0o755 });
+
+  fs.writeFileSync(
+    jobPath,
+    [
+      "---",
+      "repo: openclaw/openclaw",
+      "cluster_id: automerge-openclaw-openclaw-74134",
+      "mode: autonomous",
+      "allowed_actions:",
+      "  - comment",
+      "  - fix",
+      "  - raise_pr",
+      "blocked_actions:",
+      "  - close",
+      "  - merge",
+      "source: pr_automerge",
+      "canonical:",
+      "  - #74134",
+      "candidates:",
+      "  - #74134",
+      "cluster_refs:",
+      "  - #74134",
+      "allow_fix_pr: true",
+      "allow_merge: false",
+      "security_policy: central_security_only",
+      "security_sensitive: false",
+      "---",
+      "Maintainer opted #74134 into ClawSweeper autofix.",
+      "",
+    ].join("\n"),
+  );
+
+  execFileSync(process.execPath, ["dist/repair/plan-cluster.js", jobPath, "--run-dir", runDir], {
+    cwd: process.cwd(),
+    env: {
+      ...process.env,
+      PATH: `${binDir}${path.delimiter}${process.env.PATH}`,
+      CLAWSWEEPER_MAX_LINKED_REFS: "1",
+    },
+    stdio: "pipe",
+  });
+
+  const clusterPlan = JSON.parse(fs.readFileSync(path.join(runDir, "cluster-plan.json"), "utf8"));
+  const linkedItem = clusterPlan.items.find((item) => item.ref === "#74742");
+
+  assert.ok(linkedItem, "linked replacement PR should be hydrated");
+  assert.equal(linkedItem.security_sensitive, false);
+  assert.equal(linkedItem.security_repair_allowed, true);
+  assert.equal(linkedItem.classification_hint, "security_sensitive_fix_allowed_by_opt_in");
+  assert.deepEqual(clusterPlan.security_boundary.security_repair_allowed_items, ["#74742"]);
+});
+
+function fakeGhScript() {
+  return `#!/usr/bin/env node
+const args = process.argv.slice(2);
+function write(value) {
+  process.stdout.write(JSON.stringify(value));
+}
+function isPaged() {
+  return args.includes("--paginate") && args.includes("--slurp");
+}
+if (args[0] === "pr" && args[1] === "checks") {
+  write([]);
+  process.exit(0);
+}
+if (args[0] !== "api") {
+  console.error("unexpected gh args: " + args.join(" "));
+  process.exit(1);
+}
+const endpoint = args[1];
+if (endpoint === "repos/openclaw/openclaw/branches/main") {
+  write({ commit: { sha: "main-sha" }, _links: { html: "https://github.com/openclaw/openclaw/tree/main" } });
+  process.exit(0);
+}
+if (isPaged()) {
+  write([pagedResponse(endpoint)]);
+  process.exit(0);
+}
+if (endpoint === "repos/openclaw/openclaw/issues/74134") {
+  write(issue(74134, [], "Replacement PR: https://github.com/openclaw/openclaw/pull/74742"));
+  process.exit(0);
+}
+if (endpoint === "repos/openclaw/openclaw/issues/74742") {
+  write(issue(74742, ["clawsweeper:automerge"], "<!-- clawsweeper-security:security-sensitive item=74742 sha=e371eeac -->"));
+  process.exit(0);
+}
+if (endpoint === "repos/openclaw/openclaw/pulls/74134") {
+  write(pull(74134, "cca706a"));
+  process.exit(0);
+}
+if (endpoint === "repos/openclaw/openclaw/pulls/74742") {
+  write(pull(74742, "e371eea"));
+  process.exit(0);
+}
+console.error("unexpected endpoint: " + endpoint);
+process.exit(1);
+function issue(number, labels, body) {
+  return {
+    state: "open",
+    title: "PR #" + number,
+    html_url: "https://github.com/openclaw/openclaw/pull/" + number,
+    user: { login: "contributor" },
+    author_association: "CONTRIBUTOR",
+    labels: labels.map((name) => ({ name })),
+    created_at: "2026-04-30T00:00:00Z",
+    updated_at: "2026-04-30T00:00:00Z",
+    comments: 0,
+    body,
+    pull_request: {},
+  };
+}
+function pull(number, sha) {
+  return {
+    draft: false,
+    merged: false,
+    merged_at: null,
+    merge_commit_sha: null,
+    mergeable: number === 74742 ? false : true,
+    mergeable_state: number === 74742 ? "dirty" : "clean",
+    base: { ref: "main" },
+    head: {
+      ref: "branch-" + number,
+      sha,
+      repo: { full_name: "openclaw/openclaw", owner: { login: "openclaw" } },
+    },
+    maintainer_can_modify: true,
+    requested_reviewers: [],
+    requested_teams: [],
+    additions: 1,
+    deletions: 0,
+    changed_files: 1,
+  };
+}
+function pagedResponse(endpoint) {
+  if (endpoint.endsWith("/commits")) return [{ sha: "commit-sha", commit: { message: "test" }, author: { login: "contributor" } }];
+  return [];
+}
+`;
+}

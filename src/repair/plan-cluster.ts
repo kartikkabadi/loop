@@ -12,6 +12,7 @@ import {
   validateJob,
 } from "./lib.js";
 import { ghJson, ghPaged, ghText } from "./github-cli.js";
+import { hasSecurityRepairOptInLabel } from "./security-boundary.js";
 
 const MAX_LINKED_REFS = Number(process.env.CLAWSWEEPER_MAX_LINKED_REFS ?? 0);
 const HYDRATE_COMMENTS = process.env.CLAWSWEEPER_HYDRATE_COMMENTS === "1";
@@ -512,7 +513,7 @@ function itemSecurityRepairAllowed(item: LooseRecord, job: LooseRecord) {
   return (
     itemSecuritySignal(item) &&
     jobAllowsSecurityRepair(job) &&
-    jobTargetRefs(job).has(`#${item.number}`)
+    (jobTargetRefs(job).has(`#${item.number}`) || hasSecurityRepairOptInLabel(item.labels))
   );
 }
 

@@ -150,6 +150,9 @@ if (child.status !== 0) {
   process.exit(0);
 }
 
+if (!fs.existsSync(resultPath)) {
+  writeBlockedResult("Codex worker completed without a structured result.json artifact.");
+}
 repairResultIfNeeded();
 
 console.log(`result: ${path.relative(repoRoot(), resultPath)}`);
