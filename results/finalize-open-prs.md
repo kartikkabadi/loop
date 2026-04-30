@@ -1,19 +1,19 @@
 # Open ClawSweeper Repair PR Finalizer
 
-Generated: 2026-04-30T02:59:20.951Z
+Generated: 2026-04-30T03:13:21.420Z
 
 ## Summary
 
 | Metric | Count |
 | --- | ---: |
-| open_prs | 16 |
+| open_prs | 17 |
 | ready_candidates | 0 |
 | security_hold | 0 |
 | needs_rebase | 7 |
 | mergeability_unknown | 0 |
-| needs_checks | 8 |
+| needs_checks | 7 |
 | needs_review | 0 |
-| needs_merge_preflight | 16 |
+| needs_merge_preflight | 17 |
 | needs_result_backfill | 2 |
 
 ## Dispatch
@@ -30,8 +30,9 @@ Status: report_only
 
 | PR | Title | Cluster | Mergeable | Merge State | Checks | Blockers | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| [#74770](https://github.com/openclaw/openclaw/pull/74770) | fix: package entry-file validation regression | clawsweeper-commit-openclaw-openclaw-df4faac71fd9 | MERGEABLE | CLEAN | CANCELLED:1 SKIPPED:12 SUCCESS:73 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74764](https://github.com/openclaw/openclaw/pull/74764) | fix: commit exposes max in the Bedrock Opus 4.7 thinking profile, but the current runtime pat... | clawsweeper-commit-openclaw-openclaw-b07c7f6ab3e0 | MERGEABLE | CLEAN | CANCELLED:1 SKIPPED:12 SUCCESS:67 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
-| [#74762](https://github.com/openclaw/openclaw/pull/74762) | fix: gateway model catalog cache regression | clawsweeper-commit-openclaw-openclaw-6421e1f36a3c | MERGEABLE | UNSTABLE | CANCELLED:1 IN_PROGRESS:1 SKIPPED:11 SUCCESS:73 NEUTRAL:1; blockers:1 | needs_merge_state:UNSTABLE, needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#74762](https://github.com/openclaw/openclaw/pull/74762) | fix: gateway model catalog cache regression | clawsweeper-commit-openclaw-openclaw-6421e1f36a3c | MERGEABLE | CLEAN | CANCELLED:1 SKIPPED:11 SUCCESS:74 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74755](https://github.com/openclaw/openclaw/pull/74755) | fix: Slack select value cap likely regression | clawsweeper-commit-openclaw-openclaw-fc8fafbd2f59 | MERGEABLE | CLEAN | CANCELLED:3 SKIPPED:13 SUCCESS:67 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74746](https://github.com/openclaw/openclaw/pull/74746) | fix(ci): committed Plugin SDK API baseline hash does not match the public SDK surface generat... | clawsweeper-commit-openclaw-openclaw-02ebac6250bf | MERGEABLE | CLEAN | CANCELLED:2 SKIPPED:29 SUCCESS:13 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74742](https://github.com/openclaw/openclaw/pull/74742) | fix(file-transfer): require canonical node policy authorization | automerge-openclaw-openclaw-74134 | CONFLICTING | DIRTY | SKIPPED:3 SUCCESS:4 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |

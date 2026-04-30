@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T02:59:20.951Z",
-  "count": 16,
+  "generated_at": "2026-04-30T03:13:21.420Z",
+  "count": 17,
   "summary": {
-    "open_prs": 16,
+    "open_prs": 17,
     "ready_candidates": 0,
     "security_hold": 0,
     "needs_rebase": 7,
     "mergeability_unknown": 0,
-    "needs_checks": 8,
+    "needs_checks": 7,
     "needs_review": 0,
-    "needs_merge_preflight": 16,
+    "needs_merge_preflight": 17,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -26,6 +26,73 @@
     "candidates": []
   },
   "prs": [
+    {
+      "number": 74770,
+      "title": "fix: package entry-file validation regression",
+      "url": "https://github.com/openclaw/openclaw/pull/74770",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-df4faac71fd9",
+      "head_sha": "cea27dc1aa2f13baa905734eef473664834690b0",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-df4faac71fd9",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-df4faac71fd9.md",
+      "updated_at": "2026-04-30T03:04:04Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "CLEAN",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 87,
+        "counts": {
+          "CANCELLED": 1,
+          "SKIPPED": 12,
+          "SUCCESS": 73,
+          "NEUTRAL": 1
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74770#issuecomment-4349406045",
+            "submitted_at": "2026-04-30T03:04:04Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25144826259",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144826259",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-df4faac71fd9",
+        "published_at": "2026-04-30T02:58:32.564Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74770",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+    },
     {
       "number": 74764,
       "title": "fix: commit exposes max in the Bedrock Opus 4.7 thinking profile, but the current runtime pat...",
@@ -102,21 +169,18 @@
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-6421e1f36a3c.md",
       "updated_at": "2026-04-30T02:48:15Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "merge_state_status": "CLEAN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
         "total": 87,
         "counts": {
           "CANCELLED": 1,
-          "IN_PROGRESS": 1,
           "SKIPPED": 11,
-          "SUCCESS": 73,
+          "SUCCESS": 74,
           "NEUTRAL": 1
         },
-        "blockers": [
-          "Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -158,11 +222,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 74755,
@@ -341,12 +403,20 @@
         ]
       },
       "latest_record": {
-        "run_id": "25144928205",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25144928205",
+        "run_id": "25145015721",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25145015721",
         "cluster_id": "automerge-openclaw-openclaw-74134",
-        "published_at": "2026-04-30T02:57:25.682Z",
-        "workflow_conclusion": "success",
-        "apply_action": null
+        "published_at": "2026-04-30T03:11:33.462Z",
+        "workflow_conclusion": "failure",
+        "apply_action": {
+          "target": "#74742",
+          "action": "fix_needed",
+          "status": "planned",
+          "classification": "canonical",
+          "canonical": "#74742",
+          "candidate_fix": null,
+          "reason": "Refresh the existing canonical ClawSweeper repair branch against current main and rerun the required review/check gate before any later maintainer merge decision."
+        }
       },
       "blockers": [
         "needs_rebase:CONFLICTING",
