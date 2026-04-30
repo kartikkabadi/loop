@@ -36,6 +36,7 @@ import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js"
 import { compactText } from "./text-utils.js";
 import {
   checkoutSourcePullRequestHead,
+  fetchSourcePullRequestHead,
   firstTargetSourcePullRequest,
 } from "./source-pr-checkout.js";
 import {
@@ -1530,14 +1531,37 @@ function checkoutRecoverableReplacementBranch({
   baseBranch,
   fixArtifact,
 }: LooseRecord) {
+  const sourcePr = firstTargetSourcePullRequest(fixArtifact.source_prs ?? [], result.repo);
   if (remoteBranchExists({ targetDir, branch })) {
     run("git", ["fetch", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`], {
       cwd: targetDir,
     });
     run("git", ["checkout", "-B", branch, `origin/${branch}`], { cwd: targetDir });
+    if (sourcePr) {
+      const sourceRef = fetchSourcePullRequestHead({ targetDir, sourcePr });
+      const sourceHeadSha = run("git", ["rev-parse", sourceRef], { cwd: targetDir }).trim();
+      if (!isAncestor({ targetDir, ancestor: sourceHeadSha, descendant: "HEAD" })) {
+        const pull = fetchPullRequest(result.repo, sourcePr.number);
+        if (pull.state !== "open")
+          throw new Error(`source PR #${sourcePr.number} is ${pull.state}`);
+        const checkout = checkoutSourcePullRequestHead({
+          targetDir,
+          repo: result.repo,
+          branch,
+          sourcePr,
+          pull,
+        });
+        return {
+          resumed: false,
+          replaced_stale_branch: true,
+          branch,
+          source_pr: checkout.sourcePr.url,
+          source_head_sha: checkout.sourceHeadSha,
+        };
+      }
+    }
     return { resumed: true, branch };
   }
-  const sourcePr = firstTargetSourcePullRequest(fixArtifact.source_prs ?? [], result.repo);
   if (sourcePr) {
     const pull = fetchPullRequest(result.repo, sourcePr.number);
     if (pull.state !== "open") throw new Error(`source PR #${sourcePr.number} is ${pull.state}`);

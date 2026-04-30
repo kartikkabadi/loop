@@ -44,10 +44,8 @@ export function checkoutSourcePullRequestHead({
     throw new Error(`source PR ${sourcePr.url} is not in target repo ${repo}`);
   }
 
-  run("git", ["fetch", "origin", sourcePullRequestFetchSpec(sourcePr.number, branch)], {
-    cwd: targetDir,
-  });
-  run("git", ["checkout", branch], { cwd: targetDir });
+  const sourceRef = fetchSourcePullRequestHead({ targetDir, sourcePr });
+  run("git", ["checkout", "-B", branch, sourceRef], { cwd: targetDir });
 
   const sourceHeadSha = currentHead(targetDir);
   const expectedHeadSha = pullRequestHeadSha(pull);
@@ -66,5 +64,23 @@ export function checkoutSourcePullRequestHead({
 }
 
 export function sourcePullRequestFetchSpec(number: number, branch: string): string {
-  return `+refs/pull/${number}/head:refs/heads/${branch}`;
+  return `+refs/pull/${number}/head:${branch}`;
+}
+
+export function sourcePullRequestRemoteRef(number: number): string {
+  return `refs/remotes/clawsweeper/source-pr-${number}`;
+}
+
+export function fetchSourcePullRequestHead({
+  targetDir,
+  sourcePr,
+}: {
+  targetDir: string;
+  sourcePr: GitHubRef;
+}): string {
+  const sourceRef = sourcePullRequestRemoteRef(sourcePr.number);
+  run("git", ["fetch", "origin", sourcePullRequestFetchSpec(sourcePr.number, sourceRef)], {
+    cwd: targetDir,
+  });
+  return sourceRef;
 }

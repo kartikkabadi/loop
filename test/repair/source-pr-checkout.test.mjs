@@ -5,6 +5,7 @@ import {
   firstTargetSourcePullRequest,
   pullRequestHeadSha,
   sourcePullRequestFetchSpec,
+  sourcePullRequestRemoteRef,
 } from "../../dist/repair/source-pr-checkout.js";
 
 test("selects the first source PR from the target repo", () => {
@@ -33,8 +34,8 @@ test("ignores missing and cross-repo source PRs", () => {
 
 test("builds a forced pull-head fetch ref for replacement branches", () => {
   assert.equal(
-    sourcePullRequestFetchSpec(74134, "clawsweeper/automerge-openclaw-openclaw-74134"),
-    "+refs/pull/74134/head:refs/heads/clawsweeper/automerge-openclaw-openclaw-74134",
+    sourcePullRequestFetchSpec(74134, sourcePullRequestRemoteRef(74134)),
+    "+refs/pull/74134/head:refs/remotes/clawsweeper/source-pr-74134",
   );
 });
 
