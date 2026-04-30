@@ -660,13 +660,17 @@ jobs:
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           apply_artifacts_args=(--target-repo "$TARGET_REPO" --artifact-dir artifacts)
+          publish_state="Review publish complete"
+          publish_detail="Merged review artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards."
           if [ "$HOT_INTAKE" = "true" ] && [ -z "$EXACT_ITEM" ]; then
-            apply_artifacts_args+=(--max-pages "$MAX_PAGES")
+            apply_artifacts_args+=(--max-pages "$MAX_PAGES" --skip-reconcile)
+            publish_state="Hot intake publish complete"
+            publish_detail="Merged hot intake artifacts for run ${{ github.run_id }} without full folder reconciliation, and the dashboard reflects completed shards."
           fi
           pnpm run apply-artifacts -- "${apply_artifacts_args[@]}"
           pnpm run status -- \
-            --state "${{ needs.plan.outputs.hot_intake == 'true' && 'Hot intake publish complete' || 'Review publish complete' }}" \
-            --detail "Merged ${{ needs.plan.outputs.hot_intake == 'true' && 'hot intake' || 'review' }} artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards." \
+            --state "$publish_state" \
+            --detail "$publish_detail" \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Commit dashboard and review files

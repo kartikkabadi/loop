@@ -5479,7 +5479,7 @@ function applyArtifactsCommand(args: Args): void {
   const skipDashboard = boolArg(args.skip_dashboard);
   const replayClosedArtifacts = boolArg(args.replay_closed_artifacts);
   const maxPages = numberArg(args.max_pages, 250);
-  const { numbers: openNumbers } = fetchOpenItemNumbers(maxPages);
+  const openNumbers = skipReconcile ? null : fetchOpenItemNumbers(maxPages).numbers;
   let appliedArtifacts = 0;
   let skippedClosedArtifacts = 0;
   ensureDir(itemsDir);
@@ -5500,7 +5500,7 @@ function applyArtifactsCommand(args: Args): void {
       const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
       const destination = reviewArtifactDestination(
         action,
-        replayClosedArtifacts || openNumbers.has(number),
+        replayClosedArtifacts || artifactTargetIsOpen(number, openNumbers),
       );
       if (destination === "skip_closed") {
         skippedClosedArtifacts += 1;
@@ -5518,6 +5518,11 @@ function applyArtifactsCommand(args: Args): void {
   );
   if (!skipReconcile) reconcileFolders({ itemsDir, closedDir });
   if (!skipDashboard) updateDashboard(itemsDir, closedDir);
+}
+
+function artifactTargetIsOpen(number: number, openNumbers: Set<number> | null): boolean {
+  if (openNumbers) return openNumbers.has(number);
+  return fetchItem(number).state === "open";
 }
 
 function markdownFiles(dir: string): string[] {
