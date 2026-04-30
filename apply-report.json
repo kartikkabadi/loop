@@ -1,9 +1,6 @@
 [
   {
-    "action": "closed"
-  },
-  {
-    "action": "closed"
+    "action": "review_comment_synced"
   },
   {
     "action": "closed"
@@ -15,9 +12,63 @@
     "action": "closed"
   },
   {
+    "action": "review_comment_synced"
+  },
+  {
     "action": "closed"
   },
   {
-    "action": "skipped_open_closing_pr"
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
+  },
+  {
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
+  },
+  {
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
+  },
+  {
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
+  },
+  {
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
+  },
+  {
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
+  },
+  {
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
+  },
+  {
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
+  },
+  {
+    "action": "review_comment_synced"
+  },
+  {
+    "action": "closed"
   }
 ]
