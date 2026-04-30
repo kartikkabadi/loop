@@ -96,9 +96,47 @@ ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop
 
 - If ClawSweeper emits an explicit repair marker, requests changes, or finds failing checks/rebase work, and the PR branch is safe to update, emit a fix artifact with \`repair_strategy: "repair_contributor_branch"\` and \`source_prs: ["${prUrl}"]\`.
 - If the PR branch cannot be safely updated, emit a narrow credited replacement only when the artifact can preserve the original contributor credit; otherwise return \`needs_human\`.
+- For user-facing OpenClaw \`fix\`, \`feat\`, or \`perf\` changes, inspect the changelog policy and add or repair a \`CHANGELOG.md\` entry with contributor attribution before declaring the branch merge-ready.
 - ${finalMergeLine}
 - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.
 `;
+}
+
+export function automergeChangelogBlockReason({ repo, title, files }: LooseRecord): string | null {
+  if (String(repo ?? "").toLowerCase() !== "openclaw/openclaw") return null;
+
+  const paths = normalizeChangedPaths(files);
+  if (paths.some(isChangelogPath)) return null;
+  if (!automergeTitleUsuallyNeedsChangelog(title)) return null;
+  if (!paths.some(isPotentiallyUserFacingPath)) return null;
+
+  return "CHANGELOG.md entry is required for user-facing ClawSweeper automerge changes";
+}
+
+function normalizeChangedPaths(files: JsonValue): string[] {
+  if (!Array.isArray(files)) return [];
+  return files
+    .map((file) => (typeof file === "string" ? file : file?.path))
+    .map((file) => String(file ?? "").trim())
+    .filter(Boolean);
+}
+
+function isChangelogPath(file: string): boolean {
+  return /(^|\/)CHANGELOG\.md$/i.test(file);
+}
+
+function automergeTitleUsuallyNeedsChangelog(title: JsonValue): boolean {
+  return /^(?:feat|fix|perf)(?:\([^)]+\))?:/i.test(String(title ?? "").trim());
+}
+
+function isPotentiallyUserFacingPath(file: string): boolean {
+  if (/^(?:docs|test|tests|\.github)\//.test(file)) return false;
+  if (/(?:^|\/)__tests__\//.test(file)) return false;
+  if (/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file)) return false;
+  if (/(?:^|\/)(?:README|CONTRIBUTING|CODE_OF_CONDUCT|SECURITY|SUPPORT|LICENSE)\.md$/i.test(file))
+    return false;
+  if (file.startsWith("docs/.generated/")) return false;
+  return true;
 }
 
 export function automergeGateBlockReason(env: LooseRecord = process.env) {

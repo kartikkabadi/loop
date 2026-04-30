@@ -134,6 +134,8 @@ Common commands:
 - `automerge` labels an open PR, creates or reuses the adopted job, dispatches
   review, and enters the bounded review/fix/merge loop. Draft PRs are fix-only
   until GitHub marks them ready for review.
+- User-facing OpenClaw `fix`, `feat`, and `perf` automerge PRs must include a
+  `CHANGELOG.md` entry before ClawSweeper will merge them.
 - `approve` lets a maintainer clear a ClawSweeper human-review pause and merge
   only after the normal exact-head, checks, mergeability, and gate checks pass.
 - `stop` adds `clawsweeper:human-review`; `/autoclose <reason>` closes the

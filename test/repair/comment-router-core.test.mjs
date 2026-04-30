@@ -8,6 +8,7 @@ import {
   autocloseReasonFromCommand,
   autoRepairBlockReason,
   autoRepairHeadKey,
+  automergeChangelogBlockReason,
   automergeClusterId,
   automergeGateBlockReason,
   automergeJobBranch,
@@ -142,7 +143,50 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
   assert.deepEqual(job.frontmatter.blocked_actions, ["close", "merge"]);
   assert.deepEqual(job.frontmatter.allowed_actions, ["comment", "label", "fix", "raise_pr"]);
   assert.match(job.body, /repair_contributor_branch/);
+  assert.match(job.body, /CHANGELOG\.md/);
   assert.match(job.body, /router owns final merge/);
+});
+
+test("automerge changelog gate blocks user-facing OpenClaw changes without changelog", () => {
+  assert.equal(
+    automergeChangelogBlockReason({
+      repo: "openclaw/openclaw",
+      title: "fix(discord): cool down Cloudflare 429 responses",
+      files: [
+        { path: "extensions/discord/src/api.ts" },
+        { path: "extensions/discord/src/api.test.ts" },
+      ],
+    }),
+    "CHANGELOG.md entry is required for user-facing ClawSweeper automerge changes",
+  );
+
+  assert.equal(
+    automergeChangelogBlockReason({
+      repo: "openclaw/openclaw",
+      title: "fix(discord): cool down Cloudflare 429 responses",
+      files: [{ path: "CHANGELOG.md" }, { path: "extensions/discord/src/api.ts" }],
+    }),
+    null,
+  );
+});
+
+test("automerge changelog gate ignores docs-only and tests-only changes", () => {
+  assert.equal(
+    automergeChangelogBlockReason({
+      repo: "openclaw/openclaw",
+      title: "docs(discord): clarify setup",
+      files: [{ path: "docs/channels/discord.md" }],
+    }),
+    null,
+  );
+  assert.equal(
+    automergeChangelogBlockReason({
+      repo: "openclaw/openclaw",
+      title: "fix(sdk): align test expectation",
+      files: [{ path: "packages/sdk/src/index.test.ts" }],
+    }),
+    null,
+  );
 });
 
 test("renderAutomergeJob documents autofix as repair-only", () => {

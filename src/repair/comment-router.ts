@@ -21,6 +21,7 @@ import {
   autocloseReasonFromCommand,
   autoRepairBlockReason,
   autoRepairHeadKey,
+  automergeChangelogBlockReason,
   automergeGateBlockReason,
   automergeClusterId,
   automergeJobPath,
@@ -1304,6 +1305,12 @@ function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
   if (checks.blockers.length > 0)
     return `checks are not green: ${checks.blockers.slice(0, 8).join(", ")}`;
   if (checks.total === 0) return "no PR checks found";
+  const changelogBlock = automergeChangelogBlockReason({
+    repo: command.repo,
+    title: view.title,
+    files: view.files,
+  });
+  if (changelogBlock) return changelogBlock;
   return "";
 }
 
@@ -1433,6 +1440,7 @@ function fetchPullRequestView(number: JsonValue) {
         "baseRefName",
         "body",
         "closingIssuesReferences",
+        "files",
         "isDraft",
         "labels",
         "mergeable",
