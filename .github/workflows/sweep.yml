@@ -75,10 +75,6 @@ on:
         description: "Parallel shards (capped at 100)"
         required: false
         default: "100"
-      recovery_attempt:
-        description: "Internal one-shot retry marker for failed review matrices"
-        required: false
-        default: "0"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -799,7 +795,7 @@ jobs:
   recover-review-failures:
     name: Recover failed review shards
     needs: [plan, review, publish]
-    if: ${{ always() && needs.plan.result == 'success' && (needs.review.result == 'failure' || needs.review.result == 'cancelled') && (github.event.inputs.recovery_attempt || '0') == '0' && needs.plan.outputs.planned_item_numbers != '' && github.event_name != 'repository_dispatch' }}
+    if: ${{ always() && needs.plan.result == 'success' && (needs.review.result == 'failure' || needs.review.result == 'cancelled') && !contains(github.event.inputs.additional_prompt || '', '[clawsweeper-recovery-attempt=1]') && needs.plan.outputs.planned_item_numbers != '' && github.event_name != 'repository_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -813,6 +809,10 @@ jobs:
           ITEM_NUMBERS: ${{ needs.plan.outputs.planned_item_numbers }}
         run: |
           set -euo pipefail
+          recovery_prompt="[clawsweeper-recovery-attempt=1]"
+          if [ -n "$ADDITIONAL_PROMPT" ]; then
+            recovery_prompt="$(printf '%s\n\n%s' "$ADDITIONAL_PROMPT" "$recovery_prompt")"
+          fi
           args=(
             workflow run sweep.yml
             --ref main
@@ -823,11 +823,8 @@ jobs:
             -f shard_count=100
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
             -f item_numbers="$ITEM_NUMBERS"
-            -f recovery_attempt=1
+            -f additional_prompt="$recovery_prompt"
           )
-          if [ -n "$ADDITIONAL_PROMPT" ]; then
-            args+=(-f additional_prompt="$ADDITIONAL_PROMPT")
-          fi
           gh "${args[@]}"
 
   audit-dashboard:
