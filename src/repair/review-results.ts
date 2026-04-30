@@ -588,8 +588,16 @@ function evidenceHasExternalUrl(evidence: JsonValue) {
   return evidence.some((item: JsonValue) => {
     const text = typeof item === "string" ? item : JSON.stringify(item);
     const urls = text.match(/https?:\/\/[^\s)\]"']+/g) ?? [];
-    return urls.some((url: string) => !url.includes("github.com/"));
+    return urls.some(isExternalUrl);
   });
+}
+
+function isExternalUrl(value: string) {
+  try {
+    return new URL(value).hostname !== "github.com";
+  } catch {
+    return false;
+  }
 }
 
 function normalizeRef(ref: JsonValue) {

@@ -1542,20 +1542,68 @@ let localRelatedTitleIndexCache: { repo: string; entries: LocalRelatedTitleEntry
 
 export function relatedTitleSearchTerms(title: string, limit = 6): string[] {
   const seen = new Set<string>();
-  return (
-    title
-      .toLowerCase()
-      .match(/[a-z0-9][a-z0-9_-]{2,}/g)
-      ?.filter((term) => {
-        const normalized = term.replace(/^_+|_+$/g, "");
-        if (RELATED_TITLE_STOP_WORDS.has(normalized)) return false;
-        if (/^\d+$/.test(normalized)) return false;
-        if (seen.has(normalized)) return false;
-        seen.add(normalized);
-        return true;
-      })
-      .slice(0, limit) ?? []
-  );
+  return relatedTitleCandidateTerms(title)
+    .filter((term) => {
+      const normalized = trimEdgeChar(term, "_");
+      if (RELATED_TITLE_STOP_WORDS.has(normalized)) return false;
+      if (isDigitsOnly(normalized)) return false;
+      if (seen.has(normalized)) return false;
+      seen.add(normalized);
+      return true;
+    })
+    .slice(0, limit);
+}
+
+function relatedTitleCandidateTerms(title: string): string[] {
+  const lowerTitle = title.toLowerCase();
+  const terms: string[] = [];
+  let index = 0;
+
+  while (index < lowerTitle.length) {
+    if (!isAsciiAlphaNumeric(lowerTitle[index])) {
+      index += 1;
+      continue;
+    }
+
+    const start = index;
+    index += 1;
+    while (index < lowerTitle.length && isRelatedTitleTermChar(lowerTitle[index])) {
+      index += 1;
+    }
+
+    if (index - start >= 3) {
+      terms.push(lowerTitle.slice(start, index));
+    }
+  }
+
+  return terms;
+}
+
+function isRelatedTitleTermChar(char: string | undefined): boolean {
+  return isAsciiAlphaNumeric(char) || char === "_" || char === "-";
+}
+
+function isAsciiAlphaNumeric(char: string | undefined): boolean {
+  if (!char) return false;
+  const code = char.charCodeAt(0);
+  return (code >= 48 && code <= 57) || (code >= 97 && code <= 122);
+}
+
+function trimEdgeChar(value: string, char: string): string {
+  let start = 0;
+  let end = value.length;
+  while (start < end && value[start] === char) start += 1;
+  while (end > start && value[end - 1] === char) end -= 1;
+  return value.slice(start, end);
+}
+
+function isDigitsOnly(value: string): boolean {
+  if (!value) return false;
+  for (const char of value) {
+    const code = char.charCodeAt(0);
+    if (code < 48 || code > 57) return false;
+  }
+  return true;
 }
 
 function localRelatedTitleIndex(): LocalRelatedTitleEntry[] {
@@ -3141,12 +3189,12 @@ function reportEvidence(markdown: string): Evidence[] {
   const entries: Evidence[] = [];
   let current: Evidence | null = null;
   for (const line of evidence.split("\n")) {
-    const heading = line.match(/^- \*\*(.*?):\*\*\s*(.*)$/);
+    const heading = parseBoldListHeading(line);
     if (heading) {
       if (current) entries.push(current);
       current = evidenceEntry({
-        label: heading[1] ?? "",
-        detail: heading[2] ?? "",
+        label: heading.label,
+        detail: heading.detail,
       });
       continue;
     }
@@ -3172,12 +3220,12 @@ function reportLikelyOwners(markdown: string): LikelyOwner[] {
   const owners: LikelyOwner[] = [];
   let current: LikelyOwner | null = null;
   for (const line of section.split("\n")) {
-    const heading = line.match(/^- \*\*(.*?):\*\*\s*(.*)$/);
+    const heading = parseBoldListHeading(line);
     if (heading) {
       if (current) owners.push(current);
       current = {
-        person: heading[1] ?? "",
-        role: heading[2] ?? "",
+        person: heading.label,
+        role: heading.detail,
         reason: "",
         commits: [],
         files: [],
@@ -3216,7 +3264,7 @@ function reportLikelyOwners(markdown: string): LikelyOwner[] {
 
 function reportOverallCorrectness(markdown: string): OverallCorrectness {
   const section = reviewSectionValue(markdown, "reviewFindings");
-  const value = section.match(/^Overall correctness:\s*(.+)$/m)?.[1]?.trim();
+  const value = sectionLineValue(section, "Overall correctness");
   return value && OVERALL_CORRECTNESS_VALUES.has(value as OverallCorrectness)
     ? (value as OverallCorrectness)
     : "not a patch";
@@ -3224,7 +3272,7 @@ function reportOverallCorrectness(markdown: string): OverallCorrectness {
 
 function reportOverallConfidenceScore(markdown: string): number {
   const section = reviewSectionValue(markdown, "reviewFindings");
-  const raw = section.match(/^Overall confidence:\s*([0-9.]+)$/m)?.[1];
+  const raw = sectionLineValue(section, "Overall confidence");
   const score = raw ? Number(raw) : 0;
   return Number.isFinite(score) && score >= 0 && score <= 1 ? score : 0;
 }
@@ -3234,18 +3282,17 @@ function reportReviewFindings(markdown: string): ReviewFinding[] {
   const findings: ReviewFinding[] = [];
   let current: ReviewFinding | null = null;
   for (const line of section.split("\n")) {
-    const heading = line.match(/^- \*\*\[(P[0-3])\] (.*?):\*\*\s*`([^`:]+):(\d+)(?:-(\d+))?`$/);
-    if (heading?.[1] && heading[2] && heading[3] && heading[4]) {
+    const heading = parseReviewFindingHeading(line);
+    if (heading) {
       if (current) findings.push(current);
-      const lineStart = Number(heading[4]);
       current = {
-        title: heading[2],
+        title: heading.title,
         body: "",
-        priority: Number(heading[1].slice(1)) as ReviewFinding["priority"],
+        priority: heading.priority,
         confidenceScore: 0,
-        file: heading[3],
-        lineStart,
-        lineEnd: heading[5] ? Number(heading[5]) : lineStart,
+        file: heading.file,
+        lineStart: heading.lineStart,
+        lineEnd: heading.lineEnd,
       };
       continue;
     }
@@ -3280,24 +3327,25 @@ function defaultSecurityReview(markdown: string): SecurityReview {
 function reportSecurityReview(markdown: string): SecurityReview {
   const section = reviewSectionValue(markdown, "securityReview");
   if (!section.trim()) return defaultSecurityReview(markdown);
-  const status = section.match(/^Status:\s*(cleared|needs_attention|not_applicable)$/m)?.[1] as
-    | SecurityReviewStatus
-    | undefined;
-  const summary = section.match(/^Summary:\s*(.+)$/m)?.[1]?.trim();
+  const statusValue = sectionLineValue(section, "Status");
+  const status = SECURITY_REVIEW_STATUSES.has(statusValue as SecurityReviewStatus)
+    ? (statusValue as SecurityReviewStatus)
+    : undefined;
+  const summary = sectionLineValue(section, "Summary");
   if (!status || !summary) return defaultSecurityReview(markdown);
   const concerns: SecurityConcern[] = [];
   let current: SecurityConcern | null = null;
   for (const line of section.split("\n")) {
-    const heading = line.match(/^- \*\*\[(high|medium|low)\] (.*?):\*\*(?:\s*`([^`:]+):(\d+)`)?$/);
-    if (heading?.[1] && heading[2]) {
+    const heading = parseSecurityConcernHeading(line);
+    if (heading) {
       if (current) concerns.push(current);
       current = {
-        title: heading[2],
+        title: heading.title,
         body: "",
-        severity: heading[1] as SecurityConcernSeverity,
+        severity: heading.severity,
         confidenceScore: 0,
-        file: heading[3] ?? null,
-        line: heading[4] ? Number(heading[4]) : null,
+        file: heading.file,
+        line: heading.line,
       };
       continue;
     }
@@ -3315,6 +3363,127 @@ function reportSecurityReview(markdown: string): SecurityReview {
   }
   if (current) concerns.push(current);
   return { status, summary, concerns };
+}
+
+function parseBoldListHeading(line: string): { label: string; detail: string } | null {
+  const prefix = "- **";
+  if (!line.startsWith(prefix)) return null;
+  const delimiter = ":**";
+  const delimiterIndex = line.indexOf(delimiter, prefix.length);
+  if (delimiterIndex === -1) return null;
+  return {
+    label: line.slice(prefix.length, delimiterIndex),
+    detail: line.slice(delimiterIndex + delimiter.length).trimStart(),
+  };
+}
+
+function parseReviewFindingHeading(line: string): {
+  priority: ReviewFinding["priority"];
+  title: string;
+  file: string;
+  lineStart: number;
+  lineEnd: number;
+} | null {
+  const prefix = "- **[P";
+  if (!line.startsWith(prefix)) return null;
+  const priority = Number(line[prefix.length]);
+  if (!Number.isInteger(priority) || priority < 0 || priority > 3) return null;
+  const titleStart = prefix.length + 3;
+  if (line.slice(prefix.length + 1, titleStart) !== "] ") return null;
+  const titleEnd = line.indexOf(":**", titleStart);
+  if (titleEnd === -1) return null;
+
+  const location = parseBacktickLocation(line.slice(titleEnd + 3).trim());
+  if (!location) return null;
+  return {
+    priority: priority as ReviewFinding["priority"],
+    title: line.slice(titleStart, titleEnd),
+    ...location,
+  };
+}
+
+function parseSecurityConcernHeading(line: string): {
+  severity: SecurityConcernSeverity;
+  title: string;
+  file: string | null;
+  line: number | null;
+} | null {
+  const prefix = "- **[";
+  if (!line.startsWith(prefix)) return null;
+  const severityEnd = line.indexOf("] ", prefix.length);
+  if (severityEnd === -1) return null;
+  const severity = line.slice(prefix.length, severityEnd);
+  if (!SECURITY_CONCERN_SEVERITIES.has(severity as SecurityConcernSeverity)) return null;
+  const titleStart = severityEnd + 2;
+  const titleEnd = line.indexOf(":**", titleStart);
+  if (titleEnd === -1) return null;
+
+  const locationText = line.slice(titleEnd + 3).trim();
+  const location = locationText ? parseBacktickLocation(locationText) : null;
+  return {
+    severity: severity as SecurityConcernSeverity,
+    title: line.slice(titleStart, titleEnd),
+    file: location?.file ?? null,
+    line: location?.lineStart ?? null,
+  };
+}
+
+function parseBacktickLocation(value: string): {
+  file: string;
+  lineStart: number;
+  lineEnd: number;
+} | null {
+  if (!value.startsWith("`") || !value.endsWith("`")) return null;
+  const location = value.slice(1, -1);
+  const separator = location.lastIndexOf(":");
+  if (separator <= 0) return null;
+  const file = location.slice(0, separator);
+  const range = parseLineRange(location.slice(separator + 1));
+  return range ? { file, ...range } : null;
+}
+
+function parseLineRange(value: string): { lineStart: number; lineEnd: number } | null {
+  const separator = value.indexOf("-");
+  const lineStartText = separator === -1 ? value : value.slice(0, separator);
+  const lineEndText = separator === -1 ? value : value.slice(separator + 1);
+  if (!isDigitsOnly(lineStartText) || !isDigitsOnly(lineEndText)) return null;
+  const lineStart = Number(lineStartText);
+  const lineEnd = Number(lineEndText);
+  return lineStart > 0 && lineEnd >= lineStart ? { lineStart, lineEnd } : null;
+}
+
+function sectionLineValue(section: string, label: string): string | undefined {
+  const prefix = `${label}:`;
+  for (const line of section.split("\n")) {
+    if (line.startsWith(prefix)) {
+      const value = line.slice(prefix.length).trim();
+      return value || undefined;
+    }
+  }
+  return undefined;
+}
+
+function workCandidateReasonText(section: string): string {
+  const lines = section.split("\n");
+  const reasonStart = lines.findIndex((line) => line.startsWith("Reason:"));
+  if (reasonStart === -1) return "";
+
+  const reasonLines = [lines[reasonStart]!.slice("Reason:".length).trimStart()];
+  for (let index = reasonStart + 1; index < lines.length; index += 1) {
+    const line = lines[index]!;
+    const nextLine = lines[index + 1] ?? "";
+    if (
+      line.trim() === "" &&
+      (nextLine.startsWith("Cluster refs:") ||
+        nextLine.startsWith("Likely files:") ||
+        nextLine.startsWith("Validation:"))
+    ) {
+      break;
+    }
+    reasonLines.push(line);
+  }
+
+  return reasonLines.join("\n").trim();
 }
 
 function reportDecision(markdown: string, closeReason: CloseReason): Decision {
@@ -3497,16 +3666,13 @@ function normalizeComment(
 
 function reportWorkCandidateReason(markdown: string): string {
   const workCandidate = reviewSectionValue(markdown, "workCandidate");
-  const match = workCandidate.match(
-    /(?:^|\n)Reason:\s*([\s\S]*?)(?=\n\n(?:Cluster refs:|Likely files:|Validation:)|$)/,
-  );
-  const reason = match?.[1]?.trim();
+  const reason = workCandidateReasonText(workCandidate);
   if (!reason || reason.startsWith("_No work-lane recommendation")) return "";
   return reason;
 }
 
 function collapsedDetailsBlock(summary: string, lines: readonly string[]): string {
-  const body = lines.join("\n").replace(/^\s+|\s+$/g, "");
+  const body = lines.join("\n").trim();
   if (!body) return "";
   return ["<details>", `<summary>${summary}</summary>`, "", body, "", "</details>"].join("\n");
 }

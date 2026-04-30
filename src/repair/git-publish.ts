@@ -57,14 +57,16 @@ export function runGit(args: readonly string[], options: GitRunOptions = {}): st
   const result = spawnGit(args, options);
   if (result.status !== 0 && !options.allowFailure) {
     const detail =
-      result.stderr || result.stdout || `git ${args.join(" ")} exited ${result.status}`;
+      result.stderr ||
+      result.stdout ||
+      `${formatGitDisplayCommand(options.displayArgs ?? args)} exited ${result.status}`;
     throw new Error(detail.trim());
   }
   return result.stdout;
 }
 
 export function spawnGit(args: readonly string[], options: GitRunOptions = {}): GitRunResult {
-  console.log(`$ git ${(options.displayArgs ?? args).join(" ")}`);
+  console.log(`$ ${formatGitDisplayCommand(options.displayArgs ?? args)}`);
   const child = spawnSync("git", [...args], {
     env: process.env,
     encoding: "utf8",
@@ -76,6 +78,14 @@ export function spawnGit(args: readonly string[], options: GitRunOptions = {}): 
     stdout: child.stdout ?? "",
     stderr: child.stderr ?? "",
   };
+}
+
+function formatGitDisplayCommand(args: readonly string[]): string {
+  return `git ${args.map(redactGitDisplayArg).join(" ")}`;
+}
+
+function redactGitDisplayArg(arg: string): string {
+  return arg.replace(/x-access-token:[^@]+@/g, "x-access-token:***@");
 }
 
 export function stagePaths(paths: readonly string[]): void {

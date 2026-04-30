@@ -780,6 +780,7 @@ function checkSummaryCell(checks: LooseRecord) {
 
 function tableCell(value: JsonValue) {
   return String(value ?? "")
+    .replace(/\\/g, "\\\\")
     .replace(/\r?\n/g, " ")
     .replace(/\|/g, "\\|")
     .trim();
