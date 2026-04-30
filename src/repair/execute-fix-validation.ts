@@ -103,6 +103,7 @@ export function validateAutonomousFixScope({
   maxAutonomousFixSurfaces,
 }: LooseRecord): LooseRecord | null {
   if (allowBroadFixArtifacts || job.frontmatter.allow_broad_fix_artifacts === true) return null;
+  if (isTrustedAdoptedBranchRepair({ job, fixArtifact })) return null;
 
   const likelyFiles = fixArtifact.likely_files ?? [];
   const affectedSurfaces = fixArtifact.affected_surfaces ?? [];
@@ -144,6 +145,26 @@ export function validateAutonomousFixScope({
       `sample_files=${likelyFiles.slice(0, 8).join(", ")}`,
     ],
   };
+}
+
+function isTrustedAdoptedBranchRepair({ job, fixArtifact }: LooseRecord): boolean {
+  const frontmatter = job.frontmatter ?? {};
+  if (fixArtifact.repair_strategy !== "repair_contributor_branch") return false;
+  if (frontmatter.source !== "pr_autofix" && frontmatter.source !== "pr_automerge") return false;
+  if (frontmatter.allow_fix_pr !== true) return false;
+  if (!Array.isArray(frontmatter.allowed_actions) || !frontmatter.allowed_actions.includes("fix")) {
+    return false;
+  }
+  const targetBranch = String(frontmatter.target_branch ?? "");
+  if (!targetBranch.startsWith("clawsweeper/")) return false;
+  if (!Array.isArray(fixArtifact.source_prs) || fixArtifact.source_prs.length === 0) return false;
+  return fixArtifact.source_prs.every((source: JsonValue) => {
+    const text = String(source ?? "");
+    return (
+      /^#?\d+$/.test(text) ||
+      /^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+$/i.test(text)
+    );
+  });
 }
 
 function readSiblingJson(resultPath: string, name: string): LooseRecord | null {
