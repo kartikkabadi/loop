@@ -16,6 +16,22 @@ type TargetBaseBranch = TargetDir & {
   baseBranch: string;
 };
 
+export type RebaseOntoBaseResult = {
+  status: "already-current" | "rebased" | "conflicts";
+  base_ref: string;
+  base_sha: string;
+  previous_head: string;
+  current_head: string;
+  detail?: string;
+};
+
+export type CompleteRebaseResult = {
+  status: "not-in-progress" | "continued";
+  previous_head: string;
+  current_head: string;
+  detail?: string;
+};
+
 export function currentHead(targetDir: string): string {
   return run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
 }
@@ -93,6 +109,113 @@ export function ensureMergeBaseAvailable({ targetDir, baseBranch }: TargetBaseBr
 
   const detail = `${retry.stderr ?? ""}\n${retry.stdout ?? ""}`.trim();
   throw new Error(detail || `no merge base between ${baseRef} and HEAD`);
+}
+
+export function rebaseOntoBase({ targetDir, baseBranch }: TargetBaseBranch): RebaseOntoBaseResult {
+  ensureMergeBaseAvailable({ targetDir, baseBranch });
+  const baseRef = `origin/${baseBranch}`;
+  const baseSha = run("git", ["rev-parse", baseRef], { cwd: targetDir }).trim();
+  const previousHead = currentHead(targetDir);
+  if (isAncestor({ targetDir, ancestor: baseRef, descendant: "HEAD" })) {
+    return {
+      status: "already-current",
+      base_ref: baseRef,
+      base_sha: baseSha,
+      previous_head: previousHead,
+      current_head: previousHead,
+    };
+  }
+
+  const child = spawnSync("git", ["rebase", baseRef], {
+    cwd: targetDir,
+    env: process.env,
+    encoding: "utf8",
+  });
+  const detail = `${child.stderr ?? ""}\n${child.stdout ?? ""}`.trim();
+  if (child.status === 0) {
+    return {
+      status: "rebased",
+      base_ref: baseRef,
+      base_sha: baseSha,
+      previous_head: previousHead,
+      current_head: currentHead(targetDir),
+      detail,
+    };
+  }
+  if (hasRebaseInProgress(targetDir) || unmergedPaths(targetDir).length > 0) {
+    return {
+      status: "conflicts",
+      base_ref: baseRef,
+      base_sha: baseSha,
+      previous_head: previousHead,
+      current_head: currentHead(targetDir),
+      detail,
+    };
+  }
+  throw new Error(detail || `git rebase ${baseRef} failed`);
+}
+
+export function completeRebaseIfResolved({ targetDir }: TargetDir): CompleteRebaseResult {
+  const previousHead = currentHead(targetDir);
+  if (!hasRebaseInProgress(targetDir)) {
+    return {
+      status: "not-in-progress",
+      previous_head: previousHead,
+      current_head: previousHead,
+    };
+  }
+
+  const unresolved = unmergedPaths(targetDir);
+  if (unresolved.length > 0) {
+    throw new Error(`rebase conflicts remain unresolved: ${unresolved.join(", ")}`);
+  }
+
+  run("git", ["add", "--all"], { cwd: targetDir });
+  let detail = "";
+  while (hasRebaseInProgress(targetDir)) {
+    const child = spawnSync("git", ["-c", "core.editor=true", "rebase", "--continue"], {
+      cwd: targetDir,
+      env: process.env,
+      encoding: "utf8",
+    });
+    detail = `${detail}\n${child.stderr ?? ""}\n${child.stdout ?? ""}`.trim();
+    if (child.status !== 0) {
+      const remaining = unmergedPaths(targetDir);
+      if (remaining.length > 0) {
+        throw new Error(`rebase produced additional conflicts: ${remaining.join(", ")}`);
+      }
+      throw new Error(detail || "git rebase --continue failed");
+    }
+  }
+
+  return {
+    status: "continued",
+    previous_head: previousHead,
+    current_head: currentHead(targetDir),
+    detail,
+  };
+}
+
+export function hasRebaseInProgress(targetDir: string): boolean {
+  const gitDir = run("git", ["rev-parse", "--git-dir"], { cwd: targetDir }).trim();
+  const absoluteGitDir = path.isAbsolute(gitDir) ? gitDir : path.join(targetDir, gitDir);
+  return (
+    fs.existsSync(path.join(absoluteGitDir, "rebase-merge")) ||
+    fs.existsSync(path.join(absoluteGitDir, "rebase-apply"))
+  );
+}
+
+export function unmergedPaths(targetDir: string): string[] {
+  const child = spawnSync("git", ["diff", "--name-only", "--diff-filter=U"], {
+    cwd: targetDir,
+    env: process.env,
+    encoding: "utf8",
+  });
+  if (child.status !== 0) return [];
+  return child.stdout
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
 }
 
 function fetchDeeperHistory({ targetDir, baseBranch }: TargetBaseBranch): void {

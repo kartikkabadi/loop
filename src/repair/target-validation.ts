@@ -78,7 +78,7 @@ export function runAllowedValidationCommands(
   ensureMergeBaseAvailable({ targetDir: cwd, baseBranch });
   const validationEnv = targetValidationEnv();
   const executed: string[] = [];
-  for (const command of commands) {
+  for (const command of requiredValidationCommands(commands, cwd, options)) {
     const resolvedCommands = resolveAllowedValidationCommands(command, cwd, baseBranch, options);
     for (const parts of resolvedCommands) {
       const rendered = parts.join(" ");
@@ -120,7 +120,11 @@ export function preflightTargetValidationPlan(
   const availableScripts = [...scripts].sort();
   const resolved: string[] = [];
   const requiredScripts: LooseRecord[] = [];
-  for (const command of fixArtifact.validation_commands ?? []) {
+  for (const command of requiredValidationCommands(
+    fixArtifact.validation_commands ?? [],
+    targetDir,
+    options,
+  )) {
     const resolvedCommands = resolveAllowedValidationCommands(
       command,
       targetDir,
@@ -159,6 +163,16 @@ export function preflightTargetValidationPlan(
     resolved_commands: resolved,
     reason: `validation_script_missing: required ${missing.command} is unavailable in target checkout`,
   };
+}
+
+export function requiredValidationCommands(
+  commands: LooseRecord[] | undefined,
+  cwd: string,
+  options: TargetValidationOptions,
+) {
+  const out = [...(commands ?? [])];
+  if (requiresOpenClawChangedGate(cwd, options)) out.push("pnpm check:changed");
+  return uniqueStrings(out);
 }
 
 function restoreTargetLockfile(cwd: string) {
@@ -309,4 +323,10 @@ function readPackageScriptSet(cwd: string) {
   } catch {
     return new Set<string>();
   }
+}
+
+function requiresOpenClawChangedGate(cwd: string, options: TargetValidationOptions) {
+  return (
+    options.targetRepo === "openclaw/openclaw" && readPackageScriptSet(cwd).has("check:changed")
+  );
 }

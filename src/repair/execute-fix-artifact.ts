@@ -16,9 +16,11 @@ import {
 import { runCommand as run } from "./command-runner.js";
 import {
   branchHasBaseDiff,
+  completeRebaseIfResolved,
   currentHead,
   ensureMergeBaseAvailable,
   isAncestor,
+  rebaseOntoBase,
   remoteBranchExists,
   remoteBranchSha,
 } from "./git-repo-utils.js";
@@ -379,7 +381,7 @@ report.actions.push(outcome);
 writeReport(report, resultPath);
 
 function isBlockedFixError(error: JsonValue) {
-  return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed/i.test(
+  return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
     String(error?.message ?? error),
   );
 }
@@ -479,6 +481,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   ensureMergeBaseAvailable({ targetDir, baseBranch });
   const sourceHead = currentHead(targetDir);
   prepareTargetToolchain(targetDir, targetValidationOptions);
+  const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
 
   const prep = editValidatePrepareMerge({
     fixArtifact,
@@ -488,6 +491,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     baseBranch,
     fallbackReason: null,
     sourceHead,
+    rebaseResult,
   });
   (prep.merge_preflight as JsonValue).target = `#${sourcePr.number}`;
   const branchUpdate = branchUpdateState({ targetDir, sourceHead });
@@ -516,7 +520,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   });
   const comment = repairContributorBranchComment({
     sourcePrUrl: sourcePr.url,
-    validationCommands: fixArtifact.validation_commands,
+    validationCommands: prep.merge_preflight.validation_commands,
     provenance: externalMessageProvenance({
       model,
       reasoning: codexReasoningEffort,
@@ -616,6 +620,7 @@ function executeReplacementBranch({
     fixArtifact,
   });
   prepareTargetToolchain(targetDir, targetValidationOptions);
+  const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
 
   if (!dryRun) ghAuthSetupGit(targetDir);
   const prep = editValidatePrepareMerge({
@@ -629,6 +634,7 @@ function executeReplacementBranch({
     allowExistingChanges: branchState.resumed && branchHasBaseDiff({ targetDir, baseBranch }),
     reconcileWithBase: branchState.resumed,
     pushCheckpoint: dryRun ? null : () => pushRecoverableBranch({ targetDir, branch }),
+    rebaseResult,
   });
   const provenance = externalMessageProvenance({
     model,
@@ -922,6 +928,7 @@ function editValidatePrepareMerge({
   reconcileWithBase = false,
   pushCheckpoint = null,
   sourceHead = null,
+  rebaseResult = null,
 }: LooseRecord) {
   let producedChanges = allowExistingChanges;
   let previousSummary = "";
@@ -942,6 +949,7 @@ function editValidatePrepareMerge({
         repositoryContext,
         reconcileWithBase,
         sourceHead,
+        rebaseResult,
         maxEditAttempts,
       });
       const summaryPath = path.join(workRoot, `${mode}-codex-summary-${attempt}.md`);
@@ -1004,6 +1012,9 @@ function editValidatePrepareMerge({
       `Codex produced no target repo changes after ${maxEditAttempts} edit attempt(s).${suffix}`,
     );
   }
+
+  const completedRebase = completeRebaseIfResolved({ targetDir });
+  if (completedRebase.status === "continued") producedChanges = true;
 
   const firstCheckpoint = commitCheckpointIfNeeded({
     targetDir,

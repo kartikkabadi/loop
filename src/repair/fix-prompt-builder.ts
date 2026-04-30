@@ -16,6 +16,7 @@ export function buildFixPrompt({
   repositoryContext,
   reconcileWithBase,
   sourceHead,
+  rebaseResult,
   maxEditAttempts,
 }: LooseRecord) {
   return [
@@ -31,6 +32,7 @@ export function buildFixPrompt({
     "- preserve contributor credit in changelog/docs when the fix is user-facing;",
     "- address review-bot concerns named in the artifact;",
     "- resolve actionable human review comments, bot comments, and requested changes named in the artifact;",
+    "- fix relevant failing CI/check output named in the artifact; do not leave known changed-surface CI failures for a later pass;",
     "- prepare the PR so it can pass the ClawSweeper Repair merge_preflight gate;",
     "- do not push, open PRs, close PRs, or call gh;",
     "- do not create a final commit unless git rebase/merge conflict resolution requires it; ClawSweeper Repair checkpoints ordinary edits after you return;",
@@ -44,9 +46,10 @@ export function buildFixPrompt({
     `Branch: ${branch}`,
     `Edit attempt: ${attempt ?? 1} of ${maxEditAttempts}`,
     reconcileWithBase
-      ? "Existing repair branch detected. Reconcile the existing branch diff with current origin/main before touching new code; rebase locally only when that is the cleanest path."
+      ? "Existing repair branch detected. Reconcile the existing branch diff with the deterministic pre-edit rebase result before touching new code."
       : "",
     sourceHead ? `Source head before edit: ${sourceHead}` : "",
+    rebaseResult ? renderRebaseResult(rebaseResult) : "",
     previousNoDiff
       ? "Previous attempt produced no target repo diff. This time make the smallest concrete code/test change that satisfies the artifact; do not return analysis only."
       : "",
@@ -62,6 +65,22 @@ export function buildFixPrompt({
     "```json",
     JSON.stringify(fixArtifact, null, 2),
     "```",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function renderRebaseResult(rebaseResult: LooseRecord) {
+  const status = String(rebaseResult.status ?? "unknown");
+  const baseRef = String(rebaseResult.base_ref ?? "origin/main");
+  const baseSha = String(rebaseResult.base_sha ?? "unknown");
+  const detail = compactText(String(rebaseResult.detail ?? "").trim(), 800);
+  return [
+    `Deterministic pre-edit rebase: ${status} onto ${baseRef} (${baseSha}).`,
+    status === "conflicts"
+      ? "Resolve the active rebase conflicts, continue or finish the rebase, and leave the checkout in a normal non-rebasing state before returning."
+      : "",
+    detail ? `Rebase output: ${detail}` : "",
   ]
     .filter(Boolean)
     .join("\n");
