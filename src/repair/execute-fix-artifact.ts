@@ -1033,7 +1033,10 @@ function editValidatePrepareMerge({
   }
 
   let codexReview = null;
-  const maxFinalBaseSyncAttempts = 2;
+  const maxFinalBaseSyncAttempts = Math.max(
+    1,
+    Number(process.env.CLAWSWEEPER_FINAL_BASE_SYNC_ATTEMPTS ?? 4),
+  );
   for (let attempt = 1; attempt <= maxFinalBaseSyncAttempts; attempt += 1) {
     codexReview = validateAndReviewLoop({
       fixArtifact,
@@ -1074,9 +1077,14 @@ function editValidatePrepareMerge({
       pushCheckpoint?.();
     }
     if (attempt === maxFinalBaseSyncAttempts) {
-      throw new Error(
-        `origin/${baseBranch} moved during final validation after ${maxFinalBaseSyncAttempts} reconciliation attempts; retry repair`,
-      );
+      codexReview.final_base_sync = {
+        status: "accepted_after_final_sync",
+        reason:
+          "origin/main moved during final validation; pushed the branch after the last successful final-base sync and left review/CI/automerge to gate the exact head",
+        attempts: maxFinalBaseSyncAttempts,
+        sync,
+      };
+      break;
     }
   }
   const finalCheckpoint = commitCheckpointIfNeeded({
@@ -1490,6 +1498,7 @@ function runCodexReview({
       encoding: "utf8",
       env: codexEnv(),
       timeout: codexTimeoutMs,
+      maxBuffer: codexStdioMaxBuffer,
     },
   );
   fs.writeFileSync(
@@ -1503,6 +1512,7 @@ function runCodexReview({
     );
   if ((child.error as JsonValue)?.code === "ETIMEDOUT")
     throw new Error(`Codex /review timed out after ${codexTimeoutMs}ms`);
+  if (child.error) throw new Error(child.error.message || String(child.error));
   if (child.status !== 0) throw new Error(child.stderr || child.stdout || "Codex /review failed");
   if (!fs.existsSync(outputPath)) {
     const fallbackReview = extractCodexReviewFromJsonl(child.stdout);
@@ -1605,6 +1615,7 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
       encoding: "utf8",
       env: codexEnv(),
       timeout: codexTimeoutMs,
+      maxBuffer: codexStdioMaxBuffer,
     },
   );
   fs.writeFileSync(
@@ -1618,6 +1629,7 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
     );
   if ((child.error as JsonValue)?.code === "ETIMEDOUT")
     throw new Error(`Codex review-fix worker timed out after ${codexTimeoutMs}ms`);
+  if (child.error) throw new Error(child.error.message || String(child.error));
   if (child.status !== 0)
     throw new Error(child.stderr || child.stdout || "Codex review-fix worker failed");
 }
@@ -1659,6 +1671,7 @@ function buildMergePreflight({ fixArtifact, codexReview }: LooseRecord) {
         : [`Codex /review passed after agentic fix loop: ${codexReview.summary ?? "clean"}`],
     },
     validation_commands: validationCommands,
+    final_base_sync: codexReview.final_base_sync ?? null,
   };
 }
 
