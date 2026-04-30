@@ -163,9 +163,9 @@ Last dashboard update: Apr 30, 2026, 20:18 UTC
 | Open issues | 3784 |
 | Open PRs | 3369 |
 | Open items total | 7153 |
-| Reviewed files | 7666 |
-| Unreviewed open items | 57 |
-| Due now by cadence | 2003 |
+| Reviewed files | 7667 |
+| Unreviewed open items | 56 |
+| Due now by cadence | 2010 |
 | Proposed closes awaiting apply | 3 |
 | Work candidates awaiting promotion | 1637 |
 | Closed by Codex apply | 11288 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 20:18 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6796 | 6739 | 57 | 1843 | 3 | 1591 | 11280 | Apr 30, 2026, 20:14 UTC | Apr 30, 2026, 20:15 UTC | 348 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6796 | 6740 | 56 | 1850 | 3 | 1591 | 11280 | Apr 30, 2026, 20:17 UTC | Apr 30, 2026, 20:15 UTC | 349 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 357 | 924 | 0 | 157 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -190,13 +190,13 @@ Last dashboard update: Apr 30, 2026, 20:18 UTC
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. Latest comment sync: Apr 30, 2026, 20:14 UTC.
+Latest review: Apr 30, 2026, 20:17 UTC. Latest close: Apr 30, 2026, 20:15 UTC. Latest comment sync: Apr 30, 2026, 20:17 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 106 | 3 | 103 | 2 | 2 | 6 | 0 |
-| Last hour | 789 | 21 | 768 | 8 | 27 | 348 | 1 |
-| Last 24 hours | 6681 | 429 | 6252 | 32 | 715 | 3163 | 22 |
+| Last 15 minutes | 107 | 3 | 104 | 2 | 2 | 7 | 0 |
+| Last hour | 781 | 20 | 761 | 8 | 25 | 349 | 1 |
+| Last 24 hours | 6682 | 429 | 6253 | 32 | 713 | 3164 | 22 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75249](https://github.com/openclaw/openclaw/pull/75249) | fix(plugins): preserve mutable context in plugin hook wrapper | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75249.md) | complete | Apr 30, 2026, 20:17 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75248](https://github.com/openclaw/openclaw/pull/75248) | fix(agents): reorder workspace AGENTS.md template to put load-bearing rules first | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75248.md) | complete | Apr 30, 2026, 20:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74810](https://github.com/openclaw/openclaw/issues/74810) | LLM-only modelRun fails when inherited tool allowlist is non-empty | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74810.md) | failed | Apr 30, 2026, 20:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72648](https://github.com/openclaw/openclaw/pull/72648) | feat(core): implement session-aware heartbeat and system event normalization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72648.md) | complete | Apr 30, 2026, 20:14 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72923](https://github.com/openclaw/openclaw/pull/72923) | Mattermost: refresh slash callback command validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72923.md) | complete | Apr 30, 2026, 20:12 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70596](https://github.com/openclaw/openclaw/pull/70596) | perf(memory): prewarm explicit local embeddings on gateway startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70596.md) | complete | Apr 30, 2026, 20:08 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70473](https://github.com/openclaw/openclaw/pull/70473) | fix(agents): derive overflow budgets from provider errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70473.md) | complete | Apr 30, 2026, 20:07 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73567](https://github.com/openclaw/openclaw/pull/73567) | fix(qqbot): re-evaluate routing bindings per inbound message | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73567.md) | complete | Apr 30, 2026, 20:07 UTC |
 
 </details>
 
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 20:18 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=38836.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25187191715](https://github.com/openclaw/clawsweeper/actions/runs/25187191715)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -283,8 +283,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25187191715](https://
 | Open issues | 3445 |
 | Open PRs | 3351 |
 | Open items total | 6796 |
-| Reviewed files | 6739 |
-| Unreviewed open items | 57 |
+| Reviewed files | 6740 |
+| Unreviewed open items | 56 |
 | Archived closed files | 15254 |
 
 #### Review Outcomes
@@ -293,9 +293,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25187191715](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3418 |
 | Proposed issue closes | 2 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3301 |
+| Fresh reviewed PRs in the last 7 days | 3302 |
 | Proposed PR closes | 1 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6719 |
+| Fresh verified reviews in the last 7 days | 6720 |
 | Proposed closes awaiting apply | 3 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1591 |
 | Closed by Codex apply | 11280 |
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25187191715](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 484/1460 current (976 due, 33.2%) |
-| Hourly hot item cadence (<7d) | 484/1460 current (976 due, 33.2%) |
+| Hourly cadence coverage | 477/1461 current (984 due, 32.6%) |
+| Hourly hot item cadence (<7d) | 477/1461 current (984 due, 32.6%) |
 | Daily cadence coverage | 2697/3499 current (802 due, 77.1%) |
 | Daily PR cadence | 1876/2451 current (575 due, 76.5%) |
 | Daily new issue cadence (<30d) | 821/1048 current (227 due, 78.3%) |
 | Weekly older issue cadence | 1772/1780 current (8 due, 99.6%) |
-| Due now by cadence | 1843 |
+| Due now by cadence | 1850 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `51947,61960,62112,63037,73342`
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. Latest comment sync: Apr 30, 2026, 20:14 UTC.
+Latest review: Apr 30, 2026, 20:17 UTC. Latest close: Apr 30, 2026, 20:15 UTC. Latest comment sync: Apr 30, 2026, 20:17 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 106 | 3 | 103 | 2 | 2 | 6 | 0 |
-| Last hour | 789 | 21 | 768 | 8 | 27 | 348 | 1 |
-| Last 24 hours | 5852 | 429 | 5423 | 19 | 715 | 2764 | 22 |
+| Last 15 minutes | 107 | 3 | 104 | 2 | 2 | 7 | 0 |
+| Last hour | 781 | 20 | 761 | 8 | 25 | 349 | 1 |
+| Last 24 hours | 5853 | 429 | 5424 | 19 | 713 | 2765 | 22 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75249](https://github.com/openclaw/openclaw/pull/75249) | fix(plugins): preserve mutable context in plugin hook wrapper | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75249.md) | complete | Apr 30, 2026, 20:17 UTC |
 | [#75248](https://github.com/openclaw/openclaw/pull/75248) | fix(agents): reorder workspace AGENTS.md template to put load-bearing rules first | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75248.md) | complete | Apr 30, 2026, 20:14 UTC |
 | [#74810](https://github.com/openclaw/openclaw/issues/74810) | LLM-only modelRun fails when inherited tool allowlist is non-empty | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74810.md) | failed | Apr 30, 2026, 20:14 UTC |
 | [#72648](https://github.com/openclaw/openclaw/pull/72648) | feat(core): implement session-aware heartbeat and system event normalization | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72648.md) | complete | Apr 30, 2026, 20:14 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 20:14 UTC. Latest close: Apr 30, 2026, 20:15 UTC. L
 | [#72923](https://github.com/openclaw/openclaw/pull/72923) | Mattermost: refresh slash callback command validation | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72923.md) | complete | Apr 30, 2026, 20:12 UTC |
 | [#70596](https://github.com/openclaw/openclaw/pull/70596) | perf(memory): prewarm explicit local embeddings on gateway startup | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70596.md) | complete | Apr 30, 2026, 20:08 UTC |
 | [#70473](https://github.com/openclaw/openclaw/pull/70473) | fix(agents): derive overflow budgets from provider errors | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70473.md) | complete | Apr 30, 2026, 20:07 UTC |
-| [#73567](https://github.com/openclaw/openclaw/pull/73567) | fix(qqbot): re-evaluate routing bindings per inbound message | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73567.md) | complete | Apr 30, 2026, 20:07 UTC |
 
 </details>
 
