@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildFixPrompt } from "../../dist/repair/fix-prompt-builder.js";
+import { buildFixPrompt } from "./fix-prompt-builder.js";
+import type { LooseRecord } from "./json-types.js";
 
-function promptFor(fixArtifact) {
+function promptFor(fixArtifact: LooseRecord): string {
   return buildFixPrompt({
     fixArtifact,
     branch: "clawsweeper/automerge-openclaw-openclaw-74506",
