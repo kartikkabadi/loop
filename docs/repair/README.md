@@ -45,7 +45,7 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 00:18 UTC
+Last dashboard update: Apr 30, 2026, 00:23 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
@@ -68,8 +68,8 @@ Scope: 280 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Fix actions blocked | 53 | 27.3% |
 | Latest clusters with fix failures | 46 | 16.4% |
 | Distinct PRs touched | 851 | 100% |
-| Open PRs tracked | 263 | 30.9% |
-| Closed unmerged PRs tracked | 475 | 55.8% |
+| Open PRs tracked | 262 | 30.8% |
+| Closed unmerged PRs tracked | 476 | 55.9% |
 | Completed close actions | 30 | 9.9% |
 | Completed merge actions | 23 | 7.6% |
 | Duplicate closes | 22 | 73.3% |
@@ -163,10 +163,9 @@ Scope: 280 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | PR | Title | Cluster | Branch | Blockers | Next action |
 | --- | --- | --- | --- | --- | --- |
-| [#74677](https://github.com/openclaw/openclaw/pull/74677) | fix: config-aware auth evidence path bug | clawsweeper-commit-openclaw-openclaw-9307affe595f | clawsweeper/clawsweeper-commit-openclaw-openclaw-9307affe595f | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-agentic-commands-models:FAILURE; CI / checks-node-core:FAILURE, needs_merge_pre... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74673](https://github.com/openclaw/openclaw/pull/74673) | fix: compatibility gaps in the new Google Vertex ADC manifest evidence | clawsweeper-commit-openclaw-openclaw-dec5de8a2cda | clawsweeper/clawsweeper-commit-openclaw-openclaw-dec5de8a2cda | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-agentic-commands-models:FAILURE; CI / checks-node-core:FAILURE, needs_merge_pre... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74672](https://github.com/openclaw/openclaw/pull/74672) | fix: changed explicit-path handling regression | clawsweeper-commit-openclaw-openclaw-78f347036848 | clawsweeper/clawsweeper-commit-openclaw-openclaw-78f347036848 | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-agentic-commands-models:FAILURE; CI / checks-node-core:FAILURE, needs_merge_pre... | repair failing checks or document unrelated main flake with touched-surface proof |
-| [#74670](https://github.com/openclaw/openclaw/pull/74670) | fix: production change appears intentional, but an existing focused test file still asserts t... | clawsweeper-commit-openclaw-openclaw-a0cf07ec1066 | clawsweeper/clawsweeper-commit-openclaw-openclaw-a0cf07ec1066 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
+| [#74670](https://github.com/openclaw/openclaw/pull/74670) | fix: production change appears intentional, but an existing focused test file still asserts t... | clawsweeper-commit-openclaw-openclaw-a0cf07ec1066 | clawsweeper/clawsweeper-commit-openclaw-openclaw-a0cf07ec1066 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
 | [#74667](https://github.com/openclaw/openclaw/pull/74667) | fix: configs that used the previously documented WhatsApp exposeErrorText key now fail valida... | clawsweeper-commit-openclaw-openclaw-4cba08df01ea | clawsweeper/clawsweeper-commit-openclaw-openclaw-4cba08df01ea | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-agentic-commands-models:FAILURE; CI / checks-node-core:FAILURE, needs_merge_pre... | repair failing checks or document unrelated main flake with touched-surface proof |
 | [#74585](https://github.com/openclaw/openclaw/pull/74585) | fix(ci): Found one CI reliability regression risk in the install-smoke Doc | clawsweeper-commit-openclaw-openclaw-dac72374944f | clawsweeper/clawsweeper-commit-openclaw-openclaw-dac72374944f | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_merge_preflight | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |
 | [#74564](https://github.com/openclaw/openclaw/pull/74564) | fix: use agent auth scope in /models provider data | automerge-openclaw-openclaw-74525 | clawsweeper/automerge-openclaw-openclaw-74525 | needs_rebase:CONFLICTING, needs_merge_state:DIRTY, needs_checks:CI / check-lint:FAILURE; CI / checks-node-channels:FAILURE; CI / checks-n... | resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review |

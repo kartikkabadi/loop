@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T00:17:47.104Z",
-  "count": 10,
+  "generated_at": "2026-04-30T00:23:11.664Z",
+  "count": 9,
   "summary": {
-    "open_prs": 10,
+    "open_prs": 9,
     "ready_candidates": 0,
     "security_hold": 0,
-    "needs_rebase": 4,
+    "needs_rebase": 5,
     "mergeability_unknown": 0,
-    "needs_checks": 8,
+    "needs_checks": 7,
     "needs_review": 0,
-    "needs_merge_preflight": 10,
+    "needs_merge_preflight": 9,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -26,78 +26,6 @@
     "candidates": []
   },
   "prs": [
-    {
-      "number": 74677,
-      "title": "fix: config-aware auth evidence path bug",
-      "url": "https://github.com/openclaw/openclaw/pull/74677",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-9307affe595f",
-      "head_sha": "dbfc44134bad007c43761d8ef36cf7a57a9a6303",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-9307affe595f",
-      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-9307affe595f.md",
-      "updated_at": "2026-04-29T23:39:59Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
-      "review_decision": "",
-      "security_hold": false,
-      "checks": {
-        "total": 86,
-        "counts": {
-          "CANCELLED": 4,
-          "SKIPPED": 14,
-          "SUCCESS": 66,
-          "FAILURE": 2
-        },
-        "blockers": [
-          "CI / checks-node-agentic-commands-models:FAILURE",
-          "CI / checks-node-core:FAILURE"
-        ]
-      },
-      "review_threads": {
-        "status": "clean",
-        "reason": null,
-        "unresolved_count": 0,
-        "examples": []
-      },
-      "review_bots": {
-        "count": 1,
-        "latest": [
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74677#issuecomment-4348279196",
-            "submitted_at": "2026-04-29T23:39:59Z"
-          }
-        ]
-      },
-      "latest_record": {
-        "run_id": "25139000471",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25139000471",
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-9307affe595f",
-        "published_at": "2026-04-29T23:35:34.192Z",
-        "workflow_conclusion": "success",
-        "apply_action": {
-          "target": "#74677",
-          "action": "merge_canonical",
-          "status": "blocked",
-          "classification": "fix_pr",
-          "canonical": null,
-          "candidate_fix": null,
-          "title": null,
-          "idempotency_key": null,
-          "reason": "job does not allow merge",
-          "merged_at": null,
-          "merge_commit_sha": null,
-          "live_state": null,
-          "live_updated_at": null
-        }
-      },
-      "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-agentic-commands-models:FAILURE; CI / checks-node-core:FAILURE",
-        "needs_merge_preflight"
-      ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
-    },
     {
       "number": 74673,
       "title": "fix: compatibility gaps in the new Google Vertex ADC manifest evidence",
@@ -251,8 +179,8 @@
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-a0cf07ec1066",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-a0cf07ec1066.md",
       "updated_at": "2026-04-29T23:31:03Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "CLEAN",
+      "mergeable": "CONFLICTING",
+      "merge_state_status": "DIRTY",
       "review_decision": "",
       "security_hold": false,
       "checks": {
@@ -304,9 +232,11 @@
         }
       },
       "blockers": [
+        "needs_rebase:CONFLICTING",
+        "needs_merge_state:DIRTY",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     },
     {
       "number": 74667,
