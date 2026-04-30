@@ -45,7 +45,7 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 22:15 UTC
+Last dashboard update: Apr 30, 2026, 22:33 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
@@ -61,15 +61,15 @@ Scope: 340 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Latest successful clusters | 311 | 91.5% |
 | Latest failed clusters | 7 | 2.1% |
 | Latest cancelled clusters | 1 | 0.3% |
-| Run attempts archived | 604 | audit |
+| Run attempts archived | 605 | audit |
 | Fix action attempts | 267 | audit |
 | Fix actions executed | 8 | 3.0% |
 | Fix actions failed | 39 | 14.6% |
 | Fix actions blocked | 68 | 25.5% |
 | Latest clusters with fix failures | 57 | 16.8% |
-| Distinct PRs touched | 905 | 100% |
-| Open PRs tracked | 253 | 28.0% |
-| Closed unmerged PRs tracked | 496 | 54.8% |
+| Distinct PRs touched | 882 | 100% |
+| Open PRs tracked | 237 | 26.9% |
+| Closed unmerged PRs tracked | 488 | 55.3% |
 | Completed close actions | 30 | 8.5% |
 | Completed merge actions | 23 | 6.6% |
 | Duplicate closes | 22 | 73.3% |
@@ -83,7 +83,7 @@ Scope: 340 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | Cluster | State | Source job | Reason | Report | Run |
 | --- | --- | --- | --- | --- | --- |
-| [automerge-openclaw-openclaw-74716](results/openclaw/automerge-openclaw-openclaw-74716.md) | fix failed | jobs/openclaw/inbox/automerge-openclaw-openclaw-74716.md | validation command failed (pnpm check:changed): [check:changed] lanes=core, coreTests, extensions, extensionTests, apps, docs [check:chan... | [report](results/openclaw/automerge-openclaw-openclaw-74716.md) | [25191767273](https://github.com/openclaw/clawsweeper/actions/runs/25191767273) |
+| [automerge-openclaw-openclaw-74716](results/openclaw/automerge-openclaw-openclaw-74716.md) | fix failed | jobs/openclaw/inbox/automerge-openclaw-openclaw-74716.md | validation command failed (pnpm check:changed): [check:changed] lanes=core, coreTests, extensions, extensionTests, apps, docs [check:chan... | [report](results/openclaw/automerge-openclaw-openclaw-74716.md) | [25192389369](https://github.com/openclaw/clawsweeper/actions/runs/25192389369) |
 | [clawsweeper-commit-openclaw-openclaw-1d74ecd71f0f](results/openclaw/clawsweeper-commit-openclaw-openclaw-1d74ecd71f0f.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-1d74ecd71f0f.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-1d74ecd71f0f.md) | [25191267120](https://github.com/openclaw/clawsweeper/actions/runs/25191267120) |
 | [clawsweeper-commit-openclaw-openclaw-027ea5f08bd9](results/openclaw/clawsweeper-commit-openclaw-openclaw-027ea5f08bd9.md) | fix blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-027ea5f08bd9.md | Codex /review did not pass after 2 attempt(s): Merge is blocked by one incomplete repair. The branch is narrow and `pnpm check:changed` p... | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-027ea5f08bd9.md) | [25187047448](https://github.com/openclaw/clawsweeper/actions/runs/25187047448) |
 | [automerge-openclaw-openclaw-75209](results/openclaw/automerge-openclaw-openclaw-75209.md) | apply blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-75209.md | job does not allow merge | [report](results/openclaw/automerge-openclaw-openclaw-75209.md) | [25186718052](https://github.com/openclaw/clawsweeper/actions/runs/25186718052) |
@@ -113,8 +113,8 @@ Scope: 340 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | Cluster | Status | Target | Branch/PR | Reason | Run |
 | --- | --- | --- | --- | --- | --- |
-| [automerge-openclaw-openclaw-74716](results/openclaw/automerge-openclaw-openclaw-74716.md) | failed |  |  | validation command failed (pnpm check:changed): [check:changed] lanes=core, coreTests, extensions, extensionTests, apps, docs [check:chan... | [25191767273](https://github.com/openclaw/clawsweeper/actions/runs/25191767273) |
-| [automerge-openclaw-openclaw-74716](results/openclaw/automerge-openclaw-openclaw-74716.md) | blocked |  |  | validation command failed (pnpm check:changed): [check:changed] lanes=core, coreTests, extensions, extensionTests, apps, docs [check:chan... | [25191767273](https://github.com/openclaw/clawsweeper/actions/runs/25191767273) |
+| [automerge-openclaw-openclaw-74716](results/openclaw/automerge-openclaw-openclaw-74716.md) | failed |  |  | validation command failed (pnpm check:changed): [check:changed] lanes=core, coreTests, extensions, extensionTests, apps, docs [check:chan... | [25192389369](https://github.com/openclaw/clawsweeper/actions/runs/25192389369) |
+| [automerge-openclaw-openclaw-74716](results/openclaw/automerge-openclaw-openclaw-74716.md) | blocked |  |  | validation command failed (pnpm check:changed): [check:changed] lanes=core, coreTests, extensions, extensionTests, apps, docs [check:chan... | [25192389369](https://github.com/openclaw/clawsweeper/actions/runs/25192389369) |
 | [clawsweeper-commit-openclaw-openclaw-027ea5f08bd9](results/openclaw/clawsweeper-commit-openclaw-openclaw-027ea5f08bd9.md) | blocked |  |  | Codex /review did not pass after 2 attempt(s): Merge is blocked by one incomplete repair. The branch is narrow and `pnpm check:changed` p... | [25187047448](https://github.com/openclaw/clawsweeper/actions/runs/25187047448) |
 | [clawsweeper-commit-openclaw-openclaw-82ca6ecdde80](results/openclaw/clawsweeper-commit-openclaw-openclaw-82ca6ecdde80.md) | blocked |  |  | fix artifact is too broad for autonomous execution; split into narrower jobs or explicitly set CLAWSWEEPER_ALLOW_BROAD_FIX_ARTIFACTS=1 | [25176627885](https://github.com/openclaw/clawsweeper/actions/runs/25176627885) |
 | [clawsweeper-commit-openclaw-openclaw-ac599c9e539f](results/openclaw/clawsweeper-commit-openclaw-openclaw-ac599c9e539f.md) | blocked |  |  | validation command failed (pnpm check:changed): [check:changed] lanes=core, coreTests [check:changed] src/plugins/bundled-runtime-deps-se... | [25171874076](https://github.com/openclaw/clawsweeper/actions/runs/25171874076) |
