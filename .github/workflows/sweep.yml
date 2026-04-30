@@ -759,14 +759,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh workflow run sweep.yml \
-            --ref main \
-            -f apply_existing=false \
-            -f hot_intake="${{ needs.plan.outputs.hot_intake }}" \
-            -f target_repo="${{ needs.plan.outputs.target_repo }}" \
-            -f batch_size="${{ needs.plan.outputs.batch_size }}" \
-            -f shard_count="${{ needs.plan.outputs.shard_count }}" \
-            -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
+          for attempt in 1 2 3; do
+            if gh workflow run sweep.yml \
+              --ref main \
+              -f apply_existing=false \
+              -f hot_intake="${{ needs.plan.outputs.hot_intake }}" \
+              -f target_repo="${{ needs.plan.outputs.target_repo }}" \
+              -f batch_size="${{ needs.plan.outputs.batch_size }}" \
+              -f shard_count="${{ needs.plan.outputs.shard_count }}" \
+              -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"; then
+              exit 0
+            fi
+            sleep "$((attempt * 10))"
+          done
+          echo "::warning::Unable to dispatch the next sweep after three attempts; the scheduled backstop will pick it up."
 
   audit-dashboard:
     name: Audit dashboard
