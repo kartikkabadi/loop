@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T04:08:58.938Z",
-  "count": 20,
+  "generated_at": "2026-04-30T04:12:24.366Z",
+  "count": 19,
   "summary": {
-    "open_prs": 20,
+    "open_prs": 19,
     "ready_candidates": 0,
     "security_hold": 0,
-    "needs_rebase": 9,
+    "needs_rebase": 8,
     "mergeability_unknown": 0,
     "needs_checks": 7,
     "needs_review": 0,
-    "needs_merge_preflight": 20,
+    "needs_merge_preflight": 19,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -562,74 +562,6 @@
         "needs_merge_preflight"
       ],
       "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
-    },
-    {
-      "number": 74746,
-      "title": "fix(ci): committed Plugin SDK API baseline hash does not match the public SDK surface generat...",
-      "url": "https://github.com/openclaw/openclaw/pull/74746",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-02ebac6250bf",
-      "head_sha": "4bcbf827713a43fb6566ef97332e4a354ea73f19",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-02ebac6250bf",
-      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-02ebac6250bf.md",
-      "updated_at": "2026-04-30T04:07:19Z",
-      "mergeable": "CONFLICTING",
-      "merge_state_status": "DIRTY",
-      "review_decision": "",
-      "security_hold": false,
-      "checks": {
-        "total": 44,
-        "counts": {
-          "CANCELLED": 2,
-          "SKIPPED": 29,
-          "SUCCESS": 13
-        },
-        "blockers": []
-      },
-      "review_threads": {
-        "status": "clean",
-        "reason": null,
-        "unresolved_count": 0,
-        "examples": []
-      },
-      "review_bots": {
-        "count": 1,
-        "latest": [
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74746#issuecomment-4349236214",
-            "submitted_at": "2026-04-30T02:16:52Z"
-          }
-        ]
-      },
-      "latest_record": {
-        "run_id": "25143676983",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25143676983",
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-02ebac6250bf",
-        "published_at": "2026-04-30T02:12:52.854Z",
-        "workflow_conclusion": "success",
-        "apply_action": {
-          "target": "#74746",
-          "action": "merge_canonical",
-          "status": "blocked",
-          "classification": "fix_pr",
-          "canonical": null,
-          "candidate_fix": null,
-          "title": null,
-          "idempotency_key": null,
-          "reason": "job does not allow merge",
-          "merged_at": null,
-          "merge_commit_sha": null,
-          "live_state": null,
-          "live_updated_at": null
-        }
-      },
-      "blockers": [
-        "needs_rebase:CONFLICTING",
-        "needs_merge_state:DIRTY",
-        "needs_merge_preflight"
-      ],
-      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     },
     {
       "number": 74714,

@@ -6918,5 +6918,25 @@
     "merge_commit_sha": null,
     "live_state": null,
     "live_updated_at": null
+  },
+  {
+    "repo": "openclaw/openclaw",
+    "run_id": "25146761239",
+    "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25146761239",
+    "cluster_id": "automerge-openclaw-openclaw-74666",
+    "published_at": "2026-04-30T04:09:50.390Z",
+    "target": "#74646",
+    "action": "close_fixed_by_candidate",
+    "status": "skipped",
+    "classification": "fixed_by_candidate",
+    "canonical": "#74666",
+    "candidate_fix": "#74666",
+    "title": null,
+    "idempotency_key": "clawsweeper:automerge-openclaw-openclaw-74666:blocked-close-fixed-by-candidate:74646:2026-04-29T22:25:08Z",
+    "reason": "Blocked on the canonical fix path landing; job policy does not allow unmerged fix closeout.",
+    "merged_at": null,
+    "merge_commit_sha": null,
+    "live_state": null,
+    "live_updated_at": null
   }
 ]
