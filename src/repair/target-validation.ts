@@ -2,7 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { runCommand as run } from "./command-runner.js";
-import { ensureMergeBaseAvailable, gitChangedFiles, gitLsFiles } from "./git-repo-utils.js";
+import {
+  ensureMergeBaseAvailable,
+  gitChangedFiles,
+  gitLsFiles,
+  isAncestor,
+} from "./git-repo-utils.js";
 import { parsePullRequestUrl } from "./github-ref.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import { compactText } from "./text-utils.js";
@@ -21,8 +26,17 @@ const DEFAULT_BASE_BRANCH = "main";
 export type TargetValidationOptions = {
   allowExpensiveValidation: boolean;
   installTargetDeps: boolean;
+  skipOpenClawChangedGate?: boolean;
   strictTargetValidation: boolean;
   targetRepo: string;
+};
+
+export type RepairDeltaValidationPlan = {
+  commands: string[];
+  options: TargetValidationOptions;
+  scope: "changed-surface" | "repair-delta-docs";
+  changed_files: string[];
+  reason: string;
 };
 
 export function prepareTargetToolchain(cwd: string, options: TargetValidationOptions) {
@@ -172,8 +186,43 @@ export function requiredValidationCommands(
   options: TargetValidationOptions,
 ) {
   const out = [...(commands ?? [])];
-  if (requiresOpenClawChangedGate(cwd, options)) out.push("pnpm check:changed");
+  if (!options.skipOpenClawChangedGate && requiresOpenClawChangedGate(cwd, options)) {
+    out.push("pnpm check:changed");
+  }
   return uniqueStrings(out);
+}
+
+export function repairDeltaValidationPlan(
+  { fixArtifact, targetDir, sourceHead }: LooseRecord,
+  options: TargetValidationOptions,
+): RepairDeltaValidationPlan {
+  const commands = fixArtifact.validation_commands ?? [];
+  const changedSurface = {
+    commands,
+    options,
+    scope: "changed-surface" as const,
+    changed_files: [],
+    reason: "validate the full changed surface against the target base branch",
+  };
+  if (options.targetRepo !== "openclaw/openclaw") return changedSurface;
+  if (fixArtifact.repair_strategy !== "repair_contributor_branch") return changedSurface;
+  const sourceRef = String(sourceHead ?? "");
+  if (!/^[0-9a-f]{40}$/i.test(sourceRef)) return changedSurface;
+  if (!isAncestor({ targetDir, ancestor: sourceRef, descendant: "HEAD" })) return changedSurface;
+
+  const changedFiles = changedFilesSinceRef(targetDir, sourceRef);
+  if (changedFiles.length === 0 || !changedFiles.every(isDocsOnlyRepairDeltaFile)) {
+    return { ...changedSurface, changed_files: changedFiles };
+  }
+
+  return {
+    commands: [`git diff --check ${sourceRef}..HEAD`],
+    options: { ...options, skipOpenClawChangedGate: true },
+    scope: "repair-delta-docs",
+    changed_files: changedFiles,
+    reason:
+      "adopted PR repair changed only docs/changelog files since the source head; validate the repair delta and let PR checks gate the existing source diff",
+  };
 }
 
 function restoreTargetLockfile(cwd: string) {
@@ -331,4 +380,27 @@ function requiresOpenClawChangedGate(cwd: string, options: TargetValidationOptio
   return (
     options.targetRepo === "openclaw/openclaw" && readPackageScriptSet(cwd).has("check:changed")
   );
+}
+
+function changedFilesSinceRef(cwd: string, sourceRef: string) {
+  const committed = run("git", ["diff", "--name-only", `${sourceRef}..HEAD`], { cwd })
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const uncommitted = run("git", ["status", "--porcelain"], { cwd })
+    .split("\n")
+    .map((line) => line.trim())
+    .map((line) => line.replace(/^.. /, ""))
+    .map((line) => line.split(" -> ").pop())
+    .filter(Boolean);
+  return uniqueStrings([...committed, ...uncommitted]);
+}
+
+function isDocsOnlyRepairDeltaFile(filePath: string) {
+  const file = String(filePath ?? "").trim();
+  if (!file) return false;
+  if (file === "CHANGELOG.md") return true;
+  if (file.startsWith("docs/")) return true;
+  if (/^(?:README|CONTRIBUTING|SECURITY|SUPPORT|CODE_OF_CONDUCT)\.md$/i.test(file)) return true;
+  return /\.(?:md|mdx|txt)$/i.test(file);
 }

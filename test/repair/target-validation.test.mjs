@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -6,6 +7,7 @@ import test from "node:test";
 
 import {
   preflightTargetValidationPlan,
+  repairDeltaValidationPlan,
   requiredValidationCommands,
 } from "../../dist/repair/target-validation.js";
 
@@ -68,10 +70,85 @@ test("validation preflight accepts env-prefixed OpenClaw QA commands", () => {
   );
 });
 
+test("adopted OpenClaw PR repairs validate changelog-only repair deltas without full changed gate", () => {
+  const cwd = gitPackageFixture({ "check:changed": "node check.js" });
+  fs.writeFileSync(path.join(cwd, "CHANGELOG.md"), "# Changelog\n");
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  const sourceHead = git(cwd, "rev-parse", "HEAD");
+
+  fs.appendFileSync(path.join(cwd, "CHANGELOG.md"), "\n- Fix the Codex plugin bridge.\n");
+  git(cwd, "add", "CHANGELOG.md");
+  git(cwd, "commit", "-m", "add changelog");
+
+  const plan = repairDeltaValidationPlan(
+    {
+      fixArtifact: {
+        repair_strategy: "repair_contributor_branch",
+        validation_commands: ["pnpm check:changed"],
+      },
+      targetDir: cwd,
+      sourceHead,
+    },
+    validationOptions("openclaw/openclaw"),
+  );
+
+  assert.equal(plan.scope, "repair-delta-docs");
+  assert.deepEqual(plan.changed_files, ["CHANGELOG.md"]);
+  assert.deepEqual(plan.commands, [`git diff --check ${sourceHead}..HEAD`]);
+  assert.deepEqual(requiredValidationCommands(plan.commands, cwd, plan.options), [
+    `git diff --check ${sourceHead}..HEAD`,
+  ]);
+});
+
+test("adopted OpenClaw PR repairs keep full changed gate for code repair deltas", () => {
+  const cwd = gitPackageFixture({ "check:changed": "node check.js" });
+  fs.mkdirSync(path.join(cwd, "src"));
+  fs.writeFileSync(path.join(cwd, "src/index.ts"), "export const value = 1;\n");
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  const sourceHead = git(cwd, "rev-parse", "HEAD");
+
+  fs.writeFileSync(path.join(cwd, "src/index.ts"), "export const value = 2;\n");
+  git(cwd, "add", "src/index.ts");
+  git(cwd, "commit", "-m", "repair code");
+
+  const plan = repairDeltaValidationPlan(
+    {
+      fixArtifact: {
+        repair_strategy: "repair_contributor_branch",
+        validation_commands: ["pnpm test src/index.test.ts"],
+      },
+      targetDir: cwd,
+      sourceHead,
+    },
+    validationOptions("openclaw/openclaw"),
+  );
+
+  assert.equal(plan.scope, "changed-surface");
+  assert.deepEqual(plan.changed_files, ["src/index.ts"]);
+  assert.deepEqual(requiredValidationCommands(plan.commands, cwd, plan.options), [
+    "pnpm test src/index.test.ts",
+    "pnpm check:changed",
+  ]);
+});
+
 function packageFixture(scripts) {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-"));
   fs.writeFileSync(path.join(cwd, "package.json"), `${JSON.stringify({ scripts }, null, 2)}\n`);
   return cwd;
+}
+
+function gitPackageFixture(scripts) {
+  const cwd = packageFixture(scripts);
+  git(cwd, "init", "-b", "main");
+  git(cwd, "config", "user.email", "clawsweeper@example.invalid");
+  git(cwd, "config", "user.name", "ClawSweeper Test");
+  return cwd;
+}
+
+function git(cwd, ...args) {
+  return execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
 }
 
 function validationOptions(targetRepo) {

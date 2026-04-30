@@ -46,6 +46,7 @@ import {
 import {
   prepareTargetToolchain,
   preflightTargetValidationPlan,
+  repairDeltaValidationPlan,
   runAllowedValidationCommands,
   type TargetValidationOptions,
 } from "./target-validation.js";
@@ -1051,6 +1052,7 @@ function editValidatePrepareMerge({
       targetDir,
       mode,
       baseBranch,
+      sourceHead,
       onReviewFix: (reviewAttempt: JsonValue) => {
         const checkpoint = commitCheckpointIfNeeded({
           targetDir,
@@ -1383,14 +1385,19 @@ function validateAndReviewLoop({
   mode,
   baseBranch = DEFAULT_BASE_BRANCH,
   onReviewFix = null,
+  sourceHead = null,
 }: LooseRecord) {
   let lastReview = null;
   let validationCommands: LooseRecord[] = [];
   for (let attempt = 1; attempt <= maxReviewAttempts; attempt += 1) {
-    validationCommands = runAllowedValidationCommands(
-      fixArtifact.validation_commands,
-      targetDir,
+    const validationPlan = repairDeltaValidationPlan(
+      { fixArtifact, targetDir, sourceHead },
       targetValidationOptions,
+    );
+    validationCommands = runAllowedValidationCommands(
+      validationPlan.commands,
+      targetDir,
+      validationPlan.options,
       baseBranch,
     );
     runDiffCheck({ targetDir, baseBranch });
@@ -1402,6 +1409,7 @@ function validateAndReviewLoop({
         attempt,
         baseBranch,
         validationCommands,
+        validationPlan,
       });
     } catch (error) {
       if (attempt < maxReviewAttempts && isRetryableCodexReviewError(error)) {
@@ -1450,6 +1458,7 @@ function runCodexReview({
   attempt,
   baseBranch = DEFAULT_BASE_BRANCH,
   validationCommands = [],
+  validationPlan = null,
 }: LooseRecord) {
   const outputPath = path.join(workRoot, `${mode}-codex-review-${attempt}.json`);
   const schemaPath = codexReviewSchemaPath();
@@ -1472,6 +1481,9 @@ function runCodexReview({
     "- repository policy overrides fix artifact credit wording: for openclaw/openclaw changelog entries, do not require or re-add forbidden `Thanks @codex`, `Thanks @openclaw`, or `Thanks @steipete` attribution; PR body/history/source links are acceptable credit for those source authors.",
     "",
     `Validation commands actually run: ${validationCommands.join("; ") || "none"}`,
+    validationPlan
+      ? `Validation scope: ${validationPlan.scope}; ${validationPlan.reason}; changed files: ${(validationPlan.changed_files ?? []).join(", ") || "none"}`
+      : "",
     `Original artifact validation commands: ${(fixArtifact.validation_commands ?? []).join("; ")}`,
     "",
     "Return JSON only. If anything blocks merge, include actionable findings.",
