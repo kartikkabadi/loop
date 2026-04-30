@@ -213,6 +213,8 @@ interface Decision {
   likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
+  reproductionAssessment: string;
+  solutionAssessment: string;
   reviewFindings: ReviewFinding[];
   securityReview: SecurityReview;
   overallCorrectness: OverallCorrectness;
@@ -566,6 +568,8 @@ const DECISION_SCHEMA_KEYS = new Set([
   "likelyOwners",
   "risks",
   "bestSolution",
+  "reproductionAssessment",
+  "solutionAssessment",
   "reviewFindings",
   "securityReview",
   "overallCorrectness",
@@ -614,6 +618,8 @@ const REVIEW_SECTIONS = {
   summary: "Summary",
   changeSummary: "What This Changes",
   bestSolution: "Best Possible Solution",
+  reproductionAssessment: "Reproduction Assessment",
+  solutionAssessment: "Solution Assessment",
   reviewFindings: "Review Findings",
   securityReview: "Security Review",
   workCandidate: "Work Candidate",
@@ -1080,6 +1086,11 @@ export function parseDecision(value: unknown): Decision {
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
+    reproductionAssessment: requireString(
+      record.reproductionAssessment,
+      "decision.reproductionAssessment",
+    ),
+    solutionAssessment: requireString(record.solutionAssessment, "decision.solutionAssessment"),
     reviewFindings,
     securityReview: parseSecurityReview(record.securityReview, "decision.securityReview"),
     overallCorrectness: requireEnum(
@@ -2562,6 +2573,10 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
+    reproductionAssessment:
+      "Unclear. The review failed before ClawSweeper could establish a reproduction path.",
+    solutionAssessment:
+      "Unclear. Retry the review first so ClawSweeper can evaluate the actual issue and fix direction.",
     reviewFindings: [],
     securityReview: {
       status: "not_applicable",
@@ -3316,6 +3331,8 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
+    reproductionAssessment: reviewSectionValue(markdown, "reproductionAssessment"),
+    solutionAssessment: reviewSectionValue(markdown, "solutionAssessment"),
     reviewFindings: reportReviewFindings(markdown),
     securityReview: reportSecurityReview(markdown),
     overallCorrectness: reportOverallCorrectness(markdown),
@@ -3382,6 +3399,8 @@ function renderCloseComment(options: {
   reason: CloseReason;
   summary: string;
   bestSolution?: string;
+  reproductionAssessment?: string;
+  solutionAssessment?: string;
   evidence: Evidence[];
   likelyOwners?: LikelyOwner[];
   securityReview?: SecurityReview;
@@ -3396,6 +3415,7 @@ function renderCloseComment(options: {
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, summaryLine)) {
     details.push("Best possible solution:", "", bestSolutionLine);
   }
+  appendReviewQuestionDetails(details, options.reproductionAssessment, options.solutionAssessment);
   if (options.securityReview) {
     details.push("", "Security review:", "", securityReviewLine(options.securityReview));
     if (options.securityReview.concerns.length) {
@@ -3420,6 +3440,8 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
       reason,
       summary: reviewSectionValue(markdown, "summary"),
       bestSolution: reviewSectionValue(markdown, "bestSolution"),
+      reproductionAssessment: reviewSectionValue(markdown, "reproductionAssessment"),
+      solutionAssessment: reviewSectionValue(markdown, "solutionAssessment"),
       evidence: reportEvidence(markdown),
       likelyOwners: reportLikelyOwners(markdown),
       securityReview: reportSecurityReview(markdown),
@@ -3464,6 +3486,8 @@ function normalizeComment(
     reason: decision.closeReason,
     summary: decision.summary,
     bestSolution: decision.bestSolution,
+    reproductionAssessment: decision.reproductionAssessment,
+    solutionAssessment: decision.solutionAssessment,
     evidence: decision.evidence,
     likelyOwners: decision.likelyOwners,
     securityReview: decision.securityReview,
@@ -3487,6 +3511,25 @@ function collapsedDetailsBlock(summary: string, lines: readonly string[]): strin
   return ["<details>", `<summary>${summary}</summary>`, "", body, "", "</details>"].join("\n");
 }
 
+function appendReviewQuestionDetails(
+  details: string[],
+  reproductionAssessment: string | undefined,
+  solutionAssessment: string | undefined,
+): void {
+  const append = (heading: string, body: string) => {
+    if (details.length) details.push("");
+    details.push(heading, "", body);
+  };
+  const reproductionLine = sentence(reproductionAssessment ?? "");
+  if (reproductionLine) {
+    append("Do we have a high-confidence way to reproduce the issue?", reproductionLine);
+  }
+  const solutionLine = sentence(solutionAssessment ?? "");
+  if (solutionLine) {
+    append("Is this the best way to solve the issue?", solutionLine);
+  }
+}
+
 function renderKeepOpenCommentFromReport(markdown: string): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
@@ -3495,6 +3538,8 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const summary = reviewSectionValue(markdown, "summary");
   const changeSummary = reviewSectionValue(markdown, "changeSummary");
   const bestSolution = reviewSectionValue(markdown, "bestSolution");
+  const reproductionAssessment = reviewSectionValue(markdown, "reproductionAssessment");
+  const solutionAssessment = reviewSectionValue(markdown, "solutionAssessment");
   const risks = reviewSectionValue(markdown, "risks");
   const workReason = reportWorkCandidateReason(markdown);
   const workCandidate = frontMatterValue(markdown, "work_candidate");
@@ -3553,6 +3598,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, nextStepLine)) {
     details.push("Best possible solution:", "", bestSolutionLine);
   }
+  appendReviewQuestionDetails(details, reproductionAssessment, solutionAssessment);
   if (isPullRequest && reviewFindings.length) {
     details.push(
       "",
@@ -4295,6 +4341,9 @@ function markdownFor(options: {
         .join("\n")
     : "- none";
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
+  const reproductionAssessment =
+    options.decision.reproductionAssessment.trim() || "_Not provided._";
+  const solutionAssessment = options.decision.solutionAssessment.trim() || "_Not provided._";
   const reviewFindings = renderReviewFindingsReportSection(options.decision);
   const securityReview = renderSecurityReviewReportSection(options.decision);
   const workCandidateSection = renderWorkCandidateReportSection(options.decision);
@@ -4394,6 +4443,14 @@ ${options.decision.changeSummary}
 ## ${REVIEW_SECTIONS.bestSolution}
 
 ${bestSolution}
+
+## ${REVIEW_SECTIONS.reproductionAssessment}
+
+${reproductionAssessment}
+
+## ${REVIEW_SECTIONS.solutionAssessment}
+
+${solutionAssessment}
 
 ## ${REVIEW_SECTIONS.reviewFindings}
 

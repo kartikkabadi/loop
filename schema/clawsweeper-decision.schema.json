@@ -12,6 +12,8 @@
     "likelyOwners",
     "risks",
     "bestSolution",
+    "reproductionAssessment",
+    "solutionAssessment",
     "reviewFindings",
     "securityReview",
     "overallCorrectness",
@@ -136,6 +138,14 @@
     "bestSolution": {
       "type": "string",
       "description": "The best possible product/code/docs direction for this item, whether the item should close or stay open. Do not repeat the change summary, workReason, or risk list."
+    },
+    "reproductionAssessment": {
+      "type": "string",
+      "description": "Answer this exact question for public review details: Do we have a high-confidence way to reproduce the issue? Include yes/no/unclear/not applicable and the evidence-backed reason."
+    },
+    "solutionAssessment": {
+      "type": "string",
+      "description": "Answer this exact question for public review details: Is this the best way to solve the issue? Include yes/no/unclear/not applicable and the evidence-backed rationale or safer alternative."
     },
     "reviewFindings": {
       "type": "array",

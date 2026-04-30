@@ -72,7 +72,20 @@ Manual workflow dispatch supports:
 - `enabled`: emergency no-op switch
 - `commit_offset`: internal continuation offset
 
-The receiver enforces that the commit is reachable from `origin/main`.
+The receiver waits 15 minutes by default before selecting commits. This gives
+the target `main` push range time to settle across GitHub and the runner before
+review starts. Override it on `openclaw/clawsweeper` with:
+
+```text
+CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=900
+```
+
+Use `0` only for manual backfills where the target commit range is already
+settled.
+
+The receiver enforces that the commit is reachable from `origin/main`. Review
+workers then check out current target `main` and reference the reviewed commit
+by SHA/range rather than detaching the whole target repository at the commit.
 
 ## Scaling
 

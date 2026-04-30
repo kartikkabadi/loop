@@ -740,11 +740,16 @@ items, writes comments, or fixes code.
 - Manual runs can pass `commit_sha`, optional `before_sha`, optional
   `additional_prompt`, `enabled`, and `create_checks`.
 - The receiver verifies the selected commits are reachable from `origin/main`.
+- Before selecting and reviewing commits, the receiver waits 15 minutes by
+  default (`CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=900`) so a push range has
+  time to settle across GitHub and the runner.
 - The plan job expands ranges, pages large backfills at GitHub's matrix limit,
   and classifies each commit before Codex starts.
 - Pure documentation, changelog, README/license, and asset-only commits get a
   skipped report without spending Codex time.
-- Mixed commits and code-bearing commits start one Codex worker per commit.
+- Mixed commits and code-bearing commits start one Codex worker per commit. The
+  worker checks out current target `main` and reviews the selected commit by
+  SHA/range instead of detaching the whole repository at that commit.
 - Codex is prompted to read beyond the diff: changed files, callers/callees,
   runtime entry points, adjacent tests/docs, dependency manifests, release
   notes, advisories, web sources, and focused live tests when useful.
@@ -956,3 +961,6 @@ Target repository setup:
   without code changes
 - set `CLAWSWEEPER_COMMIT_REVIEW_CREATE_CHECKS=true` only if commit Check Runs
   should be published
+- optionally set `CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=0` for manual
+  backfills where the target commit range is already settled; the default is
+  `900`

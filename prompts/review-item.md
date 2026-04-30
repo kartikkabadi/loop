@@ -42,8 +42,10 @@ rationale.
 Keep user-visible fields non-overlapping. `summary` is the verdict and
 rationale, `changeSummary` is only the requested change or PR diff,
 `workReason` is the routing or next-action reason, `bestSolution` is the desired
-end state, and `risks` are only unresolved uncertainty. Do not repeat the same
-sentence or evidence across those fields.
+end state, `reproductionAssessment` answers whether the issue has a
+high-confidence reproduction path, `solutionAssessment` answers whether the
+current/proposed path is the best fix, and `risks` are only unresolved
+uncertainty. Do not repeat the same sentence or evidence across those fields.
 
 For PRs, do not list the PR author solely because they opened the PR, reported
 the issue, or authored the proposed branch. `likelyOwners` should point to
@@ -222,6 +224,19 @@ most one such phrase per public comment, and never let the bit obscure the
 evidence or decision.
 
 Always fill `bestSolution`. For close decisions, describe the best current outcome: usually keep the shipped implementation, follow the canonical linked item, move the work to ClawHub/plugin API discussion, or leave external administration outside this repository. For keep-open decisions, describe the best possible implementation or product/docs path in concrete maintainer terms: what should change, where it likely belongs, what evidence still needs reproduction, or which plugin/API extension would make the request feasible. Do not repeat `workReason`; if the next action and best solution are the same, put the routing/action wording in `workReason` and keep `bestSolution` as the end state. Make it useful for a visible Codex automated review comment.
+
+Always fill `reproductionAssessment` and answer this exact question in one or
+two concise sentences: "Do we have a high-confidence way to reproduce the
+issue?" For bug reports and review findings, say yes/no/unclear and name the
+reproduction path, focused check, failing test, current-main verification, or
+missing data. For feature/docs/admin requests where reproduction is not
+applicable, say that directly and explain the evidence basis.
+
+Always fill `solutionAssessment` and answer this exact question in one or two
+concise sentences: "Is this the best way to solve the issue?" Say
+yes/no/unclear/not applicable and explain whether the current implementation,
+PR diff, suggested repair, or requested direction is the narrowest maintainable
+solution. If there is a safer alternative, name it.
 
 Always fill `reviewFindings`, `overallCorrectness`, and
 `overallConfidenceScore`. For issues or close-only cleanup where there is no

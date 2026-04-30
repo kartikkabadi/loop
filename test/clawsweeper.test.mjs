@@ -123,6 +123,10 @@ function closeDecision(overrides = {}) {
     ],
     risks: [],
     bestSolution: "Keep the implementation as-is.",
+    reproductionAssessment:
+      "Yes. Current main can be checked by inspecting src/example.ts and git blame evidence.",
+    solutionAssessment:
+      "Yes. Keeping the implementation as-is is the narrowest maintainable outcome.",
     reviewFindings: [],
     securityReview: {
       status: "not_applicable",
@@ -338,6 +342,18 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.match(action.closeComment, /shell check/);
   assert.match(action.closeComment, /already implemented/);
   assert.match(action.closeComment, /<details>\n<summary>Review details<\/summary>/);
+  assert.match(
+    action.closeComment,
+    /Do we have a high-confidence way to reproduce the issue\?\n\nYes\. Current main can be checked/,
+  );
+  assert.match(
+    action.closeComment,
+    /Is this the best way to solve the issue\?\n\nYes\. Keeping the implementation as-is/,
+  );
+  assert.ok(
+    action.closeComment.indexOf("Is this the best way to solve the issue?") <
+      action.closeComment.indexOf("What I checked:"),
+  );
   assert.match(action.closeComment, /Likely related people:/);
   assert.match(action.closeComment, /@alice/);
   assert.match(action.closeComment, /@bob/);
@@ -897,6 +913,14 @@ Adds regression coverage for session-scoped model overrides.
 
 Land the tests after targeted validation is green.
 
+## Reproduction Assessment
+
+Not applicable. This is a test-only PR and the validation path is the targeted test lane.
+
+## Solution Assessment
+
+Yes. Landing the focused regression test after the targeted lane is green is the narrowest useful path.
+
 ## Work Candidate
 
 Candidate: none
@@ -908,7 +932,11 @@ Priority: low
 Status: none
 
 Reason: Maintainers should review the tests after the targeted lane is green.
-`,
+
+## Evidence
+
+- **targeted lane:** The PR is test-only and should run the matching changed-test lane.
+	`,
     "none",
   );
 
@@ -923,6 +951,18 @@ Reason: Maintainers should review the tests after the targeted lane is green.
   assert.match(
     comment,
     /Best possible solution:\n\nLand the tests after targeted validation is green\./,
+  );
+  assert.match(
+    comment,
+    /Do we have a high-confidence way to reproduce the issue\?\n\nNot applicable\. This is a test-only PR/,
+  );
+  assert.match(
+    comment,
+    /Is this the best way to solve the issue\?\n\nYes\. Landing the focused regression test/,
+  );
+  assert.ok(
+    comment.indexOf("Is this the best way to solve the issue?") <
+      comment.indexOf("What I checked:"),
   );
   assert.match(comment, /<!-- clawsweeper-verdict:needs-human item=74265 sha=abc123def456/);
 });
@@ -1623,6 +1663,29 @@ test("review prompt requires a dedicated securityReview section", () => {
   assert.match(prompt, /Always summarize this pass in `securityReview`/);
   assert.match(prompt, /Always fill `securityReview`/);
   assert.match(prompt, /status: "needs_attention"/);
+});
+
+test("review prompts require reproduction and solution assessment details", () => {
+  const itemPrompt = readFileSync("prompts/review-item.md", "utf8");
+  const commitPrompt = readFileSync("prompts/review-commit.md", "utf8");
+
+  assert.match(itemPrompt, /Always fill `reproductionAssessment`/);
+  assert.match(itemPrompt, /Always fill `solutionAssessment`/);
+  assert.match(itemPrompt, /Do we have a high-confidence way to reproduce the\s+issue\?/);
+  assert.match(itemPrompt, /Is this the best way to solve the issue\?/);
+  assert.match(commitPrompt, /The checkout is current target\s+`main`, not the commit snapshot/);
+  assert.match(commitPrompt, /Do we have a high-confidence way to reproduce the issue\?/);
+  assert.match(commitPrompt, /Is this the best way to solve the issue\?/);
+});
+
+test("commit review workflow settles and reviews from target main", () => {
+  const workflow = readFileSync(".github/workflows/commit-review.yml", "utf8");
+
+  assert.match(workflow, /CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS \|\| '900'/);
+  assert.match(workflow, /sleep "\$SETTLE_SECONDS"/);
+  assert.match(workflow, /Check out target main/);
+  assert.match(workflow, /checkout -B main refs\/remotes\/origin\/main/);
+  assert.doesNotMatch(workflow, /checkout --detach "\$COMMIT_SHA"/);
 });
 
 test("review parser strips environment access caveats from risks", () => {

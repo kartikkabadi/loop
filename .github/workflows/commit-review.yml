@@ -61,7 +61,7 @@ jobs:
     name: Plan commits
     if: ${{ !(github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     outputs:
       create_checks: ${{ steps.mode.outputs.create_checks }}
       enabled: ${{ steps.mode.outputs.enabled }}
@@ -146,6 +146,7 @@ jobs:
           COMMIT_OFFSET: ${{ github.event.inputs.commit_offset || github.event.client_payload.commit_offset || '0' }}
           ENABLED: ${{ steps.mode.outputs.enabled }}
           SOURCE_REF: ${{ github.event.client_payload.ref || 'refs/heads/main' }}
+          SETTLE_SECONDS: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS || '900' }}
         run: |
           set -euo pipefail
           if [ "$ENABLED" = "false" ]; then
@@ -177,6 +178,14 @@ jobs:
           if [ -n "$BEFORE_SHA" ] && ! printf '%s' "$BEFORE_SHA" | grep -Eq '^(0{40}|[0-9a-fA-F]{40})$'; then
             echo "Invalid before SHA: $BEFORE_SHA" >&2
             exit 1
+          fi
+          if ! printf '%s' "$SETTLE_SECONDS" | grep -Eq '^[0-9]+$'; then
+            echo "Invalid settle wait: $SETTLE_SECONDS" >&2
+            exit 1
+          fi
+          if [ "$SETTLE_SECONDS" -gt 0 ]; then
+            echo "Waiting ${SETTLE_SECONDS}s for target main to settle before selecting commits."
+            sleep "$SETTLE_SECONDS"
           fi
           url="https://x-access-token:${TARGET_TOKEN}@github.com/${TARGET_REPO}.git"
           git clone --filter=blob:none --no-checkout "$url" "$TARGET_NAME"
@@ -269,7 +278,7 @@ jobs:
         with:
           login-status: "true"
 
-      - name: Check out target commit
+      - name: Check out target main
         env:
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
           TARGET_NAME: ${{ needs.plan.outputs.target_checkout_dir }}
@@ -279,12 +288,18 @@ jobs:
           set -euo pipefail
           url="https://x-access-token:${TARGET_TOKEN}@github.com/${TARGET_REPO}.git"
           git clone --filter=blob:none --no-checkout "$url" "$TARGET_NAME"
+          git -C "$TARGET_NAME" fetch --no-tags origin main --depth=1000
+          git -C "$TARGET_NAME" checkout -B main refs/remotes/origin/main
           git -C "$TARGET_NAME" fetch --no-tags origin "$COMMIT_SHA" --depth=200
-          git -C "$TARGET_NAME" checkout --detach "$COMMIT_SHA"
-          if ! git -C "$TARGET_NAME" rev-parse --verify "$COMMIT_SHA^" >/dev/null 2>&1; then
-            git -C "$TARGET_NAME" fetch --deepen=500 origin "$COMMIT_SHA" || true
+          if ! git -C "$TARGET_NAME" merge-base --is-ancestor "$COMMIT_SHA" HEAD; then
+            echo "Commit $COMMIT_SHA is not reachable from the checked-out origin/main history." >&2
+            exit 1
           fi
-          git -C "$TARGET_NAME" rev-parse --short HEAD
+          if ! git -C "$TARGET_NAME" rev-parse --verify "$COMMIT_SHA^" >/dev/null 2>&1; then
+            git -C "$TARGET_NAME" fetch --deepen=500 origin main || true
+          fi
+          echo "Target main head: $(git -C "$TARGET_NAME" rev-parse --short HEAD)"
+          echo "Commit under review: $(git -C "$TARGET_NAME" rev-parse --short "$COMMIT_SHA")"
 
       - name: Review commit
         working-directory: clawsweeper
