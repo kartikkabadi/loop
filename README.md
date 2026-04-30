@@ -163,9 +163,9 @@ Last dashboard update: Apr 30, 2026, 18:03 UTC
 | Open issues | 3801 |
 | Open PRs | 3369 |
 | Open items total | 7170 |
-| Reviewed files | 7683 |
-| Unreviewed open items | 56 |
-| Due now by cadence | 2467 |
+| Reviewed files | 7684 |
+| Unreviewed open items | 55 |
+| Due now by cadence | 2466 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1546 |
 | Closed by Codex apply | 11235 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 18:03 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6812 | 6756 | 56 | 2372 | 0 | 1500 | 11227 | Apr 30, 2026, 18:00 UTC | Apr 30, 2026, 18:00 UTC | 487 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6812 | 6757 | 55 | 2371 | 0 | 1500 | 11227 | Apr 30, 2026, 18:01 UTC | Apr 30, 2026, 18:00 UTC | 487 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 358 | 924 | 0 | 92 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -190,13 +190,13 @@ Last dashboard update: Apr 30, 2026, 18:03 UTC
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 18:00 UTC. Latest close: Apr 30, 2026, 18:00 UTC. Latest comment sync: Apr 30, 2026, 18:00 UTC.
+Latest review: Apr 30, 2026, 18:01 UTC. Latest close: Apr 30, 2026, 18:00 UTC. Latest comment sync: Apr 30, 2026, 18:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 108 | 7 | 101 | 0 | 14 | 36 | 0 |
-| Last hour | 793 | 22 | 771 | 141 | 29 | 487 | 0 |
-| Last 24 hours | 6253 | 391 | 5862 | 157 | 725 | 2682 | 22 |
+| Last 15 minutes | 109 | 7 | 102 | 0 | 14 | 27 | 0 |
+| Last hour | 794 | 22 | 772 | 141 | 29 | 487 | 0 |
+| Last 24 hours | 6253 | 390 | 5863 | 157 | 725 | 2683 | 22 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 18:00 UTC. Latest close: Apr 30, 2026, 18:00 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75198](https://github.com/openclaw/openclaw/pull/75198) | fix(models): resolve provider-qualified aliases in session switches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75198.md) | complete | Apr 30, 2026, 18:01 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74994](https://github.com/openclaw/openclaw/pull/74994) | fix(infra): guard all startup process.cwd() callers against deleted CWD | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74994.md) | complete | Apr 30, 2026, 18:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74733](https://github.com/openclaw/openclaw/pull/74733) | fix(ui): stabilize WebChat message ordering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74733.md) | complete | Apr 30, 2026, 17:59 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75197](https://github.com/openclaw/openclaw/issues/75197) | [Bug]: voice-call OpenAI realtime transcription times out during Twilio media stream while direct WebSocket succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75197.md) | complete | Apr 30, 2026, 17:57 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 18:00 UTC. Latest close: Apr 30, 2026, 18:00 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71862](https://github.com/openclaw/openclaw/pull/71862) | feat(plugins): let model resolve hooks prefer auth profiles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71862.md) | complete | Apr 30, 2026, 17:50 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71885](https://github.com/openclaw/openclaw/pull/71885) | fix(tasks): serialize structured task values for sqlite | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71885.md) | complete | Apr 30, 2026, 17:50 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#51163](https://github.com/openclaw/openclaw/pull/51163) | feat: add /interrupt command and cross-session thread context store | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/51163.md) | complete | Apr 30, 2026, 17:50 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71099](https://github.com/openclaw/openclaw/issues/71099) | Telegram channel: ByteString encoding error on Unicode characters (◆ U+25C6) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71099.md) | complete | Apr 30, 2026, 17:50 UTC |
 
 </details>
 
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 18:03 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 11 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=41755,42438,46851,68959,70589,70941,71555,73683,74099,74170,75177.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/11. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25181177559](https://github.com/openclaw/clawsweeper/actions/runs/25181177559)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -283,8 +283,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25181177559](https://
 | Open issues | 3461 |
 | Open PRs | 3351 |
 | Open items total | 6812 |
-| Reviewed files | 6756 |
-| Unreviewed open items | 56 |
+| Reviewed files | 6757 |
+| Unreviewed open items | 55 |
 | Archived closed files | 15188 |
 
 #### Review Outcomes
@@ -293,9 +293,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25181177559](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3379 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3233 |
+| Fresh reviewed PRs in the last 7 days | 3234 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6612 |
+| Fresh verified reviews in the last 7 days | 6613 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1500 |
 | Closed by Codex apply | 11227 |
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25181177559](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 342/1459 current (1117 due, 23.4%) |
-| Hourly hot item cadence (<7d) | 342/1459 current (1117 due, 23.4%) |
+| Hourly cadence coverage | 343/1460 current (1117 due, 23.5%) |
+| Hourly hot item cadence (<7d) | 343/1460 current (1117 due, 23.5%) |
 | Daily cadence coverage | 2345/3514 current (1169 due, 66.7%) |
 | Daily PR cadence | 1625/2458 current (833 due, 66.1%) |
 | Daily new issue cadence (<30d) | 720/1056 current (336 due, 68.2%) |
 | Weekly older issue cadence | 1753/1783 current (30 due, 98.3%) |
-| Due now by cadence | 2372 |
+| Due now by cadence | 2371 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 18:00 UTC. Latest close: Apr 30, 2026, 18:00 UTC. Latest comment sync: Apr 30, 2026, 18:00 UTC.
+Latest review: Apr 30, 2026, 18:01 UTC. Latest close: Apr 30, 2026, 18:00 UTC. Latest comment sync: Apr 30, 2026, 18:01 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 108 | 7 | 101 | 0 | 14 | 36 | 0 |
-| Last hour | 793 | 22 | 771 | 141 | 29 | 487 | 0 |
-| Last 24 hours | 5351 | 391 | 4960 | 144 | 725 | 2283 | 22 |
+| Last 15 minutes | 109 | 7 | 102 | 0 | 14 | 27 | 0 |
+| Last hour | 794 | 22 | 772 | 141 | 29 | 487 | 0 |
+| Last 24 hours | 5351 | 390 | 4961 | 144 | 725 | 2284 | 22 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 18:00 UTC. Latest close: Apr 30, 2026, 18:00 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75198](https://github.com/openclaw/openclaw/pull/75198) | fix(models): resolve provider-qualified aliases in session switches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75198.md) | complete | Apr 30, 2026, 18:01 UTC |
 | [#74994](https://github.com/openclaw/openclaw/pull/74994) | fix(infra): guard all startup process.cwd() callers against deleted CWD | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74994.md) | complete | Apr 30, 2026, 18:00 UTC |
 | [#74733](https://github.com/openclaw/openclaw/pull/74733) | fix(ui): stabilize WebChat message ordering | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74733.md) | complete | Apr 30, 2026, 17:59 UTC |
 | [#75197](https://github.com/openclaw/openclaw/issues/75197) | [Bug]: voice-call OpenAI realtime transcription times out during Twilio media stream while direct WebSocket succeeds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75197.md) | complete | Apr 30, 2026, 17:57 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 18:00 UTC. Latest close: Apr 30, 2026, 18:00 UTC. L
 | [#71862](https://github.com/openclaw/openclaw/pull/71862) | feat(plugins): let model resolve hooks prefer auth profiles | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71862.md) | complete | Apr 30, 2026, 17:50 UTC |
 | [#71885](https://github.com/openclaw/openclaw/pull/71885) | fix(tasks): serialize structured task values for sqlite | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71885.md) | complete | Apr 30, 2026, 17:50 UTC |
 | [#51163](https://github.com/openclaw/openclaw/pull/51163) | feat: add /interrupt command and cross-session thread context store | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/51163.md) | complete | Apr 30, 2026, 17:50 UTC |
-| [#71099](https://github.com/openclaw/openclaw/issues/71099) | Telegram channel: ByteString encoding error on Unicode characters (◆ U+25C6) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71099.md) | complete | Apr 30, 2026, 17:50 UTC |
 
 </details>
 
