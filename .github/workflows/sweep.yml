@@ -514,7 +514,7 @@ jobs:
   review:
     name: Review shard ${{ matrix.shard }}
     needs: plan
-    runs-on: ${{ vars.CLAWSWEEPER_REVIEW_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
+    runs-on: ${{ vars.CLAWSWEEPER_REVIEW_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 75
     permissions:
       contents: read
