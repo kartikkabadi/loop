@@ -527,12 +527,17 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
       job_path: "jobs/openclaw/inbox/example.md",
       mode: "autonomous",
       model: "gpt-5.5",
+      run_url: "https://github.com/openclaw/clawsweeper/actions/runs/123456789",
     },
   );
 
   assert.match(body, /Thanks, ClawSweeper/);
   assert.match(body, /clawsweeper-command:456:2026-04-29T07:12:31Z:clawsweeper_auto_repair:def456/);
   assert.match(body, /repair-cluster-worker\.yml/);
+  assert.match(
+    body,
+    /Run: \[GitHub Actions run\]\(https:\/\/github\.com\/openclaw\/clawsweeper\/actions\/runs\/123456789\)/,
+  );
   assert.match(body, /safe credited replacement/);
   assert.match(body, /narrow fix/);
   assert.doesNotMatch(body, /ClawSweeper Repair/i);

@@ -483,6 +483,9 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     ].join("\n");
   }
   if (command.intent === "clawsweeper_auto_repair") {
+    const runLink = dispatched?.run_url
+      ? `[GitHub Actions run](${dispatched.run_url})`
+      : null;
     return [
       marker,
       "Thanks, ClawSweeper. ClawSweeper picked up the repair feedback.",
@@ -490,6 +493,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
       `Feedback: ${command.repair_reason ?? "ClawSweeper requested another repair pass."}`,
       `Action: dispatched \`${dispatched.workflow}\` for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
+      ...(runLink ? [`Run: ${runLink}`] : []),
       `Model: \`${dispatched.model}\``,
       "",
       "I will update this PR branch, or open a safe credited replacement, if the repair worker finds a narrow fix.",
@@ -559,6 +563,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     "",
     `Command: \`${command.command}\``,
     `Action: dispatched \`${dispatched.workflow}\` for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
+    ...(dispatched?.run_url ? [`Run: [GitHub Actions run](${dispatched.run_url})`] : []),
     `Model: \`${dispatched.model}\``,
     "",
     "I will keep the change narrow and update the PR branch if the repair worker finds a safe fix.",

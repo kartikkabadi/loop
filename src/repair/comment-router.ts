@@ -1079,6 +1079,7 @@ function dispatchRepair(command: LooseRecord) {
       `failed to dispatch ${command.target.job_path}: ${result.stderr || result.stdout}`,
     );
   }
+  const runUrl = githubActionsRunUrlFromDispatchOutput(result.stdout);
   return {
     workflow,
     repair_repo: repairRepo,
@@ -1087,7 +1088,13 @@ function dispatchRepair(command: LooseRecord) {
     runner,
     execution_runner: executionRunner,
     model,
+    ...(runUrl ? { run_url: runUrl } : {}),
   };
+}
+
+function githubActionsRunUrlFromDispatchOutput(output: unknown) {
+  const text = String(output ?? "");
+  return text.match(/https:\/\/github\.com\/[^\s]+\/actions\/runs\/\d+/)?.[0] ?? null;
 }
 
 function executeAutoclose(command: LooseRecord) {
