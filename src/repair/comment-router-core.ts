@@ -483,15 +483,14 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     ].join("\n");
   }
   if (command.intent === "clawsweeper_auto_repair") {
-    const runLink = dispatched?.run_url ? `[GitHub Actions run](${dispatched.run_url})` : null;
+    const workflow = dispatchedWorkflowLink(dispatched);
     return [
       marker,
       "Thanks, ClawSweeper. ClawSweeper picked up the repair feedback.",
       "",
       `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
       `Feedback: ${command.repair_reason ?? "ClawSweeper requested another repair pass."}`,
-      `Action: dispatched \`${dispatched.workflow}\` for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
-      ...(runLink ? [`Run: ${runLink}`] : []),
+      `Action: dispatched ${workflow} for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
       `Model: \`${dispatched.model}\``,
       "",
       "I will update this PR branch, or open a safe credited replacement, if the repair worker finds a narrow fix.",
@@ -560,12 +559,17 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     "ClawSweeper picked this up.",
     "",
     `Command: \`${command.command}\``,
-    `Action: dispatched \`${dispatched.workflow}\` for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
-    ...(dispatched?.run_url ? [`Run: [GitHub Actions run](${dispatched.run_url})`] : []),
+    `Action: dispatched ${dispatchedWorkflowLink(dispatched)} for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
     `Model: \`${dispatched.model}\``,
     "",
     "I will keep the change narrow and update the PR branch if the repair worker finds a safe fix.",
   ].join("\n");
+}
+
+function dispatchedWorkflowLink(dispatched: LooseRecord): string {
+  const workflow = String(dispatched.workflow ?? "workflow");
+  const runUrl = typeof dispatched.run_url === "string" ? dispatched.run_url : "";
+  return runUrl ? `[${workflow}](${runUrl})` : `\`${workflow}\``;
 }
 
 function commandFromText(trigger: JsonValue, value: JsonValue) {

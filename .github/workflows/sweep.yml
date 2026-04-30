@@ -676,7 +676,7 @@ jobs:
             --rebase-strategy theirs
 
       - name: Sync selected review comments
-        if: ${{ success() }}
+        if: ${{ success() && (needs.plan.outputs.hot_intake != 'true' || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
         timeout-minutes: 15
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
