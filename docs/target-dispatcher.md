@@ -86,7 +86,9 @@ ignored. Human label changes are debounced and may run after an active
 dispatcher, but they must not cancel a content-changing dispatch before it posts
 to ClawSweeper. Content-changing events such as issue edits and PR synchronizes
 cancel stale target-side dispatch jobs and mark their receiver dispatch as
-superseding so the receiver can cancel stale work.
+superseding. On the receiver, event-item runs are keyed by repository and item
+number and the newest event cancels any older receiver run for that same item,
+because the review always fetches the current live item state.
 
 The receiver keeps the review lane proposal-only, then runs exact apply for the
 selected item with only immediate-safe close reasons enabled:
