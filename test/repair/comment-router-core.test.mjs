@@ -14,6 +14,7 @@ import {
   automergeJobBranch,
   automergeJobPath,
   buildAutomergeMergeArgs,
+  commandHasAction,
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
@@ -110,6 +111,22 @@ test("autoclose reason parser preserves maintainer wording", () => {
     "We don't want this feature",
   );
   assert.equal(autocloseReasonFromCommand("autoclose"), "");
+});
+
+test("comment router side effects are driven by planned actions", () => {
+  const blockedReReview = {
+    intent: "re_review",
+    reason: "re-review requires an open issue or PR",
+    actions: [{ action: "comment", status: "planned" }],
+  };
+
+  assert.equal(commandHasAction(blockedReReview, "dispatch_clawsweeper"), false);
+  assert.equal(commandHasAction(blockedReReview, "comment"), true);
+
+  const body = renderResponse(blockedReReview, null);
+  assert.match(body, /could not start a re-review/);
+  assert.match(body, /re-review requires an open issue or PR/);
+  assert.doesNotMatch(body, /re-review requested/);
 });
 
 test("automerge job helpers create stable adopted PR job identity", () => {

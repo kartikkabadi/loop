@@ -163,6 +163,10 @@ export function repairableCheckBlockers(checks: LooseRecord = {}) {
   });
 }
 
+export function commandHasAction(command: LooseRecord, actionName: string): boolean {
+  return (command.actions ?? []).some((action: JsonValue) => action.action === actionName);
+}
+
 export function isMaintainerCommandAllowed({
   authorAssociation,
   repositoryPermission = null,

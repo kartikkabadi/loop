@@ -26,6 +26,7 @@ import {
   automergeClusterId,
   automergeJobPath,
   buildAutomergeMergeArgs,
+  commandHasAction,
   commandStatusMarker,
   isMaintainerCommandAllowed,
   parseCommand,
@@ -738,6 +739,9 @@ function executeCommand(command: LooseRecord) {
   const shouldDispatchRepair = command.actions?.some(
     (action: JsonValue) => action.action === "dispatch_repair",
   );
+  const shouldDispatchClawSweeper = commandHasAction(command, "dispatch_clawsweeper");
+  const shouldMerge = commandHasAction(command, "merge");
+  const shouldApplyHumanReviewLabel = commandHasAction(command, "label");
   if (!command.trusted_bot) reactToComment(command, "eyes");
   if (shouldDispatchRepair && canRepairPullTarget(command.target)) {
     const job = ensureAutomergeJob(command);
@@ -793,7 +797,11 @@ function executeCommand(command: LooseRecord) {
       return action;
     });
   }
-  if (["autofix", "automerge"].includes(command.intent) && command.issue_number) {
+  if (
+    ["autofix", "automerge"].includes(command.intent) &&
+    command.issue_number &&
+    shouldDispatchClawSweeper
+  ) {
     const modeLabel = command.intent === "autofix" ? AUTOFIX_LABEL : AUTOMERGE_LABEL;
     const oppositeModeLabel = command.intent === "autofix" ? AUTOMERGE_LABEL : AUTOFIX_LABEL;
     const job = ensureAutomergeJob(command);
@@ -849,7 +857,11 @@ function executeCommand(command: LooseRecord) {
       return action;
     });
   }
-  if (["freeform_assist", "re_review"].includes(command.intent) && command.issue_number) {
+  if (
+    ["freeform_assist", "re_review"].includes(command.intent) &&
+    command.issue_number &&
+    shouldDispatchClawSweeper
+  ) {
     const clawsweeper = dispatchClawSweeperReview(command);
     dispatched = { ...dispatched, clawsweeper };
     command.actions = command.actions.map((action: JsonValue) => {
@@ -877,7 +889,12 @@ function executeCommand(command: LooseRecord) {
         : action,
     );
   }
-  if (MERGE_INTENTS.has(command.intent) && !shouldDispatchRepair && command.issue_number) {
+  if (
+    MERGE_INTENTS.has(command.intent) &&
+    !shouldDispatchRepair &&
+    command.issue_number &&
+    shouldMerge
+  ) {
     const pauseLabels = command.actions
       .filter((action: JsonValue) => action.action === "remove_label")
       .map((action: JsonValue) => String(action.label ?? ""))
@@ -915,7 +932,11 @@ function executeCommand(command: LooseRecord) {
       return;
     }
   }
-  if (command.intent === "clawsweeper_needs_human" && command.issue_number) {
+  if (
+    command.intent === "clawsweeper_needs_human" &&
+    command.issue_number &&
+    shouldApplyHumanReviewLabel
+  ) {
     ensureHumanReviewLabel(command.repo);
     ghBestEffort([
       "issue",
@@ -932,7 +953,7 @@ function executeCommand(command: LooseRecord) {
         : action,
     );
   }
-  if (command.intent === "stop" && command.issue_number) {
+  if (command.intent === "stop" && command.issue_number && shouldApplyHumanReviewLabel) {
     ensureHumanReviewLabel(command.repo);
     ghBestEffort([
       "issue",
