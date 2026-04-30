@@ -165,7 +165,7 @@ Last dashboard update: Apr 30, 2026, 01:14 UTC
 | Open items total | 7834 |
 | Reviewed files | 7439 |
 | Unreviewed open items | 398 |
-| Due now by cadence | 3048 |
+| Due now by cadence | 3049 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1095 |
 | Closed by Codex apply | 10937 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 01:14 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6887 | 6512 | 375 | 2949 | 0 | 1049 | 10929 | Apr 30, 2026, 01:09 UTC | Apr 30, 2026, 01:08 UTC | 627 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6887 | 6512 | 375 | 2950 | 0 | 1049 | 10929 | Apr 30, 2026, 01:13 UTC | Apr 30, 2026, 01:08 UTC | 619 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 947 | 924 | 23 | 96 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,19 +184,19 @@ Last dashboard update: Apr 30, 2026, 01:14 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply comments synced | Apr 30, 2026, 01:13 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25142220345) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 01:14 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25142220345) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 01:09 UTC. Latest close: Apr 30, 2026, 01:08 UTC. Latest comment sync: Apr 30, 2026, 01:13 UTC.
+Latest review: Apr 30, 2026, 01:13 UTC. Latest close: Apr 30, 2026, 01:08 UTC. Latest comment sync: Apr 30, 2026, 01:13 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 1 | 19 | 0 | 18 | 158 | 0 |
-| Last hour | 553 | 19 | 534 | 7 | 30 | 627 | 0 |
-| Last 24 hours | 5675 | 311 | 5364 | 22 | 788 | 1960 | 19 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 18 | 151 | 0 |
+| Last hour | 553 | 19 | 534 | 7 | 30 | 619 | 0 |
+| Last 24 hours | 5673 | 311 | 5362 | 22 | 788 | 1960 | 19 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 01:09 UTC. Latest close: Apr 30, 2026, 01:08 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74711](https://github.com/openclaw/openclaw/pull/74711) | fix(memory): mirror sqlite-vec into plugin runtime deps snapshot | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74711.md) | complete | Apr 30, 2026, 01:13 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74717](https://github.com/openclaw/openclaw/pull/74717) | fix(feishu): skip empty text messages to avoid downstream LLM 'messages must not be empty' (#74634) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74717.md) | complete | Apr 30, 2026, 01:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68433](https://github.com/openclaw/openclaw/pull/68433) | Prewarm mirrored outbound sessions before first callback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68433.md) | complete | Apr 30, 2026, 01:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74716](https://github.com/openclaw/openclaw/pull/74716) | Add node-hosted MCP session plumbing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74716.md) | complete | Apr 30, 2026, 01:09 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 01:09 UTC. Latest close: Apr 30, 2026, 01:08 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74715](https://github.com/openclaw/openclaw/pull/74715) | fix(ui): show Communication Notifications tab | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74715.md) | complete | Apr 30, 2026, 01:06 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74714](https://github.com/openclaw/openclaw/pull/74714) | fix: Google Vertex manifest evidence accepts the Windows %APPDATA% ADC path, but the Google V... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74714.md) | complete | Apr 30, 2026, 01:05 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74713](https://github.com/openclaw/openclaw/pull/74713) | fix(plugins): repair configured provider runtime deps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74713.md) | complete | Apr 30, 2026, 01:05 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74699](https://github.com/openclaw/openclaw/pull/74699) | fix: Codex app-server steering path regression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74699.md) | complete | Apr 30, 2026, 01:05 UTC |
 
 </details>
 
@@ -267,11 +267,11 @@ Latest review: Apr 30, 2026, 01:09 UTC. Latest close: Apr 30, 2026, 01:08 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 01:13 UTC
+Updated: Apr 30, 2026, 01:14 UTC
 
-State: Apply comments synced
+State: Apply finished
 
-Comment-only apply checkpoint 1 finished. Synced durable review comments: 1. Result records: 1. Item numbers: 74134.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 1. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25142220345](https://github.com/openclaw/clawsweeper/actions/runs/25142220345)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -307,11 +307,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25142220345](https://
 | --- | ---: |
 | Hourly cadence coverage | 124/1128 current (1004 due, 11%) |
 | Hourly hot item cadence (<7d) | 124/1128 current (1004 due, 11%) |
-| Daily cadence coverage | 2020/3588 current (1568 due, 56.3%) |
-| Daily PR cadence | 1338/2496 current (1158 due, 53.6%) |
+| Daily cadence coverage | 2019/3588 current (1569 due, 56.3%) |
+| Daily PR cadence | 1337/2496 current (1159 due, 53.6%) |
 | Daily new issue cadence (<30d) | 682/1092 current (410 due, 62.5%) |
 | Weekly older issue cadence | 1794/1796 current (2 due, 99.9%) |
-| Due now by cadence | 2949 |
+| Due now by cadence | 2950 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 01:09 UTC. Latest close: Apr 30, 2026, 01:08 UTC. Latest comment sync: Apr 30, 2026, 01:13 UTC.
+Latest review: Apr 30, 2026, 01:13 UTC. Latest close: Apr 30, 2026, 01:08 UTC. Latest comment sync: Apr 30, 2026, 01:13 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 20 | 1 | 19 | 0 | 18 | 158 | 0 |
-| Last hour | 553 | 19 | 534 | 7 | 30 | 627 | 0 |
-| Last 24 hours | 4737 | 311 | 4426 | 9 | 777 | 1548 | 19 |
+| Last 15 minutes | 20 | 1 | 19 | 0 | 18 | 151 | 0 |
+| Last hour | 553 | 19 | 534 | 7 | 30 | 619 | 0 |
+| Last 24 hours | 4735 | 311 | 4424 | 9 | 777 | 1548 | 19 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 01:09 UTC. Latest close: Apr 30, 2026, 01:08 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74711](https://github.com/openclaw/openclaw/pull/74711) | fix(memory): mirror sqlite-vec into plugin runtime deps snapshot | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74711.md) | complete | Apr 30, 2026, 01:13 UTC |
 | [#74717](https://github.com/openclaw/openclaw/pull/74717) | fix(feishu): skip empty text messages to avoid downstream LLM 'messages must not be empty' (#74634) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74717.md) | complete | Apr 30, 2026, 01:09 UTC |
 | [#68433](https://github.com/openclaw/openclaw/pull/68433) | Prewarm mirrored outbound sessions before first callback | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/68433.md) | complete | Apr 30, 2026, 01:09 UTC |
 | [#74716](https://github.com/openclaw/openclaw/pull/74716) | Add node-hosted MCP session plumbing | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74716.md) | complete | Apr 30, 2026, 01:09 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 01:09 UTC. Latest close: Apr 30, 2026, 01:08 UTC. L
 | [#74715](https://github.com/openclaw/openclaw/pull/74715) | fix(ui): show Communication Notifications tab | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74715.md) | complete | Apr 30, 2026, 01:06 UTC |
 | [#74714](https://github.com/openclaw/openclaw/pull/74714) | fix: Google Vertex manifest evidence accepts the Windows %APPDATA% ADC path, but the Google V... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74714.md) | complete | Apr 30, 2026, 01:05 UTC |
 | [#74713](https://github.com/openclaw/openclaw/pull/74713) | fix(plugins): repair configured provider runtime deps | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74713.md) | complete | Apr 30, 2026, 01:05 UTC |
-| [#74699](https://github.com/openclaw/openclaw/pull/74699) | fix: Codex app-server steering path regression | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74699.md) | complete | Apr 30, 2026, 01:05 UTC |
 
 </details>
 
