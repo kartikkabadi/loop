@@ -163,8 +163,8 @@ Last dashboard update: Apr 30, 2026, 06:46 UTC
 | Open issues | 4396 |
 | Open PRs | 3375 |
 | Open items total | 7771 |
-| Reviewed files | 7463 |
-| Unreviewed open items | 368 |
+| Reviewed files | 7464 |
+| Unreviewed open items | 367 |
 | Due now by cadence | 3063 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1181 |
@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 06:46 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6904 | 6536 | 368 | 2987 | 0 | 1135 | 10996 | Apr 30, 2026, 06:44 UTC | Apr 30, 2026, 06:43 UTC | 629 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6904 | 6537 | 367 | 2987 | 0 | 1135 | 10996 | Apr 30, 2026, 06:45 UTC | Apr 30, 2026, 06:43 UTC | 624 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 867 | 924 | 0 | 73 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,19 +184,19 @@ Last dashboard update: Apr 30, 2026, 06:46 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 06:46 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25151427994) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 06:46 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25151427994) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 06:44 UTC. Latest close: Apr 30, 2026, 06:43 UTC. Latest comment sync: Apr 30, 2026, 06:45 UTC.
+Latest review: Apr 30, 2026, 06:45 UTC. Latest close: Apr 30, 2026, 06:43 UTC. Latest comment sync: Apr 30, 2026, 06:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 3 | 11 | 0 | 10 | 67 | 0 |
-| Last hour | 564 | 12 | 552 | 8 | 25 | 629 | 0 |
-| Last 24 hours | 5397 | 275 | 5122 | 30 | 753 | 1946 | 21 |
+| Last 15 minutes | 14 | 3 | 11 | 0 | 10 | 62 | 0 |
+| Last hour | 565 | 12 | 553 | 8 | 25 | 624 | 0 |
+| Last 24 hours | 5395 | 275 | 5120 | 30 | 753 | 1947 | 21 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 06:44 UTC. Latest close: Apr 30, 2026, 06:43 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74916](https://github.com/openclaw/openclaw/pull/74916) | fix: change disables bundled dependency repair when plugins.enabled: false, but the same fall... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74916.md) | complete | Apr 30, 2026, 06:45 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72958](https://github.com/openclaw/openclaw/pull/72958) | [codex] Fix dynamic context-window guard thresholds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72958.md) | complete | Apr 30, 2026, 06:44 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74914](https://github.com/openclaw/openclaw/pull/74914) | [codex] allow native google-vertex model provider configs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74914.md) | complete | Apr 30, 2026, 06:40 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74915](https://github.com/openclaw/openclaw/issues/74915) | web_fetch does not resolve external webFetchProviders because provider lookup is limited to bundled plugins | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74915.md) | complete | Apr 30, 2026, 06:39 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 06:44 UTC. Latest close: Apr 30, 2026, 06:43 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74912](https://github.com/openclaw/openclaw/pull/74912) | chore(ci): add agent CodeQL PR quality guard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74912.md) | complete | Apr 30, 2026, 06:37 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74910](https://github.com/openclaw/openclaw/issues/74910) | doctor: agents.defaults.llm.idleTimeoutSeconds auto-fix discards the user value; runtime gives no signal until doctor runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74910.md) | complete | Apr 30, 2026, 06:34 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74907](https://github.com/openclaw/openclaw/issues/74907) | Multi-tool turn replay produces orphan tool_use blocks after session compaction (v2026.4.x regression) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74907.md) | complete | Apr 30, 2026, 06:33 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74909](https://github.com/openclaw/openclaw/pull/74909) | fix(pi-embedded-runner): only cooldown auth profile on real auth signals | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74909.md) | complete | Apr 30, 2026, 06:32 UTC |
 
 </details>
 
@@ -269,9 +269,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 06:46 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/4. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 4. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25151427994](https://github.com/openclaw/clawsweeper/actions/runs/25151427994)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -283,8 +283,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25151427994](https://
 | Open issues | 3556 |
 | Open PRs | 3348 |
 | Open items total | 6904 |
-| Reviewed files | 6536 |
-| Unreviewed open items | 368 |
+| Reviewed files | 6537 |
+| Unreviewed open items | 367 |
 | Archived closed files | 14830 |
 
 #### Review Outcomes
@@ -293,9 +293,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25151427994](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3358 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3157 |
+| Fresh reviewed PRs in the last 7 days | 3158 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6515 |
+| Fresh verified reviews in the last 7 days | 6516 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1135 |
 | Closed by Codex apply | 10996 |
@@ -305,10 +305,10 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25151427994](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 77/1169 current (1092 due, 6.6%) |
-| Hourly hot item cadence (<7d) | 77/1169 current (1092 due, 6.6%) |
-| Daily cadence coverage | 2053/3575 current (1522 due, 57.4%) |
-| Daily PR cadence | 1362/2492 current (1130 due, 54.7%) |
+| Hourly cadence coverage | 78/1170 current (1092 due, 6.7%) |
+| Hourly hot item cadence (<7d) | 78/1170 current (1092 due, 6.7%) |
+| Daily cadence coverage | 2052/3575 current (1523 due, 57.4%) |
+| Daily PR cadence | 1361/2492 current (1131 due, 54.6%) |
 | Daily new issue cadence (<30d) | 691/1083 current (392 due, 63.8%) |
 | Weekly older issue cadence | 1787/1792 current (5 due, 99.7%) |
 | Due now by cadence | 2987 |
@@ -347,13 +347,13 @@ Targeted review input: `65635,72522,72527,72529,72531,72532,72535,72537,72539,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 06:44 UTC. Latest close: Apr 30, 2026, 06:43 UTC. Latest comment sync: Apr 30, 2026, 06:45 UTC.
+Latest review: Apr 30, 2026, 06:45 UTC. Latest close: Apr 30, 2026, 06:43 UTC. Latest comment sync: Apr 30, 2026, 06:46 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 14 | 3 | 11 | 0 | 10 | 67 | 0 |
-| Last hour | 564 | 12 | 552 | 8 | 25 | 629 | 0 |
-| Last 24 hours | 4466 | 275 | 4191 | 17 | 748 | 1541 | 21 |
+| Last 15 minutes | 14 | 3 | 11 | 0 | 10 | 62 | 0 |
+| Last hour | 565 | 12 | 553 | 8 | 25 | 624 | 0 |
+| Last 24 hours | 4464 | 275 | 4189 | 17 | 748 | 1542 | 21 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 06:44 UTC. Latest close: Apr 30, 2026, 06:43 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#74916](https://github.com/openclaw/openclaw/pull/74916) | fix: change disables bundled dependency repair when plugins.enabled: false, but the same fall... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74916.md) | complete | Apr 30, 2026, 06:45 UTC |
 | [#72958](https://github.com/openclaw/openclaw/pull/72958) | [codex] Fix dynamic context-window guard thresholds | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72958.md) | complete | Apr 30, 2026, 06:44 UTC |
 | [#74914](https://github.com/openclaw/openclaw/pull/74914) | [codex] allow native google-vertex model provider configs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74914.md) | complete | Apr 30, 2026, 06:40 UTC |
 | [#74915](https://github.com/openclaw/openclaw/issues/74915) | web_fetch does not resolve external webFetchProviders because provider lookup is limited to bundled plugins | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74915.md) | complete | Apr 30, 2026, 06:39 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 06:44 UTC. Latest close: Apr 30, 2026, 06:43 UTC. L
 | [#74912](https://github.com/openclaw/openclaw/pull/74912) | chore(ci): add agent CodeQL PR quality guard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74912.md) | complete | Apr 30, 2026, 06:37 UTC |
 | [#74910](https://github.com/openclaw/openclaw/issues/74910) | doctor: agents.defaults.llm.idleTimeoutSeconds auto-fix discards the user value; runtime gives no signal until doctor runs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74910.md) | complete | Apr 30, 2026, 06:34 UTC |
 | [#74907](https://github.com/openclaw/openclaw/issues/74907) | Multi-tool turn replay produces orphan tool_use blocks after session compaction (v2026.4.x regression) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74907.md) | complete | Apr 30, 2026, 06:33 UTC |
-| [#74909](https://github.com/openclaw/openclaw/pull/74909) | fix(pi-embedded-runner): only cooldown auth profile on real auth signals | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74909.md) | complete | Apr 30, 2026, 06:32 UTC |
 
 </details>
 
