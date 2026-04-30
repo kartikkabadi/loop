@@ -3816,6 +3816,12 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
     if (repairLoopPassModeFromReport(markdown)) {
       return `<!-- clawsweeper-verdict:pass ${baseAttrs} -->`;
     }
+    if (repairLoopFindingRepairAllowed(markdown)) {
+      return [
+        `<!-- clawsweeper-verdict:needs-changes ${baseAttrs} -->`,
+        `<!-- clawsweeper-action:fix-required ${baseAttrs} finding=review-feedback -->`,
+      ].join("\n");
+    }
     if (frontMatterValue(markdown, "work_candidate") !== "queue_fix_pr") {
       return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
     }
@@ -3843,6 +3849,14 @@ function securitySensitiveRepairAllowed(markdown: string): boolean {
     frontMatterValue(markdown, "decision") === "keep_open" &&
     frontMatterValue(markdown, "work_candidate") === "queue_fix_pr" &&
     (labels.includes(AUTOFIX_LABEL) || labels.includes(AUTOMERGE_LABEL))
+  );
+}
+
+function repairLoopFindingRepairAllowed(markdown: string): boolean {
+  const labels = frontMatterStringArray(markdown, "labels");
+  return (
+    (labels.includes(AUTOMERGE_LABEL) || labels.includes(AUTOFIX_LABEL)) &&
+    reportReviewFindings(markdown).length > 0
   );
 }
 

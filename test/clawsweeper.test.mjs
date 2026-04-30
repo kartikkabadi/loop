@@ -1240,6 +1240,35 @@ Full review comments:
   assert.doesNotMatch(markers, /clawsweeper-verdict:pass/);
 });
 
+test("pull request automerge findings trigger repair without work candidate frontmatter", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "74454",
+    decision: "keep_open",
+    close_reason: "none",
+    confidence: "high",
+    review_status: "complete",
+    labels: JSON.stringify(["clawsweeper:automerge"]),
+    pull_head_sha: "abc123def456",
+  })}
+
+## Review Findings
+
+Overall correctness: patch is incorrect
+
+Full review comments:
+
+- **[P1] Preserve the limiter guard:** \`src/webhooks/voice.ts:42\`
+  - body: The new branch can skip the limiter before accepting a webhook.
+`;
+
+  const markers = reviewAutomationMarkersFromReport(report);
+
+  assert.match(markers, /clawsweeper-verdict:needs-changes/);
+  assert.match(markers, /clawsweeper-action:fix-required/);
+  assert.doesNotMatch(markers, /clawsweeper-verdict:needs-human/);
+});
+
 test("security-needs-attention reports block unopted repair and automerge pass markers", () => {
   const securitySection = `
 ## Security Review
