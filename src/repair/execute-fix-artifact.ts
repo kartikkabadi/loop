@@ -34,6 +34,7 @@ import {
 } from "./constants.js";
 import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
 import { compactText } from "./text-utils.js";
+import { replacementAutomationLabel } from "./replacement-labels.js";
 import {
   checkoutSourcePullRequestHead,
   fetchSourcePullRequestHead,
@@ -679,7 +680,7 @@ function executeReplacementBranch({
     ).trim();
   const prNumber = pullRequestNumberFromUrl(prUrl);
   if (prNumber) ensurePullRequestOpen({ number: prNumber, targetDir });
-  if (prNumber) labelReplacementPullRequest({ number: prNumber, targetDir });
+  if (prNumber) labelReplacementPullRequest({ number: prNumber, targetDir, fixArtifact });
   if (prNumber) (prep.merge_preflight as JsonValue).target = `#${prNumber}`;
   const threadResolution = prNumber
     ? prepareReviewThreadsForMerge({
@@ -737,7 +738,7 @@ function executeReplacementBranch({
   };
 }
 
-function labelReplacementPullRequest({ number, targetDir }: LooseRecord) {
+function labelReplacementPullRequest({ number, targetDir, fixArtifact }: LooseRecord) {
   ensureLabel(
     result.repo,
     CLAWSWEEPER_LABEL,
@@ -746,6 +747,8 @@ function labelReplacementPullRequest({ number, targetDir }: LooseRecord) {
     targetDir,
   );
   addLabel(result.repo, number, CLAWSWEEPER_LABEL, targetDir);
+  const automationLabel = replacementSourceAutomationLabel({ fixArtifact, targetDir });
+  if (automationLabel) addLabel(result.repo, number, automationLabel, targetDir);
   if (job.frontmatter.source === "clawsweeper_commit" || job.frontmatter.commit_sha) {
     ensureLabel(
       result.repo,
@@ -756,6 +759,28 @@ function labelReplacementPullRequest({ number, targetDir }: LooseRecord) {
     );
     addLabel(result.repo, number, COMMIT_FINDING_LABEL, targetDir);
   }
+}
+
+function replacementSourceAutomationLabel({ fixArtifact, targetDir }: LooseRecord) {
+  const sourceLabelSets: string[][] = [];
+  for (const source of fixArtifact.source_prs ?? []) {
+    const parsed = parsePullRequestUrl(source);
+    if (!parsed || parsed.repo !== result.repo) continue;
+    sourceLabelSets.push(sourcePullRequestLabels({ number: parsed.number, targetDir }));
+  }
+  return replacementAutomationLabel(sourceLabelSets);
+}
+
+function sourcePullRequestLabels({ number, targetDir }: LooseRecord) {
+  const view = JSON.parse(
+    run("gh", ["pr", "view", String(number), "--repo", result.repo, "--json", "labels"], {
+      cwd: targetDir,
+      env: ghEnv(),
+    }),
+  );
+  return (view.labels ?? [])
+    .map((label: JsonValue) => String(label?.name ?? label ?? "").trim())
+    .filter(Boolean);
 }
 
 function ensureLabel(
