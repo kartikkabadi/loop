@@ -153,12 +153,16 @@ If an open PR is explicitly opted into `clawsweeper:automerge`, prefer the
 automerge path once review findings are empty and checks/mergeability can gate
 the exact head. Do not choose `manual_review` solely because the PR has the
 `maintainer` label, a large `size:*` label, broad surface area, or ordinary
-maintainer-review expectations. Use `manual_review` for an automerge-opted PR
-only when there is a concrete blocker that automation must not bypass, such as a
-security finding, release/beta blocker, draft/conflict/stale head, failing
-required check without a narrow repair, missing required validation or changelog,
-requested changes, unclear ownership approval for a specific risky behavior, or
-an explicit human-review/pause signal.
+maintainer-review expectations. If review findings name a narrow mechanical
+blocker that an automated worker can fix, choose `queue_fix_pr` even when the
+finding is process-only or P3. Examples include a missing required changelog
+entry, docs/diagnostic copy, validation-only warning, focused test coverage, or
+a failing check with a clear file-level repair. Use `manual_review` for an
+automerge-opted PR only when the blocker is not safely repairable by automation,
+such as a security finding, release/beta approval, draft/conflict/stale head,
+failing required check without a narrow repair, requested changes that require
+human/product/ownership approval, unclear ownership approval for a specific
+risky behavior, or an explicit human-review/pause signal.
 
 Keep an issue open when an open PR specifically references it with GitHub closing
 syntax such as `Fixes #123`, `Closes #123`, or `Resolves #123`. That PR is an
