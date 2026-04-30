@@ -3801,10 +3801,16 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
     return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
   }
   if (reportSecurityReview(markdown).status === "needs_attention") {
-    return [
-      `<!-- clawsweeper-security:security-sensitive ${baseAttrs} -->`,
-      `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`,
-    ].join("\n");
+    const markers = [`<!-- clawsweeper-security:security-sensitive ${baseAttrs} -->`];
+    if (securitySensitiveRepairAllowed(markdown)) {
+      markers.push(
+        `<!-- clawsweeper-verdict:needs-changes ${baseAttrs} -->`,
+        `<!-- clawsweeper-action:fix-required ${baseAttrs} finding=security-review -->`,
+      );
+    } else {
+      markers.push(`<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`);
+    }
+    return markers.join("\n");
   }
   if (decision === "keep_open") {
     if (repairLoopPassModeFromReport(markdown)) {
@@ -3829,6 +3835,15 @@ function repairLoopPassModeFromReport(markdown: string): "" | "autofix" | "autom
   return frontMatterStringArray(markdown, "labels").includes(AUTOFIX_LABEL)
     ? "autofix"
     : "automerge";
+}
+
+function securitySensitiveRepairAllowed(markdown: string): boolean {
+  const labels = frontMatterStringArray(markdown, "labels");
+  return (
+    frontMatterValue(markdown, "decision") === "keep_open" &&
+    frontMatterValue(markdown, "work_candidate") === "queue_fix_pr" &&
+    (labels.includes(AUTOFIX_LABEL) || labels.includes(AUTOMERGE_LABEL))
+  );
 }
 
 function isRepairLoopPassReport(markdown: string): boolean {

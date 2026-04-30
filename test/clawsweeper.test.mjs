@@ -1240,7 +1240,7 @@ Full review comments:
   assert.doesNotMatch(markers, /clawsweeper-verdict:pass/);
 });
 
-test("security-needs-attention reports block repair and automerge markers", () => {
+test("security-needs-attention reports block unopted repair and automerge pass markers", () => {
   const securitySection = `
 ## Security Review
 
@@ -1274,6 +1274,30 @@ ${securitySection}
   assert.match(repairMarkers, /clawsweeper-verdict:needs-human/);
   assert.doesNotMatch(repairMarkers, /clawsweeper-verdict:needs-changes/);
   assert.doesNotMatch(repairMarkers, /clawsweeper-action:fix-required/);
+
+  const autofixRepairMarkers = reviewAutomationMarkersFromReport(`${reportFrontMatter({
+    type: "pull_request",
+    number: "74125",
+    pull_head_sha: "abc789def123",
+    decision: "keep_open",
+    confidence: "high",
+    labels: JSON.stringify(["clawsweeper:autofix"]),
+    work_candidate: "queue_fix_pr",
+  })}
+
+## Summary
+
+Needs an opted-in repair.
+
+${securitySection}
+`);
+
+  assert.match(autofixRepairMarkers, /clawsweeper-security:security-sensitive/);
+  assert.match(autofixRepairMarkers, /clawsweeper-verdict:needs-changes/);
+  assert.match(autofixRepairMarkers, /clawsweeper-action:fix-required/);
+  assert.match(autofixRepairMarkers, /finding=security-review/);
+  assert.doesNotMatch(autofixRepairMarkers, /clawsweeper-verdict:needs-human/);
+  assert.doesNotMatch(autofixRepairMarkers, /clawsweeper-verdict:pass/);
 
   const automergeMarkers = reviewAutomationMarkersFromReport(`${reportFrontMatter({
     type: "pull_request",

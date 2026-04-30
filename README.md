@@ -136,6 +136,9 @@ Common commands:
   until GitHub marks them ready for review.
 - User-facing OpenClaw `fix`, `feat`, and `perf` automerge PRs must include a
   `CHANGELOG.md` entry before ClawSweeper will merge them.
+- Security-sensitive findings can be repaired only after explicit
+  `autofix`/`automerge` opt-in; ClawSweeper still will not merge until a later
+  exact-head review is clean.
 - `approve` lets a maintainer clear a ClawSweeper human-review pause and merge
   only after the normal exact-head, checks, mergeability, and gate checks pass.
 - `stop` adds `clawsweeper:human-review`; `/autoclose <reason>` closes the
