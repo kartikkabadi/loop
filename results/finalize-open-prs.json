@@ -2,15 +2,15 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T00:34:20.333Z",
+  "generated_at": "2026-04-30T01:19:25.550Z",
   "count": 11,
   "summary": {
     "open_prs": 11,
     "ready_candidates": 0,
     "security_hold": 0,
-    "needs_rebase": 5,
+    "needs_rebase": 6,
     "mergeability_unknown": 0,
-    "needs_checks": 9,
+    "needs_checks": 7,
     "needs_review": 0,
     "needs_merge_preflight": 11,
     "needs_result_backfill": 2
@@ -27,71 +27,95 @@
   },
   "prs": [
     {
-      "number": 74697,
-      "title": "fix(sdk): treat terminal wait timeouts as timed out",
-      "url": "https://github.com/openclaw/openclaw/pull/74697",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-29de89a8d98c",
-      "head_sha": "0b549f63fb319b17b2b2af947a2c0d0d3b8c9eb1",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-29de89a8d98c",
-      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-29de89a8d98c.md",
-      "updated_at": "2026-04-30T00:32:46Z",
+      "number": 74714,
+      "title": "fix: Google Vertex manifest evidence accepts the Windows %APPDATA% ADC path, but the Google V...",
+      "url": "https://github.com/openclaw/openclaw/pull/74714",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a",
+      "head_sha": "29dbb217f28051ccb988274fd94c0ccf91d39402",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a.md",
+      "updated_at": "2026-04-30T01:06:32Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "CLEAN",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 82,
+        "counts": {
+          "CANCELLED": 3,
+          "SKIPPED": 12,
+          "SUCCESS": 67
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74714#issuecomment-4348755631",
+            "submitted_at": "2026-04-30T01:06:32Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25141795545",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25141795545",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-3bd6b54f0b3a",
+        "published_at": "2026-04-30T01:02:55.636Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74714",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+    },
+    {
+      "number": 74703,
+      "title": "fix: Windows-specific reliability gap in the new timeout cleanup path",
+      "url": "https://github.com/openclaw/openclaw/pull/74703",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa",
+      "head_sha": "1c205f0df64214b3fbb4dfebced70c25e1dfc5cc",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa.md",
+      "updated_at": "2026-04-30T01:02:54Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 74,
+        "total": 84,
         "counts": {
-          "CANCELLED": 3,
-          "SKIPPED": 11,
-          "SUCCESS": 16,
-          "IN_PROGRESS": 44
+          "CANCELLED": 4,
+          "SKIPPED": 13,
+          "SUCCESS": 65,
+          "FAILURE": 2
         },
         "blockers": [
-          "CI / build-artifacts:IN_PROGRESS",
-          "CI / checks-fast-bundled:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-plugins-d:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-a:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-b:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels-c:IN_PROGRESS",
-          "CI / checks-node-core-fast-support:IN_PROGRESS",
-          "CI / checks-node-core-src-security:IN_PROGRESS",
-          "CI / checks-node-core-ui:IN_PROGRESS",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
-          "CI / checks-node-core-runtime-shared:IN_PROGRESS",
-          "CI / checks-node-agentic-control-plane:IN_PROGRESS",
-          "CI / checks-node-agentic-cli:IN_PROGRESS",
-          "CI / checks-node-agentic-command-support:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-agent-channel:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-doctor:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-doctor-shared:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-models:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-onboard-config:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-status-tools:IN_PROGRESS",
-          "CI / checks-node-agentic-agents:IN_PROGRESS",
-          "CI / checks-node-agentic-gateway-core:IN_PROGRESS",
-          "CI / checks-node-agentic-gateway-methods:IN_PROGRESS",
-          "CI / checks-node-agentic-plugin-sdk:IN_PROGRESS",
-          "CI / checks-node-auto-reply-core-top-level:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-agent-runner:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-commands:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-state-routing:IN_PROGRESS",
-          "CI / check-preflight-guards:IN_PROGRESS",
-          "CI / check-lint:IN_PROGRESS",
-          "CI / check-dependencies:IN_PROGRESS",
-          "CI / check-policy-guards:IN_PROGRESS",
-          "CI / check-test-types:IN_PROGRESS",
-          "CI / check-strict-smoke:IN_PROGRESS",
-          "CI / check-additional-boundaries:IN_PROGRESS",
-          "CI / check-additional-extension-channels:IN_PROGRESS",
-          "CI / check-additional-extension-bundled:IN_PROGRESS",
-          "CI / check-additional-extension-package-boundary:IN_PROGRESS",
-          "CI / check-additional-runtime-topology-architecture:IN_PROGRESS",
-          "CI / check-docs:IN_PROGRESS"
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / checks-node-core:FAILURE"
         ]
       },
       "review_threads": {
@@ -101,8 +125,149 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74703#issuecomment-4348730890",
+            "submitted_at": "2026-04-30T01:02:54Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25141710004",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25141710004",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-5a631e1ee9fa",
+        "published_at": "2026-04-30T00:58:29.789Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74703",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CI / checks-node-core-support-boundary:FAILURE; CI / checks-node-core:FAILURE",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74699,
+      "title": "fix: Codex app-server steering path regression",
+      "url": "https://github.com/openclaw/openclaw/pull/74699",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-30a2b3049ae0",
+      "head_sha": "39498ba26f38634f7225f83388159b03b1745fe9",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-30a2b3049ae0",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-30a2b3049ae0.md",
+      "updated_at": "2026-04-30T01:06:16Z",
+      "mergeable": "CONFLICTING",
+      "merge_state_status": "DIRTY",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 78,
+        "counts": {
+          "SUCCESS": 68,
+          "SKIPPED": 10
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74699#issuecomment-4348652704",
+            "submitted_at": "2026-04-30T00:49:55Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25141075574",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25141075574",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-30a2b3049ae0",
+        "published_at": "2026-04-30T00:45:28.218Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74699",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_rebase:CONFLICTING",
+        "needs_merge_state:DIRTY",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
+    },
+    {
+      "number": 74697,
+      "title": "fix(sdk): treat terminal wait timeouts as timed out",
+      "url": "https://github.com/openclaw/openclaw/pull/74697",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-29de89a8d98c",
+      "head_sha": "eb3cd642c025ab38cfc68301c46d8810384050c3",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-29de89a8d98c",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-29de89a8d98c.md",
+      "updated_at": "2026-04-30T00:46:33Z",
+      "mergeable": "CONFLICTING",
+      "merge_state_status": "DIRTY",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 77,
+        "counts": {
+          "SUCCESS": 68,
+          "SKIPPED": 9
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74697#issuecomment-4348590702",
+            "submitted_at": "2026-04-30T00:36:48Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25140871430",
@@ -127,11 +292,11 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / build-artifacts:IN_PROGRESS; CI / checks-fast-bundled:IN_PROGRESS; CI / checks-fast-contracts-plugins-a:IN_PROGRESS",
+        "needs_rebase:CONFLICTING",
+        "needs_merge_state:DIRTY",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     },
     {
       "number": 74696,
@@ -147,18 +312,17 @@
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 80,
+        "total": 81,
         "counts": {
           "CANCELLED": 3,
           "SKIPPED": 12,
-          "SUCCESS": 62,
-          "FAILURE": 2,
-          "IN_PROGRESS": 1
+          "SUCCESS": 63,
+          "FAILURE": 3
         },
         "blockers": [
           "CI / checks-node-core-runtime-infra:FAILURE",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-core-support-boundary:FAILURE"
+          "CI / checks-node-core-support-boundary:FAILURE",
+          "CI / checks-node-core:FAILURE"
         ]
       },
       "review_threads": {
@@ -202,222 +366,10 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS; CI / checks-node-core-support-boundary:FAILURE",
+        "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-core-support-boundary:FAILURE; CI / checks-node-core:FAILURE",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
-    },
-    {
-      "number": 74673,
-      "title": "fix: compatibility gaps in the new Google Vertex ADC manifest evidence",
-      "url": "https://github.com/openclaw/openclaw/pull/74673",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-dec5de8a2cda",
-      "head_sha": "70ac0101fd74ef0f1bb06dbf5f6481a1222c8fb0",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-dec5de8a2cda",
-      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-dec5de8a2cda.md",
-      "updated_at": "2026-04-29T23:34:54Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
-      "review_decision": "",
-      "security_hold": false,
-      "checks": {
-        "total": 83,
-        "counts": {
-          "CANCELLED": 3,
-          "SKIPPED": 11,
-          "SUCCESS": 67,
-          "FAILURE": 2
-        },
-        "blockers": [
-          "CI / checks-node-agentic-commands-models:FAILURE",
-          "CI / checks-node-core:FAILURE"
-        ]
-      },
-      "review_threads": {
-        "status": "clean",
-        "reason": null,
-        "unresolved_count": 0,
-        "examples": []
-      },
-      "review_bots": {
-        "count": 1,
-        "latest": [
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74673#issuecomment-4348261170",
-            "submitted_at": "2026-04-29T23:34:54Z"
-          }
-        ]
-      },
-      "latest_record": {
-        "run_id": "25139002791",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25139002791",
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-dec5de8a2cda",
-        "published_at": "2026-04-29T23:29:23.350Z",
-        "workflow_conclusion": "success",
-        "apply_action": {
-          "target": "#74673",
-          "action": "merge_canonical",
-          "status": "blocked",
-          "classification": "fix_pr",
-          "canonical": null,
-          "candidate_fix": null,
-          "title": null,
-          "idempotency_key": null,
-          "reason": "job does not allow merge",
-          "merged_at": null,
-          "merge_commit_sha": null,
-          "live_state": null,
-          "live_updated_at": null
-        }
-      },
-      "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-agentic-commands-models:FAILURE; CI / checks-node-core:FAILURE",
-        "needs_merge_preflight"
-      ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
-    },
-    {
-      "number": 74672,
-      "title": "fix: changed explicit-path handling regression",
-      "url": "https://github.com/openclaw/openclaw/pull/74672",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-78f347036848",
-      "head_sha": "511c1069ac48e42240df53447946af8f8b4a212e",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-78f347036848",
-      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-78f347036848.md",
-      "updated_at": "2026-04-29T23:32:28Z",
-      "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
-      "review_decision": "",
-      "security_hold": false,
-      "checks": {
-        "total": 83,
-        "counts": {
-          "CANCELLED": 3,
-          "SKIPPED": 12,
-          "SUCCESS": 66,
-          "FAILURE": 2
-        },
-        "blockers": [
-          "CI / checks-node-agentic-commands-models:FAILURE",
-          "CI / checks-node-core:FAILURE"
-        ]
-      },
-      "review_threads": {
-        "status": "clean",
-        "reason": null,
-        "unresolved_count": 0,
-        "examples": []
-      },
-      "review_bots": {
-        "count": 1,
-        "latest": [
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74672#issuecomment-4348252787",
-            "submitted_at": "2026-04-29T23:32:28Z"
-          }
-        ]
-      },
-      "latest_record": {
-        "run_id": "25138999673",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25138999673",
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-78f347036848",
-        "published_at": "2026-04-29T23:28:15.138Z",
-        "workflow_conclusion": "success",
-        "apply_action": {
-          "target": "#74672",
-          "action": "merge_canonical",
-          "status": "blocked",
-          "classification": "fix_pr",
-          "canonical": null,
-          "candidate_fix": null,
-          "title": null,
-          "idempotency_key": null,
-          "reason": "job does not allow merge",
-          "merged_at": null,
-          "merge_commit_sha": null,
-          "live_state": null,
-          "live_updated_at": null
-        }
-      },
-      "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-agentic-commands-models:FAILURE; CI / checks-node-core:FAILURE",
-        "needs_merge_preflight"
-      ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
-    },
-    {
-      "number": 74670,
-      "title": "fix: production change appears intentional, but an existing focused test file still asserts t...",
-      "url": "https://github.com/openclaw/openclaw/pull/74670",
-      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-a0cf07ec1066",
-      "head_sha": "aa8017e26869f6bb9d30371e43fd84053a84bfc6",
-      "cluster_id": "clawsweeper-commit-openclaw-openclaw-a0cf07ec1066",
-      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-a0cf07ec1066.md",
-      "updated_at": "2026-04-29T23:31:03Z",
-      "mergeable": "CONFLICTING",
-      "merge_state_status": "DIRTY",
-      "review_decision": "",
-      "security_hold": false,
-      "checks": {
-        "total": 83,
-        "counts": {
-          "CANCELLED": 3,
-          "SKIPPED": 13,
-          "SUCCESS": 67
-        },
-        "blockers": []
-      },
-      "review_threads": {
-        "status": "clean",
-        "reason": null,
-        "unresolved_count": 0,
-        "examples": []
-      },
-      "review_bots": {
-        "count": 1,
-        "latest": [
-          {
-            "source": "comment",
-            "author": "clawsweeper",
-            "url": "https://github.com/openclaw/openclaw/pull/74670#issuecomment-4348247564",
-            "submitted_at": "2026-04-29T23:31:03Z"
-          }
-        ]
-      },
-      "latest_record": {
-        "run_id": "25139001257",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25139001257",
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-a0cf07ec1066",
-        "published_at": "2026-04-29T23:27:10.546Z",
-        "workflow_conclusion": "success",
-        "apply_action": {
-          "target": "#74670",
-          "action": "merge_canonical",
-          "status": "blocked",
-          "classification": "fix_pr",
-          "canonical": null,
-          "candidate_fix": null,
-          "title": null,
-          "idempotency_key": null,
-          "reason": "job does not allow merge",
-          "merged_at": null,
-          "merge_commit_sha": null,
-          "live_state": null,
-          "live_updated_at": null
-        }
-      },
-      "blockers": [
-        "needs_rebase:CONFLICTING",
-        "needs_merge_state:DIRTY",
-        "needs_merge_preflight"
-      ],
-      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
     },
     {
       "number": 74667,
