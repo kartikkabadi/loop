@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 11:55 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 11:55 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25163825746) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 11:55 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25163825746) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -269,9 +269,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 11:55 UTC
 
-State: Planning review
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 4. Total fresh closes in this run: 4/4. Result records in checkpoint: 7, including durable review comment syncs.
+Apply/comment-sync run finished with 4 fresh closes out of requested limit 4. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25163825746](https://github.com/openclaw/clawsweeper/actions/runs/25163825746)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
