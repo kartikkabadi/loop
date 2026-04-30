@@ -194,7 +194,7 @@ Latest review: Apr 30, 2026, 16:17 UTC. Latest close: Apr 30, 2026, 16:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 1 | 14 | 0 | 21 | 35 | 1 |
+| Last 15 minutes | 15 | 1 | 14 | 0 | 21 | 34 | 1 |
 | Last hour | 708 | 39 | 669 | 6 | 56 | 451 | 2 |
 | Last 24 hours | 5947 | 378 | 5569 | 26 | 723 | 2056 | 26 |
 
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 16:19 UTC
 
 State: Apply in progress
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 19. Total fresh closes in this run: 19/20. Result records in checkpoint: 38, including durable review comment syncs.
+Checkpoint 2 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 19/20. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25176410587](https://github.com/openclaw/clawsweeper/actions/runs/25176410587)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,7 +351,7 @@ Latest review: Apr 30, 2026, 16:17 UTC. Latest close: Apr 30, 2026, 16:18 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 15 | 1 | 14 | 0 | 21 | 35 | 1 |
+| Last 15 minutes | 15 | 1 | 14 | 0 | 21 | 34 | 1 |
 | Last hour | 708 | 39 | 669 | 6 | 56 | 451 | 2 |
 | Last 24 hours | 5023 | 378 | 4645 | 13 | 721 | 1656 | 26 |
 
