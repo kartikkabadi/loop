@@ -946,6 +946,8 @@ function editValidatePrepareMerge({
   const checkpointCommits: JsonValue[] = [];
   const repositoryContext = buildRepositoryContext({ fixArtifact, targetDir });
   const shouldRunCodexEdit = !producedChanges || reconcileWithBase;
+  const repairDeltaBaseHead =
+    rebaseResult?.status === "conflicts" ? sourceHead : currentHead(targetDir);
   if (shouldRunCodexEdit) {
     for (let attempt = 1; attempt <= maxEditAttempts; attempt += 1) {
       const headBeforeAttempt = currentHead(targetDir);
@@ -1052,7 +1054,7 @@ function editValidatePrepareMerge({
       targetDir,
       mode,
       baseBranch,
-      sourceHead,
+      sourceHead: repairDeltaBaseHead,
       onReviewFix: (reviewAttempt: JsonValue) => {
         const checkpoint = commitCheckpointIfNeeded({
           targetDir,
