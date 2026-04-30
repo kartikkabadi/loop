@@ -160,23 +160,23 @@ Last dashboard update: Apr 30, 2026, 08:59 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4385 |
-| Open PRs | 3374 |
-| Open items total | 7759 |
-| Reviewed files | 7477 |
-| Unreviewed open items | 367 |
-| Due now by cadence | 3146 |
-| Proposed closes awaiting apply | 1 |
+| Open issues | 4384 |
+| Open PRs | 3373 |
+| Open items total | 7757 |
+| Reviewed files | 7476 |
+| Unreviewed open items | 366 |
+| Due now by cadence | 3147 |
+| Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 1183 |
-| Closed by Codex apply | 11037 |
+| Closed by Codex apply | 11038 |
 | Failed or stale reviews | 33 |
-| Archived closed files | 14911 |
+| Archived closed files | 14912 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6917 | 6550 | 367 | 3070 | 1 | 1137 | 11029 | Apr 30, 2026, 08:56 UTC | Apr 30, 2026, 08:52 UTC | 65 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6915 | 6549 | 366 | 3071 | 0 | 1137 | 11030 | Apr 30, 2026, 08:56 UTC | Apr 30, 2026, 08:59 UTC | 66 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 842 | 924 | 0 | 73 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -190,18 +190,19 @@ Last dashboard update: Apr 30, 2026, 08:59 UTC
 
 ### Fleet Activity
 
-Latest review: Apr 30, 2026, 08:56 UTC. Latest close: Apr 30, 2026, 08:52 UTC. Latest comment sync: Apr 30, 2026, 08:57 UTC.
+Latest review: Apr 30, 2026, 08:56 UTC. Latest close: Apr 30, 2026, 08:59 UTC. Latest comment sync: Apr 30, 2026, 08:59 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 32 | 1 | 31 | 3 | 3 | 11 | 0 |
-| Last hour | 565 | 15 | 550 | 3 | 24 | 65 | 1 |
-| Last 24 hours | 5154 | 274 | 4880 | 30 | 745 | 1352 | 24 |
+| Last 15 minutes | 26 | 1 | 25 | 2 | 4 | 12 | 0 |
+| Last hour | 563 | 15 | 548 | 3 | 25 | 66 | 1 |
+| Last 24 hours | 5154 | 274 | 4880 | 30 | 746 | 1353 | 24 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74006](https://github.com/openclaw/openclaw/issues/74006) | [Bug]: gateway always failed after openclaw version updated | already implemented on main | Apr 30, 2026, 08:59 UTC | [records/openclaw-openclaw/closed/74006.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74006.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74969](https://github.com/openclaw/openclaw/pull/74969) | ci: right-size OpenGrep PR scan | closed externally after review | Apr 30, 2026, 08:52 UTC | [records/openclaw-openclaw/closed/74969.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74969.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74983](https://github.com/openclaw/openclaw/pull/74983) | build(deps): bump github/codeql-action from 3 to 4 | kept open | Apr 30, 2026, 08:50 UTC | [records/openclaw-openclaw/closed/74983.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74983.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74663](https://github.com/openclaw/openclaw/pull/74663) | fix(telegram): preserve audioAsVoice flag through legacy outbound media sends | closed externally after review | Apr 30, 2026, 08:45 UTC | [records/openclaw-openclaw/closed/74663.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74663.md) |
@@ -211,7 +212,6 @@ Latest review: Apr 30, 2026, 08:56 UTC. Latest close: Apr 30, 2026, 08:52 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74975](https://github.com/openclaw/openclaw/issues/74975) | config.patch on agents.defaults.model.primary triggers gateway restart despite hot-reload docs | already implemented on main | Apr 30, 2026, 08:42 UTC | [records/openclaw-openclaw/closed/74975.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74975.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74973](https://github.com/openclaw/openclaw/issues/74973) | [Bug]: delivery-mirror assistant messages pollute LLM context causing infinite loop (distinct from #71912, #74034) | already implemented on main | Apr 30, 2026, 08:39 UTC | [records/openclaw-openclaw/closed/74973.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74973.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70877](https://github.com/openclaw/openclaw/pull/70877) | fix(tools): enable loop detection by default to prevent infinite tool call loops | closed externally after review | Apr 30, 2026, 08:36 UTC | [records/openclaw-openclaw/closed/70877.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70877.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74968](https://github.com/openclaw/openclaw/issues/74968) | bug: image tool fails with \"Failed to optimize image\" — sharp postinstall silently dropped after `npm install -g openclaw` on macOS | already implemented on main | Apr 30, 2026, 08:34 UTC | [records/openclaw-openclaw/closed/74968.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74968.md) |
 
 ### Work Candidates Across Repos
 
@@ -271,7 +271,7 @@ Updated: Apr 30, 2026, 08:59 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=74006.
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 2, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25156672918](https://github.com/openclaw/clawsweeper/actions/runs/25156672918)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -280,38 +280,38 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25156672918](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3560 |
-| Open PRs | 3357 |
-| Open items total | 6917 |
-| Reviewed files | 6550 |
-| Unreviewed open items | 367 |
-| Archived closed files | 14885 |
+| Open issues | 3559 |
+| Open PRs | 3356 |
+| Open items total | 6915 |
+| Reviewed files | 6549 |
+| Unreviewed open items | 366 |
+| Archived closed files | 14886 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3365 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3364 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3165 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6530 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 6529 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 1137 |
-| Closed by Codex apply | 11029 |
+| Closed by Codex apply | 11030 |
 | Failed or stale reviews | 20 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 76/1192 current (1116 due, 6.4%) |
-| Hourly hot item cadence (<7d) | 76/1192 current (1116 due, 6.4%) |
+| Hourly cadence coverage | 73/1191 current (1118 due, 6.1%) |
+| Hourly hot item cadence (<7d) | 73/1191 current (1118 due, 6.1%) |
 | Daily cadence coverage | 1988/3571 current (1583 due, 55.7%) |
 | Daily PR cadence | 1312/2487 current (1175 due, 52.8%) |
 | Daily new issue cadence (<30d) | 676/1084 current (408 due, 62.4%) |
 | Weekly older issue cadence | 1783/1787 current (4 due, 99.8%) |
-| Due now by cadence | 3070 |
+| Due now by cadence | 3071 |
 
 ### Audit Health
 
@@ -347,18 +347,19 @@ Targeted review input: `72522,72527,72529,72531,72532,72535,72537,72539,72541,72
 
 #### Latest Run Activity
 
-Latest review: Apr 30, 2026, 08:56 UTC. Latest close: Apr 30, 2026, 08:52 UTC. Latest comment sync: Apr 30, 2026, 08:57 UTC.
+Latest review: Apr 30, 2026, 08:56 UTC. Latest close: Apr 30, 2026, 08:59 UTC. Latest comment sync: Apr 30, 2026, 08:59 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 32 | 1 | 31 | 3 | 3 | 11 | 0 |
-| Last hour | 565 | 15 | 550 | 3 | 24 | 65 | 1 |
-| Last 24 hours | 4225 | 274 | 3951 | 17 | 742 | 949 | 24 |
+| Last 15 minutes | 26 | 1 | 25 | 2 | 4 | 12 | 0 |
+| Last hour | 563 | 15 | 548 | 3 | 25 | 66 | 1 |
+| Last 24 hours | 4225 | 274 | 3951 | 17 | 743 | 950 | 24 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74006](https://github.com/openclaw/openclaw/issues/74006) | [Bug]: gateway always failed after openclaw version updated | already implemented on main | Apr 30, 2026, 08:59 UTC | [records/openclaw-openclaw/closed/74006.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74006.md) |
 | [#74969](https://github.com/openclaw/openclaw/pull/74969) | ci: right-size OpenGrep PR scan | closed externally after review | Apr 30, 2026, 08:52 UTC | [records/openclaw-openclaw/closed/74969.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74969.md) |
 | [#74983](https://github.com/openclaw/openclaw/pull/74983) | build(deps): bump github/codeql-action from 3 to 4 | kept open | Apr 30, 2026, 08:50 UTC | [records/openclaw-openclaw/closed/74983.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74983.md) |
 | [#74663](https://github.com/openclaw/openclaw/pull/74663) | fix(telegram): preserve audioAsVoice flag through legacy outbound media sends | closed externally after review | Apr 30, 2026, 08:45 UTC | [records/openclaw-openclaw/closed/74663.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74663.md) |
@@ -368,7 +369,6 @@ Latest review: Apr 30, 2026, 08:56 UTC. Latest close: Apr 30, 2026, 08:52 UTC. L
 | [#74975](https://github.com/openclaw/openclaw/issues/74975) | config.patch on agents.defaults.model.primary triggers gateway restart despite hot-reload docs | already implemented on main | Apr 30, 2026, 08:42 UTC | [records/openclaw-openclaw/closed/74975.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74975.md) |
 | [#74973](https://github.com/openclaw/openclaw/issues/74973) | [Bug]: delivery-mirror assistant messages pollute LLM context causing infinite loop (distinct from #71912, #74034) | already implemented on main | Apr 30, 2026, 08:39 UTC | [records/openclaw-openclaw/closed/74973.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74973.md) |
 | [#70877](https://github.com/openclaw/openclaw/pull/70877) | fix(tools): enable loop detection by default to prevent infinite tool call loops | closed externally after review | Apr 30, 2026, 08:36 UTC | [records/openclaw-openclaw/closed/70877.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70877.md) |
-| [#74968](https://github.com/openclaw/openclaw/issues/74968) | bug: image tool fails with \"Failed to optimize image\" — sharp postinstall silently dropped after `npm install -g openclaw` on macOS | already implemented on main | Apr 30, 2026, 08:34 UTC | [records/openclaw-openclaw/closed/74968.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74968.md) |
 
 #### Work Candidates
 
