@@ -900,8 +900,10 @@ pnpm run oxformat
 ```
 
 `oxformat` is an alias for `oxfmt`; there is no separate `oxformat` pnpm package.
-The `CI` GitHub Actions workflow runs `pnpm run check` on pushes, pull requests,
-and manual dispatches.
+The `CI` GitHub Actions workflow uses the latest Node release and runs
+`pnpm run check` on pushes, pull requests, and manual dispatches. The check gate
+includes the full test suite, a strict changed-surface coverage threshold, and a
+full compiled-repo coverage ratchet.
 
 ## GitHub Actions Setup
 

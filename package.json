@@ -50,14 +50,15 @@
     "test": "pnpm run build:all && node --test test/*.test.mjs test/repair/*.test.mjs dist/repair/*.test.js",
     "test:unit": "node --test test/*.test.mjs",
     "test:repair": "pnpm run build:repair && node --test test/repair/*.test.mjs dist/repair/*.test.js",
-    "test:coverage": "pnpm run build:all && node --test --experimental-test-coverage --test-coverage-include='dist/repair/fix-prompt-builder.js' --test-coverage-lines=85 --test-coverage-branches=85 --test-coverage-functions=85 test/repair/*.test.mjs dist/repair/*.test.js",
+    "test:coverage": "pnpm run build:all && node --test --experimental-test-coverage --test-coverage-include='dist/**/*.js' --test-coverage-exclude='dist/repair/*.test.js' --test-coverage-lines=49 --test-coverage-branches=66 --test-coverage-functions=57 test/*.test.mjs test/repair/*.test.mjs dist/repair/*.test.js",
+    "test:coverage:changed": "pnpm run build:all && node --test --experimental-test-coverage --test-coverage-include='dist/repair/fix-prompt-builder.js' --test-coverage-lines=85 --test-coverage-branches=85 --test-coverage-functions=85 test/repair/*.test.mjs dist/repair/*.test.js",
     "check:active-surface": "node scripts/check-active-surface.mjs",
     "lint": "oxlint src --tsconfig tsconfig.json && oxlint src/repair --tsconfig tsconfig.repair.json",
     "format": "oxfmt --write src test package.json tsconfig.json tsconfig.repair.json .oxfmtrc.json schema .github/workflows",
     "format:check": "oxfmt --check src test package.json tsconfig.json tsconfig.repair.json .oxfmtrc.json schema .github/workflows",
     "oxformat": "pnpm run format",
     "oxformat:check": "pnpm run format:check",
-    "check": "pnpm run check:active-surface && pnpm run build:all && pnpm run lint && pnpm run test:unit && pnpm run test:repair && pnpm run test:coverage && pnpm run format:check"
+    "check": "pnpm run check:active-surface && pnpm run build:all && pnpm run lint && pnpm run test:unit && pnpm run test:repair && pnpm run test:coverage:changed && pnpm run test:coverage && pnpm run format:check"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

@@ -3,7 +3,7 @@ description: Setup Node, install pnpm dependencies, and optionally run a build s
 inputs:
   node-version:
     description: Node.js version.
-    default: "24"
+    default: "latest"
   working-directory:
     description: Directory containing package.json.
     default: "."
