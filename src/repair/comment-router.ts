@@ -40,6 +40,7 @@ import {
   isAllowedMutationActor,
   isGitHubAppIntegrationAuthError,
   readLedger,
+  selectCommentsForRouting,
   shouldSuppressProcessedCommentVersion,
   stripAnsi,
   summarizeChecks,
@@ -99,7 +100,7 @@ const plannedAutoRepairHeads = new Set<string>();
 const collaboratorPermissionCache = new Map();
 const liveTargetCache = new Map<number, LooseRecord>();
 const issueCommentsCache = new Map<number, JsonValue[]>();
-const comments = listRecentComments().slice(0, maxComments);
+const comments = listCandidateComments();
 const rawCommands: LooseRecord[] = [];
 
 for (const comment of comments) {
@@ -1436,9 +1437,43 @@ function listRecentComments() {
   const list = ghPaged(
     `repos/${targetRepo}/issues/comments?since=${encodeURIComponent(since)}&per_page=100`,
   );
-  return list.sort(
-    (left: JsonValue, right: JsonValue) =>
-      Date.parse(right.created_at ?? "") - Date.parse(left.created_at ?? ""),
+  return list;
+}
+
+function listCandidateComments() {
+  return selectCommentsForRouting({
+    recentComments: listRecentComments(),
+    durableComments: listRepairLoopReviewComments(),
+    maxComments,
+  });
+}
+
+function listRepairLoopReviewComments() {
+  const numbers = unique([
+    ...listOpenIssueNumbersWithLabel(AUTOFIX_LABEL),
+    ...listOpenIssueNumbersWithLabel(AUTOMERGE_LABEL),
+  ]);
+  return numbers.flatMap((number) =>
+    ghPaged<JsonValue>(`repos/${targetRepo}/issues/${number}/comments?per_page=100`).filter(
+      isClawSweeperReviewMarkerComment,
+    ),
+  );
+}
+
+function listOpenIssueNumbersWithLabel(label: string) {
+  return ghPaged<JsonValue>(
+    `repos/${targetRepo}/issues?state=open&labels=${encodeURIComponent(label)}&per_page=100`,
+  )
+    .map((issue: JsonValue) => Number(issue.number))
+    .filter((number) => Number.isInteger(number) && number > 0);
+}
+
+function isClawSweeperReviewMarkerComment(comment: JsonValue) {
+  const body = String(comment.body ?? "");
+  return (
+    body.includes("clawsweeper-verdict:") ||
+    body.includes("clawsweeper-finding:") ||
+    body.includes("clawsweeper-review item=")
   );
 }
 

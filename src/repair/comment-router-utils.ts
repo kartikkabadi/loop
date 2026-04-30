@@ -47,6 +47,19 @@ export function sortCommentsForRouting(comments: LooseRecord[]) {
   });
 }
 
+export function selectCommentsForRouting({
+  recentComments,
+  durableComments,
+  maxComments,
+}: {
+  recentComments: LooseRecord[];
+  durableComments: LooseRecord[];
+  maxComments: number;
+}) {
+  const cappedRecent = sortCommentsForRouting(recentComments).slice(0, Math.max(0, maxComments));
+  return sortCommentsForRouting(uniqueCommentsById([...cappedRecent, ...durableComments]));
+}
+
 export function isAllowedMutationActor(login: JsonValue, trustedBots: Iterable<string>) {
   const actor = normalizeGitHubActor(login);
   if (!actor) return false;
@@ -69,6 +82,18 @@ export function isGitHubAppIntegrationAuthError(message: JsonValue) {
     text.includes("resource not accessible by integration") &&
     (text.includes("http 403") || /"status"\s*:\s*"403"/.test(text) || text.includes("status: 403"))
   );
+}
+
+function uniqueCommentsById(comments: LooseRecord[]) {
+  const seen = new Set<string>();
+  const unique: LooseRecord[] = [];
+  for (const comment of comments) {
+    const key = String(comment.id ?? comment.html_url ?? comment.url ?? "");
+    if (key && seen.has(key)) continue;
+    if (key) seen.add(key);
+    unique.push(comment);
+  }
+  return unique;
 }
 
 function commentRoutingTime(comment: LooseRecord) {

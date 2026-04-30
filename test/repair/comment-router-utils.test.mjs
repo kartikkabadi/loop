@@ -6,6 +6,7 @@ import {
   isGitHubAppIntegrationAuthError,
   isAllowedMutationActor,
   normalizeGitHubActor,
+  selectCommentsForRouting,
   shouldSuppressProcessedCommentVersion,
   sortCommentsForRouting,
   summarizeChecks,
@@ -81,6 +82,39 @@ test("sortCommentsForRouting prioritizes edited durable review comments", () => 
 
   assert.deepEqual(
     sorted.map((comment) => comment.id),
+    [1, 2],
+  );
+});
+
+test("selectCommentsForRouting keeps durable review comments beyond the recent cap", () => {
+  const selected = selectCommentsForRouting({
+    maxComments: 1,
+    recentComments: [
+      {
+        id: 2,
+        body: "@clawsweeper status",
+        created_at: "2026-04-30T03:40:00Z",
+        updated_at: "2026-04-30T03:40:00Z",
+      },
+      {
+        id: 3,
+        body: "@clawsweeper rebase",
+        created_at: "2026-04-30T03:39:00Z",
+        updated_at: "2026-04-30T03:39:00Z",
+      },
+    ],
+    durableComments: [
+      {
+        id: 1,
+        body: "<!-- clawsweeper-verdict:pass item=74742 sha=abc confidence=high -->",
+        created_at: "2026-04-30T02:00:00Z",
+        updated_at: "2026-04-30T03:45:00Z",
+      },
+    ],
+  });
+
+  assert.deepEqual(
+    selected.map((comment) => comment.id),
     [1, 2],
   );
 });
