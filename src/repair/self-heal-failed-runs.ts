@@ -33,6 +33,12 @@ const executionRunner = String(
 );
 const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const maxJobs = Number(args["max-jobs"] ?? args.limit ?? 5);
+const maxAgeHours = Number(
+  args["max-age-hours"] ??
+    args.max_age_hours ??
+    process.env.CLAWSWEEPER_SELF_HEAL_MAX_AGE_HOURS ??
+    6,
+);
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const execute = Boolean(args.execute);
@@ -44,6 +50,9 @@ const skippedCandidates: LooseRecord[] = [];
 if (!Number.isInteger(maxJobs) || maxJobs < 1) {
   throw new Error("--max-jobs must be a positive integer");
 }
+if (!Number.isFinite(maxAgeHours) || maxAgeHours <= 0) {
+  throw new Error("--max-age-hours must be a positive number");
+}
 
 const candidates = selectCandidates().slice(0, maxJobs);
 const summary: LooseRecord = {
@@ -54,6 +63,7 @@ const summary: LooseRecord = {
   execution_runner: executionRunner,
   model,
   max_jobs: maxJobs,
+  max_age_hours: maxAgeHours,
   max_live_workers: maxLiveWorkers,
   candidates: candidates.map((candidate: JsonValue) => summarizeCandidate(candidate)),
   skipped_candidates: skippedCandidates,
@@ -143,6 +153,7 @@ try {
 function selectCandidates() {
   const records = readRunRecords();
   const attempts = readSelfHealLedger().attempts ?? [];
+  const cutoffMs = Date.now() - maxAgeHours * 60 * 60 * 1000;
   const attemptedJobs = new Set(
     attempts.map((attempt: JsonValue) => attempt.source_job).filter(Boolean),
   );
@@ -162,6 +173,19 @@ function selectCandidates() {
 
   return [...latestByJob.values()]
     .filter((record: JsonValue) => record.workflow_conclusion === "failure")
+    .filter((record: JsonValue) => {
+      const timestamp = recordTimestampMs(record);
+      if (timestamp >= cutoffMs) return true;
+      skippedCandidates.push({
+        reason: "older_than_max_age",
+        run_id: record.run_id ?? null,
+        source_job: record.source_job ?? null,
+        published_at: record.published_at ?? null,
+        workflow_created_at: record.workflow_created_at ?? null,
+        workflow_updated_at: record.workflow_updated_at ?? null,
+      });
+      return false;
+    })
     .filter((record: JsonValue) => allowRepeat || !attemptedJobs.has(record.source_job))
     .map((record: JsonValue) => {
       const sourceJob = String(record.source_job ?? "");
@@ -354,6 +378,14 @@ function runSortKey(record: LooseRecord) {
   const runId = Number(record.run_id);
   if (Number.isFinite(runId) && runId > 0) return runId;
   return Date.parse(record.published_at ?? "") || 0;
+}
+
+function recordTimestampMs(record: LooseRecord) {
+  return (
+    Date.parse(
+      record.workflow_updated_at ?? record.workflow_created_at ?? record.published_at ?? "",
+    ) || 0
+  );
 }
 
 function summarizeCandidate(candidate: LooseRecord) {

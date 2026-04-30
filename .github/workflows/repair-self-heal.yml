@@ -13,6 +13,11 @@ on:
         required: true
         default: "5"
         type: string
+      max_age_hours:
+        description: "Only retry failed latest jobs published within this age"
+        required: true
+        default: "6"
+        type: string
       runner:
         description: "Runner label for retried cluster workers"
         required: true
@@ -64,6 +69,7 @@ jobs:
         run: |
           execute="false"
           max_jobs="${{ github.event_name == 'workflow_dispatch' && inputs.max_jobs || vars.CLAWSWEEPER_SELF_HEAL_MAX_JOBS || '5' }}"
+          max_age_hours="${{ github.event_name == 'workflow_dispatch' && inputs.max_age_hours || vars.CLAWSWEEPER_SELF_HEAL_MAX_AGE_HOURS || '6' }}"
           runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
           execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
           if { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.execute }}" = "true" ]; } ||
@@ -71,7 +77,7 @@ jobs:
             execute="true"
           fi
 
-          args=(--max-jobs "$max_jobs" --runner "$runner" --execution-runner "$execution_runner" --wait-for-capacity)
+          args=(--max-jobs "$max_jobs" --max-age-hours "$max_age_hours" --runner "$runner" --execution-runner "$execution_runner" --wait-for-capacity)
           if [ "$execute" = "true" ]; then
             args+=(--execute)
           fi
