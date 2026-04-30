@@ -45,7 +45,7 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 19:31 UTC
+Last dashboard update: Apr 30, 2026, 20:04 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
@@ -61,14 +61,14 @@ Scope: 337 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Latest successful clusters | 307 | 91.1% |
 | Latest failed clusters | 8 | 2.4% |
 | Latest cancelled clusters | 1 | 0.3% |
-| Run attempts archived | 598 | audit |
+| Run attempts archived | 599 | audit |
 | Fix action attempts | 261 | audit |
 | Fix actions executed | 7 | 2.7% |
 | Fix actions failed | 38 | 14.6% |
 | Fix actions blocked | 66 | 25.3% |
 | Latest clusters with fix failures | 55 | 16.3% |
 | Distinct PRs touched | 903 | 100% |
-| Open PRs tracked | 253 | 28.0% |
+| Open PRs tracked | 252 | 27.9% |
 | Closed unmerged PRs tracked | 496 | 54.9% |
 | Completed close actions | 30 | 8.6% |
 | Completed merge actions | 23 | 6.6% |
@@ -83,7 +83,7 @@ Scope: 337 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | Cluster | State | Source job | Reason | Report | Run |
 | --- | --- | --- | --- | --- | --- |
-| [automerge-openclaw-openclaw-75209](results/openclaw/automerge-openclaw-openclaw-75209.md) | workflow failure | jobs/openclaw/inbox/automerge-openclaw-openclaw-75209.md | #75209 is the canonical automerge PR and is repairable in place because the same-repo head branch is writable. The ClawSweeper review pas... | [report](results/openclaw/automerge-openclaw-openclaw-75209.md) | [25185078489](https://github.com/openclaw/clawsweeper/actions/runs/25185078489) |
+| [automerge-openclaw-openclaw-75209](results/openclaw/automerge-openclaw-openclaw-75209.md) | workflow failure | jobs/openclaw/inbox/automerge-openclaw-openclaw-75209.md | PR #75209 is the repairable canonical PR for this automerge cluster. The branch is same-repo and writable, ClawSweeper review passed, no ... | [report](results/openclaw/automerge-openclaw-openclaw-75209.md) | [25186507231](https://github.com/openclaw/clawsweeper/actions/runs/25186507231) |
 | [clawsweeper-commit-openclaw-openclaw-581fbea1d653](results/openclaw/clawsweeper-commit-openclaw-openclaw-581fbea1d653.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-581fbea1d653.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-581fbea1d653.md) | [25183870132](https://github.com/openclaw/clawsweeper/actions/runs/25183870132) |
 | [clawsweeper-commit-openclaw-openclaw-54e6e3d7daf5](results/openclaw/clawsweeper-commit-openclaw-openclaw-54e6e3d7daf5.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-54e6e3d7daf5.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-54e6e3d7daf5.md) | [25183184702](https://github.com/openclaw/clawsweeper/actions/runs/25183184702) |
 | [automerge-openclaw-openclaw-74472](results/openclaw/automerge-openclaw-openclaw-74472.md) | apply blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-74472.md | job does not allow merge | [report](results/openclaw/automerge-openclaw-openclaw-74472.md) | [25182390249](https://github.com/openclaw/clawsweeper/actions/runs/25182390249) |

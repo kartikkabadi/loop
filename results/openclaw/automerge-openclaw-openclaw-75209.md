@@ -2,14 +2,14 @@
 repo: "openclaw/openclaw"
 cluster_id: "automerge-openclaw-openclaw-75209"
 mode: "autonomous"
-run_id: "25185078489"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25185078489"
-head_sha: "bf8f139d3d325824be0fc8baef1333d63bc3fde2"
+run_id: "25186507231"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25186507231"
+head_sha: "c0d7c73bd08434857b22e3a3d4de542d1cfff978"
 workflow_conclusion: "failure"
 result_status: "planned"
-published_at: "2026-04-30T19:31:03.503Z"
+published_at: "2026-04-30T20:03:41.966Z"
 canonical: "https://github.com/openclaw/openclaw/pull/75209"
-canonical_issue: null
+canonical_issue: "https://github.com/openclaw/openclaw/issues/70055"
 canonical_pr: "https://github.com/openclaw/openclaw/pull/75209"
 actions_total: 3
 fix_executed: 0
@@ -25,7 +25,7 @@ needs_human_count: 0
 
 Repo: openclaw/openclaw
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25185078489](https://github.com/openclaw/clawsweeper/actions/runs/25185078489)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25186507231](https://github.com/openclaw/clawsweeper/actions/runs/25186507231)
 
 Workflow conclusion: failure
 
@@ -35,7 +35,7 @@ Canonical: https://github.com/openclaw/openclaw/pull/75209
 
 ## Summary
 
-#75209 is the canonical automerge PR and is repairable in place because the same-repo head branch is writable. The ClawSweeper review passed for head ec48bda063a3cb55ef0309868bd9909f213bcdce, but the parity gate failed, so the executor should repair/revalidate the contributor branch rather than merge or close anything. #70055 remains an open related follow-up for the broader user-facing config/env opt-out and is not covered by this PR.
+PR #75209 is the repairable canonical PR for this automerge cluster. The branch is same-repo and writable, ClawSweeper review passed, no review comments are hydrated, and security checks are clear, but the OpenAI / Opus 4.6 parity gate is failing, so the correct next action is a branch repair artifact rather than merge or closeout. Linked issue #70055 remains a related open follow-up for the user-facing config/env opt-out that #75209 intentionally does not implement.
 
 ## Impact
 
@@ -66,9 +66,9 @@ Canonical: https://github.com/openclaw/openclaw/pull/75209
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| #75209 | fix_needed | planned | canonical | The PR is useful and repairable, but it is not merge-ready because a relevant parity gate is failing. |
-| #70055 | keep_related | planned | related | Related follow-up, not a duplicate and not fixed by #75209. |
-| cluster:automerge-openclaw-openclaw-75209 | build_fix_artifact | planned |  | Create an executable repair plan for the writable source branch; do not open a replacement PR unless branch update fails. |
+| #75209 | fix_needed | planned | canonical | Repair the writable same-repo contributor branch for the failing parity gate before any automerge path can continue. |
+| cluster:automerge-openclaw-openclaw-75209 | build_fix_artifact | planned | canonical | The executor needs a narrow repair artifact for PR #75209 because the only concrete blocker in the hydrated artifact is the failed parity gate. |
+| #70055 | keep_related | planned | related | Keep #70055 open as the canonical follow-up for the config/env opt-out that remains after #75209. |
 
 ## Needs Human
 
