@@ -654,9 +654,16 @@ jobs:
       - name: Apply review artifacts
         env:
           GH_TOKEN: ${{ github.token }}
+          EXACT_ITEM: ${{ github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}
+          HOT_INTAKE: ${{ needs.plan.outputs.hot_intake }}
+          MAX_PAGES: ${{ needs.plan.outputs.max_pages }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
-          pnpm run apply-artifacts -- --target-repo "$TARGET_REPO" --artifact-dir artifacts
+          apply_artifacts_args=(--target-repo "$TARGET_REPO" --artifact-dir artifacts)
+          if [ "$HOT_INTAKE" = "true" ] && [ -z "$EXACT_ITEM" ]; then
+            apply_artifacts_args+=(--max-pages "$MAX_PAGES")
+          fi
+          pnpm run apply-artifacts -- "${apply_artifacts_args[@]}"
           pnpm run status -- \
             --state "${{ needs.plan.outputs.hot_intake == 'true' && 'Hot intake publish complete' || 'Review publish complete' }}" \
             --detail "Merged ${{ needs.plan.outputs.hot_intake == 'true' && 'hot intake' || 'review' }} artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards." \
