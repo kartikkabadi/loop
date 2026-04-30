@@ -89,6 +89,8 @@ const codexPreflightTimeoutMs = Number(
 );
 const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "medium");
 const codexServiceTier = String(process.env.CLAWSWEEPER_CODEX_SERVICE_TIER ?? "fast").trim();
+const codexStdioMaxBuffer =
+  Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB ?? 128)) * 1024 * 1024;
 const maxEditAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_FIX_EDIT_ATTEMPTS ?? 3));
 const maxReviewAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS ?? 2));
 const resolveReviewThreads = process.env.CLAWSWEEPER_RESOLVE_REVIEW_THREADS !== "0";
@@ -977,6 +979,7 @@ function editValidatePrepareMerge({
           encoding: "utf8",
           env: codexEnv(),
           timeout: codexTimeoutMs,
+          maxBuffer: codexStdioMaxBuffer,
         },
       );
       fs.writeFileSync(
@@ -990,6 +993,9 @@ function editValidatePrepareMerge({
         );
       if ((codexResult.error as JsonValue)?.code === "ETIMEDOUT") {
         throw new Error(`Codex fix worker timed out after ${codexTimeoutMs}ms`);
+      }
+      if (codexResult.error) {
+        throw new Error(codexResult.error.message || String(codexResult.error));
       }
       if (codexResult.status !== 0) {
         throw new Error(codexResult.stderr || codexResult.stdout || "Codex fix worker failed");
@@ -1185,6 +1191,7 @@ function runCodexBaseReconcile({
         encoding: "utf8",
         env: codexEnv(),
         timeout: codexTimeoutMs,
+        maxBuffer: codexStdioMaxBuffer,
       },
     );
     fs.writeFileSync(
@@ -1198,6 +1205,9 @@ function runCodexBaseReconcile({
       );
     if ((codexResult.error as JsonValue)?.code === "ETIMEDOUT") {
       throw new Error(`Codex final rebase worker timed out after ${codexTimeoutMs}ms`);
+    }
+    if (codexResult.error) {
+      throw new Error(codexResult.error.message || String(codexResult.error));
     }
     if (codexResult.status !== 0) {
       throw new Error(
