@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T04:15:21.536Z",
-  "count": 19,
+  "generated_at": "2026-04-30T04:20:56.399Z",
+  "count": 24,
   "summary": {
-    "open_prs": 19,
+    "open_prs": 24,
     "ready_candidates": 0,
     "security_hold": 0,
     "needs_rebase": 8,
     "mergeability_unknown": 0,
-    "needs_checks": 7,
+    "needs_checks": 11,
     "needs_review": 0,
-    "needs_merge_preflight": 19,
+    "needs_merge_preflight": 24,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -26,6 +26,345 @@
     "candidates": []
   },
   "prs": [
+    {
+      "number": 74830,
+      "title": "fix: abort/wait semantics this commit is trying to stabilize regression",
+      "url": "https://github.com/openclaw/openclaw/pull/74830",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-1f1f70a23f86",
+      "head_sha": "599447862d2382741ddc9cf1b214af25916b7d5d",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-1f1f70a23f86",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-1f1f70a23f86.md",
+      "updated_at": "2026-04-30T04:15:05Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 89,
+        "counts": {
+          "CANCELLED": 3,
+          "IN_PROGRESS": 4,
+          "SKIPPED": 12,
+          "SUCCESS": 69,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
+          "CI / checks-node-agentic-control-plane:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 0,
+        "latest": []
+      },
+      "latest_record": {
+        "run_id": "25146667745",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25146667745",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-1f1f70a23f86",
+        "published_at": "2026-04-30T04:14:56.512Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74830",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS; CI / checks-node-agentic-control-plane:IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74829,
+      "title": "fix: test-harness regression risk",
+      "url": "https://github.com/openclaw/openclaw/pull/74829",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-56155e5048a2",
+      "head_sha": "ecd378dc93840a128f665e3c50ff70ed0bf5426a",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-56155e5048a2",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-56155e5048a2.md",
+      "updated_at": "2026-04-30T04:15:02Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 82,
+        "counts": {
+          "CANCELLED": 2,
+          "IN_PROGRESS": 2,
+          "SKIPPED": 14,
+          "SUCCESS": 64
+        },
+        "blockers": [
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 0,
+        "latest": []
+      },
+      "latest_record": {
+        "run_id": "25146885048",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25146885048",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-56155e5048a2",
+        "published_at": "2026-04-30T04:14:51.753Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74829",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74828,
+      "title": "fix: regression/data-loss edge case in the new metadata-only assistant drop path",
+      "url": "https://github.com/openclaw/openclaw/pull/74828",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-d80a8eb3adb6",
+      "head_sha": "99a6a311a9aa9ead957658af27f28538e8245ed9",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-d80a8eb3adb6",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-d80a8eb3adb6.md",
+      "updated_at": "2026-04-30T04:14:38Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 90,
+        "counts": {
+          "CANCELLED": 3,
+          "IN_PROGRESS": 2,
+          "SKIPPED": 13,
+          "SUCCESS": 71,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 0,
+        "latest": []
+      },
+      "latest_record": {
+        "run_id": "25146726523",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25146726523",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-d80a8eb3adb6",
+        "published_at": "2026-04-30T04:14:25.922Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74828",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74827,
+      "title": "fix: chat-only projection fallback sdk event-contract bug",
+      "url": "https://github.com/openclaw/openclaw/pull/74827",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-e6abd9e3d8c4",
+      "head_sha": "94aadfef1056a02e286e13e5c1bc576e6846e353",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-e6abd9e3d8c4",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-e6abd9e3d8c4.md",
+      "updated_at": "2026-04-30T04:18:39Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 87,
+        "counts": {
+          "CANCELLED": 3,
+          "IN_PROGRESS": 2,
+          "SKIPPED": 12,
+          "SUCCESS": 69,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74827#issuecomment-4349653003",
+            "submitted_at": "2026-04-30T04:18:38Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25146620470",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25146620470",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-e6abd9e3d8c4",
+        "published_at": "2026-04-30T04:14:13.294Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74827",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 74826,
+      "title": "fix: unconditional runtime-deps install opt-out for capability-provider fallback loads likely...",
+      "url": "https://github.com/openclaw/openclaw/pull/74826",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-94cb213544bd",
+      "head_sha": "d39ea9bb38bdf44154621ab44b4fa0e32f090736",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-94cb213544bd",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-94cb213544bd.md",
+      "updated_at": "2026-04-30T04:18:40Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 101,
+        "counts": {
+          "FAILURE": 1,
+          "CANCELLED": 1,
+          "SKIPPED": 24,
+          "SUCCESS": 74,
+          "NEUTRAL": 1
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/74826#issuecomment-4349653069",
+            "submitted_at": "2026-04-30T04:18:40Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25146660954",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25146660954",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-94cb213544bd",
+        "published_at": "2026-04-30T04:13:51.946Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74826",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+    },
     {
       "number": 74805,
       "title": "fix: production/test-runtime contract mismatch in the observe-only prepared-turn path",

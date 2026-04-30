@@ -1,19 +1,19 @@
 # Open ClawSweeper Repair PR Finalizer
 
-Generated: 2026-04-30T04:15:21.536Z
+Generated: 2026-04-30T04:20:56.399Z
 
 ## Summary
 
 | Metric | Count |
 | --- | ---: |
-| open_prs | 19 |
+| open_prs | 24 |
 | ready_candidates | 0 |
 | security_hold | 0 |
 | needs_rebase | 8 |
 | mergeability_unknown | 0 |
-| needs_checks | 7 |
+| needs_checks | 11 |
 | needs_review | 0 |
-| needs_merge_preflight | 19 |
+| needs_merge_preflight | 24 |
 | needs_result_backfill | 2 |
 
 ## Dispatch
@@ -30,6 +30,11 @@ Status: report_only
 
 | PR | Title | Cluster | Mergeable | Merge State | Checks | Blockers | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| [#74830](https://github.com/openclaw/openclaw/pull/74830) | fix: abort/wait semantics this commit is trying to stabilize regression | clawsweeper-commit-openclaw-openclaw-1f1f70a23f86 | MERGEABLE | UNSTABLE | CANCELLED:3 IN_PROGRESS:4 SKIPPED:12 SUCCESS:69 NEUTRAL:1; blockers:3 | needs_merge_state:UNSTABLE, needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS; CI / checks-node-agentic-control-plane:IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#74829](https://github.com/openclaw/openclaw/pull/74829) | fix: test-harness regression risk | clawsweeper-commit-openclaw-openclaw-56155e5048a2 | MERGEABLE | UNSTABLE | CANCELLED:2 IN_PROGRESS:2 SKIPPED:14 SUCCESS:64; blockers:1 | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#74828](https://github.com/openclaw/openclaw/pull/74828) | fix: regression/data-loss edge case in the new metadata-only assistant drop path | clawsweeper-commit-openclaw-openclaw-d80a8eb3adb6 | MERGEABLE | UNSTABLE | CANCELLED:3 IN_PROGRESS:2 SKIPPED:13 SUCCESS:71 NEUTRAL:1; blockers:2 | needs_merge_state:UNSTABLE, needs_checks:Parity gate / Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#74827](https://github.com/openclaw/openclaw/pull/74827) | fix: chat-only projection fallback sdk event-contract bug | clawsweeper-commit-openclaw-openclaw-e6abd9e3d8c4 | MERGEABLE | UNSTABLE | CANCELLED:3 IN_PROGRESS:2 SKIPPED:12 SUCCESS:69 NEUTRAL:1; blockers:2 | needs_merge_state:UNSTABLE, needs_checks:OpenGrep — PR Diff / Scan changed paths (precise):IN_PROGRESS; CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#74826](https://github.com/openclaw/openclaw/pull/74826) | fix: unconditional runtime-deps install opt-out for capability-provider fallback loads likely... | clawsweeper-commit-openclaw-openclaw-94cb213544bd | MERGEABLE | UNSTABLE | FAILURE:1 CANCELLED:1 SKIPPED:24 SUCCESS:74 NEUTRAL:1 | needs_merge_state:UNSTABLE, needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74805](https://github.com/openclaw/openclaw/pull/74805) | fix: production/test-runtime contract mismatch in the observe-only prepared-turn path | clawsweeper-commit-openclaw-openclaw-bbf932fd7d69 | MERGEABLE | CLEAN | CANCELLED:2 SKIPPED:12 SUCCESS:73 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74795](https://github.com/openclaw/openclaw/pull/74795) | fix: fixed condition order prefers a top-level require export before a node condition, which... | clawsweeper-commit-openclaw-openclaw-6877360218c9 | MERGEABLE | CLEAN | CANCELLED:3 SKIPPED:24 SUCCESS:75 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#74792](https://github.com/openclaw/openclaw/pull/74792) | fix: provider-based bundled runtime dependency selection regression | clawsweeper-commit-openclaw-openclaw-09310931cf94 | MERGEABLE | CLEAN | CANCELLED:3 SKIPPED:24 SUCCESS:75 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
