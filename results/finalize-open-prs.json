@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T01:42:20.518Z",
-  "count": 11,
+  "generated_at": "2026-04-30T01:56:25.762Z",
+  "count": 12,
   "summary": {
-    "open_prs": 11,
+    "open_prs": 12,
     "ready_candidates": 0,
     "security_hold": 0,
-    "needs_rebase": 6,
+    "needs_rebase": 7,
     "mergeability_unknown": 0,
     "needs_checks": 7,
     "needs_review": 0,
-    "needs_merge_preflight": 11,
+    "needs_merge_preflight": 12,
     "needs_result_backfill": 2
   },
   "dispatch": {
@@ -26,6 +26,67 @@
     "candidates": []
   },
   "prs": [
+    {
+      "number": 74742,
+      "title": "fix(file-transfer): require canonical node policy authorization",
+      "url": "https://github.com/openclaw/openclaw/pull/74742",
+      "branch": "clawsweeper/automerge-openclaw-openclaw-74134",
+      "head_sha": "e371eeacb8652df4f04d7b61c683f2183cd81c20",
+      "cluster_id": "automerge-openclaw-openclaw-74134",
+      "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74134.md",
+      "updated_at": "2026-04-30T01:54:37Z",
+      "mergeable": "CONFLICTING",
+      "merge_state_status": "DIRTY",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 13,
+        "counts": {
+          "CANCELLED": 2,
+          "SKIPPED": 7,
+          "SUCCESS": 4
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 0,
+        "latest": []
+      },
+      "latest_record": {
+        "run_id": "25142978529",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25142978529",
+        "cluster_id": "automerge-openclaw-openclaw-74134",
+        "published_at": "2026-04-30T01:55:10.506Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#74742",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": null,
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_rebase:CONFLICTING",
+        "needs_merge_state:DIRTY",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
+    },
     {
       "number": 74714,
       "title": "fix: Google Vertex manifest evidence accepts the Windows %APPDATA% ADC path, but the Google V...",

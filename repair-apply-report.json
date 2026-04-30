@@ -6698,5 +6698,25 @@
     "merge_commit_sha": null,
     "live_state": null,
     "live_updated_at": null
+  },
+  {
+    "repo": "openclaw/openclaw",
+    "run_id": "25142978529",
+    "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25142978529",
+    "cluster_id": "automerge-openclaw-openclaw-74134",
+    "published_at": "2026-04-30T01:55:10.506Z",
+    "target": "#74742",
+    "action": "merge_canonical",
+    "status": "blocked",
+    "classification": "fix_pr",
+    "canonical": null,
+    "candidate_fix": null,
+    "title": null,
+    "idempotency_key": null,
+    "reason": "job does not allow merge",
+    "merged_at": null,
+    "merge_commit_sha": null,
+    "live_state": null,
+    "live_updated_at": null
   }
 ]
