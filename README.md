@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: Apr 30, 2026, 05:20 UTC
+Last dashboard update: Apr 30, 2026, 05:21 UTC
 
 ### Fleet
 
@@ -161,22 +161,22 @@ Last dashboard update: Apr 30, 2026, 05:20 UTC
 | --- | ---: |
 | Covered repositories | 3 |
 | Open issues | 4462 |
-| Open PRs | 3388 |
-| Open items total | 7850 |
-| Reviewed files | 7459 |
-| Unreviewed open items | 394 |
-| Due now by cadence | 3196 |
+| Open PRs | 3390 |
+| Open items total | 7852 |
+| Reviewed files | 7458 |
+| Unreviewed open items | 397 |
+| Due now by cadence | 3200 |
 | Proposed closes awaiting apply | 0 |
-| Work candidates awaiting promotion | 1114 |
+| Work candidates awaiting promotion | 1113 |
 | Closed by Codex apply | 10986 |
 | Failed or stale reviews | 28 |
-| Archived closed files | 14811 |
+| Archived closed files | 14812 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6901 | 6532 | 369 | 3095 | 0 | 1068 | 10978 | Apr 30, 2026, 05:17 UTC | Apr 30, 2026, 05:19 UTC | 710 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6903 | 6531 | 372 | 3099 | 0 | 1067 | 10978 | Apr 30, 2026, 05:17 UTC | Apr 30, 2026, 05:19 UTC | 650 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 949 | 924 | 25 | 98 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 05:20 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 05:20 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25148723939) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 05:21 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25148825570) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,15 +194,16 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 31 | 2 | 29 | 0 | 15 | 183 | 0 |
-| Last hour | 574 | 12 | 562 | 2 | 39 | 710 | 1 |
-| Last 24 hours | 5309 | 288 | 5021 | 24 | 747 | 1697 | 20 |
+| Last 15 minutes | 30 | 2 | 28 | 0 | 12 | 131 | 0 |
+| Last hour | 573 | 12 | 561 | 2 | 37 | 650 | 1 |
+| Last 24 hours | 5303 | 283 | 5020 | 24 | 748 | 1696 | 20 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74770](https://github.com/openclaw/openclaw/pull/74770) | fix: package entry-file validation regression | already implemented on main | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/74770.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74770.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#26428](https://github.com/openclaw/openclaw/issues/26428) | [Feature]: install complitions openclaw.fish into directory ~/.config/fish/completions | closed externally after review | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/26428.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/26428.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74726](https://github.com/openclaw/openclaw/issues/74726) | MCP tools not accessible to main agent despite bundle-mcp configuration | duplicate or superseded | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/74726.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74726.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68621](https://github.com/openclaw/openclaw/pull/68621) | feat(hooks): allow model hooks to prefer auth profiles | duplicate or superseded | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/68621.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/68621.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#55942](https://github.com/openclaw/openclaw/issues/55942) | [Bug]: NVIDIA NIM Kimi 2.5 tool execution completely broken in OpenClaw > 2026.2.25 | already implemented on main | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/55942.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/55942.md) |
@@ -211,7 +212,6 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#45210](https://github.com/openclaw/openclaw/issues/45210) | [Feature]: Per-session/topic pinning to prevent cleanup | duplicate or superseded | Apr 30, 2026, 05:18 UTC | [records/openclaw-openclaw/closed/45210.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/45210.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74866](https://github.com/openclaw/openclaw/pull/74866) | chore(ci): add process CodeQL PR quality guard | closed externally after review | Apr 30, 2026, 05:15 UTC | [records/openclaw-openclaw/closed/74866.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74866.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74776](https://github.com/openclaw/openclaw/issues/74776) | gateway: prewarmConfiguredPrimaryModel blocks channel startup for ~4 minutes on every restart | already implemented on main | Apr 30, 2026, 05:14 UTC | [records/openclaw-openclaw/closed/74776.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74776.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#54176](https://github.com/openclaw/openclaw/issues/54176) | [Bug]: Binary files (.doc) should not be auto-embedded as text content | closed externally after review | Apr 30, 2026, 05:07 UTC | [records/openclaw-openclaw/closed/54176.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/54176.md) |
 
 ### Work Candidates Across Repos
 
@@ -267,12 +267,12 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: Apr 30, 2026, 05:20 UTC
+Updated: Apr 30, 2026, 05:21 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 7 fresh closes out of requested limit 7. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25148723939](https://github.com/openclaw/clawsweeper/actions/runs/25148723939)
+Starting apply/comment-sync run for up to 7 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=45210,55815,55878,55942,68621,74726,74770.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25148825570](https://github.com/openclaw/clawsweeper/actions/runs/25148825570)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -281,23 +281,23 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25148723939](https://
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
 | Open issues | 3553 |
-| Open PRs | 3348 |
-| Open items total | 6901 |
-| Reviewed files | 6532 |
-| Unreviewed open items | 369 |
-| Archived closed files | 14785 |
+| Open PRs | 3350 |
+| Open items total | 6903 |
+| Reviewed files | 6531 |
+| Unreviewed open items | 372 |
+| Archived closed files | 14786 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3360 |
+| Fresh reviewed issues in the last 7 days | 3359 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3157 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6517 |
+| Fresh verified reviews in the last 7 days | 6516 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
-| Work candidates awaiting promotion | 1068 |
+| Work candidates awaiting promotion | 1067 |
 | Closed by Codex apply | 10978 |
 | Failed or stale reviews | 15 |
 
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25148723939](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 84/1164 current (1080 due, 7.2%) |
-| Hourly hot item cadence (<7d) | 84/1164 current (1080 due, 7.2%) |
+| Hourly cadence coverage | 83/1164 current (1081 due, 7.1%) |
+| Hourly hot item cadence (<7d) | 83/1164 current (1081 due, 7.1%) |
 | Daily cadence coverage | 1929/3573 current (1644 due, 54%) |
 | Daily PR cadence | 1264/2487 current (1223 due, 50.8%) |
 | Daily new issue cadence (<30d) | 665/1086 current (421 due, 61.2%) |
-| Weekly older issue cadence | 1793/1795 current (2 due, 99.9%) |
-| Due now by cadence | 3095 |
+| Weekly older issue cadence | 1792/1794 current (2 due, 99.9%) |
+| Due now by cadence | 3099 |
 
 ### Audit Health
 
@@ -351,15 +351,16 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 31 | 2 | 29 | 0 | 15 | 183 | 0 |
-| Last hour | 574 | 12 | 562 | 2 | 39 | 710 | 1 |
-| Last 24 hours | 4377 | 288 | 4089 | 11 | 741 | 1291 | 20 |
+| Last 15 minutes | 30 | 2 | 28 | 0 | 12 | 131 | 0 |
+| Last hour | 573 | 12 | 561 | 2 | 37 | 650 | 1 |
+| Last 24 hours | 4371 | 283 | 4088 | 11 | 742 | 1290 | 20 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
 | [#74770](https://github.com/openclaw/openclaw/pull/74770) | fix: package entry-file validation regression | already implemented on main | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/74770.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74770.md) |
+| [#26428](https://github.com/openclaw/openclaw/issues/26428) | [Feature]: install complitions openclaw.fish into directory ~/.config/fish/completions | closed externally after review | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/26428.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/26428.md) |
 | [#74726](https://github.com/openclaw/openclaw/issues/74726) | MCP tools not accessible to main agent despite bundle-mcp configuration | duplicate or superseded | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/74726.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74726.md) |
 | [#68621](https://github.com/openclaw/openclaw/pull/68621) | feat(hooks): allow model hooks to prefer auth profiles | duplicate or superseded | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/68621.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/68621.md) |
 | [#55942](https://github.com/openclaw/openclaw/issues/55942) | [Bug]: NVIDIA NIM Kimi 2.5 tool execution completely broken in OpenClaw > 2026.2.25 | already implemented on main | Apr 30, 2026, 05:19 UTC | [records/openclaw-openclaw/closed/55942.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/55942.md) |
@@ -368,7 +369,6 @@ Latest review: Apr 30, 2026, 05:17 UTC. Latest close: Apr 30, 2026, 05:19 UTC. L
 | [#45210](https://github.com/openclaw/openclaw/issues/45210) | [Feature]: Per-session/topic pinning to prevent cleanup | duplicate or superseded | Apr 30, 2026, 05:18 UTC | [records/openclaw-openclaw/closed/45210.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/45210.md) |
 | [#74866](https://github.com/openclaw/openclaw/pull/74866) | chore(ci): add process CodeQL PR quality guard | closed externally after review | Apr 30, 2026, 05:15 UTC | [records/openclaw-openclaw/closed/74866.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74866.md) |
 | [#74776](https://github.com/openclaw/openclaw/issues/74776) | gateway: prewarmConfiguredPrimaryModel blocks channel startup for ~4 minutes on every restart | already implemented on main | Apr 30, 2026, 05:14 UTC | [records/openclaw-openclaw/closed/74776.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74776.md) |
-| [#54176](https://github.com/openclaw/openclaw/issues/54176) | [Bug]: Binary files (.doc) should not be auto-embedded as text content | closed externally after review | Apr 30, 2026, 05:07 UTC | [records/openclaw-openclaw/closed/54176.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/54176.md) |
 
 #### Work Candidates
 
