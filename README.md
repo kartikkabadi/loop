@@ -160,12 +160,12 @@ Last dashboard update: Apr 30, 2026, 09:52 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 4262 |
-| Open PRs | 3218 |
-| Open items total | 7480 |
+| Open issues | 4363 |
+| Open PRs | 3376 |
+| Open items total | 7739 |
 | Reviewed files | 7480 |
-| Unreviewed open items | 0 |
-| Due now by cadence | 2752 |
+| Unreviewed open items | 368 |
+| Due now by cadence | 3120 |
 | Proposed closes awaiting apply | 1 |
 | Work candidates awaiting promotion | 1186 |
 | Closed by Codex apply | 11045 |
@@ -176,15 +176,15 @@ Last dashboard update: Apr 30, 2026, 09:52 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6553 | 6553 | 0 | 2677 | 1 | 1140 | 11037 | Apr 30, 2026, 09:50 UTC | Apr 30, 2026, 09:50 UTC | 731 |
-| [ClawHub](https://github.com/openclaw/clawhub) | 924 | 924 | 0 | 72 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
-| [ClawSweeper](https://github.com/openclaw/clawsweeper) | 3 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6921 | 6553 | 368 | 3045 | 1 | 1140 | 11037 | Apr 30, 2026, 09:50 UTC | Apr 30, 2026, 09:50 UTC | 731 |
+| [ClawHub](https://github.com/openclaw/clawhub) | 818 | 924 | 0 | 72 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
+| [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
 ### Current Runs
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Planning review | Apr 30, 2026, 09:52 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25158976456) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 09:52 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25158948490) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,7 +194,7 @@ Latest review: Apr 30, 2026, 09:50 UTC. Latest close: Apr 30, 2026, 09:50 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 16 | 1 | 15 | 0 | 3 | 322 | 1 |
+| Last 15 minutes | 17 | 1 | 16 | 0 | 3 | 318 | 1 |
 | Last hour | 543 | 7 | 536 | 5 | 19 | 731 | 1 |
 | Last 24 hours | 5197 | 274 | 4923 | 24 | 716 | 1614 | 24 |
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 09:50 UTC. Latest close: Apr 30, 2026, 09:50 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75003](https://github.com/openclaw/openclaw/pull/75003) | fix(cli): avoid progress spinners in active TUI input | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75003.md) | complete | Apr 30, 2026, 09:50 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58949](https://github.com/openclaw/openclaw/pull/58949) | fix(security): make safeEqualSecret timing-safe for empty/null inputs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58949.md) | complete | Apr 30, 2026, 09:50 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58063](https://github.com/openclaw/openclaw/issues/58063) | web_search tool aborts immediately with xAI Responses API (2026.3.28) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58063.md) | complete | Apr 30, 2026, 09:49 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58733](https://github.com/openclaw/openclaw/issues/58733) | [Bug]: bundled Grok web_search inherits a too-short 30s default timeout on the xAI Responses path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58733.md) | complete | Apr 30, 2026, 09:49 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 09:50 UTC. Latest close: Apr 30, 2026, 09:50 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams and fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 30, 2026, 09:40 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74994](https://github.com/openclaw/openclaw/pull/74994) | fix(infra): guard all startup process.cwd() callers against deleted CWD | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74994.md) | complete | Apr 30, 2026, 09:40 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75005](https://github.com/openclaw/openclaw/pull/75005) | fix(media): allow explicit synthetic auth for media providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75005.md) | complete | Apr 30, 2026, 09:40 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74853](https://github.com/openclaw/openclaw/pull/74853) | [docs][plugin sdk] Split host-hook recipes from workflow follow-ups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74853.md) | complete | Apr 30, 2026, 09:39 UTC |
 
 </details>
 
@@ -269,10 +269,10 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 09:52 UTC
 
-State: Planning review
+State: Apply in progress
 
-Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158976456](https://github.com/openclaw/clawsweeper/actions/runs/25158976456)
+Starting apply/comment-sync run for up to 1 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=42555.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158948490](https://github.com/openclaw/clawsweeper/actions/runs/25158948490)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -280,11 +280,11 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158976456](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3372 |
-| Open PRs | 3181 |
-| Open items total | 6553 |
+| Open issues | 3562 |
+| Open PRs | 3359 |
+| Open items total | 6921 |
 | Reviewed files | 6553 |
-| Unreviewed open items | 0 |
+| Unreviewed open items | 368 |
 | Archived closed files | 14904 |
 
 #### Review Outcomes
@@ -311,7 +311,7 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25158976456](https://
 | Daily PR cadence | 1311/2478 current (1167 due, 52.9%) |
 | Daily new issue cadence (<30d) | 678/1083 current (405 due, 62.6%) |
 | Weekly older issue cadence | 1786/1789 current (3 due, 99.8%) |
-| Due now by cadence | 2677 |
+| Due now by cadence | 3045 |
 
 ### Audit Health
 
@@ -351,7 +351,7 @@ Latest review: Apr 30, 2026, 09:50 UTC. Latest close: Apr 30, 2026, 09:50 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 16 | 1 | 15 | 0 | 3 | 322 | 1 |
+| Last 15 minutes | 17 | 1 | 16 | 0 | 3 | 318 | 1 |
 | Last hour | 543 | 7 | 536 | 5 | 19 | 731 | 1 |
 | Last 24 hours | 4268 | 274 | 3994 | 11 | 713 | 1211 | 24 |
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 09:50 UTC. Latest close: Apr 30, 2026, 09:50 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75003](https://github.com/openclaw/openclaw/pull/75003) | fix(cli): avoid progress spinners in active TUI input | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75003.md) | complete | Apr 30, 2026, 09:50 UTC |
 | [#58949](https://github.com/openclaw/openclaw/pull/58949) | fix(security): make safeEqualSecret timing-safe for empty/null inputs | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58949.md) | complete | Apr 30, 2026, 09:50 UTC |
 | [#58063](https://github.com/openclaw/openclaw/issues/58063) | web_search tool aborts immediately with xAI Responses API (2026.3.28) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58063.md) | complete | Apr 30, 2026, 09:49 UTC |
 | [#58733](https://github.com/openclaw/openclaw/issues/58733) | [Bug]: bundled Grok web_search inherits a too-short 30s default timeout on the xAI Responses path | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/58733.md) | complete | Apr 30, 2026, 09:49 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 09:50 UTC. Latest close: Apr 30, 2026, 09:50 UTC. L
 | [#73384](https://github.com/openclaw/openclaw/pull/73384) | [plugin sdk] Consolidate workflow seams and fixtures | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73384.md) | complete | Apr 30, 2026, 09:40 UTC |
 | [#74994](https://github.com/openclaw/openclaw/pull/74994) | fix(infra): guard all startup process.cwd() callers against deleted CWD | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74994.md) | complete | Apr 30, 2026, 09:40 UTC |
 | [#75005](https://github.com/openclaw/openclaw/pull/75005) | fix(media): allow explicit synthetic auth for media providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75005.md) | complete | Apr 30, 2026, 09:40 UTC |
-| [#74853](https://github.com/openclaw/openclaw/pull/74853) | [docs][plugin sdk] Split host-hook recipes from workflow follow-ups | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74853.md) | complete | Apr 30, 2026, 09:39 UTC |
 
 </details>
 
