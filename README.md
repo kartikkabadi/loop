@@ -176,7 +176,7 @@ Last dashboard update: Apr 30, 2026, 11:15 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6926 | 6556 | 370 | 2889 | 0 | 1205 | 11060 | Apr 30, 2026, 11:14 UTC | Apr 30, 2026, 11:14 UTC | 752 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6926 | 6556 | 370 | 2889 | 0 | 1205 | 11060 | Apr 30, 2026, 11:14 UTC | Apr 30, 2026, 11:14 UTC | 753 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 353 | 924 | 0 | 72 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,7 +184,7 @@ Last dashboard update: Apr 30, 2026, 11:15 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | Apr 30, 2026, 11:15 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25162278515) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | Apr 30, 2026, 11:15 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25162278515) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,9 +194,9 @@ Latest review: Apr 30, 2026, 11:14 UTC. Latest close: Apr 30, 2026, 11:14 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 8 | 0 | 8 | 0 | 8 | 330 | 0 |
-| Last hour | 536 | 14 | 522 | 6 | 22 | 752 | 0 |
-| Last 24 hours | 5467 | 295 | 5172 | 30 | 706 | 1645 | 24 |
+| Last 15 minutes | 9 | 0 | 9 | 0 | 8 | 324 | 0 |
+| Last hour | 537 | 14 | 523 | 6 | 22 | 753 | 0 |
+| Last 24 hours | 5467 | 295 | 5172 | 30 | 704 | 1646 | 24 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: Apr 30, 2026, 11:14 UTC. Latest close: Apr 30, 2026, 11:14 UTC. L
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#48260](https://github.com/openclaw/openclaw/pull/48260) | feat(ui): add active time summary to usage overview | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/48260.md) | complete | Apr 30, 2026, 11:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70707](https://github.com/openclaw/openclaw/pull/70707) | fix(gateway): reject RPCs from invalidated device-token clients durin… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70707.md) | complete | Apr 30, 2026, 11:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75022](https://github.com/openclaw/openclaw/pull/75022) | fix(infer): load model catalog metadata-only for list/inspect/providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75022.md) | complete | Apr 30, 2026, 11:13 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75041](https://github.com/openclaw/openclaw/issues/75041) | [Bug]: Workspace .py scripts break on v2026.4.x — gateway image (node:24-bookworm-slim base) ships no python3 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75041.md) | complete | Apr 30, 2026, 11:13 UTC |
@@ -249,7 +250,6 @@ Latest review: Apr 30, 2026, 11:14 UTC. Latest close: Apr 30, 2026, 11:14 UTC. L
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75037](https://github.com/openclaw/openclaw/issues/75037) | [Bug]: Compaction/flush metadata writes advance updatedAt, breaking daily and idle session reset for legacy entries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75037.md) | complete | Apr 30, 2026, 11:00 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74998](https://github.com/openclaw/openclaw/pull/74998) | feat(google): surface Gemini subscription path in onboard wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74998.md) | complete | Apr 30, 2026, 10:59 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75036](https://github.com/openclaw/openclaw/pull/75036) | fix(tasks): recover terminal lost cron rows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75036.md) | complete | Apr 30, 2026, 10:57 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73668](https://github.com/openclaw/openclaw/pull/73668) | feat(profile): add privacy-safe profile export and import | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73668.md) | complete | Apr 30, 2026, 10:55 UTC |
 
 </details>
 
@@ -269,9 +269,9 @@ Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 Updated: Apr 30, 2026, 11:15 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/7. Result records in checkpoint: 0, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 7. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25162278515](https://github.com/openclaw/clawsweeper/actions/runs/25162278515)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,9 +351,9 @@ Latest review: Apr 30, 2026, 11:14 UTC. Latest close: Apr 30, 2026, 11:14 UTC. L
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 8 | 0 | 8 | 0 | 8 | 330 | 0 |
-| Last hour | 536 | 14 | 522 | 6 | 22 | 752 | 0 |
-| Last 24 hours | 4538 | 295 | 4243 | 17 | 703 | 1242 | 24 |
+| Last 15 minutes | 9 | 0 | 9 | 0 | 8 | 324 | 0 |
+| Last hour | 537 | 14 | 523 | 6 | 22 | 753 | 0 |
+| Last 24 hours | 4538 | 295 | 4243 | 17 | 701 | 1243 | 24 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: Apr 30, 2026, 11:14 UTC. Latest close: Apr 30, 2026, 11:14 UTC. L
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#48260](https://github.com/openclaw/openclaw/pull/48260) | feat(ui): add active time summary to usage overview | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/48260.md) | complete | Apr 30, 2026, 11:14 UTC |
 | [#70707](https://github.com/openclaw/openclaw/pull/70707) | fix(gateway): reject RPCs from invalidated device-token clients durin… | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70707.md) | complete | Apr 30, 2026, 11:14 UTC |
 | [#75022](https://github.com/openclaw/openclaw/pull/75022) | fix(infer): load model catalog metadata-only for list/inspect/providers | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75022.md) | complete | Apr 30, 2026, 11:13 UTC |
 | [#75041](https://github.com/openclaw/openclaw/issues/75041) | [Bug]: Workspace .py scripts break on v2026.4.x — gateway image (node:24-bookworm-slim base) ships no python3 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75041.md) | complete | Apr 30, 2026, 11:13 UTC |
@@ -398,7 +399,6 @@ Latest review: Apr 30, 2026, 11:14 UTC. Latest close: Apr 30, 2026, 11:14 UTC. L
 | [#75037](https://github.com/openclaw/openclaw/issues/75037) | [Bug]: Compaction/flush metadata writes advance updatedAt, breaking daily and idle session reset for legacy entries | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75037.md) | complete | Apr 30, 2026, 11:00 UTC |
 | [#74998](https://github.com/openclaw/openclaw/pull/74998) | feat(google): surface Gemini subscription path in onboard wizard | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74998.md) | complete | Apr 30, 2026, 10:59 UTC |
 | [#75036](https://github.com/openclaw/openclaw/pull/75036) | fix(tasks): recover terminal lost cron rows | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75036.md) | complete | Apr 30, 2026, 10:57 UTC |
-| [#73668](https://github.com/openclaw/openclaw/pull/73668) | feat(profile): add privacy-safe profile export and import | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73668.md) | complete | Apr 30, 2026, 10:55 UTC |
 
 </details>
 
