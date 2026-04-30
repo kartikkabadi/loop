@@ -149,6 +149,16 @@ Use `manual_review` or `none` when the remaining action is maintainer judgment,
 normal PR review, protected-label handling, ownership/product/security review,
 or validation without a specific code/docs/test defect. Do not mark an open
 implementation PR as `queue_fix_pr` merely because it needs maintainer review.
+If an open PR is explicitly opted into `clawsweeper:automerge`, prefer the
+automerge path once review findings are empty and checks/mergeability can gate
+the exact head. Do not choose `manual_review` solely because the PR has the
+`maintainer` label, a large `size:*` label, broad surface area, or ordinary
+maintainer-review expectations. Use `manual_review` for an automerge-opted PR
+only when there is a concrete blocker that automation must not bypass, such as a
+security finding, release/beta blocker, draft/conflict/stale head, failing
+required check without a narrow repair, missing required validation or changelog,
+requested changes, unclear ownership approval for a specific risky behavior, or
+an explicit human-review/pause signal.
 
 Keep an issue open when an open PR specifically references it with GitHub closing
 syntax such as `Fixes #123`, `Closes #123`, or `Resolves #123`. That PR is an
@@ -169,7 +179,7 @@ maintainer explicitly says to split/close it.
 
 Keep open any item whose GitHub author association is `OWNER`, `MEMBER`, or `COLLABORATOR`. Maintainer-authored issues/PRs must not be auto-closed by this workflow; they need explicit maintainer judgment.
 
-Keep open any item with a protected label: `security`, `beta-blocker`, `release-blocker`, or `maintainer`. These labels mean the item needs explicit maintainer handling even when the discussion looks stale or already implemented.
+Keep open any item with a protected label: `security`, `beta-blocker`, `release-blocker`, or `maintainer`. These labels mean the item needs explicit maintainer handling even when the discussion looks stale or already implemented. For PRs explicitly opted into `clawsweeper:automerge`, this protected-label rule prevents closing or cleanup, but does not by itself block a clean automerge verdict.
 
 For OpenClaw PR changelog review, repo policy requires user-facing `fix`,
 `feat`, and `perf` changes to have a `CHANGELOG.md` entry, but forbidden bot or

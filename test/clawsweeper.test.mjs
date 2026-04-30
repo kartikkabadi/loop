@@ -1422,6 +1422,50 @@ Full review comments:
   assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
 });
 
+test("pull request automerge pass is not blocked by generic protected labels", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74716",
+      decision: "keep_open",
+      close_reason: "none",
+      review_status: "complete",
+      confidence: "high",
+      labels: JSON.stringify(["maintainer", "size: XL", "clawsweeper:automerge"]),
+      work_candidate: "manual_review",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+Keep this protected platform PR open for automerge gates.
+
+## What This Changes
+
+Routes Codex Computer Use through the Mac app node host.
+
+## Best Possible Solution
+
+Merge after ClawSweeper review and required checks are green.
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`,
+    "none",
+  );
+
+  assert.match(comment, /Codex review: passed for ClawSweeper automerge\./);
+  assert.match(comment, /<!-- clawsweeper-verdict:pass item=74716 sha=abc123def456/);
+  assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
+});
+
 test("pull request autofix review comments can emit pass verdicts without merge copy", () => {
   const comment = renderReviewCommentFromReport(
     `${reportFrontMatter({
@@ -1908,6 +1952,16 @@ test("review prompt requires a dedicated securityReview section", () => {
   assert.match(prompt, /Always summarize this pass in `securityReview`/);
   assert.match(prompt, /Always fill `securityReview`/);
   assert.match(prompt, /status: "needs_attention"/);
+});
+
+test("review prompt keeps automerge opt-in from becoming generic manual review", () => {
+  const prompt = readFileSync("prompts/review-item.md", "utf8");
+
+  assert.match(prompt, /explicitly opted into `clawsweeper:automerge`/);
+  assert.match(prompt, /Do not choose `manual_review` solely because/);
+  assert.match(prompt, /`maintainer` label/);
+  assert.match(prompt, /large `size:\*` label/);
+  assert.match(prompt, /does not by itself block a clean automerge verdict/);
 });
 
 test("review prompts require reproduction and solution assessment details", () => {
