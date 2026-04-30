@@ -265,6 +265,13 @@ export function renderPrompt(
     );
   }
 
+  if (context.targetCheckout) {
+    parts.push(
+      "## Target checkout",
+      `The target repository checkout is \`${context.targetCheckout}\`. Run target-repo inspection commands from that checkout. The ClawSweeper repository is only the automation harness.`,
+    );
+  }
+
   parts.push(
     "## Required final output",
     "Return JSON matching `schema/repair/codex-result.schema.json` and nothing else.",

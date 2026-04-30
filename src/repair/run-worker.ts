@@ -68,6 +68,7 @@ const promptContext: Record<string, string> = {};
 const targetCheckout = dryRun ? "" : prepareTargetCheckout(job);
 if (targetCheckout) {
   process.env.CLAWSWEEPER_TARGET_CHECKOUT = targetCheckout;
+  promptContext.targetCheckout = targetCheckout;
 }
 
 if (!dryRun) {
@@ -163,7 +164,7 @@ function runCodex({
   const codexArgs = [
     "exec",
     "--cd",
-    repoRoot(),
+    codexWorkspaceRoot(),
     "--model",
     model,
     "--sandbox",
@@ -179,7 +180,7 @@ function runCodex({
   ];
 
   const child = spawnSync("codex", codexArgs, {
-    cwd: repoRoot(),
+    cwd: codexWorkspaceRoot(),
     input,
     encoding: "utf8",
     env: codexEnv(),
@@ -189,6 +190,10 @@ function runCodex({
   fs.writeFileSync(codexTranscriptPath, child.stdout ?? "");
   if (child.stderr) fs.writeFileSync(stderrPath, child.stderr);
   return child;
+}
+
+function codexWorkspaceRoot(): string {
+  return targetCheckout || repoRoot();
 }
 
 function codexConfigArgs() {
