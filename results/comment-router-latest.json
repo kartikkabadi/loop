@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:18:08.628Z",
+  "generated_at": "2026-05-01T04:23:27.633Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:18:07.275Z",
+  "since": "2026-05-01T01:23:25.886Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75370
+    75389
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,72 +30,78 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T04:18:03Z:clawsweeper_needs_human",
-      "comment_id": "4357487939",
-      "comment_version_key": "4357487939:2026-05-01T04:18:03Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75389:4357633512:2026-05-01T04:23:23Z:clawsweeper_auto_repair",
+      "comment_id": "4357633512",
+      "comment_version_key": "4357633512:2026-05-01T04:23:23Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75389#issuecomment-4357633512",
       "repo": "openclaw/openclaw",
-      "issue_number": 75370,
+      "issue_number": 75389,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T02:36:16Z",
-      "comment_updated_at": "2026-05-01T04:18:03Z",
+      "comment_created_at": "2026-05-01T03:24:47Z",
+      "comment_updated_at": "2026-05-01T04:23:23Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=6bfc04952db5a529163c519c72bd73d659bf248d)",
-      "review_summary": "The PR modifies `extensions/document-extract/document-extractor.ts` to detect `pdftoppm` and render PDF pages through temporary files when `@napi-rs/canvas` cannot load.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=974db85c467d41a2a6bbfb6d2de648caaccf4718)",
+      "review_summary": "The PR adds max-byte defaults and env/config parsing for cache-trace and Anthropic payload JSONL logs, updates cache-trace config schema/types/generated schema, and adds focused max-byte handling tests.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "6bfc04952db5a529163c519c72bd73d659bf248d",
-      "finding_id": null,
+      "expected_head_sha": "974db85c467d41a2a6bbfb6d2de648caaccf4718",
+      "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable",
-        "branch": "pdftoppm-fallback",
-        "head_sha": "6bfc04952db5a529163c519c72bd73d659bf248d",
-        "author": "mgustimz",
+        "title": "Cap diagnostic JSONL log files",
+        "branch": "codex/issue-75380-log-rotation",
+        "head_sha": "974db85c467d41a2a6bbfb6d2de648caaccf4718",
+        "author": "udaymanish6",
         "labels": [
+          "agents",
           "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75370",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75370.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75389",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75389.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
-        "merge_state_status": "CLEAN",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 36,
+          "total": 101,
           "counts": {
-            "SKIPPED": 30,
-            "SUCCESS": 6
+            "IN_PROGRESS": 2,
+            "SUCCESS": 76,
+            "SKIPPED": 22,
+            "NEUTRAL": 1
           },
-          "blockers": []
+          "blockers": [
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+          ]
         }
       },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1469,
+    "total_ms": 1906,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 220
+        "ms": 275
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1123
+        "ms": 1465
       },
       {
         "name": "classify_commands",
@@ -103,7 +109,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 107
+        "ms": 152
       },
       {
         "name": "append_ledger",
