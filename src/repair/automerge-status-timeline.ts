@@ -36,7 +36,8 @@ function existingTimelineRows(value: JsonValue): string[] {
   return match[1]!
     .split(/\r?\n/)
     .map((line) => line.trimEnd())
-    .filter((line) => line.includes(EVENT_PREFIX));
+    .filter((line) => line.includes(EVENT_PREFIX))
+    .map(sanitizeTimelineRow);
 }
 
 function renderTimelineEvent(event: LooseRecord): string {
@@ -47,7 +48,7 @@ function renderTimelineEvent(event: LooseRecord): string {
   const head = shortSha(event.headSha ?? event.head_sha);
   const status = compact(event.status, 80);
   const duration = formatDuration(event.durationMs ?? event.duration_ms);
-  const runUrl = String(event.runUrl ?? event.run_url ?? "").trim();
+  const runUrl = safeTimelineRunUrl(event.runUrl ?? event.run_url);
   const details = compact(event.details ?? event.detail ?? event.reason, 160);
   return [
     `- ${EVENT_PREFIX}${id} -->`,
@@ -61,6 +62,25 @@ function renderTimelineEvent(event: LooseRecord): string {
   ]
     .filter(Boolean)
     .join(" ");
+}
+
+function sanitizeTimelineRow(row: string): string {
+  return row
+    .replace(
+      /\s+Run:\s+https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/(?:pull|issues)\/\d+#issuecomment-\d+\b/gi,
+      "",
+    )
+    .trimEnd();
+}
+
+function safeTimelineRunUrl(value: JsonValue): string {
+  const url = String(value ?? "").trim();
+  if (!url) return "";
+  if (
+    /^https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/(?:pull|issues)\/\d+#issuecomment-\d+\b/i.test(url)
+  )
+    return "";
+  return url;
 }
 
 function timelineEventId(row: string): string {

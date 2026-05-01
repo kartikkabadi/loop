@@ -2131,7 +2131,7 @@ function automergeOutcomeReviewedSha() {
 
 function automergeOutcomeMarker({ target, resultPath }: LooseRecord) {
   const runName = path.basename(path.dirname(resultPath)).replace(/[^A-Za-z0-9_.-]+/g, "-");
-  return `<!-- clawsweeper-repair-outcome:${result.cluster_id}:${runName}:#${target} -->`;
+  return `<!-- clawsweeper-repair-outcome:${result.cluster_id}:${runName}:pr-${target} -->`;
 }
 
 function issueHasCommentMarker(number: JsonValue, marker: LooseRecord) {

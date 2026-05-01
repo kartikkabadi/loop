@@ -12,9 +12,12 @@ function visibleSelfReference(value: JsonValue, target: JsonValue) {
   const text = String(value ?? "");
   const number = String(target ?? "").replace(/^#/, "");
   if (!number) return text;
-  const githubPr = new RegExp(`https://github\\.com/[^/\\s]+/[^/\\s]+/pull/${number}\\b`, "gi");
+  const githubPr = new RegExp(
+    `https://github\\.com/[^/\\s]+/[^/\\s]+/pull/${number}\\b(?:#issuecomment-\\d+)?`,
+    "gi",
+  );
   const githubIssue = new RegExp(
-    `https://github\\.com/[^/\\s]+/[^/\\s]+/issues/${number}\\b`,
+    `https://github\\.com/[^/\\s]+/[^/\\s]+/issues/${number}\\b(?:#issuecomment-\\d+)?`,
     "gi",
   );
   return text

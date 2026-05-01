@@ -12,10 +12,11 @@ test("automergeRepairOutcomeComment explains no-op repair runs", () => {
     target: 74156,
     report: { reason: "no planned fix actions" },
     result: {
-      summary: "Worker found no executable fix artifact for PR #74156.",
+      summary:
+        "Worker found no executable fix artifact for PR #74156 at https://github.com/openclaw/openclaw/pull/74156#issuecomment-123.",
       actions: [
         {
-          target: "#74156",
+          target: "https://github.com/openclaw/openclaw/pull/74156#issuecomment-456",
           action: "route_security",
           status: "planned",
           reason: "central handling required for #74156",
@@ -29,6 +30,7 @@ test("automergeRepairOutcomeComment explains no-op repair runs", () => {
   assert.match(body, /(without changing|no-op|No new branch changes|no safe branch change)/i);
   assert.doesNotMatch(body, /Target: #74156/);
   assert.doesNotMatch(body, /#74156/);
+  assert.doesNotMatch(body, /issuecomment-/);
   assert.match(body, /Executor outcome: no planned fix actions\./);
   assert.match(body, /`route_security` on `this PR`: planned - central handling required/);
   assert.match(

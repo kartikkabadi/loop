@@ -54,3 +54,32 @@ test("mergeAutomergeTimelineSection appends and updates progress rows", () => {
   assert.match(second, /in 16m/);
   assert.match(second, /`fe7f373a9721`/);
 });
+
+test("mergeAutomergeTimelineSection drops same-PR comment URLs", () => {
+  const existingBody = [
+    "old body",
+    "<!-- clawsweeper-automerge-timeline:start -->",
+    "Automerge progress:",
+    "- <!-- clawsweeper-automerge-timeline-event:review-result:abc:1 --> 2026-05-01 05:10:00 UTC review requested repair `abcdef123456` Run: https://github.com/openclaw/openclaw/pull/75423#issuecomment-4357804577",
+    "<!-- clawsweeper-automerge-timeline:end -->",
+  ].join("\n");
+
+  const body = mergeAutomergeTimelineSection({
+    body: "status body",
+    existingBody,
+    events: [
+      {
+        id: "merge:abc:2",
+        label: "merge checked",
+        at: "2026-05-01T05:20:00Z",
+        headSha: "abcdef1234567890",
+        runUrl: "https://github.com/openclaw/openclaw/pull/75423#issuecomment-4358203264",
+      },
+    ],
+  });
+
+  assert.match(body, /review requested repair/);
+  assert.match(body, /merge checked/);
+  assert.doesNotMatch(body, /issuecomment-/);
+  assert.doesNotMatch(body, /github\.com\/openclaw\/openclaw\/pull\/75423/);
+});
