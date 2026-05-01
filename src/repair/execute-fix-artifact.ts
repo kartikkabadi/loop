@@ -1988,11 +1988,17 @@ function appendAutomergeRepairOutcomeComment(report: LooseRecord, resultPath: st
       reviewedSha: automergeOutcomeReviewedSha(),
     }),
   });
-  postIssueComment(target, body);
+  const existingStatus = findAutomergeStatusComment(target);
+  if (existingStatus?.id) {
+    patchIssueComment(existingStatus.id, preserveStatusMarkers(existingStatus.body, body));
+  } else {
+    postIssueComment(target, body);
+  }
   report.actions.push({
     ...base,
-    status: "executed",
+    status: existingStatus?.id ? "updated" : "executed",
     marker,
+    comment_id: existingStatus?.id ? String(existingStatus.id) : null,
     commented_at: new Date().toISOString(),
   });
 }
@@ -2046,21 +2052,79 @@ function automergeOutcomeMarker({ target, resultPath }: LooseRecord) {
 }
 
 function issueHasCommentMarker(number: JsonValue, marker: LooseRecord) {
-  const bodies = run(
+  return issueCommentsFor(number).some((comment: LooseRecord) =>
+    String(comment.body ?? "").includes(String(marker ?? "")),
+  );
+}
+
+function findAutomergeStatusComment(number: JsonValue) {
+  return issueCommentsFor(number)
+    .reverse()
+    .find((comment: LooseRecord) => {
+      if (!isTrustedStatusComment(comment)) return false;
+      return hasAutomergeStatusMarker(comment.body, number);
+    });
+}
+
+function issueCommentsFor(number: JsonValue) {
+  const raw = run(
+    "gh",
+    ["api", `repos/${result.repo}/issues/${number}/comments?per_page=100`, "--paginate"],
+    {
+      cwd: repoRoot(),
+      env: ghEnv(),
+    },
+  );
+  const parsed = JSON.parse(raw || "[]");
+  return Array.isArray(parsed) ? parsed : [];
+}
+
+function isTrustedStatusComment(comment: LooseRecord) {
+  const author = String(comment.user?.login ?? "").toLowerCase();
+  return (
+    !author ||
+    author === "clawsweeper" ||
+    author === "clawsweeper[bot]" ||
+    author === "openclaw-clawsweeper[bot]"
+  );
+}
+
+function hasAutomergeStatusMarker(body: JsonValue, number: JsonValue) {
+  const issueNumber = Number(number);
+  const prefix = `<!-- clawsweeper-command-status:${Number.isFinite(issueNumber) ? issueNumber : "unknown"}:`;
+  return (
+    String(body ?? "").includes(prefix) &&
+    /clawsweeper-command-status:\d+:(?:automerge|clawsweeper_auto_repair|clawsweeper_auto_merge|maintainer_approve_automerge):/i.test(
+      String(body ?? ""),
+    )
+  );
+}
+
+function preserveStatusMarkers(existingBody: JsonValue, nextBody: string) {
+  const markers = String(existingBody ?? "")
+    .split(/\r?\n/)
+    .filter((line) => /^<!-- clawsweeper-command(?:-status)?:/.test(line.trim()));
+  const missingMarkers = markers.filter((marker) => !nextBody.includes(marker));
+  return missingMarkers.length > 0 ? `${missingMarkers.join("\n")}\n${nextBody}` : nextBody;
+}
+
+function patchIssueComment(id: JsonValue, body: string) {
+  const payloadPath = writePayload(`automerge-outcome-${id}`, { body });
+  run(
     "gh",
     [
       "api",
-      `repos/${result.repo}/issues/${number}/comments?per_page=100`,
-      "--paginate",
-      "--jq",
-      ".[].body",
+      `repos/${result.repo}/issues/comments/${id}`,
+      "--method",
+      "PATCH",
+      "--input",
+      payloadPath,
     ],
     {
       cwd: repoRoot(),
       env: ghEnv(),
     },
   );
-  return bodies.includes(marker);
 }
 
 function postIssueComment(number: JsonValue, body: string) {
