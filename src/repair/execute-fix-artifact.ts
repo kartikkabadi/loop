@@ -91,7 +91,9 @@ const requestedCodexTimeoutMs = Number(
   process.env.CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS ?? 25 * 60 * 1000,
 );
 const fixStepTimeoutMs = Number(process.env.CLAWSWEEPER_FIX_STEP_TIMEOUT_MS ?? 30 * 60 * 1000);
-const fixTimeoutReserveMs = Number(process.env.CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS ?? 5 * 60 * 1000);
+const fixTimeoutReserveMs = Number(
+  process.env.CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS ?? 10 * 60 * 1000,
+);
 const codexTimeoutMs = Math.min(
   requestedCodexTimeoutMs,
   Math.max(60 * 1000, fixStepTimeoutMs - fixTimeoutReserveMs),
@@ -123,6 +125,19 @@ const maxAutonomousFixSurfaces = Math.max(
   Number(process.env.CLAWSWEEPER_MAX_AUTONOMOUS_FIX_SURFACES ?? 4),
 );
 const maxActivePrsPerArea = Number(process.env.CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA ?? 50);
+const targetValidationTimeoutMs = Number(
+  process.env.CLAWSWEEPER_FIX_TARGET_VALIDATION_TIMEOUT_MS ?? 8 * 60 * 1000,
+);
+const targetInstallTimeoutMs = Number(
+  process.env.CLAWSWEEPER_FIX_TARGET_INSTALL_TIMEOUT_MS ?? 8 * 60 * 1000,
+);
+const targetSetupTimeoutMs = Number(
+  process.env.CLAWSWEEPER_FIX_TARGET_SETUP_TIMEOUT_MS ?? 2 * 60 * 1000,
+);
+const minTargetCommandTimeoutMs = Number(
+  process.env.CLAWSWEEPER_FIX_MIN_TARGET_COMMAND_TIMEOUT_MS ?? 30 * 1000,
+);
+const reportReserveMs = Number(process.env.CLAWSWEEPER_FIX_REPORT_RESERVE_MS ?? 90 * 1000);
 const strictTargetValidation =
   process.env.CLAWSWEEPER_STRICT_TARGET_VALIDATION === "1" ||
   String(process.env.CLAWSWEEPER_TARGET_VALIDATION_MODE ?? "changed-only") === "strict";
@@ -194,6 +209,27 @@ const targetValidationOptions: TargetValidationOptions = {
   strictTargetValidation,
   targetRepo: result.repo,
 };
+
+function currentTargetValidationOptions(): TargetValidationOptions {
+  const remainingMs = remainingFixStepBudgetMs();
+  return {
+    ...targetValidationOptions,
+    installTimeoutMs: boundedTimeout(targetInstallTimeoutMs, remainingMs),
+    setupTimeoutMs: boundedTimeout(targetSetupTimeoutMs, remainingMs),
+    validationTimeoutMs: boundedTimeout(targetValidationTimeoutMs, remainingMs),
+  };
+}
+
+function boundedTimeout(timeoutMs: number, remainingMs: number) {
+  const timeout = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : remainingMs;
+  return Math.max(1_000, Math.min(timeout, remainingMs));
+}
+
+function remainingFixStepBudgetMs() {
+  const elapsedMs = Date.now() - scriptStartedAt.getTime();
+  const remainingMs = fixStepTimeoutMs - elapsedMs - reportReserveMs;
+  return Math.max(minTargetCommandTimeoutMs, remainingMs);
+}
 const rawFixArtifact = result.fix_artifact;
 const executableFixArtifact = executableReplacementFixArtifact(rawFixArtifact, result);
 const promotedReplacement = executableFixArtifact !== rawFixArtifact;
@@ -304,7 +340,7 @@ const validationPreflight = preflightTargetValidationPlan(
     targetDir,
     baseBranch: DEFAULT_BASE_BRANCH,
   },
-  targetValidationOptions,
+  currentTargetValidationOptions(),
 );
 report.validation_preflight = validationPreflight;
 if (validationPreflight.status === "blocked") {
@@ -497,7 +533,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   run("git", ["checkout", branch], { cwd: targetDir });
   ensureMergeBaseAvailable({ targetDir, baseBranch });
   const sourceHead = currentHead(targetDir);
-  prepareTargetToolchain(targetDir, targetValidationOptions);
+  prepareTargetToolchain(targetDir, currentTargetValidationOptions());
   const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
 
   const prep = editValidatePrepareMerge({
@@ -648,7 +684,7 @@ function executeReplacementBranch({
     baseBranch,
     fixArtifact,
   });
-  prepareTargetToolchain(targetDir, targetValidationOptions);
+  prepareTargetToolchain(targetDir, currentTargetValidationOptions());
   const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
 
   if (!dryRun) ghAuthSetupGit(targetDir);
@@ -1421,7 +1457,7 @@ function validateAndReviewLoop({
   for (let attempt = 1; attempt <= maxReviewAttempts; attempt += 1) {
     const validationPlan = repairDeltaValidationPlan(
       { fixArtifact, targetDir, sourceHead },
-      targetValidationOptions,
+      currentTargetValidationOptions(),
     );
     validationCommands = runAllowedValidationCommands(
       validationPlan.commands,

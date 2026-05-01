@@ -22,13 +22,19 @@ import {
 } from "./validation-command-utils.js";
 
 const DEFAULT_BASE_BRANCH = "main";
+const DEFAULT_TARGET_SETUP_TIMEOUT_MS = 2 * 60 * 1000;
+const DEFAULT_TARGET_INSTALL_TIMEOUT_MS = 12 * 60 * 1000;
+const DEFAULT_TARGET_VALIDATION_TIMEOUT_MS = 12 * 60 * 1000;
 
 export type TargetValidationOptions = {
   allowExpensiveValidation: boolean;
+  installTimeoutMs?: number;
   installTargetDeps: boolean;
   skipOpenClawChangedGate?: boolean;
   strictTargetValidation: boolean;
   targetRepo: string;
+  setupTimeoutMs?: number;
+  validationTimeoutMs?: number;
 };
 
 export type RepairDeltaValidationPlan = {
@@ -51,16 +57,30 @@ export function prepareTargetToolchain(cwd: string, options: TargetValidationOpt
   }
 
   const validationEnv = targetValidationEnv();
+  const setupTimeoutMs = targetValidationTimeoutMs(
+    "CLAWSWEEPER_TARGET_SETUP_TIMEOUT_MS",
+    options.setupTimeoutMs ?? DEFAULT_TARGET_SETUP_TIMEOUT_MS,
+    options.setupTimeoutMs,
+  );
+  const installTimeoutMs = targetValidationTimeoutMs(
+    "CLAWSWEEPER_TARGET_INSTALL_TIMEOUT_MS",
+    options.installTimeoutMs ?? DEFAULT_TARGET_INSTALL_TIMEOUT_MS,
+    options.installTimeoutMs,
+  );
   run(
     "node",
     [
       "-e",
       "const major = Number(process.versions.node.split('.')[0]); if (major < 22) { console.error(`Node ${process.version} is too old for target validation`); process.exit(1); }",
     ],
-    { cwd, env: validationEnv },
+    { cwd, env: validationEnv, timeoutMs: setupTimeoutMs },
   );
-  run("corepack", ["enable"], { cwd, env: validationEnv });
-  run("corepack", ["prepare", packageManager, "--activate"], { cwd, env: validationEnv });
+  run("corepack", ["enable"], { cwd, env: validationEnv, timeoutMs: setupTimeoutMs });
+  run("corepack", ["prepare", packageManager, "--activate"], {
+    cwd,
+    env: validationEnv,
+    timeoutMs: setupTimeoutMs,
+  });
   const installArgs = [
     "install",
     "--frozen-lockfile",
@@ -69,7 +89,7 @@ export function prepareTargetToolchain(cwd: string, options: TargetValidationOpt
     "--config.enable-pre-post-scripts=true",
   ];
   try {
-    run("pnpm", installArgs, { cwd, env: validationEnv });
+    run("pnpm", installArgs, { cwd, env: validationEnv, timeoutMs: installTimeoutMs });
   } catch (error) {
     if (!/ERR_PNPM_OUTDATED_LOCKFILE/i.test(String(error.message))) throw error;
     run(
@@ -78,6 +98,7 @@ export function prepareTargetToolchain(cwd: string, options: TargetValidationOpt
       {
         cwd,
         env: validationEnv,
+        timeoutMs: installTimeoutMs,
       },
     );
     restoreTargetLockfile(cwd);
@@ -92,6 +113,11 @@ export function runAllowedValidationCommands(
 ) {
   ensureMergeBaseAvailable({ targetDir: cwd, baseBranch });
   const validationEnv = targetValidationEnv();
+  const validationTimeoutMs = targetValidationTimeoutMs(
+    "CLAWSWEEPER_TARGET_VALIDATION_TIMEOUT_MS",
+    options.validationTimeoutMs ?? DEFAULT_TARGET_VALIDATION_TIMEOUT_MS,
+    options.validationTimeoutMs,
+  );
   const executed: string[] = [];
   const attempts = new Map<string, number>();
   for (const command of requiredValidationCommands(commands, cwd, options)) {
@@ -102,7 +128,11 @@ export function runAllowedValidationCommands(
       if (executed.includes(rendered)) continue;
       while (true) {
         try {
-          run(executable, parts.slice(1), { cwd, env: validationEnv });
+          run(executable, parts.slice(1), {
+            cwd,
+            env: validationEnv,
+            timeoutMs: validationTimeoutMs,
+          });
           executed.push(rendered);
           break;
         } catch (error) {
@@ -118,7 +148,11 @@ export function runAllowedValidationCommands(
               const fallbackExecutable = fallbackParts[0]!;
               const fallbackRendered = fallbackParts.join(" ");
               if (executed.includes(fallbackRendered)) continue;
-              run(fallbackExecutable, fallbackParts.slice(1), { cwd, env: validationEnv });
+              run(fallbackExecutable, fallbackParts.slice(1), {
+                cwd,
+                env: validationEnv,
+                timeoutMs: validationTimeoutMs,
+              });
               executed.push(fallbackRendered);
             }
             break;
@@ -279,6 +313,14 @@ function targetValidationEnv() {
     CI: process.env.CI ?? "true",
     OPENCLAW_LOCAL_CHECK: process.env.OPENCLAW_LOCAL_CHECK ?? "0",
   };
+}
+
+function targetValidationTimeoutMs(name: string, fallback: number, cap?: number) {
+  const raw = process.env[name];
+  if (!raw) return fallback;
+  const parsed = Number.parseInt(raw, 10);
+  const timeout = Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+  return cap ? Math.min(timeout, cap) : timeout;
 }
 
 function resolveAllowedValidationCommands(
