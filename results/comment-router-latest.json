@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:48:47.883Z",
+  "generated_at": "2026-05-01T04:49:11.304Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:48:45.692Z",
+  "since": "2026-05-01T01:49:10.340Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75317
+    75424
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75317:4357101171:2026-05-01T04:48:41Z:clawsweeper_needs_human",
-      "comment_id": "4357101171",
-      "comment_version_key": "4357101171:2026-05-01T04:48:41Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75317#issuecomment-4357101171",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75424:4357825074:2026-05-01T04:49:07Z:clawsweeper_needs_human",
+      "comment_id": "4357825074",
+      "comment_version_key": "4357825074:2026-05-01T04:49:07Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75424#issuecomment-4357825074",
       "repo": "openclaw/openclaw",
-      "issue_number": 75317,
+      "issue_number": 75424,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T00:33:40Z",
-      "comment_updated_at": "2026-05-01T04:48:41Z",
+      "comment_created_at": "2026-05-01T04:33:31Z",
+      "comment_updated_at": "2026-05-01T04:49:07Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,43 +47,41 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=3d416dde37e9119760508ed2ebc6a909fc8203af)",
-      "review_summary": "The PR broadens memory-core embedding retry classification, routes vector query embeddings through the retry loop, adds a builtin index coverage warning to memory status, and adds focused tests plus a changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=9c5acbe1a7f3f48b0b346768f06278ea6118ffc6)",
+      "review_summary": "The PR changes Discord message-action discovery to inspect configured accounts without resolving tokens, resolves scoped channel SecretRefs before agent `tools.message` execution even with an injected config snapshot, adds regression coverage, and adds an Unreleased fix changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "3d416dde37e9119760508ed2ebc6a909fc8203af",
+      "expected_head_sha": "9c5acbe1a7f3f48b0b346768f06278ea6118ffc6",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(memory): retry transient embedding failures",
-        "branch": "fix/memory-search-index-resilience",
-        "head_sha": "3d416dde37e9119760508ed2ebc6a909fc8203af",
-        "author": "anyech",
+        "title": "fix(discord): avoid resolving token during action discovery",
+        "branch": "fix/discord-secretref-action-discovery",
+        "head_sha": "9c5acbe1a7f3f48b0b346768f06278ea6118ffc6",
+        "author": "conan-scott",
         "labels": [
-          "extensions: memory-core",
-          "size: M"
+          "channel: discord",
+          "agents",
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75317",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75317.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75424",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75424.md",
         "mode": "autonomous",
-        "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
+        "mergeable": "CONFLICTING",
+        "merge_state_status": "DIRTY",
         "review_decision": "",
         "checks": {
-          "total": 78,
+          "total": 5,
           "counts": {
-            "SUCCESS": 69,
-            "SKIPPED": 8,
-            "IN_PROGRESS": 1
+            "SUCCESS": 4,
+            "SKIPPED": 1
           },
-          "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
-          ]
+          "blockers": []
         }
       },
       "reason": "PR is not opted into ClawSweeper autofix or automerge"
@@ -91,15 +89,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2394,
+    "total_ms": 1085,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 287
+        "ms": 218
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1893
+        "ms": 736
       },
       {
         "name": "classify_commands",
@@ -107,7 +105,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 194
+        "ms": 113
       },
       {
         "name": "append_ledger",
