@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T03:20:42.447Z",
+  "updated_at": "2026-05-01T03:20:44.837Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73757:4338516469:2026-04-30T22:34:39Z:clawsweeper_needs_human",
@@ -26044,14 +26044,14 @@
       }
     },
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T03:20:37Z:clawsweeper_needs_human",
-      "comment_id": "4357487939",
-      "comment_version_key": "4357487939:2026-05-01T03:20:37Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
-      "comment_created_at": "2026-05-01T02:36:16Z",
-      "comment_updated_at": "2026-05-01T03:20:37Z",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74369:4344388331:2026-05-01T03:20:38Z:clawsweeper_needs_human",
+      "comment_id": "4344388331",
+      "comment_version_key": "4344388331:2026-05-01T03:20:38Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74369#issuecomment-4344388331",
+      "comment_created_at": "2026-04-29T13:54:43Z",
+      "comment_updated_at": "2026-05-01T03:20:38Z",
       "repo": "openclaw/openclaw",
-      "issue_number": 75370,
+      "issue_number": 74369,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
       "trigger": "trusted_bot",
@@ -26060,15 +26060,15 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=1295e584fc97d92ea442019dd2a14bb138f104c6)",
-      "expected_head_sha": "1295e584fc97d92ea442019dd2a14bb138f104c6",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=c6915bfae63cfc18aa554aa9174f150d6f64a10c)",
+      "expected_head_sha": "c6915bfae63cfc18aa554aa9174f150d6f64a10c",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-05-01T03:20:42.446Z",
+      "processed_at": "2026-05-01T03:20:44.836Z",
       "target": {
         "kind": "pull_request",
-        "branch": "pdftoppm-fallback",
-        "head_sha": "1295e584fc97d92ea442019dd2a14bb138f104c6",
+        "branch": "fix/control-ui-numeric-composer-74354",
+        "head_sha": "c6915bfae63cfc18aa554aa9174f150d6f64a10c",
         "cluster_id": null,
         "job_path": null
       }

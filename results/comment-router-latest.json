@@ -1,18 +1,18 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:20:42.336Z",
+  "generated_at": "2026-05-01T03:20:44.719Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:20:40.797Z",
+  "since": "2026-05-01T00:20:43.159Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75370
+    74369
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
+  "scanned_comments": 3,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -29,16 +29,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T03:20:37Z:clawsweeper_needs_human",
-      "comment_id": "4357487939",
-      "comment_version_key": "4357487939:2026-05-01T03:20:37Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74369:4344388331:2026-05-01T03:20:38Z:clawsweeper_needs_human",
+      "comment_id": "4344388331",
+      "comment_version_key": "4344388331:2026-05-01T03:20:38Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74369#issuecomment-4344388331",
       "repo": "openclaw/openclaw",
-      "issue_number": 75370,
+      "issue_number": 74369,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T02:36:16Z",
-      "comment_updated_at": "2026-05-01T03:20:37Z",
+      "comment_created_at": "2026-04-29T13:54:43Z",
+      "comment_updated_at": "2026-05-01T03:20:38Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -46,38 +46,39 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=1295e584fc97d92ea442019dd2a14bb138f104c6)",
-      "review_summary": "The PR modifies `extensions/document-extract/document-extractor.ts` to try `pdftoppm` when `@napi-rs/canvas` cannot load, rendering selected PDF pages through a temporary file and child process.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=c6915bfae63cfc18aa554aa9174f150d6f64a10c)",
+      "review_summary": "The PR adds plain-text/autocorrect suppression attributes to the Control UI chat textarea, adds regression tests for composer attributes and numeric `chat.send` payload forwarding, and adds an Unreleased changelog entry for #74354.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "1295e584fc97d92ea442019dd2a14bb138f104c6",
+      "expected_head_sha": "c6915bfae63cfc18aa554aa9174f150d6f64a10c",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable",
-        "branch": "pdftoppm-fallback",
-        "head_sha": "1295e584fc97d92ea442019dd2a14bb138f104c6",
-        "author": "mgustimz",
+        "title": "fix(control-ui): preserve numeric chat input in composer",
+        "branch": "fix/control-ui-numeric-composer-74354",
+        "head_sha": "c6915bfae63cfc18aa554aa9174f150d6f64a10c",
+        "author": "dwc1997",
         "labels": [
-          "size: S"
+          "app: web-ui",
+          "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75370",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75370.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-74369",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74369.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 79,
+          "total": 76,
           "counts": {
-            "SUCCESS": 65,
+            "SUCCESS": 67,
             "SKIPPED": 8,
-            "FAILURE": 6
+            "IN_PROGRESS": 1
           },
           "blockers": [
             "check-prod-types:FAILURE",
@@ -94,15 +95,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1658,
+    "total_ms": 1685,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 293
+        "ms": 268
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1237
+        "ms": 1283
       },
       {
         "name": "classify_commands",
@@ -110,7 +111,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 110
+        "ms": 117
       },
       {
         "name": "append_ledger",
