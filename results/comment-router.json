@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T05:51:44.515Z",
+  "updated_at": "2026-05-01T05:54:00.313Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58796:4357138558:2026-05-01T00:44:43Z:clawsweeper_needs_human",
-      "comment_id": "4357138558",
-      "comment_version_key": "4357138558:2026-05-01T00:44:43Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/58796#issuecomment-4357138558",
-      "comment_created_at": "2026-05-01T00:44:43Z",
-      "comment_updated_at": "2026-05-01T00:44:43Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 58796,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=df9b11f8582d3dfa9d81bbf7dcf242438ade718b)",
-      "expected_head_sha": "df9b11f8582d3dfa9d81bbf7dcf242438ade718b",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58735:4349683017:2026-05-01T00:44:41Z:clawsweeper_needs_human",
       "comment_id": "4349683017",
@@ -28651,6 +28627,36 @@
         "kind": "pull_request",
         "branch": "fix/signal-quote-reply",
         "head_sha": "48f06a889fe5a0187ba7000cdc6ffe83d75e2372",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75439:4357989185:2026-05-01T05:53:55Z:clawsweeper_auto_repair",
+      "comment_id": "4357989185",
+      "comment_version_key": "4357989185:2026-05-01T05:53:55Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75439#issuecomment-4357989185",
+      "comment_created_at": "2026-05-01T05:30:54Z",
+      "comment_updated_at": "2026-05-01T05:53:55Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75439,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=52d41262c1c2975d3b70d5b4fa0b55b8146443de)",
+      "expected_head_sha": "52d41262c1c2975d3b70d5b4fa0b55b8146443de",
+      "finding_id": "review-feedback",
+      "status": "skipped",
+      "processed_at": "2026-05-01T05:54:00.313Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/heartbeat-cooldown-non-interval-wakes",
+        "head_sha": "52d41262c1c2975d3b70d5b4fa0b55b8146443de",
         "cluster_id": null,
         "job_path": null
       }
