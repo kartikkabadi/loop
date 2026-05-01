@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: May 1, 2026, 01:15 UTC
+Last dashboard update: May 1, 2026, 01:17 UTC
 
 ### Fleet
 
@@ -163,20 +163,20 @@ Last dashboard update: May 1, 2026, 01:15 UTC
 | Open issues | 3659 |
 | Open PRs | 3355 |
 | Open items total | 7014 |
-| Reviewed files | 7642 |
-| Unreviewed open items | 53 |
-| Due now by cadence | 1211 |
+| Reviewed files | 7641 |
+| Unreviewed open items | 54 |
+| Due now by cadence | 1238 |
 | Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 2068 |
-| Closed by Codex apply | 11376 |
+| Closed by Codex apply | 11377 |
 | Failed or stale reviews | 21 |
-| Archived closed files | 15386 |
+| Archived closed files | 15387 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6768 | 6715 | 53 | 955 | 0 | 2022 | 11368 | May 1, 2026, 01:14 UTC | May 1, 2026, 01:14 UTC | 520 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6768 | 6714 | 54 | 982 | 0 | 2022 | 11369 | May 1, 2026, 01:16 UTC | May 1, 2026, 01:14 UTC | 516 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 246 | 924 | 0 | 253 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 3 | 0 | 3 | 0 | 1 | 0 | Apr 29, 2026, 14:08 UTC | unknown | 0 |
 
@@ -184,19 +184,19 @@ Last dashboard update: May 1, 2026, 01:15 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | May 1, 2026, 01:15 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25197410837) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | May 1, 2026, 01:17 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25197532524) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: May 1, 2026, 01:14 UTC. Latest close: May 1, 2026, 01:14 UTC. Latest comment sync: May 1, 2026, 01:14 UTC.
+Latest review: May 1, 2026, 01:16 UTC. Latest close: May 1, 2026, 01:14 UTC. Latest comment sync: May 1, 2026, 01:16 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 108 | 4 | 104 | 0 | 14 | 17 | 0 |
-| Last hour | 886 | 21 | 865 | 1 | 18 | 520 | 1 |
-| Last 24 hours | 6744 | 470 | 6274 | 8 | 642 | 3908 | 24 |
+| Last 15 minutes | 63 | 3 | 60 | 0 | 15 | 17 | 0 |
+| Last hour | 858 | 19 | 839 | 1 | 19 | 516 | 1 |
+| Last 24 hours | 6735 | 469 | 6266 | 8 | 643 | 3907 | 24 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: May 1, 2026, 01:14 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75325](https://github.com/openclaw/openclaw/pull/75325) | perf: skip runtime-deps manifest scans when materialized | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75325.md) | complete | May 1, 2026, 01:16 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74768](https://github.com/openclaw/openclaw/pull/74768) | codex: support native app-server background spawns for Codex harness agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74768.md) | complete | May 1, 2026, 01:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73098](https://github.com/openclaw/openclaw/pull/73098) | Allow safe cache trace config patches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73098.md) | complete | May 1, 2026, 01:13 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74500](https://github.com/openclaw/openclaw/issues/74500) | [Bug]: agentRuntime=claude-cli silently ignored on cold-start 2026.4.26 install — dispatcher routes to openrouter/gpt-oss-120b:free with no failover log | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74500.md) | complete | May 1, 2026, 01:10 UTC |
@@ -249,7 +250,6 @@ Latest review: May 1, 2026, 01:14 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74722](https://github.com/openclaw/openclaw/issues/74722) | [Feature]: Language-aware TTS routing for inbound voice replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74722.md) | complete | May 1, 2026, 01:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73959](https://github.com/openclaw/openclaw/pull/73959) | fix(amazon-bedrock): add modelContextWindowOverrides for per-model context window config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73959.md) | complete | May 1, 2026, 01:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73976](https://github.com/openclaw/openclaw/pull/73976) | fix(memory): use per-keyword FTS search in hybrid mode #39484 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73976.md) | complete | May 1, 2026, 01:09 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74552](https://github.com/openclaw/openclaw/issues/74552) | [Bug]: Vision pipeline failure on macOS (M2): \"Model does not support images\" despite correct config, and \"Failed to optimize image\" persists after sharp install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74552.md) | complete | May 1, 2026, 01:09 UTC |
 
 </details>
 
@@ -267,12 +267,12 @@ Latest review: May 1, 2026, 01:14 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: May 1, 2026, 01:15 UTC
+Updated: May 1, 2026, 01:17 UTC
 
-State: Apply finished
+State: Apply in progress
 
-Apply/comment-sync run finished with 12 fresh closes out of requested limit 12. See apply-report.json for per-item results.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25197410837](https://github.com/openclaw/clawsweeper/actions/runs/25197410837)
+Starting apply/comment-sync run for up to 12 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=39554,58412,58886,59693,72870,73768,73939,73957,73988,74219,75277,75321.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25197532524](https://github.com/openclaw/clawsweeper/actions/runs/25197532524)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -283,9 +283,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25197410837](https://
 | Open issues | 3430 |
 | Open PRs | 3338 |
 | Open items total | 6768 |
-| Reviewed files | 6715 |
-| Unreviewed open items | 53 |
-| Archived closed files | 15360 |
+| Reviewed files | 6714 |
+| Unreviewed open items | 54 |
+| Archived closed files | 15361 |
 
 #### Review Outcomes
 
@@ -293,25 +293,25 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25197410837](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3414 |
 | Proposed issue closes | 0 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3291 |
+| Fresh reviewed PRs in the last 7 days | 3290 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6705 |
+| Fresh verified reviews in the last 7 days | 6704 |
 | Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 2022 |
-| Closed by Codex apply | 11368 |
+| Closed by Codex apply | 11369 |
 | Failed or stale reviews | 8 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 611/1450 current (839 due, 42.1%) |
-| Hourly hot item cadence (<7d) | 611/1450 current (839 due, 42.1%) |
+| Hourly cadence coverage | 584/1449 current (865 due, 40.3%) |
+| Hourly hot item cadence (<7d) | 584/1449 current (865 due, 40.3%) |
 | Daily cadence coverage | 3423/3481 current (58 due, 98.3%) |
 | Daily PR cadence | 2392/2445 current (53 due, 97.8%) |
 | Daily new issue cadence (<30d) | 1031/1036 current (5 due, 99.5%) |
 | Weekly older issue cadence | 1779/1784 current (5 due, 99.7%) |
-| Due now by cadence | 955 |
+| Due now by cadence | 982 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `51947,61960,62112,73342`
 
 #### Latest Run Activity
 
-Latest review: May 1, 2026, 01:14 UTC. Latest close: May 1, 2026, 01:14 UTC. Latest comment sync: May 1, 2026, 01:14 UTC.
+Latest review: May 1, 2026, 01:16 UTC. Latest close: May 1, 2026, 01:14 UTC. Latest comment sync: May 1, 2026, 01:16 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 108 | 4 | 104 | 0 | 14 | 17 | 0 |
-| Last hour | 886 | 21 | 865 | 1 | 18 | 520 | 1 |
-| Last 24 hours | 6744 | 470 | 6274 | 8 | 642 | 3908 | 24 |
+| Last 15 minutes | 63 | 3 | 60 | 0 | 15 | 17 | 0 |
+| Last hour | 858 | 19 | 839 | 1 | 19 | 516 | 1 |
+| Last 24 hours | 6735 | 469 | 6266 | 8 | 643 | 3907 | 24 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: May 1, 2026, 01:14 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75325](https://github.com/openclaw/openclaw/pull/75325) | perf: skip runtime-deps manifest scans when materialized | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75325.md) | complete | May 1, 2026, 01:16 UTC |
 | [#74768](https://github.com/openclaw/openclaw/pull/74768) | codex: support native app-server background spawns for Codex harness agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74768.md) | complete | May 1, 2026, 01:14 UTC |
 | [#73098](https://github.com/openclaw/openclaw/pull/73098) | Allow safe cache trace config patches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73098.md) | complete | May 1, 2026, 01:13 UTC |
 | [#74500](https://github.com/openclaw/openclaw/issues/74500) | [Bug]: agentRuntime=claude-cli silently ignored on cold-start 2026.4.26 install — dispatcher routes to openrouter/gpt-oss-120b:free with no failover log | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74500.md) | complete | May 1, 2026, 01:10 UTC |
@@ -398,7 +399,6 @@ Latest review: May 1, 2026, 01:14 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 | [#74722](https://github.com/openclaw/openclaw/issues/74722) | [Feature]: Language-aware TTS routing for inbound voice replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74722.md) | complete | May 1, 2026, 01:09 UTC |
 | [#73959](https://github.com/openclaw/openclaw/pull/73959) | fix(amazon-bedrock): add modelContextWindowOverrides for per-model context window config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73959.md) | complete | May 1, 2026, 01:09 UTC |
 | [#73976](https://github.com/openclaw/openclaw/pull/73976) | fix(memory): use per-keyword FTS search in hybrid mode #39484 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73976.md) | complete | May 1, 2026, 01:09 UTC |
-| [#74552](https://github.com/openclaw/openclaw/issues/74552) | [Bug]: Vision pipeline failure on macOS (M2): \"Model does not support images\" despite correct config, and \"Failed to optimize image\" persists after sharp install | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74552.md) | complete | May 1, 2026, 01:09 UTC |
 
 </details>
 
