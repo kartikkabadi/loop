@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:45:57.067Z",
+  "generated_at": "2026-05-01T05:46:22.486Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:45:55.567Z",
+  "since": "2026-05-01T02:46:20.692Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75440
+    75435
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 2,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75440:4357986654:2026-05-01T05:45:51Z:clawsweeper_needs_human",
-      "comment_id": "4357986654",
-      "comment_version_key": "4357986654:2026-05-01T05:45:51Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75440#issuecomment-4357986654",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75435:4357911264:2026-05-01T05:46:16Z:clawsweeper_needs_human",
+      "comment_id": "4357911264",
+      "comment_version_key": "4357911264:2026-05-01T05:46:16Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75435#issuecomment-4357911264",
       "repo": "openclaw/openclaw",
-      "issue_number": 75440,
+      "issue_number": 75435,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:30:04Z",
-      "comment_updated_at": "2026-05-01T05:45:51Z",
+      "comment_created_at": "2026-05-01T05:02:54Z",
+      "comment_updated_at": "2026-05-01T05:46:16Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,41 +47,44 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=fa1a81b53aa0944cffbd2fd62bbd7497248e23d9)",
-      "review_summary": "The PR extracts a shared service PATH non-minimal predicate, uses it to filter preserved existing PATH additions during gateway install planning, adds daemon install/audit regression tests, and adds a `CHANGELOG.md` Fixes entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=49217c67df72033630348e03b1e81531b9b7a56b)",
+      "review_summary": "The PR adds a defensive memory-wiki shared-search helper, query/tool regression tests for malformed or throwing shared managers, and a changelog fix entry for the linked bug.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "fa1a81b53aa0944cffbd2fd62bbd7497248e23d9",
+      "expected_head_sha": "49217c67df72033630348e03b1e81531b9b7a56b",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix: drop stale service PATH entries",
-        "branch": "fix/gateway-service-path-nonminimal",
-        "head_sha": "fa1a81b53aa0944cffbd2fd62bbd7497248e23d9",
-        "author": "leonaiee",
+        "title": "fix(memory-wiki): tolerate unavailable shared search",
+        "branch": "fix/75312-memory-wiki-shared-fallback",
+        "head_sha": "49217c67df72033630348e03b1e81531b9b7a56b",
+        "author": "chen-zhang-cs-code",
         "labels": [
-          "gateway",
-          "commands",
-          "size: S"
+          "size: M",
+          "extensions: memory-wiki"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75440",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75440.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75435",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75435.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 5,
+          "total": 78,
           "counts": {
-            "SUCCESS": 4,
-            "SKIPPED": 1
+            "SUCCESS": 68,
+            "SKIPPED": 8,
+            "IN_PROGRESS": 2
           },
-          "blockers": []
+          "blockers": [
+            "checks-node-agentic-control-plane-runtime:IN_PROGRESS",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+          ]
         }
       },
       "reason": "PR is not opted into ClawSweeper autofix or automerge"
@@ -89,23 +92,23 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1777,
+    "total_ms": 2044,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 342
+        "ms": 333
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1149
+        "ms": 1452
       },
       {
         "name": "classify_commands",
-        "ms": 2
+        "ms": 1
       },
       {
         "name": "execute_commands",
-        "ms": 270
+        "ms": 242
       },
       {
         "name": "append_ledger",

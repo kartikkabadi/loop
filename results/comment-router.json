@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T05:45:57.338Z",
+  "updated_at": "2026-05-01T05:46:22.729Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:59666:4349866241:2026-05-01T00:45:03Z:clawsweeper_needs_human",
-      "comment_id": "4349866241",
-      "comment_version_key": "4349866241:2026-05-01T00:45:03Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/59666#issuecomment-4349866241",
-      "comment_created_at": "2026-04-30T05:12:41Z",
-      "comment_updated_at": "2026-05-01T00:45:03Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 59666,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=a6e33a4d7a23e075cd7725b052e65fe83735856b)",
-      "expected_head_sha": "a6e33a4d7a23e075cd7725b052e65fe83735856b",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75302:4356858340:2026-05-01T01:04:07Z:clawsweeper_auto_merge",
       "comment_id": "4356858340",
@@ -28615,6 +28591,36 @@
         "kind": "pull_request",
         "branch": "fix/gateway-service-path-nonminimal",
         "head_sha": "fa1a81b53aa0944cffbd2fd62bbd7497248e23d9",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75435:4357911264:2026-05-01T05:46:16Z:clawsweeper_needs_human",
+      "comment_id": "4357911264",
+      "comment_version_key": "4357911264:2026-05-01T05:46:16Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75435#issuecomment-4357911264",
+      "comment_created_at": "2026-05-01T05:02:54Z",
+      "comment_updated_at": "2026-05-01T05:46:16Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75435,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=49217c67df72033630348e03b1e81531b9b7a56b)",
+      "expected_head_sha": "49217c67df72033630348e03b1e81531b9b7a56b",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T05:46:22.728Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/75312-memory-wiki-shared-fallback",
+        "head_sha": "49217c67df72033630348e03b1e81531b9b7a56b",
         "cluster_id": null,
         "job_path": null
       }
