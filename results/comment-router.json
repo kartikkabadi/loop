@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T03:04:35.205Z",
+  "updated_at": "2026-05-01T03:05:35.513Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63578:4323759330:2026-04-30T22:40:34Z:clawsweeper_needs_human",
@@ -25896,14 +25896,8 @@
       "expected_head_sha": "e7d63d0df22bbeb9ae2b1e5f292f48f8725fd8cf",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-05-01T02:58:29.016Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "fix/telegram-reply-latency",
-        "head_sha": "e7d63d0df22bbeb9ae2b1e5f292f48f8725fd8cf",
-        "cluster_id": null,
-        "job_path": null
-      }
+      "processed_at": "2026-05-01T03:05:35.512Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75368:4357479865:2026-05-01T02:58:51Z:clawsweeper_auto_repair",
