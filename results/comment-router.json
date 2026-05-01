@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T06:03:07.883Z",
+  "updated_at": "2026-05-01T06:03:50.998Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58434:4357136896:2026-05-01T00:44:13Z:clawsweeper_auto_repair",
-      "comment_id": "4357136896",
-      "comment_version_key": "4357136896:2026-05-01T00:44:13Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/58434#issuecomment-4357136896",
-      "comment_created_at": "2026-05-01T00:44:13Z",
-      "comment_updated_at": "2026-05-01T00:44:13Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 58434,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=ae07bcd787b5ebb7d63f08d07dbd3232e565055d)",
-      "expected_head_sha": "ae07bcd787b5ebb7d63f08d07dbd3232e565055d",
-      "finding_id": "review-feedback",
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58421:4357136805:2026-05-01T00:44:11Z:clawsweeper_auto_repair",
       "comment_id": "4357136805",
@@ -28759,6 +28735,36 @@
         "kind": "pull_request",
         "branch": "fix/incomplete-bundled-runtime-deps-staging",
         "head_sha": "a7c5c7d2606ca9e5f885c683dc507e37cb40e019",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:68505:4341596690:2026-05-01T06:03:45Z:clawsweeper_needs_human",
+      "comment_id": "4341596690",
+      "comment_version_key": "4341596690:2026-05-01T06:03:45Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/68505#issuecomment-4341596690",
+      "comment_created_at": "2026-04-29T07:09:30Z",
+      "comment_updated_at": "2026-05-01T06:03:45Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 68505,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=3408ed2edaac77111d756e3abd0c08815c53af8d)",
+      "expected_head_sha": "3408ed2edaac77111d756e3abd0c08815c53af8d",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T06:03:50.997Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/dreaming-rem-heading-levels",
+        "head_sha": "3408ed2edaac77111d756e3abd0c08815c53af8d",
         "cluster_id": null,
         "job_path": null
       }
