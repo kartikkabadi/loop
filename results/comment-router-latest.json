@@ -1,20 +1,20 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:01:49.605Z",
+  "generated_at": "2026-05-01T04:03:47.250Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:01:47.535Z",
+  "since": "2026-05-01T01:03:45.715Z",
   "execute": true,
-  "force_reprocess": true,
   "max_comments": 1000,
   "item_numbers": [
-    75415
+    75413
   ],
+  "comment_ids": [],
   "max_autoclose_targets": 8,
   "scanned_comments": 1,
   "commands_seen": 1,
-  "actionable": 1,
+  "actionable": 0,
   "trusted_bots": [
     "clawsweeper[bot]",
     "openclaw-clawsweeper[bot]"
@@ -29,16 +29,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75415:4357725429:2026-05-01T04:01:40Z:clawsweeper_needs_human",
-      "comment_id": "4357725429",
-      "comment_version_key": "4357725429:2026-05-01T04:01:40Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75415#issuecomment-4357725429",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75413:4357717616:2026-05-01T04:03:41Z:clawsweeper_needs_human",
+      "comment_id": "4357717616",
+      "comment_version_key": "4357717616:2026-05-01T04:03:41Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75413#issuecomment-4357717616",
       "repo": "openclaw/openclaw",
-      "issue_number": 75415,
+      "issue_number": 75413,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:58:52Z",
-      "comment_updated_at": "2026-05-01T04:01:40Z",
+      "comment_created_at": "2026-05-01T03:55:53Z",
+      "comment_updated_at": "2026-05-01T04:03:41Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -46,62 +46,59 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=18d1d3dbaba6eef11cdfdb51eb9f87646b6e3818)",
-      "review_summary": "",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=bb3bb7581fe73ffff18a10ddf596ff85ba5a24b2)",
+      "review_summary": "The PR adds `python3` to the gateway Docker runtime apt baseline, updates Docker install docs and the changelog, and extends Dockerfile tests to assert the new package/docs contract.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "18d1d3dbaba6eef11cdfdb51eb9f87646b6e3818",
+      "expected_head_sha": "bb3bb7581fe73ffff18a10ddf596ff85ba5a24b2",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(agent-tools): skip device identity for agent loopback gateway calls",
-        "branch": "fix/agent-tools-skip-device-identity",
-        "head_sha": "18d1d3dbaba6eef11cdfdb51eb9f87646b6e3818",
-        "author": "shadowwalker2014",
+        "title": "fix(docker): include python3 in gateway runtime image",
+        "branch": "codex/issue-75041-python3-runtime",
+        "head_sha": "bb3bb7581fe73ffff18a10ddf596ff85ba5a24b2",
+        "author": "chen-zhang-cs-code",
         "labels": [
-          "agents",
+          "docs",
+          "docker",
           "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75415",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75415.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75413",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75413.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "CLEAN",
         "review_decision": "",
         "checks": {
-          "total": 103,
+          "total": 96,
           "counts": {
-            "CANCELLED": 1,
-            "IN_PROGRESS": 2,
-            "SKIPPED": 23,
-            "SUCCESS": 76,
+            "CANCELLED": 2,
+            "SKIPPED": 12,
+            "SUCCESS": 81,
             "NEUTRAL": 1
           },
-          "blockers": [
-            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
-          ]
+          "blockers": []
         }
       },
-      "reason": "target is not open"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2245,
+    "total_ms": 1666,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 305
+        "ms": 237
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1755
+        "ms": 1287
       },
       {
         "name": "classify_commands",
@@ -109,7 +106,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 165
+        "ms": 125
       },
       {
         "name": "append_ledger",
