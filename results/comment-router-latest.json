@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:59:29.915Z",
+  "generated_at": "2026-05-01T05:59:27.361Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:59:28.202Z",
+  "since": "2026-05-01T02:59:25.440Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75423
+    75451
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75423:4357804577:2026-05-01T05:59:25Z:clawsweeper_auto_repair",
-      "comment_id": "4357804577",
-      "comment_version_key": "4357804577:2026-05-01T05:59:25Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75423#issuecomment-4357804577",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75451:4358050667:2026-05-01T05:59:21Z:clawsweeper_needs_human",
+      "comment_id": "4358050667",
+      "comment_version_key": "4358050667:2026-05-01T05:59:21Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75451#issuecomment-4358050667",
       "repo": "openclaw/openclaw",
-      "issue_number": 75423,
+      "issue_number": 75451,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T04:27:47Z",
-      "comment_updated_at": "2026-05-01T05:59:25Z",
+      "comment_created_at": "2026-05-01T05:53:36Z",
+      "comment_updated_at": "2026-05-01T05:59:21Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper auto repair",
       "intent": "clawsweeper_auto_repair",
@@ -47,43 +47,39 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=d5bc65b1bfada4420aac9ae4e2829bff537eb695)",
-      "review_summary": "The PR bypasses stale cached gateway channel health when live runtime lifecycle state differs, forwards configured fast mode into embedded agent runs, defaults missing PI model cost metadata, ends OpenAI SSE fallback streams, and adds focused regression tests.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=03f36178785c69feca89c09609e92a460d45dcf1)",
+      "review_summary": "The PR adds a process-local `discoverOpenClawPlugins()` result cache keyed by roots/load paths/ownership/env, exports `clearPluginDiscoveryCache()`, updates discovery tests to clear the cache, and adds a changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "d5bc65b1bfada4420aac9ae4e2829bff537eb695",
-      "finding_id": "review-feedback",
+      "expected_head_sha": "03f36178785c69feca89c09609e92a460d45dcf1",
+      "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(gateway): refresh stale channel health cache",
-        "branch": "codex/fix-discord-health-source-install",
-        "head_sha": "d5bc65b1bfada4420aac9ae4e2829bff537eb695",
-        "author": "steipete",
+        "title": "perf: cache plugin discovery scan to eliminate redundant filesystem walks",
+        "branch": "cache-plugin-discovery-scan",
+        "head_sha": "03f36178785c69feca89c09609e92a460d45dcf1",
+        "author": "sebtardif",
         "labels": [
-          "gateway",
-          "commands",
-          "agents",
-          "maintainer",
-          "size: M"
+          "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75423",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75423.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75451",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75451.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 102,
+          "total": 100,
           "counts": {
-            "FAILURE": 6,
-            "IN_PROGRESS": 2,
-            "SUCCESS": 73,
-            "SKIPPED": 20,
+            "SUCCESS": 75,
+            "SKIPPED": 21,
+            "IN_PROGRESS": 1,
+            "FAILURE": 2,
             "NEUTRAL": 1
           },
           "blockers": [
@@ -103,15 +99,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1846,
+    "total_ms": 2169,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 206
+        "ms": 331
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1497
+        "ms": 1581
       },
       {
         "name": "classify_commands",
@@ -119,7 +115,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 124
+        "ms": 238
       },
       {
         "name": "append_ledger",

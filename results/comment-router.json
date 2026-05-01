@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T05:59:30.040Z",
+  "updated_at": "2026-05-01T05:59:27.600Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58482:4357137323:2026-05-01T00:44:22Z:clawsweeper_auto_repair",
@@ -28704,31 +28704,31 @@
       }
     },
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75423:4357804577:2026-05-01T05:59:25Z:clawsweeper_auto_repair",
-      "comment_id": "4357804577",
-      "comment_version_key": "4357804577:2026-05-01T05:59:25Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75423#issuecomment-4357804577",
-      "comment_created_at": "2026-05-01T04:27:47Z",
-      "comment_updated_at": "2026-05-01T05:59:25Z",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75451:4358050667:2026-05-01T05:59:21Z:clawsweeper_needs_human",
+      "comment_id": "4358050667",
+      "comment_version_key": "4358050667:2026-05-01T05:59:21Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75451#issuecomment-4358050667",
+      "comment_created_at": "2026-05-01T05:53:36Z",
+      "comment_updated_at": "2026-05-01T05:59:21Z",
       "repo": "openclaw/openclaw",
-      "issue_number": 75423,
+      "issue_number": 75451,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
       "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=d5bc65b1bfada4420aac9ae4e2829bff537eb695)",
-      "expected_head_sha": "d5bc65b1bfada4420aac9ae4e2829bff537eb695",
-      "finding_id": "review-feedback",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=03f36178785c69feca89c09609e92a460d45dcf1)",
+      "expected_head_sha": "03f36178785c69feca89c09609e92a460d45dcf1",
+      "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-05-01T05:59:30.040Z",
+      "processed_at": "2026-05-01T05:59:27.599Z",
       "target": {
         "kind": "pull_request",
-        "branch": "codex/fix-discord-health-source-install",
-        "head_sha": "d5bc65b1bfada4420aac9ae4e2829bff537eb695",
+        "branch": "cache-plugin-discovery-scan",
+        "head_sha": "03f36178785c69feca89c09609e92a460d45dcf1",
         "cluster_id": null,
         "job_path": null
       }
