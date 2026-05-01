@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T06:02:27.950Z",
+  "generated_at": "2026-05-01T06:02:45.101Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T03:02:26.863Z",
+  "since": "2026-05-01T03:02:43.504Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75445
+    75440
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75445:4358014426:2026-05-01T06:02:22Z:clawsweeper_needs_human",
-      "comment_id": "4358014426",
-      "comment_version_key": "4358014426:2026-05-01T06:02:22Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75445#issuecomment-4358014426",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75440:4357986654:2026-05-01T06:02:40Z:clawsweeper_needs_human",
+      "comment_id": "4357986654",
+      "comment_version_key": "4357986654:2026-05-01T06:02:40Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75440#issuecomment-4357986654",
       "repo": "openclaw/openclaw",
-      "issue_number": 75445,
+      "issue_number": 75440,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:40:12Z",
-      "comment_updated_at": "2026-05-01T06:02:22Z",
+      "comment_created_at": "2026-05-01T05:30:04Z",
+      "comment_updated_at": "2026-05-01T06:02:40Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,42 +47,52 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e5bc27823adc9e5b4254ae5c2e55541ab89bed88)",
-      "review_summary": "The PR adds unresolved-SecretRef tolerance for Discord and Telegram message-action discovery, Telegram inline-button and reaction-guidance prompt discovery, focused regression tests, and a changelog entry for the embedded reply crash.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b78b5c91c9e87cba7f3fa1974c2629b868860d4b)",
+      "review_summary": "The PR extracts a shared service PATH non-minimal policy, filters stale preserved existing PATH additions during gateway install planning, and adds daemon install/audit tests plus a changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "e5bc27823adc9e5b4254ae5c2e55541ab89bed88",
+      "expected_head_sha": "b78b5c91c9e87cba7f3fa1974c2629b868860d4b",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(channels): tolerate unresolved SecretRef tokens during Discord/Telegram channel-actions discovery",
-        "branch": "fix/75433-channel-actions-secretref",
-        "head_sha": "e5bc27823adc9e5b4254ae5c2e55541ab89bed88",
-        "author": "lonexreb",
+        "title": "fix: drop stale service PATH entries",
+        "branch": "fix/gateway-service-path-nonminimal",
+        "head_sha": "b78b5c91c9e87cba7f3fa1974c2629b868860d4b",
+        "author": "leonaiee",
         "labels": [
-          "channel: discord",
-          "channel: telegram",
-          "size: M"
+          "gateway",
+          "commands",
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75445",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75445.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75440",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75440.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 8,
+          "total": 86,
           "counts": {
-            "CANCELLED": 1,
-            "SKIPPED": 3,
-            "SUCCESS": 4
+            "SUCCESS": 70,
+            "SKIPPED": 8,
+            "FAILURE": 6,
+            "IN_PROGRESS": 1,
+            "NEUTRAL": 1
           },
-          "blockers": []
+          "blockers": [
+            "checks-node-agentic-cli:FAILURE",
+            "check-dependencies:FAILURE",
+            "check-additional-boundaries:FAILURE",
+            "checks-node-core-support-boundary:FAILURE",
+            "check:FAILURE",
+            "check-additional:FAILURE",
+            "checks-node-core:IN_PROGRESS"
+          ]
         }
       },
       "reason": "PR is not opted into ClawSweeper autofix or automerge"
@@ -90,15 +100,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1255,
+    "total_ms": 1727,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 254
+        "ms": 221
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 822
+        "ms": 1365
       },
       {
         "name": "classify_commands",
@@ -106,7 +116,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 161
+        "ms": 123
       },
       {
         "name": "append_ledger",
