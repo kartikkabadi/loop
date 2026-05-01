@@ -30,6 +30,8 @@ not split reports into issue/PR subtrees.
   `batch_size * shard_count`.
 - The README dashboard is the live status surface. Check current Actions and the
   remote README before trusting local dashboard timestamps.
+- When referencing GitHub issues or PRs in user-facing output, always include
+  the full GitHub URL, not only `#12345`.
 
 ## Safety Rules
 
