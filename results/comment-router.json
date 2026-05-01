@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:46:58.648Z",
+  "updated_at": "2026-05-01T04:47:10.420Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72358:4323944930:2026-05-01T00:48:45Z:clawsweeper_needs_human",
-      "comment_id": "4323944930",
-      "comment_version_key": "4323944930:2026-05-01T00:48:45Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72358#issuecomment-4323944930",
-      "comment_created_at": "2026-04-27T03:29:55Z",
-      "comment_updated_at": "2026-05-01T00:48:45Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72358,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=60c2e95575aa8c8a4e6adf09dbc3a8850aec2468)",
-      "expected_head_sha": "60c2e95575aa8c8a4e6adf09dbc3a8850aec2468",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72352:4322976369:2026-05-01T00:48:43Z:clawsweeper_auto_repair",
       "comment_id": "4322976369",
@@ -27977,10 +27953,40 @@
       "processed_at": "2026-05-01T04:46:36.208Z",
       "target": {
         "kind": "pull_request",
-        "branch": "feat/proxy-validate",
-        "head_sha": "86f19936afc53a0df1f1cd911c4c62a201225766",
-        "cluster_id": "automerge-openclaw-openclaw-73438",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73438.md"
+        "branch": "feat/bluebubbles-reply-context-api-fallback",
+        "head_sha": "b41b207a00218c4014b9cb50faa486f50bf0fdb1",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "comment-router:openclaw/openclaw:75308:4357863805:2026-05-01T04:46:29Z:freeform_assist",
+      "comment_id": "4357863805",
+      "comment_version_key": "4357863805:2026-05-01T04:46:29Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75308#issuecomment-4357863805",
+      "comment_created_at": "2026-05-01T04:46:29Z",
+      "comment_updated_at": "2026-05-01T04:46:29Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75308,
+      "author": "pashpashpash",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "mention",
+      "command": "auto-merge",
+      "intent": "freeform_assist",
+      "trusted_bot": false,
+      "trusted_bot_author": null,
+      "automation_source": null,
+      "repair_reason": null,
+      "expected_head_sha": null,
+      "finding_id": null,
+      "status": "executed",
+      "processed_at": "2026-05-01T04:47:10.419Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "codex/native-first-dynamic-tools-pr",
+        "head_sha": "411f0c7a1af4a5052de578d6b5eeac3842a0fe2a",
+        "cluster_id": null,
+        "job_path": null
       },
       "actions": [
         {

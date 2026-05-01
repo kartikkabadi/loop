@@ -1,18 +1,18 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:46:56.188Z",
+  "generated_at": "2026-05-01T04:47:08.720Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:46:54.343Z",
+  "since": "2026-05-01T01:47:06.774Z",
   "execute": true,
   "force_reprocess": true,
   "max_comments": 1000,
   "item_numbers": [
-    73632
+    75308
   ],
   "comment_ids": [
-    4357708582
+    4357863805
   ],
   "max_autoclose_targets": 8,
   "scanned_comments": 1,
@@ -32,19 +32,19 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "comment-router:openclaw/openclaw:73632:4357708582:2026-05-01T03:52:09Z:automerge",
-      "comment_id": "4357708582",
-      "comment_version_key": "4357708582:2026-05-01T03:52:09Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73632#issuecomment-4357708582",
+      "idempotency_key": "comment-router:openclaw/openclaw:75308:4357863805:2026-05-01T04:46:29Z:freeform_assist",
+      "comment_id": "4357863805",
+      "comment_version_key": "4357863805:2026-05-01T04:46:29Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75308#issuecomment-4357863805",
       "repo": "openclaw/openclaw",
-      "issue_number": 73632,
-      "author": "joshavant",
+      "issue_number": 75308,
+      "author": "pashpashpash",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:52:09Z",
-      "comment_updated_at": "2026-05-01T03:52:09Z",
+      "comment_created_at": "2026-05-01T04:46:29Z",
+      "comment_updated_at": "2026-05-01T04:46:29Z",
       "trigger": "mention",
-      "command": "automerge",
-      "intent": "automerge",
+      "command": "auto-merge",
+      "intent": "freeform_assist",
       "autoclose_message": null,
       "trusted_bot": false,
       "trusted_bot_author": null,
@@ -52,60 +52,56 @@
       "repair_reason": null,
       "review_summary": "",
       "review_followup": "",
-      "freeform_prompt": null,
+      "freeform_prompt": "auto-merge",
       "expected_head_sha": null,
       "finding_id": null,
       "status": "executed",
       "actions": [
         {
-          "action": "label",
-          "label": "clawsweeper:automerge",
-          "status": "executed"
-        },
-        {
           "action": "dispatch_clawsweeper",
           "workflow": "sweep.yml",
           "status": "executed",
-          "dispatched_at": "2026-05-01T04:46:57.820Z",
+          "dispatched_at": "2026-05-01T04:47:09.526Z",
           "event": "repository_dispatch",
           "repo": "openclaw/clawsweeper",
-          "item_number": 73632
+          "item_number": 75308
         },
         {
           "action": "comment",
           "status": "executed",
-          "commented_at": "2026-05-01T04:46:58.647Z",
-          "response_comment_id": "4357710247",
-          "response_comment_mode": "updated"
+          "commented_at": "2026-05-01T04:47:10.419Z",
+          "response_comment_id": null,
+          "response_comment_mode": "created"
         }
       ],
       "author_repository_permission": "write",
       "target": {
         "kind": "pull_request",
-        "title": "fix voice-call SecretRef auth token",
-        "branch": "fix-voice-call-secretref-auth-token",
-        "head_sha": "a0b43ad09f523dc6f4a62399b3bc06a072485a68",
-        "author": "vacinc",
+        "title": "Prefer Codex native workspace tools",
+        "branch": "codex/native-first-dynamic-tools-pr",
+        "head_sha": "411f0c7a1af4a5052de578d6b5eeac3842a0fe2a",
+        "author": "steipete",
         "labels": [
           "docs",
-          "channel: voice-call",
+          "agents",
+          "maintainer",
           "size: S",
-          "clawsweeper:automerge"
+          "extensions: codex"
         ],
         "is_clawsweeper_pr": false,
-        "cluster_id": "automerge-openclaw-openclaw-73632",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-73632",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md",
+        "cluster_id": null,
+        "job_path": null,
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75308",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75308.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "CLEAN",
         "review_decision": "",
         "checks": {
-          "total": 104,
+          "total": 88,
           "counts": {
-            "SKIPPED": 18,
-            "SUCCESS": 85,
+            "SUCCESS": 78,
+            "SKIPPED": 9,
             "NEUTRAL": 1
           },
           "blockers": []
@@ -115,15 +111,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 4311,
+    "total_ms": 3652,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 334
+        "ms": 387
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1502
+        "ms": 1548
       },
       {
         "name": "classify_commands",
@@ -131,7 +127,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 2459
+        "ms": 1699
       },
       {
         "name": "append_ledger",
