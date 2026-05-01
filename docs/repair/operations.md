@@ -210,6 +210,11 @@ include the target PR head SHA. That lets edited ClawSweeper comments wake
 ClawSweeper again after the PR branch changes while unchanged comment versions
 remain idempotent.
 
+Use `--item-number <number>` or `--item-numbers <a,b>` to route only specific
+open issue or PR comments. The event review workflow uses this targeted path
+after syncing its durable ClawSweeper verdict so automerge can act on a fresh
+`pass` marker without waiting for the scheduled comment-router sweep.
+
 If the adopted automerge worker returns no executable fix artifact, the
 executor posts one idempotent outcome comment on the opted-in PR. That status
 comment is the audit trail for no-op repair passes: it says no branch update,

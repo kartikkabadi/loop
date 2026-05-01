@@ -89,6 +89,7 @@ const {
   maxAutoRepairsPerPr,
   lookupConcurrency,
   since,
+  itemNumbers,
   allowedAssociations,
   allowedRepositoryPermissions,
   trustedBots,
@@ -160,6 +161,7 @@ const report: LooseRecord = {
   since,
   execute,
   max_comments: maxComments,
+  item_numbers: [...itemNumbers],
   max_autoclose_targets: maxAutocloseTargets,
   scanned_comments: comments.length,
   commands_seen: commands.length,
@@ -174,6 +176,7 @@ const report: LooseRecord = {
 
 if (execute) {
   assertMutationActorIsClawsweeperBot();
+  for (const command of commands) acknowledgeSkippedMaintainerCommand(command);
   const dispatchCount = actionable.filter((command: JsonValue) =>
     REPAIR_INTENTS.has(command.intent),
   ).length;
@@ -1044,7 +1047,6 @@ function executeCommand(command: LooseRecord) {
   }
 
   const commentResult = postComment(command, renderResponse(command, dispatched));
-  if (!command.trusted_bot) reactToComment(command, "+1");
   command.actions = command.actions.map((action: JsonValue) =>
     action.action === "comment"
       ? {
@@ -1057,6 +1059,12 @@ function executeCommand(command: LooseRecord) {
       : action,
   );
   command.status = "executed";
+}
+
+function acknowledgeSkippedMaintainerCommand(command: LooseRecord) {
+  if (command.trusted_bot || command.status !== "skipped") return;
+  if (!/already enabled for this PR/i.test(String(command.reason ?? ""))) return;
+  reactToComment(command, "eyes");
 }
 
 function ensureAutomergeJob(command: LooseRecord) {
@@ -1702,6 +1710,13 @@ function listRecentComments() {
 }
 
 function listCandidateComments() {
+  if (itemNumbers.size > 0) {
+    return selectCommentsForRouting({
+      recentComments: [...itemNumbers].flatMap((number) => issueCommentsFor(number)),
+      durableComments: [],
+      maxComments,
+    });
+  }
   return selectCommentsForRouting({
     recentComments: listRecentComments(),
     durableComments: listRepairLoopReviewComments(),

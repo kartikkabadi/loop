@@ -28,6 +28,11 @@ on:
         required: true
         default: "100"
         type: string
+      item_numbers:
+        description: "Optional comma-separated issue or PR numbers to route directly"
+        required: false
+        default: ""
+        type: string
       runner:
         description: "Runner label for repair planning/review work"
         required: true
@@ -89,6 +94,7 @@ jobs:
           lookback_minutes="${{ github.event_name == 'workflow_dispatch' && inputs.lookback_minutes || vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}"
           since="${{ github.event_name == 'workflow_dispatch' && inputs.since || '' }}"
           max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '100' }}"
+          item_numbers="${{ github.event_name == 'workflow_dispatch' && inputs.item_numbers || '' }}"
           runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
           execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
 
@@ -103,6 +109,9 @@ jobs:
           )
           if [ -n "$since" ]; then
             args+=(--since "$since")
+          fi
+          if [ -n "$item_numbers" ]; then
+            args+=(--item-numbers "$item_numbers")
           fi
           if { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.execute }}" = "true" ]; } ||
              { [ "${{ github.event_name }}" = "schedule" ] && [ "${{ vars.CLAWSWEEPER_COMMENT_ROUTER_EXECUTE || '0' }}" = "1" ]; }; then

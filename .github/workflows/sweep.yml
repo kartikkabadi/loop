@@ -326,6 +326,36 @@ jobs:
           MIN_AGE_MINUTES: ${{ github.event.client_payload.apply_min_age_minutes || '0' }}
         run: pnpm run repair:publish-event-result
 
+      - name: Route synced ClawSweeper verdict
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+          CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app
+          CLAWSWEEPER_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_ALLOW_AUTOMERGE || '0' }}
+          CLAWSWEEPER_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_ALLOW_MERGE || '0' }}
+          CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES: ${{ vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}
+          CLAWSWEEPER_COMMENT_MAX_COMMENTS: ${{ vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '1000' }}
+        run: |
+          set -euo pipefail
+          pnpm run repair:comment-router -- \
+            --write-report \
+            --repo "$TARGET_REPO" \
+            --item-number "$ITEM_NUMBER" \
+            --lookback-minutes "$CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES" \
+            --max-comments "$CLAWSWEEPER_COMMENT_MAX_COMMENTS" \
+            --execute
+
+      - name: Commit event comment router ledger
+        if: always()
+        run: |
+          pnpm run repair:publish-main -- \
+            --message "chore: record ClawSweeper event comment routing" \
+            --path results/comment-router.json \
+            --path results/comment-router-latest.json \
+            --path jobs \
+            --rebase-strategy theirs
+
       - name: React to target item completion
         if: ${{ success() }}
         continue-on-error: true

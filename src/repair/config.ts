@@ -34,6 +34,7 @@ export type CommentRouterConfig = {
   lookupConcurrency: number;
   lookbackMinutes: number;
   since: string;
+  itemNumbers: Set<number>;
   allowedAssociations: Set<string>;
   allowedRepositoryPermissions: Set<string>;
   trustedBots: Set<string>;
@@ -121,6 +122,12 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
       args.since,
       new Date(Date.now() - lookbackMinutes * 60 * 1000).toISOString(),
     ),
+    itemNumbers: numberSet(
+      [args["item-number"], args["item-numbers"], process.env.CLAWSWEEPER_COMMENT_ITEM_NUMBERS]
+        .filter((value) => value !== undefined && value !== null)
+        .join(","),
+      "item-numbers",
+    ),
     allowedAssociations: upperCaseSet(
       process.env.CLAWSWEEPER_COMMENT_ALLOWED_ASSOCIATIONS ??
         DEFAULT_ALLOWED_ASSOCIATIONS.join(","),
@@ -159,4 +166,18 @@ function upperCaseSet(value: JsonValue): Set<string> {
       .map((item) => item.trim().toUpperCase())
       .filter(Boolean),
   );
+}
+
+function numberSet(value: JsonValue, name: string): Set<number> {
+  const numbers = new Set<number>();
+  for (const item of String(value ?? "").split(",")) {
+    const trimmed = item.trim();
+    if (!trimmed) continue;
+    const number = Number(trimmed);
+    if (!Number.isInteger(number) || number <= 0) {
+      throw new Error(`invalid ${name}: expected positive integer, got ${trimmed}`);
+    }
+    numbers.add(number);
+  }
+  return numbers;
 }
