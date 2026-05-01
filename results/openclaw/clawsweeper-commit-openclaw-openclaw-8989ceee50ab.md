@@ -2,16 +2,16 @@
 repo: "openclaw/openclaw"
 cluster_id: "clawsweeper-commit-openclaw-openclaw-8989ceee50ab"
 mode: "autonomous"
-run_id: "25200467866"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25200467866"
-head_sha: "b6f9a88f7ef25867bcf0e4e517d7f9f5a2b65985"
+run_id: "25202541355"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25202541355"
+head_sha: "608eef4eb86affcd1125009b55c54a58305a6b51"
 workflow_conclusion: "success"
 result_status: "planned"
-published_at: "2026-05-01T03:21:37.724Z"
+published_at: "2026-05-01T04:50:33.808Z"
 canonical: null
 canonical_issue: null
 canonical_pr: null
-actions_total: 1
+actions_total: 3
 fix_executed: 0
 fix_failed: 0
 fix_blocked: 0
@@ -25,7 +25,7 @@ needs_human_count: 0
 
 Repo: openclaw/openclaw
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25200467866](https://github.com/openclaw/clawsweeper/actions/runs/25200467866)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25202541355](https://github.com/openclaw/clawsweeper/actions/runs/25202541355)
 
 Workflow conclusion: success
 
@@ -35,13 +35,13 @@ Canonical: unknown
 
 ## Summary
 
-Found one regression: the commit removes the runtime warning for the default group/channel private-reply behavior, but the new doctor warning only covers the narrower “message tool unavailable” mismatch. A common upgraded config with channels configured and the message tool available still gets no runtime warning and no doctor warning, while normal final replies remain private.
+Verified the ClawSweeper commit finding against current main 5d1ba08e3c97afa3f90b065d293ceff2bfa9b767. The reported regression is still present: doctor warning collection returns no warning when the message tool is available, while group/channel source reply delivery still defaults to message_tool_only and suppresses normal visible final replies. A narrow non-security fix PR is warranted.
 
 ## Impact
 
 | Metric | Count |
 | --- | ---: |
-| Worker actions | 1 |
+| Worker actions | 3 |
 | Fix executed | 0 |
 | Fix failed | 0 |
 | Fix blocked | 0 |
@@ -66,7 +66,9 @@ Found one regression: the commit removes the runtime warning for the default gro
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| cluster:clawsweeper-commit-openclaw-openclaw-8989ceee50ab | build_fix_artifact | planned |  | ClawSweeper found an actionable commit-level bug/regression candidate. |
+| cluster:clawsweeper-commit-openclaw-openclaw-8989ceee50ab | fix_needed | planned |  | No viable existing canonical PR is hydrated; allow_fix_pr is true, and the bug can be repaired with a narrow doctor-warning/test/changelog patch. |
+| cluster:clawsweeper-commit-openclaw-openclaw-8989ceee50ab | build_fix_artifact | planned |  | Build a narrow implementation PR from the cluster target branch. |
+| cluster:clawsweeper-commit-openclaw-openclaw-8989ceee50ab | open_fix_pr | planned |  | After applying the narrow fix and validation, open or update the ClawSweeper implementation PR; do not merge. |
 
 ## Needs Human
 

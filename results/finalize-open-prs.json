@@ -2,7 +2,7 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-05-01T04:49:30.969Z",
+  "generated_at": "2026-05-01T04:52:09.918Z",
   "count": 16,
   "summary": {
     "open_prs": 16,
@@ -10,7 +10,7 @@
     "security_hold": 0,
     "needs_rebase": 2,
     "mergeability_unknown": 0,
-    "needs_checks": 5,
+    "needs_checks": 3,
     "needs_review": 0,
     "needs_merge_preflight": 16,
     "needs_result_backfill": 0
@@ -101,29 +101,21 @@
       "head_sha": "a5f5ddb7830f31e58996be05cf855c8ba21c9c93",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-45b86450795d",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-45b86450795d.md",
-      "updated_at": "2026-05-01T04:46:14Z",
+      "updated_at": "2026-05-01T04:49:32Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 97,
+        "total": 102,
         "counts": {
-          "IN_PROGRESS": 9,
-          "SUCCESS": 65,
+          "SUCCESS": 78,
           "SKIPPED": 22,
+          "QUEUED": 1,
           "NEUTRAL": 1
         },
         "blockers": [
-          "CodeQL / Security High (core-auth-secrets):IN_PROGRESS",
-          "CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS",
-          "CI / build-artifacts:IN_PROGRESS",
-          "CodeQL Critical Quality / Critical Quality (channel-runtime-boundary):IN_PROGRESS",
-          "CI / checks-node-core-fast-support:IN_PROGRESS",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS"
+          "CI / checks-node-core:QUEUED"
         ]
       },
       "review_threads": {
@@ -167,7 +159,7 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:CodeQL / Security High (core-auth-secrets):IN_PROGRESS; CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS",
+        "needs_checks:CI / checks-node-core:QUEUED",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
@@ -247,28 +239,21 @@
       "head_sha": "12df57871ed8b7b2074fd29d6041cba0635540fb",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-354084b1b320",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-354084b1b320.md",
-      "updated_at": "2026-05-01T04:46:36Z",
+      "updated_at": "2026-05-01T04:50:11Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 97,
+        "total": 101,
         "counts": {
-          "SUCCESS": 66,
-          "IN_PROGRESS": 8,
+          "SUCCESS": 77,
           "SKIPPED": 22,
+          "IN_PROGRESS": 1,
           "NEUTRAL": 1
         },
         "blockers": [
-          "CodeQL / Security High (network-ssrf-boundary):IN_PROGRESS",
-          "CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS",
-          "CI / build-artifacts:IN_PROGRESS",
-          "CI / checks-node-core-fast-support:IN_PROGRESS",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS"
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
         ]
       },
       "review_threads": {
@@ -312,7 +297,7 @@
       },
       "blockers": [
         "needs_merge_state:UNSTABLE",
-        "needs_checks:CodeQL / Security High (network-ssrf-boundary):IN_PROGRESS; CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS",
+        "needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
         "needs_merge_preflight"
       ],
       "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
@@ -392,32 +377,19 @@
       "head_sha": "92839044775bfa57afb3b6efc7cc1665abc0fc98",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-8989ceee50ab",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-8989ceee50ab.md",
-      "updated_at": "2026-05-01T04:46:46Z",
+      "updated_at": "2026-05-01T04:50:15Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "merge_state_status": "CLEAN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 82,
+        "total": 87,
         "counts": {
-          "SUCCESS": 62,
-          "IN_PROGRESS": 9,
+          "SUCCESS": 77,
           "SKIPPED": 9,
-          "QUEUED": 1,
           "NEUTRAL": 1
         },
-        "blockers": [
-          "CodeQL / Security High (channel-runtime-boundary):IN_PROGRESS",
-          "CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS",
-          "CI / build-artifacts:IN_PROGRESS",
-          "CI / checks-node-core-fast-support:IN_PROGRESS",
-          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
-          "CI / checks-node-agentic-commands-status-tools:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
-          "CI / checks-fast-contracts-channels:QUEUED"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -437,10 +409,10 @@
         ]
       },
       "latest_record": {
-        "run_id": "25200467866",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25200467866",
+        "run_id": "25202541355",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25202541355",
         "cluster_id": "clawsweeper-commit-openclaw-openclaw-8989ceee50ab",
-        "published_at": "2026-05-01T03:21:37.724Z",
+        "published_at": "2026-05-01T04:50:33.808Z",
         "workflow_conclusion": "success",
         "apply_action": {
           "target": "#75388",
@@ -459,11 +431,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CodeQL / Security High (channel-runtime-boundary):IN_PROGRESS; CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 75383,
@@ -949,26 +919,19 @@
       "head_sha": "cfb8cf5c4941158983753320533b0dedd440cdfe",
       "cluster_id": "automerge-openclaw-openclaw-74506",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
-      "updated_at": "2026-05-01T04:47:05Z",
+      "updated_at": "2026-05-01T04:51:44Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "merge_state_status": "CLEAN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 90,
+        "total": 98,
         "counts": {
-          "SUCCESS": 62,
-          "SKIPPED": 22,
-          "IN_PROGRESS": 6
+          "SKIPPED": 23,
+          "SUCCESS": 74,
+          "NEUTRAL": 1
         },
-        "blockers": [
-          "CI / build-artifacts:IN_PROGRESS",
-          "CodeQL Critical Quality / Critical Quality (channel-runtime-boundary):IN_PROGRESS",
-          "CI / checks-node-core-fast-support:IN_PROGRESS",
-          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -1010,11 +973,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / build-artifacts:IN_PROGRESS; CodeQL Critical Quality / Critical Quality (channel-runtime-boundary):IN_PROGRESS; CI / checks-node-core-fast-support:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 75148,
