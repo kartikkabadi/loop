@@ -1,21 +1,23 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:38:34.766Z",
+  "generated_at": "2026-05-01T05:41:30.476Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:38:33.273Z",
+  "since": "2026-05-01T02:41:28.315Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75435
+    75230
   ],
-  "comment_ids": [],
+  "comment_ids": [
+    4358016389
+  ],
   "max_autoclose_targets": 8,
   "scanned_comments": 1,
   "commands_seen": 1,
-  "actionable": 0,
+  "actionable": 1,
   "trusted_bots": [
     "clawsweeper[bot]",
     "openclaw-clawsweeper[bot]"
@@ -30,84 +32,114 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75435:4357911264:2026-05-01T05:38:29Z:clawsweeper_needs_human",
-      "comment_id": "4357911264",
-      "comment_version_key": "4357911264:2026-05-01T05:38:29Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75435#issuecomment-4357911264",
+      "idempotency_key": "comment-router:openclaw/openclaw:75230:4358016389:2026-05-01T05:40:51Z:automerge",
+      "comment_id": "4358016389",
+      "comment_version_key": "4358016389:2026-05-01T05:40:51Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75230#issuecomment-4358016389",
       "repo": "openclaw/openclaw",
-      "issue_number": 75435,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:02:54Z",
-      "comment_updated_at": "2026-05-01T05:38:29Z",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "issue_number": 75230,
+      "author": "thewilloftheshadow",
+      "author_association": "MEMBER",
+      "comment_created_at": "2026-05-01T05:40:51Z",
+      "comment_updated_at": "2026-05-01T05:40:51Z",
+      "trigger": "mention",
+      "command": "automerge",
+      "intent": "automerge",
       "autoclose_message": null,
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=3b8c4e70f2ad8704b9af1dcc71d3090683e6eef6)",
-      "review_summary": "The PR adds a defensive memory-wiki shared-search helper, query/tool regression tests for malformed or throwing shared managers, and a changelog fix entry for the linked wiki_search bug.",
+      "trusted_bot": false,
+      "trusted_bot_author": null,
+      "automation_source": null,
+      "repair_reason": null,
+      "review_summary": "",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "3b8c4e70f2ad8704b9af1dcc71d3090683e6eef6",
+      "expected_head_sha": null,
       "finding_id": null,
-      "status": "skipped",
-      "actions": [],
+      "status": "executed",
+      "actions": [
+        {
+          "action": "ensure_automerge_job",
+          "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75230.md",
+          "status": "executed",
+          "mode": "autonomous",
+          "cluster_id": "automerge-openclaw-openclaw-75230",
+          "status_detail": "written"
+        },
+        {
+          "action": "label",
+          "label": "clawsweeper:automerge",
+          "status": "executed"
+        },
+        {
+          "action": "dispatch_clawsweeper",
+          "workflow": "sweep.yml",
+          "status": "executed",
+          "dispatched_at": "2026-05-01T05:41:33.282Z",
+          "event": "repository_dispatch",
+          "repo": "openclaw/clawsweeper",
+          "item_number": 75230
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "commented_at": "2026-05-01T05:41:34.251Z",
+          "response_comment_id": null,
+          "response_comment_mode": "created"
+        }
+      ],
+      "author_repository_permission": "admin",
       "target": {
         "kind": "pull_request",
-        "title": "fix(memory-wiki): tolerate unavailable shared search",
-        "branch": "fix/75312-memory-wiki-shared-fallback",
-        "head_sha": "3b8c4e70f2ad8704b9af1dcc71d3090683e6eef6",
-        "author": "chen-zhang-cs-code",
+        "title": "security(logging): redact payment credential fields",
+        "branch": "security/link-wallet-redaction",
+        "head_sha": "5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa",
+        "author": "stainlu",
         "labels": [
-          "size: M",
-          "extensions: memory-wiki"
+          "docs",
+          "gateway",
+          "agents",
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
-        "cluster_id": null,
-        "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75435",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75435.md",
+        "cluster_id": "automerge-openclaw-openclaw-75230",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75230.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75230",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75230.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "CLEAN",
         "review_decision": "",
         "checks": {
-          "total": 78,
+          "total": 87,
           "counts": {
-            "SUCCESS": 69,
+            "SUCCESS": 78,
             "SKIPPED": 8,
-            "IN_PROGRESS": 1
+            "NEUTRAL": 1
           },
-          "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
-          ]
+          "blockers": []
         }
-      },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      }
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1757,
+    "total_ms": 5942,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 333
+        "ms": 593
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1150
+        "ms": 1560
       },
       {
         "name": "classify_commands",
-        "ms": 2
+        "ms": 1
       },
       {
         "name": "execute_commands",
-        "ms": 256
+        "ms": 3775
       },
       {
         "name": "append_ledger",
