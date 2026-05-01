@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T02:58:18.716Z",
+  "updated_at": "2026-05-01T02:58:29.016Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64044:4323766042:2026-04-30T22:40:56Z:clawsweeper_needs_human",
-      "comment_id": "4323766042",
-      "comment_version_key": "4323766042:2026-04-30T22:40:56Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/64044#issuecomment-4323766042",
-      "comment_created_at": "2026-04-27T02:22:02Z",
-      "comment_updated_at": "2026-04-30T22:40:56Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 64044,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=d889a3831004c463d517260850be6c1582c43749)",
-      "expected_head_sha": "d889a3831004c463d517260850be6c1582c43749",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T00:02:34.254Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64037:4323765953:2026-04-30T22:40:54Z:clawsweeper_needs_human",
       "comment_id": "4323765953",
@@ -25994,6 +25970,36 @@
       "status": "skipped",
       "processed_at": "2026-05-01T02:58:12.394Z",
       "target": null
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75360:4357418103:2026-05-01T02:58:24Z:clawsweeper_needs_human",
+      "comment_id": "4357418103",
+      "comment_version_key": "4357418103:2026-05-01T02:58:24Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75360#issuecomment-4357418103",
+      "comment_created_at": "2026-05-01T02:13:30Z",
+      "comment_updated_at": "2026-05-01T02:58:24Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75360,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e7d63d0df22bbeb9ae2b1e5f292f48f8725fd8cf)",
+      "expected_head_sha": "e7d63d0df22bbeb9ae2b1e5f292f48f8725fd8cf",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T02:58:29.016Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/telegram-reply-latency",
+        "head_sha": "e7d63d0df22bbeb9ae2b1e5f292f48f8725fd8cf",
+        "cluster_id": null,
+        "job_path": null
+      }
     }
   ]
 }
