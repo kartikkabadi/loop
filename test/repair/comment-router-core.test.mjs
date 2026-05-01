@@ -651,7 +651,8 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
     },
   );
 
-  assert.match(body, /Thanks, ClawSweeper/);
+  assert.match(body, /ClawSweeper picked up the repair feedback/);
+  assert.doesNotMatch(body, /Thanks, ClawSweeper/);
   assert.match(body, /clawsweeper-command:456:2026-04-29T07:12:31Z:clawsweeper_auto_repair:def456/);
   assert.match(
     body,
@@ -906,6 +907,7 @@ test("renderResponse reports automerge completion", () => {
   );
 
   assert.match(body, /merged this PR/);
+  assert.doesNotMatch(body, /Thanks, ClawSweeper/);
   assert.match(body, /What merged:/);
   assert.match(body, /Added queued retry handling/);
   assert.match(body, /Fixups included:/);

@@ -21,6 +21,16 @@ const REPAIRABLE_CHECK_BLOCKER_CONCLUSIONS = new Set([
   "TIMED_OUT",
 ]);
 
+function commandSource(command: LooseRecord): string {
+  return String(command.trusted_bot_author ?? command.author ?? "trusted automation");
+}
+
+function botFeedbackLead(command: LooseRecord, message: string): string {
+  return commandSource(command).toLowerCase().includes("clawsweeper")
+    ? message
+    : `Thanks. ${message}`;
+}
+
 export function repoSlug(repo: string) {
   return String(repo ?? "")
     .trim()
@@ -593,9 +603,9 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     const workflow = dispatchedWorkflowLink(dispatched);
     return [
       marker,
-      "Thanks, ClawSweeper. ClawSweeper picked up the repair feedback.",
+      botFeedbackLead(command, "ClawSweeper picked up the repair feedback."),
       "",
-      `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
+      `Source: \`${commandSource(command)}\``,
       `Feedback: ${command.repair_reason ?? "ClawSweeper requested another repair pass."}`,
       `Action: dispatched ${workflow} for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
       `Model: \`${dispatched.model}\``,
@@ -608,9 +618,12 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       const workflow = dispatchedWorkflowLink(dispatched.repair);
       return [
         marker,
-        "Thanks, ClawSweeper. ClawSweeper saw the passing review, but the PR needs another repair pass before merge.",
+        botFeedbackLead(
+          command,
+          "ClawSweeper saw the passing review, but the PR needs another repair pass before merge.",
+        ),
         "",
-        `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
+        `Source: \`${commandSource(command)}\``,
         `Feedback: ${command.repair_reason ?? "ClawSweeper reported a passing review."}`,
         `Action: dispatched ${workflow} for \`${dispatched.repair.job_path}\` in \`${dispatched.repair.mode}\` mode.`,
         `Model: \`${dispatched.repair.model}\``,
@@ -621,10 +634,10 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     return [
       marker,
       dispatched?.merge?.status === "executed"
-        ? "Thanks, ClawSweeper. ClawSweeper merged this PR after the passing review."
-        : "Thanks, ClawSweeper. ClawSweeper saw the passing review, but did not merge yet.",
+        ? botFeedbackLead(command, "ClawSweeper merged this PR after the passing review.")
+        : botFeedbackLead(command, "ClawSweeper saw the passing review, but did not merge yet."),
       "",
-      `Source: \`${command.trusted_bot_author ?? command.author ?? "trusted automation"}\``,
+      `Source: \`${commandSource(command)}\``,
       `Feedback: ${command.repair_reason ?? "ClawSweeper reported a passing review."}`,
       ...(dispatched?.merge?.reason ? [`Merge status: ${dispatched.merge.reason}`] : []),
       ...(dispatched?.merge?.merged_at ? [`Merged at: ${dispatched.merge.merged_at}`] : []),
