@@ -152,6 +152,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
+      actions: write
       contents: write
       issues: write
       pull-requests: write
@@ -329,6 +330,7 @@ jobs:
       - name: Route synced ClawSweeper verdict
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          CLAWSWEEPER_DISPATCH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
           ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
           CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app

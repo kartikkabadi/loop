@@ -1171,29 +1171,33 @@ function dispatchClawSweeperReview(command: LooseRecord) {
   const result = ghSpawn(
     ["api", `repos/${reviewRepo}/dispatches`, "--method", "POST", "--input", "-"],
     {
+      env: dispatchTokenEnv(),
       input: payload,
     },
   );
   if (result.status !== 0) {
-    const fallback = ghSpawn([
-      "workflow",
-      "run",
-      reviewWorkflow,
-      "--repo",
-      reviewRepo,
-      "-f",
-      `target_repo=${command.repo}`,
-      "-f",
-      `item_number=${command.issue_number}`,
-      "-f",
-      `item_numbers=${command.issue_number}`,
-      "-f",
-      `additional_prompt=${freeformReviewPrompt(command)}`,
-      "-f",
-      "batch_size=1",
-      "-f",
-      "shard_count=1",
-    ]);
+    const fallback = ghSpawn(
+      [
+        "workflow",
+        "run",
+        reviewWorkflow,
+        "--repo",
+        reviewRepo,
+        "-f",
+        `target_repo=${command.repo}`,
+        "-f",
+        `item_number=${command.issue_number}`,
+        "-f",
+        `item_numbers=${command.issue_number}`,
+        "-f",
+        `additional_prompt=${freeformReviewPrompt(command)}`,
+        "-f",
+        "batch_size=1",
+        "-f",
+        "shard_count=1",
+      ],
+      { env: dispatchTokenEnv() },
+    );
     if (fallback.status !== 0) {
       throw new Error(
         `failed to dispatch ClawSweeper review for #${command.issue_number}: repository_dispatch=${
@@ -1235,23 +1239,26 @@ function freeformReviewPrompt(command: LooseRecord): string {
 }
 
 function dispatchRepair(command: LooseRecord) {
-  const result = ghSpawn([
-    "workflow",
-    "run",
-    workflow,
-    "--repo",
-    repairRepo,
-    "-f",
-    `job=${command.target.job_path}`,
-    "-f",
-    `mode=${command.target.mode}`,
-    "-f",
-    `runner=${runner}`,
-    "-f",
-    `execution_runner=${executionRunner}`,
-    "-f",
-    `model=${model}`,
-  ]);
+  const result = ghSpawn(
+    [
+      "workflow",
+      "run",
+      workflow,
+      "--repo",
+      repairRepo,
+      "-f",
+      `job=${command.target.job_path}`,
+      "-f",
+      `mode=${command.target.mode}`,
+      "-f",
+      `runner=${runner}`,
+      "-f",
+      `execution_runner=${executionRunner}`,
+      "-f",
+      `model=${model}`,
+    ],
+    { env: dispatchTokenEnv() },
+  );
   if (result.status !== 0) {
     throw new Error(
       `failed to dispatch ${command.target.job_path}: ${result.stderr || result.stdout}`,
@@ -1268,6 +1275,11 @@ function dispatchRepair(command: LooseRecord) {
     model,
     ...(runUrl ? { run_url: runUrl } : {}),
   };
+}
+
+function dispatchTokenEnv(): NodeJS.ProcessEnv {
+  const token = process.env.CLAWSWEEPER_DISPATCH_TOKEN?.trim();
+  return token ? { GH_TOKEN: token } : {};
 }
 
 function githubActionsRunUrlFromDispatchOutput(output: unknown) {
