@@ -16,9 +16,12 @@ import {
   automergeTransientWaitConfig,
   buildAutomergeMergeArgs,
   commandHasAction,
+  commandResponseMarker,
+  commandResponseMarkerPrefix,
   commandStatusMarkerPrefix,
   existingCommandStatusBlocksReplay,
   existingModeStatusBlocksReplay,
+  hasCommandResponseMarker,
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
@@ -175,6 +178,56 @@ test("automerge status marker prefix is stable across head changes", () => {
       target: { head_sha: "old" },
     }),
     "<!-- clawsweeper-command-status:75338:automerge:",
+  );
+});
+
+test("command response markers can match across head changes", () => {
+  const body = renderResponse(
+    {
+      comment_id: "4358615144",
+      intent: "fix_ci",
+      issue_number: 75423,
+      target: { head_sha: "dc3e9a97a2c655c0c054cddb5a64e7b6fc51dd10" },
+    },
+    {
+      repair: {
+        workflow: "repair cluster worker",
+        job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-75423.md",
+        mode: "maintainer-command",
+        model: "gpt-5.5",
+      },
+    },
+  );
+
+  assert.match(body, /clawsweeper-command:4358615144:fix_ci:dc3e9a97a2c655/);
+  assert.equal(
+    commandResponseMarker({
+      commentId: "4358615144",
+      intent: "fix_ci",
+      headSha: "dc3e9a97a2c655c0c054cddb5a64e7b6fc51dd10",
+    }),
+    "<!-- clawsweeper-command:4358615144:fix_ci:dc3e9a97a2c655c0c054cddb5a64e7b6fc51dd10 -->",
+  );
+  assert.equal(
+    commandResponseMarkerPrefix({ commentId: "4358615144", intent: "fix_ci" }),
+    "<!-- clawsweeper-command:4358615144:fix_ci:",
+  );
+  assert.equal(
+    hasCommandResponseMarker(body, {
+      commentId: "4358615144",
+      intent: "fix_ci",
+      headSha: "f7dfc41af791f92efbc469a495816f590155a5db",
+      matchAnyHead: true,
+    }),
+    true,
+  );
+  assert.equal(
+    hasCommandResponseMarker(body, {
+      commentId: "4358615144",
+      intent: "fix_ci",
+      headSha: "f7dfc41af791f92efbc469a495816f590155a5db",
+    }),
+    false,
   );
 });
 

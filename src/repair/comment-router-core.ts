@@ -502,7 +502,11 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
   const markerId = command.comment_version_key ?? command.comment_id;
   const marker = [
     commandStatusMarker(command),
-    `<!-- clawsweeper-command:${markerId}:${command.intent}:${command.target?.head_sha ?? "na"} -->`,
+    commandResponseMarker({
+      commentId: markerId,
+      intent: command.intent,
+      headSha: command.target?.head_sha ?? "na",
+    }),
     CLAWSWEEPER_REPLY_BADGE,
   ].join("\n");
   if (command.intent === "help") {
@@ -817,6 +821,20 @@ export function commandStatusMarker(command: LooseRecord) {
 
 export function commandStatusMarkerPrefix(command: LooseRecord) {
   return `<!-- clawsweeper-command-status:${command.issue_number ?? "unknown"}:${command.intent}:`;
+}
+
+export function commandResponseMarker({ commentId, intent, headSha = "na" }: LooseRecord): string {
+  return `<!-- clawsweeper-command:${commentId}:${intent}:${headSha ?? "na"} -->`;
+}
+
+export function commandResponseMarkerPrefix({ commentId, intent }: LooseRecord): string {
+  return `<!-- clawsweeper-command:${commentId}:${intent}:`;
+}
+
+export function hasCommandResponseMarker(body: JsonValue, command: LooseRecord): boolean {
+  const text = String(body ?? "");
+  if (command.matchAnyHead) return text.includes(commandResponseMarkerPrefix(command));
+  return text.includes(commandResponseMarker(command));
 }
 
 export function staleAutomergeActivationReason({

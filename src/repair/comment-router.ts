@@ -30,6 +30,7 @@ import {
   automergeTransientWaitConfig,
   buildAutomergeMergeArgs,
   commandHasAction,
+  hasCommandResponseMarker,
   commandStatusMarker,
   commandStatusMarkerPrefix,
   existingCommandStatusBlocksReplay,
@@ -2122,13 +2123,14 @@ function hasExistingResponse(
   intent: JsonValue,
   headSha: JsonValue,
 ) {
-  const marker = `<!-- clawsweeper-command:${commentId}:${intent}:${headSha ?? "na"} -->`;
   const comments =
     issueCommentsCache.get(Number(number)) ??
     ghPaged(`repos/${targetRepo}/issues/${number}/comments?per_page=100`);
   return comments.some((comment: JsonValue) => {
     const body = String(comment.body ?? "");
-    if (!body.includes(marker)) return false;
+    if (!hasCommandResponseMarker(body, { commentId, intent, headSha, matchAnyHead: true })) {
+      return false;
+    }
     if (
       MERGE_INTENTS.has(String(intent)) &&
       (body.includes("did not merge yet") ||
