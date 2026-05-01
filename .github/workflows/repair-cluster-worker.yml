@@ -59,6 +59,7 @@ jobs:
       allow_execute: ${{ steps.capture_gates.outputs.allow_execute }}
       allow_fix_pr: ${{ steps.capture_gates.outputs.allow_fix_pr }}
       allow_merge: ${{ steps.capture_gates.outputs.allow_merge }}
+      job_exists: ${{ steps.check_job.outputs.job_exists }}
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
@@ -95,6 +96,18 @@ jobs:
         with:
           token: ${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}
 
+      - name: Check job file
+        id: check_job
+        env:
+          JOB_PATH: ${{ inputs.job }}
+        run: |
+          if [ -f "$JOB_PATH" ]; then
+            echo "job_exists=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "job_exists=0" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Stale repair dispatch::Job file '$JOB_PATH' no longer exists on the current state checkout; skipping this worker."
+          fi
+
       - name: Capture execution gates
         id: capture_gates
         run: |
@@ -105,14 +118,17 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - uses: ./.github/actions/setup-pnpm
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         with:
           build-script: build:repair
 
       - uses: ./.github/actions/setup-codex
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         with:
           version: ${{ env.CODEX_CLI_VERSION }}
 
       - name: Verify GitHub read token
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
@@ -123,9 +139,11 @@ jobs:
           gh auth status
 
       - name: Validate job
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         run: pnpm run repair:validate-job -- "${{ inputs.job }}"
 
       - name: Run worker
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
@@ -167,7 +185,7 @@ jobs:
   execute:
     name: Execute and apply cluster actions
     needs: cluster
-    if: ${{ needs.cluster.result == 'success' && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
+    if: ${{ needs.cluster.result == 'success' && needs.cluster.outputs.job_exists == '1' && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
     runs-on: ${{ inputs.execution_runner }}
     timeout-minutes: 45
     env:
@@ -212,51 +230,67 @@ jobs:
         with:
           token: ${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}
 
+      - name: Check job file
+        id: check_job
+        env:
+          JOB_PATH: ${{ inputs.job }}
+        run: |
+          if [ -f "$JOB_PATH" ]; then
+            echo "job_exists=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "job_exists=0" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Stale repair dispatch::Job file '$JOB_PATH' no longer exists on the current state checkout; skipping execute."
+          fi
+
       - uses: ./.github/actions/setup-pnpm
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         with:
           build-script: build:repair
 
       - uses: ./.github/actions/setup-codex
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         with:
           version: ${{ env.CODEX_CLI_VERSION }}
           cache-suffix: target-pnpm
 
       - name: Download worker artifacts
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         uses: actions/download-artifact@v8
         with:
           name: clawsweeper-repair-worker-${{ github.run_id }}-${{ github.run_attempt }}
           path: .clawsweeper-repair/runs
 
       - name: Validate job
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         run: pnpm run repair:validate-job -- "${{ inputs.job }}"
 
       - name: Execute credited fix artifact
-        if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         timeout-minutes: 30
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:execute-fix -- "${{ inputs.job }}" --latest
 
       - name: Apply safe closure actions
-        if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Post-flight finalize fix PRs
-        if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:post-flight -- "${{ inputs.job }}" --latest
 
       - name: Apply post-flight closeouts
-        if: ${{ env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Tag ClawSweeper targets
-        if: ${{ always() && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:tag-clawsweeper -- .clawsweeper-repair/runs --apply --live --open-branches false --report .clawsweeper-repair/runs/clawsweeper-label-report.json

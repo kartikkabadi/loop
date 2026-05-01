@@ -22,6 +22,7 @@ import {
   autoRepairBlockReason,
   autoRepairHeadKey,
   automergeChangelogBlockReason,
+  automergeFailedChecksRepairReason,
   automergeGateBlockReason,
   automergeClusterId,
   automergeJobPath,
@@ -397,7 +398,9 @@ function classifyCommand(command: LooseRecord): JsonValue {
       return automergeBlocked(next, `${mode} requires a pull request`);
     }
     const pauseLabels = pauseLabelsOn(target);
+    const failedChecksRepairReason = automergeFailedChecksRepairReason(target.checks);
     if (
+      !failedChecksRepairReason &&
       existingModeStatusBlocksReplay({
         hasModeLabel: hasLabel(target, modeLabel),
         hasJobPath: Boolean(target.job_path),
@@ -440,13 +443,28 @@ function classifyCommand(command: LooseRecord): JsonValue {
       actions: [
         ...actions,
         { action: "label", label: modeLabel, status: execute ? "pending" : "planned" },
-        {
-          action: "dispatch_clawsweeper",
-          workflow: reviewWorkflow,
-          status: execute ? "pending" : "planned",
-        },
+        ...(failedChecksRepairReason
+          ? [
+              {
+                action: "dispatch_repair",
+                workflow,
+                job_path: target.job_path ?? target.automerge_job_path,
+                mode: target.mode ?? "autonomous",
+                status: execute ? "pending" : "planned",
+              },
+            ]
+          : [
+              {
+                action: "dispatch_clawsweeper",
+                workflow: reviewWorkflow,
+                status: execute ? "pending" : "planned",
+              },
+            ]),
         { action: "comment", status: execute ? "pending" : "planned" },
       ],
+      ...(failedChecksRepairReason
+        ? { repair_reason: `${mode} enabled; ${failedChecksRepairReason}` }
+        : {}),
     };
   }
   if (AUTOCLOSE_INTENTS.has(command.intent)) {
@@ -827,12 +845,22 @@ function executeCommand(command: LooseRecord) {
   const shouldMerge = commandHasAction(command, "merge");
   const shouldApplyHumanReviewLabel = commandHasAction(command, "label");
   if (!command.trusted_bot) reactToComment(command, "eyes");
-  if (shouldDispatchRepair && canRepairPullTarget(command.target)) {
+  if (
+    shouldDispatchRepair &&
+    (canRepairPullTarget(command.target) || ["autofix", "automerge"].includes(command.intent))
+  ) {
+    if (["autofix", "automerge"].includes(command.intent)) {
+      applyRepairLoopOptIn(command);
+    }
     const job = ensureAutomergeJob(command);
     if (job.status_detail === "written") {
       command.actions = command.actions.map((action: JsonValue) => {
         if (action.action === "ensure_automerge_job")
           return { ...action, status: "executed", ...job };
+        if (action.action === "label")
+          return { ...action, status: "executed", label: action.label };
+        if (action.action === "remove_label")
+          return { ...action, status: "executed", label: action.label };
         if (action.action === "dispatch_repair") {
           return {
             ...action,
@@ -867,6 +895,7 @@ function executeCommand(command: LooseRecord) {
     command.actions = command.actions.map((action: JsonValue) => {
       if (action.action === "ensure_automerge_job")
         return { ...action, status: "executed", ...job };
+      if (action.action === "label") return { ...action, status: "executed", label: action.label };
       if (action.action === "remove_label")
         return { ...action, status: "executed", label: action.label };
       if (action.action === "dispatch_repair") {
@@ -1134,6 +1163,49 @@ function usesAutomergeRepairLane(command: LooseRecord) {
     command.intent === "clawsweeper_auto_merge" ||
     hasLabel(command.target, AUTOMERGE_LABEL)
   );
+}
+
+function applyRepairLoopOptIn(command: LooseRecord) {
+  const modeLabel = command.intent === "autofix" ? AUTOFIX_LABEL : AUTOMERGE_LABEL;
+  const oppositeModeLabel = command.intent === "autofix" ? AUTOMERGE_LABEL : AUTOFIX_LABEL;
+  ensureRepairLoopLabel(command.repo, modeLabel);
+
+  const labels = new Set((command.target?.labels ?? []).map((label: JsonValue) => String(label)));
+  for (const pausedLabel of pauseLabelsOn(command.target)) {
+    ghBestEffort([
+      "issue",
+      "edit",
+      String(command.issue_number),
+      "--repo",
+      command.repo,
+      "--remove-label",
+      pausedLabel,
+    ]);
+    labels.delete(pausedLabel);
+  }
+  if (labels.has(oppositeModeLabel)) {
+    ghBestEffort([
+      "issue",
+      "edit",
+      String(command.issue_number),
+      "--repo",
+      command.repo,
+      "--remove-label",
+      oppositeModeLabel,
+    ]);
+    labels.delete(oppositeModeLabel);
+  }
+  ghBestEffort([
+    "issue",
+    "edit",
+    String(command.issue_number),
+    "--repo",
+    command.repo,
+    "--add-label",
+    modeLabel,
+  ]);
+  labels.add(modeLabel);
+  command.target = { ...command.target, labels: [...labels] };
 }
 
 function acknowledgeSkippedMaintainerCommand(command: LooseRecord) {
@@ -1510,6 +1582,15 @@ function executeAutomerge(command: LooseRecord) {
         merge_method: "squash",
       };
     }
+    if (isAutomergeCheckBlock(block)) {
+      return {
+        action: "merge",
+        status: "repair_needed",
+        reason: block,
+        repair_reason: `failed required checks before automerge: ${block.replace(/^checks are not green:\s*/i, "")}`,
+        merge_method: "squash",
+      };
+    }
     if (isTransientAutomergeBlock(block, view)) {
       return {
         action: "merge",
@@ -1773,6 +1854,10 @@ function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
 
 function isAutomergeChangelogBlock(reason: string) {
   return /CHANGELOG\.md entry is required/i.test(String(reason ?? ""));
+}
+
+function isAutomergeCheckBlock(reason: string) {
+  return /^checks are not green:/i.test(String(reason ?? "").trim());
 }
 
 function isTransientAutomergeBlock(reason: string, view: LooseRecord) {

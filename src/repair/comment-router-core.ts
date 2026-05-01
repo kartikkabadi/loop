@@ -195,6 +195,12 @@ export function repairableCheckBlockers(checks: LooseRecord = {}) {
   });
 }
 
+export function automergeFailedChecksRepairReason(checks: LooseRecord = {}): string | null {
+  const failedCheckBlockers = repairableCheckBlockers(checks);
+  if (failedCheckBlockers.length === 0) return null;
+  return `current checks are failing: ${failedCheckBlockers.slice(0, 5).join(", ")}`;
+}
+
 export function automergeRebaseRepairReason(target: LooseRecord = {}): string | null {
   const mergeStateStatus = String(target.merge_state_status ?? target.mergeStateStatus ?? "")
     .trim()

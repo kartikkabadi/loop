@@ -2,7 +2,6 @@
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 import {
   hasSecuritySignalText,
   makeRunDir,
@@ -11,7 +10,12 @@ import {
   repoRoot,
   validateJob,
 } from "./lib.js";
-import { ghText } from "./github-cli.js";
+import { ghErrorText, ghText } from "./github-cli.js";
+import {
+  isMissingGithubContentError,
+  missingCommitFindingReport,
+  type CommitFindingReportReadResult,
+} from "./commit-finding-report.js";
 import { readJsonFileIfExists as readJsonIfExists } from "./json-file.js";
 import { commitFindingPrTitle } from "./pr-title.js";
 import { escapeRegExp, slug } from "./text-utils.js";
@@ -36,7 +40,10 @@ function prepare() {
     stringArg("report-url", stringArg("report_url", "")) ||
     `https://github.com/${reportRepo}/blob/main/${reportPath}`;
   const active = truthy(enabled);
-  const reportMarkdown = active ? readReport({ reportRepo, reportPath }) : "";
+  const reportRead: CommitFindingReportReadResult = active
+    ? readReport({ reportRepo, reportPath })
+    : ({ ok: true, markdown: "" } satisfies CommitFindingReportReadResult);
+  const reportMarkdown = reportRead.ok ? reportRead.markdown : "";
   const report = parseCommitReport(reportMarkdown);
   const clusterId = slug(`clawsweeper-commit-${repoSlug(targetRepo)}-${sha.slice(0, 12)}`);
   const owner = targetRepo.split("/")[0];
@@ -50,7 +57,9 @@ function prepare() {
   );
   const branch = `clawsweeper/${clusterId}`;
   const latestMain = fetchLatestMain(targetRepo);
-  const decision = intakeDecision({ enabled, report, reportMarkdown });
+  const decision = reportRead.ok
+    ? intakeDecision({ enabled, report, reportMarkdown })
+    : { status: "report_missing", shouldRepair: false, reason: reportRead.reason };
   const preparedAt = new Date().toISOString();
   const runDir = decision.shouldRepair
     ? makeRunDir({ path: jobPath, frontmatter: { mode: "autonomous" } }, "commit-finding")
@@ -384,12 +393,13 @@ ${context.report.body ? summaryFromReport(context.report.body) : "Report was not
   fs.writeFileSync(context.auditPath, body, "utf8");
 }
 
-function readReport({ reportRepo, reportPath }: LooseRecord) {
+function readReport({ reportRepo, reportPath }: LooseRecord): CommitFindingReportReadResult {
   const local = args["report-file"] ?? args.report_file;
-  if (typeof local === "string") return fs.readFileSync(path.resolve(local), "utf8");
-  const result = spawnSync(
-    "gh",
-    [
+  if (typeof local === "string") {
+    return { ok: true, markdown: fs.readFileSync(path.resolve(local), "utf8") };
+  }
+  try {
+    const content = ghText([
       "api",
       `repos/${reportRepo}/contents/${reportPath}`,
       "--method",
@@ -398,17 +408,19 @@ function readReport({ reportRepo, reportPath }: LooseRecord) {
       "ref=main",
       "--jq",
       ".content",
-    ],
-    {
-      cwd: repoRoot(),
-      encoding: "utf8",
-      stdio: "pipe",
-      env: process.env,
-    },
-  );
-  if (result.status !== 0)
-    die(result.stderr || result.stdout || `failed to fetch ${reportRepo}:${reportPath}`);
-  return Buffer.from(result.stdout.replace(/\s+/g, ""), "base64").toString("utf8");
+    ]);
+    return {
+      ok: true,
+      markdown: Buffer.from(content.replace(/\s+/g, ""), "base64").toString("utf8"),
+    };
+  } catch (error) {
+    const message = ghErrorText(error) || `failed to fetch ${reportRepo}:${reportPath}`;
+    if (isMissingGithubContentError(message)) {
+      return missingCommitFindingReport(String(reportRepo), String(reportPath));
+    }
+    die(message);
+    throw new Error(message);
+  }
 }
 
 function parseCommitReport(markdown: string) {

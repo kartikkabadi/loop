@@ -9,6 +9,7 @@ import {
   autoRepairBlockReason,
   autoRepairHeadKey,
   automergeChangelogBlockReason,
+  automergeFailedChecksRepairReason,
   automergeClusterId,
   automergeGateBlockReason,
   automergeJobBranch,
@@ -1058,6 +1059,21 @@ test("repairable check blockers only include completed failures", () => {
       ],
     }),
     ["checks-node-core:FAILURE", "checks-node-channels:TIMED_OUT"],
+  );
+});
+
+test("automerge failed checks become repair reasons", () => {
+  assert.equal(
+    automergeFailedChecksRepairReason({
+      blockers: ["checks-node-core:FAILURE", "auto-response:CANCELLED", "slow:TIMED_OUT"],
+    }),
+    "current checks are failing: checks-node-core:FAILURE, slow:TIMED_OUT",
+  );
+  assert.equal(
+    automergeFailedChecksRepairReason({
+      blockers: ["auto-response:CANCELLED", "label:SKIPPED"],
+    }),
+    null,
   );
 });
 
