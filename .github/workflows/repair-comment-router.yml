@@ -1,6 +1,8 @@
 name: repair comment router
 
 on:
+  repository_dispatch:
+    types: [clawsweeper_comment]
   workflow_dispatch:
     inputs:
       execute:
@@ -33,6 +35,11 @@ on:
         required: false
         default: ""
         type: string
+      comment_ids:
+        description: "Optional comma-separated issue comment ids to route directly"
+        required: false
+        default: ""
+        type: string
       runner:
         description: "Runner label for repair planning/review work"
         required: true
@@ -44,7 +51,7 @@ on:
         default: blacksmith-16vcpu-ubuntu-2404
         type: string
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/5 * * * *"
 
 permissions:
   contents: write
@@ -65,6 +72,15 @@ jobs:
         with:
           filter: blob:none
           fetch-depth: 0
+          sparse-checkout: |
+            .github
+            jobs
+            results
+            src/repair
+            package.json
+            pnpm-lock.yaml
+            tsconfig.repair.json
+          sparse-checkout-cone-mode: false
 
       - name: Create GitHub App token
         id: app_token
@@ -95,8 +111,17 @@ jobs:
           since="${{ github.event_name == 'workflow_dispatch' && inputs.since || '' }}"
           max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '100' }}"
           item_numbers="${{ github.event_name == 'workflow_dispatch' && inputs.item_numbers || '' }}"
+          comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.comment_ids || '' }}"
           runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
           execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
+            lookback_minutes="${{ github.event.client_payload.lookback_minutes || vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}"
+            since=""
+            max_comments="${{ github.event.client_payload.max_comments || vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '20' }}"
+            item_numbers="${{ github.event.client_payload.item_number || '' }}"
+            comment_ids="${{ github.event.client_payload.comment_id || '' }}"
+          fi
 
           args=(
             --write-report
@@ -113,7 +138,11 @@ jobs:
           if [ -n "$item_numbers" ]; then
             args+=(--item-numbers "$item_numbers")
           fi
+          if [ -n "$comment_ids" ]; then
+            args+=(--comment-ids "$comment_ids")
+          fi
           if { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.execute }}" = "true" ]; } ||
+             { [ "${{ github.event_name }}" = "repository_dispatch" ]; } ||
              { [ "${{ github.event_name }}" = "schedule" ] && [ "${{ vars.CLAWSWEEPER_COMMENT_ROUTER_EXECUTE || '0' }}" = "1" ]; }; then
             args+=(--execute)
           fi
@@ -122,6 +151,10 @@ jobs:
       - name: Commit comment router ledger
         if: always()
         run: |
+          if [ -z "$(git status --porcelain -- results/comment-router.json jobs)" ]; then
+            echo "No durable comment-router ledger or job changes to publish."
+            exit 0
+          fi
           pnpm run repair:publish-main -- \
             --message "chore: record ClawSweeper comment routing" \
             --path results/comment-router.json \

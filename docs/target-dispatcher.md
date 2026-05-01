@@ -22,6 +22,8 @@ name: ClawSweeper Dispatch
 on:
   issues:
     types: [opened, reopened, edited, labeled, unlabeled]
+  issue_comment:
+    types: [created, edited]
   pull_request_target: # zizmor: ignore[dangerous-triggers] maintainer-owned external dispatch; no checkout or untrusted PR code execution
     types: [opened, reopened, synchronize, ready_for_review, edited, labeled, unlabeled]
 
@@ -54,8 +56,22 @@ jobs:
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: openclaw
           repositories: clawsweeper
+          permission-contents: write
+
+      - name: Create target comment token
+        id: target_token
+        if: ${{ github.event_name == 'issue_comment' && env.HAS_CLAWSWEEPER_APP_PRIVATE_KEY == 'true' }}
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-issues: write
+          permission-pull-requests: read
 
       - name: Dispatch exact ClawSweeper review
+        if: ${{ github.event_name != 'issue_comment' }}
         env:
           GH_TOKEN: ${{ steps.token.outputs.token }}
           TARGET_REPO: ${{ github.repository }}
@@ -79,9 +95,50 @@ jobs:
           gh api repos/openclaw/clawsweeper/dispatches \
             --method POST \
             --input - <<< "$payload"
+
+      - name: Acknowledge and dispatch ClawSweeper comment
+        if: ${{ github.event_name == 'issue_comment' }}
+        env:
+          DISPATCH_TOKEN: ${{ steps.token.outputs.token }}
+          TARGET_TOKEN: ${{ steps.target_token.outputs.token }}
+          TARGET_REPO: ${{ github.repository }}
+          ITEM_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          SOURCE_ACTION: ${{ github.event.action }}
+        run: |
+          if [ -z "$DISPATCH_TOKEN" ]; then
+            echo "::notice::Skipping ClawSweeper dispatch because no dispatch credential is configured."
+            exit 0
+          fi
+          body_file="$RUNNER_TEMP/clawsweeper-comment-body.txt"
+          printf '%s\n' "$COMMENT_BODY" > "$body_file"
+          if ! grep -Eiq '(^|[[:space:]])@clawsweeper\b|(^|[[:space:]])/(clawsweeper|review|automerge|autoclose)\b' "$body_file"; then
+            echo "No ClawSweeper command found in comment."
+            exit 0
+          fi
+          if [ -n "$TARGET_TOKEN" ]; then
+            GH_TOKEN="$TARGET_TOKEN" gh api -X POST \
+              -H "Accept: application/vnd.github+json" \
+              "repos/$TARGET_REPO/issues/comments/$COMMENT_ID/reactions" \
+              -f content="eyes" >/dev/null || true
+          fi
+          payload="$(jq -nc \
+            --arg target_repo "$TARGET_REPO" \
+            --argjson item_number "$ITEM_NUMBER" \
+            --argjson comment_id "$COMMENT_ID" \
+            --arg source_event "issue_comment" \
+            --arg source_action "$SOURCE_ACTION" \
+            '{event_type:"clawsweeper_comment",client_payload:{target_repo:$target_repo,item_number:$item_number,comment_id:$comment_id,source_event:$source_event,source_action:$source_action}}')"
+          GH_TOKEN="$DISPATCH_TOKEN" gh api repos/openclaw/clawsweeper/dispatches \
+            --method POST \
+            --input - <<< "$payload"
 ```
 
-Comments are intentionally not a trigger. Bot-authored label churn is also
+Comments are a lightweight trigger only when the body contains a ClawSweeper
+command. The target workflow reacts with `eyes` immediately and dispatches
+`clawsweeper_comment` to the comment router with the exact comment id, so it
+does not need to wait for the scheduled sweep. Bot-authored label churn is also
 ignored. Human label changes are debounced and may run after an active
 dispatcher, but they must not cancel a content-changing dispatch before it posts
 to ClawSweeper. Content-changing events such as issue edits and PR synchronizes

@@ -48,20 +48,68 @@ test("appendLedger keeps edited comment versions separate", () => {
 test("appendLedger leaves waiting commands retryable", () => {
   const ledger = { updated_at: null, commands: [] };
 
-  appendLedger(ledger, [
-    {
-      idempotency_key: "transient",
-      comment_id: "124",
-      comment_version_key: "124:2026-04-29T03:00:00Z",
-      comment_updated_at: "2026-04-29T03:00:00Z",
-      status: "waiting",
-      intent: "clawsweeper_re_review",
-      issue_number: 74499,
-      repo: "openclaw/openclaw",
-    },
-  ]);
+  assert.equal(
+    appendLedger(ledger, [
+      {
+        idempotency_key: "transient",
+        comment_id: "124",
+        comment_version_key: "124:2026-04-29T03:00:00Z",
+        comment_updated_at: "2026-04-29T03:00:00Z",
+        status: "waiting",
+        intent: "clawsweeper_re_review",
+        issue_number: 74499,
+        repo: "openclaw/openclaw",
+      },
+    ]),
+    false,
+  );
 
   assert.equal(ledger.commands.length, 0);
+});
+
+test("appendLedger ignores no-op skipped command versions", () => {
+  const ledger = { updated_at: null, commands: [] };
+
+  assert.equal(
+    appendLedger(ledger, [
+      {
+        idempotency_key: "already-processed",
+        comment_id: "124",
+        comment_version_key: "124:2026-04-29T03:00:00Z",
+        comment_updated_at: "2026-04-29T03:00:00Z",
+        status: "skipped",
+        reason: "comment version already processed in ledger",
+        intent: "automerge",
+        issue_number: 74499,
+        repo: "openclaw/openclaw",
+      },
+    ]),
+    false,
+  );
+
+  assert.equal(ledger.commands.length, 0);
+});
+
+test("appendLedger reports compact executed writes", () => {
+  const ledger = { updated_at: null, commands: [] };
+
+  assert.equal(
+    appendLedger(ledger, [
+      {
+        idempotency_key: "processed",
+        comment_id: "125",
+        comment_version_key: "125:2026-04-29T03:01:00Z",
+        comment_updated_at: "2026-04-29T03:01:00Z",
+        status: "executed",
+        intent: "clawsweeper_re_review",
+        issue_number: 74499,
+        repo: "openclaw/openclaw",
+      },
+    ]),
+    true,
+  );
+
+  assert.equal(ledger.commands.length, 1);
 });
 
 test("appendLedger preserves compact executed actions for repair caps", () => {

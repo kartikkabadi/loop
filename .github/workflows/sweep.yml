@@ -349,6 +349,10 @@ jobs:
       - name: Commit event comment router ledger
         if: always()
         run: |
+          if [ -z "$(git status --porcelain -- results/comment-router.json jobs)" ]; then
+            echo "No durable event comment-router ledger or job changes to publish."
+            exit 0
+          fi
           pnpm run repair:publish-main -- \
             --message "chore: record ClawSweeper event comment routing" \
             --path results/comment-router.json \

@@ -174,6 +174,10 @@ Live preflight hydrates job-provided refs by default and records linked refs wit
 ## Maintainer Comment Routing
 
 `pnpm run repair:comment-router` scans recent issue and PR comments in the target repo.
+Target repositories can also forward matching `issue_comment` events as
+`clawsweeper_comment` repository dispatches with the exact comment id. Those
+comments get an immediate `eyes` reaction from the ClawSweeper app, and the
+scheduled sweep remains a five-minute fallback.
 It accepts only maintainer-authored commands, gated by GitHub
 `author_association` values `OWNER`, `MEMBER`, or `COLLABORATOR` by default.
 Contributor comments are ignored without a reply.
@@ -210,10 +214,13 @@ include the target PR head SHA. That lets edited ClawSweeper comments wake
 ClawSweeper again after the PR branch changes while unchanged comment versions
 remain idempotent.
 
-Use `--item-number <number>` or `--item-numbers <a,b>` to route only specific
-open issue or PR comments. The event review workflow uses this targeted path
-after syncing its durable ClawSweeper verdict so automerge can act on a fresh
-`pass` marker without waiting for the scheduled comment-router sweep.
+Use `--comment-id <id>`, `--comment-ids <a,b>`, `--item-number <number>`, or
+`--item-numbers <a,b>` to route only specific comments or specific open issue
+or PR comments. The event review workflow uses this targeted path after syncing
+its durable ClawSweeper verdict so automerge can act on a fresh `pass` marker
+without waiting for the scheduled comment-router sweep. No-op targeted
+acknowledgements, such as already-processed commands or already-enabled
+automerge commands, do not publish a durable ledger commit.
 
 If the adopted automerge worker returns no executable fix artifact, the
 executor posts one idempotent outcome comment on the opted-in PR. That status

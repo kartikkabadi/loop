@@ -90,11 +90,14 @@ const {
   lookupConcurrency,
   since,
   itemNumbers,
+  commentIds,
   allowedAssociations,
   allowedRepositoryPermissions,
   trustedBots,
 } = config;
 
+const startedAtMs = Date.now();
+const timings: LooseRecord[] = [];
 const ledger = readLedger(ledgerPath());
 const TARGET_LOOKUP_RETRY_ATTEMPTS = 3;
 const processedCommentVersions = new Set(
@@ -107,7 +110,7 @@ const plannedAutoRepairHeads = new Set<string>();
 const collaboratorPermissionCache = new Map();
 const liveTargetCache = new Map<number, LooseRecord>();
 const issueCommentsCache = new Map<number, JsonValue[]>();
-const comments = listCandidateComments();
+const comments = measure("list_candidate_comments", () => listCandidateComments());
 const rawCommands: LooseRecord[] = [];
 
 for (const comment of comments) {
@@ -148,8 +151,10 @@ for (const comment of comments) {
   rawCommands.push(command);
 }
 
-await prehydrateCommandLookups(rawCommands);
-const commands = rawCommands.map((command) => classifyCommand(command));
+await measureAsync("prehydrate_command_lookups", () => prehydrateCommandLookups(rawCommands));
+const commands = measure("classify_commands", () =>
+  rawCommands.map((command) => classifyCommand(command)),
+);
 
 const actionable = commands.filter((command: JsonValue) => command.status === "ready");
 const report: LooseRecord = {
@@ -162,6 +167,7 @@ const report: LooseRecord = {
   execute,
   max_comments: maxComments,
   item_numbers: [...itemNumbers],
+  comment_ids: [...commentIds],
   max_autoclose_targets: maxAutocloseTargets,
   scanned_comments: comments.length,
   commands_seen: commands.length,
@@ -175,33 +181,58 @@ const report: LooseRecord = {
 };
 
 if (execute) {
-  assertMutationActorIsClawsweeperBot();
-  for (const command of commands) acknowledgeSkippedMaintainerCommand(command);
-  const dispatchCount = actionable.filter((command: JsonValue) =>
-    REPAIR_INTENTS.has(command.intent),
-  ).length;
-  if (dispatchCount > 0) {
-    report.live_worker_capacity_before_dispatch = waitForCapacity
-      ? waitForLiveWorkerCapacity({
-          repo: repairRepo,
-          workflow,
-          requested: dispatchCount,
-          maxLiveWorkers,
-        })
-      : assertLiveWorkerCapacity({
-          repo: repairRepo,
-          workflow,
-          requested: dispatchCount,
-          maxLiveWorkers,
-        });
-  }
-  for (const command of actionable) executeCommand(command);
-  appendLedger(ledger, commands);
-  writeLedger(ledgerPath(), ledger);
+  await measureAsync("execute_commands", async () => {
+    assertMutationActorIsClawsweeperBot();
+    for (const command of commands) acknowledgeSkippedMaintainerCommand(command);
+    const dispatchCount = actionable.filter(
+      (command: JsonValue) =>
+        REPAIR_INTENTS.has(command.intent) || MERGE_INTENTS.has(command.intent),
+    ).length;
+    if (dispatchCount > 0) {
+      report.live_worker_capacity_before_dispatch = waitForCapacity
+        ? waitForLiveWorkerCapacity({
+            repo: repairRepo,
+            workflow,
+            requested: dispatchCount,
+            maxLiveWorkers,
+          })
+        : assertLiveWorkerCapacity({
+            repo: repairRepo,
+            workflow,
+            requested: dispatchCount,
+            maxLiveWorkers,
+          });
+    }
+    for (const command of actionable) executeCommand(command);
+  });
+  report.ledger_changed = measure("append_ledger", () => appendLedger(ledger, commands));
+  if (report.ledger_changed) writeLedger(ledgerPath(), ledger);
 }
 
+report.timings = {
+  total_ms: Date.now() - startedAtMs,
+  phases: timings,
+};
 if (writeReport) writeReportFile(repoRoot(), report);
 console.log(JSON.stringify(report, null, 2));
+
+function measure<T>(name: string, fn: () => T): T {
+  const start = Date.now();
+  try {
+    return fn();
+  } finally {
+    timings.push({ name, ms: Date.now() - start });
+  }
+}
+
+async function measureAsync<T>(name: string, fn: () => Promise<T>): Promise<T> {
+  const start = Date.now();
+  try {
+    return await fn();
+  } finally {
+    timings.push({ name, ms: Date.now() - start });
+  }
+}
 
 function assertMutationActorIsClawsweeperBot() {
   try {
@@ -1407,6 +1438,16 @@ function executeAutomerge(command: LooseRecord) {
   };
   const block = validateAutomergeReadiness({ command, view, target: latestTarget });
   if (block) {
+    if (isAutomergeChangelogBlock(block)) {
+      return {
+        action: "merge",
+        status: "repair_needed",
+        reason: block,
+        repair_reason:
+          "CHANGELOG.md entry is required before automerge; dispatch a focused changelog repair",
+        merge_method: "squash",
+      };
+    }
     if (isTransientAutomergeBlock(block, view)) {
       return { action: "merge", status: "waiting", reason: block, merge_method: "squash" };
     }
@@ -1624,6 +1665,10 @@ function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
   return "";
 }
 
+function isAutomergeChangelogBlock(reason: string) {
+  return /CHANGELOG\.md entry is required/i.test(String(reason ?? ""));
+}
+
 function isTransientAutomergeBlock(reason: string, view: LooseRecord) {
   const text = String(reason ?? "").toLowerCase();
   if (text.includes("checks are not green")) return hasPendingChecks(view.statusCheckRollup ?? []);
@@ -1713,6 +1758,13 @@ function listRecentComments() {
 }
 
 function listCandidateComments() {
+  if (commentIds.size > 0) {
+    return selectCommentsForRouting({
+      recentComments: [...commentIds].map((commentId) => fetchIssueComment(commentId)),
+      durableComments: [],
+      maxComments,
+    });
+  }
   if (itemNumbers.size > 0) {
     return selectCommentsForRouting({
       recentComments: [...itemNumbers].flatMap((number) => issueCommentsFor(number)),
@@ -1764,6 +1816,12 @@ function listRepairLoopReviewComments() {
       isClawSweeperReviewMarkerComment,
     ),
   );
+}
+
+function fetchIssueComment(commentId: JsonValue) {
+  return ghJson(["api", `repos/${targetRepo}/issues/comments/${commentId}`], {
+    attempts: TARGET_LOOKUP_RETRY_ATTEMPTS,
+  });
 }
 
 function listOpenIssueNumbersWithLabel(label: string) {

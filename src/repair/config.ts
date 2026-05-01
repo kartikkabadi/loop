@@ -35,6 +35,7 @@ export type CommentRouterConfig = {
   lookbackMinutes: number;
   since: string;
   itemNumbers: Set<number>;
+  commentIds: Set<number>;
   allowedAssociations: Set<string>;
   allowedRepositoryPermissions: Set<string>;
   trustedBots: Set<string>;
@@ -127,6 +128,12 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
         .filter((value) => value !== undefined && value !== null)
         .join(","),
       "item-numbers",
+    ),
+    commentIds: numberSet(
+      [args["comment-id"], args["comment-ids"], process.env.CLAWSWEEPER_COMMENT_IDS]
+        .filter((value) => value !== undefined && value !== null)
+        .join(","),
+      "comment-ids",
     ),
     allowedAssociations: upperCaseSet(
       process.env.CLAWSWEEPER_COMMENT_ALLOWED_ASSOCIATIONS ??

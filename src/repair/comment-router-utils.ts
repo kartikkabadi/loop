@@ -125,6 +125,7 @@ export function readLedger(file: JsonValue) {
 export function appendLedger(current: LooseRecord, entries: LooseRecord[]) {
   const compact = entries
     .filter((entry: JsonValue) => ["executed", "skipped"].includes(entry.status))
+    .filter((entry: JsonValue) => !isNoopSkip(entry))
     .map((entry: JsonValue) => {
       const actions = compactLedgerActions(entry.actions);
       return {
@@ -161,12 +162,36 @@ export function appendLedger(current: LooseRecord, entries: LooseRecord[]) {
         ...(actions.length > 0 ? { actions } : {}),
       };
     });
+  if (compact.length === 0) return false;
   const byCommentVersion = new Map(
     (current.commands ?? []).map((entry: JsonValue) => [ledgerEntryKey(entry), entry]),
   );
-  for (const entry of compact) byCommentVersion.set(ledgerEntryKey(entry), entry);
+  let changed = false;
+  for (const entry of compact) {
+    const key = ledgerEntryKey(entry);
+    const previous = byCommentVersion.get(key);
+    if (previous && stableLedgerEntry(previous) === stableLedgerEntry(entry)) continue;
+    byCommentVersion.set(key, entry);
+    changed = true;
+  }
+  if (!changed) return false;
   current.updated_at = new Date().toISOString();
   current.commands = [...byCommentVersion.values()].slice(-1000);
+  return true;
+}
+
+function isNoopSkip(entry: LooseRecord) {
+  if (String(entry.status ?? "") !== "skipped") return false;
+  const reason = String(entry.reason ?? "");
+  return (
+    reason === "comment version already processed in ledger" ||
+    reason === "matching ClawSweeper response comment already exists" ||
+    /already enabled for this PR/i.test(reason)
+  );
+}
+
+function stableLedgerEntry(entry: LooseRecord) {
+  return JSON.stringify({ ...entry, processed_at: null });
 }
 
 function ledgerEntryKey(entry: LooseRecord) {
