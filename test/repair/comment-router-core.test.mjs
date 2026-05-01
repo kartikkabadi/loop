@@ -13,6 +13,7 @@ import {
   automergeGateBlockReason,
   automergeJobBranch,
   automergeJobPath,
+  automergeTransientWaitConfig,
   buildAutomergeMergeArgs,
   commandHasAction,
   commandStatusMarkerPrefix,
@@ -991,6 +992,33 @@ test("automerge gate block only reports closed merge policy gates", () => {
       CLAWSWEEPER_ALLOW_AUTOMERGE: "1",
     }),
     "",
+  );
+});
+
+test("automerge transient wait config defaults to an in-run retry window", () => {
+  assert.deepEqual(automergeTransientWaitConfig({}), {
+    maxWaitMs: 600000,
+    intervalMs: 15000,
+  });
+  assert.deepEqual(
+    automergeTransientWaitConfig({
+      CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS: "0",
+      CLAWSWEEPER_AUTOMERGE_TRANSIENT_POLL_MS: "0",
+    }),
+    {
+      maxWaitMs: 0,
+      intervalMs: 1000,
+    },
+  );
+  assert.deepEqual(
+    automergeTransientWaitConfig({
+      CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS: "90000",
+      CLAWSWEEPER_AUTOMERGE_TRANSIENT_POLL_MS: "5000",
+    }),
+    {
+      maxWaitMs: 90000,
+      intervalMs: 5000,
+    },
   );
 });
 

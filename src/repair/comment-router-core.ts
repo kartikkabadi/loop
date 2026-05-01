@@ -152,6 +152,22 @@ export function automergeGateBlockReason(env: LooseRecord = process.env) {
   return "";
 }
 
+export function automergeTransientWaitConfig(env: LooseRecord = process.env) {
+  const maxWaitMs = positiveInt(env.CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS, 10 * 60 * 1000);
+  const intervalMs = Math.min(
+    Math.max(positiveInt(env.CLAWSWEEPER_AUTOMERGE_TRANSIENT_POLL_MS, 15 * 1000), 1000),
+    Math.max(maxWaitMs, 1000),
+  );
+  return { maxWaitMs, intervalMs };
+}
+
+function positiveInt(value: JsonValue, fallback: number) {
+  if (value === undefined || value === null || value === "") return fallback;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) return fallback;
+  return Math.floor(parsed);
+}
+
 export function repairableCheckBlockers(checks: LooseRecord = {}) {
   return (checks.blockers ?? []).filter((blocker: JsonValue) => {
     const conclusion = String(blocker ?? "")

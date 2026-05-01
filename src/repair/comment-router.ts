@@ -27,6 +27,7 @@ import {
   automergeJobPath,
   automergeMergeFailureRepairReason,
   automergeRebaseRepairReason,
+  automergeTransientWaitConfig,
   buildAutomergeMergeArgs,
   commandHasAction,
   commandStatusMarker,
@@ -1428,15 +1429,21 @@ function closeIssueOrPullRequest(repo: string, number: number, kind: string) {
 }
 
 function executeAutomerge(command: LooseRecord) {
-  const view = fetchPullRequestView(command.issue_number);
-  const labels = (view.labels ?? []).map((item: JsonValue) => item.name ?? item);
-  const latestTarget = {
-    ...command.target,
-    ...view,
-    labels,
-    head_sha: view.headRefOid ?? command.target?.head_sha ?? null,
-  };
-  const block = validateAutomergeReadiness({ command, view, target: latestTarget });
+  const transientWait = automergeTransientWaitConfig(process.env);
+  const transientObservations: LooseRecord[] = [];
+  let waitedMs = 0;
+  let view = fetchPullRequestView(command.issue_number);
+  let latestTarget = latestAutomergeTarget(command, view);
+  let block = validateAutomergeReadiness({ command, view, target: latestTarget });
+  while (block && isTransientAutomergeBlock(block, view) && waitedMs < transientWait.maxWaitMs) {
+    const waitMs = Math.min(transientWait.intervalMs, transientWait.maxWaitMs - waitedMs);
+    transientObservations.push(automergeTransientObservation(block, view, waitedMs, waitMs));
+    sleepMs(waitMs);
+    waitedMs += waitMs;
+    view = fetchPullRequestView(command.issue_number);
+    latestTarget = latestAutomergeTarget(command, view);
+    block = validateAutomergeReadiness({ command, view, target: latestTarget });
+  }
   if (block) {
     if (isAutomergeChangelogBlock(block)) {
       return {
@@ -1449,7 +1456,14 @@ function executeAutomerge(command: LooseRecord) {
       };
     }
     if (isTransientAutomergeBlock(block, view)) {
-      return { action: "merge", status: "waiting", reason: block, merge_method: "squash" };
+      return {
+        action: "merge",
+        status: "waiting",
+        reason: block,
+        merge_method: "squash",
+        transient_wait_ms: waitedMs,
+        transient_observations: transientObservations,
+      };
     }
     return { action: "merge", status: "blocked", reason: block, merge_method: "squash" };
   }
@@ -1527,7 +1541,44 @@ function executeAutomerge(command: LooseRecord) {
     commit_subject: mergeMessage.subject,
     summary_lines: mergeMessage.summaryLines,
     fixup_lines: mergeMessage.fixupLines,
+    transient_wait_ms: waitedMs,
+    transient_observations: transientObservations,
   };
+}
+
+function latestAutomergeTarget(command: LooseRecord, view: LooseRecord) {
+  const labels = (view.labels ?? []).map((item: JsonValue) => item.name ?? item);
+  return {
+    ...command.target,
+    ...view,
+    labels,
+    head_sha: view.headRefOid ?? command.target?.head_sha ?? null,
+  };
+}
+
+function automergeTransientObservation(
+  reason: string,
+  view: LooseRecord,
+  waitedMs: number,
+  nextWaitMs: number,
+) {
+  const checks = summarizeChecks(view.statusCheckRollup ?? []);
+  return {
+    reason,
+    waited_ms: waitedMs,
+    next_wait_ms: nextWaitMs,
+    mergeable: view.mergeable ?? null,
+    merge_state_status: view.mergeStateStatus ?? null,
+    review_decision: view.reviewDecision ?? null,
+    check_counts: checks.counts,
+    check_blockers: checks.blockers.slice(0, 8),
+  };
+}
+
+function sleepMs(ms: number) {
+  if (ms <= 0) return;
+  const buffer = new SharedArrayBuffer(4);
+  Atomics.wait(new Int32Array(buffer), 0, 0, ms);
 }
 
 function buildAutomergeSquashMessage({
