@@ -1,17 +1,17 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:03:49.973Z",
+  "generated_at": "2026-05-01T03:03:59.206Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:03:48.181Z",
+  "since": "2026-05-01T00:03:57.611Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    74905
+    74873
   ],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
+  "scanned_comments": 3,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -28,16 +28,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74905:4350181159:2026-05-01T03:03:44Z:clawsweeper_needs_human",
-      "comment_id": "4350181159",
-      "comment_version_key": "4350181159:2026-05-01T03:03:44Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/74905#issuecomment-4350181159",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74873:4349920740:2026-05-01T03:03:53Z:clawsweeper_needs_human",
+      "comment_id": "4349920740",
+      "comment_version_key": "4349920740:2026-05-01T03:03:53Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74873#issuecomment-4349920740",
       "repo": "openclaw/openclaw",
-      "issue_number": 74905,
+      "issue_number": 74873,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T06:30:26Z",
-      "comment_updated_at": "2026-05-01T03:03:44Z",
+      "comment_created_at": "2026-04-30T05:27:51Z",
+      "comment_updated_at": "2026-05-01T03:03:53Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -45,46 +45,47 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=46f4ab36cd736efff0395f33a8a481486b30ada0)",
-      "review_summary": "The PR replaces direct APNs HTTP/2 connection creation with an APNs proxy wrapper, adds active managed proxy URL state and CONNECT tunnel code, and updates lint/OpenGrep guardrails, tests, docs, and changelog text.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=ffd209c82951cb34e7a1445e83ee46974db6e33f)",
+      "review_summary": "The PR adds `ChatRunRegistry.entries()`, a new drain-manifest read/write/delete module, shutdown wiring to snapshot active chat runs before clearing state, tests for the manifest and close handler, and a small `server.impl.ts` trusted-event hardening change.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "46f4ab36cd736efff0395f33a8a481486b30ada0",
+      "expected_head_sha": "ffd209c82951cb34e7a1445e83ee46974db6e33f",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix: proxy direct APNs HTTP2 sessions",
-        "branch": "apns-http2-proxy-pr",
-        "head_sha": "46f4ab36cd736efff0395f33a8a481486b30ada0",
-        "author": "jesse-merhi",
+        "title": "feat(gateway): write drain manifest on shutdown for session recovery",
+        "branch": "feature/ai-587-drain-manifest",
+        "head_sha": "ffd209c82951cb34e7a1445e83ee46974db6e33f",
+        "author": "fancymatt",
         "labels": [
-          "docs",
-          "security",
-          "scripts",
-          "maintainer",
-          "size: XL"
+          "gateway",
+          "size: M"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-74905",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74905.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-74873",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74873.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 86,
+          "total": 88,
           "counts": {
-            "SUCCESS": 76,
-            "SKIPPED": 8,
-            "IN_PROGRESS": 1,
+            "IN_PROGRESS": 2,
+            "SUCCESS": 79,
+            "FAILURE": 2,
+            "SKIPPED": 4,
             "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
+            "security-scm-fast:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "security-fast:FAILURE"
           ]
         }
       },
