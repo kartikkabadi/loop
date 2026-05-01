@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:39:05.689Z",
+  "updated_at": "2026-05-01T04:39:41.840Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73948:4340475499:2026-04-30T23:30:31Z:clawsweeper_needs_human",
-      "comment_id": "4340475499",
-      "comment_version_key": "4340475499:2026-04-30T23:30:31Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73948#issuecomment-4340475499",
-      "comment_created_at": "2026-04-29T02:44:32Z",
-      "comment_updated_at": "2026-04-30T23:30:31Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 73948,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=722a96dfbbf84c024c63d87570dd59e9960ffe91)",
-      "expected_head_sha": "722a96dfbbf84c024c63d87570dd59e9960ffe91",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T00:02:34.254Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73947:4340476122:2026-04-30T23:30:29Z:clawsweeper_auto_repair",
       "comment_id": "4340476122",
@@ -26469,6 +26445,36 @@
         "kind": "pull_request",
         "branch": "codex/acpx-orphan-process-reaper",
         "head_sha": "ca8954a2aeb3e4d53e575b2d09e359abb734b157",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71324:4323360153:2026-05-01T04:39:36Z:clawsweeper_auto_repair",
+      "comment_id": "4323360153",
+      "comment_version_key": "4323360153:2026-05-01T04:39:36Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/71324#issuecomment-4323360153",
+      "comment_created_at": "2026-04-27T00:03:25Z",
+      "comment_updated_at": "2026-05-01T04:39:36Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 71324,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=b5d140a1301fc75f3c13a5256a7c9c904bcbe5ff)",
+      "expected_head_sha": "b5d140a1301fc75f3c13a5256a7c9c904bcbe5ff",
+      "finding_id": "review-feedback",
+      "status": "skipped",
+      "processed_at": "2026-05-01T04:39:41.839Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "codex/legacy-transcript-projection-v2",
+        "head_sha": "b5d140a1301fc75f3c13a5256a7c9c904bcbe5ff",
         "cluster_id": null,
         "job_path": null
       }
