@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:12:29.393Z",
+  "generated_at": "2026-05-01T03:13:51.286Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:12:26.483Z",
+  "since": "2026-05-01T00:13:49.326Z",
   "execute": true,
-  "max_comments": 100,
+  "max_comments": 1000,
   "item_numbers": [
-    75382
+    75075
   ],
   "max_autoclose_targets": 8,
-  "scanned_comments": 2,
+  "scanned_comments": 1,
   "commands_seen": 1,
-  "actionable": 1,
+  "actionable": 0,
   "trusted_bots": [
     "clawsweeper[bot]",
     "openclaw-clawsweeper[bot]"
@@ -28,111 +28,66 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "comment-router:openclaw/openclaw:75382:4357587023:2026-05-01T03:10:45Z:automerge",
-      "comment_id": "4357587023",
-      "comment_version_key": "4357587023:2026-05-01T03:10:45Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75382#issuecomment-4357587023",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75075:4352419837:2026-05-01T03:13:44Z:clawsweeper_needs_human",
+      "comment_id": "4352419837",
+      "comment_version_key": "4352419837:2026-05-01T03:13:44Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75075#issuecomment-4352419837",
       "repo": "openclaw/openclaw",
-      "issue_number": 75382,
-      "author": "steipete",
+      "issue_number": 75075,
+      "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:10:45Z",
-      "comment_updated_at": "2026-05-01T03:10:45Z",
-      "trigger": "mention",
-      "command": "automerge",
-      "intent": "automerge",
+      "comment_created_at": "2026-04-30T12:26:00Z",
+      "comment_updated_at": "2026-05-01T03:13:44Z",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "autoclose_message": null,
-      "trusted_bot": false,
-      "trusted_bot_author": null,
-      "automation_source": null,
-      "repair_reason": null,
-      "review_summary": "",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b8d3dd08655761128daa8876ecb8ef179b87aa07)",
+      "review_summary": "The PR adds a default-off `gateway.http.endpoints.responses.exposeBuiltInToolCalls` flag, Gateway JSON/SSE capture of sanitized built-in tool-start events, config schema/docs/changelog updates, and focused OpenResponses tests.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": null,
+      "expected_head_sha": "b8d3dd08655761128daa8876ecb8ef179b87aa07",
       "finding_id": null,
-      "status": "executed",
-      "actions": [
-        {
-          "action": "ensure_automerge_job",
-          "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75382.md",
-          "status": "executed",
-          "mode": "autonomous",
-          "cluster_id": "automerge-openclaw-openclaw-75382",
-          "status_detail": "written"
-        },
-        {
-          "action": "label",
-          "label": "clawsweeper:automerge",
-          "status": "executed"
-        },
-        {
-          "action": "dispatch_clawsweeper",
-          "workflow": "sweep.yml",
-          "status": "executed",
-          "dispatched_at": "2026-05-01T03:12:31.983Z",
-          "event": "repository_dispatch",
-          "repo": "openclaw/clawsweeper",
-          "item_number": 75382
-        },
-        {
-          "action": "comment",
-          "status": "executed",
-          "commented_at": "2026-05-01T03:12:32.923Z",
-          "response_comment_id": null,
-          "response_comment_mode": "created"
-        }
-      ],
-      "author_repository_permission": "admin",
+      "status": "skipped",
+      "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(auto-reply): keep group visible replies deliverable",
-        "branch": "fix/qa-channel-group-visible-replies",
-        "head_sha": "6c8ee20e0cf9ccbe1933ca89025ee2bd20308f48",
-        "author": "steipete",
+        "title": "feat(gateway): surface built-in tool calls as function_call output items on /v1/responses",
+        "branch": "feat/expose-builtin-tool-calls",
+        "head_sha": "b8d3dd08655761128daa8876ecb8ef179b87aa07",
+        "author": "glow1128",
         "labels": [
           "docs",
-          "agents",
-          "maintainer",
-          "size: L",
-          "channel: qa-channel",
-          "extensions: qa-lab"
+          "gateway",
+          "size: M"
         ],
         "is_clawsweeper_pr": false,
-        "cluster_id": "automerge-openclaw-openclaw-75382",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75382.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75382",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75382.md",
+        "cluster_id": null,
+        "job_path": null,
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75075",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75075.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 106,
+          "total": 101,
           "counts": {
-            "CANCELLED": 3,
-            "IN_PROGRESS": 13,
-            "SKIPPED": 22,
-            "SUCCESS": 67,
+            "IN_PROGRESS": 2,
+            "SUCCESS": 77,
+            "SKIPPED": 21,
             "NEUTRAL": 1
           },
           "blockers": [
             "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "Security High (channel-runtime-boundary):IN_PROGRESS",
-            "build-artifacts:IN_PROGRESS",
-            "Critical Quality (channel-runtime-boundary):IN_PROGRESS",
-            "Critical Quality (agent-runtime-boundary):IN_PROGRESS",
-            "checks-node-core-fast-support:IN_PROGRESS",
-            "checks-node-core-runtime-infra:IN_PROGRESS",
-            "checks-node-core-runtime-media-ui:IN_PROGRESS",
-            "checks-node-agentic-commands-status-tools:IN_PROGRESS",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "checks-node-auto-reply-reply-session:IN_PROGRESS",
-            "check-additional-extension-package-boundary:IN_PROGRESS",
-            "checks-fast-contracts-channels:IN_PROGRESS"
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
-      }
+      },
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ]
 }
