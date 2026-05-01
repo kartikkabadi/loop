@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T05:01:40.938Z",
+  "updated_at": "2026-05-01T05:04:18.389Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72085:4322155708:2026-05-01T00:48:20Z:clawsweeper_auto_repair",
@@ -28128,34 +28128,48 @@
       }
     },
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75031:4351839426:2026-05-01T05:01:37Z:clawsweeper_needs_human",
-      "comment_id": "4351839426",
-      "comment_version_key": "4351839426:2026-05-01T05:01:37Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75031#issuecomment-4351839426",
-      "comment_created_at": "2026-04-30T10:54:32Z",
-      "comment_updated_at": "2026-05-01T05:01:37Z",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75382:4357590733:2026-05-01T05:01:16Z:clawsweeper_auto_merge",
+      "comment_id": "4357590733",
+      "comment_version_key": "4357590733:2026-05-01T05:01:16Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75382#issuecomment-4357590733",
+      "comment_created_at": "2026-05-01T03:11:57Z",
+      "comment_updated_at": "2026-05-01T05:01:16Z",
       "repo": "openclaw/openclaw",
-      "issue_number": 75031,
+      "issue_number": 75382,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
       "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "command": "clawsweeper auto merge",
+      "intent": "clawsweeper_auto_merge",
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=4b5a885fc9244f81e455b0bf1d2bd21dc76a88d7)",
-      "expected_head_sha": "4b5a885fc9244f81e455b0bf1d2bd21dc76a88d7",
+      "repair_reason": "structured ClawSweeper verdict: pass (sha=adbec93b8a134448a08e55176237ea33ab0d01fc)",
+      "expected_head_sha": "adbec93b8a134448a08e55176237ea33ab0d01fc",
       "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T05:01:40.938Z",
+      "status": "executed",
+      "processed_at": "2026-05-01T05:04:18.389Z",
       "target": {
         "kind": "pull_request",
-        "branch": "fix/75007-backup-tmpdir-inside-state",
-        "head_sha": "4b5a885fc9244f81e455b0bf1d2bd21dc76a88d7",
-        "cluster_id": null,
-        "job_path": null
-      }
+        "branch": "fix/qa-channel-group-visible-replies",
+        "head_sha": "adbec93b8a134448a08e55176237ea33ab0d01fc",
+        "cluster_id": "automerge-openclaw-openclaw-75382",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75382.md"
+      },
+      "actions": [
+        {
+          "action": "merge",
+          "status": "blocked",
+          "label": null,
+          "job_path": null
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "label": null,
+          "job_path": null
+        }
+      ]
     }
   ]
 }
