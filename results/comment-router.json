@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T04:46:36.208Z",
+  "updated_at": "2026-05-01T04:46:58.648Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72358:4323944930:2026-05-01T00:48:45Z:clawsweeper_needs_human",
@@ -18290,7 +18290,7 @@
       "expected_head_sha": null,
       "finding_id": null,
       "status": "executed",
-      "processed_at": "2026-05-01T03:52:49.480Z",
+      "processed_at": "2026-05-01T04:46:58.647Z",
       "target": {
         "kind": "pull_request",
         "branch": "fix-voice-call-secretref-auth-token",
@@ -18299,12 +18299,6 @@
         "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md"
       },
       "actions": [
-        {
-          "action": "ensure_automerge_job",
-          "status": "executed",
-          "label": null,
-          "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md"
-        },
         {
           "action": "label",
           "status": "executed",
