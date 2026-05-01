@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T03:13:51.410Z",
+  "updated_at": "2026-05-01T03:14:16.804Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63133:4323635148:2026-04-30T22:40:15Z:clawsweeper_needs_human",
-      "comment_id": "4323635148",
-      "comment_version_key": "4323635148:2026-04-30T22:40:15Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/63133#issuecomment-4323635148",
-      "comment_created_at": "2026-04-27T01:34:21Z",
-      "comment_updated_at": "2026-04-30T22:40:15Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 63133,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=61e53589f2b1e28d239fec8794e9d481771ffe1d)",
-      "expected_head_sha": "61e53589f2b1e28d239fec8794e9d481771ffe1d",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T23:40:02.066Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63096:4323634841:2026-04-30T22:40:12Z:clawsweeper_needs_human",
       "comment_id": "4323634841",
@@ -26071,6 +26047,36 @@
         "kind": "pull_request",
         "branch": "feat/expose-builtin-tool-calls",
         "head_sha": "b8d3dd08655761128daa8876ecb8ef179b87aa07",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74146:4341430136:2026-05-01T03:14:10Z:clawsweeper_auto_repair",
+      "comment_id": "4341430136",
+      "comment_version_key": "4341430136:2026-05-01T03:14:10Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74146#issuecomment-4341430136",
+      "comment_created_at": "2026-04-29T06:33:35Z",
+      "comment_updated_at": "2026-05-01T03:14:10Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 74146,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=e93847526a70b9ceb4de4d9b4cf858d8b9efca7d)",
+      "expected_head_sha": "e93847526a70b9ceb4de4d9b4cf858d8b9efca7d",
+      "finding_id": "review-feedback",
+      "status": "skipped",
+      "processed_at": "2026-05-01T03:14:16.804Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/feishu-streaming-block-dedup-v2",
+        "head_sha": "e93847526a70b9ceb4de4d9b4cf858d8b9efca7d",
         "cluster_id": null,
         "job_path": null
       }
