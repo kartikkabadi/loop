@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:16:41.882Z",
+  "generated_at": "2026-05-01T04:18:08.628Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:16:40.077Z",
+  "since": "2026-05-01T01:18:07.275Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75008
+    75370
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 2,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,81 +30,72 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75008:4351392627:2026-05-01T04:16:36Z:clawsweeper_auto_repair",
-      "comment_id": "4351392627",
-      "comment_version_key": "4351392627:2026-05-01T04:16:36Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75008#issuecomment-4351392627",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T04:18:03Z:clawsweeper_needs_human",
+      "comment_id": "4357487939",
+      "comment_version_key": "4357487939:2026-05-01T04:18:03Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
       "repo": "openclaw/openclaw",
-      "issue_number": 75008,
+      "issue_number": 75370,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T09:44:24Z",
-      "comment_updated_at": "2026-05-01T04:16:36Z",
+      "comment_created_at": "2026-05-01T02:36:16Z",
+      "comment_updated_at": "2026-05-01T04:18:03Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=6d16517c2eac5de4bc1fce08cc45e464ffc3c1a7)",
-      "review_summary": "The PR extracts the embedded-run `abortable` provider-call wrapper into a module-scoped helper, updates the runner to use it, adds helper tests plus an embedded-run abort leak harness/package script, documents the harness in the heap-leak skill, and adds a changelog entry for #74182.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=6bfc04952db5a529163c519c72bd73d659bf248d)",
+      "review_summary": "The PR modifies `extensions/document-extract/document-extractor.ts` to detect `pdftoppm` and render PDF pages through temporary files when `@napi-rs/canvas` cannot load.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "6d16517c2eac5de4bc1fce08cc45e464ffc3c1a7",
-      "finding_id": "review-feedback",
+      "expected_head_sha": "6bfc04952db5a529163c519c72bd73d659bf248d",
+      "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(agents): release embedded-run scope on hung provider abort + heap-leak harness",
-        "branch": "fix/embedded-run-abort-retention",
-        "head_sha": "6d16517c2eac5de4bc1fce08cc45e464ffc3c1a7",
-        "author": "romneyda",
+        "title": "feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable",
+        "branch": "pdftoppm-fallback",
+        "head_sha": "6bfc04952db5a529163c519c72bd73d659bf248d",
+        "author": "mgustimz",
         "labels": [
-          "scripts",
-          "agents",
-          "maintainer",
-          "size: M"
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75008",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75008.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75370",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75370.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
+        "merge_state_status": "CLEAN",
         "review_decision": "",
         "checks": {
-          "total": 98,
+          "total": 36,
           "counts": {
-            "IN_PROGRESS": 3,
-            "SUCCESS": 73,
-            "SKIPPED": 21,
-            "NEUTRAL": 1
+            "SKIPPED": 30,
+            "SUCCESS": 6
           },
-          "blockers": [
-            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "build-artifacts:IN_PROGRESS",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
-          ]
+          "blockers": []
         }
       },
-      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1983,
+    "total_ms": 1469,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 292
+        "ms": 220
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1505
+        "ms": 1123
       },
       {
         "name": "classify_commands",
@@ -112,11 +103,11 @@
       },
       {
         "name": "execute_commands",
-        "ms": 171
+        "ms": 107
       },
       {
         "name": "append_ledger",
-        "ms": 0
+        "ms": 1
       }
     ]
   }
