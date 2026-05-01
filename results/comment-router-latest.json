@@ -1,14 +1,14 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:31:36.653Z",
+  "generated_at": "2026-05-01T03:32:50.977Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:31:35.195Z",
+  "since": "2026-05-01T00:32:48.912Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    73438
+    74905
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -29,16 +29,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73438:4334136650:2026-05-01T03:31:31Z:clawsweeper_needs_human",
-      "comment_id": "4334136650",
-      "comment_version_key": "4334136650:2026-05-01T03:31:31Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73438#issuecomment-4334136650",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74905:4350181159:2026-05-01T03:32:44Z:clawsweeper_needs_human",
+      "comment_id": "4350181159",
+      "comment_version_key": "4350181159:2026-05-01T03:32:44Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74905#issuecomment-4350181159",
       "repo": "openclaw/openclaw",
-      "issue_number": 73438,
+      "issue_number": 74905,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-28T09:49:23Z",
-      "comment_updated_at": "2026-05-01T03:31:31Z",
+      "comment_created_at": "2026-04-30T06:30:26Z",
+      "comment_updated_at": "2026-05-01T03:32:44Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -46,31 +46,32 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=11946064a5553597fd45dce0b363ec8870a36ffd)",
-      "review_summary": "The PR adds `openclaw proxy validate`, a proxy validation engine with CLI/runtime tests, CLI and Network Proxy docs, and an Unreleased changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=ec5c471aa5c558f597b2ce217ecac369c8cbe174)",
+      "review_summary": "The PR routes direct APNs HTTP/2 delivery through a new APNs connection wrapper and active managed-proxy state, then adds CONNECT tunnel code, raw-HTTP/2 lint/OpenGrep guardrails, APNs proxy regression tests, docs, and a changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "11946064a5553597fd45dce0b363ec8870a36ffd",
+      "expected_head_sha": "ec5c471aa5c558f597b2ce217ecac369c8cbe174",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat: add proxy validation command",
-        "branch": "feat/proxy-validate",
-        "head_sha": "11946064a5553597fd45dce0b363ec8870a36ffd",
+        "title": "fix: proxy direct APNs HTTP2 sessions",
+        "branch": "apns-http2-proxy-pr",
+        "head_sha": "ec5c471aa5c558f597b2ce217ecac369c8cbe174",
         "author": "jesse-merhi",
         "labels": [
           "docs",
-          "cli",
+          "security",
+          "scripts",
           "maintainer",
           "size: XL"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-73438",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73438.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-74905",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74905.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
@@ -78,19 +79,13 @@
         "checks": {
           "total": 86,
           "counts": {
-            "SUCCESS": 70,
-            "SKIPPED": 9,
-            "IN_PROGRESS": 2,
-            "QUEUED": 4,
+            "SUCCESS": 76,
+            "SKIPPED": 8,
+            "IN_PROGRESS": 1,
             "NEUTRAL": 1
           },
           "blockers": [
-            "build-artifacts:IN_PROGRESS",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "checks-node-channels:QUEUED",
-            "checks-node-core-support-boundary:QUEUED",
-            "build-smoke:QUEUED",
-            "check-additional:QUEUED"
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
@@ -99,23 +94,23 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1628,
+    "total_ms": 2375,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 312
+        "ms": 403
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1137
+        "ms": 1652
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 161
+        "ms": 301
       },
       {
         "name": "append_ledger",
