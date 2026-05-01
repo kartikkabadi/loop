@@ -46,6 +46,7 @@ import {
   fetchSourcePullRequestHead,
   firstTargetSourcePullRequest,
 } from "./source-pr-checkout.js";
+import { mergeAutomergeTimelineSection } from "./automerge-status-timeline.js";
 import {
   prepareTargetToolchain,
   preflightTargetValidationPlan,
@@ -93,6 +94,7 @@ const codexPreflightTimeoutMs = Number(
   process.env.CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS ?? 2 * 60 * 1000,
 );
 const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "medium");
+const scriptStartedAt = new Date();
 const codexServiceTier = String(process.env.CLAWSWEEPER_CODEX_SERVICE_TIER ?? "fast").trim();
 const codexStdioMaxBuffer =
   Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB ?? 128)) * 1024 * 1024;
@@ -527,19 +529,30 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     targetDir,
     resolveThreads: resolveReviewThreads,
   });
-  const comment = repairContributorBranchComment({
-    sourcePrUrl: sourcePr.url,
+  const statusCommentUpdated = updateAutomergeStatusCommentForBranchRepair({
+    target: sourcePr.number,
     validationCommands: prep.merge_preflight.validation_commands,
-    provenance: externalMessageProvenance({
-      model,
-      reasoning: codexReasoningEffort,
-      reviewedSha: prep.commit,
-    }),
+    commit: prep.commit,
   });
-  run("gh", ["pr", "comment", String(sourcePr.number), "--repo", result.repo, "--body", comment], {
-    cwd: targetDir,
-    env: ghEnv(),
-  });
+  if (!statusCommentUpdated) {
+    const comment = repairContributorBranchComment({
+      sourcePrUrl: sourcePr.url,
+      validationCommands: prep.merge_preflight.validation_commands,
+      provenance: externalMessageProvenance({
+        model,
+        reasoning: codexReasoningEffort,
+        reviewedSha: prep.commit,
+      }),
+    });
+    run(
+      "gh",
+      ["pr", "comment", String(sourcePr.number), "--repo", result.repo, "--body", comment],
+      {
+        cwd: targetDir,
+        env: ghEnv(),
+      },
+    );
+  }
   return {
     action: "repair_contributor_branch",
     status: "pushed",
@@ -548,6 +561,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     head_ref: pull.head.ref,
     branch_rewritten: branchUpdate.rewritten,
     commit: prep.commit,
+    status_comment_updated: statusCommentUpdated,
     merge_preflight: prep.merge_preflight,
     review_threads: threadResolution,
   };
@@ -1989,10 +2003,30 @@ function appendAutomergeRepairOutcomeComment(report: LooseRecord, resultPath: st
     }),
   });
   const existingStatus = findAutomergeStatusComment(target);
+  const bodyWithTimeline = mergeAutomergeTimelineSection({
+    body,
+    existingBody: existingStatus?.body,
+    events: [
+      {
+        id: `repair-completed:${currentActionsRunId() || path.basename(path.dirname(resultPath))}`,
+        label: "repair completed",
+        at: scriptStartedAt.toISOString(),
+        completedAt: new Date().toISOString(),
+        durationMs: Date.now() - scriptStartedAt.getTime(),
+        runUrl: currentActionsRunUrl(),
+        headSha: automergeOutcomeReviewedSha(),
+        status: "no branch change",
+        details: report?.reason ?? "no executable fix action",
+      },
+    ],
+  });
   if (existingStatus?.id) {
-    patchIssueComment(existingStatus.id, preserveStatusMarkers(existingStatus.body, body));
+    patchIssueComment(
+      existingStatus.id,
+      preserveStatusMarkers(existingStatus.body, bodyWithTimeline),
+    );
   } else {
-    postIssueComment(target, body);
+    postIssueComment(target, bodyWithTimeline);
   }
   report.actions.push({
     ...base,
@@ -2001,6 +2035,53 @@ function appendAutomergeRepairOutcomeComment(report: LooseRecord, resultPath: st
     comment_id: existingStatus?.id ? String(existingStatus.id) : null,
     commented_at: new Date().toISOString(),
   });
+}
+
+function updateAutomergeStatusCommentForBranchRepair({
+  target,
+  validationCommands,
+  commit,
+}: LooseRecord) {
+  if (!isAutomergeRepairJob()) return false;
+  if (Number(target) !== Number(automergeOutcomeTargetPrNumber())) return false;
+  const existingStatus = findAutomergeStatusComment(target);
+  const runUrl = currentActionsRunUrl();
+  const body = [
+    "🦞🦞",
+    "ClawSweeper applied a repair to this PR branch.",
+    "",
+    "Repair: kept the fix on this contributor branch instead of opening a replacement PR.",
+    `Validation: \`${listOrNone(validationCommands)}\``,
+    `Updated head: \`${commit}\``,
+    ...(runUrl ? [`Run: ${runUrl}`] : []),
+    "",
+    "Current state: waiting for GitHub checks on the repaired head before automerge can continue.",
+  ].join("\n");
+  const bodyWithTimeline = mergeAutomergeTimelineSection({
+    body,
+    existingBody: existingStatus?.body,
+    events: [
+      {
+        id: `repair-completed:${currentActionsRunId() || commit}`,
+        label: "repair completed",
+        at: scriptStartedAt.toISOString(),
+        completedAt: new Date().toISOString(),
+        durationMs: Date.now() - scriptStartedAt.getTime(),
+        runUrl,
+        headSha: commit,
+        status: "branch updated",
+      },
+    ],
+  });
+  if (existingStatus?.id) {
+    patchIssueComment(
+      existingStatus.id,
+      preserveStatusMarkers(existingStatus.body, bodyWithTimeline),
+    );
+  } else {
+    postIssueComment(target, bodyWithTimeline);
+  }
+  return true;
 }
 
 function isAutomergeRepairJob() {
@@ -2125,6 +2206,22 @@ function patchIssueComment(id: JsonValue, body: string) {
       env: ghEnv(),
     },
   );
+}
+
+function currentActionsRunId() {
+  return String(process.env.GITHUB_RUN_ID ?? "").trim();
+}
+
+function currentActionsRunUrl() {
+  const runId = currentActionsRunId();
+  const repo = String(process.env.GITHUB_REPOSITORY ?? "").trim();
+  if (!runId || !repo) return "";
+  const server = String(process.env.GITHUB_SERVER_URL ?? "https://github.com").replace(/\/+$/g, "");
+  return `${server}/${repo}/actions/runs/${runId}`;
+}
+
+function listOrNone(items: LooseRecord[]) {
+  return items?.length ? items.join("; ") : "none";
 }
 
 function postIssueComment(number: JsonValue, body: string) {

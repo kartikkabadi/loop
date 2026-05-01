@@ -45,6 +45,7 @@ import {
   staleAutomergeActivationReason,
   usesSharedAutomergeStatus,
 } from "./comment-router-core.js";
+import { mergeAutomergeTimelineSection } from "./automerge-status-timeline.js";
 import {
   appendLedger,
   issueNumberFromUrl,
@@ -883,6 +884,7 @@ function executeCommand(command: LooseRecord) {
           mode: command.target.mode,
           status: "executed",
           dispatched_at: new Date().toISOString(),
+          ...(repair.run_url ? { run_url: repair.run_url } : {}),
         };
       }
       return action;
@@ -1054,6 +1056,7 @@ function executeCommand(command: LooseRecord) {
           mode: command.target.mode,
           status: "executed",
           dispatched_at: new Date().toISOString(),
+          ...(repair.run_url ? { run_url: repair.run_url } : {}),
         });
       }
     }
@@ -2139,7 +2142,16 @@ async function fetchIssueCommentsAsync(number: JsonValue) {
 
 function postComment(command: LooseRecord, body: string) {
   const existing = findExistingCommandStatusComment(command);
-  const payloadPath = writePayload(repoRoot(), `comment-router-${command.comment_id}`, { body });
+  const nextBody = usesSharedAutomergeStatus(command)
+    ? mergeAutomergeTimelineSection({
+        body,
+        existingBody: existing?.body,
+        events: automergeTimelineEvents(command, body),
+      })
+    : body;
+  const payloadPath = writePayload(repoRoot(), `comment-router-${command.comment_id}`, {
+    body: nextBody,
+  });
   if (existing?.id) {
     ghText([
       "api",
@@ -2160,6 +2172,83 @@ function postComment(command: LooseRecord, body: string) {
     payloadPath,
   ]);
   return { mode: "created", comment_id: null };
+}
+
+function automergeTimelineEvents(command: LooseRecord, body: string) {
+  const events: LooseRecord[] = [];
+  const head = command.target?.head_sha ?? command.expected_head_sha ?? "unknown";
+  const commentTime = command.comment_updated_at ?? command.comment_created_at;
+  if (["automerge", "autofix"].includes(String(command.intent ?? ""))) {
+    const action = executedAction(command, "dispatch_clawsweeper");
+    events.push({
+      id: `review-queued:${head}:${command.comment_id ?? commentTime ?? "unknown"}`,
+      label: "review queued",
+      at: action?.dispatched_at ?? commentTime ?? new Date().toISOString(),
+      headSha: head,
+      status: "queued",
+      runUrl: action?.run_url,
+    });
+  }
+  if (
+    ["clawsweeper_auto_repair", "clawsweeper_auto_merge"].includes(String(command.intent ?? ""))
+  ) {
+    events.push({
+      id: `review-result:${head}:${command.comment_id ?? commentTime ?? "unknown"}`,
+      label:
+        String(command.intent) === "clawsweeper_auto_merge"
+          ? "review passed"
+          : "review requested repair",
+      at: commentTime ?? new Date().toISOString(),
+      headSha: head,
+      status: compactTimelineStatus(command.repair_reason ?? "verdict received"),
+      runUrl: command.comment_url,
+    });
+  }
+  const repairAction = executedAction(command, "dispatch_repair");
+  if (repairAction) {
+    const runUrl = repairAction.run_url ?? repairRunUrlFromBody(body);
+    events.push({
+      id: `repair-queued:${head}:${runIdFromUrl(runUrl) || repairAction.dispatched_at || command.comment_id || "unknown"}`,
+      label: "repair queued",
+      at: repairAction.dispatched_at ?? new Date().toISOString(),
+      headSha: head,
+      status: repairAction.mode ?? command.target?.mode ?? "queued",
+      runUrl,
+    });
+  }
+  const mergeAction = executedAction(command, "merge");
+  if (mergeAction) {
+    events.push({
+      id: `merge:${head}:${mergeAction.merge_commit_sha ?? mergeAction.completed_at ?? command.comment_id ?? "unknown"}`,
+      label: mergeAction.status === "executed" ? "merged" : "merge checked",
+      at: mergeAction.completed_at ?? mergeAction.merged_at ?? new Date().toISOString(),
+      headSha: head,
+      status: mergeAction.reason ?? mergeAction.status,
+      runUrl: command.comment_url,
+    });
+  }
+  return events;
+}
+
+function executedAction(command: LooseRecord, name: string) {
+  return (command.actions ?? []).find(
+    (action: JsonValue) => action?.action === name && action?.status === "executed",
+  );
+}
+
+function repairRunUrlFromBody(body: string) {
+  return body.match(/https:\/\/github\.com\/[^\s]+\/actions\/runs\/\d+/)?.[0] ?? "";
+}
+
+function runIdFromUrl(value: JsonValue) {
+  return String(value ?? "").match(/\/actions\/runs\/(\d+)/)?.[1] ?? "";
+}
+
+function compactTimelineStatus(value: JsonValue) {
+  return String(value ?? "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 90);
 }
 
 function findExistingCommandStatusComment(command: LooseRecord) {
