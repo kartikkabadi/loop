@@ -1,14 +1,14 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:34:10.211Z",
+  "generated_at": "2026-05-01T03:34:54.381Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:34:08.459Z",
+  "since": "2026-05-01T00:34:52.729Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75392
+    75397
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -29,90 +29,91 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75392:4357636413:2026-05-01T03:34:04Z:clawsweeper_auto_repair",
-      "comment_id": "4357636413",
-      "comment_version_key": "4357636413:2026-05-01T03:34:04Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75392#issuecomment-4357636413",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75397:4357654015:2026-05-01T03:34:50Z:clawsweeper_needs_human",
+      "comment_id": "4357654015",
+      "comment_version_key": "4357654015:2026-05-01T03:34:50Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75397#issuecomment-4357654015",
       "repo": "openclaw/openclaw",
-      "issue_number": 75392,
+      "issue_number": 75397,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:25:51Z",
-      "comment_updated_at": "2026-05-01T03:34:04Z",
+      "comment_created_at": "2026-05-01T03:32:12Z",
+      "comment_updated_at": "2026-05-01T03:34:50Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=5d01ad501c1dc9bcdb09b2f72208e4f50360456d)",
-      "review_summary": "This PR adds shared `visibleReplies` Zod coercion for global and group message config, adds focused regression tests, and adds a changelog fix entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=09ed407318c1693a46deac310489b11d81d89032)",
+      "review_summary": "This PR updates provider hook resolution to include manifest model-catalog provider aliases in ownership lookup, avoids caching transient in-flight hook misses, and adds focused regression tests.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "5d01ad501c1dc9bcdb09b2f72208e4f50360456d",
-      "finding_id": "review-feedback",
+      "expected_head_sha": "09ed407318c1693a46deac310489b11d81d89032",
+      "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(config): coerce visibleReplies boolean to enum equivalent",
-        "branch": "fix/visible-replies-boolean-coercion",
-        "head_sha": "5d01ad501c1dc9bcdb09b2f72208e4f50360456d",
-        "author": "scottgl9",
+        "title": "fix: targeted hook resolution/cache path provider-runtime regressions",
+        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-354084b1b320",
+        "head_sha": "09ed407318c1693a46deac310489b11d81d89032",
+        "author": "app/clawsweeper",
         "labels": [
-          "size: S"
+          "size: S",
+          "clawsweeper",
+          "clawsweeper:commit-finding"
         ],
-        "is_clawsweeper_pr": false,
-        "cluster_id": null,
-        "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75392",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75392.md",
+        "is_clawsweeper_pr": true,
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-354084b1b320",
+        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-354084b1b320.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75397",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75397.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 100,
+          "total": 105,
           "counts": {
+            "CANCELLED": 3,
+            "SKIPPED": 24,
             "SUCCESS": 76,
-            "SKIPPED": 21,
-            "FAILURE": 1,
             "IN_PROGRESS": 1,
             "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-core-runtime-infra:FAILURE",
             "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
-      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1926,
+    "total_ms": 1777,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 254
+        "ms": 225
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1489
+        "ms": 1415
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 3
       },
       {
         "name": "execute_commands",
-        "ms": 166
+        "ms": 119
       },
       {
         "name": "append_ledger",
-        "ms": 1
+        "ms": 0
       }
     ]
   }
