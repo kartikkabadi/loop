@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T05:05:28.957Z",
+  "updated_at": "2026-05-01T05:07:06.580Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72009:4340801980:2026-05-01T00:48:15Z:clawsweeper_auto_repair",
@@ -28076,7 +28076,7 @@
       "expected_head_sha": "adbec93b8a134448a08e55176237ea33ab0d01fc",
       "finding_id": null,
       "status": "executed",
-      "processed_at": "2026-05-01T05:04:18.389Z",
+      "processed_at": "2026-05-01T05:07:06.579Z",
       "target": {
         "kind": "pull_request",
         "branch": "fix/qa-channel-group-visible-replies",
@@ -28086,8 +28086,14 @@
       },
       "actions": [
         {
+          "action": "remove_label",
+          "status": "executed",
+          "label": "clawsweeper:merge-ready",
+          "job_path": null
+        },
+        {
           "action": "merge",
-          "status": "blocked",
+          "status": "executed",
           "label": null,
           "job_path": null
         },
