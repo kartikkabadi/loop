@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:40:03.069Z",
+  "generated_at": "2026-05-01T04:40:09.832Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:40:00.764Z",
+  "since": "2026-05-01T01:40:08.354Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75370
+    75425
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T04:39:57Z:clawsweeper_needs_human",
-      "comment_id": "4357487939",
-      "comment_version_key": "4357487939:2026-05-01T04:39:57Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75425:4357836017:2026-05-01T04:40:03Z:clawsweeper_needs_human",
+      "comment_id": "4357836017",
+      "comment_version_key": "4357836017:2026-05-01T04:40:03Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75425#issuecomment-4357836017",
       "repo": "openclaw/openclaw",
-      "issue_number": 75370,
+      "issue_number": 75425,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T02:36:16Z",
-      "comment_updated_at": "2026-05-01T04:39:57Z",
+      "comment_created_at": "2026-05-01T04:36:52Z",
+      "comment_updated_at": "2026-05-01T04:40:03Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,47 +47,40 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b8607199d8dfaa946f670f647217268b99fc7820)",
-      "review_summary": "The PR modifies the bundled `document-extract` PDF extractor to use `pdftoppm` as a fallback image renderer when `@napi-rs/canvas` cannot load, while refactoring PDF text and image extraction into helper functions.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=aa3eb999e79aaf112800b9130abada6984ddd540)",
+      "review_summary": "This PR updates the shared QR runtime loader to try bare `qrcode` first and fall back to `qrcode/lib/index.js`, adds QR runtime regression tests, and records the WhatsApp/Feishu staged runtime-deps QR fix in the changelog.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "b8607199d8dfaa946f670f647217268b99fc7820",
+      "expected_head_sha": "aa3eb999e79aaf112800b9130abada6984ddd540",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable",
-        "branch": "pdftoppm-fallback",
-        "head_sha": "b8607199d8dfaa946f670f647217268b99fc7820",
-        "author": "mgustimz",
+        "title": "fix(media): fall back to qrcode/lib subpath when bare specifier fails to resolve",
+        "branch": "fix/75394-qrcode-resolution-fallback",
+        "head_sha": "aa3eb999e79aaf112800b9130abada6984ddd540",
+        "author": "lonexreb",
         "labels": [
           "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75370",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75370.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75425",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75425.md",
         "mode": "autonomous",
-        "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
+        "mergeable": "CONFLICTING",
+        "merge_state_status": "DIRTY",
         "review_decision": "",
         "checks": {
-          "total": 107,
+          "total": 7,
           "counts": {
-            "SKIPPED": 37,
-            "SUCCESS": 65,
-            "IN_PROGRESS": 1,
-            "FAILURE": 4
+            "CANCELLED": 1,
+            "SKIPPED": 2,
+            "SUCCESS": 4
           },
-          "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "check-lint:FAILURE",
-            "check-additional-extension-bundled:FAILURE",
-            "check:FAILURE",
-            "check-additional:FAILURE"
-          ]
+          "blockers": []
         }
       },
       "reason": "PR is not opted into ClawSweeper autofix or automerge"
@@ -95,15 +88,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2486,
+    "total_ms": 1766,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 284
+        "ms": 370
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 2013
+        "ms": 1098
       },
       {
         "name": "classify_commands",
@@ -111,7 +104,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 172
+        "ms": 281
       },
       {
         "name": "append_ledger",
