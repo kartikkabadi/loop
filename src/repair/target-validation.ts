@@ -289,6 +289,7 @@ function resolveAllowedValidationCommands(
 ) {
   const parts = parseAllowedValidationCommand(command);
   const commandParts = stripEnvPrefix(parts);
+  const envPrefix = parts[0] === "env" ? parts.slice(0, parts.length - commandParts.length) : [];
   const scripts = readPackageScriptSet(cwd);
   if (
     !options.strictTargetValidation &&
@@ -309,21 +310,32 @@ function resolveAllowedValidationCommands(
       return [["pnpm", "check:changed"]];
     }
     if (pnpmScript === "vitest" && commandParts[commandStart + 1] === "run") {
-      return normalizePathValidationCommand(
-        ["pnpm", "test:serial", ...commandParts.slice(commandStart + 2)],
-        cwd,
-        baseBranch,
+      return withEnvPrefix(
+        envPrefix,
+        normalizePathValidationCommand(
+          ["pnpm", "test:serial", ...commandParts.slice(commandStart + 2)],
+          cwd,
+          baseBranch,
+        ),
       );
     }
     if (pnpmScript === "test" || pnpmScript === "test:serial") {
-      return normalizePathValidationCommand(
-        ["pnpm", pnpmScript, ...commandParts.slice(commandStart + 1)],
-        cwd,
-        baseBranch,
+      return withEnvPrefix(
+        envPrefix,
+        normalizePathValidationCommand(
+          ["pnpm", pnpmScript, ...commandParts.slice(commandStart + 1)],
+          cwd,
+          baseBranch,
+        ),
       );
     }
   }
   return [parts];
+}
+
+function withEnvPrefix(envPrefix: string[], commands: string[][]) {
+  if (envPrefix.length === 0) return commands;
+  return commands.map((command) => [...envPrefix, ...command]);
 }
 
 function normalizePathValidationCommand(

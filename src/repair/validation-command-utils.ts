@@ -62,7 +62,7 @@ export function parseAllowedValidationCommand(command: unknown): string[] {
   if (/[`$;&|<>()[\]{}*?~]/.test(safetyText)) {
     throw new Error(`unsafe validation command: ${text}`);
   }
-  const parts = text.split(/\s+/);
+  const parts = normalizeEnvInvocation(text.split(/\s+/));
   const executable = validationExecutable(parts);
   if (!executable || !["pnpm", "npm", "node", "git"].includes(executable)) {
     throw new Error(`unsupported validation command: ${text}`);
@@ -85,4 +85,9 @@ function validationExecutable(parts: readonly string[]) {
 
 function isEnvAssignment(value: unknown) {
   return /^[A-Za-z_][A-Za-z0-9_]*=.*/.test(String(value ?? ""));
+}
+
+function normalizeEnvInvocation(parts: readonly string[]): string[] {
+  if (parts[0] === "env" || !isEnvAssignment(parts[0])) return [...parts];
+  return ["env", ...parts];
 }

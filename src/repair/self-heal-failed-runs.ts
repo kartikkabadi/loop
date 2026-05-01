@@ -13,7 +13,7 @@ import {
   validateJob,
   waitForLiveWorkerCapacity,
 } from "./lib.js";
-import { ghJson, ghText } from "./github-cli.js";
+import { ghErrorText, ghJson, ghText } from "./github-cli.js";
 import { sleepMs } from "./timing.js";
 import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 
@@ -335,19 +335,11 @@ function listClusterRuns() {
 }
 
 function readExecuteGate() {
-  const variables = ghJson(["variable", "list", "--repo", repo, "--json", "name,value"]);
-  return (
-    variables.find((variable: JsonValue) => variable.name === "CLAWSWEEPER_ALLOW_EXECUTE")?.value ??
-    ""
-  );
+  return readGateValue("CLAWSWEEPER_ALLOW_EXECUTE", { preferEnv: true });
 }
 
 function readFixGate() {
-  const variables = ghJson(["variable", "list", "--repo", repo, "--json", "name,value"]);
-  return (
-    variables.find((variable: JsonValue) => variable.name === "CLAWSWEEPER_ALLOW_FIX_PR")?.value ??
-    ""
-  );
+  return readGateValue("CLAWSWEEPER_ALLOW_FIX_PR", { preferEnv: true });
 }
 
 function openGate(name: string) {
@@ -357,8 +349,27 @@ function openGate(name: string) {
 }
 
 function readGate(name: string) {
-  const variables = ghJson(["variable", "list", "--repo", repo, "--json", "name,value"]);
-  return variables.find((variable: JsonValue) => variable.name === name)?.value ?? "";
+  return readGateValue(name, { preferEnv: false });
+}
+
+function readGateValue(name: string, { preferEnv }: { preferEnv: boolean }) {
+  const envValue = process.env[name];
+  if (preferEnv && envValue !== undefined && envValue !== "") return envValue;
+  const variables = readRepoVariables();
+  return variables.find((variable: JsonValue) => variable.name === name)?.value ?? envValue ?? "";
+}
+
+function readRepoVariables() {
+  try {
+    return ghJson<LooseRecord[]>(["variable", "list", "--repo", repo, "--json", "name,value"]);
+  } catch (error) {
+    const detail = ghErrorText(error);
+    if (/HTTP 403|Resource not accessible by integration/i.test(detail)) {
+      console.warn("self-heal: cannot read repo variables; falling back to workflow env");
+      return [];
+    }
+    throw error;
+  }
 }
 
 function setGate(name: string, value: JsonValue) {

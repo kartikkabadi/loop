@@ -12,6 +12,7 @@ import {
   runAllowedValidationCommands,
 } from "../../dist/repair/target-validation.js";
 import { compactText } from "../../dist/repair/text-utils.js";
+import { parseAllowedValidationCommand } from "../../dist/repair/validation-command-utils.js";
 
 test("OpenClaw repairs require changed-surface validation even when omitted", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
@@ -92,6 +93,50 @@ test("validation preflight accepts assignment-prefixed OpenClaw test commands", 
       resolved_commands: ["pnpm check:changed"],
       available_scripts: ["check:changed"],
     },
+  );
+});
+
+test("validation preflight accepts leading env assignment commands", () => {
+  const cwd = gitPackageFixture({ "test:serial": "node test.js" });
+  fs.mkdirSync(path.join(cwd, "src", "pairing"), { recursive: true });
+  fs.writeFileSync(path.join(cwd, "src", "pairing", "pairing-store.test.ts"), "");
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  const command =
+    "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH=.vitest-cache-pairing pnpm test:serial src/pairing/pairing-store.test.ts";
+
+  assert.deepEqual(
+    preflightTargetValidationPlan(
+      {
+        fixArtifact: {
+          validation_commands: [command],
+        },
+        targetDir: cwd,
+      },
+      {
+        ...validationOptions("openclaw/openclaw"),
+        skipOpenClawChangedGate: true,
+      },
+    ),
+    {
+      status: "passed",
+      resolved_commands: [`env ${command}`],
+      available_scripts: ["test:serial"],
+    },
+  );
+});
+
+test("validation parser requires env assignments before env command", () => {
+  assert.deepEqual(parseAllowedValidationCommand("FOO=1 pnpm test:serial src/foo.test.ts"), [
+    "env",
+    "FOO=1",
+    "pnpm",
+    "test:serial",
+    "src/foo.test.ts",
+  ]);
+  assert.throws(
+    () => parseAllowedValidationCommand("env pnpm test:serial src/foo.test.ts"),
+    /unsupported validation command/,
   );
 });
 
