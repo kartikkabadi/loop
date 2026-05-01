@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T05:35:04.290Z",
+  "updated_at": "2026-05-01T05:36:52.675Z",
   "commands": [
-    {
-      "idempotency_key": "comment-router:openclaw/openclaw:75302:4357146188:2026-05-01T00:47:04Z:automerge",
-      "comment_id": "4357146188",
-      "comment_version_key": "4357146188:2026-05-01T00:47:04Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75302#issuecomment-4357146188",
-      "comment_created_at": "2026-05-01T00:47:04Z",
-      "comment_updated_at": "2026-05-01T00:47:04Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 75302,
-      "author": "vignesh07",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "mention",
-      "command": "automerge",
-      "intent": "automerge",
-      "trusted_bot": false,
-      "trusted_bot_author": null,
-      "automation_source": null,
-      "repair_reason": null,
-      "expected_head_sha": null,
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63113:4349684887:2026-05-01T00:47:04Z:clawsweeper_auto_repair",
       "comment_id": "4349684887",
@@ -28477,6 +28453,36 @@
         "kind": "pull_request",
         "branch": "fix/heartbeat-cooldown-non-interval-wakes",
         "head_sha": "1fd651123ab1d6447e94ece5b9bb86cc7de50746",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75288:4356616997:2026-05-01T05:36:46Z:clawsweeper_needs_human",
+      "comment_id": "4356616997",
+      "comment_version_key": "4356616997:2026-05-01T05:36:46Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75288#issuecomment-4356616997",
+      "comment_created_at": "2026-04-30T22:34:03Z",
+      "comment_updated_at": "2026-05-01T05:36:46Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75288,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=df8b0436669df13a7dc153d78a311b05cf1ca11c)",
+      "expected_head_sha": "df8b0436669df13a7dc153d78a311b05cf1ca11c",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T05:36:52.675Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "codex/fix-runtime-deps-symlink-update",
+        "head_sha": "df8b0436669df13a7dc153d78a311b05cf1ca11c",
         "cluster_id": null,
         "job_path": null
       }
