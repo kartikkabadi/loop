@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:36:52.337Z",
+  "generated_at": "2026-05-01T05:37:03.025Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:36:50.455Z",
+  "since": "2026-05-01T02:37:00.994Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75288
+    75442
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75288:4356616997:2026-05-01T05:36:46Z:clawsweeper_needs_human",
-      "comment_id": "4356616997",
-      "comment_version_key": "4356616997:2026-05-01T05:36:46Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75288#issuecomment-4356616997",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75442:4357999113:2026-05-01T05:36:57Z:clawsweeper_needs_human",
+      "comment_id": "4357999113",
+      "comment_version_key": "4357999113:2026-05-01T05:36:57Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75442#issuecomment-4357999113",
       "repo": "openclaw/openclaw",
-      "issue_number": 75288,
+      "issue_number": 75442,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T22:34:03Z",
-      "comment_updated_at": "2026-05-01T05:36:46Z",
+      "comment_created_at": "2026-05-01T05:34:24Z",
+      "comment_updated_at": "2026-05-01T05:36:57Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,43 +47,41 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=df8b0436669df13a7dc153d78a311b05cf1ca11c)",
-      "review_summary": "The branch adds a helper to remove legacy `.local/bundled-plugin-runtime-deps/**/node_modules` symlinks before staged bundled plugin dependency replacement/removal, plus a regression test and changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=915278e6cdaa20484a51daf9bb1990dd70856e07)",
+      "review_summary": "The PR adds `package.json` `files` exclusions for docs assets/images and a changelog entry describing the npm tarball size reduction.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "df8b0436669df13a7dc153d78a311b05cf1ca11c",
+      "expected_head_sha": "915278e6cdaa20484a51daf9bb1990dd70856e07",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "[codex] Fix runtime deps update from legacy symlinks",
-        "branch": "codex/fix-runtime-deps-symlink-update",
-        "head_sha": "df8b0436669df13a7dc153d78a311b05cf1ca11c",
-        "author": "goldmar",
+        "title": "chore(packaging): exclude docs images/assets from npm tarball",
+        "branch": "strip-docs-images-from-npm-tarball",
+        "head_sha": "915278e6cdaa20484a51daf9bb1990dd70856e07",
+        "author": "sebtardif",
         "labels": [
-          "scripts",
-          "size: S"
+          "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75288",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75288.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75442",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75442.md",
         "mode": "autonomous",
-        "mergeable": "UNKNOWN",
-        "merge_state_status": "UNKNOWN",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 107,
+          "total": 78,
           "counts": {
             "CANCELLED": 1,
-            "SKIPPED": 36,
-            "SUCCESS": 69,
+            "SKIPPED": 8,
+            "SUCCESS": 68,
             "IN_PROGRESS": 1
           },
           "blockers": [
-            "dispatch:CANCELLED",
             "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
@@ -93,15 +91,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2227,
+    "total_ms": 2319,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 339
+        "ms": 378
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1534
+        "ms": 1644
       },
       {
         "name": "classify_commands",
@@ -109,7 +107,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 338
+        "ms": 281
       },
       {
         "name": "append_ledger",
