@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T06:11:29.695Z",
+  "generated_at": "2026-05-01T06:12:21.366Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T03:11:28.300Z",
+  "since": "2026-05-01T03:12:19.564Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75448
+    75455
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75448:4358034085:2026-05-01T06:11:24Z:clawsweeper_auto_repair",
-      "comment_id": "4358034085",
-      "comment_version_key": "4358034085:2026-05-01T06:11:24Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75448#issuecomment-4358034085",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75455:4358066160:2026-05-01T06:12:14Z:clawsweeper_auto_repair",
+      "comment_id": "4358066160",
+      "comment_version_key": "4358066160:2026-05-01T06:12:14Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75455#issuecomment-4358066160",
       "repo": "openclaw/openclaw",
-      "issue_number": 75448,
+      "issue_number": 75455,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:47:27Z",
-      "comment_updated_at": "2026-05-01T06:11:24Z",
+      "comment_created_at": "2026-05-01T05:59:10Z",
+      "comment_updated_at": "2026-05-01T06:12:14Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper auto repair",
       "intent": "clawsweeper_auto_repair",
@@ -47,40 +47,49 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=961c5a98b188096bdeb8ac6144a1357919b628d6)",
-      "review_summary": "The PR adds a Lit-based CodeMirror 6 JSON5 config editor, replaces the raw config textarea with that custom element, adds CodeMirror/JSON5 dependencies and lockfile entries, updates a browser test, and adds a changelog entry.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=b3176faad521999a56690841ead1c1d7ad4e9f05)",
+      "review_summary": "The PR changes BlueBubbles inbound direct-message chat resolution to prefer a provided chat identifier before falling back to senderId, and updates the focused resolver tests.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "961c5a98b188096bdeb8ac6144a1357919b628d6",
+      "expected_head_sha": "b3176faad521999a56690841ead1c1d7ad4e9f05",
       "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(ui): replace textarea with CodeMirror 6 JSON editor in raw config view",
-        "branch": "fix/config-editor-v2",
-        "head_sha": "961c5a98b188096bdeb8ac6144a1357919b628d6",
-        "author": "tardisyuan",
+        "title": "Fix BlueBubbles DM routing when chat identifier is present",
+        "branch": "fix/bluebubbles-dm-chat-identifier-routing",
+        "head_sha": "b3176faad521999a56690841ead1c1d7ad4e9f05",
+        "author": "armandovargash",
         "labels": [
-          "app: web-ui",
-          "size: M"
+          "channel: bluebubbles",
+          "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75448",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75448.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75455",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75455.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 5,
+          "total": 94,
           "counts": {
-            "SUCCESS": 4,
-            "SKIPPED": 1
+            "SUCCESS": 66,
+            "SKIPPED": 22,
+            "FAILURE": 4,
+            "IN_PROGRESS": 1,
+            "NEUTRAL": 1
           },
-          "blockers": []
+          "blockers": [
+            "checks-node-agentic-cli:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "check-additional-boundaries:FAILURE",
+            "checks-node-core-support-boundary:FAILURE",
+            "check-additional:FAILURE"
+          ]
         }
       },
       "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
@@ -88,23 +97,23 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1629,
+    "total_ms": 2033,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 385
+        "ms": 358
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1000
+        "ms": 1433
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 224
+        "ms": 222
       },
       {
         "name": "append_ledger",
