@@ -27,10 +27,8 @@ export type GitRunOptions = {
 export type PublishResult = "committed" | "unchanged";
 
 const GENERATED_PUBLISH_PATHS = [
-  "README.md",
   "apply-report.json",
   "repair-apply-report.json",
-  "docs/repair/README.md",
   "jobs",
   "records",
   "results",
@@ -296,11 +294,7 @@ function resolveApplyRecordConflicts(): boolean {
   for (const path of conflicts) {
     if (/^records\/[^/]+\/items\/[^/]+\.md$/.test(path)) {
       runGit(["rm", "-f", "--", path], { allowFailure: true });
-    } else if (
-      /^records\/[^/]+\/closed\/[^/]+\.md$/.test(path) ||
-      path === "README.md" ||
-      path === "apply-report.json"
-    ) {
+    } else if (/^records\/[^/]+\/closed\/[^/]+\.md$/.test(path) || path === "apply-report.json") {
       runGit(["add", "--", path]);
     } else {
       console.log(`Unsupported apply rebase conflict path: ${path}`);

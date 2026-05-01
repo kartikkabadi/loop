@@ -79,13 +79,12 @@ jobs:
             echo "execution requested, but ClawSweeper execute/fix gates are not explicitly 1; writing report without dispatching repairs"
           fi
           pnpm run repair:finalize-open-prs -- "${args[@]}"
-          pnpm run repair:publish-result
+          pnpm run repair:publish-result -- --skip-dashboard
 
       - name: Commit finalizer ledger
         run: |
           pnpm run repair:publish-main -- \
             --message "chore: record open PR finalizer" \
-            --path docs/repair/README.md \
             --path repair-apply-report.json \
             --path results/finalize-open-prs.json \
             --path results/finalize-open-prs.md \

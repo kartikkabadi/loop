@@ -7,10 +7,10 @@ Keep changes narrow, evidence-backed, and automation-safe.
 
 - Main code: `src/clawsweeper.ts`.
 - Repair lane code: `src/repair/`; durable repair jobs/results: `jobs/`,
-  `results/`; repair dashboard: `docs/repair/README.md`.
+  `results/`.
 - Tests: `test/clawsweeper.test.mjs`.
 - Workflow: `.github/workflows/sweep.yml`.
-- Dashboard and explainer: `README.md`.
+- Explainer: `README.md`; dashboard renderer: `../clawsweeper-dashboard`.
 - Open/reviewed records: `records/<repo-slug>/items/<number>.md`.
 - Archived records: `records/<repo-slug>/closed/<number>.md`.
 - Scratch/generated output: `.artifacts/`, `artifacts/`, `apply-report.json`.
@@ -28,8 +28,8 @@ not split reports into issue/PR subtrees.
 - Worker concurrency is shard-level: each shard processes its selected items
   sequentially. Maximum parallel Codex sessions equals `shard_count`, not
   `batch_size * shard_count`.
-- The README dashboard is the live status surface. Check current Actions and the
-  remote README before trusting local dashboard timestamps.
+- `openclaw/clawsweeper-dashboard` is the live status surface. Check current
+  Actions and the dashboard repo before trusting local generated timestamps.
 - When referencing GitHub issues or PRs in user-facing output, always include
   the full GitHub URL, not only `#12345`.
 

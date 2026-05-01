@@ -21,8 +21,11 @@ test("uniqueNonEmpty trims, drops blanks, and deduplicates paths", () => {
 
 test("commitMessageForPublishedPaths skips CI for generated-only publishes", () => {
   assert.equal(
-    commitMessageForPublishedPaths("chore: update sweep dashboard", ["README.md", "records"]),
-    "chore: update sweep dashboard\n\n[skip ci]",
+    commitMessageForPublishedPaths("chore: update sweep records", [
+      "records",
+      "results/sweep-status",
+    ]),
+    "chore: update sweep records\n\n[skip ci]",
   );
   assert.equal(
     commitMessageForPublishedPaths("chore: publish\n\n[skip ci]", ["results"]),
@@ -125,7 +128,7 @@ test("publishMainCommit resolves apply record delete conflicts during rebase", (
   );
 });
 
-test("publishMainCommit rebuilds generated commits after rebase conflicts", () => {
+test("publishMainCommit rebuilds generated state commits after rebase conflicts", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
   const origin = path.join(root, "origin.git");
   const work = path.join(root, "work");
@@ -133,7 +136,7 @@ test("publishMainCommit rebuilds generated commits after rebase conflicts", () =
   run("git", ["init", "--bare", origin], root);
   run("git", ["clone", origin, work], root);
   configureUser(work);
-  write(path.join(work, "README.md"), "dashboard old\n");
+  write(path.join(work, "results/sweep-status/openclaw-openclaw.json"), "{}\n");
   write(path.join(work, "records/openclaw-openclaw/items/1.md"), "record old\n");
   write(path.join(work, "keep.txt"), "keep old\n");
   run("git", ["add", "."], work);
@@ -144,21 +147,21 @@ test("publishMainCommit rebuilds generated commits after rebase conflicts", () =
 
   run("git", ["clone", origin, other], root);
   configureUser(other);
-  write(path.join(other, "README.md"), "dashboard remote\n");
+  write(path.join(other, "results/sweep-status/openclaw-openclaw.json"), '{"state":"remote"}\n');
   write(path.join(other, "records/openclaw-openclaw/items/1.md"), "record remote\n");
   write(path.join(other, "records/openclaw-openclaw/items/2.md"), "remote only\n");
   write(path.join(other, "keep.txt"), "keep remote\n");
   run("git", ["add", "."], other);
-  run("git", ["commit", "-m", "remote dashboard update"], other);
+  run("git", ["commit", "-m", "remote generated state update"], other);
   run("git", ["push", "origin", "HEAD:main"], other);
 
-  write(path.join(work, "README.md"), "dashboard local\n");
+  write(path.join(work, "results/sweep-status/openclaw-openclaw.json"), '{"state":"local"}\n');
   write(path.join(work, "records/openclaw-openclaw/items/1.md"), "record local\n");
 
   const result = withCwd(work, () =>
     publishMainCommit({
-      message: "chore: update sweep dashboard",
-      paths: ["README.md", "records"],
+      message: "chore: update sweep records",
+      paths: ["results/sweep-status", "records"],
       maxAttempts: 1,
       pushAttempts: 1,
     }),
@@ -166,8 +169,12 @@ test("publishMainCommit rebuilds generated commits after rebase conflicts", () =
 
   assert.equal(result, "committed");
   assert.equal(
-    run("git", ["--git-dir", origin, "show", "main:README.md"], root),
-    "dashboard local\n",
+    run(
+      "git",
+      ["--git-dir", origin, "show", "main:results/sweep-status/openclaw-openclaw.json"],
+      root,
+    ),
+    '{"state":"local"}\n',
   );
   assert.equal(
     run("git", ["--git-dir", origin, "show", "main:records/openclaw-openclaw/items/1.md"], root),

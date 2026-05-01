@@ -536,8 +536,6 @@ const WEEKLY_REVIEW_DAYS = 7;
 const STALE_INSUFFICIENT_INFO_MIN_AGE_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RECENT_MISSING_OPEN_MS = DAY_MS;
-const STATUS_START = "<!-- clawsweeper-status:start -->";
-const STATUS_END = "<!-- clawsweeper-status:end -->";
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "fast";
@@ -697,6 +695,41 @@ function profileAuditEnd(profile = targetProfile()): string {
   return `<!-- clawsweeper-audit:${profile.slug}:end -->`;
 }
 
+function sweepStatusPath(profile = targetProfile()): string {
+  return join(ROOT, "results", "sweep-status", `${profile.slug}.json`);
+}
+
+function sweepStatusRelativePath(profile = targetProfile()): string {
+  return join("results", "sweep-status", `${profile.slug}.json`);
+}
+
+function auditStatePath(profile = targetProfile()): string {
+  return join(ROOT, "results", "audit", `${profile.slug}.json`);
+}
+
+function writeSweepStatus(options: {
+  state: string;
+  detail: string;
+  runUrl?: string;
+  profile?: RepositoryProfile;
+}): void {
+  const profile = options.profile ?? targetProfile();
+  const updatedAt = new Date().toISOString();
+  const payload = {
+    schema_version: 1,
+    slug: profile.slug,
+    display_name: profile.displayName,
+    target_repo: profile.targetRepo,
+    state: options.state,
+    detail: options.detail,
+    run_url: options.runUrl ?? null,
+    updated_at: updatedAt,
+  };
+  const outputPath = sweepStatusPath(profile);
+  ensureDir(dirname(outputPath));
+  writeFileSync(outputPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+}
+
 function repoRecordsDir(profile = targetProfile()): string {
   return join(RECORDS_ROOT, profile.slug);
 }
@@ -795,8 +828,6 @@ function maybePublishThrottleHeartbeat(options: {
   lastThrottleHeartbeatAt = now;
 
   try {
-    const readmePath = join(ROOT, "README.md");
-    if (!existsSync(readmePath)) return;
     const context = throttleHeartbeatContext?.();
     const checkpoint = process.env.CLAWSWEEPER_APPLY_CHECKPOINT;
     const checkpointText = checkpoint ? `Checkpoint ${checkpoint}. ` : "";
@@ -819,14 +850,8 @@ function maybePublishThrottleHeartbeat(options: {
     if (process.env.CLAWSWEEPER_RUN_URL) {
       statusOptions.runUrl = process.env.CLAWSWEEPER_RUN_URL;
     }
-    const block = workflowStatusBlock(statusOptions);
-    const readme = readFileSync(readmePath, "utf8");
-    const pattern = new RegExp(`${STATUS_START}[\\s\\S]*?${STATUS_END}`);
-    const updated = pattern.test(readme)
-      ? readme.replace(pattern, block)
-      : readme.replace(/Last dashboard update: .+/, `$&\n\n${block}`);
-    writeFileSync(readmePath, updated, "utf8");
-    run("git", ["add", "README.md"]);
+    writeSweepStatus(statusOptions);
+    run("git", ["add", sweepStatusRelativePath()]);
     const diff = spawnSync("git", ["diff", "--cached", "--quiet"], { cwd: ROOT });
     if (diff.status === 0) return;
     run("git", ["commit", "-m", "chore: update sweep apply throttle status"]);
@@ -5071,7 +5096,6 @@ function applyDecisionsCommand(args: Args): void {
   const closeDelayMs = numberArg(args.close_delay_ms, 2_000);
   const progressEvery = Math.max(1, numberArg(args.progress_every, 10));
   const dryRun = boolArg(args.dry_run);
-  const skipDashboard = boolArg(args.skip_dashboard);
   const syncCommentsOnly = boolArg(args.sync_comments_only);
   const commentSyncMinAgeDays = numberArg(args.comment_sync_min_age_days, 0);
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
@@ -5472,7 +5496,6 @@ function applyDecisionsCommand(args: Args): void {
   }
   ensureDir(dirname(reportPath));
   writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
-  if (!skipDashboard && !dryRun) updateDashboard(itemsDir, closedDir);
   logProgress("finished apply");
   console.log(JSON.stringify(results, null, 2));
 }
@@ -5483,7 +5506,6 @@ function applyArtifactsCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const skipReconcile = boolArg(args.skip_reconcile);
-  const skipDashboard = boolArg(args.skip_dashboard);
   const replayClosedArtifacts = boolArg(args.replay_closed_artifacts);
   const maxPages = numberArg(args.max_pages, 250);
   const openNumbers = skipReconcile ? null : fetchOpenItemNumbers(maxPages).numbers;
@@ -5524,7 +5546,6 @@ function applyArtifactsCommand(args: Args): void {
     `[apply-artifacts] applied=${appliedArtifacts} skipped_closed=${skippedClosedArtifacts}`,
   );
   if (!skipReconcile) reconcileFolders({ itemsDir, closedDir });
-  if (!skipDashboard) updateDashboard(itemsDir, closedDir);
 }
 
 function artifactTargetIsOpen(number: number, openNumbers: Set<number> | null): boolean {
@@ -5839,7 +5860,7 @@ export function auditHealthSection(result: AuditResult | null): string {
     return `### Audit Health
 
 ${profileAuditStart(profile)}
-No audit has been published yet. Run \`npm run audit -- --update-dashboard\` to refresh this section.
+No audit has been published yet. Run \`npm run audit -- --update-dashboard\` to refresh audit state.
 ${profileAuditEnd(profile)}`;
   }
   return `### Audit Health
@@ -5884,21 +5905,10 @@ function currentAuditHealthSection(readme: string, profile = targetProfile()): s
 }
 
 function updateAuditHealthDashboard(result: AuditResult): void {
-  const readmePath = join(ROOT, "README.md");
   const profile = repositoryProfileFor(result.targetRepo);
-  const readme = readFileSync(readmePath, "utf8");
-  const section = auditHealthSection(result);
-  const profilePattern = new RegExp(
-    `### Audit Health\\n\\n${escapeRegExp(profileAuditStart(profile))}[\\s\\S]*?${escapeRegExp(profileAuditEnd(profile))}`,
-  );
-  let updated = readme;
-  if (profilePattern.test(updated)) {
-    updated = updated.replace(profilePattern, section);
-  } else {
-    updated = updated.replace(/\n## How It Works/, `\n${section}\n\n## How It Works`);
-  }
-  writeFileSync(readmePath, updated, "utf8");
-  updateDashboard();
+  const outputPath = auditStatePath(profile);
+  ensureDir(dirname(outputPath));
+  writeFileSync(outputPath, `${JSON.stringify(result, null, 2)}\n`, "utf8");
 }
 
 function markReconciledState(
@@ -6683,25 +6693,11 @@ ${snapshots.map(renderRepoDashboardDetails).join("\n\n")}`;
 
 function statusCommand(args: Args): void {
   const profile = repoFromArgs(args);
-  const readmePath = join(ROOT, "README.md");
-  const readme = readFileSync(readmePath, "utf8");
   const state = stringArg(args.state, "Working");
   const detail = stringArg(args.detail, "Workflow is running.");
   const runUrl = stringArg(args.run_url, "");
-  const block = workflowStatusBlock(
-    runUrl ? { state, detail, runUrl, profile } : { state, detail, profile },
-  );
-  const profilePattern = new RegExp(
-    `${escapeRegExp(profileStatusStart(profile))}[\\s\\S]*?${escapeRegExp(profileStatusEnd(profile))}`,
-  );
-  let updated = readme;
-  if (profilePattern.test(updated)) {
-    updated = updated.replace(profilePattern, block);
-  } else {
-    updated = updated.replace(/Last dashboard update: .+/, `$&\n\n${block}`);
-  }
-  writeFileSync(readmePath, updated, "utf8");
-  updateDashboard();
+  writeSweepStatus(runUrl ? { state, detail, runUrl, profile } : { state, detail, profile });
+  console.log(JSON.stringify({ status_path: sweepStatusRelativePath(profile), state, detail }));
 }
 
 function checkCommand(): void {

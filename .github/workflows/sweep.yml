@@ -1,6 +1,6 @@
 name: ClawSweeper
 
-run-name: ${{ github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'Audit ClawSweeper dashboard' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
+run-name: ${{ github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'Audit ClawSweeper state' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
 
 on:
   repository_dispatch:
@@ -104,7 +104,7 @@ on:
         required: false
         default: "0"
       audit_dashboard:
-        description: "Refresh README Audit Health without running review or apply work"
+        description: "Refresh audit state without running review or apply work"
         required: false
         default: "false"
   schedule:
@@ -469,7 +469,7 @@ jobs:
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           pnpm run repair:publish-main -- \
             --message "chore: mark sweep planning started" \
-            --path README.md \
+            --path results/sweep-status \
             --rebase-strategy theirs
 
       - id: mode
@@ -553,15 +553,14 @@ jobs:
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
           pnpm run reconcile -- --target-repo "$TARGET_REPO"
-          pnpm run dashboard -- --target-repo "$TARGET_REPO"
           pnpm run status -- \
             --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
             --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           pnpm run repair:publish-main -- \
             --message "chore: mark sweep review in progress" \
-            --path README.md \
             --path records \
+            --path results/sweep-status \
             --rebase-strategy theirs
 
   review:
@@ -721,13 +720,13 @@ jobs:
           MAX_PAGES: ${{ needs.plan.outputs.max_pages }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
-          apply_artifacts_args=(--target-repo "$TARGET_REPO" --artifact-dir artifacts)
+          apply_artifacts_args=(--target-repo "$TARGET_REPO" --artifact-dir artifacts --skip-dashboard)
           publish_state="Review publish complete"
-          publish_detail="Merged review artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state, and the dashboard reflects completed shards."
+          publish_detail="Merged review artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state."
           if [ "$HOT_INTAKE" = "true" ] && [ -z "$EXACT_ITEM" ]; then
             apply_artifacts_args+=(--max-pages "$MAX_PAGES" --skip-reconcile)
             publish_state="Hot intake publish complete"
-            publish_detail="Merged hot intake artifacts for run ${{ github.run_id }} without full folder reconciliation, and the dashboard reflects completed shards."
+            publish_detail="Merged hot intake artifacts for run ${{ github.run_id }} without full folder reconciliation."
           fi
           pnpm run apply-artifacts -- "${apply_artifacts_args[@]}"
           pnpm run status -- \
@@ -735,7 +734,7 @@ jobs:
             --detail "$publish_detail" \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      - name: Commit dashboard and review files
+      - name: Commit review records
         env:
           EXACT_ITEM: ${{ github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}
           GH_TOKEN: ${{ github.token }}
@@ -743,15 +742,14 @@ jobs:
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           if [ "$HOT_INTAKE" = "true" ] && [ -z "$EXACT_ITEM" ]; then
-            echo "Skipping full reconcile/dashboard refresh for broad hot-intake publish; apply-artifacts already updated the dashboard."
+            echo "Skipping full reconcile for broad hot-intake publish."
           else
             pnpm run reconcile -- --target-repo "$TARGET_REPO"
-            pnpm run dashboard -- --target-repo "$TARGET_REPO"
           fi
           pnpm run repair:publish-main -- \
-            --message "chore: update sweep dashboard" \
-            --path README.md \
+            --message "chore: update sweep records" \
             --path records \
+            --path results/sweep-status \
             --rebase-strategy theirs
 
       - name: Sync selected review comments
@@ -771,6 +769,7 @@ jobs:
           git pull --rebase
           pnpm run apply-decisions -- \
             --target-repo "$TARGET_REPO" \
+            --skip-dashboard \
             --item-numbers "$item_numbers" \
             --sync-comments-only \
             --apply-kind all \
@@ -786,9 +785,9 @@ jobs:
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           pnpm run repair:publish-main -- \
             --message "chore: sync selected review comments" \
-            --path README.md \
             --path records \
             --path apply-report.json \
+            --path results/sweep-status \
             --rebase-strategy theirs
 
       - name: Apply selected safe close proposals
@@ -811,6 +810,7 @@ jobs:
           git pull --rebase
           pnpm run apply-decisions -- \
             --target-repo "$TARGET_REPO" \
+            --skip-dashboard \
             --item-numbers "$item_numbers" \
             --apply-kind all \
             --apply-close-reasons "$close_reasons" \
@@ -828,9 +828,9 @@ jobs:
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           pnpm run repair:publish-main -- \
             --message "chore: apply selected sweep decisions" \
-            --path README.md \
             --path records \
             --path apply-report.json \
+            --path results/sweep-status \
             --rebase-strategy theirs
 
       - name: Continue sweep
@@ -932,7 +932,7 @@ jobs:
           gh "${args[@]}"
 
   audit-dashboard:
-    name: Audit dashboard
+    name: Audit state
     if: ${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && !(github.event_name == 'schedule' && github.event.schedule == '12 */6 * * *' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -990,14 +990,15 @@ jobs:
           pnpm run audit -- --target-repo "$TARGET_REPO" --max-pages 250 --sample-limit 25 --output /tmp/clawsweeper-audit.json --update-dashboard
           pnpm run status -- \
             --state "Audit finished" \
-            --detail "Refreshed README Audit Health from a full live $TARGET_REPO state audit. Normal review/apply dashboard heartbeats preserve this block without rerunning the audit scan." \
+            --detail "Refreshed audit state from a full live $TARGET_REPO scan. Normal review/apply status updates preserve this state without rerunning the audit scan." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Commit Audit Health
         run: |
           pnpm run repair:publish-main -- \
-            --message "chore: update sweep audit health" \
-            --path README.md \
+            --message "chore: update sweep audit state" \
+            --path results/audit \
+            --path results/sweep-status \
             --rebase-strategy theirs
 
   apply-existing:
@@ -1083,14 +1084,6 @@ jobs:
             min_age_minutes_arg=(--min-age-minutes "$min_age_minutes")
           fi
           mkdir -p .artifacts/apply-reports
-          paths_include_readme() {
-            for path in "$@"; do
-              if [ "$path" = "README.md" ]; then
-                return 0
-              fi
-            done
-            return 1
-          }
           publish_changes() {
             message="$1"
             shift
@@ -1098,20 +1091,16 @@ jobs:
             for path in "$@"; do
               publish_args+=(--path "$path")
             done
-            if ! paths_include_readme "$@"; then
-              publish_args+=(--restore README.md)
-            fi
             pnpm run repair:publish-main -- "${publish_args[@]}"
           }
-          publish_readme_status() {
+          publish_status() {
             message="$1"
-            if ! publish_changes "$message" README.md; then
-              echo "Best-effort README status update failed: $message"
-              git restore README.md || true
+            if ! publish_changes "$message" results/sweep-status; then
+              echo "Best-effort status update failed: $message"
+              git restore results/sweep-status || true
             fi
           }
           pnpm run reconcile -- --target-repo "$TARGET_REPO"
-          pnpm run dashboard -- --target-repo "$TARGET_REPO"
           if [ "$sync_comments_only" != "true" ] && [ -z "$item_numbers" ]; then
             item_numbers="$(pnpm run --silent workflow -- proposed-item-numbers \
               --target-repo "$TARGET_REPO" \
@@ -1156,9 +1145,9 @@ jobs:
             --state "Apply in progress" \
             --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Close reasons: $apply_close_reasons. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by ${comment_sync_min_age_days} day(s); checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          if ! publish_changes "chore: mark sweep apply in progress" README.md records; then
+          if ! publish_changes "chore: mark sweep apply in progress" records results/sweep-status; then
             echo "Best-effort apply start status update failed"
-            git restore README.md || true
+            git restore results/sweep-status || true
           fi
           closed_total=0
           checkpoint=0
@@ -1168,6 +1157,7 @@ jobs:
             echo "Syncing durable review comments only for item numbers: ${item_numbers:-all}"
             pnpm run apply-decisions -- \
               --target-repo "$TARGET_REPO" \
+              --skip-dashboard \
               --limit 0 \
               --min-age-days "$min_age_days" \
               "${min_age_minutes_arg[@]}" \
@@ -1184,12 +1174,11 @@ jobs:
             result_count="$(pnpm run --silent workflow -- count-report --report ".artifacts/apply-reports/apply-report-$checkpoint.json")"
             synced_count="$(pnpm run --silent workflow -- count-actions --report ".artifacts/apply-reports/apply-report-$checkpoint.json" --action review_comment_synced)"
             publish_changes "chore: sync sweep review comments checkpoint $checkpoint" records apply-report.json
-            pnpm run dashboard -- --target-repo "$TARGET_REPO"
             pnpm run status -- \
               --state "Apply comments synced" \
               --detail "Comment-only apply checkpoint $checkpoint finished. Synced durable review comments: $synced_count. Result records: $result_count. Item numbers: ${item_numbers:-all}." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            publish_readme_status "chore: update sweep comment sync status"
+            publish_status "chore: update sweep comment sync status"
             echo "::endgroup::"
           fi
           while [ "$closed_total" -lt "$limit" ]; do
@@ -1206,6 +1195,7 @@ jobs:
             echo "Applying up to $chunk_limit fresh closes; $closed_total/$limit already closed in this run"
             CLAWSWEEPER_APPLY_CHECKPOINT="$checkpoint" pnpm run apply-decisions -- \
               --target-repo "$TARGET_REPO" \
+              --skip-dashboard \
               --limit "$chunk_limit" \
               --min-age-days "$min_age_days" \
               "${min_age_minutes_arg[@]}" \
@@ -1225,12 +1215,11 @@ jobs:
             closed_total=$((closed_total + closed_in_chunk))
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
             publish_changes "chore: apply sweep decisions checkpoint $checkpoint" records apply-report.json
-            pnpm run dashboard -- --target-repo "$TARGET_REPO"
             pnpm run status -- \
               --state "Apply in progress" \
               --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count, including durable review comment syncs." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            publish_readme_status "chore: update sweep apply checkpoint $checkpoint status"
+            publish_status "chore: update sweep apply checkpoint $checkpoint status"
             echo "::endgroup::"
             if [ "$result_count" -eq 0 ]; then
               echo "No more applicable proposed closes found."
@@ -1241,12 +1230,11 @@ jobs:
               break
             fi
           done
-          pnpm run dashboard -- --target-repo "$TARGET_REPO"
           pnpm run status -- \
             --state "Apply finished" \
             --detail "Apply/comment-sync run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          publish_readme_status "chore: mark sweep apply finished"
+          publish_status "chore: mark sweep apply finished"
           {
             echo "APPLY_CLOSED_TOTAL=$closed_total"
             echo "APPLY_LIMIT=$limit"
@@ -1272,9 +1260,9 @@ jobs:
           fi
           pnpm run repair:publish-main -- \
             --message "chore: apply sweep decisions" \
-            --path README.md \
             --path records \
             --path apply-report.json \
+            --path results/sweep-status \
             --rebase-strategy apply-records
 
       - name: Continue apply sweep

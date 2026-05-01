@@ -74,15 +74,15 @@ jobs:
           git fetch origin main
           git checkout -B main origin/main
           pnpm run repair:publish-result -- artifacts \
+            --skip-dashboard \
             --run-id "$RUN_ID" \
             --run-url "$RUN_URL" \
             --head-sha "$HEAD_SHA" \
             --conclusion "$CONCLUSION"
           pnpm run repair:finalize-open-prs -- --write-report
-          pnpm run repair:publish-result
+          pnpm run repair:publish-result -- --skip-dashboard
           pnpm run repair:publish-main -- \
             --message "chore: publish cluster result" \
-            --path docs/repair/README.md \
             --path results \
             --path jobs/openclaw/closed \
             --path repair-apply-report.json \

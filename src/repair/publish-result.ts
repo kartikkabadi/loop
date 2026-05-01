@@ -60,7 +60,7 @@ for (const input of inputs) {
 }
 
 writeAggregateApplyReport();
-updateDashboard();
+if (args["write-dashboard"]) updateDashboard();
 
 console.log(JSON.stringify({ published: published.length, records: published }, null, 2));
 

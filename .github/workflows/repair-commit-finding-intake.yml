@@ -169,6 +169,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           pnpm run repair:publish-result -- "${{ steps.prepare.outputs.run_dir }}" \
+            --skip-dashboard \
             --run-id "${{ github.run_id }}" \
             --run-url "$RUN_URL" \
             --head-sha "${{ github.sha }}" \
@@ -192,7 +193,6 @@ jobs:
             --message "chore: record commit finding intake" \
             --path jobs \
             --path results \
-            --restore docs/repair/README.md \
             --restore repair-apply-report.json \
             --max-attempts 12 \
             --push-attempts 4

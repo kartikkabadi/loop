@@ -5,10 +5,8 @@ on:
     branches:
       - main
     paths-ignore:
-      - "README.md"
       - "apply-report.json"
       - "repair-apply-report.json"
-      - "docs/repair/README.md"
       - "jobs/**"
       - "records/**"
       - "results/**"

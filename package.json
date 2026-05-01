@@ -14,7 +14,6 @@
     "apply-decisions": "node dist/clawsweeper.js apply-decisions",
     "audit": "node dist/clawsweeper.js audit",
     "reconcile": "node dist/clawsweeper.js reconcile",
-    "dashboard": "node dist/clawsweeper.js dashboard",
     "status": "node dist/clawsweeper.js status",
     "commit-review": "node dist/commit-sweeper.js",
     "commit-reports": "node dist/commit-sweeper.js reports",
