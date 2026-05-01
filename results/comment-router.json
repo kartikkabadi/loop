@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T05:59:27.600Z",
+  "updated_at": "2026-05-01T05:59:32.824Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58482:4357137323:2026-05-01T00:44:22Z:clawsweeper_auto_repair",
@@ -28704,14 +28704,14 @@
       }
     },
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75451:4358050667:2026-05-01T05:59:21Z:clawsweeper_needs_human",
-      "comment_id": "4358050667",
-      "comment_version_key": "4358050667:2026-05-01T05:59:21Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75451#issuecomment-4358050667",
-      "comment_created_at": "2026-05-01T05:53:36Z",
-      "comment_updated_at": "2026-05-01T05:59:21Z",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75450:4358049774:2026-05-01T05:59:26Z:clawsweeper_needs_human",
+      "comment_id": "4358049774",
+      "comment_version_key": "4358049774:2026-05-01T05:59:26Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75450#issuecomment-4358049774",
+      "comment_created_at": "2026-05-01T05:53:16Z",
+      "comment_updated_at": "2026-05-01T05:59:26Z",
       "repo": "openclaw/openclaw",
-      "issue_number": 75451,
+      "issue_number": 75450,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
       "trigger": "trusted_bot",
@@ -28720,15 +28720,15 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=03f36178785c69feca89c09609e92a460d45dcf1)",
-      "expected_head_sha": "03f36178785c69feca89c09609e92a460d45dcf1",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=4b0d9db0caee7fe87676d91750c5d2d7e68c46a9)",
+      "expected_head_sha": "4b0d9db0caee7fe87676d91750c5d2d7e68c46a9",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-05-01T05:59:27.599Z",
+      "processed_at": "2026-05-01T05:59:32.824Z",
       "target": {
         "kind": "pull_request",
-        "branch": "cache-plugin-discovery-scan",
-        "head_sha": "03f36178785c69feca89c09609e92a460d45dcf1",
+        "branch": "feat/bb-inbound-audio-enricher",
+        "head_sha": "4b0d9db0caee7fe87676d91750c5d2d7e68c46a9",
         "cluster_id": null,
         "job_path": null
       }

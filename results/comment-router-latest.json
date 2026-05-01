@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:59:27.361Z",
+  "generated_at": "2026-05-01T05:59:32.661Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:59:25.440Z",
+  "since": "2026-05-01T02:59:30.705Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75451
+    75450
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75451:4358050667:2026-05-01T05:59:21Z:clawsweeper_needs_human",
-      "comment_id": "4358050667",
-      "comment_version_key": "4358050667:2026-05-01T05:59:21Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75451#issuecomment-4358050667",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75450:4358049774:2026-05-01T05:59:26Z:clawsweeper_needs_human",
+      "comment_id": "4358049774",
+      "comment_version_key": "4358049774:2026-05-01T05:59:26Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75450#issuecomment-4358049774",
       "repo": "openclaw/openclaw",
-      "issue_number": 75451,
+      "issue_number": 75450,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:53:36Z",
-      "comment_updated_at": "2026-05-01T05:59:21Z",
+      "comment_created_at": "2026-05-01T05:53:16Z",
+      "comment_updated_at": "2026-05-01T05:59:26Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper auto repair",
       "intent": "clawsweeper_auto_repair",
@@ -47,47 +47,45 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=03f36178785c69feca89c09609e92a460d45dcf1)",
-      "review_summary": "The PR adds a process-local `discoverOpenClawPlugins()` result cache keyed by roots/load paths/ownership/env, exports `clearPluginDiscoveryCache()`, updates discovery tests to clear the cache, and adds a changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=4b0d9db0caee7fe87676d91750c5d2d7e68c46a9)",
+      "review_summary": "Adds a BlueBubbles inbound voice-note enricher that fetches an `audio-transcript` endpoint before dispatch, rewrites agent-facing message text, adds UTI-aware audio detection, configuration/docs, and unit coverage.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "03f36178785c69feca89c09609e92a460d45dcf1",
+      "expected_head_sha": "4b0d9db0caee7fe87676d91750c5d2d7e68c46a9",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "perf: cache plugin discovery scan to eliminate redundant filesystem walks",
-        "branch": "cache-plugin-discovery-scan",
-        "head_sha": "03f36178785c69feca89c09609e92a460d45dcf1",
-        "author": "sebtardif",
+        "title": "feat(bluebubbles): inbound audio enricher (#68719)",
+        "branch": "feat/bb-inbound-audio-enricher",
+        "head_sha": "4b0d9db0caee7fe87676d91750c5d2d7e68c46a9",
+        "author": "omarshahine",
         "labels": [
-          "size: XS"
+          "docs",
+          "channel: bluebubbles",
+          "maintainer",
+          "size: L"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75451",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75451.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75450",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75450.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 100,
+          "total": 147,
           "counts": {
-            "SUCCESS": 75,
-            "SKIPPED": 21,
-            "IN_PROGRESS": 1,
+            "CANCELLED": 3,
+            "SKIPPED": 67,
+            "SUCCESS": 74,
             "FAILURE": 2,
             "NEUTRAL": 1
           },
           "blockers": [
-            "Scan changed paths (precise):FAILURE",
-            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "check-lint:FAILURE",
-            "check-test-types:FAILURE",
             "check-additional-boundaries:FAILURE",
             "check:FAILURE",
             "check-additional:FAILURE"
@@ -99,15 +97,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2169,
+    "total_ms": 2128,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 331
+        "ms": 245
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1581
+        "ms": 1700
       },
       {
         "name": "classify_commands",
@@ -115,7 +113,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 238
+        "ms": 162
       },
       {
         "name": "append_ledger",
