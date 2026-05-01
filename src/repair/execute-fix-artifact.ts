@@ -36,7 +36,10 @@ import {
 } from "./constants.js";
 import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
 import { compactText } from "./text-utils.js";
-import { shouldCloseSupersededSourcePrs } from "./execute-fix-policy.js";
+import {
+  shouldCloseSupersededSourcePrs,
+  shouldSeedReplacementBranchFromSource,
+} from "./execute-fix-policy.js";
 import { replacementLabelsToCopy } from "./replacement-labels.js";
 import {
   checkoutSourcePullRequestHead,
@@ -1789,7 +1792,9 @@ function checkoutRecoverableReplacementBranch({
   baseBranch,
   fixArtifact,
 }: LooseRecord) {
-  const sourcePr = firstTargetSourcePullRequest(fixArtifact.source_prs ?? [], result.repo);
+  const sourcePr = shouldSeedReplacementBranchFromSource(fixArtifact)
+    ? firstTargetSourcePullRequest(fixArtifact.source_prs ?? [], result.repo)
+    : null;
   if (remoteBranchExists({ targetDir, branch })) {
     run("git", ["fetch", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`], {
       cwd: targetDir,
