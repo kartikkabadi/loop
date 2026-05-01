@@ -1,17 +1,17 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:05:35.247Z",
+  "generated_at": "2026-05-01T03:05:53.531Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:05:34.886Z",
+  "since": "2026-05-01T00:05:51.764Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75360
+    75370
   ],
   "max_autoclose_targets": 8,
-  "scanned_comments": 2,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -28,16 +28,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75360:4357418103:2026-05-01T02:58:24Z:clawsweeper_needs_human",
-      "comment_id": "4357418103",
-      "comment_version_key": "4357418103:2026-05-01T02:58:24Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75360#issuecomment-4357418103",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T03:05:47Z:clawsweeper_needs_human",
+      "comment_id": "4357487939",
+      "comment_version_key": "4357487939:2026-05-01T03:05:47Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
       "repo": "openclaw/openclaw",
-      "issue_number": 75360,
+      "issue_number": 75370,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T02:13:30Z",
-      "comment_updated_at": "2026-05-01T02:58:24Z",
+      "comment_created_at": "2026-05-01T02:36:16Z",
+      "comment_updated_at": "2026-05-01T03:05:47Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -45,15 +45,52 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e7d63d0df22bbeb9ae2b1e5f292f48f8725fd8cf)",
-      "review_summary": "The PR caches targeted provider runtime hook resolution, defers web/media provider and model resolution from tool registration to execution, and makes typing indicators asynchronous to reduce reply cold-start latency.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b08eefc65607bd4001e3649cbd6d7df097181aff)",
+      "review_summary": "The PR adds a `pdftoppm`-based PDF page rendering fallback in `extensions/document-extract/document-extractor.ts` when `@napi-rs/canvas` cannot be loaded.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "e7d63d0df22bbeb9ae2b1e5f292f48f8725fd8cf",
+      "expected_head_sha": "b08eefc65607bd4001e3649cbd6d7df097181aff",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
-      "reason": "comment version already processed in ledger"
+      "target": {
+        "kind": "pull_request",
+        "title": "feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable",
+        "branch": "pdftoppm-fallback",
+        "head_sha": "b08eefc65607bd4001e3649cbd6d7df097181aff",
+        "author": "mgustimz",
+        "labels": [
+          "size: S"
+        ],
+        "is_clawsweeper_pr": false,
+        "cluster_id": null,
+        "job_path": null,
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75370",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75370.md",
+        "mode": "autonomous",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
+        "review_decision": "",
+        "checks": {
+          "total": 78,
+          "counts": {
+            "SUCCESS": 62,
+            "SKIPPED": 9,
+            "IN_PROGRESS": 1,
+            "FAILURE": 6
+          },
+          "blockers": [
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "check-prod-types:FAILURE",
+            "check-lint:FAILURE",
+            "check-test-types:FAILURE",
+            "check-additional-extension-bundled:FAILURE",
+            "check:FAILURE",
+            "check-additional:FAILURE"
+          ]
+        }
+      },
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ]
 }
