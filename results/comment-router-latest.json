@@ -1,18 +1,18 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:28:45.234Z",
+  "generated_at": "2026-05-01T03:28:56.454Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:28:43.551Z",
+  "since": "2026-05-01T00:28:54.531Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    71611
+    75392
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 3,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -29,16 +29,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71611:4321423574:2026-05-01T03:28:39Z:clawsweeper_auto_repair",
-      "comment_id": "4321423574",
-      "comment_version_key": "4321423574:2026-05-01T03:28:39Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/71611#issuecomment-4321423574",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75392:4357636413:2026-05-01T03:28:51Z:clawsweeper_auto_repair",
+      "comment_id": "4357636413",
+      "comment_version_key": "4357636413:2026-05-01T03:28:51Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75392#issuecomment-4357636413",
       "repo": "openclaw/openclaw",
-      "issue_number": 71611,
+      "issue_number": 75392,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-26T06:25:55Z",
-      "comment_updated_at": "2026-05-01T03:28:39Z",
+      "comment_created_at": "2026-05-01T03:25:51Z",
+      "comment_updated_at": "2026-05-01T03:28:51Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper auto repair",
       "intent": "clawsweeper_auto_repair",
@@ -46,56 +46,45 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=3534a0b695516144e14a27e46b4e98f6b7fc265a)",
-      "review_summary": "The PR adds a memory-core `renameWithRetry` helper for atomic reindex file moves, retrying `EBUSY` renames and falling back to `copyFile` plus `unlink` for `EPERM`/`EEXIST`, while currently changing the rollback rethrow line to an invalid `thror err;`.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=70852ac62a03ba65272c663f089eeae05afaa992)",
+      "review_summary": "This PR adds a shared Zod `visibleReplies` schema that coerces boolean `true`/`false` to canonical visible-reply modes, wires it into global and group message config, adds regression tests, and documents the fix in the changelog.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "3534a0b695516144e14a27e46b4e98f6b7fc265a",
+      "expected_head_sha": "70852ac62a03ba65272c663f089eeae05afaa992",
       "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(memory): retry rename on EBUSY and fall back to copyFile on Windows",
-        "branch": "fix/windows-ebusy-memory",
-        "head_sha": "3534a0b695516144e14a27e46b4e98f6b7fc265a",
-        "author": "jujitao",
+        "title": "fix(config): coerce visibleReplies boolean to enum equivalent",
+        "branch": "fix/visible-replies-boolean-coercion",
+        "head_sha": "70852ac62a03ba65272c663f089eeae05afaa992",
+        "author": "scottgl9",
         "labels": [
-          "extensions: memory-core",
-          "size: XS"
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-71611",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-71611.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75392",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75392.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 80,
+          "total": 102,
           "counts": {
-            "FAILURE": 12,
-            "SUCCESS": 61,
-            "SKIPPED": 5,
-            "IN_PROGRESS": 2
+            "CANCELLED": 1,
+            "SKIPPED": 22,
+            "SUCCESS": 76,
+            "FAILURE": 1,
+            "IN_PROGRESS": 1,
+            "NEUTRAL": 1
           },
           "blockers": [
-            "Scan changed paths (precise):FAILURE",
-            "security-scm-fast:FAILURE",
-            "build-artifacts:FAILURE",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "check-prod-types:FAILURE",
-            "check-lint:FAILURE",
-            "check-test-types:FAILURE",
-            "check-additional-extension-bundled:FAILURE",
-            "check-additional-extension-package-boundary:FAILURE",
-            "checks-windows-node-test:IN_PROGRESS",
-            "security-fast:FAILURE",
-            "build-smoke:FAILURE",
-            "check:FAILURE",
-            "check-additional:FAILURE"
+            "checks-node-core-runtime-infra:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
@@ -104,15 +93,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1858,
+    "total_ms": 2093,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 294
+        "ms": 255
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1380
+        "ms": 1659
       },
       {
         "name": "classify_commands",
@@ -120,7 +109,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 166
+        "ms": 161
       },
       {
         "name": "append_ledger",
