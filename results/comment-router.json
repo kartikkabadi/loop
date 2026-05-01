@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T03:14:16.804Z",
+  "updated_at": "2026-05-01T03:16:05.326Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63096:4323634841:2026-04-30T22:40:12Z:clawsweeper_needs_human",
-      "comment_id": "4323634841",
-      "comment_version_key": "4323634841:2026-04-30T22:40:12Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/63096#issuecomment-4323634841",
-      "comment_created_at": "2026-04-27T01:34:13Z",
-      "comment_updated_at": "2026-04-30T22:40:12Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 63096,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=6fb74b12640d09700b37c6c6441a79a72297daa2)",
-      "expected_head_sha": "6fb74b12640d09700b37c6c6441a79a72297daa2",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-04-30T23:40:02.066Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75172:4354530609:2026-04-30T22:40:06Z:clawsweeper_needs_human",
       "comment_id": "4354530609",
@@ -26077,6 +26053,36 @@
         "kind": "pull_request",
         "branch": "fix/feishu-streaming-block-dedup-v2",
         "head_sha": "e93847526a70b9ceb4de4d9b4cf858d8b9efca7d",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58162:4353901488:2026-05-01T02:49:03Z:clawsweeper_needs_human",
+      "comment_id": "4353901488",
+      "comment_version_key": "4353901488:2026-05-01T02:49:03Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/58162#issuecomment-4353901488",
+      "comment_created_at": "2026-04-30T15:40:55Z",
+      "comment_updated_at": "2026-05-01T02:49:03Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 58162,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=7b00793dd4234ef65a356fc8c82f9f6e5598e9e7)",
+      "expected_head_sha": "7b00793dd4234ef65a356fc8c82f9f6e5598e9e7",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T03:16:05.325Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/redact-cloud-provider-api-keys",
+        "head_sha": "5227c30713113b540c3b2779f9e2ff11eff48b42",
         "cluster_id": null,
         "job_path": null
       }
