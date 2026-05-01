@@ -101,8 +101,81 @@ jobs:
         env:
           JOB_PATH: ${{ inputs.job }}
         run: |
+          restore_automerge_job() {
+            case "$JOB_PATH" in
+              jobs/*/inbox/automerge-*.md) ;;
+              *) return 1 ;;
+            esac
+            filename="${JOB_PATH##*/}"
+            stem="${filename%.md}"
+            rest="${stem#automerge-}"
+            number="${rest##*-}"
+            repo_slug="${rest%-${number}}"
+            owner="${JOB_PATH#jobs/}"
+            owner="${owner%%/*}"
+            repo_name="${repo_slug#${owner}-}"
+            if [ -z "$number" ] || [ "$number" = "$rest" ] || [ -z "$repo_name" ] || [ "$repo_name" = "$repo_slug" ]; then
+              return 1
+            fi
+            repo="$owner/$repo_name"
+            ref="#$number"
+            branch="clawsweeper/automerge-$repo_slug-$number"
+            mkdir -p "$(dirname "$JOB_PATH")"
+            cat > "$JOB_PATH" <<EOF
+          ---
+          repo: $repo
+          cluster_id: automerge-$repo_slug-$number
+          mode: autonomous
+          allowed_actions:
+            - comment
+            - label
+            - fix
+            - raise_pr
+          blocked_actions:
+            - close
+            - merge
+          require_human_for:
+            - close
+            - merge
+          canonical:
+            - $ref
+          candidates:
+            - $ref
+          cluster_refs:
+            - $ref
+          allow_instant_close: false
+          allow_fix_pr: true
+          allow_merge: false
+          allow_unmerged_fix_close: false
+          allow_post_merge_close: false
+          require_fix_before_close: true
+          security_policy: central_security_only
+          security_sensitive: false
+          target_branch: $branch
+          source: pr_automerge
+          ---
+
+          # ClawSweeper adopted PR repair candidate
+
+          Maintainer opted $ref into ClawSweeper automerge.
+
+          Source PR: https://github.com/$repo/pull/$number
+          Title: PR $ref
+
+          ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop:
+
+          - If ClawSweeper emits an explicit repair marker, requests changes, or finds failing checks/rebase work, and the PR branch is safe to update, emit a fix artifact with \`repair_strategy: "repair_contributor_branch"\` and \`source_prs: ["https://github.com/$repo/pull/$number"]\`.
+          - If the PR branch cannot be safely updated, emit a narrow credited replacement only when the artifact can preserve the original contributor credit; otherwise return \`needs_human\`.
+          - Do not merge, close, or bypass review gates from the worker. The comment router owns final merge only after a passing ClawSweeper verdict for the exact current head.
+          - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.
+          EOF
+          }
+
           if [ -f "$JOB_PATH" ]; then
             echo "job_exists=1" >> "$GITHUB_OUTPUT"
+          elif restore_automerge_job; then
+            echo "job_exists=1" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Restored automerge repair job::Job file '$JOB_PATH' was missing from the state checkout; reconstructed it from the workflow input."
           else
             echo "job_exists=0" >> "$GITHUB_OUTPUT"
             echo "::notice title=Stale repair dispatch::Job file '$JOB_PATH' no longer exists on the current state checkout; skipping this worker."
@@ -235,8 +308,81 @@ jobs:
         env:
           JOB_PATH: ${{ inputs.job }}
         run: |
+          restore_automerge_job() {
+            case "$JOB_PATH" in
+              jobs/*/inbox/automerge-*.md) ;;
+              *) return 1 ;;
+            esac
+            filename="${JOB_PATH##*/}"
+            stem="${filename%.md}"
+            rest="${stem#automerge-}"
+            number="${rest##*-}"
+            repo_slug="${rest%-${number}}"
+            owner="${JOB_PATH#jobs/}"
+            owner="${owner%%/*}"
+            repo_name="${repo_slug#${owner}-}"
+            if [ -z "$number" ] || [ "$number" = "$rest" ] || [ -z "$repo_name" ] || [ "$repo_name" = "$repo_slug" ]; then
+              return 1
+            fi
+            repo="$owner/$repo_name"
+            ref="#$number"
+            branch="clawsweeper/automerge-$repo_slug-$number"
+            mkdir -p "$(dirname "$JOB_PATH")"
+            cat > "$JOB_PATH" <<EOF
+          ---
+          repo: $repo
+          cluster_id: automerge-$repo_slug-$number
+          mode: autonomous
+          allowed_actions:
+            - comment
+            - label
+            - fix
+            - raise_pr
+          blocked_actions:
+            - close
+            - merge
+          require_human_for:
+            - close
+            - merge
+          canonical:
+            - $ref
+          candidates:
+            - $ref
+          cluster_refs:
+            - $ref
+          allow_instant_close: false
+          allow_fix_pr: true
+          allow_merge: false
+          allow_unmerged_fix_close: false
+          allow_post_merge_close: false
+          require_fix_before_close: true
+          security_policy: central_security_only
+          security_sensitive: false
+          target_branch: $branch
+          source: pr_automerge
+          ---
+
+          # ClawSweeper adopted PR repair candidate
+
+          Maintainer opted $ref into ClawSweeper automerge.
+
+          Source PR: https://github.com/$repo/pull/$number
+          Title: PR $ref
+
+          ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop:
+
+          - If ClawSweeper emits an explicit repair marker, requests changes, or finds failing checks/rebase work, and the PR branch is safe to update, emit a fix artifact with \`repair_strategy: "repair_contributor_branch"\` and \`source_prs: ["https://github.com/$repo/pull/$number"]\`.
+          - If the PR branch cannot be safely updated, emit a narrow credited replacement only when the artifact can preserve the original contributor credit; otherwise return \`needs_human\`.
+          - Do not merge, close, or bypass review gates from the worker. The comment router owns final merge only after a passing ClawSweeper verdict for the exact current head.
+          - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.
+          EOF
+          }
+
           if [ -f "$JOB_PATH" ]; then
             echo "job_exists=1" >> "$GITHUB_OUTPUT"
+          elif restore_automerge_job; then
+            echo "job_exists=1" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Restored automerge repair job::Job file '$JOB_PATH' was missing from the state checkout; reconstructed it from the workflow input."
           else
             echo "job_exists=0" >> "$GITHUB_OUTPUT"
             echo "::notice title=Stale repair dispatch::Job file '$JOB_PATH' no longer exists on the current state checkout; skipping execute."

@@ -1,6 +1,8 @@
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join, relative, resolve } from "node:path";
 
 import { clawsweeperGitUserEmail, clawsweeperGitUserName } from "./process-env.js";
 
@@ -210,11 +212,64 @@ function syncStatePublishPaths(paths: readonly string[], stateRoot: string): voi
     if (!destination.startsWith(`${stateRoot}/`) && destination !== stateRoot) {
       throw new Error(`Refusing to publish outside state root: ${path}`);
     }
-    rmSync(destination, { force: true, recursive: true });
-    if (!existsSync(source)) continue;
-    mkdirSync(dirname(destination), { recursive: true });
-    cpSync(source, destination, { recursive: true });
+    const preserved = preserveStateOnlyAutomergeJobs({ path, source, destination });
+    try {
+      rmSync(destination, { force: true, recursive: true });
+      if (existsSync(source)) {
+        mkdirSync(dirname(destination), { recursive: true });
+        cpSync(source, destination, { recursive: true });
+      }
+      restorePreservedFiles(preserved, destination);
+    } finally {
+      rmSync(preserved.root, { force: true, recursive: true });
+    }
   }
+}
+
+function preserveStateOnlyAutomergeJobs({
+  path,
+  source,
+  destination,
+}: {
+  path: string;
+  source: string;
+  destination: string;
+}): { root: string; files: string[] } {
+  const root = mkdtempSync(join(tmpdir(), "clawsweeper-state-preserve-"));
+  if (path !== "jobs" || !existsSync(destination)) return { root, files: [] };
+
+  const files: string[] = [];
+  for (const file of listFiles(destination)) {
+    const rel = relative(destination, file);
+    if (!/^[^/]+\/inbox\/automerge-.+\.md$/.test(rel)) continue;
+    if (existsSync(resolve(source, rel))) continue;
+    const target = resolve(root, rel);
+    mkdirSync(dirname(target), { recursive: true });
+    cpSync(file, target);
+    files.push(rel);
+  }
+  return { root, files };
+}
+
+function restorePreservedFiles(preserved: { root: string; files: string[] }, destination: string) {
+  for (const rel of preserved.files) {
+    const source = resolve(preserved.root, rel);
+    const target = resolve(destination, rel);
+    if (existsSync(target)) continue;
+    mkdirSync(dirname(target), { recursive: true });
+    cpSync(source, target);
+  }
+}
+
+function listFiles(root: string): string[] {
+  const stat = statSync(root);
+  if (stat.isFile()) return [root];
+  if (!stat.isDirectory()) return [];
+  const files: string[] = [];
+  for (const entry of readdirSync(root)) {
+    files.push(...listFiles(resolve(root, entry)));
+  }
+  return files;
 }
 
 export function pushCommit(options: {
