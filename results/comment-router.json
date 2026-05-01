@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T03:29:55.327Z",
+  "updated_at": "2026-05-01T03:30:50.858Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75165:4354345667:2026-04-30T23:18:26Z:clawsweeper_auto_repair",
-      "comment_id": "4354345667",
-      "comment_version_key": "4354345667:2026-04-30T23:18:26Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75165#issuecomment-4354345667",
-      "comment_created_at": "2026-04-30T16:40:36Z",
-      "comment_updated_at": "2026-04-30T23:18:26Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 75165,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=b106b5b89032737294c97d059a2155ca1ebe1a4c)",
-      "expected_head_sha": "b106b5b89032737294c97d059a2155ca1ebe1a4c",
-      "finding_id": "review-feedback",
-      "status": "skipped",
-      "processed_at": "2026-05-01T00:02:34.254Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75076:4352505101:2026-04-30T23:16:42Z:clawsweeper_auto_repair",
       "comment_id": "4352505101",
@@ -26105,6 +26081,36 @@
         "kind": "pull_request",
         "branch": "fix/issue-75348-disable-eager-input-streaming",
         "head_sha": "01ca674123213607dc47eb5191b1699aa24ac2d7",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75381:4357584288:2026-05-01T03:30:46Z:clawsweeper_auto_repair",
+      "comment_id": "4357584288",
+      "comment_version_key": "4357584288:2026-05-01T03:30:46Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75381#issuecomment-4357584288",
+      "comment_created_at": "2026-05-01T03:09:43Z",
+      "comment_updated_at": "2026-05-01T03:30:46Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75381,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=1468823269e068aaa6c0799c76847c0d4ff28824)",
+      "expected_head_sha": "1468823269e068aaa6c0799c76847c0d4ff28824",
+      "finding_id": "review-feedback",
+      "status": "skipped",
+      "processed_at": "2026-05-01T03:30:50.857Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "codex/issue-75379-tui-unresponsive-after-gateway-close",
+        "head_sha": "1468823269e068aaa6c0799c76847c0d4ff28824",
         "cluster_id": null,
         "job_path": null
       }
