@@ -1,18 +1,18 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:56:25.002Z",
+  "generated_at": "2026-05-01T03:58:09.442Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:56:23.730Z",
+  "since": "2026-05-01T00:58:07.747Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75008
+    75413
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 2,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -29,16 +29,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75008:4351392627:2026-05-01T03:56:20Z:clawsweeper_needs_human",
-      "comment_id": "4351392627",
-      "comment_version_key": "4351392627:2026-05-01T03:56:20Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75008#issuecomment-4351392627",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75413:4357717616:2026-05-01T03:58:04Z:clawsweeper_needs_human",
+      "comment_id": "4357717616",
+      "comment_version_key": "4357717616:2026-05-01T03:58:04Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75413#issuecomment-4357717616",
       "repo": "openclaw/openclaw",
-      "issue_number": 75008,
+      "issue_number": 75413,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T09:44:24Z",
-      "comment_updated_at": "2026-05-01T03:56:20Z",
+      "comment_created_at": "2026-05-01T03:55:53Z",
+      "comment_updated_at": "2026-05-01T03:58:04Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -46,44 +46,45 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=ab94c840d6291d6b408c45e9c973869aab9f4ea6)",
-      "review_summary": "The PR extracts the embedded-run `abortable` wrapper into a module-scoped helper, updates the runner to call it, adds focused tests and a heap-leak harness, wires a package script, updates heap-leak skill docs, and adds a changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=bb3bb7581fe73ffff18a10ddf596ff85ba5a24b2)",
+      "review_summary": "The PR adds `python3` to the gateway Docker runtime apt baseline, updates Docker install docs and the changelog, and extends Dockerfile tests to cover the new package/docs contract.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "ab94c840d6291d6b408c45e9c973869aab9f4ea6",
+      "expected_head_sha": "bb3bb7581fe73ffff18a10ddf596ff85ba5a24b2",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(agents): release embedded-run scope on hung provider abort + heap-leak harness",
-        "branch": "fix/embedded-run-abort-retention",
-        "head_sha": "ab94c840d6291d6b408c45e9c973869aab9f4ea6",
-        "author": "romneyda",
+        "title": "fix(docker): include python3 in gateway runtime image",
+        "branch": "codex/issue-75041-python3-runtime",
+        "head_sha": "bb3bb7581fe73ffff18a10ddf596ff85ba5a24b2",
+        "author": "chen-zhang-cs-code",
         "labels": [
-          "scripts",
-          "agents",
-          "maintainer",
-          "size: M"
+          "docs",
+          "docker",
+          "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75008",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75008.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75413",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75413.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 11,
+          "total": 90,
           "counts": {
-            "CANCELLED": 1,
-            "SUCCESS": 7,
-            "SKIPPED": 3
+            "CANCELLED": 2,
+            "SKIPPED": 11,
+            "SUCCESS": 75,
+            "IN_PROGRESS": 1,
+            "NEUTRAL": 1
           },
           "blockers": [
-            "dispatch:CANCELLED"
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
@@ -92,15 +93,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1470,
+    "total_ms": 1850,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 315
+        "ms": 273
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 947
+        "ms": 1413
       },
       {
         "name": "classify_commands",
@@ -108,7 +109,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 190
+        "ms": 148
       },
       {
         "name": "append_ledger",
