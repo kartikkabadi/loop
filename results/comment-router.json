@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T03:09:46.883Z",
+  "updated_at": "2026-05-01T03:10:34.218Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75094:4352936112:2026-04-30T22:40:32Z:clawsweeper_needs_human",
-      "comment_id": "4352936112",
-      "comment_version_key": "4352936112:2026-04-30T22:40:32Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75094#issuecomment-4352936112",
-      "comment_created_at": "2026-04-30T13:39:24Z",
-      "comment_updated_at": "2026-04-30T22:40:32Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 75094,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=712ff5874bc922ef1ae5b903b7f2176e1a78d592)",
-      "expected_head_sha": "712ff5874bc922ef1ae5b903b7f2176e1a78d592",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T00:02:34.254Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63460:4323758115:2026-04-30T22:40:25Z:clawsweeper_needs_human",
       "comment_id": "4323758115",
@@ -26027,6 +26003,36 @@
         "kind": "pull_request",
         "branch": "feat/zh-onboarding-complete-v2",
         "head_sha": "ed1f99f655631e902d889399d326f5be28043378",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74873:4349920740:2026-05-01T03:10:29Z:clawsweeper_needs_human",
+      "comment_id": "4349920740",
+      "comment_version_key": "4349920740:2026-05-01T03:10:29Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74873#issuecomment-4349920740",
+      "comment_created_at": "2026-04-30T05:27:51Z",
+      "comment_updated_at": "2026-05-01T03:10:29Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 74873,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=3f25cd48e45d4dd68b8cc491b63907ecb549a387)",
+      "expected_head_sha": "3f25cd48e45d4dd68b8cc491b63907ecb549a387",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T03:10:34.218Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "feature/ai-587-drain-manifest",
+        "head_sha": "3f25cd48e45d4dd68b8cc491b63907ecb549a387",
         "cluster_id": null,
         "job_path": null
       }
