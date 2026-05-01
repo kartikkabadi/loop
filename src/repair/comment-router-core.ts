@@ -228,8 +228,16 @@ export function isMaintainerCommandAllowed({
   return association === "OWNER" && associationSet.has(association);
 }
 
-export function buildAutomergeMergeArgs({ issueNumber, repo, expectedHeadSha }: LooseRecord) {
+export function buildAutomergeMergeArgs({
+  issueNumber,
+  repo,
+  expectedHeadSha,
+  subject = null,
+  bodyFile = null,
+}: LooseRecord) {
   const args = ["pr", "merge", String(issueNumber), "--repo", repo, "--squash"];
+  if (subject) args.push("--subject", String(subject));
+  if (bodyFile) args.push("--body-file", String(bodyFile));
   if (expectedHeadSha && expectedHeadSha !== "unknown") {
     args.push("--match-head-commit", expectedHeadSha);
   }
@@ -579,6 +587,19 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       `Feedback: ${command.repair_reason ?? "ClawSweeper reported a passing review."}`,
       ...(dispatched?.merge?.reason ? [`Merge status: ${dispatched.merge.reason}`] : []),
       ...(dispatched?.merge?.merged_at ? [`Merged at: ${dispatched.merge.merged_at}`] : []),
+      ...(dispatched?.merge?.merge_commit_sha
+        ? [`Merge commit: ${dispatched.merge.merge_commit_sha}`]
+        : []),
+      ...(dispatched?.merge?.summary_lines?.length
+        ? ["", "What merged:", ...dispatched.merge.summary_lines.map((line: string) => `- ${line}`)]
+        : []),
+      ...(dispatched?.merge?.fixup_lines?.length
+        ? [
+            "",
+            "Fixups included:",
+            ...dispatched.merge.fixup_lines.map((line: string) => `- ${line}`),
+          ]
+        : []),
       "",
       dispatched?.merge?.status === "executed"
         ? "The automerge loop is complete."
@@ -596,6 +617,19 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       `Head: \`${command.expected_head_sha ?? command.target?.head_sha ?? "unknown"}\``,
       ...(dispatched?.merge?.reason ? [`Merge status: ${dispatched.merge.reason}`] : []),
       ...(dispatched?.merge?.merged_at ? [`Merged at: ${dispatched.merge.merged_at}`] : []),
+      ...(dispatched?.merge?.merge_commit_sha
+        ? [`Merge commit: ${dispatched.merge.merge_commit_sha}`]
+        : []),
+      ...(dispatched?.merge?.summary_lines?.length
+        ? ["", "What merged:", ...dispatched.merge.summary_lines.map((line: string) => `- ${line}`)]
+        : []),
+      ...(dispatched?.merge?.fixup_lines?.length
+        ? [
+            "",
+            "Fixups included:",
+            ...dispatched.merge.fixup_lines.map((line: string) => `- ${line}`),
+          ]
+        : []),
       "",
       dispatched?.merge?.status === "executed"
         ? "The automerge loop is complete."

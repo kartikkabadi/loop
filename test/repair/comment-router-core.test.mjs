@@ -864,11 +864,19 @@ test("renderResponse reports automerge completion", () => {
         status: "executed",
         reason: "merged by ClawSweeper automerge",
         merged_at: "2026-04-29T05:00:00Z",
+        merge_commit_sha: "def789",
+        summary_lines: ["Added queued retry handling for Discord REST 429s."],
+        fixup_lines: ["Included follow-up commit: fix(discord): avoid stale requeues"],
       },
     },
   );
 
   assert.match(body, /merged this PR/);
+  assert.match(body, /What merged:/);
+  assert.match(body, /Added queued retry handling/);
+  assert.match(body, /Fixups included:/);
+  assert.match(body, /avoid stale requeues/);
+  assert.match(body, /Merge commit: def789/);
   assert.match(body, /automerge loop is complete/);
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
 });
@@ -887,6 +895,9 @@ test("renderResponse reports maintainer-approved automerge completion", () => {
         status: "executed",
         reason: "merged by ClawSweeper automerge",
         merged_at: "2026-04-29T05:00:00Z",
+        merge_commit_sha: "def790",
+        summary_lines: ["Updated queue scheduling defaults."],
+        fixup_lines: ["No separate fixup commits were needed after automerge opt-in."],
       },
     },
   );
@@ -894,6 +905,10 @@ test("renderResponse reports maintainer-approved automerge completion", () => {
   assert.match(body, /Maintainer-approved ClawSweeper automerge is complete/);
   assert.match(body, /Approver: `steipete`/);
   assert.match(body, /Head: `abc790`/);
+  assert.match(body, /Merge commit: def790/);
+  assert.match(body, /What merged:/);
+  assert.match(body, /Updated queue scheduling defaults/);
+  assert.match(body, /Fixups included:/);
   assert.match(body, /automerge loop is complete/);
 });
 
@@ -935,6 +950,8 @@ test("automerge merge args pin the reviewed head SHA", () => {
       issueNumber: 123,
       repo: "openclaw/openclaw",
       expectedHeadSha: "abc123",
+      subject: "fix: test (#123)",
+      bodyFile: "/tmp/body.txt",
     }),
     [
       "pr",
@@ -943,6 +960,10 @@ test("automerge merge args pin the reviewed head SHA", () => {
       "--repo",
       "openclaw/openclaw",
       "--squash",
+      "--subject",
+      "fix: test (#123)",
+      "--body-file",
+      "/tmp/body.txt",
       "--match-head-commit",
       "abc123",
     ],
