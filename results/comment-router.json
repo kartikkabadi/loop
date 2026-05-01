@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T04:49:34.606Z",
+  "updated_at": "2026-05-01T04:49:38.738Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72254:4322597795:2026-05-01T00:48:38Z:clawsweeper_needs_human",
@@ -27992,14 +27992,14 @@
       }
     },
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75118:4353572889:2026-05-01T04:49:29Z:clawsweeper_needs_human",
-      "comment_id": "4353572889",
-      "comment_version_key": "4353572889:2026-05-01T04:49:29Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75118#issuecomment-4353572889",
-      "comment_created_at": "2026-04-30T15:01:05Z",
-      "comment_updated_at": "2026-05-01T04:49:29Z",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75403:4357671409:2026-05-01T04:49:32Z:clawsweeper_needs_human",
+      "comment_id": "4357671409",
+      "comment_version_key": "4357671409:2026-05-01T04:49:32Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75403#issuecomment-4357671409",
+      "comment_created_at": "2026-05-01T03:38:10Z",
+      "comment_updated_at": "2026-05-01T04:49:32Z",
       "repo": "openclaw/openclaw",
-      "issue_number": 75118,
+      "issue_number": 75403,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
       "trigger": "trusted_bot",
@@ -28008,17 +28008,17 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e4071600c99259cb1ed96202e262c1dd57983fbb)",
-      "expected_head_sha": "e4071600c99259cb1ed96202e262c1dd57983fbb",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=a5f5ddb7830f31e58996be05cf855c8ba21c9c93)",
+      "expected_head_sha": "a5f5ddb7830f31e58996be05cf855c8ba21c9c93",
       "finding_id": null,
       "status": "skipped",
-      "processed_at": "2026-05-01T04:49:34.605Z",
+      "processed_at": "2026-05-01T04:49:38.738Z",
       "target": {
         "kind": "pull_request",
-        "branch": "mcp-context",
-        "head_sha": "e4071600c99259cb1ed96202e262c1dd57983fbb",
-        "cluster_id": null,
-        "job_path": null
+        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-45b86450795d",
+        "head_sha": "a5f5ddb7830f31e58996be05cf855c8ba21c9c93",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-45b86450795d",
+        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-45b86450795d.md"
       }
     }
   ]
