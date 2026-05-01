@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:39:52.474Z",
+  "updated_at": "2026-05-01T04:40:03.242Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73940:4340479902:2026-04-30T23:30:28Z:clawsweeper_needs_human",
-      "comment_id": "4340479902",
-      "comment_version_key": "4340479902:2026-04-30T23:30:28Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73940#issuecomment-4340479902",
-      "comment_created_at": "2026-04-29T02:45:37Z",
-      "comment_updated_at": "2026-04-30T23:30:28Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 73940,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=37522a51129e42715535df511d2b26369252f14e)",
-      "expected_head_sha": "37522a51129e42715535df511d2b26369252f14e",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T00:02:34.254Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73938:4340478370:2026-04-30T23:30:25Z:clawsweeper_needs_human",
       "comment_id": "4340478370",
@@ -26481,6 +26457,36 @@
         "kind": "pull_request",
         "branch": "fix/feishu-interactive-card-fallback-parsing",
         "head_sha": "a380eb11d56f1e84254cc167f65bb6d7388a5640",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T04:39:57Z:clawsweeper_needs_human",
+      "comment_id": "4357487939",
+      "comment_version_key": "4357487939:2026-05-01T04:39:57Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
+      "comment_created_at": "2026-05-01T02:36:16Z",
+      "comment_updated_at": "2026-05-01T04:39:57Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75370,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b8607199d8dfaa946f670f647217268b99fc7820)",
+      "expected_head_sha": "b8607199d8dfaa946f670f647217268b99fc7820",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T04:40:03.241Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "pdftoppm-fallback",
+        "head_sha": "b8607199d8dfaa946f670f647217268b99fc7820",
         "cluster_id": null,
         "job_path": null
       }
