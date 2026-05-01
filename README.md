@@ -160,23 +160,23 @@ Last dashboard update: May 1, 2026, 02:08 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 3660 |
+| Open issues | 3659 |
 | Open PRs | 3358 |
-| Open items total | 7018 |
-| Reviewed files | 7655 |
-| Unreviewed open items | 45 |
-| Due now by cadence | 1375 |
-| Proposed closes awaiting apply | 1 |
-| Work candidates awaiting promotion | 2154 |
-| Closed by Codex apply | 11389 |
+| Open items total | 7017 |
+| Reviewed files | 7648 |
+| Unreviewed open items | 51 |
+| Due now by cadence | 1410 |
+| Proposed closes awaiting apply | 0 |
+| Work candidates awaiting promotion | 2152 |
+| Closed by Codex apply | 11390 |
 | Failed or stale reviews | 22 |
-| Archived closed files | 15402 |
+| Archived closed files | 15409 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6771 | 6726 | 45 | 1119 | 1 | 2108 | 11381 | May 1, 2026, 02:07 UTC | May 1, 2026, 02:02 UTC | 441 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6770 | 6719 | 51 | 1154 | 0 | 2106 | 11382 | May 1, 2026, 02:07 UTC | May 1, 2026, 02:08 UTC | 441 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 247 | 924 | 0 | 253 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 5 | 0 | 3 | 0 | 1 | 0 | May 1, 2026, 02:03 UTC | unknown | 2 |
 
@@ -184,35 +184,34 @@ Last dashboard update: May 1, 2026, 02:08 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake publish complete | May 1, 2026, 02:08 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25198555293) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | May 1, 2026, 02:08 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25198859298) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: May 1, 2026, 02:07 UTC. Latest close: May 1, 2026, 02:02 UTC. Latest comment sync: May 1, 2026, 02:07 UTC.
+Latest review: May 1, 2026, 02:07 UTC. Latest close: May 1, 2026, 02:08 UTC. Latest comment sync: May 1, 2026, 02:08 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 67 | 1 | 66 | 1 | 1 | 18 | 0 |
-| Last hour | 488 | 9 | 479 | 1 | 27 | 443 | 0 |
-| Last 24 hours | 6765 | 468 | 6297 | 9 | 639 | 3884 | 23 |
+| Last 15 minutes | 67 | 1 | 66 | 1 | 7 | 19 | 0 |
+| Last hour | 456 | 8 | 448 | 1 | 33 | 443 | 0 |
+| Last 24 hours | 6765 | 468 | 6297 | 9 | 646 | 3885 | 23 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74343](https://github.com/openclaw/openclaw/issues/74343) | Slash command cross-routing when multiple Apps register same commands | duplicate or superseded | May 1, 2026, 02:08 UTC | [records/openclaw-openclaw/closed/74343.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74343.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#51940](https://github.com/openclaw/openclaw/pull/51940) | fix(ui): resolve channel config forms via account path | closed externally after review | May 1, 2026, 02:06 UTC | [records/openclaw-openclaw/closed/51940.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/51940.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#35152](https://github.com/openclaw/openclaw/pull/35152) | feat(doctor): detect duplicate openclaw installations | closed externally after review | May 1, 2026, 02:06 UTC | [records/openclaw-openclaw/closed/35152.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/35152.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75355](https://github.com/openclaw/openclaw/issues/75355) | Bug: Circuit breaker blocks tool but not agent turn; exec loop only warns, never blocks | duplicate or superseded | May 1, 2026, 02:02 UTC | [records/openclaw-openclaw/closed/75355.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75355.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75334](https://github.com/openclaw/openclaw/issues/75334) | [Bug]: commitments extractor uses direct OpenAI instead of configured openai-codex model, causing repeated background auth failures | closed externally after review | May 1, 2026, 01:57 UTC | [records/openclaw-openclaw/closed/75334.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75334.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75347](https://github.com/openclaw/openclaw/pull/75347) | [codex] Fix commitments extractor model selection | closed externally after review | May 1, 2026, 01:57 UTC | [records/openclaw-openclaw/closed/75347.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75347.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74963](https://github.com/openclaw/openclaw/issues/74963) | [BUG] 4.27 multi-instance: plugin-runtime-deps hash mismatch causes ENOENT on bundled channel dist files | closed externally after review | May 1, 2026, 01:56 UTC | [records/openclaw-openclaw/closed/74963.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74963.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75354](https://github.com/openclaw/openclaw/pull/75354) | fix(telegram): remove strict SecretRef resolve in read-only token inspection | already implemented on main | May 1, 2026, 01:53 UTC | [records/openclaw-openclaw/closed/75354.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75354.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#65773](https://github.com/openclaw/openclaw/pull/65773) | fix(slack): print manifest JSON without box-drawing borders | closed externally after review | May 1, 2026, 01:52 UTC | [records/openclaw-openclaw/closed/65773.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65773.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75353](https://github.com/openclaw/openclaw/pull/75353) | fix(plugins): guard against undefined plugin command handler result | duplicate or superseded | May 1, 2026, 01:52 UTC | [records/openclaw-openclaw/closed/75353.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75353.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75048](https://github.com/openclaw/openclaw/pull/75048) | fix(plugins): canonicalize packageRoot before hashing runtime-deps stage key | kept open | May 1, 2026, 01:48 UTC | [records/openclaw-openclaw/closed/75048.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75048.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75338](https://github.com/openclaw/openclaw/pull/75338) | fix(discord): harden rate limit retries | kept open | May 1, 2026, 01:45 UTC | [records/openclaw-openclaw/closed/75338.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75338.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70694](https://github.com/openclaw/openclaw/issues/70694) | sessions_spawn: task prompt appears truncated/lost for some subagent runs (8 input tokens for 2k-char task) | duplicate or superseded | May 1, 2026, 01:27 UTC | [records/openclaw-openclaw/closed/70694.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70694.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#68033](https://github.com/openclaw/openclaw/issues/68033) | openai-codex provider broken since 2026.4.5 — Cloudflare challenge + missing OAuth scope | cannot reproduce on current main | May 1, 2026, 01:27 UTC | [records/openclaw-openclaw/closed/68033.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/68033.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#62595](https://github.com/openclaw/openclaw/issues/62595) | [Bug]: pnpm check fails with TS2883 inferred type portability errors in tsgo | already implemented on main | May 1, 2026, 01:27 UTC | [records/openclaw-openclaw/closed/62595.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62595.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#60861](https://github.com/openclaw/openclaw/issues/60861) | [Bug]: WorkClaw-exec工具执行卡死Bug反馈 | already implemented on main | May 1, 2026, 01:27 UTC | [records/openclaw-openclaw/closed/60861.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60861.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#58079](https://github.com/openclaw/openclaw/pull/58079) | feat(plugins): add full conversation context to before_tool_call hook | closed externally after review | May 1, 2026, 01:26 UTC | [records/openclaw-openclaw/closed/58079.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58079.md) |
 
 ### Work Candidates Across Repos
 
@@ -272,8 +271,8 @@ Updated: May 1, 2026, 02:08 UTC
 
 State: Apply in progress
 
-Merged hot intake artifacts for run 25198555293 without full folder reconciliation, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25198555293](https://github.com/openclaw/clawsweeper/actions/runs/25198555293)
+Checkpoint 1 finished. Fresh closes in checkpoint: 1. Total fresh closes in this run: 1/1. Result records in checkpoint: 2, including durable review comment syncs.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25198859298](https://github.com/openclaw/clawsweeper/actions/runs/25198859298)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -281,38 +280,38 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25198555293](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3430 |
+| Open issues | 3429 |
 | Open PRs | 3341 |
-| Open items total | 6771 |
-| Reviewed files | 6726 |
-| Unreviewed open items | 45 |
-| Archived closed files | 15376 |
+| Open items total | 6770 |
+| Reviewed files | 6719 |
+| Unreviewed open items | 51 |
+| Archived closed files | 15383 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3407 |
-| Proposed issue closes | 1 (0% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3297 |
+| Fresh reviewed issues in the last 7 days | 3404 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
+| Fresh reviewed PRs in the last 7 days | 3293 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6704 |
-| Proposed closes awaiting apply | 1 (0% of fresh reviews) |
-| Work candidates awaiting promotion | 2108 |
-| Closed by Codex apply | 11381 |
+| Fresh verified reviews in the last 7 days | 6697 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
+| Work candidates awaiting promotion | 2106 |
+| Closed by Codex apply | 11382 |
 | Failed or stale reviews | 9 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 465/1465 current (1000 due, 31.7%) |
-| Hourly hot item cadence (<7d) | 465/1465 current (1000 due, 31.7%) |
-| Daily cadence coverage | 3418/3477 current (59 due, 98.3%) |
-| Daily PR cadence | 2392/2446 current (54 due, 97.8%) |
+| Hourly cadence coverage | 432/1461 current (1029 due, 29.6%) |
+| Hourly hot item cadence (<7d) | 432/1461 current (1029 due, 29.6%) |
+| Daily cadence coverage | 3415/3474 current (59 due, 98.3%) |
+| Daily PR cadence | 2389/2443 current (54 due, 97.8%) |
 | Daily new issue cadence (<30d) | 1026/1031 current (5 due, 99.5%) |
 | Weekly older issue cadence | 1769/1784 current (15 due, 99.2%) |
-| Due now by cadence | 1119 |
+| Due now by cadence | 1154 |
 
 ### Audit Health
 
@@ -348,29 +347,28 @@ Targeted review input: `51947,61960,62112,73342`
 
 #### Latest Run Activity
 
-Latest review: May 1, 2026, 02:07 UTC. Latest close: May 1, 2026, 02:02 UTC. Latest comment sync: May 1, 2026, 02:07 UTC.
+Latest review: May 1, 2026, 02:07 UTC. Latest close: May 1, 2026, 02:08 UTC. Latest comment sync: May 1, 2026, 02:08 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 66 | 1 | 65 | 1 | 1 | 17 | 0 |
-| Last hour | 486 | 9 | 477 | 1 | 27 | 441 | 0 |
-| Last 24 hours | 6763 | 468 | 6295 | 9 | 639 | 3882 | 23 |
+| Last 15 minutes | 66 | 1 | 65 | 1 | 7 | 18 | 0 |
+| Last hour | 454 | 8 | 446 | 1 | 33 | 441 | 0 |
+| Last 24 hours | 6763 | 468 | 6295 | 9 | 646 | 3883 | 23 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#74343](https://github.com/openclaw/openclaw/issues/74343) | Slash command cross-routing when multiple Apps register same commands | duplicate or superseded | May 1, 2026, 02:08 UTC | [records/openclaw-openclaw/closed/74343.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74343.md) |
+| [#51940](https://github.com/openclaw/openclaw/pull/51940) | fix(ui): resolve channel config forms via account path | closed externally after review | May 1, 2026, 02:06 UTC | [records/openclaw-openclaw/closed/51940.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/51940.md) |
+| [#35152](https://github.com/openclaw/openclaw/pull/35152) | feat(doctor): detect duplicate openclaw installations | closed externally after review | May 1, 2026, 02:06 UTC | [records/openclaw-openclaw/closed/35152.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/35152.md) |
 | [#75355](https://github.com/openclaw/openclaw/issues/75355) | Bug: Circuit breaker blocks tool but not agent turn; exec loop only warns, never blocks | duplicate or superseded | May 1, 2026, 02:02 UTC | [records/openclaw-openclaw/closed/75355.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75355.md) |
+| [#75334](https://github.com/openclaw/openclaw/issues/75334) | [Bug]: commitments extractor uses direct OpenAI instead of configured openai-codex model, causing repeated background auth failures | closed externally after review | May 1, 2026, 01:57 UTC | [records/openclaw-openclaw/closed/75334.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75334.md) |
+| [#75347](https://github.com/openclaw/openclaw/pull/75347) | [codex] Fix commitments extractor model selection | closed externally after review | May 1, 2026, 01:57 UTC | [records/openclaw-openclaw/closed/75347.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75347.md) |
+| [#74963](https://github.com/openclaw/openclaw/issues/74963) | [BUG] 4.27 multi-instance: plugin-runtime-deps hash mismatch causes ENOENT on bundled channel dist files | closed externally after review | May 1, 2026, 01:56 UTC | [records/openclaw-openclaw/closed/74963.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/74963.md) |
 | [#75354](https://github.com/openclaw/openclaw/pull/75354) | fix(telegram): remove strict SecretRef resolve in read-only token inspection | already implemented on main | May 1, 2026, 01:53 UTC | [records/openclaw-openclaw/closed/75354.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75354.md) |
 | [#65773](https://github.com/openclaw/openclaw/pull/65773) | fix(slack): print manifest JSON without box-drawing borders | closed externally after review | May 1, 2026, 01:52 UTC | [records/openclaw-openclaw/closed/65773.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/65773.md) |
 | [#75353](https://github.com/openclaw/openclaw/pull/75353) | fix(plugins): guard against undefined plugin command handler result | duplicate or superseded | May 1, 2026, 01:52 UTC | [records/openclaw-openclaw/closed/75353.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75353.md) |
-| [#75048](https://github.com/openclaw/openclaw/pull/75048) | fix(plugins): canonicalize packageRoot before hashing runtime-deps stage key | kept open | May 1, 2026, 01:48 UTC | [records/openclaw-openclaw/closed/75048.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75048.md) |
-| [#75338](https://github.com/openclaw/openclaw/pull/75338) | fix(discord): harden rate limit retries | kept open | May 1, 2026, 01:45 UTC | [records/openclaw-openclaw/closed/75338.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75338.md) |
-| [#70694](https://github.com/openclaw/openclaw/issues/70694) | sessions_spawn: task prompt appears truncated/lost for some subagent runs (8 input tokens for 2k-char task) | duplicate or superseded | May 1, 2026, 01:27 UTC | [records/openclaw-openclaw/closed/70694.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/70694.md) |
-| [#68033](https://github.com/openclaw/openclaw/issues/68033) | openai-codex provider broken since 2026.4.5 — Cloudflare challenge + missing OAuth scope | cannot reproduce on current main | May 1, 2026, 01:27 UTC | [records/openclaw-openclaw/closed/68033.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/68033.md) |
-| [#62595](https://github.com/openclaw/openclaw/issues/62595) | [Bug]: pnpm check fails with TS2883 inferred type portability errors in tsgo | already implemented on main | May 1, 2026, 01:27 UTC | [records/openclaw-openclaw/closed/62595.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/62595.md) |
-| [#60861](https://github.com/openclaw/openclaw/issues/60861) | [Bug]: WorkClaw-exec工具执行卡死Bug反馈 | already implemented on main | May 1, 2026, 01:27 UTC | [records/openclaw-openclaw/closed/60861.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/60861.md) |
-| [#58079](https://github.com/openclaw/openclaw/pull/58079) | feat(plugins): add full conversation context to before_tool_call hook | closed externally after review | May 1, 2026, 01:26 UTC | [records/openclaw-openclaw/closed/58079.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/58079.md) |
 
 #### Work Candidates
 
