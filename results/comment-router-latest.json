@@ -1,18 +1,18 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:20:44.719Z",
+  "generated_at": "2026-05-01T03:25:53.633Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:20:43.159Z",
+  "since": "2026-05-01T00:25:51.678Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    74369
+    75180
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 3,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -29,81 +29,87 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74369:4344388331:2026-05-01T03:20:38Z:clawsweeper_needs_human",
-      "comment_id": "4344388331",
-      "comment_version_key": "4344388331:2026-05-01T03:20:38Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/74369#issuecomment-4344388331",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75180:4354637710:2026-05-01T03:25:48Z:clawsweeper_auto_repair",
+      "comment_id": "4354637710",
+      "comment_version_key": "4354637710:2026-05-01T03:25:48Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75180#issuecomment-4354637710",
       "repo": "openclaw/openclaw",
-      "issue_number": 74369,
+      "issue_number": 75180,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-29T13:54:43Z",
-      "comment_updated_at": "2026-05-01T03:20:38Z",
+      "comment_created_at": "2026-04-30T17:24:19Z",
+      "comment_updated_at": "2026-05-01T03:25:48Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=c6915bfae63cfc18aa554aa9174f150d6f64a10c)",
-      "review_summary": "The PR adds plain-text/autocorrect suppression attributes to the Control UI chat textarea, adds regression tests for composer attributes and numeric `chat.send` payload forwarding, and adds an Unreleased changelog entry for #74354.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=c81291977a81f73f93a695ef7960919da343520a)",
+      "review_summary": "The PR adds a block-reply callback result for sent media URLs, updates the block reply pipeline and dispatch-from-config path to use it, adds block reply pipeline tests, and adds a changelog fix entry for the linked Telegram mixed text-plus-media bug.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "c6915bfae63cfc18aa554aa9174f150d6f64a10c",
-      "finding_id": null,
+      "expected_head_sha": "c81291977a81f73f93a695ef7960919da343520a",
+      "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(control-ui): preserve numeric chat input in composer",
-        "branch": "fix/control-ui-numeric-composer-74354",
-        "head_sha": "c6915bfae63cfc18aa554aa9174f150d6f64a10c",
-        "author": "dwc1997",
+        "title": "fix(reply): delivery-aware media tracking in block reply pipeline (#75156)",
+        "branch": "fix/75156-media-dedupe-mixed-text-media",
+        "head_sha": "c81291977a81f73f93a695ef7960919da343520a",
+        "author": "richardcao",
         "labels": [
-          "app: web-ui",
-          "size: XS"
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-74369",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74369.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75180",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75180.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 76,
+          "total": 106,
           "counts": {
-            "SUCCESS": 67,
-            "SKIPPED": 8,
-            "IN_PROGRESS": 1
+            "SUCCESS": 69,
+            "SKIPPED": 24,
+            "FAILURE": 12,
+            "NEUTRAL": 1
           },
           "blockers": [
+            "build-artifacts:FAILURE",
             "check-prod-types:FAILURE",
             "check-lint:FAILURE",
             "check-test-types:FAILURE",
+            "check-strict-smoke:FAILURE",
+            "check-additional-extension-channels:FAILURE",
             "check-additional-extension-bundled:FAILURE",
+            "check-additional-extension-package-boundary:FAILURE",
+            "build-smoke:FAILURE",
             "check:FAILURE",
-            "check-additional:FAILURE"
+            "check-additional:FAILURE",
+            "checks-node-core:FAILURE"
           ]
         }
       },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1685,
+    "total_ms": 2095,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 268
+        "ms": 257
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1283
+        "ms": 1688
       },
       {
         "name": "classify_commands",
@@ -111,7 +117,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 117
+        "ms": 131
       },
       {
         "name": "append_ledger",
