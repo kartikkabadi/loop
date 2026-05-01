@@ -176,7 +176,7 @@ Last dashboard update: May 1, 2026, 02:27 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6765 | 6711 | 54 | 1073 | 0 | 2196 | 11391 | May 1, 2026, 02:25 UTC | May 1, 2026, 02:27 UTC | 600 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6765 | 6711 | 54 | 1073 | 0 | 2196 | 11391 | May 1, 2026, 02:25 UTC | May 1, 2026, 02:27 UTC | 591 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 247 | 924 | 0 | 253 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 5 | 0 | 3 | 0 | 1 | 0 | May 1, 2026, 02:03 UTC | unknown | 2 |
 
@@ -194,8 +194,8 @@ Latest review: May 1, 2026, 02:25 UTC. Latest close: May 1, 2026, 02:27 UTC. Lat
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 60 | 4 | 56 | 0 | 11 | 323 | 0 |
-| Last hour | 796 | 15 | 781 | 8 | 28 | 602 | 0 |
+| Last 15 minutes | 60 | 4 | 56 | 0 | 11 | 314 | 0 |
+| Last hour | 796 | 15 | 781 | 8 | 26 | 593 | 0 |
 | Last 24 hours | 6807 | 475 | 6332 | 15 | 654 | 4183 | 23 |
 
 ### Recently Closed Across Repos
@@ -271,7 +271,7 @@ Updated: May 1, 2026, 02:27 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 8 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=51350,52353,52384,59251,60595,67235,72277,72818.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/8. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25199333662](https://github.com/openclaw/clawsweeper/actions/runs/25199333662)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,8 +351,8 @@ Latest review: May 1, 2026, 02:25 UTC. Latest close: May 1, 2026, 02:27 UTC. Lat
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 60 | 4 | 56 | 0 | 11 | 323 | 0 |
-| Last hour | 794 | 15 | 779 | 8 | 28 | 600 | 0 |
+| Last 15 minutes | 60 | 4 | 56 | 0 | 11 | 314 | 0 |
+| Last hour | 794 | 15 | 779 | 8 | 26 | 591 | 0 |
 | Last 24 hours | 6805 | 475 | 6330 | 15 | 654 | 4181 | 23 |
 
 #### Recently Closed
