@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:16:14.049Z",
+  "generated_at": "2026-05-01T05:17:51.937Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:16:12.302Z",
+  "since": "2026-05-01T02:17:50.428Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75062
+    75257
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 3,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75062:4352319157:2026-05-01T05:16:09Z:clawsweeper_needs_human",
-      "comment_id": "4352319157",
-      "comment_version_key": "4352319157:2026-05-01T05:16:09Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75062#issuecomment-4352319157",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75257:4355998386:2026-05-01T05:17:46Z:clawsweeper_needs_human",
+      "comment_id": "4355998386",
+      "comment_version_key": "4355998386:2026-05-01T05:17:46Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75257#issuecomment-4355998386",
       "repo": "openclaw/openclaw",
-      "issue_number": 75062,
+      "issue_number": 75257,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T12:09:36Z",
-      "comment_updated_at": "2026-05-01T05:16:09Z",
+      "comment_created_at": "2026-04-30T20:40:20Z",
+      "comment_updated_at": "2026-05-01T05:17:46Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,40 +47,42 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e55293403e66c8d93b04ec29a65d3b9d9e3ad7a3)",
-      "review_summary": "This PR changes uninstall cleanup to preserve configured workspaces nested inside the state directory during state-only uninstall, prune other state contents around those workspaces with unsafe-root and symlink guards, add regression tests, and add a changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b97b780853a64accaeb384e2b3372c062d1c48b1)",
+      "review_summary": "This PR updates the Voice Call Twilio media-stream startup path to register accepted streams immediately, wait for realtime STT readiness before speaking the initial greeting, close failed STT startups, and adds docs, changelog, and regression tests.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "e55293403e66c8d93b04ec29a65d3b9d9e3ad7a3",
+      "expected_head_sha": "b97b780853a64accaeb384e2b3372c062d1c48b1",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(uninstall): preserve workspace-inside-state when only state scope selected",
-        "branch": "fix/75052-uninstall-preserves-workspace-inside-state",
-        "head_sha": "e55293403e66c8d93b04ec29a65d3b9d9e3ad7a3",
-        "author": "hclsys",
+        "title": "fix(voice-call): await STT readiness before initial greeting (#75197)",
+        "branch": "fix/voice-call-stt-startup-readiness",
+        "head_sha": "b97b780853a64accaeb384e2b3372c062d1c48b1",
+        "author": "pfanp",
         "labels": [
-          "commands",
-          "size: S"
+          "docs",
+          "channel: voice-call",
+          "size: M",
+          "triage: blank-template"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75062",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75062.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75257",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75257.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 85,
+          "total": 83,
           "counts": {
-            "SUCCESS": 75,
-            "SKIPPED": 8,
-            "IN_PROGRESS": 1,
-            "NEUTRAL": 1
+            "CANCELLED": 1,
+            "SKIPPED": 11,
+            "SUCCESS": 70,
+            "IN_PROGRESS": 1
           },
           "blockers": [
             "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
@@ -92,23 +94,23 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1922,
+    "total_ms": 1630,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 273
+        "ms": 254
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1465
+        "ms": 1244
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 166
+        "ms": 114
       },
       {
         "name": "append_ledger",

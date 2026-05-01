@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T05:16:14.216Z",
+  "updated_at": "2026-05-01T05:17:52.052Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71590:4321423329:2026-05-01T00:47:49Z:clawsweeper_needs_human",
-      "comment_id": "4321423329",
-      "comment_version_key": "4321423329:2026-05-01T00:47:49Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/71590#issuecomment-4321423329",
-      "comment_created_at": "2026-04-26T06:25:46Z",
-      "comment_updated_at": "2026-05-01T00:47:49Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 71590,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=23b5365933ce9187f84ba467f05dd6ec8374757f)",
-      "expected_head_sha": "23b5365933ce9187f84ba467f05dd6ec8374757f",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71589:4321504434:2026-05-01T00:47:47Z:clawsweeper_auto_repair",
       "comment_id": "4321504434",
@@ -28279,6 +28255,36 @@
         "kind": "pull_request",
         "branch": "fix/75052-uninstall-preserves-workspace-inside-state",
         "head_sha": "e55293403e66c8d93b04ec29a65d3b9d9e3ad7a3",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75257:4355998386:2026-05-01T05:17:46Z:clawsweeper_needs_human",
+      "comment_id": "4355998386",
+      "comment_version_key": "4355998386:2026-05-01T05:17:46Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75257#issuecomment-4355998386",
+      "comment_created_at": "2026-04-30T20:40:20Z",
+      "comment_updated_at": "2026-05-01T05:17:46Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75257,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b97b780853a64accaeb384e2b3372c062d1c48b1)",
+      "expected_head_sha": "b97b780853a64accaeb384e2b3372c062d1c48b1",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T05:17:52.051Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/voice-call-stt-startup-readiness",
+        "head_sha": "b97b780853a64accaeb384e2b3372c062d1c48b1",
         "cluster_id": null,
         "job_path": null
       }
