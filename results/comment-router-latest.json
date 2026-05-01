@@ -1,20 +1,22 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:32:50.977Z",
+  "generated_at": "2026-05-01T03:32:50.325Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:32:48.912Z",
+  "since": "2026-05-01T00:32:48.734Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
     74905
   ],
-  "comment_ids": [],
+  "comment_ids": [
+    4357654331
+  ],
   "max_autoclose_targets": 8,
   "scanned_comments": 1,
   "commands_seen": 1,
-  "actionable": 0,
+  "actionable": 1,
   "trusted_bots": [
     "clawsweeper[bot]",
     "openclaw-clawsweeper[bot]"
@@ -29,31 +31,49 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74905:4350181159:2026-05-01T03:32:44Z:clawsweeper_needs_human",
-      "comment_id": "4350181159",
-      "comment_version_key": "4350181159:2026-05-01T03:32:44Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/74905#issuecomment-4350181159",
+      "idempotency_key": "comment-router:openclaw/openclaw:73438:4357654331:2026-05-01T03:32:18Z:freeform_assist",
+      "comment_id": "4357654331",
+      "comment_version_key": "4357654331:2026-05-01T03:32:18Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73438#issuecomment-4357654331",
       "repo": "openclaw/openclaw",
-      "issue_number": 74905,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T06:30:26Z",
-      "comment_updated_at": "2026-05-01T03:32:44Z",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "issue_number": 73438,
+      "author": "jesse-merhi",
+      "author_association": "MEMBER",
+      "comment_created_at": "2026-05-01T03:32:18Z",
+      "comment_updated_at": "2026-05-01T03:32:18Z",
+      "trigger": "mention",
+      "command": "automerge.",
+      "intent": "freeform_assist",
       "autoclose_message": null,
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=ec5c471aa5c558f597b2ce217ecac369c8cbe174)",
-      "review_summary": "The PR routes direct APNs HTTP/2 delivery through a new APNs connection wrapper and active managed-proxy state, then adds CONNECT tunnel code, raw-HTTP/2 lint/OpenGrep guardrails, APNs proxy regression tests, docs, and a changelog entry.",
+      "trusted_bot": false,
+      "trusted_bot_author": null,
+      "automation_source": null,
+      "repair_reason": null,
+      "review_summary": "",
       "review_followup": "",
-      "freeform_prompt": null,
-      "expected_head_sha": "ec5c471aa5c558f597b2ce217ecac369c8cbe174",
+      "freeform_prompt": "automerge.",
+      "expected_head_sha": null,
       "finding_id": null,
-      "status": "skipped",
-      "actions": [],
+      "status": "executed",
+      "actions": [
+        {
+          "action": "dispatch_clawsweeper",
+          "workflow": "sweep.yml",
+          "status": "executed",
+          "dispatched_at": "2026-05-01T03:32:51.090Z",
+          "event": "repository_dispatch",
+          "repo": "openclaw/clawsweeper",
+          "item_number": 73438
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "commented_at": "2026-05-01T03:32:51.900Z",
+          "response_comment_id": null,
+          "response_comment_mode": "created"
+        }
+      ],
+      "author_repository_permission": "write",
       "target": {
         "kind": "pull_request",
         "title": "fix: proxy direct APNs HTTP2 sessions",
@@ -77,32 +97,31 @@
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 86,
+          "total": 87,
           "counts": {
             "SUCCESS": 76,
-            "SKIPPED": 8,
-            "IN_PROGRESS": 1,
+            "SKIPPED": 9,
+            "QUEUED": 1,
             "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+            "checks-node-core:QUEUED"
           ]
         }
-      },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      }
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2375,
+    "total_ms": 3171,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 403
+        "ms": 384
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1652
+        "ms": 1198
       },
       {
         "name": "classify_commands",
@@ -110,11 +129,11 @@
       },
       {
         "name": "execute_commands",
-        "ms": 301
+        "ms": 1575
       },
       {
         "name": "append_ledger",
-        "ms": 1
+        "ms": 0
       }
     ]
   }
