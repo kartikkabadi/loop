@@ -33,6 +33,10 @@ not split reports into issue/PR subtrees.
 - `openclaw/clawsweeper-state` is the live status surface and generated state
   store. Check current Actions and that repo before trusting local generated
   timestamps.
+- When Peter asks about PRs outside `openclaw/clawsweeper`, treat the task as
+  monitoring/debugging how ClawSweeper workflows operate on that PR. Do not fix
+  foreign PR branches directly; ClawSweeper repair/automerge workflows own those
+  branch edits.
 - When referencing GitHub issues or PRs in user-facing output, always include
   the full GitHub URL, not only `#12345`.
 
