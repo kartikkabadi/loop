@@ -45,7 +45,7 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## Dashboard
 
-Last dashboard update: May 1, 2026, 00:23 UTC
+Last dashboard update: May 1, 2026, 01:01 UTC
 
 <!-- clawsweeper-repair-dashboard:start -->
 State: Failed clusters need inspection
@@ -61,7 +61,7 @@ Scope: 344 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 | Latest successful clusters | 315 | 91.6% |
 | Latest failed clusters | 7 | 2.0% |
 | Latest cancelled clusters | 1 | 0.3% |
-| Run attempts archived | 609 | audit |
+| Run attempts archived | 610 | audit |
 | Fix action attempts | 271 | audit |
 | Fix actions executed | 8 | 3.0% |
 | Fix actions failed | 39 | 14.4% |
@@ -83,7 +83,7 @@ Scope: 344 active latest cluster reports. 1 policy-archived cluster(s) are exclu
 
 | Cluster | State | Source job | Reason | Report | Run |
 | --- | --- | --- | --- | --- | --- |
-| [automerge-openclaw-openclaw-75302](results/openclaw/automerge-openclaw-openclaw-75302.md) | apply blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-75302.md | job does not allow merge | [report](results/openclaw/automerge-openclaw-openclaw-75302.md) | [25195458983](https://github.com/openclaw/clawsweeper/actions/runs/25195458983) |
+| [automerge-openclaw-openclaw-75302](results/openclaw/automerge-openclaw-openclaw-75302.md) | apply blocked | jobs/openclaw/inbox/automerge-openclaw-openclaw-75302.md | job does not allow merge | [report](results/openclaw/automerge-openclaw-openclaw-75302.md) | [25196881228](https://github.com/openclaw/clawsweeper/actions/runs/25196881228) |
 | [clawsweeper-commit-openclaw-openclaw-52bf20b07d6e](results/openclaw/clawsweeper-commit-openclaw-openclaw-52bf20b07d6e.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-52bf20b07d6e.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-52bf20b07d6e.md) | [25195746048](https://github.com/openclaw/clawsweeper/actions/runs/25195746048) |
 | [clawsweeper-commit-openclaw-openclaw-ef799fd57a77](results/openclaw/clawsweeper-commit-openclaw-openclaw-ef799fd57a77.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-ef799fd57a77.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-ef799fd57a77.md) | [25195271001](https://github.com/openclaw/clawsweeper/actions/runs/25195271001) |
 | [clawsweeper-commit-openclaw-openclaw-af5a1fbddb14](results/openclaw/clawsweeper-commit-openclaw-openclaw-af5a1fbddb14.md) | apply blocked | jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-af5a1fbddb14.md | job does not allow merge | [report](results/openclaw/clawsweeper-commit-openclaw-openclaw-af5a1fbddb14.md) | [25192772436](https://github.com/openclaw/clawsweeper/actions/runs/25192772436) |

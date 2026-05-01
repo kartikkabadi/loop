@@ -7561,10 +7561,10 @@
   },
   {
     "repo": "openclaw/openclaw",
-    "run_id": "25195458983",
-    "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25195458983",
+    "run_id": "25196881228",
+    "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25196881228",
     "cluster_id": "automerge-openclaw-openclaw-75302",
-    "published_at": "2026-05-01T00:23:01.719Z",
+    "published_at": "2026-05-01T01:00:42.257Z",
     "target": "#75302",
     "action": "merge_canonical",
     "status": "blocked",

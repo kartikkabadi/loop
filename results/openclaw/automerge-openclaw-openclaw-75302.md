@@ -2,12 +2,12 @@
 repo: "openclaw/openclaw"
 cluster_id: "automerge-openclaw-openclaw-75302"
 mode: "autonomous"
-run_id: "25195458983"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25195458983"
-head_sha: "5e9fc30229dd49254c644ac79df3a311e55ecb04"
+run_id: "25196881228"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25196881228"
+head_sha: "88417c393b78f2952a0301b8f33a60057cd5fc9c"
 workflow_conclusion: "success"
 result_status: "planned"
-published_at: "2026-05-01T00:23:01.719Z"
+published_at: "2026-05-01T01:00:42.257Z"
 canonical: "https://github.com/openclaw/openclaw/pull/75302"
 canonical_issue: null
 canonical_pr: "https://github.com/openclaw/openclaw/pull/75302"
@@ -25,7 +25,7 @@ needs_human_count: 0
 
 Repo: openclaw/openclaw
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25195458983](https://github.com/openclaw/clawsweeper/actions/runs/25195458983)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25196881228](https://github.com/openclaw/clawsweeper/actions/runs/25196881228)
 
 Workflow conclusion: success
 
@@ -35,7 +35,7 @@ Canonical: https://github.com/openclaw/openclaw/pull/75302
 
 ## Summary
 
-PR #75302 is the calibrated canonical repair target. It is open, same-repo branch writable, and useful, but not merge-ready: ClawSweeper review requested three narrow test/type repairs and CI has relevant failures in check-additional/runtime-topology-architecture and check-test-types. Merge and close are blocked by job policy, so the safe next action is to repair the contributor branch and rerun review/check gates.
+PR #75302 is the canonical automerge candidate, but it is not merge-ready. The hydrated ClawSweeper review has one actionable blocker: mark or reword the legacy commitment source text fields in src/commitments/types.ts so the deprecated surface is explicit and the architecture/check lanes can pass. The PR uses a same-repo writable branch, so the correct path is to repair the contributor branch in place and preserve attribution there. No close or merge actions are allowed by this job.
 
 ## Impact
 
@@ -66,8 +66,8 @@ PR #75302 is the calibrated canonical repair target. It is open, same-repo branc
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| #75302 | fix_needed | planned | canonical | Canonical PR is useful and writable, but it has unresolved ClawSweeper review findings and failing relevant checks. |
-| cluster:automerge-openclaw-openclaw-75302 | build_fix_artifact | planned |  | Produce an executable repair plan for the canonical contributor PR branch. |
+| #75302 | fix_needed | planned | canonical | Repair the writable contributor branch in place before any re-review/automerge path. |
+| cluster:automerge-openclaw-openclaw-75302 | build_fix_artifact | planned |  | Create a branch-repair task for PR #75302 rather than replacement or human escalation. |
 
 ## Needs Human
 
