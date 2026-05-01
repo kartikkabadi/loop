@@ -436,7 +436,7 @@ jobs:
             max_pages="1"
           elif [ "$hot_intake" = "true" ]; then
             batch_size="1"
-            shard_count="100"
+            shard_count="50"
             max_pages="10"
           else
             batch_size="${{ github.event.inputs.batch_size || '3' }}"
@@ -1288,7 +1288,7 @@ jobs:
               -f hot_intake=true \
               -f target_repo=openclaw/openclaw \
               -f batch_size=1 \
-              -f shard_count=100 \
+              -f shard_count=50 \
               -f codex_timeout_ms=600000
           fi
 

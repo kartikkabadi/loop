@@ -878,7 +878,9 @@ Scheduled runs cover the configured product profiles. `openclaw/openclaw` keeps
 the existing cadence; `openclaw/clawhub` runs on offset review/apply/audit crons
 so its reports live under `records/openclaw-clawhub/` without colliding with
 default repo records. `openclaw/clawsweeper` is available for manual and event
-self-review smoke tests.
+self-review smoke tests. Broad hot-intake sweeps cap scheduled fan-out at 50
+one-item shards per run; exact event reviews still use one shard, and normal
+review backfills can fan out to 100 shards when explicitly configured.
 
 Target repositories can opt into event-level latency by installing the
 dispatcher workflow in [docs/target-dispatcher.md](docs/target-dispatcher.md).

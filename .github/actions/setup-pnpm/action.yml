@@ -16,24 +16,12 @@ runs:
     - uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
+        cache: pnpm
+        cache-dependency-path: ${{ inputs.working-directory }}/pnpm-lock.yaml
 
     - name: Enable corepack
       shell: bash
       run: corepack enable
-
-    - name: Locate pnpm store
-      id: pnpm-store
-      shell: bash
-      working-directory: ${{ inputs.working-directory }}
-      run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
-
-    - name: Cache pnpm store
-      uses: actions/cache@v5
-      with:
-        path: ${{ steps.pnpm-store.outputs.path }}
-        key: ${{ runner.os }}-node-${{ inputs.node-version }}-pnpm-${{ hashFiles(format('{0}/pnpm-lock.yaml', inputs.working-directory)) }}
-        restore-keys: |
-          ${{ runner.os }}-node-${{ inputs.node-version }}-pnpm-
 
     - name: Install dependencies
       shell: bash
