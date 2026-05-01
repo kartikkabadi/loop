@@ -1772,7 +1772,7 @@ function ensureTargetCheckout(repo: string, targetDir: string) {
 function setupGitIdentity(cwd: JsonValue) {
   run(
     "git",
-    ["config", "user.name", process.env.CLAWSWEEPER_GIT_USER_NAME ?? "clawsweeper-repair"],
+    ["config", "user.name", process.env.CLAWSWEEPER_GIT_USER_NAME ?? "clawsweeper[bot]"],
     {
       cwd,
     },
@@ -1782,7 +1782,8 @@ function setupGitIdentity(cwd: JsonValue) {
     [
       "config",
       "user.email",
-      process.env.CLAWSWEEPER_GIT_USER_EMAIL ?? "clawsweeper-repair@users.noreply.github.com",
+      process.env.CLAWSWEEPER_GIT_USER_EMAIL ??
+        "274271284+clawsweeper[bot]@users.noreply.github.com",
     ],
     { cwd },
   );
