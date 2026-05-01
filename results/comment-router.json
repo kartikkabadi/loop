@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T05:09:34.549Z",
+  "updated_at": "2026-05-01T05:09:44.901Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71856:4339660925:2026-05-01T00:48:04Z:clawsweeper_needs_human",
-      "comment_id": "4339660925",
-      "comment_version_key": "4339660925:2026-05-01T00:48:04Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/71856#issuecomment-4339660925",
-      "comment_created_at": "2026-04-28T22:53:40Z",
-      "comment_updated_at": "2026-05-01T00:48:04Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 71856,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=cbd957bde3571c5fcade98deaf4a72df9357dc0c)",
-      "expected_head_sha": "cbd957bde3571c5fcade98deaf4a72df9357dc0c",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71837:4321829770:2026-05-01T00:48:03Z:clawsweeper_auto_repair",
       "comment_id": "4321829770",
@@ -28235,6 +28211,36 @@
         "kind": "pull_request",
         "branch": "fix/pairing-store-silent-catch",
         "head_sha": "121512c687150ebda5a91265b90b4a0fe56f349d",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75230:4355538755:2026-05-01T05:09:38Z:clawsweeper_needs_human",
+      "comment_id": "4355538755",
+      "comment_version_key": "4355538755:2026-05-01T05:09:38Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75230#issuecomment-4355538755",
+      "comment_created_at": "2026-04-30T19:24:40Z",
+      "comment_updated_at": "2026-05-01T05:09:38Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75230,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa)",
+      "expected_head_sha": "5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T05:09:44.901Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "security/link-wallet-redaction",
+        "head_sha": "5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa",
         "cluster_id": null,
         "job_path": null
       }

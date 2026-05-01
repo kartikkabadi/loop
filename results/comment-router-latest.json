@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:09:34.391Z",
+  "generated_at": "2026-05-01T05:09:44.683Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:09:32.898Z",
+  "since": "2026-05-01T02:09:42.993Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    63324
+    75230
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 3,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,76 +30,80 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63324:4340769548:2026-05-01T05:09:28Z:clawsweeper_auto_repair",
-      "comment_id": "4340769548",
-      "comment_version_key": "4340769548:2026-05-01T05:09:28Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/63324#issuecomment-4340769548",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75230:4355538755:2026-05-01T05:09:38Z:clawsweeper_needs_human",
+      "comment_id": "4355538755",
+      "comment_version_key": "4355538755:2026-05-01T05:09:38Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75230#issuecomment-4355538755",
       "repo": "openclaw/openclaw",
-      "issue_number": 63324,
+      "issue_number": 75230,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-29T04:21:04Z",
-      "comment_updated_at": "2026-05-01T05:09:28Z",
+      "comment_created_at": "2026-04-30T19:24:40Z",
+      "comment_updated_at": "2026-05-01T05:09:38Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=121512c687150ebda5a91265b90b4a0fe56f349d)",
-      "review_summary": "The PR rethrows non-ENOENT pairing allowlist stat failures in the async write cache path and sync shared reader, adds focused regression tests, and adds a changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa)",
+      "review_summary": "The PR extends default logging and tool-payload redaction for payment credential field names, adds key-aware structured redaction, and updates focused tests, docs, and the changelog.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "121512c687150ebda5a91265b90b4a0fe56f349d",
-      "finding_id": "review-feedback",
+      "expected_head_sha": "5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa",
+      "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(pairing): don't silently swallow unexpected stat errors",
-        "branch": "fix/pairing-store-silent-catch",
-        "head_sha": "121512c687150ebda5a91265b90b4a0fe56f349d",
-        "author": "franciscomaestre",
+        "title": "security(logging): redact payment credential fields",
+        "branch": "security/link-wallet-redaction",
+        "head_sha": "5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa",
+        "author": "stainlu",
         "labels": [
+          "docs",
+          "gateway",
+          "agents",
           "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-63324",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-63324.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75230",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75230.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 85,
+          "total": 86,
           "counts": {
+            "IN_PROGRESS": 2,
             "SUCCESS": 75,
             "SKIPPED": 8,
-            "IN_PROGRESS": 1,
             "NEUTRAL": 1
           },
           "blockers": [
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
             "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
-      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1660,
+    "total_ms": 1915,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 297
+        "ms": 288
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1186
+        "ms": 1392
       },
       {
         "name": "classify_commands",
@@ -107,7 +111,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 157
+        "ms": 217
       },
       {
         "name": "append_ledger",
