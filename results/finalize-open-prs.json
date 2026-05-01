@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-05-01T02:16:46.848Z",
-  "count": 9,
+  "generated_at": "2026-05-01T04:49:30.969Z",
+  "count": 16,
   "summary": {
-    "open_prs": 9,
+    "open_prs": 16,
     "ready_candidates": 0,
     "security_hold": 0,
     "needs_rebase": 2,
     "mergeability_unknown": 0,
-    "needs_checks": 1,
+    "needs_checks": 5,
     "needs_review": 0,
-    "needs_merge_preflight": 9,
+    "needs_merge_preflight": 16,
     "needs_result_backfill": 0
   },
   "dispatch": {
@@ -27,6 +27,512 @@
   },
   "prs": [
     {
+      "number": 75404,
+      "title": "fix(ci): target workflow’s pre-dispatch grep drops an alias that the ClawSweeper receiver exp...",
+      "url": "https://github.com/openclaw/openclaw/pull/75404",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-3e67ee63b4e0",
+      "head_sha": "f637fe94b843526034a682cd36b859f8e4b4b925",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-3e67ee63b4e0",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-3e67ee63b4e0.md",
+      "updated_at": "2026-05-01T03:42:08Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "CLEAN",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 92,
+        "counts": {
+          "CANCELLED": 3,
+          "SKIPPED": 12,
+          "SUCCESS": 76,
+          "NEUTRAL": 1
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75404#issuecomment-4357674369",
+            "submitted_at": "2026-05-01T03:39:14Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25200994696",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25200994696",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-3e67ee63b4e0",
+        "published_at": "2026-05-01T03:38:11.201Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75404",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix(ci): target workflow’s pre-dispatch grep drops an alias that the ClawSweeper receiver exp...",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+    },
+    {
+      "number": 75403,
+      "title": "fix: making typing start fire-and-forget allows cleanup/idle to run before a persistent typin...",
+      "url": "https://github.com/openclaw/openclaw/pull/75403",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-45b86450795d",
+      "head_sha": "a5f5ddb7830f31e58996be05cf855c8ba21c9c93",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-45b86450795d",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-45b86450795d.md",
+      "updated_at": "2026-05-01T04:46:14Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 97,
+        "counts": {
+          "IN_PROGRESS": 9,
+          "SUCCESS": 65,
+          "SKIPPED": 22,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "CodeQL / Security High (core-auth-secrets):IN_PROGRESS",
+          "CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS",
+          "CI / build-artifacts:IN_PROGRESS",
+          "CodeQL Critical Quality / Critical Quality (channel-runtime-boundary):IN_PROGRESS",
+          "CI / checks-node-core-fast-support:IN_PROGRESS",
+          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
+          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75403#issuecomment-4357671409",
+            "submitted_at": "2026-05-01T03:38:10Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25200785766",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25200785766",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-45b86450795d",
+        "published_at": "2026-05-01T03:37:00.181Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75403",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: making typing start fire-and-forget allows cleanup/idle to run before a persistent typin...",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CodeQL / Security High (core-auth-secrets):IN_PROGRESS; CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 75399,
+      "title": "fix: media-generation tool availability gate regression",
+      "url": "https://github.com/openclaw/openclaw/pull/75399",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-60bdb96f2c4c",
+      "head_sha": "28d2309a1cd57b49aa63b560f021cc0bc785ff96",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-60bdb96f2c4c",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-60bdb96f2c4c.md",
+      "updated_at": "2026-05-01T03:37:02Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "CLEAN",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 106,
+        "counts": {
+          "CANCELLED": 1,
+          "SKIPPED": 25,
+          "SUCCESS": 79,
+          "NEUTRAL": 1
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75399#issuecomment-4357660028",
+            "submitted_at": "2026-05-01T03:34:14Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25200786346",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25200786346",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-60bdb96f2c4c",
+        "published_at": "2026-05-01T03:33:05.832Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75399",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: media-generation tool availability gate regression",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+    },
+    {
+      "number": 75397,
+      "title": "fix: targeted hook resolution/cache path provider-runtime regressions",
+      "url": "https://github.com/openclaw/openclaw/pull/75397",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-354084b1b320",
+      "head_sha": "12df57871ed8b7b2074fd29d6041cba0635540fb",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-354084b1b320",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-354084b1b320.md",
+      "updated_at": "2026-05-01T04:46:36Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 97,
+        "counts": {
+          "SUCCESS": 66,
+          "IN_PROGRESS": 8,
+          "SKIPPED": 22,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "CodeQL / Security High (network-ssrf-boundary):IN_PROGRESS",
+          "CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS",
+          "CI / build-artifacts:IN_PROGRESS",
+          "CI / checks-node-core-fast-support:IN_PROGRESS",
+          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
+          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75397#issuecomment-4357654015",
+            "submitted_at": "2026-05-01T03:32:12Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25200785151",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25200785151",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-354084b1b320",
+        "published_at": "2026-05-01T03:31:03.256Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75397",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: targeted hook resolution/cache path provider-runtime regressions",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CodeQL / Security High (network-ssrf-boundary):IN_PROGRESS; CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 75396,
+      "title": "fix: One low-severity contract mismatch remains on current main",
+      "url": "https://github.com/openclaw/openclaw/pull/75396",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-e0fe02fb0970",
+      "head_sha": "fab2d847f9d9fb7d809871d774b4e480ce448e31",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-e0fe02fb0970",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-e0fe02fb0970.md",
+      "updated_at": "2026-05-01T04:01:01Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "CLEAN",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 108,
+        "counts": {
+          "CANCELLED": 2,
+          "SKIPPED": 26,
+          "SUCCESS": 79,
+          "NEUTRAL": 1
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75396#issuecomment-4357652679",
+            "submitted_at": "2026-05-01T03:31:40Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25200786950",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25200786950",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-e0fe02fb0970",
+        "published_at": "2026-05-01T03:30:36.069Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75396",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: One low-severity contract mismatch remains on current main",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+    },
+    {
+      "number": 75388,
+      "title": "fix: commit removes the runtime warning for the default group/channel private-reply behavior...",
+      "url": "https://github.com/openclaw/openclaw/pull/75388",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-8989ceee50ab",
+      "head_sha": "92839044775bfa57afb3b6efc7cc1665abc0fc98",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-8989ceee50ab",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-8989ceee50ab.md",
+      "updated_at": "2026-05-01T04:46:46Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 82,
+        "counts": {
+          "SUCCESS": 62,
+          "IN_PROGRESS": 9,
+          "SKIPPED": 9,
+          "QUEUED": 1,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "CodeQL / Security High (channel-runtime-boundary):IN_PROGRESS",
+          "CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS",
+          "CI / build-artifacts:IN_PROGRESS",
+          "CI / checks-node-core-fast-support:IN_PROGRESS",
+          "CI / checks-node-core-runtime-infra:IN_PROGRESS",
+          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
+          "CI / checks-node-agentic-commands-status-tools:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS",
+          "CI / checks-fast-contracts-channels:QUEUED"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75388#issuecomment-4357627574",
+            "submitted_at": "2026-05-01T03:22:40Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25200467866",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25200467866",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-8989ceee50ab",
+        "published_at": "2026-05-01T03:21:37.724Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75388",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: commit removes the runtime warning for the default group/channel private-reply behavior...",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CodeQL / Security High (channel-runtime-boundary):IN_PROGRESS; CodeQL / Security High (plugin-trust-boundary):IN_PROGRESS; CI / build-artifacts:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 75383,
+      "title": "fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out...",
+      "url": "https://github.com/openclaw/openclaw/pull/75383",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-df0ee092f017",
+      "head_sha": "735c4125f83cba62c6c1c27db0858557c0937582",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-df0ee092f017",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-df0ee092f017.md",
+      "updated_at": "2026-05-01T03:16:57Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "CLEAN",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 102,
+        "counts": {
+          "CANCELLED": 3,
+          "SKIPPED": 26,
+          "SUCCESS": 72,
+          "NEUTRAL": 1
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75383#issuecomment-4357601058",
+            "submitted_at": "2026-05-01T03:14:39Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25200373309",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25200373309",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-df0ee092f017",
+        "published_at": "2026-05-01T03:13:21.376Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75383",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out...",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+    },
+    {
       "number": 75344,
       "title": "fix: regression where commitment safety handling can disable tools for unrelated due heartbea...",
       "url": "https://github.com/openclaw/openclaw/pull/75344",
@@ -34,7 +540,7 @@
       "head_sha": "f85787a2c94d5d907eba5e69166132e31bd7ac5b",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-b277ae3f4c40",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-b277ae3f4c40.md",
-      "updated_at": "2026-05-01T02:03:20Z",
+      "updated_at": "2026-05-01T02:31:59Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "CLEAN",
       "review_decision": "",
@@ -308,7 +814,7 @@
       "head_sha": "24edcd5731df51f73120fd219209853d59a06d3a",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-581fbea1d653",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-581fbea1d653.md",
-      "updated_at": "2026-04-30T19:09:09Z",
+      "updated_at": "2026-05-01T04:33:08Z",
       "mergeable": "CONFLICTING",
       "merge_state_status": "DIRTY",
       "review_decision": "",
@@ -440,23 +946,29 @@
       "title": "fix(discord): document mention formatting guidance",
       "url": "https://github.com/openclaw/openclaw/pull/75173",
       "branch": "clawsweeper/automerge-openclaw-openclaw-74506",
-      "head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
+      "head_sha": "cfb8cf5c4941158983753320533b0dedd440cdfe",
       "cluster_id": "automerge-openclaw-openclaw-74506",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
-      "updated_at": "2026-05-01T02:01:54Z",
+      "updated_at": "2026-05-01T04:47:05Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "CLEAN",
+      "merge_state_status": "UNSTABLE",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 101,
+        "total": 90,
         "counts": {
-          "CANCELLED": 4,
-          "SKIPPED": 26,
-          "SUCCESS": 70,
-          "NEUTRAL": 1
+          "SUCCESS": 62,
+          "SKIPPED": 22,
+          "IN_PROGRESS": 6
         },
-        "blockers": []
+        "blockers": [
+          "CI / build-artifacts:IN_PROGRESS",
+          "CodeQL Critical Quality / Critical Quality (channel-runtime-boundary):IN_PROGRESS",
+          "CI / checks-node-core-fast-support:IN_PROGRESS",
+          "CI / checks-node-core-runtime-media-ui:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+          "CI / checks-node-auto-reply-reply-session:IN_PROGRESS"
+        ]
       },
       "review_threads": {
         "status": "clean",
@@ -476,10 +988,10 @@
         ]
       },
       "latest_record": {
-        "run_id": "25178164849",
-        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25178164849",
+        "run_id": "25202544672",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25202544672",
         "cluster_id": "automerge-openclaw-openclaw-74506",
-        "published_at": "2026-04-30T17:12:12.718Z",
+        "published_at": "2026-05-01T04:47:43.131Z",
         "workflow_conclusion": "success",
         "apply_action": {
           "target": "#75173",
@@ -488,7 +1000,7 @@
           "classification": "fix_pr",
           "canonical": null,
           "candidate_fix": null,
-          "title": null,
+          "title": "fix(discord): document mention formatting guidance",
           "idempotency_key": null,
           "reason": "job does not allow merge",
           "merged_at": null,
@@ -498,9 +1010,11 @@
         }
       },
       "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CI / build-artifacts:IN_PROGRESS; CodeQL Critical Quality / Critical Quality (channel-runtime-boundary):IN_PROGRESS; CI / checks-node-core-fast-support:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
     },
     {
       "number": 75148,
