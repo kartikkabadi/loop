@@ -170,7 +170,9 @@ ClawSweeper is split into two operational systems:
 ### Scheduler
 
 The issue/PR scheduler decides what to scan and how often. New and active items
-get more attention; older quiet items fall back to a slower cadence.
+get more attention; older quiet items fall back to a slower cadence. Detailed
+scheduling, capacity, and monitoring behavior is documented in
+[`docs/scheduler.md`](docs/scheduler.md).
 
 - hot/new and recently active items are checked hourly, with a 5-minute intake
   schedule for the newest queue edge
@@ -390,13 +392,13 @@ proposals later. Scheduled apply runs process both issues and pull requests by
 default, subject to the selected repository profile; pass `target_repo`,
 `apply_kind=issue`, or `apply_kind=pull_request` to narrow a manual run.
 
-Scheduled runs cover the configured product profiles. `openclaw/openclaw` keeps
-the existing cadence; `openclaw/clawhub` runs on offset review/apply/audit crons
-so its reports live under `records/openclaw-clawhub/` without colliding with
-default repo records. `openclaw/clawsweeper` is available for manual and event
+Scheduled runs cover the configured product profiles. `openclaw/openclaw` runs
+normal backfill every 5 minutes with up to 100 review shards when due backlog
+exists; `openclaw/clawhub` runs on offset review/apply/audit crons so its
+reports live under `records/openclaw-clawhub/` without colliding with default
+repo records. `openclaw/clawsweeper` is available for manual and event
 self-review smoke tests. Broad hot-intake sweeps cap scheduled fan-out at 50
-one-item shards per run; exact event reviews still use one shard, and normal
-review backfills can fan out to 100 shards when explicitly configured.
+one-item shards per run; exact event reviews still use one shard.
 
 Target repositories can opt into event-level latency by installing the
 dispatcher workflow in [docs/target-dispatcher.md](docs/target-dispatcher.md).
