@@ -1,18 +1,18 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:42:13.692Z",
+  "generated_at": "2026-05-01T03:45:22.120Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:42:11.780Z",
+  "since": "2026-05-01T00:45:19.631Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75404
+    75180
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
+  "scanned_comments": 2,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -29,87 +29,95 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75404:4357674369:2026-05-01T03:42:08Z:clawsweeper_needs_human",
-      "comment_id": "4357674369",
-      "comment_version_key": "4357674369:2026-05-01T03:42:08Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75404#issuecomment-4357674369",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75180:4354637710:2026-05-01T03:45:15Z:clawsweeper_auto_repair",
+      "comment_id": "4354637710",
+      "comment_version_key": "4354637710:2026-05-01T03:45:15Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75180#issuecomment-4354637710",
       "repo": "openclaw/openclaw",
-      "issue_number": 75404,
+      "issue_number": 75180,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:39:14Z",
-      "comment_updated_at": "2026-05-01T03:42:08Z",
+      "comment_created_at": "2026-04-30T17:24:19Z",
+      "comment_updated_at": "2026-05-01T03:45:15Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=f637fe94b843526034a682cd36b859f8e4b4b925)",
-      "review_summary": "The PR updates `.github/workflows/clawsweeper-dispatch.yml` so the issue-comment pre-dispatch grep recognizes `@openclaw-clawsweeper` and `@openclaw-clawsweeper[bot]` alongside the existing `@clawsweeper` and slash-command triggers.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=db804cda1128be9bbbd7f58b32f6ca2bf9efcaa8)",
+      "review_summary": "The PR adds a `BlockReplyResult` return contract for block replies, changes sent-media tracking in the block reply pipeline, wires dispatch-from-config to return sent media URLs, adds focused pipeline tests, and adds a changelog fix entry for the linked mixed text-plus-media Telegram bug.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "f637fe94b843526034a682cd36b859f8e4b4b925",
-      "finding_id": null,
+      "expected_head_sha": "db804cda1128be9bbbd7f58b32f6ca2bf9efcaa8",
+      "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(ci): target workflow’s pre-dispatch grep drops an alias that the ClawSweeper receiver exp...",
-        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-3e67ee63b4e0",
-        "head_sha": "f637fe94b843526034a682cd36b859f8e4b4b925",
-        "author": "app/clawsweeper",
+        "title": "fix(reply): delivery-aware media tracking in block reply pipeline (#75156)",
+        "branch": "fix/75156-media-dedupe-mixed-text-media",
+        "head_sha": "db804cda1128be9bbbd7f58b32f6ca2bf9efcaa8",
+        "author": "richardcao",
         "labels": [
-          "size: XS",
-          "clawsweeper",
-          "clawsweeper:commit-finding"
+          "size: S"
         ],
-        "is_clawsweeper_pr": true,
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-3e67ee63b4e0",
-        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-3e67ee63b4e0.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75404",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75404.md",
+        "is_clawsweeper_pr": false,
+        "cluster_id": null,
+        "job_path": null,
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75180",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75180.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 91,
+          "total": 101,
           "counts": {
-            "CANCELLED": 3,
-            "SKIPPED": 12,
-            "SUCCESS": 74,
-            "IN_PROGRESS": 1,
+            "SUCCESS": 65,
+            "SKIPPED": 23,
+            "FAILURE": 12,
             "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+            "build-artifacts:FAILURE",
+            "check-prod-types:FAILURE",
+            "check-lint:FAILURE",
+            "check-test-types:FAILURE",
+            "check-strict-smoke:FAILURE",
+            "check-additional-extension-channels:FAILURE",
+            "check-additional-extension-bundled:FAILURE",
+            "check-additional-extension-package-boundary:FAILURE",
+            "build-smoke:FAILURE",
+            "check:FAILURE",
+            "check-additional:FAILURE",
+            "checks-node-core:FAILURE"
           ]
         }
       },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2089,
+    "total_ms": 2725,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 293
+        "ms": 331
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1609
+        "ms": 2148
       },
       {
         "name": "classify_commands",
-        "ms": 3
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 169
+        "ms": 228
       },
       {
         "name": "append_ledger",
