@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:43:06.331Z",
+  "updated_at": "2026-05-01T04:43:46.463Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72454:4325145125:2026-05-01T00:48:57Z:clawsweeper_needs_human",
-      "comment_id": "4325145125",
-      "comment_version_key": "4325145125:2026-05-01T00:48:57Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72454#issuecomment-4325145125",
-      "comment_created_at": "2026-04-27T07:47:04Z",
-      "comment_updated_at": "2026-05-01T00:48:57Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72454,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=2d8261bc4446ec32e2c48d268fb7d9f156add61c)",
-      "expected_head_sha": "2d8261bc4446ec32e2c48d268fb7d9f156add61c",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72449:4325143648:2026-05-01T00:48:56Z:clawsweeper_needs_human",
       "comment_id": "4325143648",
@@ -27967,6 +27943,36 @@
         "kind": "pull_request",
         "branch": "fix/75156-media-dedupe-mixed-text-media",
         "head_sha": "22b719dd5c2e15288c38ab3ea00d3d3494955f85",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75427:4357854251:2026-05-01T04:43:41Z:clawsweeper_needs_human",
+      "comment_id": "4357854251",
+      "comment_version_key": "4357854251:2026-05-01T04:43:41Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75427#issuecomment-4357854251",
+      "comment_created_at": "2026-05-01T04:43:08Z",
+      "comment_updated_at": "2026-05-01T04:43:41Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75427,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=d7843ed7113dd0b44742ccb71855c21a9d7776eb)",
+      "expected_head_sha": "d7843ed7113dd0b44742ccb71855c21a9d7776eb",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T04:43:46.463Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/signal-sse-quiet-stream-75426",
+        "head_sha": "d7843ed7113dd0b44742ccb71855c21a9d7776eb",
         "cluster_id": null,
         "job_path": null
       }

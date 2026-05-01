@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:43:06.112Z",
+  "generated_at": "2026-05-01T04:43:46.341Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:43:04.486Z",
+  "since": "2026-05-01T01:43:44.993Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75180
+    75427
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 2,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,88 +30,97 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75180:4354637710:2026-05-01T04:43:00Z:clawsweeper_auto_repair",
-      "comment_id": "4354637710",
-      "comment_version_key": "4354637710:2026-05-01T04:43:00Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75180#issuecomment-4354637710",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75427:4357854251:2026-05-01T04:43:41Z:clawsweeper_needs_human",
+      "comment_id": "4357854251",
+      "comment_version_key": "4357854251:2026-05-01T04:43:41Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75427#issuecomment-4357854251",
       "repo": "openclaw/openclaw",
-      "issue_number": 75180,
+      "issue_number": 75427,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T17:24:19Z",
-      "comment_updated_at": "2026-05-01T04:43:00Z",
+      "comment_created_at": "2026-05-01T04:43:08Z",
+      "comment_updated_at": "2026-05-01T04:43:41Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=22b719dd5c2e15288c38ab3ea00d3d3494955f85)",
-      "review_summary": "The branch widens block-reply callbacks to return media-delivery confirmations, updates block media tracking and dispatch typing, adds focused pipeline tests, and adds a changelog fix entry for mixed text-plus-media replies.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=d7843ed7113dd0b44742ccb71855c21a9d7776eb)",
+      "review_summary": "The PR changes the Signal client so `streamSignalEvents` no longer applies the default 10s header timeout unless a caller explicitly supplies `timeoutMs`, adds regression coverage for a quiet SSE stream that stays open until abort, and adds a Signal changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "22b719dd5c2e15288c38ab3ea00d3d3494955f85",
-      "finding_id": "review-feedback",
+      "expected_head_sha": "d7843ed7113dd0b44742ccb71855c21a9d7776eb",
+      "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(reply): delivery-aware media tracking in block reply pipeline (#75156)",
-        "branch": "fix/75156-media-dedupe-mixed-text-media",
-        "head_sha": "22b719dd5c2e15288c38ab3ea00d3d3494955f85",
-        "author": "richardcao",
+        "title": "fix(signal): keep quiet SSE receive streams open",
+        "branch": "fix/signal-sse-quiet-stream-75426",
+        "head_sha": "d7843ed7113dd0b44742ccb71855c21a9d7776eb",
+        "author": "steipete",
         "labels": [
-          "size: S"
+          "channel: signal",
+          "maintainer",
+          "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75180",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75180.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75427",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75427.md",
         "mode": "autonomous",
-        "mergeable": "UNKNOWN",
-        "merge_state_status": "UNKNOWN",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 100,
+          "total": 94,
           "counts": {
-            "SUCCESS": 77,
-            "SKIPPED": 21,
-            "IN_PROGRESS": 1,
+            "CANCELLED": 2,
+            "SKIPPED": 23,
+            "SUCCESS": 61,
+            "IN_PROGRESS": 7,
             "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+            "build-artifacts:IN_PROGRESS",
+            "Critical Quality (channel-runtime-boundary):IN_PROGRESS",
+            "checks-node-core-fast-support:IN_PROGRESS",
+            "checks-node-core-runtime-infra:IN_PROGRESS",
+            "checks-node-core-runtime-media-ui:IN_PROGRESS",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "checks-node-auto-reply-reply-session:IN_PROGRESS"
           ]
         }
       },
-      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1854,
+    "total_ms": 1477,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 375
+        "ms": 216
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1242
+        "ms": 1122
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 218
+        "ms": 122
       },
       {
         "name": "append_ledger",
-        "ms": 1
+        "ms": 0
       }
     ]
   }
