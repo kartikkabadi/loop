@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: May 1, 2026, 03:49 UTC
+Last dashboard update: May 1, 2026, 03:50 UTC
 
 ### Fleet
 
@@ -184,7 +184,7 @@ Last dashboard update: May 1, 2026, 03:49 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | May 1, 2026, 03:49 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25201295945) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply finished | May 1, 2026, 03:50 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25201295945) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,7 +194,7 @@ Latest review: May 1, 2026, 03:46 UTC. Latest close: May 1, 2026, 03:47 UTC. Lat
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 58 | 5 | 53 | 0 | 4 | 19 | 1 |
+| Last 15 minutes | 51 | 5 | 46 | 0 | 4 | 19 | 1 |
 | Last hour | 338 | 10 | 328 | 0 | 12 | 41 | 1 |
 | Last 24 hours | 6815 | 472 | 6343 | 10 | 633 | 3930 | 24 |
 
@@ -267,11 +267,11 @@ Latest review: May 1, 2026, 03:46 UTC. Latest close: May 1, 2026, 03:47 UTC. Lat
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: May 1, 2026, 03:49 UTC
+Updated: May 1, 2026, 03:50 UTC
 
-State: Apply in progress
+State: Apply finished
 
-Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/1. Result records in checkpoint: 1, including durable review comment syncs.
+Apply/comment-sync run finished with 0 fresh closes out of requested limit 1. See apply-report.json for per-item results.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25201295945](https://github.com/openclaw/clawsweeper/actions/runs/25201295945)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,7 +351,7 @@ Latest review: May 1, 2026, 03:46 UTC. Latest close: May 1, 2026, 03:47 UTC. Lat
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 58 | 5 | 53 | 0 | 4 | 19 | 1 |
+| Last 15 minutes | 51 | 5 | 46 | 0 | 4 | 19 | 1 |
 | Last hour | 338 | 10 | 328 | 0 | 12 | 41 | 1 |
 | Last 24 hours | 6813 | 472 | 6341 | 10 | 633 | 3928 | 24 |
 
