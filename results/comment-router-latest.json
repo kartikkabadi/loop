@@ -1,14 +1,14 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:33:31.798Z",
+  "generated_at": "2026-05-01T03:34:10.211Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:33:30.289Z",
+  "since": "2026-05-01T00:34:08.459Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75370
+    75392
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -29,82 +29,78 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T03:33:27Z:clawsweeper_needs_human",
-      "comment_id": "4357487939",
-      "comment_version_key": "4357487939:2026-05-01T03:33:27Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75392:4357636413:2026-05-01T03:34:04Z:clawsweeper_auto_repair",
+      "comment_id": "4357636413",
+      "comment_version_key": "4357636413:2026-05-01T03:34:04Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75392#issuecomment-4357636413",
       "repo": "openclaw/openclaw",
-      "issue_number": 75370,
+      "issue_number": 75392,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T02:36:16Z",
-      "comment_updated_at": "2026-05-01T03:33:27Z",
+      "comment_created_at": "2026-05-01T03:25:51Z",
+      "comment_updated_at": "2026-05-01T03:34:04Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=31ff0e972ce8553ffdb6268b7ca3f7c6199ad005)",
-      "review_summary": "The PR changes `extensions/document-extract/document-extractor.ts` to detect `pdftoppm` and render selected PDF pages through temporary files when `@napi-rs/canvas` cannot load.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=5d01ad501c1dc9bcdb09b2f72208e4f50360456d)",
+      "review_summary": "This PR adds shared `visibleReplies` Zod coercion for global and group message config, adds focused regression tests, and adds a changelog fix entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "31ff0e972ce8553ffdb6268b7ca3f7c6199ad005",
-      "finding_id": null,
+      "expected_head_sha": "5d01ad501c1dc9bcdb09b2f72208e4f50360456d",
+      "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable",
-        "branch": "pdftoppm-fallback",
-        "head_sha": "31ff0e972ce8553ffdb6268b7ca3f7c6199ad005",
-        "author": "mgustimz",
+        "title": "fix(config): coerce visibleReplies boolean to enum equivalent",
+        "branch": "fix/visible-replies-boolean-coercion",
+        "head_sha": "5d01ad501c1dc9bcdb09b2f72208e4f50360456d",
+        "author": "scottgl9",
         "labels": [
           "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75370",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75370.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75392",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75392.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 84,
+          "total": 100,
           "counts": {
-            "SUCCESS": 66,
-            "SKIPPED": 10,
-            "FAILURE": 8
+            "SUCCESS": 76,
+            "SKIPPED": 21,
+            "FAILURE": 1,
+            "IN_PROGRESS": 1,
+            "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-agentic-control-plane-runtime:FAILURE",
-            "check-prod-types:FAILURE",
-            "check-lint:FAILURE",
-            "check-test-types:FAILURE",
-            "check-additional-extension-bundled:FAILURE",
-            "check:FAILURE",
-            "check-additional:FAILURE",
-            "checks-node-core:FAILURE"
+            "checks-node-core-runtime-infra:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1623,
+    "total_ms": 1926,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 224
+        "ms": 254
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1276
+        "ms": 1489
       },
       {
         "name": "classify_commands",
@@ -112,7 +108,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 106
+        "ms": 166
       },
       {
         "name": "append_ledger",
