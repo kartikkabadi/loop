@@ -1,18 +1,18 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:45:22.120Z",
+  "generated_at": "2026-05-01T03:45:59.534Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:45:19.631Z",
+  "since": "2026-05-01T00:45:57.453Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75180
+    74867
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 2,
+  "scanned_comments": 4,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -29,87 +29,81 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75180:4354637710:2026-05-01T03:45:15Z:clawsweeper_auto_repair",
-      "comment_id": "4354637710",
-      "comment_version_key": "4354637710:2026-05-01T03:45:15Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75180#issuecomment-4354637710",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74867:4349883120:2026-05-01T03:45:54Z:clawsweeper_needs_human",
+      "comment_id": "4349883120",
+      "comment_version_key": "4349883120:2026-05-01T03:45:54Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74867#issuecomment-4349883120",
       "repo": "openclaw/openclaw",
-      "issue_number": 75180,
+      "issue_number": 74867,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T17:24:19Z",
-      "comment_updated_at": "2026-05-01T03:45:15Z",
+      "comment_created_at": "2026-04-30T05:17:27Z",
+      "comment_updated_at": "2026-05-01T03:45:54Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=db804cda1128be9bbbd7f58b32f6ca2bf9efcaa8)",
-      "review_summary": "The PR adds a `BlockReplyResult` return contract for block replies, changes sent-media tracking in the block reply pipeline, wires dispatch-from-config to return sent media URLs, adds focused pipeline tests, and adds a changelog fix entry for the linked mixed text-plus-media Telegram bug.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=edab54047fbda34c4e98a6a000aeec70824f9155)",
+      "review_summary": "The PR adds typed read-only `environments.list` and `environments.status` Gateway RPCs with SDK call-through/types, `operator.read` scope classification, protocol schemas/generated Swift models, docs, changelog, and focused tests while keeping create/delete unsupported.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "db804cda1128be9bbbd7f58b32f6ca2bf9efcaa8",
-      "finding_id": "review-feedback",
+      "expected_head_sha": "edab54047fbda34c4e98a6a000aeec70824f9155",
+      "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(reply): delivery-aware media tracking in block reply pipeline (#75156)",
-        "branch": "fix/75156-media-dedupe-mixed-text-media",
-        "head_sha": "db804cda1128be9bbbd7f58b32f6ca2bf9efcaa8",
-        "author": "richardcao",
+        "title": "feat(gateway): add SDK environment discovery RPCs",
+        "branch": "fix/sdk-environments-discovery",
+        "head_sha": "edab54047fbda34c4e98a6a000aeec70824f9155",
+        "author": "ai-hpc",
         "labels": [
-          "size: S"
+          "docs",
+          "app: macos",
+          "app: web-ui",
+          "gateway",
+          "size: L"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75180",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75180.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-74867",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74867.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 101,
+          "total": 103,
           "counts": {
-            "SUCCESS": 65,
-            "SKIPPED": 23,
-            "FAILURE": 12,
+            "IN_PROGRESS": 2,
+            "SUCCESS": 80,
+            "SKIPPED": 20,
             "NEUTRAL": 1
           },
           "blockers": [
-            "build-artifacts:FAILURE",
-            "check-prod-types:FAILURE",
-            "check-lint:FAILURE",
-            "check-test-types:FAILURE",
-            "check-strict-smoke:FAILURE",
-            "check-additional-extension-channels:FAILURE",
-            "check-additional-extension-bundled:FAILURE",
-            "check-additional-extension-package-boundary:FAILURE",
-            "build-smoke:FAILURE",
-            "check:FAILURE",
-            "check-additional:FAILURE",
-            "checks-node-core:FAILURE"
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
-      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2725,
+    "total_ms": 2209,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 331
+        "ms": 241
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 2148
+        "ms": 1830
       },
       {
         "name": "classify_commands",
@@ -117,7 +111,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 228
+        "ms": 121
       },
       {
         "name": "append_ledger",
