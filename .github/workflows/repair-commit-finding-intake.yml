@@ -109,7 +109,7 @@ jobs:
 
       - uses: ./.github/actions/setup-state
         with:
-          token: ${{ secrets.OPENCLAW_GH_TOKEN }}
+          token: ${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}
 
       - name: Prepare commit finding intake
         id: prepare
