@@ -26,7 +26,9 @@ import {
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderResponse,
+  sharedAutomergeStatusMarkerPrefix,
   staleAutomergeActivationReason,
+  usesSharedAutomergeStatus,
 } from "../../dist/repair/comment-router-core.js";
 import { parseSimpleYaml, validateJob } from "../../dist/repair/lib.js";
 
@@ -656,8 +658,10 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
   assert.match(body, /clawsweeper-command:456:2026-04-29T07:12:31Z:clawsweeper_auto_repair:def456/);
   assert.match(
     body,
-    /Action: dispatched \[repair-cluster-worker\.yml\]\(https:\/\/github\.com\/openclaw\/clawsweeper\/actions\/runs\/123456789\)/,
+    /Action: repair worker queued\. Run: https:\/\/github\.com\/openclaw\/clawsweeper\/actions\/runs\/123456789/,
   );
+  assert.doesNotMatch(body, /repair-cluster-worker\.yml/);
+  assert.doesNotMatch(body, /jobs\/openclaw\/inbox\/example\.md/);
   assert.match(body, /safe credited replacement/);
   assert.match(body, /narrow fix/);
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
@@ -837,8 +841,9 @@ test("renderResponse reports automerge repair dispatches", () => {
   );
 
   assert.match(body, /picked up the repair feedback/);
-  assert.match(body, /repair-cluster-worker\.yml/);
-  assert.match(body, /automerge-openclaw-openclaw-74156/);
+  assert.match(body, /Action: repair worker queued/);
+  assert.doesNotMatch(body, /repair-cluster-worker\.yml/);
+  assert.doesNotMatch(body, /automerge-openclaw-openclaw-74156/);
   assert.doesNotMatch(body, /did not dispatch/);
 });
 
@@ -863,9 +868,21 @@ test("renderResponse reports automerge pass with failing checks as repair dispat
   );
 
   assert.match(body, /current checks are failing/);
-  assert.match(body, /dispatched `repair cluster worker`/);
-  assert.match(body, /automerge-openclaw-openclaw-74506/);
+  assert.match(body, /Action: repair worker queued/);
+  assert.doesNotMatch(body, /repair cluster worker/);
+  assert.doesNotMatch(body, /automerge-openclaw-openclaw-74506/);
   assert.doesNotMatch(body, /did not merge yet/);
+});
+
+test("automerge loop intents share one status comment thread", () => {
+  assert.equal(usesSharedAutomergeStatus({ intent: "automerge" }), true);
+  assert.equal(usesSharedAutomergeStatus({ intent: "clawsweeper_auto_repair" }), true);
+  assert.equal(usesSharedAutomergeStatus({ intent: "clawsweeper_auto_merge" }), true);
+  assert.equal(usesSharedAutomergeStatus({ intent: "status" }), false);
+  assert.equal(
+    sharedAutomergeStatusMarkerPrefix({ issue_number: 75183 }),
+    "<!-- clawsweeper-command-status:75183:",
+  );
 });
 
 test("renderResponse reports explicit human-review pause actions", () => {

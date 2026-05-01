@@ -41,7 +41,9 @@ import {
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderResponse,
+  sharedAutomergeStatusMarkerPrefix,
   staleAutomergeActivationReason,
+  usesSharedAutomergeStatus,
 } from "./comment-router-core.js";
 import {
   appendLedger,
@@ -2162,16 +2164,23 @@ function postComment(command: LooseRecord, body: string) {
 
 function findExistingCommandStatusComment(command: LooseRecord) {
   const marker = commandStatusMarker(command);
-  const markerPrefix = ["autofix", "automerge"].includes(String(command.intent ?? ""))
-    ? commandStatusMarkerPrefix(command)
-    : null;
-  return ghPaged(`repos/${command.repo}/issues/${command.issue_number}/comments?per_page=100`).find(
-    (comment: JsonValue) => {
+  const markerPrefix = usesSharedAutomergeStatus(command)
+    ? sharedAutomergeStatusMarkerPrefix(command)
+    : ["autofix"].includes(String(command.intent ?? ""))
+      ? commandStatusMarkerPrefix(command)
+      : null;
+  return ghPaged(`repos/${command.repo}/issues/${command.issue_number}/comments?per_page=100`)
+    .reverse()
+    .find((comment: JsonValue) => {
       if (!isTrustedStatusComment(comment)) return false;
       const body = String(comment.body ?? "");
-      return body.includes(marker) || Boolean(markerPrefix && body.includes(markerPrefix));
-    },
-  );
+      if (body.includes(marker)) return true;
+      if (!markerPrefix || !body.includes(markerPrefix)) return false;
+      if (!usesSharedAutomergeStatus(command)) return true;
+      return /clawsweeper-command-status:\d+:(?:automerge|clawsweeper_auto_repair|clawsweeper_auto_merge|maintainer_approve_automerge):/i.test(
+        body,
+      );
+    });
 }
 
 function isTrustedStatusComment(comment: LooseRecord) {

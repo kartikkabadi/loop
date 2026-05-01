@@ -14,6 +14,12 @@ export const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
 export const MERGE_READY_LABEL = "clawsweeper:merge-ready";
 export const DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS = ["admin", "maintain", "write"];
 const CLAWSWEEPER_REPLY_BADGE = "🦞🦞";
+const AUTOMERGE_STATUS_INTENTS = new Set([
+  "automerge",
+  "clawsweeper_auto_repair",
+  "clawsweeper_auto_merge",
+  "maintainer_approve_automerge",
+]);
 const REPAIRABLE_CHECK_BLOCKER_CONCLUSIONS = new Set([
   "ACTION_REQUIRED",
   "ERROR",
@@ -600,14 +606,13 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     ].join("\n");
   }
   if (command.intent === "clawsweeper_auto_repair") {
-    const workflow = dispatchedWorkflowLink(dispatched);
     return [
       marker,
       botFeedbackLead(command, "ClawSweeper picked up the repair feedback."),
       "",
       `Source: \`${commandSource(command)}\``,
       `Feedback: ${command.repair_reason ?? "ClawSweeper requested another repair pass."}`,
-      `Action: dispatched ${workflow} for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
+      repairDispatchLine(dispatched, "Action"),
       `Model: \`${dispatched.model}\``,
       "",
       "I will update this PR branch, or open a safe credited replacement, if the repair worker finds a narrow fix.",
@@ -615,7 +620,6 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
   }
   if (command.intent === "clawsweeper_auto_merge") {
     if (dispatched?.repair) {
-      const workflow = dispatchedWorkflowLink(dispatched.repair);
       return [
         marker,
         botFeedbackLead(
@@ -625,7 +629,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
         "",
         `Source: \`${commandSource(command)}\``,
         `Feedback: ${command.repair_reason ?? "ClawSweeper reported a passing review."}`,
-        `Action: dispatched ${workflow} for \`${dispatched.repair.job_path}\` in \`${dispatched.repair.mode}\` mode.`,
+        repairDispatchLine(dispatched.repair, "Action"),
         `Model: \`${dispatched.repair.model}\``,
         "",
         "I will update this PR branch, or open a safe credited replacement, if the repair worker finds a narrow CI fix.",
@@ -719,17 +723,26 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     "ClawSweeper picked this up.",
     "",
     `Command: \`${command.command}\``,
-    `Action: dispatched ${dispatchedWorkflowLink(dispatched)} for \`${dispatched.job_path}\` in \`${dispatched.mode}\` mode.`,
+    repairDispatchLine(dispatched, "Action"),
     `Model: \`${dispatched.model}\``,
     "",
     "I will keep the change narrow and update the PR branch if the repair worker finds a safe fix.",
   ].join("\n");
 }
 
-function dispatchedWorkflowLink(dispatched: LooseRecord): string {
-  const workflow = String(dispatched.workflow ?? "workflow");
+function repairDispatchLine(dispatched: LooseRecord, label: string): string {
   const runUrl = typeof dispatched.run_url === "string" ? dispatched.run_url : "";
-  return runUrl ? `[${workflow}](${runUrl})` : `\`${workflow}\``;
+  return runUrl
+    ? `${label}: repair worker queued. Run: ${runUrl}`
+    : `${label}: repair worker queued.`;
+}
+
+export function usesSharedAutomergeStatus(command: LooseRecord) {
+  return AUTOMERGE_STATUS_INTENTS.has(String(command.intent ?? ""));
+}
+
+export function sharedAutomergeStatusMarkerPrefix(command: LooseRecord) {
+  return `<!-- clawsweeper-command-status:${command.issue_number ?? "unknown"}:`;
 }
 
 function commandFromText(trigger: JsonValue, value: JsonValue) {

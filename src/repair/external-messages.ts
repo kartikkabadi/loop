@@ -8,6 +8,23 @@ function listOrNone(items: LooseRecord[]) {
   return items?.length ? items.join("; ") : "none";
 }
 
+function visibleSelfReference(value: JsonValue, target: JsonValue) {
+  const text = String(value ?? "");
+  const number = String(target ?? "").replace(/^#/, "");
+  if (!number) return text;
+  const githubPr = new RegExp(`https://github\\.com/[^/\\s]+/[^/\\s]+/pull/${number}\\b`, "gi");
+  const githubIssue = new RegExp(
+    `https://github\\.com/[^/\\s]+/[^/\\s]+/issues/${number}\\b`,
+    "gi",
+  );
+  return text
+    .replace(githubPr, "this PR")
+    .replace(githubIssue, "this item")
+    .replace(new RegExp(`\\bPR\\s+#${number}\\b`, "gi"), "this PR")
+    .replace(new RegExp(`\\bPR\\s+${number}\\b`, "gi"), "this PR")
+    .replace(new RegExp(`#${number}\\b`, "g"), "this PR");
+}
+
 function issueRef(value: JsonValue) {
   return value ? `#${value}` : "";
 }
@@ -218,18 +235,13 @@ function withFishNotes(lines: JsonValue, provenance: LooseRecord) {
   return [...lines, "", fishNotes(provenance)].join("\n");
 }
 
-export function repairContributorBranchComment({
-  sourcePrUrl,
-  validationCommands,
-  provenance,
-}: LooseRecord) {
+export function repairContributorBranchComment({ validationCommands, provenance }: LooseRecord) {
   return withFishNotes(
     [
       `${SIGNATURE} reef update`,
       "",
       variant(repairBranchOpeners),
       "",
-      `Source PR: ${sourcePrUrl}`,
       `Validation: ${listOrNone(validationCommands)}`,
       variant(preservedCreditLines),
     ],
@@ -250,12 +262,11 @@ export function automergeRepairOutcomeComment({
     "",
     variant(automergeNoChangeOpeners),
     "",
-    `Target: #${target}`,
     `Executor outcome: ${compactForComment(report?.reason ?? "no executable fix action", 260)}.`,
   ];
-  const summary = compactForComment(result?.summary, 900);
+  const summary = compactForComment(visibleSelfReference(result?.summary, target), 900);
   if (summary) lines.push(`Worker summary: ${summary}`);
-  const actionLines = automergeOutcomeActionLines(result?.actions);
+  const actionLines = automergeOutcomeActionLines(result?.actions, target);
   if (actionLines.length > 0) {
     lines.push("", "Worker actions:", ...actionLines);
   }
@@ -263,11 +274,7 @@ export function automergeRepairOutcomeComment({
   return withFishNotes(lines, provenance);
 }
 
-export function replacementSourceLinkComment({
-  replacementPrUrl,
-  sourcePrUrl,
-  provenance,
-}: LooseRecord) {
+export function replacementSourceLinkComment({ replacementPrUrl, provenance }: LooseRecord) {
   return withFishNotes(
     [
       `${SIGNATURE} reef update`,
@@ -275,7 +282,6 @@ export function replacementSourceLinkComment({
       variant(replacementPermissionLines),
       "",
       `Replacement PR: ${replacementPrUrl}`,
-      `Source PR: ${sourcePrUrl}`,
       variant(sourceStaysOpenLines),
       variant(carriedCreditLines),
     ],
@@ -283,13 +289,16 @@ export function replacementSourceLinkComment({
   );
 }
 
-function automergeOutcomeActionLines(actions: LooseRecord[]) {
+function automergeOutcomeActionLines(actions: LooseRecord[], targetPr: JsonValue) {
   if (!Array.isArray(actions)) return [];
   return actions.slice(0, 6).map((action: JsonValue) => {
     const name = compactForComment(action?.action ?? "unknown", 80);
-    const target = compactForComment(action?.target ?? "unknown", 80);
+    const target = compactForComment(
+      visibleSelfReference(action?.target ?? "unknown", targetPr),
+      80,
+    );
     const status = compactForComment(action?.status ?? "unknown", 80);
-    const reason = compactForComment(action?.reason, 220);
+    const reason = compactForComment(visibleSelfReference(action?.reason, targetPr), 220);
     return `- \`${name}\` on \`${target}\`: ${status}${reason ? ` - ${reason}` : ""}`;
   });
 }
@@ -303,11 +312,7 @@ function compactForComment(value: JsonValue, max: JsonValue) {
   return `${text.slice(0, Math.max(0, max - 1)).trimEnd()}...`;
 }
 
-export function replacementSourceCloseComment({
-  replacementPrUrl,
-  sourcePrUrl,
-  provenance,
-}: LooseRecord) {
+export function replacementSourceCloseComment({ replacementPrUrl, provenance }: LooseRecord) {
   return withFishNotes(
     [
       `${SIGNATURE} reef update`,
@@ -315,7 +320,6 @@ export function replacementSourceCloseComment({
       variant(replacementPermissionLines),
       "",
       `Replacement PR: ${replacementPrUrl}`,
-      `Source PR: ${sourcePrUrl}`,
       variant(closeOnlyWhenEnabledLines),
       variant(carriedCreditLines),
     ],
