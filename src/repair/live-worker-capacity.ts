@@ -24,13 +24,22 @@ export function liveWorkerCapacity({
   workflow = REPAIR_CLUSTER_WORKFLOW,
   requested = 1,
   maxLiveWorkers = DEFAULT_MAX_LIVE_WORKERS,
+  runNamePrefix = "",
+  excludeRunNamePrefix = "",
 }: LooseRecord = {}) {
   const requestedCount = readNonNegativeInteger(requested, "requested");
   const max = readMaxLiveWorkerLimit(maxLiveWorkers);
-  const activeRuns = listActiveWorkflowRuns({ repo, workflow });
+  const activeRuns = listActiveWorkflowRuns({
+    repo,
+    workflow,
+    runNamePrefix,
+    excludeRunNamePrefix,
+  });
   return {
     repo,
     workflow,
+    ...(runNamePrefix ? { run_name_prefix: runNamePrefix } : {}),
+    ...(excludeRunNamePrefix ? { exclude_run_name_prefix: excludeRunNamePrefix } : {}),
     active: activeRuns.length,
     requested: requestedCount,
     max_live_workers: max,
@@ -96,6 +105,8 @@ export function waitForLiveWorkerCapacity(options: LooseRecord = {}) {
 export function listActiveWorkflowRuns({
   repo = currentProjectRepo(),
   workflow = REPAIR_CLUSTER_WORKFLOW,
+  runNamePrefix = "",
+  excludeRunNamePrefix = "",
 }: LooseRecord = {}) {
   const runs: LooseRecord[] = [];
   for (const status of ACTIVE_WORKFLOW_STATUSES) {
@@ -116,10 +127,25 @@ export function listActiveWorkflowRuns({
   }
   return [
     ...new Map(runs.map((run: JsonValue) => [String(run.databaseId ?? run.id), run])).values(),
-  ].sort(
-    (left: JsonValue, right: JsonValue) =>
-      Date.parse(right.createdAt ?? "") - Date.parse(left.createdAt ?? ""),
-  );
+  ]
+    .filter((run: JsonValue) => runMatchesNameFilter(run, runNamePrefix, excludeRunNamePrefix))
+    .sort(
+      (left: JsonValue, right: JsonValue) =>
+        Date.parse(right.createdAt ?? "") - Date.parse(left.createdAt ?? ""),
+    );
+}
+
+function runMatchesNameFilter(
+  run: LooseRecord,
+  runNamePrefix: JsonValue,
+  excludeRunNamePrefix: JsonValue,
+) {
+  const title = String(run.displayTitle ?? "");
+  const includePrefix = String(runNamePrefix ?? "");
+  const excludePrefix = String(excludeRunNamePrefix ?? "");
+  if (includePrefix && !title.startsWith(includePrefix)) return false;
+  if (excludePrefix && title.startsWith(excludePrefix)) return false;
+  return true;
 }
 
 function normalizeWorkflowRun(run: LooseRecord, fallbackStatus: string) {

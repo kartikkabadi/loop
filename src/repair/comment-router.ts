@@ -90,6 +90,8 @@ const {
   writeReport,
   waitForCapacity,
   maxLiveWorkers,
+  automergeMaxLiveWorkers,
+  automergeRunNamePrefix,
   maxComments,
   maxAutocloseTargets,
   maxAutoRepairsPerHead,
@@ -194,24 +196,13 @@ if (execute) {
   await measureAsync("execute_commands", async () => {
     assertMutationActorIsClawsweeperBot();
     for (const command of commands) acknowledgeSkippedMaintainerCommand(command);
-    const dispatchCount = actionable.filter(
-      (command: JsonValue) =>
-        REPAIR_INTENTS.has(command.intent) || MERGE_INTENTS.has(command.intent),
-    ).length;
-    if (dispatchCount > 0) {
-      report.live_worker_capacity_before_dispatch = waitForCapacity
-        ? waitForLiveWorkerCapacity({
-            repo: repairRepo,
-            workflow,
-            requested: dispatchCount,
-            maxLiveWorkers,
-          })
-        : assertLiveWorkerCapacity({
-            repo: repairRepo,
-            workflow,
-            requested: dispatchCount,
-            maxLiveWorkers,
-          });
+    const capacityRequests = workerCapacityRequests(actionable);
+    if (capacityRequests.length > 0) {
+      const capacities = capacityRequests.map((request) =>
+        waitForCapacity ? waitForLiveWorkerCapacity(request) : assertLiveWorkerCapacity(request),
+      );
+      report.live_worker_capacity_before_dispatch =
+        capacities.length === 1 ? capacities[0] : capacities;
     }
     for (const command of actionable) executeCommand(command);
   });
@@ -1113,6 +1104,35 @@ function executeCommand(command: LooseRecord) {
       : action,
   );
   command.status = "executed";
+}
+
+function workerCapacityRequests(commands: LooseRecord[]) {
+  const counts = new Map<string, { count: number; automergeLane: boolean }>();
+  for (const command of commands) {
+    if (!REPAIR_INTENTS.has(command.intent) && !MERGE_INTENTS.has(command.intent)) continue;
+    const automergeLane = usesAutomergeRepairLane(command);
+    const key = automergeLane ? "automerge" : "default";
+    const entry = counts.get(key) ?? { count: 0, automergeLane };
+    entry.count += 1;
+    counts.set(key, entry);
+  }
+  return [...counts.values()].map(({ count, automergeLane }) => ({
+    repo: repairRepo,
+    workflow,
+    requested: count,
+    maxLiveWorkers: automergeLane ? automergeMaxLiveWorkers : maxLiveWorkers,
+    ...(automergeLane
+      ? { runNamePrefix: automergeRunNamePrefix }
+      : { excludeRunNamePrefix: automergeRunNamePrefix }),
+  }));
+}
+
+function usesAutomergeRepairLane(command: LooseRecord) {
+  return (
+    command.intent === "automerge" ||
+    command.intent === "clawsweeper_auto_merge" ||
+    hasLabel(command.target, AUTOMERGE_LABEL)
+  );
 }
 
 function acknowledgeSkippedMaintainerCommand(command: LooseRecord) {

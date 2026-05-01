@@ -1,5 +1,7 @@
 name: repair cluster worker
 
+run-name: ${{ startsWith(inputs.job, 'jobs/openclaw/inbox/automerge-') && format('automerge repair {0}', inputs.job) || format('repair cluster {0}', inputs.job) }}
+
 on:
   workflow_dispatch:
     inputs:

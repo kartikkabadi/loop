@@ -28,6 +28,8 @@ export type CommentRouterConfig = {
   writeReport: boolean;
   waitForCapacity: boolean;
   maxLiveWorkers: number;
+  automergeMaxLiveWorkers: number;
+  automergeRunNamePrefix: string;
   maxComments: number;
   maxAutocloseTargets: number;
   maxAutoRepairsPerHead: number;
@@ -104,6 +106,16 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     writeReport: Boolean(args["write-report"] || args.execute),
     waitForCapacity: Boolean(args["wait-for-capacity"]),
     maxLiveWorkers: readMaxLiveWorkers(args),
+    automergeMaxLiveWorkers: readMaxLiveWorkers({
+      "max-live-workers":
+        args["automerge-max-live-workers"] ??
+        process.env.CLAWSWEEPER_AUTOMERGE_MAX_LIVE_WORKERS ??
+        50,
+    }),
+    automergeRunNamePrefix: stringSetting(
+      args["automerge-run-name-prefix"] ?? process.env.CLAWSWEEPER_AUTOMERGE_RUN_NAME_PREFIX,
+      "automerge repair ",
+    ),
     maxComments: positiveInteger(
       args["max-comments"] ?? process.env.CLAWSWEEPER_COMMENT_MAX_COMMENTS ?? 100,
       "max-comments",
