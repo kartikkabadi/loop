@@ -53,6 +53,7 @@ import {
   firstTargetSourcePullRequest,
 } from "./source-pr-checkout.js";
 import { mergeAutomergeTimelineSection } from "./automerge-status-timeline.js";
+import { isRepairBranchPushRace, repairBranchPushRaceReason } from "./repair-branch-push-errors.js";
 import {
   prepareTargetToolchain,
   preflightTargetValidationPlan,
@@ -387,19 +388,30 @@ try {
     try {
       outcome = executeRepairBranch({ fixArtifact, targetDir });
     } catch (error) {
-      report.actions.push({
-        action: "repair_contributor_branch",
-        status: "failed",
-        reason: error.message,
-      });
-      if (!shouldFallbackToReplacementAfterRepairError(error)) throw error;
-      const fallbackTargetDir = prepareFallbackReplacementCheckout(targetDir);
-      outcome = executeReplacementBranch({
-        fixArtifact,
-        targetDir: fallbackTargetDir,
-        supersedeSources: true,
-        fallbackReason: error.message,
-      });
+      const branchPushRaceReason = repairBranchPushRaceReason(error);
+      if (branchPushRaceReason) {
+        outcome = {
+          action: "repair_contributor_branch",
+          status: "blocked",
+          repair_strategy: fixArtifact.repair_strategy,
+          reason: branchPushRaceReason,
+          requeue_required: true,
+        };
+      } else {
+        report.actions.push({
+          action: "repair_contributor_branch",
+          status: "failed",
+          reason: error.message,
+        });
+        if (!shouldFallbackToReplacementAfterRepairError(error)) throw error;
+        const fallbackTargetDir = prepareFallbackReplacementCheckout(targetDir);
+        outcome = executeReplacementBranch({
+          fixArtifact,
+          targetDir: fallbackTargetDir,
+          supersedeSources: true,
+          fallbackReason: error.message,
+        });
+      }
     }
   } else {
     outcome = executeReplacementBranch({
@@ -438,12 +450,14 @@ report.actions.push(outcome);
 writeReport(report, resultPath);
 
 function isBlockedFixError(error: JsonValue) {
+  if (isRepairBranchPushRace(error)) return true;
   return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
     String(error?.message ?? error),
   );
 }
 
 function shouldFallbackToReplacementAfterRepairError(error: JsonValue) {
+  if (isRepairBranchPushRace(error)) return false;
   const message = String(error?.message ?? error);
   if (/validation command failed|Codex |no merge base/i.test(message)) return false;
   return /maintainer_can_modify=false|missing head repo\/ref|source PR #\d+ is (?:closed|merged)|permission denied|permission to [^\s]+ denied|remote rejected|could not push|repository not found|not found/i.test(
