@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T01:27:53.260Z",
+  "updated_at": "2026-05-01T01:31:27.105Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73704:4337712747:2026-04-30T22:49:17Z:clawsweeper_needs_human",
-      "comment_id": "4337712747",
-      "comment_version_key": "4337712747:2026-04-30T22:49:17Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73704#issuecomment-4337712747",
-      "comment_created_at": "2026-04-28T17:34:35Z",
-      "comment_updated_at": "2026-04-30T22:49:17Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 73704,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=0e82fa2edae5950e702aba6d79303f9f4a2d12b3)",
-      "expected_head_sha": "0e82fa2edae5950e702aba6d79303f9f4a2d12b3",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T00:02:34.254Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73668:4337169336:2026-04-30T22:49:16Z:clawsweeper_needs_human",
       "comment_id": "4337169336",
@@ -23365,41 +23341,9 @@
       "repair_reason": null,
       "expected_head_sha": null,
       "finding_id": null,
-      "status": "executed",
-      "processed_at": "2026-05-01T01:25:56.649Z",
-      "target": {
-        "kind": "pull_request",
-        "branch": "codex/automerge-dirty-repair",
-        "head_sha": "3b3a1cfc372a8e3f9c9e66a0b05cbef16122ed24",
-        "cluster_id": "automerge-openclaw-clawsweeper-23",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-23.md"
-      },
-      "actions": [
-        {
-          "action": "ensure_automerge_job",
-          "status": "executed",
-          "label": null,
-          "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-23.md"
-        },
-        {
-          "action": "label",
-          "status": "executed",
-          "label": "clawsweeper:automerge",
-          "job_path": null
-        },
-        {
-          "action": "dispatch_clawsweeper",
-          "status": "executed",
-          "label": null,
-          "job_path": null
-        },
-        {
-          "action": "comment",
-          "status": "executed",
-          "label": null,
-          "job_path": null
-        }
-      ]
+      "status": "skipped",
+      "processed_at": "2026-05-01T01:31:27.105Z",
+      "target": null
     },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:60743:4323674924:2026-05-01T01:27:13Z:clawsweeper_needs_human",
@@ -27014,6 +26958,50 @@
         {
           "action": "merge",
           "status": "blocked",
+          "label": null,
+          "job_path": null
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "label": null,
+          "job_path": null
+        }
+      ]
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/clawsweeper:23:4357278915:2026-05-01T01:29:23Z:clawsweeper_auto_merge",
+      "comment_id": "4357278915",
+      "comment_version_key": "4357278915:2026-05-01T01:29:23Z",
+      "comment_url": "https://github.com/openclaw/clawsweeper/pull/23#issuecomment-4357278915",
+      "comment_created_at": "2026-05-01T01:27:28Z",
+      "comment_updated_at": "2026-05-01T01:29:23Z",
+      "repo": "openclaw/clawsweeper",
+      "issue_number": 23,
+      "author": "clawsweeper[bot]",
+      "author_association": "NONE",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto merge",
+      "intent": "clawsweeper_auto_merge",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: pass (sha=3b3a1cfc372a8e3f9c9e66a0b05cbef16122ed24)",
+      "expected_head_sha": "3b3a1cfc372a8e3f9c9e66a0b05cbef16122ed24",
+      "finding_id": null,
+      "status": "executed",
+      "processed_at": "2026-05-01T01:31:27.104Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "codex/automerge-dirty-repair",
+        "head_sha": "3b3a1cfc372a8e3f9c9e66a0b05cbef16122ed24",
+        "cluster_id": "automerge-openclaw-clawsweeper-23",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-23.md"
+      },
+      "actions": [
+        {
+          "action": "merge",
+          "status": "executed",
           "label": null,
           "job_path": null
         },
