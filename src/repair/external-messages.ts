@@ -217,7 +217,7 @@ const postMergeCloseLines = [
 function fishNotes(provenance: LooseRecord) {
   const model = provenance?.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5";
   const reasoning =
-    provenance?.reasoning ?? process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "medium";
+    provenance?.reasoning ?? process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "high";
   const reviewedSha = provenance?.reviewedSha ?? provenance?.reviewed_sha;
   const reviewed = reviewedSha ? `; reviewed against ${String(reviewedSha).slice(0, 12)}` : "";
   return `fish notes: model ${model}, reasoning ${reasoning}${reviewed}.`;
@@ -226,7 +226,7 @@ function fishNotes(provenance: LooseRecord) {
 export function externalMessageProvenance({ model, reasoning, reviewedSha }: LooseRecord = {}) {
   return {
     model: model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5",
-    reasoning: reasoning ?? process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "medium",
+    reasoning: reasoning ?? process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "high",
     reviewedSha,
   };
 }

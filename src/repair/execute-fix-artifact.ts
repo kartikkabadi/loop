@@ -93,7 +93,7 @@ const codexTimeoutMs = Math.min(
 const codexPreflightTimeoutMs = Number(
   process.env.CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS ?? 2 * 60 * 1000,
 );
-const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "medium");
+const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "high");
 const scriptStartedAt = new Date();
 const codexServiceTier = String(process.env.CLAWSWEEPER_CODEX_SERVICE_TIER ?? "fast").trim();
 const codexStdioMaxBuffer =
