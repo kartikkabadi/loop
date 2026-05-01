@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T05:27:44.609Z",
+  "updated_at": "2026-05-01T05:28:40.115Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64335:4349685434:2026-05-01T00:47:12Z:clawsweeper_needs_human",
-      "comment_id": "4349685434",
-      "comment_version_key": "4349685434:2026-05-01T00:47:12Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/64335#issuecomment-4349685434",
-      "comment_created_at": "2026-04-30T04:27:52Z",
-      "comment_updated_at": "2026-05-01T00:47:12Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 64335,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e2e6c15d13dc258686b0fa35d87cb013cda2ca83)",
-      "expected_head_sha": "e2e6c15d13dc258686b0fa35d87cb013cda2ca83",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:64064:4349685250:2026-05-01T00:47:11Z:clawsweeper_needs_human",
       "comment_id": "4349685250",
@@ -28442,6 +28418,36 @@
           "job_path": null
         }
       ]
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75308:4356919781:2026-05-01T05:28:33Z:clawsweeper_needs_human",
+      "comment_id": "4356919781",
+      "comment_version_key": "4356919781:2026-05-01T05:28:33Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75308#issuecomment-4356919781",
+      "comment_created_at": "2026-04-30T23:46:47Z",
+      "comment_updated_at": "2026-05-01T05:28:33Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75308,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=99c00f4c33a6e320bd7469b13c8f8908bc5e11ce)",
+      "expected_head_sha": "99c00f4c33a6e320bd7469b13c8f8908bc5e11ce",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T05:28:40.114Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "codex/native-first-dynamic-tools-pr",
+        "head_sha": "99c00f4c33a6e320bd7469b13c8f8908bc5e11ce",
+        "cluster_id": null,
+        "job_path": null
+      }
     }
   ]
 }
