@@ -299,6 +299,7 @@ jobs:
           git -C "$checkout_dir" rev-parse --short HEAD
 
       - name: Review exact event item
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
           ADDITIONAL_PROMPT: ${{ github.event.client_payload.additional_prompt || '' }}
