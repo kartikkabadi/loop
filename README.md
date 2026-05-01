@@ -160,23 +160,23 @@ Last dashboard update: May 1, 2026, 05:57 UTC
 | Metric | Count |
 | --- | ---: |
 | Covered repositories | 3 |
-| Open issues | 3668 |
-| Open PRs | 3354 |
-| Open items total | 7022 |
-| Reviewed files | 7646 |
-| Unreviewed open items | 59 |
-| Due now by cadence | 1666 |
-| Proposed closes awaiting apply | 2 |
+| Open issues | 3666 |
+| Open PRs | 3355 |
+| Open items total | 7021 |
+| Reviewed files | 7644 |
+| Unreviewed open items | 60 |
+| Due now by cadence | 1667 |
+| Proposed closes awaiting apply | 0 |
 | Work candidates awaiting promotion | 2380 |
-| Closed by Codex apply | 11438 |
+| Closed by Codex apply | 11440 |
 | Failed or stale reviews | 22 |
-| Archived closed files | 15501 |
+| Archived closed files | 15503 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6775 | 6717 | 58 | 1413 | 2 | 2334 | 11430 | May 1, 2026, 05:54 UTC | May 1, 2026, 05:54 UTC | 41 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6774 | 6715 | 59 | 1414 | 0 | 2334 | 11432 | May 1, 2026, 05:54 UTC | May 1, 2026, 05:57 UTC | 43 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 246 | 924 | 0 | 247 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 1 | 5 | 1 | 6 | 0 | 1 | 0 | May 1, 2026, 02:03 UTC | unknown | 0 |
 
@@ -190,18 +190,20 @@ Last dashboard update: May 1, 2026, 05:57 UTC
 
 ### Fleet Activity
 
-Latest review: May 1, 2026, 05:54 UTC. Latest close: May 1, 2026, 05:54 UTC. Latest comment sync: May 1, 2026, 05:54 UTC.
+Latest review: May 1, 2026, 05:54 UTC. Latest close: May 1, 2026, 05:57 UTC. Latest comment sync: May 1, 2026, 05:57 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 60 | 3 | 57 | 1 | 10 | 14 | 0 |
-| Last hour | 279 | 12 | 267 | 1 | 32 | 41 | 3 |
-| Last 24 hours | 6801 | 471 | 6330 | 7 | 607 | 4032 | 22 |
+| Last 15 minutes | 47 | 3 | 44 | 1 | 12 | 16 | 0 |
+| Last hour | 279 | 12 | 267 | 1 | 34 | 43 | 3 |
+| Last 24 hours | 6801 | 471 | 6330 | 7 | 609 | 4034 | 22 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#49989](https://github.com/openclaw/openclaw/issues/49989) | bug: Synology Chat plugin fails to deliver replies when peer ID contains channel prefix (e.g. \"synology-chat:4\") | already implemented on main | May 1, 2026, 05:57 UTC | [records/openclaw-openclaw/closed/49989.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49989.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#48239](https://github.com/openclaw/openclaw/issues/48239) | Telegram exec approvals can surface in the wrong agent/chat despite agentFilter=main | already implemented on main | May 1, 2026, 05:57 UTC | [records/openclaw-openclaw/closed/48239.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/48239.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75449](https://github.com/openclaw/openclaw/issues/75449) | Telegram group topic responses silently dropped — model generates text but does not auto-deliver | already implemented on main | May 1, 2026, 05:54 UTC | [records/openclaw-openclaw/closed/75449.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75449.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75399](https://github.com/openclaw/openclaw/pull/75399) | fix: media-generation tool availability gate regression | closed externally after review | May 1, 2026, 05:46 UTC | [records/openclaw-openclaw/closed/75399.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75399.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75446](https://github.com/openclaw/openclaw/pull/75446) | fix: The stat-error rethrow itself is correct, but the same allowlist readers still convert n... | closed externally after review | May 1, 2026, 05:46 UTC | [records/openclaw-openclaw/closed/75446.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75446.md) |
@@ -210,8 +212,6 @@ Latest review: May 1, 2026, 05:54 UTC. Latest close: May 1, 2026, 05:54 UTC. Lat
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75344](https://github.com/openclaw/openclaw/pull/75344) | fix: regression where commitment safety handling can disable tools for unrelated due heartbea... | closed externally after review | May 1, 2026, 05:44 UTC | [records/openclaw-openclaw/closed/75344.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75344.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75443](https://github.com/openclaw/openclaw/pull/75443) | fix: BlueBubbles reply-context fallback cache-key regression | closed externally after review | May 1, 2026, 05:44 UTC | [records/openclaw-openclaw/closed/75443.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75443.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75383](https://github.com/openclaw/openclaw/pull/75383) | fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out... | closed externally after review | May 1, 2026, 05:42 UTC | [records/openclaw-openclaw/closed/75383.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75383.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75396](https://github.com/openclaw/openclaw/pull/75396) | fix: One low-severity contract mismatch remains on current main | closed externally after review | May 1, 2026, 05:42 UTC | [records/openclaw-openclaw/closed/75396.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75396.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75404](https://github.com/openclaw/openclaw/pull/75404) | fix(ci): target workflow’s pre-dispatch grep drops an alias that the ClawSweeper receiver exp... | closed externally after review | May 1, 2026, 05:42 UTC | [records/openclaw-openclaw/closed/75404.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75404.md) |
 
 ### Work Candidates Across Repos
 
@@ -271,7 +271,7 @@ Updated: May 1, 2026, 05:57 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 2 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=48239,49989.
+Checkpoint 1 finished. Fresh closes in checkpoint: 2. Total fresh closes in this run: 2/2. Result records in checkpoint: 4, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25204279451](https://github.com/openclaw/clawsweeper/actions/runs/25204279451)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -280,25 +280,25 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25204279451](https://
 | Metric | Count |
 | --- | ---: |
 | Target repository | [openclaw/openclaw](https://github.com/openclaw/openclaw) |
-| Open issues | 3437 |
-| Open PRs | 3338 |
-| Open items total | 6775 |
-| Reviewed files | 6717 |
-| Unreviewed open items | 58 |
-| Archived closed files | 15475 |
+| Open issues | 3435 |
+| Open PRs | 3339 |
+| Open items total | 6774 |
+| Reviewed files | 6715 |
+| Unreviewed open items | 59 |
+| Archived closed files | 15477 |
 
 #### Review Outcomes
 
 | Metric | Count |
 | --- | ---: |
-| Fresh reviewed issues in the last 7 days | 3391 |
-| Proposed issue closes | 2 (0.1% of reviewed issues) |
+| Fresh reviewed issues in the last 7 days | 3389 |
+| Proposed issue closes | 0 (0% of reviewed issues) |
 | Fresh reviewed PRs in the last 7 days | 3272 |
 | Proposed PR closes | 0 (0% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6663 |
-| Proposed closes awaiting apply | 2 (0% of fresh reviews) |
+| Fresh verified reviews in the last 7 days | 6661 |
+| Proposed closes awaiting apply | 0 (0% of fresh reviews) |
 | Work candidates awaiting promotion | 2334 |
-| Closed by Codex apply | 11430 |
+| Closed by Codex apply | 11432 |
 | Failed or stale reviews | 9 |
 
 #### Cadence
@@ -310,8 +310,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25204279451](https://
 | Daily cadence coverage | 3406/3464 current (58 due, 98.3%) |
 | Daily PR cadence | 2381/2435 current (54 due, 97.8%) |
 | Daily new issue cadence (<30d) | 1025/1029 current (4 due, 99.6%) |
-| Weekly older issue cadence | 1753/1785 current (32 due, 98.2%) |
-| Due now by cadence | 1413 |
+| Weekly older issue cadence | 1751/1783 current (32 due, 98.2%) |
+| Due now by cadence | 1414 |
 
 ### Audit Health
 
@@ -347,18 +347,20 @@ Targeted review input: `51947,61960,62112,73342`
 
 #### Latest Run Activity
 
-Latest review: May 1, 2026, 05:54 UTC. Latest close: May 1, 2026, 05:54 UTC. Latest comment sync: May 1, 2026, 05:54 UTC.
+Latest review: May 1, 2026, 05:54 UTC. Latest close: May 1, 2026, 05:57 UTC. Latest comment sync: May 1, 2026, 05:57 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 60 | 3 | 57 | 1 | 10 | 14 | 0 |
-| Last hour | 279 | 12 | 267 | 1 | 32 | 41 | 3 |
-| Last 24 hours | 6799 | 471 | 6328 | 7 | 607 | 4030 | 22 |
+| Last 15 minutes | 47 | 3 | 44 | 1 | 12 | 16 | 0 |
+| Last hour | 279 | 12 | 267 | 1 | 34 | 43 | 3 |
+| Last 24 hours | 6799 | 471 | 6328 | 7 | 609 | 4032 | 22 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#49989](https://github.com/openclaw/openclaw/issues/49989) | bug: Synology Chat plugin fails to deliver replies when peer ID contains channel prefix (e.g. \"synology-chat:4\") | already implemented on main | May 1, 2026, 05:57 UTC | [records/openclaw-openclaw/closed/49989.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/49989.md) |
+| [#48239](https://github.com/openclaw/openclaw/issues/48239) | Telegram exec approvals can surface in the wrong agent/chat despite agentFilter=main | already implemented on main | May 1, 2026, 05:57 UTC | [records/openclaw-openclaw/closed/48239.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/48239.md) |
 | [#75449](https://github.com/openclaw/openclaw/issues/75449) | Telegram group topic responses silently dropped — model generates text but does not auto-deliver | already implemented on main | May 1, 2026, 05:54 UTC | [records/openclaw-openclaw/closed/75449.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75449.md) |
 | [#75399](https://github.com/openclaw/openclaw/pull/75399) | fix: media-generation tool availability gate regression | closed externally after review | May 1, 2026, 05:46 UTC | [records/openclaw-openclaw/closed/75399.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75399.md) |
 | [#75446](https://github.com/openclaw/openclaw/pull/75446) | fix: The stat-error rethrow itself is correct, but the same allowlist readers still convert n... | closed externally after review | May 1, 2026, 05:46 UTC | [records/openclaw-openclaw/closed/75446.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75446.md) |
@@ -367,8 +369,6 @@ Latest review: May 1, 2026, 05:54 UTC. Latest close: May 1, 2026, 05:54 UTC. Lat
 | [#75344](https://github.com/openclaw/openclaw/pull/75344) | fix: regression where commitment safety handling can disable tools for unrelated due heartbea... | closed externally after review | May 1, 2026, 05:44 UTC | [records/openclaw-openclaw/closed/75344.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75344.md) |
 | [#75443](https://github.com/openclaw/openclaw/pull/75443) | fix: BlueBubbles reply-context fallback cache-key regression | closed externally after review | May 1, 2026, 05:44 UTC | [records/openclaw-openclaw/closed/75443.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75443.md) |
 | [#75383](https://github.com/openclaw/openclaw/pull/75383) | fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out... | closed externally after review | May 1, 2026, 05:42 UTC | [records/openclaw-openclaw/closed/75383.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75383.md) |
-| [#75396](https://github.com/openclaw/openclaw/pull/75396) | fix: One low-severity contract mismatch remains on current main | closed externally after review | May 1, 2026, 05:42 UTC | [records/openclaw-openclaw/closed/75396.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75396.md) |
-| [#75404](https://github.com/openclaw/openclaw/pull/75404) | fix(ci): target workflow’s pre-dispatch grep drops an alias that the ClawSweeper receiver exp... | closed externally after review | May 1, 2026, 05:42 UTC | [records/openclaw-openclaw/closed/75404.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75404.md) |
 
 #### Work Candidates
 
