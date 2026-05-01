@@ -25,7 +25,12 @@ import {
   remoteBranchSha,
 } from "./git-repo-utils.js";
 import { parsePullRequestUrl, pullRequestNumberFromUrl } from "./github-ref.js";
-import { codexSubprocessEnv as codexEnv, repairGhEnv as ghEnv } from "./process-env.js";
+import {
+  clawsweeperGitUserEmail,
+  clawsweeperGitUserName,
+  codexSubprocessEnv as codexEnv,
+  repairGhEnv as ghEnv,
+} from "./process-env.js";
 import {
   CLAWSWEEPER_LABEL,
   CLAWSWEEPER_LABEL_COLOR,
@@ -1775,19 +1780,8 @@ function ensureTargetCheckout(repo: string, targetDir: string) {
 }
 
 function setupGitIdentity(cwd: JsonValue) {
-  run("git", ["config", "user.name", process.env.CLAWSWEEPER_GIT_USER_NAME ?? "clawsweeper[bot]"], {
-    cwd,
-  });
-  run(
-    "git",
-    [
-      "config",
-      "user.email",
-      process.env.CLAWSWEEPER_GIT_USER_EMAIL ??
-        "274271284+clawsweeper[bot]@users.noreply.github.com",
-    ],
-    { cwd },
-  );
+  run("git", ["config", "user.name", clawsweeperGitUserName()], { cwd });
+  run("git", ["config", "user.email", clawsweeperGitUserEmail()], { cwd });
 }
 
 function firstSourcePullRequest(fixArtifact: LooseRecord) {

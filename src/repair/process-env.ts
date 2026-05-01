@@ -7,7 +7,7 @@ export function repairGhEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEn
 }
 
 export function codexSubprocessEnv(): NodeJS.ProcessEnv {
-  const env = { ...process.env };
+  const env = { ...process.env, ...clawsweeperGitIdentityEnv() };
   delete env.GH_TOKEN;
   delete env.GITHUB_TOKEN;
   for (const key of Object.keys(env)) {
@@ -17,6 +17,32 @@ export function codexSubprocessEnv(): NodeJS.ProcessEnv {
     delete env.OPENAI_API_KEY;
   }
   return withoutColor(env);
+}
+
+export function clawsweeperGitUserName(): string {
+  const configured = String(process.env.CLAWSWEEPER_GIT_USER_NAME ?? "").trim();
+  if (!configured || configured === "clawsweeper-repair" || configured === "clawsweeper[bot]") {
+    return "clawsweeper";
+  }
+  return configured;
+}
+
+export function clawsweeperGitUserEmail(): string {
+  return (
+    String(process.env.CLAWSWEEPER_GIT_USER_EMAIL ?? "").trim() ||
+    "274271284+clawsweeper[bot]@users.noreply.github.com"
+  );
+}
+
+export function clawsweeperGitIdentityEnv(): NodeJS.ProcessEnv {
+  const name = clawsweeperGitUserName();
+  const email = clawsweeperGitUserEmail();
+  return {
+    GIT_AUTHOR_NAME: name,
+    GIT_AUTHOR_EMAIL: email,
+    GIT_COMMITTER_NAME: name,
+    GIT_COMMITTER_EMAIL: email,
+  };
 }
 
 function withoutColor(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {

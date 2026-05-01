@@ -2,6 +2,8 @@ import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
+import { clawsweeperGitUserEmail, clawsweeperGitUserName } from "./process-env.js";
+
 export type GitRunResult = {
   status: number;
   stdout: string;
@@ -39,13 +41,8 @@ const SKIP_CI_DIRECTIVE_PATTERN =
   /\[(?:skip ci|ci skip|no ci|skip actions|actions skip)\]|^skip-checks:\s*true$/im;
 
 export function configureGitUser(): void {
-  runGit(["config", "user.name", process.env.CLAWSWEEPER_GIT_USER_NAME || "github-actions[bot]"]);
-  runGit([
-    "config",
-    "user.email",
-    process.env.CLAWSWEEPER_GIT_USER_EMAIL ||
-      "41898282+github-actions[bot]@users.noreply.github.com",
-  ]);
+  runGit(["config", "user.name", clawsweeperGitUserName()]);
+  runGit(["config", "user.email", clawsweeperGitUserEmail()]);
 }
 
 export function setTokenOrigin(token: string, repository: string): void {
