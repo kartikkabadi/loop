@@ -1,20 +1,22 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:52:06.797Z",
+  "generated_at": "2026-05-01T03:52:45.583Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:52:05.756Z",
+  "since": "2026-05-01T00:52:43.352Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75008
+    73632
   ],
-  "comment_ids": [],
+  "comment_ids": [
+    4357708582
+  ],
   "max_autoclose_targets": 8,
-  "scanned_comments": 2,
+  "scanned_comments": 1,
   "commands_seen": 1,
-  "actionable": 0,
+  "actionable": 1,
   "trusted_bots": [
     "clawsweeper[bot]",
     "openclaw-clawsweeper[bot]"
@@ -29,83 +31,150 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75008:4351392627:2026-05-01T03:52:02Z:clawsweeper_needs_human",
-      "comment_id": "4351392627",
-      "comment_version_key": "4351392627:2026-05-01T03:52:02Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75008#issuecomment-4351392627",
+      "idempotency_key": "comment-router:openclaw/openclaw:73632:4357708582:2026-05-01T03:52:09Z:automerge",
+      "comment_id": "4357708582",
+      "comment_version_key": "4357708582:2026-05-01T03:52:09Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73632#issuecomment-4357708582",
       "repo": "openclaw/openclaw",
-      "issue_number": 75008,
-      "author": "clawsweeper[bot]",
+      "issue_number": 73632,
+      "author": "joshavant",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T09:44:24Z",
-      "comment_updated_at": "2026-05-01T03:52:02Z",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "comment_created_at": "2026-05-01T03:52:09Z",
+      "comment_updated_at": "2026-05-01T03:52:09Z",
+      "trigger": "mention",
+      "command": "automerge",
+      "intent": "automerge",
       "autoclose_message": null,
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=a668a0ef6804eb9e94def8592402c4683e19376a)",
-      "review_summary": "The PR extracts `abortable`/`makeAbortError` from `runEmbeddedAttempt` into a new helper, wires `attempt.ts` to it, and adds focused tests plus an embedded-run abort leak harness, package script, and heap-leak skill docs.",
+      "trusted_bot": false,
+      "trusted_bot_author": null,
+      "automation_source": null,
+      "repair_reason": null,
+      "review_summary": "",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "a668a0ef6804eb9e94def8592402c4683e19376a",
+      "expected_head_sha": null,
       "finding_id": null,
-      "status": "skipped",
-      "actions": [],
+      "status": "executed",
+      "actions": [
+        {
+          "action": "ensure_automerge_job",
+          "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md",
+          "status": "executed",
+          "mode": "autonomous",
+          "cluster_id": "automerge-openclaw-openclaw-73632",
+          "status_detail": "written"
+        },
+        {
+          "action": "label",
+          "label": "clawsweeper:automerge",
+          "status": "executed"
+        },
+        {
+          "action": "dispatch_clawsweeper",
+          "workflow": "sweep.yml",
+          "status": "executed",
+          "dispatched_at": "2026-05-01T03:52:48.396Z",
+          "event": "repository_dispatch",
+          "repo": "openclaw/clawsweeper",
+          "item_number": 73632
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "commented_at": "2026-05-01T03:52:49.480Z",
+          "response_comment_id": null,
+          "response_comment_mode": "created"
+        }
+      ],
+      "author_repository_permission": "write",
       "target": {
         "kind": "pull_request",
-        "title": "fix(agents): release embedded-run scope on hung provider abort + heap-leak harness",
-        "branch": "fix/embedded-run-abort-retention",
-        "head_sha": "ab94c840d6291d6b408c45e9c973869aab9f4ea6",
-        "author": "romneyda",
+        "title": "fix voice-call SecretRef auth token",
+        "branch": "fix-voice-call-secretref-auth-token",
+        "head_sha": "a0b43ad09f523dc6f4a62399b3bc06a072485a68",
+        "author": "vacinc",
         "labels": [
-          "scripts",
-          "agents",
-          "maintainer",
-          "size: M"
+          "docs",
+          "channel: voice-call",
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
-        "cluster_id": null,
-        "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75008",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75008.md",
+        "cluster_id": "automerge-openclaw-openclaw-73632",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-73632",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 6,
+          "total": 94,
           "counts": {
-            "SUCCESS": 4,
-            "SKIPPED": 2
+            "SUCCESS": 41,
+            "IN_PROGRESS": 35,
+            "SKIPPED": 17,
+            "NEUTRAL": 1
           },
-          "blockers": []
+          "blockers": [
+            "Security High (actions):IN_PROGRESS",
+            "build-artifacts:IN_PROGRESS",
+            "Critical Quality (core-auth-secrets):IN_PROGRESS",
+            "checks-fast-bundled:IN_PROGRESS",
+            "checks-fast-contracts-plugins-a:IN_PROGRESS",
+            "checks-fast-contracts-channels-a:IN_PROGRESS",
+            "checks-fast-contracts-channels-b:IN_PROGRESS",
+            "checks-fast-contracts-channels-c:IN_PROGRESS",
+            "checks-node-core-fast-support:IN_PROGRESS",
+            "checks-node-core-runtime-infra:IN_PROGRESS",
+            "checks-node-core-runtime-media-ui:IN_PROGRESS",
+            "checks-node-core-runtime-shared:IN_PROGRESS",
+            "checks-node-agentic-control-plane-http-models:IN_PROGRESS",
+            "checks-node-agentic-control-plane-runtime:IN_PROGRESS",
+            "checks-node-agentic-cli:IN_PROGRESS",
+            "checks-node-agentic-commands-doctor-shared:IN_PROGRESS",
+            "checks-node-agentic-commands-status-tools:IN_PROGRESS",
+            "checks-node-agentic-gateway-core:IN_PROGRESS",
+            "checks-node-agentic-gateway-methods:IN_PROGRESS",
+            "checks-node-auto-reply-reply-agent-runner:IN_PROGRESS",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "checks-node-auto-reply-reply-session:IN_PROGRESS",
+            "check-dependencies:IN_PROGRESS",
+            "check-policy-guards:IN_PROGRESS",
+            "check-test-types:IN_PROGRESS",
+            "check-additional-boundaries:IN_PROGRESS",
+            "check-additional-extension-channels:IN_PROGRESS",
+            "check-additional-extension-bundled:IN_PROGRESS",
+            "check-additional-extension-package-boundary:IN_PROGRESS",
+            "check-additional-runtime-topology-architecture:IN_PROGRESS",
+            "checks-windows-node-test:IN_PROGRESS",
+            "macos-node:IN_PROGRESS",
+            "macos-swift:IN_PROGRESS",
+            "android-test-third-party:IN_PROGRESS",
+            "android-build-play:IN_PROGRESS"
+          ]
         }
-      },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      }
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1158,
+    "total_ms": 6135,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 211
+        "ms": 497
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 820
+        "ms": 1724
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 107
+        "ms": 3897
       },
       {
         "name": "append_ledger",
