@@ -78,6 +78,7 @@ test("fix prompt includes rebase and previous no-diff recovery details", () => {
   });
 
   assert.match(prompt, /Edit attempt: 1 of 5/);
+  assert.match(prompt, /always fetch latest origin\/main and rebase or otherwise sync/);
   assert.match(prompt, /Existing repair branch detected/);
   assert.match(prompt, /Source head before edit: abc123/);
   assert.match(prompt, /Deterministic pre-edit rebase: conflicts onto origin\/main \(def456\)/);
