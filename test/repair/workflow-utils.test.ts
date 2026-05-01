@@ -9,6 +9,7 @@ import {
   countActions,
   countCommandActions,
   mergeApplyReports,
+  planOutputFields,
   plannedItemNumberCsv,
   proposedItemNumbers,
 } from "../../dist/repair/workflow-utils.js";
@@ -73,6 +74,34 @@ test("workflow utilities expose planned item numbers for recovery dispatches", (
       candidates: [{ number: 42 }, { number: "7" }, { number: 0 }, { title: "missing" }],
     }),
     "42,7",
+  );
+});
+
+test("workflow utilities expose review capacity telemetry from plans", () => {
+  assert.deepEqual(
+    planOutputFields(
+      {
+        capacity: 300,
+        candidates: [{ number: 42 }, { number: 43 }],
+        matrix: [{ shard: 0, item_numbers: "42,43" }],
+        activeCodexTarget: 1,
+        dueBacklog: 17,
+        oldestUnreviewedAt: "2026-01-01T00:00:00Z",
+        capacityReason: "under capacity: due backlog below planned capacity",
+      },
+      { batchSize: 3, shardCount: 100 },
+    ),
+    {
+      matrix: JSON.stringify([{ shard: 0, item_numbers: "42,43" }]),
+      planned_count: "2",
+      planned_capacity: "300",
+      planned_item_numbers: "42,43",
+      planned_shards: "1",
+      active_codex_target: "1",
+      due_backlog: "17",
+      oldest_unreviewed_at: "2026-01-01T00:00:00Z",
+      capacity_reason: "under capacity: due backlog below planned capacity",
+    },
   );
 });
 

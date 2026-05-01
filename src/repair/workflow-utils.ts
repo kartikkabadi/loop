@@ -59,18 +59,55 @@ function runCli(): void {
 
 function printPlanOutput(): void {
   const plan = readJsonObject(requiredString("plan"));
-  const matrix = Array.isArray(plan.matrix) ? plan.matrix : [];
-  const candidates = Array.isArray(plan.candidates) ? plan.candidates : [];
   const batchSize = positiveNumber(optionalString("batch-size"), 5);
   const shardCount = positiveNumber(optionalString("shard-count"), 100);
+  printOutput(planOutputFields(plan, { batchSize, shardCount }));
+}
+
+export function planOutputFields(
+  plan: LooseRecord,
+  options: { batchSize: number; shardCount: number },
+): Record<string, string> {
+  const matrix = Array.isArray(plan.matrix) ? plan.matrix : [];
+  const candidates = Array.isArray(plan.candidates) ? plan.candidates : [];
   const planCapacity = Number(plan.capacity);
-  printOutput({
+  const capacity = Number.isFinite(planCapacity)
+    ? planCapacity
+    : options.batchSize * options.shardCount;
+  return {
     matrix: JSON.stringify(matrix),
     planned_count: String(candidates.length),
-    planned_capacity: String(Number.isFinite(planCapacity) ? planCapacity : batchSize * shardCount),
+    planned_capacity: String(capacity),
     planned_item_numbers: plannedItemNumberCsv(plan),
     planned_shards: String(matrix.length),
-  });
+    active_codex_target: String(numberFromPlan(plan.activeCodexTarget, matrix.length)),
+    due_backlog: String(numberFromPlan(plan.dueBacklog, candidates.length)),
+    oldest_unreviewed_at:
+      typeof plan.oldestUnreviewedAt === "string" ? plan.oldestUnreviewedAt : "",
+    capacity_reason:
+      typeof plan.capacityReason === "string" && plan.capacityReason.trim()
+        ? plan.capacityReason
+        : defaultCapacityReason(
+            candidates.length,
+            numberFromPlan(plan.dueBacklog, candidates.length),
+            capacity,
+          ),
+  };
+}
+
+function numberFromPlan(value: JsonValue | undefined, fallback: number): number {
+  const number = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function defaultCapacityReason(
+  selectedCount: number,
+  dueBacklog: number,
+  capacity: number,
+): string {
+  if (selectedCount === 0) return "idle: no due candidates found";
+  if (dueBacklog >= capacity) return "saturated: due backlog filled planned capacity";
+  return "under capacity: due backlog below planned capacity";
 }
 
 export function plannedItemNumberCsv(plan: LooseRecord): string {

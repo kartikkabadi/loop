@@ -394,6 +394,13 @@ interface WorkflowStatusSummary {
   state: string;
   detail: string;
   runUrl: string | undefined;
+  plannedCount: number | undefined;
+  plannedCapacity: number | undefined;
+  plannedShards: number | undefined;
+  activeCodex: number | undefined;
+  dueBacklog: number | undefined;
+  oldestUnreviewedAt: string | undefined;
+  capacityReason: string | undefined;
 }
 
 interface RepoDashboardSnapshot {
@@ -407,6 +414,17 @@ interface RepoDashboardSnapshot {
 interface PlanShard {
   shard: number;
   itemNumbers: number[];
+}
+
+interface PlanCandidateResult {
+  shards: PlanShard[];
+  scannedPages: number;
+  candidates: Item[];
+  capacity: number;
+  dueBacklog: number;
+  activeCodexTarget: number;
+  oldestUnreviewedAt: string | undefined;
+  capacityReason: string;
 }
 
 const DEFAULT_PLAN_BATCH_SIZE = 3;
@@ -712,6 +730,13 @@ function writeSweepStatus(options: {
   detail: string;
   runUrl?: string;
   profile?: RepositoryProfile;
+  plannedCount?: number;
+  plannedCapacity?: number;
+  plannedShards?: number;
+  activeCodex?: number;
+  dueBacklog?: number;
+  oldestUnreviewedAt?: string;
+  capacityReason?: string;
 }): void {
   const profile = options.profile ?? targetProfile();
   const updatedAt = new Date().toISOString();
@@ -723,6 +748,13 @@ function writeSweepStatus(options: {
     state: options.state,
     detail: options.detail,
     run_url: options.runUrl ?? null,
+    planned_count: options.plannedCount ?? null,
+    planned_capacity: options.plannedCapacity ?? null,
+    planned_shards: options.plannedShards ?? null,
+    active_codex: options.activeCodex ?? null,
+    due_backlog: options.dueBacklog ?? null,
+    oldest_unreviewed_at: options.oldestUnreviewedAt ?? null,
+    capacity_reason: options.capacityReason ?? null,
     updated_at: updatedAt,
   };
   const outputPath = sweepStatusPath(profile);
@@ -2608,6 +2640,40 @@ export function shardItemNumbers(itemNumbers: readonly number[], shardCount: num
   return shards;
 }
 
+function activeCodexTarget(shards: readonly PlanShard[]): number {
+  return shards.filter((shard) => shard.itemNumbers.length > 0).length;
+}
+
+function oldestUnreviewedAt(candidates: readonly DueCandidate[]): string | undefined {
+  let oldest: string | undefined;
+  let oldestMs = Number.POSITIVE_INFINITY;
+  for (const candidate of candidates) {
+    if (candidate.review) continue;
+    const createdAtMs = Date.parse(candidate.item.createdAt);
+    if (!Number.isFinite(createdAtMs) || createdAtMs >= oldestMs) continue;
+    oldestMs = createdAtMs;
+    oldest = candidate.item.createdAt;
+  }
+  return oldest;
+}
+
+function planCapacityReason(options: {
+  selectedCount: number;
+  dueBacklog: number;
+  capacity: number;
+  exact?: boolean;
+}): string {
+  if (options.exact) {
+    return options.selectedCount === 0
+      ? "idle: no requested open items found"
+      : "exact: requested item selection";
+  }
+  if (options.selectedCount === 0) return "idle: no due candidates found";
+  if (options.dueBacklog >= options.capacity)
+    return "saturated: due backlog filled planned capacity";
+  return "under capacity: due backlog below planned capacity";
+}
+
 function planCandidates(options: {
   batchSize: number;
   maxPages: number;
@@ -2617,30 +2683,51 @@ function planCandidates(options: {
   itemNumbers?: number[];
   reviewPolicy: string;
   hotIntake?: boolean;
-}): { shards: PlanShard[]; scannedPages: number; candidates: Item[]; capacity: number } {
+}): PlanCandidateResult {
   const shardCount = planShardCount(options.shardCount);
   const batchSize = Math.max(1, options.batchSize);
   const capacity = batchSize * shardCount;
   if (options.itemNumbers) {
     const candidates = openExplicitItems(options.itemNumbers);
+    const shards = shardItemNumbers(
+      candidates.map((item) => item.number),
+      shardCount,
+    );
     return {
-      shards: shardItemNumbers(
-        candidates.map((item) => item.number),
-        shardCount,
-      ),
+      shards,
       scannedPages: 0,
       candidates,
       capacity,
+      dueBacklog: candidates.length,
+      activeCodexTarget: activeCodexTarget(shards),
+      oldestUnreviewedAt: undefined,
+      capacityReason: planCapacityReason({
+        selectedCount: candidates.length,
+        dueBacklog: candidates.length,
+        capacity,
+        exact: true,
+      }),
     };
   }
   if (options.itemNumber) {
     const { item, state } = fetchItem(options.itemNumber);
     const shouldReview = state === "open";
+    const candidates = shouldReview ? [item] : [];
+    const shards = [{ shard: 0, itemNumbers: shouldReview ? [item.number] : [] }];
     return {
-      shards: [{ shard: 0, itemNumbers: shouldReview ? [item.number] : [] }],
+      shards,
       scannedPages: 0,
-      candidates: shouldReview ? [item] : [],
+      candidates,
       capacity,
+      dueBacklog: candidates.length,
+      activeCodexTarget: activeCodexTarget(shards),
+      oldestUnreviewedAt: undefined,
+      capacityReason: planCapacityReason({
+        selectedCount: candidates.length,
+        dueBacklog: candidates.length,
+        capacity,
+        exact: true,
+      }),
     };
   }
 
@@ -2670,7 +2757,20 @@ function planCandidates(options: {
     candidates.forEach((item, index) => {
       shards[index % shards.length]?.itemNumbers.push(item.number);
     });
-    return { shards, scannedPages: pagesScanned, candidates, capacity };
+    return {
+      shards,
+      scannedPages: pagesScanned,
+      candidates,
+      capacity,
+      dueBacklog: due.length,
+      activeCodexTarget: activeCodexTarget(shards),
+      oldestUnreviewedAt: oldestUnreviewedAt(due),
+      capacityReason: planCapacityReason({
+        selectedCount: candidates.length,
+        dueBacklog: due.length,
+        capacity,
+      }),
+    };
   }
   let scannedPages = 0;
   for (let page = 1; page <= options.maxPages; page += 1) {
@@ -2690,15 +2790,24 @@ function planCandidates(options: {
     }
   }
   const candidates = selectDueCandidates(due, capacity).map(({ item }) => item);
+  const shards = shardItemNumbers(
+    candidates.map((item) => item.number),
+    shardCount,
+  );
 
   return {
-    shards: shardItemNumbers(
-      candidates.map((item) => item.number),
-      shardCount,
-    ),
+    shards,
     scannedPages,
     candidates,
     capacity,
+    dueBacklog: due.length,
+    activeCodexTarget: activeCodexTarget(shards),
+    oldestUnreviewedAt: oldestUnreviewedAt(due),
+    capacityReason: planCapacityReason({
+      selectedCount: candidates.length,
+      dueBacklog: due.length,
+      capacity,
+    }),
   };
 }
 
@@ -3148,16 +3257,25 @@ function formatTimestamp(iso: string | undefined): string {
 }
 
 function workflowStatusBlock(options?: {
-  state?: string;
-  detail?: string;
-  runUrl?: string;
-  updatedAt?: string;
-  profile?: RepositoryProfile;
+  state?: string | undefined;
+  detail?: string | undefined;
+  runUrl?: string | undefined;
+  updatedAt?: string | undefined;
+  profile?: RepositoryProfile | undefined;
+  plannedCount?: number | undefined;
+  plannedCapacity?: number | undefined;
+  plannedShards?: number | undefined;
+  activeCodex?: number | undefined;
+  dueBacklog?: number | undefined;
+  oldestUnreviewedAt?: string | undefined;
+  capacityReason?: string | undefined;
 }): string {
   const profile = options?.profile ?? targetProfile();
   const updatedAt = formatTimestamp(options?.updatedAt ?? new Date().toISOString());
   const state = options?.state ?? "Idle";
   const detail = options?.detail ?? "No workflow status has been published yet.";
+  const metrics = workflowStatusMetricLines(options ?? {});
+  const metricBlock = metrics.length > 0 ? `\n\n${metrics.join("\n")}` : "";
   const runLine = options?.runUrl ? `\nRun: ${markdownLink(options.runUrl, options.runUrl)}` : "";
   return `${profileStatusStart(profile)}
 **Workflow status**
@@ -3168,11 +3286,85 @@ Updated: ${updatedAt}
 
 State: ${state}
 
-${detail}${runLine}
+${detail}${metricBlock}${runLine}
 ${profileStatusEnd(profile)}`;
 }
 
+function workflowStatusMetricLines(options: {
+  plannedCount?: number | undefined;
+  plannedCapacity?: number | undefined;
+  plannedShards?: number | undefined;
+  activeCodex?: number | undefined;
+  dueBacklog?: number | undefined;
+  oldestUnreviewedAt?: string | undefined;
+  capacityReason?: string | undefined;
+}): string[] {
+  const lines: string[] = [];
+  if (
+    options.plannedCount !== undefined ||
+    options.plannedShards !== undefined ||
+    options.plannedCapacity !== undefined
+  ) {
+    lines.push(
+      `Plan: ${formatStatusNumber(options.plannedCount)} items across ${formatStatusNumber(
+        options.plannedShards,
+      )} shards (capacity ${formatStatusNumber(options.plannedCapacity)}).`,
+    );
+  }
+  if (options.activeCodex !== undefined) {
+    lines.push(`Active Codex target: ${formatStatusNumber(options.activeCodex)}.`);
+  }
+  if (options.dueBacklog !== undefined) {
+    lines.push(`Due backlog scanned: ${formatStatusNumber(options.dueBacklog)}.`);
+  }
+  if (options.oldestUnreviewedAt) {
+    lines.push(`Oldest unreviewed: ${formatTimestamp(options.oldestUnreviewedAt)}.`);
+  }
+  if (options.capacityReason) {
+    lines.push(`Capacity reason: ${options.capacityReason}.`);
+  }
+  return lines;
+}
+
+function formatStatusNumber(value: number | undefined): string {
+  return value === undefined || !Number.isFinite(value) ? "unknown" : String(value);
+}
+
+function readSweepStatusSummary(profile = targetProfile()): WorkflowStatusSummary | null {
+  const path = sweepStatusPath(profile);
+  if (!existsSync(path)) return null;
+  try {
+    const parsed = JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
+    return {
+      updatedAt: stringOrUndefined(parsed.updated_at),
+      state: stringOrUndefined(parsed.state) ?? "Idle",
+      detail: stringOrUndefined(parsed.detail) ?? "No workflow status has been published yet.",
+      runUrl: stringOrUndefined(parsed.run_url),
+      plannedCount: numberOrUndefined(parsed.planned_count),
+      plannedCapacity: numberOrUndefined(parsed.planned_capacity),
+      plannedShards: numberOrUndefined(parsed.planned_shards),
+      activeCodex: numberOrUndefined(parsed.active_codex),
+      dueBacklog: numberOrUndefined(parsed.due_backlog),
+      oldestUnreviewedAt: stringOrUndefined(parsed.oldest_unreviewed_at),
+      capacityReason: stringOrUndefined(parsed.capacity_reason),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function stringOrUndefined(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim() ? value : undefined;
+}
+
+function numberOrUndefined(value: unknown): number | undefined {
+  const number = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(number) ? number : undefined;
+}
+
 function currentWorkflowStatusBlock(readme: string, profile = targetProfile()): string {
+  const statusSummary = readSweepStatusSummary(profile);
+  if (statusSummary) return workflowStatusBlock({ ...statusSummary, profile });
   const profilePattern = new RegExp(
     `${escapeRegExp(profileStatusStart(profile))}[\\s\\S]*?${escapeRegExp(profileStatusEnd(profile))}`,
   );
@@ -3195,9 +3387,28 @@ function workflowStatusSummary(block: string): WorkflowStatusSummary {
   const updatedAt = block.match(/^Updated: (.+)$/m)?.[1];
   const state = block.match(/^State: (.+)$/m)?.[1] ?? "Idle";
   const runUrl = block.match(/^Run: \[([^\]]+)\]\([^)]+\)$/m)?.[1];
-  const detailMatch = block.match(/^State: .+\n\n([\s\S]*?)(?:\nRun: |\n<!-- clawsweeper-status)/m);
+  const detailMatch = block.match(
+    /^State: .+\n\n([\s\S]*?)(?:\n\nPlan: |\n\nActive Codex target: |\nRun: |\n<!-- clawsweeper-status)/m,
+  );
   const detail = detailMatch?.[1]?.trim() || "No workflow status has been published yet.";
-  return { updatedAt, state, detail, runUrl };
+  const planMatch = block.match(/^Plan: (\d+) items across (\d+) shards \(capacity (\d+)\)\.$/m);
+  const activeCodex = numberOrUndefined(block.match(/^Active Codex target: (\d+)\.$/m)?.[1]);
+  const dueBacklog = numberOrUndefined(block.match(/^Due backlog scanned: (\d+)\.$/m)?.[1]);
+  const oldestUnreviewedAt = block.match(/^Oldest unreviewed: (.+)\.$/m)?.[1];
+  const capacityReason = block.match(/^Capacity reason: (.+)\.$/m)?.[1];
+  return {
+    updatedAt,
+    state,
+    detail,
+    runUrl,
+    plannedCount: numberOrUndefined(planMatch?.[1]),
+    plannedShards: numberOrUndefined(planMatch?.[2]),
+    plannedCapacity: numberOrUndefined(planMatch?.[3]),
+    activeCodex,
+    dueBacklog,
+    oldestUnreviewedAt,
+    capacityReason,
+  };
 }
 
 function displayTitle(title: string): string {
@@ -6480,7 +6691,15 @@ function formatWorkflowStatusRow(snapshot: RepoDashboardSnapshot): string {
   const run = snapshot.statusSummary.runUrl
     ? markdownLink("run", snapshot.statusSummary.runUrl)
     : "_none_";
-  return `| ${markdownLink(snapshot.profile.displayName, repoUrlFor(snapshot.profile.targetRepo))} | ${markdownTableCell(snapshot.statusSummary.state)} | ${formatTimestamp(snapshot.statusSummary.updatedAt)} | ${run} |`;
+  const plan =
+    snapshot.statusSummary.plannedCount === undefined &&
+    snapshot.statusSummary.plannedCapacity === undefined &&
+    snapshot.statusSummary.plannedShards === undefined
+      ? "unknown"
+      : `${formatStatusNumber(snapshot.statusSummary.plannedCount)}/${formatStatusNumber(
+          snapshot.statusSummary.plannedCapacity,
+        )} items, ${formatStatusNumber(snapshot.statusSummary.plannedShards)} shards`;
+  return `| ${markdownLink(snapshot.profile.displayName, repoUrlFor(snapshot.profile.targetRepo))} | ${markdownTableCell(snapshot.statusSummary.state)} | ${formatStatusNumber(snapshot.statusSummary.activeCodex)} | ${plan} | ${formatStatusNumber(snapshot.statusSummary.dueBacklog)} | ${formatTimestamp(snapshot.statusSummary.oldestUnreviewedAt)} | ${markdownTableCell(snapshot.statusSummary.capacityReason ?? "unknown")} | ${formatTimestamp(snapshot.statusSummary.updatedAt)} | ${run} |`;
 }
 
 function renderRepoDashboardDetails(snapshot: RepoDashboardSnapshot): string {
@@ -6504,6 +6723,13 @@ ${snapshot.status}
 | Open items total | ${stats.open.total} |
 | Reviewed files | ${stats.files} |
 | Unreviewed open items | ${stats.cadence.unreviewedOpen} |
+| Active Codex target | ${formatStatusNumber(snapshot.statusSummary.activeCodex)} |
+| Planned review items | ${formatStatusNumber(snapshot.statusSummary.plannedCount)} |
+| Planned review shards | ${formatStatusNumber(snapshot.statusSummary.plannedShards)} |
+| Planned review capacity | ${formatStatusNumber(snapshot.statusSummary.plannedCapacity)} |
+| Due backlog scanned | ${formatStatusNumber(snapshot.statusSummary.dueBacklog)} |
+| Oldest unreviewed scanned | ${formatTimestamp(snapshot.statusSummary.oldestUnreviewedAt)} |
+| Capacity reason | ${markdownTableCell(snapshot.statusSummary.capacityReason ?? "unknown")} |
 | Archived closed files | ${stats.archivedFiles} |
 
 #### Review Outcomes
@@ -6596,6 +6822,10 @@ function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosed
       accumulator.reviewedFiles += stats.files;
       accumulator.unreviewedOpen += stats.cadence.unreviewedOpen;
       accumulator.due += stats.cadence.due;
+      accumulator.activeCodex += snapshot.statusSummary.activeCodex ?? 0;
+      accumulator.plannedShards += snapshot.statusSummary.plannedShards ?? 0;
+      accumulator.plannedCapacity += snapshot.statusSummary.plannedCapacity ?? 0;
+      accumulator.dueBacklog += snapshot.statusSummary.dueBacklog ?? 0;
       accumulator.proposedClose += stats.proposedClose;
       accumulator.workCandidates += stats.workCandidates;
       accumulator.closed += stats.closed;
@@ -6609,6 +6839,10 @@ function updateDashboard(itemsDir = defaultItemsDir(), closedDir = defaultClosed
       reviewedFiles: 0,
       unreviewedOpen: 0,
       due: 0,
+      activeCodex: 0,
+      plannedShards: 0,
+      plannedCapacity: 0,
+      dueBacklog: 0,
       proposedClose: 0,
       workCandidates: 0,
       closed: 0,
@@ -6631,6 +6865,10 @@ Last dashboard update: ${formatTimestamp(new Date().toISOString())}
 | Reviewed files | ${totals.reviewedFiles} |
 | Unreviewed open items | ${totals.unreviewedOpen} |
 | Due now by cadence | ${totals.due} |
+| Active Codex target | ${totals.activeCodex} |
+| Planned review shards | ${totals.plannedShards} |
+| Planned review capacity | ${totals.plannedCapacity} |
+| Due backlog scanned | ${totals.dueBacklog} |
 | Proposed closes awaiting apply | ${totals.proposedClose} |
 | Work candidates awaiting promotion | ${totals.workCandidates} |
 | Closed by Codex apply | ${totals.closed} |
@@ -6645,8 +6883,8 @@ ${snapshots.map(formatRepositoryOverviewRow).join("\n")}
 
 ### Current Runs
 
-| Repository | State | Updated | Run |
-| --- | --- | --- | --- |
+| Repository | State | Active Codex | Plan | Due backlog | Oldest unreviewed | Capacity reason | Updated | Run |
+| --- | --- | ---: | --- | ---: | --- | --- | --- | --- |
 ${snapshots.map(formatWorkflowStatusRow).join("\n")}
 
 ### Fleet Activity
@@ -6697,7 +6935,27 @@ function statusCommand(args: Args): void {
   const state = stringArg(args.state, "Working");
   const detail = stringArg(args.detail, "Workflow is running.");
   const runUrl = stringArg(args.run_url, "");
-  writeSweepStatus(runUrl ? { state, detail, runUrl, profile } : { state, detail, profile });
+  const plannedCount = optionalNumberArg(args.planned_count);
+  const plannedCapacity = optionalNumberArg(args.planned_capacity);
+  const plannedShards = optionalNumberArg(args.planned_shards);
+  const activeCodex = optionalNumberArg(args.active_codex);
+  const dueBacklog = optionalNumberArg(args.due_backlog);
+  const oldestUnreviewedAt = stringArg(args.oldest_unreviewed_at, "");
+  const capacityReason = stringArg(args.capacity_reason, "");
+  const statusOptions: Parameters<typeof writeSweepStatus>[0] = {
+    state,
+    detail,
+    profile,
+  };
+  if (runUrl) statusOptions.runUrl = runUrl;
+  if (plannedCount !== undefined) statusOptions.plannedCount = plannedCount;
+  if (plannedCapacity !== undefined) statusOptions.plannedCapacity = plannedCapacity;
+  if (plannedShards !== undefined) statusOptions.plannedShards = plannedShards;
+  if (activeCodex !== undefined) statusOptions.activeCodex = activeCodex;
+  if (dueBacklog !== undefined) statusOptions.dueBacklog = dueBacklog;
+  if (oldestUnreviewedAt) statusOptions.oldestUnreviewedAt = oldestUnreviewedAt;
+  if (capacityReason) statusOptions.capacityReason = capacityReason;
+  writeSweepStatus(statusOptions);
   console.log(JSON.stringify({ status_path: sweepStatusRelativePath(profile), state, detail }));
 }
 

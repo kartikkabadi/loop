@@ -113,7 +113,7 @@ on:
     - cron: "2/5 * * * *"
     - cron: "7 */6 * * *"
     - cron: "12 */6 * * *"
-    - cron: "17 * * * *"
+    - cron: "1/5 * * * *"
     - cron: "22 * * * *"
     - cron: "3 * * * *"
     - cron: "18 * * * *"
@@ -451,6 +451,10 @@ jobs:
       planned_capacity: ${{ steps.select.outputs.planned_capacity }}
       planned_item_numbers: ${{ steps.select.outputs.planned_item_numbers }}
       planned_shards: ${{ steps.select.outputs.planned_shards }}
+      active_codex_target: ${{ steps.select.outputs.active_codex_target }}
+      due_backlog: ${{ steps.select.outputs.due_backlog }}
+      oldest_unreviewed_at: ${{ steps.select.outputs.oldest_unreviewed_at }}
+      capacity_reason: ${{ steps.select.outputs.capacity_reason }}
       shard_count: ${{ steps.mode.outputs.shard_count }}
       target_checkout_dir: ${{ steps.target.outputs.target_checkout_dir }}
       target_repo: ${{ steps.target.outputs.target_repo }}
@@ -613,8 +617,15 @@ jobs:
           pnpm run reconcile -- --target-repo "$TARGET_REPO"
           pnpm run status -- \
             --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
-            --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items. Review shards are starting; publish will merge artifacts when they finish." \
-            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items; due backlog scanned is ${{ steps.select.outputs.due_backlog }}. Capacity reason: ${{ steps.select.outputs.capacity_reason }}. Review shards are starting; publish will merge artifacts when they finish." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --planned-count "${{ steps.select.outputs.planned_count }}" \
+            --planned-capacity "${{ steps.select.outputs.planned_capacity }}" \
+            --planned-shards "${{ steps.select.outputs.planned_shards }}" \
+            --active-codex "${{ steps.select.outputs.active_codex_target }}" \
+            --due-backlog "${{ steps.select.outputs.due_backlog }}" \
+            --oldest-unreviewed-at "${{ steps.select.outputs.oldest_unreviewed_at }}" \
+            --capacity-reason "${{ steps.select.outputs.capacity_reason }}"
           pnpm run repair:publish-main -- \
             --message "chore: mark sweep review in progress" \
             --path records \
@@ -827,7 +838,14 @@ jobs:
           pnpm run status -- \
             --state "$publish_state" \
             --detail "$publish_detail" \
-            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --planned-count "${{ needs.plan.outputs.planned_count }}" \
+            --planned-capacity "${{ needs.plan.outputs.planned_capacity }}" \
+            --planned-shards "${{ needs.plan.outputs.planned_shards }}" \
+            --active-codex "0" \
+            --due-backlog "${{ needs.plan.outputs.due_backlog }}" \
+            --oldest-unreviewed-at "${{ needs.plan.outputs.oldest_unreviewed_at }}" \
+            --capacity-reason "${{ needs.plan.outputs.capacity_reason }}"
 
       - name: Commit review records
         env:
@@ -877,7 +895,14 @@ jobs:
           pnpm run status -- \
             --state "Review comments checked" \
             --detail "Checked selected durable Codex review comments and synced missing or stale comments. Synced: $synced_count. Item numbers: $item_numbers." \
-            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --planned-count "${{ needs.plan.outputs.planned_count }}" \
+            --planned-capacity "${{ needs.plan.outputs.planned_capacity }}" \
+            --planned-shards "${{ needs.plan.outputs.planned_shards }}" \
+            --active-codex "0" \
+            --due-backlog "${{ needs.plan.outputs.due_backlog }}" \
+            --oldest-unreviewed-at "${{ needs.plan.outputs.oldest_unreviewed_at }}" \
+            --capacity-reason "${{ needs.plan.outputs.capacity_reason }}"
           pnpm run repair:publish-main -- \
             --message "chore: sync selected review comments" \
             --path records \
@@ -920,7 +945,14 @@ jobs:
           pnpm run status -- \
             --state "Immediate apply checked" \
             --detail "Checked selected safe close proposals right after review publish. Closed: $closed_count/$item_count. Close reasons enabled: $close_reasons. Item numbers: $item_numbers." \
-            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --planned-count "${{ needs.plan.outputs.planned_count }}" \
+            --planned-capacity "${{ needs.plan.outputs.planned_capacity }}" \
+            --planned-shards "${{ needs.plan.outputs.planned_shards }}" \
+            --active-codex "0" \
+            --due-backlog "${{ needs.plan.outputs.due_backlog }}" \
+            --oldest-unreviewed-at "${{ needs.plan.outputs.oldest_unreviewed_at }}" \
+            --capacity-reason "${{ needs.plan.outputs.capacity_reason }}"
           pnpm run repair:publish-main -- \
             --message "chore: apply selected sweep decisions" \
             --path records \
