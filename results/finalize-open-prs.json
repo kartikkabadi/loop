@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-04-30T22:33:22.027Z",
-  "count": 6,
+  "generated_at": "2026-05-01T00:23:35.218Z",
+  "count": 8,
   "summary": {
-    "open_prs": 6,
+    "open_prs": 8,
     "ready_candidates": 0,
     "security_hold": 0,
-    "needs_rebase": 1,
+    "needs_rebase": 2,
     "mergeability_unknown": 0,
-    "needs_checks": 0,
+    "needs_checks": 1,
     "needs_review": 0,
-    "needs_merge_preflight": 6,
+    "needs_merge_preflight": 8,
     "needs_result_backfill": 0
   },
   "dispatch": {
@@ -26,6 +26,146 @@
     "candidates": []
   },
   "prs": [
+    {
+      "number": 75315,
+      "title": "fix: Windows stale-import guard still generates an invalid PowerShell regex, so the intended...",
+      "url": "https://github.com/openclaw/openclaw/pull/75315",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-52bf20b07d6e",
+      "head_sha": "7955628c15d849ee294afebd25353c0271470378",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-52bf20b07d6e",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-52bf20b07d6e.md",
+      "updated_at": "2026-05-01T00:19:39Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 83,
+        "counts": {
+          "CANCELLED": 3,
+          "SKIPPED": 13,
+          "SUCCESS": 65,
+          "FAILURE": 2
+        },
+        "blockers": [
+          "CI / checks-node-core-runtime-infra:FAILURE",
+          "CI / checks-node-core:FAILURE"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75315#issuecomment-4357032811",
+            "submitted_at": "2026-05-01T00:17:20Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25195746048",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25195746048",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-52bf20b07d6e",
+        "published_at": "2026-05-01T00:16:06.715Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75315",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: Windows stale-import guard still generates an invalid PowerShell regex, so the intended...",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CI / checks-node-core-runtime-infra:FAILURE; CI / checks-node-core:FAILURE",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
+    {
+      "number": 75293,
+      "title": "fix: macOS-only Parallels smoke harness regression",
+      "url": "https://github.com/openclaw/openclaw/pull/75293",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-af5a1fbddb14",
+      "head_sha": "220a50365810089e5edd8c6f660e691c6808f136",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-af5a1fbddb14",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-af5a1fbddb14.md",
+      "updated_at": "2026-04-30T22:45:44Z",
+      "mergeable": "CONFLICTING",
+      "merge_state_status": "DIRTY",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 83,
+        "counts": {
+          "CANCELLED": 3,
+          "SKIPPED": 13,
+          "SUCCESS": 67
+        },
+        "blockers": []
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75293#issuecomment-4356668440",
+            "submitted_at": "2026-04-30T22:45:44Z"
+          }
+        ]
+      },
+      "latest_record": {
+        "run_id": "25192772436",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25192772436",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-af5a1fbddb14",
+        "published_at": "2026-04-30T22:42:13.364Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75293",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: macOS-only Parallels smoke harness regression",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_rebase:CONFLICTING",
+        "needs_merge_state:DIRTY",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review"
+    },
     {
       "number": 75282,
       "title": "fix: TTS fallback fix removes the global plugin-disable guard for every capability provider...",
@@ -236,7 +376,7 @@
       "head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
       "cluster_id": "automerge-openclaw-openclaw-74506",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
-      "updated_at": "2026-04-30T22:26:09Z",
+      "updated_at": "2026-05-01T00:02:33Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "CLEAN",
       "review_decision": "",
