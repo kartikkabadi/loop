@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:43:20.960Z",
+  "generated_at": "2026-05-01T05:44:07.594Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:43:19.504Z",
+  "since": "2026-05-01T02:44:05.686Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75445
+    75423
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75445:4358014426:2026-05-01T05:43:15Z:clawsweeper_auto_repair",
-      "comment_id": "4358014426",
-      "comment_version_key": "4358014426:2026-05-01T05:43:15Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75445#issuecomment-4358014426",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75423:4357804577:2026-05-01T05:44:02Z:clawsweeper_auto_repair",
+      "comment_id": "4357804577",
+      "comment_version_key": "4357804577:2026-05-01T05:44:02Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75423#issuecomment-4357804577",
       "repo": "openclaw/openclaw",
-      "issue_number": 75445,
+      "issue_number": 75423,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:40:12Z",
-      "comment_updated_at": "2026-05-01T05:43:15Z",
+      "comment_created_at": "2026-05-01T04:27:47Z",
+      "comment_updated_at": "2026-05-01T05:44:02Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper auto repair",
       "intent": "clawsweeper_auto_repair",
@@ -47,47 +47,59 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=8059393961b87bed1b5be91e3c2389638b7a05e2)",
-      "review_summary": "The PR adds Discord and Telegram channel-action try/catch handling for unresolved SecretRef errors, regression tests for direct `describeMessageTool` discovery, and a changelog entry for the linked channel SecretRef crash.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=c49d3df7ed16f2827de98199cd9896650169469e)",
+      "review_summary": "The PR refreshes gateway health when cached channel lifecycle state differs from the live runtime snapshot, fixes provider-qualified fast-mode config lookup and forwarding to embedded agent runs, defaults missing PI model cost metadata, and adds regression tests.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "8059393961b87bed1b5be91e3c2389638b7a05e2",
+      "expected_head_sha": "c49d3df7ed16f2827de98199cd9896650169469e",
       "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(channels): tolerate unresolved SecretRef tokens during Discord/Telegram channel-actions discovery",
-        "branch": "fix/75433-channel-actions-secretref",
-        "head_sha": "8059393961b87bed1b5be91e3c2389638b7a05e2",
-        "author": "lonexreb",
+        "title": "fix(gateway): refresh stale channel health cache",
+        "branch": "codex/fix-discord-health-source-install",
+        "head_sha": "c49d3df7ed16f2827de98199cd9896650169469e",
+        "author": "steipete",
         "labels": [
-          "channel: discord",
-          "channel: telegram",
-          "size: S"
+          "gateway",
+          "commands",
+          "agents",
+          "maintainer",
+          "size: M"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75445",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75445.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75423",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75423.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 98,
+          "total": 102,
           "counts": {
-            "FAILURE": 1,
-            "CANCELLED": 2,
+            "FAILURE": 12,
+            "SUCCESS": 65,
             "SKIPPED": 23,
-            "SUCCESS": 70,
             "IN_PROGRESS": 1,
             "NEUTRAL": 1
           },
           "blockers": [
-            "Scan changed paths (precise):FAILURE",
-            "checks-node-core:IN_PROGRESS"
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:FAILURE",
+            "build-artifacts:FAILURE",
+            "checks-node-agentic-control-plane-runtime:IN_PROGRESS",
+            "check-prod-types:FAILURE",
+            "check-lint:FAILURE",
+            "check-test-types:FAILURE",
+            "check-strict-smoke:FAILURE",
+            "check-additional-extension-channels:FAILURE",
+            "check-additional-extension-bundled:FAILURE",
+            "check-additional-extension-package-boundary:FAILURE",
+            "build-smoke:FAILURE",
+            "check:FAILURE",
+            "check-additional:FAILURE"
           ]
         }
       },
@@ -96,15 +108,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1687,
+    "total_ms": 2106,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 320
+        "ms": 258
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1127
+        "ms": 1640
       },
       {
         "name": "classify_commands",
@@ -112,7 +124,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 221
+        "ms": 188
       },
       {
         "name": "append_ledger",
