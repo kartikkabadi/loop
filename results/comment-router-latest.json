@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:49:11.304Z",
+  "generated_at": "2026-05-01T04:49:34.422Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:49:10.340Z",
+  "since": "2026-05-01T01:49:33.161Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75424
+    75118
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75424:4357825074:2026-05-01T04:49:07Z:clawsweeper_needs_human",
-      "comment_id": "4357825074",
-      "comment_version_key": "4357825074:2026-05-01T04:49:07Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75424#issuecomment-4357825074",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75118:4353572889:2026-05-01T04:49:29Z:clawsweeper_needs_human",
+      "comment_id": "4353572889",
+      "comment_version_key": "4353572889:2026-05-01T04:49:29Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75118#issuecomment-4353572889",
       "repo": "openclaw/openclaw",
-      "issue_number": 75424,
+      "issue_number": 75118,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T04:33:31Z",
-      "comment_updated_at": "2026-05-01T04:49:07Z",
+      "comment_created_at": "2026-04-30T15:01:05Z",
+      "comment_updated_at": "2026-05-01T04:49:29Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,39 +47,39 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=9c5acbe1a7f3f48b0b346768f06278ea6118ffc6)",
-      "review_summary": "The PR changes Discord message-action discovery to inspect configured accounts without resolving tokens, resolves scoped channel SecretRefs before agent `tools.message` execution even with an injected config snapshot, adds regression coverage, and adds an Unreleased fix changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e4071600c99259cb1ed96202e262c1dd57983fbb)",
+      "review_summary": "The PR adds a per-server `injectCallerContext` MCP config flag, caller-header injection and placeholder env handling for bundled CLI remote MCP configs, generated config schema and changelog updates, and unit coverage across Claude, Codex, and Gemini bundle MCP paths.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "9c5acbe1a7f3f48b0b346768f06278ea6118ffc6",
+      "expected_head_sha": "e4071600c99259cb1ed96202e262c1dd57983fbb",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(discord): avoid resolving token during action discovery",
-        "branch": "fix/discord-secretref-action-discovery",
-        "head_sha": "9c5acbe1a7f3f48b0b346768f06278ea6118ffc6",
-        "author": "conan-scott",
+        "title": "feat(mcp): opt-in injectCallerContext for bundle MCP remote servers",
+        "branch": "mcp-context",
+        "head_sha": "e4071600c99259cb1ed96202e262c1dd57983fbb",
+        "author": "david-garcia-garcia",
         "labels": [
-          "channel: discord",
+          "docs",
           "agents",
-          "size: S"
+          "size: L"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75424",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75424.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75118",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75118.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "UNKNOWN",
+        "merge_state_status": "UNKNOWN",
         "review_decision": "",
         "checks": {
-          "total": 5,
+          "total": 20,
           "counts": {
-            "SUCCESS": 4,
-            "SKIPPED": 1
+            "SUCCESS": 16,
+            "SKIPPED": 4
           },
           "blockers": []
         }
@@ -89,15 +89,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1085,
+    "total_ms": 1453,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 218
+        "ms": 257
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 736
+        "ms": 994
       },
       {
         "name": "classify_commands",
@@ -105,7 +105,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 113
+        "ms": 182
       },
       {
         "name": "append_ledger",
