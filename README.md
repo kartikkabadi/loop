@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: May 1, 2026, 02:23 UTC
+Last dashboard update: May 1, 2026, 02:24 UTC
 
 ### Fleet
 
@@ -163,9 +163,9 @@ Last dashboard update: May 1, 2026, 02:23 UTC
 | Open issues | 3660 |
 | Open PRs | 3361 |
 | Open items total | 7021 |
-| Reviewed files | 7648 |
-| Unreviewed open items | 55 |
-| Due now by cadence | 1323 |
+| Reviewed files | 7649 |
+| Unreviewed open items | 54 |
+| Due now by cadence | 1324 |
 | Proposed closes awaiting apply | 8 |
 | Work candidates awaiting promotion | 2242 |
 | Closed by Codex apply | 11391 |
@@ -176,7 +176,7 @@ Last dashboard update: May 1, 2026, 02:23 UTC
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6774 | 6719 | 55 | 1067 | 8 | 2196 | 11383 | May 1, 2026, 02:21 UTC | May 1, 2026, 02:17 UTC | 706 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6774 | 6720 | 54 | 1068 | 8 | 2196 | 11383 | May 1, 2026, 02:22 UTC | May 1, 2026, 02:17 UTC | 694 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 247 | 924 | 0 | 253 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 5 | 0 | 3 | 0 | 1 | 0 | May 1, 2026, 02:03 UTC | unknown | 2 |
 
@@ -184,19 +184,19 @@ Last dashboard update: May 1, 2026, 02:23 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review in progress | May 1, 2026, 02:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25199245519) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | May 1, 2026, 02:24 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25199257988) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: May 1, 2026, 02:21 UTC. Latest close: May 1, 2026, 02:17 UTC. Latest comment sync: May 1, 2026, 02:21 UTC.
+Latest review: May 1, 2026, 02:22 UTC. Latest close: May 1, 2026, 02:17 UTC. Latest comment sync: May 1, 2026, 02:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 57 | 3 | 54 | 0 | 1 | 407 | 0 |
-| Last hour | 796 | 14 | 782 | 8 | 22 | 708 | 0 |
-| Last 24 hours | 6805 | 474 | 6331 | 15 | 644 | 4180 | 23 |
+| Last 15 minutes | 58 | 4 | 54 | 0 | 1 | 407 | 0 |
+| Last hour | 796 | 15 | 781 | 8 | 22 | 696 | 0 |
+| Last 24 hours | 6806 | 475 | 6331 | 15 | 644 | 4180 | 23 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: May 1, 2026, 02:21 UTC. Latest close: May 1, 2026, 02:17 UTC. Lat
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75362](https://github.com/openclaw/openclaw/issues/75362) | [Bug]: Regression: openai/gpt-5.4 rejects parameter-free MCP tool schemas again in v2026.4.27 | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75362.md) | complete | May 1, 2026, 02:22 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74941](https://github.com/openclaw/openclaw/pull/74941) | fix: preserve deferred heartbeat system events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74941.md) | complete | May 1, 2026, 02:21 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75361](https://github.com/openclaw/openclaw/pull/75361) | test: strengthen published upgrade survivor lane | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75361.md) | complete | May 1, 2026, 02:20 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75326](https://github.com/openclaw/openclaw/pull/75326) | perf: keep models list responsive during catalog discovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75326.md) | complete | May 1, 2026, 02:18 UTC |
@@ -249,7 +250,6 @@ Latest review: May 1, 2026, 02:21 UTC. Latest close: May 1, 2026, 02:17 UTC. Lat
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73563](https://github.com/openclaw/openclaw/pull/73563) | fix(security): add session transcript redaction guards at bare appendMessage call sites | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73563.md) | complete | May 1, 2026, 02:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72293](https://github.com/openclaw/openclaw/issues/72293) | Aborted subagent with empty content silently marked `done`, never auto-announces — parent black-holes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72293.md) | complete | May 1, 2026, 02:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72348.md) | complete | May 1, 2026, 02:14 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72121](https://github.com/openclaw/openclaw/issues/72121) | [Bug]: Anthropic auth rejects valid sk-ant-api03 API keys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72121.md) | complete | May 1, 2026, 02:14 UTC |
 
 </details>
 
@@ -267,12 +267,12 @@ Latest review: May 1, 2026, 02:21 UTC. Latest close: May 1, 2026, 02:17 UTC. Lat
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: May 1, 2026, 02:23 UTC
+Updated: May 1, 2026, 02:24 UTC
 
-State: Review in progress
+State: Apply in progress
 
-Planned 30 items across 6 shards. Capacity is 30 items. Review shards are starting; publish will merge artifacts when they finish.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25199245519](https://github.com/openclaw/clawsweeper/actions/runs/25199245519)
+Starting apply/comment-sync run for up to 8 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=51350,52353,52384,59251,60595,67235,72277,72818.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25199257988](https://github.com/openclaw/clawsweeper/actions/runs/25199257988)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -283,8 +283,8 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25199245519](https://
 | Open issues | 3430 |
 | Open PRs | 3344 |
 | Open items total | 6774 |
-| Reviewed files | 6719 |
-| Unreviewed open items | 55 |
+| Reviewed files | 6720 |
+| Unreviewed open items | 54 |
 | Archived closed files | 15386 |
 
 #### Review Outcomes
@@ -305,13 +305,13 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25199245519](https://
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 529/1460 current (931 due, 36.2%) |
-| Hourly hot item cadence (<7d) | 529/1460 current (931 due, 36.2%) |
+| Hourly cadence coverage | 529/1461 current (932 due, 36.2%) |
+| Hourly hot item cadence (<7d) | 529/1461 current (932 due, 36.2%) |
 | Daily cadence coverage | 3411/3475 current (64 due, 98.2%) |
 | Daily PR cadence | 2386/2445 current (59 due, 97.6%) |
 | Daily new issue cadence (<30d) | 1025/1030 current (5 due, 99.5%) |
-| Weekly older issue cadence | 1767/1784 current (17 due, 99%) |
-| Due now by cadence | 1067 |
+| Weekly older issue cadence | 1766/1784 current (18 due, 99%) |
+| Due now by cadence | 1068 |
 
 ### Audit Health
 
@@ -347,13 +347,13 @@ Targeted review input: `51947,61960,62112,73342`
 
 #### Latest Run Activity
 
-Latest review: May 1, 2026, 02:21 UTC. Latest close: May 1, 2026, 02:17 UTC. Latest comment sync: May 1, 2026, 02:21 UTC.
+Latest review: May 1, 2026, 02:22 UTC. Latest close: May 1, 2026, 02:17 UTC. Latest comment sync: May 1, 2026, 02:21 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 57 | 3 | 54 | 0 | 1 | 407 | 0 |
-| Last hour | 794 | 14 | 780 | 8 | 22 | 706 | 0 |
-| Last 24 hours | 6803 | 474 | 6329 | 15 | 644 | 4178 | 23 |
+| Last 15 minutes | 58 | 4 | 54 | 0 | 1 | 407 | 0 |
+| Last hour | 794 | 15 | 779 | 8 | 22 | 694 | 0 |
+| Last 24 hours | 6804 | 475 | 6329 | 15 | 644 | 4178 | 23 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: May 1, 2026, 02:21 UTC. Latest close: May 1, 2026, 02:17 UTC. Lat
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75362](https://github.com/openclaw/openclaw/issues/75362) | [Bug]: Regression: openai/gpt-5.4 rejects parameter-free MCP tool schemas again in v2026.4.27 | [close / skipped_invalid_decision](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75362.md) | complete | May 1, 2026, 02:22 UTC |
 | [#74941](https://github.com/openclaw/openclaw/pull/74941) | fix: preserve deferred heartbeat system events | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74941.md) | complete | May 1, 2026, 02:21 UTC |
 | [#75361](https://github.com/openclaw/openclaw/pull/75361) | test: strengthen published upgrade survivor lane | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75361.md) | complete | May 1, 2026, 02:20 UTC |
 | [#75326](https://github.com/openclaw/openclaw/pull/75326) | perf: keep models list responsive during catalog discovery | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75326.md) | complete | May 1, 2026, 02:18 UTC |
@@ -398,7 +399,6 @@ Latest review: May 1, 2026, 02:21 UTC. Latest close: May 1, 2026, 02:17 UTC. Lat
 | [#73563](https://github.com/openclaw/openclaw/pull/73563) | fix(security): add session transcript redaction guards at bare appendMessage call sites | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73563.md) | complete | May 1, 2026, 02:14 UTC |
 | [#72293](https://github.com/openclaw/openclaw/issues/72293) | Aborted subagent with empty content silently marked `done`, never auto-announces — parent black-holes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72293.md) | complete | May 1, 2026, 02:14 UTC |
 | [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72348.md) | complete | May 1, 2026, 02:14 UTC |
-| [#72121](https://github.com/openclaw/openclaw/issues/72121) | [Bug]: Anthropic auth rejects valid sk-ant-api03 API keys | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72121.md) | complete | May 1, 2026, 02:14 UTC |
 
 </details>
 
