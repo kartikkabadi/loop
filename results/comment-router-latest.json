@@ -1,17 +1,17 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:05:53.531Z",
+  "generated_at": "2026-05-01T03:09:46.617Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:05:51.764Z",
+  "since": "2026-05-01T00:09:44.551Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75370
+    44695
   ],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
+  "scanned_comments": 4,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -28,16 +28,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75370:4357487939:2026-05-01T03:05:47Z:clawsweeper_needs_human",
-      "comment_id": "4357487939",
-      "comment_version_key": "4357487939:2026-05-01T03:05:47Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75370#issuecomment-4357487939",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:44695:4332699168:2026-05-01T03:09:41Z:clawsweeper_needs_human",
+      "comment_id": "4332699168",
+      "comment_version_key": "4332699168:2026-05-01T03:09:41Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/44695#issuecomment-4332699168",
       "repo": "openclaw/openclaw",
-      "issue_number": 75370,
+      "issue_number": 44695,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T02:36:16Z",
-      "comment_updated_at": "2026-05-01T03:05:47Z",
+      "comment_created_at": "2026-04-28T05:54:49Z",
+      "comment_updated_at": "2026-05-01T03:09:41Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -45,48 +45,43 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b08eefc65607bd4001e3649cbd6d7df097181aff)",
-      "review_summary": "The PR adds a `pdftoppm`-based PDF page rendering fallback in `extensions/document-extract/document-extractor.ts` when `@napi-rs/canvas` cannot be loaded.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=ed1f99f655631e902d889399d326f5be28043378)",
+      "review_summary": "This PR adds an English/zh-CN setup message catalog, resolves setup locale from env/config/LANG/prompt, persists `cli.locale`, updates config schemas, and routes much of setup/finalization copy through the new catalog.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "b08eefc65607bd4001e3649cbd6d7df097181aff",
+      "expected_head_sha": "ed1f99f655631e902d889399d326f5be28043378",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable",
-        "branch": "pdftoppm-fallback",
-        "head_sha": "b08eefc65607bd4001e3649cbd6d7df097181aff",
-        "author": "mgustimz",
+        "title": "feat(onboarding): complete zh-CN locale onboarding bundle + review fixes",
+        "branch": "feat/zh-onboarding-complete-v2",
+        "head_sha": "ed1f99f655631e902d889399d326f5be28043378",
+        "author": "buzuweidao",
         "labels": [
-          "size: S"
+          "size: XL"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75370",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75370.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-44695",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-44695.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 78,
+          "total": 100,
           "counts": {
-            "SUCCESS": 62,
-            "SKIPPED": 9,
-            "IN_PROGRESS": 1,
-            "FAILURE": 6
+            "SUCCESS": 75,
+            "SKIPPED": 22,
+            "IN_PROGRESS": 2,
+            "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "check-prod-types:FAILURE",
-            "check-lint:FAILURE",
-            "check-test-types:FAILURE",
-            "check-additional-extension-bundled:FAILURE",
-            "check:FAILURE",
-            "check-additional:FAILURE"
+            "checks-node-agentic-control-plane-runtime:IN_PROGRESS",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
