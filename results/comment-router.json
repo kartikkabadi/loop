@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T03:03:59.337Z",
+  "updated_at": "2026-05-01T03:04:35.205Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63578:4323759330:2026-04-30T22:40:34Z:clawsweeper_needs_human",
