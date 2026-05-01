@@ -17,6 +17,8 @@ import {
   buildAutomergeMergeArgs,
   commandHasAction,
   commandStatusMarkerPrefix,
+  existingCommandStatusBlocksReplay,
+  existingModeStatusBlocksReplay,
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
@@ -140,6 +142,27 @@ test("comment router side effects are driven by planned actions", () => {
   assert.match(body, /could not start a re-review/);
   assert.match(body, /re-review requires an open issue or PR/);
   assert.doesNotMatch(body, /re-review requested/);
+});
+
+test("force reprocess bypasses existing command status guards", () => {
+  assert.equal(
+    existingCommandStatusBlocksReplay({ hasExistingResponse: true, forceReprocess: false }),
+    true,
+  );
+  assert.equal(
+    existingCommandStatusBlocksReplay({ hasExistingResponse: true, forceReprocess: true }),
+    false,
+  );
+
+  const existingEnabled = {
+    hasModeLabel: true,
+    hasJobPath: true,
+    hasPauseLabels: false,
+    hasOppositeModeLabel: false,
+    hasExistingModeStatusResponse: true,
+  };
+  assert.equal(existingModeStatusBlocksReplay({ ...existingEnabled, forceReprocess: false }), true);
+  assert.equal(existingModeStatusBlocksReplay({ ...existingEnabled, forceReprocess: true }), false);
 });
 
 test("automerge status marker prefix is stable across head changes", () => {

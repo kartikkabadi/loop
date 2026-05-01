@@ -217,6 +217,31 @@ export function commandHasAction(command: LooseRecord, actionName: string): bool
   return (command.actions ?? []).some((action: JsonValue) => action.action === actionName);
 }
 
+export function existingCommandStatusBlocksReplay({
+  hasExistingResponse,
+  forceReprocess,
+}: LooseRecord = {}) {
+  return Boolean(hasExistingResponse) && !forceReprocess;
+}
+
+export function existingModeStatusBlocksReplay({
+  hasModeLabel,
+  hasJobPath,
+  hasPauseLabels,
+  hasOppositeModeLabel,
+  hasExistingModeStatusResponse,
+  forceReprocess,
+}: LooseRecord = {}) {
+  return (
+    Boolean(hasModeLabel) &&
+    Boolean(hasJobPath) &&
+    !hasPauseLabels &&
+    !hasOppositeModeLabel &&
+    Boolean(hasExistingModeStatusResponse) &&
+    !forceReprocess
+  );
+}
+
 export function isMaintainerCommandAllowed({
   authorAssociation,
   repositoryPermission = null,

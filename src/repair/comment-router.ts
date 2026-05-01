@@ -32,6 +32,8 @@ import {
   commandHasAction,
   commandStatusMarker,
   commandStatusMarkerPrefix,
+  existingCommandStatusBlocksReplay,
+  existingModeStatusBlocksReplay,
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
@@ -319,12 +321,15 @@ function classifyCommand(command: LooseRecord): JsonValue {
   const next = { ...command, target };
 
   if (
-    hasExistingResponse(
-      command.issue_number,
-      command.comment_version_key ?? command.comment_id,
-      command.intent,
-      target.head_sha,
-    )
+    existingCommandStatusBlocksReplay({
+      hasExistingResponse: hasExistingResponse(
+        command.issue_number,
+        command.comment_version_key ?? command.comment_id,
+        command.intent,
+        target.head_sha,
+      ),
+      forceReprocess,
+    })
   ) {
     return {
       ...next,
@@ -362,9 +367,6 @@ function classifyCommand(command: LooseRecord): JsonValue {
       ],
     };
   }
-  if (AUTOCLOSE_INTENTS.has(command.intent)) {
-    return classifyAutoclose(next, issue, pull);
-  }
   if (command.intent === "re_review") {
     if (String(issue.state ?? "").toLowerCase() !== "open") {
       return {
@@ -399,12 +401,19 @@ function classifyCommand(command: LooseRecord): JsonValue {
     if (!pull) {
       return automergeBlocked(next, `${mode} requires a pull request`);
     }
+    const pauseLabels = pauseLabelsOn(target);
     if (
-      hasLabel(target, modeLabel) &&
-      target.job_path &&
-      pauseLabelsOn(target).length === 0 &&
-      !hasLabel(target, oppositeModeLabel) &&
-      hasExistingModeStatusResponse(command.issue_number, command.intent)
+      existingModeStatusBlocksReplay({
+        hasModeLabel: hasLabel(target, modeLabel),
+        hasJobPath: Boolean(target.job_path),
+        hasPauseLabels: pauseLabels.length > 0,
+        hasOppositeModeLabel: hasLabel(target, oppositeModeLabel),
+        hasExistingModeStatusResponse: hasExistingModeStatusResponse(
+          command.issue_number,
+          command.intent,
+        ),
+        forceReprocess,
+      })
     ) {
       return { ...next, status: "skipped", reason: `${mode} already enabled for this PR` };
     }
@@ -423,7 +432,7 @@ function classifyCommand(command: LooseRecord): JsonValue {
         status: execute ? "pending" : "planned",
       });
     }
-    for (const pausedLabel of pauseLabelsOn(target)) {
+    for (const pausedLabel of pauseLabels) {
       actions.push({
         action: "remove_label",
         label: pausedLabel,
@@ -445,6 +454,10 @@ function classifyCommand(command: LooseRecord): JsonValue {
       ],
     };
   }
+  if (AUTOCLOSE_INTENTS.has(command.intent)) {
+    return classifyAutoclose(next, issue, pull);
+  }
+
   if (command.intent === "stop") {
     return {
       ...next,
