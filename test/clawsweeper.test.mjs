@@ -1989,6 +1989,20 @@ test("commit review workflow settles and reviews from target main", () => {
   assert.doesNotMatch(workflow, /checkout --detach "\$COMMIT_SHA"/);
 });
 
+test("sweep target write tokens can merge pull requests", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const targetWriteTokenBlocks = workflow
+    .split("- name: Create target write token")
+    .slice(1)
+    .map((block) => block.split("\n      - ")[0]);
+
+  assert.equal(targetWriteTokenBlocks.length, 3);
+  for (const block of targetWriteTokenBlocks) {
+    assert.match(block, /permission-contents: write/);
+    assert.match(block, /permission-pull-requests: write/);
+  }
+});
+
 test("review parser strips environment access caveats from risks", () => {
   const parsed = parseDecision(
     closeDecision({
