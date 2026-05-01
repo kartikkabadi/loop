@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:56:12.675Z",
+  "updated_at": "2026-05-01T04:57:25.412Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72149:4323709197:2026-05-01T00:48:26Z:clawsweeper_auto_repair",
-      "comment_id": "4323709197",
-      "comment_version_key": "4323709197:2026-05-01T00:48:26Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72149#issuecomment-4323709197",
-      "comment_created_at": "2026-04-27T02:01:44Z",
-      "comment_updated_at": "2026-05-01T00:48:26Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72149,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=cc1d29c664495cc7499f679601a3ba73c61273ca)",
-      "expected_head_sha": "cc1d29c664495cc7499f679601a3ba73c61273ca",
-      "finding_id": "review-feedback",
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72128:4322902122:2026-05-01T00:48:24Z:clawsweeper_auto_repair",
       "comment_id": "4322902122",
@@ -28135,6 +28111,36 @@
         "kind": "pull_request",
         "branch": "feat/bluebubbles-reply-context-api-fallback",
         "head_sha": "04f6a8740a0b1aa1f40d14b492cb11c11d67f8f1",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:63324:4340769548:2026-05-01T04:57:20Z:clawsweeper_auto_repair",
+      "comment_id": "4340769548",
+      "comment_version_key": "4340769548:2026-05-01T04:57:20Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/63324#issuecomment-4340769548",
+      "comment_created_at": "2026-04-29T04:21:04Z",
+      "comment_updated_at": "2026-05-01T04:57:20Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 63324,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=75cd0082c381d48734cfade03e624e939250be51)",
+      "expected_head_sha": "75cd0082c381d48734cfade03e624e939250be51",
+      "finding_id": "review-feedback",
+      "status": "skipped",
+      "processed_at": "2026-05-01T04:57:25.412Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/pairing-store-silent-catch",
+        "head_sha": "75cd0082c381d48734cfade03e624e939250be51",
         "cluster_id": null,
         "job_path": null
       }
