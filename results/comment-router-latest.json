@@ -1,17 +1,17 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:16:05.153Z",
+  "generated_at": "2026-05-01T03:17:03.742Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:16:03.872Z",
+  "since": "2026-05-01T00:17:01.711Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    58162
+    75383
   ],
   "max_autoclose_targets": 8,
-  "scanned_comments": 7,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -28,16 +28,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58162:4353901488:2026-05-01T02:49:03Z:clawsweeper_needs_human",
-      "comment_id": "4353901488",
-      "comment_version_key": "4353901488:2026-05-01T02:49:03Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/58162#issuecomment-4353901488",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75383:4357601058:2026-05-01T03:16:57Z:clawsweeper_needs_human",
+      "comment_id": "4357601058",
+      "comment_version_key": "4357601058:2026-05-01T03:16:57Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75383#issuecomment-4357601058",
       "repo": "openclaw/openclaw",
-      "issue_number": 58162,
+      "issue_number": 75383,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-30T15:40:55Z",
-      "comment_updated_at": "2026-05-01T02:49:03Z",
+      "comment_created_at": "2026-05-01T03:14:39Z",
+      "comment_updated_at": "2026-05-01T03:16:57Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -45,48 +45,50 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=7b00793dd4234ef65a356fc8c82f9f6e5598e9e7)",
-      "review_summary": "The PR adds default logging redaction patterns for `AKID`, `LTAI`, `hf_`, and `r8_` tokens, regression tests for those token shapes, and a changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=735c4125f83cba62c6c1c27db0858557c0937582)",
+      "review_summary": "The PR propagates Telegram payload `audioAsVoice` to the Telegram sender as `asVoice: true` and adds a regression test for payload media voice sends.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "7b00793dd4234ef65a356fc8c82f9f6e5598e9e7",
+      "expected_head_sha": "735c4125f83cba62c6c1c27db0858557c0937582",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(logging): add redaction patterns for Tencent Cloud, Alibaba Cloud, HuggingFace and Replicate API keys",
-        "branch": "fix/redact-cloud-provider-api-keys",
-        "head_sha": "5227c30713113b540c3b2779f9e2ff11eff48b42",
-        "author": "gavyngong",
+        "title": "fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out...",
+        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-df0ee092f017",
+        "head_sha": "735c4125f83cba62c6c1c27db0858557c0937582",
+        "author": "app/clawsweeper",
         "labels": [
-          "stale",
-          "size: S"
+          "channel: telegram",
+          "size: XS",
+          "clawsweeper",
+          "clawsweeper:commit-finding"
         ],
-        "is_clawsweeper_pr": false,
-        "cluster_id": null,
-        "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-58162",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-58162.md",
+        "is_clawsweeper_pr": true,
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-df0ee092f017",
+        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-df0ee092f017.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75383",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75383.md",
         "mode": "autonomous",
-        "mergeable": "UNKNOWN",
-        "merge_state_status": "UNKNOWN",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 81,
+          "total": 101,
           "counts": {
+            "CANCELLED": 3,
+            "SKIPPED": 26,
             "SUCCESS": 70,
-            "SKIPPED": 8,
-            "IN_PROGRESS": 2,
+            "IN_PROGRESS": 1,
             "NEUTRAL": 1
           },
           "blockers": [
-            "build-artifacts:IN_PROGRESS",
             "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
-      "reason": "target is not open"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ]
 }
