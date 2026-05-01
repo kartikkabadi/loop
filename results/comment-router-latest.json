@@ -1,18 +1,18 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:39:04.502Z",
+  "generated_at": "2026-05-01T03:39:18.229Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:39:02.926Z",
+  "since": "2026-05-01T00:39:16.038Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75401
+    73822
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
+  "scanned_comments": 6,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -29,92 +29,90 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75401:4357662929:2026-05-01T03:38:59Z:clawsweeper_auto_repair",
-      "comment_id": "4357662929",
-      "comment_version_key": "4357662929:2026-05-01T03:38:59Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75401#issuecomment-4357662929",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73822:4339360546:2026-05-01T03:39:11Z:clawsweeper_needs_human",
+      "comment_id": "4339360546",
+      "comment_version_key": "4339360546:2026-05-01T03:39:11Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73822#issuecomment-4339360546",
       "repo": "openclaw/openclaw",
-      "issue_number": 75401,
+      "issue_number": 73822,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:35:12Z",
-      "comment_updated_at": "2026-05-01T03:38:59Z",
+      "comment_created_at": "2026-04-28T21:53:24Z",
+      "comment_updated_at": "2026-05-01T03:39:11Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=abd04a07578cac6bcb86ce80597c407721c19b71)",
-      "review_summary": "The PR updates MCP/OpenAI tool-parameter schema normalization for typed object schemas whose `properties` value is `undefined` or `null`, with regression coverage in agent and OpenAI strict-schema tests.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=62d18ae17386ef007d62a656a4b3a3604f621ede)",
+      "review_summary": "The PR adds SecretRef support for phone-number and sender-identity fields across WhatsApp, Signal, iMessage, BlueBubbles, and the voice-call plugin, with schema, secret-contract, manifest, UI hint, docs, changelog, and test updates.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "abd04a07578cac6bcb86ce80597c407721c19b71",
-      "finding_id": "review-feedback",
+      "expected_head_sha": "62d18ae17386ef007d62a656a4b3a3604f621ede",
+      "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(mcp): normalize empty parameter-free tool schema before sending to OpenAI (#75362)",
-        "branch": "fix/mcp-empty-schema-75362",
-        "head_sha": "abd04a07578cac6bcb86ce80597c407721c19b71",
-        "author": "symbolstar",
+        "title": "feat(config): support SecretRef for phone numbers in channel configs",
+        "branch": "codex/issue-56502-secretref-phone-numbers",
+        "head_sha": "62d18ae17386ef007d62a656a4b3a3604f621ede",
+        "author": "nickytonline",
         "labels": [
-          "agents",
-          "size: S"
+          "docs",
+          "channel: bluebubbles",
+          "channel: imessage",
+          "channel: signal",
+          "channel: voice-call",
+          "channel: whatsapp-web",
+          "size: XL"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75401",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75401.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-73822",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73822.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 90,
+          "total": 100,
           "counts": {
-            "CANCELLED": 1,
+            "SUCCESS": 81,
+            "SKIPPED": 17,
             "IN_PROGRESS": 1,
-            "SKIPPED": 11,
-            "SUCCESS": 71,
-            "FAILURE": 5,
             "NEUTRAL": 1
           },
           "blockers": [
-            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "check-lint:FAILURE",
-            "check-test-types:FAILURE",
-            "check-additional-boundaries:FAILURE",
-            "check:FAILURE",
-            "check-additional:FAILURE"
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
-      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1725,
+    "total_ms": 2455,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 256
+        "ms": 376
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1310
+        "ms": 1805
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 142
+        "ms": 255
       },
       {
         "name": "append_ledger",
