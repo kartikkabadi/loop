@@ -35,6 +35,7 @@ import {
   COMMIT_FINDING_LABEL_DESCRIPTION,
 } from "./constants.js";
 import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
+import { applyMechanicalChangelogFix } from "./mechanical-changelog.js";
 import { compactText } from "./text-utils.js";
 import {
   shouldCloseSupersededSourcePrs,
@@ -961,6 +962,10 @@ function editValidatePrepareMerge({
   let producedChanges = allowExistingChanges;
   let previousSummary = "";
   const checkpointCommits: JsonValue[] = [];
+  if (!producedChanges && !reconcileWithBase) {
+    const mechanicalFix = applyMechanicalChangelogFix({ fixArtifact, targetDir });
+    producedChanges = mechanicalFix?.status === "applied";
+  }
   const repositoryContext = buildRepositoryContext({ fixArtifact, targetDir });
   const shouldRunCodexEdit = !producedChanges || reconcileWithBase;
   const repairDeltaBaseHead =
