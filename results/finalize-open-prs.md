@@ -1,6 +1,6 @@
 # Open ClawSweeper Repair PR Finalizer
 
-Generated: 2026-05-01T04:52:09.918Z
+Generated: 2026-05-01T04:54:03.810Z
 
 ## Summary
 
@@ -11,7 +11,7 @@ Generated: 2026-05-01T04:52:09.918Z
 | security_hold | 0 |
 | needs_rebase | 2 |
 | mergeability_unknown | 0 |
-| needs_checks | 3 |
+| needs_checks | 1 |
 | needs_review | 0 |
 | needs_merge_preflight | 16 |
 | needs_result_backfill | 0 |
@@ -31,9 +31,9 @@ Status: report_only
 | PR | Title | Cluster | Mergeable | Merge State | Checks | Blockers | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [#75404](https://github.com/openclaw/openclaw/pull/75404) | fix(ci): target workflow’s pre-dispatch grep drops an alias that the ClawSweeper receiver exp... | clawsweeper-commit-openclaw-openclaw-3e67ee63b4e0 | MERGEABLE | CLEAN | CANCELLED:3 SKIPPED:12 SUCCESS:76 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
-| [#75403](https://github.com/openclaw/openclaw/pull/75403) | fix: making typing start fire-and-forget allows cleanup/idle to run before a persistent typin... | clawsweeper-commit-openclaw-openclaw-45b86450795d | MERGEABLE | UNSTABLE | SUCCESS:78 SKIPPED:22 QUEUED:1 NEUTRAL:1; blockers:1 | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-core:QUEUED, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#75403](https://github.com/openclaw/openclaw/pull/75403) | fix: making typing start fire-and-forget allows cleanup/idle to run before a persistent typin... | clawsweeper-commit-openclaw-openclaw-45b86450795d | MERGEABLE | CLEAN | SUCCESS:79 SKIPPED:22 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#75399](https://github.com/openclaw/openclaw/pull/75399) | fix: media-generation tool availability gate regression | clawsweeper-commit-openclaw-openclaw-60bdb96f2c4c | MERGEABLE | CLEAN | CANCELLED:1 SKIPPED:25 SUCCESS:79 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
-| [#75397](https://github.com/openclaw/openclaw/pull/75397) | fix: targeted hook resolution/cache path provider-runtime regressions | clawsweeper-commit-openclaw-openclaw-354084b1b320 | MERGEABLE | UNSTABLE | SUCCESS:77 SKIPPED:22 IN_PROGRESS:1 NEUTRAL:1; blockers:1 | needs_merge_state:UNSTABLE, needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS, needs_merge_preflight | repair failing checks or document unrelated main flake with touched-surface proof |
+| [#75397](https://github.com/openclaw/openclaw/pull/75397) | fix: targeted hook resolution/cache path provider-runtime regressions | clawsweeper-commit-openclaw-openclaw-354084b1b320 | MERGEABLE | CLEAN | SUCCESS:79 SKIPPED:22 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#75396](https://github.com/openclaw/openclaw/pull/75396) | fix: One low-severity contract mismatch remains on current main | clawsweeper-commit-openclaw-openclaw-e0fe02fb0970 | MERGEABLE | CLEAN | CANCELLED:2 SKIPPED:26 SUCCESS:79 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#75388](https://github.com/openclaw/openclaw/pull/75388) | fix: commit removes the runtime warning for the default group/channel private-reply behavior... | clawsweeper-commit-openclaw-openclaw-8989ceee50ab | MERGEABLE | CLEAN | SUCCESS:77 SKIPPED:9 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |
 | [#75383](https://github.com/openclaw/openclaw/pull/75383) | fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out... | clawsweeper-commit-openclaw-openclaw-df0ee092f017 | MERGEABLE | CLEAN | CANCELLED:3 SKIPPED:26 SUCCESS:72 NEUTRAL:1 | needs_merge_preflight | backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded |

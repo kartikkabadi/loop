@@ -2,7 +2,7 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-05-01T04:52:09.918Z",
+  "generated_at": "2026-05-01T04:54:03.810Z",
   "count": 16,
   "summary": {
     "open_prs": 16,
@@ -10,7 +10,7 @@
     "security_hold": 0,
     "needs_rebase": 2,
     "mergeability_unknown": 0,
-    "needs_checks": 3,
+    "needs_checks": 1,
     "needs_review": 0,
     "needs_merge_preflight": 16,
     "needs_result_backfill": 0
@@ -103,20 +103,17 @@
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-45b86450795d.md",
       "updated_at": "2026-05-01T04:49:32Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "merge_state_status": "CLEAN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
         "total": 102,
         "counts": {
-          "SUCCESS": 78,
+          "SUCCESS": 79,
           "SKIPPED": 22,
-          "QUEUED": 1,
           "NEUTRAL": 1
         },
-        "blockers": [
-          "CI / checks-node-core:QUEUED"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -158,11 +155,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-core:QUEUED",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 75399,
@@ -241,20 +236,17 @@
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-354084b1b320.md",
       "updated_at": "2026-05-01T04:50:11Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "merge_state_status": "CLEAN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 101,
+        "total": 102,
         "counts": {
-          "SUCCESS": 77,
+          "SUCCESS": 79,
           "SKIPPED": 22,
-          "IN_PROGRESS": 1,
           "NEUTRAL": 1
         },
-        "blockers": [
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -296,11 +288,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 75396,
