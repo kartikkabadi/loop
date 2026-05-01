@@ -30,6 +30,7 @@ import {
   buildAutomergeMergeArgs,
   commandHasAction,
   commandStatusMarker,
+  commandStatusMarkerPrefix,
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
@@ -37,6 +38,7 @@ import {
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderResponse,
+  staleAutomergeActivationReason,
 } from "./comment-router-core.js";
 import {
   appendLedger,
@@ -349,10 +351,21 @@ function classifyCommand(command: LooseRecord): JsonValue {
     const modeLabel = command.intent === "autofix" ? AUTOFIX_LABEL : AUTOMERGE_LABEL;
     const oppositeModeLabel = command.intent === "autofix" ? AUTOMERGE_LABEL : AUTOFIX_LABEL;
     if (String(issue.state ?? "").toLowerCase() !== "open") {
+      const staleReason = staleAutomergeActivationReason({ command: next, issue, pull });
+      if (staleReason) return { ...next, status: "skipped", reason: staleReason };
       return automergeBlocked(next, `${mode} requires an open PR`);
     }
     if (!pull) {
       return automergeBlocked(next, `${mode} requires a pull request`);
+    }
+    if (
+      hasLabel(target, modeLabel) &&
+      target.job_path &&
+      pauseLabelsOn(target).length === 0 &&
+      !hasLabel(target, oppositeModeLabel) &&
+      hasExistingModeStatusResponse(command.issue_number, command.intent)
+    ) {
+      return { ...next, status: "skipped", reason: `${mode} already enabled for this PR` };
     }
     const actions: LooseRecord[] = [];
     if (!target.job_path) {
@@ -1806,6 +1819,18 @@ function hasExistingResponse(
   });
 }
 
+function hasExistingModeStatusResponse(number: JsonValue, intent: JsonValue) {
+  const markerPrefix = commandStatusMarkerPrefix({ issue_number: number, intent });
+  const comments =
+    issueCommentsCache.get(Number(number)) ??
+    ghPaged(`repos/${targetRepo}/issues/${number}/comments?per_page=100`);
+  return comments.some((comment: JsonValue) => {
+    if (!isTrustedStatusComment(comment)) return false;
+    const body = String(comment.body ?? "");
+    return body.includes(markerPrefix) && !body.includes("could not enable");
+  });
+}
+
 async function fetchIssueCommentsAsync(number: JsonValue) {
   return ghPagedAsync<JsonValue>(`repos/${targetRepo}/issues/${number}/comments?per_page=100`);
 }
@@ -1837,13 +1862,21 @@ function postComment(command: LooseRecord, body: string) {
 
 function findExistingCommandStatusComment(command: LooseRecord) {
   const marker = commandStatusMarker(command);
+  const markerPrefix = ["autofix", "automerge"].includes(String(command.intent ?? ""))
+    ? commandStatusMarkerPrefix(command)
+    : null;
   return ghPaged(`repos/${command.repo}/issues/${command.issue_number}/comments?per_page=100`).find(
     (comment: JsonValue) => {
-      const author = String(comment.user?.login ?? "").toLowerCase();
-      if (author && author !== "clawsweeper" && !trustedBots.has(author)) return false;
-      return String(comment.body ?? "").includes(marker);
+      if (!isTrustedStatusComment(comment)) return false;
+      const body = String(comment.body ?? "");
+      return body.includes(marker) || Boolean(markerPrefix && body.includes(markerPrefix));
     },
   );
+}
+
+function isTrustedStatusComment(comment: LooseRecord) {
+  const author = String(comment.user?.login ?? "").toLowerCase();
+  return !author || author === "clawsweeper" || trustedBots.has(author);
 }
 
 function reactToComment(command: LooseRecord, content: string) {

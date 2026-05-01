@@ -702,6 +702,35 @@ export function commandStatusMarker(command: LooseRecord) {
   return `<!-- clawsweeper-command-status:${command.issue_number ?? "unknown"}:${command.intent}:${command.target?.head_sha ?? "na"} -->`;
 }
 
+export function commandStatusMarkerPrefix(command: LooseRecord) {
+  return `<!-- clawsweeper-command-status:${command.issue_number ?? "unknown"}:${command.intent}:`;
+}
+
+export function staleAutomergeActivationReason({
+  command,
+  issue,
+  pull = null,
+}: LooseRecord): string | null {
+  const intent = String(command?.intent ?? "");
+  if (!["autofix", "automerge"].includes(intent)) return null;
+
+  const closedAt = pull?.mergedAt ?? pull?.merged_at ?? issue?.closed_at ?? issue?.closedAt;
+  if (!closedAt) return null;
+
+  const commandTime = Date.parse(
+    String(command?.comment_created_at ?? command?.comment_updated_at ?? ""),
+  );
+  const closedTime = Date.parse(String(closedAt));
+  if (!Number.isFinite(commandTime) || !Number.isFinite(closedTime) || commandTime >= closedTime) {
+    return null;
+  }
+
+  if (pull?.mergedAt || pull?.merged_at || String(pull?.state ?? "").toUpperCase() === "MERGED") {
+    return `${intent} already completed after this command`;
+  }
+  return `PR closed after this ${intent} command`;
+}
+
 function inlineQuote(value: JsonValue): string {
   const text = String(value ?? "")
     .replace(/\s+/g, " ")

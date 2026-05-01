@@ -15,6 +15,7 @@ import {
   automergeJobPath,
   buildAutomergeMergeArgs,
   commandHasAction,
+  commandStatusMarkerPrefix,
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
@@ -22,6 +23,7 @@ import {
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderResponse,
+  staleAutomergeActivationReason,
 } from "../../dist/repair/comment-router-core.js";
 import { parseSimpleYaml, validateJob } from "../../dist/repair/lib.js";
 
@@ -127,6 +129,42 @@ test("comment router side effects are driven by planned actions", () => {
   assert.match(body, /could not start a re-review/);
   assert.match(body, /re-review requires an open issue or PR/);
   assert.doesNotMatch(body, /re-review requested/);
+});
+
+test("automerge status marker prefix is stable across head changes", () => {
+  assert.equal(
+    commandStatusMarkerPrefix({
+      issue_number: 75338,
+      intent: "automerge",
+      target: { head_sha: "old" },
+    }),
+    "<!-- clawsweeper-command-status:75338:automerge:",
+  );
+});
+
+test("stale automerge activation commands after merge are skipped silently", () => {
+  assert.equal(
+    staleAutomergeActivationReason({
+      command: {
+        intent: "automerge",
+        comment_created_at: "2026-05-01T01:27:37Z",
+      },
+      issue: { state: "closed", closed_at: "2026-05-01T01:49:03Z" },
+      pull: { state: "MERGED", mergedAt: "2026-05-01T01:49:03Z" },
+    }),
+    "automerge already completed after this command",
+  );
+  assert.equal(
+    staleAutomergeActivationReason({
+      command: {
+        intent: "automerge",
+        comment_created_at: "2026-05-01T01:50:00Z",
+      },
+      issue: { state: "closed", closed_at: "2026-05-01T01:49:03Z" },
+      pull: { state: "MERGED", mergedAt: "2026-05-01T01:49:03Z" },
+    }),
+    null,
+  );
 });
 
 test("automerge job helpers create stable adopted PR job identity", () => {
