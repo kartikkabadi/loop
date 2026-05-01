@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T06:04:45.722Z",
+  "generated_at": "2026-05-01T06:06:12.691Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T03:04:43.577Z",
+  "since": "2026-05-01T03:06:11.291Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75441
+    75327
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
+  "scanned_comments": 2,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75441:4357998376:2026-05-01T06:04:39Z:clawsweeper_needs_human",
-      "comment_id": "4357998376",
-      "comment_version_key": "4357998376:2026-05-01T06:04:39Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75441#issuecomment-4357998376",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75327:4357173923:2026-05-01T06:06:07Z:clawsweeper_needs_human",
+      "comment_id": "4357173923",
+      "comment_version_key": "4357173923:2026-05-01T06:06:07Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75327#issuecomment-4357173923",
       "repo": "openclaw/openclaw",
-      "issue_number": 75441,
+      "issue_number": 75327,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:34:07Z",
-      "comment_updated_at": "2026-05-01T06:04:39Z",
+      "comment_created_at": "2026-05-01T00:54:57Z",
+      "comment_updated_at": "2026-05-01T06:06:07Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,50 +47,49 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=67d3ef1b13a0ce1b5df4bb080008db488e5113e9)",
-      "review_summary": "The PR logs config observe-recovery health-state write failures, records failed backup-copy restores with audit error fields, adds async and sync regression coverage, and updates the changelog.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=2c5d72f2bdf29a41bd6140b4a195be7f24132028)",
+      "review_summary": "The PR adds a `WasMentioned` reply-delivery context flag and tests so group/channel @mentions convert `message_tool_only` source reply delivery to `automatic`, including requested modes.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "67d3ef1b13a0ce1b5df4bb080008db488e5113e9",
+      "expected_head_sha": "2c5d72f2bdf29a41bd6140b4a195be7f24132028",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(config): log observe recovery write failures",
-        "branch": "fix/config-recovery-observe-errors",
-        "head_sha": "67d3ef1b13a0ce1b5df4bb080008db488e5113e9",
-        "author": "sallyom",
+        "title": "fix: deliver group/channel replies automatically when bot is @mentioned",
+        "branch": "fix/group-mention-reply-delivery",
+        "head_sha": "2c5d72f2bdf29a41bd6140b4a195be7f24132028",
+        "author": "dalu610",
         "labels": [
-          "maintainer",
-          "size: M"
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75441",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75441.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75327",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75327.md",
         "mode": "autonomous",
-        "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
+        "mergeable": "UNKNOWN",
+        "merge_state_status": "UNKNOWN",
         "review_decision": "",
         "checks": {
-          "total": 106,
+          "total": 85,
           "counts": {
-            "FAILURE": 8,
-            "SUCCESS": 76,
-            "SKIPPED": 21,
+            "SUCCESS": 68,
+            "SKIPPED": 9,
+            "FAILURE": 6,
+            "IN_PROGRESS": 1,
             "NEUTRAL": 1
           },
           "blockers": [
-            "Scan changed paths (precise):FAILURE",
             "checks-node-agentic-cli:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
             "check-dependencies:FAILURE",
             "check-additional-boundaries:FAILURE",
             "checks-node-core-support-boundary:FAILURE",
             "check:FAILURE",
-            "check-additional:FAILURE",
-            "checks-node-core:FAILURE"
+            "check-additional:FAILURE"
           ]
         }
       },
@@ -99,23 +98,23 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2384,
+    "total_ms": 1583,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 313
+        "ms": 280
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1825
+        "ms": 1110
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 232
+        "ms": 176
       },
       {
         "name": "append_ledger",
