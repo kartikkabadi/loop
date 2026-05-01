@@ -44,7 +44,7 @@ jobs:
 
       - uses: ./.github/actions/setup-state
         with:
-          token: ${{ steps.app_token.outputs.token }}
+          token: ${{ secrets.OPENCLAW_GH_TOKEN }}
 
       - uses: ./.github/actions/setup-pnpm
         with:

@@ -223,15 +223,9 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - name: Create state token
+      - name: Use state token
         id: state-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: clawsweeper-state
-          permission-contents: write
+        run: echo "token=${{ secrets.OPENCLAW_GH_TOKEN }}" >> "$GITHUB_OUTPUT"
 
       - uses: ./.github/actions/setup-state
         with:
@@ -463,15 +457,9 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - name: Create state token
+      - name: Use state token
         id: state-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: clawsweeper-state
-          permission-contents: write
+        run: echo "token=${{ secrets.OPENCLAW_GH_TOKEN }}" >> "$GITHUB_OUTPUT"
 
       - uses: ./clawsweeper/.github/actions/setup-state
         with:
@@ -621,15 +609,9 @@ jobs:
           permission-issues: write
           permission-pull-requests: read
 
-      - name: Create state token
+      - name: Use state token
         id: state-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: clawsweeper-state
-          permission-contents: read
+        run: echo "token=${{ secrets.OPENCLAW_GH_TOKEN }}" >> "$GITHUB_OUTPUT"
 
       - uses: ./clawsweeper/.github/actions/setup-state
         with:
@@ -739,15 +721,9 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - name: Create state token
+      - name: Use state token
         id: state-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: clawsweeper-state
-          permission-contents: write
+        run: echo "token=${{ secrets.OPENCLAW_GH_TOKEN }}" >> "$GITHUB_OUTPUT"
 
       - uses: ./.github/actions/setup-state
         with:
@@ -1030,15 +1006,9 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - name: Create state token
+      - name: Use state token
         id: state-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: clawsweeper-state
-          permission-contents: write
+        run: echo "token=${{ secrets.OPENCLAW_GH_TOKEN }}" >> "$GITHUB_OUTPUT"
 
       - uses: ./.github/actions/setup-state
         with:
@@ -1114,15 +1084,9 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - name: Create state token
+      - name: Use state token
         id: state-token
-        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
-        with:
-          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
-          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: clawsweeper-state
-          permission-contents: write
+        run: echo "token=${{ secrets.OPENCLAW_GH_TOKEN }}" >> "$GITHUB_OUTPUT"
 
       - uses: ./.github/actions/setup-state
         with:
