@@ -67,7 +67,10 @@ Defaults:
 - exact event review: 1 shard, 1 item
 - exact manual hot intake: 1 shard, 1 item
 - broad hot intake: 50 shards, batch size 1, scans up to 10 GitHub pages
-- normal backfill: 100 shards, batch size 3, scans up to 250 GitHub pages
+- scheduled normal backfill: 100 shards, batch size 1, scans up to 250 GitHub
+  pages
+- manual normal backfill: defaults to 100 shards, batch size 3, scans up to 250
+  GitHub pages unless overridden
 
 The hard planner cap is 100 shards. The workflow clamps invalid or larger
 `shard_count` inputs to 100.
@@ -75,8 +78,9 @@ The hard planner cap is 100 shards. The workflow clamps invalid or larger
 Normal backfill now runs every 5 minutes for `openclaw/openclaw`. Because its
 concurrency group allows only one running normal backfill per target repo, the
 effect is a continuous drain loop: when due backlog exists, the active run can
-hold about 100 Codex review shards, and the next scheduled tick is available as
-the backstop or pending continuation.
+hold about 100 Codex review shards with one item per shard, and the next
+scheduled tick is available as the backstop or pending continuation. Manual
+normal reviews keep the larger default batch size for targeted catch-up runs.
 
 ## Cadence
 
