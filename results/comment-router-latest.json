@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:37:03.025Z",
+  "generated_at": "2026-05-01T05:37:21.292Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:37:00.994Z",
+  "since": "2026-05-01T02:37:19.524Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75442
+    75441
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75442:4357999113:2026-05-01T05:36:57Z:clawsweeper_needs_human",
-      "comment_id": "4357999113",
-      "comment_version_key": "4357999113:2026-05-01T05:36:57Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75442#issuecomment-4357999113",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75441:4357998376:2026-05-01T05:37:15Z:clawsweeper_needs_human",
+      "comment_id": "4357998376",
+      "comment_version_key": "4357998376:2026-05-01T05:37:15Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75441#issuecomment-4357998376",
       "repo": "openclaw/openclaw",
-      "issue_number": 75442,
+      "issue_number": 75441,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:34:24Z",
-      "comment_updated_at": "2026-05-01T05:36:57Z",
+      "comment_created_at": "2026-05-01T05:34:07Z",
+      "comment_updated_at": "2026-05-01T05:37:15Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,42 +47,47 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=915278e6cdaa20484a51daf9bb1990dd70856e07)",
-      "review_summary": "The PR adds `package.json` `files` exclusions for docs assets/images and a changelog entry describing the npm tarball size reduction.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=8298157bda3d00801bb3af61f4a4fc4b44541b59)",
+      "review_summary": "The PR adds warnings for config health-state write failures and failed backup-restore copies in async and sync config observe recovery, extends regression coverage, and adds a changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "915278e6cdaa20484a51daf9bb1990dd70856e07",
+      "expected_head_sha": "8298157bda3d00801bb3af61f4a4fc4b44541b59",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "chore(packaging): exclude docs images/assets from npm tarball",
-        "branch": "strip-docs-images-from-npm-tarball",
-        "head_sha": "915278e6cdaa20484a51daf9bb1990dd70856e07",
-        "author": "sebtardif",
+        "title": "fix(config): log observe recovery write failures",
+        "branch": "fix/config-recovery-observe-errors",
+        "head_sha": "8298157bda3d00801bb3af61f4a4fc4b44541b59",
+        "author": "sallyom",
         "labels": [
-          "size: XS"
+          "maintainer",
+          "size: M"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75442",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75442.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75441",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75441.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 78,
+          "total": 103,
           "counts": {
             "CANCELLED": 1,
-            "SKIPPED": 8,
-            "SUCCESS": 68,
-            "IN_PROGRESS": 1
+            "SKIPPED": 23,
+            "SUCCESS": 75,
+            "IN_PROGRESS": 1,
+            "FAILURE": 2,
+            "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "check-lint:FAILURE",
+            "check:FAILURE"
           ]
         }
       },
@@ -91,23 +96,23 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2319,
+    "total_ms": 1936,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 378
+        "ms": 259
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1644
+        "ms": 1500
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 281
+        "ms": 163
       },
       {
         "name": "append_ledger",
