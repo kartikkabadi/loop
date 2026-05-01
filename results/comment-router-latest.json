@@ -1,22 +1,20 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:52:45.583Z",
+  "generated_at": "2026-05-01T03:53:25.179Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:52:43.352Z",
+  "since": "2026-05-01T00:53:23.389Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    73632
+    75400
   ],
-  "comment_ids": [
-    4357708582
-  ],
+  "comment_ids": [],
   "max_autoclose_targets": 8,
   "scanned_comments": 1,
   "commands_seen": 1,
-  "actionable": 1,
+  "actionable": 0,
   "trusted_bots": [
     "clawsweeper[bot]",
     "openclaw-clawsweeper[bot]"
@@ -31,150 +29,89 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "comment-router:openclaw/openclaw:73632:4357708582:2026-05-01T03:52:09Z:automerge",
-      "comment_id": "4357708582",
-      "comment_version_key": "4357708582:2026-05-01T03:52:09Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73632#issuecomment-4357708582",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75400:4357661176:2026-05-01T03:53:20Z:clawsweeper_auto_repair",
+      "comment_id": "4357661176",
+      "comment_version_key": "4357661176:2026-05-01T03:53:20Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75400#issuecomment-4357661176",
       "repo": "openclaw/openclaw",
-      "issue_number": 73632,
-      "author": "joshavant",
+      "issue_number": 75400,
+      "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:52:09Z",
-      "comment_updated_at": "2026-05-01T03:52:09Z",
-      "trigger": "mention",
-      "command": "automerge",
-      "intent": "automerge",
+      "comment_created_at": "2026-05-01T03:34:36Z",
+      "comment_updated_at": "2026-05-01T03:53:20Z",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
       "autoclose_message": null,
-      "trusted_bot": false,
-      "trusted_bot_author": null,
-      "automation_source": null,
-      "repair_reason": null,
-      "review_summary": "",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=15db32581bfcdbd209694f30127d72cf2f36b2ee)",
+      "review_summary": "The PR updates the OpenRouter stream wrapper and shared provider-stream helper/tests so Anthropic model refs routed through OpenRouter strip trailing assistant prefill when reasoning is enabled.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": null,
-      "finding_id": null,
-      "status": "executed",
-      "actions": [
-        {
-          "action": "ensure_automerge_job",
-          "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md",
-          "status": "executed",
-          "mode": "autonomous",
-          "cluster_id": "automerge-openclaw-openclaw-73632",
-          "status_detail": "written"
-        },
-        {
-          "action": "label",
-          "label": "clawsweeper:automerge",
-          "status": "executed"
-        },
-        {
-          "action": "dispatch_clawsweeper",
-          "workflow": "sweep.yml",
-          "status": "executed",
-          "dispatched_at": "2026-05-01T03:52:48.396Z",
-          "event": "repository_dispatch",
-          "repo": "openclaw/clawsweeper",
-          "item_number": 73632
-        },
-        {
-          "action": "comment",
-          "status": "executed",
-          "commented_at": "2026-05-01T03:52:49.480Z",
-          "response_comment_id": null,
-          "response_comment_mode": "created"
-        }
-      ],
-      "author_repository_permission": "write",
+      "expected_head_sha": "15db32581bfcdbd209694f30127d72cf2f36b2ee",
+      "finding_id": "review-feedback",
+      "status": "skipped",
+      "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix voice-call SecretRef auth token",
-        "branch": "fix-voice-call-secretref-auth-token",
-        "head_sha": "a0b43ad09f523dc6f4a62399b3bc06a072485a68",
-        "author": "vacinc",
+        "title": "Strip OpenRouter Anthropic assistant prefill",
+        "branch": "codex/issue-75395-openrouter-prefill",
+        "head_sha": "15db32581bfcdbd209694f30127d72cf2f36b2ee",
+        "author": "udaymanish6",
         "labels": [
-          "docs",
-          "channel: voice-call",
+          "agents",
           "size: S"
         ],
         "is_clawsweeper_pr": false,
-        "cluster_id": "automerge-openclaw-openclaw-73632",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-73632",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73632.md",
+        "cluster_id": null,
+        "job_path": null,
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75400",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75400.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 94,
+          "total": 101,
           "counts": {
-            "SUCCESS": 41,
-            "IN_PROGRESS": 35,
-            "SKIPPED": 17,
+            "IN_PROGRESS": 2,
+            "SUCCESS": 77,
+            "SKIPPED": 19,
+            "FAILURE": 2,
             "NEUTRAL": 1
           },
           "blockers": [
-            "Security High (actions):IN_PROGRESS",
-            "build-artifacts:IN_PROGRESS",
-            "Critical Quality (core-auth-secrets):IN_PROGRESS",
-            "checks-fast-bundled:IN_PROGRESS",
-            "checks-fast-contracts-plugins-a:IN_PROGRESS",
-            "checks-fast-contracts-channels-a:IN_PROGRESS",
-            "checks-fast-contracts-channels-b:IN_PROGRESS",
-            "checks-fast-contracts-channels-c:IN_PROGRESS",
-            "checks-node-core-fast-support:IN_PROGRESS",
-            "checks-node-core-runtime-infra:IN_PROGRESS",
-            "checks-node-core-runtime-media-ui:IN_PROGRESS",
-            "checks-node-core-runtime-shared:IN_PROGRESS",
-            "checks-node-agentic-control-plane-http-models:IN_PROGRESS",
-            "checks-node-agentic-control-plane-runtime:IN_PROGRESS",
-            "checks-node-agentic-cli:IN_PROGRESS",
-            "checks-node-agentic-commands-doctor-shared:IN_PROGRESS",
-            "checks-node-agentic-commands-status-tools:IN_PROGRESS",
-            "checks-node-agentic-gateway-core:IN_PROGRESS",
-            "checks-node-agentic-gateway-methods:IN_PROGRESS",
-            "checks-node-auto-reply-reply-agent-runner:IN_PROGRESS",
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
             "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "checks-node-auto-reply-reply-session:IN_PROGRESS",
-            "check-dependencies:IN_PROGRESS",
-            "check-policy-guards:IN_PROGRESS",
-            "check-test-types:IN_PROGRESS",
-            "check-additional-boundaries:IN_PROGRESS",
-            "check-additional-extension-channels:IN_PROGRESS",
-            "check-additional-extension-bundled:IN_PROGRESS",
-            "check-additional-extension-package-boundary:IN_PROGRESS",
-            "check-additional-runtime-topology-architecture:IN_PROGRESS",
-            "checks-windows-node-test:IN_PROGRESS",
-            "macos-node:IN_PROGRESS",
-            "macos-swift:IN_PROGRESS",
-            "android-test-third-party:IN_PROGRESS",
-            "android-build-play:IN_PROGRESS"
+            "check-test-types:FAILURE",
+            "check:FAILURE"
           ]
         }
-      }
+      },
+      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 6135,
+    "total_ms": 1918,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 497
+        "ms": 221
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1724
+        "ms": 1559
       },
       {
         "name": "classify_commands",
-        "ms": 2
+        "ms": 1
       },
       {
         "name": "execute_commands",
-        "ms": 3897
+        "ms": 119
       },
       {
         "name": "append_ledger",
