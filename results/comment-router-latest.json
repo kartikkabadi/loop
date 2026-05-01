@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T06:20:28.422Z",
+  "generated_at": "2026-05-01T06:21:44.709Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T03:20:27.024Z",
+  "since": "2026-05-01T03:21:43.099Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75466
+    75461
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75466:4358120758:2026-05-01T06:20:23Z:clawsweeper_needs_human",
-      "comment_id": "4358120758",
-      "comment_version_key": "4358120758:2026-05-01T06:20:23Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75466#issuecomment-4358120758",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75461:4358098851:2026-05-01T06:21:40Z:clawsweeper_needs_human",
+      "comment_id": "4358098851",
+      "comment_version_key": "4358098851:2026-05-01T06:21:40Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75461#issuecomment-4358098851",
       "repo": "openclaw/openclaw",
-      "issue_number": 75466,
+      "issue_number": 75461,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T06:17:36Z",
-      "comment_updated_at": "2026-05-01T06:20:23Z",
+      "comment_created_at": "2026-05-01T06:09:51Z",
+      "comment_updated_at": "2026-05-01T06:21:40Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,41 +47,48 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=3acb4017a593f5a0de683addd5c620a6113fa673)",
-      "review_summary": "The PR adds a Lit CodeMirror 6 JSON5 raw config editor, wires it into the Control UI raw config view, updates one browser test, adds CodeMirror-related dependencies, and edits the changelog.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b2c149fcf342100daa02e820b4305224ad8975ed)",
+      "review_summary": "The PR re-exports four reply-prefix/reply-pipeline helpers from the deprecated plugin SDK compat surface, adds root-alias contract assertions, and records the fix in the changelog.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "3acb4017a593f5a0de683addd5c620a6113fa673",
+      "expected_head_sha": "b2c149fcf342100daa02e820b4305224ad8975ed",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(ui): replace textarea with CodeMirror 6 JSON editor in raw config view",
-        "branch": "fix/config-editor-v3",
-        "head_sha": "3acb4017a593f5a0de683addd5c620a6113fa673",
-        "author": "tardisyuan",
+        "title": "fix(plugin-sdk): restore reply-prefix helpers on legacy compat surface",
+        "branch": "fix/plugin-sdk-compat-reply-prefix-helpers",
+        "head_sha": "b2c149fcf342100daa02e820b4305224ad8975ed",
+        "author": "pfanp",
         "labels": [
-          "app: web-ui",
-          "size: M"
+          "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75466",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75466.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75461",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75461.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
-        "merge_state_status": "CLEAN",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 38,
+          "total": 100,
           "counts": {
-            "CANCELLED": 1,
-            "SKIPPED": 31,
-            "SUCCESS": 6
+            "SUCCESS": 74,
+            "SKIPPED": 20,
+            "FAILURE": 4,
+            "IN_PROGRESS": 1,
+            "NEUTRAL": 1
           },
-          "blockers": []
+          "blockers": [
+            "checks-node-agentic-cli:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "check-additional-boundaries:FAILURE",
+            "checks-node-core-support-boundary:FAILURE",
+            "check-additional:FAILURE"
+          ]
         }
       },
       "reason": "PR is not opted into ClawSweeper autofix or automerge"
@@ -89,15 +96,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1522,
+    "total_ms": 1735,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 230
+        "ms": 221
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1158
+        "ms": 1379
       },
       {
         "name": "classify_commands",
@@ -105,7 +112,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 115
+        "ms": 118
       },
       {
         "name": "append_ledger",
