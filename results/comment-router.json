@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T05:08:15.032Z",
+  "updated_at": "2026-05-01T05:08:29.460Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71899:4340801074:2026-05-01T00:48:11Z:clawsweeper_needs_human",
-      "comment_id": "4340801074",
-      "comment_version_key": "4340801074:2026-05-01T00:48:11Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/71899#issuecomment-4340801074",
-      "comment_created_at": "2026-04-29T04:30:35Z",
-      "comment_updated_at": "2026-05-01T00:48:11Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 71899,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=bdfe00311404f014c6a1094e3b11116a3591a63d)",
-      "expected_head_sha": "bdfe00311404f014c6a1094e3b11116a3591a63d",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71887:4340800840:2026-05-01T00:48:09Z:clawsweeper_auto_repair",
       "comment_id": "4340800840",
@@ -28217,6 +28193,36 @@
         "kind": "pull_request",
         "branch": "codex/fix-discord-health-source-install",
         "head_sha": "b95945157ead859dd51a47bb682cc4be465d0807",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:58823:4346662451:2026-05-01T05:08:24Z:clawsweeper_needs_human",
+      "comment_id": "4346662451",
+      "comment_version_key": "4346662451:2026-05-01T05:08:24Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/58823#issuecomment-4346662451",
+      "comment_created_at": "2026-04-29T18:54:26Z",
+      "comment_updated_at": "2026-05-01T05:08:24Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 58823,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=271777bc9620b352de70de794ad242409ec77430)",
+      "expected_head_sha": "271777bc9620b352de70de794ad242409ec77430",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T05:08:29.460Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/subagent-model-precedence-global-default",
+        "head_sha": "271777bc9620b352de70de794ad242409ec77430",
         "cluster_id": null,
         "job_path": null
       }
