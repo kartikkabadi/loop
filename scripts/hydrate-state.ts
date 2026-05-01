@@ -10,8 +10,15 @@ const GENERATED_PATHS = [
   "repair-apply-report.json",
 ];
 
+type Args = {
+  stateDir?: string;
+  worktree?: string;
+};
+
 const args = parseArgs(process.argv.slice(2));
-const stateRoot = path.resolve(args.stateDir ?? process.env.CLAWSWEEPER_STATE_DIR ?? "../clawsweeper-state");
+const stateRoot = path.resolve(
+  args.stateDir ?? process.env.CLAWSWEEPER_STATE_DIR ?? "../clawsweeper-state",
+);
 const worktreeRoot = path.resolve(args.worktree ?? process.cwd());
 
 for (const relativePath of GENERATED_PATHS) {
@@ -25,8 +32,8 @@ for (const relativePath of GENERATED_PATHS) {
 
 console.log(JSON.stringify({ hydrated: GENERATED_PATHS, source: stateRoot, target: worktreeRoot }));
 
-function parseArgs(argv) {
-  const parsed = {};
+function parseArgs(argv: string[]): Args {
+  const parsed: Args = {};
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--") continue;
@@ -37,7 +44,7 @@ function parseArgs(argv) {
   return parsed;
 }
 
-function requiredValue(argv, index, flag) {
+function requiredValue(argv: string[], index: number, flag: string): string {
   const value = argv[index];
   if (!value || value.startsWith("--")) throw new Error(`${flag} requires a value`);
   return value;

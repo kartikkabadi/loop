@@ -81,7 +81,7 @@ jobs:
             .github
             jobs
             results
-            scripts/hydrate-state.mjs
+            scripts/hydrate-state.ts
             src/repair
             package.json
             pnpm-lock.yaml

@@ -20,6 +20,10 @@ inputs:
     description: ClawSweeper checkout path to hydrate.
     required: false
     default: .
+  node-version:
+    description: Node.js version used to run the TypeScript hydrator.
+    required: false
+    default: "latest"
 runs:
   using: composite
   steps:
@@ -35,8 +39,12 @@ runs:
       shell: bash
       run: echo "CLAWSWEEPER_STATE_DIR=$GITHUB_WORKSPACE/${{ inputs.state-path }}" >> "$GITHUB_ENV"
 
+    - uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+
     - name: Hydrate generated state
       shell: bash
       env:
         CLAWSWEEPER_STATE_DIR: ${{ inputs.state-path }}
-      run: node "${{ inputs.worktree-path }}/scripts/hydrate-state.mjs" --state-dir "${{ inputs.state-path }}" --worktree "${{ inputs.worktree-path }}"
+      run: node "${{ inputs.worktree-path }}/scripts/hydrate-state.ts" --state-dir "${{ inputs.state-path }}" --worktree "${{ inputs.worktree-path }}"

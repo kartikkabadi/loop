@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const activeRoots = [
+const activeRoots: string[] = [
   ".github/workflows",
   "src",
   "test",
@@ -19,8 +19,14 @@ const activeRoots = [
   "tsconfig.repair.json",
 ];
 
-const ignoredDirs = new Set([".git", "dist", "node_modules", "records", ".clawsweeper-repair"]);
-const textExtensions = new Set([
+const ignoredDirs = new Set<string>([
+  ".git",
+  "dist",
+  "node_modules",
+  "records",
+  ".clawsweeper-repair",
+]);
+const textExtensions = new Set<string>([
   ".cjs",
   ".d.ts",
   ".json",
@@ -34,7 +40,7 @@ const textExtensions = new Set([
   ".yml",
 ]);
 
-const retiredPatterns = [
+const retiredPatterns: { label: string; pattern: RegExp }[] = [
   { label: "Clownfish product name", pattern: /\bclownfish\b/i },
   { label: "ProjectClownfish name", pattern: /\bProjectClownFish\b|\bProjectClownfish\b/i },
   { label: "old Clownfish env prefix", pattern: /\bCLAWSWEEPER_CLOWNFISH\b/ },
@@ -46,7 +52,15 @@ const retiredPatterns = [
   { label: "retired review token", pattern: /\bCLAWSWEEPER_REVIEW_GH_TOKEN\b/ },
 ];
 
-const findings = [];
+type Finding = {
+  file: string;
+  line: number;
+  column: number;
+  label: string;
+  match: string;
+};
+
+const findings: Finding[] = [];
 
 for (const entry of activeRoots) {
   const absolute = path.join(root, entry);
@@ -64,7 +78,7 @@ if (findings.length > 0) {
   process.exit(1);
 }
 
-function scan(absolute) {
+function scan(absolute: string): void {
   const stat = fs.statSync(absolute);
   const name = path.basename(absolute);
   if (stat.isDirectory()) {
@@ -74,7 +88,7 @@ function scan(absolute) {
   }
   if (!stat.isFile() || !isTextFile(absolute)) return;
   const relative = path.relative(root, absolute);
-  if (relative === "scripts/check-active-surface.mjs") return;
+  if (relative === "scripts/check-active-surface.ts") return;
   const text = fs.readFileSync(absolute, "utf8");
   const lines = text.split(/\r?\n/);
   lines.forEach((line, index) => {
@@ -92,7 +106,7 @@ function scan(absolute) {
   });
 }
 
-function isTextFile(file) {
+function isTextFile(file: string): boolean {
   const basename = path.basename(file);
   if (basename === "package.json") return true;
   if (basename.startsWith("tsconfig") && basename.endsWith(".json")) return true;
