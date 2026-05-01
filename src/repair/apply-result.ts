@@ -25,6 +25,10 @@ import {
   CLAWSWEEPER_LABEL_COLOR,
   CLAWSWEEPER_LABEL_DESCRIPTION,
 } from "./constants.js";
+import {
+  buildRepairSquashMergeMessage,
+  writeRepairSquashMergeBody,
+} from "./repair-merge-message.js";
 
 const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 const CLOSE_ACTIONS = new Set([
@@ -477,6 +481,7 @@ function applyMergeAction({
       live_updated_at: live.updated_at,
     };
   }
+  const mergePreflight = findMergePreflight(result, target);
 
   if (process.env.CLAWSWEEPER_ALLOW_MERGE !== "1") {
     if (!dryRun) labelForClawSweeperReview(result.repo, target);
@@ -501,7 +506,28 @@ function applyMergeAction({
     };
   }
 
-  ghWithRetry(["pr", "merge", String(target), "--repo", result.repo, "--squash"]);
+  const mergeMessage = buildRepairSquashMergeMessage({
+    target,
+    title: view.title ?? pullRequest.title,
+    headSha: pullRequest.head?.sha,
+    preflight: mergePreflight,
+    reason: "merged by ClawSweeper Repair",
+  });
+  const bodyFile = writeRepairSquashMergeBody(target, pullRequest.head?.sha, mergeMessage.body);
+  const mergeArgs = [
+    "pr",
+    "merge",
+    String(target),
+    "--repo",
+    result.repo,
+    "--squash",
+    "--subject",
+    String(mergeMessage.subject),
+    "--body-file",
+    bodyFile,
+  ];
+  if (pullRequest.head?.sha) mergeArgs.push("--match-head-commit", String(pullRequest.head.sha));
+  ghWithRetry(mergeArgs);
   const merged = fetchPullRequest(result.repo, target);
   return {
     ...base,
@@ -512,6 +538,9 @@ function applyMergeAction({
     merged_at: merged.merged_at ?? null,
     merge_commit_sha: merged.merge_commit_sha ?? null,
     merge_method: "squash",
+    commit_subject: mergeMessage.subject,
+    summary_lines: mergeMessage.summaryLines,
+    fixup_lines: mergeMessage.fixupLines,
   };
 }
 

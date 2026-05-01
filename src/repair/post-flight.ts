@@ -27,6 +27,10 @@ import {
 } from "./constants.js";
 import { AUTOMERGE_LABEL } from "./comment-router-core.js";
 import { numberEnv } from "./env-utils.js";
+import {
+  buildRepairSquashMergeMessage,
+  writeRepairSquashMergeBody,
+} from "./repair-merge-message.js";
 import { compactText as compactPlainText } from "./text-utils.js";
 
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
@@ -212,8 +216,29 @@ function finalizeFixPr(action: LooseRecord) {
     };
   }
 
+  const mergeMessage = buildRepairSquashMergeMessage({
+    target: parsed.number,
+    title: view.title ?? pull.title,
+    headSha: pull.head?.sha,
+    preflight: action.merge_preflight,
+    reason: "merged by ClawSweeper Repair post-flight",
+  });
+  const bodyFile = writeRepairSquashMergeBody(parsed.number, pull.head?.sha, mergeMessage.body);
+  const mergeArgs = [
+    "pr",
+    "merge",
+    String(parsed.number),
+    "--repo",
+    result.repo,
+    "--squash",
+    "--subject",
+    String(mergeMessage.subject),
+    "--body-file",
+    bodyFile,
+  ];
+  if (pull.head?.sha) mergeArgs.push("--match-head-commit", String(pull.head.sha));
   try {
-    ghWithRetry(["pr", "merge", String(parsed.number), "--repo", result.repo, "--squash"]);
+    ghWithRetry(mergeArgs);
   } catch (error) {
     const detail = ghErrorText(error);
     if (isRecoverableMergeRace(detail)) {
@@ -239,6 +264,9 @@ function finalizeFixPr(action: LooseRecord) {
     merged_at: merged.merged_at ?? null,
     merge_commit_sha: merged.merge_commit_sha ?? null,
     merge_method: "squash",
+    commit_subject: mergeMessage.subject,
+    summary_lines: mergeMessage.summaryLines,
+    fixup_lines: mergeMessage.fixupLines,
     waited_ms: waitedMs,
   };
 }
