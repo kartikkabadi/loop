@@ -107,6 +107,10 @@ jobs:
           permission-workflows: write
           permission-actions: read
 
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+
       - name: Prepare commit finding intake
         id: prepare
         env:

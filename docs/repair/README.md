@@ -41,11 +41,15 @@ The default workflow is proposal-first. It does not comment or close unless a jo
 
 ## State Boundaries
 
-`jobs/` and `results/` are durable operational state, not generated source. They may contain historical run text and audit evidence. Active code, prompts, workflows, docs, schemas, and tests are covered by `pnpm run check:active-surface`, which rejects retired project names and old token variables before the full gate runs.
+`jobs/` and `results/` are durable operational state in
+`openclaw/clawsweeper-state`, not generated source in this repo. They may
+contain historical run text and audit evidence. Active code, prompts, workflows,
+docs, schemas, and tests are covered by `pnpm run check:active-surface`, which
+rejects retired project names and old token variables before the full gate runs.
 
 ## Dashboard
 
-Live dashboard: https://github.com/openclaw/clawsweeper-dashboard
+Live dashboard and generated state: https://github.com/openclaw/clawsweeper-state
 
 ## How It Works
 
@@ -85,7 +89,9 @@ Each cluster job:
 6. Reviews the worker artifact with deterministic safety checks.
 7. Executes credited fix artifacts through `scripts/execute-fix-artifact.ts` when the fix gate is open: repair a writable contributor branch first, treating same-repo head branches as writable even when GitHub reports `maintainer_can_modify=false`; otherwise raise a narrow replacement PR, copy source labels, add non-bot source PR authors as replacement co-authors, and close the uneditable source PR after the replacement push succeeds.
 8. Applies guarded close/comment and explicit merge actions through `scripts/apply-result.ts`.
-9. Publishes a sanitized result ledger back to this repo under `results/`, `jobs/openclaw/closed/`, and `repair-apply-report.json`; the external dashboard renders from that ledger.
+9. Publishes a sanitized result ledger back to `openclaw/clawsweeper-state`
+   under `results/`, `jobs/openclaw/closed/`, and `repair-apply-report.json`;
+   the external dashboard renders from that ledger.
 
 Codex does not receive a GitHub token during classification. The runner preflights GitHub state before model execution, then Codex receives those artifacts and returns JSON only. When a reviewed fix artifact is executed, Codex gets a temporary target checkout without GitHub credentials; the deterministic executor owns commit, push, PR creation, and source-PR closeout using the short-lived GitHub App token exposed to the executor as `GH_TOKEN`. Commit author metadata defaults to `clawsweeper-repair` and can be overridden with `CLAWSWEEPER_GIT_USER_NAME` and `CLAWSWEEPER_GIT_USER_EMAIL`; this is separate from the GitHub token used to push. The applicator re-fetches the target item, checks `updated_at`, blocks unsafe closeouts, writes idempotent close comments, closes supported duplicate/superseded/fixed-by-candidate actions, and can squash-merge explicitly allowed clean PR actions.
 

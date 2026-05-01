@@ -1,0 +1,42 @@
+name: Setup ClawSweeper state
+description: Checkout generated state and hydrate it into the ClawSweeper worktree.
+inputs:
+  token:
+    description: GitHub token with contents read/write access to the state repo.
+    required: true
+  state-repository:
+    description: Generated state repository.
+    required: false
+    default: openclaw/clawsweeper-state
+  state-ref:
+    description: Generated state branch.
+    required: false
+    default: state
+  state-path:
+    description: Checkout path for the generated state repository.
+    required: false
+    default: clawsweeper-state
+  worktree-path:
+    description: ClawSweeper checkout path to hydrate.
+    required: false
+    default: .
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v6
+      with:
+        repository: ${{ inputs.state-repository }}
+        ref: ${{ inputs.state-ref }}
+        path: ${{ inputs.state-path }}
+        token: ${{ inputs.token }}
+        fetch-depth: 0
+
+    - name: Export state root
+      shell: bash
+      run: echo "CLAWSWEEPER_STATE_DIR=$GITHUB_WORKSPACE/${{ inputs.state-path }}" >> "$GITHUB_ENV"
+
+    - name: Hydrate generated state
+      shell: bash
+      env:
+        CLAWSWEEPER_STATE_DIR: ${{ inputs.state-path }}
+      run: node "${{ inputs.worktree-path }}/scripts/hydrate-state.mjs" --state-dir "${{ inputs.state-path }}" --worktree "${{ inputs.worktree-path }}"

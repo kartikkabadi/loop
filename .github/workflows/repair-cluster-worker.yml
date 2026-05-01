@@ -89,6 +89,10 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+
       - name: Capture execution gates
         id: capture_gates
         run: |
@@ -201,6 +205,10 @@ jobs:
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.app_token.outputs.token }}
 
       - uses: ./.github/actions/setup-pnpm
         with:

@@ -1,4 +1,6 @@
 import { spawnSync } from "node:child_process";
+import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 
 export type GitRunResult = {
   status: number;
@@ -78,6 +80,7 @@ export function runGit(args: readonly string[], options: GitRunOptions = {}): st
 export function spawnGit(args: readonly string[], options: GitRunOptions = {}): GitRunResult {
   console.log(`$ ${formatGitDisplayCommand(options.displayArgs ?? args)}`);
   const child = spawnSync("git", [...args], {
+    cwd: publishRoot(),
     env: process.env,
     encoding: "utf8",
   });
@@ -149,11 +152,12 @@ export function hasWorktreePath(path: string): boolean {
 
 export function publishMainCommit(options: GitPublishOptions): PublishResult {
   const remote = options.remote ?? "origin";
-  const branch = options.branch ?? "main";
+  const branch = options.branch ?? publishDefaultBranch();
   const maxAttempts = positiveInt(options.maxAttempts, 8);
   const pushAttempts = positiveInt(options.pushAttempts, 3);
   const rebaseStrategy = options.rebaseStrategy ?? "normal";
 
+  syncPublishPaths(options.paths);
   configureGitUser();
   stagePaths(options.paths);
   if (!hasStagedChanges()) {
@@ -188,6 +192,34 @@ export function publishMainCommit(options: GitPublishOptions): PublishResult {
   throw new Error(`Failed to publish commit after ${maxAttempts} attempts`);
 }
 
+export function publishRoot(): string | undefined {
+  const root = process.env.CLAWSWEEPER_STATE_DIR || process.env.CLAWSWEEPER_PUBLISH_ROOT;
+  return root ? resolve(root) : undefined;
+}
+
+function publishDefaultBranch(): string {
+  return process.env.CLAWSWEEPER_PUBLISH_BRANCH || (publishRoot() ? "state" : "main");
+}
+
+export function syncPublishPaths(paths: readonly string[]): void {
+  const stateRoot = publishRoot();
+  if (stateRoot) syncStatePublishPaths(paths, stateRoot);
+}
+
+function syncStatePublishPaths(paths: readonly string[], stateRoot: string): void {
+  for (const path of uniqueNonEmpty(paths)) {
+    const source = resolve(path);
+    const destination = resolve(stateRoot, path);
+    if (!destination.startsWith(`${stateRoot}/`) && destination !== stateRoot) {
+      throw new Error(`Refusing to publish outside state root: ${path}`);
+    }
+    rmSync(destination, { force: true, recursive: true });
+    if (!existsSync(source)) continue;
+    mkdirSync(dirname(destination), { recursive: true });
+    cpSync(source, destination, { recursive: true });
+  }
+}
+
 export function pushCommit(options: {
   remote?: string;
   branch?: string;
@@ -195,7 +227,7 @@ export function pushCommit(options: {
   rebaseStrategy?: RebaseStrategy;
 }): boolean {
   const remote = options.remote ?? "origin";
-  const branch = options.branch ?? "main";
+  const branch = options.branch ?? publishDefaultBranch();
   const pushAttempts = positiveInt(options.pushAttempts, 3);
   const rebaseStrategy = options.rebaseStrategy ?? "normal";
 
@@ -252,7 +284,7 @@ function commitHasPath(commit: string, path: string): boolean {
   );
 }
 
-export function hardResetToRemoteMain(remote = "origin", branch = "main"): void {
+export function hardResetToRemoteMain(remote = "origin", branch = publishDefaultBranch()): void {
   runGit(["fetch", remote, branch]);
   runGit(["reset", "--hard", `${remote}/${branch}`]);
 }

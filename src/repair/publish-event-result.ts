@@ -12,10 +12,12 @@ import {
   configureGitUser,
   hardResetToRemoteMain,
   hasStagedChanges,
+  publishRoot,
   pushCommit,
   runGit,
   setTokenOrigin,
   stagePaths,
+  syncPublishPaths,
 } from "./git-publish.js";
 import { isJsonObject } from "./json-types.js";
 
@@ -40,7 +42,7 @@ async function publishEventResult(options: EventOptions): Promise<void> {
   validateItemNumber(options.itemNumber);
   const repository = process.env.GITHUB_REPOSITORY;
   const repoToken = process.env.REPO_TOKEN;
-  if (repository && repoToken) setTokenOrigin(repoToken, repository);
+  if (!publishRoot() && repository && repoToken) setTokenOrigin(repoToken, repository);
   configureGitUser();
 
   const recordStore = {
@@ -135,6 +137,19 @@ function publishSnapshot({
 }): boolean {
   try {
     hardResetToRemoteMain();
+    const stateRoot = publishRoot();
+    if (
+      stateRoot &&
+      fs.existsSync(paths.snapshotItem) &&
+      !fs.existsSync(paths.snapshotClosed) &&
+      fs.existsSync(`${stateRoot}/${paths.closedRecord}`)
+    ) {
+      console.log(
+        `Remote already has closed record for ${paths.targetSlug}#${options.itemNumber}; skipping open-record publish`,
+      );
+      summary();
+      return true;
+    }
     const snapshotResult = applyEventSnapshot(paths);
     if (snapshotResult === "remote-closed") {
       console.log(
@@ -149,14 +164,15 @@ function publishSnapshot({
       return true;
     }
 
-    stagePaths([paths.itemRecord, paths.closedRecord]);
+    const commitPaths = [paths.itemRecord, paths.closedRecord];
+    syncPublishPaths(commitPaths);
+    stagePaths(commitPaths);
     if (!hasStagedChanges()) {
       console.log("No event result changes");
       summary();
       return true;
     }
 
-    const commitPaths = [paths.itemRecord, paths.closedRecord];
     runGit([
       "commit",
       "-m",

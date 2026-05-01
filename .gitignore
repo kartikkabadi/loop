@@ -5,3 +5,8 @@ dist/
 .artifacts/
 artifacts/
 tmp/
+apply-report.json
+repair-apply-report.json
+jobs/
+records/
+results/

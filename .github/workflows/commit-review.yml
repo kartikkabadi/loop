@@ -132,6 +132,21 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: read
+
+      - uses: ./clawsweeper/.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+          worktree-path: clawsweeper
+
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
           working-directory: clawsweeper
@@ -270,6 +285,21 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: read
+
+      - uses: ./clawsweeper/.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+          worktree-path: clawsweeper
+
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
           working-directory: clawsweeper
@@ -374,6 +404,20 @@ jobs:
         with:
           filter: blob:none
           fetch-depth: 0
+
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: write
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
 
       - uses: ./.github/actions/setup-pnpm
         with:

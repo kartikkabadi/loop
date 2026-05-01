@@ -56,6 +56,10 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token }}
 
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+
       - uses: ./.github/actions/setup-pnpm
         with:
           build-script: build:repair

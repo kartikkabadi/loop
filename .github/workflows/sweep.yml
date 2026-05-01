@@ -223,6 +223,20 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: write
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+
       - name: React to target item review start
         continue-on-error: true
         env:
@@ -352,10 +366,6 @@ jobs:
       - name: Commit event comment router ledger
         if: always()
         run: |
-          if [ -z "$(git status --porcelain -- results/comment-router.json jobs)" ]; then
-            echo "No durable event comment-router ledger or job changes to publish."
-            exit 0
-          fi
           pnpm run repair:publish-main -- \
             --message "chore: record ClawSweeper event comment routing" \
             --path results/comment-router.json \
@@ -452,6 +462,21 @@ jobs:
           permission-contents: read
           permission-issues: read
           permission-pull-requests: read
+
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: write
+
+      - uses: ./clawsweeper/.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+          worktree-path: clawsweeper
 
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
@@ -596,6 +621,21 @@ jobs:
           permission-issues: write
           permission-pull-requests: read
 
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: read
+
+      - uses: ./clawsweeper/.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+          worktree-path: clawsweeper
+
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
           working-directory: clawsweeper
@@ -698,6 +738,20 @@ jobs:
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
+
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: write
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
 
       - uses: ./.github/actions/setup-pnpm
         with:
@@ -976,6 +1030,20 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: write
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+
       - uses: ./.github/actions/setup-pnpm
         with:
           build-script: build:all
@@ -1045,6 +1113,20 @@ jobs:
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
+
+      - name: Create state token
+        id: state-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: clawsweeper-state
+          permission-contents: write
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
 
       - uses: ./.github/actions/setup-pnpm
         with:

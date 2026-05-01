@@ -81,6 +81,7 @@ jobs:
             .github
             jobs
             results
+            scripts/hydrate-state.mjs
             src/repair
             package.json
             pnpm-lock.yaml
@@ -98,6 +99,10 @@ jobs:
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.app_token.outputs.token }}
 
       - uses: ./.github/actions/setup-pnpm
         with:
@@ -160,10 +165,6 @@ jobs:
       - name: Commit comment router ledger
         if: always()
         run: |
-          if [ -z "$(git status --porcelain -- results/comment-router.json jobs)" ]; then
-            echo "No durable comment-router ledger or job changes to publish."
-            exit 0
-          fi
           pnpm run repair:publish-main -- \
             --message "chore: record ClawSweeper comment routing" \
             --path results/comment-router.json \

@@ -186,6 +186,43 @@ test("publishMainCommit rebuilds generated state commits after rebase conflicts"
   assert.equal(run("git", ["--git-dir", origin, "show", "main:keep.txt"], root), "keep remote\n");
 });
 
+test("publishMainCommit publishes generated paths to state branch when state root is configured", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
+  const origin = path.join(root, "origin.git");
+  const work = path.join(root, "work");
+  const state = path.join(root, "state");
+  run("git", ["init", "--bare", origin], root);
+  run("git", ["clone", origin, state], root);
+  configureUser(state);
+  write(path.join(state, "results/initial.txt"), "initial\n");
+  run("git", ["add", "."], state);
+  run("git", ["commit", "-m", "initial state"], state);
+  run("git", ["push", "origin", "HEAD:state"], state);
+  run("git", ["--git-dir", origin, "symbolic-ref", "HEAD", "refs/heads/state"], root);
+  run("git", ["checkout", "-B", "state", "origin/state"], state);
+
+  fs.mkdirSync(work);
+  write(path.join(work, "results/ledger.txt"), "ledger\n");
+
+  const result = withEnv({ CLAWSWEEPER_STATE_DIR: state }, () =>
+    withCwd(work, () =>
+      publishMainCommit({
+        message: "chore: publish state ledger",
+        paths: ["results"],
+        maxAttempts: 1,
+        pushAttempts: 1,
+      }),
+    ),
+  );
+
+  assert.equal(result, "committed");
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:results/ledger.txt"], root),
+    "ledger\n",
+  );
+  assert.throws(() => run("git", ["--git-dir", origin, "show", "main:results/ledger.txt"], root));
+});
+
 test("publish-main CLI accepts package-manager double dash separators", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
   const origin = path.join(root, "origin.git");
@@ -249,6 +286,22 @@ function withCwd(cwd, callback) {
     return callback();
   } finally {
     process.chdir(previous);
+  }
+}
+
+function withEnv(values, callback) {
+  const previous = {};
+  for (const [key, value] of Object.entries(values)) {
+    previous[key] = process.env[key];
+    process.env[key] = value;
+  }
+  try {
+    return callback();
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
   }
 }
 
