@@ -1,21 +1,21 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:26:26.131Z",
+  "generated_at": "2026-05-01T05:26:30.181Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:26:24.615Z",
+  "since": "2026-05-01T02:26:27.956Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75424
+    75327
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 3,
-  "commands_seen": 2,
-  "actionable": 1,
+  "scanned_comments": 2,
+  "commands_seen": 1,
+  "actionable": 0,
   "trusted_bots": [
     "clawsweeper[bot]",
     "openclaw-clawsweeper[bot]"
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75424:4357825074:2026-05-01T05:26:20Z:clawsweeper_auto_merge",
-      "comment_id": "4357825074",
-      "comment_version_key": "4357825074:2026-05-01T05:26:20Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75424#issuecomment-4357825074",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75327:4357173923:2026-05-01T05:26:22Z:clawsweeper_needs_human",
+      "comment_id": "4357173923",
+      "comment_version_key": "4357173923:2026-05-01T05:26:22Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75327#issuecomment-4357173923",
       "repo": "openclaw/openclaw",
-      "issue_number": 75424,
+      "issue_number": 75327,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T04:33:31Z",
-      "comment_updated_at": "2026-05-01T05:26:20Z",
+      "comment_created_at": "2026-05-01T00:54:57Z",
+      "comment_updated_at": "2026-05-01T05:26:22Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper auto merge",
       "intent": "clawsweeper_auto_merge",
@@ -47,11 +47,11 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: pass (sha=36a339d5b1b81bad423165e685849c1e7717b512); PR is behind or has merge conflicts and needs a cloud rebase repair before automerge",
-      "review_summary": "The PR updates Discord message-action discovery to treat configured SecretRefs as credential presence without resolving tokens, resolves scoped channel SecretRefs for agent `tools.message` executions built from config snapshots, and adds regression tests plus a changelog entry.",
-      "review_followup": "No repair lane target: the PR is clean, opted into `clawsweeper:automerge`, and should be gated by exact-head checks and mergeability rather than a separate fix PR.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=1f131b3f6f266e5c728ff485e14f2cc81a07cf61)",
+      "review_summary": "The PR adds `WasMentioned` to source reply delivery-mode resolution so mentioned group/channel turns override `message_tool_only` to `automatic`, with resolver and visibility-policy tests.",
+      "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "36a339d5b1b81bad423165e685849c1e7717b512",
+      "expected_head_sha": "1f131b3f6f266e5c728ff485e14f2cc81a07cf61",
       "finding_id": null,
       "status": "executed",
       "actions": [
@@ -73,63 +73,43 @@
       ],
       "target": {
         "kind": "pull_request",
-        "title": "fix(discord): avoid resolving token during action discovery",
-        "branch": "fix/discord-secretref-action-discovery",
-        "head_sha": "36a339d5b1b81bad423165e685849c1e7717b512",
-        "author": "conan-scott",
+        "title": "fix: deliver group/channel replies automatically when bot is @mentioned",
+        "branch": "fix/group-mention-reply-delivery",
+        "head_sha": "1f131b3f6f266e5c728ff485e14f2cc81a07cf61",
+        "author": "dalu610",
         "labels": [
-          "channel: discord",
-          "agents",
-          "size: S",
-          "clawsweeper:automerge"
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
-        "cluster_id": "automerge-openclaw-openclaw-75424",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75424.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75424",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75424.md",
+        "cluster_id": null,
+        "job_path": null,
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75327",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75327.md",
         "mode": "autonomous",
-        "mergeable": "CONFLICTING",
-        "merge_state_status": "DIRTY",
+        "mergeable": "MERGEABLE",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 104,
+          "total": 83,
           "counts": {
-            "SKIPPED": 21,
-            "SUCCESS": 82,
+            "SUCCESS": 69,
+            "FAILURE": 5,
+            "SKIPPED": 6,
+            "IN_PROGRESS": 2,
             "NEUTRAL": 1
           },
-          "blockers": []
+          "blockers": [
+            "security-scm-fast:FAILURE",
+            "build-artifacts:IN_PROGRESS",
+            "checks-node-core-fast-support:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "check-test-types:FAILURE",
+            "security-fast:FAILURE",
+            "check:FAILURE"
+          ]
         }
-      }
-    },
-    {
-      "idempotency_key": "comment-router:openclaw/openclaw:75424:4357962474:2026-05-01T05:21:25Z:automerge",
-      "comment_id": "4357962474",
-      "comment_version_key": "4357962474:2026-05-01T05:21:25Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75424#issuecomment-4357962474",
-      "repo": "openclaw/openclaw",
-      "issue_number": 75424,
-      "author": "thewilloftheshadow",
-      "author_association": "MEMBER",
-      "comment_created_at": "2026-05-01T05:21:25Z",
-      "comment_updated_at": "2026-05-01T05:21:25Z",
-      "trigger": "mention",
-      "command": "automerge",
-      "intent": "automerge",
-      "autoclose_message": null,
-      "trusted_bot": false,
-      "trusted_bot_author": null,
-      "automation_source": null,
-      "repair_reason": null,
-      "review_summary": "",
-      "review_followup": "",
-      "freeform_prompt": null,
-      "expected_head_sha": null,
-      "finding_id": null,
-      "status": "skipped",
-      "actions": [],
-      "reason": "comment version already processed in ledger"
+      },
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "live_worker_capacity_before_dispatch": {
@@ -152,27 +132,27 @@
   },
   "ledger_changed": true,
   "timings": {
-    "total_ms": 5299,
+    "total_ms": 2474,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 283
+        "ms": 357
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1221
+        "ms": 1859
       },
       {
         "name": "classify_commands",
-        "ms": 3
+        "ms": 1
       },
       {
         "name": "execute_commands",
-        "ms": 3776
+        "ms": 241
       },
       {
         "name": "append_ledger",
-        "ms": 1
+        "ms": 0
       }
     ]
   }
