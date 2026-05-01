@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:04:53.510Z",
+  "updated_at": "2026-05-01T04:09:59.340Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74028:4340563495:2026-04-30T23:31:00Z:clawsweeper_needs_human",
-      "comment_id": "4340563495",
-      "comment_version_key": "4340563495:2026-04-30T23:31:00Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/74028#issuecomment-4340563495",
-      "comment_created_at": "2026-04-29T03:11:27Z",
-      "comment_updated_at": "2026-04-30T23:31:00Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 74028,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=8b83e03e3310bf20a3352b8f41679d115bcb6633)",
-      "expected_head_sha": "8b83e03e3310bf20a3352b8f41679d115bcb6633",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T00:02:34.254Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74023:4340551474:2026-04-30T23:30:59Z:clawsweeper_auto_repair",
       "comment_id": "4340551474",
@@ -26324,6 +26300,36 @@
           "job_path": null
         }
       ]
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75384:4357609760:2026-05-01T04:09:54Z:clawsweeper_needs_human",
+      "comment_id": "4357609760",
+      "comment_version_key": "4357609760:2026-05-01T04:09:54Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75384#issuecomment-4357609760",
+      "comment_created_at": "2026-05-01T03:17:06Z",
+      "comment_updated_at": "2026-05-01T04:09:54Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75384,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=e93dbcbeb43d612db9695c5e159bf51fb36651cd)",
+      "expected_head_sha": "e93dbcbeb43d612db9695c5e159bf51fb36651cd",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T04:09:59.339Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "fix/75305-memory-flush-empty-transcript-prompt",
+        "head_sha": "e93dbcbeb43d612db9695c5e159bf51fb36651cd",
+        "cluster_id": null,
+        "job_path": null
+      }
     }
   ]
 }
