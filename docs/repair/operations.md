@@ -135,6 +135,32 @@ It only applies closure actions when all of these are true:
 
 The applicator writes an idempotency marker into the close comment before closing. Re-runs skip already-applied comments/closures instead of posting twice.
 
+## Merge Notifications
+
+The repair publish workflow sends Discord notifications for PRs that
+ClawSweeper actually merged. The notifier reads `repair-apply-report.json`,
+filters executed `merge_candidate` and `merge_canonical` rows, skips catch-up
+rows whose reason is `already merged`, and posts `/hooks/agent` to the Hetzner
+OpenClaw gateway.
+
+The generic ClawSweeper-to-OpenClaw hook pattern, Gateway configuration, session
+isolation, idempotency contract, and add-a-new-event checklist are documented in
+[`docs/openclaw-event-hooks.md`](../openclaw-event-hooks.md).
+
+Required repository configuration:
+
+- `CLAWSWEEPER_OPENCLAW_HOOK_URL` secret: OpenClaw hook base URL or full
+  `/hooks/agent` URL.
+- `CLAWSWEEPER_OPENCLAW_HOOK_TOKEN` secret: bearer token for the hook.
+- `CLAWSWEEPER_DISCORD_TARGET` variable: Discord delivery target such as
+  `channel:<id>`.
+- `CLAWSWEEPER_OPENCLAW_AGENT_ID` variable: optional, defaults to `clawsweeper`.
+
+Successful notifications are recorded in
+`notifications/clawsweeper-merge-ledger.json` in
+`openclaw/clawsweeper-state`, keyed by repo, PR, action, and merge commit SHA.
+This prevents duplicate Discord posts when the publish workflow reruns.
+
 ## Autonomous Flow
 
 `pnpm run repair:build-fix-artifact -- <job.md>` hydrates the job refs, linked refs, current `main`, PR files, commits, and checks, then writes:

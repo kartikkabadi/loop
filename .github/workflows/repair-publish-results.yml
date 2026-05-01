@@ -78,7 +78,7 @@ jobs:
           echo "has_artifacts=0" >> "$GITHUB_OUTPUT"
           echo "::notice title=No repair artifacts::No downloadable artifacts for worker run $RUN_ID."
 
-      - name: Publish and commit result ledger
+      - name: Publish result ledger
         if: ${{ steps.download.outputs.has_artifacts == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -98,10 +98,30 @@ jobs:
             --conclusion "$CONCLUSION"
           pnpm run repair:finalize-open-prs -- --write-report
           pnpm run repair:publish-result -- --skip-dashboard
+
+      - name: Notify Discord about merged PRs
+        if: ${{ steps.download.outputs.has_artifacts == '1' }}
+        env:
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          CLAWSWEEPER_OPENCLAW_HOOK_URL: ${{ secrets.CLAWSWEEPER_OPENCLAW_HOOK_URL }}
+          CLAWSWEEPER_OPENCLAW_HOOK_TOKEN: ${{ secrets.CLAWSWEEPER_OPENCLAW_HOOK_TOKEN }}
+          CLAWSWEEPER_OPENCLAW_AGENT_ID: ${{ vars.CLAWSWEEPER_OPENCLAW_AGENT_ID || 'clawsweeper' }}
+          CLAWSWEEPER_DISCORD_TARGET: ${{ vars.CLAWSWEEPER_DISCORD_TARGET }}
+        run: |
+          set -euo pipefail
+          pnpm run repair:notify-merge -- --run-id "$RUN_ID"
+
+      - name: Commit result ledger
+        if: ${{ steps.download.outputs.has_artifacts == '1' }}
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+        run: |
+          set -euo pipefail
           pnpm run repair:publish-main -- \
             --message "chore: publish cluster result" \
             --path results \
             --path jobs/openclaw/closed \
             --path repair-apply-report.json \
+            --path notifications \
             --max-attempts 12 \
             --push-attempts 4

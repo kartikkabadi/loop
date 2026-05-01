@@ -90,8 +90,9 @@ Each cluster job:
 7. Executes credited fix artifacts through `scripts/execute-fix-artifact.ts` when the fix gate is open: repair a writable contributor branch first, treating same-repo head branches as writable even when GitHub reports `maintainer_can_modify=false`; otherwise raise a narrow replacement PR, copy source labels, add non-bot source PR authors as replacement co-authors, and close the uneditable source PR after the replacement push succeeds.
 8. Applies guarded close/comment and explicit merge actions through `scripts/apply-result.ts`.
 9. Publishes a sanitized result ledger back to `openclaw/clawsweeper-state`
-   under `results/`, `jobs/openclaw/closed/`, and `repair-apply-report.json`;
-   the external dashboard renders from that ledger.
+   under `results/`, `jobs/openclaw/closed/`, `repair-apply-report.json`, and
+   `notifications/`; the external dashboard and Discord notification dedupe
+   render from that ledger.
 
 Codex does not receive a GitHub token during classification. The runner preflights GitHub state before model execution, then Codex receives those artifacts and returns JSON only. When a reviewed fix artifact is executed, Codex gets a temporary target checkout without GitHub credentials; the deterministic executor owns commit, push, PR creation, and source-PR closeout using the short-lived GitHub App token exposed to the executor as `GH_TOKEN`. Commit author metadata defaults to `clawsweeper-repair` and can be overridden with `CLAWSWEEPER_GIT_USER_NAME` and `CLAWSWEEPER_GIT_USER_EMAIL`; this is separate from the GitHub token used to push. The applicator re-fetches the target item, checks `updated_at`, blocks unsafe closeouts, writes idempotent close comments, closes supported duplicate/superseded/fixed-by-candidate actions, and can squash-merge explicitly allowed clean PR actions.
 
