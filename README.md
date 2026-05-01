@@ -194,9 +194,9 @@ Latest review: May 1, 2026, 01:16 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 63 | 3 | 60 | 0 | 15 | 17 | 0 |
+| Last 15 minutes | 59 | 3 | 56 | 0 | 15 | 17 | 0 |
 | Last hour | 858 | 19 | 839 | 1 | 19 | 516 | 1 |
-| Last 24 hours | 6735 | 469 | 6266 | 8 | 643 | 3907 | 24 |
+| Last 24 hours | 6732 | 469 | 6263 | 8 | 643 | 3907 | 24 |
 
 ### Recently Closed Across Repos
 
@@ -240,6 +240,7 @@ Latest review: May 1, 2026, 01:16 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75319](https://github.com/openclaw/openclaw/pull/75319) | feat(PR 3): Add transparent encryption for session transcripts and metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75319.md) | complete | May 1, 2026, 01:16 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75325](https://github.com/openclaw/openclaw/pull/75325) | perf: skip runtime-deps manifest scans when materialized | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75325.md) | complete | May 1, 2026, 01:16 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74768](https://github.com/openclaw/openclaw/pull/74768) | codex: support native app-server background spawns for Codex harness agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74768.md) | complete | May 1, 2026, 01:14 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73098](https://github.com/openclaw/openclaw/pull/73098) | Allow safe cache trace config patches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73098.md) | complete | May 1, 2026, 01:13 UTC |
@@ -249,7 +250,6 @@ Latest review: May 1, 2026, 01:16 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74497](https://github.com/openclaw/openclaw/issues/74497) | [Bug]: Telegram group chats are not discovered or ingested by OpenClaw bot, while direct messages work normally | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74497.md) | complete | May 1, 2026, 01:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74722](https://github.com/openclaw/openclaw/issues/74722) | [Feature]: Language-aware TTS routing for inbound voice replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74722.md) | complete | May 1, 2026, 01:09 UTC |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73959](https://github.com/openclaw/openclaw/pull/73959) | fix(amazon-bedrock): add modelContextWindowOverrides for per-model context window config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73959.md) | complete | May 1, 2026, 01:09 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73976](https://github.com/openclaw/openclaw/pull/73976) | fix(memory): use per-keyword FTS search in hybrid mode #39484 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73976.md) | complete | May 1, 2026, 01:09 UTC |
 
 </details>
 
@@ -271,7 +271,7 @@ Updated: May 1, 2026, 01:17 UTC
 
 State: Apply in progress
 
-Starting apply/comment-sync run for up to 12 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=39554,58412,58886,59693,72870,73768,73939,73957,73988,74219,75277,75321.
+Checkpoint 1 finished. Fresh closes in checkpoint: 0. Total fresh closes in this run: 0/12. Result records in checkpoint: 0, including durable review comment syncs.
 Run: [https://github.com/openclaw/clawsweeper/actions/runs/25197532524](https://github.com/openclaw/clawsweeper/actions/runs/25197532524)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
@@ -351,9 +351,9 @@ Latest review: May 1, 2026, 01:16 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 63 | 3 | 60 | 0 | 15 | 17 | 0 |
+| Last 15 minutes | 59 | 3 | 56 | 0 | 15 | 17 | 0 |
 | Last hour | 858 | 19 | 839 | 1 | 19 | 516 | 1 |
-| Last 24 hours | 6735 | 469 | 6266 | 8 | 643 | 3907 | 24 |
+| Last 24 hours | 6732 | 469 | 6263 | 8 | 643 | 3907 | 24 |
 
 #### Recently Closed
 
@@ -389,6 +389,7 @@ Latest review: May 1, 2026, 01:16 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
+| [#75319](https://github.com/openclaw/openclaw/pull/75319) | feat(PR 3): Add transparent encryption for session transcripts and metadata | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75319.md) | complete | May 1, 2026, 01:16 UTC |
 | [#75325](https://github.com/openclaw/openclaw/pull/75325) | perf: skip runtime-deps manifest scans when materialized | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75325.md) | complete | May 1, 2026, 01:16 UTC |
 | [#74768](https://github.com/openclaw/openclaw/pull/74768) | codex: support native app-server background spawns for Codex harness agents | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74768.md) | complete | May 1, 2026, 01:14 UTC |
 | [#73098](https://github.com/openclaw/openclaw/pull/73098) | Allow safe cache trace config patches | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73098.md) | complete | May 1, 2026, 01:13 UTC |
@@ -398,7 +399,6 @@ Latest review: May 1, 2026, 01:16 UTC. Latest close: May 1, 2026, 01:14 UTC. Lat
 | [#74497](https://github.com/openclaw/openclaw/issues/74497) | [Bug]: Telegram group chats are not discovered or ingested by OpenClaw bot, while direct messages work normally | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74497.md) | complete | May 1, 2026, 01:09 UTC |
 | [#74722](https://github.com/openclaw/openclaw/issues/74722) | [Feature]: Language-aware TTS routing for inbound voice replies | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74722.md) | complete | May 1, 2026, 01:09 UTC |
 | [#73959](https://github.com/openclaw/openclaw/pull/73959) | fix(amazon-bedrock): add modelContextWindowOverrides for per-model context window config | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73959.md) | complete | May 1, 2026, 01:09 UTC |
-| [#73976](https://github.com/openclaw/openclaw/pull/73976) | fix(memory): use per-keyword FTS search in hybrid mode #39484 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73976.md) | complete | May 1, 2026, 01:09 UTC |
 
 </details>
 
