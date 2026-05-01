@@ -1,14 +1,14 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:27:47.207Z",
+  "generated_at": "2026-05-01T03:28:12.002Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:27:45.652Z",
+  "since": "2026-05-01T00:28:10.216Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75389
+    75391
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -29,16 +29,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75389:4357633512:2026-05-01T03:27:42Z:clawsweeper_auto_repair",
-      "comment_id": "4357633512",
-      "comment_version_key": "4357633512:2026-05-01T03:27:42Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75389#issuecomment-4357633512",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75391:4357634410:2026-05-01T03:28:06Z:clawsweeper_auto_repair",
+      "comment_id": "4357634410",
+      "comment_version_key": "4357634410:2026-05-01T03:28:06Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75391#issuecomment-4357634410",
       "repo": "openclaw/openclaw",
-      "issue_number": 75389,
+      "issue_number": 75391,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:24:47Z",
-      "comment_updated_at": "2026-05-01T03:27:42Z",
+      "comment_created_at": "2026-05-01T03:25:07Z",
+      "comment_updated_at": "2026-05-01T03:28:06Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper auto repair",
       "intent": "clawsweeper_auto_repair",
@@ -46,52 +46,42 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=6ce6221a7aee47865255e08ad458997968960ce0)",
-      "review_summary": "The PR adds default/env/config max-byte caps for cache-trace and Anthropic payload JSONL writers, plus focused tests that accept the new settings.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=384b697ea12a6399661ba9f72c240456dcd19ac4)",
+      "review_summary": "The PR removes `claude-opus-4.6` from the GitHub Copilot `DEFAULT_MODEL_IDS` helper in `extensions/github-copilot/models-defaults.ts`.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "6ce6221a7aee47865255e08ad458997968960ce0",
+      "expected_head_sha": "384b697ea12a6399661ba9f72c240456dcd19ac4",
       "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "Cap diagnostic JSONL log files",
-        "branch": "codex/issue-75380-log-rotation",
-        "head_sha": "acd4a582645f9478ac38a8f6c103c4de03e78aee",
-        "author": "udaymanish6",
+        "title": "fix(copilot): remove stale claude-opus-4.6 from default model IDs",
+        "branch": "fix/issue-75349-remove-stale-copilot-model",
+        "head_sha": "384b697ea12a6399661ba9f72c240456dcd19ac4",
+        "author": "kailigithub",
         "labels": [
-          "agents",
-          "size: S"
+          "size: XS"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75389",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75389.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75391",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75391.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 18,
+          "total": 80,
           "counts": {
             "CANCELLED": 1,
-            "IN_PROGRESS": 13,
-            "SKIPPED": 4
+            "SKIPPED": 10,
+            "SUCCESS": 68,
+            "IN_PROGRESS": 1
           },
           "blockers": [
-            "dispatch:CANCELLED",
-            "Security High (core-auth-secrets):IN_PROGRESS",
-            "Select Critical Quality shards:IN_PROGRESS",
-            "Scan changed paths (precise):IN_PROGRESS",
-            "no-tabs:IN_PROGRESS",
-            "Security High (channel-runtime-boundary):IN_PROGRESS",
-            "Security High (network-ssrf-boundary):IN_PROGRESS",
-            "Security High (mcp-process-tool-boundary):IN_PROGRESS",
-            "Security High (plugin-trust-boundary):IN_PROGRESS",
-            "Security High (actions):IN_PROGRESS",
-            "actionlint:IN_PROGRESS"
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
@@ -100,23 +90,23 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1735,
+    "total_ms": 2042,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 280
+        "ms": 339
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1265
+        "ms": 1436
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 170
+        "ms": 246
       },
       {
         "name": "append_ledger",
