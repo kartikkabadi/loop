@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:43:46.463Z",
+  "updated_at": "2026-05-01T04:45:27.423Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72449:4325143648:2026-05-01T00:48:56Z:clawsweeper_needs_human",
-      "comment_id": "4325143648",
-      "comment_version_key": "4325143648:2026-05-01T00:48:56Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72449#issuecomment-4325143648",
-      "comment_created_at": "2026-04-27T07:46:50Z",
-      "comment_updated_at": "2026-05-01T00:48:56Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72449,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=3d1f3abb0cbc844baf1dbfbeeb8dca1693180235)",
-      "expected_head_sha": "3d1f3abb0cbc844baf1dbfbeeb8dca1693180235",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72387:4324823708:2026-05-01T00:48:53Z:clawsweeper_needs_human",
       "comment_id": "4324823708",
@@ -27973,6 +27949,36 @@
         "kind": "pull_request",
         "branch": "fix/signal-sse-quiet-stream-75426",
         "head_sha": "d7843ed7113dd0b44742ccb71855c21a9d7776eb",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74592:4347172171:2026-05-01T04:45:20Z:clawsweeper_needs_human",
+      "comment_id": "4347172171",
+      "comment_version_key": "4347172171:2026-05-01T04:45:20Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74592#issuecomment-4347172171",
+      "comment_created_at": "2026-04-29T20:09:26Z",
+      "comment_updated_at": "2026-05-01T04:45:20Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 74592,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=046cd1e50f409f0cbc92a470c0dcfb814dcd8b1d)",
+      "expected_head_sha": "046cd1e50f409f0cbc92a470c0dcfb814dcd8b1d",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T04:45:27.422Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "contrib/74572-active-memory-memory-core-tools",
+        "head_sha": "046cd1e50f409f0cbc92a470c0dcfb814dcd8b1d",
         "cluster_id": null,
         "job_path": null
       }

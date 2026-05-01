@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:43:46.341Z",
+  "generated_at": "2026-05-01T04:45:27.186Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:43:44.993Z",
+  "since": "2026-05-01T01:45:24.858Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75427
+    74592
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
+  "scanned_comments": 2,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75427:4357854251:2026-05-01T04:43:41Z:clawsweeper_needs_human",
-      "comment_id": "4357854251",
-      "comment_version_key": "4357854251:2026-05-01T04:43:41Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75427#issuecomment-4357854251",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74592:4347172171:2026-05-01T04:45:20Z:clawsweeper_needs_human",
+      "comment_id": "4347172171",
+      "comment_version_key": "4347172171:2026-05-01T04:45:20Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/74592#issuecomment-4347172171",
       "repo": "openclaw/openclaw",
-      "issue_number": 75427,
+      "issue_number": 74592,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T04:43:08Z",
-      "comment_updated_at": "2026-05-01T04:43:41Z",
+      "comment_created_at": "2026-04-29T20:09:26Z",
+      "comment_updated_at": "2026-05-01T04:45:20Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,51 +47,44 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=d7843ed7113dd0b44742ccb71855c21a9d7776eb)",
-      "review_summary": "The PR changes the Signal client so `streamSignalEvents` no longer applies the default 10s header timeout unless a caller explicitly supplies `timeoutMs`, adds regression coverage for a quiet SSE stream that stays open until abort, and adds a Signal changelog entry.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=046cd1e50f409f0cbc92a470c0dcfb814dcd8b1d)",
+      "review_summary": "The PR threads embedded-run `toolsAllow` into plugin tool materialization, enables gateway subagent binding for Active Memory recall runs, adds focused regression tests, and adds a changelog entry for #74572.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "d7843ed7113dd0b44742ccb71855c21a9d7776eb",
+      "expected_head_sha": "046cd1e50f409f0cbc92a470c0dcfb814dcd8b1d",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix(signal): keep quiet SSE receive streams open",
-        "branch": "fix/signal-sse-quiet-stream-75426",
-        "head_sha": "d7843ed7113dd0b44742ccb71855c21a9d7776eb",
-        "author": "steipete",
+        "title": "fix(active-memory): expose memory tools to recall runs",
+        "branch": "contrib/74572-active-memory-memory-core-tools",
+        "head_sha": "046cd1e50f409f0cbc92a470c0dcfb814dcd8b1d",
+        "author": "vyctorbrzezowski",
         "labels": [
-          "channel: signal",
-          "maintainer",
-          "size: XS"
+          "agents",
+          "size: S"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75427",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75427.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-74592",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74592.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 94,
+          "total": 101,
           "counts": {
-            "CANCELLED": 2,
-            "SKIPPED": 23,
-            "SUCCESS": 61,
-            "IN_PROGRESS": 7,
+            "IN_PROGRESS": 2,
+            "SUCCESS": 77,
+            "SKIPPED": 21,
             "NEUTRAL": 1
           },
           "blockers": [
-            "build-artifacts:IN_PROGRESS",
-            "Critical Quality (channel-runtime-boundary):IN_PROGRESS",
-            "checks-node-core-fast-support:IN_PROGRESS",
-            "checks-node-core-runtime-infra:IN_PROGRESS",
-            "checks-node-core-runtime-media-ui:IN_PROGRESS",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "checks-node-auto-reply-reply-session:IN_PROGRESS"
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
       },
@@ -100,15 +93,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1477,
+    "total_ms": 2571,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 216
+        "ms": 362
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1122
+        "ms": 1955
       },
       {
         "name": "classify_commands",
@@ -116,11 +109,11 @@
       },
       {
         "name": "execute_commands",
-        "ms": 122
+        "ms": 236
       },
       {
         "name": "append_ledger",
-        "ms": 0
+        "ms": 1
       }
     ]
   }
