@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: May 1, 2026, 01:11 UTC
+Last dashboard update: May 1, 2026, 01:12 UTC
 
 ### Fleet
 
@@ -184,7 +184,7 @@ Last dashboard update: May 1, 2026, 01:11 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake publish complete | May 1, 2026, 01:11 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25197214692) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Apply in progress | May 1, 2026, 01:12 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25197410837) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
@@ -194,7 +194,7 @@ Latest review: May 1, 2026, 01:10 UTC. Latest close: May 1, 2026, 01:08 UTC. Lat
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 108 | 3 | 105 | 0 | 1 | 9 | 0 |
+| Last 15 minutes | 107 | 3 | 104 | 0 | 1 | 8 | 0 |
 | Last hour | 889 | 20 | 869 | 1 | 5 | 511 | 1 |
 | Last 24 hours | 6745 | 470 | 6275 | 8 | 629 | 3901 | 24 |
 
@@ -267,12 +267,12 @@ Latest review: May 1, 2026, 01:10 UTC. Latest close: May 1, 2026, 01:08 UTC. Lat
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: May 1, 2026, 01:11 UTC
+Updated: May 1, 2026, 01:12 UTC
 
-State: Hot intake publish complete
+State: Apply in progress
 
-Merged hot intake artifacts for run 25197214692 without full folder reconciliation, and the dashboard reflects completed shards.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25197214692](https://github.com/openclaw/clawsweeper/actions/runs/25197214692)
+Starting apply/comment-sync run for up to 12 fresh all closes. Close reasons: all. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by 7 day(s); checkpoints commit every 50 fresh closes; close delay is 2000ms; sync-comments-only=false; item numbers=39554,58412,58886,59693,72870,73768,73939,73957,73988,74219,75277,75321.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25197410837](https://github.com/openclaw/clawsweeper/actions/runs/25197410837)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -351,7 +351,7 @@ Latest review: May 1, 2026, 01:10 UTC. Latest close: May 1, 2026, 01:08 UTC. Lat
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 108 | 3 | 105 | 0 | 1 | 9 | 0 |
+| Last 15 minutes | 107 | 3 | 104 | 0 | 1 | 8 | 0 |
 | Last hour | 889 | 20 | 869 | 1 | 5 | 511 | 1 |
 | Last 24 hours | 6745 | 470 | 6275 | 8 | 629 | 3901 | 24 |
 
