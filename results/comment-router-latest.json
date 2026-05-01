@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T06:25:21.633Z",
+  "generated_at": "2026-05-01T06:26:23.807Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T03:25:19.555Z",
+  "since": "2026-05-01T03:26:22.260Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75469
+    75463
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
+  "scanned_comments": 2,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75469:4358134792:2026-05-01T06:25:15Z:clawsweeper_needs_human",
-      "comment_id": "4358134792",
-      "comment_version_key": "4358134792:2026-05-01T06:25:15Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75469#issuecomment-4358134792",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75463:4358107200:2026-05-01T06:26:19Z:clawsweeper_needs_human",
+      "comment_id": "4358107200",
+      "comment_version_key": "4358107200:2026-05-01T06:26:19Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75463#issuecomment-4358107200",
       "repo": "openclaw/openclaw",
-      "issue_number": 75469,
+      "issue_number": 75463,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T06:22:23Z",
-      "comment_updated_at": "2026-05-01T06:25:15Z",
+      "comment_created_at": "2026-05-01T06:12:49Z",
+      "comment_updated_at": "2026-05-01T06:26:19Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,40 +47,40 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=46af05bf7519eb88593cfb051f64004f419d3b47)",
-      "review_summary": "The PR adds a commitment-only heartbeat path, runs due commitments after successful tool-capable HEARTBEAT.md task turns, and updates the commitment regression test to expect both deliveries.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=492a15d6217166bbaec01b981f16761c50ec0b33)",
+      "review_summary": "The PR updates BlueBubbles reply-context fallback so a `p:n/<guid>` lookup that joins an existing bare in-flight fetch caches its prefixed alias, adds a concurrency regression test, and adds a changelog fix note.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "46af05bf7519eb88593cfb051f64004f419d3b47",
+      "expected_head_sha": "492a15d6217166bbaec01b981f16761c50ec0b33",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix: same-session inferred commitments can be starved indefinitely when a normal HEARTBEAT.md...",
-        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-955a0e9c0f7d",
-        "head_sha": "46af05bf7519eb88593cfb051f64004f419d3b47",
+        "title": "fix: edge case in the new prefixed-alias cache behavior",
+        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-173f959613b3",
+        "head_sha": "492a15d6217166bbaec01b981f16761c50ec0b33",
         "author": "app/clawsweeper",
         "labels": [
+          "channel: bluebubbles",
           "size: S",
           "clawsweeper",
           "clawsweeper:commit-finding"
         ],
         "is_clawsweeper_pr": true,
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-955a0e9c0f7d",
-        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-955a0e9c0f7d.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75469",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75469.md",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-173f959613b3",
+        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-173f959613b3.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75463",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75463.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
-        "merge_state_status": "CLEAN",
+        "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 38,
+          "total": 95,
           "counts": {
-            "QUEUED": 1,
-            "SKIPPED": 12,
-            "SUCCESS": 69,
+            "SUCCESS": 67,
+            "SKIPPED": 22,
             "FAILURE": 4,
             "IN_PROGRESS": 1,
             "NEUTRAL": 1
@@ -99,15 +99,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2367,
+    "total_ms": 1687,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 391
+        "ms": 222
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1677
+        "ms": 1314
       },
       {
         "name": "classify_commands",
@@ -115,11 +115,11 @@
       },
       {
         "name": "execute_commands",
-        "ms": 282
+        "ms": 132
       },
       {
         "name": "append_ledger",
-        "ms": 0
+        "ms": 1
       }
     ]
   }
