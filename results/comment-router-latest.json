@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T06:12:50.926Z",
+  "generated_at": "2026-05-01T06:13:03.019Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T03:12:48.796Z",
+  "since": "2026-05-01T03:13:01.092Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75460
+    75441
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75460:4358089621:2026-05-01T06:12:44Z:clawsweeper_needs_human",
-      "comment_id": "4358089621",
-      "comment_version_key": "4358089621:2026-05-01T06:12:44Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75460#issuecomment-4358089621",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75441:4357998376:2026-05-01T06:12:57Z:clawsweeper_needs_human",
+      "comment_id": "4357998376",
+      "comment_version_key": "4357998376:2026-05-01T06:12:57Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75441#issuecomment-4357998376",
       "repo": "openclaw/openclaw",
-      "issue_number": 75460,
+      "issue_number": 75441,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T06:06:45Z",
-      "comment_updated_at": "2026-05-01T06:12:44Z",
+      "comment_created_at": "2026-05-01T05:34:07Z",
+      "comment_updated_at": "2026-05-01T06:12:57Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,51 +47,48 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=5c7c6c3cb42eec27e943237b6b97ecf573f41739)",
-      "review_summary": "",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=184f022c77a11f8ad7a6d0aab1962a14048d369d)",
+      "review_summary": "The PR adds warning and audit handling for config observe-recovery health-state and backup-copy write failures, regression tests, and a changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "5c7c6c3cb42eec27e943237b6b97ecf573f41739",
+      "expected_head_sha": "184f022c77a11f8ad7a6d0aab1962a14048d369d",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(manifest): add Manifest open-source LLM router provider",
-        "branch": "feat/manifest-provider",
-        "head_sha": "5c7c6c3cb42eec27e943237b6b97ecf573f41739",
-        "author": "sebconejo",
+        "title": "fix(config): log observe recovery write failures",
+        "branch": "fix/config-recovery-observe-errors",
+        "head_sha": "184f022c77a11f8ad7a6d0aab1962a14048d369d",
+        "author": "sallyom",
         "labels": [
-          "docs",
-          "size: S",
-          "triage: external-plugin-candidate"
+          "maintainer",
+          "size: M"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75460",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75460.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75441",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75441.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 93,
+          "total": 100,
           "counts": {
-            "SKIPPED": 15,
-            "SUCCESS": 69,
-            "FAILURE": 9
+            "SUCCESS": 73,
+            "SKIPPED": 21,
+            "FAILURE": 4,
+            "IN_PROGRESS": 1,
+            "NEUTRAL": 1
           },
           "blockers": [
-            "build-artifacts:FAILURE",
             "checks-node-agentic-cli:FAILURE",
-            "check-dependencies:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
             "check-additional-boundaries:FAILURE",
-            "check-docs:FAILURE",
-            "build-smoke:FAILURE",
-            "check:FAILURE",
-            "check-additional:FAILURE",
-            "checks-node-core:FAILURE"
+            "checks-node-core-support-boundary:FAILURE",
+            "check-additional:FAILURE"
           ]
         }
       },
@@ -100,7 +97,7 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2370,
+    "total_ms": 2127,
     "phases": [
       {
         "name": "list_candidate_comments",
@@ -108,15 +105,15 @@
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1800
+        "ms": 1599
       },
       {
         "name": "classify_commands",
-        "ms": 1
+        "ms": 2
       },
       {
         "name": "execute_commands",
-        "ms": 230
+        "ms": 193
       },
       {
         "name": "append_ledger",
