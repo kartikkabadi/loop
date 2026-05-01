@@ -2,12 +2,12 @@
 repo: "openclaw/openclaw"
 cluster_id: "automerge-openclaw-openclaw-75326"
 mode: "autonomous"
-run_id: "25198065928"
-run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25198065928"
-head_sha: "99759ba2ce029ba942e3c6c26b236ba46be0cf97"
+run_id: "25198747424"
+run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25198747424"
+head_sha: "3ef57c79bce06296ec805a4766d76b90bb3416c4"
 workflow_conclusion: "success"
 result_status: "planned"
-published_at: "2026-05-01T01:43:38.442Z"
+published_at: "2026-05-01T02:16:13.917Z"
 canonical: "https://github.com/openclaw/openclaw/pull/75326"
 canonical_issue: null
 canonical_pr: "https://github.com/openclaw/openclaw/pull/75326"
@@ -25,7 +25,7 @@ needs_human_count: 0
 
 Repo: openclaw/openclaw
 
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25198065928](https://github.com/openclaw/clawsweeper/actions/runs/25198065928)
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25198747424](https://github.com/openclaw/clawsweeper/actions/runs/25198747424)
 
 Workflow conclusion: success
 
@@ -35,7 +35,7 @@ Canonical: https://github.com/openclaw/openclaw/pull/75326
 
 ## Summary
 
-PR #75326 is the canonical repair path, but it is not merge-ready in this run: the hydrated PR is dirty/unmergeable and has an actionable Codex review finding about preserving catalog load errors. Because the same-repo branch is writable and the diff is narrow, plan a contributor-branch repair rather than replacement. Linked security-sensitive issue #72338 must be routed to central security handling only; the other linked issues remain related broader gateway performance reports and should stay open.
+PR #75326 remains the canonical repair path, but it is not merge-ready because GitHub reports merge conflicts on head 90162fd2c9a318ef5a16fdf00e90b192ffbc31f1. The branch is a same-repo writable head, so the next deterministic action is to repair/rebase the contributor branch, preserve the existing credit, rerun review and changed-surface validation, and leave merge/close decisions to the gated applicator. Security-sensitive linked issue #72338 is quarantined only for central security handling; the other linked performance issues stay open as related broader regressions.
 
 ## Impact
 
@@ -66,12 +66,12 @@ PR #75326 is the canonical repair path, but it is not merge-ready in this run: t
 
 | Target | Action | Status | Classification | Reason |
 | --- | --- | --- | --- | --- |
-| #75326 | fix_needed | planned | canonical | Repair the existing writable contributor branch, rebase/resolve dirty state, preserve catalog load failures while keeping the slow-catalog fallback, and rerun exact-head validation. |
-| cluster:automerge-openclaw-openclaw-75326 | build_fix_artifact | planned |  | Build an executable repair plan for the canonical PR branch. |
-| #72338 | route_security | planned | security_sensitive | Security-sensitive linked issue is out of ClawSweeper Repair scope and should go to central OpenClaw security triage. |
-| #74404 | keep_related | planned | related | Related gateway performance regression; keep open outside this PR repair lane. |
-| #75287 | keep_related | planned | related | Related but not duplicate; keep open for a separate focused repair path. |
-| #75297 | keep_related | planned | related | Related broader performance report; keep open until a canonical tracker/fix proves coverage. |
+| #72338 | route_security | planned | security_sensitive | Security-sensitive issue is out of ClawSweeper Repair scope and must route to central OpenClaw security handling without mutation. |
+| #74404 | keep_related | planned | related | Related surface, but not a true duplicate or fixed-by-candidate closeout for this narrow PR. |
+| #75287 | keep_related | planned | related | Related performance family but distinct root cause and fix scope. |
+| #75297 | keep_related | planned | related | Related broader regression remains open; #75326 is not sufficient closure proof. |
+| #75326 | fix_needed | planned | canonical | Canonical PR is useful and writable but blocked by merge conflicts; repair the contributor branch instead of opening a replacement. |
+| cluster:automerge-openclaw-openclaw-75326 | build_fix_artifact | planned |  | Executor needs an actionable repair artifact for the same writable PR branch. |
 
 ## Needs Human
 

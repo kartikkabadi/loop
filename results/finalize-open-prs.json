@@ -2,7 +2,7 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-05-01T01:44:21.917Z",
+  "generated_at": "2026-05-01T02:16:46.848Z",
   "count": 9,
   "summary": {
     "open_prs": 9,
@@ -10,7 +10,7 @@
     "security_hold": 0,
     "needs_rebase": 2,
     "mergeability_unknown": 0,
-    "needs_checks": 2,
+    "needs_checks": 1,
     "needs_review": 0,
     "needs_merge_preflight": 9,
     "needs_result_backfill": 0
@@ -34,23 +34,20 @@
       "head_sha": "f85787a2c94d5d907eba5e69166132e31bd7ac5b",
       "cluster_id": "clawsweeper-commit-openclaw-openclaw-b277ae3f4c40",
       "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-b277ae3f4c40.md",
-      "updated_at": "2026-05-01T01:43:55Z",
+      "updated_at": "2026-05-01T02:03:20Z",
       "mergeable": "MERGEABLE",
-      "merge_state_status": "UNSTABLE",
+      "merge_state_status": "CLEAN",
       "review_decision": "",
       "security_hold": false,
       "checks": {
-        "total": 87,
+        "total": 90,
         "counts": {
           "CANCELLED": 2,
-          "SKIPPED": 12,
-          "SUCCESS": 71,
-          "IN_PROGRESS": 1,
+          "SKIPPED": 13,
+          "SUCCESS": 74,
           "NEUTRAL": 1
         },
-        "blockers": [
-          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
-        ]
+        "blockers": []
       },
       "review_threads": {
         "status": "clean",
@@ -59,8 +56,15 @@
         "examples": []
       },
       "review_bots": {
-        "count": 0,
-        "latest": []
+        "count": 1,
+        "latest": [
+          {
+            "source": "comment",
+            "author": "clawsweeper",
+            "url": "https://github.com/openclaw/openclaw/pull/75344#issuecomment-4357324697",
+            "submitted_at": "2026-05-01T01:42:20Z"
+          }
+        ]
       },
       "latest_record": {
         "run_id": "25198053576",
@@ -85,11 +89,9 @@
         }
       },
       "blockers": [
-        "needs_merge_state:UNSTABLE",
-        "needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
         "needs_merge_preflight"
       ],
-      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+      "recommended_next_action": "backfill merge preflight: security cleared, comments resolved, Codex /review passed, validation recorded"
     },
     {
       "number": 75315,
@@ -441,7 +443,7 @@
       "head_sha": "18e6250b97c270c36e7b4dff7f9a465cd60e5674",
       "cluster_id": "automerge-openclaw-openclaw-74506",
       "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
-      "updated_at": "2026-05-01T01:35:33Z",
+      "updated_at": "2026-05-01T02:01:54Z",
       "mergeable": "MERGEABLE",
       "merge_state_status": "CLEAN",
       "review_decision": "",
