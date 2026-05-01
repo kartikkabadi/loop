@@ -225,6 +225,10 @@ function boundedTimeout(timeoutMs: number, remainingMs: number) {
   return Math.max(1_000, Math.min(timeout, remainingMs));
 }
 
+function currentCodexTimeoutMs() {
+  return boundedTimeout(codexTimeoutMs, remainingFixStepBudgetMs());
+}
+
 function remainingFixStepBudgetMs() {
   const elapsedMs = Date.now() - scriptStartedAt.getTime();
   const remainingMs = fixStepTimeoutMs - elapsedMs - reportReserveMs;
@@ -1029,6 +1033,7 @@ function editValidatePrepareMerge({
         maxEditAttempts,
       });
       const summaryPath = path.join(workRoot, `${mode}-codex-summary-${attempt}.md`);
+      const workerTimeoutMs = currentCodexTimeoutMs();
       const codexResult = spawnSync(
         "codex",
         [
@@ -1052,7 +1057,7 @@ function editValidatePrepareMerge({
           input: prompt,
           encoding: "utf8",
           env: codexEnv(),
-          timeout: codexTimeoutMs,
+          timeout: workerTimeoutMs,
           maxBuffer: codexStdioMaxBuffer,
         },
       );
@@ -1066,7 +1071,7 @@ function editValidatePrepareMerge({
           codexResult.stderr,
         );
       if ((codexResult.error as JsonValue)?.code === "ETIMEDOUT") {
-        throw new Error(`Codex fix worker timed out after ${codexTimeoutMs}ms`);
+        throw new Error(`Codex fix worker timed out after ${workerTimeoutMs}ms`);
       }
       if (codexResult.error) {
         throw new Error(codexResult.error.message || String(codexResult.error));
@@ -1250,6 +1255,7 @@ function runCodexBaseReconcile({
       workRoot,
       `${mode}-final-base-reconcile-summary-${attempt}-${codexAttempt}.md`,
     );
+    const reconcileTimeoutMs = currentCodexTimeoutMs();
     const codexResult = spawnSync(
       "codex",
       [
@@ -1273,7 +1279,7 @@ function runCodexBaseReconcile({
         input: prompt,
         encoding: "utf8",
         env: codexEnv(),
-        timeout: codexTimeoutMs,
+        timeout: reconcileTimeoutMs,
         maxBuffer: codexStdioMaxBuffer,
       },
     );
@@ -1287,7 +1293,7 @@ function runCodexBaseReconcile({
         codexResult.stderr,
       );
     if ((codexResult.error as JsonValue)?.code === "ETIMEDOUT") {
-      throw new Error(`Codex final rebase worker timed out after ${codexTimeoutMs}ms`);
+      throw new Error(`Codex final rebase worker timed out after ${reconcileTimeoutMs}ms`);
     }
     if (codexResult.error) {
       throw new Error(codexResult.error.message || String(codexResult.error));
@@ -1558,6 +1564,7 @@ function runCodexReview({
     JSON.stringify(fixArtifact, null, 2),
     "```",
   ].join("\n");
+  const reviewTimeoutMs = currentCodexTimeoutMs();
   const child = spawnSync(
     "codex",
     [
@@ -1583,7 +1590,7 @@ function runCodexReview({
       input: prompt,
       encoding: "utf8",
       env: codexEnv(),
-      timeout: codexTimeoutMs,
+      timeout: reviewTimeoutMs,
       maxBuffer: codexStdioMaxBuffer,
     },
   );
@@ -1597,7 +1604,7 @@ function runCodexReview({
       child.stderr,
     );
   if ((child.error as JsonValue)?.code === "ETIMEDOUT")
-    throw new Error(`Codex /review timed out after ${codexTimeoutMs}ms`);
+    throw new Error(`Codex /review timed out after ${reviewTimeoutMs}ms`);
   if (child.error) throw new Error(child.error.message || String(child.error));
   if (child.status !== 0) throw new Error(child.stderr || child.stdout || "Codex /review failed");
   if (!fs.existsSync(outputPath)) {
@@ -1677,6 +1684,7 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
     JSON.stringify(fixArtifact, null, 2),
     "```",
   ].join("\n");
+  const reviewFixTimeoutMs = currentCodexTimeoutMs();
   const child = spawnSync(
     "codex",
     [
@@ -1700,7 +1708,7 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
       input: prompt,
       encoding: "utf8",
       env: codexEnv(),
-      timeout: codexTimeoutMs,
+      timeout: reviewFixTimeoutMs,
       maxBuffer: codexStdioMaxBuffer,
     },
   );
@@ -1714,7 +1722,7 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
       child.stderr,
     );
   if ((child.error as JsonValue)?.code === "ETIMEDOUT")
-    throw new Error(`Codex review-fix worker timed out after ${codexTimeoutMs}ms`);
+    throw new Error(`Codex review-fix worker timed out after ${reviewFixTimeoutMs}ms`);
   if (child.error) throw new Error(child.error.message || String(child.error));
   if (child.status !== 0)
     throw new Error(child.stderr || child.stdout || "Codex review-fix worker failed");
