@@ -48,7 +48,7 @@ env:
 
 concurrency:
   group: clawsweeper-repair-${{ inputs.job }}-${{ inputs.mode }}
-  cancel-in-progress: ${{ inputs.mode == 'autonomous' }}
+  cancel-in-progress: false
 
 jobs:
   cluster:
