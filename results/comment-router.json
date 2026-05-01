@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01T05:09:44.901Z",
+  "updated_at": "2026-05-01T05:09:46.197Z",
   "commands": [
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:71837:4321829770:2026-05-01T00:48:03Z:clawsweeper_auto_repair",
@@ -28216,14 +28216,14 @@
       }
     },
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75230:4355538755:2026-05-01T05:09:38Z:clawsweeper_needs_human",
-      "comment_id": "4355538755",
-      "comment_version_key": "4355538755:2026-05-01T05:09:38Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75230#issuecomment-4355538755",
-      "comment_created_at": "2026-04-30T19:24:40Z",
-      "comment_updated_at": "2026-05-01T05:09:38Z",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73438:4334136650:2026-05-01T05:09:36Z:clawsweeper_needs_human",
+      "comment_id": "4334136650",
+      "comment_version_key": "4334136650:2026-05-01T05:09:36Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73438#issuecomment-4334136650",
+      "comment_created_at": "2026-04-28T09:49:23Z",
+      "comment_updated_at": "2026-05-01T05:09:36Z",
       "repo": "openclaw/openclaw",
-      "issue_number": 75230,
+      "issue_number": 73438,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
       "trigger": "trusted_bot",
@@ -28232,18 +28232,32 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa)",
-      "expected_head_sha": "5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=00ea33017bb968fe1c22e6f8641b032e586d786b)",
+      "expected_head_sha": "00ea33017bb968fe1c22e6f8641b032e586d786b",
       "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T05:09:44.901Z",
+      "status": "executed",
+      "processed_at": "2026-05-01T05:09:46.197Z",
       "target": {
         "kind": "pull_request",
-        "branch": "security/link-wallet-redaction",
-        "head_sha": "5f5f1fadbbd120dfcc98885b9cfd5efa7bee4bfa",
-        "cluster_id": null,
-        "job_path": null
-      }
+        "branch": "feat/proxy-validate",
+        "head_sha": "00ea33017bb968fe1c22e6f8641b032e586d786b",
+        "cluster_id": "automerge-openclaw-openclaw-73438",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73438.md"
+      },
+      "actions": [
+        {
+          "action": "label",
+          "status": "executed",
+          "label": "clawsweeper:human-review",
+          "job_path": null
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "label": null,
+          "job_path": null
+        }
+      ]
     }
   ]
 }
