@@ -2,17 +2,17 @@
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "head_prefix": "clawsweeper/",
-  "generated_at": "2026-05-01T01:40:02.641Z",
-  "count": 8,
+  "generated_at": "2026-05-01T01:44:21.917Z",
+  "count": 9,
   "summary": {
-    "open_prs": 8,
+    "open_prs": 9,
     "ready_candidates": 0,
     "security_hold": 0,
     "needs_rebase": 2,
     "mergeability_unknown": 0,
-    "needs_checks": 1,
+    "needs_checks": 2,
     "needs_review": 0,
-    "needs_merge_preflight": 8,
+    "needs_merge_preflight": 9,
     "needs_result_backfill": 0
   },
   "dispatch": {
@@ -26,6 +26,71 @@
     "candidates": []
   },
   "prs": [
+    {
+      "number": 75344,
+      "title": "fix: regression where commitment safety handling can disable tools for unrelated due heartbea...",
+      "url": "https://github.com/openclaw/openclaw/pull/75344",
+      "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-b277ae3f4c40",
+      "head_sha": "f85787a2c94d5d907eba5e69166132e31bd7ac5b",
+      "cluster_id": "clawsweeper-commit-openclaw-openclaw-b277ae3f4c40",
+      "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-b277ae3f4c40.md",
+      "updated_at": "2026-05-01T01:43:55Z",
+      "mergeable": "MERGEABLE",
+      "merge_state_status": "UNSTABLE",
+      "review_decision": "",
+      "security_hold": false,
+      "checks": {
+        "total": 87,
+        "counts": {
+          "CANCELLED": 2,
+          "SKIPPED": 12,
+          "SUCCESS": 71,
+          "IN_PROGRESS": 1,
+          "NEUTRAL": 1
+        },
+        "blockers": [
+          "CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+        ]
+      },
+      "review_threads": {
+        "status": "clean",
+        "reason": null,
+        "unresolved_count": 0,
+        "examples": []
+      },
+      "review_bots": {
+        "count": 0,
+        "latest": []
+      },
+      "latest_record": {
+        "run_id": "25198053576",
+        "run_url": "https://github.com/openclaw/clawsweeper/actions/runs/25198053576",
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-b277ae3f4c40",
+        "published_at": "2026-05-01T01:40:59.027Z",
+        "workflow_conclusion": "success",
+        "apply_action": {
+          "target": "#75344",
+          "action": "merge_canonical",
+          "status": "blocked",
+          "classification": "fix_pr",
+          "canonical": null,
+          "candidate_fix": null,
+          "title": "fix: regression where commitment safety handling can disable tools for unrelated due heartbea...",
+          "idempotency_key": null,
+          "reason": "job does not allow merge",
+          "merged_at": null,
+          "merge_commit_sha": null,
+          "live_state": null,
+          "live_updated_at": null
+        }
+      },
+      "blockers": [
+        "needs_merge_state:UNSTABLE",
+        "needs_checks:CI / checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+        "needs_merge_preflight"
+      ],
+      "recommended_next_action": "repair failing checks or document unrelated main flake with touched-surface proof"
+    },
     {
       "number": 75315,
       "title": "fix: Windows stale-import guard still generates an invalid PowerShell regex, so the intended...",
