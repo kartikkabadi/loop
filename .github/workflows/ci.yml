@@ -30,7 +30,23 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          filter: blob:none
+          sparse-checkout: |
+            .github
+            docs
+            instructions
+            prompts
+            schema
+            scripts
+            src
+            test
+            .oxfmtrc.json
+            AGENTS.md
+            README.md
+            package.json
+            pnpm-lock.yaml
+            tsconfig.json
+            tsconfig.repair.json
+          sparse-checkout-cone-mode: false
 
       - uses: ./.github/actions/setup-pnpm
 
