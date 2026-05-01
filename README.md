@@ -153,7 +153,7 @@ can be used for one-off live routing.
 
 ## Dashboard
 
-Last dashboard update: May 1, 2026, 04:33 UTC
+Last dashboard update: May 1, 2026, 04:34 UTC
 
 ### Fleet
 
@@ -163,20 +163,20 @@ Last dashboard update: May 1, 2026, 04:33 UTC
 | Open issues | 3663 |
 | Open PRs | 3365 |
 | Open items total | 7028 |
-| Reviewed files | 7662 |
-| Unreviewed open items | 49 |
-| Due now by cadence | 1329 |
-| Proposed closes awaiting apply | 7 |
+| Reviewed files | 7663 |
+| Unreviewed open items | 48 |
+| Due now by cadence | 1230 |
+| Proposed closes awaiting apply | 8 |
 | Work candidates awaiting promotion | 2362 |
-| Closed by Codex apply | 11419 |
+| Closed by Codex apply | 11421 |
 | Failed or stale reviews | 22 |
-| Archived closed files | 15457 |
+| Archived closed files | 15458 |
 
 ### Repositories
 
 | Repository | Open | Reviewed | Unreviewed | Due | Proposed closes | Work candidates | Closed | Latest review | Latest close | Comments synced, 1h |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: |
-| [OpenClaw](https://github.com/openclaw/openclaw) | 6782 | 6733 | 49 | 1076 | 7 | 2316 | 11411 | May 1, 2026, 04:23 UTC | May 1, 2026, 04:15 UTC | 610 |
+| [OpenClaw](https://github.com/openclaw/openclaw) | 6782 | 6734 | 48 | 977 | 8 | 2316 | 11413 | May 1, 2026, 04:32 UTC | May 1, 2026, 04:28 UTC | 614 |
 | [ClawHub](https://github.com/openclaw/clawhub) | 246 | 924 | 0 | 248 | 0 | 45 | 8 | Apr 29, 2026, 22:22 UTC | Apr 29, 2026, 17:17 UTC | 0 |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | 0 | 5 | 0 | 5 | 0 | 1 | 0 | May 1, 2026, 02:03 UTC | unknown | 0 |
 
@@ -184,24 +184,25 @@ Last dashboard update: May 1, 2026, 04:33 UTC
 
 | Repository | State | Updated | Run |
 | --- | --- | --- | --- |
-| [OpenClaw](https://github.com/openclaw/openclaw) | Review comments checked | May 1, 2026, 04:33 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25201607320) |
+| [OpenClaw](https://github.com/openclaw/openclaw) | Hot intake publish complete | May 1, 2026, 04:34 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25202203940) |
 | [ClawHub](https://github.com/openclaw/clawhub) | Review publish complete | Apr 29, 2026, 22:23 UTC | [run](https://github.com/openclaw/clawsweeper/actions/runs/25135463730) |
 | [ClawSweeper](https://github.com/openclaw/clawsweeper) | Idle | unknown | _none_ |
 
 ### Fleet Activity
 
-Latest review: May 1, 2026, 04:23 UTC. Latest close: May 1, 2026, 04:15 UTC. Latest comment sync: May 1, 2026, 04:33 UTC.
+Latest review: May 1, 2026, 04:32 UTC. Latest close: May 1, 2026, 04:28 UTC. Latest comment sync: May 1, 2026, 04:33 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 3 | 0 | 3 | 0 | 0 | 300 | 1 |
-| Last hour | 852 | 26 | 826 | 1 | 14 | 610 | 2 |
-| Last 24 hours | 6838 | 473 | 6365 | 7 | 612 | 4323 | 23 |
+| Last 15 minutes | 108 | 3 | 105 | 0 | 2 | 307 | 1 |
+| Last hour | 953 | 29 | 924 | 1 | 16 | 614 | 2 |
+| Last 24 hours | 6841 | 476 | 6365 | 7 | 612 | 4325 | 23 |
 
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75422](https://github.com/openclaw/openclaw/issues/75422) | active-memory blocks replies and saturates gateway event loop with timed-out embedded runs | duplicate or superseded | May 1, 2026, 04:28 UTC | [records/openclaw-openclaw/closed/75422.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75422.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75421](https://github.com/openclaw/openclaw/issues/75421) | Fallback inserts blank user messages, rejected by providers (ZAI GLM 400 error) | already implemented on main | May 1, 2026, 04:24 UTC | [records/openclaw-openclaw/closed/75421.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75421.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72794](https://github.com/openclaw/openclaw/pull/72794) | test(agents): align unclassified failure expectation | already implemented on main | May 1, 2026, 04:15 UTC | [records/openclaw-openclaw/closed/72794.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72794.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72634](https://github.com/openclaw/openclaw/pull/72634) | fix: normalize null params to {} for empty object schemas (prevents infinite loops) | already implemented on main | May 1, 2026, 04:15 UTC | [records/openclaw-openclaw/closed/72634.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72634.md) |
@@ -211,12 +212,14 @@ Latest review: May 1, 2026, 04:23 UTC. Latest close: May 1, 2026, 04:15 UTC. Lat
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#50996](https://github.com/openclaw/openclaw/issues/50996) | Feature Request: Interruptible tool calls — agent unresponsive during long process(poll) | duplicate or superseded | May 1, 2026, 04:14 UTC | [records/openclaw-openclaw/closed/50996.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50996.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75418](https://github.com/openclaw/openclaw/issues/75418) | [Bug] Embedded agent startup regressed to ~70s after updating to 2026.4.29 (Linux/Node 24) | already implemented on main | May 1, 2026, 04:14 UTC | [records/openclaw-openclaw/closed/75418.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75418.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75041](https://github.com/openclaw/openclaw/issues/75041) | [Bug]: Workspace .py scripts break on v2026.4.x — gateway image (node:24-bookworm-slim base) ships no python3 | closed externally after review | May 1, 2026, 04:11 UTC | [records/openclaw-openclaw/closed/75041.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75041.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75417](https://github.com/openclaw/openclaw/pull/75417) | fix(docker): restore python3 in runtime image | kept open | May 1, 2026, 04:07 UTC | [records/openclaw-openclaw/closed/75417.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75417.md) |
 
 ### Work Candidates Across Repos
 
 | Repository | Item | Title | Priority | Status | Reviewed | Report |
 | --- | --- | --- | --- | --- | --- | --- |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | high | candidate | May 1, 2026, 04:32 UTC | [records/openclaw-openclaw/items/72348.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72348.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75341](https://github.com/openclaw/openclaw/issues/75341) | [Discord] v2026.4.29 regression: OAuth @me fetch-timeout + native slash command deploy PATCH hits 429 during startup | high | candidate | May 1, 2026, 04:31 UTC | [records/openclaw-openclaw/items/75341.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75341.md) |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72345](https://github.com/openclaw/openclaw/issues/72345) | voice-call: CLI `voicecall call` cannot run when gateway is owning the webhook port | high | candidate | May 1, 2026, 04:31 UTC | [records/openclaw-openclaw/items/72345.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72345.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75420](https://github.com/openclaw/openclaw/issues/75420) | Bug: web_search can receive unresolved SecretRef for Gemini provider after 2026.4.29 | high | candidate | May 1, 2026, 04:25 UTC | [records/openclaw-openclaw/items/75420.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75420.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71382](https://github.com/openclaw/openclaw/pull/71382) | feat: add WhatsApp read-only mode | high | candidate | May 1, 2026, 04:24 UTC | [records/openclaw-openclaw/items/71382.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71382.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72373](https://github.com/openclaw/openclaw/issues/72373) | OpenShell should fail fast on malformed generated commands and hard-abort repeated tool loops | high | candidate | May 1, 2026, 04:24 UTC | [records/openclaw-openclaw/items/72373.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72373.md) |
@@ -229,9 +232,6 @@ Latest review: May 1, 2026, 04:23 UTC. Latest close: May 1, 2026, 04:15 UTC. Lat
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75411](https://github.com/openclaw/openclaw/issues/75411) | [Bug]: Copilot 429 fail-fast fix is bypassed by session-custom stream path on 2026.4.29 | high | candidate | May 1, 2026, 04:14 UTC | [records/openclaw-openclaw/items/75411.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75411.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74700](https://github.com/openclaw/openclaw/pull/74700) | fix: clean up completed ACP run sessions | high | candidate | May 1, 2026, 04:13 UTC | [records/openclaw-openclaw/items/74700.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74700.md) |
 | [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74334](https://github.com/openclaw/openclaw/issues/74334) | v2026.4.24: Stored snippet normalization mismatch with `relocateCandidateRange` causes silent rehydration failure for all post-Apr-23 promotion candidates | high | candidate | May 1, 2026, 04:13 UTC | [records/openclaw-openclaw/items/74334.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74334.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74003](https://github.com/openclaw/openclaw/issues/74003) | [Bug]: before_tool_call plugin approval fails with 'no approval route' — turnSourceChannel not passed to plugin.approval.request | high | candidate | May 1, 2026, 04:12 UTC | [records/openclaw-openclaw/items/74003.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74003.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74586](https://github.com/openclaw/openclaw/issues/74586) | AM embedded run aborts memory_search tool calls; classifies as timeout despite model completion | high | candidate | May 1, 2026, 04:12 UTC | [records/openclaw-openclaw/items/74586.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74586.md) |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#51133](https://github.com/openclaw/openclaw/issues/51133) | Model enters infinite loop in OpenClaw | high | candidate | May 1, 2026, 04:11 UTC | [records/openclaw-openclaw/items/51133.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/51133.md) |
 
 <details>
 <summary>Recently Reviewed Across Repos</summary>
@@ -240,16 +240,16 @@ Latest review: May 1, 2026, 04:23 UTC. Latest close: May 1, 2026, 04:15 UTC. Lat
 
 | Repository | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- | --- |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75389](https://github.com/openclaw/openclaw/pull/75389) | Cap diagnostic JSONL log files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75389.md) | complete | May 1, 2026, 04:23 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75420](https://github.com/openclaw/openclaw/issues/75420) | Bug: web_search can receive unresolved SecretRef for Gemini provider after 2026.4.29 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75420.md) | complete | May 1, 2026, 04:21 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#74217](https://github.com/openclaw/openclaw/issues/74217) | Heartbeat model leaks into user session status/runtime model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74217.md) | complete | May 1, 2026, 04:20 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73391](https://github.com/openclaw/openclaw/pull/73391) | fix(cli): preserve parent options + await eager registration in lazy CLI runtime | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73391.md) | complete | May 1, 2026, 04:18 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75370](https://github.com/openclaw/openclaw/pull/75370) | feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75370.md) | complete | May 1, 2026, 04:18 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#70443](https://github.com/openclaw/openclaw/issues/70443) | [Feature]: Add --offline flag to scripts/docker/setup.sh for airgapped re-runs with a pre-loaded image | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70443.md) | failed | May 1, 2026, 04:17 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73496](https://github.com/openclaw/openclaw/issues/73496) | [Bug]: Embedded runtime hangs after `embedded run start`, agent never produces reply (WhatsApp channel) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73496.md) | complete | May 1, 2026, 04:17 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73349](https://github.com/openclaw/openclaw/pull/73349) | feat(exec): inject OPENCLAW_SESSION_KEY and OPENCLAW_AGENT_ID env vars for child processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73349.md) | complete | May 1, 2026, 04:17 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71820](https://github.com/openclaw/openclaw/pull/71820) | feat(bluebubbles): add reply-context API fallback for cache misses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71820.md) | complete | May 1, 2026, 04:17 UTC |
-| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75119](https://github.com/openclaw/openclaw/pull/75119) | [codex] fix(telegram): show structured tool progress | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75119.md) | complete | May 1, 2026, 04:17 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72284](https://github.com/openclaw/openclaw/issues/72284) | [Bug]: DREAMS.md not created after successful REM phase; Control UI Dreams tab empty | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72284.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73438](https://github.com/openclaw/openclaw/pull/73438) | feat: add proxy validation command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73438.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72216](https://github.com/openclaw/openclaw/pull/72216) | fix(nostr): keep setup status off full surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72216.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73755](https://github.com/openclaw/openclaw/pull/73755) | fix(gateway): preserve external Tailscale Funnel routes in serve mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73755.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75348](https://github.com/openclaw/openclaw/issues/75348) | github-copilot: tools[].eager_input_streaming still rejected on v2026.4.29 (re: #72183) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75348.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#75383](https://github.com/openclaw/openclaw/pull/75383) | fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75383.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72796](https://github.com/openclaw/openclaw/pull/72796) | feat(plugin-sdk): extend PluginHookAgentContext with sender and chat context [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72796.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72348.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#71569](https://github.com/openclaw/openclaw/issues/71569) | Mattermost streaming config: documented but not implemented + notification UX bug | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71569.md) | complete | May 1, 2026, 04:32 UTC |
+| [openclaw/openclaw](https://github.com/openclaw/openclaw) | [#73563](https://github.com/openclaw/openclaw/pull/73563) | fix(security): add session transcript redaction guards at bare appendMessage call sites | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73563.md) | complete | May 1, 2026, 04:32 UTC |
 
 </details>
 
@@ -267,12 +267,12 @@ Latest review: May 1, 2026, 04:23 UTC. Latest close: May 1, 2026, 04:15 UTC. Lat
 
 Repository: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-Updated: May 1, 2026, 04:33 UTC
+Updated: May 1, 2026, 04:34 UTC
 
-State: Review comments checked
+State: Hot intake publish complete
 
-Checked selected durable Codex review comments and synced missing or stale comments. Synced: 298. Item numbers: 15591,16085,17098,19362,19482,20802,23096,27771,38502,39166,40216,40238,40311,40438,40464,40502,40697,40764,40873,40953,41022,41038,41206,41254,41624,41628,42497,42654,43063,43411,43441,43462,43573,43588,43609,43810,43910,43953,43992,44027,44329,44897,44900,44972,44986,44996,45216,45220,45288,45525,45901,46377,51133,51251,51287,51511,51534,51586,51644,52092,52130,52161,52266,52385,52421,52496,52511,52526,52596,52618,52662,52665,52826,52934,53578,54409,55600,59397,59821,60137,60206,60304,60534,61345,61416,61422,61441,61469,61483,61521,61735,61807,61961,61973,62011,62092,62100,62307,62403,62733,63034,63145,63371,63373,63572,63905,65525,65538,65643,65776,65782,65859,66115,66252,68622,69110,69118,69182,69186,69190,69220,69260,69307,69327,69364,69386,69401,69443,69451,69475,69492,69505,69533,69541,69570,69572,69669,69678,69708,69748,69777,69849,69943,70024,70043,70050,70072,70164,70443,70734,71712,71713,71867,71923,71940,71961,72209,72418,72504,72514,72580,72623,72677,72717,72724,72805,72812,72937,72983,73039,73056,73122,73166,73186,73187,73243,73320,73328,73381,73387,73400,73449,73461,73488,73504,73537,73552,73557,73565,73574,73593,73603,73619,73691,73726,73813,73836,73860,73864,73898,73901,73910,73956,73967,73972,74003,74063,74073,74088,74093,74117,74124,74136,74143,74164,74185,74204,74212,74217,74233,74252,74262,74269,74284,74320,74334,74340,74364,74374,74378,74384,74395,74412,74421,74424,74481,74484,74491,74497,74500,74504,74510,74537,74552,74572,74575,74580,74586,74594,74601,74674,74679,74700,74722,74729,74732,74735,74749,74767,74782,74788,74800,74801,74803,74807,74809,74810,74822,74835,74859,74903,74922,74953,74982,74990,74998,75011,75026,75030,75031,75037,75044,75059,75061,75064,75065,75066,75071,75103,75152,75186,75204,75208,75223,75246,75247,75255,75305,75309,75411.
-Run: [https://github.com/openclaw/clawsweeper/actions/runs/25201607320](https://github.com/openclaw/clawsweeper/actions/runs/25201607320)
+Merged hot intake artifacts for run 25202203940 without full folder reconciliation, and the dashboard reflects completed shards.
+Run: [https://github.com/openclaw/clawsweeper/actions/runs/25202203940](https://github.com/openclaw/clawsweeper/actions/runs/25202203940)
 <!-- clawsweeper-status:openclaw-openclaw:end -->
 
 #### Queue
@@ -283,9 +283,9 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25201607320](https://
 | Open issues | 3433 |
 | Open PRs | 3349 |
 | Open items total | 6782 |
-| Reviewed files | 6733 |
-| Unreviewed open items | 49 |
-| Archived closed files | 15430 |
+| Reviewed files | 6734 |
+| Unreviewed open items | 48 |
+| Archived closed files | 15432 |
 
 #### Review Outcomes
 
@@ -293,25 +293,25 @@ Run: [https://github.com/openclaw/clawsweeper/actions/runs/25201607320](https://
 | --- | ---: |
 | Fresh reviewed issues in the last 7 days | 3392 |
 | Proposed issue closes | 3 (0.1% of reviewed issues) |
-| Fresh reviewed PRs in the last 7 days | 3291 |
-| Proposed PR closes | 4 (0.1% of reviewed PRs) |
-| Fresh verified reviews in the last 7 days | 6683 |
-| Proposed closes awaiting apply | 7 (0.1% of fresh reviews) |
+| Fresh reviewed PRs in the last 7 days | 3292 |
+| Proposed PR closes | 5 (0.2% of reviewed PRs) |
+| Fresh verified reviews in the last 7 days | 6684 |
+| Proposed closes awaiting apply | 8 (0.1% of fresh reviews) |
 | Work candidates awaiting promotion | 2316 |
-| Closed by Codex apply | 11411 |
+| Closed by Codex apply | 11413 |
 | Failed or stale reviews | 9 |
 
 #### Cadence
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | 537/1474 current (937 due, 36.4%) |
-| Hourly hot item cadence (<7d) | 537/1474 current (937 due, 36.4%) |
+| Hourly cadence coverage | 636/1475 current (839 due, 43.1%) |
+| Hourly hot item cadence (<7d) | 636/1475 current (839 due, 43.1%) |
 | Daily cadence coverage | 3414/3473 current (59 due, 98.3%) |
 | Daily PR cadence | 2391/2445 current (54 due, 97.8%) |
 | Daily new issue cadence (<30d) | 1023/1028 current (5 due, 99.5%) |
 | Weekly older issue cadence | 1755/1786 current (31 due, 98.3%) |
-| Due now by cadence | 1076 |
+| Due now by cadence | 977 |
 
 ### Audit Health
 
@@ -347,18 +347,19 @@ Targeted review input: `51947,61960,62112,73342`
 
 #### Latest Run Activity
 
-Latest review: May 1, 2026, 04:23 UTC. Latest close: May 1, 2026, 04:15 UTC. Latest comment sync: May 1, 2026, 04:33 UTC.
+Latest review: May 1, 2026, 04:32 UTC. Latest close: May 1, 2026, 04:28 UTC. Latest comment sync: May 1, 2026, 04:33 UTC.
 
 | Window | Reviews | Close decisions | Keep-open decisions | Failed/stale reviews | Closed | Comments synced | Apply skips |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Last 15 minutes | 3 | 0 | 3 | 0 | 0 | 300 | 1 |
-| Last hour | 852 | 26 | 826 | 1 | 14 | 610 | 2 |
-| Last 24 hours | 6836 | 473 | 6363 | 7 | 612 | 4321 | 23 |
+| Last 15 minutes | 108 | 3 | 105 | 0 | 2 | 307 | 1 |
+| Last hour | 953 | 29 | 924 | 1 | 16 | 614 | 2 |
+| Last 24 hours | 6839 | 476 | 6363 | 7 | 612 | 4323 | 23 |
 
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
 | --- | --- | --- | --- | --- |
+| [#75422](https://github.com/openclaw/openclaw/issues/75422) | active-memory blocks replies and saturates gateway event loop with timed-out embedded runs | duplicate or superseded | May 1, 2026, 04:28 UTC | [records/openclaw-openclaw/closed/75422.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75422.md) |
 | [#75421](https://github.com/openclaw/openclaw/issues/75421) | Fallback inserts blank user messages, rejected by providers (ZAI GLM 400 error) | already implemented on main | May 1, 2026, 04:24 UTC | [records/openclaw-openclaw/closed/75421.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75421.md) |
 | [#72794](https://github.com/openclaw/openclaw/pull/72794) | test(agents): align unclassified failure expectation | already implemented on main | May 1, 2026, 04:15 UTC | [records/openclaw-openclaw/closed/72794.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72794.md) |
 | [#72634](https://github.com/openclaw/openclaw/pull/72634) | fix: normalize null params to {} for empty object schemas (prevents infinite loops) | already implemented on main | May 1, 2026, 04:15 UTC | [records/openclaw-openclaw/closed/72634.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/72634.md) |
@@ -368,12 +369,14 @@ Latest review: May 1, 2026, 04:23 UTC. Latest close: May 1, 2026, 04:15 UTC. Lat
 | [#50996](https://github.com/openclaw/openclaw/issues/50996) | Feature Request: Interruptible tool calls — agent unresponsive during long process(poll) | duplicate or superseded | May 1, 2026, 04:14 UTC | [records/openclaw-openclaw/closed/50996.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/50996.md) |
 | [#75418](https://github.com/openclaw/openclaw/issues/75418) | [Bug] Embedded agent startup regressed to ~70s after updating to 2026.4.29 (Linux/Node 24) | already implemented on main | May 1, 2026, 04:14 UTC | [records/openclaw-openclaw/closed/75418.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75418.md) |
 | [#75041](https://github.com/openclaw/openclaw/issues/75041) | [Bug]: Workspace .py scripts break on v2026.4.x — gateway image (node:24-bookworm-slim base) ships no python3 | closed externally after review | May 1, 2026, 04:11 UTC | [records/openclaw-openclaw/closed/75041.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75041.md) |
-| [#75417](https://github.com/openclaw/openclaw/pull/75417) | fix(docker): restore python3 in runtime image | kept open | May 1, 2026, 04:07 UTC | [records/openclaw-openclaw/closed/75417.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/closed/75417.md) |
 
 #### Work Candidates
 
 | Item | Title | Priority | Status | Reviewed | Report |
 | --- | --- | --- | --- | --- | --- |
+| [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | high | candidate | May 1, 2026, 04:32 UTC | [records/openclaw-openclaw/items/72348.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72348.md) |
+| [#75341](https://github.com/openclaw/openclaw/issues/75341) | [Discord] v2026.4.29 regression: OAuth @me fetch-timeout + native slash command deploy PATCH hits 429 during startup | high | candidate | May 1, 2026, 04:31 UTC | [records/openclaw-openclaw/items/75341.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75341.md) |
+| [#72345](https://github.com/openclaw/openclaw/issues/72345) | voice-call: CLI `voicecall call` cannot run when gateway is owning the webhook port | high | candidate | May 1, 2026, 04:31 UTC | [records/openclaw-openclaw/items/72345.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72345.md) |
 | [#75420](https://github.com/openclaw/openclaw/issues/75420) | Bug: web_search can receive unresolved SecretRef for Gemini provider after 2026.4.29 | high | candidate | May 1, 2026, 04:25 UTC | [records/openclaw-openclaw/items/75420.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75420.md) |
 | [#71382](https://github.com/openclaw/openclaw/pull/71382) | feat: add WhatsApp read-only mode | high | candidate | May 1, 2026, 04:24 UTC | [records/openclaw-openclaw/items/71382.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71382.md) |
 | [#72373](https://github.com/openclaw/openclaw/issues/72373) | OpenShell should fail fast on malformed generated commands and hard-abort repeated tool loops | high | candidate | May 1, 2026, 04:24 UTC | [records/openclaw-openclaw/items/72373.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72373.md) |
@@ -381,24 +384,21 @@ Latest review: May 1, 2026, 04:23 UTC. Latest close: May 1, 2026, 04:15 UTC. Lat
 | [#72985](https://github.com/openclaw/openclaw/issues/72985) | Cron isolated-agent: fallback chain silently delivers incomplete-turn warning, and status=error rows mark delivered=true | high | candidate | May 1, 2026, 04:24 UTC | [records/openclaw-openclaw/items/72985.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72985.md) |
 | [#73391](https://github.com/openclaw/openclaw/pull/73391) | fix(cli): preserve parent options + await eager registration in lazy CLI runtime | high | candidate | May 1, 2026, 04:18 UTC | [records/openclaw-openclaw/items/73391.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73391.md) |
 | [#73427](https://github.com/openclaw/openclaw/issues/73427) | Control UI Realtime Talk: CSP blocks OpenAI WebRTC and UI hides realtime audio errors | high | candidate | May 1, 2026, 04:16 UTC | [records/openclaw-openclaw/items/73427.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73427.md) |
-| [#73163](https://github.com/openclaw/openclaw/pull/73163) | fix(gateway): warn for insecure Control UI access | high | candidate | May 1, 2026, 04:16 UTC | [records/openclaw-openclaw/items/73163.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73163.md) |
-| [#73478](https://github.com/openclaw/openclaw/issues/73478) | [Bug]: openclaw gateway 没有输出图片信息 | high | candidate | May 1, 2026, 04:16 UTC | [records/openclaw-openclaw/items/73478.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73478.md) |
-| [#75411](https://github.com/openclaw/openclaw/issues/75411) | [Bug]: Copilot 429 fail-fast fix is bypassed by session-custom stream path on 2026.4.29 | high | candidate | May 1, 2026, 04:14 UTC | [records/openclaw-openclaw/items/75411.md](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75411.md) |
 
 #### Recently Reviewed
 
 | Item | Title | Outcome | Status | Reviewed |
 | --- | --- | --- | --- | --- |
-| [#75389](https://github.com/openclaw/openclaw/pull/75389) | Cap diagnostic JSONL log files | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75389.md) | complete | May 1, 2026, 04:23 UTC |
-| [#75420](https://github.com/openclaw/openclaw/issues/75420) | Bug: web_search can receive unresolved SecretRef for Gemini provider after 2026.4.29 | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75420.md) | complete | May 1, 2026, 04:21 UTC |
-| [#74217](https://github.com/openclaw/openclaw/issues/74217) | Heartbeat model leaks into user session status/runtime model | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/74217.md) | complete | May 1, 2026, 04:20 UTC |
-| [#73391](https://github.com/openclaw/openclaw/pull/73391) | fix(cli): preserve parent options + await eager registration in lazy CLI runtime | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73391.md) | complete | May 1, 2026, 04:18 UTC |
-| [#75370](https://github.com/openclaw/openclaw/pull/75370) | feat(document-extract): add pdftoppm fallback when @napi-rs/canvas is unavailable | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75370.md) | complete | May 1, 2026, 04:18 UTC |
-| [#70443](https://github.com/openclaw/openclaw/issues/70443) | [Feature]: Add --offline flag to scripts/docker/setup.sh for airgapped re-runs with a pre-loaded image | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/70443.md) | failed | May 1, 2026, 04:17 UTC |
-| [#73496](https://github.com/openclaw/openclaw/issues/73496) | [Bug]: Embedded runtime hangs after `embedded run start`, agent never produces reply (WhatsApp channel) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73496.md) | complete | May 1, 2026, 04:17 UTC |
-| [#73349](https://github.com/openclaw/openclaw/pull/73349) | feat(exec): inject OPENCLAW_SESSION_KEY and OPENCLAW_AGENT_ID env vars for child processes | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73349.md) | complete | May 1, 2026, 04:17 UTC |
-| [#71820](https://github.com/openclaw/openclaw/pull/71820) | feat(bluebubbles): add reply-context API fallback for cache misses | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71820.md) | complete | May 1, 2026, 04:17 UTC |
-| [#75119](https://github.com/openclaw/openclaw/pull/75119) | [codex] fix(telegram): show structured tool progress | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75119.md) | complete | May 1, 2026, 04:17 UTC |
+| [#72284](https://github.com/openclaw/openclaw/issues/72284) | [Bug]: DREAMS.md not created after successful REM phase; Control UI Dreams tab empty | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72284.md) | complete | May 1, 2026, 04:32 UTC |
+| [#73438](https://github.com/openclaw/openclaw/pull/73438) | feat: add proxy validation command | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73438.md) | complete | May 1, 2026, 04:32 UTC |
+| [#72216](https://github.com/openclaw/openclaw/pull/72216) | fix(nostr): keep setup status off full surface | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72216.md) | complete | May 1, 2026, 04:32 UTC |
+| [#73755](https://github.com/openclaw/openclaw/pull/73755) | fix(gateway): preserve external Tailscale Funnel routes in serve mode | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73755.md) | complete | May 1, 2026, 04:32 UTC |
+| [#75348](https://github.com/openclaw/openclaw/issues/75348) | github-copilot: tools[].eager_input_streaming still rejected on v2026.4.29 (re: #72183) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75348.md) | complete | May 1, 2026, 04:32 UTC |
+| [#75383](https://github.com/openclaw/openclaw/pull/75383) | fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out... | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/75383.md) | complete | May 1, 2026, 04:32 UTC |
+| [#72796](https://github.com/openclaw/openclaw/pull/72796) | feat(plugin-sdk): extend PluginHookAgentContext with sender and chat context [AI-assisted] | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72796.md) | complete | May 1, 2026, 04:32 UTC |
+| [#72348](https://github.com/openclaw/openclaw/pull/72348) | fix(nextcloud-talk): dispatch react action so agents can send reactions (#70110) | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/72348.md) | complete | May 1, 2026, 04:32 UTC |
+| [#71569](https://github.com/openclaw/openclaw/issues/71569) | Mattermost streaming config: documented but not implemented + notification UX bug | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/71569.md) | complete | May 1, 2026, 04:32 UTC |
+| [#73563](https://github.com/openclaw/openclaw/pull/73563) | fix(security): add session transcript redaction guards at bare appendMessage call sites | [keep_open / kept_open](https://github.com/openclaw/clawsweeper/blob/main/records/openclaw-openclaw/items/73563.md) | complete | May 1, 2026, 04:32 UTC |
 
 </details>
 
