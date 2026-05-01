@@ -3,7 +3,7 @@ description: Cache, install, and authenticate the OpenAI Codex CLI.
 inputs:
   version:
     description: Codex CLI npm package version.
-    default: "0.125.0"
+    default: "0.128.0"
   cache-suffix:
     description: Extra cache key suffix for target-tool downloads.
     default: ""
@@ -19,7 +19,6 @@ runs:
         path: |
           ~/.npm
           ~/.cache/node/corepack
-          ~/.local/share/pnpm/store
           ~/.clawsweeper-repair/codex
         key: ${{ runner.os }}-node24-codex-${{ inputs.version }}-${{ inputs['cache-suffix'] || 'default' }}-v1
         restore-keys: |
