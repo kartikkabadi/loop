@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:17:03.742Z",
+  "generated_at": "2026-05-01T03:17:10.370Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:17:01.711Z",
+  "since": "2026-05-01T00:17:08.082Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75383
+    75382
   ],
   "max_autoclose_targets": 8,
-  "scanned_comments": 1,
-  "commands_seen": 1,
-  "actionable": 0,
+  "scanned_comments": 3,
+  "commands_seen": 2,
+  "actionable": 1,
   "trusted_bots": [
     "clawsweeper[bot]",
     "openclaw-clawsweeper[bot]"
@@ -28,67 +28,109 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75383:4357601058:2026-05-01T03:16:57Z:clawsweeper_needs_human",
-      "comment_id": "4357601058",
-      "comment_version_key": "4357601058:2026-05-01T03:16:57Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75383#issuecomment-4357601058",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75382:4357590733:2026-05-01T03:17:04Z:clawsweeper_auto_merge",
+      "comment_id": "4357590733",
+      "comment_version_key": "4357590733:2026-05-01T03:17:04Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75382#issuecomment-4357590733",
       "repo": "openclaw/openclaw",
-      "issue_number": 75383,
+      "issue_number": 75382,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:14:39Z",
-      "comment_updated_at": "2026-05-01T03:16:57Z",
+      "comment_created_at": "2026-05-01T03:11:57Z",
+      "comment_updated_at": "2026-05-01T03:17:04Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "command": "clawsweeper auto merge",
+      "intent": "clawsweeper_auto_merge",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=735c4125f83cba62c6c1c27db0858557c0937582)",
-      "review_summary": "The PR propagates Telegram payload `audioAsVoice` to the Telegram sender as `asVoice: true` and adds a regression test for payload media voice sends.",
-      "review_followup": "",
+      "repair_reason": "structured ClawSweeper verdict: pass (sha=6c8ee20e0cf9ccbe1933ca89025ee2bd20308f48)",
+      "review_summary": "The PR updates auto-reply tool-policy fallback detection, message-tool forcing for tool-only runs, qa-channel group target support, qa-lab scenarios, generated channel metadata, docs, and changelog coverage for group visible replies.",
+      "review_followup": "No repair job is needed: this automerge-opted PR has no discrete actionable finding, and the remaining action is to let exact-head CI/mergeability gate the merge.",
       "freeform_prompt": null,
-      "expected_head_sha": "735c4125f83cba62c6c1c27db0858557c0937582",
+      "expected_head_sha": "6c8ee20e0cf9ccbe1933ca89025ee2bd20308f48",
       "finding_id": null,
-      "status": "skipped",
-      "actions": [],
+      "status": "waiting",
+      "actions": [
+        {
+          "action": "merge",
+          "status": "waiting",
+          "reason": "merge state status is UNSTABLE",
+          "merge_method": "squash",
+          "completed_at": "2026-05-01T03:17:11.827Z"
+        },
+        {
+          "action": "comment",
+          "status": "pending"
+        }
+      ],
       "target": {
         "kind": "pull_request",
-        "title": "fix: Gateway send.asVoice field is accepted and converted to audioAsVoice, but Telegram’s out...",
-        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-df0ee092f017",
-        "head_sha": "735c4125f83cba62c6c1c27db0858557c0937582",
-        "author": "app/clawsweeper",
+        "title": "fix(auto-reply): keep group visible replies deliverable",
+        "branch": "fix/qa-channel-group-visible-replies",
+        "head_sha": "6c8ee20e0cf9ccbe1933ca89025ee2bd20308f48",
+        "author": "steipete",
         "labels": [
-          "channel: telegram",
-          "size: XS",
-          "clawsweeper",
-          "clawsweeper:commit-finding"
+          "docs",
+          "agents",
+          "maintainer",
+          "size: L",
+          "channel: qa-channel",
+          "extensions: qa-lab",
+          "clawsweeper:automerge"
         ],
-        "is_clawsweeper_pr": true,
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-df0ee092f017",
-        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-df0ee092f017.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75383",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75383.md",
+        "is_clawsweeper_pr": false,
+        "cluster_id": "automerge-openclaw-openclaw-75382",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75382.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75382",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75382.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 101,
+          "total": 113,
           "counts": {
             "CANCELLED": 3,
-            "SKIPPED": 26,
-            "SUCCESS": 70,
             "IN_PROGRESS": 1,
+            "SKIPPED": 23,
+            "SUCCESS": 85,
             "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS"
           ]
         }
-      },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      }
+    },
+    {
+      "idempotency_key": "comment-router:openclaw/openclaw:75382:4357587023:2026-05-01T03:10:45Z:automerge",
+      "comment_id": "4357587023",
+      "comment_version_key": "4357587023:2026-05-01T03:10:45Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75382#issuecomment-4357587023",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75382,
+      "author": "steipete",
+      "author_association": "CONTRIBUTOR",
+      "comment_created_at": "2026-05-01T03:10:45Z",
+      "comment_updated_at": "2026-05-01T03:10:45Z",
+      "trigger": "mention",
+      "command": "automerge",
+      "intent": "automerge",
+      "autoclose_message": null,
+      "trusted_bot": false,
+      "trusted_bot_author": null,
+      "automation_source": null,
+      "repair_reason": null,
+      "review_summary": "",
+      "review_followup": "",
+      "freeform_prompt": null,
+      "expected_head_sha": null,
+      "finding_id": null,
+      "status": "skipped",
+      "actions": [],
+      "reason": "comment version already processed in ledger"
     }
   ]
 }
