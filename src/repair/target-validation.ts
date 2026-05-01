@@ -93,34 +93,39 @@ export function runAllowedValidationCommands(
   ensureMergeBaseAvailable({ targetDir: cwd, baseBranch });
   const validationEnv = targetValidationEnv();
   const executed: string[] = [];
+  const attempts = new Map<string, number>();
   for (const command of requiredValidationCommands(commands, cwd, options)) {
     const resolvedCommands = resolveAllowedValidationCommands(command, cwd, baseBranch, options);
     for (const parts of resolvedCommands) {
       const rendered = parts.join(" ");
       if (executed.includes(rendered)) continue;
-      try {
-        run(parts[0], parts.slice(1), { cwd, env: validationEnv });
-        executed.push(rendered);
-      } catch (error) {
-        const fallbackCommands = validationFallbackCommands({
-          parts,
-          error,
-          cwd,
-          baseBranch,
-          options,
-        });
-        if (fallbackCommands.length > 0) {
-          for (const fallbackParts of fallbackCommands) {
-            const fallbackRendered = fallbackParts.join(" ");
-            if (executed.includes(fallbackRendered)) continue;
-            run(fallbackParts[0], fallbackParts.slice(1), { cwd, env: validationEnv });
-            executed.push(fallbackRendered);
+      while (true) {
+        try {
+          run(parts[0], parts.slice(1), { cwd, env: validationEnv });
+          executed.push(rendered);
+          break;
+        } catch (error) {
+          const fallbackCommands = validationFallbackCommands({
+            parts,
+            error,
+            cwd,
+            baseBranch,
+            options,
+          });
+          if (fallbackCommands.length > 0) {
+            for (const fallbackParts of fallbackCommands) {
+              const fallbackRendered = fallbackParts.join(" ");
+              if (executed.includes(fallbackRendered)) continue;
+              run(fallbackParts[0], fallbackParts.slice(1), { cwd, env: validationEnv });
+              executed.push(fallbackRendered);
+            }
+            break;
           }
-          continue;
+          if (shouldRetryValidationCommand({ parts, error, attempts, options })) continue;
+          throw new Error(
+            `validation command failed (${parts.join(" ")}): ${compactText(error.message, 1200)}`,
+          );
         }
-        throw new Error(
-          `validation command failed (${parts.join(" ")}): ${compactText(error.message, 1200)}`,
-        );
       }
     }
   }
@@ -250,6 +255,20 @@ function isChangedGateStall(error: JsonValue) {
   return /no output for \d+ms|terminating stalled Vitest|stalled Vitest process/i.test(
     String(error?.message ?? ""),
   );
+}
+
+function shouldRetryValidationCommand({ parts, error, attempts, options }: LooseRecord) {
+  if (options.strictTargetValidation) return false;
+  if (parts[0] !== "pnpm" || parts[1] !== "check:changed" || parts.length !== 2) return false;
+  if (isChangedGateStall(error)) return false;
+
+  const configuredRetries = Number.parseInt(process.env.CLAWSWEEPER_VALIDATION_RETRIES ?? "1", 10);
+  const maxRetries = Number.isFinite(configuredRetries) ? Math.max(0, configuredRetries) : 1;
+  const rendered = parts.join(" ");
+  const used = attempts.get(rendered) ?? 0;
+  if (used >= maxRetries) return false;
+  attempts.set(rendered, used + 1);
+  return true;
 }
 
 function targetValidationEnv() {

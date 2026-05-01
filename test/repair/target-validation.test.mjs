@@ -9,7 +9,9 @@ import {
   preflightTargetValidationPlan,
   repairDeltaValidationPlan,
   requiredValidationCommands,
+  runAllowedValidationCommands,
 } from "../../dist/repair/target-validation.js";
+import { compactText } from "../../dist/repair/text-utils.js";
 
 test("OpenClaw repairs require changed-surface validation even when omitted", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
@@ -158,6 +160,39 @@ test("adopted OpenClaw PR repairs keep full changed gate for code repair deltas"
   ]);
 });
 
+test("changed validation retries one transient check:changed failure", () => {
+  const cwd = gitPackageFixture({
+    "check:changed":
+      "node -e \"const fs=require('fs'); const file='.attempt'; const count=fs.existsSync(file)?Number(fs.readFileSync(file,'utf8')):0; fs.writeFileSync(file, String(count+1)); if (count===0) { console.error('transient changed gate failure'); process.exit(1); }\"",
+  });
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  attachOrigin(cwd);
+
+  const previous = process.env.CLAWSWEEPER_VALIDATION_RETRIES;
+  process.env.CLAWSWEEPER_VALIDATION_RETRIES = "1";
+  try {
+    assert.deepEqual(
+      runAllowedValidationCommands(
+        ["pnpm check:changed"],
+        cwd,
+        validationOptions("openclaw/openclaw"),
+      ),
+      ["pnpm check:changed"],
+    );
+  } finally {
+    if (previous === undefined) delete process.env.CLAWSWEEPER_VALIDATION_RETRIES;
+    else process.env.CLAWSWEEPER_VALIDATION_RETRIES = previous;
+  }
+});
+
+test("compactText keeps both head and tail for long validation output", () => {
+  assert.equal(
+    compactText("head ".repeat(20) + "tail failure detail", 64).endsWith("failure detail"),
+    true,
+  );
+});
+
 function packageFixture(scripts) {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-"));
   fs.writeFileSync(path.join(cwd, "package.json"), `${JSON.stringify({ scripts }, null, 2)}\n`);
@@ -170,6 +205,13 @@ function gitPackageFixture(scripts) {
   git(cwd, "config", "user.email", "clawsweeper@example.invalid");
   git(cwd, "config", "user.name", "ClawSweeper Test");
   return cwd;
+}
+
+function attachOrigin(cwd) {
+  const origin = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-origin-"));
+  git(origin, "init", "--bare");
+  git(cwd, "remote", "add", "origin", origin);
+  git(cwd, "push", "-u", "origin", "main:main");
 }
 
 function git(cwd, ...args) {

@@ -2,7 +2,14 @@ export function compactText(value: unknown, maxLength: number) {
   const text = String(value ?? "")
     .replace(/\s+/g, " ")
     .trim();
-  return text.length > maxLength ? `${text.slice(0, maxLength - 3)}...` : text;
+  if (text.length <= maxLength) return text;
+  if (maxLength <= 16) return `${text.slice(0, Math.max(0, maxLength - 3))}...`;
+
+  const marker = " ... ";
+  const available = Math.max(0, maxLength - marker.length);
+  const headLength = Math.ceil(available / 2);
+  const tailLength = Math.floor(available / 2);
+  return `${text.slice(0, headLength)}${marker}${text.slice(text.length - tailLength)}`;
 }
 
 export function escapeRegExp(value: unknown) {
