@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:11:34.833Z",
+  "updated_at": "2026-05-01T04:14:30.628Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74013:4340522420:2026-04-30T23:30:57Z:clawsweeper_needs_human",
-      "comment_id": "4340522420",
-      "comment_version_key": "4340522420:2026-04-30T23:30:57Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/74013#issuecomment-4340522420",
-      "comment_created_at": "2026-04-29T03:00:25Z",
-      "comment_updated_at": "2026-04-30T23:30:57Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 74013,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=8a863e0a0da1d62624c838b0ff043e7e2735c772)",
-      "expected_head_sha": "8a863e0a0da1d62624c838b0ff043e7e2735c772",
-      "finding_id": null,
-      "status": "skipped",
-      "processed_at": "2026-05-01T00:02:34.254Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:74004:4340490429:2026-04-30T23:30:55Z:clawsweeper_needs_human",
       "comment_id": "4340490429",
@@ -26333,6 +26309,36 @@
         "kind": "pull_request",
         "branch": "fix/embedded-run-abort-retention",
         "head_sha": "08428855eea0acdef0ea1da10e1423bb7754f581",
+        "cluster_id": null,
+        "job_path": null
+      }
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:61775:4353855379:2026-05-01T04:14:25Z:clawsweeper_needs_human",
+      "comment_id": "4353855379",
+      "comment_version_key": "4353855379:2026-05-01T04:14:25Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/61775#issuecomment-4353855379",
+      "comment_created_at": "2026-04-30T15:34:49Z",
+      "comment_updated_at": "2026-05-01T04:14:25Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 61775,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=777c0c7608cfa971aad8dd261f719d354805d688)",
+      "expected_head_sha": "777c0c7608cfa971aad8dd261f719d354805d688",
+      "finding_id": null,
+      "status": "skipped",
+      "processed_at": "2026-05-01T04:14:30.627Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "makefile-enhance",
+        "head_sha": "777c0c7608cfa971aad8dd261f719d354805d688",
         "cluster_id": null,
         "job_path": null
       }
