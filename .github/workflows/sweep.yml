@@ -275,11 +275,17 @@ jobs:
           checkout_dir="${{ steps.target.outputs.target_checkout_dir }}"
           if [ -d "$cache_dir" ]; then
             git -C "$cache_dir" remote set-url origin "$url"
-            git -C "$cache_dir" fetch --prune --depth=1 origin main
+            git -C "$cache_dir" config remote.origin.promisor true
+            git -C "$cache_dir" config remote.origin.partialclonefilter blob:none
+            if [ -f "$cache_dir/shallow" ]; then
+              git -C "$cache_dir" fetch --prune --unshallow --filter=blob:none origin main
+            else
+              git -C "$cache_dir" fetch --prune --filter=blob:none origin main
+            fi
           else
-            git clone --bare --depth=1 "$url" "$cache_dir"
+            git clone --bare --filter=blob:none --single-branch --branch main "$url" "$cache_dir"
           fi
-          git clone --reference-if-able "$cache_dir" --dissociate --depth=1 --branch main --single-branch "$url" "$checkout_dir"
+          git clone --reference-if-able "$cache_dir" --dissociate --filter=blob:none --branch main --single-branch "$url" "$checkout_dir"
           git -C "$checkout_dir" rev-parse --short HEAD
 
       - name: Review exact event item
@@ -580,11 +586,17 @@ jobs:
           checkout_dir="${{ needs.plan.outputs.target_checkout_dir }}"
           if [ -d "$cache_dir" ]; then
             git -C "$cache_dir" remote set-url origin "$url"
-            git -C "$cache_dir" fetch --prune --depth=1 origin main
+            git -C "$cache_dir" config remote.origin.promisor true
+            git -C "$cache_dir" config remote.origin.partialclonefilter blob:none
+            if [ -f "$cache_dir/shallow" ]; then
+              git -C "$cache_dir" fetch --prune --unshallow --filter=blob:none origin main
+            else
+              git -C "$cache_dir" fetch --prune --filter=blob:none origin main
+            fi
           else
-            git clone --bare --depth=1 "$url" "$cache_dir"
+            git clone --bare --filter=blob:none --single-branch --branch main "$url" "$cache_dir"
           fi
-          git clone --reference-if-able "$cache_dir" --dissociate --depth=1 --branch main --single-branch "$url" "$checkout_dir"
+          git clone --reference-if-able "$cache_dir" --dissociate --filter=blob:none --branch main --single-branch "$url" "$checkout_dir"
           git -C "$checkout_dir" rev-parse --short HEAD
 
       - name: Review shard
