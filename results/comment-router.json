@@ -1,30 +1,6 @@
 {
-  "updated_at": "2026-05-01T04:50:58.664Z",
+  "updated_at": "2026-05-01T04:51:45.216Z",
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72239:4323012546:2026-05-01T00:48:34Z:clawsweeper_auto_repair",
-      "comment_id": "4323012546",
-      "comment_version_key": "4323012546:2026-05-01T00:48:34Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/72239#issuecomment-4323012546",
-      "comment_created_at": "2026-04-26T21:12:03Z",
-      "comment_updated_at": "2026-05-01T00:48:34Z",
-      "repo": "openclaw/openclaw",
-      "issue_number": 72239,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=54c0ff408740b2cb1a8a2ba56cb1891ec403a402)",
-      "expected_head_sha": "54c0ff408740b2cb1a8a2ba56cb1891ec403a402",
-      "finding_id": "review-feedback",
-      "status": "skipped",
-      "processed_at": "2026-05-01T02:03:22.328Z",
-      "target": null
-    },
     {
       "idempotency_key": "clawsweeper-repair:openclaw/openclaw:72218:4322597356:2026-05-01T00:48:33Z:clawsweeper_auto_repair",
       "comment_id": "4322597356",
@@ -28057,6 +28033,50 @@
           "action": "label",
           "status": "executed",
           "label": "clawsweeper:human-review",
+          "job_path": null
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "label": null,
+          "job_path": null
+        }
+      ]
+    },
+    {
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75173:4354537199:2026-05-01T04:51:01Z:clawsweeper_auto_merge",
+      "comment_id": "4354537199",
+      "comment_version_key": "4354537199:2026-05-01T04:51:01Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75173#issuecomment-4354537199",
+      "comment_created_at": "2026-04-30T17:08:51Z",
+      "comment_updated_at": "2026-05-01T04:51:01Z",
+      "repo": "openclaw/openclaw",
+      "issue_number": 75173,
+      "author": "clawsweeper[bot]",
+      "author_association": "CONTRIBUTOR",
+      "trigger": "trusted_bot",
+      "command": "clawsweeper auto merge",
+      "intent": "clawsweeper_auto_merge",
+      "trusted_bot": true,
+      "trusted_bot_author": "clawsweeper[bot]",
+      "automation_source": "clawsweeper",
+      "repair_reason": "structured ClawSweeper verdict: pass (sha=cfb8cf5c4941158983753320533b0dedd440cdfe)",
+      "expected_head_sha": "cfb8cf5c4941158983753320533b0dedd440cdfe",
+      "finding_id": null,
+      "status": "executed",
+      "processed_at": "2026-05-01T04:51:45.215Z",
+      "target": {
+        "kind": "pull_request",
+        "branch": "clawsweeper/automerge-openclaw-openclaw-74506",
+        "head_sha": "cfb8cf5c4941158983753320533b0dedd440cdfe",
+        "cluster_id": "automerge-openclaw-openclaw-74506",
+        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md"
+      },
+      "actions": [
+        {
+          "action": "merge",
+          "status": "blocked",
+          "label": null,
           "job_path": null
         },
         {
