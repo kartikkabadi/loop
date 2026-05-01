@@ -97,11 +97,12 @@ export function runAllowedValidationCommands(
   for (const command of requiredValidationCommands(commands, cwd, options)) {
     const resolvedCommands = resolveAllowedValidationCommands(command, cwd, baseBranch, options);
     for (const parts of resolvedCommands) {
+      const executable = parts[0]!;
       const rendered = parts.join(" ");
       if (executed.includes(rendered)) continue;
       while (true) {
         try {
-          run(parts[0], parts.slice(1), { cwd, env: validationEnv });
+          run(executable, parts.slice(1), { cwd, env: validationEnv });
           executed.push(rendered);
           break;
         } catch (error) {
@@ -114,9 +115,10 @@ export function runAllowedValidationCommands(
           });
           if (fallbackCommands.length > 0) {
             for (const fallbackParts of fallbackCommands) {
+              const fallbackExecutable = fallbackParts[0]!;
               const fallbackRendered = fallbackParts.join(" ");
               if (executed.includes(fallbackRendered)) continue;
-              run(fallbackParts[0], fallbackParts.slice(1), { cwd, env: validationEnv });
+              run(fallbackExecutable, fallbackParts.slice(1), { cwd, env: validationEnv });
               executed.push(fallbackRendered);
             }
             break;

@@ -441,9 +441,9 @@ function findingKinds(markdown: string) {
 function likelyFilesFromReport(markdown: string) {
   const out: JsonValue[] = [];
   for (const match of markdown.matchAll(/^- File:\s*`?([^`\n]+?)`?\s*$/gim))
-    out.push(match[1].trim());
+    out.push(match[1]!.trim());
   const changed = markdown.match(/^- Changed files:\s*(.+)$/im)?.[1] ?? "";
-  for (const match of changed.matchAll(/`([^`]+)`/g)) out.push(match[1].trim());
+  for (const match of changed.matchAll(/`([^`]+)`/g)) out.push(match[1]!.trim());
   return unique(
     out.filter(
       (file: JsonValue) =>

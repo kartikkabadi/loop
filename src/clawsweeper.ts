@@ -1436,7 +1436,7 @@ function closingPullRequestsForIssue(number: number): unknown[] {
 export function openClosingPullRequestApplyReason(pullRequests: readonly unknown[]): string | null {
   const openPulls = pullRequests
     .map(asRecord)
-    .filter((pull) => String(pull.state ?? "").toLowerCase() === "open")
+    .filter((pull) => typeof pull.state === "string" && pull.state.toLowerCase() === "open")
     .map((pull) => ({
       number: typeof pull.number === "number" ? pull.number : null,
       title: typeof pull.title === "string" ? pull.title : "",
@@ -1502,7 +1502,7 @@ function collectRelatedMentions(options: {
   return mentions;
 }
 
-function compactRelatedItem(number: number, mentionedIn: string[]): unknown | null {
+function compactRelatedItem(number: number, mentionedIn: string[]): Record<string, unknown> | null {
   try {
     const issue = ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${number}`]);
     const issueRecord = asRecord(issue);
@@ -1748,11 +1748,12 @@ function relatedCounterpartInfo(value: unknown): {
   const issue = asRecord(record.issue);
   const pullRequest = asRecord(record.pullRequest);
   const isPullRequest = Object.keys(pullRequest).length > 0;
+  const state = isPullRequest ? pullRequest.state : issue.state;
   return {
     number: typeof issue.number === "number" ? issue.number : null,
     kind: isPullRequest ? "pull_request" : "issue",
     author: normalizeAuthorLogin(isPullRequest ? pullRequest.author : issue.author),
-    state: String((isPullRequest ? pullRequest.state : issue.state) ?? "").toLowerCase(),
+    state: typeof state === "string" ? state.toLowerCase() : "",
     title: typeof issue.title === "string" ? issue.title : "",
   };
 }
@@ -2714,8 +2715,8 @@ function collectItemContext(item: Item): ItemContext {
       timeline: timeline.length,
     },
   };
-  let pullRequest: unknown | undefined;
-  let pullReviewComments: unknown[] | undefined;
+  let pullRequest: unknown = null;
+  let pullReviewComments: unknown[] | null = null;
   if (item.kind === "issue") {
     const closingPullRequests = closingPullRequestsForIssue(item.number);
     if (closingPullRequests.length > 0) {

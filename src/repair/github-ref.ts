@@ -9,10 +9,12 @@ export function parsePullRequestUrl(value: unknown): GitHubRef | null {
     .trim()
     .match(/^https:\/\/github\.com\/([^/\s]+\/[^/\s]+)\/pull\/(\d+)(?:[/?#].*)?$/i);
   if (!match) return null;
+  const repo = match[1]!;
+  const numberText = match[2]!;
   return {
-    repo: match[1],
-    number: Number(match[2]),
-    url: `https://github.com/${match[1]}/pull/${match[2]}`,
+    repo,
+    number: Number(numberText),
+    url: `https://github.com/${repo}/pull/${numberText}`,
   };
 }
 
@@ -26,19 +28,22 @@ export function parseIssueOrPullRef(value: unknown, defaultRepo = ""): GitHubRef
     /^https:\/\/github\.com\/([^/]+\/[^/]+)\/(?:issues|pull)\/(\d+)(?:[/?#].*)?$/i,
   );
   if (urlMatch) {
+    const repo = urlMatch[1]!;
+    const numberText = urlMatch[2]!;
     return {
-      repo: urlMatch[1],
-      number: Number(urlMatch[2]),
-      url: `https://github.com/${urlMatch[1]}/issues/${urlMatch[2]}`,
+      repo,
+      number: Number(numberText),
+      url: `https://github.com/${repo}/issues/${numberText}`,
     };
   }
 
   const shorthand = text.match(/^#?(\d+)$/);
   if (!shorthand || !defaultRepo) return null;
+  const numberText = shorthand[1]!;
   return {
     repo: defaultRepo,
-    number: Number(shorthand[1]),
-    url: `https://github.com/${defaultRepo}/issues/${shorthand[1]}`,
+    number: Number(numberText),
+    url: `https://github.com/${defaultRepo}/issues/${numberText}`,
   };
 }
 
@@ -46,7 +51,7 @@ export function issueNumberFromRef(value: unknown, expectedRepo = ""): number {
   const shorthand = String(value ?? "")
     .trim()
     .match(/^#?(\d+)$/);
-  if (shorthand) return Number(shorthand[1]);
+  if (shorthand) return Number(shorthand[1]!);
 
   const parsed = parseIssueOrPullRef(value);
   if (!parsed) return 0;

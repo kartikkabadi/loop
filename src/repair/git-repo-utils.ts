@@ -60,8 +60,8 @@ export function remoteBranchSha({ targetDir, branch }: TargetBranch): string {
     encoding: "utf8",
   });
   if (child.status !== 0) return "";
-  const [sha] = child.stdout.trim().split(/\s+/);
-  return /^[0-9a-f]{40}$/.test(sha ?? "") ? sha : "";
+  const sha = child.stdout.trim().split(/\s+/)[0] ?? "";
+  return /^[0-9a-f]{40}$/.test(sha) ? sha : "";
 }
 
 export function branchHasBaseDiff({ targetDir, baseBranch }: TargetBaseBranch): boolean {

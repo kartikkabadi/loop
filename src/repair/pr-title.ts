@@ -77,10 +77,8 @@ function repairStem(surface: unknown, issue: unknown) {
 }
 
 function firstSentence(value: unknown) {
-  return normalizeTitleText(value)
-    .split(/(?<=[.!?])\s+/)[0]
-    .replace(/[.!?]+$/, "")
-    .trim();
+  const first = normalizeTitleText(value).split(/(?<=[.!?])\s+/)[0]!;
+  return first.replace(/[.!?]+$/, "").trim();
 }
 
 function compactTitle(value: unknown, maxLength: number) {

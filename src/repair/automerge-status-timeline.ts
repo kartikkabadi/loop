@@ -33,7 +33,7 @@ function existingTimelineRows(value: JsonValue): string[] {
     new RegExp(`${escapeRegExp(TIMELINE_START)}([\\s\\S]*?)${escapeRegExp(TIMELINE_END)}`),
   );
   if (!match) return [];
-  return match[1]
+  return match[1]!
     .split(/\r?\n/)
     .map((line) => line.trimEnd())
     .filter((line) => line.includes(EVENT_PREFIX));

@@ -12,11 +12,11 @@ export type GitPublishOptions = {
   message: string;
   paths: readonly string[];
   restorePaths?: readonly string[];
-  maxAttempts?: number;
-  pushAttempts?: number;
+  maxAttempts?: number | undefined;
+  pushAttempts?: number | undefined;
   remote?: string;
   branch?: string;
-  rebaseStrategy?: RebaseStrategy;
+  rebaseStrategy?: RebaseStrategy | undefined;
 };
 
 export type RebaseStrategy = "normal" | "theirs" | "apply-records";

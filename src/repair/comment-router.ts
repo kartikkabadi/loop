@@ -2411,7 +2411,7 @@ async function mapLimit<T, R>(
     while (next < items.length) {
       const index = next;
       next += 1;
-      results[index] = await mapper(items[index]);
+      results[index] = await mapper(items[index] as T);
     }
   });
   await Promise.all(workers);

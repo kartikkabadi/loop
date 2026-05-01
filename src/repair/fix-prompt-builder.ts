@@ -155,7 +155,7 @@ function focusedFileExcerpt(content: string, tokens: string[]) {
     .map((token) => token.toLowerCase())
     .filter((token) => token.length >= 4);
   for (let index = 0; index < lines.length; index += 1) {
-    const lower = lines[index].toLowerCase();
+    const lower = lines[index]!.toLowerCase();
     if (lowerTokens.some((token) => lower.includes(token))) {
       for (
         let line = Math.max(0, index - 8);

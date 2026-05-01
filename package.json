@@ -52,9 +52,12 @@
     "test:coverage": "pnpm run build:all && node --test --experimental-test-coverage --test-coverage-include='dist/**/*.js' --test-coverage-exclude='dist/repair/*.test.js' --test-coverage-lines=49 --test-coverage-branches=66 --test-coverage-functions=57 test/*.test.ts test/repair/*.test.ts dist/repair/*.test.js",
     "test:coverage:changed": "pnpm run build:all && node --test --experimental-test-coverage --test-coverage-include='dist/repair/fix-prompt-builder.js' --test-coverage-lines=85 --test-coverage-branches=85 --test-coverage-functions=85 test/repair/*.test.ts dist/repair/*.test.js",
     "check:active-surface": "node scripts/check-active-surface.ts",
-    "lint": "oxlint src --tsconfig tsconfig.json && oxlint src/repair --tsconfig tsconfig.repair.json",
-    "format": "oxfmt --write src scripts test package.json tsconfig.json tsconfig.repair.json .oxfmtrc.json schema .github/workflows",
-    "format:check": "oxfmt --check src scripts test package.json tsconfig.json tsconfig.repair.json .oxfmtrc.json schema .github/workflows",
+    "lint": "pnpm run lint:src && pnpm run lint:repair && pnpm run lint:scripts",
+    "lint:src": "oxlint src/*.ts --tsconfig tsconfig.json --type-aware --deny-warnings --report-unused-disable-directives -D correctness",
+    "lint:repair": "oxlint src/repair --tsconfig tsconfig.repair.json --deny-warnings --report-unused-disable-directives -D correctness",
+    "lint:scripts": "oxlint scripts test --deny-warnings --report-unused-disable-directives -D correctness",
+    "format": "oxfmt --write src scripts test package.json tsconfig.json tsconfig.repair.json .oxfmtrc.json schema .github/actions .github/workflows",
+    "format:check": "oxfmt --check src scripts test package.json tsconfig.json tsconfig.repair.json .oxfmtrc.json schema .github/actions .github/workflows",
     "oxformat": "pnpm run format",
     "oxformat:check": "pnpm run format:check",
     "check": "pnpm run check:active-surface && pnpm run build:all && pnpm run lint && pnpm run test:unit && pnpm run test:repair && pnpm run test:coverage:changed && pnpm run test:coverage && pnpm run format:check"
@@ -63,7 +66,8 @@
     "@types/node": "^25.6.0",
     "@typescript/native-preview": "7.0.0-dev.20260423.1",
     "oxfmt": "^0.46.0",
-    "oxlint": "^1.61.0"
+    "oxlint": "^1.61.0",
+    "oxlint-tsgolint": "0.22.1"
   },
   "engines": {
     "node": ">=24"
