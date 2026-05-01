@@ -2003,6 +2003,21 @@ test("sweep target write tokens can merge pull requests", () => {
   }
 });
 
+test("sweep review recovery uses explicit failed shard artifacts", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+
+  assert.match(workflow, /- name: Review shard\n\s+id: review-shard\n\s+continue-on-error: true/);
+  assert.match(workflow, /- name: Record failed review shard/);
+  assert.match(workflow, /steps\.review-shard\.outcome == 'failure'/);
+  assert.match(workflow, /name: review-failed-shard-\$\{\{ matrix\.shard \}\}/);
+  assert.match(workflow, /pattern: review-failed-shard-\*/);
+  assert.match(workflow, /needs\.review\.result != 'skipped'/);
+  assert.doesNotMatch(
+    workflow,
+    /needs\.review\.result == 'failure' \|\| needs\.review\.result == 'cancelled'/,
+  );
+});
+
 test("review parser strips environment access caveats from risks", () => {
   const parsed = parseDecision(
     closeDecision({

@@ -703,6 +703,8 @@ jobs:
           git -C "$checkout_dir" rev-parse --short HEAD
 
       - name: Review shard
+        id: review-shard
+        continue-on-error: true
         working-directory: clawsweeper
         env:
           GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
@@ -734,12 +736,30 @@ jobs:
             --shard-count ${{ needs.plan.outputs.planned_shards }} \
             "${additional_prompt_arg[@]}"
 
+      - name: Record failed review shard
+        if: ${{ steps.review-shard.outcome == 'failure' }}
+        run: |
+          mkdir -p review-artifacts/failed-shards
+          cat > review-artifacts/failed-shards/shard-${{ matrix.shard }}.json <<JSON
+          {
+            "shard": ${{ matrix.shard }},
+            "item_numbers": "${{ matrix.item_numbers }}"
+          }
+          JSON
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: review-shard-${{ matrix.shard }}
           path: |
             review-artifacts/shard-${{ matrix.shard }}/*.md
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && steps.review-shard.outcome == 'failure' }}
+        with:
+          name: review-failed-shard-${{ matrix.shard }}
+          path: review-artifacts/failed-shards/shard-${{ matrix.shard }}.json
           if-no-files-found: ignore
 
   publish:
@@ -931,13 +951,21 @@ jobs:
   recover-review-failures:
     name: Recover failed review shards
     needs: [plan, review, publish]
-    if: ${{ always() && needs.plan.result == 'success' && (needs.review.result == 'failure' || needs.review.result == 'cancelled') && !contains(github.event.inputs.additional_prompt || '', '[clawsweeper-recovery-attempt=1]') && needs.plan.outputs.planned_item_numbers != '' && github.event_name != 'repository_dispatch' }}
+    if: ${{ always() && needs.plan.result == 'success' && needs.review.result != 'skipped' && !contains(github.event.inputs.additional_prompt || '', '[clawsweeper-recovery-attempt=1]') && needs.plan.outputs.planned_item_numbers != '' && github.event_name != 'repository_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       actions: write
       contents: read
     steps:
+      - uses: actions/download-artifact@v4
+        id: failed-shards
+        continue-on-error: true
+        with:
+          pattern: review-failed-shard-*
+          path: failed-review-shards
+          merge-multiple: true
+
       - name: Requeue planned review items once
         env:
           GH_TOKEN: ${{ github.token }}
@@ -949,14 +977,22 @@ jobs:
           if [ -n "$ADDITIONAL_PROMPT" ]; then
             recovery_prompt="$(printf '%s\n\n%s' "$ADDITIONAL_PROMPT" "$recovery_prompt")"
           fi
-          failed_shards="$(
-            gh run view "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --json jobs --jq '
-              .jobs[]
-              | select((.conclusion == "failure" or .conclusion == "cancelled") and (.name | startswith("Review shard ")))
-              | .name
-              | sub("^Review shard "; "")
-            ' | paste -sd, -
-          )"
+          failed_shards=""
+          if [ -d failed-review-shards ]; then
+            failed_shards="$(find failed-review-shards -type f -name 'shard-*.json' -print0 \
+              | xargs -0 -r jq -r '.shard // empty' \
+              | paste -sd, -)"
+          fi
+          if [ -z "$failed_shards" ]; then
+            failed_shards="$(
+              gh run view "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --json jobs --jq '
+                .jobs[]
+                | select((.conclusion == "failure" or .conclusion == "cancelled") and (.name | startswith("Review shard ")))
+                | .name
+                | sub("^Review shard "; "")
+              ' | paste -sd, -
+            )"
+          fi
           if [ -z "$failed_shards" ]; then
             echo "No failed review shard jobs found; nothing to requeue."
             exit 0
