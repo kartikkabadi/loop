@@ -49,6 +49,16 @@ test("parseCommand recognizes maintainer slash commands", () => {
     command: "automerge",
     intent: "automerge",
   });
+  assert.deepEqual(parseCommand("@clawsweeper automerge."), {
+    trigger: "mention",
+    command: "automerge",
+    intent: "automerge",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper automerge!"), {
+    trigger: "slash",
+    command: "automerge",
+    intent: "automerge",
+  });
   assert.deepEqual(parseCommand("/clawsweeper autofix"), {
     trigger: "slash",
     command: "autofix",

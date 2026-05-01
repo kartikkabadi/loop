@@ -698,15 +698,27 @@ function commandFromText(trigger: JsonValue, value: JsonValue) {
   const rawCommand = String(value ?? "status")
     .trim()
     .replace(/\s+/g, " ");
-  const command = rawCommand.toLowerCase();
+  const rawNormalized = rawCommand.toLowerCase();
+  const command = normalizeCommandForIntent(rawNormalized);
   let intent = normalizeIntent(command);
-  if (trigger === "mention" && intent === "help" && !["", "help", "?"].includes(command)) {
+  if (
+    trigger === "mention" &&
+    intent === "help" &&
+    !["", "help", "?", "help.", "help!", "help?"].includes(rawNormalized)
+  ) {
     intent = "freeform_assist";
   }
-  const parsed: LooseRecord = { trigger, command, intent };
+  const parsedCommand =
+    intent === "freeform_assist" || intent === "autoclose" ? rawNormalized : command;
+  const parsed: LooseRecord = { trigger, command: parsedCommand, intent };
   if (intent === "autoclose") parsed.autoclose_message = autocloseReasonFromCommand(rawCommand);
   if (intent === "freeform_assist") parsed.freeform_prompt = rawCommand;
   return parsed;
+}
+
+function normalizeCommandForIntent(command: string) {
+  if (command === "?" || command.startsWith("autoclose ")) return command;
+  return command.replace(/[.!]+$/g, "");
 }
 
 export function autocloseReasonFromCommand(command: LooseRecord) {
