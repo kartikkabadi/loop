@@ -1063,22 +1063,23 @@ function executeCommand(command: LooseRecord) {
 
 function acknowledgeSkippedMaintainerCommand(command: LooseRecord) {
   if (command.trusted_bot || command.status !== "skipped") return;
-  const reason = [command.reason, previousLedgerEntryForCommentVersion(command)?.reason]
+  const reason = [command.reason, ...previousLedgerReasonsForCommentVersion(command)]
     .map((value) => String(value ?? ""))
     .join("\n");
   if (!/already enabled for this PR/i.test(reason)) return;
   reactToComment(command, "eyes");
 }
 
-function previousLedgerEntryForCommentVersion(command: LooseRecord) {
+function previousLedgerReasonsForCommentVersion(command: LooseRecord) {
   const key = String(command.comment_version_key ?? "");
-  if (!key) return null;
+  if (!key) return [];
   const entries = ledger.commands ?? [];
+  const reasons: JsonValue[] = [];
   for (let index = entries.length - 1; index >= 0; index -= 1) {
     const entry = entries[index];
-    if (commentVersionKey(entry) === key) return entry;
+    if (commentVersionKey(entry) === key) reasons.push(entry.reason);
   }
-  return null;
+  return reasons;
 }
 
 function ensureAutomergeJob(command: LooseRecord) {
