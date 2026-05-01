@@ -37,6 +37,15 @@ function runCli(): void {
     case "count-actions":
       console.log(countActions(requiredString("report"), requiredString("action")));
       break;
+    case "count-command-actions":
+      console.log(
+        countCommandActions(
+          requiredString("report"),
+          requiredString("action"),
+          optionalString("status"),
+        ),
+      );
+      break;
     case "proposed-item-numbers":
       process.stdout.write(proposedItemNumbers(proposedItemOptions()).join(","));
       break;
@@ -105,6 +114,18 @@ export function artifactItemNumbers(artifactDir: string): number[] {
 export function countActions(reportPath: string, action: string): number {
   if (!action) return readApplyActions(reportPath).length;
   return readApplyActions(reportPath).filter((entry) => entry.action === action).length;
+}
+
+export function countCommandActions(reportPath: string, action: string, status = ""): number {
+  const report = readJsonObject(reportPath);
+  const commands: JsonValue[] = Array.isArray(report.commands) ? report.commands : [];
+  return commands
+    .flatMap((command: JsonValue): JsonValue[] =>
+      isJsonObject(command) && Array.isArray(command.actions) ? command.actions : [],
+    )
+    .filter((entry: JsonValue): entry is LooseRecord => isJsonObject(entry))
+    .filter((entry: LooseRecord) => entry.action === action)
+    .filter((entry: LooseRecord) => !status || entry.status === status).length;
 }
 
 export function mergeApplyReports(reportDir: string, outputPath: string): void {

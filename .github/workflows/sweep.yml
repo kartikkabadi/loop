@@ -367,6 +367,50 @@ jobs:
             --path jobs \
             --rebase-strategy theirs
 
+      - name: Detect waiting event repair dispatches
+        id: waiting-event-repair-dispatches
+        if: ${{ success() }}
+        run: |
+          set -euo pipefail
+          count="0"
+          if [ -f results/comment-router-latest.json ]; then
+            count="$(pnpm run --silent workflow -- count-command-actions --report results/comment-router-latest.json --action dispatch_repair --status waiting)"
+          fi
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Retry waiting event repair dispatches
+        if: ${{ steps.waiting-event-repair-dispatches.outputs.count != '' && steps.waiting-event-repair-dispatches.outputs.count != '0' }}
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          CLAWSWEEPER_DISPATCH_TOKEN: ${{ github.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+          CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app
+          CLAWSWEEPER_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_ALLOW_AUTOMERGE || '0' }}
+          CLAWSWEEPER_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_ALLOW_MERGE || '0' }}
+          CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES: ${{ vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}
+          CLAWSWEEPER_COMMENT_MAX_COMMENTS: ${{ vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '1000' }}
+        run: |
+          set -euo pipefail
+          echo "Retrying ${{ steps.waiting-event-repair-dispatches.outputs.count }} waiting repair dispatch(es) after publishing router state."
+          pnpm run repair:comment-router -- \
+            --write-report \
+            --repo "$TARGET_REPO" \
+            --item-number "$ITEM_NUMBER" \
+            --lookback-minutes "$CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES" \
+            --max-comments "$CLAWSWEEPER_COMMENT_MAX_COMMENTS" \
+            --execute
+
+      - name: Commit event comment router retry ledger
+        if: ${{ always() && steps.waiting-event-repair-dispatches.outputs.count != '' && steps.waiting-event-repair-dispatches.outputs.count != '0' }}
+        run: |
+          pnpm run repair:publish-main -- \
+            --message "chore: record ClawSweeper event repair dispatch retry" \
+            --path results/comment-router.json \
+            --path results/comment-router-latest.json \
+            --path jobs \
+            --rebase-strategy theirs
+
       - name: React to target item completion
         if: ${{ success() }}
         continue-on-error: true

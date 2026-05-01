@@ -171,3 +171,77 @@ jobs:
             --path results/comment-router-latest.json \
             --path jobs \
             --rebase-strategy theirs
+
+      - name: Detect waiting repair dispatches
+        id: waiting-repair-dispatches
+        if: ${{ success() }}
+        run: |
+          set -euo pipefail
+          count="0"
+          if [ -f results/comment-router-latest.json ]; then
+            count="$(pnpm run --silent workflow -- count-command-actions --report results/comment-router-latest.json --action dispatch_repair --status waiting)"
+          fi
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Retry waiting repair dispatches
+        if: ${{ steps.waiting-repair-dispatches.outputs.count != '' && steps.waiting-repair-dispatches.outputs.count != '0' }}
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app
+          CLAWSWEEPER_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_ALLOW_AUTOMERGE || '0' }}
+          CLAWSWEEPER_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_ALLOW_MERGE || '0' }}
+        run: |
+          set -euo pipefail
+          target_repo="${{ github.event_name == 'workflow_dispatch' && inputs.target_repo || vars.CLAWSWEEPER_TARGET_REPO || 'openclaw/openclaw' }}"
+          lookback_minutes="${{ github.event_name == 'workflow_dispatch' && inputs.lookback_minutes || vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}"
+          since="${{ github.event_name == 'workflow_dispatch' && inputs.since || '' }}"
+          max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '100' }}"
+          item_numbers="${{ github.event_name == 'workflow_dispatch' && inputs.item_numbers || '' }}"
+          comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.comment_ids || '' }}"
+          runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
+          execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
+          force_reprocess="${{ github.event_name == 'workflow_dispatch' && inputs.force_reprocess || 'false' }}"
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
+            lookback_minutes="${{ github.event.client_payload.lookback_minutes || vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}"
+            since=""
+            max_comments="${{ github.event.client_payload.max_comments || vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '20' }}"
+            item_numbers="${{ github.event.client_payload.item_number || '' }}"
+            comment_ids="${{ github.event.client_payload.comment_id || '' }}"
+          fi
+
+          args=(
+            --write-report
+            --repo "$target_repo"
+            --lookback-minutes "$lookback_minutes"
+            --max-comments "$max_comments"
+            --runner "$runner"
+            --execution-runner "$execution_runner"
+            --wait-for-capacity
+          )
+          if [ -n "$since" ]; then
+            args+=(--since "$since")
+          fi
+          if [ -n "$item_numbers" ]; then
+            args+=(--item-numbers "$item_numbers")
+          fi
+          if [ -n "$comment_ids" ]; then
+            args+=(--comment-ids "$comment_ids")
+          fi
+          if [ "$force_reprocess" = "true" ]; then
+            args+=(--force-reprocess)
+          fi
+          args+=(--execute)
+
+          echo "Retrying ${{ steps.waiting-repair-dispatches.outputs.count }} waiting repair dispatch(es) after publishing router state."
+          pnpm run repair:comment-router -- "${args[@]}"
+
+      - name: Commit comment router retry ledger
+        if: ${{ always() && steps.waiting-repair-dispatches.outputs.count != '' && steps.waiting-repair-dispatches.outputs.count != '0' }}
+        run: |
+          pnpm run repair:publish-main -- \
+            --message "chore: record ClawSweeper repair dispatch retry" \
+            --path results/comment-router.json \
+            --path results/comment-router-latest.json \
+            --path jobs \
+            --rebase-strategy theirs

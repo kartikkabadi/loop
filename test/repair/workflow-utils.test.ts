@@ -7,6 +7,7 @@ import test from "node:test";
 import {
   artifactItemNumbers,
   countActions,
+  countCommandActions,
   mergeApplyReports,
   plannedItemNumberCsv,
   proposedItemNumbers,
@@ -24,6 +25,31 @@ test("workflow utilities derive artifact item numbers and action counts", () => 
   assert.deepEqual(artifactItemNumbers(path.join(root, "artifacts")), [7, 42]);
   assert.equal(countActions(path.join(root, "apply-report.json"), ""), 2);
   assert.equal(countActions(path.join(root, "apply-report.json"), "closed"), 1);
+});
+
+test("workflow utilities count nested command actions by status", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const report = path.join(root, "comment-router-latest.json");
+  write(
+    report,
+    JSON.stringify({
+      commands: [
+        {
+          actions: [
+            { action: "dispatch_repair", status: "waiting" },
+            { action: "dispatch_repair", status: "executed" },
+          ],
+        },
+        {
+          actions: [{ action: "dispatch_clawsweeper", status: "waiting" }],
+        },
+      ],
+    }),
+  );
+
+  assert.equal(countCommandActions(report, "dispatch_repair"), 2);
+  assert.equal(countCommandActions(report, "dispatch_repair", "waiting"), 1);
+  assert.equal(countCommandActions(report, "dispatch_clawsweeper", "waiting"), 1);
 });
 
 test("workflow utilities merge checkpoint reports in numeric order", () => {
