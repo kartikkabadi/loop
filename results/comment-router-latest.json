@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:55:34.793Z",
+  "generated_at": "2026-05-01T03:56:25.002Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:55:32.346Z",
+  "since": "2026-05-01T00:56:23.730Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    73668
+    75008
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 5,
-  "commands_seen": 4,
+  "scanned_comments": 2,
+  "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
     "clawsweeper[bot]",
@@ -29,16 +29,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73668:4337169336:2026-05-01T03:55:27Z:clawsweeper_needs_human",
-      "comment_id": "4337169336",
-      "comment_version_key": "4337169336:2026-05-01T03:55:27Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73668#issuecomment-4337169336",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75008:4351392627:2026-05-01T03:56:20Z:clawsweeper_needs_human",
+      "comment_id": "4351392627",
+      "comment_version_key": "4351392627:2026-05-01T03:56:20Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75008#issuecomment-4351392627",
       "repo": "openclaw/openclaw",
-      "issue_number": 73668,
+      "issue_number": 75008,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-28T16:25:27Z",
-      "comment_updated_at": "2026-05-01T03:55:27Z",
+      "comment_created_at": "2026-04-30T09:44:24Z",
+      "comment_updated_at": "2026-05-01T03:56:20Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -46,251 +46,44 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=8cc8420672f8f3527f2cbd91aa10dda162f8dc2e)",
-      "review_summary": "The PR adds a new `openclaw profile export/import` CLI, `.openclaw-profile.tar.gz` manifest/archive infrastructure, profile portability docs, infra/CLI/command tests, and adjacent test fixture updates.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=ab94c840d6291d6b408c45e9c973869aab9f4ea6)",
+      "review_summary": "The PR extracts the embedded-run `abortable` wrapper into a module-scoped helper, updates the runner to call it, adds focused tests and a heap-leak harness, wires a package script, updates heap-leak skill docs, and adds a changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "8cc8420672f8f3527f2cbd91aa10dda162f8dc2e",
+      "expected_head_sha": "ab94c840d6291d6b408c45e9c973869aab9f4ea6",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "feat(profile): add privacy-safe profile export and import",
-        "branch": "codex/profile-portability-export-import",
-        "head_sha": "8cc8420672f8f3527f2cbd91aa10dda162f8dc2e",
-        "author": "alovwang-sys",
+        "title": "fix(agents): release embedded-run scope on hung provider abort + heap-leak harness",
+        "branch": "fix/embedded-run-abort-retention",
+        "head_sha": "ab94c840d6291d6b408c45e9c973869aab9f4ea6",
+        "author": "romneyda",
         "labels": [
-          "docs",
-          "gateway",
-          "cli",
-          "commands",
-          "size: XL"
+          "scripts",
+          "agents",
+          "maintainer",
+          "size: M"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-73668",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73668.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75008",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75008.md",
         "mode": "autonomous",
-        "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
+        "mergeable": "CONFLICTING",
+        "merge_state_status": "DIRTY",
         "review_decision": "",
         "checks": {
-          "total": 103,
+          "total": 11,
           "counts": {
-            "IN_PROGRESS": 2,
-            "SUCCESS": 81,
-            "FAILURE": 2,
-            "SKIPPED": 17,
-            "NEUTRAL": 1
+            "CANCELLED": 1,
+            "SUCCESS": 7,
+            "SKIPPED": 3
           },
           "blockers": [
-            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "security-scm-fast:FAILURE",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "security-fast:FAILURE"
-          ]
-        }
-      },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73668:4345667653:2026-04-29T16:38:44Z:clawsweeper_needs_human",
-      "comment_id": "4345667653",
-      "comment_version_key": "4345667653:2026-04-29T16:38:44Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73668#issuecomment-4345667653",
-      "repo": "openclaw/openclaw",
-      "issue_number": 73668,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-29T16:38:44Z",
-      "comment_updated_at": "2026-04-29T16:38:44Z",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "autoclose_message": null,
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=ab3892a568995c2cca4ea4585d921040b3333a1a)",
-      "review_summary": "The PR adds `openclaw profile export/import`, profile archive creation/import infrastructure, docs, CLI/command/infra tests, and adjacent plugin/UI test fixes.",
-      "review_followup": "",
-      "freeform_prompt": null,
-      "expected_head_sha": "ab3892a568995c2cca4ea4585d921040b3333a1a",
-      "finding_id": null,
-      "status": "skipped",
-      "actions": [],
-      "target": {
-        "kind": "pull_request",
-        "title": "feat(profile): add privacy-safe profile export and import",
-        "branch": "codex/profile-portability-export-import",
-        "head_sha": "8cc8420672f8f3527f2cbd91aa10dda162f8dc2e",
-        "author": "alovwang-sys",
-        "labels": [
-          "docs",
-          "gateway",
-          "cli",
-          "commands",
-          "size: XL"
-        ],
-        "is_clawsweeper_pr": false,
-        "cluster_id": null,
-        "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-73668",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73668.md",
-        "mode": "autonomous",
-        "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
-        "review_decision": "",
-        "checks": {
-          "total": 103,
-          "counts": {
-            "IN_PROGRESS": 2,
-            "SUCCESS": 81,
-            "FAILURE": 2,
-            "SKIPPED": 17,
-            "NEUTRAL": 1
-          },
-          "blockers": [
-            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "security-scm-fast:FAILURE",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "security-fast:FAILURE"
-          ]
-        }
-      },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73668:4345338311:2026-04-29T15:52:35Z:clawsweeper_needs_human",
-      "comment_id": "4345338311",
-      "comment_version_key": "4345338311:2026-04-29T15:52:35Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73668#issuecomment-4345338311",
-      "repo": "openclaw/openclaw",
-      "issue_number": 73668,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-29T15:52:35Z",
-      "comment_updated_at": "2026-04-29T15:52:35Z",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "autoclose_message": null,
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=ec6a9d2e227f2dba6c2f20a8c4b2b1969a28ec57)",
-      "review_summary": "The PR adds `openclaw profile export/import`, profile archive creation/import infrastructure, CLI/docs/tests, and bundled-plugin test setup adjustments.",
-      "review_followup": "",
-      "freeform_prompt": null,
-      "expected_head_sha": "ec6a9d2e227f2dba6c2f20a8c4b2b1969a28ec57",
-      "finding_id": null,
-      "status": "skipped",
-      "actions": [],
-      "target": {
-        "kind": "pull_request",
-        "title": "feat(profile): add privacy-safe profile export and import",
-        "branch": "codex/profile-portability-export-import",
-        "head_sha": "8cc8420672f8f3527f2cbd91aa10dda162f8dc2e",
-        "author": "alovwang-sys",
-        "labels": [
-          "docs",
-          "gateway",
-          "cli",
-          "commands",
-          "size: XL"
-        ],
-        "is_clawsweeper_pr": false,
-        "cluster_id": null,
-        "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-73668",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73668.md",
-        "mode": "autonomous",
-        "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
-        "review_decision": "",
-        "checks": {
-          "total": 103,
-          "counts": {
-            "IN_PROGRESS": 2,
-            "SUCCESS": 81,
-            "FAILURE": 2,
-            "SKIPPED": 17,
-            "NEUTRAL": 1
-          },
-          "blockers": [
-            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "security-scm-fast:FAILURE",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "security-fast:FAILURE"
-          ]
-        }
-      },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
-    },
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73668:4345260671:2026-04-29T15:41:27Z:clawsweeper_needs_human",
-      "comment_id": "4345260671",
-      "comment_version_key": "4345260671:2026-04-29T15:41:27Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73668#issuecomment-4345260671",
-      "repo": "openclaw/openclaw",
-      "issue_number": 73668,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-29T15:41:27Z",
-      "comment_updated_at": "2026-04-29T15:41:27Z",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "autoclose_message": null,
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=b02c5798516a25293b154ed2bb4b0e6f57377237)",
-      "review_summary": "The PR adds `openclaw profile export/import`, profile archive creation/import infrastructure, CLI/docs/tests, and several bundled-plugin test setup adjustments.",
-      "review_followup": "",
-      "freeform_prompt": null,
-      "expected_head_sha": "b02c5798516a25293b154ed2bb4b0e6f57377237",
-      "finding_id": null,
-      "status": "skipped",
-      "actions": [],
-      "target": {
-        "kind": "pull_request",
-        "title": "feat(profile): add privacy-safe profile export and import",
-        "branch": "codex/profile-portability-export-import",
-        "head_sha": "8cc8420672f8f3527f2cbd91aa10dda162f8dc2e",
-        "author": "alovwang-sys",
-        "labels": [
-          "docs",
-          "gateway",
-          "cli",
-          "commands",
-          "size: XL"
-        ],
-        "is_clawsweeper_pr": false,
-        "cluster_id": null,
-        "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-73668",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73668.md",
-        "mode": "autonomous",
-        "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
-        "review_decision": "",
-        "checks": {
-          "total": 103,
-          "counts": {
-            "IN_PROGRESS": 2,
-            "SUCCESS": 81,
-            "FAILURE": 2,
-            "SKIPPED": 17,
-            "NEUTRAL": 1
-          },
-          "blockers": [
-            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
-            "security-scm-fast:FAILURE",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
-            "security-fast:FAILURE"
+            "dispatch:CANCELLED"
           ]
         }
       },
@@ -299,15 +92,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2721,
+    "total_ms": 1470,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 417
+        "ms": 315
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 2022
+        "ms": 947
       },
       {
         "name": "classify_commands",
@@ -315,11 +108,11 @@
       },
       {
         "name": "execute_commands",
-        "ms": 268
+        "ms": 190
       },
       {
         "name": "append_ledger",
-        "ms": 0
+        "ms": 1
       }
     ]
   }
