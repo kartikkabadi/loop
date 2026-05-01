@@ -1,20 +1,22 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T04:37:40.733Z",
+  "generated_at": "2026-05-01T04:37:53.813Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T01:37:39.007Z",
+  "since": "2026-05-01T01:37:51.772Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
     73438
   ],
-  "comment_ids": [],
+  "comment_ids": [
+    4357837170
+  ],
   "max_autoclose_targets": 8,
-  "scanned_comments": 7,
-  "commands_seen": 3,
+  "scanned_comments": 1,
+  "commands_seen": 1,
   "actionable": 1,
   "trusted_bots": [
     "clawsweeper[bot]",
@@ -29,82 +31,6 @@
   "max_auto_repairs_per_pr": 10,
   "lookup_concurrency": 8,
   "commands": [
-    {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73438:4334136650:2026-05-01T04:37:35Z:clawsweeper_needs_human",
-      "comment_id": "4334136650",
-      "comment_version_key": "4334136650:2026-05-01T04:37:35Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73438#issuecomment-4334136650",
-      "repo": "openclaw/openclaw",
-      "issue_number": 73438,
-      "author": "clawsweeper[bot]",
-      "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-28T09:49:23Z",
-      "comment_updated_at": "2026-05-01T04:37:35Z",
-      "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
-      "autoclose_message": null,
-      "trusted_bot": true,
-      "trusted_bot_author": "clawsweeper[bot]",
-      "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=406fcea435044e6018b63dd650e6d2f4b8dc2212)",
-      "review_summary": "The PR adds `openclaw proxy validate`, a proxy validation runtime, CLI/docs/changelog updates, and focused tests for effective proxy URL resolution plus allowed and denied destination checks.",
-      "review_followup": "",
-      "freeform_prompt": null,
-      "expected_head_sha": "406fcea435044e6018b63dd650e6d2f4b8dc2212",
-      "finding_id": null,
-      "status": "executed",
-      "actions": [
-        {
-          "action": "label",
-          "label": "clawsweeper:human-review",
-          "status": "executed"
-        },
-        {
-          "action": "comment",
-          "status": "executed",
-          "commented_at": "2026-05-01T04:37:44.115Z",
-          "response_comment_id": null,
-          "response_comment_mode": "created"
-        }
-      ],
-      "target": {
-        "kind": "pull_request",
-        "title": "feat: add proxy validation command",
-        "branch": "feat/proxy-validate",
-        "head_sha": "406fcea435044e6018b63dd650e6d2f4b8dc2212",
-        "author": "jesse-merhi",
-        "labels": [
-          "docs",
-          "cli",
-          "maintainer",
-          "size: XL",
-          "clawsweeper:automerge"
-        ],
-        "is_clawsweeper_pr": false,
-        "cluster_id": "automerge-openclaw-openclaw-73438",
-        "job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73438.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-73438",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73438.md",
-        "mode": "autonomous",
-        "mergeable": "MERGEABLE",
-        "merge_state_status": "UNSTABLE",
-        "review_decision": "",
-        "checks": {
-          "total": 87,
-          "counts": {
-            "IN_PROGRESS": 2,
-            "SUCCESS": 76,
-            "SKIPPED": 8,
-            "NEUTRAL": 1
-          },
-          "blockers": [
-            "dispatch:IN_PROGRESS",
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
-          ]
-        }
-      }
-    },
     {
       "idempotency_key": "comment-router:openclaw/openclaw:73438:4357837170:2026-05-01T04:37:17Z:automerge",
       "comment_id": "4357837170",
@@ -129,8 +55,35 @@
       "freeform_prompt": null,
       "expected_head_sha": null,
       "finding_id": null,
-      "status": "skipped",
-      "actions": [],
+      "status": "executed",
+      "actions": [
+        {
+          "action": "remove_label",
+          "label": "clawsweeper:human-review",
+          "status": "executed"
+        },
+        {
+          "action": "label",
+          "label": "clawsweeper:automerge",
+          "status": "executed"
+        },
+        {
+          "action": "dispatch_clawsweeper",
+          "workflow": "sweep.yml",
+          "status": "executed",
+          "dispatched_at": "2026-05-01T04:37:56.806Z",
+          "event": "repository_dispatch",
+          "repo": "openclaw/clawsweeper",
+          "item_number": 73438
+        },
+        {
+          "action": "comment",
+          "status": "executed",
+          "commented_at": "2026-05-01T04:37:57.688Z",
+          "response_comment_id": "4357733058",
+          "response_comment_mode": "updated"
+        }
+      ],
       "author_repository_permission": "write",
       "target": {
         "kind": "pull_request",
@@ -143,7 +96,8 @@
           "cli",
           "maintainer",
           "size: XL",
-          "clawsweeper:automerge"
+          "clawsweeper:automerge",
+          "clawsweeper:human-review"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": "automerge-openclaw-openclaw-73438",
@@ -155,69 +109,41 @@
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 87,
+          "total": 88,
           "counts": {
+            "CANCELLED": 1,
             "IN_PROGRESS": 2,
             "SUCCESS": 76,
             "SKIPPED": 8,
             "NEUTRAL": 1
           },
           "blockers": [
-            "dispatch:IN_PROGRESS",
+            "dispatch:CANCELLED",
             "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
           ]
         }
-      },
-      "reason": "automerge already enabled for this PR"
-    },
-    {
-      "idempotency_key": "comment-router:openclaw/openclaw:73438:4357654331:2026-05-01T03:32:18Z:automerge",
-      "comment_id": "4357654331",
-      "comment_version_key": "4357654331:2026-05-01T03:32:18Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/73438#issuecomment-4357654331",
-      "repo": "openclaw/openclaw",
-      "issue_number": 73438,
-      "author": "jesse-merhi",
-      "author_association": "MEMBER",
-      "comment_created_at": "2026-05-01T03:32:18Z",
-      "comment_updated_at": "2026-05-01T03:32:18Z",
-      "trigger": "mention",
-      "command": "automerge",
-      "intent": "automerge",
-      "autoclose_message": null,
-      "trusted_bot": false,
-      "trusted_bot_author": null,
-      "automation_source": null,
-      "repair_reason": null,
-      "review_summary": "",
-      "review_followup": "",
-      "freeform_prompt": null,
-      "expected_head_sha": null,
-      "finding_id": null,
-      "status": "skipped",
-      "actions": [],
-      "reason": "comment version already processed in ledger"
+      }
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 5116,
+    "total_ms": 5924,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 272
+        "ms": 866
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1442
+        "ms": 1164
       },
       {
         "name": "classify_commands",
-        "ms": 2
+        "ms": 3
       },
       {
         "name": "execute_commands",
-        "ms": 3382
+        "ms": 3875
       },
       {
         "name": "append_ledger",
