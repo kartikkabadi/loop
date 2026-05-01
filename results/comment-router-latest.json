@@ -1,19 +1,19 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T06:19:19.481Z",
+  "generated_at": "2026-05-01T06:20:11.619Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T03:19:17.424Z",
+  "since": "2026-05-01T03:20:09.858Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    16085
+    75465
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
-  "scanned_comments": 11,
+  "scanned_comments": 1,
   "commands_seen": 1,
   "actionable": 0,
   "trusted_bots": [
@@ -30,16 +30,16 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:16085:4345449502:2026-05-01T06:19:13Z:clawsweeper_needs_human",
-      "comment_id": "4345449502",
-      "comment_version_key": "4345449502:2026-05-01T06:19:13Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/16085#issuecomment-4345449502",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75465:4358120672:2026-05-01T06:20:06Z:clawsweeper_needs_human",
+      "comment_id": "4358120672",
+      "comment_version_key": "4358120672:2026-05-01T06:20:06Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75465#issuecomment-4358120672",
       "repo": "openclaw/openclaw",
-      "issue_number": 16085,
+      "issue_number": 75465,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-04-29T16:07:24Z",
-      "comment_updated_at": "2026-05-01T06:19:13Z",
+      "comment_created_at": "2026-05-01T06:17:35Z",
+      "comment_updated_at": "2026-05-01T06:20:06Z",
       "trigger": "trusted_bot",
       "command": "clawsweeper needs human",
       "intent": "clawsweeper_needs_human",
@@ -47,55 +47,51 @@
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=63761166e8d415c44b68bd090ebcb80fe151bff5)",
-      "review_summary": "The PR adds a Signal native/container adapter, a bbernhard REST/WebSocket client, Signal caller rewiring, `channels.signal.apiMode` docs/types/tests, a changelog fragment, and a direct `ws` runtime dependency for the Signal plugin.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=68f6b494c85230a34cb323fa182066bf65a67904)",
+      "review_summary": "The PR normalizes Voice Call and Google Meet webhook host checks for bracketed IPv6 and IPv4-mapped private or loopback URLs, adds regression coverage, and updates the changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "63761166e8d415c44b68bd090ebcb80fe151bff5",
+      "expected_head_sha": "68f6b494c85230a34cb323fa182066bf65a67904",
       "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "Signal: add REST API support for containerized deployments",
-        "branch": "feature/signal-bridge-v2-signal-only",
-        "head_sha": "63761166e8d415c44b68bd090ebcb80fe151bff5",
-        "author": "hua688",
+        "title": "fix: webhook exposure checks bug",
+        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-b2aac178d6da",
+        "head_sha": "68f6b494c85230a34cb323fa182066bf65a67904",
+        "author": "app/clawsweeper",
         "labels": [
-          "docs",
-          "channel: signal",
-          "size: XL"
+          "channel: voice-call",
+          "size: M",
+          "plugin: google-meet",
+          "clawsweeper",
+          "clawsweeper:commit-finding"
         ],
-        "is_clawsweeper_pr": false,
-        "cluster_id": null,
-        "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-16085",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-16085.md",
+        "is_clawsweeper_pr": true,
+        "cluster_id": "clawsweeper-commit-openclaw-openclaw-b2aac178d6da",
+        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-b2aac178d6da.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75465",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75465.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 107,
+          "total": 87,
           "counts": {
-            "SKIPPED": 25,
-            "SUCCESS": 69,
-            "FAILURE": 12,
-            "NEUTRAL": 1
+            "CANCELLED": 4,
+            "SKIPPED": 13,
+            "SUCCESS": 65,
+            "FAILURE": 4,
+            "IN_PROGRESS": 1
           },
           "blockers": [
-            "checks-fast-contracts-plugins-d:FAILURE",
             "checks-node-agentic-cli:FAILURE",
-            "check-prod-types:FAILURE",
-            "check-test-types:FAILURE",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
             "check-additional-boundaries:FAILURE",
-            "check-additional-extension-package-boundary:FAILURE",
-            "check-additional-runtime-topology-architecture:FAILURE",
             "checks-node-core-support-boundary:FAILURE",
-            "checks-fast-contracts-plugins:FAILURE",
-            "check:FAILURE",
-            "check-additional:FAILURE",
-            "checks-node-core:FAILURE"
+            "check-additional:FAILURE"
           ]
         }
       },
@@ -104,15 +100,15 @@
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 2198,
+    "total_ms": 1946,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 277
+        "ms": 292
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1770
+        "ms": 1460
       },
       {
         "name": "classify_commands",
@@ -120,7 +116,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 133
+        "ms": 177
       },
       {
         "name": "append_ledger",
