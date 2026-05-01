@@ -72,6 +72,29 @@ test("validation preflight accepts env-prefixed OpenClaw QA commands", () => {
   );
 });
 
+test("validation preflight accepts assignment-prefixed OpenClaw test commands", () => {
+  const cwd = packageFixture({ "check:changed": "node check.js" });
+
+  assert.deepEqual(
+    preflightTargetValidationPlan(
+      {
+        fixArtifact: {
+          validation_commands: [
+            "OPENCLAW_VITEST_FS_MODULE_CACHE_PATH=.vitest-cache-pairing pnpm test:serial src/pairing/pairing-store.test.ts",
+          ],
+        },
+        targetDir: cwd,
+      },
+      validationOptions("openclaw/openclaw"),
+    ),
+    {
+      status: "passed",
+      resolved_commands: ["pnpm check:changed"],
+      available_scripts: ["check:changed"],
+    },
+  );
+});
+
 test("validation preflight preserves scoped git diff checks", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
   const sourceHead = "0123456789abcdef0123456789abcdef01234567";

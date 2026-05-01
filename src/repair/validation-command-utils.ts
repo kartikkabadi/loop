@@ -71,16 +71,15 @@ export function parseAllowedValidationCommand(command: unknown): string[] {
 }
 
 export function stripEnvPrefix(parts: readonly string[]): string[] {
-  if (parts[0] !== "env") return [...parts];
-  let index = 1;
+  let index = parts[0] === "env" ? 1 : 0;
   while (index < parts.length && isEnvAssignment(parts[index])) index += 1;
   return parts.slice(index);
 }
 
 function validationExecutable(parts: readonly string[]) {
-  if (parts[0] !== "env") return parts[0] ?? "";
   const commandParts = stripEnvPrefix(parts);
-  if (commandParts.length === parts.length - 1) return "";
+  const strippedCount = parts.length - commandParts.length - (parts[0] === "env" ? 1 : 0);
+  if (parts[0] === "env" && strippedCount === 0) return "";
   return commandParts[0] ?? "";
 }
 
