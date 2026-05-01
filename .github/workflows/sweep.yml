@@ -157,6 +157,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          filter: blob:none
           fetch-depth: 0
           persist-credentials: false
 
@@ -366,6 +367,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           path: clawsweeper
+          filter: blob:none
           fetch-depth: 0
 
       - name: Resolve target repository
@@ -535,6 +537,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           path: clawsweeper
+          filter: blob:none
           fetch-depth: 0
           persist-credentials: false
 
@@ -632,6 +635,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          filter: blob:none
           fetch-depth: 0
 
       - name: Create target write token
@@ -884,6 +888,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          filter: blob:none
           fetch-depth: 0
 
       - name: Resolve target repository
@@ -952,6 +957,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          filter: blob:none
           fetch-depth: 0
 
       - name: Resolve target repository

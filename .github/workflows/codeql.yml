@@ -39,6 +39,8 @@ jobs:
           - javascript-typescript
     steps:
       - uses: actions/checkout@v6
+        with:
+          filter: blob:none
 
       - uses: github/codeql-action/init@v4
         with:

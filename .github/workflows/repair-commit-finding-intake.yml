@@ -87,6 +87,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          filter: blob:none
           fetch-depth: 0
 
       - uses: ./.github/actions/setup-pnpm
