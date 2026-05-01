@@ -1,15 +1,15 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T05:58:45.353Z",
+  "generated_at": "2026-05-01T05:59:29.915Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T02:58:43.699Z",
+  "since": "2026-05-01T02:59:28.202Z",
   "execute": true,
   "force_reprocess": false,
   "max_comments": 1000,
   "item_numbers": [
-    75453
+    75423
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -30,90 +30,96 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75453:4358060051:2026-05-01T05:58:39Z:clawsweeper_needs_human",
-      "comment_id": "4358060051",
-      "comment_version_key": "4358060051:2026-05-01T05:58:39Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75453#issuecomment-4358060051",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75423:4357804577:2026-05-01T05:59:25Z:clawsweeper_auto_repair",
+      "comment_id": "4357804577",
+      "comment_version_key": "4357804577:2026-05-01T05:59:25Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/75423#issuecomment-4357804577",
       "repo": "openclaw/openclaw",
-      "issue_number": 75453,
+      "issue_number": 75423,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T05:56:58Z",
-      "comment_updated_at": "2026-05-01T05:58:39Z",
+      "comment_created_at": "2026-05-01T04:27:47Z",
+      "comment_updated_at": "2026-05-01T05:59:25Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper needs human",
-      "intent": "clawsweeper_needs_human",
+      "command": "clawsweeper auto repair",
+      "intent": "clawsweeper_auto_repair",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=6769c28985a3aa74eba6f7ef475141b531aabbba)",
-      "review_summary": "This PR updates `extensions/voice-call/src/media-stream.test.ts` so the early Twilio media test waits for observed audio delivery and closes the client WebSocket during teardown before closing the test server.",
+      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=d5bc65b1bfada4420aac9ae4e2829bff537eb695)",
+      "review_summary": "The PR bypasses stale cached gateway channel health when live runtime lifecycle state differs, forwards configured fast mode into embedded agent runs, defaults missing PI model cost metadata, ends OpenAI SSE fallback streams, and adds focused regression tests.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "6769c28985a3aa74eba6f7ef475141b531aabbba",
-      "finding_id": null,
+      "expected_head_sha": "d5bc65b1bfada4420aac9ae4e2829bff537eb695",
+      "finding_id": "review-feedback",
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "fix: One actionable issue found",
-        "branch": "clawsweeper/clawsweeper-commit-openclaw-openclaw-e8f9c3e6dedc",
-        "head_sha": "6769c28985a3aa74eba6f7ef475141b531aabbba",
-        "author": "app/clawsweeper",
+        "title": "fix(gateway): refresh stale channel health cache",
+        "branch": "codex/fix-discord-health-source-install",
+        "head_sha": "d5bc65b1bfada4420aac9ae4e2829bff537eb695",
+        "author": "steipete",
         "labels": [
-          "channel: voice-call",
-          "size: XS",
-          "clawsweeper",
-          "clawsweeper:commit-finding"
+          "gateway",
+          "commands",
+          "agents",
+          "maintainer",
+          "size: M"
         ],
-        "is_clawsweeper_pr": true,
-        "cluster_id": "clawsweeper-commit-openclaw-openclaw-e8f9c3e6dedc",
-        "job_path": "jobs/openclaw/inbox/clawsweeper-commit-openclaw-openclaw-e8f9c3e6dedc.md",
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75453",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75453.md",
+        "is_clawsweeper_pr": false,
+        "cluster_id": null,
+        "job_path": null,
+        "automerge_cluster_id": "automerge-openclaw-openclaw-75423",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75423.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 83,
+          "total": 102,
           "counts": {
-            "CANCELLED": 3,
-            "SKIPPED": 11,
-            "SUCCESS": 66,
-            "IN_PROGRESS": 1,
-            "FAILURE": 2
+            "FAILURE": 6,
+            "IN_PROGRESS": 2,
+            "SUCCESS": 73,
+            "SKIPPED": 20,
+            "NEUTRAL": 1
           },
           "blockers": [
+            "Scan changed paths (precise):FAILURE",
+            "Run the OpenAI / Opus 4.6 parity gate against the qa-lab mock:IN_PROGRESS",
             "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "check-lint:FAILURE",
+            "check-test-types:FAILURE",
             "check-additional-boundaries:FAILURE",
+            "check:FAILURE",
             "check-additional:FAILURE"
           ]
         }
       },
-      "reason": "PR is not opted into ClawSweeper autofix or automerge"
+      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1884,
+    "total_ms": 1846,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 328
+        "ms": 206
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1317
+        "ms": 1497
       },
       {
         "name": "classify_commands",
-        "ms": 2
+        "ms": 1
       },
       {
         "name": "execute_commands",
-        "ms": 225
+        "ms": 124
       },
       {
         "name": "append_ledger",
