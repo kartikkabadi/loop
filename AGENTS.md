@@ -8,7 +8,7 @@ Keep changes narrow, evidence-backed, and automation-safe.
 - Main code: `src/clawsweeper.ts`.
 - Repair lane code: `src/repair/`; durable generated state lives in
   `openclaw/clawsweeper-state`.
-- Tests: `test/clawsweeper.test.mjs`.
+- Tests: `test/clawsweeper.test.ts`.
 - Workflow: `.github/workflows/sweep.yml`.
 - Explainer: `README.md`; state/dashboard repo: `../clawsweeper-state`.
 - Open/reviewed records in state repo:

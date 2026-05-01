@@ -290,7 +290,7 @@ test("commit review cheaply skips documentation-only paths", () => {
   assert.equal(isReviewableCommitPath("CHANGELOG.md"), false);
   assert.equal(isReviewableCommitPath("README.md"), false);
   assert.equal(isReviewableCommitPath("assets/logo.png"), false);
-  assert.equal(isReviewableCommitPath("test/clawsweeper.test.mjs"), true);
+  assert.equal(isReviewableCommitPath("test/clawsweeper.test.ts"), true);
   assert.equal(isReviewableCommitPath("src/clawsweeper.ts"), true);
   assert.equal(isReviewableCommitPath(".github/workflows/sweep.yml"), true);
   assert.equal(isReviewableCommitPath("package.json"), true);
