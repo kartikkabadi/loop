@@ -282,7 +282,7 @@ jobs:
 
       - name: Review exact event item
         env:
-          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
           ADDITIONAL_PROMPT: ${{ github.event.client_payload.additional_prompt || '' }}
         run: |
           set -euo pipefail
@@ -806,25 +806,68 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           ADDITIONAL_PROMPT: ${{ github.event.inputs.additional_prompt || '' }}
-          ITEM_NUMBERS: ${{ needs.plan.outputs.planned_item_numbers }}
+          MATRIX_JSON: ${{ needs.plan.outputs.matrix }}
         run: |
           set -euo pipefail
           recovery_prompt="[clawsweeper-recovery-attempt=1]"
           if [ -n "$ADDITIONAL_PROMPT" ]; then
             recovery_prompt="$(printf '%s\n\n%s' "$ADDITIONAL_PROMPT" "$recovery_prompt")"
           fi
+          failed_shards="$(
+            gh run view "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --json jobs --jq '
+              .jobs[]
+              | select((.conclusion == "failure" or .conclusion == "cancelled") and (.name | startswith("Review shard ")))
+              | .name
+              | sub("^Review shard "; "")
+            ' | paste -sd, -
+          )"
+          if [ -z "$failed_shards" ]; then
+            echo "No failed review shard jobs found; nothing to requeue."
+            exit 0
+          fi
+          item_numbers="$(
+            jq -r --arg failed_shards ",$failed_shards," '
+              [
+                .[]
+                | . as $matrix_entry
+                | select($failed_shards | contains("," + ($matrix_entry.shard | tostring) + ","))
+                | $matrix_entry.item_numbers
+                | split(",")[]
+                | select(test("^[0-9]+$"))
+              ]
+              | unique
+              | join(",")
+            ' <<<"$MATRIX_JSON"
+          )"
+          if [ -z "$item_numbers" ]; then
+            echo "Failed shards had no item numbers to requeue: $failed_shards"
+            exit 0
+          fi
+          recovery_shard_count="$(
+            jq -r --arg failed_shards ",$failed_shards," '
+              [
+                .[]
+                | . as $matrix_entry
+                | select($failed_shards | contains("," + ($matrix_entry.shard | tostring) + ","))
+              ]
+              | length
+              | if . < 1 then 1 else . end
+            ' <<<"$MATRIX_JSON"
+          )"
           args=(
             workflow run sweep.yml
+            --repo "$GITHUB_REPOSITORY"
             --ref main
             -f apply_existing=false
             -f hot_intake=false
             -f target_repo="${{ needs.plan.outputs.target_repo }}"
             -f batch_size="${{ needs.plan.outputs.batch_size }}"
-            -f shard_count=100
+            -f shard_count="$recovery_shard_count"
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
-            -f item_numbers="$ITEM_NUMBERS"
+            -f item_numbers="$item_numbers"
             -f additional_prompt="$recovery_prompt"
           )
+          echo "Requeueing failed review shards $failed_shards with item numbers: $item_numbers"
           gh "${args[@]}"
 
   audit-dashboard:
