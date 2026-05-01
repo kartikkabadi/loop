@@ -10,6 +10,11 @@ on:
         required: true
         default: false
         type: boolean
+      force_reprocess:
+        description: "Replay matching comments even if their current version is already in the ledger"
+        required: true
+        default: false
+        type: boolean
       target_repo:
         description: "Repository to scan for ClawSweeper commands"
         required: true
@@ -114,6 +119,7 @@ jobs:
           comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.comment_ids || '' }}"
           runner="${{ github.event_name == 'workflow_dispatch' && inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}"
           execution_runner="${{ github.event_name == 'workflow_dispatch' && inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}"
+          force_reprocess="${{ github.event_name == 'workflow_dispatch' && inputs.force_reprocess || 'false' }}"
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
             target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
             lookback_minutes="${{ github.event.client_payload.lookback_minutes || vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}"
@@ -140,6 +146,9 @@ jobs:
           fi
           if [ -n "$comment_ids" ]; then
             args+=(--comment-ids "$comment_ids")
+          fi
+          if [ "$force_reprocess" = "true" ]; then
+            args+=(--force-reprocess)
           fi
           if { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.execute }}" = "true" ]; } ||
              { [ "${{ github.event_name }}" = "repository_dispatch" ]; } ||

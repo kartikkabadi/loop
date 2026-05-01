@@ -221,6 +221,9 @@ its durable ClawSweeper verdict so automerge can act on a fresh `pass` marker
 without waiting for the scheduled comment-router sweep. No-op targeted
 acknowledgements, such as already-processed commands or already-enabled
 automerge commands, do not publish a durable ledger commit.
+For operator replays after a parser or router fix, pass `--force-reprocess`
+or the `force_reprocess` workflow-dispatch input together with `comment_ids`;
+that ignores the current ledger version and reroutes the selected comment.
 
 If the adopted automerge worker returns no executable fix artifact, the
 executor posts one idempotent outcome comment on the opted-in PR. That status

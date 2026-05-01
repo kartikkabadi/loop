@@ -24,6 +24,7 @@ export type CommentRouterConfig = {
   model: string;
   headPrefix: string;
   execute: boolean;
+  forceReprocess: boolean;
   writeReport: boolean;
   waitForCapacity: boolean;
   maxLiveWorkers: number;
@@ -95,6 +96,11 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     model,
     headPrefix,
     execute: Boolean(args.execute),
+    forceReprocess: Boolean(
+      args["force-reprocess"] ||
+      args.force_reprocess ||
+      process.env.CLAWSWEEPER_COMMENT_FORCE_REPROCESS === "1",
+    ),
     writeReport: Boolean(args["write-report"] || args.execute),
     waitForCapacity: Boolean(args["wait-for-capacity"]),
     maxLiveWorkers: readMaxLiveWorkers(args),

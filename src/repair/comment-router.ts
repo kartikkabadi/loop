@@ -81,6 +81,7 @@ const {
   model,
   headPrefix,
   execute,
+  forceReprocess,
   writeReport,
   waitForCapacity,
   maxLiveWorkers,
@@ -101,12 +102,14 @@ const startedAtMs = Date.now();
 const timings: LooseRecord[] = [];
 const ledger = readLedger(ledgerPath());
 const TARGET_LOOKUP_RETRY_ATTEMPTS = 3;
-const processedCommentVersions = new Set(
-  (ledger.commands ?? [])
-    .filter((entry: JsonValue) => shouldSuppressProcessedCommentVersion(entry))
-    .map(commentVersionKey)
-    .filter(Boolean),
-);
+const processedCommentVersions = forceReprocess
+  ? new Set()
+  : new Set(
+      (ledger.commands ?? [])
+        .filter((entry: JsonValue) => shouldSuppressProcessedCommentVersion(entry))
+        .map(commentVersionKey)
+        .filter(Boolean),
+    );
 const plannedAutoRepairHeads = new Set<string>();
 const collaboratorPermissionCache = new Map();
 const liveTargetCache = new Map<number, LooseRecord>();
@@ -166,6 +169,7 @@ const report: LooseRecord = {
   review_repo: reviewRepo,
   since,
   execute,
+  force_reprocess: forceReprocess,
   max_comments: maxComments,
   item_numbers: [...itemNumbers],
   comment_ids: [...commentIds],
