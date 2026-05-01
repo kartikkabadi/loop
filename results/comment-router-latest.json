@@ -1,14 +1,14 @@
 {
   "status": "executed",
-  "generated_at": "2026-05-01T03:30:50.727Z",
+  "generated_at": "2026-05-01T03:31:36.653Z",
   "repo": "openclaw/openclaw",
   "repair_repo": "openclaw/clawsweeper",
   "review_repo": "openclaw/clawsweeper",
-  "since": "2026-05-01T00:30:49.019Z",
+  "since": "2026-05-01T00:31:35.195Z",
   "execute": true,
   "max_comments": 1000,
   "item_numbers": [
-    75381
+    73438
   ],
   "comment_ids": [],
   "max_autoclose_targets": 8,
@@ -29,76 +29,85 @@
   "lookup_concurrency": 8,
   "commands": [
     {
-      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:75381:4357584288:2026-05-01T03:30:46Z:clawsweeper_auto_repair",
-      "comment_id": "4357584288",
-      "comment_version_key": "4357584288:2026-05-01T03:30:46Z",
-      "comment_url": "https://github.com/openclaw/openclaw/pull/75381#issuecomment-4357584288",
+      "idempotency_key": "clawsweeper-repair:openclaw/openclaw:73438:4334136650:2026-05-01T03:31:31Z:clawsweeper_needs_human",
+      "comment_id": "4334136650",
+      "comment_version_key": "4334136650:2026-05-01T03:31:31Z",
+      "comment_url": "https://github.com/openclaw/openclaw/pull/73438#issuecomment-4334136650",
       "repo": "openclaw/openclaw",
-      "issue_number": 75381,
+      "issue_number": 73438,
       "author": "clawsweeper[bot]",
       "author_association": "CONTRIBUTOR",
-      "comment_created_at": "2026-05-01T03:09:43Z",
-      "comment_updated_at": "2026-05-01T03:30:46Z",
+      "comment_created_at": "2026-04-28T09:49:23Z",
+      "comment_updated_at": "2026-05-01T03:31:31Z",
       "trigger": "trusted_bot",
-      "command": "clawsweeper auto repair",
-      "intent": "clawsweeper_auto_repair",
+      "command": "clawsweeper needs human",
+      "intent": "clawsweeper_needs_human",
       "autoclose_message": null,
       "trusted_bot": true,
       "trusted_bot_author": "clawsweeper[bot]",
       "automation_source": "clawsweeper",
-      "repair_reason": "structured ClawSweeper marker: fix-required (finding=review-feedback sha=1468823269e068aaa6c0799c76847c0d4ff28824)",
-      "review_summary": "The PR bounds TUI shutdown input draining, adds forced exit behavior for repeated Ctrl+C or shutdown timeout after gateway disconnect, and updates the TUI shutdown test to assert the drain bounds.",
+      "repair_reason": "structured ClawSweeper verdict: needs-human (sha=11946064a5553597fd45dce0b363ec8870a36ffd)",
+      "review_summary": "The PR adds `openclaw proxy validate`, a proxy validation engine with CLI/runtime tests, CLI and Network Proxy docs, and an Unreleased changelog entry.",
       "review_followup": "",
       "freeform_prompt": null,
-      "expected_head_sha": "1468823269e068aaa6c0799c76847c0d4ff28824",
-      "finding_id": "review-feedback",
+      "expected_head_sha": "11946064a5553597fd45dce0b363ec8870a36ffd",
+      "finding_id": null,
       "status": "skipped",
       "actions": [],
       "target": {
         "kind": "pull_request",
-        "title": "Fix TUI exit after gateway disconnect",
-        "branch": "codex/issue-75379-tui-unresponsive-after-gateway-close",
-        "head_sha": "1468823269e068aaa6c0799c76847c0d4ff28824",
-        "author": "udaymanish6",
+        "title": "feat: add proxy validation command",
+        "branch": "feat/proxy-validate",
+        "head_sha": "11946064a5553597fd45dce0b363ec8870a36ffd",
+        "author": "jesse-merhi",
         "labels": [
-          "size: XS"
+          "docs",
+          "cli",
+          "maintainer",
+          "size: XL"
         ],
         "is_clawsweeper_pr": false,
         "cluster_id": null,
         "job_path": null,
-        "automerge_cluster_id": "automerge-openclaw-openclaw-75381",
-        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-75381.md",
+        "automerge_cluster_id": "automerge-openclaw-openclaw-73438",
+        "automerge_job_path": "jobs/openclaw/inbox/automerge-openclaw-openclaw-73438.md",
         "mode": "autonomous",
         "mergeable": "MERGEABLE",
         "merge_state_status": "UNSTABLE",
         "review_decision": "",
         "checks": {
-          "total": 85,
+          "total": 86,
           "counts": {
-            "SUCCESS": 74,
+            "SUCCESS": 70,
             "SKIPPED": 9,
-            "IN_PROGRESS": 1,
+            "IN_PROGRESS": 2,
+            "QUEUED": 4,
             "NEUTRAL": 1
           },
           "blockers": [
-            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS"
+            "build-artifacts:IN_PROGRESS",
+            "checks-node-auto-reply-reply-dispatch:IN_PROGRESS",
+            "checks-node-channels:QUEUED",
+            "checks-node-core-support-boundary:QUEUED",
+            "build-smoke:QUEUED",
+            "check-additional:QUEUED"
           ]
         }
       },
-      "reason": "repair commands require a ClawSweeper PR or a PR opted into ClawSweeper autofix or automerge"
+      "reason": "PR is not opted into ClawSweeper autofix or automerge"
     }
   ],
   "ledger_changed": true,
   "timings": {
-    "total_ms": 1847,
+    "total_ms": 1628,
     "phases": [
       {
         "name": "list_candidate_comments",
-        "ms": 241
+        "ms": 312
       },
       {
         "name": "prehydrate_command_lookups",
-        "ms": 1459
+        "ms": 1137
       },
       {
         "name": "classify_commands",
@@ -106,7 +115,7 @@
       },
       {
         "name": "execute_commands",
-        "ms": 130
+        "ms": 161
       },
       {
         "name": "append_ledger",
