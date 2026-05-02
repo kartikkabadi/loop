@@ -23,6 +23,7 @@ import {
   rebaseOntoBase,
   remoteBranchExists,
   remoteBranchSha,
+  unmergedPaths,
 } from "./git-repo-utils.js";
 import { parsePullRequestUrl, pullRequestNumberFromUrl } from "./github-ref.js";
 import {
@@ -41,6 +42,7 @@ import {
 } from "./constants.js";
 import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
 import { applyMechanicalChangelogFix } from "./mechanical-changelog.js";
+import { tryResolveMechanicalRebaseConflicts } from "./mechanical-rebase-conflicts.js";
 import { compactText } from "./text-utils.js";
 import {
   shouldCloseSupersededSourcePrs,
@@ -579,6 +581,13 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     previous_head: rebaseResult.previous_head,
     current_head: rebaseResult.current_head,
   });
+  const mechanicalConflictResolution = tryResolveMechanicalRebaseConflicts({
+    targetDir,
+    rebaseResult,
+  });
+  if (mechanicalConflictResolution.status === "resolved") {
+    logProgress("mechanically resolved rebase conflicts", mechanicalConflictResolution);
+  }
 
   const prep = editValidatePrepareMerge({
     fixArtifact,
@@ -730,6 +739,13 @@ function executeReplacementBranch({
   });
   prepareTargetToolchain(targetDir, currentTargetValidationOptions());
   const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
+  const mechanicalConflictResolution = tryResolveMechanicalRebaseConflicts({
+    targetDir,
+    rebaseResult,
+  });
+  if (mechanicalConflictResolution.status === "resolved") {
+    logProgress("mechanically resolved replacement rebase conflicts", mechanicalConflictResolution);
+  }
 
   if (!dryRun) ghAuthSetupGit(targetDir);
   const prep = editValidatePrepareMerge({
@@ -1057,6 +1073,20 @@ function editValidatePrepareMerge({
       previous_head: rebaseResult.previous_head,
       current_head: rebaseResult.current_head,
     });
+  }
+  if (
+    !producedChanges &&
+    rebaseResult?.status === "conflicts" &&
+    unmergedPaths(targetDir).length === 0
+  ) {
+    const completed = completeRebaseIfResolved({ targetDir });
+    if (completed.status === "continued") {
+      producedChanges = true;
+      logProgress("completed mechanically resolved rebase", {
+        previous_head: completed.previous_head,
+        current_head: completed.current_head,
+      });
+    }
   }
   if (!producedChanges && !reconcileWithBase) {
     const mechanicalFix = applyMechanicalChangelogFix({ fixArtifact, targetDir });

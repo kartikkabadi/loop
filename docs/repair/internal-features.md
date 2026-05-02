@@ -208,7 +208,10 @@ at the audit record. Eligible ordinary bug/regression/reliability findings get a
 deterministic synthetic ClawSweeper result and fix artifact. That skips the normal
 cluster-planning Codex pass and sends the report straight to
 `execute-fix-artifact`, where Codex is used for the repair loop against latest
-target `main`.
+target `main`. The executor handles trivial branch-refresh work before asking
+Codex to edit: a clean rebase that changes only commit ancestry skips the edit
+pass, and an isolated `CHANGELOG.md` rebase conflict is merged mechanically by
+preserving both sides before validation continues.
 
 Commit-finding fix artifacts set `allow_no_pr: true`. If the repair loop
 verifies the report but produces no target-repo diff, ClawSweeper records a clean
