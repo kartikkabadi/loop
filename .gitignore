@@ -4,6 +4,7 @@ dist/
 .env
 .artifacts/
 artifacts/
+.clawsweeper-repair/
 tmp/
 apply-report.json
 repair-apply-report.json
