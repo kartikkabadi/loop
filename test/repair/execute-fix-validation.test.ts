@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { validateAutonomousFixScope } from "../../dist/repair/execute-fix-validation.js";
+import {
+  HUMAN_REVIEW_LABEL,
+  repairPauseLabel,
+  validateAutonomousFixScope,
+} from "../../dist/repair/execute-fix-validation.js";
 
 function broadBranchRepairArtifact() {
   return {
@@ -81,4 +85,13 @@ test("autonomous scope validation still blocks adopted repairs outside ClawSweep
   });
 
   assert.match(block.reason, /too broad for autonomous execution/);
+});
+
+test("repair pause labels block live branch mutation", () => {
+  assert.equal(repairPauseLabel(["bug", HUMAN_REVIEW_LABEL]), HUMAN_REVIEW_LABEL);
+  assert.equal(
+    repairPauseLabel([{ name: "Bug" }, { name: "ClawSweeper:Human-Review" }]),
+    HUMAN_REVIEW_LABEL,
+  );
+  assert.equal(repairPauseLabel(["clawsweeper:automerge"]), null);
 });

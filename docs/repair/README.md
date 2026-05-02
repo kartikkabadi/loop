@@ -305,6 +305,9 @@ The workflow needs:
   ClawSweeper review feedback; defaults are `10` automatic repair iterations per
   PR and `1` repair per PR head SHA. The per-PR cap is total across changing
   head SHAs and stops the automatic review/repair loop.
+- In-flight branch repair workers re-fetch the live PR before mutation and block
+  if `clawsweeper:human-review` is present, so a trusted needs-human verdict or
+  maintainer stop wins over stale queued repair jobs.
 - optional `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` to let the scheduled comment
   router respond to maintainer-only `/clawsweeper ...` and
   `@clawsweeper ...` / `@openclaw-clawsweeper ...` commands. Without it,

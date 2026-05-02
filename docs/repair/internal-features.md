@@ -510,6 +510,10 @@ Important defaults:
 - `CLAWSWEEPER_DISPATCH_RECHECK_MS`: short active-worker recheck before
   dispatching a repair worker; default `5000` to avoid duplicate queued workers
   when parallel routers race GitHub run visibility.
+- In-flight branch repair execution re-fetches live PR labels immediately before
+  branch mutation and refuses to push when `clawsweeper:human-review` is present.
+  This makes trusted needs-human verdicts and maintainer stop commands win over
+  stale already-queued repair workers.
 - `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA`: replacement PR area backpressure; default
   is `50` open ClawSweeper PRs per touched area, and `0` disables the cap.
 - ClawSweeper commit-finding repair PRs get the `clawsweeper:commit-finding`

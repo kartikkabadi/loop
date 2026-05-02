@@ -9,6 +9,17 @@ const REPAIR_STRATEGIES = new Set([
   "replace_uneditable_branch",
   "new_fix_pr",
 ]);
+export const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
+
+export function repairPauseLabel(labels: Iterable<JsonValue> | null | undefined): string | null {
+  for (const label of labels ?? []) {
+    const name = String(label?.name ?? label ?? "")
+      .trim()
+      .toLowerCase();
+    if (name === HUMAN_REVIEW_LABEL) return HUMAN_REVIEW_LABEL;
+  }
+  return null;
+}
 
 export function validateFixArtifact(fixArtifact: LooseRecord): LooseRecord {
   if (!fixArtifact || typeof fixArtifact !== "object") {

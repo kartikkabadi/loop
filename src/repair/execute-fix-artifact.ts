@@ -74,6 +74,7 @@ import {
 import { uniqueStrings } from "./validation-command-utils.js";
 import { validateActivePrAreaCapacity } from "./execute-fix-area-capacity.js";
 import {
+  repairPauseLabel,
   validateAutonomousFixScope,
   validateFixArtifact,
   validateFixSecurityScope,
@@ -559,6 +560,12 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   logProgress("repairing contributor branch", { source_pr: sourcePr.url, base_branch: baseBranch });
   const pull = fetchPullRequest(result.repo, sourcePr.number);
   if (pull.state !== "open") throw new Error(`source PR #${sourcePr.number} is ${pull.state}`);
+  const initialPauseBlock = liveRepairPauseBlock({
+    pull,
+    number: sourcePr.number,
+    target: sourcePr.url,
+  });
+  if (initialPauseBlock) return initialPauseBlock;
   if (!pull.head?.repo?.full_name || !pull.head?.ref)
     throw new Error(`source PR #${sourcePr.number} is missing head repo/ref`);
   const sameRepoBranch = pull.head.repo.full_name === result.repo;
@@ -667,6 +674,15 @@ function pushRepairBranchAndUpdateStatus({
   if (!sameRepoBranch) {
     assertRepairBranchWritable({ targetDir, pull, rewritten: branchUpdate.rewritten });
   }
+  const livePull = fetchPullRequest(result.repo, sourcePr.number);
+  const livePauseBlock = liveRepairPauseBlock({
+    pull: livePull,
+    number: sourcePr.number,
+    target: sourcePr.url,
+    commit: prep.commit,
+    branchUpdate,
+  });
+  if (livePauseBlock) return livePauseBlock;
   const pushArgs = repairBranchPushArgs({ pull, rewritten: branchUpdate.rewritten });
   run("git", pushArgs, { cwd: targetDir });
   const threadResolution = prepareReviewThreadsForMerge({
@@ -717,6 +733,26 @@ function pushRepairBranchAndUpdateStatus({
     status_comment_updated: statusCommentUpdated,
     merge_preflight: prep.merge_preflight,
     review_threads: threadResolution,
+  };
+}
+
+function liveRepairPauseBlock({
+  pull,
+  number,
+  target,
+  commit = null,
+  branchUpdate = null,
+}: LooseRecord) {
+  const pauseLabel = repairPauseLabel(pull?.labels);
+  if (!pauseLabel) return null;
+  return {
+    action: "repair_contributor_branch",
+    status: "blocked",
+    target,
+    commit,
+    branch_rewritten: branchUpdate?.rewritten ?? null,
+    paused_label: pauseLabel,
+    reason: `source PR #${number} is paused by ${pauseLabel}; refusing to mutate the PR branch`,
   };
 }
 
