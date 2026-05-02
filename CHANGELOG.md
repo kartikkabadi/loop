@@ -92,6 +92,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Skipped event comment-router ledger publishes when a cancelled run exits before
+  pnpm setup, avoiding noisy `pnpm: command not found` failures.
 - Prevented duplicate automerge repair dispatches when the configured run-name
   prefix is trimmed but an active worker already exists for the same job path.
 - Kept Codex review access read-only and verified the OpenClaw checkout before

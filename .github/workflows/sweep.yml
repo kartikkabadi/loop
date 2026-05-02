@@ -261,6 +261,7 @@ jobs:
           react "eyes"
 
       - uses: ./.github/actions/setup-pnpm
+        id: setup-pnpm
         with:
           build-script: build:all
 
@@ -361,7 +362,7 @@ jobs:
             --execute
 
       - name: Commit event comment router ledger
-        if: always()
+        if: ${{ !cancelled() && steps.setup-pnpm.outcome == 'success' }}
         run: |
           pnpm run repair:publish-main -- \
             --message "chore: record ClawSweeper event comment routing" \
@@ -405,7 +406,7 @@ jobs:
             --execute
 
       - name: Commit event comment router retry ledger
-        if: ${{ always() && steps.waiting-event-repair-dispatches.outputs.count != '' && steps.waiting-event-repair-dispatches.outputs.count != '0' }}
+        if: ${{ !cancelled() && steps.setup-pnpm.outcome == 'success' && steps.waiting-event-repair-dispatches.outputs.count != '' && steps.waiting-event-repair-dispatches.outputs.count != '0' }}
         run: |
           pnpm run repair:publish-main -- \
             --message "chore: record ClawSweeper event repair dispatch retry" \
