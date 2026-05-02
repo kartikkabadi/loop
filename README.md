@@ -323,7 +323,10 @@ status update scan all open GitHub items. The state repo renders reviewable
 findings such as missing eligible records, reopened archived records, and stale
 reviews from that state. The
 workflow refreshes audit state on a separate six-hour schedule, and it can be run
-manually with `audit_dashboard=true`.
+manually with `audit_dashboard=true`. The read-only audit lane covers
+`openclaw/openclaw`, `openclaw/clawhub`, and `openclaw/clawsweeper`; it falls
+back to public workflow-token reads when the ClawSweeper App token is not
+available for a target.
 
 ## Local Run
 
@@ -396,9 +399,10 @@ Scheduled runs cover the configured product profiles. `openclaw/openclaw` runs
 normal backfill every 5 minutes with up to 100 review shards when due backlog
 exists; `openclaw/clawhub` runs on offset review/apply/audit crons so its
 reports live under `records/openclaw-clawhub/` without colliding with default
-repo records. `openclaw/clawsweeper` is available for manual and event
-self-review smoke tests. Broad hot-intake sweeps cap scheduled fan-out at 50
-one-item shards per run; exact event reviews still use one shard.
+repo records. `openclaw/clawsweeper` has a scheduled read-only audit row and is
+available for manual and event self-review smoke tests. Broad hot-intake sweeps
+cap scheduled fan-out at 50 one-item shards per run; exact event reviews still
+use one shard.
 
 Target repositories can opt into event-level latency by installing the
 dispatcher workflow in [docs/target-dispatcher.md](docs/target-dispatcher.md).

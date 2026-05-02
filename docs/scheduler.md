@@ -50,7 +50,13 @@ because `cancel-in-progress` is only true for exact `repository_dispatch` runs.
 - normal backfill: `22 * * * *`
 - apply: `8,23,38,53 * * * *`
 - audit: `12 */6 * * *`
-- all ClawHub scheduled work is gated by `CLAWSWEEPER_ENABLE_CLAWHUB=1`
+- review and apply work is gated by `CLAWSWEEPER_ENABLE_CLAWHUB=1`
+
+`openclaw/clawsweeper`:
+
+- audit: `17 */6 * * *`
+- self-review is primarily manual or event-driven; scheduled audit keeps the
+  dashboard health row fresh
 
 Manual `workflow_dispatch` can override `target_repo`, `item_number`,
 `item_numbers`, `batch_size`, `shard_count`, `hot_intake`, and apply inputs.
@@ -268,6 +274,21 @@ real review failures can be separated while monitoring.
 The generated state checkout uses a blobless partial clone, but it intentionally
 keeps full commit history by default. Publish jobs rebase and retry state writes
 after races, and shallow state history can make those retries less reliable.
+
+## Audit
+
+Audit is read-only and runs separately from review and apply. It refreshes
+`results/audit/<repo-slug>.json` and the README Audit Health table from live
+GitHub state. Scheduled audit currently covers:
+
+- `openclaw/openclaw`: `7 */6 * * *`
+- `openclaw/clawhub`: `12 */6 * * *`
+- `openclaw/clawsweeper`: `17 */6 * * *`
+
+The audit lane first tries a ClawSweeper GitHub App read token for the target
+repository. If that token is unavailable, it falls back to the workflow token for
+public read-only API access so dashboard rows do not remain `unknown` just
+because mutating scheduled work is still gated.
 
 ## Monitoring
 

@@ -1,6 +1,6 @@
 name: ClawSweeper
 
-run-name: ${{ github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'Audit ClawSweeper state' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
+run-name: ${{ github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'Audit ClawSweeper state' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
 
 on:
   repository_dispatch:
@@ -109,10 +109,11 @@ on:
         default: "false"
   schedule:
     - cron: "*/5 * * * *"
-    # ClawHub schedules stay opt-in until the ClawSweeper app is installed there.
+    # ClawHub review/apply schedules stay opt-in until the ClawSweeper app is installed there.
     - cron: "2/5 * * * *"
     - cron: "7 */6 * * *"
     - cron: "12 */6 * * *"
+    - cron: "17 */6 * * *"
     - cron: "1/5 * * * *"
     - cron: "22 * * * *"
     - cron: "3 * * * *"
@@ -132,7 +133,7 @@ env:
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
 
 concurrency:
-  group: ${{ github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || (github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true' && (github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '')) && format('clawsweeper-intake-exact-{0}', github.event.inputs.item_number || github.event.inputs.item_numbers) || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake-v2' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw')) }}
+  group: ${{ github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || (github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true' && (github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '')) && format('clawsweeper-intake-exact-{0}', github.event.inputs.item_number || github.event.inputs.item_numbers) || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake-v2' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '17 */6 * * *') && 'openclaw/clawsweeper' || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw'))) }}
   cancel-in-progress: ${{ github.event_name == 'repository_dispatch' }}
 
 jobs:
@@ -439,7 +440,7 @@ jobs:
 
   plan:
     name: Plan review candidates
-    if: ${{ github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) && !(github.event_name == 'schedule' && (github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *') && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
+    if: ${{ github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *')))) && !(github.event_name == 'schedule' && (github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *') && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -830,7 +831,7 @@ jobs:
   publish:
     name: Publish review artifacts
     needs: [plan, review]
-    if: ${{ always() && needs.plan.result == 'success' && needs.review.result != 'cancelled' && needs.plan.outputs.target_repo != '' && github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *')))) }}
+    if: ${{ always() && needs.plan.result == 'success' && needs.review.result != 'cancelled' && needs.plan.outputs.target_repo != '' && github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *')))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -1169,7 +1170,7 @@ jobs:
 
   audit-dashboard:
     name: Audit state
-    if: ${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *'))) && !(github.event_name == 'schedule' && github.event.schedule == '12 */6 * * *' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -1187,6 +1188,9 @@ jobs:
               "12 */6 * * *")
                 target_repo="openclaw/clawhub"
                 ;;
+              "17 */6 * * *")
+                target_repo="openclaw/clawsweeper"
+                ;;
               *)
                 target_repo="openclaw/openclaw"
                 ;;
@@ -1202,6 +1206,7 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -1211,6 +1216,20 @@ jobs:
           permission-contents: read
           permission-issues: read
           permission-pull-requests: read
+
+      - name: Select target read token
+        id: target-token
+        env:
+          APP_TOKEN: ${{ steps.target-read-token.outputs.token }}
+          FALLBACK_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "$APP_TOKEN" ]; then
+            echo "Using ClawSweeper App token for audit reads."
+            echo "token=$APP_TOKEN" >> "$GITHUB_OUTPUT"
+          else
+            echo "Using workflow token fallback for public audit reads."
+            echo "token=$FALLBACK_TOKEN" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Use state token
         id: state-token
@@ -1226,7 +1245,7 @@ jobs:
 
       - name: Refresh Audit Health
         env:
-          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
+          GH_TOKEN: ${{ steps.target-token.outputs.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
           set -euo pipefail
