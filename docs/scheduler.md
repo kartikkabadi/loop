@@ -300,6 +300,10 @@ cleanup runs therefore avoid hundreds of per-item GitHub API subprocesses. The
 local reconciler still fetches `closed_at` by default for operator runs; pass
 `--skip-closed-at` for fast state-only cleanup.
 
+Review publishing applies newly generated artifacts first, then runs the same
+fast reconciler once before committing records. It does not run the slower
+artifact-apply reconciler and the explicit publish reconciler back to back.
+
 After publishing audit state and reconciled records, audit dispatches the
 `openclaw/clawsweeper-state` dashboard renderer; that repository's 15-minute
 schedule remains the fallback if dispatch is delayed.

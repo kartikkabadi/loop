@@ -888,7 +888,7 @@ jobs:
           MAX_PAGES: ${{ needs.plan.outputs.max_pages }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
-          apply_artifacts_args=(--target-repo "$TARGET_REPO" --artifact-dir artifacts --skip-dashboard)
+          apply_artifacts_args=(--target-repo "$TARGET_REPO" --artifact-dir artifacts --skip-dashboard --skip-reconcile)
           publish_state="Review publish complete"
           reviewed_count="$(find artifacts -type f -name '*.md' | wc -l | tr -d ' ')"
           metric_count="$(find review-metrics -type f -name '*.json' 2>/dev/null | wc -l | tr -d ' ')"
