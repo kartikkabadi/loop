@@ -116,7 +116,9 @@ loop does not wait for the scheduled comment-router sweep before checking the
 repaired head. For base-sync-only blockers, the executor first tries a
 deterministic rebase fast path and pushes that result without a Codex edit pass;
 if the rebase or known mechanical conflict resolvers cannot finish cleanly, it
-falls back to the normal Codex fix worker.
+falls back to the normal Codex fix worker. The mechanical set includes
+isolated `CHANGELOG.md` conflicts and generated config checksum conflicts where
+the replayed commit changed only selected checksum entries.
 
 After a successful same-branch repair push, the worker shepherds the PR for a
 bounded window. It polls for the exact-head ClawSweeper pass marker and GitHub

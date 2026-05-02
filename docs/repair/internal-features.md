@@ -219,7 +219,9 @@ cluster-planning Codex pass and sends the report straight to
 target `main`. The executor handles trivial branch-refresh work before asking
 Codex to edit: a clean rebase that changes only commit ancestry skips the edit
 pass, and an isolated `CHANGELOG.md` rebase conflict is merged mechanically by
-preserving both sides before validation continues.
+preserving both sides before validation continues. Generated config checksum
+conflicts are also merged mechanically by keeping replayed checksum entries and
+current-main entries that the replayed commit did not touch.
 
 Commit-finding fix artifacts set `allow_no_pr: true`. If the repair loop
 verifies the report but produces no target-repo diff, ClawSweeper records a clean

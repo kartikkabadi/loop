@@ -742,7 +742,7 @@ function tryAutomergeFastRebaseRepair({
     commit = String(rebaseResult.current_head);
     detail = "clean deterministic rebase";
   } else if (rebaseResult?.status === "conflicts" && unmergedPaths(targetDir).length === 0) {
-    const completed = completeRebaseIfResolved({ targetDir });
+    const completed = completeMechanicallyResolvedRebase({ targetDir });
     if (completed.status !== "continued") {
       return { status: "fallback", reason: "mechanically resolved rebase did not continue" };
     }
@@ -803,6 +803,36 @@ function tryAutomergeFastRebaseRepair({
       },
     },
   };
+}
+
+function completeMechanicallyResolvedRebase({ targetDir }: { targetDir: string }) {
+  for (let attempt = 1; attempt <= 6; attempt += 1) {
+    try {
+      return completeRebaseIfResolved({ targetDir });
+    } catch (error) {
+      const paths = unmergedPaths(targetDir);
+      if (paths.length === 0) throw error;
+      const current = currentHead(targetDir);
+      const resolved = tryResolveMechanicalRebaseConflicts({
+        targetDir,
+        rebaseResult: {
+          status: "conflicts",
+          base_ref: "",
+          base_sha: "",
+          previous_head: current,
+          current_head: current,
+          detail: String((error as Error).message ?? error),
+        },
+      });
+      if (resolved.status !== "resolved") throw error;
+      logProgress("mechanically resolved additional rebase conflicts", {
+        attempt,
+        paths: resolved.paths,
+        reason: resolved.reason,
+      });
+    }
+  }
+  throw new Error("mechanical rebase did not complete after resolving repeated conflicts");
 }
 
 function branchUpdateState({ targetDir, sourceHead }: LooseRecord) {
@@ -1222,7 +1252,7 @@ function editValidatePrepareMerge({
     rebaseResult?.status === "conflicts" &&
     unmergedPaths(targetDir).length === 0
   ) {
-    const completed = completeRebaseIfResolved({ targetDir });
+    const completed = completeMechanicallyResolvedRebase({ targetDir });
     if (completed.status === "continued") {
       producedChanges = true;
       logProgress("completed mechanically resolved rebase", {
