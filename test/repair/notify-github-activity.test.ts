@@ -7,6 +7,7 @@ import test from "node:test";
 import {
   normalizeGithubActivity,
   renderGithubActivityMessage,
+  routineGithubActivityReason,
   runGithubActivityNotifier,
 } from "../../dist/repair/notify-github-activity.js";
 
@@ -291,6 +292,122 @@ test("runGithubActivityNotifier posts ingest-only hook payload by default", asyn
   assert.equal(requests[0]?.body.deliver, false);
   assert.match(String(requests[0]?.body.message), /use the message tool/);
   assert.match(String(requests[0]?.body.message), /channel:123/);
+});
+
+test("runGithubActivityNotifier skips routine noisy GitHub activity before posting hooks", async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-github-routine-"));
+  const eventPath = path.join(root, "event.json");
+  fs.writeFileSync(
+    eventPath,
+    `${JSON.stringify({
+      action: "edited",
+      repository: { full_name: "openclaw/openclaw" },
+      sender: { login: "openclaw-clawsweeper[bot]" },
+      issue: {
+        number: 123,
+        title: "Fix config parsing",
+        state: "open",
+        html_url: "https://github.com/openclaw/openclaw/pull/123",
+        pull_request: {},
+      },
+      comment: {
+        id: 999,
+        html_url: "https://github.com/openclaw/openclaw/pull/123#issuecomment-999",
+        body: "Updated dashboard timestamp.",
+        user: { login: "openclaw-clawsweeper[bot]" },
+      },
+    })}\n`,
+  );
+
+  let posts = 0;
+  const summary = await runGithubActivityNotifier(["--write-report"], {
+    root,
+    fetch: async () => {
+      posts += 1;
+      return new Response(JSON.stringify({ ok: true }), { status: 200 });
+    },
+    log: () => undefined,
+    env: {
+      GITHUB_EVENT_PATH: eventPath,
+      GITHUB_EVENT_NAME: "issue_comment",
+      GITHUB_REPOSITORY: "openclaw/clawsweeper",
+      CLAWSWEEPER_OPENCLAW_HOOK_URL: "https://claw.example/hooks",
+      CLAWSWEEPER_OPENCLAW_HOOK_TOKEN: "secret",
+      CLAWSWEEPER_DISCORD_TARGET: "channel:123",
+    },
+  });
+
+  assert.equal(summary.status, "skipped");
+  assert.equal(summary.sent, 0);
+  assert.equal(posts, 0);
+  assert.match(summary.reason ?? "", /issue comment edit/);
+  const report = JSON.parse(
+    fs.readFileSync(path.join(root, "notifications/github-activity-report.json"), "utf8"),
+  );
+  assert.match(report.reason, /issue comment edit/);
+});
+
+test("routineGithubActivityReason keeps explicit ClawSweeper commands visible", () => {
+  const activity = normalizeGithubActivity({
+    eventName: "issue_comment",
+    payload: {
+      action: "edited",
+      repository: { full_name: "openclaw/openclaw" },
+      sender: { login: "openclaw-clawsweeper[bot]" },
+      issue: {
+        number: 123,
+        title: "Fix config parsing",
+        state: "open",
+        html_url: "https://github.com/openclaw/openclaw/pull/123",
+        pull_request: {},
+      },
+      comment: {
+        id: 999,
+        html_url: "https://github.com/openclaw/openclaw/pull/123#issuecomment-999",
+        body: "@clawsweeper review this again",
+      },
+    },
+  });
+
+  assert.equal(routineGithubActivityReason(activity!), null);
+});
+
+test("routineGithubActivityReason filters duplicate PR synchronize and successful automation", () => {
+  const synchronize = normalizeGithubActivity({
+    eventName: "pull_request_target",
+    payload: {
+      action: "synchronize",
+      repository: { full_name: "openclaw/openclaw" },
+      sender: { login: "contributor" },
+      pull_request: {
+        number: 123,
+        title: "Fix config parsing",
+        state: "open",
+        html_url: "https://github.com/openclaw/openclaw/pull/123",
+        head: { sha: "abc123" },
+      },
+    },
+  });
+  assert.match(routineGithubActivityReason(synchronize!) ?? "", /synchronize/);
+
+  const success = normalizeGithubActivity({
+    eventName: "workflow_run",
+    payload: {
+      action: "completed",
+      repository: { full_name: "openclaw/openclaw" },
+      sender: { login: "github-actions[bot]" },
+      workflow_run: {
+        id: 13,
+        run_number: 5,
+        name: "repair publish cluster results",
+        status: "completed",
+        conclusion: "success",
+        head_sha: "ghi",
+        html_url: "https://example.test/run",
+      },
+    },
+  });
+  assert.match(routineGithubActivityReason(success!) ?? "", /successful automation/);
 });
 
 test("runGithubActivityNotifier covers skip, dry-run, deliver, and failure paths", async () => {

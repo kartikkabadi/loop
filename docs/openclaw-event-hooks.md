@@ -113,9 +113,14 @@ Default behavior:
 
 - missing hook URL, token, or delivery target: skip notification and keep the
   workflow green;
-- OpenClaw HTTP failure: record the failed attempt and keep the workflow green;
+- transient OpenClaw HTTP/network failure: retry with the same idempotency key;
+- persistent OpenClaw HTTP failure: record the failed attempt and keep the
+  workflow green;
 - rerun after failure: retry because no success ledger entry exists;
 - rerun after success: skip because the ledger contains the event key.
+
+Set `CLAWSWEEPER_OPENCLAW_HOOK_RETRY_ATTEMPTS` to override the default retry
+count for hook posts.
 
 Strict mode is allowed for events whose notification is the product of the
 workflow. Strict mode should fail on OpenClaw delivery errors, but it still
@@ -180,6 +185,12 @@ The GitHub activity notifier posts to `/hooks/agent` with `deliver: false` by
 default. The agent receives the Discord target in the prompt and should use the
 message tool only when the event is surprising, actionable, risky, or otherwise
 operationally useful. For routine events it replies exactly `NO_REPLY`.
+
+The notifier also applies a cheap deterministic prefilter before calling
+OpenClaw. Routine bot comments, comment edits, metadata edits, duplicate PR
+synchronizes, and successful automation events are skipped unless they contain
+an explicit ClawSweeper command or mention. This keeps noisy GitHub churn from
+consuming hook-session model turns.
 
 The activity prompt always treats GitHub titles, comments, review bodies, and
 issue text as untrusted data. It must not follow instructions embedded in those

@@ -8,6 +8,7 @@ export type OpenClawHookConfig = {
   discordTarget: string;
   thinking: string;
   timeoutSeconds: number;
+  retryAttempts: number;
 };
 
 export type OpenClawHookPost = {
@@ -25,6 +26,8 @@ const DEFAULT_AGENT_ID = "clawsweeper";
 const DEFAULT_CHANNEL = "discord";
 const DEFAULT_THINKING = "low";
 const DEFAULT_TIMEOUT_SECONDS = 60;
+const DEFAULT_RETRY_ATTEMPTS = 3;
+const DEFAULT_RETRY_DELAYS_MS = [1000, 4000];
 
 export function resolveOpenClawHookConfig(env: NodeJS.ProcessEnv): OpenClawHookConfig | null {
   const hookUrl = normalizeString(env.CLAWSWEEPER_OPENCLAW_HOOK_URL);
@@ -42,6 +45,10 @@ export function resolveOpenClawHookConfig(env: NodeJS.ProcessEnv): OpenClawHookC
       env.CLAWSWEEPER_OPENCLAW_HOOK_TIMEOUT_SECONDS,
       DEFAULT_TIMEOUT_SECONDS,
     ),
+    retryAttempts: positiveInt(
+      env.CLAWSWEEPER_OPENCLAW_HOOK_RETRY_ATTEMPTS,
+      DEFAULT_RETRY_ATTEMPTS,
+    ),
   };
 }
 
@@ -57,6 +64,35 @@ export function resolveHookAgentUrl(raw: string): string {
 }
 
 export async function postOpenClawAgentHook({
+  config,
+  fetcher,
+  post,
+  retryDelaysMs = DEFAULT_RETRY_DELAYS_MS,
+  sleep = delay,
+}: {
+  config: OpenClawHookConfig;
+  fetcher: typeof fetch;
+  post: OpenClawHookPost;
+  retryDelaysMs?: number[];
+  sleep?: (ms: number) => Promise<void>;
+}): Promise<OpenClawHookPostResult> {
+  const attempts = Math.max(1, Math.floor(config.retryAttempts));
+  let lastError: unknown = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await postOpenClawAgentHookOnce({ config, fetcher, post });
+    } catch (error) {
+      lastError = error;
+      if (attempt >= attempts || !isTransientOpenClawHookError(error)) {
+        throw error;
+      }
+      await sleep(retryDelaysMs[Math.min(attempt - 1, retryDelaysMs.length - 1)] ?? 0);
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
+}
+
+async function postOpenClawAgentHookOnce({
   config,
   fetcher,
   post,
@@ -90,12 +126,32 @@ export async function postOpenClawAgentHook({
     });
     const body = await response.text();
     if (!response.ok) {
-      throw new Error(`OpenClaw hook returned ${response.status}: ${body.slice(0, 500)}`);
+      throw new OpenClawHookHttpError(response.status, body);
     }
     return { runId: readHookRunId(body) };
   } finally {
     clearTimeout(timeout);
   }
+}
+
+export class OpenClawHookHttpError extends Error {
+  constructor(
+    readonly status: number,
+    readonly body: string,
+  ) {
+    super(`OpenClaw hook returned ${status}: ${body.slice(0, 500)}`);
+  }
+}
+
+export function isTransientOpenClawHookError(error: unknown): boolean {
+  if (error instanceof OpenClawHookHttpError) {
+    return [408, 425, 429, 500, 502, 503, 504].includes(error.status);
+  }
+  if (!(error instanceof Error)) return false;
+  if (error.name === "AbortError" || error.name === "TimeoutError") return true;
+  return /\b(ECONNRESET|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|socket hang up|fetch failed)\b/i.test(
+    error.message,
+  );
 }
 
 export function readHookRunId(body: string): string | null {
@@ -134,4 +190,12 @@ export function normalizeString(value: string | undefined): string | undefined {
 
 export function errorText(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function delay(ms: number): Promise<void> {
+  if (ms <= 0) return Promise.resolve();
+  return new Promise((resolve) => {
+    const timeout = setTimeout(resolve, ms);
+    timeout.unref?.();
+  });
 }

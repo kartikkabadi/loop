@@ -47,6 +47,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
+- Filter routine GitHub activity before posting OpenClaw hook turns, retry
+  transient hook failures with the same idempotency key, and document the retry
+  controls for the activity lane.
 - Switched review runs to GPT-5.5 with high reasoning.
 - Limited protected-proposed audit failures to active item records so archived
   historical reports do not keep Audit Health in action-needed state.

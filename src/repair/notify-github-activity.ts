@@ -50,6 +50,8 @@ export type GithubActivityNotifierRuntime = {
 
 const DEFAULT_REPORT_PATH = "notifications/github-activity-report.json";
 const BODY_EXCERPT_LIMIT = 1200;
+const CLAWSWEEPER_COMMAND_RE =
+  /(^|\s)(@(clawsweeper|openclaw-clawsweeper)(\[bot\])?\b|\/(clawsweeper|review|automerge|autoclose)\b)/i;
 
 export function normalizeGithubActivity({
   eventName,
@@ -303,6 +305,26 @@ export async function runGithubActivityNotifier(
     log(JSON.stringify(summary));
     return summary;
   }
+  const routineReason = routineGithubActivityReason(activity);
+  if (routineReason) {
+    if (args["write-report"]) {
+      writeJsonFile(reportPath, {
+        version: 1,
+        generated_at: now().toISOString(),
+        event_name: eventName,
+        event_path: path.relative(root, eventPath),
+        dry_run: dryRun,
+        deliver,
+        hook_run_id: null,
+        failed: 0,
+        reason: routineReason,
+        activity,
+      });
+    }
+    const summary = summaryRow("skipped", 0, 0, routineReason);
+    log(JSON.stringify(summary));
+    return summary;
+  }
 
   const config = resolveOpenClawHookConfig(env);
   if (!config) {
@@ -352,6 +374,70 @@ export async function runGithubActivityNotifier(
   summary.exitCode = failed > 0 && strict ? 1 : 0;
   log(JSON.stringify(summary, null, 2));
   return summary;
+}
+
+export function routineGithubActivityReason(activity: GithubActivity): string | null {
+  const typeAction = `${activity.type}.${activity.action ?? "none"}`;
+  const commandLike = activityContainsClawSweeperCommand(activity);
+  if (typeAction === "issue_comment.edited" && !commandLike) {
+    return "routine GitHub activity filtered: issue comment edit";
+  }
+  if (activity.type === "issue_comment" && isBotActor(activity.actor) && !commandLike) {
+    return "routine GitHub activity filtered: bot issue comment";
+  }
+  if (
+    (activity.action === "labeled" ||
+      activity.action === "unlabeled" ||
+      activity.action === "assigned" ||
+      activity.action === "unassigned") &&
+    isBotActor(activity.actor)
+  ) {
+    return `routine GitHub activity filtered: bot ${activity.action}`;
+  }
+  if (
+    (activity.type === "pull_request" || activity.type === "pull_request_target") &&
+    activity.action === "synchronize"
+  ) {
+    return "routine GitHub activity filtered: pull request synchronize";
+  }
+  if (
+    (activity.type === "issues" ||
+      activity.type === "pull_request" ||
+      activity.type === "pull_request_target") &&
+    activity.action === "edited" &&
+    !commandLike
+  ) {
+    return "routine GitHub activity filtered: metadata edit";
+  }
+  if (
+    (activity.type === "check_run" ||
+      activity.type === "check_suite" ||
+      activity.type === "workflow_run") &&
+    successfulState(activity.subject.state)
+  ) {
+    return "routine GitHub activity filtered: successful automation event";
+  }
+  return null;
+}
+
+function isBotActor(actor: string | null): boolean {
+  return typeof actor === "string" && (actor.endsWith("[bot]") || actor === "github-actions");
+}
+
+function successfulState(state: string | null): boolean {
+  return /^(success|successful|neutral|skipped)$/i.test(state ?? "");
+}
+
+function activityContainsClawSweeperCommand(activity: GithubActivity): boolean {
+  const text = [
+    activity.subject.title,
+    stringOrNull(activity.payload.body_excerpt),
+    stringOrNull(asJsonObject(activity.payload.comment).body_excerpt),
+    stringOrNull(asJsonObject(activity.payload.review).body_excerpt),
+  ]
+    .filter((value): value is string => Boolean(value))
+    .join("\n");
+  return CLAWSWEEPER_COMMAND_RE.test(text);
 }
 
 function normalizeRepositoryDispatch(
