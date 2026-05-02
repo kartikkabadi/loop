@@ -627,7 +627,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
-          pnpm run reconcile -- --target-repo "$TARGET_REPO"
+          pnpm run reconcile -- --target-repo "$TARGET_REPO" --skip-closed-at
           pnpm run status -- \
             --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
             --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items; due backlog scanned is ${{ steps.select.outputs.due_backlog }}. Capacity reason: ${{ steps.select.outputs.capacity_reason }}. Review shards are starting; publish will merge artifacts when they finish." \
@@ -922,7 +922,7 @@ jobs:
           if [ "$HOT_INTAKE" = "true" ] && [ -z "$EXACT_ITEM" ]; then
             echo "Skipping full reconcile for broad hot-intake publish."
           else
-            pnpm run reconcile -- --target-repo "$TARGET_REPO"
+            pnpm run reconcile -- --target-repo "$TARGET_REPO" --skip-closed-at
           fi
           pnpm run repair:publish-main -- \
             --message "chore: update sweep records" \
@@ -1386,7 +1386,7 @@ jobs:
               git restore results/sweep-status || true
             fi
           }
-          pnpm run reconcile -- --target-repo "$TARGET_REPO"
+          pnpm run reconcile -- --target-repo "$TARGET_REPO" --skip-closed-at
           if [ "$sync_comments_only" != "true" ] && [ -z "$item_numbers" ]; then
             item_numbers="$(pnpm run --silent workflow -- proposed-item-numbers \
               --target-repo "$TARGET_REPO" \

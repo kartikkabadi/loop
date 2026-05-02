@@ -294,10 +294,11 @@ Before calculating audit health, audit also runs the folder reconciler against
 live open GitHub state. This is target-read-only and only mutates generated state:
 records for items no longer open move from `records/<repo>/items/` to
 `records/<repo>/closed/`, reopened archived records move back to `items/`, and
-duplicate closed copies are removed. Audit uses the fast reconciliation mode that
-does not fetch each closed item individually for `closed_at`; large cleanup runs
-therefore avoid hundreds of per-item GitHub API subprocesses. Review and apply
-jobs still run the normal reconciler when they need richer per-item metadata.
+duplicate closed copies are removed. GitHub Actions uses the fast reconciliation
+mode that does not fetch each closed item individually for `closed_at`; large
+cleanup runs therefore avoid hundreds of per-item GitHub API subprocesses. The
+local reconciler still fetches `closed_at` by default for operator runs; pass
+`--skip-closed-at` for fast state-only cleanup.
 
 After publishing audit state and reconciled records, audit dispatches the
 `openclaw/clawsweeper-state` dashboard renderer; that repository's 15-minute
