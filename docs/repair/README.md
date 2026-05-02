@@ -291,7 +291,10 @@ The workflow needs:
 - execution gates that default closed: set `CLAWSWEEPER_ALLOW_EXECUTE=1` and `CLAWSWEEPER_ALLOW_FIX_PR=1` only for an intentional execution window; otherwise execute/autonomous dispatches render plan-only output and skip mutation steps
 - merge is separately gated by `CLAWSWEEPER_ALLOW_MERGE`; automerge additionally requires `CLAWSWEEPER_ALLOW_AUTOMERGE`; both default to `0`, and merge-ready PRs are labeled `clawsweeper:human-review` and `clawsweeper:merge-ready` for a maintainer to merge manually
 - optional `CLAWSWEEPER_CODEX_CLI_VERSION` variable to pin and refresh the cached Codex CLI
-- optional `CLAWSWEEPER_MODEL` override for dispatch scripts; default Codex model is `gpt-5.5`
+- optional `CLAWSWEEPER_MODEL` override for dispatch scripts; default Codex
+  model is `gpt-5.5`; repair workers default to high reasoning on the fast
+  service tier, and accidental `xhigh` reasoning overrides are normalized back
+  to `high`
 - optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; default is `50`
 - optional `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA` variable for replacement PR backpressure; default is `50` open ClawSweeper PRs per touched area, `0` disables the area cap, and common changelog/release-note files are ignored for this check
 - ClawSweeper commit-finding repair PRs are labeled `clawsweeper:commit-finding`

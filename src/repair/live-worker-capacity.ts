@@ -190,6 +190,20 @@ export function activeRepairWorkflowRunForJob({
   );
 }
 
+export function activeRepairWorkflowRunForJobAfterDispatchRecheck(options: LooseRecord = {}) {
+  const activeRun = activeRepairWorkflowRunForJob(options);
+  if (activeRun) return activeRun;
+  const recheckMs = readNonNegativeInteger(
+    options.recheckMs ?? process.env.CLAWSWEEPER_DISPATCH_RECHECK_MS ?? 5000,
+    "repair dispatch recheck ms",
+  );
+  if (recheckMs <= 0) return null;
+  sleepMs(recheckMs);
+  const cache = options.activeRunsByPrefix;
+  if (cache instanceof Map) cache.clear();
+  return activeRepairWorkflowRunForJob(options);
+}
+
 function runMatchesNameFilter(
   run: LooseRecord,
   runNamePrefix: JsonValue,

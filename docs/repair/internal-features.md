@@ -501,9 +501,15 @@ Important gates:
 Important defaults:
 
 - `CLAWSWEEPER_MODEL`: default worker model, usually `gpt-5.5`.
-- `CLAWSWEEPER_CODEX_REASONING_EFFORT`: model reasoning effort; use `xhigh` for
-  difficult repair work.
+- `CLAWSWEEPER_CODEX_REASONING_EFFORT`: model reasoning effort. Repair workers
+  default to `high` and normalize accidental `xhigh` overrides back to `high`
+  to keep automerge repair latency predictable.
+- `CLAWSWEEPER_CODEX_SERVICE_TIER`: Codex service tier. Repair workers default
+  to `fast`.
 - `CLAWSWEEPER_MAX_LIVE_WORKERS`: dispatch capacity guard.
+- `CLAWSWEEPER_DISPATCH_RECHECK_MS`: short active-worker recheck before
+  dispatching a repair worker; default `5000` to avoid duplicate queued workers
+  when parallel routers race GitHub run visibility.
 - `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA`: replacement PR area backpressure; default
   is `50` open ClawSweeper PRs per touched area, and `0` disables the cap.
 - ClawSweeper commit-finding repair PRs get the `clawsweeper:commit-finding`

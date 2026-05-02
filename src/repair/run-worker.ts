@@ -13,7 +13,11 @@ import {
   repoRoot,
   validateJob,
 } from "./lib.js";
-import { codexSubprocessEnv } from "./process-env.js";
+import {
+  codexSubprocessEnv,
+  repairCodexReasoningEffort,
+  repairCodexServiceTier,
+} from "./process-env.js";
 
 const args = parseArgs(process.argv.slice(2));
 const jobPath = args._[0];
@@ -28,8 +32,8 @@ const resultRepairAttempts = Math.max(
 const resultRepairTimeoutMs = Number(
   process.env.CLAWSWEEPER_RESULT_REPAIR_TIMEOUT_MS ?? 10 * 60 * 1000,
 );
-const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "high");
-const codexServiceTier = String(process.env.CLAWSWEEPER_CODEX_SERVICE_TIER ?? "fast").trim();
+const codexReasoningEffort = repairCodexReasoningEffort();
+const codexServiceTier = repairCodexServiceTier();
 const codexStdioMaxBuffer =
   Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB ?? 128)) * 1024 * 1024;
 

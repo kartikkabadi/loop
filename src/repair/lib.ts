@@ -28,6 +28,7 @@ export { githubActionsRunUrl, currentProjectRepo } from "./project-repo.js";
 export {
   assertLiveWorkerCapacity,
   activeRepairWorkflowRunForJob,
+  activeRepairWorkflowRunForJobAfterDispatchRecheck,
   listActiveWorkflowRuns,
   liveWorkerCapacity,
   readMaxLiveWorkers,

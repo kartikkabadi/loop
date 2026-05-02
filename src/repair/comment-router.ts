@@ -3,7 +3,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  activeRepairWorkflowRunForJob,
+  activeRepairWorkflowRunForJobAfterDispatchRecheck,
   assertLiveWorkerCapacity,
   parseArgs,
   parseJob,
@@ -1438,7 +1438,7 @@ function commandHasWaitingRepairDispatch(command: LooseRecord) {
 function activeRepairRunForCommand(command: LooseRecord) {
   const jobPath = String(command.target?.job_path ?? "");
   if (!jobPath) return null;
-  return activeRepairWorkflowRunForJob({
+  return activeRepairWorkflowRunForJobAfterDispatchRecheck({
     repo: repairRepo,
     workflow,
     jobPath,

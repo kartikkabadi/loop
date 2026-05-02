@@ -19,6 +19,15 @@ export function codexSubprocessEnv(): NodeJS.ProcessEnv {
   return withoutColor(env);
 }
 
+export function repairCodexReasoningEffort(value = process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT) {
+  const effort = String(value ?? "high").trim() || "high";
+  return effort.toLowerCase() === "xhigh" ? "high" : effort;
+}
+
+export function repairCodexServiceTier(value = process.env.CLAWSWEEPER_CODEX_SERVICE_TIER) {
+  return String(value ?? "fast").trim() || "fast";
+}
+
 export function clawsweeperGitUserName(): string {
   const configured = String(process.env.CLAWSWEEPER_GIT_USER_NAME ?? "").trim();
   if (!configured || configured === "clawsweeper-repair" || configured === "clawsweeper[bot]") {

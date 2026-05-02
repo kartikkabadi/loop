@@ -5,6 +5,8 @@ import {
   clawsweeperGitIdentityEnv,
   clawsweeperGitUserName,
   codexSubprocessEnv,
+  repairCodexReasoningEffort,
+  repairCodexServiceTier,
 } from "../../dist/repair/process-env.js";
 
 test("codexSubprocessEnv forces ClawSweeper git identity and strips tokens", () => {
@@ -40,6 +42,18 @@ test("clawsweeper git identity defaults to avatar-friendly bot name", () => {
       GIT_COMMITTER_EMAIL: "274271284+clawsweeper[bot]@users.noreply.github.com",
     });
   });
+});
+
+test("repair Codex config keeps repair workers on high fast", () => {
+  assert.equal(repairCodexReasoningEffort(undefined), "high");
+  assert.equal(repairCodexReasoningEffort(""), "high");
+  assert.equal(repairCodexReasoningEffort("xhigh"), "high");
+  assert.equal(repairCodexReasoningEffort("XHIGH"), "high");
+  assert.equal(repairCodexReasoningEffort("medium"), "medium");
+
+  assert.equal(repairCodexServiceTier(undefined), "fast");
+  assert.equal(repairCodexServiceTier(""), "fast");
+  assert.equal(repairCodexServiceTier("fast"), "fast");
 });
 
 function withEnv(values: Record<string, string>, callback: () => void) {

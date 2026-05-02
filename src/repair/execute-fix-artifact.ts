@@ -35,7 +35,9 @@ import {
   clawsweeperGitUserEmail,
   clawsweeperGitUserName,
   codexSubprocessEnv as codexEnv,
+  repairCodexReasoningEffort,
   repairGhEnv as ghEnv,
+  repairCodexServiceTier,
 } from "./process-env.js";
 import {
   CLAWSWEEPER_LABEL,
@@ -110,9 +112,9 @@ const codexTimeoutMs = Math.min(
 const codexPreflightTimeoutMs = Number(
   process.env.CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS ?? 2 * 60 * 1000,
 );
-const codexReasoningEffort = String(process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "high");
+const codexReasoningEffort = repairCodexReasoningEffort();
 const scriptStartedAt = new Date();
-const codexServiceTier = String(process.env.CLAWSWEEPER_CODEX_SERVICE_TIER ?? "fast").trim();
+const codexServiceTier = repairCodexServiceTier();
 const codexStdioMaxBuffer =
   Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB ?? 128)) * 1024 * 1024;
 const maxEditAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_FIX_EDIT_ATTEMPTS ?? 3));

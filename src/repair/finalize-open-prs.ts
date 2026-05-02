@@ -3,7 +3,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  activeRepairWorkflowRunForJob,
+  activeRepairWorkflowRunForJobAfterDispatchRecheck,
   assertLiveWorkerCapacity,
   currentProjectRepo,
   hasDeterministicSecuritySignal,
@@ -591,7 +591,7 @@ function executeDispatches(candidates: LooseRecord[], dispatchSummary: JsonValue
 
   const activeRunsByJobPath = new Map<string, LooseRecord>();
   for (const candidate of candidates) {
-    const activeRun = activeRepairWorkflowRunForJob({
+    const activeRun = activeRepairWorkflowRunForJobAfterDispatchRecheck({
       repo: repairRepo,
       workflow,
       jobPath: candidate.job_path,
