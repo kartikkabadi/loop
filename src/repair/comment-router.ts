@@ -175,6 +175,9 @@ for (const comment of comments) {
   };
   rawCommands.push(command);
 }
+for (const command of listRepairLoopSweepCommands(rawCommands)) {
+  rawCommands.push(command);
+}
 
 await measureAsync("prehydrate_command_lookups", () => prehydrateCommandLookups(rawCommands));
 const commands = measure("classify_commands", () =>
@@ -448,15 +451,38 @@ function classifyCommand(command: LooseRecord): JsonValue {
     if (String(issue.state ?? "").toLowerCase() !== "open") {
       const staleReason = staleAutomergeActivationReason({ command: next, issue, pull });
       if (staleReason) return { ...next, status: "skipped", reason: staleReason };
+      if (command.automation_source === "repair_loop_label_sweep") {
+        return { ...next, status: "skipped", reason: `${mode} label sweep requires an open PR` };
+      }
       return automergeBlocked(next, `${mode} requires an open PR`);
     }
     if (!pull) {
+      if (command.automation_source === "repair_loop_label_sweep") {
+        return {
+          ...next,
+          status: "skipped",
+          reason: `${mode} label sweep requires a pull request`,
+        };
+      }
       return automergeBlocked(next, `${mode} requires a pull request`);
     }
     const pauseLabels = pauseLabelsOn(target);
     const failedChecksRepairReason = automergeFailedChecksRepairReason(target.checks);
+    const rebaseRepairReason = automergeRebaseRepairReason(target);
+    const activationRepairReason = failedChecksRepairReason ?? rebaseRepairReason;
     if (
-      !failedChecksRepairReason &&
+      command.trusted_bot &&
+      command.automation_source === "repair_loop_label_sweep" &&
+      pauseLabels.length > 0
+    ) {
+      return { ...next, status: "skipped", reason: "PR is paused for human review" };
+    }
+    if (activationRepairReason) {
+      const alreadyPlanned = autoRepairAlreadyPlanned(next);
+      if (alreadyPlanned) return { ...next, status: "skipped", reason: alreadyPlanned };
+    }
+    if (
+      !activationRepairReason &&
       existingModeStatusBlocksReplay({
         hasModeLabel: hasLabel(target, modeLabel),
         hasJobPath: Boolean(target.job_path),
@@ -499,7 +525,7 @@ function classifyCommand(command: LooseRecord): JsonValue {
       actions: [
         ...actions,
         { action: "label", label: modeLabel, status: execute ? "pending" : "planned" },
-        ...(failedChecksRepairReason
+        ...(activationRepairReason
           ? [
               {
                 action: "dispatch_repair",
@@ -518,8 +544,8 @@ function classifyCommand(command: LooseRecord): JsonValue {
             ]),
         { action: "comment", status: execute ? "pending" : "planned" },
       ],
-      ...(failedChecksRepairReason
-        ? { repair_reason: `${mode} enabled; ${failedChecksRepairReason}` }
+      ...(activationRepairReason
+        ? { repair_reason: `${mode} enabled; ${activationRepairReason}` }
         : {}),
     };
   }
@@ -2194,6 +2220,48 @@ function listRepairLoopReviewComments() {
       isClawSweeperReviewMarkerComment,
     ),
   );
+}
+
+function listRepairLoopSweepCommands(existingCommands: LooseRecord[]) {
+  if (itemNumbers.size > 0 || commentIds.size > 0) return [];
+  const seen = new Set(
+    existingCommands
+      .filter((command) => ["autofix", "automerge"].includes(String(command.intent ?? "")))
+      .map((command) => `${command.intent}:${Number(command.issue_number)}`),
+  );
+  const commands: LooseRecord[] = [];
+  for (const [intent, label] of [
+    ["autofix", AUTOFIX_LABEL],
+    ["automerge", AUTOMERGE_LABEL],
+  ] as const) {
+    for (const number of listOpenIssueNumbersWithLabel(label)) {
+      const key = `${intent}:${number}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      commands.push({
+        idempotency_key: `repair-loop-label-sweep:${targetRepo}:${intent}:${number}`,
+        comment_id: `repair-loop-label-sweep:${intent}:${number}`,
+        comment_version_key: null,
+        comment_url: `https://github.com/${targetRepo}/pull/${number}`,
+        repo: targetRepo,
+        issue_number: number,
+        author: "clawsweeper[bot]",
+        author_association: "NONE",
+        comment_created_at: new Date(startedAtMs).toISOString(),
+        comment_updated_at: new Date(startedAtMs).toISOString(),
+        trigger: "trusted_bot",
+        command: intent,
+        intent,
+        trusted_bot: true,
+        trusted_bot_author: "clawsweeper[bot]",
+        automation_source: "repair_loop_label_sweep",
+        repair_reason: "scheduled ClawSweeper repair-loop label sweep",
+        status: "pending",
+        actions: [],
+      });
+    }
+  }
+  return commands;
 }
 
 function fetchIssueComment(commentId: JsonValue) {

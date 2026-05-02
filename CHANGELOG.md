@@ -68,6 +68,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Requeue repair runs immediately when a contributor branch advances during the
   safe push window, preserving the source-head race guard without waiting for a
   later sweep to retry against the latest head.
+- Let scheduled comment-router sweeps re-enter labelled autofix/automerge PRs
+  without a fresh comment, and dispatch repair when automerge activation sees a
+  dirty or behind merge state.
 - Filter routine GitHub activity before posting OpenClaw hook turns, retry
   transient hook failures with the same idempotency key, and document the retry
   controls for the activity lane.

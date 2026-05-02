@@ -278,6 +278,13 @@ include the target PR head SHA. That lets edited ClawSweeper comments wake
 ClawSweeper again after the PR branch changes while unchanged comment versions
 remain idempotent.
 
+Scheduled router runs also sweep current `clawsweeper:autofix` and
+`clawsweeper:automerge` labels and synthesize an internal trusted command for
+open labelled PRs that have no fresh matching command in the scan. If checks
+are failing, or automerge is blocked by a dirty or behind merge state, the
+synthetic command dispatches the normal repair worker. PRs paused with
+`clawsweeper:human-review` stay paused.
+
 Use `--comment-id <id>`, `--comment-ids <a,b>`, `--item-number <number>`, or
 `--item-numbers <a,b>` to route only specific comments or specific open issue
 or PR comments. The event review workflow uses this targeted path after syncing

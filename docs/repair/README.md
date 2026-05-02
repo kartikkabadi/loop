@@ -186,6 +186,12 @@ comments in `results/comment-router.json`. The scheduled workflow is dry by
 default; set `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1` to let scheduled runs post
 replies and dispatch workers.
 
+Scheduled runs also sweep open PRs with `clawsweeper:autofix` or
+`clawsweeper:automerge` labels. When a labelled PR is stale, failing checks, or
+dirty/behind its base branch, the router can synthesize an internal trusted
+repair-loop command and re-enter the normal repair path without waiting for a
+new GitHub comment. `clawsweeper:human-review` still pauses that path.
+
 ## Local Run
 
 Requires Node 24.

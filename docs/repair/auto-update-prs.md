@@ -217,6 +217,9 @@ ClawSweeper has three layers of duplicate protection:
 - the comment router writes an idempotency marker in its reply, records
   processed comment versions in `results/comment-router.json`, and edits one
   command-status reply in place per item, intent, and head SHA;
+- scheduled router scans synthesize an internal repair-loop command for open
+  PRs that still carry `clawsweeper:autofix` or `clawsweeper:automerge`, so
+  stale labelled PRs can be repaired or re-reviewed without a fresh comment;
 - trusted ClawSweeper repairs are capped per PR and per PR head SHA.
 
 The default caps are ten automatic repair iterations per PR and one
@@ -236,6 +239,11 @@ iteration produces a new commit.
 
 Runs for the same job path and mode share the `repair-cluster-worker.yml` concurrency
 group, so repeated dispatches queue instead of racing the same branch.
+
+For automerge activation and scheduled label sweeps, a dirty or behind merge
+state is enough to dispatch repair. That lets Codex rebase or resolve conflicts
+before the next exact-head review instead of waiting for a later pass marker or
+new maintainer comment.
 
 ClawSweeper edits one durable review comment in place. The router keys its
 ledger by comment id plus `updated_at`, and response markers include the target
