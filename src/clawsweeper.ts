@@ -461,6 +461,7 @@ interface ReconcileResult {
   movedToClosed: number;
   movedToItems: number;
   removedStaleClosedCopies: number;
+  fetchedClosedAt: number;
 }
 
 type AuditRecordLocation = "items" | "closed";
@@ -6178,15 +6179,18 @@ function reconcileFolders(options: {
   closedDir: string;
   maxPages?: number;
   dryRun?: boolean;
+  fetchClosedAt?: boolean;
 }): ReconcileResult {
   const maxPages = options.maxPages ?? 250;
   const dryRun = options.dryRun ?? false;
+  const fetchClosedAt = options.fetchClosedAt ?? true;
   ensureDir(options.itemsDir);
   ensureDir(options.closedDir);
   const { numbers: openNumbers, pagesScanned } = fetchOpenItemNumbers(maxPages);
   let movedToClosed = 0;
   let movedToItems = 0;
   let removedStaleClosedCopies = 0;
+  let fetchedClosedAt = 0;
 
   for (const file of markdownFiles(options.itemsDir)) {
     const number = numberForMarkdownFile(file);
@@ -6196,15 +6200,18 @@ function reconcileFolders(options: {
     if (openNumbers.has(number)) continue;
     const destinationPath = join(options.closedDir, file);
     let closedAt: string | null | undefined;
-    try {
-      const fetched = fetchItem(number);
-      if (fetched.state !== "open") closedAt = fetched.item.closedAt;
-    } catch (error) {
-      console.error(
-        `[reconcile] failed to fetch closed_at for #${number}; using reconciled_at fallback: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
+    if (fetchClosedAt) {
+      try {
+        const fetched = fetchItem(number);
+        if (fetched.state !== "open") closedAt = fetched.item.closedAt;
+        fetchedClosedAt += 1;
+      } catch (error) {
+        console.error(
+          `[reconcile] failed to fetch closed_at for #${number}; using reconciled_at fallback: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
     }
     const markdown = markReconciledState(sourceMarkdown, "closed", { closedAt });
     moveMarkdownFile({ sourcePath, destinationPath, markdown, dryRun });
@@ -6234,6 +6241,7 @@ function reconcileFolders(options: {
     movedToClosed,
     movedToItems,
     removedStaleClosedCopies,
+    fetchedClosedAt,
   };
 }
 
@@ -6243,7 +6251,8 @@ function reconcileCommand(args: Args): void {
   const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const maxPages = numberArg(args.max_pages, 250);
   const dryRun = boolArg(args.dry_run);
-  const result = reconcileFolders({ itemsDir, closedDir, maxPages, dryRun });
+  const fetchClosedAt = !boolArg(args.skip_closed_at);
+  const result = reconcileFolders({ itemsDir, closedDir, maxPages, dryRun, fetchClosedAt });
   console.log(JSON.stringify(result, null, 2));
 }
 

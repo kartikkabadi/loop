@@ -288,9 +288,20 @@ GitHub state. Scheduled audit currently covers:
 The audit lane first tries a ClawSweeper GitHub App read token for the target
 repository. If that token is unavailable, it falls back to the workflow token for
 public read-only API access so dashboard rows do not remain `unknown` just
-because mutating scheduled work is still gated. After publishing audit state, it
-dispatches the `openclaw/clawsweeper-state` dashboard renderer; that repository's
-15-minute schedule remains the fallback if dispatch is delayed.
+because mutating scheduled work is still gated.
+
+Before calculating audit health, audit also runs the folder reconciler against
+live open GitHub state. This is target-read-only and only mutates generated state:
+records for items no longer open move from `records/<repo>/items/` to
+`records/<repo>/closed/`, reopened archived records move back to `items/`, and
+duplicate closed copies are removed. Audit uses the fast reconciliation mode that
+does not fetch each closed item individually for `closed_at`; large cleanup runs
+therefore avoid hundreds of per-item GitHub API subprocesses. Review and apply
+jobs still run the normal reconciler when they need richer per-item metadata.
+
+After publishing audit state and reconciled records, audit dispatches the
+`openclaw/clawsweeper-state` dashboard renderer; that repository's 15-minute
+schedule remains the fallback if dispatch is delayed.
 
 ## Monitoring
 

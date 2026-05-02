@@ -1250,10 +1250,15 @@ jobs:
         run: |
           set -euo pipefail
           git pull --rebase
+          reconcile_json="$(pnpm run --silent reconcile -- --target-repo "$TARGET_REPO" --max-pages 250 --skip-closed-at)"
+          echo "$reconcile_json"
+          moved_to_closed="$(jq -r '.movedToClosed' <<<"$reconcile_json")"
+          moved_to_items="$(jq -r '.movedToItems' <<<"$reconcile_json")"
+          removed_stale_closed_copies="$(jq -r '.removedStaleClosedCopies' <<<"$reconcile_json")"
           pnpm run audit -- --target-repo "$TARGET_REPO" --max-pages 250 --sample-limit 25 --output /tmp/clawsweeper-audit.json --update-dashboard
           pnpm run status -- \
             --state "Audit finished" \
-            --detail "Refreshed audit state from a full live $TARGET_REPO scan. Normal review/apply status updates preserve this state without rerunning the audit scan." \
+            --detail "Reconciled durable $TARGET_REPO records before audit: moved ${moved_to_closed} closed records, restored ${moved_to_items} reopened records, removed ${removed_stale_closed_copies} stale archived copies. Refreshed audit state from a full live scan." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Commit Audit Health
@@ -1261,6 +1266,7 @@ jobs:
           pnpm run repair:publish-main -- \
             --message "chore: update sweep audit state" \
             --path README.md \
+            --path records \
             --path results/audit \
             --path results/sweep-status \
             --rebase-strategy theirs
