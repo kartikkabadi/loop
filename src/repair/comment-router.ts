@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   assertLiveWorkerCapacity,
+  listActiveWorkflowRuns,
   parseArgs,
   parseJob,
   repoRoot,
@@ -122,6 +123,7 @@ const processedCommentVersions = forceReprocess
     );
 const plannedAutoRepairHeads = new Set<string>();
 const collaboratorPermissionCache = new Map();
+const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 const liveTargetCache = new Map<number, LooseRecord>();
 const issueCommentsCache = new Map<number, JsonValue[]>();
 const comments = measure("list_candidate_comments", () => listCandidateComments());
@@ -909,9 +911,7 @@ function executeCommand(command: LooseRecord) {
           ...action,
           job_path: command.target.job_path,
           mode: command.target.mode,
-          status: "executed",
-          dispatched_at: new Date().toISOString(),
-          ...(repair.run_url ? { run_url: repair.run_url } : {}),
+          ...dispatchRepairActionStatus(repair),
         };
       }
       return action;
@@ -1081,9 +1081,7 @@ function executeCommand(command: LooseRecord) {
           workflow,
           job_path: command.target.job_path,
           mode: command.target.mode,
-          status: "executed",
-          dispatched_at: new Date().toISOString(),
-          ...(repair.run_url ? { run_url: repair.run_url } : {}),
+          ...dispatchRepairActionStatus(repair),
         });
       }
     }
@@ -1139,7 +1137,7 @@ function executeCommand(command: LooseRecord) {
         }
       : action,
   );
-  command.status = "executed";
+  command.status = commandHasWaitingRepairDispatch(command) ? "waiting" : "executed";
 }
 
 function workerCapacityRequests(commands: LooseRecord[]) {
@@ -1356,6 +1354,23 @@ function freeformReviewPrompt(command: LooseRecord): string {
 }
 
 function dispatchRepair(command: LooseRecord) {
+  const activeRun = activeRepairRunForCommand(command);
+  if (activeRun) {
+    return {
+      workflow,
+      repair_repo: repairRepo,
+      job_path: command.target.job_path,
+      mode: command.target.mode,
+      runner,
+      execution_runner: executionRunner,
+      model,
+      status: "already_running",
+      reason: "repair worker already active for this job path",
+      run_url: activeRun.url,
+      run_id: activeRun.databaseId ?? activeRun.id,
+      run_status: activeRun.status,
+    };
+  }
   const result = ghSpawn(
     [
       "workflow",
@@ -1392,6 +1407,53 @@ function dispatchRepair(command: LooseRecord) {
     model,
     ...(runUrl ? { run_url: runUrl } : {}),
   };
+}
+
+function dispatchRepairActionStatus(repair: LooseRecord) {
+  if (repair.status === "already_running") {
+    return {
+      status: "waiting",
+      reason: repair.reason,
+      checked_at: new Date().toISOString(),
+      ...(repair.run_url ? { run_url: repair.run_url } : {}),
+      ...(repair.run_id ? { run_id: repair.run_id } : {}),
+      ...(repair.run_status ? { run_status: repair.run_status } : {}),
+    };
+  }
+  return {
+    status: "executed",
+    dispatched_at: new Date().toISOString(),
+    ...(repair.run_url ? { run_url: repair.run_url } : {}),
+  };
+}
+
+function commandHasWaitingRepairDispatch(command: LooseRecord) {
+  return command.actions?.some(
+    (action: JsonValue) => action?.action === "dispatch_repair" && action?.status === "waiting",
+  );
+}
+
+function activeRepairRunForCommand(command: LooseRecord) {
+  const jobPath = String(command.target?.job_path ?? "");
+  if (!jobPath) return null;
+  const automergeJob = jobPath.includes("/inbox/automerge-");
+  const prefix = automergeJob ? automergeRunNamePrefix : "repair cluster ";
+  const expectedTitle = `${prefix}${jobPath}`;
+  if (!activeRepairRunsByPrefix.has(prefix)) {
+    activeRepairRunsByPrefix.set(
+      prefix,
+      listActiveWorkflowRuns({
+        repo: repairRepo,
+        workflow,
+        runNamePrefix: prefix,
+      }),
+    );
+  }
+  return (
+    activeRepairRunsByPrefix
+      .get(prefix)
+      ?.find((run: JsonValue) => String(run.displayTitle ?? "") === expectedTitle) ?? null
+  );
 }
 
 function dispatchTokenEnv(): NodeJS.ProcessEnv {

@@ -156,8 +156,11 @@ The loop is intentionally idempotent.
 - One durable review comment edited in place.
 - Comment-router ledger keys use comment id plus `updated_at`.
 - Response markers include the PR head SHA.
-- Repair runs for the same job path share a concurrency group and queue instead
-  of racing the same branch.
+- Before dispatching repair, the router checks for an active run with the same
+  adopted job path. If one exists, the command stays `waiting` and points at
+  that run instead of enqueueing another repair.
+- Repair workers still keep a workflow concurrency group for the same job path
+  as a last-resort race guard.
 - Automatic repairs are capped by
   `CLAWSWEEPER_MAX_REPAIRS_PER_PR` and
   `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD`.
