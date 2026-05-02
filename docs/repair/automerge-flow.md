@@ -157,9 +157,9 @@ The loop is intentionally idempotent.
 - Comment-router ledger keys use comment id plus `updated_at`.
 - Response markers include the PR head SHA.
 - Before dispatching repair, the router and repair dispatchers check for an
-  active run with the same adopted job path. If one exists, the command stays
-  `waiting` or the dispatcher skips that job instead of enqueueing another
-  repair.
+  active run with the same adopted job path. If one exists, the router records
+  the dispatch action as `active` and keeps the command open without enqueueing
+  another repair; batch dispatchers skip that job.
 - Repair workers still keep a workflow concurrency group for the same job path
   as a last-resort race guard.
 - Automatic repairs are capped by

@@ -1412,7 +1412,7 @@ function dispatchRepair(command: LooseRecord) {
 function dispatchRepairActionStatus(repair: LooseRecord) {
   if (repair.status === "already_running") {
     return {
-      status: "waiting",
+      status: "active",
       reason: repair.reason,
       checked_at: new Date().toISOString(),
       ...(repair.run_url ? { run_url: repair.run_url } : {}),
@@ -1429,7 +1429,9 @@ function dispatchRepairActionStatus(repair: LooseRecord) {
 
 function commandHasWaitingRepairDispatch(command: LooseRecord) {
   return command.actions?.some(
-    (action: JsonValue) => action?.action === "dispatch_repair" && action?.status === "waiting",
+    (action: JsonValue) =>
+      action?.action === "dispatch_repair" &&
+      (action?.status === "waiting" || action?.status === "active"),
   );
 }
 

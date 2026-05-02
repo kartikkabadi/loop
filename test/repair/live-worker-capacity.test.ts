@@ -38,4 +38,11 @@ test("repair run names match workflow dispatch titles", () => {
     repairRunNameForJob("jobs/openclaw/inbox/automerge-openclaw-openclaw-75363.md", "auto "),
     "auto jobs/openclaw/inbox/automerge-openclaw-openclaw-75363.md",
   );
+  assert.equal(
+    repairRunNameForJob(
+      "jobs/openclaw/inbox/automerge-openclaw-openclaw-75363.md",
+      "automerge repair",
+    ),
+    "automerge repair jobs/openclaw/inbox/automerge-openclaw-openclaw-75363.md",
+  );
 });

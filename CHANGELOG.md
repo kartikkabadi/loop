@@ -92,6 +92,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Prevented duplicate automerge repair dispatches when the configured run-name
+  prefix is trimmed but an active worker already exists for the same job path.
 - Kept Codex review access read-only and verified the OpenClaw checkout before
   and after review.
 - Authenticated Codex in CI without exposing GitHub write tokens to nested review

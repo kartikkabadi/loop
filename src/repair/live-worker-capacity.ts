@@ -150,7 +150,10 @@ export function repairRunNameForJob(
   jobPath: JsonValue,
   automergeRunNamePrefix: JsonValue = DEFAULT_AUTOMERGE_REPAIR_RUN_NAME_PREFIX,
 ) {
-  return `${repairRunNamePrefixForJob(jobPath, automergeRunNamePrefix)}${String(jobPath ?? "")}`;
+  return joinRepairRunNamePrefix(
+    repairRunNamePrefixForJob(jobPath, automergeRunNamePrefix),
+    String(jobPath ?? ""),
+  );
 }
 
 export function activeRepairWorkflowRunForJob({
@@ -209,6 +212,12 @@ function normalizeWorkflowRun(run: LooseRecord, fallbackStatus: string) {
     url: run.url ?? run.html_url ?? null,
     displayTitle: run.displayTitle ?? run.display_title ?? run.name ?? null,
   };
+}
+
+function joinRepairRunNamePrefix(prefix: JsonValue, jobPath: string) {
+  const text = String(prefix ?? "");
+  if (!text || !jobPath) return `${text}${jobPath}`;
+  return /\s$/.test(text) ? `${text}${jobPath}` : `${text} ${jobPath}`;
 }
 
 function readPositiveInteger(value: JsonValue, name: string) {
