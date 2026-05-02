@@ -12,6 +12,12 @@ repository can keep the two lanes in separate workflow files or combine them in
 one `.github/workflows/clawsweeper-dispatch.yml`; `openclaw/openclaw` uses the
 combined form.
 
+General GitHub activity can also be forwarded to the OpenClaw-backed activity
+ingest lane with `repository_dispatch` type `github_activity`. That lane does
+not run ClawSweeper review/apply; it feeds compact activity to the agent, which
+posts to `#clawsweeper` only when the event is surprising or actionable. See
+[openclaw-event-hooks.md](openclaw-event-hooks.md#github-activity-stream).
+
 For issue and PR dispatch, copy this workflow into each target repository as
 `.github/workflows/clawsweeper-dispatch.yml`, or merge these triggers and the
 `Dispatch exact ClawSweeper review` step into an existing combined dispatcher:

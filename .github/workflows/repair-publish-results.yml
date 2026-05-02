@@ -99,7 +99,7 @@ jobs:
           pnpm run repair:finalize-open-prs -- --write-report
           pnpm run repair:publish-result -- --skip-dashboard
 
-      - name: Notify Discord about merged PRs
+      - name: Notify OpenClaw about ClawSweeper events
         if: ${{ steps.download.outputs.has_artifacts == '1' }}
         env:
           RUN_ID: ${{ github.event.workflow_run.id }}
@@ -109,7 +109,10 @@ jobs:
           CLAWSWEEPER_DISCORD_TARGET: ${{ vars.CLAWSWEEPER_DISCORD_TARGET }}
         run: |
           set -euo pipefail
-          pnpm run repair:notify-merge -- --run-id "$RUN_ID"
+          pnpm run repair:notify-events -- \
+            --run-id "$RUN_ID" \
+            --run-record "results/runs/$RUN_ID.json" \
+            --write-report
 
       - name: Commit result ledger
         if: ${{ steps.download.outputs.has_artifacts == '1' }}

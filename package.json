@@ -36,6 +36,8 @@
     "repair:commit-finding-intake": "node dist/repair/commit-finding-intake.js",
     "repair:publish-main": "node dist/repair/publish-main.js",
     "repair:notify-merge": "node dist/repair/notify-merge.js",
+    "repair:notify-events": "node dist/repair/notify-events.js",
+    "repair:notify-github-activity": "node dist/repair/notify-github-activity.js",
     "repair:publish-event-result": "node dist/repair/publish-event-result.js",
     "workflow": "node dist/repair/workflow-utils.js",
     "repair:promote-stuck-jobs": "node dist/repair/promote-stuck-jobs.js",

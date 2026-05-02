@@ -135,13 +135,23 @@ It only applies closure actions when all of these are true:
 
 The applicator writes an idempotency marker into the close comment before closing. Re-runs skip already-applied comments/closures instead of posting twice.
 
-## Merge Notifications
+## OpenClaw Event Notifications
 
-The repair publish workflow sends Discord notifications for PRs that
-ClawSweeper actually merged. The notifier reads `repair-apply-report.json`,
-filters executed `merge_candidate` and `merge_canonical` rows, skips catch-up
-rows whose reason is `already merged`, and posts `/hooks/agent` to the Hetzner
-OpenClaw gateway.
+The repair publish workflow sends OpenClaw notifications for important
+ClawSweeper events. The notifier reads `repair-apply-report.json` plus the
+published run record under `results/runs/<run-id>.json`, then posts
+`/hooks/agent` to the Hetzner OpenClaw gateway.
+
+Current event classes:
+
+- merged PRs from executed `merge_candidate` and `merge_canonical` rows;
+- item closures from executed close actions;
+- blocked or failed merge/close actions;
+- opened replacement fix PRs and repaired contributor branches;
+- blocked or failed repair actions.
+
+The standalone `repair:notify-merge` script remains for compatibility, but the
+workflow uses `repair:notify-events`.
 
 The generic ClawSweeper-to-OpenClaw hook pattern, Gateway configuration, session
 isolation, idempotency contract, and add-a-new-event checklist are documented in
@@ -156,10 +166,11 @@ Required repository configuration:
   `channel:<id>`.
 - `CLAWSWEEPER_OPENCLAW_AGENT_ID` variable: optional, defaults to `clawsweeper`.
 
-Successful notifications are recorded in
-`notifications/clawsweeper-merge-ledger.json` in
-`openclaw/clawsweeper-state`, keyed by repo, PR, action, and merge commit SHA.
-This prevents duplicate Discord posts when the publish workflow reruns.
+Successful event notifications are recorded in
+`notifications/clawsweeper-event-ledger.json` in
+`openclaw/clawsweeper-state`, keyed by event type, repo, target, action, status,
+and stable mutation evidence. This prevents duplicate Discord posts when the
+publish workflow reruns.
 
 ## Autonomous Flow
 
