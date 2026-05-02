@@ -253,6 +253,14 @@ const report: LooseRecord = {
   actions: [],
 };
 
+logProgress("starting fix execution", {
+  repo: result.repo,
+  cluster_id: result.cluster_id,
+  result_path: path.relative(repoRoot(), resultPath),
+  model,
+  reasoning: codexReasoningEffort,
+});
+
 if (plannedFixActions.length === 0) {
   report.status = "skipped";
   report.reason = "no planned fix actions";
@@ -339,6 +347,7 @@ fs.mkdirSync(workRoot, { recursive: true });
 ensureTargetCheckout(result.repo, targetDir);
 setupGitIdentity(targetDir);
 
+logProgress("checking target validation plan", { target_dir: targetDir });
 const validationPreflight = preflightTargetValidationPlan(
   {
     fixArtifact,
@@ -365,7 +374,15 @@ if (validationPreflight.status === "blocked") {
   writeReport(report, resultPath);
   process.exit(0);
 }
+logProgress("target validation plan accepted", {
+  status: validationPreflight.status,
+  target_branch: validationPreflight.target_branch,
+});
 
+logProgress("running Codex write preflight", {
+  timeout_ms: codexPreflightTimeoutMs,
+  sandbox: codexWriteSandbox,
+});
 const writePreflight = runCodexWritePreflight();
 report.preflight = writePreflight;
 if (writePreflight.status === "blocked") {
@@ -381,6 +398,7 @@ if (writePreflight.status === "blocked") {
   writeReport(report, resultPath);
   process.exit(0);
 }
+logProgress("Codex write preflight passed", { status: writePreflight.status });
 
 let outcome: JsonValue;
 try {
@@ -528,6 +546,7 @@ function shouldPromoteNeedsHumanReplacement(fixArtifact: LooseRecord, workerResu
 function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
   const sourcePr = firstSourcePullRequest(fixArtifact);
+  logProgress("repairing contributor branch", { source_pr: sourcePr.url, base_branch: baseBranch });
   const pull = fetchPullRequest(result.repo, sourcePr.number);
   if (pull.state !== "open") throw new Error(`source PR #${sourcePr.number} is ${pull.state}`);
   if (!pull.head?.repo?.full_name || !pull.head?.ref)
@@ -551,8 +570,15 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   run("git", ["checkout", branch], { cwd: targetDir });
   ensureMergeBaseAvailable({ targetDir, baseBranch });
   const sourceHead = currentHead(targetDir);
+  logProgress("preparing target toolchain", { source_head: sourceHead });
   prepareTargetToolchain(targetDir, currentTargetValidationOptions());
+  logProgress("rebasing source branch", { branch, base_branch: baseBranch });
   const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
+  logProgress("source branch rebase result", {
+    status: rebaseResult.status,
+    previous_head: rebaseResult.previous_head,
+    current_head: rebaseResult.current_head,
+  });
 
   const prep = editValidatePrepareMerge({
     fixArtifact,
@@ -1021,9 +1047,21 @@ function editValidatePrepareMerge({
   let producedChanges = allowExistingChanges;
   let previousSummary = "";
   const checkpointCommits: JsonValue[] = [];
+  if (
+    !producedChanges &&
+    rebaseResult?.status === "rebased" &&
+    rebaseResult.previous_head !== rebaseResult.current_head
+  ) {
+    producedChanges = true;
+    logProgress("clean rebase changed branch head; skipping Codex edit pass", {
+      previous_head: rebaseResult.previous_head,
+      current_head: rebaseResult.current_head,
+    });
+  }
   if (!producedChanges && !reconcileWithBase) {
     const mechanicalFix = applyMechanicalChangelogFix({ fixArtifact, targetDir });
     producedChanges = mechanicalFix?.status === "applied";
+    if (producedChanges) logProgress("applied mechanical changelog fix");
   }
   const repositoryContext = buildRepositoryContext({ fixArtifact, targetDir });
   const shouldRunCodexEdit = !producedChanges || reconcileWithBase;
@@ -1048,6 +1086,13 @@ function editValidatePrepareMerge({
       });
       const summaryPath = path.join(workRoot, `${mode}-codex-summary-${attempt}.md`);
       const workerTimeoutMs = currentCodexTimeoutMs();
+      logProgress("starting Codex edit pass", {
+        mode,
+        attempt,
+        timeout_ms: workerTimeoutMs,
+        reconcile_with_base: reconcileWithBase,
+        rebase_status: rebaseResult?.status ?? null,
+      });
       const codexResult = spawnSync(
         "codex",
         [
@@ -1093,6 +1138,7 @@ function editValidatePrepareMerge({
       if (codexResult.status !== 0) {
         throw new Error(codexResult.stderr || codexResult.stdout || "Codex fix worker failed");
       }
+      logProgress("Codex edit pass finished", { mode, attempt, status: codexResult.status });
 
       const hasWorkingTreeChanges = Boolean(
         run("git", ["status", "--porcelain"], { cwd: targetDir }).trim(),
@@ -1113,7 +1159,13 @@ function editValidatePrepareMerge({
   }
 
   const completedRebase = completeRebaseIfResolved({ targetDir });
-  if (completedRebase.status === "continued") producedChanges = true;
+  if (completedRebase.status === "continued") {
+    producedChanges = true;
+    logProgress("completed resolved rebase", {
+      previous_head: completedRebase.previous_head,
+      current_head: completedRebase.current_head,
+    });
+  }
 
   const firstCheckpoint = commitCheckpointIfNeeded({
     targetDir,
@@ -1131,6 +1183,7 @@ function editValidatePrepareMerge({
     Number(process.env.CLAWSWEEPER_FINAL_BASE_SYNC_ATTEMPTS ?? 4),
   );
   for (let attempt = 1; attempt <= maxFinalBaseSyncAttempts; attempt += 1) {
+    logProgress("starting validation/review loop", { mode, attempt });
     codexReview = validateAndReviewLoop({
       fixArtifact,
       targetDir,
@@ -1160,6 +1213,7 @@ function editValidatePrepareMerge({
       repositoryContext,
       sourceHead,
     });
+    logProgress("final base sync result", { mode, attempt, status: sync.status });
     if (sync.status === "already-current") break;
     const checkpoint = commitCheckpointIfNeeded({
       targetDir,
@@ -1196,6 +1250,11 @@ function editValidatePrepareMerge({
     checkpoint_commits: checkpointCommits,
     merge_preflight: buildMergePreflight({ fixArtifact, codexReview }),
   };
+}
+
+function logProgress(message: string, details: LooseRecord = {}) {
+  const suffix = Object.keys(details).length > 0 ? ` ${JSON.stringify(details)}` : "";
+  console.log(`[clawsweeper repair] ${new Date().toISOString()} ${message}${suffix}`);
 }
 
 function reconcileLatestBaseBeforePush({
