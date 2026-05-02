@@ -79,7 +79,10 @@ state. Default transient wait is two minutes with 15-second polls. If GitHub
 still reports `UNSTABLE`, ClawSweeper allows the merge command to try when the
 only visible blockers are ignored non-gating automation checks such as
 `ClawSweeper Dispatch`; GitHub branch protection still enforces required checks
-at merge time.
+at merge time. If the live merge preflight reports `DIRTY`, `BEHIND`, or
+`CONFLICTING`, automerge treats that as repairable rebase work and dispatches
+the adopted repair worker instead of leaving the PR open with only a status
+comment.
 
 ## Capacity
 

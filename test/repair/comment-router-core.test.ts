@@ -14,6 +14,7 @@ import {
   automergeGateBlockReason,
   automergeJobBranch,
   automergeJobPath,
+  automergeReadinessRepairReason,
   automergeTransientWaitConfig,
   buildAutomergeMergeArgs,
   commandHasAction,
@@ -1085,6 +1086,22 @@ test("automerge failed checks become repair reasons", () => {
     }),
     null,
   );
+});
+
+test("automerge live readiness blocks become repair reasons", () => {
+  assert.equal(
+    automergeReadinessRepairReason("mergeable state is CONFLICTING"),
+    "PR has merge conflicts and needs a cloud rebase repair before automerge",
+  );
+  assert.equal(
+    automergeReadinessRepairReason("merge state status is DIRTY"),
+    "PR is behind or has merge conflicts and needs a cloud rebase repair before automerge",
+  );
+  assert.equal(
+    automergeReadinessRepairReason("merge state status is BEHIND"),
+    "PR is behind the base branch and needs a cloud rebase repair before automerge",
+  );
+  assert.equal(automergeReadinessRepairReason("pull request is draft"), null);
 });
 
 test("autoclose intent set documents destructive maintainer commands", () => {

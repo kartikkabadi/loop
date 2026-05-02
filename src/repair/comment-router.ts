@@ -27,6 +27,7 @@ import {
   automergeClusterId,
   automergeJobPath,
   automergeMergeFailureRepairReason,
+  automergeReadinessRepairReason,
   automergeRebaseRepairReason,
   automergeTransientWaitConfig,
   buildAutomergeMergeArgs,
@@ -1593,6 +1594,16 @@ function executeAutomerge(command: LooseRecord) {
         status: "repair_needed",
         reason: block,
         repair_reason: `failed required checks before automerge: ${block.replace(/^checks are not green:\s*/i, "")}`,
+        merge_method: "squash",
+      };
+    }
+    const readinessRepairReason = automergeReadinessRepairReason(block);
+    if (readinessRepairReason) {
+      return {
+        action: "merge",
+        status: "repair_needed",
+        reason: block,
+        repair_reason: readinessRepairReason,
         merge_method: "squash",
       };
     }

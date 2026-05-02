@@ -240,6 +240,12 @@ Automerge also refuses to merge when:
 - GitHub reports requested changes or required review;
 - `CLAWSWEEPER_ALLOW_MERGE` or `CLAWSWEEPER_ALLOW_AUTOMERGE` is not `1`.
 
+For automerge-labeled PRs, live mergeability blocks that are repairable are not
+terminal. If GitHub reports `mergeable: CONFLICTING`, `mergeStateStatus:
+DIRTY`, or `mergeStateStatus: BEHIND`, the router dispatches the adopted repair
+worker to rebase or resolve conflicts, then requires a fresh exact-head
+ClawSweeper pass before merge.
+
 GitHub can report `mergeStateStatus: UNSTABLE` for cancelled or skipped
 non-gating automation checks even when branch protection is satisfied. The
 router summarizes checks first, ignores default non-gating checks such as

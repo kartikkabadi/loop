@@ -235,6 +235,23 @@ export function automergeMergeFailureRepairReason(reason: JsonValue): string | n
   return null;
 }
 
+export function automergeReadinessRepairReason(reason: JsonValue): string | null {
+  const text = String(reason ?? "")
+    .trim()
+    .toLowerCase();
+  if (!text) return null;
+  if (text === "mergeable state is conflicting") {
+    return "PR has merge conflicts and needs a cloud rebase repair before automerge";
+  }
+  if (text === "merge state status is dirty") {
+    return "PR is behind or has merge conflicts and needs a cloud rebase repair before automerge";
+  }
+  if (text === "merge state status is behind") {
+    return "PR is behind the base branch and needs a cloud rebase repair before automerge";
+  }
+  return null;
+}
+
 export function commandHasAction(command: LooseRecord, actionName: string): boolean {
   return (command.actions ?? []).some((action: JsonValue) => action.action === actionName);
 }
