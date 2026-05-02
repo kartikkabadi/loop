@@ -71,6 +71,10 @@ path to:
 4. immediate exact-head re-review;
 5. merge after checks, review verdict, and policy gates pass.
 
+The complete state machine is documented in
+[`docs/repair/automerge-flow.md`](repair/automerge-flow.md). Keep this section
+as the scheduler-facing summary.
+
 The automerge status comment is the live progress surface. It is edited in
 place and records review, repair, re-review, and merge events with durations,
 run links, and commit links.

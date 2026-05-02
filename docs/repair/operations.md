@@ -266,6 +266,10 @@ exact-head ClawSweeper pass marker, then dispatches the comment router as soon
 as merge gates are ready. Codex fix/edit remains the fallback when the
 deterministic repair path cannot complete cleanly.
 
+For the full automerge decision table, including why pending checks wait instead
+of dispatching repair and how to replay a fixed router against an exact trusted
+comment, see [`automerge-flow.md`](automerge-flow.md).
+
 For operator replays after a parser or router fix, pass `--force-reprocess`
 or the `force_reprocess` workflow-dispatch input together with `comment_ids`;
 that ignores the current ledger version and reroutes the selected comment.

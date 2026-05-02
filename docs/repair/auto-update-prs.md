@@ -27,6 +27,10 @@ The loop is intentionally small:
    cannot be safely updated.
 6. ClawSweeper reviews the updated PR again.
 
+For the full automerge state machine, including exact-head gating, pending
+check handling, shepherd waits, router waits, and operator replay, see
+[`automerge-flow.md`](automerge-flow.md).
+
 ## Trust Model
 
 There are two accepted input lanes.
@@ -119,6 +123,10 @@ if the rebase or known mechanical conflict resolvers cannot finish cleanly, it
 falls back to the normal Codex fix worker. The mechanical set includes
 isolated `CHANGELOG.md` conflicts and generated config checksum conflicts where
 the replayed commit changed only selected checksum entries.
+
+The status comment is also the audit surface for wait and repair decisions. It
+must distinguish pending checks from failed checks: pending checks wait, while
+completed terminal failures can dispatch repair.
 
 After a successful same-branch repair push, the worker shepherds the PR for a
 bounded window. It polls for the exact-head ClawSweeper pass marker and GitHub
@@ -270,6 +278,9 @@ authority. Pending checks are treated as wait states, not repair triggers; only
 terminal required-check failures can dispatch another repair pass. Transient
 merge-state and check polling defaults to ten minutes; set
 `CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS` to tune the window.
+
+The detailed wait/repair/merge decision table lives in
+[`automerge-flow.md`](automerge-flow.md#checks-wait-repair-or-merge).
 
 For trusted automation comments, these blocked cases are silent skips. That
 keeps ClawSweeper from replying to every ordinary contributor PR that

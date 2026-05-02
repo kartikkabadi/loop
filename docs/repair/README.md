@@ -58,6 +58,8 @@ For a maintainer-facing architecture map of the automation lanes, see
 
 For the ClawSweeper feedback loop that updates existing generated PRs, see
 [`docs/repair/auto-update-prs.md`](auto-update-prs.md).
+For the exact automerge state machine, wait behavior, and operator replay, see
+[`docs/repair/automerge-flow.md`](automerge-flow.md).
 
 That loop is marker-driven. ClawSweeper comments use hidden
 `clawsweeper-verdict:*` markers, and only actionable PR feedback includes

@@ -164,7 +164,9 @@ pushes, opens PRs, and comments using the GitHub token.
 For same-branch automerge repairs, the executor can stay alive after pushing a
 deterministic repair. It waits for the exact-head ClawSweeper verdict and GitHub
 checks on the new head, then dispatches the comment router immediately when the
-PR is ready so merge does not depend on the next scheduled sweep.
+PR is ready so merge does not depend on the next scheduled sweep. See
+[`automerge-flow.md`](automerge-flow.md) for the full wait and repair decision
+table.
 
 When replacing a meaningful contributor PR, the executor fetches the source PR
 author, skips bot authors, adds `Co-authored-by` trailers to replacement
