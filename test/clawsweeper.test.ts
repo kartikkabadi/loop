@@ -1178,9 +1178,9 @@ Reason: Maintainers should review the tests after the targeted lane is green.
   assert.match(comment, /Codex review: needs maintainer review before merge\./);
   assert.match(
     comment,
-    /What this changes:\n\nAdds regression coverage for session-scoped model overrides\./,
+    /\*\*Summary\*\*\nAdds regression coverage for session-scoped model overrides\./,
   );
-  assert.match(comment, /Maintainer follow-up before merge:/);
+  assert.match(comment, /\*\*Next step before merge\*\*/);
   assert.match(comment, /Maintainers should review the tests after the targeted lane is green\./);
   assert.match(comment, /<details>\n<summary>Review details<\/summary>/);
   assert.match(
@@ -1276,8 +1276,8 @@ Reason: Normal maintainer review is sufficient.
     "none",
   );
 
-  assert.match(comment, /Security review:/);
-  assert.match(comment, /Security review needs attention:/);
+  assert.match(comment, /\*\*Security\*\*/);
+  assert.match(comment, /Needs attention:/);
   assert.match(comment, /Confirm issue write scope/);
   assert.match(comment, /Review details/);
   assert.match(comment, /<!-- clawsweeper-security:security-sensitive item=74265 sha=abc123def456/);
@@ -1337,7 +1337,7 @@ Reason: The fix is narrow and can be made on the PR branch.
   assert.match(comment, /Codex review: needs changes before merge\./);
   assert.match(
     comment,
-    /Review findings:\n\n- \[P1\] Validate replace paths — `src\/config\/apply\.ts:42-44`/,
+    /\*\*Review findings\*\*\n- \[P1\] Validate replace paths — `src\/config\/apply\.ts:42-44`/,
   );
   assert.match(comment, /Full review comments:/);
   assert.match(comment, /A misspelled replace path is currently ignored/);
@@ -1373,7 +1373,7 @@ Land this docs-only PR after maintainer review.
 
   assert.match(
     comment,
-    /Maintainer follow-up before merge:\n\nLand this docs-only PR after maintainer review\./,
+    /\*\*Next step before merge\*\*\nLand this docs-only PR after maintainer review\./,
   );
   assert.doesNotMatch(comment, /Best possible solution:/);
 });
@@ -1416,8 +1416,9 @@ Full review comments:
     "none",
   );
 
-  assert.match(comment, /Codex review: passed for ClawSweeper automerge\./);
-  assert.match(comment, /Automerge follow-up:\n\nMerge after required checks are green\./);
+  assert.match(comment, /Codex review: passed\./);
+  assert.match(comment, /\*\*Next step before merge\*\*\nMerge after required checks are green\./);
+  assert.doesNotMatch(comment, /Automerge follow-up:/);
   assert.match(comment, /<!-- clawsweeper-verdict:pass item=74453 sha=abc123def456/);
   assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
 });
@@ -1461,7 +1462,8 @@ Full review comments:
     "none",
   );
 
-  assert.match(comment, /Codex review: passed for ClawSweeper automerge\./);
+  assert.match(comment, /Codex review: passed\./);
+  assert.doesNotMatch(comment, /Codex review: passed for ClawSweeper automerge/);
   assert.match(comment, /<!-- clawsweeper-verdict:pass item=74716 sha=abc123def456/);
   assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
 });
@@ -1504,8 +1506,12 @@ Full review comments:
     "none",
   );
 
-  assert.match(comment, /Codex review: passed for ClawSweeper autofix\./);
-  assert.match(comment, /Autofix follow-up:\n\nLeave this draft open after fixes are complete\./);
+  assert.match(comment, /Codex review: passed\./);
+  assert.match(
+    comment,
+    /\*\*Next step before merge\*\*\nLeave this draft open after fixes are complete\./,
+  );
+  assert.doesNotMatch(comment, /Autofix follow-up:/);
   assert.match(comment, /<!-- clawsweeper-verdict:pass item=74610 sha=abc123def456/);
   assert.doesNotMatch(comment, /Codex review: passed for ClawSweeper automerge/);
 });
@@ -1552,7 +1558,7 @@ Full review comments:
   const markers = reviewAutomationMarkersFromReport(report);
 
   assert.match(comment, /Codex review: needs changes before merge\./);
-  assert.match(comment, /Review findings:/);
+  assert.match(comment, /\*\*Review findings\*\*/);
   assert.doesNotMatch(comment, /clawsweeper-verdict:pass/);
   assert.match(markers, /clawsweeper-verdict:needs-changes/);
   assert.match(markers, /clawsweeper-action:fix-required/);
@@ -1710,7 +1716,7 @@ Reason: ${duplicateRisk}
     "none",
   );
 
-  assert.ok(comment.includes(`Maintainer follow-up before merge:\n\n${duplicateRisk}`));
+  assert.ok(comment.includes(`**Next step before merge**\n${duplicateRisk}`));
   assert.doesNotMatch(comment, /Remaining risk \/ open question:/);
   assert.equal(comment.split(duplicateRisk).length - 1, 1);
 });
@@ -1952,6 +1958,17 @@ test("review prompt requires a dedicated securityReview section", () => {
   assert.match(prompt, /Always summarize this pass in `securityReview`/);
   assert.match(prompt, /Always fill `securityReview`/);
   assert.match(prompt, /status: "needs_attention"/);
+});
+
+test("review prompt asks for concise public review fields", () => {
+  const prompt = readFileSync("prompts/review-item.md", "utf8");
+
+  assert.match(prompt, /Keep these fields concise because they become the public review comment/);
+  assert.match(prompt, /one short sentence for `changeSummary`, `workReason`, `bestSolution`/);
+  assert.match(
+    prompt,
+    /merge\s+automation is reported by the command\/status comment and hidden markers/,
+  );
 });
 
 test("review prompt keeps automerge opt-in from becoming generic manual review", () => {

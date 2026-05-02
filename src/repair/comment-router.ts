@@ -153,8 +153,13 @@ for (const comment of comments) {
     trusted_bot_author: parsed.trusted_bot_author ?? null,
     automation_source: parsed.automation_source ?? null,
     repair_reason: parsed.repair_reason ?? null,
-    review_summary: extractMarkdownSection(comment.body, "What this changes"),
-    review_followup: extractMarkdownSection(comment.body, "Automerge follow-up"),
+    review_summary:
+      extractMarkdownSection(comment.body, "Summary") ??
+      extractMarkdownSection(comment.body, "What this changes"),
+    review_followup:
+      extractMarkdownSection(comment.body, "Next step before merge") ??
+      extractMarkdownSection(comment.body, "Automerge follow-up") ??
+      extractMarkdownSection(comment.body, "Autofix follow-up"),
     freeform_prompt: parsed.freeform_prompt ?? null,
     expected_head_sha: parsed.expected_head_sha ?? null,
     finding_id: parsed.finding_id ?? null,
@@ -1970,13 +1975,15 @@ function listCandidateComments() {
   });
 }
 
-function extractMarkdownSection(body: JsonValue, heading: string): string {
+function extractMarkdownSection(body: JsonValue, heading: string): string | null {
   const text = String(body ?? "");
   const pattern = new RegExp(
-    `(?:^|\\n)${escapeRegExp(heading)}:\\s*\\n+([\\s\\S]*?)(?=\\n\\n[A-Z][^\\n:]{0,80}:\\n|\\n<details>|\\n<!--|$)`,
+    `(?:^|\\n)(?:\\*\\*${escapeRegExp(heading)}\\*\\*|${escapeRegExp(
+      heading,
+    )}:)\\s*\\n+([\\s\\S]*?)(?=\\n\\n(?:\\*\\*[^\\n*]{1,80}\\*\\*|[A-Z][^\\n:]{0,80}:\\n)|\\n<details>|\\n<!--|$)`,
     "i",
   );
-  return pattern.exec(text)?.[1]?.trim() ?? "";
+  return pattern.exec(text)?.[1]?.trim() || null;
 }
 
 function linesFromMarkdownSection(section: JsonValue): string[] {

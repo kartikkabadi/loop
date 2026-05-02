@@ -41,17 +41,17 @@ Codex review: needs changes before merge.
 The body should include the strongest actionable, non-overlapping sections the
 report has:
 
-- `What this changes:` from the typed `changeSummary` field, not from the
+- `**Summary**` from the typed `changeSummary` field, not from the
   merge verdict or maintainer follow-up summary
-- `Required change before merge:` or `Maintainer follow-up before merge:` from
-  the work-candidate reason or next action
-- `Security review:` from the typed `securityReview` field, so supply-chain,
+- `**Next step before merge**` for PRs, or `**Next step**` for issues, from the
+  work-candidate reason or next action
+- `**Security**` from the typed `securityReview` field, so supply-chain,
   permission, secret-handling, and code-execution concerns have a dedicated
   visible pass
-- `Review findings:` for Codex `/review`-style findings, using typed priority,
+- `**Review findings**` for Codex `/review`-style findings, using typed priority,
   confidence, file, and line-range data from the report
 - `Best possible solution:` only when it adds a distinct end-state that is not
-  already covered by the required-change or maintainer-follow-up section
+  already covered by the next-step section
 - `Acceptance criteria:`
 - `What I checked:`
 - `Remaining risk:` only when it is not a restatement of the required change or
@@ -61,8 +61,12 @@ Full review comments, source links, owner routing, acceptance criteria, and
 evidence stay under the collapsed `Review details` block so the top-level PR
 comment reads like a concise review.
 
-Issues can use `Required change / next step:` instead of the PR-specific
-heading. Non-PR comments are never repair triggers.
+Automerge and autofix state belongs in the command/status comment and hidden
+markers, not in the public review section headings. A clean opted-in PR should
+still read as `Codex review: passed.` in the durable review comment.
+
+Issues use `**Next step**` instead of the PR-specific `**Next step before
+merge**` heading. Non-PR comments are never repair triggers.
 
 ## Repair Markers
 

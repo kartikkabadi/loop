@@ -3612,6 +3612,16 @@ function securityReviewLine(review: SecurityReview): string {
   return `${prefix}: ${sentence(review.summary)}`;
 }
 
+function publicSecurityReviewLine(review: SecurityReview): string {
+  const prefix =
+    review.status === "needs_attention"
+      ? "Needs attention"
+      : review.status === "cleared"
+        ? "Cleared"
+        : "Not applicable";
+  return `${prefix}: ${sentence(review.summary)}`;
+}
+
 function closeIntro(reason: CloseReason): string {
   switch (reason) {
     case "implemented_on_main":
@@ -4141,6 +4151,10 @@ function collapsedDetailsBlock(summary: string, lines: readonly string[]): strin
   return ["<details>", `<summary>${summary}</summary>`, "", body, "", "</details>"].join("\n");
 }
 
+function appendPublicSection(lines: string[], heading: string, body: string): void {
+  lines.push(`**${heading}**`, body, "");
+}
+
 function appendReviewQuestionDetails(
   details: string[],
   reproductionAssessment: string | undefined,
@@ -4178,8 +4192,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     .map((step) => `- ${step}`);
   const isPullRequest = frontMatterValue(markdown, "type") === "pull_request";
   const isRepairCandidate = workCandidate === "queue_fix_pr";
-  const repairLoopPassMode = isPullRequest ? repairLoopPassModeFromReport(markdown) : "";
-  const isRepairLoopPass = Boolean(repairLoopPassMode);
+  const isRepairLoopPass = isPullRequest && Boolean(repairLoopPassModeFromReport(markdown));
   const summaryLine = sentence(summary) || "_No summary provided._";
   const changeSummaryLine = sentence(changeSummary || summary) || "_No change summary provided._";
   const fallbackNextStep =
@@ -4190,7 +4203,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   const hasReviewFindings = isPullRequest && reviewFindings.length > 0;
   const lines = [
     isRepairLoopPass
-      ? `Codex review: passed for ClawSweeper ${repairLoopPassMode}.`
+      ? "Codex review: passed."
       : isPullRequest && isRepairCandidate
         ? "Codex review: needs changes before merge."
         : hasReviewFindings
@@ -4201,29 +4214,14 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     "",
   ];
   if (isPullRequest) {
-    lines.push("What this changes:", "", changeSummaryLine, "");
+    appendPublicSection(lines, "Summary", changeSummaryLine);
   } else {
-    lines.push(summaryLine, "");
+    appendPublicSection(lines, "Summary", summaryLine);
   }
-  lines.push(
-    isRepairLoopPass
-      ? `${capitalize(repairLoopPassMode)} follow-up:`
-      : isPullRequest && !isRepairCandidate
-        ? "Maintainer follow-up before merge:"
-        : isPullRequest
-          ? "Required change before merge:"
-          : "Required change / next step:",
-    "",
-    nextStepLine,
-  );
-  lines.push("", "Security review:", "", securityReviewLine(securityReview));
+  appendPublicSection(lines, isPullRequest ? "Next step before merge" : "Next step", nextStepLine);
+  appendPublicSection(lines, "Security", publicSecurityReviewLine(securityReview));
   if (isPullRequest && reviewFindings.length) {
-    lines.push(
-      "",
-      "Review findings:",
-      "",
-      ...reviewFindings.slice(0, 3).map(reviewFindingSummaryLine),
-    );
+    lines.push("**Review findings**", ...reviewFindings.slice(0, 3).map(reviewFindingSummaryLine));
   }
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, nextStepLine)) {
     details.push("Best possible solution:", "", bestSolutionLine);
@@ -4546,10 +4544,6 @@ function isRepairLoopPassReport(markdown: string): boolean {
     reportOverallCorrectness(markdown) === "patch is correct" &&
     reportReviewFindings(markdown).length === 0
   );
-}
-
-function capitalize(value: string): string {
-  return value ? `${value.slice(0, 1).toUpperCase()}${value.slice(1)}` : value;
 }
 
 function markedReviewCommentBody(number: number, body: string): string {
