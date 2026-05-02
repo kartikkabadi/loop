@@ -18,6 +18,7 @@ export function buildFixPrompt({
   sourceHead,
   rebaseResult,
   maxEditAttempts,
+  validationCommands,
 }: LooseRecord) {
   return [
     "You are editing the target repository for ClawSweeper Repair.",
@@ -43,6 +44,8 @@ export function buildFixPrompt({
     "- do not change auth, approval, sandbox, or trust-boundary semantics unless the artifact explicitly asks for that boundary change;",
     "- exec-adjacent bugs are allowed when the fix is ordinary correctness or hardening and does not redefine the security boundary;",
     "- before returning, verify git status/diff/log show a merge-ready branch state.",
+    "",
+    renderValidationLoopGuidance({ fixArtifact, validationCommands }),
     "",
     `Mode: ${mode}`,
     `Branch: ${branch}`,
@@ -70,6 +73,27 @@ export function buildFixPrompt({
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+function renderValidationLoopGuidance({ fixArtifact, validationCommands = [] }: LooseRecord) {
+  const commands = [
+    ...(Array.isArray(validationCommands) ? validationCommands : []),
+    ...(Array.isArray(fixArtifact.validation_commands) ? fixArtifact.validation_commands : []),
+  ]
+    .map((command) => String(command).trim())
+    .filter(Boolean)
+    .filter((command, index, all) => all.indexOf(command) === index);
+  return [
+    "Validation loop:",
+    "- after editing, run the changed-surface validation in this checkout before returning;",
+    "- if `pnpm check:changed` is available or listed below, run it; it is the default OpenClaw changed-surface gate;",
+    commands.length > 0
+      ? `- expected validation commands: ${commands.join(" ; ")}`
+      : "- expected validation commands: discover the narrow changed-surface command from package scripts and the artifact;",
+    "- if validation fails, fix the failure and rerun until it passes or an external blocker is proven;",
+    "- do not report validation as passed unless it passed after your last edit in this checkout;",
+    "- include the exact validation commands and final pass/fail result in your final message.",
+  ].join("\n");
 }
 
 function renderChangelogRule(fixArtifact: LooseRecord) {

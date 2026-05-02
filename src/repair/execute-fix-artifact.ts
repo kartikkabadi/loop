@@ -1393,6 +1393,7 @@ function editValidatePrepareMerge({
         sourceHead,
         rebaseResult,
         maxEditAttempts,
+        validationCommands: validationPreflight.resolved_commands ?? [],
       });
       const summaryPath = path.join(workRoot, `${mode}-codex-summary-${attempt}.md`);
       const workerTimeoutMs = currentCodexTimeoutMs();
@@ -1633,6 +1634,7 @@ function runCodexBaseReconcile({
       sourceHead,
       rebaseResult,
       maxEditAttempts,
+      validationCommands: validationPreflight.resolved_commands ?? [],
     });
     const summaryPath = path.join(
       workRoot,
@@ -2085,7 +2087,10 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
     "Rules:",
     "- keep the patch narrow;",
     "- do not commit, push, open PRs, close PRs, or call gh;",
-    "- rerun is handled by ClawSweeper after your edits;",
+    "- after edits, run the changed-surface validation command yourself before returning;",
+    "- if `pnpm check:changed` is available, run it before returning;",
+    "- if validation fails, fix and rerun until it passes or an external blocker is proven;",
+    "- include the exact validation command and final pass/fail result in your final message;",
     "- if a finding is false-positive, adjust comments/tests only when that makes the proof clearer.",
     "",
     "Codex /review findings:",
@@ -2163,7 +2168,10 @@ function runCodexValidationFix({
     "- keep the patch narrow;",
     "- fix only issues introduced by the current repair branch or required to make its changed gate pass;",
     "- do not commit, push, open PRs, close PRs, or call gh;",
-    "- rerun is handled by ClawSweeper after your edits;",
+    "- after edits, rerun the failed validation command yourself before returning;",
+    "- if `pnpm check:changed` is available, run it before returning;",
+    "- if validation still fails, keep fixing and rerunning until it passes or an external blocker is proven;",
+    "- include the exact validation command and final pass/fail result in your final message;",
     "- prefer the smallest lint/typecheck/test fix over broad rewrites.",
     "",
     `Validation commands attempted: ${validationCommands.join("; ") || "none"}`,

@@ -74,10 +74,12 @@ For base-sync-only work, the executor first tries the deterministic fast path:
 Known mechanical resolvers currently cover isolated `CHANGELOG.md` conflicts
 and generated config checksum conflicts where the replayed commit changed only
 selected checksum entries. If the deterministic path cannot finish cleanly,
-Codex edit/review/fix remains the fallback. If the first Codex edit leaves a
-changed-surface lint, typecheck, or diff-check failure, the executor feeds that
-failure back into a dedicated validation-fix pass before spending the next
-review attempt.
+Codex edit/review/fix remains the fallback. The Codex edit prompt includes the
+same normalized changed-surface gate the executor will verify, usually
+`pnpm check:changed` for OpenClaw, and Codex must run that gate, fix failures,
+and rerun it before returning. The executor still re-runs the gate as the
+authority before push; if anything remains, it feeds the full failure back into
+a dedicated validation-fix pass before spending the next review attempt.
 
 ## Exact-Head Rule
 

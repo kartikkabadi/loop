@@ -109,6 +109,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Fed changed-surface validation failures back into Codex repair so automerge
   fixes can correct lint/typecheck fallout instead of stopping after the first
   failed `pnpm check:changed`.
+- Passed the normalized changed-surface gate into Codex repair prompts so the
+  agent runs, fixes, and reruns validation before returning to the deterministic
+  executor.
 - Backed up redacted Codex session/log artifacts from repair worker Actions runs
   so automerge stalls can be debugged from the raw model transcript.
 - Prevented automerge repair workers from treating a clean rebase as a complete

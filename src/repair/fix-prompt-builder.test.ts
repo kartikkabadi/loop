@@ -54,6 +54,28 @@ test("fix prompt still asks Codex to add discovered changelog requirements", () 
   assert.match(prompt, /if you discover the target repository requires a changelog/);
 });
 
+test("fix prompt makes Codex own the validation loop", () => {
+  const prompt = buildFixPrompt({
+    fixArtifact: {
+      summary: "Repair the stuck automerge branch.",
+      changelog_required: false,
+      validation_commands: ["pnpm test:repair"],
+    },
+    branch: "clawsweeper/automerge-openclaw-openclaw-74506",
+    mode: "repair",
+    attempt: 1,
+    maxEditAttempts: 3,
+    repositoryContext: "candidate_files (1):\nsrc/repair.ts (100)",
+    validationCommands: ["pnpm check:changed"],
+  });
+
+  assert.match(prompt, /Validation loop:/);
+  assert.match(prompt, /run the changed-surface validation in this checkout before returning/);
+  assert.match(prompt, /expected validation commands: pnpm check:changed ; pnpm test:repair/);
+  assert.match(prompt, /fix the failure and rerun until it passes/);
+  assert.match(prompt, /do not report validation as passed unless it passed after your last edit/);
+});
+
 test("fix prompt includes rebase and previous no-diff recovery details", () => {
   const prompt = buildFixPrompt({
     fixArtifact: {
