@@ -2405,7 +2405,9 @@ test("GitHub retry classifier distinguishes throttle and transient failures", ()
   assert.equal(ghRetryKind(badGateway), "transient");
 
   const dispatchServerError = Object.assign(
-    new Error("could not create workflow dispatch event: HTTP 500: Failed to run workflow dispatch"),
+    new Error(
+      "could not create workflow dispatch event: HTTP 500: Failed to run workflow dispatch",
+    ),
     { stderr: "" },
   );
   assert.equal(ghRetryKind(dispatchServerError), "transient");
