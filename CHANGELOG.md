@@ -106,6 +106,9 @@ checkpoint, and status-only commits are intentionally omitted.
   artifacts and kept execute-side logs under uploaded repair run artifacts.
 - Kept substantive automerge repairs in the Codex edit loop after a clean rebase
   instead of treating base-sync head movement as the repair itself.
+- Fed changed-surface validation failures back into Codex repair so automerge
+  fixes can correct lint/typecheck fallout instead of stopping after the first
+  failed `pnpm check:changed`.
 - Backed up redacted Codex session/log artifacts from repair worker Actions runs
   so automerge stalls can be debugged from the raw model transcript.
 - Prevented automerge repair workers from treating a clean rebase as a complete

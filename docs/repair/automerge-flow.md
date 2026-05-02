@@ -74,7 +74,10 @@ For base-sync-only work, the executor first tries the deterministic fast path:
 Known mechanical resolvers currently cover isolated `CHANGELOG.md` conflicts
 and generated config checksum conflicts where the replayed commit changed only
 selected checksum entries. If the deterministic path cannot finish cleanly,
-Codex edit/review/fix remains the fallback.
+Codex edit/review/fix remains the fallback. If the first Codex edit leaves a
+changed-surface lint, typecheck, or diff-check failure, the executor feeds that
+failure back into a dedicated validation-fix pass before spending the next
+review attempt.
 
 ## Exact-Head Rule
 

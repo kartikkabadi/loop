@@ -1848,13 +1848,38 @@ function validateAndReviewLoop({
       { fixArtifact, targetDir, sourceHead },
       currentTargetValidationOptions(),
     );
-    validationCommands = runAllowedValidationCommands(
-      validationPlan.commands,
-      targetDir,
-      validationPlan.options,
-      baseBranch,
-    );
-    runDiffCheck({ targetDir, baseBranch });
+    try {
+      validationCommands = runAllowedValidationCommands(
+        validationPlan.commands,
+        targetDir,
+        validationPlan.options,
+        baseBranch,
+      );
+      runDiffCheck({ targetDir, baseBranch });
+    } catch (error) {
+      if (attempt < maxReviewAttempts && isFixableValidationError(error)) {
+        lastReview = {
+          status: "validation_failed",
+          summary: String(error?.message ?? error),
+          findings: [],
+          findings_addressed: false,
+          evidence: [],
+          validation_commands_run: validationCommands,
+        };
+        runCodexValidationFix({
+          fixArtifact,
+          targetDir,
+          mode,
+          error,
+          attempt,
+          validationPlan,
+          validationCommands,
+        });
+        onReviewFix?.(`validation-${attempt}`);
+        continue;
+      }
+      throw error;
+    }
     try {
       lastReview = runCodexReview({
         fixArtifact,
@@ -1891,6 +1916,12 @@ function validateAndReviewLoop({
       ? lastReview.findings.map((finding: JsonValue) => finding.summary ?? finding).join("; ")
       : "unknown");
   throw new Error(`Codex /review did not pass after ${maxReviewAttempts} attempt(s): ${summary}`);
+}
+
+function isFixableValidationError(error: JsonValue) {
+  const message = String(error?.message ?? error);
+  if (/no merge base|validation_script_missing/i.test(message)) return false;
+  return /validation command failed|git diff --check/i.test(message);
 }
 
 function isRetryableCodexReviewError(error: JsonValue) {
@@ -2109,6 +2140,90 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
   if (child.error) throw new Error(child.error.message || String(child.error));
   if (child.status !== 0)
     throw new Error(child.stderr || child.stdout || "Codex review-fix worker failed");
+}
+
+function runCodexValidationFix({
+  fixArtifact,
+  targetDir,
+  mode,
+  error,
+  attempt,
+  validationPlan,
+  validationCommands = [],
+}: LooseRecord) {
+  const validationError = compactText(String(error?.message ?? error), 4000);
+  const changedFiles = run("git", ["diff", "--name-only"], { cwd: targetDir })
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const prompt = [
+    "Fix the current repair patch so the changed-surface validation gate passes.",
+    "",
+    "Rules:",
+    "- keep the patch narrow;",
+    "- fix only issues introduced by the current repair branch or required to make its changed gate pass;",
+    "- do not commit, push, open PRs, close PRs, or call gh;",
+    "- rerun is handled by ClawSweeper after your edits;",
+    "- prefer the smallest lint/typecheck/test fix over broad rewrites.",
+    "",
+    `Validation commands attempted: ${validationCommands.join("; ") || "none"}`,
+    validationPlan
+      ? `Validation scope: ${validationPlan.scope}; ${validationPlan.reason}; changed files: ${(validationPlan.changed_files ?? []).join(", ") || "none"}`
+      : "",
+    `Current uncommitted changed files: ${changedFiles.join(", ") || "none"}`,
+    "",
+    "Validation failure:",
+    "```text",
+    validationError,
+    "```",
+    "",
+    "Fix artifact:",
+    "```json",
+    JSON.stringify(fixArtifact, null, 2),
+    "```",
+  ].join("\n");
+  const validationFixTimeoutMs = currentCodexTimeoutMs();
+  const child = spawnCodexSyncWithHeartbeat(
+    `Codex validation-fix worker ${mode} attempt ${attempt}`,
+    [
+      "exec",
+      "--cd",
+      targetDir,
+      "--model",
+      model,
+      "--sandbox",
+      codexWriteSandbox,
+      ...codexWriteSandboxConfigArgs(),
+      ...codexConfigArgs(),
+      "--output-last-message",
+      path.join(workRoot, `${mode}-codex-validation-fix-${attempt}.md`),
+      "--ephemeral",
+      "--json",
+      "-",
+    ],
+    {
+      cwd: targetDir,
+      input: prompt,
+      encoding: "utf8",
+      env: codexEnv(),
+      timeout: validationFixTimeoutMs,
+      maxBuffer: codexStdioMaxBuffer,
+    },
+  );
+  fs.writeFileSync(
+    path.join(workRoot, `${mode}-codex-validation-fix-${attempt}.jsonl`),
+    child.stdout ?? "",
+  );
+  if (child.stderr)
+    fs.writeFileSync(
+      path.join(workRoot, `${mode}-codex-validation-fix-${attempt}.stderr.log`),
+      child.stderr,
+    );
+  if ((child.error as JsonValue)?.code === "ETIMEDOUT")
+    throw new Error(`Codex validation-fix worker timed out after ${validationFixTimeoutMs}ms`);
+  if (child.error) throw new Error(child.error.message || String(child.error));
+  if (child.status !== 0)
+    throw new Error(child.stderr || child.stdout || "Codex validation-fix worker failed");
 }
 
 function isCleanCodexReview(review: LooseRecord) {

@@ -124,6 +124,11 @@ falls back to the normal Codex fix worker. The mechanical set includes
 isolated `CHANGELOG.md` conflicts and generated config checksum conflicts where
 the replayed commit changed only selected checksum entries.
 
+During Codex repair, changed-surface validation failures are loop inputs, not
+immediate terminal outcomes. The executor feeds a failed `pnpm check:changed`
+or diff-check result back into a narrow validation-fix prompt, checkpoints any
+resulting edit, and then reruns validation plus Codex `/review`.
+
 The status comment is also the audit surface for wait and repair decisions. It
 must distinguish pending checks from failed checks: pending checks wait, while
 completed terminal failures can dispatch repair.
