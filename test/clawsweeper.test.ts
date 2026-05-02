@@ -2072,7 +2072,7 @@ test("review prompts require reproduction and solution assessment details", () =
 test("commit review workflow settles and reviews from target main", () => {
   const workflow = readFileSync(".github/workflows/commit-review.yml", "utf8");
 
-  assert.match(workflow, /CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS \|\| '900'/);
+  assert.match(workflow, /CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS \|\| '60'/);
   assert.match(workflow, /sleep "\$SETTLE_SECONDS"/);
   assert.match(workflow, /Check out target main/);
   assert.match(workflow, /checkout -B main refs\/remotes\/origin\/main/);

@@ -93,14 +93,15 @@ Enable optional target commit check-runs with:
 CLAWSWEEPER_COMMIT_REVIEW_CREATE_CHECKS=true
 ```
 
-The receiver waits 15 minutes before selecting commits by default. Adjust on
+The receiver waits 60 seconds before selecting commits by default. Adjust on
 `openclaw/clawsweeper` only when needed:
 
 ```text
-CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=900
+CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=60
 ```
 
-Use `0` for settled manual backfills.
+Use `0` for settled manual backfills or a larger value during GitHub event
+lag incidents.
 
 `openclaw/clawhub` commit dispatches are skipped while
 `CLAWSWEEPER_ENABLE_CLAWHUB` is not `1`. Turn that receiver variable on only

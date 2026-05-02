@@ -72,16 +72,17 @@ Manual workflow dispatch supports:
 - `enabled`: emergency no-op switch
 - `commit_offset`: internal continuation offset
 
-The receiver waits 15 minutes by default before selecting commits. This gives
-the target `main` push range time to settle across GitHub and the runner before
-review starts. Override it on `openclaw/clawsweeper` with:
+The receiver waits 60 seconds by default before selecting commits. This gives
+the target `main` push event time to settle across GitHub and the runner without
+holding the planner for a full review cycle. Override it on
+`openclaw/clawsweeper` with:
 
 ```text
-CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=900
+CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=60
 ```
 
-Use `0` only for manual backfills where the target commit range is already
-settled.
+Use `0` for manual backfills where the target commit range is already settled,
+or temporarily raise the value during GitHub event lag incidents.
 
 The receiver enforces that the commit is reachable from `origin/main`. Review
 workers then check out current target `main` and reference the reviewed commit

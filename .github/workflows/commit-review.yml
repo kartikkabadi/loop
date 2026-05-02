@@ -80,7 +80,7 @@ jobs:
         with:
           path: clawsweeper
           filter: blob:none
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Resolve mode
         id: mode
@@ -140,6 +140,7 @@ jobs:
         with:
           token: ${{ steps.state-token.outputs.token }}
           worktree-path: clawsweeper
+          fetch-depth: 1
 
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:
@@ -157,7 +158,7 @@ jobs:
           COMMIT_OFFSET: ${{ github.event.inputs.commit_offset || github.event.client_payload.commit_offset || '0' }}
           ENABLED: ${{ steps.mode.outputs.enabled }}
           SOURCE_REF: ${{ github.event.client_payload.ref || 'refs/heads/main' }}
-          SETTLE_SECONDS: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS || '900' }}
+          SETTLE_SECONDS: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS || '60' }}
         run: |
           set -euo pipefail
           if [ "$ENABLED" = "false" ]; then
@@ -263,7 +264,7 @@ jobs:
         with:
           path: clawsweeper
           filter: blob:none
-          fetch-depth: 0
+          fetch-depth: 1
           persist-credentials: false
 
       - name: Create target read token
@@ -287,6 +288,7 @@ jobs:
         with:
           token: ${{ steps.state-token.outputs.token }}
           worktree-path: clawsweeper
+          fetch-depth: 1
 
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:

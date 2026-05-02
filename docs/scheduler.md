@@ -136,6 +136,10 @@ runtime artifact. Review shards download the built `dist/` and run
 install and build. This keeps 50-100 shard waves from stampeding the npm
 registry or Corepack metadata endpoints.
 
+Read-only review shards use shallow ClawSweeper and generated-state checkouts.
+Publish and apply jobs keep full state history because they may rebase and push
+generated records.
+
 Normal backfill now runs every 5 minutes for `openclaw/openclaw`. Because its
 concurrency group allows only one running normal backfill per target repo, the
 effect is a continuous drain loop: when due backlog exists, the active run can

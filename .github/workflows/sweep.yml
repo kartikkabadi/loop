@@ -665,7 +665,7 @@ jobs:
         with:
           path: clawsweeper
           filter: blob:none
-          fetch-depth: 0
+          fetch-depth: 1
           persist-credentials: false
 
       - name: Create target review token
@@ -688,6 +688,7 @@ jobs:
         with:
           token: ${{ steps.state-token.outputs.token }}
           worktree-path: clawsweeper
+          fetch-depth: 1
 
       - uses: actions/setup-node@v6
         with:
