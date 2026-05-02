@@ -6,6 +6,8 @@ import { sleepMs } from "./timing.js";
 
 const DEFAULT_MAX_LIVE_WORKERS = 50;
 export const MAX_LIVE_WORKERS = 100;
+export const DEFAULT_AUTOMERGE_REPAIR_RUN_NAME_PREFIX = "automerge repair ";
+export const DEFAULT_REPAIR_RUN_NAME_PREFIX = "repair cluster ";
 const DEFAULT_CAPACITY_POLL_MS = 30_000;
 const DEFAULT_CAPACITY_TIMEOUT_MS = 30 * 60 * 1000;
 const ACTIVE_WORKFLOW_STATUSES = ["queued", "in_progress", "waiting", "requested", "pending"];
@@ -133,6 +135,56 @@ export function listActiveWorkflowRuns({
       (left: JsonValue, right: JsonValue) =>
         Date.parse(right.createdAt ?? "") - Date.parse(left.createdAt ?? ""),
     );
+}
+
+export function repairRunNamePrefixForJob(
+  jobPath: JsonValue,
+  automergeRunNamePrefix: JsonValue = DEFAULT_AUTOMERGE_REPAIR_RUN_NAME_PREFIX,
+) {
+  return String(jobPath ?? "").includes("/inbox/automerge-")
+    ? String(automergeRunNamePrefix ?? DEFAULT_AUTOMERGE_REPAIR_RUN_NAME_PREFIX)
+    : DEFAULT_REPAIR_RUN_NAME_PREFIX;
+}
+
+export function repairRunNameForJob(
+  jobPath: JsonValue,
+  automergeRunNamePrefix: JsonValue = DEFAULT_AUTOMERGE_REPAIR_RUN_NAME_PREFIX,
+) {
+  return `${repairRunNamePrefixForJob(jobPath, automergeRunNamePrefix)}${String(jobPath ?? "")}`;
+}
+
+export function activeRepairWorkflowRunForJob({
+  repo = currentProjectRepo(),
+  workflow = REPAIR_CLUSTER_WORKFLOW,
+  jobPath,
+  automergeRunNamePrefix = DEFAULT_AUTOMERGE_REPAIR_RUN_NAME_PREFIX,
+  activeRunsByPrefix,
+}: LooseRecord = {}) {
+  const job = String(jobPath ?? "");
+  if (!job) return null;
+  const prefix = repairRunNamePrefixForJob(job, automergeRunNamePrefix);
+  const expectedTitle = repairRunNameForJob(job, automergeRunNamePrefix);
+  if (activeRunsByPrefix instanceof Map && !activeRunsByPrefix.has(prefix)) {
+    activeRunsByPrefix.set(
+      prefix,
+      listActiveWorkflowRuns({
+        repo,
+        workflow,
+        runNamePrefix: prefix,
+      }),
+    );
+  }
+  const activeRuns =
+    activeRunsByPrefix instanceof Map
+      ? activeRunsByPrefix.get(prefix)
+      : listActiveWorkflowRuns({
+          repo,
+          workflow,
+          runNamePrefix: prefix,
+        });
+  return (
+    activeRuns?.find((run: JsonValue) => String(run.displayTitle ?? "") === expectedTitle) ?? null
+  );
 }
 
 function runMatchesNameFilter(

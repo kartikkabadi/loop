@@ -27,9 +27,12 @@ export type ParsedJob = {
 export { githubActionsRunUrl, currentProjectRepo } from "./project-repo.js";
 export {
   assertLiveWorkerCapacity,
+  activeRepairWorkflowRunForJob,
   listActiveWorkflowRuns,
   liveWorkerCapacity,
   readMaxLiveWorkers,
+  repairRunNameForJob,
+  repairRunNamePrefixForJob,
   waitForLiveWorkerCapacity,
 } from "./live-worker-capacity.js";
 export { hasDeterministicSecuritySignal, hasSecuritySignalText } from "./security-signals.js";

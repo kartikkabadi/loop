@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-import type { JsonValue } from "./json-types.js";
+import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import {
+  activeRepairWorkflowRunForJob,
   assertLiveWorkerCapacity,
   currentProjectRepo,
   liveWorkerCapacity,
@@ -31,6 +32,7 @@ const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const ref = args.ref ? String(args.ref) : "";
 const files = args._;
+const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 
 if (files.length === 0) {
   console.error(
@@ -40,7 +42,7 @@ if (files.length === 0) {
 }
 
 let failed = false;
-const jobs: JsonValue[] = [];
+const validatedJobs: JsonValue[] = [];
 for (const file of files) {
   const job = parseJob(file);
   const errors = validateJob(job);
@@ -57,8 +59,10 @@ for (const file of files) {
     console.error(`job does not exist inside repo: ${file}`);
     continue;
   }
-  jobs.push(relative);
+  validatedJobs.push(relative);
 }
+
+const jobs = failed ? [] : validatedJobs.filter((relative) => shouldDispatchJob(relative));
 
 if (!failed) {
   const requested = waitForCapacity ? Math.min(jobs.length, 1) : jobs.length;
@@ -131,6 +135,20 @@ function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue)
       `dispatched ${position}/${total} ${relative} (${mode}) on ${runner}; execution on ${executionRunner}`,
     );
   }
+}
+
+function shouldDispatchJob(relative: JsonValue) {
+  const activeRun = activeRepairWorkflowRunForJob({
+    repo,
+    workflow,
+    jobPath: relative,
+    activeRunsByPrefix: activeRepairRunsByPrefix,
+  });
+  if (!activeRun) return true;
+  console.log(
+    `skipping ${relative}: active ${workflow} run already exists (${activeRun.url ?? activeRun.databaseId ?? "unknown run"})`,
+  );
+  return false;
 }
 
 if (failed) process.exit(1);

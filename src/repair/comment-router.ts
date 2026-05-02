@@ -3,8 +3,8 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import {
+  activeRepairWorkflowRunForJob,
   assertLiveWorkerCapacity,
-  listActiveWorkflowRuns,
   parseArgs,
   parseJob,
   repoRoot,
@@ -1436,24 +1436,13 @@ function commandHasWaitingRepairDispatch(command: LooseRecord) {
 function activeRepairRunForCommand(command: LooseRecord) {
   const jobPath = String(command.target?.job_path ?? "");
   if (!jobPath) return null;
-  const automergeJob = jobPath.includes("/inbox/automerge-");
-  const prefix = automergeJob ? automergeRunNamePrefix : "repair cluster ";
-  const expectedTitle = `${prefix}${jobPath}`;
-  if (!activeRepairRunsByPrefix.has(prefix)) {
-    activeRepairRunsByPrefix.set(
-      prefix,
-      listActiveWorkflowRuns({
-        repo: repairRepo,
-        workflow,
-        runNamePrefix: prefix,
-      }),
-    );
-  }
-  return (
-    activeRepairRunsByPrefix
-      .get(prefix)
-      ?.find((run: JsonValue) => String(run.displayTitle ?? "") === expectedTitle) ?? null
-  );
+  return activeRepairWorkflowRunForJob({
+    repo: repairRepo,
+    workflow,
+    jobPath,
+    automergeRunNamePrefix,
+    activeRunsByPrefix: activeRepairRunsByPrefix,
+  });
 }
 
 function dispatchTokenEnv(): NodeJS.ProcessEnv {

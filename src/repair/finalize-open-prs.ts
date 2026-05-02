@@ -3,6 +3,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import {
+  activeRepairWorkflowRunForJob,
   assertLiveWorkerCapacity,
   currentProjectRepo,
   hasDeterministicSecuritySignal,
@@ -52,6 +53,7 @@ const maxPrs = Number(args["max-prs"] ?? args.limit ?? 5);
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const allowRepeat = Boolean(args["allow-repeat"]);
+const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 
 if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) {
   throw new Error(`repo must be owner/repo, got ${repo}`);
@@ -587,25 +589,38 @@ function executeDispatches(candidates: LooseRecord[], dispatchSummary: JsonValue
     throw new Error("refusing finalizer dispatch: CLAWSWEEPER_ALLOW_FIX_PR must be 1");
   }
 
-  const capacity = waitForCapacity
-    ? waitForLiveWorkerCapacity({
-        repo: repairRepo,
-        workflow,
-        requested: candidates.length,
-        maxLiveWorkers,
-      })
-    : assertLiveWorkerCapacity({
-        repo: repairRepo,
-        workflow,
-        requested: candidates.length,
-        maxLiveWorkers,
-      });
-  summary.live_worker_capacity_before_dispatch = capacity;
+  const activeRunsByJobPath = new Map<string, LooseRecord>();
+  for (const candidate of candidates) {
+    const activeRun = activeRepairWorkflowRunForJob({
+      repo: repairRepo,
+      workflow,
+      jobPath: candidate.job_path,
+      activeRunsByPrefix: activeRepairRunsByPrefix,
+    });
+    if (activeRun) activeRunsByJobPath.set(String(candidate.job_path), activeRun);
+  }
+  const dispatchCount = candidates.length - activeRunsByJobPath.size;
+  if (dispatchCount > 0) {
+    const capacity = waitForCapacity
+      ? waitForLiveWorkerCapacity({
+          repo: repairRepo,
+          workflow,
+          requested: dispatchCount,
+          maxLiveWorkers,
+        })
+      : assertLiveWorkerCapacity({
+          repo: repairRepo,
+          workflow,
+          requested: dispatchCount,
+          maxLiveWorkers,
+        });
+    summary.live_worker_capacity_before_dispatch = capacity;
+  }
 
   const ledger = readDispatchLedger();
   const batchId = `finalize-open-prs-${new Date().toISOString().replace(/[:.]/g, "-")}`;
   for (const candidate of candidates) {
-    const attempt = {
+    const attempt: LooseRecord = {
       batch_id: batchId,
       idempotency_key: candidate.idempotency_key,
       target_repo: repo,
@@ -625,8 +640,17 @@ function executeDispatches(candidates: LooseRecord[], dispatchSummary: JsonValue
       dispatched_at: new Date().toISOString(),
       status: "pending",
     };
-    dispatchRepair(candidate);
-    attempt.status = "dispatched";
+    const activeRun = activeRunsByJobPath.get(String(candidate.job_path));
+    if (activeRun) {
+      attempt.status = "waiting";
+      attempt.reason = "repair worker already active for this job path";
+      attempt.run_url = activeRun.url;
+      attempt.run_id = activeRun.databaseId ?? activeRun.id;
+      attempt.run_status = activeRun.status;
+    } else {
+      dispatchRepair(candidate);
+      attempt.status = "dispatched";
+    }
     summary.attempts.push(attempt);
     ledger.attempts.push(attempt);
   }
