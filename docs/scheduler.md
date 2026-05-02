@@ -83,7 +83,9 @@ and GitHub checks. Codex fix/edit remains the fallback when the deterministic
 rebase cannot complete cleanly. The default shepherd wait is ten minutes with
 15-second polls, controlled by
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS` and
-`CLAWSWEEPER_AUTOMERGE_SHEPHERD_POLL_MS`.
+`CLAWSWEEPER_AUTOMERGE_SHEPHERD_POLL_MS`. Terminal check failures stop the
+shepherd wait immediately and dispatch the router so the failed-check repair
+loop can start without waiting for the full timeout.
 
 The final router gate no longer waits ten minutes for transient GitHub merge
 state. Default transient wait is two minutes with 15-second polls. If GitHub

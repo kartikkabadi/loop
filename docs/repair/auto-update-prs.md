@@ -123,7 +123,9 @@ the replayed commit changed only selected checksum entries.
 After a successful same-branch repair push, the worker shepherds the PR for a
 bounded window. It polls for the exact-head ClawSweeper pass marker and GitHub
 checks on the repaired commit, then dispatches the comment router as soon as the
-head is ready to merge. Defaults are ten minutes and 15-second polls; set
+head is ready to merge. If checks fail terminally, the shepherd stops early and
+dispatches the router for the failed-check repair path. Defaults are ten minutes
+and 15-second polls; set
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS=0` or
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT=0` to disable that wait.
 

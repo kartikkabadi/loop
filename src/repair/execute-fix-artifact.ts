@@ -2446,9 +2446,9 @@ function waitForAutomergeAfterBranchRepair({ target, commit }: LooseRecord) {
       headSha: String(commit),
     });
     lastReason = readiness.reason;
-    if (["ready", "merged", "stopped"].includes(String(readiness.status))) {
+    if (["ready", "merged", "stopped", "blocked"].includes(String(readiness.status))) {
       const dispatch =
-        readiness.status === "ready"
+        readiness.status === "ready" || readiness.status === "blocked"
           ? dispatchAutomergeCommentRouter({ target, reason: readiness.reason })
           : null;
       logProgress("automerge shepherd wait finished", {

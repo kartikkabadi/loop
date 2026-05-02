@@ -85,6 +85,25 @@ test("automerge shepherd treats head movement as terminal for the current repair
   );
 });
 
+test("automerge shepherd stops on terminal check failures before review pass", () => {
+  const headSha = "abc123";
+  assert.deepEqual(
+    automergeShepherdReadiness({
+      view: {
+        state: "OPEN",
+        headRefOid: headSha,
+        statusCheckRollup: [
+          { name: "check-lint", status: "COMPLETED", conclusion: "FAILURE" },
+          { name: "slow-check", status: "IN_PROGRESS", conclusion: "" },
+        ],
+      },
+      comments: [],
+      headSha,
+    }),
+    { status: "blocked", reason: "GitHub checks failed: check-lint:FAILURE" },
+  );
+});
+
 test("automerge shepherd wait config is bounded and configurable", () => {
   assert.deepEqual(
     automergeShepherdWaitConfig({

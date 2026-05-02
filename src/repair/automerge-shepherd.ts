@@ -42,11 +42,12 @@ export function automergeShepherdReadiness({
       reason: `head changed from ${headSha} to ${view.headRefOid}`,
     };
   }
+  const checkBlock = checkBlockReason(view.statusCheckRollup ?? []);
+  if (checkBlock.status === "blocked") return checkBlock;
   if (!hasTrustedPassForHead(comments, headSha)) {
     return { status: "waiting", reason: "waiting for exact-head ClawSweeper review pass" };
   }
-  const checkBlock = checkBlockReason(view.statusCheckRollup ?? []);
-  if (checkBlock) return { status: "waiting", reason: checkBlock };
+  if (checkBlock.status === "waiting") return checkBlock;
   if (view.mergeable && view.mergeable !== "MERGEABLE") {
     return { status: "waiting", reason: `mergeable state is ${view.mergeable}` };
   }
@@ -77,23 +78,35 @@ export function hasTrustedPassForHead(comments: JsonValue[], headSha: string) {
 }
 
 function checkBlockReason(checks: JsonValue[]) {
-  if (!Array.isArray(checks) || checks.length === 0) return "waiting for GitHub checks";
-  const blockers: string[] = [];
+  if (!Array.isArray(checks) || checks.length === 0) {
+    return { status: "waiting", reason: "waiting for GitHub checks" };
+  }
+  const pending: string[] = [];
+  const failed: string[] = [];
   for (const check of checks) {
     const status = String(check?.status ?? "").toUpperCase();
     const conclusion = String(check?.conclusion ?? "").toUpperCase();
     const name = String(check?.name ?? check?.workflowName ?? "check");
     if (status && status !== "COMPLETED") {
-      blockers.push(`${name}:${status}`);
+      pending.push(`${name}:${status}`);
       continue;
     }
     if (
       ["FAILURE", "ERROR", "TIMED_OUT", "ACTION_REQUIRED", "STARTUP_FAILURE"].includes(conclusion)
     ) {
-      blockers.push(`${name}:${conclusion}`);
+      failed.push(`${name}:${conclusion}`);
     }
   }
-  return blockers.length > 0 ? `waiting for GitHub checks: ${blockers.slice(0, 5).join(", ")}` : "";
+  if (failed.length > 0) {
+    return { status: "blocked", reason: `GitHub checks failed: ${failed.slice(0, 5).join(", ")}` };
+  }
+  if (pending.length > 0) {
+    return {
+      status: "waiting",
+      reason: `waiting for GitHub checks: ${pending.slice(0, 5).join(", ")}`,
+    };
+  }
+  return { status: "ready", reason: "" };
 }
 
 function positiveInt(value: JsonValue, fallback: number) {
