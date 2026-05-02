@@ -87,15 +87,16 @@ rebase cannot complete cleanly. The default shepherd wait is ten minutes with
 shepherd wait immediately and dispatch the router so the failed-check repair
 loop can start without waiting for the full timeout.
 
-The final router gate no longer waits ten minutes for transient GitHub merge
-state. Default transient wait is two minutes with 15-second polls. If GitHub
-still reports `UNSTABLE`, ClawSweeper allows the merge command to try when the
-only visible blockers are ignored non-gating automation checks such as
-`ClawSweeper Dispatch`; GitHub branch protection still enforces required checks
-at merge time. If the live merge preflight reports `DIRTY`, `BEHIND`, or
-`CONFLICTING`, automerge treats that as repairable rebase work and dispatches
-the adopted repair worker instead of leaving the PR open with only a status
-comment.
+The final router gate waits up to ten minutes for transient GitHub merge state
+or pending required checks, polling every 15 seconds. Pending checks are wait
+states, not repair triggers; terminal required-check failures can still dispatch
+the adopted repair worker. If GitHub still reports `UNSTABLE`, ClawSweeper
+allows the merge command to try when the only visible blockers are ignored
+non-gating automation checks such as `ClawSweeper Dispatch`; GitHub branch
+protection still enforces required checks at merge time. If the live merge
+preflight reports `DIRTY`, `BEHIND`, or `CONFLICTING`, automerge treats that as
+repairable rebase work and dispatches the adopted repair worker instead of
+leaving the PR open with only a status comment.
 
 ## Capacity
 

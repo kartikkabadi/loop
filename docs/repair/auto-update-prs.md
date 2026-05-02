@@ -266,8 +266,10 @@ router summarizes checks first, ignores default non-gating checks such as
 `auto-response`, `Labeler`, `Stale`, and `ClawSweeper Dispatch`, then allows the
 exact-head merge command to try when no check blockers remain. The merge command
 still pins the reviewed head SHA and GitHub branch protection remains the final
-authority. Transient merge-state polling defaults to two minutes; set
-`CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS` to use a longer window.
+authority. Pending checks are treated as wait states, not repair triggers; only
+terminal required-check failures can dispatch another repair pass. Transient
+merge-state and check polling defaults to ten minutes; set
+`CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS` to tune the window.
 
 For trusted automation comments, these blocked cases are silent skips. That
 keeps ClawSweeper from replying to every ordinary contributor PR that
@@ -314,8 +316,9 @@ Important knobs:
   iterations per PR; default `10`.
 - `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD` controls per-head repair caps;
   default `1`.
-- `CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS` controls in-run merge-state polling
-  before the router records a waiting automerge action; default `120000`.
+- `CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS` controls in-run merge-state and
+  check polling before the router records a waiting automerge action; default
+  `600000`.
 
 ## Verification
 

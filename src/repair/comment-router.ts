@@ -1568,7 +1568,7 @@ function executeAutomerge(command: LooseRecord) {
   let view = fetchPullRequestView(command.issue_number);
   let latestTarget = latestAutomergeTarget(command, view);
   let block = validateAutomergeReadiness({ command, view, target: latestTarget });
-  while (block && isTransientAutomergeBlock(block, view) && waitedMs < transientWait.maxWaitMs) {
+  while (block && isTransientAutomergeBlock(block) && waitedMs < transientWait.maxWaitMs) {
     const waitMs = Math.min(transientWait.intervalMs, transientWait.maxWaitMs - waitedMs);
     transientObservations.push(automergeTransientObservation(block, view, waitedMs, waitMs));
     sleepMs(waitMs);
@@ -1588,6 +1588,16 @@ function executeAutomerge(command: LooseRecord) {
         merge_method: "squash",
       };
     }
+    if (isTransientAutomergeBlock(block)) {
+      return {
+        action: "merge",
+        status: "waiting",
+        reason: block,
+        merge_method: "squash",
+        transient_wait_ms: waitedMs,
+        transient_observations: transientObservations,
+      };
+    }
     if (isAutomergeCheckBlock(block)) {
       return {
         action: "merge",
@@ -1605,16 +1615,6 @@ function executeAutomerge(command: LooseRecord) {
         reason: block,
         repair_reason: readinessRepairReason,
         merge_method: "squash",
-      };
-    }
-    if (isTransientAutomergeBlock(block, view)) {
-      return {
-        action: "merge",
-        status: "waiting",
-        reason: block,
-        merge_method: "squash",
-        transient_wait_ms: waitedMs,
-        transient_observations: transientObservations,
       };
     }
     return { action: "merge", status: "blocked", reason: block, merge_method: "squash" };
@@ -1850,8 +1850,10 @@ function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
   if (headBlock) return headBlock;
   if (view.mergeable !== "MERGEABLE") return `mergeable state is ${view.mergeable || "unknown"}`;
   const checks = summarizeChecks(view.statusCheckRollup ?? []);
-  if (checks.blockers.length > 0)
-    return `checks are not green: ${checks.blockers.slice(0, 8).join(", ")}`;
+  if (checks.terminalBlockers?.length > 0)
+    return `checks are not green: ${checks.terminalBlockers.slice(0, 8).join(", ")}`;
+  if (checks.pending?.length > 0)
+    return `checks are still running: ${checks.pending.slice(0, 8).join(", ")}`;
   if (checks.total === 0) return "no PR checks found";
   const mergeStateStatus = String(view.mergeStateStatus ?? "");
   if (
@@ -1880,9 +1882,10 @@ function isAutomergeCheckBlock(reason: string) {
   return /^checks are not green:/i.test(String(reason ?? "").trim());
 }
 
-function isTransientAutomergeBlock(reason: string, view: LooseRecord) {
+function isTransientAutomergeBlock(reason: string) {
   const text = String(reason ?? "").toLowerCase();
-  if (text.includes("checks are not green")) return hasPendingChecks(view.statusCheckRollup ?? []);
+  if (text.includes("checks are not green")) return false;
+  if (text.includes("checks are still running")) return true;
   return (
     text.includes("mergeable state is unknown") ||
     text.includes("merge state status is unknown") ||
@@ -1890,14 +1893,6 @@ function isTransientAutomergeBlock(reason: string, view: LooseRecord) {
     text.includes("review decision is review_required") ||
     text.includes("no pr checks found")
   );
-}
-
-function hasPendingChecks(checks: LooseRecord[]) {
-  return (checks ?? []).some((check: JsonValue) => {
-    const status = String(check.status ?? check.state ?? "").toUpperCase();
-    const conclusion = String(check.conclusion ?? "").toUpperCase();
-    return status && !["COMPLETED", "SUCCESS"].includes(status) && !conclusion;
-  });
 }
 
 function classifyIssueTarget(issue: LooseRecord): JsonValue {

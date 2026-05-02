@@ -1064,12 +1064,17 @@ test("repairable check blockers only include completed failures", () => {
       blockers: [
         "checks-node-core:FAILURE",
         "checks-node-channels:TIMED_OUT",
+        "checks-node-start:STARTUP_FAILURE",
         "checks-node-docs:IN_PROGRESS",
         "auto-response:CANCELLED",
         "label:SKIPPED",
       ],
     }),
-    ["checks-node-core:FAILURE", "checks-node-channels:TIMED_OUT"],
+    [
+      "checks-node-core:FAILURE",
+      "checks-node-channels:TIMED_OUT",
+      "checks-node-start:STARTUP_FAILURE",
+    ],
   );
 });
 
@@ -1160,7 +1165,7 @@ test("automerge gate block only reports closed merge policy gates", () => {
 
 test("automerge transient wait config defaults to an in-run retry window", () => {
   assert.deepEqual(automergeTransientWaitConfig({}), {
-    maxWaitMs: 120000,
+    maxWaitMs: 600000,
     intervalMs: 15000,
   });
   assert.deepEqual(

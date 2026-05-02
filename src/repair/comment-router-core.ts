@@ -24,6 +24,7 @@ const REPAIRABLE_CHECK_BLOCKER_CONCLUSIONS = new Set([
   "ACTION_REQUIRED",
   "ERROR",
   "FAILURE",
+  "STARTUP_FAILURE",
   "TIMED_OUT",
 ]);
 
@@ -169,7 +170,7 @@ export function automergeGateBlockReason(env: LooseRecord = process.env) {
 }
 
 export function automergeTransientWaitConfig(env: LooseRecord = process.env) {
-  const maxWaitMs = positiveInt(env.CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS, 2 * 60 * 1000);
+  const maxWaitMs = positiveInt(env.CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS, 10 * 60 * 1000);
   const intervalMs = Math.min(
     Math.max(positiveInt(env.CLAWSWEEPER_AUTOMERGE_TRANSIENT_POLL_MS, 15 * 1000), 1000),
     Math.max(maxWaitMs, 1000),

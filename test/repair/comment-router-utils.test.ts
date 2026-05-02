@@ -240,6 +240,29 @@ test("summarizeChecks still blocks cancelled required checks", () => {
   ]);
 
   assert.deepEqual(checks.blockers, ["required-build:CANCELLED"]);
+  assert.deepEqual(checks.pending, []);
+  assert.deepEqual(checks.terminalBlockers, ["required-build:CANCELLED"]);
+});
+
+test("summarizeChecks separates pending checks from terminal blockers", () => {
+  const checks = summarizeChecks([
+    {
+      name: "slow-required",
+      workflowName: "CI",
+      status: "IN_PROGRESS",
+      conclusion: "",
+    },
+    {
+      name: "failed-required",
+      workflowName: "CI",
+      status: "COMPLETED",
+      conclusion: "FAILURE",
+    },
+  ]);
+
+  assert.deepEqual(checks.blockers, ["slow-required:IN_PROGRESS", "failed-required:FAILURE"]);
+  assert.deepEqual(checks.pending, ["slow-required:IN_PROGRESS"]);
+  assert.deepEqual(checks.terminalBlockers, ["failed-required:FAILURE"]);
 });
 
 test("skipped automerge ledger entries stay retryable", () => {

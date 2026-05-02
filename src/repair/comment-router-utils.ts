@@ -15,6 +15,8 @@ export function summarizeChecks(checks: LooseRecord[]) {
   const ignored = ignoredCheckNames();
   const counts: Record<string, number> = {};
   const blockers: LooseRecord[] = [];
+  const pending: LooseRecord[] = [];
+  const terminalBlockers: LooseRecord[] = [];
   for (const check of checks) {
     const name = String(check.name ?? check.context ?? "unknown check");
     const workflow = String(check.workflowName ?? "");
@@ -24,11 +26,18 @@ export function summarizeChecks(checks: LooseRecord[]) {
     const key = conclusion || status || "UNKNOWN";
     counts[key] = (counts[key] ?? 0) + 1;
     if (ignoredCheck) continue;
-    if (status && !["COMPLETED", "SUCCESS"].includes(status)) blockers.push(`${name}:${status}`);
-    if (conclusion && !PASSING_CHECK_CONCLUSIONS.has(conclusion))
-      blockers.push(`${name}:${conclusion}`);
+    if (status && !["COMPLETED", "SUCCESS"].includes(status)) {
+      const blocker = `${name}:${status}`;
+      blockers.push(blocker);
+      pending.push(blocker);
+    }
+    if (conclusion && !PASSING_CHECK_CONCLUSIONS.has(conclusion)) {
+      const blocker = `${name}:${conclusion}`;
+      blockers.push(blocker);
+      terminalBlockers.push(blocker);
+    }
   }
-  return { total: checks.length, counts, blockers };
+  return { total: checks.length, counts, blockers, pending, terminalBlockers };
 }
 
 export function shouldSuppressProcessedCommentVersion(entry: LooseRecord) {
