@@ -85,13 +85,15 @@ The automerge status comment is the live progress surface. It is edited in
 place and records review, repair, re-review, and merge events with durations,
 run links, and commit links.
 
-For base-sync-only repairs, the repair executor first tries a deterministic
-fast path: rebase onto current `main`, apply known mechanical conflict resolvers
-such as isolated `CHANGELOG.md` conflicts and generated config checksum
-three-way conflicts, push the repaired branch, then wait for exact-head review
-and GitHub checks. Codex fix/edit remains the fallback when the deterministic
-rebase cannot complete cleanly. The default shepherd wait is ten minutes with
-15-second polls, controlled by
+For explicit base-sync-only repairs, the repair executor first tries a
+deterministic fast path: rebase onto current `main`, apply known mechanical
+conflict resolvers such as isolated `CHANGELOG.md` conflicts and generated
+config checksum three-way conflicts, push the repaired branch, then wait for
+exact-head review and GitHub checks. For substantive automerge repairs, Codex
+owns the initial rebase plus PR-comment, CI, and local-test repair loop; the
+executor still owns every GitHub mutation and reruns the normalized validation
+gate before push. The default shepherd wait is ten minutes with 15-second polls,
+controlled by
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS` and
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_POLL_MS`. Terminal check failures stop the
 shepherd wait immediately and dispatch the router so the failed-check repair

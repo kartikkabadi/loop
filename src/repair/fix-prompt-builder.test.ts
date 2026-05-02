@@ -76,6 +76,32 @@ test("fix prompt makes Codex own the validation loop", () => {
   assert.match(prompt, /do not report validation as passed unless it passed after your last edit/);
 });
 
+test("automerge fix prompt makes Codex own PR repair, rebase, and CI discovery", () => {
+  const prompt = buildFixPrompt({
+    fixArtifact: {
+      repair_strategy: "repair_contributor_branch",
+      summary: "Repair the stuck automerge branch.",
+      changelog_required: false,
+      validation_commands: ["pnpm build", "pnpm test src/config/schema.base.generated.test.ts"],
+    },
+    branch: "clawsweeper/automerge-openclaw-openclaw-75976",
+    mode: "repair",
+    attempt: 1,
+    maxEditAttempts: 3,
+    repositoryContext: "candidate_files (1):\nsrc/config/schema.base.generated.test.ts (100)",
+    validationCommands: ["pnpm check:changed"],
+    isAutomergeRepair: true,
+  });
+
+  assert.match(prompt, /automerge repair loop: treat this as direct PR repair work/);
+  assert.match(prompt, /read-only `gh` commands are allowed/);
+  assert.match(prompt, /rebase this branch onto latest origin\/main yourself/);
+  assert.match(prompt, /fix failing CI\/checks for this PR/);
+  assert.match(prompt, /validation command hints: pnpm check:changed ; pnpm build/);
+  assert.match(prompt, /treat artifact validation commands as hints/);
+  assert.doesNotMatch(prompt, /do not push, open PRs, close PRs, or call gh/);
+});
+
 test("fix prompt includes rebase and previous no-diff recovery details", () => {
   const prompt = buildFixPrompt({
     fixArtifact: {

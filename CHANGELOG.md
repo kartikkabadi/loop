@@ -57,6 +57,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added bounded Git/GitHub network timeouts to repair execution so hung
   contributor-branch fetches fail with artifacts instead of exhausting the
   whole automerge job.
+- Simplified substantive automerge repair so Codex owns the initial rebase,
+  PR-comment review, CI inspection, and test/fix loop while the deterministic
+  executor keeps GitHub mutations and final validation.
 - Filter routine GitHub activity before posting OpenClaw hook turns, retry
   transient hook failures with the same idempotency key, and document the retry
   controls for the activity lane.

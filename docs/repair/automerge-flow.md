@@ -73,13 +73,23 @@ For base-sync-only work, the executor first tries the deterministic fast path:
 
 Known mechanical resolvers currently cover isolated `CHANGELOG.md` conflicts
 and generated config checksum conflicts where the replayed commit changed only
-selected checksum entries. If the deterministic path cannot finish cleanly,
-Codex edit/review/fix remains the fallback. The Codex edit prompt includes the
-same normalized changed-surface gate the executor will verify, usually
-`pnpm check:changed` for OpenClaw, and Codex must run that gate, fix failures,
-and rerun it before returning. The executor still re-runs the gate as the
-authority before push; if anything remains, it feeds the full failure back into
-a dedicated validation-fix pass before spending the next review attempt.
+selected checksum entries. That deterministic fast path is only for explicit
+base-sync-only artifacts.
+
+For substantive automerge repairs, Codex owns the first rebase. The executor
+fetches the current base and contributor branch, prepares the target toolchain,
+then prompts Codex to inspect the PR comments/review threads/check logs, rebase
+onto latest `origin/main`, resolve conflicts, fix CI, run tests, and keep
+iterating until the checkout is merge-ready or an external blocker is proven.
+Read-only `gh` is allowed inside that prompt for comments, review threads,
+check status, and check logs; GitHub mutations still stay with the deterministic
+executor.
+
+The Codex prompt treats artifact validation commands as hints for automerge
+repair, with `pnpm check:changed` as the OpenClaw default local gate. The
+executor still re-runs the normalized gate as the authority before push; if
+anything remains, it feeds the full failure back into a dedicated
+validation-fix pass before spending the next review attempt.
 
 ## Exact-Head Rule
 

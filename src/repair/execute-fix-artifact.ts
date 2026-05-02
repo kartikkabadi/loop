@@ -668,42 +668,59 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   const sourceHead = currentHead(targetDir);
   logProgress("preparing target toolchain", { source_head: sourceHead });
   prepareTargetToolchain(targetDir, currentTargetValidationOptions());
-  logProgress("rebasing source branch", { branch, base_branch: baseBranch });
-  const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
-  logProgress("source branch rebase result", {
-    status: rebaseResult.status,
-    previous_head: rebaseResult.previous_head,
-    current_head: rebaseResult.current_head,
-  });
-  const mechanicalConflictResolution = tryResolveMechanicalRebaseConflicts({
-    targetDir,
-    rebaseResult,
-  });
-  if (mechanicalConflictResolution.status === "resolved") {
-    logProgress("mechanically resolved rebase conflicts", mechanicalConflictResolution);
-  }
+  const codexOwnsInitialRebase =
+    isAutomergeRepairJob() && fixArtifact.deterministic_rebase_only !== true;
+  let rebaseResult = null;
+  let fastRepair: LooseRecord = {
+    status: "disabled",
+    reason: codexOwnsInitialRebase
+      ? "initial automerge rebase is delegated to Codex repair"
+      : "not evaluated",
+  };
+  if (codexOwnsInitialRebase) {
+    logProgress("deferring initial automerge rebase to Codex repair pass", {
+      branch,
+      base_branch: baseBranch,
+      source_head: sourceHead,
+    });
+  } else {
+    logProgress("rebasing source branch", { branch, base_branch: baseBranch });
+    rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
+    logProgress("source branch rebase result", {
+      status: rebaseResult.status,
+      previous_head: rebaseResult.previous_head,
+      current_head: rebaseResult.current_head,
+    });
+    const mechanicalConflictResolution = tryResolveMechanicalRebaseConflicts({
+      targetDir,
+      rebaseResult,
+    });
+    if (mechanicalConflictResolution.status === "resolved") {
+      logProgress("mechanically resolved rebase conflicts", mechanicalConflictResolution);
+    }
 
-  const fastRepair = tryAutomergeFastRebaseRepair({
-    fixArtifact,
-    targetDir,
-    sourceHead,
-    rebaseResult,
-  });
-  if (fastRepair.status === "ready") {
-    return pushRepairBranchAndUpdateStatus({
-      sourcePr,
-      pull,
-      sameRepoBranch,
+    fastRepair = tryAutomergeFastRebaseRepair({
+      fixArtifact,
       targetDir,
       sourceHead,
-      prep: fastRepair.prep,
-      fastRepair,
+      rebaseResult,
     });
-  }
-  if (fastRepair.status === "fallback") {
-    logProgress("automerge fast rebase falling back to Codex repair path", {
-      reason: fastRepair.reason,
-    });
+    if (fastRepair.status === "ready") {
+      return pushRepairBranchAndUpdateStatus({
+        sourcePr,
+        pull,
+        sameRepoBranch,
+        targetDir,
+        sourceHead,
+        prep: fastRepair.prep,
+        fastRepair,
+      });
+    }
+    if (fastRepair.status === "fallback") {
+      logProgress("automerge fast rebase falling back to Codex repair path", {
+        reason: fastRepair.reason,
+      });
+    }
   }
 
   const prep = editValidatePrepareMerge({
@@ -1419,6 +1436,7 @@ function editValidatePrepareMerge({
         rebaseResult,
         maxEditAttempts,
         validationCommands: validationPreflight.resolved_commands ?? [],
+        isAutomergeRepair: isAutomergeRepairJob(),
       });
       const summaryPath = path.join(workRoot, `${mode}-codex-summary-${attempt}.md`);
       const workerTimeoutMs = currentCodexTimeoutMs();
@@ -1658,6 +1676,7 @@ function runCodexBaseReconcile({
       rebaseResult,
       maxEditAttempts,
       validationCommands: validationPreflight.resolved_commands ?? [],
+      isAutomergeRepair: isAutomergeRepairJob(),
     });
     const summaryPath = path.join(
       workRoot,

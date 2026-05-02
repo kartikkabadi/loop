@@ -19,6 +19,7 @@ export function buildFixPrompt({
   rebaseResult,
   maxEditAttempts,
   validationCommands,
+  isAutomergeRepair = false,
 }: LooseRecord) {
   return [
     "You are editing the target repository for ClawSweeper Repair.",
@@ -35,9 +36,10 @@ export function buildFixPrompt({
     "- address review-bot concerns named in the artifact;",
     "- resolve actionable human review comments, bot comments, and requested changes named in the artifact;",
     "- fix relevant failing CI/check output named in the artifact; do not leave known changed-surface CI failures for a later pass;",
+    isAutomergeRepair ? renderAutomergeRepairGuidance() : "",
     renderChangelogRule(fixArtifact),
     "- prepare the PR so it can pass the ClawSweeper Repair merge_preflight gate;",
-    "- do not push, open PRs, close PRs, or call gh;",
+    renderGitHubToolRule(isAutomergeRepair),
     "- do not create a final commit unless git rebase/merge conflict resolution requires it; ClawSweeper Repair checkpoints ordinary edits after you return;",
     "- ClawSweeper Repair will checkpoint and push your edits to the recovery branch after you return;",
     "- do not inspect or print environment variables, credentials, tokens, or secrets;",
@@ -45,7 +47,7 @@ export function buildFixPrompt({
     "- exec-adjacent bugs are allowed when the fix is ordinary correctness or hardening and does not redefine the security boundary;",
     "- before returning, verify git status/diff/log show a merge-ready branch state.",
     "",
-    renderValidationLoopGuidance({ fixArtifact, validationCommands }),
+    renderValidationLoopGuidance({ fixArtifact, validationCommands, isAutomergeRepair }),
     "",
     `Mode: ${mode}`,
     `Branch: ${branch}`,
@@ -75,7 +77,27 @@ export function buildFixPrompt({
     .join("\n");
 }
 
-function renderValidationLoopGuidance({ fixArtifact, validationCommands = [] }: LooseRecord) {
+function renderGitHubToolRule(isAutomergeRepair: boolean) {
+  if (!isAutomergeRepair) return "- do not push, open PRs, close PRs, or call gh;";
+  return "- do not push, open PRs, close PRs, comment, label, or merge; read-only `gh` commands are allowed for PR comments, review threads, check status, and check logs when available;";
+}
+
+function renderAutomergeRepairGuidance() {
+  return [
+    "- automerge repair loop: treat this as direct PR repair work, not a planning exercise;",
+    "- inspect the PR comments, review threads, ClawSweeper verdict, and failing check evidence already provided; if read-only `gh` is available, use it to inspect missing PR comments, reviews, checks, and logs;",
+    "- rebase this branch onto latest origin/main yourself and resolve conflicts;",
+    "- address actionable PR comments and review findings;",
+    "- fix failing CI/checks for this PR;",
+    "- run the tests/checks needed to prove the PR should go green, then keep iterating until the checkout is merge-ready or a concrete external blocker is proven;",
+  ].join("\n");
+}
+
+function renderValidationLoopGuidance({
+  fixArtifact,
+  validationCommands = [],
+  isAutomergeRepair = false,
+}: LooseRecord) {
   const commands = [
     ...(Array.isArray(validationCommands) ? validationCommands : []),
     ...(Array.isArray(fixArtifact.validation_commands) ? fixArtifact.validation_commands : []),
@@ -83,6 +105,20 @@ function renderValidationLoopGuidance({ fixArtifact, validationCommands = [] }: 
     .map((command) => String(command).trim())
     .filter(Boolean)
     .filter((command, index, all) => all.indexOf(command) === index);
+  if (isAutomergeRepair) {
+    return [
+      "Validation loop:",
+      "- run the tests/checks needed to prove this automerge PR should go green before returning;",
+      "- if `pnpm check:changed` is available or listed below, run it; it is the default OpenClaw changed-surface gate;",
+      commands.length > 0
+        ? `- validation command hints: ${commands.join(" ; ")}`
+        : "- validation command hints: discover the narrow changed-surface command from package scripts, PR comments, check logs, and the artifact;",
+      "- treat artifact validation commands as hints unless they reproduce or prove the failing PR checks;",
+      "- if validation fails, fix the failure and rerun until it passes or an external blocker is proven;",
+      "- do not report validation as passed unless it passed after your last edit in this checkout;",
+      "- include the exact validation commands and final pass/fail result in your final message.",
+    ].join("\n");
+  }
   return [
     "Validation loop:",
     "- after editing, run the changed-surface validation in this checkout before returning;",
