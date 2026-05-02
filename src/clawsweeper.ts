@@ -3613,6 +3613,7 @@ function securityReviewLine(review: SecurityReview): string {
 }
 
 function publicSecurityReviewLine(review: SecurityReview): string {
+  if (review.status === "not_applicable" && review.concerns.length === 0) return "";
   const prefix =
     review.status === "needs_attention"
       ? "Needs attention"
@@ -4239,7 +4240,8 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     appendPublicSection(lines, "Summary", publicSummaryBody(summaryLine, reproductionAssessment));
   }
   appendPublicSection(lines, isPullRequest ? "Next step before merge" : "Next step", nextStepLine);
-  appendPublicSection(lines, "Security", publicSecurityReviewLine(securityReview));
+  const securityLine = publicSecurityReviewLine(securityReview);
+  if (securityLine) appendPublicSection(lines, "Security", securityLine);
   if (isPullRequest && reviewFindings.length) {
     lines.push("**Review findings**", ...reviewFindings.slice(0, 3).map(reviewFindingSummaryLine));
   }

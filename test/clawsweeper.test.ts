@@ -1240,6 +1240,8 @@ Reason: The bug is narrow and source-reproducible.
     /\*\*Summary\*\*\nKeep open\. Slack typing callbacks are disabled in message-tool-only group replies\.\n\nReproducibility: yes\. A source-level reproduction is clear/,
   );
   assert.ok(comment.indexOf("Reproducibility: yes.") < comment.indexOf("**Next step**"));
+  assert.doesNotMatch(comment, /\*\*Security\*\*/);
+  assert.doesNotMatch(comment, /Not applicable:/);
   assert.match(
     comment,
     /Do we have a high-confidence way to reproduce the issue\?\n\nYes\. A source-level reproduction is clear/,

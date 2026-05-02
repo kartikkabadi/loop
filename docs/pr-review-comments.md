@@ -48,7 +48,8 @@ report has:
   work-candidate reason or next action
 - `**Security**` from the typed `securityReview` field, so supply-chain,
   permission, secret-handling, and code-execution concerns have a dedicated
-  visible pass
+  visible pass; omit this section when the review is `not_applicable` and has
+  no concerns
 - `**Review findings**` for Codex `/review`-style findings, using typed priority,
   confidence, file, and line-range data from the report
 - `Best possible solution:` only when it adds a distinct end-state that is not
