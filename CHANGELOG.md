@@ -44,6 +44,8 @@ checkpoint, and status-only commits are intentionally omitted.
   reviewed together without waiting for normal batch selection. Thanks @stainlu.
 - Added copyable targeted review inputs to Audit Health for reviewable drift
   findings. Thanks @stainlu.
+- Added maintainer issue commands that let ClawSweeper create or update one
+  guarded implementation pull request from an open issue.
 
 ### Changed
 

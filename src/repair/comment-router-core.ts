@@ -3,11 +3,13 @@ export const REPAIR_INTENTS = new Set([
   "fix_ci",
   "address_review",
   "rebase",
+  "implement_issue",
   "clawsweeper_auto_repair",
 ]);
 export const MERGE_INTENTS = new Set(["clawsweeper_auto_merge", "maintainer_approve_automerge"]);
 export const AUTOCLOSE_INTENTS = new Set(["autoclose"]);
 export const AUTOMERGE_JOB_SOURCE = "pr_automerge";
+export const ISSUE_IMPLEMENTATION_JOB_SOURCE = "issue_implementation";
 export const AUTOMERGE_LABEL = "clawsweeper:automerge";
 export const AUTOFIX_LABEL = "clawsweeper:autofix";
 export const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
@@ -57,6 +59,19 @@ export function automergeJobBranch(repo: string, issueNumber: JsonValue) {
 export function automergeJobPath(repo: string, issueNumber: JsonValue) {
   const owner = String(repo ?? "").split("/")[0] || "openclaw";
   return `jobs/${owner}/inbox/${automergeClusterId(repo, issueNumber)}.md`;
+}
+
+export function issueImplementationClusterId(repo: string, issueNumber: JsonValue) {
+  return `issue-${repoSlug(repo)}-${Number(issueNumber)}`;
+}
+
+export function issueImplementationJobBranch(repo: string, issueNumber: JsonValue) {
+  return `clawsweeper/${issueImplementationClusterId(repo, issueNumber)}`;
+}
+
+export function issueImplementationJobPath(repo: string, issueNumber: JsonValue) {
+  const owner = String(repo ?? "").split("/")[0] || "openclaw";
+  return `jobs/${owner}/inbox/${issueImplementationClusterId(repo, issueNumber)}.md`;
 }
 
 export function renderAutomergeJob({
@@ -122,6 +137,88 @@ ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop
 - For user-facing OpenClaw \`fix\`, \`feat\`, or \`perf\` changes, inspect the changelog policy. If a changelog is required, emit \`changelog_required: true\`, include \`CHANGELOG.md\` in \`likely_files\`, and tell the Codex edit pass to add or repair the \`CHANGELOG.md\` entry with allowed contributor attribution before declaring the branch merge-ready. Never add forbidden \`Thanks @codex\`, \`Thanks @openclaw\`, or \`Thanks @steipete\`; if only those authors are known, keep the required changelog entry without a \`Thanks @...\` line and preserve credit in PR history/source links.
 - ${finalMergeLine}
 - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.
+`;
+}
+
+export function renderIssueImplementationJob({
+  repo,
+  issueNumber,
+  title = null,
+  commentUrl = null,
+  author = null,
+  implementationPrompt = null,
+}: LooseRecord) {
+  const clusterId = issueImplementationClusterId(repo, issueNumber);
+  const branch = issueImplementationJobBranch(repo, issueNumber);
+  const ref = `#${Number(issueNumber)}`;
+  const issueUrl = `https://github.com/${repo}/issues/${Number(issueNumber)}`;
+  const safeTitle = String(title ?? `Issue ${ref}`).trim() || `Issue ${ref}`;
+  const extraPrompt = String(implementationPrompt ?? "").trim();
+  const maintainerContext = [
+    commentUrl ? `- Command comment: ${commentUrl}` : null,
+    author ? `- Requested by: ${author}` : null,
+    extraPrompt ? `- Maintainer instruction: ${extraPrompt}` : null,
+  ].filter(Boolean);
+  return `---
+repo: ${repo}
+cluster_id: ${clusterId}
+mode: autonomous
+allowed_actions:
+  - comment
+  - label
+  - fix
+  - raise_pr
+blocked_actions:
+  - close
+  - merge
+require_human_for:
+  - close
+  - merge
+canonical:
+  - ${ref}
+candidates:
+  - ${ref}
+cluster_refs:
+  - ${ref}
+allow_instant_close: false
+allow_fix_pr: true
+allow_merge: false
+allow_unmerged_fix_close: false
+allow_post_merge_close: false
+require_fix_before_close: false
+security_policy: central_security_only
+security_sensitive: false
+target_branch: ${branch}
+source: ${ISSUE_IMPLEMENTATION_JOB_SOURCE}
+---
+
+# ClawSweeper issue implementation candidate
+
+ClawSweeper Repair should create or update one implementation PR from \`${branch}\`.
+
+Source issue: ${issueUrl}
+Title: ${safeTitle}
+${maintainerContext.length ? `\n## Maintainer Context\n\n${maintainerContext.join("\n")}\n` : ""}
+## Operator Prompt
+
+Use the source issue as the product request or bug report. Verify the request is
+still valid on latest \`${repo}@main\`, inspect nearby code, and make the
+narrowest implementation that directly satisfies the issue. If the issue is too
+broad, underspecified, security-sensitive, already fixed, or not safely
+implementable by automation, do not change code; report the exact blocker.
+
+When code changes are appropriate, emit a fix artifact with
+\`repair_strategy: "new_fix_pr"\`, \`source_prs: []\`, this issue in
+\`linked_refs\`, and validation commands for the touched surface.
+
+## Guardrails
+
+- Do not merge.
+- Do not close the issue from this lane.
+- Keep one PR for this issue; reuse \`${branch}\` if it already exists.
+- Keep the diff narrow and avoid unrelated refactors.
+- Preserve issue context and link ${issueUrl} in the PR body.
+- Add a changelog entry when the target repo expects one.
 `;
 }
 
@@ -445,7 +542,17 @@ export function parseCommand(body: string) {
     const review = line.match(/^\s*\/review(?:\s+(.+))?\s*$/i);
     if (review) return commandFromText("slash", review[1] ? `review ${review[1]}` : "review");
     const slash = line.match(/^\s*\/clawsweeper(?:\s+(.+))?\s*$/i);
-    if (slash) return commandFromText("slash", slash[1] ?? "status");
+    if (slash) {
+      const command = commandFromText("slash", slash[1] ?? "status");
+      if (command.intent === "implement_issue") {
+        const rest = lines
+          .slice(index + 1)
+          .join("\n")
+          .trim();
+        if (rest) return commandFromText("slash", `${slash[1]}\n${rest}`);
+      }
+      return command;
+    }
     const mention = line.match(
       /^\s*@(?:clawsweeper|openclaw-clawsweeper)(?:\[bot\])?(?:(?:\s*[:,]\s*|\s+)(.+))?\s*$/i,
     );
@@ -456,6 +563,8 @@ export function parseCommand(body: string) {
           .slice(index + 1)
           .join("\n")
           .trim();
+        if (command.intent === "implement_issue" && rest)
+          return commandFromText("mention", `${mention[1]}\n${rest}`);
         if (command.command === "status" && rest) return commandFromText("mention", rest);
         return command;
       }
@@ -538,7 +647,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       marker,
       "ClawSweeper is here and listening for maintainer commands.",
       "",
-      "Supported commands: `/review`, `/clawsweeper status`, `/clawsweeper re-review`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper autofix`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
+      "Supported commands: `/review`, `/clawsweeper status`, `/clawsweeper re-review`, `/clawsweeper implement`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper autofix`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
       "",
       "I only act for maintainers, or for trusted ClawSweeper feedback on a ClawSweeper PR or PR opted into `clawsweeper:autofix` or `clawsweeper:automerge`.",
     ].join("\n");
@@ -614,6 +723,24 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       dispatched?.clawsweeper
         ? "I asked ClawSweeper to review this item again."
         : `Reason: ${command.reason ?? "re-review requires an open issue or PR"}.`,
+    ].join("\n");
+  }
+  if (command.intent === "implement_issue") {
+    return [
+      marker,
+      dispatched
+        ? "ClawSweeper issue implementation requested."
+        : "ClawSweeper could not start an implementation PR for this issue.",
+      "",
+      dispatched
+        ? [
+            "I queued the repair worker to verify this issue on latest `main` and open or update one narrow implementation PR if it is safe.",
+            repairDispatchLine(dispatched, "Action"),
+            `Model: \`${dispatched.model}\``,
+          ].join("\n")
+        : `Reason: ${command.reason ?? "implementation PR creation requires an open issue"}.`,
+      "",
+      "This lane creates PRs only; it does not merge or close the issue.",
     ].join("\n");
   }
   if (command.intent === "autoclose") {
@@ -755,6 +882,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       `Reason: ${command.reason ?? "unsupported command or target"}.`,
       "",
       "Supported re-review commands work on open issues and PRs: `/review`, `/clawsweeper re-review`, or `@clawsweeper re-review`.",
+      "Supported issue implementation commands work on open issues: `/clawsweeper implement`, `@clawsweeper create pr`, or `@clawsweeper fix issue`.",
       "Supported repair commands work on existing ClawSweeper PRs and PRs opted into `clawsweeper:autofix` or `clawsweeper:automerge`: `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`.",
       "A maintainer can opt a PR in with `/clawsweeper autofix` or `/clawsweeper automerge` and I can take another pass.",
       "A maintainer can close unsupported or declined work with `/autoclose <reason>`.",
@@ -797,9 +925,8 @@ export function sharedAutomergeStatusMarkerPrefix(command: LooseRecord) {
 }
 
 function commandFromText(trigger: JsonValue, value: JsonValue) {
-  const rawCommand = String(value ?? "status")
-    .trim()
-    .replace(/\s+/g, " ");
+  const rawText = String(value ?? "status").trim();
+  const rawCommand = rawText.replace(/\s+/g, " ");
   const rawNormalized = rawCommand.toLowerCase();
   const command = normalizeCommandForIntent(rawNormalized);
   let intent = normalizeIntent(command);
@@ -815,6 +942,8 @@ function commandFromText(trigger: JsonValue, value: JsonValue) {
   const parsed: LooseRecord = { trigger, command: parsedCommand, intent };
   if (intent === "autoclose") parsed.autoclose_message = autocloseReasonFromCommand(rawCommand);
   if (intent === "freeform_assist") parsed.freeform_prompt = rawCommand;
+  if (intent === "implement_issue")
+    parsed.implementation_prompt = implementationPromptFromCommand(rawText);
   return parsed;
 }
 
@@ -830,6 +959,13 @@ export function autocloseReasonFromCommand(command: LooseRecord) {
   return String(match?.[1] ?? "").trim();
 }
 
+function implementationPromptFromCommand(command: LooseRecord) {
+  return String(command ?? "")
+    .trim()
+    .replace(/^(?:implement|create\s+pr|open\s+pr|fix\s+issue)\b[:\s-]*/i, "")
+    .trim();
+}
+
 function normalizeIntent(command: LooseRecord) {
   if (!command || command === "status") return "status";
   if (["help", "?"].includes(command)) return "help";
@@ -837,6 +973,18 @@ function normalizeIntent(command: LooseRecord) {
   if (["fix ci", "fix-ci", "ci", "repair ci", "repair checks", "fix checks"].includes(command))
     return "fix_ci";
   if (["address review", "address-review", "fix review"].includes(command)) return "address_review";
+  if (
+    command === "implement" ||
+    command.startsWith("implement ") ||
+    command === "create pr" ||
+    command.startsWith("create pr ") ||
+    command === "open pr" ||
+    command.startsWith("open pr ") ||
+    command === "fix issue" ||
+    command.startsWith("fix issue ")
+  ) {
+    return "implement_issue";
+  }
   if (
     ["review", "re-review", "rereview", "review again", "rerun review", "run review"].includes(
       command,

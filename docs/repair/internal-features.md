@@ -233,6 +233,25 @@ The generated job uses `source: clawsweeper_commit` and may have no issue/PR
 `candidates`. The fix artifact uses `repair_strategy: new_fix_pr`; merge and
 close actions remain blocked.
 
+## Issue Implementation Commands
+
+Maintainer comments can turn an open issue into one ClawSweeper implementation
+PR with `/clawsweeper implement`, `@clawsweeper create pr`, or
+`@clawsweeper fix issue`.
+
+The comment router creates or reuses
+`jobs/<owner>/inbox/issue-<owner>-<repo>-<number>.md` with
+`source: issue_implementation` and target branch
+`clawsweeper/issue-<owner>-<repo>-<number>`. The job allows comment, label,
+fix, and raise-pr actions, blocks close and merge, and tells the repair worker
+to verify the issue against latest `main` before emitting
+`repair_strategy: new_fix_pr`.
+
+This lane is intentionally PR-only: it does not merge, close the source issue,
+or convert broad/security-sensitive requests into public branches. Reruns reuse
+the same job and branch, so repeated maintainer comments update one PR instead
+of creating duplicates.
+
 ## Applying Comments, Closures, And Merges
 
 Script: `scripts/apply-result.ts`

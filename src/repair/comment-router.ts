@@ -39,11 +39,14 @@ import {
   existingCommandStatusBlocksReplay,
   existingModeStatusBlocksReplay,
   isMaintainerCommandAllowed,
+  issueImplementationClusterId,
+  issueImplementationJobPath,
   parseCommand,
   parseTrustedAutomation,
   repairableCheckBlockers,
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
+  renderIssueImplementationJob,
   renderResponse,
   sharedAutomergeStatusMarkerPrefix,
   staleAutomergeActivationReason,
@@ -152,6 +155,7 @@ for (const comment of comments) {
     command: parsed.command,
     intent: parsed.intent,
     autoclose_message: parsed.autoclose_message ?? null,
+    implementation_prompt: parsed.implementation_prompt ?? null,
     trusted_bot: Boolean(parsed.trusted_bot),
     trusted_bot_author: parsed.trusted_bot_author ?? null,
     automation_source: parsed.automation_source ?? null,
@@ -321,7 +325,9 @@ function classifyCommand(command: LooseRecord): JsonValue {
   const liveTarget = fetchLiveTarget(command);
   if (liveTarget.status === "waiting") return liveTarget;
   const { issue, pull } = liveTarget;
-  const target = pull ? classifyPullTarget(pull, command.issue_number) : classifyIssueTarget(issue);
+  const target = pull
+    ? classifyPullTarget(pull, command.issue_number)
+    : classifyIssueTarget(issue, command.issue_number);
   const next = { ...command, target };
 
   if (
@@ -387,6 +393,48 @@ function classifyCommand(command: LooseRecord): JsonValue {
         {
           action: "dispatch_clawsweeper",
           workflow: reviewWorkflow,
+          status: execute ? "pending" : "planned",
+        },
+        { action: "comment", status: execute ? "pending" : "planned" },
+      ],
+    };
+  }
+  if (command.intent === "implement_issue") {
+    if (String(issue.state ?? "").toLowerCase() !== "open") {
+      return {
+        ...next,
+        status: "ready",
+        reason: "implementation PR creation requires an open issue",
+        actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
+      };
+    }
+    if (pull) {
+      return {
+        ...next,
+        status: "ready",
+        reason:
+          "implementation PR creation must be requested on an issue; use autofix or automerge for pull requests",
+        actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
+      };
+    }
+    return {
+      ...next,
+      status: "ready",
+      actions: [
+        ...(target.job_path
+          ? []
+          : [
+              {
+                action: "ensure_issue_implementation_job",
+                job_path: target.issue_implementation_job_path,
+                status: execute ? "pending" : "planned",
+              },
+            ]),
+        {
+          action: "dispatch_repair",
+          workflow,
+          job_path: target.job_path ?? target.issue_implementation_job_path,
+          mode: target.mode ?? "autonomous",
           status: execute ? "pending" : "planned",
         },
         { action: "comment", status: execute ? "pending" : "planned" },
@@ -855,15 +903,22 @@ function executeCommand(command: LooseRecord) {
   if (!command.trusted_bot) reactToComment(command, "eyes");
   if (
     shouldDispatchRepair &&
-    (canRepairPullTarget(command.target) || ["autofix", "automerge"].includes(command.intent))
+    (canRepairPullTarget(command.target) ||
+      ["autofix", "automerge", "implement_issue"].includes(command.intent))
   ) {
     if (["autofix", "automerge"].includes(command.intent)) {
       applyRepairLoopOptIn(command);
     }
-    const job = ensureAutomergeJob(command);
+    const job =
+      command.intent === "implement_issue"
+        ? ensureIssueImplementationJob(command)
+        : ensureAutomergeJob(command);
     if (job.status_detail === "written") {
       command.actions = command.actions.map((action: JsonValue) => {
-        if (action.action === "ensure_automerge_job")
+        if (
+          action.action === "ensure_automerge_job" ||
+          action.action === "ensure_issue_implementation_job"
+        )
           return { ...action, status: "executed", ...job };
         if (action.action === "label")
           return { ...action, status: "executed", label: action.label };
@@ -901,7 +956,10 @@ function executeCommand(command: LooseRecord) {
       ]);
     }
     command.actions = command.actions.map((action: JsonValue) => {
-      if (action.action === "ensure_automerge_job")
+      if (
+        action.action === "ensure_automerge_job" ||
+        action.action === "ensure_issue_implementation_job"
+      )
         return { ...action, status: "executed", ...job };
       if (action.action === "label") return { ...action, status: "executed", label: action.label };
       if (action.action === "remove_label")
@@ -1254,6 +1312,57 @@ function ensureAutomergeJob(command: LooseRecord) {
   const job = parseJob(relative);
   const errors = validateJob(job);
   if (errors.length > 0) throw new Error(`invalid automerge job ${relative}: ${errors.join("; ")}`);
+  command.target = {
+    ...command.target,
+    cluster_id: job.frontmatter.cluster_id,
+    job_path: job.relativePath,
+    mode: dispatchMode(job.relativePath),
+  };
+  return {
+    job_path: command.target.job_path,
+    mode: command.target.mode,
+    cluster_id: command.target.cluster_id,
+    status_detail: statusDetail,
+  };
+}
+
+function ensureIssueImplementationJob(command: LooseRecord) {
+  if (command.target?.job_path) {
+    return {
+      job_path: command.target.job_path,
+      mode: command.target.mode ?? dispatchMode(command.target.job_path),
+      status_detail: "existing",
+    };
+  }
+  if (command.target?.kind !== "issue" || !command.issue_number) {
+    throw new Error("issue implementation job requires an issue target");
+  }
+
+  const relative =
+    command.target.issue_implementation_job_path ??
+    issueImplementationJobPath(command.repo, command.issue_number);
+  const absolute = path.join(repoRoot(), relative);
+  let statusDetail = "existing";
+  if (!fs.existsSync(absolute)) {
+    fs.mkdirSync(path.dirname(absolute), { recursive: true });
+    fs.writeFileSync(
+      absolute,
+      renderIssueImplementationJob({
+        repo: command.repo,
+        issueNumber: command.issue_number,
+        title: command.target.title,
+        commentUrl: command.comment_url,
+        author: command.author,
+        implementationPrompt: command.implementation_prompt,
+      }),
+    );
+    statusDetail = "written";
+  }
+
+  const job = parseJob(relative);
+  const errors = validateJob(job);
+  if (errors.length > 0)
+    throw new Error(`invalid issue implementation job ${relative}: ${errors.join("; ")}`);
   command.target = {
     ...command.target,
     cluster_id: job.frontmatter.cluster_id,
@@ -1948,12 +2057,20 @@ function isTransientAutomergeBlock(reason: string) {
   );
 }
 
-function classifyIssueTarget(issue: LooseRecord): JsonValue {
+function classifyIssueTarget(issue: LooseRecord, issueNumber: JsonValue): JsonValue {
+  const implementationCluster = issueImplementationClusterId(targetRepo, issueNumber);
+  const implementationPath = issueImplementationJobPath(targetRepo, issueNumber);
+  const jobPath = existingJobPath(implementationCluster, targetRepo);
   return {
     kind: "issue",
     state: issue.state ?? null,
     title: issue.title ?? null,
     labels: (issue.labels ?? []).map((item: JsonValue) => item.name ?? item),
+    cluster_id: jobPath ? implementationCluster : null,
+    job_path: jobPath,
+    issue_implementation_cluster_id: implementationCluster,
+    issue_implementation_job_path: jobPath ?? implementationPath,
+    mode: jobPath ? dispatchMode(jobPath) : "autonomous",
   };
 }
 

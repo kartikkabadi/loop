@@ -24,12 +24,16 @@ import {
   existingCommandStatusBlocksReplay,
   existingModeStatusBlocksReplay,
   hasCommandResponseMarker,
+  issueImplementationClusterId,
+  issueImplementationJobBranch,
+  issueImplementationJobPath,
   isMaintainerCommandAllowed,
   parseCommand,
   parseTrustedAutomation,
   repairableCheckBlockers,
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
+  renderIssueImplementationJob,
   renderResponse,
   sharedAutomergeStatusMarkerPrefix,
   staleAutomergeActivationReason,
@@ -102,6 +106,24 @@ test("parseCommand recognizes maintainer slash commands", () => {
     trigger: "slash",
     command: "review again",
     intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper implement"), {
+    trigger: "slash",
+    command: "implement",
+    intent: "implement_issue",
+    implementation_prompt: "",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper create pr keep the fix narrow"), {
+    trigger: "slash",
+    command: "create pr keep the fix narrow",
+    intent: "implement_issue",
+    implementation_prompt: "keep the fix narrow",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper implement\nKeep it small.\nAdd tests."), {
+    trigger: "slash",
+    command: "implement keep it small. add tests",
+    intent: "implement_issue",
+    implementation_prompt: "Keep it small.\nAdd tests.",
   });
   assert.deepEqual(parseCommand("/clawsweeper approve"), {
     trigger: "slash",
@@ -285,6 +307,21 @@ test("automerge job helpers create stable adopted PR job identity", () => {
   );
 });
 
+test("issue implementation job helpers create stable issue PR job identity", () => {
+  assert.equal(
+    issueImplementationClusterId("openclaw/openclaw", 74112),
+    "issue-openclaw-openclaw-74112",
+  );
+  assert.equal(
+    issueImplementationJobBranch("openclaw/openclaw", 74112),
+    "clawsweeper/issue-openclaw-openclaw-74112",
+  );
+  assert.equal(
+    issueImplementationJobPath("openclaw/openclaw", 74112),
+    "jobs/openclaw/inbox/issue-openclaw-openclaw-74112.md",
+  );
+});
+
 test("renderAutomergeJob validates and keeps merge owned by router", () => {
   const raw = renderAutomergeJob({
     repo: "openclaw/openclaw",
@@ -311,6 +348,35 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
   assert.match(job.body, /Never add forbidden `Thanks @codex`/);
   assert.match(job.body, /without a `Thanks @\.\.\.` line/);
   assert.match(job.body, /router owns final merge/);
+});
+
+test("renderIssueImplementationJob validates and opens one non-closing fix PR lane", () => {
+  const raw = renderIssueImplementationJob({
+    repo: "openclaw/openclaw",
+    issueNumber: 74113,
+    title: "Add session export button",
+    commentUrl: "https://github.com/openclaw/openclaw/issues/74113#issuecomment-1",
+    author: "steipete",
+    implementationPrompt: "Keep it scoped to the toolbar.",
+  });
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  assert.ok(match);
+  const job = {
+    frontmatter: parseSimpleYaml(match[1]),
+    body: match[2].trim(),
+  };
+
+  assert.deepEqual(validateJob(job), []);
+  assert.equal(job.frontmatter.source, "issue_implementation");
+  assert.equal(job.frontmatter.allow_fix_pr, true);
+  assert.equal(job.frontmatter.allow_merge, false);
+  assert.equal(job.frontmatter.allow_post_merge_close, false);
+  assert.deepEqual(job.frontmatter.blocked_actions, ["close", "merge"]);
+  assert.deepEqual(job.frontmatter.allowed_actions, ["comment", "label", "fix", "raise_pr"]);
+  assert.match(job.body, /Source issue: https:\/\/github\.com\/openclaw\/openclaw\/issues\/74113/);
+  assert.match(job.body, /repair_strategy: "new_fix_pr"/);
+  assert.match(job.body, /Do not close the issue from this lane/);
+  assert.match(job.body, /Keep it scoped to the toolbar/);
 });
 
 test("automerge changelog gate blocks user-facing OpenClaw changes without changelog", () => {
@@ -388,6 +454,24 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
     trigger: "mention",
     command: "review",
     intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper implement"), {
+    trigger: "mention",
+    command: "implement",
+    intent: "implement_issue",
+    implementation_prompt: "",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper fix issue\nPlease keep the UI small."), {
+    trigger: "mention",
+    command: "fix issue please keep the ui small",
+    intent: "implement_issue",
+    implementation_prompt: "Please keep the UI small.",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper create pr\nKeep it small.\nAdd tests."), {
+    trigger: "mention",
+    command: "create pr keep it small. add tests",
+    intent: "implement_issue",
+    implementation_prompt: "Keep it small.\nAdd tests.",
   });
   assert.deepEqual(parseCommand("@clawsweeper[bot] rerun review"), {
     trigger: "mention",
@@ -878,6 +962,30 @@ test("renderResponse reports maintainer re-review dispatches", () => {
   assert.doesNotMatch(body, /repair worker/);
 });
 
+test("renderResponse reports issue implementation repair dispatches", () => {
+  const body = renderResponse(
+    {
+      comment_id: "463",
+      intent: "implement_issue",
+      issue_number: 74113,
+      target: { kind: "issue", head_sha: null },
+    },
+    {
+      workflow: "repair cluster worker",
+      job_path: "jobs/openclaw/inbox/issue-openclaw-openclaw-74113.md",
+      mode: "autonomous",
+      model: "gpt-5.5",
+      run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25242426839",
+    },
+  );
+
+  assert.match(body, /ClawSweeper issue implementation requested/);
+  assert.match(body, /open or update one narrow implementation PR/);
+  assert.match(body, /Action: repair worker queued/);
+  assert.match(body, /does not merge or close the issue/);
+  assert.doesNotMatch(body, /automerge/);
+});
+
 test("renderResponse reports freeform assist dispatches as read-only", () => {
   const body = renderResponse(
     {
@@ -1080,6 +1188,7 @@ test("repair intent set documents executable repair commands", () => {
     "address_review",
     "clawsweeper_auto_repair",
     "fix_ci",
+    "implement_issue",
     "rebase",
   ]);
 });
