@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   automergeRepairOutcomeComment,
+  externalMessageProvenance,
   repairContributorBranchComment,
 } from "../../dist/repair/external-messages.js";
 
@@ -51,4 +52,19 @@ test("repairContributorBranchComment avoids self PR references", () => {
   assert.match(body, /Validation: pnpm check:changed/);
   assert.doesNotMatch(body, /Source PR:/);
   assert.doesNotMatch(body, /75183/);
+});
+
+test("external message provenance normalizes accidental xhigh reasoning", () => {
+  const provenance = externalMessageProvenance({ model: "gpt-test", reasoning: "xhigh" });
+  const body = automergeRepairOutcomeComment({
+    marker: "<!-- marker -->",
+    target: 74156,
+    report: { reason: "no planned fix actions" },
+    result: { summary: "No executable fix.", actions: [] },
+    provenance,
+  });
+
+  assert.equal(provenance.reasoning, "high");
+  assert.match(body, /model gpt-test, reasoning high/);
+  assert.doesNotMatch(body, /reasoning xhigh/);
 });

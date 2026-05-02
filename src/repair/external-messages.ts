@@ -1,5 +1,6 @@
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import { randomInt } from "node:crypto";
+import { repairCodexReasoningEffort } from "./process-env.js";
 
 const SIGNATURE = "ClawSweeper 🐠";
 const EVIDENCE_LIMIT = 5;
@@ -219,8 +220,7 @@ const postMergeCloseLines = [
 
 function fishNotes(provenance: LooseRecord) {
   const model = provenance?.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5";
-  const reasoning =
-    provenance?.reasoning ?? process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "high";
+  const reasoning = repairCodexReasoningEffort(provenance?.reasoning);
   const reviewedSha = provenance?.reviewedSha ?? provenance?.reviewed_sha;
   const reviewed = reviewedSha ? `; reviewed against ${String(reviewedSha).slice(0, 12)}` : "";
   return `fish notes: model ${model}, reasoning ${reasoning}${reviewed}.`;
@@ -229,7 +229,7 @@ function fishNotes(provenance: LooseRecord) {
 export function externalMessageProvenance({ model, reasoning, reviewedSha }: LooseRecord = {}) {
   return {
     model: model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5",
-    reasoning: reasoning ?? process.env.CLAWSWEEPER_CODEX_REASONING_EFFORT ?? "high",
+    reasoning: repairCodexReasoningEffort(reasoning),
     reviewedSha,
   };
 }
