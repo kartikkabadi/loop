@@ -3,7 +3,12 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import {
+  spawn,
+  spawnSync,
+  type ChildProcess,
+  type SpawnSyncOptionsWithStringEncoding,
+} from "node:child_process";
 import { assertAllowedOwner, parseArgs, parseJob, repoRoot, validateJob } from "./lib.js";
 import {
   automergeRepairOutcomeComment,
@@ -119,6 +124,10 @@ const scriptStartedAt = new Date();
 const codexServiceTier = repairCodexServiceTier();
 const codexStdioMaxBuffer =
   Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB ?? 128)) * 1024 * 1024;
+const codexHeartbeatMs = Math.max(
+  10_000,
+  Number(process.env.CLAWSWEEPER_CODEX_HEARTBEAT_MS ?? 60_000),
+);
 const maxEditAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_FIX_EDIT_ATTEMPTS ?? 3));
 const maxReviewAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS ?? 2));
 const resolveReviewThreads = process.env.CLAWSWEEPER_RESOLVE_REVIEW_THREADS !== "0";
@@ -240,6 +249,45 @@ function boundedTimeout(timeoutMs: number, remainingMs: number) {
 
 function currentCodexTimeoutMs() {
   return boundedTimeout(codexTimeoutMs, remainingFixStepBudgetMs());
+}
+
+function spawnCodexSyncWithHeartbeat(
+  label: string,
+  args: string[],
+  options: SpawnSyncOptionsWithStringEncoding,
+) {
+  const heartbeat = startCodexHeartbeat(label);
+  try {
+    return spawnSync("codex", args, options);
+  } finally {
+    stopCodexHeartbeat(heartbeat);
+  }
+}
+
+function startCodexHeartbeat(label: string) {
+  const script = `
+const interval = Math.max(1000, Number(process.env.CLAWSWEEPER_CODEX_HEARTBEAT_MS || 60000));
+const label = process.env.CLAWSWEEPER_CODEX_HEARTBEAT_LABEL || "Codex subprocess";
+const startedAt = Date.now();
+setInterval(() => {
+  const elapsedSeconds = Math.round((Date.now() - startedAt) / 1000);
+  console.log(\`[clawsweeper repair] \${new Date().toISOString()} \${label} still running (\${elapsedSeconds}s elapsed)\`);
+}, interval);
+`;
+  const child = spawn(process.execPath, ["-e", script], {
+    env: {
+      ...process.env,
+      CLAWSWEEPER_CODEX_HEARTBEAT_LABEL: label,
+      CLAWSWEEPER_CODEX_HEARTBEAT_MS: String(codexHeartbeatMs),
+    },
+    stdio: ["ignore", "inherit", "inherit"],
+  });
+  child.on("error", () => {});
+  return child;
+}
+
+function stopCodexHeartbeat(child: ChildProcess) {
+  if (!child.killed) child.kill("SIGTERM");
 }
 
 function remainingFixStepBudgetMs() {
@@ -1342,8 +1390,8 @@ function editValidatePrepareMerge({
         reconcile_with_base: reconcileWithBase,
         rebase_status: rebaseResult?.status ?? null,
       });
-      const codexResult = spawnSync(
-        "codex",
+      const codexResult = spawnCodexSyncWithHeartbeat(
+        `Codex fix worker ${mode} attempt ${attempt}`,
         [
           "exec",
           "--cd",
@@ -1578,8 +1626,8 @@ function runCodexBaseReconcile({
       `${mode}-final-base-reconcile-summary-${attempt}-${codexAttempt}.md`,
     );
     const reconcileTimeoutMs = currentCodexTimeoutMs();
-    const codexResult = spawnSync(
-      "codex",
+    const codexResult = spawnCodexSyncWithHeartbeat(
+      `Codex final rebase worker ${mode} attempt ${attempt}.${codexAttempt}`,
       [
         "exec",
         "--cd",
@@ -1662,8 +1710,8 @@ function runCodexWritePreflight() {
     "Do not inspect environment variables, credentials, tokens, or secrets.",
     "Do not call gh, git push, open PRs, or mutate anything outside the current directory.",
   ].join("\n");
-  const child = spawnSync(
-    "codex",
+  const child = spawnCodexSyncWithHeartbeat(
+    "Codex write preflight",
     [
       "exec",
       "--cd",
@@ -1887,8 +1935,8 @@ function runCodexReview({
     "```",
   ].join("\n");
   const reviewTimeoutMs = currentCodexTimeoutMs();
-  const child = spawnSync(
-    "codex",
+  const child = spawnCodexSyncWithHeartbeat(
+    `Codex /review ${mode} attempt ${attempt}`,
     [
       "exec",
       "--cd",
@@ -2007,8 +2055,8 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
     "```",
   ].join("\n");
   const reviewFixTimeoutMs = currentCodexTimeoutMs();
-  const child = spawnSync(
-    "codex",
+  const child = spawnCodexSyncWithHeartbeat(
+    `Codex review-fix worker ${mode} attempt ${attempt}`,
     [
       "exec",
       "--cd",

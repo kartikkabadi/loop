@@ -96,6 +96,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 - Emitted repair-worker heartbeats while Codex is running so GitHub Actions does
   not treat long silent model calls as stalled jobs before debug artifacts upload.
+- Emitted execute-side Codex heartbeats during repair edit, review, and preflight
+  subprocesses so automerge runs stay observable until debug artifacts upload.
 - Kept substantive automerge repairs in the Codex edit loop after a clean rebase
   instead of treating base-sync head movement as the repair itself.
 - Backed up redacted Codex session/log artifacts from repair worker Actions runs

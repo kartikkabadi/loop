@@ -64,9 +64,10 @@ artifacts, but it must not mutate GitHub directly.
 trusts it.
 
 Long Codex calls emit periodic `[clawsweeper repair] ... still running` log
-lines from the wrapper process. This keeps GitHub Actions from killing otherwise
-healthy repair workers for lack of output before the debug artifact collection
-steps can run.
+lines from the wrapper process. This covers both the planning worker and
+execute-side edit, review, rebase-reconcile, and write-preflight subprocesses,
+so GitHub Actions does not kill otherwise healthy repair jobs for lack of output
+before the debug artifact collection steps can run.
 
 ### Codex Debug Artifacts
 
@@ -545,8 +546,8 @@ Important defaults:
   to keep automerge repair latency predictable.
 - `CLAWSWEEPER_CODEX_SERVICE_TIER`: Codex service tier. Repair workers default
   to `fast`.
-- `CLAWSWEEPER_CODEX_HEARTBEAT_MS`: repair-worker heartbeat interval while
-  Codex is running; default `60000`.
+- `CLAWSWEEPER_CODEX_HEARTBEAT_MS`: repair-worker and execute-side Codex
+  subprocess heartbeat interval; default `60000`.
 - `CLAWSWEEPER_MAX_LIVE_WORKERS`: dispatch capacity guard.
 - `CLAWSWEEPER_DISPATCH_RECHECK_MS`: short active-worker recheck before
   dispatching a repair worker; default `5000` to avoid duplicate queued workers
