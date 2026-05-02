@@ -121,6 +121,13 @@ Defaults:
 The hard planner cap is 100 shards. The workflow clamps invalid or larger
 `shard_count` inputs to 100.
 
+Planning is also the runtime build point for matrix review. The plan job installs
+with pinned Node 24 and `pnpm@10.33.2`, builds `dist/` once, and uploads that
+runtime artifact. Review shards download the built `dist/` and run
+`node dist/clawsweeper.js review` directly instead of running a per-shard pnpm
+install and build. This keeps 50-100 shard waves from stampeding the npm
+registry or Corepack metadata endpoints.
+
 Normal backfill now runs every 5 minutes for `openclaw/openclaw`. Because its
 concurrency group allows only one running normal backfill per target repo, the
 effect is a continuous drain loop: when due backlog exists, the active run can
@@ -250,6 +257,17 @@ If review shards fail, the recovery job reads failed shard artifacts or failed
 job names, extracts their planned item numbers from the original matrix, and
 requeues those exact item numbers once with a recovery marker in the additional
 prompt.
+
+Review shard jobs are allowed to finish as recovered failures instead of making
+the whole sweep appear broken when the recovery job can requeue exact item
+numbers. Each shard uploads a small metrics artifact with item numbers, target
+repo, start/end timestamps, and review-step outcome. Publish includes artifact
+and metric counts in the status detail so setup noise, missing artifacts, and
+real review failures can be separated while monitoring.
+
+The generated state checkout uses a blobless partial clone, but it intentionally
+keeps full commit history by default. Publish jobs rebase and retry state writes
+after races, and shallow state history can make those retries less reliable.
 
 ## Monitoring
 

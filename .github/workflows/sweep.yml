@@ -521,6 +521,13 @@ jobs:
           working-directory: clawsweeper
           build-script: build:all
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clawsweeper-runtime-dist
+          path: clawsweeper/dist
+          if-no-files-found: error
+          retention-days: 1
+
       - name: Publish planning-started status
         if: ${{ !((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *'))) && !((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true' && github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) }}
         continue-on-error: true
@@ -642,6 +649,7 @@ jobs:
     needs: plan
     runs-on: ${{ vars.CLAWSWEEPER_REVIEW_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 75
+    continue-on-error: true
     permissions:
       contents: read
       issues: read
@@ -679,10 +687,14 @@ jobs:
           token: ${{ steps.state-token.outputs.token }}
           worktree-path: clawsweeper
 
-      - uses: ./clawsweeper/.github/actions/setup-pnpm
+      - uses: actions/setup-node@v6
         with:
-          working-directory: clawsweeper
-          build-script: build
+          node-version: 24
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: clawsweeper-runtime-dist
+          path: clawsweeper/dist
 
       - uses: ./clawsweeper/.github/actions/setup-codex
         env:
@@ -718,6 +730,10 @@ jobs:
           git clone --reference-if-able "$cache_dir" --dissociate --filter=blob:none --branch main --single-branch "$url" "$checkout_dir"
           git -C "$checkout_dir" rev-parse --short HEAD
 
+      - name: Mark shard start
+        id: shard-start
+        run: echo "started_at=$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
       - name: Review shard
         id: review-shard
         continue-on-error: true
@@ -734,7 +750,7 @@ jobs:
           if [ -n "$ADDITIONAL_PROMPT" ]; then
             additional_prompt_arg=(--additional-prompt "$ADDITIONAL_PROMPT")
           fi
-          pnpm run review -- \
+          node dist/clawsweeper.js review \
             --target-repo "${{ needs.plan.outputs.target_repo }}" \
             --target-dir "../${{ needs.plan.outputs.target_checkout_dir }}" \
             --artifact-dir ../review-artifacts/shard-${{ matrix.shard }} \
@@ -752,8 +768,34 @@ jobs:
             --shard-count ${{ needs.plan.outputs.planned_shards }} \
             "${additional_prompt_arg[@]}"
 
+      - name: Record shard metrics
+        if: always()
+        env:
+          ITEM_NUMBERS: ${{ matrix.item_numbers }}
+          REVIEW_OUTCOME: ${{ steps.review-shard.outcome || 'not_started' }}
+          STARTED_AT: ${{ steps.shard-start.outputs.started_at || '' }}
+          TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
+        run: |
+          set -euo pipefail
+          mkdir -p review-artifacts/metrics
+          jq -n \
+            --arg shard "${{ matrix.shard }}" \
+            --arg item_numbers "$ITEM_NUMBERS" \
+            --arg review_outcome "$REVIEW_OUTCOME" \
+            --arg started_at "$STARTED_AT" \
+            --arg completed_at "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" \
+            --arg target_repo "$TARGET_REPO" \
+            '{
+              shard: ($shard | tonumber),
+              item_numbers: $item_numbers,
+              review_outcome: $review_outcome,
+              started_at: $started_at,
+              completed_at: $completed_at,
+              target_repo: $target_repo
+            }' > review-artifacts/metrics/shard-${{ matrix.shard }}.json
+
       - name: Record failed review shard
-        if: ${{ steps.review-shard.outcome == 'failure' }}
+        if: ${{ failure() || steps.review-shard.outcome == 'failure' }}
         run: |
           mkdir -p review-artifacts/failed-shards
           cat > review-artifacts/failed-shards/shard-${{ matrix.shard }}.json <<JSON
@@ -772,10 +814,17 @@ jobs:
           if-no-files-found: ignore
 
       - uses: actions/upload-artifact@v4
-        if: ${{ always() && steps.review-shard.outcome == 'failure' }}
+        if: always()
         with:
           name: review-failed-shard-${{ matrix.shard }}
           path: review-artifacts/failed-shards/shard-${{ matrix.shard }}.json
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: review-metrics-${{ matrix.shard }}
+          path: review-artifacts/metrics/shard-${{ matrix.shard }}.json
           if-no-files-found: ignore
 
   publish:
@@ -820,6 +869,13 @@ jobs:
           path: artifacts
           merge-multiple: true
 
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: review-metrics-*
+          path: review-metrics
+          merge-multiple: true
+
       - name: Sync before applying artifacts
         run: git pull --rebase
 
@@ -833,11 +889,14 @@ jobs:
         run: |
           apply_artifacts_args=(--target-repo "$TARGET_REPO" --artifact-dir artifacts --skip-dashboard)
           publish_state="Review publish complete"
-          publish_detail="Merged review artifacts for run ${{ github.run_id }}. Folder reconciliation moved tracked files to match current GitHub open/closed state."
+          reviewed_count="$(find artifacts -type f -name '*.md' | wc -l | tr -d ' ')"
+          metric_count="$(find review-metrics -type f -name '*.json' 2>/dev/null | wc -l | tr -d ' ')"
+          non_success_metric_count="$(find review-metrics -type f -name '*.json' -print0 2>/dev/null | xargs -0 -r jq -r 'select(.review_outcome != "success") | .shard' | wc -l | tr -d ' ')"
+          publish_detail="Merged ${reviewed_count} review artifacts for run ${{ github.run_id }}. Captured ${metric_count} shard metrics; ${non_success_metric_count} shards reported non-success review status. Folder reconciliation moved tracked files to match current GitHub open/closed state."
           if [ "$HOT_INTAKE" = "true" ] && [ -z "$EXACT_ITEM" ]; then
             apply_artifacts_args+=(--max-pages "$MAX_PAGES" --skip-reconcile)
             publish_state="Hot intake publish complete"
-            publish_detail="Merged hot intake artifacts for run ${{ github.run_id }} without full folder reconciliation."
+            publish_detail="Merged ${reviewed_count} hot intake artifacts for run ${{ github.run_id }} without full folder reconciliation. Captured ${metric_count} shard metrics; ${non_success_metric_count} shards reported non-success review status."
           fi
           pnpm run apply-artifacts -- "${apply_artifacts_args[@]}"
           pnpm run status -- \

@@ -572,6 +572,9 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     const repairOnly = command.intent === "autofix";
     const mode = repairOnly ? "autofix" : "automerge";
     const label = repairOnly ? AUTOFIX_LABEL : AUTOMERGE_LABEL;
+    const reviewQueued = Boolean(dispatched?.clawsweeper);
+    const repairQueued = Boolean(dispatched?.repair);
+    const enabled = reviewQueued || repairQueued;
     const clearedHumanReview = (command.actions ?? []).some(
       (action: JsonValue) => action.action === "remove_label",
     );
@@ -581,14 +584,17 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     );
     return [
       marker,
-      dispatched?.clawsweeper
+      enabled
         ? `ClawSweeper ${mode} is enabled.`
         : `ClawSweeper could not enable ${mode} for this PR.`,
       "",
-      dispatched?.clawsweeper
+      enabled
         ? [
             `- Head: ${head || "`unknown`"}`,
             `- Label: \`${label}\`${clearedHumanReview ? " (pause labels cleared)" : ""}`,
+            repairQueued
+              ? repairDispatchLine(dispatched.repair, "Action")
+              : "- Action: exact-head review queued.",
             "- Flow: review this head, repair/rebase only if needed, then re-review the exact repaired head before merge.",
           ].join("\n")
         : `Reason: ${command.reason ?? `${mode} requires a pull request`}.`,

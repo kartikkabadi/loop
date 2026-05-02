@@ -23,7 +23,15 @@ inputs:
   node-version:
     description: Node.js version used to run the TypeScript hydrator.
     required: false
-    default: "latest"
+    default: "24"
+  filter:
+    description: Git partial clone filter for the generated state repository.
+    required: false
+    default: blob:none
+  fetch-depth:
+    description: Git fetch depth for the generated state repository. Keep 0 for publish jobs that may rebase.
+    required: false
+    default: "0"
 runs:
   using: composite
   steps:
@@ -33,7 +41,8 @@ runs:
         ref: ${{ inputs.state-ref }}
         path: ${{ inputs.state-path }}
         token: ${{ inputs.token }}
-        fetch-depth: 0
+        filter: ${{ inputs.filter }}
+        fetch-depth: ${{ inputs.fetch-depth }}
 
     - name: Export state root
       shell: bash

@@ -804,6 +804,36 @@ test("renderResponse reports automerge resume actions", () => {
   assert.match(body, /repair\/rebase/);
 });
 
+test("renderResponse reports automerge repair dispatches as enabled", () => {
+  const body = renderResponse(
+    {
+      comment_id: "460",
+      intent: "automerge",
+      repo: "openclaw/openclaw",
+      target: { head_sha: "def460" },
+      actions: [
+        { action: "label", label: "clawsweeper:automerge", status: "executed" },
+        { action: "dispatch_repair", status: "executed" },
+      ],
+    },
+    {
+      repair: {
+        workflow: "repair cluster worker",
+        job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-75401.md",
+        mode: "autonomous",
+        model: "gpt-5.5",
+        run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25242426838",
+      },
+    },
+  );
+
+  assert.match(body, /ClawSweeper automerge is enabled/);
+  assert.match(body, /Action: repair worker queued/);
+  assert.doesNotMatch(body, /could not enable automerge/);
+  assert.doesNotMatch(body, /requires a pull request/);
+  assert.doesNotMatch(body, /automerge-openclaw-openclaw-75401/);
+});
+
 test("renderResponse reports autofix repair-only opt-in", () => {
   const body = renderResponse(
     {

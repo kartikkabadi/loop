@@ -3,7 +3,10 @@ description: Setup Node, install pnpm dependencies, and optionally run a build s
 inputs:
   node-version:
     description: Node.js version.
-    default: "latest"
+    default: "24"
+  pnpm-version:
+    description: pnpm version to activate through Corepack.
+    default: "10.33.2"
   working-directory:
     description: Directory containing package.json.
     default: "."
@@ -13,25 +16,68 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Enable corepack for dependency cache
-      shell: bash
-      run: corepack enable
-
     - uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
-        cache: pnpm
-        cache-dependency-path: ${{ inputs.working-directory }}/pnpm-lock.yaml
 
-    - name: Enable corepack
+    - name: Enable pinned pnpm
       shell: bash
-      run: corepack enable
+      run: |
+        set -euo pipefail
+        corepack enable
+        for attempt in 1 2 3; do
+          if corepack prepare "pnpm@${{ inputs.pnpm-version }}" --activate; then
+            exit 0
+          fi
+          sleep "$((attempt * 10))"
+        done
+        corepack prepare "pnpm@${{ inputs.pnpm-version }}" --activate
+
+    - name: Resolve pnpm store
+      id: pnpm-store
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+    - name: Resolve pnpm cache key
+      id: pnpm-cache-key
+      shell: bash
+      run: |
+        set -euo pipefail
+        lockfile="${{ inputs.working-directory }}/pnpm-lock.yaml"
+        if [ -f "$lockfile" ]; then
+          lock_hash="$(git hash-object "$lockfile")"
+        else
+          lock_hash="no-lockfile"
+        fi
+        {
+          echo "key=${RUNNER_OS:-unknown}-pnpm-${{ inputs.pnpm-version }}-$lock_hash"
+          echo "restore_key=${RUNNER_OS:-unknown}-pnpm-${{ inputs.pnpm-version }}-"
+          echo "fallback_restore_key=${RUNNER_OS:-unknown}-pnpm-"
+        } >> "$GITHUB_OUTPUT"
+
+    - uses: actions/cache@v5
+      with:
+        path: ${{ steps.pnpm-store.outputs.path }}
+        key: ${{ steps.pnpm-cache-key.outputs.key }}
+        restore-keys: |
+          ${{ steps.pnpm-cache-key.outputs.restore_key }}
+          ${{ steps.pnpm-cache-key.outputs.fallback_restore_key }}
 
     - name: Install dependencies
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
-        pnpm install --frozen-lockfile
+        set -euo pipefail
+        for attempt in 1 2 3; do
+          if pnpm install --frozen-lockfile; then
+            break
+          fi
+          if [ "$attempt" -eq 3 ]; then
+            exit 1
+          fi
+          sleep "$((attempt * 10))"
+        done
         if [[ -n "${{ inputs.build-script }}" ]]; then
           pnpm run "${{ inputs.build-script }}"
         fi
