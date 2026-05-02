@@ -108,6 +108,13 @@ repair worker update the contributor branch when GitHub says that is safe, or
 open a credited replacement when it is not. `/clawsweeper stop` pauses the loop
 by adding `clawsweeper:human-review`.
 
+The status comment is edited in place through the whole loop. Its progress
+section records review, repair, re-review, and merge rows with durations, run
+links, and linked commit hashes. A branch repair that pushes a new commit also
+dispatches the next exact-head review immediately from the repair worker, so the
+loop does not wait for the scheduled comment-router sweep before checking the
+repaired head.
+
 If the repair worker completes without an executable fix artifact, the executor
 posts an idempotent outcome comment on the opted-in PR. That comment records
 that no branch push, rebase, replacement PR, merge, or ClawSweeper re-review
@@ -233,6 +240,15 @@ Automerge also refuses to merge when:
 - GitHub reports requested changes or required review;
 - `CLAWSWEEPER_ALLOW_MERGE` or `CLAWSWEEPER_ALLOW_AUTOMERGE` is not `1`.
 
+GitHub can report `mergeStateStatus: UNSTABLE` for cancelled or skipped
+non-gating automation checks even when branch protection is satisfied. The
+router summarizes checks first, ignores default non-gating checks such as
+`auto-response`, `Labeler`, `Stale`, and `ClawSweeper Dispatch`, then allows the
+exact-head merge command to try when no check blockers remain. The merge command
+still pins the reviewed head SHA and GitHub branch protection remains the final
+authority. Transient merge-state polling defaults to two minutes; set
+`CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS` to use a longer window.
+
 For trusted automation comments, these blocked cases are silent skips. That
 keeps ClawSweeper from replying to every ordinary contributor PR that
 ClawSweeper reviews.
@@ -278,6 +294,8 @@ Important knobs:
   iterations per PR; default `10`.
 - `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD` controls per-head repair caps;
   default `1`.
+- `CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS` controls in-run merge-state polling
+  before the router records a waiting automerge action; default `120000`.
 
 ## Verification
 

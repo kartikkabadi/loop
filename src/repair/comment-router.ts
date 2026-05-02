@@ -1838,16 +1838,20 @@ function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
   });
   if (headBlock) return headBlock;
   if (view.mergeable !== "MERGEABLE") return `mergeable state is ${view.mergeable || "unknown"}`;
-  if (!["CLEAN", "HAS_HOOKS"].includes(String(view.mergeStateStatus ?? ""))) {
+  const checks = summarizeChecks(view.statusCheckRollup ?? []);
+  if (checks.blockers.length > 0)
+    return `checks are not green: ${checks.blockers.slice(0, 8).join(", ")}`;
+  if (checks.total === 0) return "no PR checks found";
+  const mergeStateStatus = String(view.mergeStateStatus ?? "");
+  if (
+    !["CLEAN", "HAS_HOOKS"].includes(mergeStateStatus) &&
+    !(mergeStateStatus === "UNSTABLE" && checks.blockers.length === 0)
+  ) {
     return `merge state status is ${view.mergeStateStatus || "unknown"}`;
   }
   if (["CHANGES_REQUESTED", "REVIEW_REQUIRED"].includes(String(view.reviewDecision ?? ""))) {
     return `review decision is ${view.reviewDecision}`;
   }
-  const checks = summarizeChecks(view.statusCheckRollup ?? []);
-  if (checks.blockers.length > 0)
-    return `checks are not green: ${checks.blockers.slice(0, 8).join(", ")}`;
-  if (checks.total === 0) return "no PR checks found";
   const changelogBlock = automergeChangelogBlockReason({
     repo: command.repo,
     title: view.title,
@@ -2299,6 +2303,7 @@ function automergeTimelineEvents(command: LooseRecord, body: string) {
       label: "review queued",
       at: action?.dispatched_at ?? commentTime ?? new Date().toISOString(),
       headSha: head,
+      repo: command.repo,
       status: "queued",
       runUrl: action?.run_url,
     });
@@ -2314,6 +2319,7 @@ function automergeTimelineEvents(command: LooseRecord, body: string) {
           : "review requested repair",
       at: commentTime ?? new Date().toISOString(),
       headSha: head,
+      repo: command.repo,
       status: compactTimelineStatus(command.repair_reason ?? "verdict received"),
       runUrl: command.comment_url,
     });
@@ -2326,6 +2332,7 @@ function automergeTimelineEvents(command: LooseRecord, body: string) {
       label: "repair queued",
       at: repairAction.dispatched_at ?? new Date().toISOString(),
       headSha: head,
+      repo: command.repo,
       status: repairAction.mode ?? command.target?.mode ?? "queued",
       runUrl,
     });
@@ -2337,6 +2344,7 @@ function automergeTimelineEvents(command: LooseRecord, body: string) {
       label: mergeAction.status === "executed" ? "merged" : "merge checked",
       at: mergeAction.completed_at ?? mergeAction.merged_at ?? new Date().toISOString(),
       headSha: head,
+      repo: command.repo,
       status: mergeAction.reason ?? mergeAction.status,
       runUrl: command.comment_url,
     });

@@ -338,6 +338,7 @@ jobs:
         run: pnpm run repair:publish-event-result
 
       - name: Route synced ClawSweeper verdict
+        timeout-minutes: 4
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
           CLAWSWEEPER_DISPATCH_TOKEN: ${{ github.token }}

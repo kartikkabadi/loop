@@ -45,7 +45,7 @@ function renderTimelineEvent(event: LooseRecord): string {
   if (!id) return "";
   const at = formatTimestamp(event.completedAt ?? event.completed_at ?? event.at);
   const label = compact(event.label ?? event.phase ?? "event", 90);
-  const head = shortSha(event.headSha ?? event.head_sha);
+  const head = renderCommitSha(event.headSha ?? event.head_sha, event.repo ?? event.targetRepo);
   const status = compact(event.status, 80);
   const duration = formatDuration(event.durationMs ?? event.duration_ms);
   const runUrl = safeTimelineRunUrl(event.runUrl ?? event.run_url);
@@ -54,7 +54,7 @@ function renderTimelineEvent(event: LooseRecord): string {
     `- ${EVENT_PREFIX}${id} -->`,
     at,
     label,
-    head ? `\`${head}\`` : "",
+    head,
     status ? `(${status})` : "",
     duration ? `in ${duration}` : "",
     runUrl ? `Run: ${runUrl}` : "",
@@ -117,9 +117,18 @@ function formatDuration(value: JsonValue): string {
   return mins ? `${hours}h ${mins}m` : `${hours}h`;
 }
 
-function shortSha(value: JsonValue): string {
+function renderCommitSha(value: JsonValue, repoValue: JsonValue): string {
+  const full = fullSha(value);
+  if (!full) return "";
+  const short = full.slice(0, 12);
+  const repo = String(repoValue ?? "").trim();
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) return `\`${short}\``;
+  return `[\`${short}\`](https://github.com/${repo}/commit/${full})`;
+}
+
+function fullSha(value: JsonValue): string {
   const text = String(value ?? "").trim();
-  return /^[0-9a-f]{7,40}$/i.test(text) ? text.slice(0, 12) : "";
+  return /^[0-9a-f]{7,40}$/i.test(text) ? text : "";
 }
 
 function compact(value: JsonValue, max: number): string {

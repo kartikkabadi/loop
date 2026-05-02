@@ -3,7 +3,13 @@ import fs from "node:fs";
 import path from "node:path";
 
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
-const DEFAULT_IGNORED_CHECKS = ["auto-response", "Labeler", "Stale"];
+const DEFAULT_IGNORED_CHECKS = [
+  "auto-response",
+  "ClawSweeper Dispatch",
+  "dispatch",
+  "Labeler",
+  "Stale",
+];
 
 export function summarizeChecks(checks: LooseRecord[]) {
   const ignored = ignoredCheckNames();

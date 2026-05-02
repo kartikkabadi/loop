@@ -211,6 +211,12 @@ test("summarizeChecks ignores cancelled default non-gating checks", () => {
       conclusion: "CANCELLED",
     },
     {
+      name: "dispatch",
+      workflowName: "ClawSweeper Dispatch",
+      status: "COMPLETED",
+      conclusion: "CANCELLED",
+    },
+    {
       name: "CI",
       workflowName: "CI",
       status: "COMPLETED",
@@ -218,9 +224,9 @@ test("summarizeChecks ignores cancelled default non-gating checks", () => {
     },
   ]);
 
-  assert.equal(checks.total, 2);
+  assert.equal(checks.total, 3);
   assert.deepEqual(checks.blockers, []);
-  assert.equal(checks.counts.CANCELLED, 1);
+  assert.equal(checks.counts.CANCELLED, 2);
 });
 
 test("summarizeChecks still blocks cancelled required checks", () => {

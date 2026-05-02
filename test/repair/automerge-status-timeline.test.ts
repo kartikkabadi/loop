@@ -13,6 +13,7 @@ test("mergeAutomergeTimelineSection appends and updates progress rows", () => {
         label: "review queued",
         at: "2026-05-01T05:00:00Z",
         headSha: "abcdef1234567890",
+        repo: "openclaw/openclaw",
         status: "queued",
         runUrl: "https://github.com/openclaw/clawsweeper/actions/runs/123",
       },
@@ -22,7 +23,10 @@ test("mergeAutomergeTimelineSection appends and updates progress rows", () => {
   assert.match(first, /Automerge progress:/);
   assert.match(first, /review queued/);
   assert.match(first, /2026-05-01 05:00:00 UTC/);
-  assert.match(first, /`abcdef123456`/);
+  assert.match(
+    first,
+    /\[`abcdef123456`\]\(https:\/\/github\.com\/openclaw\/openclaw\/commit\/abcdef1234567890\)/,
+  );
   assert.match(first, /actions\/runs\/123/);
 
   const second = mergeAutomergeTimelineSection({

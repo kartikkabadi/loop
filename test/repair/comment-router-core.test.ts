@@ -786,6 +786,7 @@ test("renderResponse reports automerge resume actions", () => {
     {
       comment_id: "459",
       intent: "automerge",
+      repo: "openclaw/openclaw",
       target: { head_sha: "def459" },
       actions: [{ action: "remove_label", label: "clawsweeper:human-review", status: "executed" }],
     },
@@ -797,7 +798,8 @@ test("renderResponse reports automerge resume actions", () => {
     },
   );
 
-  assert.match(body, /cleared pause labels/);
+  assert.match(body, /pause labels cleared/);
+  assert.match(body, /Head: `def459`/);
   assert.match(body, /repair\/rebase/);
 });
 
@@ -976,6 +978,7 @@ test("renderResponse reports automerge completion", () => {
     {
       comment_id: "789",
       intent: "clawsweeper_auto_merge",
+      repo: "openclaw/openclaw",
       trusted_bot_author: "clawsweeper[bot]",
       repair_reason: "structured ClawSweeper verdict: pass",
       target: { head_sha: "abc789" },
@@ -985,7 +988,7 @@ test("renderResponse reports automerge completion", () => {
         status: "executed",
         reason: "merged by ClawSweeper automerge",
         merged_at: "2026-04-29T05:00:00Z",
-        merge_commit_sha: "def789",
+        merge_commit_sha: "def789abcdef789abcdef789abcdef789abcdef7",
         summary_lines: ["Added queued retry handling for Discord REST 429s."],
         fixup_lines: ["Included follow-up commit: fix(discord): avoid stale requeues"],
       },
@@ -998,7 +1001,10 @@ test("renderResponse reports automerge completion", () => {
   assert.match(body, /Added queued retry handling/);
   assert.match(body, /Fixups included:/);
   assert.match(body, /avoid stale requeues/);
-  assert.match(body, /Merge commit: def789/);
+  assert.match(
+    body,
+    /Merge commit: \[`def789abcdef`\]\(https:\/\/github\.com\/openclaw\/openclaw\/commit\/def789abcdef789abcdef789abcdef789abcdef7\)/,
+  );
   assert.match(body, /automerge loop is complete/);
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
 });
@@ -1008,6 +1014,7 @@ test("renderResponse reports maintainer-approved automerge completion", () => {
     {
       comment_id: "790",
       intent: "maintainer_approve_automerge",
+      repo: "openclaw/openclaw",
       author: "steipete",
       expected_head_sha: "abc790",
       target: { head_sha: "abc790" },
@@ -1017,7 +1024,7 @@ test("renderResponse reports maintainer-approved automerge completion", () => {
         status: "executed",
         reason: "merged by ClawSweeper automerge",
         merged_at: "2026-04-29T05:00:00Z",
-        merge_commit_sha: "def790",
+        merge_commit_sha: "def790abcdef790abcdef790abcdef790abcdef7",
         summary_lines: ["Updated queue scheduling defaults."],
         fixup_lines: ["No separate fixup commits were needed after automerge opt-in."],
       },
@@ -1027,7 +1034,10 @@ test("renderResponse reports maintainer-approved automerge completion", () => {
   assert.match(body, /Maintainer-approved ClawSweeper automerge is complete/);
   assert.match(body, /Approver: `steipete`/);
   assert.match(body, /Head: `abc790`/);
-  assert.match(body, /Merge commit: def790/);
+  assert.match(
+    body,
+    /Merge commit: \[`def790abcdef`\]\(https:\/\/github\.com\/openclaw\/openclaw\/commit\/def790abcdef790abcdef790abcdef790abcdef7\)/,
+  );
   assert.match(body, /What merged:/);
   assert.match(body, /Updated queue scheduling defaults/);
   assert.match(body, /Fixups included:/);
@@ -1133,7 +1143,7 @@ test("automerge gate block only reports closed merge policy gates", () => {
 
 test("automerge transient wait config defaults to an in-run retry window", () => {
   assert.deepEqual(automergeTransientWaitConfig({}), {
-    maxWaitMs: 600000,
+    maxWaitMs: 120000,
     intervalMs: 15000,
   });
   assert.deepEqual(

@@ -2100,16 +2100,20 @@ function updateAutomergeStatusCommentForBranchRepair({
   if (Number(target) !== Number(automergeOutcomeTargetPrNumber())) return false;
   const existingStatus = findAutomergeStatusComment(target);
   const runUrl = currentActionsRunUrl();
+  const reviewDispatch = dispatchAutomergeReviewAfterBranchRepair({ target, commit });
   const body = [
     "🦞🦞",
     "ClawSweeper applied a repair to this PR branch.",
     "",
     "Repair: kept the fix on this contributor branch instead of opening a replacement PR.",
     `Validation: \`${listOrNone(validationCommands)}\``,
-    `Updated head: \`${commit}\``,
+    `Updated head: ${markdownCommitLink(result.repo, commit)}`,
     ...(runUrl ? [`Run: ${runUrl}`] : []),
     "",
-    "Current state: waiting for GitHub checks on the repaired head before automerge can continue.",
+    reviewDispatch.status === "executed"
+      ? "Current state: exact-head review queued immediately; GitHub checks and the review verdict gate final merge."
+      : "Current state: waiting for GitHub checks and the next router pass to continue automerge.",
+    ...(reviewDispatch.status === "failed" ? [`Review dispatch: ${reviewDispatch.reason}`] : []),
   ].join("\n");
   const bodyWithTimeline = mergeAutomergeTimelineSection({
     body,
@@ -2123,8 +2127,21 @@ function updateAutomergeStatusCommentForBranchRepair({
         durationMs: Date.now() - scriptStartedAt.getTime(),
         runUrl,
         headSha: commit,
+        repo: result.repo,
         status: "branch updated",
       },
+      ...(reviewDispatch.status === "executed"
+        ? [
+            {
+              id: `review-queued:${commit}:${reviewDispatch.dispatched_at}`,
+              label: "review queued",
+              at: reviewDispatch.dispatched_at,
+              headSha: commit,
+              repo: result.repo,
+              status: "after repair",
+            },
+          ]
+        : []),
     ],
   });
   if (existingStatus?.id) {
@@ -2136,6 +2153,49 @@ function updateAutomergeStatusCommentForBranchRepair({
     postIssueComment(target, bodyWithTimeline);
   }
   return true;
+}
+
+function dispatchAutomergeReviewAfterBranchRepair({ target, commit }: LooseRecord) {
+  const reviewRepo = String(process.env.CLAWSWEEPER_REVIEW_REPO ?? "openclaw/clawsweeper").trim();
+  const dispatchedAt = new Date().toISOString();
+  const payloadPath = writePayload(`automerge-review-dispatch-${target}-${commit}`, {
+    event_type: "clawsweeper_item",
+    client_payload: {
+      target_repo: result.repo,
+      item_number: String(target),
+      item_kind: "pull_request",
+      source_event: "repair_completed",
+      source_action: "branch_repaired",
+      supersedes_in_progress: true,
+    },
+  });
+  try {
+    run(
+      "gh",
+      ["api", `repos/${reviewRepo}/dispatches`, "--method", "POST", "--input", payloadPath],
+      {
+        cwd: repoRoot(),
+        env: ghEnv(),
+      },
+    );
+    return { status: "executed", repo: reviewRepo, dispatched_at: dispatchedAt };
+  } catch (error) {
+    return {
+      status: "failed",
+      repo: reviewRepo,
+      dispatched_at: dispatchedAt,
+      reason: compactText(error instanceof Error ? error.message : String(error), 180),
+    };
+  }
+}
+
+function markdownCommitLink(repo: JsonValue, sha: JsonValue): string {
+  const full = String(sha ?? "").trim();
+  if (!/^[0-9a-f]{7,40}$/i.test(full)) return full ? `\`${full}\`` : "`unknown`";
+  const short = full.slice(0, 12);
+  const repoText = String(repo ?? "").trim();
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repoText)) return `\`${short}\``;
+  return `[\`${short}\`](https://github.com/${repoText}/commit/${full})`;
 }
 
 function isAutomergeRepairJob() {

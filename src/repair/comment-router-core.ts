@@ -169,7 +169,7 @@ export function automergeGateBlockReason(env: LooseRecord = process.env) {
 }
 
 export function automergeTransientWaitConfig(env: LooseRecord = process.env) {
-  const maxWaitMs = positiveInt(env.CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS, 10 * 60 * 1000);
+  const maxWaitMs = positiveInt(env.CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS, 2 * 60 * 1000);
   const intervalMs = Math.min(
     Math.max(positiveInt(env.CLAWSWEEPER_AUTOMERGE_TRANSIENT_POLL_MS, 15 * 1000), 1000),
     Math.max(maxWaitMs, 1000),
@@ -557,19 +557,27 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     const clearedHumanReview = (command.actions ?? []).some(
       (action: JsonValue) => action.action === "remove_label",
     );
+    const head = markdownCommitLink(
+      command.repo,
+      command.target?.head_sha ?? command.expected_head_sha,
+    );
     return [
       marker,
       dispatched?.clawsweeper
-        ? `ClawSweeper ${mode} is enabled for this PR.`
+        ? `ClawSweeper ${mode} is enabled.`
         : `ClawSweeper could not enable ${mode} for this PR.`,
       "",
       dispatched?.clawsweeper
-        ? `I ${clearedHumanReview ? "cleared pause labels, " : ""}added \`${label}\` and asked ClawSweeper to review this head. If ClawSweeper emits a repair marker or requests changes, I will repair/rebase the branch and ask for another review, up to the configured round limit.`
+        ? [
+            `- Head: ${head || "`unknown`"}`,
+            `- Label: \`${label}\`${clearedHumanReview ? " (pause labels cleared)" : ""}`,
+            "- Flow: review this head, repair/rebase only if needed, then re-review the exact repaired head before merge.",
+          ].join("\n")
         : `Reason: ${command.reason ?? `${mode} requires a pull request`}.`,
       "",
       repairOnly
-        ? "This is fix-only: I will not merge this PR. Tiny claw oath."
-        : "Draft PRs stay fix-only until GitHub marks them ready for review. A maintainer can pause this with `/clawsweeper stop`.",
+        ? "This is fix-only; I will not merge this PR."
+        : "Draft PRs stay fix-only until GitHub marks them ready for review. Pause with `/clawsweeper stop`.",
     ].join("\n");
   }
   if (command.intent === "re_review") {
@@ -656,7 +664,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       ...(dispatched?.merge?.reason ? [`Merge status: ${dispatched.merge.reason}`] : []),
       ...(dispatched?.merge?.merged_at ? [`Merged at: ${dispatched.merge.merged_at}`] : []),
       ...(dispatched?.merge?.merge_commit_sha
-        ? [`Merge commit: ${dispatched.merge.merge_commit_sha}`]
+        ? [`Merge commit: ${markdownCommitLink(command.repo, dispatched.merge.merge_commit_sha)}`]
         : []),
       ...(dispatched?.merge?.summary_lines?.length
         ? ["", "What merged:", ...dispatched.merge.summary_lines.map((line: string) => `- ${line}`)]
@@ -682,11 +690,11 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
         : "Maintainer-approved ClawSweeper automerge is not merged yet.",
       "",
       `Approver: \`${command.author ?? "maintainer"}\``,
-      `Head: \`${command.expected_head_sha ?? command.target?.head_sha ?? "unknown"}\``,
+      `Head: ${markdownCommitLink(command.repo, command.expected_head_sha ?? command.target?.head_sha) || "`unknown`"}`,
       ...(dispatched?.merge?.reason ? [`Merge status: ${dispatched.merge.reason}`] : []),
       ...(dispatched?.merge?.merged_at ? [`Merged at: ${dispatched.merge.merged_at}`] : []),
       ...(dispatched?.merge?.merge_commit_sha
-        ? [`Merge commit: ${dispatched.merge.merge_commit_sha}`]
+        ? [`Merge commit: ${markdownCommitLink(command.repo, dispatched.merge.merge_commit_sha)}`]
         : []),
       ...(dispatched?.merge?.summary_lines?.length
         ? ["", "What merged:", ...dispatched.merge.summary_lines.map((line: string) => `- ${line}`)]
@@ -738,6 +746,15 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     "",
     "I will keep the change narrow and update the PR branch if the repair worker finds a safe fix.",
   ].join("\n");
+}
+
+function markdownCommitLink(repo: JsonValue, sha: JsonValue): string {
+  const full = String(sha ?? "").trim();
+  if (!/^[0-9a-f]{7,40}$/i.test(full)) return full ? `\`${full}\`` : "";
+  const short = full.slice(0, 12);
+  const repoText = String(repo ?? "").trim();
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repoText)) return `\`${short}\``;
+  return `[\`${short}\`](https://github.com/${repoText}/commit/${full})`;
 }
 
 function repairDispatchLine(dispatched: LooseRecord, label: string): string {

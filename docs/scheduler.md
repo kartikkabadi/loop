@@ -56,6 +56,31 @@ Manual `workflow_dispatch` can override `target_repo`, `item_number`,
 `item_numbers`, `batch_size`, `shard_count`, `hot_intake`, and apply inputs.
 Exact item dispatches use the event path instead of the planner matrix.
 
+## Automerge Fast Path
+
+Automerge is an exact-item event path. A maintainer command dispatches one
+review for the current PR head. If review requests a repair, the adopted repair
+worker may push a branch fix; after a successful contributor-branch repair it
+immediately dispatches another exact-head review instead of waiting for the next
+comment-router sweep. That keeps the normal path to:
+
+1. command acknowledgement;
+2. exact-head review;
+3. optional branch repair;
+4. immediate exact-head re-review;
+5. merge after checks, review verdict, and policy gates pass.
+
+The automerge status comment is the live progress surface. It is edited in
+place and records review, repair, re-review, and merge events with durations,
+run links, and commit links.
+
+The final router gate no longer waits ten minutes for transient GitHub merge
+state. Default transient wait is two minutes with 15-second polls. If GitHub
+still reports `UNSTABLE`, ClawSweeper allows the merge command to try when the
+only visible blockers are ignored non-gating automation checks such as
+`ClawSweeper Dispatch`; GitHub branch protection still enforces required checks
+at merge time.
+
 ## Capacity
 
 Capacity is shard-level. A review shard processes its selected item numbers
