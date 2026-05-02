@@ -48,6 +48,7 @@ import {
   COMMIT_FINDING_LABEL_DESCRIPTION,
 } from "./constants.js";
 import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
+import { canTreatRebaseAsCompleteRepair } from "./fix-edit-policy.js";
 import { applyMechanicalChangelogFix } from "./mechanical-changelog.js";
 import { tryResolveMechanicalRebaseConflicts } from "./mechanical-rebase-conflicts.js";
 import { compactText } from "./text-utils.js";
@@ -1277,19 +1278,25 @@ function editValidatePrepareMerge({
   const checkpointCommits: JsonValue[] = [];
   if (
     !producedChanges &&
-    rebaseResult?.status === "rebased" &&
-    rebaseResult.previous_head !== rebaseResult.current_head
+    canTreatRebaseAsCompleteRepair({
+      fixArtifact,
+      rebaseResult,
+    })
   ) {
     producedChanges = true;
-    logProgress("clean rebase changed branch head; skipping Codex edit pass", {
+    logProgress("deterministic rebase changed branch head; skipping Codex edit pass", {
       previous_head: rebaseResult.previous_head,
       current_head: rebaseResult.current_head,
     });
   }
+  const rebaseUnmergedPaths = !producedChanges ? unmergedPaths(targetDir) : [];
   if (
     !producedChanges &&
-    rebaseResult?.status === "conflicts" &&
-    unmergedPaths(targetDir).length === 0
+    canTreatRebaseAsCompleteRepair({
+      fixArtifact,
+      rebaseResult,
+      hasUnmergedPaths: rebaseUnmergedPaths.length > 0,
+    })
   ) {
     const completed = completeMechanicallyResolvedRebase({ targetDir });
     if (completed.status === "continued") {
