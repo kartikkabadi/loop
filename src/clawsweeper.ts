@@ -4155,6 +4155,22 @@ function appendPublicSection(lines: string[], heading: string, body: string): vo
   lines.push(`**${heading}**`, body, "");
 }
 
+function publicReproducibilityLine(reproductionAssessment: string): string {
+  const assessmentLine = sentence(reproductionAssessment);
+  if (!assessmentLine) return "";
+  const match = assessmentLine.match(/^(yes|no|unclear|not applicable)\b/i);
+  if (!match) return `Reproducibility: ${assessmentLine}`;
+  const status = match[1]?.toLowerCase() ?? "";
+  const detail = sentence(assessmentLine.slice(match[0].length).replace(/^[\s,.:;-]+/, ""));
+  return `Reproducibility: ${status}.${detail ? ` ${detail}` : ""}`;
+}
+
+function publicSummaryBody(summaryLine: string, reproductionAssessment: string): string {
+  return [summaryLine, publicReproducibilityLine(reproductionAssessment)]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 function appendReviewQuestionDetails(
   details: string[],
   reproductionAssessment: string | undefined,
@@ -4214,9 +4230,13 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     "",
   ];
   if (isPullRequest) {
-    appendPublicSection(lines, "Summary", changeSummaryLine);
+    appendPublicSection(
+      lines,
+      "Summary",
+      publicSummaryBody(changeSummaryLine, reproductionAssessment),
+    );
   } else {
-    appendPublicSection(lines, "Summary", summaryLine);
+    appendPublicSection(lines, "Summary", publicSummaryBody(summaryLine, reproductionAssessment));
   }
   appendPublicSection(lines, isPullRequest ? "Next step before merge" : "Next step", nextStepLine);
   appendPublicSection(lines, "Security", publicSecurityReviewLine(securityReview));

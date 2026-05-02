@@ -1202,6 +1202,50 @@ Reason: Maintainers should review the tests after the targeted lane is green.
   assert.match(comment, /<!-- clawsweeper-verdict:needs-human item=74265 sha=abc123def456/);
 });
 
+test("issue keep-open review comments surface reproducibility in the summary", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "issue",
+      number: "75877",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "queue_fix_pr",
+    })}
+
+## Summary
+
+Keep open. Slack typing callbacks are disabled in message-tool-only group replies.
+
+## Reproduction Assessment
+
+Yes. A source-level reproduction is clear: set a Slack group turn to message-tool-only and inspect the dispatch typing callbacks.
+
+## Work Candidate
+
+Candidate: queue_fix_pr
+
+Confidence: high
+
+Priority: medium
+
+Status: queued
+
+Reason: The bug is narrow and source-reproducible.
+`,
+    "none",
+  );
+
+  assert.match(
+    comment,
+    /\*\*Summary\*\*\nKeep open\. Slack typing callbacks are disabled in message-tool-only group replies\.\n\nReproducibility: yes\. A source-level reproduction is clear/,
+  );
+  assert.ok(comment.indexOf("Reproducibility: yes.") < comment.indexOf("**Next step**"));
+  assert.match(
+    comment,
+    /Do we have a high-confidence way to reproduce the issue\?\n\nYes\. A source-level reproduction is clear/,
+  );
+});
+
 test("pull request review comments include dedicated security review", () => {
   const comment = renderReviewCommentFromReport(
     `${reportFrontMatter({

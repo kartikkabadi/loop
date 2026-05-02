@@ -42,7 +42,8 @@ The body should include the strongest actionable, non-overlapping sections the
 report has:
 
 - `**Summary**` from the typed `changeSummary` field, not from the
-  merge verdict or maintainer follow-up summary
+  merge verdict or maintainer follow-up summary; when `reproductionAssessment`
+  is present, this section also includes a compact `Reproducibility:` line
 - `**Next step before merge**` for PRs, or `**Next step**` for issues, from the
   work-candidate reason or next action
 - `**Security**` from the typed `securityReview` field, so supply-chain,
