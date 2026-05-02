@@ -461,6 +461,7 @@ jobs:
 
       - name: Tag ClawSweeper targets
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:tag-clawsweeper -- .clawsweeper-repair/runs --apply --live --open-branches false --report .clawsweeper-repair/runs/clawsweeper-label-report.json

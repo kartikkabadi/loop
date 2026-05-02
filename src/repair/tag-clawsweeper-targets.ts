@@ -3,7 +3,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { currentProjectRepo, parseArgs, parseSimpleYaml, repoRoot } from "./lib.js";
-import { ghJson, ghText } from "./github-cli.js";
+import { ghJsonWithRetry, ghTextWithRetry } from "./github-cli.js";
 import { parseIssueOrPullRef } from "./github-ref.js";
 import { CLAWSWEEPER_LABEL_DESCRIPTION, DEFAULT_LABEL } from "./constants.js";
 import { readJsonFileIfExists as readJson } from "./json-file.js";
@@ -261,7 +261,7 @@ function collectFixActions(
 
 function collectOpenClawSweeperPullRequests() {
   const repo = process.env.CLAWSWEEPER_TARGET_REPO ?? "openclaw/openclaw";
-  const pulls = ghJson([
+  const pulls = ghJsonWithRetry([
     "pr",
     "list",
     "--repo",
@@ -335,7 +335,7 @@ function labelTarget(target: LooseRecord) {
   }
 
   try {
-    ghText([
+    ghTextWithRetry([
       "issue",
       "edit",
       String(target.number),
@@ -363,13 +363,22 @@ function postFlightToApplyAction(action: LooseRecord) {
 
 function githubLabelExists() {
   const repo = process.env.CLAWSWEEPER_TARGET_REPO ?? "openclaw/openclaw";
-  const labels = ghJson(["label", "list", "--repo", repo, "--limit", "1000", "--json", "name"]);
+  const labels = ghJsonWithRetry([
+    "label",
+    "list",
+    "--repo",
+    repo,
+    "--limit",
+    "1000",
+    "--json",
+    "name",
+  ]);
   return (labels ?? []).some((label: JsonValue) => label.name === labelName);
 }
 
 function createGithubLabel() {
   const repo = process.env.CLAWSWEEPER_TARGET_REPO ?? "openclaw/openclaw";
-  ghText([
+  ghTextWithRetry([
     "label",
     "create",
     labelName,
@@ -383,7 +392,7 @@ function createGithubLabel() {
 }
 
 function fetchIssue(repo: string, number: JsonValue) {
-  return ghJson(["api", `repos/${repo}/issues/${number}`]);
+  return ghJsonWithRetry(["api", `repos/${repo}/issues/${number}`]);
 }
 
 function readSiblingJson(runDir: string, filename: string) {

@@ -492,7 +492,11 @@ target repo. It helps downstream tools and maintainers distinguish generated
 work from ordinary contributor work.
 
 The exact label is `clawsweeper`. The script intentionally refuses alternate
-label names to keep the marker stable.
+label names to keep the marker stable. Live GitHub reads and label mutations use
+the retrying `gh` helpers so transient GitHub 502/503/504 responses do not fail
+an otherwise completed worker run. The worker workflow also treats this tagging
+step as non-blocking metadata; durable repair/apply results remain the source of
+truth.
 
 ## Job Hygiene
 
