@@ -308,7 +308,13 @@ The workflow needs:
 - optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; default is `50`
 - optional `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA` variable for replacement PR backpressure; default is `50` open ClawSweeper PRs per touched area, `0` disables the area cap, and common changelog/release-note files are ignored for this check
 - ClawSweeper commit-finding repair PRs are labeled `clawsweeper:commit-finding`
-- optional `CLAWSWEEPER_CODEX_TIMEOUT_MS` and `CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS` variables; worker planning defaults to 30 minutes, while fix execution defaults to a 20 minute Codex budget inside the 30 minute build-PR step so timeout artifacts can be written
+- optional `CLAWSWEEPER_CODEX_TIMEOUT_MS`, `CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS`,
+  and `CLAWSWEEPER_FIX_STEP_TIMEOUT_MS` variables; worker planning defaults to
+  30 minutes, while fix execution defaults to a 20 minute per-Codex-call budget
+  inside a 35 minute executor budget. The GitHub Actions execute job keeps a 45
+  minute timeout so long edit/test passes still leave room for internal
+  `/review`, post-flight, and timeout artifact upload instead of falling into a
+  30-second review floor near the end of the run.
 - optional `CLAWSWEEPER_NETWORK_COMMAND_TIMEOUT_MS` variable; repair execution
   uses bounded Git/GitHub network calls so a stuck clone, fetch, push, or API
   request fails in time for the executor to write a blocked report and upload

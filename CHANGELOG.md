@@ -60,6 +60,10 @@ checkpoint, and status-only commits are intentionally omitted.
 - Simplified substantive automerge repair so Codex owns the initial rebase,
   PR-comment review, CI inspection, and test/fix loop while the deterministic
   executor keeps GitHub mutations and final validation.
+- Increased the repair executor budget inside the existing 45-minute Actions
+  job so long Codex edit/test passes still have time for internal `/review`,
+  post-flight, and artifact upload instead of wasting a retry on a 30-second
+  end-of-budget review timeout.
 - Filter routine GitHub activity before posting OpenClaw hook turns, retry
   transient hook failures with the same idempotency key, and document the retry
   controls for the activity lane.
