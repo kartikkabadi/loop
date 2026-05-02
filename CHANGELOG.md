@@ -94,6 +94,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Prevented automerge repair workers from treating a clean rebase as a complete
+  repair when the current ClawSweeper review still requires a substantive fix.
 - Skipped event comment-router ledger publishes when a cancelled run exits before
   pnpm setup, avoiding noisy `pnpm: command not found` failures.
 - Prevented duplicate automerge repair dispatches when the configured run-name

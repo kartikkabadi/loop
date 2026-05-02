@@ -453,6 +453,7 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
       "show canonical URL or explain needs_human",
       "use canonical/duplicate_of/candidate_fix refs only when those refs are hydrated preflight items; unhydrated PR refs found in comments belong in evidence or fix_artifact until hydrated",
       "include targeted tests and changelog plan for fix artifacts",
+      "set fix_artifact.deterministic_rebase_only=true only for a pure base-sync repair with no review finding, failing validation, or code/content change to address; omit it for any substantive fix",
       "do not plan executable fix PRs for broad feature/config/docs rewrites; split them into narrower follow-up jobs or mark implementation blocked with exact sub-scopes",
       "if replacing a contributor PR, include source PR credit and the exact close comment that says ClawSweeper will preserve attribution",
       "include full GitHub URLs in closure rationale",

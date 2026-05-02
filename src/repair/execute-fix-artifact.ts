@@ -766,6 +766,7 @@ function tryAutomergeFastRebaseRepair({
     !canUseAutomergeFastRebase({
       isAutomergeRepair: isAutomergeRepairJob(),
       repairStrategy: fixArtifact.repair_strategy,
+      fixArtifact,
     })
   ) {
     return { status: "disabled", reason: "not an adopted automerge branch repair" };

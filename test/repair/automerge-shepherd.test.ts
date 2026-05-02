@@ -12,6 +12,7 @@ test("automerge fast rebase is limited to adopted branch repairs", () => {
     canUseAutomergeFastRebase({
       isAutomergeRepair: true,
       repairStrategy: "repair_contributor_branch",
+      fixArtifact: { deterministic_rebase_only: true },
       env: {},
     }),
     true,
@@ -20,6 +21,7 @@ test("automerge fast rebase is limited to adopted branch repairs", () => {
     canUseAutomergeFastRebase({
       isAutomergeRepair: true,
       repairStrategy: "replace_uneditable_branch",
+      fixArtifact: { deterministic_rebase_only: true },
       env: {},
     }),
     false,
@@ -28,7 +30,20 @@ test("automerge fast rebase is limited to adopted branch repairs", () => {
     canUseAutomergeFastRebase({
       isAutomergeRepair: true,
       repairStrategy: "repair_contributor_branch",
+      fixArtifact: { deterministic_rebase_only: true },
       env: { CLAWSWEEPER_AUTOMERGE_FAST_REBASE: "0" },
+    }),
+    false,
+  );
+  assert.equal(
+    canUseAutomergeFastRebase({
+      isAutomergeRepair: true,
+      repairStrategy: "repair_contributor_branch",
+      fixArtifact: {
+        summary: "Address ClawSweeper review feedback before automerge.",
+        validation_commands: ["pnpm check:changed"],
+      },
+      env: {},
     }),
     false,
   );

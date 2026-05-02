@@ -15,10 +15,12 @@ export function automergeShepherdWaitConfig(env: LooseRecord = process.env) {
 export function canUseAutomergeFastRebase({
   isAutomergeRepair,
   repairStrategy,
+  fixArtifact = null,
   env = process.env,
 }: LooseRecord) {
   if (env.CLAWSWEEPER_AUTOMERGE_FAST_REBASE === "0") return false;
-  return isAutomergeRepair === true && repairStrategy === "repair_contributor_branch";
+  if (isAutomergeRepair !== true || repairStrategy !== "repair_contributor_branch") return false;
+  return fixArtifact?.deterministic_rebase_only === true;
 }
 
 export function automergeShepherdReadiness({
