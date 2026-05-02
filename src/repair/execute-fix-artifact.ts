@@ -129,7 +129,7 @@ const codexHeartbeatMs = Math.max(
   Number(process.env.CLAWSWEEPER_CODEX_HEARTBEAT_MS ?? 60_000),
 );
 const maxEditAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_FIX_EDIT_ATTEMPTS ?? 3));
-const maxReviewAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS ?? 2));
+const maxReviewAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS ?? 4));
 const resolveReviewThreads = process.env.CLAWSWEEPER_RESOLVE_REVIEW_THREADS !== "0";
 const skipCodexWritePreflight = process.env.CLAWSWEEPER_SKIP_CODEX_WRITE_PREFLIGHT === "1";
 const allowExpensiveValidation = process.env.CLAWSWEEPER_ALLOW_EXPENSIVE_VALIDATION === "1";

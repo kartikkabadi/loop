@@ -49,6 +49,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
+- Let automerge fix execution run up to three Codex review-fix rounds by
+  default, so new actionable findings found after validation feed back into the
+  agent instead of stopping after one review-fix attempt.
 - Filter routine GitHub activity before posting OpenClaw hook turns, retry
   transient hook failures with the same idempotency key, and document the retry
   controls for the activity lane.
