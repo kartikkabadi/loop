@@ -4,6 +4,15 @@ import { parsePullRequestUrl } from "./github-ref.js";
 import type { JsonValue } from "./json-types.js";
 import { runCommand as run } from "./command-runner.js";
 
+const gitNetworkTimeoutMs = Math.max(
+  30_000,
+  Number(
+    process.env.CLAWSWEEPER_GIT_NETWORK_TIMEOUT_MS ??
+      process.env.CLAWSWEEPER_NETWORK_COMMAND_TIMEOUT_MS ??
+      5 * 60 * 1000,
+  ),
+);
+
 export type SourcePullRequestCheckout = {
   branch: string;
   sourcePr: GitHubRef;
@@ -81,6 +90,7 @@ export function fetchSourcePullRequestHead({
   const sourceRef = sourcePullRequestRemoteRef(sourcePr.number);
   run("git", ["fetch", "origin", sourcePullRequestFetchSpec(sourcePr.number, sourceRef)], {
     cwd: targetDir,
+    timeoutMs: gitNetworkTimeoutMs,
   });
   return sourceRef;
 }

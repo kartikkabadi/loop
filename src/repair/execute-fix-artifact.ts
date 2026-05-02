@@ -159,6 +159,10 @@ const targetSetupTimeoutMs = Number(
 const minTargetCommandTimeoutMs = Number(
   process.env.CLAWSWEEPER_FIX_MIN_TARGET_COMMAND_TIMEOUT_MS ?? 30 * 1000,
 );
+const networkCommandTimeoutMs = Math.max(
+  minTargetCommandTimeoutMs,
+  Number(process.env.CLAWSWEEPER_NETWORK_COMMAND_TIMEOUT_MS ?? 5 * 60 * 1000),
+);
 const reportReserveMs = Number(process.env.CLAWSWEEPER_FIX_REPORT_RESERVE_MS ?? 90 * 1000);
 const strictTargetValidation =
   process.env.CLAWSWEEPER_STRICT_TARGET_VALIDATION === "1" ||
@@ -245,6 +249,17 @@ function currentTargetValidationOptions(): TargetValidationOptions {
 function boundedTimeout(timeoutMs: number, remainingMs: number) {
   const timeout = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : remainingMs;
   return Math.max(1_000, Math.min(timeout, remainingMs));
+}
+
+function currentNetworkCommandTimeoutMs() {
+  return boundedTimeout(networkCommandTimeoutMs, remainingFixStepBudgetMs());
+}
+
+function runGitNetwork(args: string[], cwd: string = targetDir) {
+  return run("git", args, {
+    cwd,
+    timeoutMs: currentNetworkCommandTimeoutMs(),
+  });
 }
 
 function currentCodexTimeoutMs() {
@@ -638,13 +653,15 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   const branch = safeBranchName(
     `clawsweeper-repair/repair-${result.cluster_id}-${sourcePr.number}`,
   );
-  run("git", ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], {
-    cwd: targetDir,
+  logProgress("fetching latest base for contributor repair", { base_branch: baseBranch });
+  runGitNetwork(["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], targetDir);
+  logProgress("fetching contributor branch", {
+    head_repo: pull.head.repo.full_name,
+    head_ref: pull.head.ref,
   });
-  run(
-    "git",
+  runGitNetwork(
     ["fetch", `https://github.com/${pull.head.repo.full_name}.git`, `${pull.head.ref}:${branch}`],
-    { cwd: targetDir },
+    targetDir,
   );
   run("git", ["checkout", branch], { cwd: targetDir });
   ensureMergeBaseAvailable({ targetDir, baseBranch });
@@ -746,7 +763,7 @@ function pushRepairBranchAndUpdateStatus({
   });
   if (livePauseBlock) return livePauseBlock;
   const pushArgs = repairBranchPushArgs({ pull, rewritten: branchUpdate.rewritten });
-  run("git", pushArgs, { cwd: targetDir });
+  runGitNetwork(pushArgs, targetDir);
   const threadResolution = prepareReviewThreadsForMerge({
     repo: result.repo,
     number: sourcePr.number,
@@ -775,6 +792,7 @@ function pushRepairBranchAndUpdateStatus({
       {
         cwd: targetDir,
         env: ghEnv(),
+        timeoutMs: currentNetworkCommandTimeoutMs(),
       },
     );
   }
@@ -962,7 +980,7 @@ function repairBranchPushArgs({ pull, rewritten }: LooseRecord) {
 
 function assertRepairBranchWritable({ targetDir, pull, rewritten }: LooseRecord) {
   const args = repairBranchPushArgs({ pull, rewritten });
-  run("git", ["push", "--dry-run", ...args.slice(1)], { cwd: targetDir });
+  runGitNetwork(["push", "--dry-run", ...args.slice(1)], targetDir);
 }
 
 function prepareFallbackReplacementCheckout(sourceTargetDir: string) {
@@ -1004,7 +1022,7 @@ function executeReplacementBranch({
       ...areaCapacityBlock,
     };
   }
-  run("git", ["fetch", "origin", baseBranch], { cwd: targetDir });
+  runGitNetwork(["fetch", "origin", baseBranch], targetDir);
   const branchState = checkoutRecoverableReplacementBranch({
     targetDir,
     branch,
@@ -1081,7 +1099,7 @@ function executeReplacementBranch({
         "--body-file",
         bodyPath,
       ],
-      { cwd: targetDir, env: ghEnv() },
+      { cwd: targetDir, env: ghEnv(), timeoutMs: currentNetworkCommandTimeoutMs() },
     ).trim();
   const prNumber = pullRequestNumberFromUrl(prUrl);
   if (prNumber) ensurePullRequestOpen({ number: prNumber, targetDir });
@@ -1186,6 +1204,7 @@ function sourcePullRequestLabels({ number, targetDir }: LooseRecord) {
     run("gh", ["pr", "view", String(number), "--repo", result.repo, "--json", "labels"], {
       cwd: targetDir,
       env: ghEnv(),
+      timeoutMs: currentNetworkCommandTimeoutMs(),
     }),
   );
   return (view.labels ?? [])
@@ -1207,6 +1226,7 @@ function ensureLabel(
       {
         cwd: targetDir,
         env: ghEnv(),
+        timeoutMs: currentNetworkCommandTimeoutMs(),
       },
     );
   } catch (error) {
@@ -1218,6 +1238,7 @@ function addLabel(repo: string, number: JsonValue, name: string, targetDir: stri
   run("gh", ["issue", "edit", String(number), "--repo", repo, "--add-label", name], {
     cwd: targetDir,
     env: ghEnv(),
+    timeoutMs: currentNetworkCommandTimeoutMs(),
   });
 }
 
@@ -1250,6 +1271,7 @@ function linkReplacementSourcePr({
   run("gh", ["pr", "comment", String(parsed.number), "--repo", result.repo, "--body", comment], {
     cwd: targetDir,
     env: ghEnv(),
+    timeoutMs: currentNetworkCommandTimeoutMs(),
   });
   return { ...base, status: "executed", reason: "linked replacement PR without closing source PR" };
 }
@@ -1284,12 +1306,14 @@ function closeSupersededSourcePr({
   run("gh", ["pr", "comment", String(parsed.number), "--repo", result.repo, "--body", comment], {
     cwd: targetDir,
     env: ghEnv(),
+    timeoutMs: currentNetworkCommandTimeoutMs(),
   });
 
   try {
     run("gh", ["pr", "close", String(parsed.number), "--repo", result.repo], {
       cwd: targetDir,
       env: ghEnv(),
+      timeoutMs: currentNetworkCommandTimeoutMs(),
     });
     return {
       ...base,
@@ -1316,6 +1340,7 @@ function ensurePullRequestOpen({ number, targetDir }: LooseRecord) {
     run("gh", ["pr", "reopen", String(number), "--repo", result.repo], {
       cwd: targetDir,
       env: ghEnv(),
+      timeoutMs: currentNetworkCommandTimeoutMs(),
     });
   }
 }
@@ -1578,9 +1603,7 @@ function reconcileLatestBaseBeforePush({
   repositoryContext,
   sourceHead,
 }: LooseRecord) {
-  run("git", ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], {
-    cwd: targetDir,
-  });
+  runGitNetwork(["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], targetDir);
   const baseRef = `origin/${baseBranch}`;
   if (isAncestor({ targetDir, ancestor: baseRef, descendant: "HEAD" })) {
     return { status: "already-current" };
@@ -2319,6 +2342,7 @@ function ensureTargetCheckout(repo: string, targetDir: string) {
     run("gh", ["repo", "clone", repo, targetDir, "--", "--depth=1"], {
       cwd: repoRoot(),
       env: ghEnv(),
+      timeoutMs: currentNetworkCommandTimeoutMs(),
     });
     return;
   }
@@ -2356,9 +2380,10 @@ function checkoutRecoverableReplacementBranch({
     ? firstTargetSourcePullRequest(fixArtifact.source_prs ?? [], result.repo)
     : null;
   if (remoteBranchExists({ targetDir, branch })) {
-    run("git", ["fetch", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`], {
-      cwd: targetDir,
-    });
+    runGitNetwork(
+      ["fetch", "origin", `+refs/heads/${branch}:refs/remotes/origin/${branch}`],
+      targetDir,
+    );
     run("git", ["checkout", "-B", branch, `origin/${branch}`], { cwd: targetDir });
     if (sourcePr) {
       const sourceRef = fetchSourcePullRequestHead({ targetDir, sourcePr });
@@ -2411,7 +2436,7 @@ function commitCheckpointIfNeeded({ targetDir, message, trailers = [] }: LooseRe
   run("git", ["add", "--all"], { cwd: targetDir });
   const args = ["commit", "-m", message];
   for (const trailer of uniqueStrings(trailers)) args.push("-m", trailer);
-  run("git", args, { cwd: targetDir });
+  runGitNetwork(args, targetDir);
   return run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
 }
 
@@ -2421,7 +2446,7 @@ function pushRecoverableBranch({ targetDir, branch }: LooseRecord) {
   const args = remoteSha
     ? ["push", `--force-with-lease=${targetRef}:${remoteSha}`, "origin", `HEAD:${targetRef}`]
     : ["push", "origin", `HEAD:${targetRef}`];
-  run("git", args, { cwd: targetDir });
+  runGitNetwork(args, targetDir);
   if (fetchRemoteRecoverableBranch({ targetDir, branch, required: false })) return;
   throw new Error(`git push reported success, but refs/heads/${branch} was not visible on origin`);
 }
@@ -2434,6 +2459,7 @@ function fetchRemoteRecoverableBranch({ targetDir, branch, required = true }: Lo
       cwd: targetDir,
       env: process.env,
       encoding: "utf8",
+      timeout: currentNetworkCommandTimeoutMs(),
     },
   );
   if (child.status === 0) return true;
@@ -2460,7 +2486,7 @@ function findOpenPullRequestForBranch(branch: string, cwd: JsonValue) {
       "--jq",
       '.[0].url // ""',
     ],
-    { cwd, env: ghEnv() },
+    { cwd, env: ghEnv(), timeoutMs: currentNetworkCommandTimeoutMs() },
   ).trim();
 }
 
@@ -2728,6 +2754,7 @@ function dispatchAutomergeCommentRouter({ target, reason }: LooseRecord) {
       {
         cwd: repoRoot(),
         env: ghEnv(),
+        timeoutMs: currentNetworkCommandTimeoutMs(),
       },
     );
     return { status: "executed", repo: reviewRepo, dispatched_at: dispatchedAt };
@@ -2762,6 +2789,7 @@ function dispatchAutomergeReviewAfterBranchRepair({ target, commit }: LooseRecor
       {
         cwd: repoRoot(),
         env: ghEnv(),
+        timeoutMs: currentNetworkCommandTimeoutMs(),
       },
     );
     return { status: "executed", repo: reviewRepo, dispatched_at: dispatchedAt };
@@ -2854,6 +2882,7 @@ function issueCommentsFor(number: JsonValue) {
     {
       cwd: repoRoot(),
       env: ghEnv(),
+      timeoutMs: currentNetworkCommandTimeoutMs(),
     },
   );
   const parsed = JSON.parse(raw || "[]");
@@ -2880,7 +2909,7 @@ function fetchPullRequestViewForRepo({ repo, number }: LooseRecord) {
           "statusCheckRollup",
         ].join(","),
       ],
-      { cwd: repoRoot(), env: ghEnv() },
+      { cwd: repoRoot(), env: ghEnv(), timeoutMs: currentNetworkCommandTimeoutMs() },
     ) || "{}",
   );
 }
@@ -2929,6 +2958,7 @@ function patchIssueComment(id: JsonValue, body: string) {
     {
       cwd: repoRoot(),
       env: ghEnv(),
+      timeoutMs: currentNetworkCommandTimeoutMs(),
     },
   );
 }
@@ -2999,5 +3029,9 @@ function copyFixDebugArtifacts(reportDir: JsonValue) {
 }
 
 function ghAuthSetupGit(cwd: JsonValue) {
-  run("gh", ["auth", "setup-git"], { cwd, env: ghEnv() });
+  run("gh", ["auth", "setup-git"], {
+    cwd,
+    env: ghEnv(),
+    timeoutMs: currentNetworkCommandTimeoutMs(),
+  });
 }

@@ -54,6 +54,9 @@ checkpoint, and status-only commits are intentionally omitted.
   agent instead of stopping after one review-fix attempt.
 - Updated repair workflow defaults to pass the four-attempt review loop through
   GitHub Actions instead of overriding the executor default with two attempts.
+- Added bounded Git/GitHub network timeouts to repair execution so hung
+  contributor-branch fetches fail with artifacts instead of exhausting the
+  whole automerge job.
 - Filter routine GitHub activity before posting OpenClaw hook turns, retry
   transient hook failures with the same idempotency key, and document the retry
   controls for the activity lane.

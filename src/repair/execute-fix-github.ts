@@ -5,9 +5,22 @@ import { repoRoot } from "./lib.js";
 import { repairGhEnv as ghEnv } from "./process-env.js";
 import { uniqueStrings } from "./validation-command-utils.js";
 
+const ghCommandTimeoutMs = Math.max(
+  30_000,
+  Number(
+    process.env.CLAWSWEEPER_GH_COMMAND_TIMEOUT_MS ??
+      process.env.CLAWSWEEPER_NETWORK_COMMAND_TIMEOUT_MS ??
+      2 * 60 * 1000,
+  ),
+);
+
 export function fetchPullRequest(repo: string, number: JsonValue): LooseRecord {
   return JSON.parse(
-    run("gh", ["api", `repos/${repo}/pulls/${number}`], { cwd: repoRoot(), env: ghEnv() }),
+    run("gh", ["api", `repos/${repo}/pulls/${number}`], {
+      cwd: repoRoot(),
+      env: ghEnv(),
+      timeoutMs: ghCommandTimeoutMs,
+    }),
   );
 }
 
@@ -27,6 +40,7 @@ export function fetchSourcePullRequestView({
       {
         cwd: targetDir,
         env: ghEnv(),
+        timeoutMs: ghCommandTimeoutMs,
       },
     ),
   );
@@ -155,7 +169,13 @@ export function prepareReviewThreadsForMerge({
 
 function fetchGitHubUser(login: JsonValue, targetDir: string): LooseRecord | null {
   try {
-    const user = JSON.parse(run("gh", ["api", `users/${login}`], { cwd: targetDir, env: ghEnv() }));
+    const user = JSON.parse(
+      run("gh", ["api", `users/${login}`], {
+        cwd: targetDir,
+        env: ghEnv(),
+        timeoutMs: ghCommandTimeoutMs,
+      }),
+    );
     if (!user?.id || !user?.login) return null;
     return user;
   } catch {
@@ -215,7 +235,7 @@ function fetchReviewThreads(repo: string, number: JsonValue): LooseRecord {
         "-f",
         `query=${query}`,
       ],
-      { cwd: repoRoot(), env: ghEnv() },
+      { cwd: repoRoot(), env: ghEnv(), timeoutMs: ghCommandTimeoutMs },
     ),
   );
   const threads = data?.data?.repository?.pullRequest?.reviewThreads;

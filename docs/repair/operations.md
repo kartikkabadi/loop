@@ -210,6 +210,11 @@ heartbeat. If a model call is slow, Actions logs should show
 `[clawsweeper repair] ... still running` about once a minute instead of ending
 with a silent no-output timeout.
 
+Network calls in fix execution are also bounded. Contributor-branch clone,
+fetch, push, status-comment, and review-thread calls should time out before the
+GitHub Actions step limit, leaving the final repair report and debug artifacts
+for the comment router instead of a bare step timeout.
+
 For deep debugging, download the `clawsweeper-codex-debug-cluster-*` and
 `clawsweeper-codex-debug-execute-*` artifacts from the repair worker run. They
 contain recent Codex session/log files, ClawSweeper-captured `codex exec --json`

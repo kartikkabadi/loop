@@ -4,6 +4,15 @@ import { spawnSync } from "node:child_process";
 import { runCommand as run } from "./command-runner.js";
 import { uniqueStrings } from "./validation-command-utils.js";
 
+const gitNetworkTimeoutMs = Math.max(
+  30_000,
+  Number(
+    process.env.CLAWSWEEPER_GIT_NETWORK_TIMEOUT_MS ??
+      process.env.CLAWSWEEPER_NETWORK_COMMAND_TIMEOUT_MS ??
+      5 * 60 * 1000,
+  ),
+);
+
 type TargetDir = {
   targetDir: string;
 };
@@ -58,6 +67,7 @@ export function remoteBranchSha({ targetDir, branch }: TargetBranch): string {
     cwd: targetDir,
     env: process.env,
     encoding: "utf8",
+    timeout: gitNetworkTimeoutMs,
   });
   if (child.status !== 0) return "";
   const sha = child.stdout.trim().split(/\s+/)[0] ?? "";
@@ -88,9 +98,7 @@ export function branchHasBaseDiff({ targetDir, baseBranch }: TargetBaseBranch): 
 }
 
 export function ensureMergeBaseAvailable({ targetDir, baseBranch }: TargetBaseBranch): string {
-  run("git", ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], {
-    cwd: targetDir,
-  });
+  gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
   const baseRef = `origin/${baseBranch}`;
   const first = spawnSync("git", ["merge-base", baseRef, "HEAD"], {
     cwd: targetDir,
@@ -237,13 +245,15 @@ function fetchDeeperHistory({ targetDir, baseBranch }: TargetBaseBranch): void {
     encoding: "utf8",
   }).stdout.trim();
   if (shallow === "true" || fs.existsSync(path.join(targetDir, ".git", "shallow"))) {
-    run("git", ["fetch", "--unshallow", "origin"], { cwd: targetDir });
+    gitFetch(targetDir, ["--unshallow", "origin"]);
   } else {
-    run("git", ["fetch", "origin", "--prune"], { cwd: targetDir });
+    gitFetch(targetDir, ["origin", "--prune"]);
   }
-  run("git", ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], {
-    cwd: targetDir,
-  });
+  gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
+}
+
+function gitFetch(targetDir: string, args: string[]): void {
+  run("git", ["fetch", ...args], { cwd: targetDir, timeoutMs: gitNetworkTimeoutMs });
 }
 
 export function gitChangedFiles(targetDir: string, baseBranch: string): string[] {
