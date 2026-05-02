@@ -28,6 +28,7 @@
     "repair:import-ghcrawl": "node dist/repair/import-gitcrawl-clusters.js",
     "repair:import-low-signal": "node dist/repair/import-gitcrawl-low-signal-prs.js",
     "repair:worker": "node dist/repair/run-worker.js",
+    "repair:collect-codex-debug": "node dist/repair/collect-codex-debug.js",
     "repair:apply-result": "node dist/repair/apply-result.js",
     "repair:execute-fix": "node dist/repair/execute-fix-artifact.js",
     "repair:post-flight": "node dist/repair/post-flight.js",

@@ -94,6 +94,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Backed up redacted Codex session/log artifacts from repair worker Actions runs
+  so automerge stalls can be debugged from the raw model transcript.
 - Prevented automerge repair workers from treating a clean rebase as a complete
   repair when the current ClawSweeper review still requires a substantive fix.
 - Skipped event comment-router ledger publishes when a cancelled run exits before

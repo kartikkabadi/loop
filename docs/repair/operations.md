@@ -204,6 +204,12 @@ The workflow uses Node 24 and logs Codex in with `OPENAI_API_KEY`, while also pa
 
 Codex runs in a read-only sandbox for classification and receives no GitHub token. GitHub read access is scoped to deterministic preflight scripts. For reviewed fix artifacts, `execute-fix-artifact` gives Codex a temporary target checkout without GitHub credentials, then the deterministic executor commits, pushes, opens the replacement PR, and closes uneditable source PRs only after the replacement exists. When a replacement carries contributor work forward, non-bot source PR authors are added as `Co-authored-by` trailers and named in the replacement PR body and source close comment. Remaining write access is scoped to `apply-result`.
 
+For deep debugging, download the `clawsweeper-codex-debug-cluster-*` and
+`clawsweeper-codex-debug-execute-*` artifacts from the repair worker run. They
+contain recent Codex session/log files plus a manifest. The collector skips
+Codex auth/config files and redacts common token shapes before upload; retention
+is seven days by default.
+
 Runs for the same job path and mode share a concurrency group. Different cluster jobs can still run in parallel.
 
 Live preflight hydrates job-provided refs by default and records linked refs without expanding them. Set repo variables `CLAWSWEEPER_MAX_LINKED_REFS` above `0` only for small clusters that need first-hop context and `CLAWSWEEPER_HYDRATE_COMMENTS=1` when comment bodies are necessary evidence; normal scale runs use issue/PR metadata, body excerpts, PR files, and PR checks.

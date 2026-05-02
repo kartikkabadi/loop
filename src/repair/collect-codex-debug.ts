@@ -1,0 +1,188 @@
+#!/usr/bin/env node
+import crypto from "node:crypto";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+
+type CollectOptions = {
+  outDir: string;
+  label: string;
+  sinceMinutes: number;
+  maxBytes: number;
+  homeDir: string;
+  codexHome?: string;
+};
+
+type ManifestEntry = {
+  source: string;
+  artifact_path: string;
+  bytes: number;
+  redacted_bytes: number;
+  modified_at: string;
+  sha256: string;
+};
+
+type SkippedEntry = {
+  source: string;
+  reason: string;
+};
+
+const DEFAULT_SINCE_MINUTES = 240;
+const DEFAULT_MAX_BYTES = 100 * 1024 * 1024;
+
+export function collectCodexDebug(options: CollectOptions) {
+  const roots = codexDebugRoots(options);
+  const since = Date.now() - options.sinceMinutes * 60 * 1000;
+  const manifest: ManifestEntry[] = [];
+  const skipped: SkippedEntry[] = [];
+
+  fs.rmSync(options.outDir, { recursive: true, force: true });
+  fs.mkdirSync(options.outDir, { recursive: true });
+
+  for (const root of roots) {
+    if (!fs.existsSync(root.path)) {
+      skipped.push({ source: root.path, reason: "missing" });
+      continue;
+    }
+    for (const filePath of listFiles(root.path)) {
+      const stat = fs.statSync(filePath);
+      if (!stat.isFile()) continue;
+      if (stat.mtimeMs < since) continue;
+      if (!isAllowedCodexDebugFile(filePath)) {
+        skipped.push({ source: filePath, reason: "not-session-log" });
+        continue;
+      }
+      if (stat.size > options.maxBytes) {
+        skipped.push({ source: filePath, reason: `over ${options.maxBytes} bytes` });
+        continue;
+      }
+      const relative = safeRelative(root.path, filePath);
+      const artifactPath = path.join(options.outDir, root.name, relative);
+      fs.mkdirSync(path.dirname(artifactPath), { recursive: true });
+      const raw = fs.readFileSync(filePath, "utf8");
+      const redacted = redactSecrets(raw);
+      fs.writeFileSync(artifactPath, redacted);
+      manifest.push({
+        source: path.join(root.name, relative),
+        artifact_path: path.relative(options.outDir, artifactPath),
+        bytes: stat.size,
+        redacted_bytes: Buffer.byteLength(redacted),
+        modified_at: stat.mtime.toISOString(),
+        sha256: crypto.createHash("sha256").update(redacted).digest("hex"),
+      });
+    }
+  }
+
+  const manifestPath = path.join(options.outDir, "manifest.json");
+  fs.writeFileSync(
+    manifestPath,
+    `${JSON.stringify(
+      {
+        label: options.label,
+        collected_at: new Date().toISOString(),
+        since_minutes: options.sinceMinutes,
+        files: manifest,
+        skipped,
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
+  return { manifest, skipped, manifestPath };
+}
+
+export function redactSecrets(text: string) {
+  return text
+    .replace(/\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b/g, "[REDACTED_OPENAI_KEY]")
+    .replace(/\bgithub_pat_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
+    .replace(/\bgh[pousr]_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
+    .replace(/\b(OPENAI_API_KEY|CODEX_API_KEY|GH_TOKEN|GITHUB_TOKEN)=([^\s"']+)/g, "$1=[REDACTED]")
+    .replace(
+      /"((?:OPENAI_API_KEY|CODEX_API_KEY|GH_TOKEN|GITHUB_TOKEN))"\s*:\s*"[^"]*"/g,
+      '"$1":"[REDACTED]"',
+    );
+}
+
+function codexDebugRoots(options: CollectOptions) {
+  const codexHome = options.codexHome || path.join(options.homeDir, ".codex");
+  return [
+    { name: "sessions", path: path.join(codexHome, "sessions") },
+    { name: "log", path: path.join(codexHome, "log") },
+  ];
+}
+
+function isAllowedCodexDebugFile(filePath: string) {
+  const base = path.basename(filePath).toLowerCase();
+  if (base === "auth.json" || base === "config.toml" || base === "config.json") return false;
+  return /\.(jsonl|ndjson|log|txt)$/i.test(base);
+}
+
+function* listFiles(root: string): Generator<string> {
+  for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+    const filePath = path.join(root, entry.name);
+    if (entry.isDirectory()) yield* listFiles(filePath);
+    else if (entry.isFile()) yield filePath;
+  }
+}
+
+function safeRelative(root: string, filePath: string) {
+  const relative = path.relative(root, filePath);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
+    throw new Error(`refusing to copy file outside root: ${filePath}`);
+  }
+  return relative;
+}
+
+function parseArgs(argv: string[]) {
+  const args: Record<string, string | boolean> = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    const value = argv[index];
+    if (!value?.startsWith("--")) continue;
+    const key = value.slice(2);
+    const next = argv[index + 1];
+    if (!next || next.startsWith("--")) args[key] = true;
+    else {
+      args[key] = next;
+      index += 1;
+    }
+  }
+  return args;
+}
+
+function numberArg(value: string | boolean | undefined, fallback: number) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function stringArg(value: string | boolean | undefined, fallback: string) {
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function isMain() {
+  const entry = process.argv[1];
+  return Boolean(entry && import.meta.url === pathToFileURL(entry).href);
+}
+
+if (isMain()) {
+  const args = parseArgs(process.argv.slice(2));
+  const outDir = stringArg(args.out, ".clawsweeper-repair/codex-debug");
+  const codexHome = typeof args["codex-home"] === "string" ? args["codex-home"] : undefined;
+  const result = collectCodexDebug({
+    outDir,
+    label: stringArg(args.label, "codex"),
+    sinceMinutes: numberArg(args["since-minutes"], DEFAULT_SINCE_MINUTES),
+    maxBytes: numberArg(args["max-bytes"], DEFAULT_MAX_BYTES),
+    homeDir: os.homedir(),
+    ...(codexHome ? { codexHome } : {}),
+  });
+  console.log(
+    JSON.stringify({
+      out_dir: outDir,
+      files: result.manifest.length,
+      skipped: result.skipped.length,
+      manifest: result.manifestPath,
+    }),
+  );
+}

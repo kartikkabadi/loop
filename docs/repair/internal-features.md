@@ -63,6 +63,21 @@ artifacts, but it must not mutate GitHub directly.
 `scripts/review-results.ts` validates the result before any follow-up lane
 trusts it.
 
+### Codex Debug Artifacts
+
+Artifact names:
+
+- `clawsweeper-codex-debug-cluster-<run-id>-<attempt>`
+- `clawsweeper-codex-debug-execute-<run-id>-<attempt>`
+
+The repair workflow snapshots recent Codex session JSONL files and Codex log
+files from `~/.codex/sessions` and `~/.codex/log` after both the planning job
+and the fix execution job. The collector deliberately excludes Codex auth and
+config files, redacts common OpenAI and GitHub token shapes, and writes a
+`manifest.json` with source-relative paths, byte counts, mtimes, and SHA-256
+hashes. These debug artifacts are separate from the worker-transfer artifact, so
+the execute job does not download raw session logs just to continue a repair.
+
 ### Fix Artifact
 
 Path: `.clawsweeper-repair/runs/<run>/fix-artifact.json` and embedded result

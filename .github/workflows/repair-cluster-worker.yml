@@ -238,6 +238,29 @@ jobs:
             pnpm run repair:review-results -- .clawsweeper-repair/runs
           fi
 
+      - name: Collect Codex debug logs
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}
+        env:
+          CLAWSWEEPER_CODEX_DEBUG_SINCE_MINUTES: ${{ vars.CLAWSWEEPER_CODEX_DEBUG_SINCE_MINUTES || '240' }}
+        run: |
+          if [ -f dist/repair/collect-codex-debug.js ]; then
+            node dist/repair/collect-codex-debug.js \
+              --out .clawsweeper-repair/codex-debug/cluster \
+              --label cluster \
+              --since-minutes "${CLAWSWEEPER_CODEX_DEBUG_SINCE_MINUTES}"
+          else
+            echo "::notice title=No Codex debug collector::dist/repair/collect-codex-debug.js is missing."
+          fi
+
+      - name: Upload Codex debug logs
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: clawsweeper-codex-debug-cluster-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .clawsweeper-repair/codex-debug/cluster/**
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Upload worker transfer artifacts
         if: ${{ always() && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
         uses: actions/upload-artifact@v7
@@ -440,6 +463,29 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:tag-clawsweeper -- .clawsweeper-repair/runs --apply --live --open-branches false --report .clawsweeper-repair/runs/clawsweeper-label-report.json
+
+      - name: Collect Codex debug logs
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}
+        env:
+          CLAWSWEEPER_CODEX_DEBUG_SINCE_MINUTES: ${{ vars.CLAWSWEEPER_CODEX_DEBUG_SINCE_MINUTES || '240' }}
+        run: |
+          if [ -f dist/repair/collect-codex-debug.js ]; then
+            node dist/repair/collect-codex-debug.js \
+              --out .clawsweeper-repair/codex-debug/execute \
+              --label execute \
+              --since-minutes "${CLAWSWEEPER_CODEX_DEBUG_SINCE_MINUTES}"
+          else
+            echo "::notice title=No Codex debug collector::dist/repair/collect-codex-debug.js is missing."
+          fi
+
+      - name: Upload Codex debug logs
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: clawsweeper-codex-debug-execute-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .clawsweeper-repair/codex-debug/execute/**
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Upload final worker artifacts
         if: always()
