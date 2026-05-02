@@ -46,6 +46,7 @@ checkpoint, and status-only commits are intentionally omitted.
   findings. Thanks @stainlu.
 - Added maintainer issue commands that let ClawSweeper create or update one
   guarded implementation pull request from an open issue.
+- Added `build` as an issue implementation command alias.
 
 ### Changed
 

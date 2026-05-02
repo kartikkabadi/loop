@@ -143,6 +143,7 @@ Supported commands:
 /clawsweeper status
 /clawsweeper re-review
 /clawsweeper implement
+/clawsweeper build
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
@@ -154,6 +155,7 @@ Supported commands:
 @clawsweeper re-review
 @clawsweeper review
 @clawsweeper implement
+@clawsweeper build
 @clawsweeper create pr
 @clawsweeper fix issue
 @openclaw-clawsweeper fix ci
@@ -164,7 +166,7 @@ Supported commands:
 dispatch ClawSweeper review again for an open issue or PR. `fix ci`, `address review`,
 and `rebase` dispatch the normal `repair-cluster-worker.yml` repair path, but only for
 existing ClawSweeper PRs identified by the `clawsweeper/*` branch.
-`implement`, `create pr`, and `fix issue` work only on open issues. The router
+`implement`, `build`, `create pr`, and `fix issue` work only on open issues. The router
 creates or reuses one durable `issue-<repo>-<number>` job and dispatches the
 normal repair worker to verify the issue on latest `main` and open or update one
 narrow implementation PR. This lane never merges or closes the issue; broad,

@@ -113,6 +113,12 @@ test("parseCommand recognizes maintainer slash commands", () => {
     intent: "implement_issue",
     implementation_prompt: "",
   });
+  assert.deepEqual(parseCommand("/clawsweeper build add export support"), {
+    trigger: "slash",
+    command: "build add export support",
+    intent: "implement_issue",
+    implementation_prompt: "add export support",
+  });
   assert.deepEqual(parseCommand("/clawsweeper create pr keep the fix narrow"), {
     trigger: "slash",
     command: "create pr keep the fix narrow",
@@ -460,6 +466,12 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
     command: "implement",
     intent: "implement_issue",
     implementation_prompt: "",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper build\nAdd export support."), {
+    trigger: "mention",
+    command: "build add export support",
+    intent: "implement_issue",
+    implementation_prompt: "Add export support.",
   });
   assert.deepEqual(parseCommand("@clawsweeper fix issue\nPlease keep the UI small."), {
     trigger: "mention",

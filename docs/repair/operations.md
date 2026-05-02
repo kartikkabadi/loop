@@ -244,6 +244,7 @@ Supported triggers:
 /clawsweeper status
 /clawsweeper re-review
 /clawsweeper implement
+/clawsweeper build
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
@@ -255,13 +256,14 @@ Supported triggers:
 @clawsweeper re-review
 @clawsweeper review
 @clawsweeper implement
+@clawsweeper build
 @clawsweeper create pr
 @clawsweeper fix issue
 @openclaw-clawsweeper fix ci
 ```
 
 `review` and `re-review` dispatch ClawSweeper review again for an open issue or PR.
-Issue implementation commands (`implement`, `create pr`, `fix issue`) dispatch
+Issue implementation commands (`implement`, `build`, `create pr`, `fix issue`) dispatch
 the repair worker for one open issue and ask it to create or update a single
 ClawSweeper implementation PR. The generated job uses
 `source: issue_implementation`, `repair_strategy: new_fix_pr`, blocks merge and
