@@ -46,6 +46,9 @@ function runCli(): void {
         ),
       );
       break;
+    case "count-requeue-required":
+      console.log(countRequeueRequired(requiredString("dir")));
+      break;
     case "proposed-item-numbers":
       process.stdout.write(proposedItemNumbers(proposedItemOptions()).join(","));
       break;
@@ -165,6 +168,12 @@ export function countCommandActions(reportPath: string, action: string, status =
     .filter((entry: LooseRecord) => !status || entry.status === status).length;
 }
 
+export function countRequeueRequired(reportDir: string): number {
+  return resultFiles(reportDir)
+    .flatMap((file) => resultActions(file))
+    .filter((action) => action.requeue_required === true).length;
+}
+
 export function mergeApplyReports(reportDir: string, outputPath: string): void {
   const reports = fs.existsSync(reportDir)
     ? fs
@@ -263,6 +272,21 @@ function readApplyActions(reportPath: string): ApplyAction[] {
     if (!isJsonObject(entry) || typeof entry.action !== "string") return { action: "" };
     return { action: entry.action };
   });
+}
+
+function resultFiles(reportDir: string): string[] {
+  if (!fs.existsSync(reportDir)) return [];
+  return fs
+    .readdirSync(reportDir, { recursive: true })
+    .map((entry) => path.join(reportDir, String(entry)))
+    .filter((candidate) => path.basename(candidate) === "result.json")
+    .filter((candidate) => fs.statSync(candidate).isFile());
+}
+
+function resultActions(reportPath: string): LooseRecord[] {
+  const parsed = readJsonObject(reportPath);
+  const actions: JsonValue[] = Array.isArray(parsed.actions) ? parsed.actions : [];
+  return actions.filter((action): action is LooseRecord => isJsonObject(action));
 }
 
 function readJsonObject(filePath: string): LooseRecord {

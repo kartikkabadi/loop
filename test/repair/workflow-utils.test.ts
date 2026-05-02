@@ -8,6 +8,7 @@ import {
   artifactItemNumbers,
   countActions,
   countCommandActions,
+  countRequeueRequired,
   mergeApplyReports,
   planOutputFields,
   plannedItemNumberCsv,
@@ -51,6 +52,25 @@ test("workflow utilities count nested command actions by status", () => {
   assert.equal(countCommandActions(report, "dispatch_repair"), 2);
   assert.equal(countCommandActions(report, "dispatch_repair", "waiting"), 1);
   assert.equal(countCommandActions(report, "dispatch_clawsweeper", "waiting"), 1);
+});
+
+test("workflow utilities count repair results that require requeue", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  write(
+    path.join(root, "runs/a/result.json"),
+    JSON.stringify({
+      actions: [
+        { action: "repair_contributor_branch", status: "blocked", requeue_required: true },
+        { action: "automerge_repair_outcome_comment", status: "updated" },
+      ],
+    }),
+  );
+  write(
+    path.join(root, "runs/b/result.json"),
+    JSON.stringify({ actions: [{ action: "repair_contributor_branch", status: "pushed" }] }),
+  );
+
+  assert.equal(countRequeueRequired(path.join(root, "runs")), 1);
 });
 
 test("workflow utilities merge checkpoint reports in numeric order", () => {

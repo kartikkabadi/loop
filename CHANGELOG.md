@@ -63,7 +63,11 @@ checkpoint, and status-only commits are intentionally omitted.
 - Increased the repair executor budget inside the existing 45-minute Actions
   job so long Codex edit/test passes still have time for internal `/review`,
   post-flight, and artifact upload instead of wasting a retry on a 30-second
-  end-of-budget review timeout.
+  end-of-budget review timeout; the workflow step timeout now leaves room for
+  that larger internal budget to complete cleanly.
+- Requeue repair runs immediately when a contributor branch advances during the
+  safe push window, preserving the source-head race guard without waiting for a
+  later sweep to retry against the latest head.
 - Filter routine GitHub activity before posting OpenClaw hook turns, retry
   transient hook failures with the same idempotency key, and document the retry
   controls for the activity lane.

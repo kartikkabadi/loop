@@ -318,6 +318,7 @@ jobs:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
           owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
+          permission-actions: write
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -435,7 +436,7 @@ jobs:
 
       - name: Execute credited fix artifact
         if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
-        timeout-minutes: 30
+        timeout-minutes: 40
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:execute-fix -- "${{ inputs.job }}" --latest
@@ -463,6 +464,31 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:tag-clawsweeper -- .clawsweeper-repair/runs --apply --live --open-branches false --report .clawsweeper-repair/runs/clawsweeper-label-report.json
+
+      - name: Detect repair requeue requests
+        id: repair_requeue
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
+        run: |
+          set -euo pipefail
+          count="$(pnpm run --silent workflow -- count-requeue-required --dir .clawsweeper-repair/runs)"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Requeue source-head repair races
+        if: ${{ steps.repair_requeue.outputs.count != '' && steps.repair_requeue.outputs.count != '0' }}
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app
+        run: |
+          set -euo pipefail
+          echo "Requeueing ${{ steps.repair_requeue.outputs.count }} source-head race repair result(s) against the latest head."
+          pnpm run repair:requeue -- "${{ inputs.job }}" \
+            --mode "${{ inputs.mode }}" \
+            --execute \
+            --open-execute-window \
+            --wait-for-capacity \
+            --runner "${{ inputs.runner }}" \
+            --execution-runner "${{ inputs.execution_runner }}" \
+            --model "${{ inputs.model }}"
 
       - name: Collect Codex debug logs
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}

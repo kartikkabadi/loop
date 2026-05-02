@@ -311,10 +311,14 @@ The workflow needs:
 - optional `CLAWSWEEPER_CODEX_TIMEOUT_MS`, `CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS`,
   and `CLAWSWEEPER_FIX_STEP_TIMEOUT_MS` variables; worker planning defaults to
   30 minutes, while fix execution defaults to a 20 minute per-Codex-call budget
-  inside a 35 minute executor budget. The GitHub Actions execute job keeps a 45
-  minute timeout so long edit/test passes still leave room for internal
-  `/review`, post-flight, and timeout artifact upload instead of falling into a
-  30-second review floor near the end of the run.
+  inside a 35 minute executor budget. The cluster execute job keeps a 45 minute
+  timeout and a 40 minute execute-step cap so long edit/test passes still leave
+  room for internal `/review`, post-flight, and timeout artifact upload instead
+  of falling into a 30-second review floor near the end of the run.
+- If a contributor branch changes while a repair is preparing its push, the
+  executor records `requeue_required: true` and the same workflow dispatches a
+  fresh repair run for the latest head after publishing the result. This keeps
+  the force-with-lease guard intact without waiting for a later scheduled sweep.
 - optional `CLAWSWEEPER_NETWORK_COMMAND_TIMEOUT_MS` variable; repair execution
   uses bounded Git/GitHub network calls so a stuck clone, fetch, push, or API
   request fails in time for the executor to write a blocked report and upload
