@@ -10,7 +10,7 @@ const GH_TRANSIENT_PATTERNS = [
   /unexpected EOF/i,
   /connection reset by peer/i,
   /error connecting to api\.github\.com/i,
-  /\b(?:HTTP|status(?: code)?)\s*:?\s*(?:502|503|504)\b/i,
+  /\b(?:HTTP|status(?: code)?)\s*:?\s*(?:500|502|503|504)\b/i,
   /bad gateway/i,
   /service unavailable/i,
   /gateway timeout/i,

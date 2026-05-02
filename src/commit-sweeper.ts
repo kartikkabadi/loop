@@ -13,6 +13,7 @@ import { argBool, argNumber, argString, parseArgs, type Args } from "./clawsweep
 import { safeOutputTail } from "./clawsweeper-text.js";
 import { codexEnv } from "./codex-env.js";
 import { runText } from "./command.js";
+import { ghRetryKind, ghRetryWaitMs } from "./github-retry.js";
 import { DEFAULT_TARGET_REPO, repositoryProfileFor } from "./repository-profiles.js";
 
 export { isReviewableCommitPath } from "./commit-classifier.js";
@@ -668,6 +669,24 @@ function workflowDispatchArgs(
   ];
 }
 
+function sleepSync(ms: number): void {
+  if (ms <= 0) return;
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+function dispatchFailureError(
+  options: { dispatch: CommitFindingDispatch; repairRepo: string },
+  result: { stdout?: string | null; stderr?: string | null; error?: Error },
+): Error & { stdout: string; stderr: string } {
+  const stdout = result.stdout ?? "";
+  const stderr = result.stderr ?? "";
+  const detail = stderr || stdout || result.error?.message || "unknown gh error";
+  return Object.assign(
+    new Error(`failed to dispatch ${options.dispatch.sha} to ${options.repairRepo}: ${detail}`),
+    { stdout, stderr },
+  );
+}
+
 function dispatchCommitFinding(options: {
   dispatch: CommitFindingDispatch;
   mode: string;
@@ -681,20 +700,27 @@ function dispatchCommitFinding(options: {
       : workflowDispatchArgs(options.dispatch, options.reportRepo, options.workflow).map((arg) =>
           arg === "PLACEHOLDER" ? options.repairRepo : arg,
         );
-  const result = spawnSync("gh", commandArgs, {
-    input:
-      options.mode === "repository_dispatch"
-        ? dispatchPayload(options.dispatch, options.reportRepo)
-        : undefined,
-    encoding: "utf8",
-    env: process.env,
-  });
-  if (result.status !== 0) {
-    throw new Error(
-      `failed to dispatch ${options.dispatch.sha} to ${options.repairRepo}: ${
-        result.stderr || result.stdout || "unknown gh error"
-      }`,
+  const maxAttempts = 3;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const result = spawnSync("gh", commandArgs, {
+      input:
+        options.mode === "repository_dispatch"
+          ? dispatchPayload(options.dispatch, options.reportRepo)
+          : undefined,
+      encoding: "utf8",
+      env: process.env,
+    });
+    if (result.status === 0) return;
+
+    const error = dispatchFailureError(options, result);
+    const retryKind = ghRetryKind(error);
+    if (attempt >= maxAttempts - 1 || retryKind === "none") throw error;
+
+    const waitMs = ghRetryWaitMs(retryKind, attempt);
+    console.warn(
+      `dispatch failed with ${retryKind} GitHub error; retrying in ${Math.round(waitMs / 1000)}s`,
     );
+    sleepSync(waitMs);
   }
 }
 

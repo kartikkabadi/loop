@@ -1570,8 +1570,22 @@ jobs:
             exit 0
           fi
 
+          run_workflow_with_retry() {
+            local label="$1"
+            shift
+            for attempt in 1 2 3; do
+              if gh workflow run sweep.yml "$@"; then
+                return 0
+              fi
+              echo "::warning::Failed to queue ${label} on attempt ${attempt}; retrying."
+              sleep "$((attempt * 10))"
+            done
+            echo "::warning::Unable to queue ${label} after three attempts; scheduled runs will backstop it."
+            return 0
+          }
+
           echo "Apply reached requested limit; queueing another apply run."
-          gh workflow run sweep.yml \
+          run_workflow_with_retry "apply continuation" \
             --ref main \
             -f apply_existing=true \
             -f target_repo="$APPLY_TARGET_REPO" \
@@ -1613,9 +1627,23 @@ jobs:
           NODE
           )"
 
+          run_workflow_with_retry() {
+            local label="$1"
+            shift
+            for attempt in 1 2 3; do
+              if gh workflow run sweep.yml "$@"; then
+                return 0
+              fi
+              echo "::warning::Failed to queue ${label} on attempt ${attempt}; retrying."
+              sleep "$((attempt * 10))"
+            done
+            echo "::warning::Unable to queue ${label} after three attempts; scheduled runs will backstop it."
+            return 0
+          }
+
           if [ "$HOT_RECENT" != "true" ]; then
             echo "No recent hot-intake run found; queueing backstop."
-            gh workflow run sweep.yml \
+            run_workflow_with_retry "hot review backstop" \
               --ref main \
               -f apply_existing=false \
               -f hot_intake=true \
@@ -1627,7 +1655,7 @@ jobs:
 
           if [ "$REVIEW_RECENT" != "true" ]; then
             echo "No recent normal review run found; queueing backstop."
-            gh workflow run sweep.yml \
+            run_workflow_with_retry "normal review backstop" \
               --ref main \
               -f apply_existing=false \
               -f hot_intake=false \
