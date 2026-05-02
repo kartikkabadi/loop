@@ -295,6 +295,18 @@ function remainingFixStepBudgetMs() {
   const remainingMs = fixStepTimeoutMs - elapsedMs - reportReserveMs;
   return Math.max(minTargetCommandTimeoutMs, remainingMs);
 }
+
+function defaultFixWorkRoot(resultPath: string) {
+  return path.join(path.dirname(resultPath), "fix-execution");
+}
+
+function defaultTargetDir(repo: string) {
+  return path.join(
+    fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-repair-target-")),
+    repo.replace("/", "-"),
+  );
+}
+
 const rawFixArtifact = result.fix_artifact;
 const executableFixArtifact = executableReplacementFixArtifact(rawFixArtifact, result);
 const promotedReplacement = executableFixArtifact !== rawFixArtifact;
@@ -397,11 +409,12 @@ if (scopeBlock) {
 workRoot =
   typeof args["work-dir"] === "string"
     ? path.resolve(args["work-dir"])
-    : fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-repair-fix-"));
+    : defaultFixWorkRoot(resultPath);
 targetDir =
   typeof args["target-dir"] === "string"
     ? path.resolve(args["target-dir"])
-    : path.join(workRoot, result.repo.replace("/", "-"));
+    : defaultTargetDir(result.repo);
+if (typeof args["work-dir"] !== "string") fs.rmSync(workRoot, { recursive: true, force: true });
 fs.mkdirSync(workRoot, { recursive: true });
 
 ensureTargetCheckout(result.repo, targetDir);

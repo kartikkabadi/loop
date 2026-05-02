@@ -54,6 +54,62 @@ test("collectCodexDebug copies recent Codex session logs and excludes auth files
   }
 });
 
+test("collectCodexDebug backs up Codex JSONL from repair run artifacts", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-codex-debug-runs-"));
+  const codexHome = path.join(tmp, ".codex");
+  const repairRunsDir = path.join(tmp, ".clawsweeper-repair", "runs");
+  const runDir = path.join(repairRunsDir, "run-1", "fix-execution");
+  const outDir = path.join(tmp, "out");
+  fs.mkdirSync(path.join(codexHome, "sessions"), { recursive: true });
+  fs.mkdirSync(path.join(codexHome, "log"), { recursive: true });
+  fs.mkdirSync(runDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(runDir, "adopted-codex-1.jsonl"),
+    "GH_TOKEN=ghp_abcdefghijklmnopqrstuvwxyz123456\n",
+  );
+  fs.writeFileSync(path.join(runDir, "adopted-codex-review-1.json"), '{"ok":true}\n');
+  fs.writeFileSync(path.join(runDir, "result.json"), '{"status":"ignored"}\n');
+
+  try {
+    const result = collectCodexDebug({
+      outDir,
+      label: "runs",
+      sinceMinutes: 60,
+      maxBytes: 1024 * 1024,
+      homeDir: tmp,
+      codexHome,
+      repairRunsDir,
+    });
+
+    assert.equal(result.manifest.length, 2);
+    assert.equal(
+      fs.existsSync(
+        path.join(outDir, "repair-runs", "run-1", "fix-execution", "adopted-codex-1.jsonl"),
+      ),
+      true,
+    );
+    assert.equal(
+      fs.existsSync(
+        path.join(outDir, "repair-runs", "run-1", "fix-execution", "adopted-codex-review-1.json"),
+      ),
+      true,
+    );
+    assert.equal(
+      fs.existsSync(path.join(outDir, "repair-runs", "run-1", "fix-execution", "result.json")),
+      false,
+    );
+    assert.match(
+      fs.readFileSync(
+        path.join(outDir, "repair-runs", "run-1", "fix-execution", "adopted-codex-1.jsonl"),
+        "utf8",
+      ),
+      /GH_TOKEN=\[REDACTED\]/,
+    );
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("redactSecrets masks common token shapes", () => {
   assert.equal(
     redactSecrets(

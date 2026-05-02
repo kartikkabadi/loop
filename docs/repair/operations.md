@@ -212,7 +212,8 @@ with a silent no-output timeout.
 
 For deep debugging, download the `clawsweeper-codex-debug-cluster-*` and
 `clawsweeper-codex-debug-execute-*` artifacts from the repair worker run. They
-contain recent Codex session/log files plus a manifest. The collector skips
+contain recent Codex session/log files, ClawSweeper-captured `codex exec --json`
+outputs from `.clawsweeper-repair/runs`, and a manifest. The collector skips
 Codex auth/config files and redacts common token shapes before upload; retention
 is seven days by default.
 

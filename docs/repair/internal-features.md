@@ -76,13 +76,15 @@ Artifact names:
 - `clawsweeper-codex-debug-cluster-<run-id>-<attempt>`
 - `clawsweeper-codex-debug-execute-<run-id>-<attempt>`
 
-The repair workflow snapshots recent Codex session JSONL files and Codex log
-files from `~/.codex/sessions` and `~/.codex/log` after both the planning job
-and the fix execution job. The collector deliberately excludes Codex auth and
-config files, redacts common OpenAI and GitHub token shapes, and writes a
-`manifest.json` with source-relative paths, byte counts, mtimes, and SHA-256
-hashes. These debug artifacts are separate from the worker-transfer artifact, so
-the execute job does not download raw session logs just to continue a repair.
+The repair workflow snapshots recent Codex session JSONL files, Codex log files,
+and ClawSweeper-captured `codex exec --json` outputs after both the planning job
+and the fix execution job. Session/log files come from `~/.codex/sessions` and
+`~/.codex/log`; captured repair outputs come from `.clawsweeper-repair/runs`.
+The collector deliberately excludes Codex auth and config files, redacts common
+OpenAI and GitHub token shapes, and writes a `manifest.json` with
+source-relative paths, byte counts, mtimes, and SHA-256 hashes. These debug
+artifacts are separate from the worker-transfer artifact, so the execute job
+does not download raw session logs just to continue a repair.
 
 ### Fix Artifact
 

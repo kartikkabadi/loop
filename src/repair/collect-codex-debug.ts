@@ -12,6 +12,7 @@ type CollectOptions = {
   maxBytes: number;
   homeDir: string;
   codexHome?: string;
+  repairRunsDir?: string;
 };
 
 type ManifestEntry = {
@@ -49,8 +50,8 @@ export function collectCodexDebug(options: CollectOptions) {
       const stat = fs.statSync(filePath);
       if (!stat.isFile()) continue;
       if (stat.mtimeMs < since) continue;
-      if (!isAllowedCodexDebugFile(filePath)) {
-        skipped.push({ source: filePath, reason: "not-session-log" });
+      if (!isAllowedCodexDebugFile(filePath, root.kind)) {
+        skipped.push({ source: filePath, reason: "not-codex-debug" });
         continue;
       }
       if (stat.size > options.maxBytes) {
@@ -107,16 +108,20 @@ export function redactSecrets(text: string) {
 
 function codexDebugRoots(options: CollectOptions) {
   const codexHome = options.codexHome || path.join(options.homeDir, ".codex");
+  const repairRunsDir =
+    options.repairRunsDir || path.join(process.cwd(), ".clawsweeper-repair", "runs");
   return [
-    { name: "sessions", path: path.join(codexHome, "sessions") },
-    { name: "log", path: path.join(codexHome, "log") },
+    { name: "sessions", path: path.join(codexHome, "sessions"), kind: "codex-home" },
+    { name: "log", path: path.join(codexHome, "log"), kind: "codex-home" },
+    { name: "repair-runs", path: repairRunsDir, kind: "repair-runs" },
   ];
 }
 
-function isAllowedCodexDebugFile(filePath: string) {
+function isAllowedCodexDebugFile(filePath: string, kind = "codex-home") {
   const base = path.basename(filePath).toLowerCase();
   if (base === "auth.json" || base === "config.toml" || base === "config.json") return false;
-  return /\.(jsonl|ndjson|log|txt)$/i.test(base);
+  if (kind === "repair-runs" && !base.includes("codex")) return false;
+  return /\.(json|jsonl|ndjson|log|txt)$/i.test(base);
 }
 
 function* listFiles(root: string): Generator<string> {
@@ -169,6 +174,8 @@ if (isMain()) {
   const args = parseArgs(process.argv.slice(2));
   const outDir = stringArg(args.out, ".clawsweeper-repair/codex-debug");
   const codexHome = typeof args["codex-home"] === "string" ? args["codex-home"] : undefined;
+  const repairRunsDir =
+    typeof args["repair-runs-dir"] === "string" ? args["repair-runs-dir"] : undefined;
   const result = collectCodexDebug({
     outDir,
     label: stringArg(args.label, "codex"),
@@ -176,6 +183,7 @@ if (isMain()) {
     maxBytes: numberArg(args["max-bytes"], DEFAULT_MAX_BYTES),
     homeDir: os.homedir(),
     ...(codexHome ? { codexHome } : {}),
+    ...(repairRunsDir ? { repairRunsDir } : {}),
   });
   console.log(
     JSON.stringify({
