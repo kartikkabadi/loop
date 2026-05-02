@@ -113,7 +113,17 @@ section records review, repair, re-review, and merge rows with durations, run
 links, and linked commit hashes. A branch repair that pushes a new commit also
 dispatches the next exact-head review immediately from the repair worker, so the
 loop does not wait for the scheduled comment-router sweep before checking the
-repaired head.
+repaired head. For base-sync-only blockers, the executor first tries a
+deterministic rebase fast path and pushes that result without a Codex edit pass;
+if the rebase or known mechanical conflict resolvers cannot finish cleanly, it
+falls back to the normal Codex fix worker.
+
+After a successful same-branch repair push, the worker shepherds the PR for a
+bounded window. It polls for the exact-head ClawSweeper pass marker and GitHub
+checks on the repaired commit, then dispatches the comment router as soon as the
+head is ready to merge. Defaults are ten minutes and 15-second polls; set
+`CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS=0` or
+`CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT=0` to disable that wait.
 
 If the repair worker completes without an executable fix artifact, the executor
 posts an idempotent outcome comment on the opted-in PR. That comment records

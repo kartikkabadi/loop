@@ -1,0 +1,104 @@
+import type { JsonValue, LooseRecord } from "./json-types.js";
+
+const DEFAULT_WAIT_MS = 10 * 60 * 1000;
+const DEFAULT_POLL_MS = 15 * 1000;
+
+export function automergeShepherdWaitConfig(env: LooseRecord = process.env) {
+  const maxWaitMs = positiveInt(env.CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS, DEFAULT_WAIT_MS);
+  const intervalMs = Math.min(
+    Math.max(positiveInt(env.CLAWSWEEPER_AUTOMERGE_SHEPHERD_POLL_MS, DEFAULT_POLL_MS), 1000),
+    Math.max(maxWaitMs, 1000),
+  );
+  return { maxWaitMs, intervalMs };
+}
+
+export function canUseAutomergeFastRebase({
+  isAutomergeRepair,
+  repairStrategy,
+  env = process.env,
+}: LooseRecord) {
+  if (env.CLAWSWEEPER_AUTOMERGE_FAST_REBASE === "0") return false;
+  return isAutomergeRepair === true && repairStrategy === "repair_contributor_branch";
+}
+
+export function automergeShepherdReadiness({
+  view,
+  comments,
+  headSha,
+}: {
+  view: LooseRecord;
+  comments: JsonValue[];
+  headSha: string;
+}) {
+  if (view.state === "MERGED" || view.mergedAt) {
+    return { status: "merged", reason: "pull request already merged" };
+  }
+  if (view.state && view.state !== "OPEN") {
+    return { status: "stopped", reason: `pull request is ${String(view.state).toLowerCase()}` };
+  }
+  if (view.headRefOid && view.headRefOid !== headSha) {
+    return {
+      status: "stopped",
+      reason: `head changed from ${headSha} to ${view.headRefOid}`,
+    };
+  }
+  if (!hasTrustedPassForHead(comments, headSha)) {
+    return { status: "waiting", reason: "waiting for exact-head ClawSweeper review pass" };
+  }
+  const checkBlock = checkBlockReason(view.statusCheckRollup ?? []);
+  if (checkBlock) return { status: "waiting", reason: checkBlock };
+  if (view.mergeable && view.mergeable !== "MERGEABLE") {
+    return { status: "waiting", reason: `mergeable state is ${view.mergeable}` };
+  }
+  const mergeStateStatus = String(view.mergeStateStatus ?? "");
+  if (
+    mergeStateStatus &&
+    !["CLEAN", "HAS_HOOKS"].includes(mergeStateStatus) &&
+    mergeStateStatus !== "UNSTABLE"
+  ) {
+    return { status: "waiting", reason: `merge state status is ${mergeStateStatus}` };
+  }
+  return { status: "ready", reason: "checks and exact-head review are ready" };
+}
+
+export function hasTrustedPassForHead(comments: JsonValue[], headSha: string) {
+  const escaped = headSha.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pass = new RegExp(
+    `clawsweeper-verdict:(?:pass|approved|no-changes)[^>]*\\bsha=${escaped}\\b`,
+    "i",
+  );
+  return comments.some((comment: JsonValue) => {
+    const author = String(comment?.user?.login ?? "").toLowerCase();
+    if (!["clawsweeper", "clawsweeper[bot]", "openclaw-clawsweeper[bot]"].includes(author)) {
+      return false;
+    }
+    return pass.test(String(comment?.body ?? ""));
+  });
+}
+
+function checkBlockReason(checks: JsonValue[]) {
+  if (!Array.isArray(checks) || checks.length === 0) return "waiting for GitHub checks";
+  const blockers: string[] = [];
+  for (const check of checks) {
+    const status = String(check?.status ?? "").toUpperCase();
+    const conclusion = String(check?.conclusion ?? "").toUpperCase();
+    const name = String(check?.name ?? check?.workflowName ?? "check");
+    if (status && status !== "COMPLETED") {
+      blockers.push(`${name}:${status}`);
+      continue;
+    }
+    if (
+      ["FAILURE", "ERROR", "TIMED_OUT", "ACTION_REQUIRED", "STARTUP_FAILURE"].includes(conclusion)
+    ) {
+      blockers.push(`${name}:${conclusion}`);
+    }
+  }
+  return blockers.length > 0 ? `waiting for GitHub checks: ${blockers.slice(0, 5).join(", ")}` : "";
+}
+
+function positiveInt(value: JsonValue, fallback: number) {
+  if (value === undefined || value === null || value === "") return fallback;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) return fallback;
+  return Math.floor(parsed);
+}

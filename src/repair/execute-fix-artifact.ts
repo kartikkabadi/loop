@@ -25,6 +25,11 @@ import {
   remoteBranchSha,
   unmergedPaths,
 } from "./git-repo-utils.js";
+import {
+  automergeShepherdReadiness,
+  automergeShepherdWaitConfig,
+  canUseAutomergeFastRebase,
+} from "./automerge-shepherd.js";
 import { parsePullRequestUrl, pullRequestNumberFromUrl } from "./github-ref.js";
 import {
   clawsweeperGitUserEmail,
@@ -55,6 +60,7 @@ import {
   firstTargetSourcePullRequest,
 } from "./source-pr-checkout.js";
 import { mergeAutomergeTimelineSection } from "./automerge-status-timeline.js";
+import { sleepMs } from "./timing.js";
 import { isRepairBranchPushRace, repairBranchPushRaceReason } from "./repair-branch-push-errors.js";
 import {
   prepareTargetToolchain,
@@ -589,6 +595,29 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     logProgress("mechanically resolved rebase conflicts", mechanicalConflictResolution);
   }
 
+  const fastRepair = tryAutomergeFastRebaseRepair({
+    fixArtifact,
+    targetDir,
+    sourceHead,
+    rebaseResult,
+  });
+  if (fastRepair.status === "ready") {
+    return pushRepairBranchAndUpdateStatus({
+      sourcePr,
+      pull,
+      sameRepoBranch,
+      targetDir,
+      sourceHead,
+      prep: fastRepair.prep,
+      fastRepair,
+    });
+  }
+  if (fastRepair.status === "fallback") {
+    logProgress("automerge fast rebase falling back to Codex repair path", {
+      reason: fastRepair.reason,
+    });
+  }
+
   const prep = editValidatePrepareMerge({
     fixArtifact,
     targetDir,
@@ -600,6 +629,26 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     rebaseResult,
   });
   (prep.merge_preflight as JsonValue).target = `#${sourcePr.number}`;
+  return pushRepairBranchAndUpdateStatus({
+    sourcePr,
+    pull,
+    sameRepoBranch,
+    targetDir,
+    sourceHead,
+    prep,
+    fastRepair,
+  });
+}
+
+function pushRepairBranchAndUpdateStatus({
+  sourcePr,
+  pull,
+  sameRepoBranch,
+  targetDir,
+  sourceHead,
+  prep,
+  fastRepair,
+}: LooseRecord) {
   const branchUpdate = branchUpdateState({ targetDir, sourceHead });
   if (dryRun) {
     return {
@@ -628,6 +677,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     target: sourcePr.number,
     validationCommands: prep.merge_preflight.validation_commands,
     commit: prep.commit,
+    fastRepair,
   });
   if (!statusCommentUpdated) {
     const comment = repairContributorBranchComment({
@@ -648,6 +698,10 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
       },
     );
   }
+  const shepherd = waitForAutomergeAfterBranchRepair({
+    target: sourcePr.number,
+    commit: prep.commit,
+  });
   return {
     action: "repair_contributor_branch",
     status: "pushed",
@@ -656,9 +710,98 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     head_ref: pull.head.ref,
     branch_rewritten: branchUpdate.rewritten,
     commit: prep.commit,
+    fast_rebase: fastRepair?.status === "ready" ? fastRepair : null,
+    automerge_shepherd: shepherd,
     status_comment_updated: statusCommentUpdated,
     merge_preflight: prep.merge_preflight,
     review_threads: threadResolution,
+  };
+}
+
+function tryAutomergeFastRebaseRepair({
+  fixArtifact,
+  targetDir,
+  sourceHead,
+  rebaseResult,
+}: LooseRecord) {
+  if (
+    !canUseAutomergeFastRebase({
+      isAutomergeRepair: isAutomergeRepairJob(),
+      repairStrategy: fixArtifact.repair_strategy,
+    })
+  ) {
+    return { status: "disabled", reason: "not an adopted automerge branch repair" };
+  }
+
+  let commit = "";
+  let detail = "";
+  if (
+    rebaseResult?.status === "rebased" &&
+    rebaseResult.previous_head !== rebaseResult.current_head
+  ) {
+    commit = String(rebaseResult.current_head);
+    detail = "clean deterministic rebase";
+  } else if (rebaseResult?.status === "conflicts" && unmergedPaths(targetDir).length === 0) {
+    const completed = completeRebaseIfResolved({ targetDir });
+    if (completed.status !== "continued") {
+      return { status: "fallback", reason: "mechanically resolved rebase did not continue" };
+    }
+    commit = completed.current_head;
+    detail = "mechanically resolved deterministic rebase";
+  } else {
+    return {
+      status: "fallback",
+      reason: `rebase status ${rebaseResult?.status ?? "unknown"} is not fast-pathable`,
+    };
+  }
+
+  if (!commit || commit === sourceHead) {
+    return { status: "fallback", reason: "deterministic rebase produced no branch change" };
+  }
+  if (run("git", ["status", "--porcelain"], { cwd: targetDir }).trim()) {
+    return { status: "fallback", reason: "deterministic rebase left working tree changes" };
+  }
+
+  logProgress("automerge deterministic rebase ready; skipping Codex fix and local review pass", {
+    source_head: sourceHead,
+    commit,
+    detail,
+  });
+  return {
+    status: "ready",
+    reason: detail,
+    source_head: sourceHead,
+    commit,
+    prep: {
+      commit,
+      checkpoint_commits: [],
+      merge_preflight: {
+        target: null,
+        security_status: "deferred",
+        security_evidence: [
+          "Deterministic automerge rebase changed only base ancestry; exact-head ClawSweeper review is dispatched after push.",
+        ],
+        comments_status: "deferred",
+        comments_evidence: ["Fresh exact-head review gates merge after the rebase push."],
+        bot_comments_status: "deferred",
+        bot_comments_evidence: ["Fresh exact-head review gates merge after the rebase push."],
+        codex_review: {
+          command: "/review",
+          status: "pending",
+          findings_addressed: false,
+          evidence: [
+            "Skipped Codex fix worker for deterministic rebase; review worker runs after push.",
+          ],
+        },
+        validation_commands: ["GitHub checks and exact-head ClawSweeper review gate this rebase"],
+        final_base_sync: {
+          status: "deterministic_rebase",
+          previous_head: rebaseResult.previous_head,
+          current_head: commit,
+          base_sha: rebaseResult.base_sha,
+        },
+      },
+    },
   };
 }
 
@@ -2184,6 +2327,7 @@ function updateAutomergeStatusCommentForBranchRepair({
   target,
   validationCommands,
   commit,
+  fastRepair = null,
 }: LooseRecord) {
   if (!isAutomergeRepairJob()) return false;
   if (Number(target) !== Number(automergeOutcomeTargetPrNumber())) return false;
@@ -2194,7 +2338,9 @@ function updateAutomergeStatusCommentForBranchRepair({
     "🦞🦞",
     "ClawSweeper applied a repair to this PR branch.",
     "",
-    "Repair: kept the fix on this contributor branch instead of opening a replacement PR.",
+    fastRepair?.status === "ready"
+      ? "Repair: rebased this branch deterministically; Codex fix/edit was not needed."
+      : "Repair: kept the fix on this contributor branch instead of opening a replacement PR.",
     `Validation: \`${listOrNone(validationCommands)}\``,
     `Updated head: ${markdownCommitLink(result.repo, commit)}`,
     ...(runUrl ? [`Run: ${runUrl}`] : []),
@@ -2217,7 +2363,8 @@ function updateAutomergeStatusCommentForBranchRepair({
         runUrl,
         headSha: commit,
         repo: result.repo,
-        status: "branch updated",
+        status: fastRepair?.status === "ready" ? "deterministic rebase" : "branch updated",
+        details: fastRepair?.reason ?? null,
       },
       ...(reviewDispatch.status === "executed"
         ? [
@@ -2242,6 +2389,96 @@ function updateAutomergeStatusCommentForBranchRepair({
     postIssueComment(target, bodyWithTimeline);
   }
   return true;
+}
+
+function waitForAutomergeAfterBranchRepair({ target, commit }: LooseRecord) {
+  if (!isAutomergeRepairJob()) return { status: "skipped", reason: "not automerge repair" };
+  if (process.env.CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT === "0") {
+    return { status: "skipped", reason: "disabled by CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT=0" };
+  }
+  const config = automergeShepherdWaitConfig(process.env);
+  if (config.maxWaitMs <= 0) return { status: "skipped", reason: "wait disabled" };
+
+  const startedAt = Date.now();
+  let waitedMs = 0;
+  let lastReason = "";
+  logProgress("waiting for automerge continuation after branch repair", {
+    target,
+    commit,
+    max_wait_ms: config.maxWaitMs,
+    poll_ms: config.intervalMs,
+  });
+  while (waitedMs <= config.maxWaitMs) {
+    const view = fetchPullRequestViewForRepo({ repo: result.repo, number: target });
+    const readiness = automergeShepherdReadiness({
+      view,
+      comments: issueCommentsFor(target),
+      headSha: String(commit),
+    });
+    lastReason = readiness.reason;
+    if (["ready", "merged", "stopped"].includes(String(readiness.status))) {
+      const dispatch =
+        readiness.status === "ready"
+          ? dispatchAutomergeCommentRouter({ target, reason: readiness.reason })
+          : null;
+      logProgress("automerge shepherd wait finished", {
+        status: readiness.status,
+        reason: readiness.reason,
+        waited_ms: waitedMs,
+        dispatch_status: dispatch?.status ?? null,
+      });
+      return {
+        status: readiness.status,
+        reason: readiness.reason,
+        waited_ms: waitedMs,
+        router_dispatch: dispatch,
+      };
+    }
+    if (waitedMs >= config.maxWaitMs) break;
+    const sleepFor = Math.min(config.intervalMs, config.maxWaitMs - waitedMs);
+    sleepMs(sleepFor);
+    waitedMs = Date.now() - startedAt;
+  }
+  logProgress("automerge shepherd wait timed out", { target, commit, waited_ms: waitedMs });
+  return {
+    status: "waiting",
+    reason: lastReason || "waiting for exact-head review/checks",
+    waited_ms: waitedMs,
+  };
+}
+
+function dispatchAutomergeCommentRouter({ target, reason }: LooseRecord) {
+  const reviewRepo = String(process.env.CLAWSWEEPER_REVIEW_REPO ?? "openclaw/clawsweeper").trim();
+  const dispatchedAt = new Date().toISOString();
+  const payloadPath = writePayload(`automerge-router-dispatch-${target}-${Date.now()}`, {
+    event_type: "clawsweeper_comment",
+    client_payload: {
+      target_repo: result.repo,
+      item_number: String(target),
+      max_comments: "20",
+      source_event: "repair_completed",
+      source_action: "automerge_shepherd_ready",
+      reason,
+    },
+  });
+  try {
+    run(
+      "gh",
+      ["api", `repos/${reviewRepo}/dispatches`, "--method", "POST", "--input", payloadPath],
+      {
+        cwd: repoRoot(),
+        env: ghEnv(),
+      },
+    );
+    return { status: "executed", repo: reviewRepo, dispatched_at: dispatchedAt };
+  } catch (error) {
+    return {
+      status: "failed",
+      repo: reviewRepo,
+      dispatched_at: dispatchedAt,
+      reason: compactText(error instanceof Error ? error.message : String(error), 180),
+    };
+  }
 }
 
 function dispatchAutomergeReviewAfterBranchRepair({ target, commit }: LooseRecord) {
@@ -2361,6 +2598,31 @@ function issueCommentsFor(number: JsonValue) {
   );
   const parsed = JSON.parse(raw || "[]");
   return Array.isArray(parsed) ? parsed : [];
+}
+
+function fetchPullRequestViewForRepo({ repo, number }: LooseRecord) {
+  return JSON.parse(
+    run(
+      "gh",
+      [
+        "pr",
+        "view",
+        String(number),
+        "--repo",
+        String(repo),
+        "--json",
+        [
+          "headRefOid",
+          "mergeable",
+          "mergeStateStatus",
+          "mergedAt",
+          "state",
+          "statusCheckRollup",
+        ].join(","),
+      ],
+      { cwd: repoRoot(), env: ghEnv() },
+    ) || "{}",
+  );
 }
 
 function isTrustedStatusComment(comment: LooseRecord) {

@@ -144,6 +144,9 @@ It can:
 - update a maintainer-editable contributor branch when that path is safe
 - fall back to a replacement branch when the source branch is uneditable or
   unsafe
+- fast-path adopted automerge base-sync repairs by rebasing, applying known
+  mechanical conflict resolvers, pushing, and letting the fresh exact-head
+  review/check gates handle merge readiness
 - create or update `clawsweeper/<cluster-id>`
 - push checkpoint commits after Codex edits
 - run changed-surface validation
@@ -157,6 +160,11 @@ It can:
 The executor prepares a temporary checkout of the target repo. Codex edits that
 checkout without GitHub credentials. The deterministic executor commits,
 pushes, opens PRs, and comments using the GitHub token.
+
+For same-branch automerge repairs, the executor can stay alive after pushing a
+deterministic repair. It waits for the exact-head ClawSweeper verdict and GitHub
+checks on the new head, then dispatches the comment router immediately when the
+PR is ready so merge does not depend on the next scheduled sweep.
 
 When replacing a meaningful contributor PR, the executor fetches the source PR
 author, skips bot authors, adds `Co-authored-by` trailers to replacement

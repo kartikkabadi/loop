@@ -258,6 +258,14 @@ its durable ClawSweeper verdict so automerge can act on a fresh `pass` marker
 without waiting for the scheduled comment-router sweep. No-op targeted
 acknowledgements, such as already-processed commands or already-enabled
 automerge commands, do not publish a durable ledger commit.
+
+Same-branch automerge repairs also use a shepherd wait inside the repair
+executor. After a deterministic rebase or known mechanical conflict repair is
+pushed, the executor polls the repaired head for GitHub checks and the
+exact-head ClawSweeper pass marker, then dispatches the comment router as soon
+as merge gates are ready. Codex fix/edit remains the fallback when the
+deterministic repair path cannot complete cleanly.
+
 For operator replays after a parser or router fix, pass `--force-reprocess`
 or the `force_reprocess` workflow-dispatch input together with `comment_ids`;
 that ignores the current ledger version and reroutes the selected comment.

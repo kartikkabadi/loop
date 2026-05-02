@@ -61,8 +61,9 @@ Exact item dispatches use the event path instead of the planner matrix.
 Automerge is an exact-item event path. A maintainer command dispatches one
 review for the current PR head. If review requests a repair, the adopted repair
 worker may push a branch fix; after a successful contributor-branch repair it
-immediately dispatches another exact-head review instead of waiting for the next
-comment-router sweep. That keeps the normal path to:
+immediately dispatches another exact-head review and then shepherds the repaired
+head for a bounded window instead of exiting immediately. That keeps the normal
+path to:
 
 1. command acknowledgement;
 2. exact-head review;
@@ -73,6 +74,15 @@ comment-router sweep. That keeps the normal path to:
 The automerge status comment is the live progress surface. It is edited in
 place and records review, repair, re-review, and merge events with durations,
 run links, and commit links.
+
+For base-sync-only repairs, the repair executor first tries a deterministic
+fast path: rebase onto current `main`, apply known mechanical conflict resolvers
+such as isolated `CHANGELOG.md` conflicts, push the repaired branch, then wait
+for exact-head review and GitHub checks. Codex fix/edit remains the fallback
+when the deterministic rebase cannot complete cleanly. The default shepherd
+wait is ten minutes with 15-second polls, controlled by
+`CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS` and
+`CLAWSWEEPER_AUTOMERGE_SHEPHERD_POLL_MS`.
 
 The final router gate no longer waits ten minutes for transient GitHub merge
 state. Default transient wait is two minutes with 15-second polls. If GitHub
