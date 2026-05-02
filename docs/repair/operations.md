@@ -204,6 +204,10 @@ The workflow uses Node 24 and logs Codex in with `OPENAI_API_KEY`, while also pa
 
 Codex runs in a read-only sandbox for classification and receives no GitHub token. GitHub read access is scoped to deterministic preflight scripts. For reviewed fix artifacts, `execute-fix-artifact` gives Codex a temporary target checkout without GitHub credentials, then the deterministic executor commits, pushes, opens the replacement PR, and closes uneditable source PRs only after the replacement exists. When a replacement carries contributor work forward, non-bot source PR authors are added as `Co-authored-by` trailers and named in the replacement PR body and source close comment. Remaining write access is scoped to `apply-result`.
 
+The repair worker wrapper emits a heartbeat while Codex is running. If a model
+call is slow, Actions logs should show `[clawsweeper repair] ... still running`
+about once a minute instead of ending with a silent no-output timeout.
+
 For deep debugging, download the `clawsweeper-codex-debug-cluster-*` and
 `clawsweeper-codex-debug-execute-*` artifacts from the repair worker run. They
 contain recent Codex session/log files plus a manifest. The collector skips

@@ -3,7 +3,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import {
   assertAllowedOwner,
   makeRunDir,
@@ -36,6 +36,10 @@ const codexReasoningEffort = repairCodexReasoningEffort();
 const codexServiceTier = repairCodexServiceTier();
 const codexStdioMaxBuffer =
   Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB ?? 128)) * 1024 * 1024;
+const codexHeartbeatMs = Math.max(
+  10_000,
+  Number(process.env.CLAWSWEEPER_CODEX_HEARTBEAT_MS ?? 60_000),
+);
 
 if (!jobPath) {
   console.error(
@@ -135,7 +139,7 @@ if (dryRun) {
   process.exit(0);
 }
 
-const child = runCodex({
+const child = await runCodex({
   input: prompt,
   outputPath: resultPath,
   transcriptPath,
@@ -166,7 +170,7 @@ if (child.status !== 0) {
 if (!fs.existsSync(resultPath)) {
   writeBlockedResult("Codex worker completed without a structured result.json artifact.");
 }
-repairResultIfNeeded();
+await repairResultIfNeeded();
 
 console.log(`result: ${path.relative(repoRoot(), resultPath)}`);
 
@@ -195,18 +199,101 @@ function runCodex({
     "-",
   ];
 
-  const child = spawnSync("codex", codexArgs, {
+  return spawnCodexWithHeartbeat({
+    args: codexArgs,
     cwd: codexWorkspaceRoot(),
-    input,
-    encoding: "utf8",
-    env: codexEnv(),
-    timeout: timeoutMs,
-    maxBuffer: codexStdioMaxBuffer,
+    input: String(input ?? ""),
+    transcriptPath: codexTranscriptPath,
+    stderrPath,
+    timeoutMs: Number(timeoutMs),
   });
+}
 
-  fs.writeFileSync(codexTranscriptPath, child.stdout ?? "");
-  if (child.stderr) fs.writeFileSync(stderrPath, child.stderr);
-  return child;
+function spawnCodexWithHeartbeat({
+  args: commandArgs,
+  cwd,
+  input,
+  transcriptPath: codexTranscriptPath,
+  stderrPath,
+  timeoutMs,
+}: LooseRecord): Promise<LooseRecord> {
+  return new Promise((resolve) => {
+    const startedAt = Date.now();
+    let stdout = "";
+    let stderr = "";
+    let stdoutBytes = 0;
+    let stderrBytes = 0;
+    let settled = false;
+    let timeoutError: Error | null = null;
+    let bufferError: Error | null = null;
+
+    const child = spawn("codex", commandArgs, {
+      cwd,
+      env: codexEnv(),
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+
+    const heartbeat = setInterval(() => {
+      const elapsedSeconds = Math.round((Date.now() - startedAt) / 1000);
+      console.log(
+        `[clawsweeper repair] ${new Date().toISOString()} Codex worker still running (${elapsedSeconds}s elapsed)`,
+      );
+    }, codexHeartbeatMs);
+    const timeout = setTimeout(() => {
+      timeoutError = new Error(`Codex worker timed out after ${timeoutMs}ms`);
+      (timeoutError as LooseRecord).code = "ETIMEDOUT";
+      child.kill("SIGTERM");
+      setTimeout(() => {
+        if (!settled) child.kill("SIGKILL");
+      }, 5_000).unref();
+    }, timeoutMs);
+
+    const finish = (result: LooseRecord) => {
+      if (settled) return;
+      settled = true;
+      clearInterval(heartbeat);
+      clearTimeout(timeout);
+      fs.writeFileSync(codexTranscriptPath, stdout);
+      if (stderr) fs.writeFileSync(stderrPath, stderr);
+      resolve(result);
+    };
+
+    const append = (stream: "stdout" | "stderr", chunk: JsonValue) => {
+      const text = String(chunk ?? "");
+      const bytes = Buffer.byteLength(text);
+      if (stream === "stdout") {
+        stdout += text;
+        stdoutBytes += bytes;
+      } else {
+        stderr += text;
+        stderrBytes += bytes;
+      }
+      if (stdoutBytes + stderrBytes > codexStdioMaxBuffer && !bufferError) {
+        bufferError = new Error(`Codex output exceeded ${codexStdioMaxBuffer} bytes`);
+        (bufferError as LooseRecord).code = "ENOBUFS";
+        child.kill("SIGTERM");
+      }
+    };
+
+    child.stdout.on("data", (chunk) => append("stdout", chunk));
+    child.stderr.on("data", (chunk) => append("stderr", chunk));
+    child.on("error", (error) => {
+      finish({ status: null, stdout, stderr, error });
+    });
+    child.on("close", (status, signal) => {
+      finish({
+        status,
+        signal,
+        stdout,
+        stderr,
+        error: timeoutError ?? bufferError ?? undefined,
+      });
+    });
+    child.stdin.end(input);
+  });
 }
 
 function codexWorkspaceRoot(): string {
@@ -222,7 +309,7 @@ function codexConfigArgs() {
   return configs.flatMap((config: JsonValue) => ["-c", config]);
 }
 
-function repairResultIfNeeded() {
+async function repairResultIfNeeded() {
   for (let attempt = 1; attempt <= resultRepairAttempts; attempt += 1) {
     const review = reviewResult();
     if (review.status === 0) return;
@@ -257,7 +344,7 @@ function repairResultIfNeeded() {
       "```",
     ].join("\n");
 
-    const repair = runCodex({
+    const repair = await runCodex({
       input: repairPrompt,
       outputPath: resultPath,
       transcriptPath: path.join(runDir, `codex-repair-${attempt}.jsonl`),

@@ -94,6 +94,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Emitted repair-worker heartbeats while Codex is running so GitHub Actions does
+  not treat long silent model calls as stalled jobs before debug artifacts upload.
 - Backed up redacted Codex session/log artifacts from repair worker Actions runs
   so automerge stalls can be debugged from the raw model transcript.
 - Prevented automerge repair workers from treating a clean rebase as a complete
