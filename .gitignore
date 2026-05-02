@@ -5,6 +5,7 @@ dist/
 .artifacts/
 artifacts/
 .clawsweeper-repair/
+.claude/
 tmp/
 apply-report.json
 repair-apply-report.json
