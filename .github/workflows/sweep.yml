@@ -1260,6 +1260,7 @@ jobs:
         run: |
           pnpm run repair:publish-main -- \
             --message "chore: update sweep audit state" \
+            --path README.md \
             --path results/audit \
             --path results/sweep-status \
             --rebase-strategy theirs
