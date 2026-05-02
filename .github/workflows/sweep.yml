@@ -1265,6 +1265,14 @@ jobs:
             --path results/sweep-status \
             --rebase-strategy theirs
 
+      - name: Refresh state dashboard
+        env:
+          GH_TOKEN: ${{ steps.state-token.outputs.token }}
+        run: |
+          gh workflow run dashboard.yml \
+            --repo openclaw/clawsweeper-state \
+            --ref main || echo "Best-effort dashboard refresh dispatch failed; scheduled state dashboard will retry."
+
   apply-existing:
     name: Apply close proposals
     if: ${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && !(github.event_name == 'schedule' && github.event.schedule == '8,23,38,53 * * * *' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}

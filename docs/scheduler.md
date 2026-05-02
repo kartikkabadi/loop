@@ -288,7 +288,9 @@ GitHub state. Scheduled audit currently covers:
 The audit lane first tries a ClawSweeper GitHub App read token for the target
 repository. If that token is unavailable, it falls back to the workflow token for
 public read-only API access so dashboard rows do not remain `unknown` just
-because mutating scheduled work is still gated.
+because mutating scheduled work is still gated. After publishing audit state, it
+dispatches the `openclaw/clawsweeper-state` dashboard renderer; that repository's
+15-minute schedule remains the fallback if dispatch is delayed.
 
 ## Monitoring
 
