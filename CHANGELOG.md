@@ -5,7 +5,7 @@ All notable ClawSweeper changes are tracked here.
 This file was reconstructed from first-parent git history. Generated dashboard,
 checkpoint, and status-only commits are intentionally omitted.
 
-## Unreleased
+## 0.2.1 - Unreleased
 
 ### Added
 
