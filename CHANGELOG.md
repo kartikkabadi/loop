@@ -17,6 +17,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Made the GitHub activity notifier workflow use a lean uncached Node/pnpm setup
   so bursty events do not wait on `actions/cache` downloads before notifying
   OpenClaw.
+- Wrapped review shard execution in a computed shell timeout so one hung broad
+  review shard records failed-shard artifacts and enters recovery instead of
+  blocking publish until the full GitHub job timeout.
 - Switched the shared Codex setup action to a per-run `CODEX_HOME` with a local
   Responses proxy so Codex subprocesses no longer inherit raw OpenAI/Codex API
   key environment variables.

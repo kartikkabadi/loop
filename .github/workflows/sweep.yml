@@ -762,7 +762,16 @@ jobs:
           if [ -n "$ADDITIONAL_PROMPT" ]; then
             additional_prompt_arg=(--additional-prompt "$ADDITIONAL_PROMPT")
           fi
-          node dist/clawsweeper.js review \
+          codex_timeout_seconds=$(((${{ needs.plan.outputs.codex_timeout_ms }} + 999) / 1000))
+          review_timeout_seconds=$(((codex_timeout_seconds + 180) * ${{ needs.plan.outputs.batch_size }}))
+          if [ "$review_timeout_seconds" -lt 300 ]; then
+            review_timeout_seconds=300
+          fi
+          if [ "$review_timeout_seconds" -gt 4200 ]; then
+            review_timeout_seconds=4200
+          fi
+          echo "::notice::Review shard timeout is ${review_timeout_seconds}s for batch size ${{ needs.plan.outputs.batch_size }} and per-item Codex timeout ${codex_timeout_seconds}s."
+          timeout --kill-after=30s "${review_timeout_seconds}s" node dist/clawsweeper.js review \
             --target-repo "${{ needs.plan.outputs.target_repo }}" \
             --target-dir "../${{ needs.plan.outputs.target_checkout_dir }}" \
             --artifact-dir ../review-artifacts/shard-${{ matrix.shard }} \

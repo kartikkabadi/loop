@@ -149,6 +149,12 @@ runtime artifact. Review shards download the built `dist/` and run
 install and build. This keeps 50-100 shard waves from stampeding the npm
 registry or Corepack metadata endpoints.
 
+Each review shard also wraps the review command in a shell timeout derived from
+the per-item Codex timeout and the shard batch size, with a 70-minute ceiling so
+the job still has time to upload metrics and failed-shard artifacts. A hung
+review command therefore records a failed shard for the recovery lane instead
+of blocking the publish job until the 75-minute GitHub job timeout.
+
 Read-only review shards use shallow ClawSweeper checkouts and skip generated
 state checkout entirely. The planner passes exact item numbers to each shard, so
 shards can fetch current GitHub item state and write review artifacts without
