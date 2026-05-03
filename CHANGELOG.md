@@ -19,6 +19,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Removed `actions/setup-node` from the high-volume GitHub activity lane and
   kept that notifier compatible with runner-provided Node 20+ so bursty
   activity forwarding is not blocked by codeload action download timeouts.
+- Skipped routine pull request synchronize events and successful workflow-run
+  events before checkout in the GitHub activity lane.
 - Kept human-review pauses from being cleared by stale trusted pass markers or
   replayed automerge commands.
 - Updated targeted re-review command comments with live progress while the review

@@ -62,6 +62,11 @@ concurrency:
 
 jobs:
   notify:
+    if: >-
+      ${{
+        !(github.event_name == 'pull_request_target' && github.event.action == 'synchronize') &&
+        !(github.event_name == 'workflow_run' && contains(fromJSON('["success","neutral","skipped"]'), github.event.workflow_run.conclusion))
+      }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 10
     steps:
