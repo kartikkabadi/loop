@@ -199,10 +199,11 @@ Accepted repair verdicts:
 `clawsweeper:autofix` or `clawsweeper:automerge`, a pass verdict for the exact
 current head ends the current repair round. Autofix never merges. Automerge can
 merge only after required checks, mergeability, review state, non-draft status,
-and both merge gates are green. `needs-human`, `human-review`, and
-`/clawsweeper stop` pause the loop by adding `clawsweeper:human-review`. If
-ClawSweeper wants the bounded repair/rebase loop to continue, it must emit an
-accepted repair verdict or action marker.
+and both merge gates are green. `needs-human` and `human-review` pause the loop
+by adding `clawsweeper:human-review`; `/clawsweeper stop` is stronger and also
+removes repair-loop labels so older automerge/autofix comments cannot resume the
+loop. If ClawSweeper wants the bounded repair/rebase loop to continue, it must
+emit an accepted repair verdict or action marker.
 
 After a `needs-human` pause, `/clawsweeper approve` is a maintainer-only exact-head
 approval. It clears pause labels and uses the same merge readiness checks and

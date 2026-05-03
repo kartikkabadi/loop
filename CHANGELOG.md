@@ -29,6 +29,10 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Made `/clawsweeper stop` revoke repair-loop labels and block older
+  automerge/autofix comments from continuing, so a trusted pass marker cannot
+  clear a human-review pause and merge after a maintainer stop.
+
 ## 0.1.0 - 2026-05-03
 
 ### Added

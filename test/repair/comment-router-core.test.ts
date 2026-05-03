@@ -31,6 +31,7 @@ import {
   parseCommand,
   parseTrustedAutomation,
   repairableCheckBlockers,
+  repairLoopStopPauseReason,
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderIssueImplementationJob,
@@ -296,6 +297,49 @@ test("stale automerge activation commands after merge are skipped silently", () 
       },
       issue: { state: "closed", closed_at: "2026-05-01T01:49:03Z" },
       pull: { state: "MERGED", mergedAt: "2026-05-01T01:49:03Z" },
+    }),
+    null,
+  );
+});
+
+test("later stop command pauses older automerge automation", () => {
+  const entries = [
+    {
+      repo: "openclaw/openclaw",
+      issue_number: 76686,
+      intent: "automerge",
+      comment_updated_at: "2026-05-03T12:55:27Z",
+    },
+    {
+      repo: "openclaw/openclaw",
+      issue_number: 76686,
+      intent: "stop",
+      comment_updated_at: "2026-05-03T12:59:16Z",
+    },
+  ];
+
+  assert.equal(
+    repairLoopStopPauseReason({
+      command: {
+        repo: "openclaw/openclaw",
+        issue_number: 76686,
+        intent: "clawsweeper_auto_merge",
+        trusted_bot: true,
+        comment_updated_at: "2026-05-03T13:00:07Z",
+      },
+      entries,
+    }),
+    "ClawSweeper automation was paused by a later /clawsweeper stop command",
+  );
+  assert.equal(
+    repairLoopStopPauseReason({
+      command: {
+        repo: "openclaw/openclaw",
+        issue_number: 76686,
+        intent: "automerge",
+        comment_updated_at: "2026-05-03T13:05:00Z",
+      },
+      entries,
     }),
     null,
   );
@@ -861,6 +905,24 @@ test("renderResponse gives command replies a lobster badge", () => {
     body,
     /^<!-- clawsweeper-command-status:unknown:help:na -->\n<!-- clawsweeper-command:456:help:na -->\n🦞🦞\nClawSweeper is here/,
   );
+});
+
+test("renderResponse describes stop as revoking repair-loop labels", () => {
+  const body = renderResponse(
+    {
+      comment_id: "456",
+      intent: "stop",
+      target: { head_sha: "abc123" },
+      actions: [
+        { action: "remove_label", label: "clawsweeper:automerge", status: "executed" },
+        { action: "label", label: "clawsweeper:human-review", status: "executed" },
+      ],
+    },
+    null,
+  );
+
+  assert.match(body, /added `clawsweeper:human-review`/);
+  assert.match(body, /removed `clawsweeper:automerge`/);
 });
 
 test("renderResponse avoids self-linking current item numbers in status replies", () => {

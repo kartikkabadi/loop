@@ -44,6 +44,7 @@ import {
   parseCommand,
   parseTrustedAutomation,
   repairableCheckBlockers,
+  repairLoopStopPauseReason,
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
   renderIssueImplementationJob,
@@ -125,6 +126,7 @@ const processedCommentVersions = forceReprocess
         .filter(Boolean),
     );
 const plannedAutoRepairHeads = new Set<string>();
+let repairLoopControlEntriesCache: LooseRecord[] | null = null;
 const collaboratorPermissionCache = new Map();
 const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 const liveTargetCache = new Map<number, LooseRecord>();
@@ -466,6 +468,8 @@ function classifyCommand(command: LooseRecord): JsonValue {
       }
       return automergeBlocked(next, `${mode} requires a pull request`);
     }
+    const stoppedReason = repairLoopStoppedReason(next);
+    if (stoppedReason) return { ...next, status: "skipped", reason: stoppedReason };
     const pauseLabels = pauseLabelsOn(target);
     const failedChecksRepairReason = automergeFailedChecksRepairReason(target.checks);
     const rebaseRepairReason = automergeRebaseRepairReason(target);
@@ -554,10 +558,18 @@ function classifyCommand(command: LooseRecord): JsonValue {
   }
 
   if (command.intent === "stop") {
+    const removeRepairLoopLabelActions = [AUTOMERGE_LABEL, AUTOFIX_LABEL, MERGE_READY_LABEL]
+      .filter((label) => hasLabel(target, label))
+      .map((label) => ({
+        action: "remove_label",
+        label,
+        status: execute ? "pending" : "planned",
+      }));
     return {
       ...next,
       status: "ready",
       actions: [
+        ...removeRepairLoopLabelActions,
         { action: "label", label: HUMAN_REVIEW_LABEL, status: execute ? "pending" : "planned" },
         { action: "comment", status: execute ? "pending" : "planned" },
       ],
@@ -579,6 +591,10 @@ function classifyCommand(command: LooseRecord): JsonValue {
   }
   if (!pull) {
     return repairBlocked(next, "repair commands require a pull request");
+  }
+  if (command.trusted_bot) {
+    const stoppedReason = repairLoopStoppedReason(next);
+    if (stoppedReason) return { ...next, status: "skipped", reason: stoppedReason };
   }
   if (!canRepairPullTarget(target)) {
     return repairBlocked(
@@ -700,6 +716,8 @@ function classifyAutomergePass(
     return { ...command, status: "skipped", reason: "PR is not open" };
   if (!pull)
     return { ...command, status: "skipped", reason: "ClawSweeper pass marker is not on a PR" };
+  const stoppedReason = repairLoopStoppedReason(command);
+  if (stoppedReason) return { ...command, status: "skipped", reason: stoppedReason };
   if (!hasRepairLoopLabel(command.target))
     return {
       ...command,
@@ -712,6 +730,10 @@ function classifyAutomergePass(
     markerName: "pass",
   });
   if (headBlock) return { ...command, status: "skipped", reason: headBlock };
+  const pauseLabels = pauseLabelsOn(command.target);
+  if (pauseLabels.length > 0) {
+    return { ...command, status: "skipped", reason: "PR is paused for human review" };
+  }
   const pauseLabelActions = pauseLabelsOn(command.target).map((label) => ({
     action: "remove_label",
     label,
@@ -916,6 +938,34 @@ function latestAutomergeResumeAt(command: LooseRecord) {
     }
   }
   return latest;
+}
+
+function repairLoopStoppedReason(command: LooseRecord) {
+  return repairLoopStopPauseReason({
+    command,
+    entries: repairLoopControlEntries(),
+  });
+}
+
+function repairLoopControlEntries() {
+  if (repairLoopControlEntriesCache) return repairLoopControlEntriesCache;
+  const entries: LooseRecord[] = [];
+  for (const entry of ledger.commands ?? []) {
+    if (!isRepairLoopControlIntent(entry)) continue;
+    if (!["executed", "waiting"].includes(String(entry.status ?? ""))) continue;
+    entries.push(entry);
+  }
+  for (const command of rawCommands) {
+    if (!isRepairLoopControlIntent(command) || command.trusted_bot) continue;
+    const authorization = resolveMaintainerCommandAuthorization(command);
+    if (authorization.allowed) entries.push(command);
+  }
+  repairLoopControlEntriesCache = entries;
+  return entries;
+}
+
+function isRepairLoopControlIntent(command: LooseRecord) {
+  return ["stop", "autofix", "automerge"].includes(String(command?.intent ?? ""));
 }
 
 function executeCommand(command: LooseRecord) {
@@ -1192,6 +1242,7 @@ function executeCommand(command: LooseRecord) {
     );
   }
   if (command.intent === "stop" && command.issue_number && shouldApplyHumanReviewLabel) {
+    applyRemoveLabelActions(command);
     ensureHumanReviewLabel(command.repo);
     ghBestEffort([
       "issue",
@@ -1222,6 +1273,36 @@ function executeCommand(command: LooseRecord) {
       : action,
   );
   command.status = commandHasWaitingRepairDispatch(command) ? "waiting" : "executed";
+}
+
+function applyRemoveLabelActions(command: LooseRecord) {
+  const labelsToRemove = (command.actions ?? [])
+    .filter((action: JsonValue) => action.action === "remove_label")
+    .map((action: JsonValue) => String(action.label ?? ""))
+    .filter(Boolean);
+  if (labelsToRemove.length === 0) return;
+  for (const label of labelsToRemove) {
+    ghBestEffort([
+      "issue",
+      "edit",
+      String(command.issue_number),
+      "--repo",
+      command.repo,
+      "--remove-label",
+      label,
+    ]);
+  }
+  command.target = {
+    ...command.target,
+    labels: (command.target?.labels ?? []).filter(
+      (label: JsonValue) => !labelsToRemove.includes(String(label)),
+    ),
+  };
+  command.actions = command.actions.map((action: JsonValue) =>
+    action.action === "remove_label"
+      ? { ...action, status: "executed", label: action.label }
+      : action,
+  );
 }
 
 function workerCapacityRequests(commands: LooseRecord[]) {
@@ -1750,6 +1831,10 @@ function closeIssueOrPullRequest(repo: string, number: number, kind: string) {
 }
 
 function executeAutomerge(command: LooseRecord) {
+  const stoppedReason = repairLoopStoppedReason(command);
+  if (stoppedReason) {
+    return { action: "merge", status: "blocked", reason: stoppedReason, merge_method: "squash" };
+  }
   const transientWait = automergeTransientWaitConfig(process.env);
   const transientObservations: LooseRecord[] = [];
   let waitedMs = 0;

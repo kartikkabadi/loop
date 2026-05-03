@@ -143,8 +143,10 @@ Common commands:
   exact-head review is clean.
 - `approve` lets a maintainer clear a ClawSweeper human-review pause and merge
   only after the normal exact-head, checks, mergeability, and gate checks pass.
-- `stop` adds `clawsweeper:human-review`; `/autoclose <reason>` closes the
-  item and bounded linked same-repo targets with an explicit maintainer reason.
+- `stop` removes repair-loop labels, adds `clawsweeper:human-review`, and makes
+  older automerge/autofix comments ineligible to continue. `/autoclose <reason>`
+  closes the item and bounded linked same-repo targets with an explicit
+  maintainer reason.
 
 Only maintainers are accepted. The router checks repository collaborator
 permission (`admin`, `maintain`, or `write`) and falls back to trusted

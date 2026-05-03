@@ -182,6 +182,8 @@ PRs stay fix-only until GitHub marks them ready for review. `approve` is
 maintainer-only exact-head approval after a human-review pause; it clears pause
 labels and merges only when the normal automerge readiness checks and merge
 gates pass. `stop` labels the item for human review.
+It also removes repair-loop labels, so older automerge/autofix commands and
+trusted pass markers cannot continue the loop after the stop.
 
 The router writes an idempotency marker into each reply and records processed
 comments in `results/comment-router.json`. The scheduled workflow is dry by

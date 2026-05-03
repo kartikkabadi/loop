@@ -720,11 +720,15 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
     ].join("\n");
   }
   if (command.intent === "stop") {
+    const removedLabels = (command.actions ?? [])
+      .filter((action: JsonValue) => action.action === "remove_label")
+      .map((action: JsonValue) => `\`${action.label}\``)
+      .filter(Boolean);
     return [
       marker,
       "Got it. ClawSweeper will leave this item for human review.",
       "",
-      `I added \`${HUMAN_REVIEW_LABEL}\` and paused the automation trail until a maintainer asks again.`,
+      `I added \`${HUMAN_REVIEW_LABEL}\`${removedLabels.length > 0 ? `, removed ${removedLabels.join(", ")},` : ""} and paused the automation trail until a maintainer asks again.`,
     ].join("\n");
   }
   if (["autofix", "automerge"].includes(command.intent)) {
@@ -1113,6 +1117,39 @@ export function staleAutomergeActivationReason({
     return `${intent} already completed after this command`;
   }
   return `PR closed after this ${intent} command`;
+}
+
+export function repairLoopStopPauseReason({ command, entries = [] }: LooseRecord): string | null {
+  const stopAt = latestRepairLoopControlTime(entries, command, ["stop"]);
+  if (!stopAt) return null;
+
+  let resumeAt = latestRepairLoopControlTime(entries, command, ["autofix", "automerge"]);
+  const commandIntent = String(command?.intent ?? "");
+  if (["autofix", "automerge"].includes(commandIntent) && !command?.trusted_bot) {
+    resumeAt = Math.max(resumeAt, repairLoopControlTime(command));
+  }
+
+  if (stopAt <= resumeAt) return null;
+  return "ClawSweeper automation was paused by a later /clawsweeper stop command";
+}
+
+function latestRepairLoopControlTime(entries: JsonValue, command: LooseRecord, intents: string[]) {
+  if (!Array.isArray(entries)) return 0;
+  const intentSet = new Set(intents);
+  let latest = 0;
+  for (const entry of entries) {
+    if (!entry || typeof entry !== "object") continue;
+    if (entry.repo !== command?.repo) continue;
+    if (Number(entry.issue_number) !== Number(command?.issue_number)) continue;
+    if (!intentSet.has(String(entry.intent ?? ""))) continue;
+    latest = Math.max(latest, repairLoopControlTime(entry));
+  }
+  return latest;
+}
+
+function repairLoopControlTime(entry: LooseRecord) {
+  const parsed = Date.parse(String(entry?.comment_updated_at ?? entry?.comment_created_at ?? ""));
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 function inlineQuote(value: JsonValue): string {
