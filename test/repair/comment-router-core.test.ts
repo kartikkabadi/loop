@@ -526,6 +526,18 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
     intent: "implement_issue",
     implementation_prompt: "",
   });
+  assert.deepEqual(parseCommand("@clawsweeper fix"), {
+    trigger: "mention",
+    command: "fix",
+    intent: "implement_issue",
+    implementation_prompt: "",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper fix\nPlease keep it narrow."), {
+    trigger: "mention",
+    command: "fix issue please keep it narrow",
+    intent: "implement_issue",
+    implementation_prompt: "Please keep it narrow.",
+  });
   assert.deepEqual(parseCommand("@clawsweeper build\nAdd export support."), {
     trigger: "mention",
     command: "build add export support",

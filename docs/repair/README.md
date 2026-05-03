@@ -156,6 +156,7 @@ Supported commands:
 @clawsweeper re-review
 @clawsweeper review
 @clawsweeper implement
+@clawsweeper fix
 @clawsweeper build
 @clawsweeper create pr
 @clawsweeper fix issue
@@ -167,12 +168,12 @@ Supported commands:
 dispatch ClawSweeper review again for an open issue or PR. `fix ci`, `address review`,
 and `rebase` dispatch the normal `repair-cluster-worker.yml` repair path, but only for
 existing ClawSweeper PRs identified by the `clawsweeper/*` branch.
-`implement`, `build`, `create pr`, and `fix issue` work only on open issues. The router
-creates or reuses one durable `issue-<repo>-<number>` job and dispatches the
-normal repair worker to verify the issue on latest `main` and open or update one
-narrow implementation PR. This lane never merges or closes the issue; broad,
-underspecified, security-sensitive, or already-fixed issues become a blocked
-repair result instead of a public PR.
+`implement`, `fix`, `build`, `create pr`, and `fix issue` work only on open issues.
+The router creates or reuses one durable `issue-<repo>-<number>` job and
+dispatches the normal repair worker to verify the issue on latest `main` and
+open or update one narrow implementation PR. This lane never merges or closes
+the issue; broad, underspecified, security-sensitive, or already-fixed issues
+become a blocked repair result instead of a public PR.
 Freeform maintainer mentions such as `@clawsweeper why did automerge stop here?`
 dispatch a read-only assist review. The answer lands in the next ClawSweeper
 comment; action-looking prose can only become existing structured

@@ -259,8 +259,8 @@ close actions remain blocked.
 ## Issue Implementation Commands
 
 Maintainer comments can turn an open issue into one ClawSweeper implementation
-PR with `/clawsweeper implement`, `/clawsweeper build`, `@clawsweeper create pr`, or
-`@clawsweeper fix issue`.
+PR with `/clawsweeper implement`, `@clawsweeper fix`, `/clawsweeper build`,
+`@clawsweeper create pr`, or `@clawsweeper fix issue`.
 
 The comment router creates or reuses
 `jobs/<owner>/inbox/issue-<owner>-<repo>-<number>.md` with

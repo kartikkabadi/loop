@@ -9,6 +9,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Added
 
+- Accepted `@clawsweeper fix` as a short issue implementation command that
+  creates or updates one guarded ClawSweeper PR for an open issue.
+
 ### Changed
 
 - Kept broad review continuations warm and faster by preserving the

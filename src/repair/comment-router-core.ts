@@ -588,7 +588,8 @@ export function parseCommand(body: string) {
           .slice(index + 1)
           .join("\n")
           .trim();
-        if (rest) return commandFromText("slash", `${slash[1]}\n${rest}`);
+        if (rest)
+          return commandFromText("slash", `${issueImplementationRestPrefix(command)}\n${rest}`);
       }
       return command;
     }
@@ -603,7 +604,7 @@ export function parseCommand(body: string) {
           .join("\n")
           .trim();
         if (command.intent === "implement_issue" && rest)
-          return commandFromText("mention", `${mention[1]}\n${rest}`);
+          return commandFromText("mention", `${issueImplementationRestPrefix(command)}\n${rest}`);
         if (command.command === "status" && rest) return commandFromText("mention", rest);
         return command;
       }
@@ -1016,8 +1017,12 @@ export function autocloseReasonFromCommand(command: LooseRecord) {
 function implementationPromptFromCommand(command: LooseRecord) {
   return String(command ?? "")
     .trim()
-    .replace(/^(?:implement|build|create\s+pr|open\s+pr|fix\s+issue)\b[:\s-]*/i, "")
+    .replace(/^(?:implement|build|create\s+pr|open\s+pr|fix\s+issue|fix)\b[:\s-]*/i, "")
     .trim();
+}
+
+function issueImplementationRestPrefix(command: LooseRecord) {
+  return command.command === "fix" ? "fix issue" : command.command;
 }
 
 function normalizeIntent(command: LooseRecord) {
@@ -1036,6 +1041,7 @@ function normalizeIntent(command: LooseRecord) {
     command.startsWith("create pr ") ||
     command === "open pr" ||
     command.startsWith("open pr ") ||
+    command === "fix" ||
     command === "fix issue" ||
     command.startsWith("fix issue ")
   ) {

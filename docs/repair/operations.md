@@ -269,6 +269,7 @@ Supported triggers:
 @clawsweeper re-review
 @clawsweeper review
 @clawsweeper implement
+@clawsweeper fix
 @clawsweeper build
 @clawsweeper create pr
 @clawsweeper fix issue
@@ -276,9 +277,9 @@ Supported triggers:
 ```
 
 `review` and `re-review` dispatch ClawSweeper review again for an open issue or PR.
-Issue implementation commands (`implement`, `build`, `create pr`, `fix issue`) dispatch
-the repair worker for one open issue and ask it to create or update a single
-ClawSweeper implementation PR. The generated job uses
+Issue implementation commands (`implement`, `fix`, `build`, `create pr`, `fix issue`)
+dispatch the repair worker for one open issue and ask it to create or update a
+single ClawSweeper implementation PR. The generated job uses
 `source: issue_implementation`, `repair_strategy: new_fix_pr`, blocks merge and
 close actions, and reuses `clawsweeper/issue-<repo>-<number>` on reruns.
 When `CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS=1`, review publish can also dispatch
