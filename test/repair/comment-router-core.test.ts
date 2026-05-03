@@ -668,6 +668,27 @@ test("parseTrustedAutomation treats trusted ClawSweeper needs-human as a pause",
   assert.match(parsed.repair_reason, /needs-human/);
 });
 
+test("parseTrustedAutomation repairs needs-human verdicts with concrete P findings", () => {
+  const trustedAuthors = new Set(["clawsweeper[bot]"]);
+  const parsed = parseTrustedAutomation(
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: [
+        "ClawSweeper says this needs maintainer judgment.",
+        "",
+        "**Review findings**",
+        "- **[P1] Unwrap sudo reset-timestamp carriers:** `src/infra/command-carriers.ts:74`",
+        "<!-- clawsweeper-verdict:needs-human sha=abc123 -->",
+      ].join("\n"),
+    },
+    { trustedAuthors },
+  );
+
+  assert.equal(parsed.intent, "clawsweeper_auto_repair");
+  assert.equal(parsed.expected_head_sha, "abc123");
+  assert.match(parsed.repair_reason, /repairable P-severity findings/);
+});
+
 test("parseTrustedAutomation accepts explicit repair verdicts", () => {
   const trustedAuthors = new Set(["clawsweeper[bot]"]);
   const parsed = parseTrustedAutomation(

@@ -628,7 +628,21 @@ export function parseTrustedAutomation(
   const body = String(comment?.body ?? "");
   const verdict = clawsweeperMarker(body, "verdict");
   const actionMarker = clawsweeperMarker(body, "action");
-  if (verdict && ["needs-human", "human-review"].includes(verdict.action)) {
+  if (verdict?.action === "human-review") {
+    return trustedHumanReview({
+      author,
+      reason: `structured ClawSweeper verdict: ${verdict.action}${markerReasonSuffix(verdict.attrs)}`,
+      marker: verdict,
+    });
+  }
+  if (verdict?.action === "needs-human" && trustedCommentHasPriorityFinding(body)) {
+    return trustedRepair({
+      author,
+      reason: `structured ClawSweeper needs-human verdict with repairable P-severity findings${markerReasonSuffix(verdict.attrs)}`,
+      marker: verdict,
+    });
+  }
+  if (verdict?.action === "needs-human") {
     return trustedHumanReview({
       author,
       reason: `structured ClawSweeper verdict: ${verdict.action}${markerReasonSuffix(verdict.attrs)}`,

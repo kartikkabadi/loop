@@ -1800,9 +1800,11 @@ ${securitySection}
 `);
 
   assert.match(automergeMarkers, /clawsweeper-security:security-sensitive/);
-  assert.match(automergeMarkers, /clawsweeper-verdict:needs-human/);
+  assert.match(automergeMarkers, /clawsweeper-verdict:needs-changes/);
+  assert.match(automergeMarkers, /clawsweeper-action:fix-required/);
+  assert.match(automergeMarkers, /finding=security-review/);
   assert.doesNotMatch(automergeMarkers, /clawsweeper-verdict:pass/);
-  assert.doesNotMatch(automergeMarkers, /clawsweeper-action:fix-required/);
+  assert.doesNotMatch(automergeMarkers, /clawsweeper-verdict:needs-human/);
 });
 
 test("pull request keep-open review comments suppress duplicate remaining risk text", () => {

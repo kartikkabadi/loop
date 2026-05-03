@@ -4768,7 +4768,6 @@ function securitySensitiveRepairAllowed(markdown: string): boolean {
   const labels = frontMatterStringArray(markdown, "labels");
   return (
     frontMatterValue(markdown, "decision") === "keep_open" &&
-    frontMatterValue(markdown, "work_candidate") === "queue_fix_pr" &&
     (labels.includes(AUTOFIX_LABEL) || labels.includes(AUTOMERGE_LABEL))
   );
 }
