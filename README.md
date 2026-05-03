@@ -124,8 +124,9 @@ Common commands:
 - `review` and `re-review` dispatch a fresh ClawSweeper issue/PR review without
   starting repair.
 - Command status replies are marker-backed and edited in place per
-  issue/PR, intent, and head SHA, so repeated review nudges do not leave a
-  trail of duplicate lobster notes.
+  issue/PR, intent, and head SHA. The visible badge is one lobster plus the
+  current state: `👀` for acknowledgement, `🧹` for review, `🔧` for repair, and
+  `✅` for completed/paused work.
 - Freeform `@clawsweeper ...` mentions dispatch a read-only assist review that
   answers the maintainer request in the next ClawSweeper comment. Action-looking
   prose still maps through existing safe markers and deterministic gates.

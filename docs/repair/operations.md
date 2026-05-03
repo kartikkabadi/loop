@@ -245,6 +245,9 @@ Target repositories can also forward matching `issue_comment` events as
 `clawsweeper_comment` repository dispatches with the exact comment id. Those
 comments get an immediate `eyes` reaction from the ClawSweeper app, and the
 scheduled sweep remains a five-minute fallback.
+The status comment itself uses one compact badge: `🦞👀` for acknowledgement,
+`🦞🧹` for review, `🦞🔧` for repair/build/fix work, and `🦞✅` for completed or
+paused work.
 It accepts only maintainer-authored commands, gated by GitHub
 `author_association` values `OWNER`, `MEMBER`, or `COLLABORATOR` by default.
 Contributor comments are ignored without a reply.

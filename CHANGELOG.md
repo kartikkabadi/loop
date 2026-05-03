@@ -14,6 +14,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
+- Replaced duplicate-lobster command status badges with one lobster plus a
+  state emoji for acknowledgement, review, repair, and completed/paused work.
 - Kept broad review continuations warm and faster by preserving the
   `openclaw/openclaw` active shard floor, stopping saturated planning once
   capacity is full, capping optional pre-shard dashboard publishes, and moving

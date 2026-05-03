@@ -946,13 +946,33 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
 });
 
-test("renderResponse gives command replies a lobster badge", () => {
+test("renderResponse gives command replies stateful lobster badges", () => {
   const body = renderResponse({ comment_id: "456", intent: "help", target: {} }, null);
+  const reviewBody = renderResponse(
+    { comment_id: "457", intent: "re_review", target: {} },
+    { clawsweeper: { workflow: "sweep.yml" } },
+  );
+  const repairBody = renderResponse(
+    { comment_id: "458", intent: "implement_issue", target: {} },
+    { model: "gpt-5.5" },
+  );
+  const doneBody = renderResponse(
+    {
+      comment_id: "459",
+      intent: "clawsweeper_auto_merge",
+      target: {},
+      trusted_bot_author: "clawsweeper[bot]",
+    },
+    { merge: { status: "executed" } },
+  );
 
   assert.match(
     body,
-    /^<!-- clawsweeper-command-status:unknown:help:na -->\n<!-- clawsweeper-command:456:help:na -->\n🦞🦞\nClawSweeper is here/,
+    /^<!-- clawsweeper-command-status:unknown:help:na -->\n<!-- clawsweeper-command:456:help:na -->\n🦞👀\nClawSweeper is here/,
   );
+  assert.match(reviewBody, /\n🦞🧹\nClawSweeper re-review requested/);
+  assert.match(repairBody, /\n🦞🔧\nClawSweeper issue implementation requested/);
+  assert.match(doneBody, /\n🦞✅\nClawSweeper merged this PR/);
   assert.match(body, /@clawsweeper fix/);
 });
 

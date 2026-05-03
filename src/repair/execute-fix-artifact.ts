@@ -2763,7 +2763,7 @@ function updateAutomergeStatusCommentForBranchRepair({
   const runUrl = currentActionsRunUrl();
   const reviewDispatch = dispatchAutomergeReviewAfterBranchRepair({ target, commit });
   const body = [
-    "🦞🦞",
+    "🦞🔧",
     "ClawSweeper applied a repair to this PR branch.",
     "",
     fastRepair?.status === "ready"
