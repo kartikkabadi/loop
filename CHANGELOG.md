@@ -16,9 +16,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 - Made trusted human-review and security-sensitive pause reasons include the
   actionable review sections instead of only the structured marker.
-- Removed `actions/setup-node` from the high-volume GitHub activity lane so
-  bursty activity forwarding is not blocked by codeload action download
-  timeouts.
+- Removed `actions/setup-node` from the high-volume GitHub activity lane and
+  kept that notifier compatible with runner-provided Node 20+ so bursty
+  activity forwarding is not blocked by codeload action download timeouts.
 
 ## 0.2.0 - 2026-05-03
 

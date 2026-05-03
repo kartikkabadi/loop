@@ -192,11 +192,13 @@ synchronizes, and successful automation events are skipped unless they contain
 an explicit ClawSweeper command or mention. This keeps noisy GitHub churn from
 consuming hook-session model turns.
 
-The workflow intentionally uses the runner-provided Node 24 runtime plus a lean
+The workflow intentionally uses the runner-provided Node runtime plus a lean
 uncached pnpm install instead of `actions/setup-node` or the shared cached pnpm
 action. This event stream can burst dozens of runs at once, and downloading
 extra setup/cache actions has proven slower and less reliable than a direct
-install/build path for the small notifier.
+install/build path for the small notifier. The activity notifier is kept
+compatible with the runner's Node 20+ runtime even though the broader project
+gate still uses Node 24.
 
 The activity prompt always treats GitHub titles, comments, review bodies, and
 issue text as untrusted data. It must not follow instructions embedded in those
