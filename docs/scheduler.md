@@ -144,9 +144,11 @@ runtime artifact. Review shards download the built `dist/` and run
 install and build. This keeps 50-100 shard waves from stampeding the npm
 registry or Corepack metadata endpoints.
 
-Read-only review shards use shallow ClawSweeper and generated-state checkouts.
-Publish and apply jobs keep full state history because they may rebase and push
-generated records.
+Read-only review shards use shallow ClawSweeper checkouts and skip generated
+state checkout entirely. The planner passes exact item numbers to each shard, so
+shards can fetch current GitHub item state and write review artifacts without
+hydrating historical records. Publish and apply jobs keep full state history
+because they may rebase and push generated records.
 
 Normal backfill now runs every 5 minutes for `openclaw/openclaw`. Because its
 concurrency group allows only one running normal backfill per target repo, the
@@ -273,9 +275,11 @@ critical path records the planned counts and publishes only
 `results/sweep-status/`; publish, apply, and audit still reconcile records before
 their state mutations where folder placement matters.
 
-Read-only plan and review jobs hydrate generated state from a shallow
-`fetch-depth: 1` checkout. Generated-state publish, apply, and audit jobs keep a
-full checkout because they may need to rebase and push state updates.
+Read-only plan jobs hydrate generated state from a shallow `fetch-depth: 1`
+checkout. Review shard jobs skip generated-state hydration because the plan
+matrix already contains exact item numbers. Generated-state publish, apply, and
+audit jobs keep a full checkout because they may need to rebase and push state
+updates.
 
 ## Apply
 
