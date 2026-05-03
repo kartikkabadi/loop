@@ -2166,7 +2166,9 @@ function listRecentComments() {
 function listCandidateComments() {
   if (commentIds.size > 0) {
     return selectCommentsForRouting({
-      recentComments: [...commentIds].map((commentId) => fetchIssueComment(commentId)),
+      recentComments: [...commentIds]
+        .map((commentId) => fetchIssueComment(commentId))
+        .filter((comment) => comment !== null),
       durableComments: [],
       maxComments,
     });
@@ -2268,10 +2270,24 @@ function listRepairLoopSweepCommands(existingCommands: LooseRecord[]) {
   return commands;
 }
 
-function fetchIssueComment(commentId: JsonValue) {
-  return ghJson(["api", `repos/${targetRepo}/issues/comments/${commentId}`], {
-    attempts: TARGET_LOOKUP_RETRY_ATTEMPTS,
-  });
+function fetchIssueComment(commentId: JsonValue): LooseRecord | null {
+  try {
+    return ghJson<LooseRecord>(["api", `repos/${targetRepo}/issues/comments/${commentId}`], {
+      attempts: TARGET_LOOKUP_RETRY_ATTEMPTS,
+    });
+  } catch (error) {
+    if (isGitHubNotFoundError(error)) {
+      console.warn(
+        `[comment-router] skipping missing issue comment ${commentId}: ${compactText(ghErrorText(error), 160)}`,
+      );
+      return null;
+    }
+    throw error;
+  }
+}
+
+function isGitHubNotFoundError(error: unknown) {
+  return /\bHTTP 404\b|gh:\s*Not Found/i.test(ghErrorText(error));
 }
 
 function listOpenIssueNumbersWithLabel(label: string) {

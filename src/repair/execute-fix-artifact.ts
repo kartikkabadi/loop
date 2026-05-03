@@ -167,6 +167,10 @@ const networkCommandTimeoutMs = Math.max(
   Number(process.env.CLAWSWEEPER_NETWORK_COMMAND_TIMEOUT_MS ?? 5 * 60 * 1000),
 );
 const reportReserveMs = Number(process.env.CLAWSWEEPER_FIX_REPORT_RESERVE_MS ?? 90 * 1000);
+const fixDebugMaxBytes = Math.max(
+  1024 * 1024,
+  Number(process.env.CLAWSWEEPER_FIX_DEBUG_MAX_BYTES ?? 8 * 1024 * 1024),
+);
 const strictTargetValidation =
   process.env.CLAWSWEEPER_STRICT_TARGET_VALIDATION === "1" ||
   String(process.env.CLAWSWEEPER_TARGET_VALIDATION_MODE ?? "changed-only") === "strict";
@@ -1095,6 +1099,26 @@ function executeReplacementBranch({
       merge_preflight: prep.merge_preflight,
       supersede_sources: supersedeSources ? (fixArtifact.source_prs ?? []) : [],
       contributor_credit: contributorCredits.map(publicContributorCredit),
+    };
+  }
+
+  if (!branchHasBaseDiff({ targetDir, baseBranch })) {
+    logProgress("replacement branch has no changes versus base; skipping PR create", {
+      branch,
+      base_branch: baseBranch,
+      commit: prep.commit,
+    });
+    return {
+      action: "open_fix_pr",
+      status: "skipped",
+      branch,
+      resumed_branch: branchState.resumed,
+      commit: prep.commit,
+      checkpoint_commits: prep.checkpoint_commits,
+      merge_preflight: prep.merge_preflight,
+      supersede_sources: [],
+      contributor_credit: contributorCredits.map(publicContributorCredit),
+      reason: "replacement branch has no changes versus base after repair",
     };
   }
 
@@ -3054,10 +3078,32 @@ function copyFixDebugArtifacts(reportDir: JsonValue) {
     if (!/\.(jsonl|stderr\.log|md|json)$/i.test(entry.name)) continue;
     if (entry.name === "replacement-pr-body.md") continue;
     fs.mkdirSync(debugDir, { recursive: true });
-    fs.copyFileSync(path.join(workRoot, entry.name), path.join(debugDir, entry.name));
+    copyDebugFileWithTailCap(path.join(workRoot, entry.name), path.join(debugDir, entry.name));
     copied += 1;
   }
   return copied > 0 ? debugDir : "";
+}
+
+function copyDebugFileWithTailCap(source: string, destination: string) {
+  const size = fs.statSync(source).size;
+  if (size <= fixDebugMaxBytes) {
+    fs.copyFileSync(source, destination);
+    return;
+  }
+
+  const readSize = Math.min(size, fixDebugMaxBytes);
+  const buffer = Buffer.alloc(readSize);
+  const fd = fs.openSync(source, "r");
+  try {
+    fs.readSync(fd, buffer, 0, readSize, size - readSize);
+  } finally {
+    fs.closeSync(fd);
+  }
+  fs.writeFileSync(
+    destination,
+    `[clawsweeper] debug file truncated from ${size} bytes to last ${readSize} bytes for final repair artifact; see dedicated Codex debug artifact when available.\n`,
+  );
+  fs.appendFileSync(destination, buffer);
 }
 
 function ghAuthSetupGit(cwd: JsonValue) {

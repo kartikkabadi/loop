@@ -222,6 +222,18 @@ outputs from `.clawsweeper-repair/runs`, and a manifest. The collector skips
 Codex auth/config files and redacts common token shapes before upload; retention
 is seven days by default.
 
+The final repair artifact keeps only capped tail copies of executor debug files
+under `fix-executor-debug/` so failed runs do not spend minutes uploading huge
+Codex JSONL files. Use the dedicated `clawsweeper-codex-debug-*` artifact when
+the full session/log backup is needed. The cap defaults to 8 MiB per copied file
+and is configurable with `CLAWSWEEPER_FIX_DEBUG_MAX_BYTES`.
+
+If a replacement repair finishes with no diff against the latest base branch,
+the executor records a skipped no-op outcome instead of calling `gh pr create`.
+This avoids failing on GitHub's "No commits between" response when the repair is
+already represented on `main` or the resumed replacement branch collapsed to an
+empty diff after rebase.
+
 Runs for the same job path and mode share a concurrency group. Different cluster jobs can still run in parallel.
 
 Live preflight hydrates job-provided refs by default and records linked refs without expanding them. Set repo variables `CLAWSWEEPER_MAX_LINKED_REFS` above `0` only for small clusters that need first-hop context and `CLAWSWEEPER_HYDRATE_COMMENTS=1` when comment bodies are necessary evidence; normal scale runs use issue/PR metadata, body excerpts, PR files, and PR checks.
