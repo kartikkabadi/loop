@@ -446,6 +446,14 @@ export function existingModeStatusBlocksReplay({
   );
 }
 
+export function pausedModeStatusBlocksReplay({
+  hasPauseLabels,
+  hasExistingModeStatusResponse,
+  forceReprocess,
+}: LooseRecord = {}) {
+  return Boolean(hasPauseLabels) && Boolean(hasExistingModeStatusResponse) && !forceReprocess;
+}
+
 export function isMaintainerCommandAllowed({
   authorAssociation,
   repositoryPermission = null,
@@ -850,7 +858,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
             `- Label: \`${label}\`${clearedHumanReview ? " (pause labels cleared)" : ""}`,
             repairQueued
               ? repairDispatchLine(dispatched.repair, "- Action")
-              : "- Action: exact-head review queued.",
+              : reviewDispatchLine(dispatched.clawsweeper, "- Action", "exact-head review queued"),
             "- Flow: review this head, repair/rebase only if needed, then re-review the exact repaired head before merge.",
           ].join("\n")
         : `Reason: ${command.reason ?? `${mode} requires a pull request`}.`,
@@ -868,7 +876,11 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
         : "ClawSweeper could not start a re-review for this item.",
       "",
       dispatched?.clawsweeper
-        ? "I asked ClawSweeper to review this item again."
+        ? [
+            "I asked ClawSweeper to review this item again.",
+            reviewDispatchLine(dispatched.clawsweeper, "Action", "item re-review queued"),
+            "Result: the existing ClawSweeper review comment will be edited in place when the review finishes.",
+          ].join("\n")
         : `Reason: ${command.reason ?? "re-review requires an open issue or PR"}.`,
     ].join("\n");
   }
@@ -1061,6 +1073,17 @@ function repairDispatchLine(dispatched: LooseRecord, label: string): string {
   return runUrl
     ? `${label}: repair worker queued. Run: ${runUrl}`
     : `${label}: repair worker queued.`;
+}
+
+function reviewDispatchLine(dispatched: LooseRecord, label: string, action: string): string {
+  const runUrl = typeof dispatched.run_url === "string" ? dispatched.run_url : "";
+  const workflow = String(dispatched.workflow ?? "").trim();
+  const event = String(dispatched.event ?? "").trim();
+  const suffix = [workflow ? `workflow \`${workflow}\`` : "", event ? `event \`${event}\`` : ""]
+    .filter(Boolean)
+    .join(", ");
+  const detail = suffix ? ` (${suffix})` : "";
+  return runUrl ? `${label}: ${action}. Run: ${runUrl}` : `${label}: ${action}${detail}.`;
 }
 
 export function usesSharedAutomergeStatus(command: LooseRecord) {

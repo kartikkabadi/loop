@@ -257,6 +257,24 @@ jobs:
         with:
           build-script: build:all
 
+      - name: Mark re-review command in progress
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+          COMMAND_STATUS_MARKER: ${{ github.event.client_payload.command_status_marker || '' }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          pnpm run repair:update-command-status -- \
+            --repo "$TARGET_REPO" \
+            --item-number "$ITEM_NUMBER" \
+            --marker "$COMMAND_STATUS_MARKER" \
+            --state "Review in progress" \
+            --detail "Targeted re-review run started; Codex is reviewing the item." \
+            --run-url "$RUN_URL" \
+            --wait-ms 120000
+
       - uses: ./.github/actions/setup-codex
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -293,6 +311,7 @@ jobs:
           git -C "$checkout_dir" rev-parse --short HEAD
 
       - name: Review exact event item
+        id: review-exact-event-item
         continue-on-error: true
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
@@ -330,6 +349,7 @@ jobs:
           token: ${{ steps.state-token.outputs.token }}
 
       - name: Publish event result and apply safe close
+        id: publish-event-result
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
           REPO_TOKEN: ${{ github.token }}
@@ -340,6 +360,7 @@ jobs:
         run: pnpm run repair:publish-event-result
 
       - name: Route synced ClawSweeper verdict
+        id: route-synced-verdict
         timeout-minutes: 4
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
@@ -360,6 +381,33 @@ jobs:
             --lookback-minutes "$CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES" \
             --max-comments "$CLAWSWEEPER_COMMENT_MAX_COMMENTS" \
             --execute
+
+      - name: Mark re-review complete
+        if: ${{ always() && steps.setup-pnpm.outcome == 'success' }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+          COMMAND_STATUS_MARKER: ${{ github.event.client_payload.command_status_marker || '' }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REVIEW_OUTCOME: ${{ steps.review-exact-event-item.outcome }}
+          PUBLISH_OUTCOME: ${{ steps.publish-event-result.outcome }}
+          ROUTE_OUTCOME: ${{ steps.route-synced-verdict.outcome }}
+        run: |
+          state="Failed"
+          detail="The targeted re-review did not finish cleanly. Check the workflow run for details."
+          if [ "$REVIEW_OUTCOME" = "success" ] && [ "$PUBLISH_OUTCOME" = "success" ] && [ "$ROUTE_OUTCOME" = "success" ]; then
+            state="Complete"
+            detail="The targeted re-review finished, the durable review comment was updated, and the synced verdict was routed."
+          fi
+          pnpm run repair:update-command-status -- \
+            --repo "$TARGET_REPO" \
+            --item-number "$ITEM_NUMBER" \
+            --marker "$COMMAND_STATUS_MARKER" \
+            --state "$state" \
+            --detail "$detail" \
+            --run-url "$RUN_URL"
 
       - name: Commit event comment router ledger
         if: ${{ !cancelled() && steps.setup-pnpm.outcome == 'success' }}

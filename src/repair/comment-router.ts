@@ -42,6 +42,7 @@ import {
   issueImplementationClusterId,
   issueImplementationJobPath,
   parseCommand,
+  pausedModeStatusBlocksReplay,
   parseTrustedAutomation,
   repairableCheckBlockers,
   repairLoopStopPauseReason,
@@ -501,6 +502,22 @@ function classifyCommand(command: LooseRecord): JsonValue {
     ) {
       return { ...next, status: "skipped", reason: `${mode} already enabled for this PR` };
     }
+    if (
+      pausedModeStatusBlocksReplay({
+        hasPauseLabels: pauseLabels.length > 0,
+        hasExistingModeStatusResponse: hasExistingModeStatusResponse(
+          command.issue_number,
+          command.intent,
+        ),
+        forceReprocess,
+      })
+    ) {
+      return {
+        ...next,
+        status: "skipped",
+        reason: "PR is paused for human review",
+      };
+    }
     const actions: LooseRecord[] = [];
     if (!target.job_path) {
       actions.push({
@@ -734,11 +751,7 @@ function classifyAutomergePass(
   if (pauseLabels.length > 0) {
     return { ...command, status: "skipped", reason: "PR is paused for human review" };
   }
-  const pauseLabelActions = pauseLabelsOn(command.target).map((label) => ({
-    action: "remove_label",
-    label,
-    status: execute ? "pending" : "planned",
-  }));
+  const pauseLabelActions: LooseRecord[] = [];
   const failedCheckBlockers = repairableCheckBlockers(command.target?.checks);
   if (failedCheckBlockers.length > 0) {
     return classifyPassedAutomergeRepair(
@@ -1490,6 +1503,8 @@ function repairJobModeForCommand(command: LooseRecord) {
 }
 
 function dispatchClawSweeperReview(command: LooseRecord) {
+  const commandStatus =
+    command.intent === "re_review" ? { command_status_marker: commandStatusMarker(command) } : {};
   const payload = JSON.stringify({
     event_type: "clawsweeper_item",
     client_payload: {
@@ -1497,6 +1512,7 @@ function dispatchClawSweeperReview(command: LooseRecord) {
       item_number: String(command.issue_number),
       item_kind: command.target?.kind ?? "",
       additional_prompt: freeformReviewPrompt(command),
+      ...commandStatus,
     },
   });
   const result = ghSpawn(

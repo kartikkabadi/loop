@@ -19,6 +19,10 @@ checkpoint, and status-only commits are intentionally omitted.
 - Removed `actions/setup-node` from the high-volume GitHub activity lane and
   kept that notifier compatible with runner-provided Node 20+ so bursty
   activity forwarding is not blocked by codeload action download timeouts.
+- Kept human-review pauses from being cleared by stale trusted pass markers or
+  replayed automerge commands.
+- Updated targeted re-review command comments with live progress while the review
+  workflow runs.
 
 ## 0.2.0 - 2026-05-03
 
