@@ -799,7 +799,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
             `- Head: ${head || "`unknown`"}`,
             `- Label: \`${label}\`${clearedHumanReview ? " (pause labels cleared)" : ""}`,
             repairQueued
-              ? repairDispatchLine(dispatched.repair, "Action")
+              ? repairDispatchLine(dispatched.repair, "- Action")
               : "- Action: exact-head review queued.",
             "- Flow: review this head, repair/rebase only if needed, then re-review the exact repaired head before merge.",
           ].join("\n")

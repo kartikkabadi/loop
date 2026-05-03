@@ -437,7 +437,9 @@ full compiled-repo coverage ratchet.
 
 Required secrets:
 
-- `OPENAI_API_KEY`: OpenAI API key used to log Codex in before review shards run.
+- `OPENAI_API_KEY`: OpenAI API key used by the per-job local Codex Responses
+  proxy. Codex subprocesses inherit only the proxy-backed `CODEX_HOME`, not the
+  raw API key.
 - `CLAWSWEEPER_APP_CLIENT_ID`: public GitHub App client ID for `clawsweeper`.
   Currently `Iv23liOECG0slfuhz093`.
 - `CLAWSWEEPER_APP_PRIVATE_KEY`: private key for `clawsweeper`; plan/review
@@ -451,8 +453,9 @@ Required secrets:
 
 Token flow:
 
-- Review shards log Codex in with `OPENAI_API_KEY`, then run without OpenAI or
-  Codex token environment variables.
+- Review and repair jobs create an isolated per-run `CODEX_HOME`, start a local
+  Responses proxy from `OPENAI_API_KEY`, write proxy-only Codex config there,
+  and run Codex without OpenAI or Codex token environment variables.
 - ClawSweeper uses the `clawsweeper` GitHub App token for read-heavy target
   context.
 - Apply mode uses the same app token for review comments and closes, so GitHub

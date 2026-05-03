@@ -78,8 +78,9 @@ Artifact names:
 
 The repair workflow snapshots recent Codex session JSONL files, Codex log files,
 and ClawSweeper-captured `codex exec --json` outputs after both the planning job
-and the fix execution job. Session/log files come from `~/.codex/sessions` and
-`~/.codex/log`; captured repair outputs come from `.clawsweeper-repair/runs`.
+and the fix execution job. Session/log files come from the job's isolated
+`CODEX_HOME` when set, otherwise `~/.codex`; captured repair outputs come from
+`.clawsweeper-repair/runs`.
 The collector deliberately excludes Codex auth and config files, redacts common
 OpenAI and GitHub token shapes, and writes a `manifest.json` with
 source-relative paths, byte counts, mtimes, and SHA-256 hashes. These debug

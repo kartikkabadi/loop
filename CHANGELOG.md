@@ -14,6 +14,11 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
+- Switched the shared Codex setup action to a per-run `CODEX_HOME` with a local
+  Responses proxy so Codex subprocesses no longer inherit raw OpenAI/Codex API
+  key environment variables.
+- Added coarse automerge repair progress updates to the existing mutable status
+  timeline for validation, Codex edit, review, base-sync, and wait phases.
 - Replaced duplicate-lobster command status badges with one lobster plus a
   state emoji for acknowledgement, review, repair, and completed/paused work.
 - Kept broad review continuations warm and faster by preserving the

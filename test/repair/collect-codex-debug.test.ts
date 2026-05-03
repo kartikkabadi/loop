@@ -110,6 +110,33 @@ test("collectCodexDebug backs up Codex JSONL from repair run artifacts", () => {
   }
 });
 
+test("collectCodexDebug defaults to CODEX_HOME when set", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-codex-debug-env-"));
+  const codexHome = path.join(tmp, "isolated-codex-home");
+  const outDir = path.join(tmp, "out");
+  const previous = process.env.CODEX_HOME;
+  fs.mkdirSync(path.join(codexHome, "sessions"), { recursive: true });
+  fs.writeFileSync(path.join(codexHome, "sessions", "run.jsonl"), "ok\n");
+
+  try {
+    process.env.CODEX_HOME = codexHome;
+    const result = collectCodexDebug({
+      outDir,
+      label: "env",
+      sinceMinutes: 60,
+      maxBytes: 1024 * 1024,
+      homeDir: path.join(tmp, "home"),
+    });
+
+    assert.equal(result.manifest.length, 1);
+    assert.equal(fs.existsSync(path.join(outDir, "sessions", "run.jsonl")), true);
+  } finally {
+    if (previous === undefined) delete process.env.CODEX_HOME;
+    else process.env.CODEX_HOME = previous;
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("redactSecrets masks common token shapes", () => {
   assert.equal(
     redactSecrets(

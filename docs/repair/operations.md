@@ -200,7 +200,11 @@ Use Blacksmith labels only when you intentionally want a non-parity hosted runne
 pnpm run repair:dispatch -- jobs/openclaw/cluster-*.md --mode plan --runner blacksmith-4vcpu-ubuntu-2404
 ```
 
-The workflow uses Node 24 and logs Codex in with `OPENAI_API_KEY`, while also passing `CODEX_API_KEY` to `codex exec`. Set `CODEX_API_KEY` to the same value unless you intentionally separate CI auth.
+The workflow uses Node 24 and starts a local Codex Responses proxy from
+`OPENAI_API_KEY` inside an isolated per-run `CODEX_HOME`. Codex subprocesses use
+that proxy config and run without raw OpenAI or Codex API key environment
+variables. The legacy `codex login` path remains available only through the
+local `setup-codex` action's `auth-mode: login` input.
 
 Codex runs in a read-only sandbox for classification and receives no GitHub token. GitHub read access is scoped to deterministic preflight scripts. For reviewed fix artifacts, `execute-fix-artifact` gives Codex a temporary target checkout without GitHub credentials, then the deterministic executor commits, pushes, opens the replacement PR, and closes uneditable source PRs only after the replacement exists. When a replacement carries contributor work forward, non-bot source PR authors are added as `Co-authored-by` trailers and named in the replacement PR body and source close comment. Remaining write access is scoped to `apply-result`.
 
@@ -209,6 +213,12 @@ edit, review, final rebase, and write-preflight subprocesses emit the same
 heartbeat. If a model call is slow, Actions logs should show
 `[clawsweeper repair] ... still running` about once a minute instead of ending
 with a silent no-output timeout.
+
+Automerge repair execution also updates the existing mutable automerge status
+comment at coarse milestones: validation plan, write preflight, Codex edit
+passes, validation/review loops, final base sync, and the post-repair automerge
+wait. These updates append or replace rows in the single progress timeline
+instead of adding new comments.
 
 Network calls in fix execution are also bounded. Contributor-branch clone,
 fetch, push, status-comment, and review-thread calls should time out before the
@@ -219,8 +229,8 @@ For deep debugging, download the `clawsweeper-codex-debug-cluster-*` and
 `clawsweeper-codex-debug-execute-*` artifacts from the repair worker run. They
 contain recent Codex session/log files, ClawSweeper-captured `codex exec --json`
 outputs from `.clawsweeper-repair/runs`, and a manifest. The collector skips
-Codex auth/config files and redacts common token shapes before upload; retention
-is seven days by default.
+Codex auth/config files, honors the isolated `CODEX_HOME`, and redacts common
+token shapes before upload; retention is seven days by default.
 
 The final repair artifact keeps only capped tail copies of executor debug files
 under `fix-executor-debug/` so failed runs do not spend minutes uploading huge

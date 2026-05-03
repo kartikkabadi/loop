@@ -355,6 +355,12 @@ logProgress("starting fix execution", {
   model,
   reasoning: codexReasoningEffort,
 });
+updateAutomergeProgressStatus({
+  id: "repair-started",
+  label: "repair started",
+  status: "running",
+  details: result.cluster_id,
+});
 
 if (plannedFixActions.length === 0) {
   report.status = "skipped";
@@ -474,10 +480,22 @@ logProgress("target validation plan accepted", {
   status: validationPreflight.status,
   target_branch: validationPreflight.target_branch,
 });
+updateAutomergeProgressStatus({
+  id: "validation-plan",
+  label: "validation plan",
+  status: validationPreflight.status,
+  details: listOrNone(validationPreflight.resolved_commands ?? []),
+});
 
 logProgress("running Codex write preflight", {
   timeout_ms: codexPreflightTimeoutMs,
   sandbox: codexWriteSandbox,
+});
+updateAutomergeProgressStatus({
+  id: "codex-write-preflight",
+  label: "Codex write preflight",
+  status: "running",
+  details: codexWriteSandbox,
 });
 const writePreflight = runCodexWritePreflight();
 report.preflight = writePreflight;
@@ -495,6 +513,12 @@ if (writePreflight.status === "blocked") {
   process.exit(0);
 }
 logProgress("Codex write preflight passed", { status: writePreflight.status });
+updateAutomergeProgressStatus({
+  id: "codex-write-preflight",
+  label: "Codex write preflight",
+  status: writePreflight.status,
+  details: codexWriteSandbox,
+});
 
 let outcome: JsonValue;
 try {
@@ -1485,6 +1509,13 @@ function editValidatePrepareMerge({
         reconcile_with_base: reconcileWithBase,
         rebase_status: rebaseResult?.status ?? null,
       });
+      updateAutomergeProgressStatus({
+        id: `codex-edit-${mode}-${attempt}`,
+        label: `Codex edit ${attempt}`,
+        status: "running",
+        details: reconcileWithBase ? "reconciling latest base" : "repairing branch",
+        headSha: headBeforeAttempt,
+      });
       const codexResult = spawnCodexSyncWithHeartbeat(
         `Codex fix worker ${mode} attempt ${attempt}`,
         [
@@ -1531,6 +1562,13 @@ function editValidatePrepareMerge({
         throw new Error(codexResult.stderr || codexResult.stdout || "Codex fix worker failed");
       }
       logProgress("Codex edit pass finished", { mode, attempt, status: codexResult.status });
+      updateAutomergeProgressStatus({
+        id: `codex-edit-${mode}-${attempt}`,
+        label: `Codex edit ${attempt}`,
+        status: "complete",
+        details: `exit ${codexResult.status}`,
+        headSha: currentHead(targetDir),
+      });
 
       const hasWorkingTreeChanges = Boolean(
         run("git", ["status", "--porcelain"], { cwd: targetDir }).trim(),
@@ -1576,6 +1614,13 @@ function editValidatePrepareMerge({
   );
   for (let attempt = 1; attempt <= maxFinalBaseSyncAttempts; attempt += 1) {
     logProgress("starting validation/review loop", { mode, attempt });
+    updateAutomergeProgressStatus({
+      id: `validation-review-${mode}-${attempt}`,
+      label: `validation and review ${attempt}`,
+      status: "running",
+      details: mode,
+      headSha: currentHead(targetDir),
+    });
     codexReview = validateAndReviewLoop({
       fixArtifact,
       targetDir,
@@ -1606,6 +1651,13 @@ function editValidatePrepareMerge({
       sourceHead,
     });
     logProgress("final base sync result", { mode, attempt, status: sync.status });
+    updateAutomergeProgressStatus({
+      id: `validation-review-${mode}-${attempt}`,
+      label: `validation and review ${attempt}`,
+      status: sync.status === "already-current" ? "complete" : "base moved",
+      details: sync.status,
+      headSha: currentHead(targetDir),
+    });
     if (sync.status === "already-current") break;
     const checkpoint = commitCheckpointIfNeeded({
       targetDir,
@@ -1647,6 +1699,50 @@ function editValidatePrepareMerge({
 function logProgress(message: string, details: LooseRecord = {}) {
   const suffix = Object.keys(details).length > 0 ? ` ${JSON.stringify(details)}` : "";
   console.log(`[clawsweeper repair] ${new Date().toISOString()} ${message}${suffix}`);
+}
+
+function updateAutomergeProgressStatus({
+  id,
+  label,
+  status,
+  details = null,
+  headSha = null,
+}: LooseRecord) {
+  if (!isAutomergeRepairJob() || dryRun) return false;
+  const target = automergeOutcomeTargetPrNumber();
+  if (!target) return false;
+  try {
+    const existingStatus = findAutomergeStatusComment(target);
+    if (!existingStatus?.id) return false;
+    const now = new Date();
+    const bodyWithTimeline = mergeAutomergeTimelineSection({
+      body: existingStatus.body,
+      existingBody: existingStatus.body,
+      events: [
+        {
+          id: `repair-progress:${currentActionsRunId() || path.basename(path.dirname(resultPath))}:${id}`,
+          label,
+          at: scriptStartedAt.toISOString(),
+          completedAt: now.toISOString(),
+          durationMs: now.getTime() - scriptStartedAt.getTime(),
+          runUrl: currentActionsRunUrl(),
+          headSha: headSha ?? automergeOutcomeReviewedSha(),
+          repo: result.repo,
+          status,
+          details,
+        },
+      ],
+    });
+    patchIssueComment(
+      existingStatus.id,
+      preserveStatusMarkers(existingStatus.body, bodyWithTimeline),
+    );
+    return true;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`[clawsweeper repair] failed to update automerge progress status: ${message}`);
+    return false;
+  }
 }
 
 function reconcileLatestBaseBeforePush({
@@ -2836,6 +2932,13 @@ function waitForAutomergeAfterBranchRepair({ target, commit }: LooseRecord) {
     max_wait_ms: config.maxWaitMs,
     poll_ms: config.intervalMs,
   });
+  updateAutomergeProgressStatus({
+    id: `automerge-wait-${commit}`,
+    label: "automerge wait",
+    status: "waiting",
+    details: `up to ${Math.round(config.maxWaitMs / 1000)}s`,
+    headSha: commit,
+  });
   while (waitedMs <= config.maxWaitMs) {
     const view = fetchPullRequestViewForRepo({ repo: result.repo, number: target });
     const readiness = automergeShepherdReadiness({
@@ -2855,6 +2958,13 @@ function waitForAutomergeAfterBranchRepair({ target, commit }: LooseRecord) {
         waited_ms: waitedMs,
         dispatch_status: dispatch?.status ?? null,
       });
+      updateAutomergeProgressStatus({
+        id: `automerge-wait-${commit}`,
+        label: "automerge wait",
+        status: readiness.status,
+        details: readiness.reason,
+        headSha: commit,
+      });
       return {
         status: readiness.status,
         reason: readiness.reason,
@@ -2868,6 +2978,13 @@ function waitForAutomergeAfterBranchRepair({ target, commit }: LooseRecord) {
     waitedMs = Date.now() - startedAt;
   }
   logProgress("automerge shepherd wait timed out", { target, commit, waited_ms: waitedMs });
+  updateAutomergeProgressStatus({
+    id: `automerge-wait-${commit}`,
+    label: "automerge wait",
+    status: "waiting",
+    details: lastReason || "waiting for exact-head review/checks",
+    headSha: commit,
+  });
   return {
     status: "waiting",
     reason: lastReason || "waiting for exact-head review/checks",

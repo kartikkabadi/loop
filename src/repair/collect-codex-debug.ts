@@ -107,7 +107,8 @@ export function redactSecrets(text: string) {
 }
 
 function codexDebugRoots(options: CollectOptions) {
-  const codexHome = options.codexHome || path.join(options.homeDir, ".codex");
+  const codexHome =
+    options.codexHome || process.env.CODEX_HOME?.trim() || path.join(options.homeDir, ".codex");
   const repairRunsDir =
     options.repairRunsDir || path.join(process.cwd(), ".clawsweeper-repair", "runs");
   return [
@@ -173,7 +174,8 @@ function isMain() {
 if (isMain()) {
   const args = parseArgs(process.argv.slice(2));
   const outDir = stringArg(args.out, ".clawsweeper-repair/codex-debug");
-  const codexHome = typeof args["codex-home"] === "string" ? args["codex-home"] : undefined;
+  const codexHome =
+    typeof args["codex-home"] === "string" ? args["codex-home"] : process.env.CODEX_HOME;
   const repairRunsDir =
     typeof args["repair-runs-dir"] === "string" ? args["repair-runs-dir"] : undefined;
   const result = collectCodexDebug({

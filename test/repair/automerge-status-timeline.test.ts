@@ -23,10 +23,13 @@ test("mergeAutomergeTimelineSection appends and updates progress rows", () => {
   assert.match(first, /Automerge progress:/);
   assert.match(first, /review queued/);
   assert.match(first, /2026-05-01 05:00:00 UTC/);
+  assert.match(first, /clawsweeper-automerge-timeline-event:review-queued:abc123:1 -->\n- /);
+  assert.doesNotMatch(first, /- <!-- clawsweeper-automerge-timeline-event:/);
   assert.match(
     first,
     /\[`abcdef123456`\]\(https:\/\/github\.com\/openclaw\/openclaw\/commit\/abcdef1234567890\)/,
   );
+  assert.doesNotMatch(first, /\]\s*\n\s*\(/);
   assert.match(first, /actions\/runs\/123/);
 
   const second = mergeAutomergeTimelineSection({
@@ -86,4 +89,29 @@ test("mergeAutomergeTimelineSection drops same-PR comment URLs", () => {
   assert.match(body, /merge checked/);
   assert.doesNotMatch(body, /issuecomment-/);
   assert.doesNotMatch(body, /github\.com\/openclaw\/openclaw\/pull\/75423/);
+});
+
+test("mergeAutomergeTimelineSection normalizes old inline marker rows", () => {
+  const existingBody = [
+    "old body",
+    "<!-- clawsweeper-automerge-timeline:start -->",
+    "Automerge progress:",
+    "- <!-- clawsweeper-automerge-timeline-event:review-queued:old:1 --> 2026-05-03 15:19:34 UTC review queued [`f9bdd078dc0e`]",
+    "(https://github.com/openclaw/openclaw/commit/f9bdd078dc0ee0927829f40ab4c441c79c91d7fe) (queued)",
+    "<!-- clawsweeper-automerge-timeline:end -->",
+  ].join("\n");
+
+  const body = mergeAutomergeTimelineSection({
+    body: "status body",
+    existingBody,
+    events: [],
+  });
+
+  assert.match(body, /clawsweeper-automerge-timeline-event:review-queued:old:1 -->\n- /);
+  assert.match(
+    body,
+    /\[`f9bdd078dc0e`\]\(https:\/\/github\.com\/openclaw\/openclaw\/commit\/f9bdd078dc0ee0927829f40ab4c441c79c91d7fe\)/,
+  );
+  assert.doesNotMatch(body, /- <!-- clawsweeper-automerge-timeline-event:/);
+  assert.doesNotMatch(body, /\]\s*\n\s*\(/);
 });

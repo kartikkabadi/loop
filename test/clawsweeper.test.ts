@@ -2207,6 +2207,7 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     process.env.CLAWSWEEPER_APP_ID = "123";
     process.env.CLAWSWEEPER_APP_PRIVATE_KEY = "private";
     process.env.OPENAI_API_KEY = "openai";
+    process.env.CODEX_API_KEY = "codex";
 
     const env = codexEnv();
 
@@ -2216,6 +2217,7 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     assert.equal(env.CLAWSWEEPER_APP_ID, undefined);
     assert.equal(env.CLAWSWEEPER_APP_PRIVATE_KEY, undefined);
     assert.equal(env.OPENAI_API_KEY, undefined);
+    assert.equal(env.CODEX_API_KEY, undefined);
     assert.equal(env.GIT_OPTIONAL_LOCKS, "0");
   } finally {
     process.env = originalEnv;

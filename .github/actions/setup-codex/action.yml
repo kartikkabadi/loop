@@ -4,6 +4,12 @@ inputs:
   version:
     description: Codex CLI npm package version.
     default: "0.128.0"
+  auth-mode:
+    description: Authentication mode. Use proxy to keep OPENAI_API_KEY out of Codex subprocesses, or login for legacy codex login.
+    default: "proxy"
+  codex-home:
+    description: CODEX_HOME directory. Defaults to an isolated per-run ClawSweeper directory.
+    default: ""
   cache-suffix:
     description: Extra cache key suffix for target-tool downloads.
     default: ""
@@ -20,7 +26,7 @@ runs:
           ~/.npm
           ~/.cache/node/corepack
           ~/.clawsweeper-repair/codex
-        key: ${{ runner.os }}-node24-codex-${{ inputs.version }}-${{ inputs['cache-suffix'] || 'default' }}-v1
+        key: ${{ runner.os }}-node24-codex-${{ inputs.version }}-${{ inputs['cache-suffix'] || 'default' }}-v2
         restore-keys: |
           ${{ runner.os }}-node24-codex-${{ inputs.version }}-
           ${{ runner.os }}-node24-codex-
@@ -37,14 +43,75 @@ runs:
         if ! command -v codex >/dev/null 2>&1 || ! codex --version | grep -Fq "${{ inputs.version }}"; then
           npm install -g "@openai/codex@${{ inputs.version }}" --prefer-offline --no-audit --no-fund
         fi
+        if [[ "${{ inputs['auth-mode'] }}" == "proxy" ]] && ! npm list -g --depth=0 "@openai/codex-responses-api-proxy@${{ inputs.version }}" >/dev/null 2>&1; then
+          npm install -g "@openai/codex-responses-api-proxy@${{ inputs.version }}" --prefer-offline --no-audit --no-fund
+        fi
         codex --version
 
-    - name: Authenticate Codex
+    - name: Resolve Codex home
       shell: bash
       run: |
         set -euo pipefail
+        if [[ -n "${{ inputs['codex-home'] }}" ]]; then
+          codex_home="${{ inputs['codex-home'] }}"
+        else
+          codex_home="$HOME/.clawsweeper-repair/codex-home/${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}"
+        fi
+        mkdir -p "$codex_home"
+        chmod 700 "$codex_home"
+        echo "CODEX_HOME=$codex_home" >> "$GITHUB_ENV"
+        export CODEX_HOME="$codex_home"
+        echo "Using isolated CODEX_HOME=$CODEX_HOME"
+
+    - name: Authenticate Codex through Responses proxy
+      if: ${{ inputs['auth-mode'] == 'proxy' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        export CODEX_HOME="${CODEX_HOME:?}"
+        test -n "${OPENAI_API_KEY:-}"
+        server_info="$CODEX_HOME/responses-proxy.json"
+        if [[ ! -s "$server_info" ]]; then
+          (
+            printenv OPENAI_API_KEY | env -u OPENAI_API_KEY -u CODEX_API_KEY -u PROXY_API_KEY \
+              codex-responses-api-proxy --http-shutdown --server-info "$server_info"
+          ) &
+        fi
+        for _ in {1..100}; do
+          [[ -s "$server_info" ]] && break
+          sleep 0.1
+        done
+        if [[ ! -s "$server_info" ]]; then
+          echo "codex-responses-api-proxy did not write server info" >&2
+          exit 1
+        fi
+        port="$(node -e 'const fs=require("fs"); const p=process.argv[1]; const data=JSON.parse(fs.readFileSync(p,"utf8")); if (!Number.isInteger(data.port)) process.exit(2); process.stdout.write(String(data.port));' "$server_info")"
+        cat > "$CODEX_HOME/config.toml" <<EOF
+        model_provider = "clawsweeper-responses-proxy"
+
+        [model_providers.clawsweeper-responses-proxy]
+        name = "ClawSweeper Responses Proxy"
+        base_url = "http://127.0.0.1:${port}/v1"
+        wire_api = "responses"
+        EOF
+        chmod 600 "$CODEX_HOME/config.toml"
+        echo "Configured Codex Responses proxy on localhost."
+
+    - name: Authenticate Codex with login
+      if: ${{ inputs['auth-mode'] == 'login' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        export CODEX_HOME="${CODEX_HOME:?}"
         test -n "${OPENAI_API_KEY:-}"
         printenv OPENAI_API_KEY | codex login --with-api-key >/dev/null
         if [[ "${{ inputs['login-status'] }}" == "true" ]]; then
           codex login status
         fi
+
+    - name: Reject unknown Codex auth mode
+      if: ${{ inputs['auth-mode'] != 'proxy' && inputs['auth-mode'] != 'login' }}
+      shell: bash
+      run: |
+        echo "Unsupported setup-codex auth-mode: ${{ inputs['auth-mode'] }}" >&2
+        exit 1

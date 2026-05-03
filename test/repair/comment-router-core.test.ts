@@ -1076,7 +1076,7 @@ test("renderResponse reports automerge repair dispatches as enabled", () => {
   );
 
   assert.match(body, /ClawSweeper automerge is enabled/);
-  assert.match(body, /Action: repair worker queued/);
+  assert.match(body, /- Action: repair worker queued/);
   assert.doesNotMatch(body, /could not enable automerge/);
   assert.doesNotMatch(body, /requires a pull request/);
   assert.doesNotMatch(body, /automerge-openclaw-openclaw-75401/);

@@ -33,11 +33,22 @@ function existingTimelineRows(value: JsonValue): string[] {
     new RegExp(`${escapeRegExp(TIMELINE_START)}([\\s\\S]*?)${escapeRegExp(TIMELINE_END)}`),
   );
   if (!match) return [];
-  return match[1]!
+  const lines = match[1]!
     .split(/\r?\n/)
     .map((line) => line.trimEnd())
-    .filter((line) => line.includes(EVENT_PREFIX))
-    .map(sanitizeTimelineRow);
+    .filter((line) => line.trim() && line.trim() !== "Automerge progress:");
+  const rows: string[] = [];
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index]!;
+    if (!line.includes(EVENT_PREFIX)) continue;
+    const parts = [line];
+    while (index + 1 < lines.length && !lines[index + 1]!.includes(EVENT_PREFIX)) {
+      parts.push(lines[++index]!);
+    }
+    const row = sanitizeTimelineRow(parts.join("\n"));
+    if (row) rows.push(row);
+  }
+  return rows;
 }
 
 function renderTimelineEvent(event: LooseRecord): string {
@@ -50,8 +61,9 @@ function renderTimelineEvent(event: LooseRecord): string {
   const duration = formatDuration(event.durationMs ?? event.duration_ms);
   const runUrl = safeTimelineRunUrl(event.runUrl ?? event.run_url);
   const details = compact(event.details ?? event.detail ?? event.reason, 160);
-  return [
-    `- ${EVENT_PREFIX}${id} -->`,
+  const eventMarker = `${EVENT_PREFIX}${id} -->`;
+  const row = [
+    "-",
     at,
     label,
     head,
@@ -62,15 +74,24 @@ function renderTimelineEvent(event: LooseRecord): string {
   ]
     .filter(Boolean)
     .join(" ");
+  return `${eventMarker}\n${row}`;
 }
 
 function sanitizeTimelineRow(row: string): string {
-  return row
+  const id = timelineEventId(row);
+  if (!id) return "";
+  const body = row
+    .replace(/\r?\n/g, " ")
+    .replace(/^\s*-\s*/, "")
+    .replace(new RegExp(escapeRegExp(`${EVENT_PREFIX}${id} -->`), "g"), "")
     .replace(
       /\s+Run:\s+https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/(?:pull|issues)\/\d+#issuecomment-\d+\b/gi,
       "",
     )
-    .trimEnd();
+    .replace(/\]\s+\(/g, "](")
+    .replace(/\s+/g, " ")
+    .trim();
+  return `${EVENT_PREFIX}${id} -->${body ? `\n${body.startsWith("- ") ? body : `- ${body}`}` : ""}`;
 }
 
 function safeTimelineRunUrl(value: JsonValue): string {
