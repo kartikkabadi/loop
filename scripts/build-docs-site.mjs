@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
+import { socialCardPng } from "./social-card.mjs";
 
 const root = process.cwd();
 const docsDir = path.join(root, "docs");
@@ -80,6 +81,7 @@ for (const page of pages) {
 
 fs.writeFileSync(path.join(outDir, "clawsweeper.svg"), clawSvg(), "utf8");
 fs.writeFileSync(path.join(outDir, "favicon.svg"), faviconSvg(), "utf8");
+fs.writeFileSync(path.join(outDir, "social-card.png"), socialCardPng());
 fs.writeFileSync(path.join(outDir, ".nojekyll"), "", "utf8");
 fs.writeFileSync(path.join(outDir, "CNAME"), `${customDomain}\n`, "utf8");
 fs.writeFileSync(
@@ -325,7 +327,13 @@ function layout({ page, html, toc, prev, next, sectionName }) {
   <meta property="og:description" content="${escapeAttr(description)}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://${customDomain}/${page.outRel === "index.html" ? "" : page.outRel}">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://${customDomain}/social-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="ClawSweeper: conservative OpenClaw maintenance bot">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://${customDomain}/social-card.png">
+  <meta name="twitter:image:alt" content="ClawSweeper: conservative OpenClaw maintenance bot">
   <link rel="icon" type="image/svg+xml" href="${rootPrefix}favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
