@@ -159,6 +159,7 @@ jobs:
           ENABLED: ${{ steps.mode.outputs.enabled }}
           SOURCE_REF: ${{ github.event.client_payload.ref || 'refs/heads/main' }}
           SETTLE_SECONDS: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS || '60' }}
+          PAGE_SIZE: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE || '10' }}
         run: |
           set -euo pipefail
           if [ "$ENABLED" = "false" ]; then
@@ -195,6 +196,16 @@ jobs:
             echo "Invalid settle wait: $SETTLE_SECONDS" >&2
             exit 1
           fi
+          if ! printf '%s' "$PAGE_SIZE" | grep -Eq '^[0-9]+$'; then
+            echo "Invalid commit review page size: $PAGE_SIZE" >&2
+            exit 1
+          fi
+          if [ "$PAGE_SIZE" -lt 1 ]; then
+            PAGE_SIZE=1
+          fi
+          if [ "$PAGE_SIZE" -gt 256 ]; then
+            PAGE_SIZE=256
+          fi
           if [ "$SETTLE_SECONDS" -gt 0 ]; then
             echo "Waiting ${SETTLE_SECONDS}s for target main to settle before selecting commits."
             sleep "$SETTLE_SECONDS"
@@ -217,7 +228,7 @@ jobs:
             commits="$COMMIT_SHA"
           fi
           total_count="$(printf '%s\n' "$commits" | sed '/^$/d' | wc -l | tr -d ' ')"
-          page_size=256
+          page_size="$PAGE_SIZE"
           start_line=$((COMMIT_OFFSET + 1))
           end_line=$((COMMIT_OFFSET + page_size))
           selected_commits="$(printf '%s\n' "$commits" | sed -n "${start_line},${end_line}p")"

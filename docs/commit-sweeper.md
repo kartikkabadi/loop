@@ -90,18 +90,19 @@ by SHA/range rather than detaching the whole target repository at the commit.
 
 ## Scaling
 
-GitHub Actions matrices are capped at 256 jobs per workflow run. Commit Sweeper
-therefore pages large ranges:
+Commit Sweeper defaults to 10 commits per workflow page. The receiver clamps
+`CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` between 1 and 256, then pages large
+ranges:
 
-- select up to 256 commits
+- select up to the configured page size
 - classify them cheaply
 - start one matrix worker per code-bearing commit
 - write skipped reports for non-code commits
 - commit all reports
 - dispatch the next page when more commits remain
 
-A 200-commit push runs in one workflow run. A 600-commit historic backfill runs
-as multiple continuation runs.
+A 200-commit push runs as multiple continuation runs at the default page size.
+Raise the page size only when the org has enough rate-limit headroom.
 
 ## Cheap Classification
 

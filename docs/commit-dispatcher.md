@@ -103,6 +103,16 @@ CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=60
 Use `0` for settled manual backfills or a larger value during GitHub event
 lag incidents.
 
+Commit review runs at most 10 Codex workers per workflow page by default. Adjust
+on `openclaw/clawsweeper` only when the org has enough rate-limit headroom:
+
+```text
+CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE=10
+```
+
+The receiver clamps this between 1 and 256. Large push ranges continue in later
+workflow pages.
+
 `openclaw/clawhub` commit dispatches are skipped while
 `CLAWSWEEPER_ENABLE_CLAWHUB` is not `1`. Turn that receiver variable on only
 after the ClawSweeper GitHub App is installed on `openclaw/clawhub`; otherwise
