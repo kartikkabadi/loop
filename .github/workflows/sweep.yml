@@ -224,14 +224,6 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - name: Use state token
-        id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
-
-      - uses: ./.github/actions/setup-state
-        with:
-          token: ${{ steps.state-token.outputs.token }}
-
       - name: React to target item review start
         continue-on-error: true
         env:
@@ -328,6 +320,14 @@ jobs:
             --shard-index 0 \
             --shard-count 1 \
             "${additional_prompt_arg[@]}"
+
+      - name: Use state token
+        id: state-token
+        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
 
       - name: Publish event result and apply safe close
         env:

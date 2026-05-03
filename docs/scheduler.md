@@ -66,6 +66,11 @@ Manual `workflow_dispatch` can override `target_repo`, `item_number`,
 `item_numbers`, `batch_size`, `shard_count`, `hot_intake`, and apply inputs.
 Exact item dispatches use the event path instead of the planner matrix.
 
+Exact event review also starts Codex before generated-state hydration. The
+single-item review only needs the target repository and live GitHub item state;
+generated state is checked out afterward, just before publishing the review
+record, safe close result, and command-router ledger.
+
 ## Automerge Fast Path
 
 Automerge is an exact-item event path. A maintainer command dispatches one

@@ -23,6 +23,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Removed generated-state checkout and hydration from review shards; the planner
   already passes exact item numbers, so shards can start Codex after checkout and
   runtime setup instead of copying historical records first.
+- Moved exact event review state hydration after the Codex review step so
+  maintainer-triggered single-item reviews can start the model before generated
+  records are copied.
 
 ### Fixed
 
