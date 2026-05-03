@@ -36,6 +36,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Moved exact event review state hydration after the Codex review step so
   maintainer-triggered single-item reviews can start the model before generated
   records are copied.
+- Updated sweep and commit-review artifact upload/download actions to their
+  Node 24-compatible versions so review runs no longer emit artifact action
+  runtime deprecation annotations.
 
 ### Fixed
 

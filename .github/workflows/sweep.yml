@@ -526,7 +526,7 @@ jobs:
           working-directory: clawsweeper
           build-script: build:all
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: clawsweeper-runtime-dist
           path: clawsweeper/dist
@@ -703,7 +703,7 @@ jobs:
         with:
           node-version: 24
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: clawsweeper-runtime-dist
           path: clawsweeper/dist
@@ -817,7 +817,7 @@ jobs:
           }
           JSON
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: review-shard-${{ matrix.shard }}
@@ -825,14 +825,14 @@ jobs:
             review-artifacts/shard-${{ matrix.shard }}/*.md
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: review-failed-shard-${{ matrix.shard }}
           path: review-artifacts/failed-shards/shard-${{ matrix.shard }}.json
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: review-metrics-${{ matrix.shard }}
@@ -875,13 +875,13 @@ jobs:
         with:
           build-script: build:all
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: review-shard-*
           path: artifacts
           merge-multiple: true
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           pattern: review-metrics-*
@@ -1144,7 +1144,7 @@ jobs:
       actions: write
       contents: read
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         id: failed-shards
         continue-on-error: true
         with:

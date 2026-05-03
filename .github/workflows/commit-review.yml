@@ -240,7 +240,7 @@ jobs:
           echo "Selected $selected_count/$total_count commits at offset $COMMIT_OFFSET"
           printf 'Selected commits:\n%s\n' "$selected_commits"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: skipped-commit-reports
@@ -376,7 +376,7 @@ jobs:
             --report-relative-path "$relative_path" \
             --report-repo "${{ github.repository }}"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: commit-review-${{ matrix.sha }}
@@ -407,14 +407,14 @@ jobs:
         with:
           build-script: build:all
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         if: ${{ needs.plan.outputs.planned_count != '0' }}
         with:
           pattern: commit-review-*
           path: commit-artifacts
           merge-multiple: true
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         if: ${{ needs.plan.outputs.skipped_count != '0' }}
         with:
           name: skipped-commit-reports
