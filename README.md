@@ -1,4 +1,4 @@
-# ClawSweeper
+# 🦞🧹 ClawSweeper
 
 ClawSweeper is the conservative maintenance bot for OpenClaw repositories. It
 keeps the backlog reviewed, keeps maintainer-visible GitHub comments tidy, and
