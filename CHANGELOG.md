@@ -15,6 +15,9 @@ checkpoint, and status-only commits are intentionally omitted.
   `openclaw/openclaw` active shard floor, stopping saturated planning once
   capacity is full, capping optional pre-shard dashboard publishes, and moving
   broad continuation comment sync into the separate comment-sync lane.
+- Removed the expensive record reconciler from pre-shard planning status so
+  review jobs can start without waiting on a full GitHub state scan; publish,
+  apply, and audit still reconcile before mutating records.
 
 ### Fixed
 

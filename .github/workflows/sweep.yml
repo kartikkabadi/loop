@@ -647,9 +647,7 @@ jobs:
         working-directory: clawsweeper
         env:
           GH_TOKEN: ${{ github.token }}
-          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
-          pnpm run reconcile -- --target-repo "$TARGET_REPO" --skip-closed-at
           pnpm run status -- \
             --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
             --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items; due backlog scanned is ${{ steps.select.outputs.due_backlog }}. Capacity reason: ${{ steps.select.outputs.capacity_reason }}. Review shards are starting; publish will merge artifacts when they finish." \
@@ -663,7 +661,6 @@ jobs:
             --capacity-reason "${{ steps.select.outputs.capacity_reason }}"
           timeout 20s pnpm run repair:publish-main -- \
             --message "chore: mark sweep review in progress" \
-            --path records \
             --path results/sweep-status \
             --rebase-strategy theirs || echo "::warning::Skipped slow in-progress dashboard publish so review shards can start."
 

@@ -267,6 +267,12 @@ that JSON and shows:
 current run. It is not a live process count from GitHub Actions. For live worker
 count, inspect active review shard jobs on the current workflow run.
 
+Planning status intentionally does not run `pnpm run reconcile`. Reconciliation
+can scan many live GitHub pages and has delayed review shard startup. The
+critical path records the planned counts and publishes only
+`results/sweep-status/`; publish, apply, and audit still reconcile records before
+their state mutations where folder placement matters.
+
 ## Apply
 
 Review is proposal-only. Apply is the only issue/PR scheduler path that mutates
