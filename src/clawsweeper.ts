@@ -447,6 +447,7 @@ interface PlanCandidateResult {
   activeCodexTarget: number;
   oldestUnreviewedAt: string | undefined;
   capacityReason: string;
+  floorBackfill: number;
 }
 
 const DEFAULT_PLAN_BATCH_SIZE = 3;
@@ -2249,11 +2250,44 @@ function dueCandidate(
   };
 }
 
+function reviewBackfillCandidate(
+  item: Item,
+  itemsDir: string,
+  now = Date.now(),
+  reviewPolicy?: string,
+  minReviewAgeMs = 0,
+  reviewIndex?: ExistingReviewIndex,
+): DueCandidate | null {
+  const review = indexedExistingReview(item, itemsDir, reviewIndex);
+  if (!review || hasReviewPolicyMismatch(review, reviewPolicy)) return null;
+  const reviewedAt = reviewedAtMs(review);
+  if (reviewedAt === null) return null;
+  if (now - reviewedAt < minReviewAgeMs) return null;
+  if (shouldReviewItem(item, review, now, reviewPolicy)) return null;
+  return {
+    item,
+    review,
+    priority: reviewPriority(item, review, now, reviewPolicy),
+    reviewedAt,
+    nextDueAt: nextReviewDueAtMs(item, review, now, reviewPolicy),
+    bucket: schedulerBucket(item, review, now),
+  };
+}
+
 function compareDueCandidates(left: DueCandidate, right: DueCandidate): number {
   return (
     left.priority - right.priority ||
     left.nextDueAt - right.nextDueAt ||
     left.reviewedAt - right.reviewedAt ||
+    left.item.number - right.item.number
+  );
+}
+
+function compareBackfillCandidates(left: DueCandidate, right: DueCandidate): number {
+  return (
+    left.nextDueAt - right.nextDueAt ||
+    left.reviewedAt - right.reviewedAt ||
+    left.priority - right.priority ||
     left.item.number - right.item.number
   );
 }
@@ -2304,6 +2338,29 @@ function selectDueCandidates(
   return selected;
 }
 
+function appendFloorBackfillCandidates(
+  selected: DueCandidate[],
+  backfill: DueCandidate[],
+  options: { activeFloor: number; capacity: number },
+): DueCandidate[] {
+  const activeFloor = Math.max(0, Math.floor(options.activeFloor));
+  const capacity = Math.max(0, Math.floor(options.capacity));
+  const target = Math.min(activeFloor, capacity);
+  if (selected.length >= target) return selected;
+  const selectedKeys = new Set(
+    selected.map((candidate) => existingReviewKey(candidate.item.repo, candidate.item.number)),
+  );
+  const filled = [...selected];
+  for (const candidate of [...backfill].sort(compareBackfillCandidates)) {
+    if (filled.length >= target) break;
+    const key = existingReviewKey(candidate.item.repo, candidate.item.number);
+    if (selectedKeys.has(key)) continue;
+    selectedKeys.add(key);
+    filled.push(candidate);
+  }
+  return filled;
+}
+
 export function selectDueCandidateNumbersForTest(
   due: Array<{
     item: Item;
@@ -2325,6 +2382,38 @@ export function selectDueCandidateNumbersForTest(
     })),
     limit,
   ).map((candidate) => candidate.item.number);
+}
+
+export function appendFloorBackfillCandidateNumbersForTest(
+  selected: Array<{
+    item: Item;
+    bucket: SchedulerBucket;
+    priority?: number;
+    reviewedAt?: number;
+    nextDueAt?: number;
+  }>,
+  backfill: Array<{
+    item: Item;
+    bucket: SchedulerBucket;
+    priority?: number;
+    reviewedAt?: number;
+    nextDueAt?: number;
+  }>,
+  activeFloor: number,
+  capacity: number,
+): number[] {
+  const normalize = (candidate: (typeof selected)[number]): DueCandidate => ({
+    item: candidate.item,
+    review: null,
+    priority: candidate.priority ?? reviewPriority(candidate.item, null),
+    reviewedAt: candidate.reviewedAt ?? 0,
+    nextDueAt: candidate.nextDueAt ?? 0,
+    bucket: candidate.bucket,
+  });
+  return appendFloorBackfillCandidates(selected.map(normalize), backfill.map(normalize), {
+    activeFloor,
+    capacity,
+  }).map((candidate) => candidate.item.number);
 }
 
 function compareHotIntakeDueCandidates(left: DueCandidate, right: DueCandidate): number {
@@ -2734,11 +2823,19 @@ function planCapacityReason(options: {
   dueBacklog: number;
   capacity: number;
   exact?: boolean;
+  activeFloor?: number;
+  floorBackfill?: number;
 }): string {
   if (options.exact) {
     return options.selectedCount === 0
       ? "idle: no requested open items found"
       : "exact: requested item selection";
+  }
+  if ((options.floorBackfill ?? 0) > 0) {
+    return `floor: due backlog below active floor; filled ${options.floorBackfill} stale current item(s)`;
+  }
+  if ((options.activeFloor ?? 0) > 0 && options.selectedCount < (options.activeFloor ?? 0)) {
+    return `under floor: only ${options.selectedCount} eligible item(s) found for active floor ${options.activeFloor}`;
   }
   if (options.selectedCount === 0) return "idle: no due candidates found";
   if (options.dueBacklog >= options.capacity)
@@ -2755,10 +2852,17 @@ function planCandidates(options: {
   itemNumbers?: number[];
   reviewPolicy: string;
   hotIntake?: boolean;
+  minimumActiveShards?: number;
+  minimumBackfillReviewAgeMs?: number;
 }): PlanCandidateResult {
   const shardCount = planShardCount(options.shardCount);
   const batchSize = Math.max(1, options.batchSize);
   const capacity = batchSize * shardCount;
+  const activeFloor =
+    options.hotIntake || options.itemNumber || options.itemNumbers
+      ? 0
+      : Math.max(0, Math.min(capacity, Math.floor(options.minimumActiveShards ?? 0)));
+  const minimumBackfillReviewAgeMs = Math.max(0, options.minimumBackfillReviewAgeMs ?? 0);
   if (options.itemNumbers) {
     const candidates = openExplicitItems(options.itemNumbers);
     const shards = shardItemNumbers(
@@ -2773,6 +2877,7 @@ function planCandidates(options: {
       dueBacklog: candidates.length,
       activeCodexTarget: activeCodexTarget(shards),
       oldestUnreviewedAt: undefined,
+      floorBackfill: 0,
       capacityReason: planCapacityReason({
         selectedCount: candidates.length,
         dueBacklog: candidates.length,
@@ -2794,6 +2899,7 @@ function planCandidates(options: {
       dueBacklog: candidates.length,
       activeCodexTarget: activeCodexTarget(shards),
       oldestUnreviewedAt: undefined,
+      floorBackfill: 0,
       capacityReason: planCapacityReason({
         selectedCount: candidates.length,
         dueBacklog: candidates.length,
@@ -2837,6 +2943,7 @@ function planCandidates(options: {
       dueBacklog: due.length,
       activeCodexTarget: activeCodexTarget(shards),
       oldestUnreviewedAt: oldestUnreviewedAt(due),
+      floorBackfill: 0,
       capacityReason: planCapacityReason({
         selectedCount: candidates.length,
         dueBacklog: due.length,
@@ -2845,6 +2952,7 @@ function planCandidates(options: {
     };
   }
   let scannedPages = 0;
+  const backfill: DueCandidate[] = [];
   for (let page = 1; page <= options.maxPages; page += 1) {
     const items = fetchOpenItemPage(page);
     scannedPages = page;
@@ -2858,10 +2966,28 @@ function planCandidates(options: {
         options.reviewPolicy,
         reviewIndex,
       );
-      if (candidate) due.push(candidate);
+      if (candidate) {
+        due.push(candidate);
+        continue;
+      }
+      if (activeFloor <= 0) continue;
+      const fallback = reviewBackfillCandidate(
+        item,
+        options.itemsDir,
+        now,
+        options.reviewPolicy,
+        minimumBackfillReviewAgeMs,
+        reviewIndex,
+      );
+      if (fallback) backfill.push(fallback);
     }
   }
-  const candidates = selectDueCandidates(due, capacity).map(({ item }) => item);
+  const selected = appendFloorBackfillCandidates(selectDueCandidates(due, capacity), backfill, {
+    activeFloor,
+    capacity,
+  });
+  const floorBackfill = selected.filter((candidate) => !due.includes(candidate)).length;
+  const candidates = selected.map(({ item }) => item);
   const shards = shardItemNumbers(
     candidates.map((item) => item.number),
     shardCount,
@@ -2875,10 +3001,13 @@ function planCandidates(options: {
     dueBacklog: due.length,
     activeCodexTarget: activeCodexTarget(shards),
     oldestUnreviewedAt: oldestUnreviewedAt(due),
+    floorBackfill,
     capacityReason: planCapacityReason({
       selectedCount: candidates.length,
       dueBacklog: due.length,
       capacity,
+      activeFloor,
+      floorBackfill,
     }),
   };
 }
@@ -5236,6 +5365,9 @@ function planCommand(args: Args): void {
   const batchSize = numberArg(args.batch_size, DEFAULT_PLAN_BATCH_SIZE);
   const maxPages = numberArg(args.max_pages, 250);
   const shardCount = numberArg(args.shard_count, DEFAULT_PLAN_SHARD_COUNT);
+  const minimumActiveShards = numberArg(args.min_active_shards, 0);
+  const minimumBackfillReviewAgeMs =
+    numberArg(args.min_backfill_review_age_minutes, 30) * 60 * 1000;
   const itemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const hasItemNumbersInput = typeof args.item_numbers === "string" && args.item_numbers.trim();
   const hotIntake = boolArg(args.hot_intake);
@@ -5250,6 +5382,8 @@ function planCommand(args: Args): void {
     shardCount,
     itemsDir,
     reviewPolicy,
+    minimumActiveShards,
+    minimumBackfillReviewAgeMs,
   };
   if (hasItemNumbersInput || itemNumbers.length > 0) planOptions.itemNumbers = itemNumbers;
   if (hotIntake) planOptions.hotIntake = true;

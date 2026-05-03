@@ -39,6 +39,7 @@ import {
   safeOutputTail,
   sameAuthorCounterpartApplyReason,
   sanitizePublicSelfReferences,
+  appendFloorBackfillCandidateNumbersForTest,
   selectDueCandidateNumbersForTest,
   shardItemNumbers,
   shouldSyncReviewComment,
@@ -723,6 +724,46 @@ test("normal scheduler reserves throughput for PR and older buckets", () => {
   );
 
   assert.deepEqual(selectDueCandidateNumbersForTest(due, 8), [1, 2, 3, 4, 101, 201, 301, 5]);
+});
+
+test("normal scheduler can fill active floor from stale current reviews", () => {
+  const selected = [
+    {
+      item: item({ number: 1, kind: "issue", createdAt: "2026-04-30T00:00:00Z" }),
+      bucket: "hot_issue",
+      priority: 0,
+      nextDueAt: 1,
+    },
+  ];
+  const backfill = [
+    {
+      item: item({ number: 10, kind: "pull_request", createdAt: "2026-03-01T00:00:00Z" }),
+      bucket: "daily_pull_request",
+      priority: 3,
+      reviewedAt: 100,
+      nextDueAt: 1000,
+    },
+    {
+      item: item({ number: 11, kind: "issue", createdAt: "2026-03-01T00:00:00Z" }),
+      bucket: "weekly_issue",
+      priority: 6,
+      reviewedAt: 50,
+      nextDueAt: 2000,
+    },
+    {
+      item: item({ number: 1, kind: "issue", createdAt: "2026-04-30T00:00:00Z" }),
+      bucket: "hot_issue",
+      priority: 0,
+      reviewedAt: 25,
+      nextDueAt: 3000,
+    },
+  ];
+
+  assert.deepEqual(
+    appendFloorBackfillCandidateNumbersForTest(selected, backfill, 3, 10),
+    [1, 10, 11],
+  );
+  assert.deepEqual(appendFloorBackfillCandidateNumbersForTest(selected, backfill, 3, 2), [1, 10]);
 });
 
 test("hot intake recency prefers newly updated or created issues", () => {

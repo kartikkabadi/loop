@@ -12,8 +12,11 @@ ClawSweeper has three issue/PR scheduler paths:
 
 The lanes share report storage and apply rules, but they intentionally do not
 share throughput. Event review and hot intake keep new maintainer-visible work
-fast. Normal backfill keeps older due records moving with up to 100 concurrent
-Codex review shards when backlog exists.
+fast. Normal backfill keeps older records moving with up to 100 concurrent Codex
+review shards. Scheduled `openclaw/openclaw` review also has an active floor of
+50 shards: due items win first, and if fewer than 50 items are due, the planner
+fills the floor with the stalest currently-reviewed eligible items so review
+capacity stays warm around the clock.
 
 ## Workflow
 
@@ -123,6 +126,8 @@ Defaults:
 - broad hot intake: 50 shards, batch size 1, scans up to 10 GitHub pages
 - scheduled normal backfill: 100 shards, batch size 1, scans up to 250 GitHub
   pages
+- scheduled normal active floor: 50 shards for `openclaw/openclaw`; stale
+  current-review backfill is eligible after 30 minutes
 - manual normal backfill: defaults to 100 shards, batch size 3, scans up to 250
   GitHub pages unless overridden
 
@@ -146,6 +151,12 @@ effect is a continuous drain loop: when due backlog exists, the active run can
 hold about 100 Codex review shards with one item per shard, and the next
 scheduled tick is available as the backstop or pending continuation. Manual
 normal reviews keep the larger default batch size for targeted catch-up runs.
+
+The active floor is not a separate lane and does not change close/apply safety.
+It only changes normal planning when due backlog is below the desired floor:
+after selecting all due candidates, the planner fills up to 50 nonempty shards
+with eligible items whose latest complete review is at least 30 minutes old.
+Capacity status reports this as `floor: due backlog below active floor`.
 
 ## Cadence
 
@@ -187,7 +198,9 @@ pnpm run --silent plan -- \
   --codex-model gpt-5.5 \
   --codex-reasoning-effort high \
   --codex-sandbox danger-full-access \
-  --codex-service-tier fast
+  --codex-service-tier fast \
+  --min-active-shards "$MIN_ACTIVE_SHARDS" \
+  --min-backfill-review-age-minutes "$MIN_BACKFILL_REVIEW_AGE_MINUTES"
 ```
 
 `pnpm run plan` returns:
@@ -199,6 +212,8 @@ pnpm run --silent plan -- \
 - `activeCodexTarget`: nonempty shard count
 - `oldestUnreviewedAt`: oldest scanned due candidate with no existing review
 - `capacityReason`: why the selected count did or did not fill capacity
+- `floorBackfill`: selected stale current-review candidates used to fill the
+  active floor
 - `matrix`: GitHub Actions matrix entries
 
 `pnpm run workflow -- plan-output` maps that JSON to GitHub Actions outputs:
