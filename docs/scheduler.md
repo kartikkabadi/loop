@@ -278,11 +278,12 @@ association, paired issue/PR state, snapshot drift, and repository profile
 rules. It closes only unchanged high-confidence proposals and otherwise updates
 or syncs the durable ClawSweeper review comment.
 
-Scheduled normal review publishes records first, then dispatches durable review
-comment sync into the separate apply/comment-sync lane. This keeps slow GitHub
-comment writes from holding the normal review concurrency group and delaying the
-next 100-shard backfill wave. Exact and manual targeted review runs still sync
-their selected comments inline before finishing.
+Broad normal review publishes records first, then dispatches durable review
+comment sync into the separate apply/comment-sync lane. This includes scheduled
+runs and workflow-dispatch continuations, so slow GitHub comment writes do not
+hold the normal review concurrency group or delay the next 100-shard backfill
+wave. Exact issue/PR reviews and repository-dispatch item runs still sync their
+selected comments inline before finishing.
 
 Long apply runs commit checkpoints and can dispatch continuation runs when they
 reach the configured close limit.

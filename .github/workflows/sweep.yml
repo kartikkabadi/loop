@@ -1002,8 +1002,8 @@ jobs:
               -f report_url="$report_url"
           done < /tmp/issue-implementation-candidates.tsv
 
-      - name: Dispatch scheduled review comment sync
-        if: ${{ success() && github.event_name == 'schedule' && needs.plan.outputs.hot_intake != 'true' }}
+      - name: Dispatch background review comment sync
+        if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && github.event_name != 'repository_dispatch' && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
@@ -1024,15 +1024,15 @@ jobs:
               -f apply_limit=0 \
               -f apply_comment_sync_min_age_days=7 \
               -f apply_progress_every=25; then
-              echo "Dispatched scheduled comment sync for item numbers: $item_numbers"
+              echo "Dispatched background comment sync for item numbers: $item_numbers"
               exit 0
             fi
             sleep "$((attempt * 10))"
           done
-          echo "::warning::Unable to dispatch scheduled comment sync after three attempts; apply/comment-sync backstops can pick it up later."
+          echo "::warning::Unable to dispatch background comment sync after three attempts; apply/comment-sync backstops can pick it up later."
 
       - name: Sync selected review comments
-        if: ${{ success() && (github.event_name != 'schedule' || needs.plan.outputs.hot_intake == 'true') && (needs.plan.outputs.hot_intake != 'true' || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
+        if: ${{ success() && (github.event_name == 'repository_dispatch' || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
         timeout-minutes: 15
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}

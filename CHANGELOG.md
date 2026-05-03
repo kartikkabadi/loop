@@ -11,6 +11,11 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
+- Kept broad review continuations warm and faster by preserving the
+  `openclaw/openclaw` active shard floor, stopping saturated planning once
+  capacity is full, capping optional pre-shard dashboard publishes, and moving
+  broad continuation comment sync into the separate comment-sync lane.
+
 ### Fixed
 
 ## 0.1.0 - 2026-05-03
