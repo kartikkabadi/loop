@@ -12,6 +12,11 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added a generated 1200x630 social preview card plus large-image Open Graph and
   Twitter metadata for the docs site.
 
+### Fixed
+
+- Made trusted human-review and security-sensitive pause reasons include the
+  actionable review sections instead of only the structured marker.
+
 ## 0.2.0 - 2026-05-03
 
 ### Added

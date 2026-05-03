@@ -656,10 +656,18 @@ export function parseTrustedAutomation(
   const body = String(comment?.body ?? "");
   const verdict = clawsweeperMarker(body, "verdict");
   const actionMarker = clawsweeperMarker(body, "action");
+  const securityMarker = clawsweeperMarker(body, "security");
   if (verdict?.action === "human-review") {
     return trustedHumanReview({
       author,
-      reason: `structured ClawSweeper verdict: ${verdict.action}${markerReasonSuffix(verdict.attrs)}`,
+      reason: trustedHumanReviewReason(body, verdict),
+      marker: verdict,
+    });
+  }
+  if (verdict?.action === "needs-human" && securityMarker?.action === "security-sensitive") {
+    return trustedHumanReview({
+      author,
+      reason: trustedHumanReviewReason(body, verdict),
       marker: verdict,
     });
   }
@@ -673,7 +681,7 @@ export function parseTrustedAutomation(
   if (verdict?.action === "needs-human") {
     return trustedHumanReview({
       author,
-      reason: `structured ClawSweeper verdict: ${verdict.action}${markerReasonSuffix(verdict.attrs)}`,
+      reason: trustedHumanReviewReason(body, verdict),
       marker: verdict,
     });
   }
@@ -722,6 +730,48 @@ export function parseTrustedAutomation(
 
 function trustedCommentHasPriorityFinding(body: string) {
   return /(?:^|\n)\s*(?:[-*]\s*)?(?:\*\*)?\[P[0-3]\]/i.test(String(body ?? ""));
+}
+
+function trustedHumanReviewReason(body: string, verdict: LooseRecord | null) {
+  const details = [
+    markdownSection(body, "Next step before merge"),
+    markdownSection(body, "Security"),
+    firstReviewFinding(body),
+  ].filter(Boolean);
+  const suffix = markerReasonSuffix(verdict?.attrs);
+  const fallback = verdict?.action
+    ? `structured ClawSweeper verdict: ${verdict.action}${suffix}`
+    : "ClawSweeper requested human review";
+  if (details.length === 0) return fallback;
+  return `${compactReason(details.join("; "), 420)}${suffix}`;
+}
+
+function markdownSection(body: string, heading: string) {
+  const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = String(body ?? "").match(
+    new RegExp(
+      `(?:^|\\n)\\*\\*${escaped}\\*\\*\\s*\\n([\\s\\S]*?)(?=\\n\\n\\*\\*|\\n<details|\\n<!--|$)`,
+      "i",
+    ),
+  );
+  return compactReason(match?.[1] ?? "", 220);
+}
+
+function firstReviewFinding(body: string) {
+  const section = markdownSection(body, "Review findings");
+  const finding = section.match(/(?:^|;\s*|\n)\s*[-*]\s*(.+?)(?:$|;\s*|\n)/)?.[1] ?? "";
+  return finding ? compactReason(`Review finding: ${finding}`, 180) : "";
+}
+
+function compactReason(value: JsonValue, max = 300) {
+  const text = String(value ?? "")
+    .replace(/`/g, "")
+    .replace(/\s+/g, " ")
+    .replace(/\bNeeds attention:\s+Needs attention:\s+/i, "Needs attention: ")
+    .trim();
+  if (!text) return "";
+  if (text.length <= max) return text;
+  return `${text.slice(0, Math.max(0, max - 1)).trimEnd()}...`;
 }
 
 export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {

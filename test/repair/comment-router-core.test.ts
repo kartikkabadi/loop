@@ -668,6 +668,38 @@ test("parseTrustedAutomation treats trusted ClawSweeper needs-human as a pause",
   assert.match(parsed.repair_reason, /needs-human/);
 });
 
+test("parseTrustedAutomation explains security-sensitive human-review pauses", () => {
+  const trustedAuthors = new Set(["clawsweeper[bot]"]);
+  const parsed = parseTrustedAutomation(
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: [
+        "Codex review: found issues before merge.",
+        "",
+        "**Next step before merge**",
+        "Automerge should pause for maintainer/security handling of the remaining sudo -k carrier bypass.",
+        "",
+        "**Security**",
+        "Needs attention: Needs attention: the PR still leaves a sudo reset-timestamp carrier form unwrapped.",
+        "",
+        "**Review findings**",
+        "- [P1] Treat sudo -k as a command-carrying option — `src/infra/command-carriers.ts:74-83`",
+        "",
+        "<!-- clawsweeper-security:security-sensitive item=76672 sha=abc123 confidence=high -->",
+        "<!-- clawsweeper-verdict:needs-human item=76672 sha=abc123 confidence=high -->",
+      ].join("\n"),
+    },
+    { trustedAuthors },
+  );
+
+  assert.equal(parsed.intent, "clawsweeper_needs_human");
+  assert.equal(parsed.expected_head_sha, "abc123");
+  assert.match(parsed.repair_reason, /sudo -k carrier bypass/);
+  assert.match(parsed.repair_reason, /sudo reset-timestamp carrier form/);
+  assert.match(parsed.repair_reason, /\[P1\] Treat sudo -k/);
+  assert.match(parsed.repair_reason, /sha=abc123/);
+});
+
 test("parseTrustedAutomation repairs needs-human verdicts with concrete P findings", () => {
   const trustedAuthors = new Set(["clawsweeper[bot]"]);
   const parsed = parseTrustedAutomation(
