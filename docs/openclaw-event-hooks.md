@@ -186,13 +186,13 @@ default. The agent receives the Discord target in the prompt and should use the
 message tool only when the event is surprising, actionable, risky, or otherwise
 operationally useful. For routine events it replies exactly `NO_REPLY`.
 
-The workflow skips pull request synchronize events and successful workflow-run
-events before checkout because the notifier always treats them as routine. The
-notifier also applies a cheap deterministic prefilter before calling OpenClaw.
-Routine bot comments, comment edits, metadata edits, duplicate PR synchronizes,
-and successful automation events are skipped unless they contain an explicit
-ClawSweeper command or mention. This keeps noisy GitHub churn from consuming
-hook-session model turns.
+The workflow skips native and forwarded pull request synchronize events plus
+successful workflow-run events before checkout because the notifier always
+treats them as routine. The notifier also applies a cheap deterministic
+prefilter before calling OpenClaw. Routine bot comments, comment edits, metadata
+edits, duplicate PR synchronizes, and successful automation events are skipped
+unless they contain an explicit ClawSweeper command or mention. This keeps noisy
+GitHub churn from consuming hook-session model turns.
 
 The workflow intentionally uses the runner-provided Node runtime plus a lean
 uncached pnpm install instead of `actions/setup-node` or the shared cached pnpm
