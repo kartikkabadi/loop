@@ -13,10 +13,11 @@ ClawSweeper has three issue/PR scheduler paths:
 The lanes share report storage and apply rules, but they intentionally do not
 share throughput. Event review and hot intake keep new maintainer-visible work
 fast. Normal backfill keeps older records moving with up to 100 concurrent Codex
-review shards. Scheduled `openclaw/openclaw` review also has an active floor of
-50 shards: due items win first, and if fewer than 50 items are due, the planner
-fills the floor with the stalest currently-reviewed eligible items so review
-capacity stays warm around the clock.
+review shards. Normal `openclaw/openclaw` review has an active floor of 50
+shards for scheduled runs and workflow-dispatch continuations: due items win
+first, and if fewer than 50 items are due, the planner fills the floor with the
+stalest currently-reviewed eligible items so review capacity stays warm around
+the clock.
 
 ## Workflow
 
@@ -126,8 +127,9 @@ Defaults:
 - broad hot intake: 50 shards, batch size 1, scans up to 10 GitHub pages
 - scheduled normal backfill: 100 shards, batch size 1, scans up to 250 GitHub
   pages
-- scheduled normal active floor: 50 shards for `openclaw/openclaw`; stale
-  current-review backfill is eligible after 30 minutes
+- normal active floor: 50 shards for `openclaw/openclaw` scheduled runs and
+  workflow-dispatch continuations; stale current-review backfill is eligible
+  after 30 minutes
 - manual normal backfill: defaults to 100 shards, batch size 3, scans up to 250
   GitHub pages unless overridden
 

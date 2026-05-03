@@ -550,6 +550,7 @@ jobs:
         run: |
           hot_intake="${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'true' || 'false' }}"
           exact_item="${{ github.event.client_payload.item_number || github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}"
+          target_repo="${{ steps.target.outputs.target_repo }}"
           if [ "$hot_intake" = "true" ] && [ -n "$exact_item" ]; then
             batch_size="1"
             shard_count="1"
@@ -563,9 +564,12 @@ jobs:
           else
             if [ "${{ github.event_name }}" = "schedule" ]; then
               batch_size="1"
-              min_active_shards="50"
             else
               batch_size="${{ github.event.inputs.batch_size || '3' }}"
+            fi
+            if [ "$target_repo" = "openclaw/openclaw" ]; then
+              min_active_shards="50"
+            else
               min_active_shards="0"
             fi
             shard_count="${{ github.event.inputs.shard_count || '100' }}"
