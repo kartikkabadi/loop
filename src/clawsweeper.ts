@@ -2818,6 +2818,13 @@ function oldestUnreviewedAt(candidates: readonly DueCandidate[]): string | undef
   return oldest;
 }
 
+export function shouldStopSaturatedPlanScan(options: {
+  dueCount: number;
+  capacity: number;
+}): boolean {
+  return options.capacity > 0 && options.dueCount >= options.capacity;
+}
+
 function planCapacityReason(options: {
   selectedCount: number;
   dueBacklog: number;
@@ -2981,6 +2988,7 @@ function planCandidates(options: {
       );
       if (fallback) backfill.push(fallback);
     }
+    if (shouldStopSaturatedPlanScan({ dueCount: due.length, capacity })) break;
   }
   const selected = appendFloorBackfillCandidates(selectDueCandidates(due, capacity), backfill, {
     activeFloor,

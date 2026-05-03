@@ -42,6 +42,7 @@ import {
   appendFloorBackfillCandidateNumbersForTest,
   selectDueCandidateNumbersForTest,
   shardItemNumbers,
+  shouldStopSaturatedPlanScan,
   shouldSyncReviewComment,
   shouldReviewItem,
   shouldRetryGh,
@@ -764,6 +765,13 @@ test("normal scheduler can fill active floor from stale current reviews", () => 
     [1, 10, 11],
   );
   assert.deepEqual(appendFloorBackfillCandidateNumbersForTest(selected, backfill, 3, 2), [1, 10]);
+});
+
+test("normal scheduler can stop scanning once planned capacity is saturated", () => {
+  assert.equal(shouldStopSaturatedPlanScan({ dueCount: 99, capacity: 100 }), false);
+  assert.equal(shouldStopSaturatedPlanScan({ dueCount: 100, capacity: 100 }), true);
+  assert.equal(shouldStopSaturatedPlanScan({ dueCount: 150, capacity: 100 }), true);
+  assert.equal(shouldStopSaturatedPlanScan({ dueCount: 1, capacity: 0 }), false);
 });
 
 test("hot intake recency prefers newly updated or created issues", () => {

@@ -131,7 +131,8 @@ Defaults:
   workflow-dispatch continuations; stale current-review backfill is eligible
   after 30 minutes
 - manual normal backfill: defaults to 100 shards, batch size 3, scans up to 250
-  GitHub pages unless overridden
+  GitHub pages unless overridden, and stops early once scanned due candidates
+  fill planned capacity
 
 The hard planner cap is 100 shards. The workflow clamps invalid or larger
 `shard_count` inputs to 100.
@@ -159,6 +160,12 @@ It only changes normal planning when due backlog is below the desired floor:
 after selecting all due candidates, the planner fills up to 50 nonempty shards
 with eligible items whose latest complete review is at least 30 minutes old.
 Capacity status reports this as `floor: due backlog below active floor`.
+
+On saturated queues, normal planning stops scanning as soon as it has enough due
+candidates to fill `batch_size * shard_count`. `dueBacklog` remains the due
+backlog found during the scan, not a full-repository count. This keeps
+continuation runs from spending minutes on extra GitHub page reads before the
+review shard matrix can start.
 
 ## Cadence
 
@@ -210,7 +217,8 @@ pnpm run --silent plan -- \
 - `candidates`: selected open items
 - `shards`: selected item numbers distributed across shard jobs
 - `capacity`: `batch_size * clamped_shard_count`
-- `dueBacklog`: due candidates found during the scan
+- `dueBacklog`: due candidates found during the scan; on saturated queues this
+  can be a lower bound because planning stops once capacity is full
 - `activeCodexTarget`: nonempty shard count
 - `oldestUnreviewedAt`: oldest scanned due candidate with no existing review
 - `capacityReason`: why the selected count did or did not fill capacity
