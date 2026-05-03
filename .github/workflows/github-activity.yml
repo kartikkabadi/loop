@@ -70,14 +70,12 @@ jobs:
           filter: blob:none
           persist-credentials: false
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-
       - name: Prepare notifier runtime
         timeout-minutes: 5
         run: |
           set -euo pipefail
+          node --version
+          node -e 'const major = Number(process.versions.node.split(".")[0]); if (major < 24) { console.error(`Node 24+ required, found ${process.version}`); process.exit(1); }'
           corepack enable
           for attempt in 1 2 3; do
             if corepack prepare "pnpm@10.33.2" --activate; then
