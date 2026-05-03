@@ -5,26 +5,23 @@ All notable ClawSweeper changes are tracked here.
 This file was reconstructed from first-parent git history. Generated dashboard,
 checkpoint, and status-only commits are intentionally omitted.
 
-## 0.2.0 - Unreleased
+## 0.2.0 - 2026-05-03
 
 ### Added
 
 - Accepted `@clawsweeper fix` as a short issue implementation command that
   creates or updates one guarded ClawSweeper PR for an open issue.
+- Added an `openclaw/openclaw` active review-shard floor so scheduled normal
+  review keeps capacity warm around the clock even when the due backlog is
+  temporarily below full shard capacity.
+- Added coarse automerge repair progress updates to the existing mutable status
+  timeline for validation, Codex edit, review, base-sync, and wait phases.
 
 ### Changed
 
-- Made the GitHub activity notifier workflow use a lean uncached Node/pnpm setup
-  so bursty events do not wait on `actions/cache` downloads before notifying
-  OpenClaw.
-- Wrapped review shard execution in a computed shell timeout so one hung broad
-  review shard records failed-shard artifacts and enters recovery instead of
-  blocking publish until the full GitHub job timeout.
 - Switched the shared Codex setup action to a per-run `CODEX_HOME` with a local
   Responses proxy so Codex subprocesses no longer inherit raw OpenAI/Codex API
   key environment variables.
-- Added coarse automerge repair progress updates to the existing mutable status
-  timeline for validation, Codex edit, review, base-sync, and wait phases.
 - Replaced duplicate-lobster command status badges with one lobster plus a
   state emoji for acknowledgement, review, repair, and completed/paused work.
 - Kept broad review continuations warm and faster by preserving the
@@ -42,12 +39,21 @@ checkpoint, and status-only commits are intentionally omitted.
 - Moved exact event review state hydration after the Codex review step so
   maintainer-triggered single-item reviews can start the model before generated
   records are copied.
+- Made the GitHub activity notifier workflow use a lean uncached Node/pnpm setup
+  so bursty events do not wait on `actions/cache` downloads before notifying
+  OpenClaw.
+- Wrapped review shard execution in a computed shell timeout so one hung broad
+  review shard records failed-shard artifacts and enters recovery instead of
+  blocking publish until the full GitHub job timeout.
 - Updated sweep and commit-review artifact upload/download actions to their
   Node 24-compatible versions so review runs no longer emit artifact action
   runtime deprecation annotations.
+- Updated TypeScript tooling while preserving the existing `pnpm` workflow.
 
 ### Fixed
 
+- Kept review continuations warm when the normal backlog is below the target
+  active shard floor.
 - Retried transient Codex edit-pass transport failures where the Codex tool
   router reports a closed stdin session, instead of failing the whole repair
   worker after an otherwise recoverable automation run.
@@ -62,6 +68,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Recovered issue implementation workers from state propagation races by
   reconstructing minimal `source: issue_implementation` jobs from the dispatched
   job path instead of skipping the worker as stale.
+- Routed trusted ClawSweeper verdicts with P0/P1/P2/P3 findings through the
+  repair loop even when the same review also contains a pass marker.
 - Made `/clawsweeper stop` revoke repair-loop labels and block older
   automerge/autofix comments from continuing, so a trusted pass marker cannot
   clear a human-review pause and merge after a maintainer stop.
