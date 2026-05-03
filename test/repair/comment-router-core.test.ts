@@ -29,6 +29,7 @@ import {
   issueImplementationJobPath,
   isMaintainerCommandAllowed,
   parseCommand,
+  pausedModeStatusBlocksReplay,
   parseTrustedAutomation,
   repairableCheckBlockers,
   repairLoopStopPauseReason,
@@ -229,6 +230,22 @@ test("force reprocess bypasses existing command status guards", () => {
   };
   assert.equal(existingModeStatusBlocksReplay({ ...existingEnabled, forceReprocess: false }), true);
   assert.equal(existingModeStatusBlocksReplay({ ...existingEnabled, forceReprocess: true }), false);
+  assert.equal(
+    pausedModeStatusBlocksReplay({
+      hasPauseLabels: true,
+      hasExistingModeStatusResponse: true,
+      forceReprocess: false,
+    }),
+    true,
+  );
+  assert.equal(
+    pausedModeStatusBlocksReplay({
+      hasPauseLabels: true,
+      hasExistingModeStatusResponse: true,
+      forceReprocess: true,
+    }),
+    false,
+  );
 });
 
 test("automerge status marker prefix is stable across head changes", () => {
@@ -1154,6 +1171,8 @@ test("renderResponse reports maintainer re-review dispatches", () => {
 
   assert.match(body, /re-review requested/);
   assert.match(body, /review this item again/);
+  assert.match(body, /Action: item re-review queued/);
+  assert.match(body, /existing ClawSweeper review comment will be edited in place/);
   assert.match(body, /clawsweeper-command-status:74107:re_review:def461/);
   assert.doesNotMatch(body, /repair worker/);
 });
