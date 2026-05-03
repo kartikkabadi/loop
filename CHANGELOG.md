@@ -14,6 +14,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Limited commit-review fan-out to 10 commits per workflow page by default, with
+  a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the
   actionable review sections instead of only the structured marker.
 - Removed `actions/setup-node` from the high-volume GitHub activity lane and
