@@ -167,6 +167,10 @@ backlog found during the scan, not a full-repository count. This keeps
 continuation runs from spending minutes on extra GitHub page reads before the
 review shard matrix can start.
 
+The optional in-progress dashboard publish in the plan job is capped at 20
+seconds. It is useful telemetry, but it must not delay the review shard matrix;
+the publish job writes the final dashboard state after review artifacts land.
+
 ## Cadence
 
 The planner considers only open issues and PRs that pass `shouldPlanItem`.

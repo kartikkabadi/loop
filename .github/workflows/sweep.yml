@@ -661,11 +661,11 @@ jobs:
             --due-backlog "${{ steps.select.outputs.due_backlog }}" \
             --oldest-unreviewed-at "${{ steps.select.outputs.oldest_unreviewed_at }}" \
             --capacity-reason "${{ steps.select.outputs.capacity_reason }}"
-          pnpm run repair:publish-main -- \
+          timeout 20s pnpm run repair:publish-main -- \
             --message "chore: mark sweep review in progress" \
             --path records \
             --path results/sweep-status \
-            --rebase-strategy theirs
+            --rebase-strategy theirs || echo "::warning::Skipped slow in-progress dashboard publish so review shards can start."
 
   review:
     name: Review shard ${{ matrix.shard }}
