@@ -39,6 +39,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Accepted scoped `scripts/run-opengrep.sh --error -- <paths>` validation hints
+  so automerge repair execution does not fail preflight before normalizing
+  OpenClaw repairs to the changed-surface gate.
 - Accepted spaced `auto merge` command aliases everywhere `automerge` and
   `auto-merge` are accepted, including the top-level `/auto merge` shorthand.
 - Updated issue implementation command comments after a fix PR opens, linking

@@ -140,6 +140,37 @@ test("validation parser requires env assignments before env command", () => {
   );
 });
 
+test("validation preflight accepts scoped OpenGrep commands", () => {
+  const cwd = packageFixture({ "check:changed": "node check.js" });
+  const command =
+    "scripts/run-opengrep.sh --error -- src/infra/net/http-connect-tunnel.ts src/infra/push-apns-http2.ts src/infra/push-apns.ts";
+
+  assert.deepEqual(parseAllowedValidationCommand(command), [
+    "scripts/run-opengrep.sh",
+    "--error",
+    "--",
+    "src/infra/net/http-connect-tunnel.ts",
+    "src/infra/push-apns-http2.ts",
+    "src/infra/push-apns.ts",
+  ]);
+  assert.deepEqual(
+    preflightTargetValidationPlan(
+      {
+        fixArtifact: {
+          validation_commands: [command],
+        },
+        targetDir: cwd,
+      },
+      validationOptions("openclaw/openclaw"),
+    ),
+    {
+      status: "passed",
+      resolved_commands: ["pnpm check:changed"],
+      available_scripts: ["check:changed"],
+    },
+  );
+});
+
 test("validation preflight preserves scoped git diff checks", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
   const sourceHead = "0123456789abcdef0123456789abcdef01234567";

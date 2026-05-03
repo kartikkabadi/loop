@@ -64,7 +64,7 @@ export function parseAllowedValidationCommand(command: unknown): string[] {
   }
   const parts = normalizeEnvInvocation(text.split(/\s+/));
   const executable = validationExecutable(parts);
-  if (!executable || !["pnpm", "npm", "node", "git"].includes(executable)) {
+  if (!executable || !isAllowedValidationExecutable(executable)) {
     throw new Error(`unsupported validation command: ${text}`);
   }
   return parts;
@@ -81,6 +81,14 @@ function validationExecutable(parts: readonly string[]) {
   const strippedCount = parts.length - commandParts.length - (parts[0] === "env" ? 1 : 0);
   if (parts[0] === "env" && strippedCount === 0) return "";
   return commandParts[0] ?? "";
+}
+
+function isAllowedValidationExecutable(executable: string) {
+  return (
+    ["pnpm", "npm", "node", "git"].includes(executable) ||
+    executable === "scripts/run-opengrep.sh" ||
+    executable === "./scripts/run-opengrep.sh"
+  );
 }
 
 function isEnvAssignment(value: unknown) {
