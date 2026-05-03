@@ -126,6 +126,12 @@ function closeDecision(overrides = {}) {
     ],
     risks: [],
     bestSolution: "Keep the implementation as-is.",
+    itemCategory: "bug",
+    reproductionStatus: "reproduced",
+    reproductionConfidence: "high",
+    requiresNewFeature: false,
+    requiresNewConfigOption: false,
+    requiresProductDecision: false,
     reproductionAssessment:
       "Yes. Current main can be checked by inspecting src/example.ts and git blame evidence.",
     solutionAssessment:
@@ -1989,6 +1995,22 @@ test("decision parser enforces required schema-shaped evidence", () => {
       }),
     /decision\.workCandidate/,
   );
+  assert.throws(
+    () =>
+      parseDecision({
+        ...closeDecision(),
+        itemCategory: "mixed_mode",
+      }),
+    /decision\.itemCategory/,
+  );
+  assert.throws(
+    () =>
+      parseDecision({
+        ...closeDecision(),
+        requiresNewConfigOption: "false",
+      }),
+    /decision\.requiresNewConfigOption/,
+  );
   assert.throws(() => {
     const decision = closeDecision();
     delete decision.securityReview;
@@ -2010,6 +2032,8 @@ test("decision parser enforces required schema-shaped evidence", () => {
     }),
   );
   assert.equal(workCandidate.workCandidate, "queue_fix_pr");
+  assert.equal(workCandidate.itemCategory, "bug");
+  assert.equal(workCandidate.reproductionStatus, "reproduced");
   assert.deepEqual(workCandidate.workClusterRefs, ["#123", "#456"]);
 });
 
@@ -2061,6 +2085,9 @@ test("review prompts require reproduction and solution assessment details", () =
   const commitPrompt = readFileSync("prompts/review-commit.md", "utf8");
 
   assert.match(itemPrompt, /Always fill `reproductionAssessment`/);
+  assert.match(itemPrompt, /itemCategory: "bug"/);
+  assert.match(itemPrompt, /requiresNewConfigOption/);
+  assert.match(itemPrompt, /automatic\s+bug-fix PR creation/);
   assert.match(itemPrompt, /Always fill `solutionAssessment`/);
   assert.match(itemPrompt, /Do we have a high-confidence way to reproduce the\s+issue\?/);
   assert.match(itemPrompt, /Is this the best way to solve the issue\?/);

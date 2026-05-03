@@ -63,6 +63,22 @@ type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
+type ItemCategory =
+  | "bug"
+  | "regression"
+  | "feature"
+  | "docs"
+  | "cleanup"
+  | "support"
+  | "admin"
+  | "security"
+  | "unclear";
+type ReproductionStatus =
+  | "reproduced"
+  | "source_reproducible"
+  | "not_reproduced"
+  | "unclear"
+  | "not_applicable";
 type OverallCorrectness = "patch is correct" | "patch is incorrect" | "not a patch";
 type SecurityReviewStatus = "cleared" | "needs_attention" | "not_applicable";
 type SecurityConcernSeverity = "high" | "medium" | "low";
@@ -214,6 +230,12 @@ interface Decision {
   likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
+  itemCategory: ItemCategory;
+  reproductionStatus: ReproductionStatus;
+  reproductionConfidence: Confidence;
+  requiresNewFeature: boolean;
+  requiresNewConfigOption: boolean;
+  requiresProductDecision: boolean;
   reproductionAssessment: string;
   solutionAssessment: string;
   reviewFindings: ReviewFinding[];
@@ -576,6 +598,24 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
 const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
+const ITEM_CATEGORIES = new Set<ItemCategory>([
+  "bug",
+  "regression",
+  "feature",
+  "docs",
+  "cleanup",
+  "support",
+  "admin",
+  "security",
+  "unclear",
+]);
+const REPRODUCTION_STATUSES = new Set<ReproductionStatus>([
+  "reproduced",
+  "source_reproducible",
+  "not_reproduced",
+  "unclear",
+  "not_applicable",
+]);
 const SECURITY_REVIEW_STATUSES = new Set<SecurityReviewStatus>([
   "cleared",
   "needs_attention",
@@ -600,6 +640,12 @@ const DECISION_SCHEMA_KEYS = new Set([
   "likelyOwners",
   "risks",
   "bestSolution",
+  "itemCategory",
+  "reproductionStatus",
+  "reproductionConfidence",
+  "requiresNewFeature",
+  "requiresNewConfigOption",
+  "requiresProductDecision",
   "reproductionAssessment",
   "solutionAssessment",
   "reviewFindings",
@@ -1020,6 +1066,11 @@ function requireNumber(value: unknown, path: string): number {
   throw new Error(`${path} must be a finite number`);
 }
 
+function requireBoolean(value: unknown, path: string): boolean {
+  if (typeof value === "boolean") return value;
+  throw new Error(`${path} must be a boolean`);
+}
+
 function requireConfidenceScore(value: unknown, path: string): number {
   const score = requireNumber(value, path);
   if (score < 0 || score > 1) throw new Error(`${path} must be between 0 and 1`);
@@ -1159,6 +1210,26 @@ export function parseDecision(value: unknown): Decision {
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
+    itemCategory: requireEnum(record.itemCategory, ITEM_CATEGORIES, "decision.itemCategory"),
+    reproductionStatus: requireEnum(
+      record.reproductionStatus,
+      REPRODUCTION_STATUSES,
+      "decision.reproductionStatus",
+    ),
+    reproductionConfidence: requireEnum(
+      record.reproductionConfidence,
+      CONFIDENCES,
+      "decision.reproductionConfidence",
+    ),
+    requiresNewFeature: requireBoolean(record.requiresNewFeature, "decision.requiresNewFeature"),
+    requiresNewConfigOption: requireBoolean(
+      record.requiresNewConfigOption,
+      "decision.requiresNewConfigOption",
+    ),
+    requiresProductDecision: requireBoolean(
+      record.requiresProductDecision,
+      "decision.requiresProductDecision",
+    ),
     reproductionAssessment: requireString(
       record.reproductionAssessment,
       "decision.reproductionAssessment",
@@ -2984,6 +3055,12 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
+    itemCategory: "unclear",
+    reproductionStatus: "unclear",
+    reproductionConfidence: "low",
+    requiresNewFeature: false,
+    requiresNewConfigOption: false,
+    requiresProductDecision: false,
     reproductionAssessment:
       "Unclear. The review failed before ClawSweeper could establish a reproduction path.",
     solutionAssessment:
@@ -3976,6 +4053,16 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
+    itemCategory:
+      (frontMatterValue(markdown, "item_category") as ItemCategory | undefined) ?? "unclear",
+    reproductionStatus:
+      (frontMatterValue(markdown, "reproduction_status") as ReproductionStatus | undefined) ??
+      "unclear",
+    reproductionConfidence:
+      (frontMatterValue(markdown, "reproduction_confidence") as Confidence | undefined) ?? "low",
+    requiresNewFeature: frontMatterValue(markdown, "requires_new_feature") === "true",
+    requiresNewConfigOption: frontMatterValue(markdown, "requires_new_config_option") === "true",
+    requiresProductDecision: frontMatterValue(markdown, "requires_product_decision") === "true",
     reproductionAssessment: reviewSectionValue(markdown, "reproductionAssessment"),
     solutionAssessment: reviewSectionValue(markdown, "solutionAssessment"),
     reviewFindings: reportReviewFindings(markdown),
@@ -5041,6 +5128,12 @@ work_prompt_sha256: ${options.decision.workPrompt ? sha256(options.decision.work
 work_cluster_refs: ${jsonFrontMatterValue(options.decision.workClusterRefs)}
 work_validation: ${jsonFrontMatterValue(options.decision.workValidation)}
 work_likely_files: ${jsonFrontMatterValue(options.decision.workLikelyFiles)}
+item_category: ${options.decision.itemCategory}
+reproduction_status: ${options.decision.reproductionStatus}
+reproduction_confidence: ${options.decision.reproductionConfidence}
+requires_new_feature: ${options.decision.requiresNewFeature}
+requires_new_config_option: ${options.decision.requiresNewConfigOption}
+requires_product_decision: ${options.decision.requiresProductDecision}
 ---
 
 # ${markdownLink(`#${options.item.number}: ${options.item.title}`, options.item.url)}

@@ -35,6 +35,7 @@
     "repair:finalize-open-prs": "node dist/repair/finalize-open-prs.js",
     "repair:comment-router": "node dist/repair/comment-router.js",
     "repair:commit-finding-intake": "node dist/repair/commit-finding-intake.js",
+    "repair:issue-implementation-intake": "node dist/repair/issue-implementation-intake.js",
     "repair:publish-main": "node dist/repair/publish-main.js",
     "repair:notify-merge": "node dist/repair/notify-merge.js",
     "repair:notify-events": "node dist/repair/notify-events.js",

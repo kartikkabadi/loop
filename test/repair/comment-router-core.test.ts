@@ -561,6 +561,27 @@ test("parseTrustedAutomation accepts trusted ClawSweeper pass verdicts for autom
   assert.match(parsed.repair_reason, /verdict: pass/);
 });
 
+test("parseTrustedAutomation repairs trusted pass verdicts that still contain P findings", () => {
+  const trustedAuthors = new Set(["clawsweeper[bot]"]);
+  const parsed = parseTrustedAutomation(
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: [
+        "ClawSweeper review passed.",
+        "",
+        "**Review findings**",
+        "- **[P2] Preserve queued delivery:** `src/queue.ts:42`",
+        "<!-- clawsweeper-verdict:pass sha=abc123 -->",
+      ].join("\n"),
+    },
+    { trustedAuthors },
+  );
+
+  assert.equal(parsed.intent, "clawsweeper_auto_repair");
+  assert.equal(parsed.expected_head_sha, "abc123");
+  assert.match(parsed.repair_reason, /P-severity findings/);
+});
+
 test("parseTrustedAutomation treats trusted ClawSweeper needs-human as a pause", () => {
   const trustedAuthors = new Set(["clawsweeper[bot]"]);
   const parsed = parseTrustedAutomation(
@@ -1141,7 +1162,9 @@ test("renderResponse reports automerge completion", () => {
         merged_at: "2026-04-29T05:00:00Z",
         merge_commit_sha: "def789abcdef789abcdef789abcdef789abcdef7",
         summary_lines: ["Added queued retry handling for Discord REST 429s."],
-        fixup_lines: ["Included follow-up commit: fix(discord): avoid stale requeues"],
+        fixup_lines: [
+          "Included post-review commit in the final squash: fix(discord): avoid stale requeues",
+        ],
       },
     },
   );
@@ -1150,7 +1173,7 @@ test("renderResponse reports automerge completion", () => {
   assert.doesNotMatch(body, /Thanks, ClawSweeper/);
   assert.match(body, /What merged:/);
   assert.match(body, /Added queued retry handling/);
-  assert.match(body, /Fixups included:/);
+  assert.match(body, /Automerge notes:/);
   assert.match(body, /avoid stale requeues/);
   assert.match(
     body,
@@ -1177,7 +1200,7 @@ test("renderResponse reports maintainer-approved automerge completion", () => {
         merged_at: "2026-04-29T05:00:00Z",
         merge_commit_sha: "def790abcdef790abcdef790abcdef790abcdef7",
         summary_lines: ["Updated queue scheduling defaults."],
-        fixup_lines: ["No separate fixup commits were needed after automerge opt-in."],
+        fixup_lines: ["No ClawSweeper repair was needed after automerge opt-in."],
       },
     },
   );
@@ -1191,7 +1214,7 @@ test("renderResponse reports maintainer-approved automerge completion", () => {
   );
   assert.match(body, /What merged:/);
   assert.match(body, /Updated queue scheduling defaults/);
-  assert.match(body, /Fixups included:/);
+  assert.match(body, /Automerge notes:/);
   assert.match(body, /automerge loop is complete/);
 });
 

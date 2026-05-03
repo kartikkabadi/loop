@@ -1,0 +1,160 @@
+name: repair issue implementation intake
+
+on:
+  repository_dispatch:
+    types: [clawsweeper_issue_implementation]
+  workflow_dispatch:
+    inputs:
+      enabled:
+        description: "Run issue implementation intake"
+        required: false
+        default: "true"
+        type: string
+      target_repo:
+        description: "Target repository"
+        required: true
+        default: "openclaw/openclaw"
+        type: string
+      item_number:
+        description: "Issue number with a strict reproducible bug review"
+        required: true
+        type: string
+      report_repo:
+        description: "Repository containing the ClawSweeper report"
+        required: false
+        default: "openclaw/clawsweeper"
+        type: string
+      report_path:
+        description: "Path to the ClawSweeper report"
+        required: false
+        default: ""
+        type: string
+      report_url:
+        description: "Public report URL"
+        required: false
+        default: ""
+        type: string
+      runner:
+        description: "Runner label for repair planning/review work"
+        required: false
+        default: blacksmith-4vcpu-ubuntu-2404
+        type: string
+      execution_runner:
+        description: "Runner label for fix/apply execution work"
+        required: false
+        default: blacksmith-16vcpu-ubuntu-2404
+        type: string
+      model:
+        description: "Codex model for repair worker"
+        required: false
+        default: gpt-5.5
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+  CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
+  CLAWSWEEPER_ALLOW_EXECUTE: ${{ vars.CLAWSWEEPER_ALLOW_EXECUTE == '1' && '1' || '0' }}
+  CLAWSWEEPER_ALLOW_FIX_PR: ${{ vars.CLAWSWEEPER_ALLOW_FIX_PR == '1' && '1' || '0' }}
+  CLAWSWEEPER_ALLOW_MERGE: "0"
+  CLAWSWEEPER_MODEL: ${{ vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
+  CLAWSWEEPER_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_CODEX_REASONING_EFFORT || 'high' }}
+  CLAWSWEEPER_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_GIT_USER_NAME || 'clawsweeper[bot]' }}
+  CLAWSWEEPER_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_GIT_USER_EMAIL || '274271284+clawsweeper[bot]@users.noreply.github.com' }}
+
+concurrency:
+  group: issue-implementation-${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}-${{ github.event.inputs.item_number || github.event.client_payload.item_number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    runs-on: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_ISSUE_IMPLEMENTATION_INTAKE_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          filter: blob:none
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-pnpm
+        with:
+          build-script: build:repair
+
+      - name: Create GitHub App token
+        id: app_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+          permission-workflows: write
+          permission-actions: read
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}
+
+      - name: Prepare issue implementation intake
+        id: prepare
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          ENABLED: ${{ github.event.inputs.enabled || github.event.client_payload.enabled || vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS || 'false' }}
+          TARGET_REPO: ${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}
+          ITEM_NUMBER: ${{ github.event.inputs.item_number || github.event.client_payload.item_number }}
+          REPORT_REPO: ${{ github.event.inputs.report_repo || github.event.client_payload.report_repo || 'openclaw/clawsweeper' }}
+          REPORT_PATH: ${{ github.event.inputs.report_path || github.event.client_payload.report_path }}
+          REPORT_URL: ${{ github.event.inputs.report_url || github.event.client_payload.report_url }}
+        run: |
+          set -euo pipefail
+          args=(
+            prepare
+            --enabled "$ENABLED"
+            --target-repo "$TARGET_REPO"
+            --item-number "$ITEM_NUMBER"
+            --report-repo "$REPORT_REPO"
+          )
+          if [ -n "${REPORT_PATH:-}" ]; then
+            args+=(--report-path "$REPORT_PATH")
+          fi
+          if [ -n "${REPORT_URL:-}" ]; then
+            args+=(--report-url "$REPORT_URL")
+          fi
+          pnpm run repair:issue-implementation-intake -- "${args[@]}"
+
+      - name: Commit intake ledger
+        if: always()
+        run: |
+          set -euo pipefail
+          pnpm run repair:publish-main -- \
+            --message "chore: record issue implementation intake" \
+            --path jobs \
+            --path results \
+            --max-attempts 12 \
+            --push-attempts 4
+
+      - name: Dispatch repair worker
+        if: ${{ steps.prepare.outputs.should_repair == 'true' }}
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          MAX_LIVE_WORKERS: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_LIVE_WORKERS || '50' }}
+          RUNNER: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
+          EXECUTION_RUNNER: ${{ github.event.inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
+          MODEL: ${{ github.event.inputs.model || vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
+        run: |
+          set -euo pipefail
+          git pull --rebase
+          pnpm run repair:dispatch -- "${{ steps.prepare.outputs.job_path }}" \
+            --mode autonomous \
+            --wait-for-capacity \
+            --max-live-workers "$MAX_LIVE_WORKERS" \
+            --runner "$RUNNER" \
+            --execution-runner "$EXECUTION_RUNNER" \
+            --model "$MODEL" \
+            --ref main

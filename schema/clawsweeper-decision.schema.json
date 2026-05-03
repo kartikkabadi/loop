@@ -12,6 +12,12 @@
     "likelyOwners",
     "risks",
     "bestSolution",
+    "itemCategory",
+    "reproductionStatus",
+    "reproductionConfidence",
+    "requiresNewFeature",
+    "requiresNewConfigOption",
+    "requiresProductDecision",
     "reproductionAssessment",
     "solutionAssessment",
     "reviewFindings",
@@ -138,6 +144,42 @@
     "bestSolution": {
       "type": "string",
       "description": "The best possible product/code/docs direction for this item, whether the item should close or stay open. Do not repeat the change summary, workReason, or risk list."
+    },
+    "itemCategory": {
+      "type": "string",
+      "enum": [
+        "bug",
+        "regression",
+        "feature",
+        "docs",
+        "cleanup",
+        "support",
+        "admin",
+        "security",
+        "unclear"
+      ],
+      "description": "Primary item category. Use bug only for broken existing behavior with an already-defined expected behavior; feature/config/product changes are not bugs."
+    },
+    "reproductionStatus": {
+      "type": "string",
+      "enum": ["reproduced", "source_reproducible", "not_reproduced", "unclear", "not_applicable"],
+      "description": "Structured reproduction state. Use reproduced only when there is a high-confidence current-main reproduction path for a bug."
+    },
+    "reproductionConfidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "requiresNewFeature": {
+      "type": "boolean",
+      "description": "True when solving the item would add a new user-facing capability or mode instead of fixing broken existing behavior."
+    },
+    "requiresNewConfigOption": {
+      "type": "boolean",
+      "description": "True when solving the item would require adding a config option, CLI flag, setting, environment variable, or policy knob."
+    },
+    "requiresProductDecision": {
+      "type": "boolean",
+      "description": "True when solving the item requires maintainer product/UX/policy judgment before implementation."
     },
     "reproductionAssessment": {
       "type": "string",

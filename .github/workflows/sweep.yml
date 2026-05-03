@@ -932,6 +932,55 @@ jobs:
             --path results/sweep-status \
             --rebase-strategy theirs
 
+      - name: Dispatch reproducible bug implementation candidates
+        if: ${{ success() && needs.plan.outputs.target_repo == 'openclaw/openclaw' && vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS == '1' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
+          ENABLED: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS == '1' && 'true' || 'false' }}
+          MAX_DISPATCH: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_DISPATCH_PER_SWEEP || '5' }}
+        run: |
+          set -euo pipefail
+          candidate_output="$(pnpm run --silent repair:issue-implementation-intake -- candidates \
+            --enabled "$ENABLED" \
+            --target-repo "$TARGET_REPO" \
+            --artifact-dir artifacts)"
+          echo "$candidate_output"
+          candidates_json="$(CANDIDATE_OUTPUT="$candidate_output" node <<'NODE'
+          const output = JSON.parse(process.env.CANDIDATE_OUTPUT || "{}");
+          console.log(JSON.stringify(output.candidates || []));
+          NODE
+          )"
+          if [ -z "$candidates_json" ] || [ "$candidates_json" = "[]" ]; then
+            echo "No strict reproducible bug implementation candidates."
+            exit 0
+          fi
+          CANDIDATES_JSON="$candidates_json" MAX_DISPATCH="$MAX_DISPATCH" node <<'NODE' > /tmp/issue-implementation-candidates.tsv
+          const candidates = JSON.parse(process.env.CANDIDATES_JSON || "[]");
+          const limit = Math.max(0, Number(process.env.MAX_DISPATCH || "5"));
+          for (const candidate of candidates.slice(0, limit)) {
+            console.log([
+              candidate.item_number,
+              candidate.report_path,
+              candidate.report_url,
+            ].join("\t"));
+          }
+          NODE
+          if [ ! -s /tmp/issue-implementation-candidates.tsv ]; then
+            echo "No candidates remained after dispatch cap."
+            exit 0
+          fi
+          while IFS=$'\t' read -r item_number report_path report_url; do
+            echo "Dispatching reproducible bug implementation intake for $TARGET_REPO#$item_number"
+            gh workflow run repair-issue-implementation-intake.yml \
+              --ref main \
+              -f enabled=true \
+              -f target_repo="$TARGET_REPO" \
+              -f item_number="$item_number" \
+              -f report_path="$report_path" \
+              -f report_url="$report_url"
+          done < /tmp/issue-implementation-candidates.tsv
+
       - name: Dispatch scheduled review comment sync
         if: ${{ success() && github.event_name == 'schedule' && needs.plan.outputs.hot_intake != 'true' }}
         env:

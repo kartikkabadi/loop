@@ -53,6 +53,24 @@ one short sentence for `changeSummary`, `workReason`, `bestSolution`, and
 `changeSummary` or `workReason` into an automerge/autofix status update; merge
 automation is reported by the command/status comment and hidden markers.
 
+Classify issue type conservatively. Set `itemCategory: "bug"` only when the
+item reports broken existing behavior and the expected behavior is already
+defined by current docs, tests, CLI/API contract, or established behavior. Do
+not classify requests for a new capability, config option, flag, mode,
+provider, workflow, fallback, UX change, or policy choice as bugs; use
+`feature`, `support`, `admin`, `docs`, `cleanup`, `security`, or `unclear`
+instead. Set `requiresNewFeature`, `requiresNewConfigOption`, and
+`requiresProductDecision` independently. Any true value means the item is not a
+strict bug-fix automation candidate even if useful.
+
+Populate structured reproduction metadata separately from the public prose.
+Use `reproductionStatus: "reproduced"` only when there is a concrete,
+current-main reproduction path for the bug with high confidence. Use
+`source_reproducible` when the code path is clear from source inspection but you
+did not actually establish a failing current-main path. Use `not_reproduced`,
+`unclear`, or `not_applicable` otherwise. `reproductionConfidence` must match
+the evidence, not the importance of the bug.
+
 For PRs, do not list the PR author solely because they opened the PR, reported
 the issue, or authored the proposed branch. `likelyOwners` should point to
 people connected to the current `main` history and merged feature history for
@@ -147,6 +165,16 @@ anything that must not be changed. Keep it concrete enough that a single
 autonomous PR can be attempted without reopening triage. Use `workValidation`
 for the exact tests or checks a fix PR should run, and `workLikelyFiles` for
 probable implementation/test/docs paths.
+
+For issues, `queue_fix_pr` may mark general manual work-lane candidates, but
+automatic implementation is stricter. A report is eligible for automatic
+bug-fix PR creation only when `itemCategory` is exactly `bug`,
+`reproductionStatus` is exactly `reproduced`, `reproductionConfidence` is
+`high`, `workConfidence` is `high`, and `requiresNewFeature`,
+`requiresNewConfigOption`, and `requiresProductDecision` are all `false`.
+Keep the bug boundary narrow in `workPrompt`: fix broken existing behavior,
+add or update regression coverage, and stop if the implementation would add a
+feature/config/product-policy change.
 
 For pull requests, `workCandidate` is also the automation contract. Use
 `queue_fix_pr` only when there is a concrete, actionable repair that an

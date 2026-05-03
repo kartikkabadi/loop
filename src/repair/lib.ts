@@ -140,6 +140,7 @@ export function validateJob(job: ParsedJob | LooseRecord) {
     "candidates",
     "cluster_refs",
     "maintainer_close_refs",
+    "required_pr_labels",
   ]) {
     if (fm[key] !== undefined && !Array.isArray(fm[key])) {
       errors.push(`${key} must be a list`);
@@ -186,6 +187,7 @@ export function validateJob(job: ParsedJob | LooseRecord) {
     "triage_policy",
     "security_policy",
     "source",
+    "trigger_source",
     "commit_sha",
     "clawsweeper_report_repo",
     "clawsweeper_report_path",

@@ -1940,7 +1940,7 @@ function buildAutomergeSquashMessage({
     "Summary:",
     ...summaryLines.map((line: string) => `- ${line}`),
     "",
-    "ClawSweeper fixups:",
+    "Automerge notes:",
     ...fixupLines.map((line: string) => `- ${line}`),
     "",
     "Validation:",
@@ -1965,10 +1965,6 @@ function reviewSummaryLines(command: LooseRecord): string[] {
 function automergeFixupLines({ view, comments }: LooseRecord): string[] {
   const lines: string[] = [];
   const commits = Array.isArray(view.commits) ? view.commits : [];
-  const followupCommits = commits.slice(1).map(commitHeadline).filter(Boolean);
-  for (const headline of followupCommits.slice(0, 6)) {
-    lines.push(`Included follow-up commit: ${headline}`);
-  }
   const sawRepair = comments.some((comment: JsonValue) =>
     String(comment.body ?? "").includes("clawsweeper_auto_repair"),
   );
@@ -1979,10 +1975,18 @@ function automergeFixupLines({ view, comments }: LooseRecord): string[] {
   );
   if (sawRepair) lines.push("Ran the ClawSweeper repair loop before final review.");
   if (sawFinding) lines.push("Addressed earlier ClawSweeper review findings before merge.");
+  const followupCommits = commits.slice(1).map(commitHeadline).filter(Boolean);
+  const followupPrefix =
+    sawRepair || sawFinding
+      ? "Included post-review commit in the final squash"
+      : "PR branch already contained follow-up commit before automerge";
+  for (const headline of followupCommits.slice(0, 6)) {
+    lines.push(`${followupPrefix}: ${headline}`);
+  }
   const uniqueLines = unique(lines).slice(0, 8);
   return uniqueLines.length > 0
     ? uniqueLines
-    : ["No separate fixup commits were needed after automerge opt-in."];
+    : ["No ClawSweeper repair was needed after automerge opt-in."];
 }
 
 function coAuthorTrailersFromCommits(commits: JsonValue): string[] {
