@@ -282,6 +282,9 @@ dispatch the repair worker for one open issue and ask it to create or update a
 single ClawSweeper implementation PR. The generated job uses
 `source: issue_implementation`, `repair_strategy: new_fix_pr`, blocks merge and
 close actions, and reuses `clawsweeper/issue-<repo>-<number>` on reruns.
+Workers can reconstruct this minimal job from the requested `jobs/.../issue-*.md`
+path when a dispatch races ahead of state propagation, so the request does not
+silently skip as stale.
 When `CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS=1`, review publish can also dispatch
 the same lane automatically for strict bug reports only: `item_category: bug`,
 `reproduction_status: reproduced`, `reproduction_confidence: high`, high
