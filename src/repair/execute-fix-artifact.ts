@@ -111,7 +111,7 @@ const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const requestedCodexTimeoutMs = Number(
   process.env.CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS ?? 25 * 60 * 1000,
 );
-const fixStepTimeoutMs = Number(process.env.CLAWSWEEPER_FIX_STEP_TIMEOUT_MS ?? 35 * 60 * 1000);
+const fixStepTimeoutMs = Number(process.env.CLAWSWEEPER_FIX_STEP_TIMEOUT_MS ?? 40 * 60 * 1000);
 const fixTimeoutReserveMs = Number(
   process.env.CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS ?? 10 * 60 * 1000,
 );

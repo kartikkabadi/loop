@@ -125,6 +125,9 @@ checkpoint, and status-only commits are intentionally omitted.
   not treat long silent model calls as stalled jobs before debug artifacts upload.
 - Emitted execute-side Codex heartbeats during repair edit, review, and preflight
   subprocesses so automerge runs stay observable until debug artifacts upload.
+- Kept final base-reconcile Codex workers from being squeezed down to the
+  30-second timeout floor by aligning the executor budget with the 40-minute
+  repair step.
 - Included ClawSweeper-captured `codex exec --json` outputs in Codex debug
   artifacts and kept execute-side logs under uploaded repair run artifacts.
 - Kept substantive automerge repairs in the Codex edit loop after a clean rebase

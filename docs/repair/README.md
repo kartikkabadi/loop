@@ -319,7 +319,7 @@ The workflow needs:
 - optional `CLAWSWEEPER_CODEX_TIMEOUT_MS`, `CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS`,
   and `CLAWSWEEPER_FIX_STEP_TIMEOUT_MS` variables; worker planning defaults to
   30 minutes, while fix execution defaults to a 20 minute per-Codex-call budget
-  inside a 35 minute executor budget. The cluster execute job keeps a 45 minute
+  inside a 40 minute executor budget. The cluster execute job keeps a 45 minute
   timeout and a 40 minute execute-step cap so long edit/test passes still leave
   room for internal `/review`, post-flight, and timeout artifact upload instead
   of falling into a 30-second review floor near the end of the run.
