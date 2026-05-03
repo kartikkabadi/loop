@@ -285,6 +285,8 @@ close actions, and reuses `clawsweeper/issue-<repo>-<number>` on reruns.
 Workers can reconstruct this minimal job from the requested `jobs/.../issue-*.md`
 path when a dispatch races ahead of state propagation, so the request does not
 silently skip as stale.
+After opening the PR, the worker updates the existing ClawSweeper command status
+comment with the generated PR link.
 When `CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS=1`, review publish can also dispatch
 the same lane automatically for strict bug reports only: `item_category: bug`,
 `reproduction_status: reproduced`, `reproduction_confidence: high`, high

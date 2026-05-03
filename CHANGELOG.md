@@ -34,6 +34,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 - Accepted spaced `auto merge` command aliases everywhere `automerge` and
   `auto-merge` are accepted, including the top-level `/auto merge` shorthand.
+- Updated issue implementation command comments after a fix PR opens, linking
+  the generated PR from the original ClawSweeper status comment instead of
+  leaving the acknowledgement at "queued".
 - Recovered issue implementation workers from state propagation races by
   reconstructing minimal `source: issue_implementation` jobs from the dispatched
   job path instead of skipping the worker as stale.

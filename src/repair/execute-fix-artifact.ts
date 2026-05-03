@@ -13,6 +13,7 @@ import { assertAllowedOwner, parseArgs, parseJob, repoRoot, validateJob } from "
 import {
   automergeRepairOutcomeComment,
   externalMessageProvenance,
+  issueImplementationResultStatusComment,
   repairContributorBranchComment,
   replacementPrBody,
   replacementSourceCloseComment,
@@ -2570,6 +2571,7 @@ function findLatestResultPath() {
 }
 
 function writeReport(report: LooseRecord, resultPath: string) {
+  appendIssueImplementationPrLinkComment(report);
   appendAutomergeRepairOutcomeComment(report, resultPath);
   const reportPath =
     typeof args.report === "string"
@@ -2581,6 +2583,90 @@ function writeReport(report: LooseRecord, resultPath: string) {
   }
   fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
   console.log(JSON.stringify(report, null, 2));
+}
+
+function appendIssueImplementationPrLinkComment(report: LooseRecord) {
+  if (job.frontmatter.source !== "issue_implementation") return;
+  if (!job.frontmatter.allowed_actions.includes("comment")) return;
+  if (
+    report.actions?.some(
+      (action: JsonValue) => action.action === "issue_implementation_status_comment",
+    )
+  )
+    return;
+
+  const prAction = issueImplementationOpenedPrAction(report);
+  if (!prAction) return;
+  const issueNumber = issueImplementationTargetIssueNumber();
+  const base = {
+    action: "issue_implementation_status_comment",
+    target: issueNumber ? `#${issueNumber}` : null,
+    pr_url: prAction.pr_url,
+  };
+  if (!issueNumber) {
+    report.actions.push({ ...base, status: "skipped", reason: "missing source issue number" });
+    return;
+  }
+  if (dryRun) {
+    report.actions.push({ ...base, status: "planned" });
+    return;
+  }
+
+  const existing = findIssueImplementationStatusComment(issueNumber);
+  if (!existing?.id) {
+    report.actions.push({
+      ...base,
+      status: "skipped",
+      reason: "no existing ClawSweeper issue implementation status comment",
+    });
+    return;
+  }
+
+  const body = issueImplementationResultStatusComment({
+    existingBody: existing.body,
+    prUrl: prAction.pr_url,
+    branch: prAction.branch,
+    runUrl: currentActionsRunUrl(),
+    completedAt: new Date().toISOString(),
+  });
+  patchIssueComment(existing.id, preserveStatusMarkers(existing.body, body));
+  report.actions.push({
+    ...base,
+    status: "updated",
+    comment_id: String(existing.id),
+  });
+}
+
+function issueImplementationOpenedPrAction(report: LooseRecord) {
+  return [...(report.actions ?? [])].reverse().find((action: JsonValue) => {
+    if (action?.action !== "open_fix_pr") return false;
+    if (action?.status !== "opened") return false;
+    return typeof action?.pr_url === "string" && action.pr_url.trim();
+  });
+}
+
+function issueImplementationTargetIssueNumber() {
+  for (const ref of [
+    ...(job.frontmatter.canonical ?? []),
+    ...(job.frontmatter.candidates ?? []),
+    ...(job.frontmatter.cluster_refs ?? []),
+  ]) {
+    const match = String(ref).match(/^#(\d+)$/);
+    if (match) return Number(match[1]);
+  }
+  const clusterMatch = String(result.cluster_id ?? "").match(/-(\d+)$/);
+  return clusterMatch ? Number(clusterMatch[1]) : 0;
+}
+
+function findIssueImplementationStatusComment(number: JsonValue) {
+  const issueNumber = Number(number);
+  const marker = `<!-- clawsweeper-command-status:${Number.isFinite(issueNumber) ? issueNumber : "unknown"}:implement_issue:`;
+  return issueCommentsFor(number)
+    .reverse()
+    .find((comment: LooseRecord) => {
+      if (!isTrustedStatusComment(comment)) return false;
+      return String(comment.body ?? "").includes(marker);
+    });
 }
 
 function appendAutomergeRepairOutcomeComment(report: LooseRecord, resultPath: string) {

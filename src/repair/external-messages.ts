@@ -277,6 +277,30 @@ export function automergeRepairOutcomeComment({
   return withFishNotes(lines, provenance);
 }
 
+export function issueImplementationResultStatusComment({
+  existingBody,
+  prUrl,
+  branch,
+  runUrl,
+  completedAt,
+}: LooseRecord) {
+  const marker = "<!-- clawsweeper-issue-implementation-result -->";
+  const lines = [
+    marker,
+    "Result: implementation PR opened.",
+    "",
+    `- PR: ${prUrl}`,
+    branch ? `- Branch: \`${branch}\`` : null,
+    runUrl ? `- Worker: ${runUrl}` : null,
+    completedAt ? `- Updated: ${completedAt}` : null,
+  ].filter(Boolean);
+  const nextSection = lines.join("\n");
+  const body = String(existingBody ?? "").trimEnd();
+  const existingSection = new RegExp(`\\n\\n${escapeRegExp(marker)}[\\s\\S]*$`);
+  if (existingSection.test(body)) return body.replace(existingSection, `\n\n${nextSection}`);
+  return `${body}\n\n${nextSection}`;
+}
+
 export function replacementSourceLinkComment({ replacementPrUrl, provenance }: LooseRecord) {
   return withFishNotes(
     [
@@ -313,6 +337,10 @@ function compactForComment(value: JsonValue, max: JsonValue) {
   if (!text) return "";
   if (text.length <= max) return text;
   return `${text.slice(0, Math.max(0, max - 1)).trimEnd()}...`;
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 export function replacementSourceCloseComment({ replacementPrUrl, provenance }: LooseRecord) {
