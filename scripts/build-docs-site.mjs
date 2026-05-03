@@ -385,7 +385,7 @@ function landingHero(rootPrefix) {
         <div class="hero-text">
           <p class="eyebrow">OpenClaw - maintenance bot</p>
           <h1>Sideways through the <em>backlog</em>.<br>Sweep what's safe.<br>Leave the rest.</h1>
-          <p class="lede">ClawSweeper is the conservative maintenance bot for OpenClaw. It reads every open issue, pull request, and commit on <code>main</code>; it writes one durable review comment per item; and it only proposes a close when the evidence is strong.</p>
+          <p class="lede">ClawSweeper is the conservative maintenance bot for OpenClaw. It reviews issues, pull requests, and code-bearing commits; keeps one durable public comment per item; and turns narrow trusted findings into guarded repair or automerge work.</p>
           <div class="cta">
             <a class="cta-primary" href="${rootPrefix}scheduler.html">Read the docs</a>
             <a class="cta-secondary" href="${repoUrl}" rel="noopener">View on GitHub</a>
@@ -402,7 +402,7 @@ function landingBody() {
   const features = [
     [
       "One report per item",
-      "Every open issue and PR becomes <code>records/&lt;repo&gt;/items/&lt;n&gt;.md</code>: decision, evidence, proposed comment, snapshot hash. Nothing else.",
+      "Every reviewed issue and PR becomes <code>records/&lt;repo&gt;/items/&lt;n&gt;.md</code>: decision, evidence, proposed comment, runtime metadata, and snapshot hash.",
       "report",
     ],
     [
@@ -416,8 +416,8 @@ function landingBody() {
       "shield",
     ],
     [
-      "Two independent lanes",
-      "Issue/PR sweeper and commit sweeper run separately. Commit reviews land at <code>records/&lt;repo&gt;/commits/&lt;sha&gt;.md</code> with optional Check Runs.",
+      "Four operational lanes",
+      "Review, apply, repair, and commit review run as separate lanes. Each lane has its own state, gates, and GitHub Actions path.",
       "lanes",
     ],
     [
@@ -427,7 +427,7 @@ function landingBody() {
     ],
     [
       "Repair, gated",
-      "When a finding is narrow, non-security, and still relevant on latest <code>main</code>, the repair lane can open one ClawSweeper PR. Everything else stays a proposal.",
+      "Opted-in PRs can run through review, fix, re-review, and merge. Strict reproducible bug issues can open one guarded generated PR.",
       "wrench",
     ],
   ];
@@ -440,19 +440,24 @@ function landingBody() {
 
   const lanes = [
     {
-      name: "Issue / PR Sweep",
+      name: "Review Lane",
       href: "scheduler.html",
-      desc: "Scheduled scan of every open issue and PR. Three planner paths: exact event, hot intake, full sweep.",
+      desc: "Scheduled and event-driven issue/PR reviews. Planner paths: exact event, hot intake, normal backfill.",
     },
     {
-      name: "Commit Sweep",
-      href: "commit-sweeper.html",
-      desc: "Reviews code-bearing commits on <code>main</code>. Skips non-code commits cheaply. Optional Check Runs.",
+      name: "Apply Lane",
+      href: "scheduler.html#apply-lane",
+      desc: "Guarded comment and close mutations. Re-fetches live GitHub state before every write.",
     },
     {
       name: "Repair Lane",
       href: "repair/",
-      desc: 'Bounded "review, fix, re-review, merge" loop for one opted-in PR. Pinned to a reviewed head SHA.',
+      desc: 'Bounded "review, fix, re-review, merge" loop for opted-in PRs and strict generated bug PRs.',
+    },
+    {
+      name: "Commit Review Lane",
+      href: "commit-sweeper.html",
+      desc: "Reviews code-bearing commits on <code>main</code>. Skips non-code commits cheaply. Optional Check Runs.",
     },
   ];
   const laneCards = lanes
@@ -472,21 +477,22 @@ function landingBody() {
             <ul class="snippet-list">
               <li><strong>Read</strong> - GitHub snapshot, prior report, repository profile, paired issue/PR state.</li>
               <li><strong>Write</strong> - one markdown report per item or commit, with a hashed snapshot.</li>
-              <li><strong>Propose</strong> - a single durable comment, edited in place. A close only when the rule fits.</li>
+            <li><strong>Act</strong> - one durable comment, guarded apply, and repair only through explicit trusted gates.</li>
             </ul>
           </div>
-          <pre class="snippet" aria-hidden="true"><code><span class="prompt">$</span> pnpm sweep --repo openclaw/openclaw
-<span class="comment"># scan 142 open items - 4 hot, 138 idle</span>
-<span class="comment"># report records/openclaw-openclaw/items/812.md</span>
-<span class="comment"># comment edited (marker: clawsweeper:review)</span>
-<span class="comment"># proposal: close 3 - implemented on main</span>
-<span class="comment"># apply gate: ok - 3 closed - 0 errors</span>
+          <pre class="snippet" aria-hidden="true"><code><span class="prompt">$</span> pnpm run plan -- --target-repo openclaw/openclaw --shard-count 100
+<span class="comment"># exact item numbers selected for review shards</span>
+<span class="prompt">$</span> pnpm run review -- --target-repo openclaw/openclaw --artifact-dir artifacts/reviews
+<span class="comment"># records/openclaw-openclaw/items/812.md</span>
+<span class="comment"># durable comment marker: clawsweeper:review</span>
+<span class="prompt">$</span> pnpm run apply-decisions -- --target-repo openclaw/openclaw --limit 20
+<span class="comment"># guarded close/comment mutations only after live re-fetch</span>
 <span class="prompt">$</span> pnpm commit-reports -- --since 24h --findings
 <span class="comment"># 6 commits reviewed - 1 finding (non-security)</span>
 <span class="comment"># dispatched to repair intake</span></code></pre>
         </section>
         <section class="lanes-row" aria-label="The lanes">
-          <h2>Three lanes, one engine</h2>
+          <h2>Four lanes, one engine</h2>
           <div class="lanes">${laneCards}</div>
         </section>
         <section class="rules" aria-label="Guardrails">

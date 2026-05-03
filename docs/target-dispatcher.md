@@ -119,7 +119,7 @@ jobs:
           fi
           body_file="$RUNNER_TEMP/clawsweeper-comment-body.txt"
           printf '%s\n' "$COMMENT_BODY" > "$body_file"
-          if ! grep -Eiq '(^|[[:space:]])@clawsweeper\b|(^|[[:space:]])/(clawsweeper|review|automerge|autoclose)\b' "$body_file"; then
+          if ! grep -Eiq '(^|[[:space:]])@clawsweeper\b|(^|[[:space:]])/(clawsweeper|review|re-review|rerun[ -]?review|status|explain|fix|build|implement|create[ -]?pr|fix[ -]?issue|autofix|auto[ -]?fix|automerge|auto[ -]?merge|approve|stop|autoclose)\b' "$body_file"; then
             echo "No ClawSweeper command found in comment."
             exit 0
           fi

@@ -312,8 +312,8 @@ items, writes comments, or fixes code.
 - Manual runs can pass `commit_sha`, optional `before_sha`, optional
   `additional_prompt`, `enabled`, and `create_checks`.
 - The receiver verifies the selected commits are reachable from `origin/main`.
-- Before selecting and reviewing commits, the receiver waits 15 minutes by
-  default (`CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=900`) so a push range has
+- Before selecting and reviewing commits, the receiver waits 60 seconds by
+  default (`CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=60`) so a push range has
   time to settle across GitHub and the runner.
 - The plan job expands ranges, pages large backfills at GitHub's matrix limit,
   and classifies each commit before Codex starts.
@@ -548,4 +548,4 @@ Target repository setup:
   should be published
 - optionally set `CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS=0` for manual
   backfills where the target commit range is already settled; the default is
-  `900`
+  `60`
