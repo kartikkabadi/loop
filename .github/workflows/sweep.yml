@@ -519,6 +519,7 @@ jobs:
         with:
           token: ${{ steps.state-token.outputs.token }}
           worktree-path: clawsweeper
+          fetch-depth: 1
 
       - uses: ./clawsweeper/.github/actions/setup-pnpm
         with:

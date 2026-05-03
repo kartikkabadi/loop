@@ -273,6 +273,10 @@ critical path records the planned counts and publishes only
 `results/sweep-status/`; publish, apply, and audit still reconcile records before
 their state mutations where folder placement matters.
 
+Read-only plan and review jobs hydrate generated state from a shallow
+`fetch-depth: 1` checkout. Generated-state publish, apply, and audit jobs keep a
+full checkout because they may need to rebase and push state updates.
+
 ## Apply
 
 Review is proposal-only. Apply is the only issue/PR scheduler path that mutates

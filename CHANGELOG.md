@@ -18,6 +18,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Removed the expensive record reconciler from pre-shard planning status so
   review jobs can start without waiting on a full GitHub state scan; publish,
   apply, and audit still reconcile before mutating records.
+- Made read-only review planning hydrate generated state from a shallow checkout
+  instead of cloning the full generated-state history.
 
 ### Fixed
 
