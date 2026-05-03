@@ -20,6 +20,7 @@ import {
   replacementSourceLinkComment,
 } from "./external-messages.js";
 import { runCommand as run } from "./command-runner.js";
+import { isRetryableCodexTransportError } from "./codex-transient.js";
 import {
   branchHasBaseDiff,
   completeRebaseIfResolved,
@@ -1556,10 +1557,44 @@ function editValidatePrepareMerge({
         throw new Error(`Codex fix worker timed out after ${workerTimeoutMs}ms`);
       }
       if (codexResult.error) {
-        throw new Error(codexResult.error.message || String(codexResult.error));
+        const errorMessage = codexResult.error.message || String(codexResult.error);
+        if (attempt < maxEditAttempts && isRetryableCodexTransportError(errorMessage)) {
+          previousSummary = compactText(errorMessage, 360);
+          logProgress("retrying Codex edit pass after transient transport error", {
+            mode,
+            attempt,
+            max_attempts: maxEditAttempts,
+          });
+          updateAutomergeProgressStatus({
+            id: `codex-edit-${mode}-${attempt}`,
+            label: `Codex edit ${attempt}`,
+            status: "retrying",
+            details: "transient Codex transport error",
+            headSha: currentHead(targetDir),
+          });
+          continue;
+        }
+        throw new Error(errorMessage);
       }
       if (codexResult.status !== 0) {
-        throw new Error(codexResult.stderr || codexResult.stdout || "Codex fix worker failed");
+        const errorMessage = codexResult.stderr || codexResult.stdout || "Codex fix worker failed";
+        if (attempt < maxEditAttempts && isRetryableCodexTransportError(errorMessage)) {
+          previousSummary = compactText(errorMessage, 360);
+          logProgress("retrying Codex edit pass after transient transport error", {
+            mode,
+            attempt,
+            max_attempts: maxEditAttempts,
+          });
+          updateAutomergeProgressStatus({
+            id: `codex-edit-${mode}-${attempt}`,
+            label: `Codex edit ${attempt}`,
+            status: "retrying",
+            details: "transient Codex transport error",
+            headSha: currentHead(targetDir),
+          });
+          continue;
+        }
+        throw new Error(errorMessage);
       }
       logProgress("Codex edit pass finished", { mode, attempt, status: codexResult.status });
       updateAutomergeProgressStatus({

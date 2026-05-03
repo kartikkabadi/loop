@@ -70,9 +70,34 @@ jobs:
           filter: blob:none
           persist-credentials: false
 
-      - uses: ./.github/actions/setup-pnpm
+      - uses: actions/setup-node@v6
         with:
-          build-script: build:repair
+          node-version: "24"
+
+      - name: Prepare notifier runtime
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          corepack enable
+          for attempt in 1 2 3; do
+            if corepack prepare "pnpm@10.33.2" --activate; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            sleep "$((attempt * 10))"
+          done
+          for attempt in 1 2 3; do
+            if pnpm install --frozen-lockfile; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            sleep "$((attempt * 10))"
+          done
+          pnpm run build:repair
 
       - name: Feed activity to OpenClaw
         env:

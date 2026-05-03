@@ -14,6 +14,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
+- Made the GitHub activity notifier workflow use a lean uncached Node/pnpm setup
+  so bursty events do not wait on `actions/cache` downloads before notifying
+  OpenClaw.
 - Switched the shared Codex setup action to a per-run `CODEX_HOME` with a local
   Responses proxy so Codex subprocesses no longer inherit raw OpenAI/Codex API
   key environment variables.
@@ -42,6 +45,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Retried transient Codex edit-pass transport failures where the Codex tool
+  router reports a closed stdin session, instead of failing the whole repair
+  worker after an otherwise recoverable automation run.
 - Accepted scoped `scripts/run-opengrep.sh --error -- <paths>` validation hints
   so automerge repair execution does not fail preflight before normalizing
   OpenClaw repairs to the changed-surface gate.

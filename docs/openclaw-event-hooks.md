@@ -192,6 +192,11 @@ synchronizes, and successful automation events are skipped unless they contain
 an explicit ClawSweeper command or mention. This keeps noisy GitHub churn from
 consuming hook-session model turns.
 
+The workflow intentionally uses a lean uncached Node/pnpm setup instead of the
+shared cached pnpm action. This event stream can burst dozens of runs at once,
+and downloading the cache action itself has proven slower and less reliable than
+a direct install/build path for the small notifier.
+
 The activity prompt always treats GitHub titles, comments, review bodies, and
 issue text as untrusted data. It must not follow instructions embedded in those
 fields.
