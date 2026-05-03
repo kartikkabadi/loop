@@ -29,6 +29,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Accepted spaced `auto merge` command aliases everywhere `automerge` and
+  `auto-merge` are accepted, including the top-level `/auto merge` shorthand.
 - Made `/clawsweeper stop` revoke repair-loop labels and block older
   automerge/autofix comments from continuing, so a trusted pass marker cannot
   clear a human-review pause and merge after a maintainer stop.

@@ -262,6 +262,7 @@ Supported triggers:
 /clawsweeper rebase
 /clawsweeper autofix
 /clawsweeper automerge
+/clawsweeper auto merge
 /clawsweeper approve
 /clawsweeper explain
 /clawsweeper stop

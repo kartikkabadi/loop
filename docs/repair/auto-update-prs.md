@@ -102,6 +102,7 @@ Maintainers can opt any open PR into the bounded merge loop with:
 
 ```text
 /clawsweeper automerge
+/clawsweeper auto merge
 ```
 
 The command adds `clawsweeper:automerge`, asks ClawSweeper to review the current

@@ -100,7 +100,8 @@ Maintainers can steer ClawSweeper from target-repo issue and PR comments. The
 preferred form is `@clawsweeper ...`. The router also accepts
 `@clawsweeper[bot] ...`, `@openclaw-clawsweeper ...`,
 `@openclaw-clawsweeper[bot] ...`, and legacy slash aliases such as
-`/clawsweeper ...`, `/review`, `/automerge`, and `/autoclose <reason>`.
+`/clawsweeper ...`, `/review`, `/automerge`, `/auto merge`, and
+`/autoclose <reason>`.
 
 Common commands:
 

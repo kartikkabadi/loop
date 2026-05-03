@@ -574,7 +574,7 @@ export function parseCommand(body: string) {
   const lines = String(body ?? "").split(/\r?\n/);
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? "";
-    const automerge = line.match(/^\s*\/auto-?merge\s*$/i);
+    const automerge = line.match(/^\s*\/auto(?:-|\s+)?merge\s*$/i);
     if (automerge) return commandFromText("slash", "automerge");
     const autoclose = line.match(/^\s*\/autoclose(?:\s+(.+))?\s*$/i);
     if (autoclose) return commandFromText("slash", `autoclose ${autoclose[1] ?? ""}`.trim());
@@ -1060,6 +1060,7 @@ function normalizeIntent(command: LooseRecord) {
       "merge when ready",
       "automerge on",
       "auto-merge on",
+      "auto merge on",
     ].includes(command)
   ) {
     return "automerge";
