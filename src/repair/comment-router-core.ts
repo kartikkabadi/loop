@@ -698,7 +698,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       marker,
       "ClawSweeper is here and listening for maintainer commands.",
       "",
-      "Supported commands: `/review`, `/clawsweeper status`, `/clawsweeper re-review`, `/clawsweeper implement`, `/clawsweeper build`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper autofix`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
+      "Supported commands: `/review`, `/clawsweeper status`, `/clawsweeper re-review`, `/clawsweeper implement`, `@clawsweeper fix`, `/clawsweeper build`, `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`, `/clawsweeper autofix`, `/clawsweeper automerge`, `/clawsweeper approve`, `/autoclose <reason>`, `/clawsweeper explain`, `/clawsweeper stop`.",
       "",
       "I only act for maintainers, or for trusted ClawSweeper feedback on a ClawSweeper PR or PR opted into `clawsweeper:autofix` or `clawsweeper:automerge`.",
     ].join("\n");
@@ -937,7 +937,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
       `Reason: ${command.reason ?? "unsupported command or target"}.`,
       "",
       "Supported re-review commands work on open issues and PRs: `/review`, `/clawsweeper re-review`, or `@clawsweeper re-review`.",
-      "Supported issue implementation commands work on open issues: `/clawsweeper implement`, `/clawsweeper build`, `@clawsweeper create pr`, or `@clawsweeper fix issue`.",
+      "Supported issue implementation commands work on open issues: `/clawsweeper implement`, `@clawsweeper fix`, `/clawsweeper build`, `@clawsweeper create pr`, or `@clawsweeper fix issue`.",
       "Supported repair commands work on existing ClawSweeper PRs and PRs opted into `clawsweeper:autofix` or `clawsweeper:automerge`: `/clawsweeper fix ci`, `/clawsweeper address review`, `/clawsweeper rebase`.",
       "A maintainer can opt a PR in with `/clawsweeper autofix` or `/clawsweeper automerge` and I can take another pass.",
       "A maintainer can close unsupported or declined work with `/autoclose <reason>`.",

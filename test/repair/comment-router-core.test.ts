@@ -932,6 +932,7 @@ test("renderResponse gives command replies a lobster badge", () => {
     body,
     /^<!-- clawsweeper-command-status:unknown:help:na -->\n<!-- clawsweeper-command:456:help:na -->\n🦞🦞\nClawSweeper is here/,
   );
+  assert.match(body, /@clawsweeper fix/);
 });
 
 test("renderResponse describes stop as revoking repair-loop labels", () => {
