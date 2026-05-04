@@ -329,11 +329,35 @@ function assertExecuteGateOpenIfNeeded(candidates: LooseRecord[]) {
 
 function readRunRecords() {
   const runsDir = path.join(repoRoot(), "results", "runs");
-  if (!fs.existsSync(runsDir)) return [];
-  return fs
-    .readdirSync(runsDir)
-    .filter((name: string) => name.endsWith(".json"))
-    .map((name: string) => JSON.parse(fs.readFileSync(path.join(runsDir, name), "utf8")));
+  const records = fs.existsSync(runsDir)
+    ? fs
+        .readdirSync(runsDir)
+        .filter((name: string) => name.endsWith(".json"))
+        .map((name: string) => JSON.parse(fs.readFileSync(path.join(runsDir, name), "utf8")))
+    : [];
+  return [...records, ...liveRunRecords()];
+}
+
+function liveRunRecords() {
+  try {
+    return listClusterRuns()
+      .map((run: LooseRecord) => {
+        const sourceJob = sourceJobFromRunTitle(String(run.displayTitle ?? ""));
+        if (!sourceJob) return null;
+        return {
+          run_id: String(run.databaseId ?? ""),
+          source_job: sourceJob,
+          workflow_conclusion: run.conclusion ?? null,
+          workflow_created_at: run.createdAt ?? null,
+          workflow_updated_at: run.updatedAt ?? null,
+          run_url: run.url ?? null,
+        };
+      })
+      .filter(Boolean);
+  } catch (error) {
+    console.warn(`self-heal: cannot list live repair runs: ${ghErrorText(error)}`);
+    return [];
+  }
 }
 
 function readSelfHealLedger() {
@@ -370,7 +394,7 @@ function listClusterRuns() {
     "--limit",
     "50",
     "--json",
-    "databaseId,displayTitle,headSha,status,conclusion,createdAt,url",
+    "databaseId,displayTitle,headSha,status,conclusion,createdAt,updatedAt,url",
   ]);
 }
 
