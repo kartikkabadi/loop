@@ -371,6 +371,99 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.match(action.closeComment, /Codex review notes: model gpt-5\.5, reasoning high;/);
 });
 
+test("close comments reference high-confidence merged fixing PRs", () => {
+  const action = reviewActionForDecision({
+    item: item(),
+    decision: closeDecision({
+      fixedPullRequest: {
+        repo: "openclaw/openclaw",
+        number: 456,
+        url: "https://github.com/openclaw/openclaw/pull/456",
+        title: "fix: wire the shell check",
+        mergedAt: "2026-04-28T12:00:00Z",
+        sha: "fedcba9876543210",
+        confidence: "high",
+        source: "GitHub closing PR reference",
+      },
+    }),
+    git,
+    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(
+    action.closeComment,
+    /merged PR that appears to have closed this: \[#456: fix: wire the shell check\]\(https:\/\/github\.com\/openclaw\/openclaw\/pull\/456\)/,
+  );
+  assert.match(
+    action.closeComment,
+    /fix evidence: merged PR \[#456\]\(https:\/\/github\.com\/openclaw\/openclaw\/pull\/456\), commit/,
+  );
+});
+
+test("report-rendered close comments keep merged fixing PR provenance", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "issue",
+      number: "123",
+      title: JSON.stringify("Sample item"),
+      decision: "close",
+      close_reason: "implemented_on_main",
+      action_taken: "proposed_close",
+      fixed_pr_url: "https://github.com/openclaw/openclaw/pull/456",
+      fixed_pr_number: "456",
+      fixed_pr_title: JSON.stringify("fix: wire the shell check"),
+      fixed_pr_merged_at: "2026-04-28T12:00:00Z",
+      fixed_pr_sha: "fedcba9876543210",
+      fixed_pr_confidence: "high",
+      fixed_pr_source: JSON.stringify("GitHub closing PR reference"),
+      fixed_sha: "abcdef1234567890",
+      fixed_at: "2026-04-28T12:00:00Z",
+      main_sha: "abcdef1234567890",
+      review_model: "gpt-5.5",
+      review_reasoning_effort: "high",
+    })}
+
+## Summary
+
+Current main already implements this.
+
+## Best Possible Solution
+
+Keep the implementation as-is.
+
+## Reproduction Assessment
+
+Yes. Current main can be checked by inspecting source and history.
+
+## Solution Assessment
+
+Yes. Keeping the implementation as-is is the narrowest maintainable outcome.
+
+## Evidence
+
+- **implementation:** The feature is present in source.
+  - file: [src/example.ts:12](https://github.com/openclaw/openclaw/blob/abcdef1234567890/src/example.ts#L12)
+  - sha: [abcdef1234567890](https://github.com/openclaw/openclaw/commit/abcdef1234567890)
+
+## Likely Owners
+
+- **@alice:** introduced behavior
+  - reason: git blame points at the fix.
+  - confidence: high
+  - commits: abcdef1234567890
+  - files: src/example.ts
+`,
+    "implemented_on_main",
+  );
+
+  assert.match(
+    comment,
+    /merged PR that appears to have closed this: \[#456: fix: wire the shell check\]\(https:\/\/github\.com\/openclaw\/openclaw\/pull\/456\)/,
+  );
+  assert.match(comment, /fix evidence: merged PR \[#456\]/);
+});
+
 test("close comments suppress duplicate best solution text", () => {
   const action = reviewActionForDecision({
     item: item(),

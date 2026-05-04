@@ -220,6 +220,17 @@ interface SecurityReview {
   concerns: SecurityConcern[];
 }
 
+interface FixedPullRequest {
+  repo: string;
+  number: number;
+  url: string;
+  title: string;
+  mergedAt: string | null;
+  sha: string | null;
+  confidence: Confidence;
+  source: string;
+}
+
 interface Decision {
   decision: DecisionKind;
   closeReason: CloseReason;
@@ -245,6 +256,7 @@ interface Decision {
   fixedRelease?: string | null;
   fixedSha?: string | null;
   fixedAt?: string | null;
+  fixedPullRequest?: FixedPullRequest | null;
   closeComment: string;
   workCandidate: WorkCandidateKind;
   workConfidence: Confidence;
@@ -1455,10 +1467,12 @@ function compactPullRequest(value: unknown): unknown {
   return {
     number: pull.number,
     title: pull.title,
+    url: pull.html_url,
     state: pull.state,
     draft: pull.draft,
     merged: pull.merged,
     mergedAt: pull.merged_at,
+    mergeCommitSha: pull.merge_commit_sha,
     mergeable: pull.mergeable,
     author: login(pull.user),
     head: {
@@ -1525,7 +1539,7 @@ function closingPullRequestsForIssue(number: number): unknown[] {
           "api",
           `repos/${reference.repo}/pulls/${reference.number}`,
           "--jq",
-          "{number,title,state,html_url,body,user:{login:.user.login},merged:.merged,merged_at:.merged_at,head:{ref:.head.ref,sha:.head.sha},base:{ref:.base.ref,sha:.base.sha}}",
+          "{number,title,state,html_url,body,user:{login:.user.login},merged:.merged,merged_at:.merged_at,merge_commit_sha:.merge_commit_sha,head:{ref:.head.ref,sha:.head.sha},base:{ref:.base.ref,sha:.base.sha}}",
         ]),
       );
     } catch (error) {
@@ -3213,6 +3227,7 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     fixedRelease: null,
     fixedSha: null,
     fixedAt: null,
+    fixedPullRequest: null,
     closeComment: "",
     workCandidate: "none",
     workConfidence: "low",
@@ -3637,6 +3652,8 @@ function displayTitle(title: string): string {
 
 function fixedInText(decision: Decision): string {
   const parts: string[] = [];
+  if (decision.fixedPullRequest?.confidence === "high")
+    parts.push(`merged PR ${linkedPullRequest(decision.fixedPullRequest)}`);
   if (decision.fixedRelease) parts.push(`release ${linkedRelease(decision.fixedRelease)}`);
   if (decision.fixedSha) parts.push(`commit ${linkedSha(decision.fixedSha)}`);
   if (!decision.fixedRelease && decision.fixedAt)
@@ -3644,17 +3661,103 @@ function fixedInText(decision: Decision): string {
   return parts.length ? parts.join(", ") : "not determined";
 }
 
+function fixedPullRequestFromUnknown(value: unknown, source: string): FixedPullRequest | null {
+  const pull = asRecord(value);
+  const number = pull.number;
+  if (typeof number !== "number" || !Number.isInteger(number) || number <= 0) return null;
+  const url = typeof pull.url === "string" ? pull.url : pull.html_url;
+  if (typeof url !== "string" || !url) return null;
+  const title = typeof pull.title === "string" ? pull.title : `#${number}`;
+  const mergedAt = typeof pull.mergedAt === "string" ? pull.mergedAt : pull.merged_at;
+  const merged = pull.merged === true || typeof mergedAt === "string";
+  if (!merged) return null;
+  const head = asRecord(pull.head);
+  const sha =
+    typeof pull.mergeCommitSha === "string"
+      ? pull.mergeCommitSha
+      : typeof pull.merge_commit_sha === "string"
+        ? pull.merge_commit_sha
+        : typeof head.sha === "string"
+          ? head.sha
+          : null;
+  return {
+    repo: targetRepo(),
+    number,
+    url,
+    title,
+    mergedAt: typeof mergedAt === "string" ? mergedAt : null,
+    sha,
+    confidence: "high",
+    source,
+  };
+}
+
+function fixedPullRequestFromContext(
+  item: Item,
+  context: ItemContext,
+  decision: Decision,
+): FixedPullRequest | null {
+  if (item.kind !== "issue") return null;
+  if (decision.decision !== "close" || decision.confidence !== "high") return null;
+  if (!Array.isArray(context.closingPullRequests)) return null;
+  const candidates = context.closingPullRequests
+    .map((pull) => fixedPullRequestFromUnknown(pull, "GitHub closing PR reference"))
+    .filter((pull): pull is FixedPullRequest => pull !== null)
+    .sort((left, right) => {
+      const leftTime = left.mergedAt ? Date.parse(left.mergedAt) : 0;
+      const rightTime = right.mergedAt ? Date.parse(right.mergedAt) : 0;
+      return rightTime - leftTime;
+    });
+  return candidates[0] ?? null;
+}
+
+function attachFixedPullRequest(decision: Decision, item: Item, context: ItemContext): Decision {
+  if (decision.fixedPullRequest) return decision;
+  const fixedPullRequest = fixedPullRequestFromContext(item, context, decision);
+  return fixedPullRequest ? { ...decision, fixedPullRequest } : decision;
+}
+
+function linkedPullRequest(pull: FixedPullRequest): string {
+  return markdownLink(`#${pull.number}`, pull.url);
+}
+
 function fixedInReportText(markdown: string): string {
   const parts: string[] = [];
+  const fixedPullRequest = fixedPullRequestFromReport(markdown);
   const fixedRelease = frontMatterValue(markdown, "fixed_release");
   const fixedSha = frontMatterValue(markdown, "fixed_sha");
   const fixedAt = frontMatterValue(markdown, "fixed_at");
+  if (fixedPullRequest?.confidence === "high")
+    parts.push(`merged PR ${linkedPullRequest(fixedPullRequest)}`);
   if (fixedRelease && fixedRelease !== "unknown")
     parts.push(`release ${linkedRelease(fixedRelease)}`);
   if (fixedSha && fixedSha !== "unknown") parts.push(`commit ${linkedSha(fixedSha)}`);
   if ((!fixedRelease || fixedRelease === "unknown") && fixedAt && fixedAt !== "unknown")
     parts.push(`main fix timestamp ${fixedAt}`);
   return parts.length ? parts.join(", ") : "not determined";
+}
+
+function fixedPullRequestFromReport(markdown: string): FixedPullRequest | null {
+  const url = frontMatterValue(markdown, "fixed_pr_url");
+  const rawNumber = frontMatterValue(markdown, "fixed_pr_number");
+  const number = rawNumber ? Number(rawNumber) : NaN;
+  if (!url || url === "unknown" || !Number.isInteger(number) || number <= 0) return null;
+  const confidence = frontMatterValue(markdown, "fixed_pr_confidence") as Confidence | undefined;
+  return {
+    repo: markdownRepository(markdown),
+    number,
+    url,
+    title: displayTitle(frontMatterValue(markdown, "fixed_pr_title") ?? `#${number}`),
+    mergedAt: nonUnknownFrontMatter(markdown, "fixed_pr_merged_at"),
+    sha: nonUnknownFrontMatter(markdown, "fixed_pr_sha"),
+    confidence: confidence && CONFIDENCES.has(confidence) ? confidence : "low",
+    source: nonUnknownFrontMatter(markdown, "fixed_pr_source") ?? "report metadata",
+  };
+}
+
+function nonUnknownFrontMatter(markdown: string, key: string): string | null {
+  const value = frontMatterValue(markdown, key);
+  return value && value !== "unknown" ? value : null;
 }
 
 function sentence(value: string): string {
@@ -4208,6 +4311,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     fixedRelease: fixedRelease && fixedRelease !== "unknown" ? fixedRelease : null,
     fixedSha: fixedSha && fixedSha !== "unknown" ? fixedSha : null,
     fixedAt: fixedAt && fixedAt !== "unknown" ? fixedAt : null,
+    fixedPullRequest: fixedPullRequestFromReport(markdown),
     closeComment: reviewSectionValue(markdown, "closeComment"),
     workCandidate:
       (frontMatterValue(markdown, "work_candidate") as WorkCandidateKind | undefined) ?? "none",
@@ -4271,6 +4375,7 @@ function renderCloseComment(options: {
   solutionAssessment?: string;
   evidence: Evidence[];
   likelyOwners?: LikelyOwner[];
+  fixedPullRequest?: FixedPullRequest | null;
   securityReview?: SecurityReview;
   reviewLine: string;
 }): string {
@@ -4278,6 +4383,15 @@ function renderCloseComment(options: {
   const likelyOwners = (options.likelyOwners ?? []).slice(0, 5).map(likelyOwnerLine);
   const summaryLine = sentence(options.summary);
   const lines = [closeIntro(options.reason), "", summaryLine];
+  if (options.fixedPullRequest?.confidence === "high") {
+    lines.push(
+      "",
+      `I found the merged PR that appears to have closed this: ${markdownLink(
+        `#${options.fixedPullRequest.number}: ${options.fixedPullRequest.title}`,
+        options.fixedPullRequest.url,
+      )}.`,
+    );
+  }
   const details: string[] = [];
   const bestSolutionLine = sentence(options.bestSolution ?? "");
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, summaryLine)) {
@@ -4312,6 +4426,7 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
       solutionAssessment: reviewSectionValue(markdown, "solutionAssessment"),
       evidence: reportEvidence(markdown),
       likelyOwners: reportLikelyOwners(markdown),
+      fixedPullRequest: fixedPullRequestFromReport(markdown),
       securityReview: reportSecurityReview(markdown),
       reviewLine: closeReviewLineFromReport(markdown),
     }),
@@ -4358,6 +4473,7 @@ function normalizeComment(
     solutionAssessment: decision.solutionAssessment,
     evidence: decision.evidence,
     likelyOwners: decision.likelyOwners,
+    fixedPullRequest: decision.fixedPullRequest ?? null,
     securityReview: decision.securityReview,
     reviewLine: closeReviewLineFromDecision(decision, git, runtime),
   });
@@ -5177,6 +5293,7 @@ function markdownFor(options: {
   runtime: ReviewRuntime;
 }): string {
   const labels = options.item.labels.length ? options.item.labels.join(", ") : "none";
+  const fixedPullRequest = options.decision.fixedPullRequest;
   const evidence = options.decision.evidence.length
     ? options.decision.evidence
         .map((entry) => {
@@ -5237,6 +5354,13 @@ latest_release_sha: ${options.git.latestRelease?.sha ?? "unknown"}
 fixed_release: ${options.decision.fixedRelease ?? "unknown"}
 fixed_sha: ${options.decision.fixedSha ?? "unknown"}
 fixed_at: ${options.decision.fixedAt ?? "unknown"}
+fixed_pr_url: ${fixedPullRequest?.url ?? "unknown"}
+fixed_pr_number: ${fixedPullRequest?.number ?? "unknown"}
+fixed_pr_title: ${fixedPullRequest ? JSON.stringify(fixedPullRequest.title) : "unknown"}
+fixed_pr_merged_at: ${fixedPullRequest?.mergedAt ?? "unknown"}
+fixed_pr_sha: ${fixedPullRequest?.sha ?? "unknown"}
+fixed_pr_confidence: ${fixedPullRequest?.confidence ?? "unknown"}
+fixed_pr_source: ${fixedPullRequest ? JSON.stringify(fixedPullRequest.source) : "unknown"}
 review_policy: ${options.reviewPolicy}
 review_model: ${options.runtime.model}
 review_reasoning_effort: ${options.runtime.reasoningEffort}
@@ -5509,6 +5633,7 @@ function reviewCommand(args: Args): void {
         "Per-item Codex failure; continuing with the rest of the shard.",
       );
     }
+    decision = attachFixedPullRequest(decision, item, context);
     const runtime = { model, reasoningEffort, sandboxMode, serviceTier };
     const action = reviewActionForDecision({ item, decision, git, runtime });
     writeFileSync(

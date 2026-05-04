@@ -14,6 +14,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Added deterministic merged closing-PR provenance to issue close reports and
+  public close comments when GitHub exposes a high-confidence closing PR.
 - Allowed repair cluster execute tokens to request workflow-file write
   permission, so adopted automerge repairs can rebase PR branches that already
   contain `.github/workflows/*` changes.

@@ -230,7 +230,8 @@ Review is proposal-only. It never closes items.
 - Each item becomes a flat report under
   `records/<repo-slug>/items/<number>.md` with the decision, evidence,
   Codex `/review`-style PR findings, suggested comment, runtime metadata, and
-  GitHub snapshot hash.
+  GitHub snapshot hash. When GitHub exposes a merged closing PR for an issue,
+  the report records that PR and the close comment links it as fix provenance.
 - High-confidence allowed close decisions become `proposed_close`.
 - After publish, the lane checks the selected items' single marker-backed Codex
   review comment. Missing comments and missing metadata are synced immediately;
