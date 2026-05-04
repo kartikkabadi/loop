@@ -20,6 +20,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Reduced default worker fan-out by about 20% across review shards, hot intake,
   commit review pages, repair live-worker caps, and automatic implementation
   dispatches.
+- Reduced automation capacity defaults and hard caps by another 20% to lower
+  GitHub and Codex rate-limit pressure.
 - Added deterministic merged closing-PR provenance to issue close reports and
   public close comments when GitHub exposes a high-confidence closing PR.
 - Allowed repair cluster execute tokens to request workflow-file write

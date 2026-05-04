@@ -395,7 +395,7 @@ source ~/.profile
 corepack enable
 pnpm install
 pnpm run build
-pnpm run plan -- --target-repo openclaw/openclaw --batch-size 5 --shard-count 64 --max-pages 250 --codex-model gpt-5.5 --codex-reasoning-effort high
+pnpm run plan -- --target-repo openclaw/openclaw --batch-size 5 --shard-count 51 --max-pages 250 --codex-model gpt-5.5 --codex-reasoning-effort high
 pnpm run review -- --target-repo openclaw/openclaw --target-dir ../openclaw --batch-size 5 --max-pages 250 --artifact-dir artifacts/reviews --codex-model gpt-5.5 --codex-reasoning-effort high --codex-timeout-ms 600000
 pnpm run apply-artifacts -- --target-repo openclaw/openclaw --artifact-dir artifacts/reviews --skip-dashboard
 pnpm run audit -- --target-repo openclaw/openclaw --max-pages 250 --sample-limit 25 --update-dashboard
@@ -452,12 +452,12 @@ default, subject to the selected repository profile; pass `target_repo`,
 `apply_kind=issue`, or `apply_kind=pull_request` to narrow a manual run.
 
 Scheduled runs cover the configured product profiles. `openclaw/openclaw` runs
-normal backfill every 5 minutes with up to 64 review shards when due backlog
+normal backfill every 5 minutes with up to 51 review shards when due backlog
 exists; `openclaw/clawhub` runs on offset review/apply/audit crons so its
 reports live under `records/openclaw-clawhub/` without colliding with default
 repo records. `openclaw/clawsweeper` has a scheduled read-only audit row and is
 available for manual and event self-review smoke tests. Broad hot-intake sweeps
-cap scheduled fan-out at 40 one-item shards per run; exact event reviews still
+cap scheduled fan-out at 32 one-item shards per run; exact event reviews still
 use one shard. Throughput defaults live in
 [docs/limits.md](docs/limits.md) and `config/automation-limits.json`.
 

@@ -18,8 +18,8 @@ import {
 } from "../../dist/repair/workflow-utils.js";
 
 test("workflow utilities expose automation limits", () => {
-  assert.equal(automationLimit("review_shards.normal_default"), 64);
-  assert.equal(automationLimit("repair_live_runs.default"), 40);
+  assert.equal(automationLimit("review_shards.normal_default"), 51);
+  assert.equal(automationLimit("repair_live_runs.default"), 32);
   assert.throws(() => automationLimit("missing.default"), /unknown automation limit/);
 });
 
@@ -29,7 +29,7 @@ test("workflow utilities accept positional automation limit CLI paths", () => {
     ["dist/repair/workflow-utils.js", "limit", "review_shards.normal_default"],
     { cwd: process.cwd(), encoding: "utf8" },
   );
-  assert.equal(output, "64");
+  assert.equal(output, "51");
 });
 
 test("workflow utilities derive artifact item numbers and action counts", () => {

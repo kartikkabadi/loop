@@ -2050,7 +2050,7 @@ test("explicit item numbers shard targeted review runs", () => {
 test("planned review shards stay within the Codex worker cap", () => {
   const itemNumbers = Array.from({ length: 300 }, (_, index) => index + 1);
   const shards = shardItemNumbers(itemNumbers, 400);
-  assert.equal(shards.length, 100);
+  assert.equal(shards.length, 80);
   assert.equal(
     shards.reduce((total, shard) => total + shard.itemNumbers.length, 0),
     itemNumbers.length,

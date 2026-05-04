@@ -1,22 +1,22 @@
 {
   "review_shards": {
-    "normal_default": 64,
-    "normal_active_floor": 32,
-    "hot_intake_default": 40,
+    "normal_default": 51,
+    "normal_active_floor": 26,
+    "hot_intake_default": 32,
     "exact_item_default": 1,
-    "hard_cap": 100
+    "hard_cap": 80
   },
   "commit_review": {
-    "page_size_default": 6,
-    "page_size_hard_cap": 256
+    "page_size_default": 5,
+    "page_size_hard_cap": 205
   },
   "repair_live_runs": {
-    "default": 40,
-    "hard_cap": 100,
-    "automerge_default": 40,
-    "issue_implementation_default": 40
+    "default": 32,
+    "hard_cap": 80,
+    "automerge_default": 32,
+    "issue_implementation_default": 32
   },
   "issue_implementation": {
-    "dispatches_per_sweep_default": 4
+    "dispatches_per_sweep_default": 3
   }
 }

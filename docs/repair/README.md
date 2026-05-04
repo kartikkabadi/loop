@@ -230,11 +230,11 @@ pnpm run repair:import-gitcrawl-low-signal -- --limit 20 --batch-size 5 --mode a
 pnpm run repair:import-gitcrawl -- --from-gitcrawl --limit 40 --mode autonomous --suffix autonomous-smoke --allow-instant-close --allow-merge --allow-fix-pr --allow-post-merge-close
 
 # Dispatch reviewed jobs. Dispatch, requeue, and self-heal refuse to exceed
-# 40 live cluster-worker runs by default. The checked-in default lives in
+# 32 live cluster-worker runs by default. The checked-in default lives in
 # config/automation-limits.json; tune live runs with CLAWSWEEPER_MAX_LIVE_WORKERS
 # or --max-live-workers. With --wait-for-capacity, dispatch can drain a larger
 # file list in capacity-sized waves instead of refusing the whole batch.
-CLAWSWEEPER_MAX_LIVE_WORKERS=40 pnpm run repair:dispatch -- jobs/openclaw/inbox/cluster-example.md \
+CLAWSWEEPER_MAX_LIVE_WORKERS=32 pnpm run repair:dispatch -- jobs/openclaw/inbox/cluster-example.md \
   --mode autonomous \
   --runner blacksmith-4vcpu-ubuntu-2404 \
   --execution-runner blacksmith-16vcpu-ubuntu-2404
@@ -295,7 +295,7 @@ CLAWSWEEPER_ALLOW_EXECUTE=1 pnpm run repair:tag-clawsweeper -- --live --apply
 # Retry failed jobs once. This briefly opens the execution gate, waits for the
 # dispatched workers to start, records the self-heal ledger, and closes the gate.
 pnpm run repair:self-heal -- --execute --open-execute-window --max-jobs 5 \
-  --max-live-workers 40 \
+  --max-live-workers 32 \
   --runner blacksmith-4vcpu-ubuntu-2404 \
   --execution-runner blacksmith-16vcpu-ubuntu-2404
 ```
@@ -324,7 +324,7 @@ The workflow needs:
   model is `gpt-5.5`; repair workers default to high reasoning on the fast
   service tier, and accidental `xhigh` reasoning overrides are normalized back
   to `high`
-- optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; default is `40`
+- optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; default is `32`
 - optional `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA` variable for replacement PR backpressure; default is `50` open ClawSweeper PRs per touched area, `0` disables the area cap, and common changelog/release-note files are ignored for this check
 - ClawSweeper commit-finding repair PRs are labeled `clawsweeper:commit-finding`
 - optional `CLAWSWEEPER_CODEX_TIMEOUT_MS`, `CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS`,
