@@ -108,6 +108,10 @@ gate before push. If `main` moves during that final validation, the worker does
 one final base sync by default and lets the immediate exact-head review plus
 GitHub checks validate the pushed head; `CLAWSWEEPER_FINAL_BASE_SYNC_ATTEMPTS`
 can raise that only when extra local passes are intentionally worth the delay.
+Likewise, the last internal Codex `/review` is not a dead end: if it still finds
+an actionable issue, the worker can run one final review-fix pass, require
+changed-surface validation to pass, push the repaired branch, and leave the
+immediate exact-head review plus GitHub checks as the merge authority.
 The default shepherd wait is ten minutes with 15-second polls, controlled by
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS` and
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_POLL_MS`. Terminal check failures stop the

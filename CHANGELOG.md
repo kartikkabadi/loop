@@ -50,6 +50,9 @@ checkpoint, and status-only commits are intentionally omitted.
   `workflow -- limit <path>` form.
 - Included the automation limits config in the repair comment-router sparse
   checkout so scheduled maintainer commands can load shared worker caps.
+- Let the final internal Codex `/review` in a repair loop feed one last
+  review-fix pass before blocking, pushing only after changed-surface validation
+  passes so exact-head review and GitHub checks can finish the merge decision.
 - Expanded validation-failure detail passed into Codex repair follow-up prompts
   so lint/typecheck failures keep the actionable diagnostic instead of only the
   package-manager epilogue.
