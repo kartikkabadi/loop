@@ -5,6 +5,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "./lib.js";
 import { isJsonObject } from "./json-types.js";
+import { AUTOMATION_LIMITS } from "./limits.js";
 
 type ApplyAction = {
   action: string;
@@ -49,6 +50,9 @@ function runCli(): void {
     case "count-requeue-required":
       console.log(countRequeueRequired(requiredString("dir")));
       break;
+    case "limit":
+      process.stdout.write(String(automationLimit(requiredString("path"))));
+      break;
     case "proposed-item-numbers":
       process.stdout.write(proposedItemNumbers(proposedItemOptions()).join(","));
       break;
@@ -60,10 +64,28 @@ function runCli(): void {
   }
 }
 
+export function automationLimit(limitPath: string): number {
+  let cursor: unknown = AUTOMATION_LIMITS;
+  for (const segment of limitPath.split(".")) {
+    if (!segment) throw new Error(`invalid automation limit path: ${limitPath}`);
+    if (!isJsonObject(cursor) || !(segment in cursor)) {
+      throw new Error(`unknown automation limit: ${limitPath}`);
+    }
+    cursor = cursor[segment];
+  }
+  if (typeof cursor !== "number" || !Number.isInteger(cursor) || cursor < 1) {
+    throw new Error(`automation limit ${limitPath} must resolve to a positive integer`);
+  }
+  return cursor;
+}
+
 function printPlanOutput(): void {
   const plan = readJsonObject(requiredString("plan"));
   const batchSize = positiveNumber(optionalString("batch-size"), 5);
-  const shardCount = positiveNumber(optionalString("shard-count"), 64);
+  const shardCount = positiveNumber(
+    optionalString("shard-count"),
+    AUTOMATION_LIMITS.review_shards.normal_default,
+  );
   printOutput(planOutputFields(plan, { batchSize, shardCount }));
 }
 

@@ -6,6 +6,7 @@ import test from "node:test";
 
 import {
   artifactItemNumbers,
+  automationLimit,
   countActions,
   countCommandActions,
   countRequeueRequired,
@@ -14,6 +15,12 @@ import {
   plannedItemNumberCsv,
   proposedItemNumbers,
 } from "../../dist/repair/workflow-utils.js";
+
+test("workflow utilities expose automation limits", () => {
+  assert.equal(automationLimit("review_shards.normal_default"), 64);
+  assert.equal(automationLimit("repair_live_runs.default"), 40);
+  assert.throws(() => automationLimit("missing.default"), /unknown automation limit/);
+});
 
 test("workflow utilities derive artifact item numbers and action counts", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));

@@ -1,0 +1,22 @@
+{
+  "review_shards": {
+    "normal_default": 64,
+    "normal_active_floor": 32,
+    "hot_intake_default": 40,
+    "exact_item_default": 1,
+    "hard_cap": 100
+  },
+  "commit_review": {
+    "page_size_default": 6,
+    "page_size_hard_cap": 256
+  },
+  "repair_live_runs": {
+    "default": 40,
+    "hard_cap": 100,
+    "automerge_default": 40,
+    "issue_implementation_default": 40
+  },
+  "issue_implementation": {
+    "dispatches_per_sweep_default": 4
+  }
+}

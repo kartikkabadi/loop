@@ -2,6 +2,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import { DEFAULT_ALLOWED_REPOSITORY_PERMISSIONS } from "./comment-router-core.js";
 import { currentProjectRepo, readMaxLiveWorkers } from "./lib.js";
 import { assertRepo, commaSet, positiveInteger } from "./comment-router-utils.js";
+import { AUTOMATION_LIMITS } from "./limits.js";
 import {
   DEFAULT_HEAD_PREFIX,
   DEFAULT_TARGET_REPO,
@@ -110,7 +111,7 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
       "max-live-workers":
         args["automerge-max-live-workers"] ??
         process.env.CLAWSWEEPER_AUTOMERGE_MAX_LIVE_WORKERS ??
-        40,
+        AUTOMATION_LIMITS.repair_live_runs.automerge_default,
     }),
     automergeRunNamePrefix: stringSetting(
       args["automerge-run-name-prefix"] ?? process.env.CLAWSWEEPER_AUTOMERGE_RUN_NAME_PREFIX,

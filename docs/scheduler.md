@@ -4,6 +4,9 @@ Read when changing `.github/workflows/sweep.yml`, `src/clawsweeper.ts` planner
 selection, review cadence, dashboard capacity fields, or GitHub Actions
 concurrency for issue/PR review and apply.
 
+Throughput defaults come from `config/automation-limits.json`; see
+[Automation Limits](limits.md) for the naming and GitHub variable overrides.
+
 ClawSweeper has three issue/PR scheduler paths:
 
 - exact event review for one target issue or pull request
@@ -128,7 +131,7 @@ Capacity is shard-level. A review shard processes its selected item numbers
 sequentially, so maximum concurrent Codex sessions equals the number of nonempty
 review shard jobs, not `batch_size * shard_count`.
 
-Defaults:
+Current defaults:
 
 - exact event review: 1 shard, 1 item
 - exact manual hot intake: 1 shard, 1 item

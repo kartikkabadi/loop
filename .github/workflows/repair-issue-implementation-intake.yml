@@ -143,12 +143,15 @@ jobs:
         if: ${{ steps.prepare.outputs.should_repair == 'true' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
-          MAX_LIVE_WORKERS: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_LIVE_WORKERS || '40' }}
+          MAX_LIVE_WORKERS: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_LIVE_WORKERS || '' }}
           RUNNER: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
           EXECUTION_RUNNER: ${{ github.event.inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
           MODEL: ${{ github.event.inputs.model || vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
         run: |
           set -euo pipefail
+          if [ -z "$MAX_LIVE_WORKERS" ]; then
+            MAX_LIVE_WORKERS="$(pnpm run --silent workflow -- limit repair_live_runs.issue_implementation_default)"
+          fi
           git pull --rebase
           pnpm run repair:dispatch -- "${{ steps.prepare.outputs.job_path }}" \
             --mode autonomous \

@@ -17,6 +17,7 @@ import {
 } from "./lib.js";
 import { sleepMs } from "./timing.js";
 import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
+import { AUTOMATION_LIMITS } from "./limits.js";
 
 const args = parseArgs(process.argv.slice(2));
 const defaultRunner = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
@@ -36,7 +37,7 @@ const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 
 if (files.length === 0) {
   console.error(
-    "usage: node scripts/dispatch-jobs.ts <job.md> [...] [--mode plan|execute|autonomous] [--runner label] [--execution-runner label] [--model model] [--max-live-workers 40] [--wait-for-capacity]",
+    `usage: node scripts/dispatch-jobs.ts <job.md> [...] [--mode plan|execute|autonomous] [--runner label] [--execution-runner label] [--model model] [--max-live-workers ${AUTOMATION_LIMITS.repair_live_runs.default}] [--wait-for-capacity]`,
   );
   process.exit(2);
 }

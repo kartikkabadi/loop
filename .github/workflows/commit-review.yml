@@ -159,9 +159,13 @@ jobs:
           ENABLED: ${{ steps.mode.outputs.enabled }}
           SOURCE_REF: ${{ github.event.client_payload.ref || 'refs/heads/main' }}
           SETTLE_SECONDS: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS || '60' }}
-          PAGE_SIZE: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE || '6' }}
+          PAGE_SIZE: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE || '' }}
         run: |
           set -euo pipefail
+          if [ -z "$PAGE_SIZE" ]; then
+            PAGE_SIZE="$(pnpm --dir clawsweeper run --silent workflow -- limit commit_review.page_size_default)"
+          fi
+          page_size_hard_cap="$(pnpm --dir clawsweeper run --silent workflow -- limit commit_review.page_size_hard_cap)"
           if [ "$ENABLED" = "false" ]; then
             {
               echo "matrix=[]"
@@ -203,8 +207,8 @@ jobs:
           if [ "$PAGE_SIZE" -lt 1 ]; then
             PAGE_SIZE=1
           fi
-          if [ "$PAGE_SIZE" -gt 256 ]; then
-            PAGE_SIZE=256
+          if [ "$PAGE_SIZE" -gt "$page_size_hard_cap" ]; then
+            PAGE_SIZE="$page_size_hard_cap"
           fi
           if [ "$SETTLE_SECONDS" -gt 0 ]; then
             echo "Waiting ${SETTLE_SECONDS}s for target main to settle before selecting commits."

@@ -5,6 +5,7 @@ import path from "node:path";
 const root = process.cwd();
 const activeRoots: string[] = [
   ".github/workflows",
+  "config",
   "src",
   "test",
   "docs",

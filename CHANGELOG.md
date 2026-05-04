@@ -9,6 +9,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Added
 
+- Added `config/automation-limits.json` plus docs and a drift check so review,
+  commit-review, repair, and issue-implementation capacity defaults have one
+  checked-in source of truth.
 - Added a generated 1200x630 social preview card plus large-image Open Graph and
   Twitter metadata for the docs site.
 
@@ -37,6 +40,9 @@ checkpoint, and status-only commits are intentionally omitted.
   and push timeouts as blocked repair outcomes.
 - Skipped self-heal repair redispatches when the same repair job is already
   queued or running, avoiding duplicate pending workers for active PR repairs.
+- Let self-heal rediscover recent failed repair workers from live GitHub run
+  metadata when a hard execute failure happens before durable run records are
+  published.
 - Expanded validation-failure detail passed into Codex repair follow-up prompts
   so lint/typecheck failures keep the actionable diagnostic instead of only the
   package-manager epilogue.

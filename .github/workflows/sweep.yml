@@ -596,16 +596,24 @@ jobs:
 
       - id: mode
         run: |
+          limit() {
+            pnpm --dir clawsweeper run --silent workflow -- limit "$1"
+          }
+          exact_item_shards="$(limit review_shards.exact_item_default)"
+          hot_intake_shards="$(limit review_shards.hot_intake_default)"
+          normal_shards="$(limit review_shards.normal_default)"
+          normal_active_floor="$(limit review_shards.normal_active_floor)"
+          hard_shard_cap="$(limit review_shards.hard_cap)"
           hot_intake="${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'true' || 'false' }}"
           exact_item="${{ github.event.client_payload.item_number || github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}"
           target_repo="${{ steps.target.outputs.target_repo }}"
           if [ "$hot_intake" = "true" ] && [ -n "$exact_item" ]; then
             batch_size="1"
-            shard_count="1"
+            shard_count="$exact_item_shards"
             max_pages="1"
           elif [ "$hot_intake" = "true" ]; then
             batch_size="1"
-            shard_count="40"
+            shard_count="$hot_intake_shards"
             max_pages="10"
             min_active_shards="0"
             min_backfill_review_age_minutes="30"
@@ -616,11 +624,14 @@ jobs:
               batch_size="${{ github.event.inputs.batch_size || '3' }}"
             fi
             if [ "$target_repo" = "openclaw/openclaw" ]; then
-              min_active_shards="32"
+              min_active_shards="$normal_active_floor"
             else
               min_active_shards="0"
             fi
-            shard_count="${{ github.event.inputs.shard_count || '64' }}"
+            shard_count="${{ github.event.inputs.shard_count || '' }}"
+            if [ -z "$shard_count" ]; then
+              shard_count="$normal_shards"
+            fi
             max_pages="250"
             min_backfill_review_age_minutes="30"
           fi
@@ -629,10 +640,10 @@ jobs:
             min_backfill_review_age_minutes="30"
           fi
           if ! [[ "$shard_count" =~ ^[0-9]+$ ]]; then
-            shard_count="64"
+            shard_count="$normal_shards"
           fi
-          if [ "$shard_count" -gt 100 ]; then
-            shard_count="100"
+          if [ "$shard_count" -gt "$hard_shard_cap" ]; then
+            shard_count="$hard_shard_cap"
           fi
           {
             echo "batch_size=$batch_size"
@@ -1001,9 +1012,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
           ENABLED: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS == '1' && 'true' || 'false' }}
-          MAX_DISPATCH: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_DISPATCH_PER_SWEEP || '4' }}
+          MAX_DISPATCH: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_DISPATCH_PER_SWEEP || '' }}
         run: |
           set -euo pipefail
+          if [ -z "$MAX_DISPATCH" ]; then
+            MAX_DISPATCH="$(pnpm run --silent workflow -- limit issue_implementation.dispatches_per_sweep_default)"
+          fi
           candidate_output="$(pnpm run --silent repair:issue-implementation-intake -- candidates \
             --enabled "$ENABLED" \
             --target-repo "$TARGET_REPO" \
@@ -1020,7 +1034,7 @@ jobs:
           fi
           CANDIDATES_JSON="$candidates_json" MAX_DISPATCH="$MAX_DISPATCH" node <<'NODE' > /tmp/issue-implementation-candidates.tsv
           const candidates = JSON.parse(process.env.CANDIDATES_JSON || "[]");
-          const limit = Math.max(0, Number(process.env.MAX_DISPATCH || "4"));
+          const limit = Math.max(0, Number(process.env.MAX_DISPATCH || "0"));
           for (const candidate of candidates.slice(0, limit)) {
             console.log([
               candidate.item_number,
@@ -1721,6 +1735,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          hot_intake_shards="$(pnpm run --silent workflow -- limit review_shards.hot_intake_default)"
+          normal_shards="$(pnpm run --silent workflow -- limit review_shards.normal_default)"
           runs_json="$(gh run list --repo "${{ github.repository }}" --workflow sweep.yml --limit 80 --json displayTitle,status,createdAt)"
           eval "$(
             RUNS_JSON="$runs_json" node <<'NODE'
@@ -1762,7 +1778,7 @@ jobs:
               -f hot_intake=true \
               -f target_repo=openclaw/openclaw \
               -f batch_size=1 \
-              -f shard_count=40 \
+              -f shard_count="$hot_intake_shards" \
               -f codex_timeout_ms=600000
           fi
 
@@ -1774,6 +1790,6 @@ jobs:
               -f hot_intake=false \
               -f target_repo=openclaw/openclaw \
               -f batch_size=3 \
-              -f shard_count=64 \
+              -f shard_count="$normal_shards" \
               -f codex_timeout_ms=600000
           fi

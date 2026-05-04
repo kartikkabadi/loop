@@ -230,7 +230,8 @@ pnpm run repair:import-gitcrawl-low-signal -- --limit 20 --batch-size 5 --mode a
 pnpm run repair:import-gitcrawl -- --from-gitcrawl --limit 40 --mode autonomous --suffix autonomous-smoke --allow-instant-close --allow-merge --allow-fix-pr --allow-post-merge-close
 
 # Dispatch reviewed jobs. Dispatch, requeue, and self-heal refuse to exceed
-# 40 live cluster-worker runs by default; tune with CLAWSWEEPER_MAX_LIVE_WORKERS
+# 40 live cluster-worker runs by default. The checked-in default lives in
+# config/automation-limits.json; tune live runs with CLAWSWEEPER_MAX_LIVE_WORKERS
 # or --max-live-workers. With --wait-for-capacity, dispatch can drain a larger
 # file list in capacity-sized waves instead of refusing the whole batch.
 CLAWSWEEPER_MAX_LIVE_WORKERS=40 pnpm run repair:dispatch -- jobs/openclaw/inbox/cluster-example.md \

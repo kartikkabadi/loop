@@ -36,6 +36,7 @@ import {
 import { parseGhJson, parseGhJsonLines } from "./github-json.js";
 import { stableJson } from "./stable-json.js";
 import { runText } from "./command.js";
+import { AUTOMATION_LIMITS } from "./limits.js";
 import {
   boolArg,
   itemNumbersArg,
@@ -463,8 +464,8 @@ interface PlanCandidateResult {
 }
 
 const DEFAULT_PLAN_BATCH_SIZE = 3;
-const DEFAULT_PLAN_SHARD_COUNT = 64;
-const MAX_PLAN_SHARD_COUNT = 100;
+const DEFAULT_PLAN_SHARD_COUNT = AUTOMATION_LIMITS.review_shards.normal_default;
+const MAX_PLAN_SHARD_COUNT = AUTOMATION_LIMITS.review_shards.hard_cap;
 
 type SchedulerBucket =
   | "hot_issue"

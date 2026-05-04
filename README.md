@@ -458,7 +458,8 @@ reports live under `records/openclaw-clawhub/` without colliding with default
 repo records. `openclaw/clawsweeper` has a scheduled read-only audit row and is
 available for manual and event self-review smoke tests. Broad hot-intake sweeps
 cap scheduled fan-out at 40 one-item shards per run; exact event reviews still
-use one shard.
+use one shard. Throughput defaults live in
+[docs/limits.md](docs/limits.md) and `config/automation-limits.json`.
 
 Target repositories can opt into event-level latency by installing the
 dispatcher workflow in [docs/target-dispatcher.md](docs/target-dispatcher.md).
