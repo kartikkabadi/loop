@@ -14,6 +14,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Marked automerge repair loops as failed or blocked when fix execution ends on
+  an unrecovered Codex transport error, instead of leaving the PR timeline at a
+  running step.
 - Limited commit-review fan-out to 10 commits per workflow page by default, with
   a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the

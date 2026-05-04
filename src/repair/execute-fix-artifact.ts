@@ -573,7 +573,15 @@ try {
         "Codex produced no target repo changes; treating this allow_no_pr artifact as an audited no-PR outcome",
     };
   } else {
-    if (!isBlockedFixError(error)) throw error;
+    if (!isBlockedFixError(error)) {
+      updateAutomergeProgressStatus({
+        id: "repair-failed",
+        label: "repair failed",
+        status: "failed",
+        details: compactText(String(error?.message ?? error), 240),
+      });
+      throw error;
+    }
     outcome = {
       action: "execute_fix",
       status: "blocked",
@@ -587,9 +595,17 @@ report.status = outcome.status;
 if (outcome.reason && !report.reason) report.reason = outcome.reason;
 report.actions.push(outcome);
 writeReport(report, resultPath);
+updateAutomergeProgressStatus({
+  id: "repair-finished",
+  label: "repair finished",
+  status: outcome.status,
+  details: compactText(String(outcome.reason ?? outcome.action ?? "done"), 240),
+  headSha: outcome.commit ?? null,
+});
 
 function isBlockedFixError(error: JsonValue) {
   if (isRepairBranchPushRace(error)) return true;
+  if (isRetryableCodexTransportError(String(error?.message ?? error))) return true;
   return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
     String(error?.message ?? error),
   );
