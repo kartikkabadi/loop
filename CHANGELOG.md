@@ -33,6 +33,9 @@ checkpoint, and status-only commits are intentionally omitted.
   and push timeouts as blocked repair outcomes.
 - Skipped self-heal repair redispatches when the same repair job is already
   queued or running, avoiding duplicate pending workers for active PR repairs.
+- Expanded validation-failure detail passed into Codex repair follow-up prompts
+  so lint/typecheck failures keep the actionable diagnostic instead of only the
+  package-manager epilogue.
 - Limited commit-review fan-out to 8 commits per workflow page by default, with
   a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the

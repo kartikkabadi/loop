@@ -159,7 +159,7 @@ export function runAllowedValidationCommands(
           }
           if (shouldRetryValidationCommand({ parts, error, attempts, options })) continue;
           throw new Error(
-            `validation command failed (${parts.join(" ")}): ${compactText(error.message, 1200)}`,
+            `validation command failed (${parts.join(" ")}): ${compactText(error.message, 12000)}`,
           );
         }
       }

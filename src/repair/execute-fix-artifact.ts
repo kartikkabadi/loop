@@ -2400,7 +2400,7 @@ function runCodexValidationFix({
   validationPlan,
   validationCommands = [],
 }: LooseRecord) {
-  const validationError = compactText(String(error?.message ?? error), 4000);
+  const validationError = compactText(String(error?.message ?? error), 8000);
   const changedFiles = run("git", ["diff", "--name-only"], { cwd: targetDir })
     .split("\n")
     .map((line) => line.trim())
