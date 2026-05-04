@@ -51,7 +51,7 @@ function runCli(): void {
       console.log(countRequeueRequired(requiredString("dir")));
       break;
     case "limit":
-      process.stdout.write(String(automationLimit(requiredString("path"))));
+      process.stdout.write(String(automationLimit(optionalString("path") || positionalString(1))));
       break;
     case "proposed-item-numbers":
       process.stdout.write(proposedItemNumbers(proposedItemOptions()).join(","));
@@ -329,6 +329,11 @@ function requiredString(name: string): string {
 
 function optionalString(name: string): string {
   const value = args[name];
+  return typeof value === "string" ? value : "";
+}
+
+function positionalString(index: number): string {
+  const value = args._[index];
   return typeof value === "string" ? value : "";
 }
 

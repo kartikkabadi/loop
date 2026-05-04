@@ -45,6 +45,9 @@ checkpoint, and status-only commits are intentionally omitted.
   published.
 - Included the automation limits config in the CI sparse checkout so the new
   limits drift check can run on GitHub as well as locally.
+- Accepted positional automation-limit paths in workflow utilities again so
+  high-volume commit-review and scheduler workflows keep using the compact
+  `workflow -- limit <path>` form.
 - Expanded validation-failure detail passed into Codex repair follow-up prompts
   so lint/typecheck failures keep the actionable diagnostic instead of only the
   package-manager epilogue.
