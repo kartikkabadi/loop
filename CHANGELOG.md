@@ -43,6 +43,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Let self-heal rediscover recent failed repair workers from live GitHub run
   metadata when a hard execute failure happens before durable run records are
   published.
+- Included the automation limits config in the CI sparse checkout so the new
+  limits drift check can run on GitHub as well as locally.
 - Expanded validation-failure detail passed into Codex repair follow-up prompts
   so lint/typecheck failures keep the actionable diagnostic instead of only the
   package-manager epilogue.
