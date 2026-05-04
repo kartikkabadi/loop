@@ -146,7 +146,8 @@ The cluster worker has two jobs:
 
 2. `execute`
    - runs only for `execute` or `autonomous`
-   - mints a write GitHub App token when configured
+   - mints a write GitHub App token, including workflow-file write permission,
+     when configured
    - downloads worker artifacts
    - runs `execute-fix-artifact`
    - runs `apply-result`

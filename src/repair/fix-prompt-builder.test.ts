@@ -5,7 +5,11 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
+import {
+  buildFixPrompt,
+  buildRepositoryContext,
+  renderFixArtifactForPrompt,
+} from "./fix-prompt-builder.js";
 import type { LooseRecord } from "./json-types.js";
 
 function promptFor(fixArtifact: LooseRecord): string {
@@ -135,6 +139,83 @@ test("fix prompt includes rebase and previous no-diff recovery details", () => {
   assert.match(prompt, /Previous attempt produced no target repo diff/);
   assert.match(prompt, /Previous no-diff summary: Analyzed without editing files/);
   assert.match(prompt, /Fallback reason: source branch is stale/);
+});
+
+test("fix prompt compacts oversized artifacts before sending them to Codex", () => {
+  const hugeBody = "Codex review evidence with repeated context.\n".repeat(4000);
+  const prompt = buildFixPrompt({
+    fixArtifact: {
+      repo: "openclaw/openclaw",
+      repair_strategy: "repair_contributor_branch",
+      summary: "Fix a durable status comment lifecycle regression.",
+      source_prs: ["https://github.com/openclaw/openclaw/pull/77205"],
+      likely_files: ["src/clawsweeper.ts"],
+      validation_commands: ["pnpm check:changed"],
+      pr_body: hugeBody,
+      comments: Array.from({ length: 50 }, (_, index) => ({
+        author: `reviewer-${index}`,
+        body: hugeBody,
+      })),
+    },
+    branch: "clawsweeper/automerge-openclaw-openclaw-77205",
+    mode: "repair",
+    attempt: 1,
+    maxEditAttempts: 3,
+    repositoryContext: "candidate_files (1):\nsrc/clawsweeper.ts (100)",
+    isAutomergeRepair: true,
+  });
+  const artifactJson = renderFixArtifactForPrompt({
+    summary: "Fix a durable status comment lifecycle regression.",
+    pr_body: hugeBody,
+  });
+
+  assert.ok(prompt.length < 80_000, `prompt was ${prompt.length} chars`);
+  assert.ok(artifactJson.length <= 36_000, `artifact was ${artifactJson.length} chars`);
+  assert.match(prompt, /Original fix artifact was \d+ characters/);
+  assert.match(prompt, /source_prs/);
+  assert.match(prompt, /https:\/\/github\.com\/openclaw\/openclaw\/pull\/77205/);
+  assert.match(prompt, /pnpm check:changed/);
+  assert.match(prompt, /entries omitted/);
+  assert.match(prompt, /truncated \d+ chars/);
+});
+
+test("artifact compaction falls back to critical fields for pathological payloads", () => {
+  const tooManyKeys: LooseRecord = {
+    repo: "openclaw/openclaw",
+    source_prs: ["https://github.com/openclaw/openclaw/pull/77205"],
+    summary: "Keep the critical summary.",
+    validation_commands: ["pnpm check:changed"],
+    comments: Array.from({ length: 17 }, (_, index) => `comment ${index}`),
+    nested: { a: { b: { c: { d: { e: { f: "too deep" } } } } } },
+  };
+  for (let index = 0; index < 70; index += 1) {
+    tooManyKeys[`html_url_${index}`] =
+      `https://github.com/openclaw/openclaw/pull/77205#${"x".repeat(6000)}`;
+  }
+
+  const rendered = renderFixArtifactForPrompt(tooManyKeys);
+  const scalar = renderFixArtifactForPrompt("scalar context ".repeat(4000));
+
+  assert.ok(rendered.length < 8000, `artifact was ${rendered.length} chars`);
+  assert.match(rendered, /critical fields only/);
+  assert.match(rendered, /Keep the critical summary/);
+  assert.match(rendered, /pnpm check:changed/);
+  assert.match(scalar, /value was truncated/);
+  assert.match(scalar, /scalar context/);
+
+  const array = renderFixArtifactForPrompt(
+    Array.from({ length: 1000 }, (_, index) => ({
+      body: `array entry ${index} ${"x".repeat(200)}`,
+    })),
+  );
+  assert.match(array, /value was truncated/);
+  assert.match(array, /entries omitted/);
+
+  const hugeArray = renderFixArtifactForPrompt(
+    Array.from({ length: 1000 }, () => "x".repeat(10_000)),
+  );
+  assert.match(hugeArray, /critical fields only/);
+  assert.match(hugeArray, /prompt artifact hit/);
 });
 
 test("repository context ranks likely files and renders focused excerpts", () => {

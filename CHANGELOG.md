@@ -14,6 +14,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Allowed repair cluster execute tokens to request workflow-file write
+  permission, so adopted automerge repairs can rebase PR branches that already
+  contain `.github/workflows/*` changes.
 - Reduced default fan-out by 20% for normal review shards and commit-review
   pages, and stopped forcing Codex fast mode in review and commit-review runs.
 - Marked automerge repair loops as failed or blocked when fix execution ends on
@@ -22,6 +25,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Marked GitHub App workflow-file push denials as blocked repair outcomes
   instead of failing the repair worker after Codex prepares an otherwise useful
   fix.
+- Capped repair Codex prompt payloads by compacting oversized fix artifacts and
+  repository snippets, and classified Codex context-limit responses as blocked
+  repair outcomes instead of red workflow failures.
 - Limited commit-review fan-out to 8 commits per workflow page by default, with
   a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the

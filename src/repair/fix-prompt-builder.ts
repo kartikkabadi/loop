@@ -5,6 +5,12 @@ import { runCommand as run } from "./command-runner.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import { compactText } from "./text-utils.js";
 
+const FIX_ARTIFACT_PROMPT_LIMIT = 36_000;
+const FIX_ARTIFACT_ARRAY_LIMIT = 16;
+const FIX_ARTIFACT_OBJECT_KEY_LIMIT = 60;
+const REPOSITORY_CANDIDATE_LIMIT = 40;
+const REPOSITORY_SNIPPET_LIMIT = 12_000;
+
 export function buildFixPrompt({
   fixArtifact,
   branch,
@@ -70,11 +76,125 @@ export function buildFixPrompt({
     "",
     "Fix artifact:",
     "```json",
-    JSON.stringify(fixArtifact, null, 2),
+    renderFixArtifactForPrompt(fixArtifact),
     "```",
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+export function renderFixArtifactForPrompt(fixArtifact: JsonValue) {
+  const raw = JSON.stringify(fixArtifact, null, 2);
+  if (raw.length <= FIX_ARTIFACT_PROMPT_LIMIT) return raw;
+
+  const compacted = compactPromptValue(fixArtifact);
+  const annotated =
+    compacted && typeof compacted === "object" && !Array.isArray(compacted)
+      ? {
+          _prompt_compaction: `Original fix artifact was ${raw.length} characters; long strings, arrays, and nested objects were truncated for Codex context. Use local repository discovery and read-only GitHub inspection if more detail is needed.`,
+          ...compacted,
+        }
+      : {
+          _prompt_compaction: `Original fix artifact was ${raw.length} characters; value was truncated for Codex context.`,
+          value: compacted,
+        };
+  const rendered = JSON.stringify(annotated, null, 2);
+  if (rendered.length <= FIX_ARTIFACT_PROMPT_LIMIT) return rendered;
+  return JSON.stringify(
+    finalPromptArtifactFallback(fixArtifact, raw.length, rendered.length),
+    null,
+    2,
+  );
+}
+
+function finalPromptArtifactFallback(
+  fixArtifact: JsonValue,
+  rawLength: number,
+  compactedLength: number,
+) {
+  const record =
+    fixArtifact && typeof fixArtifact === "object" && !Array.isArray(fixArtifact)
+      ? (fixArtifact as LooseRecord)
+      : {};
+  return {
+    _prompt_compaction: `Original fix artifact was ${rawLength} characters and compacted artifact was ${compactedLength} characters; using critical fields only for Codex context.`,
+    _truncated: `prompt artifact hit ${FIX_ARTIFACT_PROMPT_LIMIT} character cap`,
+    repo: record.repo ?? null,
+    cluster_id: record.cluster_id ?? null,
+    source_prs: compactPromptValue(record.source_prs ?? []),
+    source_issues: compactPromptValue(record.source_issues ?? []),
+    repair_strategy: record.repair_strategy ?? null,
+    summary: compactPromptValue(record.summary ?? ""),
+    pr_title: compactPromptValue(record.pr_title ?? ""),
+    affected_surfaces: compactPromptValue(record.affected_surfaces ?? []),
+    likely_files: compactPromptValue(record.likely_files ?? []),
+    validation_commands: compactPromptValue(record.validation_commands ?? []),
+    changelog_required: record.changelog_required ?? null,
+  };
+}
+
+function compactPromptValue(value: JsonValue, key = "", depth = 0): JsonValue {
+  if (value === null || typeof value === "number" || typeof value === "boolean") return value;
+  if (typeof value === "string") return compactPromptString(value, key, depth);
+  if (Array.isArray(value)) {
+    const limit = depth <= 1 ? FIX_ARTIFACT_ARRAY_LIMIT : Math.min(8, FIX_ARTIFACT_ARRAY_LIMIT);
+    const kept = value.slice(0, limit).map((entry) => compactPromptValue(entry, key, depth + 1));
+    if (value.length > limit) {
+      kept.push(
+        `[... ${value.length - limit} artifact entr${value.length - limit === 1 ? "y" : "ies"} omitted ...]`,
+      );
+    }
+    return kept;
+  }
+  if (typeof value !== "object") return String(value);
+  if (depth >= 5) return "[... nested artifact object omitted ...]";
+
+  const entries = Object.entries(value as LooseRecord);
+  const priority = new Set([
+    "repo",
+    "cluster_id",
+    "source_prs",
+    "source_issues",
+    "repair_strategy",
+    "summary",
+    "pr_title",
+    "affected_surfaces",
+    "likely_files",
+    "validation_commands",
+    "changelog_required",
+    "review_findings",
+    "fix_plan",
+    "actions",
+  ]);
+  const sorted = entries.sort(([left], [right]) => {
+    const leftPriority = priority.has(left) ? 0 : 1;
+    const rightPriority = priority.has(right) ? 0 : 1;
+    return leftPriority - rightPriority;
+  });
+  const out: LooseRecord = {};
+  for (const [entryKey, entryValue] of sorted.slice(0, FIX_ARTIFACT_OBJECT_KEY_LIMIT)) {
+    out[entryKey] = compactPromptValue(entryValue, entryKey, depth + 1);
+  }
+  if (entries.length > FIX_ARTIFACT_OBJECT_KEY_LIMIT) {
+    out._omitted_keys = `${entries.length - FIX_ARTIFACT_OBJECT_KEY_LIMIT} low-priority artifact keys omitted`;
+  }
+  return out;
+}
+
+function compactPromptString(value: string, key: string, depth: number) {
+  const lowerKey = key.toLowerCase();
+  const limit = /url|html_url|sha|oid|idempotency/.test(lowerKey)
+    ? 4096
+    : /body|comment|review|evidence|log|stdout|stderr|diff|patch|transcript|message/.test(lowerKey)
+      ? 1200
+      : depth <= 1
+        ? 2400
+        : 1600;
+  if (value.length <= limit) return value;
+  const marker = `\n...[truncated ${value.length - limit} chars]...\n`;
+  const available = Math.max(0, limit - marker.length);
+  const head = Math.ceil(available * 0.65);
+  return `${value.slice(0, head)}${marker}${value.slice(value.length - (available - head))}`;
 }
 
 function renderGitHubToolRule(isAutomergeRepair: boolean) {
@@ -170,7 +290,10 @@ export function buildRepositoryContext({ fixArtifact, targetDir }: LooseRecord) 
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
-  const scoredCandidates = scoreRepositoryFiles({ files, fixArtifact }).slice(0, 80);
+  const scoredCandidates = scoreRepositoryFiles({ files, fixArtifact }).slice(
+    0,
+    REPOSITORY_CANDIDATE_LIMIT,
+  );
   const candidates = scoredCandidates.map((entry: JsonValue) => `${entry.file} (${entry.score})`);
   const snippets = buildRepositorySnippets({
     targetDir,
@@ -204,9 +327,9 @@ function buildRepositorySnippets({ targetDir, candidates, fixArtifact }: LooseRe
     const excerpt = focusedFileExcerpt(content, tokens);
     if (!excerpt) continue;
     out.push(`--- ${candidate.file} ---\n${excerpt}`);
-    if (out.join("\n\n").length > 18_000) break;
+    if (out.join("\n\n").length > REPOSITORY_SNIPPET_LIMIT) break;
   }
-  return out.join("\n\n").slice(0, 18_000);
+  return out.join("\n\n").slice(0, REPOSITORY_SNIPPET_LIMIT);
 }
 
 function focusedFileExcerpt(content: string, tokens: string[]) {

@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isRetryableCodexTransportError } from "../../dist/repair/codex-transient.js";
+import {
+  isCodexContextLimitError,
+  isRetryableCodexTransportError,
+} from "../../dist/repair/codex-transient.js";
 
 test("Codex closed-stdin tool transport errors are retryable", () => {
   assert.equal(
@@ -17,4 +20,13 @@ test("ordinary Codex failures are not classified as transient transport", () => 
     isRetryableCodexTransportError("validation command failed: pnpm check:changed"),
     false,
   );
+});
+
+test("Codex context-limit errors are blocked automation outcomes", () => {
+  assert.equal(
+    isCodexContextLimitError("Error: Requested 142470. Please try again with a smaller input."),
+    true,
+  );
+  assert.equal(isCodexContextLimitError("maximum context length exceeded"), true);
+  assert.equal(isCodexContextLimitError("validation command failed: pnpm check:changed"), false);
 });

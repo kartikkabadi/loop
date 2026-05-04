@@ -20,7 +20,7 @@ import {
   replacementSourceLinkComment,
 } from "./external-messages.js";
 import { runCommand as run } from "./command-runner.js";
-import { isRetryableCodexTransportError } from "./codex-transient.js";
+import { isCodexContextLimitError, isRetryableCodexTransportError } from "./codex-transient.js";
 import {
   branchHasBaseDiff,
   completeRebaseIfResolved,
@@ -57,7 +57,11 @@ import {
   COMMIT_FINDING_LABEL_COLOR,
   COMMIT_FINDING_LABEL_DESCRIPTION,
 } from "./constants.js";
-import { buildFixPrompt, buildRepositoryContext } from "./fix-prompt-builder.js";
+import {
+  buildFixPrompt,
+  buildRepositoryContext,
+  renderFixArtifactForPrompt,
+} from "./fix-prompt-builder.js";
 import { canTreatRebaseAsCompleteRepair } from "./fix-edit-policy.js";
 import { applyMechanicalChangelogFix } from "./mechanical-changelog.js";
 import { tryResolveMechanicalRebaseConflicts } from "./mechanical-rebase-conflicts.js";
@@ -614,6 +618,7 @@ function isBlockedFixError(error: JsonValue) {
   if (isRepairBranchPushRace(error)) return true;
   if (isRepairBranchPushBlocked(error)) return true;
   if (isRetryableCodexTransportError(String(error?.message ?? error))) return true;
+  if (isCodexContextLimitError(String(error?.message ?? error))) return true;
   return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
     String(error?.message ?? error),
   );
@@ -2213,7 +2218,7 @@ function runCodexReview({
     "",
     "Fix artifact:",
     "```json",
-    JSON.stringify(fixArtifact, null, 2),
+    renderFixArtifactForPrompt(fixArtifact),
     "```",
   ].join("\n");
   const reviewTimeoutMs = currentCodexTimeoutMs();
@@ -2336,7 +2341,7 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
     "",
     "Fix artifact:",
     "```json",
-    JSON.stringify(fixArtifact, null, 2),
+    renderFixArtifactForPrompt(fixArtifact),
     "```",
   ].join("\n");
   const reviewFixTimeoutMs = currentCodexTimeoutMs();
@@ -2423,7 +2428,7 @@ function runCodexValidationFix({
     "",
     "Fix artifact:",
     "```json",
-    JSON.stringify(fixArtifact, null, 2),
+    renderFixArtifactForPrompt(fixArtifact),
     "```",
   ].join("\n");
   const validationFixTimeoutMs = currentCodexTimeoutMs();
