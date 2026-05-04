@@ -101,8 +101,11 @@ config checksum three-way conflicts, push the repaired branch, then wait for
 exact-head review and GitHub checks. For substantive automerge repairs, Codex
 owns the initial rebase plus PR-comment, CI, and local-test repair loop; the
 executor still owns every GitHub mutation and reruns the normalized validation
-gate before push. The default shepherd wait is ten minutes with 15-second polls,
-controlled by
+gate before push. If `main` moves during that final validation, the worker does
+one final base sync by default and lets the immediate exact-head review plus
+GitHub checks validate the pushed head; `CLAWSWEEPER_FINAL_BASE_SYNC_ATTEMPTS`
+can raise that only when extra local passes are intentionally worth the delay.
+The default shepherd wait is ten minutes with 15-second polls, controlled by
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS` and
 `CLAWSWEEPER_AUTOMERGE_SHEPHERD_POLL_MS`. Terminal check failures stop the
 shepherd wait immediately and dispatch the router so the failed-check repair

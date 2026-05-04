@@ -1678,7 +1678,7 @@ function editValidatePrepareMerge({
   let codexReview = null;
   const maxFinalBaseSyncAttempts = Math.max(
     1,
-    Number(process.env.CLAWSWEEPER_FINAL_BASE_SYNC_ATTEMPTS ?? 4),
+    Number(process.env.CLAWSWEEPER_FINAL_BASE_SYNC_ATTEMPTS ?? 1),
   );
   for (let attempt = 1; attempt <= maxFinalBaseSyncAttempts; attempt += 1) {
     logProgress("starting validation/review loop", { mode, attempt });
