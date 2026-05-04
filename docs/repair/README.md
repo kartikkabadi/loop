@@ -334,6 +334,8 @@ The workflow needs:
   timeout and a 40 minute execute-step cap so long edit/test passes still leave
   room for internal `/review`, post-flight, and timeout artifact upload instead
   of falling into a 30-second review floor near the end of the run.
+- optional `CLAWSWEEPER_CODEX_RETRY_DELAY_MS` variable for edit-worker backoff
+  after retryable Codex transport or TPM rate-limit exits; default is `15000`.
 - If a contributor branch changes while a repair is preparing its push, the
   executor records `requeue_required: true` and the same workflow dispatches a
   fresh repair run for the latest head after publishing the result. This keeps

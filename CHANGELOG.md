@@ -22,6 +22,7 @@ checkpoint, and status-only commits are intentionally omitted.
   dispatches.
 - Reduced automation capacity defaults and hard caps by another 20% to lower
   GitHub and Codex rate-limit pressure.
+- Retried Codex edit workers after TPM/rate-limit exits and collapsed JSONL failure transcripts into concise repair status reasons.
 - Added deterministic merged closing-PR provenance to issue close reports and
   public close comments when GitHub exposes a high-confidence closing PR.
 - Allowed repair cluster execute tokens to request workflow-file write

@@ -1590,13 +1590,18 @@ function editValidatePrepareMerge({
         throw new Error(`Codex fix worker timed out after ${workerTimeoutMs}ms`);
       }
       if (codexResult.error) {
-        const errorMessage = codexResult.error.message || String(codexResult.error);
-        if (attempt < maxEditAttempts && isRetryableCodexTransportError(errorMessage)) {
-          previousSummary = compactText(errorMessage, 360);
+        const errorDetail = codexFailureDetail(
+          codexResult,
+          codexResult.error.message || String(codexResult.error),
+        );
+        if (attempt < maxEditAttempts && isRetryableCodexTransportError(errorDetail)) {
+          previousSummary = compactText(errorDetail, 360);
+          const retryDelayMs = codexRetryDelayMs(errorDetail, attempt);
           logProgress("retrying Codex edit pass after transient transport error", {
             mode,
             attempt,
             max_attempts: maxEditAttempts,
+            retry_delay_ms: retryDelayMs,
           });
           updateAutomergeProgressStatus({
             id: `codex-edit-${mode}-${attempt}`,
@@ -1605,18 +1610,21 @@ function editValidatePrepareMerge({
             details: "transient Codex transport error",
             headSha: currentHead(targetDir),
           });
+          sleepMs(retryDelayMs);
           continue;
         }
-        throw new Error(errorMessage);
+        throw new Error(codexFailureMessage("Codex fix worker failed", errorDetail));
       }
       if (codexResult.status !== 0) {
-        const errorMessage = codexResult.stderr || codexResult.stdout || "Codex fix worker failed";
-        if (attempt < maxEditAttempts && isRetryableCodexTransportError(errorMessage)) {
-          previousSummary = compactText(errorMessage, 360);
+        const errorDetail = codexFailureDetail(codexResult, "Codex fix worker failed");
+        if (attempt < maxEditAttempts && isRetryableCodexTransportError(errorDetail)) {
+          previousSummary = compactText(errorDetail, 360);
+          const retryDelayMs = codexRetryDelayMs(errorDetail, attempt);
           logProgress("retrying Codex edit pass after transient transport error", {
             mode,
             attempt,
             max_attempts: maxEditAttempts,
+            retry_delay_ms: retryDelayMs,
           });
           updateAutomergeProgressStatus({
             id: `codex-edit-${mode}-${attempt}`,
@@ -1625,9 +1633,10 @@ function editValidatePrepareMerge({
             details: "transient Codex transport error",
             headSha: currentHead(targetDir),
           });
+          sleepMs(retryDelayMs);
           continue;
         }
-        throw new Error(errorMessage);
+        throw new Error(codexFailureMessage("Codex fix worker failed", errorDetail));
       }
       logProgress("Codex edit pass finished", { mode, attempt, status: codexResult.status });
       updateAutomergeProgressStatus({
@@ -2037,6 +2046,72 @@ function blockedCodexWritePreflight(reason: string, detail: string) {
   };
 }
 
+function codexFailureDetail(child: LooseRecord, fallback: string) {
+  const detail =
+    extractCodexJsonlFailure(child.stdout) ??
+    extractCodexJsonlFailure(child.stderr) ??
+    stripAnsi(String(child.stderr ?? child.stdout ?? "")).trim();
+  return detail || fallback;
+}
+
+function codexFailureMessage(label: string, detail: string) {
+  return `${label}: ${compactText(stripAnsi(detail || "no Codex output"), 900)}`;
+}
+
+function extractCodexJsonlFailure(value: JsonValue) {
+  const messages: string[] = [];
+  for (const line of String(value ?? "").split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    let event;
+    try {
+      event = JSON.parse(line);
+    } catch {
+      continue;
+    }
+    if (event?.type === "error" && typeof event.message === "string") {
+      messages.push(event.message);
+    }
+    if (event?.type === "turn.failed" && typeof event.error?.message === "string") {
+      messages.push(event.error.message);
+    }
+  }
+  return messages.length > 0 ? messages[messages.length - 1] : null;
+}
+
+function stripAnsi(value: string) {
+  const text = String(value ?? "");
+  let out = "";
+  for (let index = 0; index < text.length; index += 1) {
+    if (text.charCodeAt(index) !== 27) {
+      out += text[index];
+      continue;
+    }
+    if (text[index + 1] !== "[") continue;
+    index += 2;
+    while (index < text.length) {
+      const code = text.charCodeAt(index);
+      if (code >= 0x40 && code <= 0x7e) break;
+      index += 1;
+    }
+  }
+  return out;
+}
+
+function codexRetryDelayMs(message: string, attempt: number) {
+  const parsed = parseCodexRetryAfterMs(message);
+  const fallback = Number(process.env.CLAWSWEEPER_CODEX_RETRY_DELAY_MS ?? 15_000);
+  const base = Number.isFinite(fallback) && fallback > 0 ? fallback : 15_000;
+  return Math.min(120_000, Math.max(parsed ?? 0, base * attempt));
+}
+
+function parseCodexRetryAfterMs(message: string) {
+  const match = String(message ?? "").match(/try again in\s+(\d+(?:\.\d+)?)(ms|s)\b/i);
+  if (!match) return null;
+  const value = Number(match[1]);
+  if (!Number.isFinite(value) || value < 0) return null;
+  return match[2]?.toLowerCase() === "s" ? Math.ceil(value * 1000) : Math.ceil(value);
+}
+
 function classifyCodexFailure(detail: string) {
   const text = String(detail ?? "");
   if (
@@ -2373,6 +2448,7 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
     "",
     "Rules:",
     "- keep the patch narrow;",
+    "- keep shell output bounded; inspect targeted files and avoid broad repo-wide dumps;",
     "- do not commit, push, open PRs, close PRs, or call gh;",
     "- after edits, run the changed-surface validation command yourself before returning;",
     "- if `pnpm check:changed` is available, run it before returning;",
@@ -2454,6 +2530,7 @@ function runCodexValidationFix({
     "Rules:",
     "- keep the patch narrow;",
     "- fix only issues introduced by the current repair branch or required to make its changed gate pass;",
+    "- keep shell output bounded; inspect targeted files and avoid broad repo-wide dumps;",
     "- do not commit, push, open PRs, close PRs, or call gh;",
     "- after edits, rerun the failed validation command yourself before returning;",
     "- if `pnpm check:changed` is available, run it before returning;",

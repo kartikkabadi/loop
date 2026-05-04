@@ -34,6 +34,7 @@ export function buildFixPrompt({
     "- this is a writable checkout; make concrete file edits before returning;",
     "- make the narrowest code change that satisfies the fix artifact;",
     "- start by inspecting the repository paths below with rg/git ls-files/sed;",
+    "- keep shell output bounded: prefer targeted rg/sed/git commands, add --max-count/head/tail where useful, and do not dump broad repo-wide matches or huge files into the transcript;",
     "- if likely_files are stale, missing, or glob-like, discover the real nearby files and edit those;",
     "- always fetch latest origin/main and rebase or otherwise sync this branch onto that latest main before returning;",
     "- run local git status/diff/log/rebase/merge commands needed to reconcile this branch with current origin/main;",
