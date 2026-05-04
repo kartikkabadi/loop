@@ -28,6 +28,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Capped repair Codex prompt payloads by compacting oversized fix artifacts and
   repository snippets, and classified Codex context-limit responses as blocked
   repair outcomes instead of red workflow failures.
+- Fetched contributor PR repair heads through the target repository pull-request
+  ref instead of directly from contributor forks, and treated git fetch timeouts
+  and push timeouts as blocked repair outcomes.
 - Limited commit-review fan-out to 8 commits per workflow page by default, with
   a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the

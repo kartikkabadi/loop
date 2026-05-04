@@ -619,7 +619,7 @@ function isBlockedFixError(error: JsonValue) {
   if (isRepairBranchPushBlocked(error)) return true;
   if (isRetryableCodexTransportError(String(error?.message ?? error))) return true;
   if (isCodexContextLimitError(String(error?.message ?? error))) return true;
-  return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
+  return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed|command timed out after \d+ms: git (?:fetch|push)|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
     String(error?.message ?? error),
   );
 }
@@ -718,15 +718,18 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   );
   logProgress("fetching latest base for contributor repair", { base_branch: baseBranch });
   runGitNetwork(["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], targetDir);
-  logProgress("fetching contributor branch", {
+  logProgress("fetching contributor PR head", {
+    source_pr: sourcePr.url,
     head_repo: pull.head.repo.full_name,
     head_ref: pull.head.ref,
   });
-  runGitNetwork(
-    ["fetch", `https://github.com/${pull.head.repo.full_name}.git`, `${pull.head.ref}:${branch}`],
+  checkoutSourcePullRequestHead({
     targetDir,
-  );
-  run("git", ["checkout", branch], { cwd: targetDir });
+    repo: result.repo,
+    branch,
+    sourcePr,
+    pull,
+  });
   ensureMergeBaseAvailable({ targetDir, baseBranch });
   const sourceHead = currentHead(targetDir);
   logProgress("preparing target toolchain", { source_head: sourceHead });
