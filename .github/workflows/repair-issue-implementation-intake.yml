@@ -150,7 +150,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "$MAX_LIVE_WORKERS" ]; then
-            MAX_LIVE_WORKERS="$(pnpm run --silent workflow -- limit repair_live_runs.issue_implementation_default)"
+            MAX_LIVE_WORKERS="$(pnpm run --silent workflow -- worker-limit issue_implementation)"
           fi
           git pull --rebase
           pnpm run repair:dispatch -- "${{ steps.prepare.outputs.job_path }}" \

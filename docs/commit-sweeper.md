@@ -92,7 +92,7 @@ by SHA/range rather than detaching the whole target repository at the commit.
 
 Commit Sweeper defaults to 5 commits per workflow page. The checked-in default
 lives in `config/automation-limits.json`. The receiver clamps
-`CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` between 1 and 205, then pages large ranges:
+`CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` between 1 and 100, then pages large ranges:
 
 - select up to the configured page size
 - classify them cheaply

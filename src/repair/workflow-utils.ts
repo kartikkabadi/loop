@@ -5,7 +5,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "./lib.js";
 import { isJsonObject } from "./json-types.js";
-import { AUTOMATION_LIMITS } from "./limits.js";
+import { AUTOMATION_LIMITS, WORKER_CONFIG, workerLimit, type WorkerLane } from "./limits.js";
 
 type ApplyAction = {
   action: string;
@@ -53,6 +53,19 @@ function runCli(): void {
     case "limit":
       process.stdout.write(String(automationLimit(optionalString("path") || positionalString(1))));
       break;
+    case "worker-limit":
+      process.stdout.write(
+        String(
+          workerLimit(requiredWorkerLane(optionalString("lane") || positionalString(1)), {
+            activeCritical: numberArg("active-critical", 0),
+            activeBackground: numberArg("active-background", 0),
+          }),
+        ),
+      );
+      break;
+    case "worker-config":
+      process.stdout.write(JSON.stringify(WORKER_CONFIG, null, 2));
+      break;
     case "proposed-item-numbers":
       process.stdout.write(proposedItemNumbers(proposedItemOptions()).join(","));
       break;
@@ -62,6 +75,20 @@ function runCli(): void {
     default:
       throw new Error(`unknown workflow utility command: ${command}`);
   }
+}
+
+function requiredWorkerLane(value: string): WorkerLane {
+  const allowed = new Set<WorkerLane>([
+    "normal_review",
+    "hot_intake",
+    "commit_review",
+    "repair",
+    "automerge_repair",
+    "issue_implementation",
+    "exact_item",
+  ]);
+  if (allowed.has(value as WorkerLane)) return value as WorkerLane;
+  throw new Error(`unknown worker lane: ${value}`);
 }
 
 export function automationLimit(limitPath: string): number {

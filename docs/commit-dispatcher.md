@@ -112,7 +112,7 @@ headroom:
 CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE=5
 ```
 
-The receiver clamps this between 1 and 205. Large push ranges continue in later
+The receiver clamps this between 1 and 100. Large push ranges continue in later
 workflow pages.
 
 `openclaw/clawhub` commit dispatches are skipped while

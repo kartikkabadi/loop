@@ -2,6 +2,14 @@
 import fs from "node:fs";
 import path from "node:path";
 
+type WorkerConfig = {
+  workers: {
+    max: number;
+    reserve_for_interactive: number;
+    minimum_background: number;
+  };
+};
+
 type AutomationLimits = {
   review_shards: {
     normal_default: number;
@@ -26,9 +34,10 @@ type AutomationLimits = {
 };
 
 const root = process.cwd();
-const limits = JSON.parse(
+const config = JSON.parse(
   fs.readFileSync(path.join(root, "config", "automation-limits.json"), "utf8"),
-) as AutomationLimits;
+) as WorkerConfig;
+const limits = deriveAutomationLimits(config);
 
 const expectations: { file: string; label: string; pattern: RegExp }[] = [
   {
@@ -73,7 +82,9 @@ const expectations: { file: string; label: string; pattern: RegExp }[] = [
   {
     file: "docs/scheduler.md",
     label: "hot intake shard default",
-    pattern: new RegExp(`broad hot intake: ${limits.review_shards.hot_intake_default} shards`),
+    pattern: new RegExp(
+      `broad hot intake: up to ${limits.review_shards.hot_intake_default} shards`,
+    ),
   },
   {
     file: "docs/limits.md",
@@ -86,6 +97,13 @@ for (const [limitPath, value] of Object.entries(flattenLimits(limits))) {
   expectations.push({
     file: "docs/limits.md",
     label: `${limitPath} documented current value`,
+    pattern: new RegExp(`\\| \`${escapeRegExp(limitPath)}\` \\| ${value} \\|`),
+  });
+}
+for (const [limitPath, value] of Object.entries(flattenLimits(config))) {
+  expectations.push({
+    file: "docs/limits.md",
+    label: `${limitPath} documented worker config value`,
     pattern: new RegExp(`\\| \`${escapeRegExp(limitPath)}\` \\| ${value} \\|`),
   });
 }
@@ -116,6 +134,36 @@ function flattenLimits(value: unknown, prefix = ""): Record<string, number> {
     }
   }
   return out;
+}
+
+function deriveAutomationLimits(workerConfig: WorkerConfig): AutomationLimits {
+  const max = workerConfig.workers.max;
+  return {
+    review_shards: {
+      normal_default: percent(max, 70),
+      normal_active_floor: percent(max, 30),
+      hot_intake_default: percent(max, 35),
+      exact_item_default: 1,
+      hard_cap: max,
+    },
+    commit_review: {
+      page_size_default: percent(max, 5),
+      page_size_hard_cap: max,
+    },
+    repair_live_runs: {
+      default: percent(max, 40),
+      hard_cap: max,
+      automerge_default: percent(max, 40),
+      issue_implementation_default: percent(max, 40),
+    },
+    issue_implementation: {
+      dispatches_per_sweep_default: percent(max, 4),
+    },
+  };
+}
+
+function percent(max: number, value: number): number {
+  return Math.max(1, Math.floor((max * value) / 100));
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

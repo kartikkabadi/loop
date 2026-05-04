@@ -12,6 +12,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added `config/automation-limits.json` plus docs and a drift check so review,
   commit-review, repair, and issue-implementation capacity defaults have one
   checked-in source of truth.
+- Replaced per-lane capacity config with a single `workers.max` budget and
+  dynamic background lane scheduling.
 - Added a generated 1200x630 social preview card plus large-image Open Graph and
   Twitter metadata for the docs site.
 
@@ -20,8 +22,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Reduced default worker fan-out by about 20% across review shards, hot intake,
   commit review pages, repair live-worker caps, and automatic implementation
   dispatches.
-- Reduced automation capacity defaults and hard caps by another 20% to lower
-  GitHub and Codex rate-limit pressure.
+- Made background review lanes yield to active repair and exact-item work to
+  lower GitHub and Codex rate-limit pressure during busy periods.
 - Retried Codex edit workers after TPM/rate-limit exits and collapsed JSONL failure transcripts into concise repair status reasons.
 - Added deterministic merged closing-PR provenance to issue close reports and
   public close comments when GitHub exposes a high-confidence closing PR.

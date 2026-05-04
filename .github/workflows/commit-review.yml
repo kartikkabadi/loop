@@ -150,6 +150,7 @@ jobs:
       - name: Select commits
         id: select
         env:
+          GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
           TARGET_NAME: ${{ steps.target.outputs.target_checkout_dir }}
           TARGET_TOKEN: ${{ steps.target-read-token.outputs.token }}
@@ -162,8 +163,28 @@ jobs:
           PAGE_SIZE: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE || '' }}
         run: |
           set -euo pipefail
+          active_run_count() {
+            gh run list --repo "${{ github.repository }}" --workflow "$1" --limit 100 --json status 2>/dev/null \
+              | jq '[.[] | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested")] | length' 2>/dev/null \
+              || printf '0'
+          }
+          active_sweep_background_workers() {
+            local normal_limit hot_limit
+            normal_limit="$(pnpm --dir clawsweeper run --silent workflow -- limit review_shards.normal_default)"
+            hot_limit="$(pnpm --dir clawsweeper run --silent workflow -- limit review_shards.hot_intake_default)"
+            gh run list --repo "${{ github.repository }}" --workflow sweep.yml --limit 100 --json displayTitle,status 2>/dev/null \
+              | NORMAL_LIMIT="$normal_limit" HOT_LIMIT="$hot_limit" jq '[.[] | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | if .displayTitle == "Review ClawSweeper items" then (env.NORMAL_LIMIT | tonumber) elif .displayTitle == "Review hot ClawSweeper items" then (env.HOT_LIMIT | tonumber) else 0 end] | add // 0' 2>/dev/null \
+              || printf '0'
+          }
+          active_sweep_exact_count() {
+            gh run list --repo "${{ github.repository }}" --workflow sweep.yml --limit 100 --json displayTitle,status 2>/dev/null \
+              | jq '[.[] | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | select(.displayTitle | startswith("Review event item "))] | length' 2>/dev/null \
+              || printf '0'
+          }
           if [ -z "$PAGE_SIZE" ]; then
-            PAGE_SIZE="$(pnpm --dir clawsweeper run --silent workflow -- limit commit_review.page_size_default)"
+            active_critical_workers="$(( $(active_run_count repair-cluster-worker.yml) + $(active_sweep_exact_count) ))"
+            active_background_workers="$(active_sweep_background_workers)"
+            PAGE_SIZE="$(pnpm --dir clawsweeper run --silent workflow -- worker-limit commit_review --active-critical "$active_critical_workers" --active-background "$active_background_workers")"
           fi
           page_size_hard_cap="$(pnpm --dir clawsweeper run --silent workflow -- limit commit_review.page_size_hard_cap)"
           if [ "$ENABLED" = "false" ]; then

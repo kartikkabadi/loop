@@ -4,8 +4,9 @@ Read when changing `.github/workflows/sweep.yml`, `src/clawsweeper.ts` planner
 selection, review cadence, dashboard capacity fields, or GitHub Actions
 concurrency for issue/PR review and apply.
 
-Throughput defaults come from `config/automation-limits.json`; see
-[Automation Limits](limits.md) for the naming and GitHub variable overrides.
+The global worker budget comes from `config/automation-limits.json`; see
+[Automation Limits](limits.md) for the derived lane limits and GitHub variable
+overrides.
 
 ClawSweeper has three issue/PR scheduler paths:
 
@@ -15,12 +16,12 @@ ClawSweeper has three issue/PR scheduler paths:
 
 The lanes share report storage and apply rules, but they intentionally do not
 share throughput. Event review and hot intake keep new maintainer-visible work
-fast. Normal backfill keeps older records moving with up to 51 concurrent Codex
-review shards. Normal `openclaw/openclaw` review has an active floor of 26
-shards for scheduled runs and workflow-dispatch continuations: due items win
-first, and if fewer than 26 items are due, the planner fills the floor with the
-stalest currently-reviewed eligible items so review capacity stays warm around
-the clock.
+fast. Normal backfill keeps older records moving with up to 70 concurrent Codex
+review shards when the system is quiet. Normal `openclaw/openclaw` review has an
+active floor of 30 shards for scheduled runs and workflow-dispatch
+continuations: due items win first, and if fewer than 30 items are due, the
+planner fills the floor with the stalest currently-reviewed eligible items so
+review capacity stays warm around the clock.
 
 ## Workflow
 
@@ -139,24 +140,24 @@ Current defaults:
 
 - exact event review: 1 shard, 1 item
 - exact manual hot intake: 1 shard, 1 item
-- broad hot intake: 32 shards, batch size 1, scans up to 10 GitHub pages
-- scheduled normal backfill: 51 shards, batch size 1, scans up to 250 GitHub
-  pages
-- normal active floor: 26 shards for `openclaw/openclaw` scheduled runs and
+- broad hot intake: up to 35 shards, batch size 1, scans up to 10 GitHub pages
+- scheduled normal backfill: up to 70 shards, batch size 1, scans up to 250
+  GitHub pages
+- normal active floor: 30 shards for `openclaw/openclaw` scheduled runs and
   workflow-dispatch continuations; stale current-review backfill is eligible
   after 30 minutes
-- manual normal backfill: defaults to 51 shards, batch size 3, scans up to 250
+- manual normal backfill: defaults to 70 shards, batch size 3, scans up to 250
   GitHub pages unless overridden, and stops early once scanned due candidates
   fill planned capacity
 
-The hard planner cap is 80 shards. The workflow clamps invalid or larger
-`shard_count` inputs to 80.
+The hard planner cap is 100 shards. The workflow clamps invalid or larger
+`shard_count` inputs to 100.
 
 Planning is also the runtime build point for matrix review. The plan job installs
 with pinned Node 24 and `pnpm@10.33.2`, builds `dist/` once, and uploads that
 runtime artifact. Review shards download the built `dist/` and run
 `node dist/clawsweeper.js review` directly instead of running a per-shard pnpm
-install and build. This keeps 32-51 shard waves from stampeding the npm
+install and build. This keeps 35-70 shard waves from stampeding the npm
 registry or Corepack metadata endpoints.
 
 Each review shard also wraps the review command in a shell timeout derived from
@@ -174,13 +175,13 @@ because they may rebase and push generated records.
 Normal backfill now runs every 5 minutes for `openclaw/openclaw`. Because its
 concurrency group allows only one running normal backfill per target repo, the
 effect is a continuous drain loop: when due backlog exists, the active run can
-hold about 51 Codex review shards with one item per shard, and the next
+hold about 70 Codex review shards with one item per shard, and the next
 scheduled tick is available as the backstop or pending continuation. Manual
 normal reviews keep the larger default batch size for targeted catch-up runs.
 
 The active floor is not a separate lane and does not change close/apply safety.
 It only changes normal planning when due backlog is below the desired floor:
-after selecting all due candidates, the planner fills up to 26 nonempty shards
+after selecting all due candidates, the planner fills up to 30 nonempty shards
 with eligible items whose latest complete review is at least 30 minutes old.
 Capacity status reports this as `floor: due backlog below active floor`.
 
@@ -315,7 +316,7 @@ or syncs the durable ClawSweeper review comment.
 Broad normal review publishes records first, then dispatches durable review
 comment sync into the separate apply/comment-sync lane. This includes scheduled
 runs and workflow-dispatch continuations, so slow GitHub comment writes do not
-hold the normal review concurrency group or delay the next 51-shard backfill
+hold the normal review concurrency group or delay the next 70-shard backfill
 wave. Exact issue/PR reviews and repository-dispatch item runs still sync their
 selected comments inline before finishing.
 
