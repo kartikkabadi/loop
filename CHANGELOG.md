@@ -48,6 +48,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Accepted positional automation-limit paths in workflow utilities again so
   high-volume commit-review and scheduler workflows keep using the compact
   `workflow -- limit <path>` form.
+- Included the automation limits config in the repair comment-router sparse
+  checkout so scheduled maintainer commands can load shared worker caps.
 - Expanded validation-failure detail passed into Codex repair follow-up prompts
   so lint/typecheck failures keep the actionable diagnostic instead of only the
   package-manager epilogue.
