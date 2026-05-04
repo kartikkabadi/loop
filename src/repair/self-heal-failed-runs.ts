@@ -23,6 +23,7 @@ const DEFAULT_RUNNER = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcp
 const DEFAULT_EXECUTION_RUNNER =
   process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
 const QUEUED_STATUSES = new Set(["queued", "requested", "waiting", "pending"]);
+const ACTIVE_STATUSES = new Set([...QUEUED_STATUSES, "in_progress"]);
 
 const args = parseArgs(process.argv.slice(2));
 const repo = String(args.repo ?? DEFAULT_REPO);
@@ -153,6 +154,7 @@ try {
 function selectCandidates() {
   const records = readRunRecords();
   const attempts = readSelfHealLedger().attempts ?? [];
+  const activeSourceJobs = execute ? activeRepairSourceJobs() : new Map<string, string[]>();
   const cutoffMs = Date.now() - maxAgeHours * 60 * 60 * 1000;
   const attemptedJobs = new Set(
     attempts.map((attempt: JsonValue) => attempt.source_job).filter(Boolean),
@@ -186,6 +188,18 @@ function selectCandidates() {
       });
       return false;
     })
+    .filter((record: JsonValue) => {
+      const sourceJob = String(record.source_job ?? "");
+      const activeRunIds = activeSourceJobs.get(sourceJob) ?? [];
+      if (activeRunIds.length === 0) return true;
+      skippedCandidates.push({
+        reason: "active_repair_run",
+        run_id: record.run_id ?? null,
+        source_job: sourceJob,
+        active_run_ids: activeRunIds,
+      });
+      return false;
+    })
     .filter((record: JsonValue) => allowRepeat || !attemptedJobs.has(record.source_job))
     .map((record: JsonValue) => {
       const sourceJob = String(record.source_job ?? "");
@@ -214,6 +228,32 @@ function selectCandidates() {
 
 function sourceJobPath(sourceJob: string) {
   return path.isAbsolute(sourceJob) ? sourceJob : path.join(repoRoot(), sourceJob);
+}
+
+function activeRepairSourceJobs() {
+  const jobs = new Map<string, string[]>();
+  let runs: LooseRecord[] = [];
+  try {
+    runs = listClusterRuns();
+  } catch (error) {
+    console.warn(`self-heal: cannot list active repair runs: ${ghErrorText(error)}`);
+    return jobs;
+  }
+
+  for (const run of runs) {
+    if (!ACTIVE_STATUSES.has(String(run.status ?? ""))) continue;
+    const sourceJob = sourceJobFromRunTitle(String(run.displayTitle ?? ""));
+    if (!sourceJob) continue;
+    const runId = String(run.databaseId ?? "");
+    jobs.set(sourceJob, [...(jobs.get(sourceJob) ?? []), runId].filter(Boolean));
+  }
+  return jobs;
+}
+
+function sourceJobFromRunTitle(title: string) {
+  const index = title.indexOf("jobs/");
+  if (index < 0) return null;
+  return title.slice(index).trim();
 }
 
 function dispatchCandidate(candidate: LooseRecord) {
@@ -330,7 +370,7 @@ function listClusterRuns() {
     "--limit",
     "50",
     "--json",
-    "databaseId,headSha,status,conclusion,createdAt,url",
+    "databaseId,displayTitle,headSha,status,conclusion,createdAt,url",
   ]);
 }
 

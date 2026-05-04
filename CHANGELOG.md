@@ -31,6 +31,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Fetched contributor PR repair heads through the target repository pull-request
   ref instead of directly from contributor forks, and treated git fetch timeouts
   and push timeouts as blocked repair outcomes.
+- Skipped self-heal repair redispatches when the same repair job is already
+  queued or running, avoiding duplicate pending workers for active PR repairs.
 - Limited commit-review fan-out to 8 commits per workflow page by default, with
   a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the
