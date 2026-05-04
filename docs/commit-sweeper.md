@@ -90,7 +90,7 @@ by SHA/range rather than detaching the whole target repository at the commit.
 
 ## Scaling
 
-Commit Sweeper defaults to 10 commits per workflow page. The receiver clamps
+Commit Sweeper defaults to 8 commits per workflow page. The receiver clamps
 `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` between 1 and 256, then pages large
 ranges:
 

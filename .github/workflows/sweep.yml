@@ -74,7 +74,7 @@ on:
       shard_count:
         description: "Parallel shards (capped at 100)"
         required: false
-        default: "100"
+        default: "80"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -332,7 +332,6 @@ jobs:
             --codex-model gpt-5.5 \
             --codex-reasoning-effort high \
             --codex-sandbox danger-full-access \
-            --codex-service-tier fast \
             --codex-timeout-ms 600000 \
             --item-numbers "${{ steps.target.outputs.item_number }}" \
             --readonly-openclaw \
@@ -617,11 +616,11 @@ jobs:
               batch_size="${{ github.event.inputs.batch_size || '3' }}"
             fi
             if [ "$target_repo" = "openclaw/openclaw" ]; then
-              min_active_shards="50"
+              min_active_shards="40"
             else
               min_active_shards="0"
             fi
-            shard_count="${{ github.event.inputs.shard_count || '100' }}"
+            shard_count="${{ github.event.inputs.shard_count || '80' }}"
             max_pages="250"
             min_backfill_review_age_minutes="30"
           fi
@@ -630,7 +629,7 @@ jobs:
             min_backfill_review_age_minutes="30"
           fi
           if ! [[ "$shard_count" =~ ^[0-9]+$ ]]; then
-            shard_count="100"
+            shard_count="80"
           fi
           if [ "$shard_count" -gt 100 ]; then
             shard_count="100"
@@ -679,7 +678,6 @@ jobs:
             --codex-model gpt-5.5 \
             --codex-reasoning-effort high \
             --codex-sandbox danger-full-access \
-            --codex-service-tier fast \
             --min-active-shards "$MIN_ACTIVE_SHARDS" \
             --min-backfill-review-age-minutes "$MIN_BACKFILL_REVIEW_AGE_MINUTES" \
             "${hot_intake_arg[@]}" \
@@ -828,7 +826,6 @@ jobs:
             --codex-model gpt-5.5 \
             --codex-reasoning-effort high \
             --codex-sandbox danger-full-access \
-            --codex-service-tier fast \
             --codex-timeout-ms ${{ needs.plan.outputs.codex_timeout_ms }} \
             --item-numbers "${{ matrix.item_numbers }}" \
             "${hot_intake_arg[@]}" \
@@ -1777,6 +1774,6 @@ jobs:
               -f hot_intake=false \
               -f target_repo=openclaw/openclaw \
               -f batch_size=3 \
-              -f shard_count=100 \
+              -f shard_count=80 \
               -f codex_timeout_ms=600000
           fi

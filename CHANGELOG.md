@@ -14,10 +14,12 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Reduced default fan-out by 20% for normal review shards and commit-review
+  pages, and stopped forcing Codex fast mode in review and commit-review runs.
 - Marked automerge repair loops as failed or blocked when fix execution ends on
   an unrecovered Codex transport error, instead of leaving the PR timeline at a
   running step.
-- Limited commit-review fan-out to 10 commits per workflow page by default, with
+- Limited commit-review fan-out to 8 commits per workflow page by default, with
   a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the
   actionable review sections instead of only the structured marker.

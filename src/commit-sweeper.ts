@@ -36,7 +36,7 @@ interface CommitMetadata {
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
-const DEFAULT_SERVICE_TIER = "fast";
+const DEFAULT_SERVICE_TIER = "";
 const COMMIT_REVIEW_CHECK_NAME = "ClawSweeper Commit Review";
 
 function run(command: string, commandArgs: string[], options: { cwd?: string } = {}): string {
@@ -294,20 +294,19 @@ function runCodex(options: {
     }),
     "utf8",
   );
+  const codexConfig = [
+    `model_reasoning_effort="${options.reasoningEffort}"`,
+    'forced_login_method="api"',
+    'approval_policy="never"',
+  ];
+  if (options.serviceTier) codexConfig.splice(1, 0, `service_tier="${options.serviceTier}"`);
   const result = spawnSync(
     "codex",
     [
       "exec",
       "-m",
       options.model,
-      "-c",
-      `model_reasoning_effort="${options.reasoningEffort}"`,
-      "-c",
-      `service_tier="${options.serviceTier}"`,
-      "-c",
-      'forced_login_method="api"',
-      "-c",
-      'approval_policy="never"',
+      ...codexConfig.flatMap((config) => ["-c", config]),
       "-C",
       options.targetDir,
       "--output-last-message",

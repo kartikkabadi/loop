@@ -12,10 +12,10 @@ ClawSweeper has three issue/PR scheduler paths:
 
 The lanes share report storage and apply rules, but they intentionally do not
 share throughput. Event review and hot intake keep new maintainer-visible work
-fast. Normal backfill keeps older records moving with up to 100 concurrent Codex
-review shards. Normal `openclaw/openclaw` review has an active floor of 50
+fast. Normal backfill keeps older records moving with up to 80 concurrent Codex
+review shards. Normal `openclaw/openclaw` review has an active floor of 40
 shards for scheduled runs and workflow-dispatch continuations: due items win
-first, and if fewer than 50 items are due, the planner fills the floor with the
+first, and if fewer than 40 items are due, the planner fills the floor with the
 stalest currently-reviewed eligible items so review capacity stays warm around
 the clock.
 
@@ -130,12 +130,12 @@ Defaults:
 - exact event review: 1 shard, 1 item
 - exact manual hot intake: 1 shard, 1 item
 - broad hot intake: 50 shards, batch size 1, scans up to 10 GitHub pages
-- scheduled normal backfill: 100 shards, batch size 1, scans up to 250 GitHub
+- scheduled normal backfill: 80 shards, batch size 1, scans up to 250 GitHub
   pages
-- normal active floor: 50 shards for `openclaw/openclaw` scheduled runs and
+- normal active floor: 40 shards for `openclaw/openclaw` scheduled runs and
   workflow-dispatch continuations; stale current-review backfill is eligible
   after 30 minutes
-- manual normal backfill: defaults to 100 shards, batch size 3, scans up to 250
+- manual normal backfill: defaults to 80 shards, batch size 3, scans up to 250
   GitHub pages unless overridden, and stops early once scanned due candidates
   fill planned capacity
 
@@ -146,7 +146,7 @@ Planning is also the runtime build point for matrix review. The plan job install
 with pinned Node 24 and `pnpm@10.33.2`, builds `dist/` once, and uploads that
 runtime artifact. Review shards download the built `dist/` and run
 `node dist/clawsweeper.js review` directly instead of running a per-shard pnpm
-install and build. This keeps 50-100 shard waves from stampeding the npm
+install and build. This keeps 50-80 shard waves from stampeding the npm
 registry or Corepack metadata endpoints.
 
 Each review shard also wraps the review command in a shell timeout derived from
@@ -164,13 +164,13 @@ because they may rebase and push generated records.
 Normal backfill now runs every 5 minutes for `openclaw/openclaw`. Because its
 concurrency group allows only one running normal backfill per target repo, the
 effect is a continuous drain loop: when due backlog exists, the active run can
-hold about 100 Codex review shards with one item per shard, and the next
+hold about 80 Codex review shards with one item per shard, and the next
 scheduled tick is available as the backstop or pending continuation. Manual
 normal reviews keep the larger default batch size for targeted catch-up runs.
 
 The active floor is not a separate lane and does not change close/apply safety.
 It only changes normal planning when due backlog is below the desired floor:
-after selecting all due candidates, the planner fills up to 50 nonempty shards
+after selecting all due candidates, the planner fills up to 40 nonempty shards
 with eligible items whose latest complete review is at least 30 minutes old.
 Capacity status reports this as `floor: due backlog below active floor`.
 
@@ -224,7 +224,6 @@ pnpm run --silent plan -- \
   --codex-model gpt-5.5 \
   --codex-reasoning-effort high \
   --codex-sandbox danger-full-access \
-  --codex-service-tier fast \
   --min-active-shards "$MIN_ACTIVE_SHARDS" \
   --min-backfill-review-age-minutes "$MIN_BACKFILL_REVIEW_AGE_MINUTES"
 ```
@@ -306,7 +305,7 @@ or syncs the durable ClawSweeper review comment.
 Broad normal review publishes records first, then dispatches durable review
 comment sync into the separate apply/comment-sync lane. This includes scheduled
 runs and workflow-dispatch continuations, so slow GitHub comment writes do not
-hold the normal review concurrency group or delay the next 100-shard backfill
+hold the normal review concurrency group or delay the next 80-shard backfill
 wave. Exact issue/PR reviews and repository-dispatch item runs still sync their
 selected comments inline before finishing.
 

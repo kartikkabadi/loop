@@ -159,7 +159,7 @@ jobs:
           ENABLED: ${{ steps.mode.outputs.enabled }}
           SOURCE_REF: ${{ github.event.client_payload.ref || 'refs/heads/main' }}
           SETTLE_SECONDS: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_SETTLE_SECONDS || '60' }}
-          PAGE_SIZE: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE || '10' }}
+          PAGE_SIZE: ${{ vars.CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE || '8' }}
         run: |
           set -euo pipefail
           if [ "$ENABLED" = "false" ]; then
@@ -352,7 +352,6 @@ jobs:
             --codex-model gpt-5.5 \
             --codex-reasoning-effort high \
             --codex-sandbox danger-full-access \
-            --codex-service-tier fast \
             --codex-timeout-ms 1800000
 
       - name: Create target checks token

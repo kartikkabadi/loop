@@ -580,7 +580,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const RECENT_MISSING_OPEN_MS = DAY_MS;
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
-const DEFAULT_SERVICE_TIER = "fast";
+const DEFAULT_SERVICE_TIER = "";
 const REVIEW_POLICY_VERSION = "2026-04-29-policy-v12";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const REVIEW_START_STATUS_MARKER_PREFIX = "<!-- clawsweeper-review-status";
@@ -3269,20 +3269,19 @@ function runCodex(options: {
       `OpenClaw checkout is dirty before reviewing #${options.item.number}:\n${dirtyBefore}`,
     );
   }
+  const codexConfig = [
+    `model_reasoning_effort="${options.reasoningEffort}"`,
+    'forced_login_method="api"',
+    'approval_policy="never"',
+  ];
+  if (options.serviceTier) codexConfig.splice(1, 0, `service_tier="${options.serviceTier}"`);
   const result = spawnSync(
     "codex",
     [
       "exec",
       "-m",
       options.model,
-      "-c",
-      `model_reasoning_effort="${options.reasoningEffort}"`,
-      "-c",
-      `service_tier="${options.serviceTier}"`,
-      "-c",
-      'forced_login_method="api"',
-      "-c",
-      'approval_policy="never"',
+      ...codexConfig.flatMap((config) => ["-c", config]),
       "-C",
       options.openclawDir,
       "--output-schema",
@@ -5242,7 +5241,7 @@ review_policy: ${options.reviewPolicy}
 review_model: ${options.runtime.model}
 review_reasoning_effort: ${options.runtime.reasoningEffort}
 review_sandbox: ${options.runtime.sandboxMode ?? "unknown"}
-review_service_tier: ${options.runtime.serviceTier ?? "unknown"}
+review_service_tier: ${options.runtime.serviceTier || "default"}
 review_mode: ${options.reviewMode}
 review_status: ${options.decision.summary.startsWith("Codex review failed") ? "failed" : "complete"}
 local_checkout_access: verified
