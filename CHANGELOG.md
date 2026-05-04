@@ -19,6 +19,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Marked automerge repair loops as failed or blocked when fix execution ends on
   an unrecovered Codex transport error, instead of leaving the PR timeline at a
   running step.
+- Marked GitHub App workflow-file push denials as blocked repair outcomes
+  instead of failing the repair worker after Codex prepares an otherwise useful
+  fix.
 - Limited commit-review fan-out to 8 commits per workflow page by default, with
   a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the
