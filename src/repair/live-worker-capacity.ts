@@ -4,7 +4,7 @@ import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 import { currentProjectRepo } from "./project-repo.js";
 import { sleepMs } from "./timing.js";
 
-const DEFAULT_MAX_LIVE_WORKERS = 50;
+const DEFAULT_MAX_LIVE_WORKERS = 40;
 export const MAX_LIVE_WORKERS = 100;
 export const DEFAULT_AUTOMERGE_REPAIR_RUN_NAME_PREFIX = "automerge repair ";
 export const DEFAULT_REPAIR_RUN_NAME_PREFIX = "repair cluster ";

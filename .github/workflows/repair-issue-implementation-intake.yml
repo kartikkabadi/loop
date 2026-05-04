@@ -143,7 +143,7 @@ jobs:
         if: ${{ steps.prepare.outputs.should_repair == 'true' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
-          MAX_LIVE_WORKERS: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_LIVE_WORKERS || '50' }}
+          MAX_LIVE_WORKERS: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_LIVE_WORKERS || '40' }}
           RUNNER: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
           EXECUTION_RUNNER: ${{ github.event.inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
           MODEL: ${{ github.event.inputs.model || vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}

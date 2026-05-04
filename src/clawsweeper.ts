@@ -463,7 +463,7 @@ interface PlanCandidateResult {
 }
 
 const DEFAULT_PLAN_BATCH_SIZE = 3;
-const DEFAULT_PLAN_SHARD_COUNT = 100;
+const DEFAULT_PLAN_SHARD_COUNT = 64;
 const MAX_PLAN_SHARD_COUNT = 100;
 
 type SchedulerBucket =

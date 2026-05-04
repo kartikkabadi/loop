@@ -74,7 +74,7 @@ on:
       shard_count:
         description: "Parallel shards (capped at 100)"
         required: false
-        default: "80"
+        default: "64"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -605,7 +605,7 @@ jobs:
             max_pages="1"
           elif [ "$hot_intake" = "true" ]; then
             batch_size="1"
-            shard_count="50"
+            shard_count="40"
             max_pages="10"
             min_active_shards="0"
             min_backfill_review_age_minutes="30"
@@ -616,11 +616,11 @@ jobs:
               batch_size="${{ github.event.inputs.batch_size || '3' }}"
             fi
             if [ "$target_repo" = "openclaw/openclaw" ]; then
-              min_active_shards="40"
+              min_active_shards="32"
             else
               min_active_shards="0"
             fi
-            shard_count="${{ github.event.inputs.shard_count || '80' }}"
+            shard_count="${{ github.event.inputs.shard_count || '64' }}"
             max_pages="250"
             min_backfill_review_age_minutes="30"
           fi
@@ -629,7 +629,7 @@ jobs:
             min_backfill_review_age_minutes="30"
           fi
           if ! [[ "$shard_count" =~ ^[0-9]+$ ]]; then
-            shard_count="80"
+            shard_count="64"
           fi
           if [ "$shard_count" -gt 100 ]; then
             shard_count="100"
@@ -1001,7 +1001,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
           ENABLED: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS == '1' && 'true' || 'false' }}
-          MAX_DISPATCH: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_DISPATCH_PER_SWEEP || '5' }}
+          MAX_DISPATCH: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_DISPATCH_PER_SWEEP || '4' }}
         run: |
           set -euo pipefail
           candidate_output="$(pnpm run --silent repair:issue-implementation-intake -- candidates \
@@ -1020,7 +1020,7 @@ jobs:
           fi
           CANDIDATES_JSON="$candidates_json" MAX_DISPATCH="$MAX_DISPATCH" node <<'NODE' > /tmp/issue-implementation-candidates.tsv
           const candidates = JSON.parse(process.env.CANDIDATES_JSON || "[]");
-          const limit = Math.max(0, Number(process.env.MAX_DISPATCH || "5"));
+          const limit = Math.max(0, Number(process.env.MAX_DISPATCH || "4"));
           for (const candidate of candidates.slice(0, limit)) {
             console.log([
               candidate.item_number,
@@ -1762,7 +1762,7 @@ jobs:
               -f hot_intake=true \
               -f target_repo=openclaw/openclaw \
               -f batch_size=1 \
-              -f shard_count=50 \
+              -f shard_count=40 \
               -f codex_timeout_ms=600000
           fi
 
@@ -1774,6 +1774,6 @@ jobs:
               -f hot_intake=false \
               -f target_repo=openclaw/openclaw \
               -f batch_size=3 \
-              -f shard_count=80 \
+              -f shard_count=64 \
               -f codex_timeout_ms=600000
           fi

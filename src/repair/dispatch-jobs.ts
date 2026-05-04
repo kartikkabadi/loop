@@ -36,7 +36,7 @@ const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 
 if (files.length === 0) {
   console.error(
-    "usage: node scripts/dispatch-jobs.ts <job.md> [...] [--mode plan|execute|autonomous] [--runner label] [--execution-runner label] [--model model] [--max-live-workers 50] [--wait-for-capacity]",
+    "usage: node scripts/dispatch-jobs.ts <job.md> [...] [--mode plan|execute|autonomous] [--runner label] [--execution-runner label] [--model model] [--max-live-workers 40] [--wait-for-capacity]",
   );
   process.exit(2);
 }

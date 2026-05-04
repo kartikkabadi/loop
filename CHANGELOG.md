@@ -14,13 +14,15 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Reduced default worker fan-out by about 20% across review shards, hot intake,
+  commit review pages, repair live-worker caps, and automatic implementation
+  dispatches.
 - Added deterministic merged closing-PR provenance to issue close reports and
   public close comments when GitHub exposes a high-confidence closing PR.
 - Allowed repair cluster execute tokens to request workflow-file write
   permission, so adopted automerge repairs can rebase PR branches that already
   contain `.github/workflows/*` changes.
-- Reduced default fan-out by 20% for normal review shards and commit-review
-  pages, and stopped forcing Codex fast mode in review and commit-review runs.
+- Stopped forcing Codex fast mode in review and commit-review runs.
 - Marked automerge repair loops as failed or blocked when fix execution ends on
   an unrecovered Codex transport error, instead of leaving the PR timeline at a
   running step.
@@ -38,7 +40,7 @@ checkpoint, and status-only commits are intentionally omitted.
 - Expanded validation-failure detail passed into Codex repair follow-up prompts
   so lint/typecheck failures keep the actionable diagnostic instead of only the
   package-manager epilogue.
-- Limited commit-review fan-out to 8 commits per workflow page by default, with
+- Limited commit-review fan-out to 6 commits per workflow page by default, with
   a `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` override for controlled backfills.
 - Made trusted human-review and security-sensitive pause reasons include the
   actionable review sections instead of only the structured marker.

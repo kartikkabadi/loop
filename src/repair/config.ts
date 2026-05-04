@@ -110,7 +110,7 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
       "max-live-workers":
         args["automerge-max-live-workers"] ??
         process.env.CLAWSWEEPER_AUTOMERGE_MAX_LIVE_WORKERS ??
-        50,
+        40,
     }),
     automergeRunNamePrefix: stringSetting(
       args["automerge-run-name-prefix"] ?? process.env.CLAWSWEEPER_AUTOMERGE_RUN_NAME_PREFIX,

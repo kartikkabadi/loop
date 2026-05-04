@@ -63,7 +63,7 @@ function runCli(): void {
 function printPlanOutput(): void {
   const plan = readJsonObject(requiredString("plan"));
   const batchSize = positiveNumber(optionalString("batch-size"), 5);
-  const shardCount = positiveNumber(optionalString("shard-count"), 100);
+  const shardCount = positiveNumber(optionalString("shard-count"), 64);
   printOutput(planOutputFields(plan, { batchSize, shardCount }));
 }
 

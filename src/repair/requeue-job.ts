@@ -46,7 +46,7 @@ const resolved = requestedRunId
 
 if (!resolved.source_job) {
   console.error(
-    "usage: node scripts/requeue-job.ts <job.md|run-id> [--mode plan|execute|autonomous] [--execute] [--open-execute-window] [--runner label] [--execution-runner label] [--model model] [--max-live-workers 50] [--wait-for-capacity]",
+    "usage: node scripts/requeue-job.ts <job.md|run-id> [--mode plan|execute|autonomous] [--execute] [--open-execute-window] [--runner label] [--execution-runner label] [--model model] [--max-live-workers 40] [--wait-for-capacity]",
   );
   process.exit(2);
 }
