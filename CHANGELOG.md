@@ -94,6 +94,8 @@ checkpoint, and status-only commits are intentionally omitted.
   workflow runs.
 - Avoided full-file token scans for repair repository snippets when no discovery
   tokens exist, keeping untargeted fix prompts cheaper to build.
+- Requested 100-item REST pages for paginated GitHub list calls, reducing
+  review and repair API page fan-out on large issues and pull requests.
 
 ## 0.2.0 - 2026-05-03
 
