@@ -11,6 +11,7 @@ import {
   closeReasonApplyAgeSkipReason,
   closeReasonsArg,
   closingPullRequestReferenceTarget,
+  compactMappedSlice,
   codexEnv,
   dashboardClosedAt,
   fixedPullRequestFromCommitPullsForTest,
@@ -183,6 +184,32 @@ test("githubPaginatedPath requests maximum REST page size by default", () => {
     githubPaginatedPath("repos/openclaw/openclaw/issues?per_page=50&state=open"),
     "repos/openclaw/openclaw/issues?per_page=50&state=open",
   );
+});
+
+test("compactMappedSlice maps only retained prompt entries", () => {
+  const mapped: number[] = [];
+  const result = compactMappedSlice([1, 2, 3, 4, 5, 6], 4, (value) => {
+    mapped.push(value);
+    return value * 10;
+  });
+  assert.deepEqual(result, [
+    10,
+    20,
+    { omitted: 2, note: "middle entries omitted from prompt context" },
+    50,
+    60,
+  ]);
+  assert.deepEqual(mapped, [1, 2, 5, 6]);
+});
+
+test("compactMappedSlice maps every entry when no compaction is needed", () => {
+  const mapped: number[] = [];
+  const result = compactMappedSlice([1, 2, 3], 3, (value) => {
+    mapped.push(value);
+    return value * 10;
+  });
+  assert.deepEqual(result, [10, 20, 30]);
+  assert.deepEqual(mapped, [1, 2, 3]);
 });
 
 test("main CLI args ignore package-manager double dash separators", () => {

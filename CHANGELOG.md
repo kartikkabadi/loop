@@ -96,6 +96,8 @@ checkpoint, and status-only commits are intentionally omitted.
   tokens exist, keeping untargeted fix prompts cheaper to build.
 - Requested 100-item REST pages for paginated GitHub list calls, reducing
   review and repair API page fan-out on large issues and pull requests.
+- Compacted review prompt context lazily so large comment, timeline, file, and
+  commit lists no longer process entries that are omitted from Codex input.
 
 ## 0.2.0 - 2026-05-03
 
