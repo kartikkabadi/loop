@@ -8,6 +8,7 @@ export function codexEnv(options: CodexEnvOptions = {}): NodeJS.ProcessEnv {
   delete env.GH_TOKEN;
   delete env.GITHUB_TOKEN;
   delete env.COMMIT_SWEEPER_TARGET_GH_TOKEN;
+  delete env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN;
   delete env.CLAWSWEEPER_APP_ID;
   delete env.CLAWSWEEPER_APP_PRIVATE_KEY;
   delete env.OPENAI_API_KEY;

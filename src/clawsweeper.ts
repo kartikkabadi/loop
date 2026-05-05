@@ -361,6 +361,10 @@ interface ReviewPromptBuild {
   telemetry: ReviewPromptTelemetry;
 }
 
+interface ReviewPromptRuntimeHints {
+  proofScratchDir?: string;
+}
+
 interface DashboardItem {
   repo: string;
   number: number;
@@ -638,12 +642,13 @@ const RECENT_MISSING_OPEN_MS = DAY_MS;
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "";
-const REVIEW_POLICY_VERSION = "2026-05-05-policy-v13";
+const REVIEW_POLICY_VERSION = "2026-05-05-policy-v14";
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const REVIEW_START_STATUS_MARKER_PREFIX = "<!-- clawsweeper-review-status";
 const AUTOMERGE_LABEL = "clawsweeper:automerge";
 const AUTOFIX_LABEL = "clawsweeper:autofix";
 const PROOF_OVERRIDE_LABEL = "proof: override";
+const PROOF_SUFFICIENT_LABEL = "proof: sufficient";
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -3260,10 +3265,12 @@ function buildReviewPrompt(
   context: ItemContext,
   git: GitInfo,
   additionalPrompt = "",
+  runtimeHints: ReviewPromptRuntimeHints = {},
 ): ReviewPromptBuild {
   const prompt = reviewPromptTemplate();
   const contextJson = contextJsonForPrompt(context);
   const schema = reviewDecisionSchemaText();
+  const proofScratchDir = runtimeHints.proofScratchDir?.trim();
   const extra = additionalPrompt.trim()
     ? `
 
@@ -3289,6 +3296,12 @@ ${additionalPrompt.trim()}
 - Current main SHA: ${git.mainSha}
 - Latest release: ${git.latestRelease?.tagName ?? "unknown"} (${git.latestRelease?.sha ?? "unknown sha"})
 
+## Runtime Capabilities
+
+- You may use the available network and read-only GitHub token to inspect PR body links, comments, screenshots, videos, logs, terminal output, and target-repo artifacts.
+- Download proof artifacts into ${proofScratchDir ? `\`${proofScratchDir}\`` : "a temporary scratch directory"} before inspecting them.
+- The target checkout is read-only for review. Do not modify repository files; use the scratch directory or /tmp for downloaded evidence and generated video stills/contact sheets.
+
 ## GitHub Context
 
 \`\`\`json
@@ -3306,10 +3319,6 @@ ${extra}
       additionalPromptChars: additionalPrompt.trim().length,
     },
   };
-}
-
-function promptFor(item: Item, context: ItemContext, git: GitInfo, additionalPrompt = ""): string {
-  return buildReviewPrompt(item, context, git, additionalPrompt).text;
 }
 
 function reviewPromptTelemetry(
@@ -3434,14 +3443,20 @@ function runCodex(options: {
   timeoutMs: number;
   workDir: string;
   additionalPrompt?: string;
+  proofScratchDir?: string;
   prompt?: string;
 }): Decision {
   ensureDir(options.workDir);
+  const proofScratchDir =
+    options.proofScratchDir ?? join(options.workDir, "proof-scratch", String(options.item.number));
+  ensureDir(proofScratchDir);
   const promptPath = join(options.workDir, `${options.item.number}.prompt.md`);
   const outputPath = join(options.workDir, `${options.item.number}.json`);
   const prompt =
     options.prompt ??
-    promptFor(options.item, options.context, options.git, options.additionalPrompt);
+    buildReviewPrompt(options.item, options.context, options.git, options.additionalPrompt, {
+      proofScratchDir,
+    }).text;
   writeFileSync(promptPath, prompt, "utf8");
   const dirtyBefore = openclawDirtyStatus(options.openclawDir);
   if (dirtyBefore) {
@@ -3470,12 +3485,17 @@ function runCodex(options: {
       outputPath,
       "--sandbox",
       options.sandboxMode,
+      "--add-dir",
+      proofScratchDir,
       "-",
     ],
     {
       cwd: options.openclawDir,
       encoding: "utf8",
-      env: codexEnv(),
+      env: {
+        ...codexEnv({ ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN }),
+        CLAWSWEEPER_PROOF_SCRATCH_DIR: proofScratchDir,
+      },
       input: prompt,
       maxBuffer: 128 * 1024 * 1024,
       timeout: options.timeoutMs,
@@ -4146,6 +4166,18 @@ function publicSecurityReviewLine(review: SecurityReview): string {
   return `${prefix}: ${sentence(review.summary)}`;
 }
 
+function realBehaviorProofReReviewGuidance(): string {
+  return "After adding proof, update the PR body; ClawSweeper should re-review automatically. If it does not, ask a maintainer to comment `@clawsweeper re-review`.";
+}
+
+function realBehaviorProofBlockerSummary(summary: string, fallback: string): string {
+  const body = sentence(summary) || fallback;
+  if (/\b(?:@clawsweeper re-review|re-review automatically|update the PR body)\b/i.test(body)) {
+    return body;
+  }
+  return `${body} ${realBehaviorProofReReviewGuidance()}`;
+}
+
 function publicRealBehaviorProofLine(proof: RealBehaviorProof): string {
   const summary = sentence(proof.summary);
   switch (proof.status) {
@@ -4154,20 +4186,20 @@ function publicRealBehaviorProofLine(proof: RealBehaviorProof): string {
     case "override":
       return `Override: ${summary || "A maintainer applied proof: override."}`;
     case "missing":
-      return `Needs real behavior proof before merge: ${
-        summary ||
-        "the PR must include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count."
-      }`;
+      return `Needs real behavior proof before merge: ${realBehaviorProofBlockerSummary(
+        summary,
+        "The PR must include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+      )}`;
     case "mock_only":
-      return `Needs real behavior proof before merge: ${
-        summary ||
-        "tests, mocks, snapshots, lint, typechecks, and CI are supplemental only. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count."
-      }`;
+      return `Needs real behavior proof before merge: ${realBehaviorProofBlockerSummary(
+        summary,
+        "Tests, mocks, snapshots, lint, typechecks, and CI are supplemental only. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+      )}`;
     case "insufficient":
-      return `Needs stronger real behavior proof before merge: ${
-        summary ||
-        "include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count."
-      }`;
+      return `Needs stronger real behavior proof before merge: ${realBehaviorProofBlockerSummary(
+        summary,
+        "Include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+      )}`;
     case "not_applicable":
       return summary ? `Not applicable: ${summary}` : "";
   }
@@ -4446,6 +4478,46 @@ function reportRealBehaviorProof(markdown: string): RealBehaviorProof {
     evidenceKind,
     needsContributorAction: /^true$/i.test(needsContributorActionValue ?? ""),
   };
+}
+
+function nextRealBehaviorProofSufficientLabels(
+  labels: readonly string[],
+  proof: Pick<RealBehaviorProof, "status">,
+): string[] {
+  const nextLabels = labels.filter((label) => label !== PROOF_SUFFICIENT_LABEL);
+  if (proof.status === "sufficient") nextLabels.push(PROOF_SUFFICIENT_LABEL);
+  return nextLabels;
+}
+
+export function realBehaviorProofSufficientLabelsForTest(
+  labels: readonly string[],
+  status: string,
+): string[] {
+  const proofStatus = REAL_BEHAVIOR_PROOF_STATUSES.has(status as RealBehaviorProofStatus)
+    ? (status as RealBehaviorProofStatus)
+    : "not_applicable";
+  return nextRealBehaviorProofSufficientLabels(labels, { status: proofStatus });
+}
+
+function syncRealBehaviorProofSufficientLabel(options: {
+  number: number;
+  labels: readonly string[];
+  proof: Pick<RealBehaviorProof, "status">;
+  dryRun: boolean;
+}): string[] {
+  const nextLabels = nextRealBehaviorProofSufficientLabels(options.labels, options.proof);
+  const hadLabel = options.labels.includes(PROOF_SUFFICIENT_LABEL);
+  const wantsLabel = nextLabels.includes(PROOF_SUFFICIENT_LABEL);
+  if (hadLabel === wantsLabel) return nextLabels;
+  if (options.dryRun) return nextLabels;
+  ghWithRetry([
+    "issue",
+    "edit",
+    String(options.number),
+    wantsLabel ? "--add-label" : "--remove-label",
+    PROOF_SUFFICIENT_LABEL,
+  ]);
+  return nextLabels;
 }
 
 function isAutomationReportAuthor(author: string | undefined): boolean {
@@ -5969,7 +6041,9 @@ function reviewCommand(args: Args): void {
     const contextStartedAt = Date.now();
     const context = collectItemContext(item);
     const contextElapsedMs = Date.now() - contextStartedAt;
-    const prompt = buildReviewPrompt(item, context, git, additionalPrompt);
+    const codexWorkDir = join(artifactDir, "codex");
+    const proofScratchDir = join(codexWorkDir, "proof-scratch", String(item.number));
+    const prompt = buildReviewPrompt(item, context, git, additionalPrompt, { proofScratchDir });
     const snapshotHash = itemSnapshotHash(item, context);
     try {
       const startComment = postReviewStartStatusComment({
@@ -6003,8 +6077,9 @@ function reviewCommand(args: Args): void {
         sandboxMode,
         serviceTier,
         timeoutMs,
-        workDir: join(artifactDir, "codex"),
+        workDir: codexWorkDir,
         additionalPrompt,
+        proofScratchDir,
         prompt: prompt.text,
       });
     } catch (error) {
@@ -6196,6 +6271,14 @@ function applyDecisionsCommand(args: Args): void {
       maybeLogProgress(`skipped comment sync #${number}: already ${state}`);
       if (processedCount >= processedLimit) break;
       continue;
+    }
+    if (state === "open" && item.kind === "pull_request") {
+      item.labels = syncRealBehaviorProofSufficientLabel({
+        number,
+        labels: item.labels,
+        proof: reportRealBehaviorProof(markdown),
+        dryRun,
+      });
     }
     markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
     const reviewComment = renderReviewCommentFromReport(markdown, closeReason ?? "none");
