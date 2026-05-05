@@ -124,6 +124,10 @@ if the rebase or known mechanical conflict resolvers cannot finish cleanly, it
 falls back to the normal Codex fix worker. The mechanical set includes
 isolated `CHANGELOG.md` conflicts and generated config checksum conflicts where
 the replayed commit changed only selected checksum entries.
+If GitHub rejects a fork-branch repair push because the synchronized branch
+would create or update workflow files without effective workflow permission, the
+worker keeps the prepared repair and publishes it as a credited replacement PR
+from the base repository instead of starting Codex over.
 
 During Codex repair, changed-surface validation failures are loop inputs, not
 immediate terminal outcomes. The executor feeds a failed `pnpm check:changed`

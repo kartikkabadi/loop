@@ -37,6 +37,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Marked GitHub App workflow-file push denials as blocked repair outcomes
   instead of failing the repair worker after Codex prepares an otherwise useful
   fix.
+- Published already-prepared fork repairs as credited replacement PRs when
+  GitHub rejects the contributor-branch push because rebasing would create or
+  update workflow files without effective workflow permission.
 - Capped repair Codex prompt payloads by compacting oversized fix artifacts and
   repository snippets, and classified Codex context-limit responses as blocked
   repair outcomes instead of red workflow failures.

@@ -773,6 +773,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     });
     if (fastRepair.status === "ready") {
       return pushRepairBranchAndUpdateStatus({
+        fixArtifact,
         sourcePr,
         pull,
         sameRepoBranch,
@@ -801,6 +802,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   });
   (prep.merge_preflight as JsonValue).target = `#${sourcePr.number}`;
   return pushRepairBranchAndUpdateStatus({
+    fixArtifact,
     sourcePr,
     pull,
     sameRepoBranch,
@@ -812,6 +814,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
 }
 
 function pushRepairBranchAndUpdateStatus({
+  fixArtifact,
   sourcePr,
   pull,
   sameRepoBranch,
@@ -846,7 +849,35 @@ function pushRepairBranchAndUpdateStatus({
   });
   if (livePauseBlock) return livePauseBlock;
   const pushArgs = repairBranchPushArgs({ pull, rewritten: branchUpdate.rewritten });
-  runGitNetwork(pushArgs, targetDir);
+  try {
+    runGitNetwork(pushArgs, targetDir);
+  } catch (error) {
+    const blockedReason = repairBranchPushBlockedReason(error);
+    if (blockedReason && !sameRepoBranch) {
+      logProgress("repair branch push blocked; publishing prepared repair as replacement PR", {
+        source_pr: sourcePr.url,
+        head_repo: pull.head.repo.full_name,
+        head_ref: pull.head.ref,
+        reason: blockedReason,
+      });
+      report.actions.push({
+        action: "repair_contributor_branch",
+        status: "blocked",
+        target: sourcePr.url,
+        repair_strategy: fixArtifact.repair_strategy,
+        reason: blockedReason,
+        fallback: "open_fix_pr",
+      });
+      return openReplacementPrFromPreparedRepairCheckout({
+        fixArtifact,
+        sourcePr,
+        targetDir,
+        prep,
+        fallbackReason: blockedReason,
+      });
+    }
+    throw error;
+  }
   const threadResolution = prepareReviewThreadsForMerge({
     repo: result.repo,
     number: sourcePr.number,
@@ -896,6 +927,158 @@ function pushRepairBranchAndUpdateStatus({
     status_comment_updated: statusCommentUpdated,
     merge_preflight: prep.merge_preflight,
     review_threads: threadResolution,
+  };
+}
+
+function openReplacementPrFromPreparedRepairCheckout({
+  fixArtifact,
+  sourcePr,
+  targetDir,
+  prep,
+  fallbackReason,
+}: LooseRecord) {
+  const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
+  const contributorCredits = sourceContributorCredits({
+    fixArtifact,
+    targetDir,
+    repo: result.repo,
+  });
+  const branch = replacementBranchName(result.cluster_id);
+  const areaCapacityBlock = validateActivePrAreaCapacity({
+    fixArtifact,
+    targetDir,
+    branch,
+    repo: result.repo,
+    maxActivePrsPerArea,
+  });
+  if (areaCapacityBlock) {
+    return {
+      action: "open_fix_pr",
+      status: "blocked",
+      branch,
+      repair_strategy: "replace_uneditable_branch",
+      fallback_from: "repair_contributor_branch",
+      fallback_source_pr: sourcePr.url,
+      fallback_reason: fallbackReason,
+      ...areaCapacityBlock,
+    };
+  }
+
+  ghAuthSetupGit(targetDir);
+  run("git", ["checkout", "-B", branch], { cwd: targetDir });
+  if (!branchHasBaseDiff({ targetDir, baseBranch })) {
+    logProgress("prepared replacement branch has no changes versus base; skipping PR create", {
+      branch,
+      base_branch: baseBranch,
+      commit: prep.commit,
+    });
+    return {
+      action: "open_fix_pr",
+      status: "skipped",
+      branch,
+      repair_strategy: "replace_uneditable_branch",
+      fallback_from: "repair_contributor_branch",
+      fallback_source_pr: sourcePr.url,
+      fallback_reason: fallbackReason,
+      commit: prep.commit,
+      checkpoint_commits: prep.checkpoint_commits,
+      merge_preflight: prep.merge_preflight,
+      supersede_sources: [],
+      contributor_credit: contributorCredits.map(publicContributorCredit),
+      reason: "prepared replacement branch has no changes versus base after repair",
+    };
+  }
+
+  pushRecoverableBranch({ targetDir, branch });
+  const provenance = externalMessageProvenance({
+    model,
+    reasoning: codexReasoningEffort,
+    reviewedSha: prep.commit,
+  });
+  const body = replacementPrBody({
+    fixArtifact,
+    fallbackReason,
+    clusterId: result.cluster_id,
+    provenance,
+  });
+  const bodyPath = path.join(workRoot, "replacement-pr-body.md");
+  fs.writeFileSync(bodyPath, body);
+  const prUrl =
+    findOpenPullRequestForBranch(branch, targetDir) ||
+    run(
+      "gh",
+      [
+        "pr",
+        "create",
+        "--repo",
+        result.repo,
+        "--base",
+        baseBranch,
+        "--head",
+        branch,
+        "--title",
+        fixArtifact.pr_title,
+        "--body-file",
+        bodyPath,
+      ],
+      { cwd: targetDir, env: ghEnv(), timeoutMs: currentNetworkCommandTimeoutMs() },
+    ).trim();
+  const prNumber = pullRequestNumberFromUrl(prUrl);
+  if (prNumber) ensurePullRequestOpen({ number: prNumber, targetDir });
+  if (prNumber) labelReplacementPullRequest({ number: prNumber, targetDir, fixArtifact });
+  if (prNumber) (prep.merge_preflight as JsonValue).target = `#${prNumber}`;
+  const threadResolution = prNumber
+    ? prepareReviewThreadsForMerge({
+        repo: result.repo,
+        number: prNumber,
+        targetDir,
+        resolveThreads: resolveReviewThreads,
+      })
+    : { status: "blocked", reason: "replacement PR URL did not include a PR number" };
+
+  const supersededSources = supersededReplacementSources({ fixArtifact, repo: result.repo }).filter(
+    (source: JsonValue) => pullRequestNumberFromUrl(source) !== prNumber,
+  );
+  const supersededSourceActions: JsonValue[] = [];
+  for (const source of supersededSources) {
+    const parsed = parsePullRequestUrl(source);
+    if (!parsed || parsed.repo !== result.repo) continue;
+    supersededSourceActions.push(
+      closeSupersededSourcePrs
+        ? closeSupersededSourcePr({
+            source,
+            parsed,
+            replacementPrUrl: prUrl,
+            targetDir,
+            contributorCredits,
+            provenance,
+          })
+        : linkReplacementSourcePr({
+            source,
+            parsed,
+            replacementPrUrl: prUrl,
+            targetDir,
+            provenance,
+          }),
+    );
+  }
+
+  return {
+    action: "open_fix_pr",
+    status: "opened",
+    pr_url: prUrl,
+    branch,
+    repair_strategy: "replace_uneditable_branch",
+    fallback_from: "repair_contributor_branch",
+    fallback_source_pr: sourcePr.url,
+    fallback_reason: fallbackReason,
+    commit: prep.commit,
+    checkpoint_commits: prep.checkpoint_commits,
+    merge_preflight: prep.merge_preflight,
+    review_threads: threadResolution,
+    superseded_sources: supersededSources,
+    superseded_source_actions: supersededSourceActions,
+    contributor_credit: contributorCredits.map(publicContributorCredit),
   };
 }
 
