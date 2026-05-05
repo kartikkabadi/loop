@@ -98,6 +98,8 @@ checkpoint, and status-only commits are intentionally omitted.
   review and repair API page fan-out on large issues and pull requests.
 - Compacted review prompt context lazily so large comment, timeline, file, and
   commit lists no longer process entries that are omitted from Codex input.
+- Thanks @stainlu for the repair prompt, GitHub pagination, lazy context
+  compaction, and review telemetry PRs.
 
 ## 0.2.0 - 2026-05-03
 
