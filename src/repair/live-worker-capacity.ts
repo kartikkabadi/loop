@@ -218,13 +218,13 @@ function runMatchesNameFilter(
   return true;
 }
 
-function normalizeWorkflowRun(run: LooseRecord, fallbackStatus: string) {
+export function normalizeWorkflowRun(run: LooseRecord, fallbackStatus: string) {
   return {
     databaseId: run.databaseId ?? run.database_id ?? run.id,
     status: run.status ?? fallbackStatus,
     conclusion: run.conclusion ?? null,
     createdAt: run.createdAt ?? run.created_at ?? null,
-    url: run.url ?? run.html_url ?? null,
+    url: run.html_url ?? run.url ?? null,
     displayTitle: run.displayTitle ?? run.display_title ?? run.name ?? null,
   };
 }

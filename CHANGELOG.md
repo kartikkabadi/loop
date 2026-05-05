@@ -78,6 +78,11 @@ checkpoint, and status-only commits are intentionally omitted.
 - Removed `actions/setup-node` from the high-volume GitHub activity lane and
   kept that notifier compatible with runner-provided Node 20+ so bursty
   activity forwarding is not blocked by codeload action download timeouts.
+- Switched repair target checkouts to retryable blobless Git clones with a
+  shorter per-attempt timeout, avoiding five-minute `gh repo clone` hangs before
+  Codex can repair a PR.
+- Preferred human GitHub Actions URLs when reporting active repair workers,
+  avoiding API URLs in ClawSweeper status comments and dashboards.
 - Skipped routine native and forwarded pull request synchronize events plus
   successful workflow-run events before checkout in the GitHub activity lane.
 - Kept human-review pauses from being cleared by stale trusted pass markers or

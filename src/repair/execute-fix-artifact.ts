@@ -273,6 +273,13 @@ function currentNetworkCommandTimeoutMs() {
   return boundedTimeout(networkCommandTimeoutMs, remainingFixStepBudgetMs());
 }
 
+function currentCheckoutCloneTimeoutMs() {
+  return boundedTimeout(
+    Math.max(1_000, Number(process.env.CLAWSWEEPER_CHECKOUT_CLONE_TIMEOUT_MS ?? 120_000)),
+    remainingFixStepBudgetMs(),
+  );
+}
+
 function runGitNetwork(args: string[], cwd: string = targetDir) {
   return run("git", args, {
     cwd,
@@ -2862,12 +2869,7 @@ function codexReviewSchemaPath() {
 
 function ensureTargetCheckout(repo: string, targetDir: string) {
   if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(path.dirname(targetDir), { recursive: true });
-    run("gh", ["repo", "clone", repo, targetDir, "--", "--depth=1"], {
-      cwd: repoRoot(),
-      env: ghEnv(),
-      timeoutMs: currentNetworkCommandTimeoutMs(),
-    });
+    cloneTargetCheckout(repo, targetDir);
     return;
   }
   if (!fs.existsSync(path.join(targetDir, ".git"))) {
@@ -2875,6 +2877,70 @@ function ensureTargetCheckout(repo: string, targetDir: string) {
   }
   const status = run("git", ["status", "--porcelain"], { cwd: targetDir }).trim();
   if (status) throw new Error(`target checkout has uncommitted changes: ${targetDir}`);
+}
+
+function cloneTargetCheckout(repo: string, targetDir: string) {
+  fs.mkdirSync(path.dirname(targetDir), { recursive: true });
+  setupGitHubCredentialHelper();
+  const timeoutMs = currentCheckoutCloneTimeoutMs();
+  const attempts = Math.max(1, Number(process.env.CLAWSWEEPER_CHECKOUT_CLONE_ATTEMPTS ?? 3));
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    fs.rmSync(targetDir, { recursive: true, force: true });
+    try {
+      run("git", bloblessCloneArgs(repo, targetDir), {
+        cwd: repoRoot(),
+        env: ghEnv(),
+        timeoutMs,
+      });
+      return;
+    } catch (error) {
+      lastError = error;
+      logProgress("target checkout clone attempt failed", {
+        repo,
+        attempt,
+        attempts,
+        timeout_ms: timeoutMs,
+        error: compactText(String(error?.message ?? error), 500),
+      });
+      if (attempt === attempts) break;
+    }
+  }
+  fs.rmSync(targetDir, { recursive: true, force: true });
+  throw lastError instanceof Error ? lastError : new Error(String(lastError));
+}
+
+function setupGitHubCredentialHelper() {
+  if (!process.env.GH_TOKEN && !process.env.GITHUB_TOKEN) return;
+  try {
+    run("gh", ["auth", "setup-git", "--hostname", "github.com"], {
+      cwd: repoRoot(),
+      env: ghEnv(),
+      timeoutMs: Math.min(30_000, currentNetworkCommandTimeoutMs()),
+    });
+  } catch (error) {
+    logProgress("GitHub git credential setup failed; continuing", {
+      error: compactText(String(error?.message ?? error), 500),
+    });
+  }
+}
+
+function bloblessCloneArgs(repo: string, targetDir: string) {
+  return [
+    "clone",
+    "--filter=blob:none",
+    "--depth=1",
+    "--single-branch",
+    githubRepoCloneUrl(repo),
+    targetDir,
+  ];
+}
+
+function githubRepoCloneUrl(repo: string) {
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) {
+    throw new Error(`invalid GitHub repository: ${repo}`);
+  }
+  return `https://github.com/${repo}.git`;
 }
 
 function setupGitIdentity(cwd: JsonValue) {

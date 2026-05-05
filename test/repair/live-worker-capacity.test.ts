@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   MAX_LIVE_WORKERS,
+  normalizeWorkflowRun,
   readMaxLiveWorkers,
   repairRunNameForJob,
   repairRunNamePrefixForJob,
@@ -45,4 +46,18 @@ test("repair run names match workflow dispatch titles", () => {
     ),
     "automerge repair jobs/openclaw/inbox/automerge-openclaw-openclaw-75363.md",
   );
+});
+
+test("workflow run normalization prefers the human Actions URL", () => {
+  const run = normalizeWorkflowRun(
+    {
+      id: 123,
+      status: "queued",
+      url: "https://api.github.com/repos/openclaw/clawsweeper/actions/runs/123",
+      html_url: "https://github.com/openclaw/clawsweeper/actions/runs/123",
+      display_title: "automerge repair jobs/openclaw/inbox/a.md",
+    },
+    "queued",
+  );
+  assert.equal(run.url, "https://github.com/openclaw/clawsweeper/actions/runs/123");
 });
