@@ -361,7 +361,7 @@ ClawSweeper PRs and PRs labeled `clawsweeper:autofix` or
 ClawSweeper comments include `clawsweeper-verdict:*` markers plus a
 `clawsweeper-action:fix-required` marker when ClawSweeper should wake up. The
 router dispatches at most ten automatic repair iterations per PR and at most
-one auto-repair per PR head SHA by default, controlled by
+two auto-repairs per PR head SHA by default, controlled by
 `CLAWSWEEPER_MAX_REPAIRS_PER_PR` and
 `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD`. The per-PR cap is total across
 head SHA changes, so the automatic loop stops after ten ClawSweeper-triggered

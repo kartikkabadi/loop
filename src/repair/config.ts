@@ -126,7 +126,7 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
       "max-autoclose-targets",
     ),
     maxAutoRepairsPerHead: positiveInteger(
-      args["max-auto-repairs-per-head"] ?? process.env.CLAWSWEEPER_MAX_REPAIRS_PER_HEAD ?? 1,
+      args["max-auto-repairs-per-head"] ?? process.env.CLAWSWEEPER_MAX_REPAIRS_PER_HEAD ?? 2,
       "max-auto-repairs-per-head",
     ),
     maxAutoRepairsPerPr: positiveInteger(

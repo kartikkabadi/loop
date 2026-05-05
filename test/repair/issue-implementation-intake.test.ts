@@ -104,3 +104,9 @@ test("repair executor uses retryable blobless target checkout", () => {
   assert.match(source, /CLAWSWEEPER_CHECKOUT_CLONE_ATTEMPTS/);
   assert.match(source, /CLAWSWEEPER_CHECKOUT_CLONE_TIMEOUT_MS/);
 });
+
+test("comment router default allows one same-head infrastructure retry", () => {
+  const source = readFileSync("src/repair/config.ts", "utf8");
+
+  assert.match(source, /CLAWSWEEPER_MAX_REPAIRS_PER_HEAD \?\? 2/);
+});

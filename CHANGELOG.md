@@ -83,6 +83,9 @@ checkpoint, and status-only commits are intentionally omitted.
   Codex can repair a PR.
 - Preferred human GitHub Actions URLs when reporting active repair workers,
   avoiding API URLs in ClawSweeper status comments and dashboards.
+- Raised the same-head automatic repair cap to two attempts so a transient
+  checkout or runner failure does not permanently block the PR head from a
+  retry.
 - Skipped routine native and forwarded pull request synchronize events plus
   successful workflow-run events before checkout in the GitHub activity lane.
 - Kept human-review pauses from being cleared by stale trusted pass markers or

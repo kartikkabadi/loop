@@ -228,17 +228,18 @@ ClawSweeper has three layers of duplicate protection:
   stale labelled PRs can be repaired or re-reviewed without a fresh comment;
 - trusted ClawSweeper repairs are capped per PR and per PR head SHA.
 
-The default caps are ten automatic repair iterations per PR and one
-auto-repair dispatch per PR head SHA:
+The default caps are ten automatic repair iterations per PR and two
+auto-repair dispatches per PR head SHA:
 
 ```bash
 CLAWSWEEPER_MAX_REPAIRS_PER_PR=10
-CLAWSWEEPER_MAX_REPAIRS_PER_HEAD=1
+CLAWSWEEPER_MAX_REPAIRS_PER_HEAD=2
 ```
 
-That means many ClawSweeper comments on the same commit trigger at most one
-repair run. If ClawSweeper pushes a new commit, the PR head SHA changes and a
-new ClawSweeper finding can trigger one more repair run, until the PR reaches
+That means many ClawSweeper comments on the same commit trigger at most two
+repair runs, leaving room for one infrastructure retry without an operator
+reset. If ClawSweeper pushes a new commit, the PR head SHA changes and a new
+ClawSweeper finding can trigger another bounded repair run, until the PR reaches
 ten automatic ClawSweeper-triggered repair iterations. The per-PR cap is total
 across all head SHAs and stops the automatic review/repair loop even when every
 iteration produces a new commit.
@@ -345,7 +346,7 @@ Important knobs:
 - `CLAWSWEEPER_MAX_REPAIRS_PER_PR` controls total automatic repair
   iterations per PR; default `10`.
 - `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD` controls per-head repair caps;
-  default `1`.
+  default `2`.
 - `CLAWSWEEPER_AUTOMERGE_TRANSIENT_WAIT_MS` controls in-run merge-state and
   check polling before the router records a waiting automerge action; default
   `600000`.

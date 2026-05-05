@@ -351,7 +351,7 @@ The workflow needs:
 - optional `CLAWSWEEPER_MAX_REPAIRS_PER_PR` and
   `CLAWSWEEPER_MAX_REPAIRS_PER_HEAD` variables for trusted
   ClawSweeper review feedback; defaults are `10` automatic repair iterations per
-  PR and `1` repair per PR head SHA. The per-PR cap is total across changing
+  PR and `2` repairs per PR head SHA. The per-PR cap is total across changing
   head SHAs and stops the automatic review/repair loop.
 - In-flight branch repair workers re-fetch the live PR before mutation and block
   if `clawsweeper:human-review` is present, so a trusted needs-human verdict or
