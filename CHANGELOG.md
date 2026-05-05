@@ -31,6 +31,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Reduced repair live-capacity polling from one GitHub Actions API request per
   active status to a single recent-runs request filtered locally, and avoided an
   immediate duplicate capacity probe in the dispatch loop.
+- Cached comment-router open-label issue lookups per run so repair-loop comment
+  discovery and command synthesis do not repeat identical GitHub searches.
 - Retried Codex edit workers after TPM/rate-limit exits and collapsed JSONL failure transcripts into concise repair status reasons.
 - Added deterministic merged closing-PR provenance to issue close reports and
   public close comments when GitHub exposes a high-confidence closing PR.
