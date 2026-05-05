@@ -325,8 +325,11 @@ nice-to-have. Missing, mock-only, or insufficient proof should appear near the
 top of the public review as "needs real behavior proof before merge"; tell the
 contributor that terminal screenshots, console output, copied live output,
 linked artifacts, recordings, and redacted logs count. If the proof links to
-public or GitHub-hosted media, inspect it when possible before deciding. Use
-`evidenceKind: "none"` when proof is absent or mock-only, and set
+public or GitHub-hosted media, inspect it when possible before deciding. Also
+tell contributors that after they add proof, updating the PR body should trigger
+a fresh ClawSweeper review automatically; if it does not, they can ask a
+maintainer to comment `@clawsweeper re-review`. Use `evidenceKind: "none"` when
+proof is absent or mock-only, and set
 `needsContributorAction: false` only for `sufficient`, `override`, or
 `not_applicable`.
 

@@ -1876,6 +1876,8 @@ Full review comments:
   assert.match(comment, /Codex review: needs real behavior proof before merge\./);
   assert.match(comment, /\*\*Real behavior proof\*\*/);
   assert.match(comment, /terminal screenshots, console output, copied live output/);
+  assert.match(comment, /update the PR body; ClawSweeper should re-review automatically/);
+  assert.match(comment, /@clawsweeper re-review/);
   assert.match(markers, /clawsweeper-verdict:needs-human/);
   assert.doesNotMatch(markers, /clawsweeper-verdict:pass/);
   assert.doesNotMatch(markers, /clawsweeper-action:fix-required/);
@@ -2499,6 +2501,7 @@ test("review prompt requires real behavior proof for PR reviews", () => {
   assert.match(prompt, /generate stills or contact sheets from videos/);
   assert.match(prompt, /compare the proof against the PR diff/);
   assert.match(prompt, /scratch directory/);
+  assert.match(prompt, /@clawsweeper re-review/);
   assert.match(
     prompt,
     /Unit tests, mocks, snapshots, lint, typechecks, and CI are supplemental only/,

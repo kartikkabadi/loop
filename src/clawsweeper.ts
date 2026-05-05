@@ -4166,6 +4166,18 @@ function publicSecurityReviewLine(review: SecurityReview): string {
   return `${prefix}: ${sentence(review.summary)}`;
 }
 
+function realBehaviorProofReReviewGuidance(): string {
+  return "After adding proof, update the PR body; ClawSweeper should re-review automatically. If it does not, ask a maintainer to comment `@clawsweeper re-review`.";
+}
+
+function realBehaviorProofBlockerSummary(summary: string, fallback: string): string {
+  const body = sentence(summary) || fallback;
+  if (/\b(?:@clawsweeper re-review|re-review automatically|update the PR body)\b/i.test(body)) {
+    return body;
+  }
+  return `${body} ${realBehaviorProofReReviewGuidance()}`;
+}
+
 function publicRealBehaviorProofLine(proof: RealBehaviorProof): string {
   const summary = sentence(proof.summary);
   switch (proof.status) {
@@ -4174,20 +4186,20 @@ function publicRealBehaviorProofLine(proof: RealBehaviorProof): string {
     case "override":
       return `Override: ${summary || "A maintainer applied proof: override."}`;
     case "missing":
-      return `Needs real behavior proof before merge: ${
-        summary ||
-        "the PR must include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count."
-      }`;
+      return `Needs real behavior proof before merge: ${realBehaviorProofBlockerSummary(
+        summary,
+        "The PR must include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+      )}`;
     case "mock_only":
-      return `Needs real behavior proof before merge: ${
-        summary ||
-        "tests, mocks, snapshots, lint, typechecks, and CI are supplemental only. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count."
-      }`;
+      return `Needs real behavior proof before merge: ${realBehaviorProofBlockerSummary(
+        summary,
+        "Tests, mocks, snapshots, lint, typechecks, and CI are supplemental only. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+      )}`;
     case "insufficient":
-      return `Needs stronger real behavior proof before merge: ${
-        summary ||
-        "include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count."
-      }`;
+      return `Needs stronger real behavior proof before merge: ${realBehaviorProofBlockerSummary(
+        summary,
+        "Include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+      )}`;
     case "not_applicable":
       return summary ? `Not applicable: ${summary}` : "";
   }
