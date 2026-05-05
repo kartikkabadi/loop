@@ -452,13 +452,15 @@ default, subject to the selected repository profile; pass `target_repo`,
 `apply_kind=issue`, or `apply_kind=pull_request` to narrow a manual run.
 
 Scheduled runs cover the configured product profiles. `openclaw/openclaw` runs
-normal backfill every 5 minutes with up to 70 review shards when due backlog
-exists; `openclaw/clawhub` runs on offset review/apply/audit crons so its
-reports live under `records/openclaw-clawhub/` without colliding with default
-repo records. `openclaw/clawsweeper` has a scheduled read-only audit row and is
+normal backfill every 5 minutes with up to 70 review shards when the system is
+quiet; `openclaw/clawhub` runs on offset review/apply/audit crons so its reports
+live under `records/openclaw-clawhub/` without colliding with default repo
+records. `openclaw/clawsweeper` has a scheduled read-only audit row and is
 available for manual and event self-review smoke tests. Broad hot-intake sweeps
-cap scheduled fan-out at 35 one-item shards per run; exact event reviews still
-use one shard. Throughput defaults live in
+cap scheduled fan-out at 35 one-item shards per run when quiet; exact event
+reviews still use one shard. Normal review, hot intake, and commit review are
+background lanes, so they shrink automatically while repair or exact-item work
+is active. Throughput defaults live in
 [docs/limits.md](docs/limits.md) and `config/automation-limits.json`.
 
 Target repositories can opt into event-level latency by installing the

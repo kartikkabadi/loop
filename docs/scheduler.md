@@ -136,13 +136,22 @@ Capacity is shard-level. A review shard processes its selected item numbers
 sequentially, so maximum concurrent Codex sessions equals the number of nonempty
 review shard jobs, not `batch_size * shard_count`.
 
+Capacity also has priority. Exact-item review, repair, automerge repair, and
+issue implementation are priority work because they unblock a specific PR,
+issue, or maintainer command. Normal review, hot intake, and commit review are
+background work because they keep the backlog fresh but can safely slow down
+when priority work is busy. The workflow asks the central worker scheduler for a
+lane limit before dispatching background work; see
+[`docs/limits.md`](limits.md) for the config, formulas, and examples.
+
 Current defaults:
 
 - exact event review: 1 shard, 1 item
 - exact manual hot intake: 1 shard, 1 item
-- broad hot intake: up to 35 shards, batch size 1, scans up to 10 GitHub pages
-- scheduled normal backfill: up to 70 shards, batch size 1, scans up to 250
+- broad hot intake: up to 35 shards when quiet, batch size 1, scans up to 10
   GitHub pages
+- scheduled normal backfill: up to 70 shards when quiet, batch size 1, scans up
+  to 250 GitHub pages
 - normal active floor: 30 shards for `openclaw/openclaw` scheduled runs and
   workflow-dispatch continuations; stale current-review backfill is eligible
   after 30 minutes
@@ -179,11 +188,20 @@ hold about 70 Codex review shards with one item per shard, and the next
 scheduled tick is available as the backstop or pending continuation. Manual
 normal reviews keep the larger default batch size for targeted catch-up runs.
 
+The quiet-system ceiling is not a promise that every scheduled run dispatches
+that many shards. The `mode` step checks active repair workers, exact-item sweep
+runs, and commit-review pages, then asks `worker-limit normal_review` or
+`worker-limit hot_intake` for the current allowance. If repair/automerge is
+busy, background sweep dispatches fewer shards and leaves capacity for the
+specific work that is closest to a merge or maintainer request.
+
 The active floor is not a separate lane and does not change close/apply safety.
 It only changes normal planning when due backlog is below the desired floor:
 after selecting all due candidates, the planner fills up to 30 nonempty shards
 with eligible items whose latest complete review is at least 30 minutes old.
-Capacity status reports this as `floor: due backlog below active floor`.
+Capacity status reports this as `floor: due backlog below active floor`. If the
+central worker scheduler returns fewer than 30 allowed shards, the smaller
+worker allowance wins.
 
 On saturated queues, normal planning stops scanning as soon as it has enough due
 candidates to fill `batch_size * shard_count`. `dueBacklog` remains the due
@@ -289,6 +307,13 @@ that JSON and shows:
 `active Codex target` is the planned number of nonempty Codex shard jobs for the
 current run. It is not a live process count from GitHub Actions. For live worker
 count, inspect active review shard jobs on the current workflow run.
+
+The live scheduler estimate happens before planning and is intentionally coarse:
+it counts active repair-cluster workflow runs as priority work, active exact-item
+sweep runs as priority work, and active commit-review workflow runs as
+background work weighted by the configured commit page size. GitHub Actions can
+start or finish jobs after that estimate, so the scheduler is a throttle, not a
+distributed lock.
 
 Planning status intentionally does not run `pnpm run reconcile`. Reconciliation
 can scan many live GitHub pages and has delayed review shard startup. The
