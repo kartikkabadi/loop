@@ -586,6 +586,7 @@ jobs:
         working-directory: clawsweeper
         run: |
           pnpm run status -- \
+            --target-repo "${{ steps.target.outputs.target_repo }}" \
             --state "Planning review" \
             --detail "Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -731,8 +732,10 @@ jobs:
         working-directory: clawsweeper
         env:
           GH_TOKEN: ${{ github.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
           pnpm run status -- \
+            --target-repo "$TARGET_REPO" \
             --state "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake in progress' || 'Review in progress' }}" \
             --detail "${{ steps.mode.outputs.hot_intake == 'true' && 'Hot intake planned' || 'Planned' }} ${{ steps.select.outputs.planned_count }} items across ${{ steps.select.outputs.planned_shards }} shards. Capacity is ${{ steps.select.outputs.planned_capacity }} items; due backlog scanned is ${{ steps.select.outputs.due_backlog }}. Capacity reason: ${{ steps.select.outputs.capacity_reason }}. Review shards are starting; publish will merge artifacts when they finish." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
@@ -1003,6 +1006,7 @@ jobs:
           fi
           pnpm run apply-artifacts -- "${apply_artifacts_args[@]}"
           pnpm run status -- \
+            --target-repo "$TARGET_REPO" \
             --state "$publish_state" \
             --detail "$publish_detail" \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
@@ -1141,6 +1145,7 @@ jobs:
             --progress-every 25
           synced_count="$(pnpm run --silent workflow -- count-actions --report apply-report.json --action review_comment_synced)"
           pnpm run status -- \
+            --target-repo "$TARGET_REPO" \
             --state "Review comments checked" \
             --detail "Checked selected durable Codex review comments and synced missing or stale comments. Synced: $synced_count. Item numbers: $item_numbers." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
@@ -1191,6 +1196,7 @@ jobs:
             --progress-every 1
           closed_count="$(pnpm run --silent workflow -- count-actions --report apply-report.json --action closed)"
           pnpm run status -- \
+            --target-repo "$TARGET_REPO" \
             --state "Immediate apply checked" \
             --detail "Checked selected safe close proposals right after review publish. Closed: $closed_count/$item_count. Close reasons enabled: $close_reasons. Item numbers: $item_numbers." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
@@ -1411,6 +1417,7 @@ jobs:
           removed_stale_closed_copies="$(jq -r '.removedStaleClosedCopies' <<<"$reconcile_json")"
           pnpm run audit -- --target-repo "$TARGET_REPO" --max-pages 250 --sample-limit 25 --output /tmp/clawsweeper-audit.json --update-dashboard
           pnpm run status -- \
+            --target-repo "$TARGET_REPO" \
             --state "Audit finished" \
             --detail "Reconciled durable $TARGET_REPO records before audit: moved ${moved_to_closed} closed records, restored ${moved_to_items} reopened records, removed ${removed_stale_closed_copies} stale archived copies. Refreshed audit state from a full live scan." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -1582,6 +1589,7 @@ jobs:
             exit 0
           fi
           pnpm run status -- \
+            --target-repo "$TARGET_REPO" \
             --state "Apply in progress" \
             --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Close reasons: $apply_close_reasons. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by ${comment_sync_min_age_days} day(s); checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -1615,6 +1623,7 @@ jobs:
             synced_count="$(pnpm run --silent workflow -- count-actions --report ".artifacts/apply-reports/apply-report-$checkpoint.json" --action review_comment_synced)"
             publish_changes "chore: sync sweep review comments checkpoint $checkpoint" records apply-report.json
             pnpm run status -- \
+              --target-repo "$TARGET_REPO" \
               --state "Apply comments synced" \
               --detail "Comment-only apply checkpoint $checkpoint finished. Synced durable review comments: $synced_count. Result records: $result_count. Item numbers: ${item_numbers:-all}." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -1656,6 +1665,7 @@ jobs:
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
             publish_changes "chore: apply sweep decisions checkpoint $checkpoint" records apply-report.json
             pnpm run status -- \
+              --target-repo "$TARGET_REPO" \
               --state "Apply in progress" \
               --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count, including durable review comment syncs." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -1671,6 +1681,7 @@ jobs:
             fi
           done
           pnpm run status -- \
+            --target-repo "$TARGET_REPO" \
             --state "Apply finished" \
             --detail "Apply/comment-sync run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"

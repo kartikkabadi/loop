@@ -293,8 +293,10 @@ Capacity reasons:
 ## Status and Dashboard
 
 Planning and publish steps call `pnpm run status`, which writes structured JSON
-under `results/sweep-status/` in generated state. The README dashboard reads
-that JSON and shows:
+under `results/sweep-status/<repo-slug>.json` in generated state. Every sweep
+workflow status update must pass the active `--target-repo` so a ClawHub,
+ClawSweeper, or OpenClaw lane updates only its own dashboard row. The README
+dashboard reads that JSON and shows:
 
 - active Codex target
 - planned review items

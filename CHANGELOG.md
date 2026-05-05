@@ -103,6 +103,9 @@ checkpoint, and status-only commits are intentionally omitted.
   review and repair API page fan-out on large issues and pull requests.
 - Compacted review prompt context lazily so large comment, timeline, file, and
   commit lists no longer process entries that are omitted from Codex input.
+- Scoped every sweep workflow status write to the active target repository so
+  `openclaw/clawhub` and `openclaw/clawsweeper` runs no longer overwrite
+  `openclaw/openclaw` dashboard telemetry.
 - Thanks @stainlu for the repair prompt, GitHub pagination, lazy context
   compaction, review telemetry, live-capacity probe, and comment-router cache
   PRs.

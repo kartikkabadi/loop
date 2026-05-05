@@ -2579,6 +2579,17 @@ test("sweep review recovery uses explicit failed shard artifacts", () => {
   );
 });
 
+test("sweep dashboard status writes are scoped to the target repository", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const statusCalls = [...workflow.matchAll(new RegExp("pnpm run status -- \\\\", "g"))];
+
+  assert.ok(statusCalls.length > 0);
+  for (const match of statusCalls) {
+    const block = workflow.slice(match.index, match.index + 220);
+    assert.match(block, /--target-repo /);
+  }
+});
+
 test("review parser strips environment access caveats from risks", () => {
   const parsed = parseDecision(
     closeDecision({
