@@ -31,6 +31,7 @@ import {
   parseGhJsonLines,
   parseDecision,
   protectedLabels,
+  realBehaviorProofSufficientLabelsForTest,
   relatedTitleSearchTerms,
   renderReviewStartStatusComment,
   reviewArtifactDestination,
@@ -2494,11 +2495,38 @@ test("review prompt requires real behavior proof for PR reviews", () => {
 
   assert.match(prompt, /realBehaviorProof/);
   assert.match(prompt, /Terminal screenshots|terminal screenshots/);
+  assert.match(prompt, /download\/open GitHub attachment links/);
+  assert.match(prompt, /generate stills or contact sheets from videos/);
+  assert.match(prompt, /compare the proof against the PR diff/);
+  assert.match(prompt, /scratch directory/);
   assert.match(
     prompt,
     /Unit tests, mocks, snapshots, lint, typechecks, and CI are supplemental only/,
   );
   assert.match(prompt, /do not request ClawSweeper repair markers/);
+});
+
+test("ClawSweeper proof judgement controls the sufficient proof label", () => {
+  assert.deepEqual(realBehaviorProofSufficientLabelsForTest(["proof: supplied"], "sufficient"), [
+    "proof: supplied",
+    "proof: sufficient",
+  ]);
+  assert.deepEqual(
+    realBehaviorProofSufficientLabelsForTest(
+      ["proof: supplied", "proof: sufficient"],
+      "insufficient",
+    ),
+    ["proof: supplied"],
+  );
+  assert.deepEqual(realBehaviorProofSufficientLabelsForTest(["proof: sufficient"], "missing"), []);
+});
+
+test("review workflow gives Codex a read-only inspection token", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+
+  assert.match(workflow, /id: codex-inspection-token/);
+  assert.match(workflow, /permission-issues: read/);
+  assert.match(workflow, /CLAWSWEEPER_PROOF_INSPECTION_TOKEN/);
 });
 
 test("review prompt asks for concise public review fields", () => {
@@ -2608,6 +2636,7 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     process.env.GH_TOKEN = "gh";
     process.env.GITHUB_TOKEN = "github";
     process.env.COMMIT_SWEEPER_TARGET_GH_TOKEN = "target";
+    process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN = "codex-target";
     process.env.CLAWSWEEPER_APP_ID = "123";
     process.env.CLAWSWEEPER_APP_PRIVATE_KEY = "private";
     process.env.OPENAI_API_KEY = "openai";
@@ -2618,6 +2647,7 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     assert.equal(env.GH_TOKEN, undefined);
     assert.equal(env.GITHUB_TOKEN, undefined);
     assert.equal(env.COMMIT_SWEEPER_TARGET_GH_TOKEN, undefined);
+    assert.equal(env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN, undefined);
     assert.equal(env.CLAWSWEEPER_APP_ID, undefined);
     assert.equal(env.CLAWSWEEPER_APP_PRIVATE_KEY, undefined);
     assert.equal(env.OPENAI_API_KEY, undefined);
@@ -2634,12 +2664,14 @@ test("codex subprocess env can expose an explicit read-only GitHub token", () =>
     process.env.GH_TOKEN = "ambient";
     process.env.GITHUB_TOKEN = "github";
     process.env.COMMIT_SWEEPER_TARGET_GH_TOKEN = "hidden";
+    process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN = "hidden-codex";
 
     const env = codexEnv({ ghToken: "target-read" });
 
     assert.equal(env.GH_TOKEN, "target-read");
     assert.equal(env.GITHUB_TOKEN, undefined);
     assert.equal(env.COMMIT_SWEEPER_TARGET_GH_TOKEN, undefined);
+    assert.equal(env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN, undefined);
     assert.equal(env.GIT_OPTIONAL_LOCKS, "0");
   } finally {
     process.env = originalEnv;
