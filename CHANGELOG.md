@@ -17,7 +17,7 @@ checkpoint, and status-only commits are intentionally omitted.
 - Replaced per-lane capacity config with a single `workers.max` budget and
   dynamic background lane scheduling.
 - Added generated coding-plan artifacts for fresh `queue_fix_pr` work candidates
-  and linked them from the dashboard work-candidate tables.
+  and linked them from the dashboard work-candidate tables. Thanks @FerFroid.
 - Added a generated 1200x630 social preview card plus large-image Open Graph and
   Twitter metadata for the docs site.
 
@@ -109,9 +109,11 @@ checkpoint, and status-only commits are intentionally omitted.
 - Scoped every sweep workflow status write to the active target repository so
   `openclaw/clawhub` and `openclaw/clawsweeper` runs no longer overwrite
   `openclaw/openclaw` dashboard telemetry.
+- Cached the static review prompt and decision schema within each ClawSweeper
+  process instead of re-reading them during review planning and item prompts.
 - Thanks @stainlu for the repair prompt, GitHub pagination, lazy context
-  compaction, review telemetry, live-capacity probe, and comment-router cache
-  PRs.
+  compaction, review telemetry, live-capacity probe, comment-router cache, and
+  prompt asset cache PRs.
 
 ## 0.2.0 - 2026-05-03
 
