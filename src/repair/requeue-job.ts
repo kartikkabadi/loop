@@ -215,18 +215,22 @@ function assertGateOpenIfNeeded(mode: string) {
 }
 
 function listClusterRuns() {
-  return ghJson([
+  const workflowName = workflowDisplayName(workflow);
+  return ghJson<LooseRecord[]>([
     "run",
     "list",
     "--repo",
     repo,
-    "--workflow",
-    workflow,
     "--limit",
-    "50",
+    "200",
     "--json",
-    "databaseId,headSha,status,conclusion,createdAt,url",
-  ]);
+    "databaseId,workflowName,headSha,status,conclusion,createdAt,url",
+  ]).filter((run: LooseRecord) => run.workflowName === workflowName);
+}
+
+function workflowDisplayName(workflowNameOrFile: string): string {
+  if (workflowNameOrFile === "repair-cluster-worker.yml") return "repair cluster worker";
+  return workflowNameOrFile;
 }
 
 function readGate(name: string) {

@@ -384,18 +384,22 @@ function selfHealLedgerPath() {
 }
 
 function listClusterRuns() {
-  return ghJson([
+  const workflowName = workflowDisplayName(workflow);
+  return ghJson<LooseRecord[]>([
     "run",
     "list",
     "--repo",
     repo,
-    "--workflow",
-    workflow,
     "--limit",
-    "50",
+    "200",
     "--json",
-    "databaseId,displayTitle,headSha,status,conclusion,createdAt,updatedAt,url",
-  ]);
+    "databaseId,workflowName,displayTitle,headSha,status,conclusion,createdAt,updatedAt,url",
+  ]).filter((run: LooseRecord) => run.workflowName === workflowName);
+}
+
+function workflowDisplayName(workflowNameOrFile: string): string {
+  if (workflowNameOrFile === "repair-cluster-worker.yml") return "repair cluster worker";
+  return workflowNameOrFile;
 }
 
 function readExecuteGate() {

@@ -310,10 +310,11 @@ count, inspect active review shard jobs on the current workflow run.
 
 The live scheduler estimate happens before planning and is intentionally coarse:
 it counts active repair-cluster workflow runs as priority work, active exact-item
-sweep runs as priority work, and active commit-review workflow runs as
-background work weighted by the configured commit page size. GitHub Actions can
-start or finish jobs after that estimate, so the scheduler is a throttle, not a
-distributed lock.
+sweep runs as priority work, active commit-review workflow runs as background
+work weighted by the configured commit page size, and other active normal/hot
+sweep runs as background work weighted by their quiet-system ceilings. GitHub
+Actions can start or finish jobs after that estimate, so the scheduler is a
+throttle, not a distributed lock.
 
 Planning status intentionally does not run `pnpm run reconcile`. Reconciliation
 can scan many live GitHub pages and has delayed review shard startup. The
@@ -409,8 +410,9 @@ schedule remains the fallback if dispatch is delayed.
 Useful commands:
 
 ```bash
-gh run list --repo openclaw/clawsweeper --workflow sweep.yml --limit 20 \
-  --json databaseId,displayTitle,event,status,conclusion,createdAt,headSha,url
+gh run list --repo openclaw/clawsweeper --limit 100 \
+  --json databaseId,workflowName,displayTitle,event,status,conclusion,createdAt,headSha,url \
+  --jq '.[] | select(.workflowName == "ClawSweeper")'
 
 gh run view <run-id> --repo openclaw/clawsweeper --json jobs \
   --jq '[.jobs[] | select(.name | startswith("Review shard")) | select(.status=="in_progress")] | length'

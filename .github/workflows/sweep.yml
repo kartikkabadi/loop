@@ -605,21 +605,29 @@ jobs:
             pnpm --dir clawsweeper run --silent workflow -- worker-limit "$@"
           }
           active_run_count() {
-            gh run list --repo "${{ github.repository }}" --workflow "$1" --limit 100 --json status 2>/dev/null \
-              | jq '[.[] | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested")] | length' 2>/dev/null \
+            gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,status 2>/dev/null \
+              | WORKFLOW_NAME="$1" jq '[.[] | select(.workflowName == env.WORKFLOW_NAME) | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested")] | length' 2>/dev/null \
               || printf '0'
           }
           active_sweep_exact_count() {
-            gh run list --repo "${{ github.repository }}" --workflow sweep.yml --limit 100 --json displayTitle,status 2>/dev/null \
-              | jq '[.[] | select((.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and (.displayTitle | startswith("Review event item ")))] | length' 2>/dev/null \
+            gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,displayTitle,status 2>/dev/null \
+              | jq '[.[] | select(.workflowName == "ClawSweeper") | select((.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and (.displayTitle | startswith("Review event item ")))] | length' 2>/dev/null \
+              || printf '0'
+          }
+          active_sweep_background_workers() {
+            local normal_limit hot_limit
+            normal_limit="$(limit review_shards.normal_default)"
+            hot_limit="$(limit review_shards.hot_intake_default)"
+            gh run list --repo "${{ github.repository }}" --limit 100 --json databaseId,workflowName,displayTitle,status 2>/dev/null \
+              | CURRENT_RUN_ID="${GITHUB_RUN_ID:-0}" NORMAL_LIMIT="$normal_limit" HOT_LIMIT="$hot_limit" jq '[.[] | select((.databaseId | tostring) != env.CURRENT_RUN_ID) | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | if .displayTitle == "Review ClawSweeper items" then (env.NORMAL_LIMIT | tonumber) elif .displayTitle == "Review hot ClawSweeper items" then (env.HOT_LIMIT | tonumber) else 0 end] | add // 0' 2>/dev/null \
               || printf '0'
           }
           exact_item_shards="$(limit review_shards.exact_item_default)"
           normal_active_floor="$(limit review_shards.normal_active_floor)"
           hard_shard_cap="$(limit review_shards.hard_cap)"
           commit_page_size="$(limit commit_review.page_size_default)"
-          active_critical_workers="$(( $(active_run_count repair-cluster-worker.yml) + $(active_sweep_exact_count) ))"
-          active_background_workers="$(( $(active_run_count commit-review.yml) * commit_page_size ))"
+          active_critical_workers="$(( $(active_run_count "repair cluster worker") + $(active_sweep_exact_count) ))"
+          active_background_workers="$(( $(active_run_count "ClawSweeper Commit Review") * commit_page_size + $(active_sweep_background_workers) ))"
           hot_intake_shards="$(worker_limit hot_intake --active-critical "$active_critical_workers" --active-background "$active_background_workers")"
           normal_shards="$(worker_limit normal_review --active-critical "$active_critical_workers" --active-background "$active_background_workers")"
           hot_intake="${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'true' || 'false' }}"
@@ -1755,7 +1763,7 @@ jobs:
           set -euo pipefail
           hot_intake_shards="$(pnpm run --silent workflow -- limit review_shards.hot_intake_default)"
           normal_shards="$(pnpm run --silent workflow -- limit review_shards.normal_default)"
-          runs_json="$(gh run list --repo "${{ github.repository }}" --workflow sweep.yml --limit 80 --json displayTitle,status,createdAt)"
+          runs_json="$(gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,displayTitle,status,createdAt)"
           eval "$(
             RUNS_JSON="$runs_json" node <<'NODE'
           const runs = JSON.parse(process.env.RUNS_JSON || "[]");
@@ -1763,6 +1771,7 @@ jobs:
           const active = new Set(["in_progress", "pending", "queued", "waiting", "requested"]);
           function recent(title, windowMs) {
             return runs.some((run) => {
+              if (run.workflowName !== "ClawSweeper") return false;
               if (run.displayTitle !== title) return false;
               if (active.has(String(run.status))) return true;
               const createdAt = Date.parse(String(run.createdAt || ""));

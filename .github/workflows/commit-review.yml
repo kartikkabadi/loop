@@ -164,25 +164,25 @@ jobs:
         run: |
           set -euo pipefail
           active_run_count() {
-            gh run list --repo "${{ github.repository }}" --workflow "$1" --limit 100 --json status 2>/dev/null \
-              | jq '[.[] | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested")] | length' 2>/dev/null \
+            gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,status 2>/dev/null \
+              | WORKFLOW_NAME="$1" jq '[.[] | select(.workflowName == env.WORKFLOW_NAME) | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested")] | length' 2>/dev/null \
               || printf '0'
           }
           active_sweep_background_workers() {
             local normal_limit hot_limit
             normal_limit="$(pnpm --dir clawsweeper run --silent workflow -- limit review_shards.normal_default)"
             hot_limit="$(pnpm --dir clawsweeper run --silent workflow -- limit review_shards.hot_intake_default)"
-            gh run list --repo "${{ github.repository }}" --workflow sweep.yml --limit 100 --json displayTitle,status 2>/dev/null \
-              | NORMAL_LIMIT="$normal_limit" HOT_LIMIT="$hot_limit" jq '[.[] | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | if .displayTitle == "Review ClawSweeper items" then (env.NORMAL_LIMIT | tonumber) elif .displayTitle == "Review hot ClawSweeper items" then (env.HOT_LIMIT | tonumber) else 0 end] | add // 0' 2>/dev/null \
+            gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,displayTitle,status 2>/dev/null \
+              | NORMAL_LIMIT="$normal_limit" HOT_LIMIT="$hot_limit" jq '[.[] | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | if .displayTitle == "Review ClawSweeper items" then (env.NORMAL_LIMIT | tonumber) elif .displayTitle == "Review hot ClawSweeper items" then (env.HOT_LIMIT | tonumber) else 0 end] | add // 0' 2>/dev/null \
               || printf '0'
           }
           active_sweep_exact_count() {
-            gh run list --repo "${{ github.repository }}" --workflow sweep.yml --limit 100 --json displayTitle,status 2>/dev/null \
-              | jq '[.[] | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | select(.displayTitle | startswith("Review event item "))] | length' 2>/dev/null \
+            gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,displayTitle,status 2>/dev/null \
+              | jq '[.[] | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | select(.displayTitle | startswith("Review event item "))] | length' 2>/dev/null \
               || printf '0'
           }
           if [ -z "$PAGE_SIZE" ]; then
-            active_critical_workers="$(( $(active_run_count repair-cluster-worker.yml) + $(active_sweep_exact_count) ))"
+            active_critical_workers="$(( $(active_run_count "repair cluster worker") + $(active_sweep_exact_count) ))"
             active_background_workers="$(active_sweep_background_workers)"
             PAGE_SIZE="$(pnpm --dir clawsweeper run --silent workflow -- worker-limit commit_review --active-critical "$active_critical_workers" --active-background "$active_background_workers")"
           fi

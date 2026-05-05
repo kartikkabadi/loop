@@ -76,7 +76,8 @@ The scheduler does this for background lanes:
 1. start with `workers.max`
 2. subtract active priority work, currently repair workers plus exact-item sweep
    runs
-3. subtract active background work already known to the workflow
+3. subtract active background work already known to the workflow, including
+   commit-review pages and other active normal/hot sweep runs
 4. reserve `workers.reserve_for_interactive`
 5. cap the result at the lane's derived quiet-system ceiling
 6. return at least 1 so an enabled lane can still make slow progress

@@ -281,35 +281,30 @@ function readOpenClawSweeperPrClusters() {
 
 function readActiveClusterRuns() {
   const repo = process.env.CLAWSWEEPER_REPO ?? "openclaw/clawsweeper";
-  const statuses = ["queued", "in_progress", "waiting", "requested", "pending"];
-  const runs: LooseRecord[] = [];
-  for (const status of statuses) {
-    try {
-      runs.push(
-        ...ghJson([
-          "run",
-          "list",
-          "--repo",
-          repo,
-          "--workflow",
-          REPAIR_CLUSTER_WORKFLOW,
-          "--status",
-          status,
-          "--limit",
-          "100",
-          "--json",
-          "databaseId,status,conclusion,createdAt,updatedAt,url,displayTitle",
-        ]),
-      );
-    } catch {
-      // Some statuses are not accepted on older gh versions; active PR detection is still useful.
-    }
-  }
+  const statuses = new Set(["queued", "in_progress", "waiting", "requested", "pending"]);
+  const workflowName = workflowDisplayName(REPAIR_CLUSTER_WORKFLOW);
+  const runs = ghJson<LooseRecord[]>([
+    "run",
+    "list",
+    "--repo",
+    repo,
+    "--limit",
+    "200",
+    "--json",
+    "databaseId,workflowName,status,conclusion,createdAt,updatedAt,url,displayTitle",
+  ]).filter((run: LooseRecord) => {
+    return run.workflowName === workflowName && statuses.has(String(run.status));
+  });
   const byId = new Map();
   for (const run of runs) byId.set(String(run.databaseId), run);
   return [...byId.values()].sort((left: JsonValue, right: JsonValue) =>
     String(right.createdAt).localeCompare(String(left.createdAt)),
   );
+}
+
+function workflowDisplayName(workflow: string): string {
+  if (workflow === "repair-cluster-worker.yml") return "repair cluster worker";
+  return workflow;
 }
 
 function publicRow(row: LooseRecord) {

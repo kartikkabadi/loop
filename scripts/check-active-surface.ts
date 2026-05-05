@@ -51,6 +51,7 @@ const retiredPatterns: { label: string; pattern: RegExp }[] = [
   { label: "retired ClawSweeper read token", pattern: /\bCLAWSWEEPER_READ_GH_TOKEN\b/ },
   { label: "retired repair Codex token", pattern: /\bCLAWSWEEPER_CODEX_GH_TOKEN\b/ },
   { label: "retired review token", pattern: /\bCLAWSWEEPER_REVIEW_GH_TOKEN\b/ },
+  { label: "unsupported gh run list workflow flag", pattern: /\bgh run list\b.*--workflow\b/ },
 ];
 
 type Finding = {
