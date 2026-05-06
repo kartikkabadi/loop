@@ -2818,7 +2818,7 @@ test("review prompt requires real behavior proof for PR reviews", () => {
   assert.match(prompt, /download\/open GitHub attachment links/);
   assert.match(prompt, /generate stills or contact sheets from videos/);
   assert.match(prompt, /compare the proof against the PR diff/);
-  assert.match(prompt, /Prefer asking for screenshots/);
+  assert.match(prompt, /Prefer asking for screenshots or videos/);
   assert.match(prompt, /redact private information like IP addresses, API keys/);
   assert.match(prompt, /screenshot-only proof sufficient/);
   assert.match(prompt, /no visible console violation/);
