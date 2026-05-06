@@ -31,6 +31,9 @@ Important source files:
 
 - `src/clawsweeper.ts`: item selection, cadence, planning, review, dashboard,
   and status JSON
+- `config/target-repositories.json`: configured non-core target repositories
+  and the conservative `openclaw/*` exact-review fallback
+- `docs/target-repositories.md`: target onboarding and rollout checklist
 - `src/repair/workflow-utils.ts`: GitHub Actions output shaping for plans
 - `results/sweep-status/<repo-slug>.json`: generated state consumed by the
   dashboard
@@ -72,6 +75,14 @@ group, so targeted maintainer checks do not wait behind broad normal backfill.
 
 - exact event review: enabled through the target repository dispatcher
 - scheduled review/apply/audit: not enabled yet
+- issues are review/comment-only; PRs may auto-close only when already
+  implemented on `main`
+
+Other `openclaw/*` repositories:
+
+- exact event/manual review: supported through the generic conservative
+  fallback after the target dispatcher and GitHub App installation are present
+- scheduled review/apply/audit: not enabled automatically
 - issues are review/comment-only; PRs may auto-close only when already
   implemented on `main`
 

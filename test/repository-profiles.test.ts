@@ -20,6 +20,32 @@ test("repositoryProfileFor supports fs-safe event reviews", () => {
   assert.deepEqual(profile.applyCloseRules.pull_request, ["implemented_on_main"]);
 });
 
+test("generic OpenClaw fallback supports conservative event-only onboarding", () => {
+  const profile = repositoryProfileFor("OpenClaw/example-tool");
+
+  assert.equal(profile.targetRepo, "openclaw/example-tool");
+  assert.equal(profile.slug, "openclaw-example-tool");
+  assert.equal(profile.displayName, "example-tool");
+  assert.equal(profile.checkoutDir, "example-tool");
+  assert.match(profile.promptNote, /generic OpenClaw onboarding profile/);
+  assert.deepEqual(profile.applyCloseRules.issue, []);
+  assert.deepEqual(profile.applyCloseRules.pull_request, ["implemented_on_main"]);
+});
+
+test("generic OpenClaw fallback keeps denied repositories unsupported", () => {
+  assert.throws(
+    () => repositoryProfileFor("openclaw/clawsweeper-state"),
+    /Unsupported target repo: openclaw\/clawsweeper-state/,
+  );
+});
+
+test("generic fallback does not support repositories outside OpenClaw", () => {
+  assert.throws(
+    () => repositoryProfileFor("other-org/example-tool"),
+    /Unsupported target repo: other-org\/example-tool/,
+  );
+});
+
 test("profile lookup normalizes candidate target repos as well as input", () => {
   const mixedCaseProfile = {
     ...REPOSITORY_PROFILES[0],

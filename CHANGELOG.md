@@ -36,6 +36,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Scoped sweep record/status publishing to the active target repository slug so
   concurrent runs for other repositories cannot overwrite newly added target
   records from stale generated state.
+- Added data-driven target repository config plus a conservative `openclaw/*`
+  fallback so newly installed OpenClaw repositories can use exact event review
+  without a TypeScript profile change.
 - Reduced default worker fan-out by about 20% across review shards, hot intake,
   commit review pages, repair live-worker caps, and automatic implementation
   dispatches.

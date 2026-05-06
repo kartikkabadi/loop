@@ -22,6 +22,13 @@ For issue and PR dispatch, copy this workflow into each target repository as
 `.github/workflows/clawsweeper-dispatch.yml`, or merge these triggers and the
 `Dispatch exact ClawSweeper review` step into an existing combined dispatcher:
 
+Target repositories no longer need a TypeScript profile before exact event
+review can run. Any installed `openclaw/*` repository that is not denied in
+`config/target-repositories.json` uses the conservative generic profile:
+issues stay open, and PRs can auto-close only when already implemented on
+`main`. Add a config entry only when the repo should appear in the dashboard or
+needs repo-specific review guidance.
+
 ```yaml
 name: ClawSweeper Dispatch
 
