@@ -2852,6 +2852,19 @@ test("review workflow gives Codex a read-only inspection token", () => {
   assert.match(workflow, /CLAWSWEEPER_PROOF_INSPECTION_TOKEN/);
 });
 
+test("manual exact-item review dispatches avoid broad review concurrency", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+
+  assert.match(
+    workflow,
+    /github\.event_name == 'workflow_dispatch' && \(github\.event\.inputs\.item_number != '' \|\| github\.event\.inputs\.item_numbers != ''\)\) && format\('clawsweeper-intake-exact-\{0\}'/,
+  );
+  assert.doesNotMatch(
+    workflow,
+    /github\.event_name == 'workflow_dispatch' && github\.event\.inputs\.hot_intake == 'true' && \(github\.event\.inputs\.item_number != '' \|\| github\.event\.inputs\.item_numbers != ''\)\) && format\('clawsweeper-intake-exact-\{0\}'/,
+  );
+});
+
 test("review prompt asks for concise public review fields", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 

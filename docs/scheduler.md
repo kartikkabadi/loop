@@ -42,6 +42,8 @@ normal review cannot overlap another normal review for the same target repo.
 GitHub may keep one pending run for a concurrency group; newer scheduled runs
 can replace older pending runs, but they do not cancel a running normal review
 because `cancel-in-progress` is only true for exact `repository_dispatch` runs.
+Manual exact-item `workflow_dispatch` reviews use an exact-item concurrency
+group, so targeted maintainer checks do not wait behind broad normal backfill.
 
 ## Schedules
 
@@ -68,7 +70,8 @@ because `cancel-in-progress` is only true for exact `repository_dispatch` runs.
 
 Manual `workflow_dispatch` can override `target_repo`, `item_number`,
 `item_numbers`, `batch_size`, `shard_count`, `hot_intake`, and apply inputs.
-Exact item dispatches use the event path instead of the planner matrix.
+Exact item dispatches use a dedicated concurrency group and exact planner
+matrix rather than the broad normal-review queue.
 
 Exact event review also starts Codex before generated-state hydration. The
 single-item review only needs the target repository and live GitHub item state;
