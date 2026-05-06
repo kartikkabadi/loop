@@ -152,6 +152,7 @@
         "bug",
         "regression",
         "feature",
+        "skill",
         "docs",
         "cleanup",
         "support",
@@ -159,7 +160,7 @@
         "security",
         "unclear"
       ],
-      "description": "Primary item category. Use bug only for broken existing behavior with an already-defined expected behavior; feature/config/product changes are not bugs."
+      "description": "Primary item category. Use bug only for broken existing behavior with an already-defined expected behavior; use skill for optional skill bundles or skill-only pull requests; feature/config/product changes are not bugs."
     },
     "reproductionStatus": {
       "type": "string",

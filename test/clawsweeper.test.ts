@@ -626,6 +626,49 @@ test("close comments suppress duplicate best solution text", () => {
   assert.doesNotMatch(action.closeComment, /Best possible solution:/);
 });
 
+test("skill-only OpenClaw PRs can close through ClawHub with upload guidance", () => {
+  const decision = closeDecision({
+    closeReason: "clawhub",
+    summary:
+      "The branch adds an optional bundled skill and does not change required core behavior.",
+    changeSummary: "Adds bundled Higgsfield skill files under skills/higgsfield.",
+    bestSolution:
+      "Publish the skill through ClawHub so it stays installable outside OpenClaw core.",
+    itemCategory: "skill",
+    reproductionStatus: "not_applicable",
+    reproductionConfidence: "high",
+    securityReview: {
+      status: "cleared",
+      summary:
+        "The PR is a skill-only content addition and should move to the community skill path.",
+      concerns: [],
+    },
+    realBehaviorProof: {
+      status: "not_applicable",
+      summary: "Real behavior proof is not needed for a scope-fit close.",
+      evidenceKind: "not_applicable",
+      needsContributorAction: false,
+    },
+  });
+  const pr = item({
+    kind: "pull_request",
+    url: "https://github.com/openclaw/openclaw/pull/78018",
+  });
+
+  assert.equal(validateCloseDecision(pr, decision).ok, true);
+
+  const action = reviewActionForDecision({
+    item: pr,
+    decision,
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(action.closeComment, /ClawHub\.com/);
+  assert.match(action.closeComment, /upload or publish/i);
+  assert.match(action.closeComment, /installable community skill/);
+});
+
 test("ClawHub policy only allows implemented-on-main PR close proposals", () => {
   const implementedPr = validateCloseDecision(
     item({
@@ -2666,6 +2709,7 @@ test("runtime budget only trips after a positive elapsed limit", () => {
 
 test("decision parser enforces required schema-shaped evidence", () => {
   assert.equal(parseDecision(closeDecision()).decision, "close");
+  assert.equal(parseDecision(closeDecision({ itemCategory: "skill" })).itemCategory, "skill");
   assert.throws(
     () =>
       parseDecision({
@@ -2837,6 +2881,9 @@ test("review prompts require reproduction and solution assessment details", () =
 
   assert.match(itemPrompt, /Always fill `reproductionAssessment`/);
   assert.match(itemPrompt, /itemCategory: "bug"/);
+  assert.match(itemPrompt, /itemCategory: "skill"/);
+  assert.match(itemPrompt, /skills\/<vendor>/);
+  assert.match(itemPrompt, /upload or publish it through ClawHub\.com/);
   assert.match(itemPrompt, /requiresNewConfigOption/);
   assert.match(itemPrompt, /automatic\s+bug-fix PR creation/);
   assert.match(itemPrompt, /Always fill `solutionAssessment`/);

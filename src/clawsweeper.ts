@@ -68,6 +68,7 @@ type ItemCategory =
   | "bug"
   | "regression"
   | "feature"
+  | "skill"
   | "docs"
   | "cleanup"
   | "support"
@@ -669,6 +670,7 @@ const ITEM_CATEGORIES = new Set<ItemCategory>([
   "bug",
   "regression",
   "feature",
+  "skill",
   "docs",
   "cleanup",
   "support",
@@ -4224,7 +4226,7 @@ function closeIntro(reason: CloseReason): string {
     case "cannot_reproduce":
       return "Thanks for the report. I gave this a fresh shell check against current `main`, and I could not reproduce it anymore.";
     case "clawhub":
-      return `Thanks for the idea. I checked the current extension path, and this is a better fit for the ${markdownLink("ClawHub", targetProfile().communityUrl ?? "https://clawhub.ai/")}/community tide pool than OpenClaw core.`;
+      return `Thanks for the idea. I checked the current extension path, and this is a better fit for ${markdownLink("ClawHub.com", targetProfile().communityUrl ?? "https://clawhub.ai/")} than OpenClaw core.`;
     case "duplicate_or_superseded":
       return "Thanks for the context here. I swept through the related work, and this is now duplicate or superseded.";
     case "not_actionable_in_repo":
@@ -4243,7 +4245,7 @@ function closeOutro(reason: CloseReason): string {
     case "implemented_on_main":
       return "So I’m closing this as already implemented rather than keeping a duplicate issue open.";
     case "clawhub":
-      return "So I’m closing this as a scope-fit item for the plugin/community path rather than keeping it open as an OpenClaw core request.";
+      return `So I’m closing this as a scope-fit item for the plugin/community path. Please upload or publish it through ${markdownLink("ClawHub.com", targetProfile().communityUrl ?? "https://clawhub.ai/")} so it can live as an installable community skill instead of a bundled OpenClaw core change.`;
     case "duplicate_or_superseded":
       return "So I’m closing this here and keeping the remaining discussion on the canonical linked item.";
     case "not_actionable_in_repo":
