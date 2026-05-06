@@ -10,6 +10,16 @@ test("repositoryProfileFor matches mixed-case input against canonical profiles",
   assert.equal(profile.slug, "openclaw-clawhub");
 });
 
+test("repositoryProfileFor supports fs-safe event reviews", () => {
+  const profile = repositoryProfileFor("OpenClaw/fs-safe");
+
+  assert.equal(profile.targetRepo, "openclaw/fs-safe");
+  assert.equal(profile.slug, "openclaw-fs-safe");
+  assert.equal(profile.checkoutDir, "fs-safe");
+  assert.deepEqual(profile.applyCloseRules.issue, []);
+  assert.deepEqual(profile.applyCloseRules.pull_request, ["implemented_on_main"]);
+});
+
 test("profile lookup normalizes candidate target repos as well as input", () => {
   const mixedCaseProfile = {
     ...REPOSITORY_PROFILES[0],

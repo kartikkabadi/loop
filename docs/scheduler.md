@@ -68,6 +68,13 @@ group, so targeted maintainer checks do not wait behind broad normal backfill.
 - self-review is primarily manual or event-driven; scheduled audit keeps the
   dashboard health row fresh
 
+`openclaw/fs-safe`:
+
+- exact event review: enabled through the target repository dispatcher
+- scheduled review/apply/audit: not enabled yet
+- issues are review/comment-only; PRs may auto-close only when already
+  implemented on `main`
+
 Manual `workflow_dispatch` can override `target_repo`, `item_number`,
 `item_numbers`, `batch_size`, `shard_count`, `hot_intake`, and apply inputs.
 Exact item dispatches use a dedicated concurrency group and exact planner

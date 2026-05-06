@@ -72,6 +72,18 @@ export const REPOSITORY_PROFILES: readonly RepositoryProfile[] = [
       pull_request: ["implemented_on_main"],
     },
   },
+  {
+    targetRepo: "openclaw/fs-safe",
+    slug: "openclaw-fs-safe",
+    displayName: "fs-safe",
+    checkoutDir: "fs-safe",
+    promptNote:
+      "Use the fs-safe source tree and current main branch. Review filesystem-safety, path-handling, and package changes conservatively. Only propose auto-close for pull requests that are certainly implemented on main; keep issues open for maintainer triage.",
+    applyCloseRules: {
+      issue: [],
+      pull_request: ["implemented_on_main"],
+    },
+  },
 ];
 
 export function repositoryProfileFor(targetRepo: string): RepositoryProfile {

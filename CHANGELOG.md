@@ -30,6 +30,8 @@ checkpoint, and status-only commits are intentionally omitted.
   OpenClaw core additions to the ClawHub upload path with clearer close copy.
 - Required generated public review comments to use full GitHub URLs for
   cross-issue and cross-PR references instead of shorthand `#123` refs.
+- Added `openclaw/fs-safe` as an event-driven review target with conservative
+  PR implemented-on-main close rules and issue review-only behavior.
 - Reduced default worker fan-out by about 20% across review shards, hot intake,
   commit review pages, repair live-worker caps, and automatic implementation
   dispatches.
