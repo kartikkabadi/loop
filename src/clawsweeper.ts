@@ -4202,17 +4202,17 @@ function publicRealBehaviorProofLine(proof: RealBehaviorProof): string {
     case "missing":
       return `Needs real behavior proof before merge: ${realBehaviorProofBlockerSummary(
         summary,
-        "The PR must include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+        "The PR must include after-fix evidence from a real setup. Screenshots are preferred when they can show the behavior; terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count. Redact private information like IP addresses, API keys, phone numbers, non-public endpoints, and other private details before posting evidence.",
       )}`;
     case "mock_only":
       return `Needs real behavior proof before merge: ${realBehaviorProofBlockerSummary(
         summary,
-        "Tests, mocks, snapshots, lint, typechecks, and CI are supplemental only. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+        "Tests, mocks, snapshots, lint, typechecks, and CI are supplemental only. Screenshots are preferred when they can show the behavior; terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count. Redact private information like IP addresses, API keys, phone numbers, non-public endpoints, and other private details before posting evidence.",
       )}`;
     case "insufficient":
       return `Needs stronger real behavior proof before merge: ${realBehaviorProofBlockerSummary(
         summary,
-        "Include after-fix evidence from a real setup. Terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count.",
+        "Include after-fix evidence from a real setup. Screenshots are preferred when they can show the behavior; terminal screenshots, console output, copied live output, linked artifacts, and redacted logs count. Redact private information like IP addresses, API keys, phone numbers, non-public endpoints, and other private details before posting evidence.",
       )}`;
     case "not_applicable":
       return summary ? `Not applicable: ${summary}` : "";
@@ -4466,7 +4466,7 @@ function reportRealBehaviorProof(markdown: string): RealBehaviorProof {
       return {
         status: "missing",
         summary:
-          "No after-fix real behavior proof was recorded for this external PR; terminal screenshots, console output, copied live output, linked artifacts, recordings, and redacted logs count.",
+          "No after-fix real behavior proof was recorded for this external PR; screenshots are preferred when they can show the behavior, and terminal screenshots, console output, copied live output, linked artifacts, recordings, and redacted logs count. Redact private information like IP addresses, API keys, phone numbers, non-public endpoints, and other private details before posting evidence.",
         evidenceKind: "none",
         needsContributorAction: true,
       };
