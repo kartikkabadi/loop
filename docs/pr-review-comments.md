@@ -55,7 +55,10 @@ report has:
   `realBehaviorProof` field. When proof is missing, mock-only, or insufficient,
   this section should tell contributors that terminal screenshots, console
   output, copied live output, linked artifacts, recordings, and redacted logs
-  count even for non-visual CLI or text changes
+  count even for non-visual CLI or text changes. Ordinary app screenshots count
+  only for behavior they directly show; browser runtime, network, CSP, and
+  security proof needs visible diagnostic output, not a "no visible console
+  violation" claim
 - `**Next step before merge**` for PRs, or `**Next step**` for issues, from the
   work-candidate reason or next action
 - `**Security**` from the typed `securityReview` field, so supply-chain,

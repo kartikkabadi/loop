@@ -4484,12 +4484,49 @@ function reportRealBehaviorProof(markdown: string): RealBehaviorProof {
     ? (evidenceKindValue as RealBehaviorProofEvidenceKind)
     : undefined;
   if (!status || !evidenceKind || !summary) return defaultRealBehaviorProof(markdown);
-  return {
+  return normalizeRealBehaviorProof({
     status,
     summary,
     evidenceKind,
     needsContributorAction: /^true$/i.test(needsContributorActionValue ?? ""),
-  };
+  });
+}
+
+function screenshotProofNeedsRuntimeOutput(summary: string): boolean {
+  if (
+    /\b(?:no|without|absence of|zero|none)\b[^.]{0,120}\b(?:visible\s+)?(?:console|network|error|warning|violation|csp|cors)\b/i.test(
+      summary,
+    )
+  ) {
+    return true;
+  }
+  if (
+    !/\b(?:csp|content[- ]security[- ]policy|connect-src|script-src|style-src|img-src|cors)\b/i.test(
+      summary,
+    )
+  ) {
+    return false;
+  }
+  return !/\b(?:devtools|developer tools|console output|console panel|network trace|network panel|network tab|terminal|logs?|live output|request|response|status code|har)\b/i.test(
+    summary,
+  );
+}
+
+function normalizeRealBehaviorProof(proof: RealBehaviorProof): RealBehaviorProof {
+  if (
+    proof.status === "sufficient" &&
+    proof.evidenceKind === "screenshot" &&
+    screenshotProofNeedsRuntimeOutput(proof.summary)
+  ) {
+    return {
+      status: "insufficient",
+      summary:
+        "The screenshot proof is not enough for browser runtime or security behavior; include console, network, terminal, live output, or logs showing the changed behavior after the fix.",
+      evidenceKind: "screenshot",
+      needsContributorAction: true,
+    };
+  }
+  return proof;
 }
 
 function nextRealBehaviorProofSufficientLabels(

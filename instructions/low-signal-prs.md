@@ -33,7 +33,9 @@ owner discussion, green checks, or a focused fix that should be preserved.
   but provides no after-fix evidence from a real setup, or only lists unit tests,
   mocks, snapshots, lint, typechecks, or CI. Ask for screenshots, terminal
   screenshots, console output, copied live output, linked artifacts, recordings,
-  or redacted runtime logs instead.
+  or redacted runtime logs instead. For browser runtime, network, CSP, or
+  security changes, an ordinary app screenshot or "no visible console violation"
+  claim is not enough without visible diagnostic output.
 
 ## Evidence bar
 

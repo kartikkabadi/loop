@@ -311,10 +311,11 @@
         },
         "summary": {
           "type": "string",
-          "description": "One concise sentence explaining whether the PR body contains after-fix real behavior proof."
+          "description": "One concise sentence explaining whether the PR body contains after-fix real behavior proof. Do not call screenshot-only proof sufficient for browser runtime, CSP, CORS, network, or security changes when it only claims no console error or violation is visible."
         },
         "evidenceKind": {
           "type": "string",
+          "description": "Use screenshot only for directly visible UI or flow proof. For browser runtime, CSP, CORS, network, or security proof, prefer terminal, logs, live_output, or linked_artifact unless the media visibly includes the diagnostic output.",
           "enum": [
             "screenshot",
             "recording",

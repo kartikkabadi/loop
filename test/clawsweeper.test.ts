@@ -1840,6 +1840,64 @@ Full review comments:
   assert.doesNotMatch(markers, /clawsweeper-verdict:needs-human/);
 });
 
+test("screenshot-only browser runtime proof blocks pass markers", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "74460",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "high",
+    author: "contributor",
+    author_association: "CONTRIBUTOR",
+    labels: JSON.stringify(["clawsweeper:automerge"]),
+    work_candidate: "none",
+    pull_head_sha: "abc123def456",
+  })}
+
+## Summary
+
+Keep this focused PR open for automerge.
+
+## What This Changes
+
+Adds tweakcn.com to the Control UI connect-src directive.
+
+## Best Possible Solution
+
+Ask the contributor to add browser runtime proof from their real setup.
+
+${realBehaviorProofReportSection({
+  status: "sufficient",
+  evidenceKind: "screenshot",
+  needsContributorAction: false,
+  summary:
+    "The inspected screenshot shows an after-fix Control UI import success state for a tweakcn theme, with no visible console CSP violation.",
+})}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`;
+
+  const comment = renderReviewCommentFromReport(report, "none");
+  const markers = reviewAutomationMarkersFromReport(report);
+
+  assert.match(comment, /Codex review: needs real behavior proof before merge\./);
+  assert.match(comment, /Needs stronger real behavior proof before merge:/);
+  assert.match(comment, /not enough for browser runtime or security behavior/);
+  assert.match(comment, /console, network, terminal, live output, or logs/);
+  assert.match(markers, /clawsweeper-verdict:needs-human/);
+  assert.doesNotMatch(markers, /clawsweeper-verdict:pass/);
+  assert.doesNotMatch(markers, /proof: sufficient/);
+});
+
 test("missing real behavior proof blocks pass and repair markers", () => {
   const report = `${reportFrontMatter({
     type: "pull_request",
@@ -2716,6 +2774,8 @@ test("review prompt requires real behavior proof for PR reviews", () => {
   assert.match(prompt, /download\/open GitHub attachment links/);
   assert.match(prompt, /generate stills or contact sheets from videos/);
   assert.match(prompt, /compare the proof against the PR diff/);
+  assert.match(prompt, /screenshot-only proof sufficient/);
+  assert.match(prompt, /no visible console violation/);
   assert.match(prompt, /scratch directory/);
   assert.match(prompt, /@clawsweeper re-review/);
   assert.match(

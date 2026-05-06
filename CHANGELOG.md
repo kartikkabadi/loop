@@ -23,6 +23,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Downgraded screenshot-only browser runtime proof so ClawSweeper no longer accepts "no visible console/CSP violation" screenshots as sufficient real behavior proof. Thanks @BunsDev.
 - Reduced default worker fan-out by about 20% across review shards, hot intake,
   commit review pages, repair live-worker caps, and automatic implementation
   dispatches.
