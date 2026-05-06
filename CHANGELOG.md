@@ -28,6 +28,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Downgraded screenshot-only browser runtime proof so ClawSweeper no longer accepts "no visible console/CSP violation" screenshots as sufficient real behavior proof. Thanks @BunsDev.
 - Classified optional bundled skill PRs as `skill` items and routed skill-only
   OpenClaw core additions to the ClawHub upload path with clearer close copy.
+- Required generated public review comments to use full GitHub URLs for
+  cross-issue and cross-PR references instead of shorthand `#123` refs.
 - Reduced default worker fan-out by about 20% across review shards, hot intake,
   commit review pages, repair live-worker caps, and automatic implementation
   dispatches.

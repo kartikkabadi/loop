@@ -217,8 +217,10 @@ implemented by GitHub or by apply.
 
 In user-visible prose, avoid bare self-references to the current item such as
 `#123`, `Issue #123`, `PR #123`, or quoted closing syntax like `Fixes #123`.
-Write `this issue` or `this PR` instead. Keep other issue/PR references as
-normal `#123` links when they point to different items.
+Write `this issue` or `this PR` instead. For every other issue or PR reference,
+use the full GitHub URL, such as `https://github.com/owner/repo/issues/123` or
+`https://github.com/owner/repo/pull/123`; do not write bare `#123`, `Issue
+#123`, or `PR #123` references in public prose.
 
 Keep open when the current item appears paired with an open issue or PR by the
 same author. Contributor issues and PRs commonly arrive as a pair for the same

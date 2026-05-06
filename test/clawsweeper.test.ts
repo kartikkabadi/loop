@@ -2899,6 +2899,8 @@ test("review prompts require reproduction and solution assessment details", () =
   assert.match(itemPrompt, /upload or publish it through ClawHub\.com/);
   assert.match(itemPrompt, /requiresNewConfigOption/);
   assert.match(itemPrompt, /automatic\s+bug-fix PR creation/);
+  assert.match(itemPrompt, /For every other issue or PR reference,\s+use the full GitHub URL/);
+  assert.doesNotMatch(itemPrompt, /normal `#123` links/);
   assert.match(itemPrompt, /Always fill `solutionAssessment`/);
   assert.match(itemPrompt, /Do we have a high-confidence way to reproduce the\s+issue\?/);
   assert.match(itemPrompt, /Is this the best way to solve the issue\?/);
