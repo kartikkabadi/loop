@@ -90,7 +90,69 @@ fs.writeFileSync(
   "utf8",
 );
 fs.writeFileSync(path.join(outDir, "sitemap.xml"), sitemap(orderedPages), "utf8");
+fs.writeFileSync(path.join(outDir, "llms.txt"), llmsTxt(), "utf8");
 console.log(`built docs site: ${path.relative(root, outDir)} (${pages.length} pages)`);
+
+function llmsTxt() {
+  const origin = docsOrigin();
+  const source = docsSourceUrl();
+  const name = typeof productName !== "undefined" ? productName : path.basename(root);
+  const description = typeof productDescription !== "undefined" ? productDescription : `${name} documentation index.`;
+  const install = docsInstallHint();
+  const docPages = docsLlmsPages().map((page) => `- ${page.title}: ${pageUrl(origin, page.outRel)}`);
+  const lines = [
+    `# ${name}`,
+    "",
+    description,
+    "",
+    "Canonical documentation:",
+    ...docPages,
+  ];
+  if (install) {
+    lines.push("", "Install:", `- ${install}`);
+  }
+  if (source) {
+    lines.push("", `Source: ${source}`);
+  }
+  lines.push("", "Guidance for agents:", "- Prefer the canonical documentation URLs above over README excerpts or package metadata.", "- Fetch only the pages needed for the current task; this is an index, not a full-site corpus.");
+  return `${lines.join("\n")}\n`;
+}
+
+function docsLlmsPages() {
+  const seen = new Set();
+  const ordered = typeof orderedPages !== "undefined" ? orderedPages : [];
+  return [...ordered, ...pages].filter((page) => page.outRel && !seen.has(page.outRel) && seen.add(page.outRel));
+}
+
+function docsOrigin() {
+  const value =
+    (typeof siteBase !== "undefined" && siteBase) ||
+    (typeof siteUrl !== "undefined" && siteUrl) ||
+    (typeof customDomain !== "undefined" && customDomain ? `https://${customDomain}` : "");
+  return value.replace(/\/$/, "");
+}
+
+function docsSourceUrl() {
+  if (typeof repoBase !== "undefined") return repoBase;
+  if (typeof repoUrl !== "undefined") return repoUrl;
+  if (typeof repoEditBase !== "undefined") return repoEditBase.replace(/\/edit\/main\/docs\/?$/, "");
+  return "";
+}
+
+function docsInstallHint() {
+  if (typeof installCommand !== "undefined") return installCommand;
+  if (typeof installLine !== "undefined") return installLine;
+  if (typeof installCmd !== "undefined") return installCmd;
+  if (typeof installSnippet !== "undefined") return installSnippet;
+  if (typeof brewInstall !== "undefined") return brewInstall;
+  return "";
+}
+
+function pageUrl(origin, outRel) {
+  const normalized = outRel === "index.html" ? "" : outRel.replace(/(?:^|\/)index\.html$/, (match) => match === "index.html" ? "" : "/");
+  if (!origin) return normalized || "index.html";
+  return normalized ? `${origin}/${normalized}` : `${origin}/`;
+}
 
 function allMarkdown(dir) {
   return fs
@@ -262,7 +324,7 @@ function inline(text, currentRel) {
   const stash = [];
   let out = text.replace(/`([^`]+)`/g, (_, code) => {
     stash.push(`<code>${escapeHtml(code)}</code>`);
-    return ` ${stash.length - 1} `;
+    return `@@CODE${stash.length - 1}@@`;
   });
   out = escapeHtml(out)
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
@@ -270,7 +332,7 @@ function inline(text, currentRel) {
       /\[([^\]]+)\]\(([^)]+)\)/g,
       (_, label, href) => `<a href="${escapeAttr(rewriteHref(href, currentRel))}">${label}</a>`,
     );
-  return out.replace(/ (\d+) /g, (_, i) => stash[Number(i)]);
+  return out.replace(/@@CODE(\d+)@@/g, (_, i) => stash[Number(i)]);
 }
 
 function rewriteHref(href, currentRel) {
