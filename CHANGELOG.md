@@ -24,6 +24,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Ignored non-SHA likely-owner provenance values when rendering public commit
+  links, avoiding broken `/commit/...` URLs in review comments. Thanks @samzong.
 - Gave manual exact-item review dispatches their own concurrency group so
   targeted maintainer reviews no longer wait behind broad normal backfill runs.
 - Downgraded screenshot-only browser runtime proof so ClawSweeper no longer accepts "no visible console/CSP violation" screenshots as sufficient real behavior proof. Thanks @BunsDev.
