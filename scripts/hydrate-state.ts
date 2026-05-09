@@ -21,6 +21,16 @@ const stateRoot = path.resolve(
 );
 const worktreeRoot = path.resolve(args.worktree ?? process.cwd());
 
+if (!existsSync(stateRoot)) {
+  throw new Error(`State directory does not exist: ${stateRoot}`);
+}
+
+if (!GENERATED_PATHS.some((relativePath) => existsSync(path.join(stateRoot, relativePath)))) {
+  throw new Error(
+    `State directory has no generated paths: ${stateRoot}. Check out the generated state branch first, for example: git -C ${stateRoot} switch state`,
+  );
+}
+
 for (const relativePath of GENERATED_PATHS) {
   const source = path.join(stateRoot, relativePath);
   const destination = path.join(worktreeRoot, relativePath);

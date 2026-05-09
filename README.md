@@ -56,10 +56,14 @@ commenting or closing anything. Closed or already-closed reports move to
 `records/<repo-slug>/closed/<number>.md`; reopened archived items move back to
 `items/` as stale work.
 
-Generated state lives in `openclaw/clawsweeper-state`: durable `records/`,
-`jobs/`, `results/`, audit output, workflow status JSON, repair ledgers, and the
-rendered dashboard. This repository stays focused on source, workflows, docs,
-and tests.
+Generated state lives on the `state` branch of `openclaw/clawsweeper-state`:
+durable `records/`, `jobs/`, `results/`, audit output, workflow status JSON,
+repair ledgers, and the rendered dashboard. The state repo `main` branch is the
+dashboard renderer source, so a checkout on `main` intentionally does not show
+`records/`. Hydrate this repo with `git -C ../clawsweeper-state switch state &&
+node scripts/hydrate-state.ts --state-dir ../clawsweeper-state` when local
+commands need generated records. This repository stays focused on source,
+workflows, docs, and tests.
 
 ### Repair and Automerge
 
@@ -271,7 +275,7 @@ separate publish job. They still use the same review and apply code paths, but
 only for the selected item number and only with immediate-safe reasons enabled
 by default: `implemented_on_main` and `duplicate_or_superseded`.
 `stale_insufficient_info` is never applied to young items; apply requires those
-issue reports to be at least 30 days old unless a manual run explicitly changes
+issue reports to be at least 60 days old unless a manual run explicitly changes
 the threshold.
 
 The external state dashboard is fleet-scoped. Each configured repository gets

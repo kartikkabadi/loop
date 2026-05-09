@@ -308,7 +308,7 @@ function proposedItemOptions(): ProposedItemOptions {
     targetRepo: requiredString("target-repo"),
     applyKind: optionalString("apply-kind") || "all",
     applyCloseReasons: optionalString("apply-close-reasons") || "all",
-    staleMinAgeDays: numberArg("stale-min-age-days", 30),
+    staleMinAgeDays: numberArg("stale-min-age-days", 60),
     minAgeDays: numberArg("min-age-days", 0),
     minAgeMinutes: optionalString("min-age-minutes") ? numberArg("min-age-minutes", 0) : null,
   };

@@ -615,6 +615,24 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.match(action.closeComment, /Codex review notes: model gpt-5\.5, reasoning high;/);
 });
 
+test("review actions render deterministic close comments when model close comment is empty", () => {
+  const decision = closeDecision({ closeComment: "" });
+  const action = reviewActionForDecision({
+    item: item(),
+    decision,
+    git,
+    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(action.closeComment, /Thanks for the context here/);
+  assert.match(action.closeComment, /already implemented/);
+
+  const applyValidation = validateCloseDecision(item(), decision);
+  assert.equal(applyValidation.ok, false);
+  assert.equal(applyValidation.reason, "missing close comment");
+});
+
 test("close comments reference high-confidence merged fixing PRs", () => {
   const action = reviewActionForDecision({
     item: item(),

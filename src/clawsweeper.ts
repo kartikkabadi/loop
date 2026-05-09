@@ -646,13 +646,13 @@ const RECENT_ISSUE_DAYS = 30;
 const HOURLY_REVIEW_MS = 60 * 60 * 1000;
 const DAILY_REVIEW_DAYS = 1;
 const WEEKLY_REVIEW_DAYS = 7;
-const STALE_INSUFFICIENT_INFO_MIN_AGE_DAYS = 30;
+const STALE_INSUFFICIENT_INFO_MIN_AGE_DAYS = 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RECENT_MISSING_OPEN_MS = DAY_MS;
 const DEFAULT_CODEX_MODEL = "gpt-5.5";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "";
-const REVIEW_POLICY_VERSION = "2026-05-09-policy-v15";
+const REVIEW_POLICY_VERSION = "2026-05-09-policy-v16";
 const REVIEW_ITEM_PROMPT_PATH = join(ROOT, "prompts", "review-item.md");
 const CLAWSWEEPER_DECISION_SCHEMA_PATH = join(ROOT, "schema", "clawsweeper-decision.schema.json");
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
@@ -5527,7 +5527,9 @@ function canClose(decision: Decision): boolean {
 export function validateCloseDecision(
   item: Pick<Item, "kind" | "labels"> & Partial<Pick<Item, "repo">>,
   decision: Decision,
+  options: { requireCloseComment?: boolean } = {},
 ): { ok: true } | { ok: false; actionTaken: ActionTaken; reason: string } {
+  const requireCloseComment = options.requireCloseComment !== false;
   const profile = repositoryProfileFor(item.repo ?? targetRepo());
   if (decision.decision !== "close") {
     return {
@@ -5567,7 +5569,7 @@ export function validateCloseDecision(
   if (!decision.summary.trim()) {
     return { ok: false, actionTaken: "skipped_invalid_decision", reason: "missing summary" };
   }
-  if (!hasUsableCloseComment(decision.closeComment)) {
+  if (requireCloseComment && !hasUsableCloseComment(decision.closeComment)) {
     return {
       ok: false,
       actionTaken: "skipped_invalid_decision",
@@ -6019,9 +6021,14 @@ export function reviewActionForDecision(options: {
   if (isMaintainerAuthored(options.item)) {
     return { actionTaken: "skipped_maintainer_authored", closeComment: "" };
   }
-  const validation = validateCloseDecision(options.item, options.decision);
+  const validation = validateCloseDecision(options.item, options.decision, {
+    requireCloseComment: false,
+  });
   if (!validation.ok) return { actionTaken: validation.actionTaken, closeComment: "" };
   const closeComment = normalizeComment(options.decision, options.git, options.runtime);
+  if (!hasUsableCloseComment(closeComment)) {
+    return { actionTaken: "skipped_invalid_decision", closeComment: "" };
+  }
   return { actionTaken: "proposed_close", closeComment };
 }
 

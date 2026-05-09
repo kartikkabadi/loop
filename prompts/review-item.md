@@ -142,6 +142,24 @@ Close only when the evidence is strong and the repository policy allows it. Allo
 
 For `openclaw/clawhub`, review every issue and PR with the same depth, but only close PRs where current `main` definitely implements the PR’s intended change. For ClawHub, use `implemented_on_main` only for those PRs, and keep all issues plus all other PR outcomes open.
 
+Do a canonical-search pass before keeping an older issue open only because a
+small part might remain. Start with the provided `relatedItems`, then search
+GitHub and local reports for the central user problem, not just exact title
+words. Useful checks include `gh issue list --repo <repo> --state all --search
+"<key terms>"`, `gh pr list --repo <repo> --state all --search "<key terms>"`,
+`gh search issues "<key terms> repo:<owner/repo>"`, and local report title terms
+from the prompt context. Follow synonyms, old product names, and linked PRs. If
+one canonical issue or PR now owns the remaining work, close this item as
+`duplicate_or_superseded` and link that canonical item. If current `main` solves
+the central user problem and only minor unconfirmed leftovers remain, prefer
+`implemented_on_main` with fix provenance, or `duplicate_or_superseded` when a
+narrower follow-up tracks the leftovers. If the item is older than 60 days,
+partially addressed, and the only remaining blocker is missing reporter data to
+verify whether anything still fails on current `main`, `stale_insufficient_info`
+is acceptable for issues. Do not use stale age to close a clearly described
+remaining feature, config surface, security hardening task, or product decision;
+keep those open or route them to the canonical item.
+
 Close as implemented when current `main` solves the observable user problem well enough, even if it did not use the exact workflow, file split, or field names proposed in the item. For broad umbrella requests, weigh the title and central user problem first. If current `main` solves the central problem and any leftovers are already tracked by a narrower related item, close as `duplicate_or_superseded` or `implemented_on_main` as appropriate and link the canonical follow-up. Keep open when a meaningful requested capability remains missing and no narrower canonical follow-up exists.
 
 Keep open for everything else, including real bugs, unclear-but-salvageable reports, stale PRs that might still contain useful work, optional features that require a new core/plugin API first, or anything where the evidence is not high-confidence.

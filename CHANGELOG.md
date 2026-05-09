@@ -24,6 +24,13 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Rendered deterministic close comments during review even when the model omits
+  `closeComment`, while keeping apply strict about requiring a stored usable
+  close comment before mutating GitHub.
+- Counted live normal and hot review capacity from active `Review shard` jobs
+  instead of reserving an entire 35-70 shard lane for every planning or
+  publishing background run, so saturated backlog runs keep using available
+  Codex capacity.
 - Ignored non-SHA likely-owner provenance values when rendering public commit
   links, avoiding broken `/commit/...` URLs in review comments. Thanks @samzong.
 - Kept missing changelog entries as maintainer-owned ClawSweeper repair work instead of asking PR authors to add them. Thanks @obviyus.
