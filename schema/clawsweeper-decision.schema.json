@@ -71,6 +71,7 @@
     },
     "evidence": {
       "type": "array",
+      "description": "Evidence used for the decision. For implemented_on_main and mostly_implemented_on_main, include source evidence with file+sha, git-history provenance from git blame/log/show, and release or current-main-only provenance.",
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -89,10 +90,12 @@
             "type": ["integer", "null"]
           },
           "command": {
-            "type": ["string", "null"]
+            "type": ["string", "null"],
+            "description": "Exact read-only command used, when applicable. Implementation close decisions need at least one git blame/log/show command and one release or current-main-only check."
           },
           "sha": {
-            "type": ["string", "null"]
+            "type": ["string", "null"],
+            "description": "Commit SHA supporting this evidence. Source and provenance evidence for implementation close decisions must include a SHA."
           }
         }
       }
@@ -351,7 +354,7 @@
     },
     "fixedSha": {
       "type": ["string", "null"],
-      "description": "Specific commit SHA that fixed or proves the issue is implemented, if known. Use null when not applicable or not known."
+      "description": "Specific commit SHA that fixed or proves the issue is implemented. Required for implemented_on_main and mostly_implemented_on_main; keep open if this cannot be identified."
     },
     "fixedAt": {
       "type": ["string", "null"],

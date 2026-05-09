@@ -303,6 +303,9 @@ For implemented-on-main decisions, include both implementation evidence and
 release provenance evidence:
 
 - Include source-backed evidence with `file` and `sha`.
+- Include git-history provenance evidence. At least one evidence entry must use
+  a command like `git blame`, `git log`, or `git show` and explain how the
+  fixed/proof SHA is tied to the current implementation.
 - Set `fixedSha` to the specific commit SHA that fixed or best proves the
   implementation.
 - Set `fixedAt` to the ISO-8601 commit or merge timestamp for `fixedSha`.
@@ -313,9 +316,11 @@ release provenance evidence:
   comment must say it is fixed on current `main` and include `fixedAt`.
 - Add at least one evidence entry whose label/detail/command explains the
   release check, such as `git tag --contains <fixedSha>`, `gh release view`, or
-  changelog/tag inspection.
+  changelog/tag inspection. If no release contains the fix, the evidence must
+  explicitly say this is current-main-only or unreleased provenance.
 - Do not invent release facts. If you cannot identify `fixedSha` plus either
-  `fixedRelease` or `fixedAt`, keep the item open.
+  `fixedRelease` or `fixedAt`, or cannot provide the source, git-history, and
+  release/main-only evidence entries above, keep the item open.
 
 Voice: friendly, calm, and human, like a maintainer doing careful cleanup. Prefer
 `Thanks for the report/context/contribution` when it fits, then get straight to

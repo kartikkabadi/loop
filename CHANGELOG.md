@@ -24,6 +24,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Tightened implemented-on-main review prompts and schema descriptions so close
+  proposals include the git-history and release/current-main provenance required
+  by the apply gate.
 - Added age-gated `mostly_implemented_on_main` PR cleanup so ClawSweeper can
   close older pull requests when current `main` already contains the useful
   change and the remaining diff is obsolete, minor, risky churn, or separately
