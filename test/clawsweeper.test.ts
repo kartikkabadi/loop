@@ -17,10 +17,13 @@ import {
   closeReasonsArg,
   closingPullRequestReferenceTarget,
   compactMappedSlice,
+  compactMappedWindow,
   codexEnv,
   dashboardClosedAt,
   fixedPullRequestFromCommitPullsForTest,
   formatRecentClosedRows,
+  githubContextWindowPlan,
+  ghPagedContextWindow,
   githubPaginatedPath,
   ghRetryKind,
   hotIntakeRecencyMs,
@@ -220,6 +223,105 @@ test("compactMappedSlice maps every entry when no compaction is needed", () => {
   });
   assert.deepEqual(result, [10, 20, 30]);
   assert.deepEqual(mapped, [1, 2, 3]);
+});
+
+test("compactMappedWindow marks omitted entries when hydration is already bounded", () => {
+  const mapped: number[] = [];
+  const result = compactMappedWindow([1, 2, 5, 6], 6, 4, (value) => {
+    mapped.push(value);
+    return value * 10;
+  });
+  assert.deepEqual(result, [
+    10,
+    20,
+    { omitted: 2, note: "middle entries omitted from prompt context" },
+    50,
+    60,
+  ]);
+  assert.deepEqual(mapped, [1, 2, 5, 6]);
+});
+
+test("compactMappedWindow keeps bounded hydrated context when total is larger than limit", () => {
+  const mapped: number[] = [];
+  const result = compactMappedWindow([1, 2, 99, 100], 100, 4, (value) => {
+    mapped.push(value);
+    return value;
+  });
+  assert.deepEqual(result, [
+    1,
+    2,
+    { omitted: 96, note: "middle entries omitted from prompt context" },
+    99,
+    100,
+  ]);
+  assert.deepEqual(mapped, [1, 2, 99, 100]);
+});
+
+test("githubContextWindowPlan includes prior page when the tail crosses a page boundary", () => {
+  assert.deepEqual(githubContextWindowPlan(101, 80), {
+    keepStart: 40,
+    keepEnd: 40,
+    tailFirstPageNumber: 1,
+    lastPageNumber: 2,
+    tailOffset: 61,
+  });
+});
+
+test("githubContextWindowPlan keeps large tails to the final page when possible", () => {
+  assert.deepEqual(githubContextWindowPlan(3000, 80), {
+    keepStart: 40,
+    keepEnd: 40,
+    tailFirstPageNumber: 30,
+    lastPageNumber: 30,
+    tailOffset: 60,
+  });
+});
+
+test("ghPagedContextWindow reuses first page when tail overlaps the head page", () => {
+  const fetchedPages: number[] = [];
+  const window = ghPagedContextWindow<number>(
+    "repos/openclaw/openclaw/issues/123/comments",
+    101,
+    80,
+    {
+      page: (_path, page) => {
+        fetchedPages.push(page);
+        const start = (page - 1) * 100 + 1;
+        const end = Math.min(page * 100, 101);
+        return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+      },
+    },
+  );
+
+  assert.deepEqual(fetchedPages, [1, 2]);
+  assert.deepEqual(window.items, [
+    ...Array.from({ length: 40 }, (_, index) => index + 1),
+    ...Array.from({ length: 40 }, (_, index) => index + 62),
+  ]);
+  assert.equal(window.total, 101);
+  assert.equal(window.hydrated, 80);
+  assert.equal(window.truncated, true);
+});
+
+test("ghPagedContextWindow falls back to full pagination when total is missing", () => {
+  const window = ghPagedContextWindow<number>(
+    "repos/openclaw/openclaw/pulls/123/files",
+    undefined,
+    80,
+    {
+      paged: () => [1, 2, 3],
+      page: () => {
+        throw new Error("page fetch should not be used without a total count");
+      },
+    },
+  );
+
+  assert.deepEqual(window, {
+    items: [1, 2, 3],
+    total: 3,
+    hydrated: 3,
+    truncated: false,
+  });
 });
 
 test("review prompt assets match tracked files", () => {
