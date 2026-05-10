@@ -71,36 +71,14 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           filter: blob:none
           persist-credentials: false
 
-      - name: Prepare notifier runtime
-        timeout-minutes: 5
-        run: |
-          set -euo pipefail
-          node --version
-          corepack enable
-          for attempt in 1 2 3; do
-            if corepack prepare "pnpm@10.33.2" --activate; then
-              break
-            fi
-            if [ "$attempt" -eq 3 ]; then
-              exit 1
-            fi
-            sleep "$((attempt * 10))"
-          done
-          for attempt in 1 2 3; do
-            if pnpm install --frozen-lockfile; then
-              break
-            fi
-            if [ "$attempt" -eq 3 ]; then
-              exit 1
-            fi
-            sleep "$((attempt * 10))"
-          done
-          pnpm run build:repair
+      - uses: ./.github/actions/setup-pnpm
+        with:
+          build-script: build:repair
 
       - name: Feed activity to OpenClaw
         env:

@@ -383,7 +383,7 @@ or syncs the durable ClawSweeper review comment.
 Broad normal review publishes records first, then dispatches durable review
 comment sync into the separate apply/comment-sync lane. This includes scheduled
 runs and workflow-dispatch continuations, so slow GitHub comment writes do not
-hold the normal review concurrency group or delay the next 100-shard backfill
+hold the normal review concurrency group or delay the next 70-shard backfill
 wave. Exact issue/PR reviews and repository-dispatch item runs still sync their
 selected comments inline before finishing.
 
