@@ -182,7 +182,7 @@ const fixDebugMaxBytes = Math.max(
   1024 * 1024,
   Number(process.env.CLAWSWEEPER_FIX_DEBUG_MAX_BYTES ?? 8 * 1024 * 1024),
 );
-const strictTargetValidation =
+const configuredStrictTargetValidation =
   process.env.CLAWSWEEPER_STRICT_TARGET_VALIDATION === "1" ||
   String(process.env.CLAWSWEEPER_TARGET_VALIDATION_MODE ?? "changed-only") === "strict";
 const defaultCodexWriteSandbox =
@@ -247,10 +247,17 @@ if (result.mode !== job.frontmatter.mode) {
   throw new Error(`result mode ${result.mode} does not match job mode ${job.frontmatter.mode}`);
 }
 
+const automergeTargetValidation =
+  String(job.frontmatter.source ?? "") === "pr_automerge" ||
+  String(job.frontmatter.cluster_id ?? "").startsWith("automerge-");
 const targetValidationOptions: TargetValidationOptions = {
+  additionalValidationCommands:
+    automergeTargetValidation && result.repo === "openclaw/openclaw"
+      ? ["pnpm lint", "pnpm test:types"]
+      : [],
   allowExpensiveValidation,
   installTargetDeps,
-  strictTargetValidation,
+  strictTargetValidation: configuredStrictTargetValidation || automergeTargetValidation,
   targetRepo: result.repo,
 };
 

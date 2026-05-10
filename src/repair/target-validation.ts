@@ -27,6 +27,7 @@ const DEFAULT_TARGET_INSTALL_TIMEOUT_MS = 12 * 60 * 1000;
 const DEFAULT_TARGET_VALIDATION_TIMEOUT_MS = 12 * 60 * 1000;
 
 export type TargetValidationOptions = {
+  additionalValidationCommands?: string[];
   allowExpensiveValidation: boolean;
   installTimeoutMs?: number;
   installTargetDeps: boolean;
@@ -226,7 +227,7 @@ export function requiredValidationCommands(
   cwd: string,
   options: TargetValidationOptions,
 ) {
-  const out = [...(commands ?? [])];
+  const out = [...(commands ?? []), ...(options.additionalValidationCommands ?? [])];
   if (!options.skipOpenClawChangedGate && requiresOpenClawChangedGate(cwd, options)) {
     out.push("pnpm check:changed");
   }

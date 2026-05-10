@@ -27,6 +27,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Treated explicit `clawsweeper:automerge` opt-in as the per-PR automerge
   authorization, leaving only the global merge gate so maintainer-approved
   automerge PRs do not stall behind a second environment flag.
+- Strengthened adopted OpenClaw automerge repairs so they run lint and type
+  checks locally instead of pushing after changed-surface validation alone.
 - Tightened implemented-on-main review prompts and schema descriptions so close
   proposals include the git-history and release/current-main provenance required
   by the apply gate.
