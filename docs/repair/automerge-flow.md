@@ -88,12 +88,12 @@ executor.
 The Codex prompt treats artifact validation commands as hints for automerge
 repair, with `pnpm check:changed` as the OpenClaw default local gate. Adopted
 OpenClaw automerge repairs strengthen that local gate to strict validation and
-also require `pnpm lint` plus `pnpm test:types` before push, because maintainer
-automerge opt-in means ClawSweeper should keep fixing terminal CI failures
-rather than handing back another red head. The executor still re-runs the
-normalized gate as the authority before push; if anything remains, it feeds the
-full failure back into a dedicated validation-fix pass before spending the next
-review attempt.
+also require `pnpm lint` plus `pnpm check:test-types` before push, because
+maintainer automerge opt-in means ClawSweeper should keep fixing terminal CI
+failures rather than handing back another red head. The executor still re-runs
+the normalized gate as the authority before push; if anything remains, it feeds
+the full failure back into a dedicated validation-fix pass before spending the
+next review attempt.
 
 ## Exact-Head Rule
 

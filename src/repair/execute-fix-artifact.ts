@@ -253,7 +253,7 @@ const automergeTargetValidation =
 const targetValidationOptions: TargetValidationOptions = {
   additionalValidationCommands:
     automergeTargetValidation && result.repo === "openclaw/openclaw"
-      ? ["pnpm lint", "pnpm test:types"]
+      ? ["pnpm lint", "pnpm check:test-types"]
       : [],
   allowExpensiveValidation,
   installTargetDeps,

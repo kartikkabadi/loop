@@ -53,19 +53,19 @@ test("validation preflight reports injected OpenClaw changed gate", () => {
 test("OpenClaw automerge repairs can require CI-parity validation commands", () => {
   const cwd = packageFixture({
     "check:changed": "node check.js",
+    "check:test-types": "node types.js",
     lint: "node lint.js",
-    "test:types": "node types.js",
   });
   const options = {
     ...validationOptions("openclaw/openclaw"),
-    additionalValidationCommands: ["pnpm lint", "pnpm test:types"],
+    additionalValidationCommands: ["pnpm lint", "pnpm check:test-types"],
     strictTargetValidation: true,
   };
 
   assert.deepEqual(requiredValidationCommands(["pnpm check:changed"], cwd, options), [
     "pnpm check:changed",
     "pnpm lint",
-    "pnpm test:types",
+    "pnpm check:test-types",
   ]);
   assert.deepEqual(
     preflightTargetValidationPlan(
@@ -74,8 +74,8 @@ test("OpenClaw automerge repairs can require CI-parity validation commands", () 
     ),
     {
       status: "passed",
-      resolved_commands: ["pnpm check:changed", "pnpm lint", "pnpm test:types"],
-      available_scripts: ["check:changed", "lint", "test:types"],
+      resolved_commands: ["pnpm check:changed", "pnpm lint", "pnpm check:test-types"],
+      available_scripts: ["check:changed", "check:test-types", "lint"],
     },
   );
 });
