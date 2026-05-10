@@ -6,6 +6,7 @@ type WorkerConfig = {
   workers: {
     max: number;
     reserve_for_interactive: number;
+    expansion_reserve: number;
     minimum_background: number;
   };
 };
@@ -140,7 +141,7 @@ function deriveAutomationLimits(workerConfig: WorkerConfig): AutomationLimits {
   const max = workerConfig.workers.max;
   return {
     review_shards: {
-      normal_default: percent(max, 100),
+      normal_default: percent(max, 70),
       normal_active_floor: percent(max, 30),
       hot_intake_default: percent(max, 35),
       exact_item_default: 1,

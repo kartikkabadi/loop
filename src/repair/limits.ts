@@ -6,6 +6,7 @@ export type WorkerConfig = {
   workers: {
     max: number;
     reserve_for_interactive: number;
+    expansion_reserve: number;
     minimum_background: number;
   };
 };
@@ -56,7 +57,7 @@ export function deriveAutomationLimits(config: WorkerConfig): AutomationLimits {
   const max = config.workers.max;
   return {
     review_shards: {
-      normal_default: percent(max, 100),
+      normal_default: percent(max, 70),
       normal_active_floor: percent(max, 30),
       hot_intake_default: percent(max, 35),
       exact_item_default: 1,
@@ -121,6 +122,7 @@ export function workerLimit(
     const rawAvailable =
       config.workers.max -
       config.workers.reserve_for_interactive -
+      config.workers.expansion_reserve -
       nonNegative(active) -
       nonNegative(background);
     if (rawAvailable <= 0) return 1;
@@ -136,6 +138,7 @@ function validateWorkerConfig(value: unknown): WorkerConfig {
     workers: {
       max: positiveInteger(value, "workers.max"),
       reserve_for_interactive: nonNegativeInteger(value, "workers.reserve_for_interactive"),
+      expansion_reserve: nonNegativeInteger(value, "workers.expansion_reserve"),
       minimum_background: positiveInteger(value, "workers.minimum_background"),
     },
   };

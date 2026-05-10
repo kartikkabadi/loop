@@ -31,19 +31,19 @@ The mental model:
 | --- | ---: | --- |
 | `workers.max` | 100 | Maximum global Codex worker budget used to derive lane limits. |
 | `workers.reserve_for_interactive` | 10 | Worker slots background lanes leave open for exact/manual/urgent work. |
+| `workers.expansion_reserve` | 20 | Extra slots background lanes leave open for independently planned matrix expansion. |
 | `workers.minimum_background` | 10 | Target floor for background progress when enough global capacity is available. |
 
 ## Derived Limits
 
-Derived limits are intentionally percentages of `workers.max`, except normal
-review, which uses the full configured budget when explicitly requested. With
+Derived limits are intentionally percentages of `workers.max`. With
 `workers.max = 100`, the quiet-system ceilings are easy to read directly:
-normal review can use 100 workers, hot intake can use 35, commit review can use
-5 commits per page, and repair lanes can dispatch 40 live workers.
+normal review can use 70 workers, hot intake can use 35, commit review can use 5
+commits per page, and repair lanes can dispatch 40 live workers.
 
 | Name | Current | Meaning |
 | --- | ---: | --- |
-| `review_shards.normal_default` | 100 | Quiet-system normal review shard ceiling. |
+| `review_shards.normal_default` | 70 | Quiet-system normal review shard ceiling. |
 | `review_shards.normal_active_floor` | 30 | Minimum active normal review shards to keep queued for `openclaw/openclaw`. |
 | `review_shards.hot_intake_default` | 35 | Quiet-system broad hot-intake review shard ceiling. |
 | `review_shards.exact_item_default` | 1 | Exact-item hot-intake shard count. |
@@ -58,7 +58,7 @@ normal review can use 100 workers, hot intake can use 35, commit review can use
 
 Formula summary:
 
-- normal review: 100% of `workers.max`
+- normal review: 70% of `workers.max`
 - normal active floor: 30% of `workers.max`
 - hot intake: 35% of `workers.max`
 - commit review page size: 5% of `workers.max`
@@ -80,8 +80,9 @@ The scheduler does this for background lanes:
 3. subtract active background work already known to the workflow, including
    commit-review pages and other active normal/hot sweep runs
 4. reserve `workers.reserve_for_interactive`
-5. cap the result at the lane's derived quiet-system ceiling
-6. return at least 1 so an enabled lane can still make slow progress
+5. reserve `workers.expansion_reserve` for independently planned matrix waves
+6. cap the result at the lane's derived quiet-system ceiling
+7. return at least 1 so an enabled lane can still make slow progress
 
 Priority lanes do not subtract the interactive reserve. They cap themselves at
 their derived lane ceiling and at the remaining global budget after other active
@@ -89,10 +90,12 @@ priority work.
 
 Examples with the current config:
 
-- Quiet system: manual normal review can request 100 shards; scheduled normal
-  review gets 90 after reserving 10 slots for exact/manual/urgent work.
+- Quiet system: manual normal review can request 70 shards; scheduled normal
+  review gets 70 after reserving 10 slots for exact/manual/urgent work and 20
+  slots for in-flight matrix expansion.
 - 30 active repair workers and 20 active background workers: normal review gets
-  40 because `100 - 10 reserve - 30 priority - 20 background = 40`.
+  20 because `100 - 10 interactive reserve - 20 expansion reserve - 30 priority
+  - 20 background = 20`.
 - 90 active priority workers: commit review gets 1, so commit review yields but
   does not fully stall.
 
@@ -106,7 +109,7 @@ pnpm run --silent workflow -- worker-limit commit_review --active-critical 90
 ```
 
 Change `workers.max` first when tuning rate-limit pressure. For example, setting
-`workers.max` to `80` automatically makes normal review `80`, hot intake `28`,
+`workers.max` to `80` automatically makes normal review `56`, hot intake `28`,
 commit review `4`, repair `32`, and hard caps `80`.
 
 ## Runtime Overrides
