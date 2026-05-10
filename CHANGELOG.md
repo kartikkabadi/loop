@@ -52,6 +52,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Clarified likely-owner role wording in generated review comments and reports
   so history-based routing does not imply official maintainer status. Thanks
   @rubencu.
+- Taught PR review prompts to inspect matching maintainer notes before reviewing
+  diffs, avoiding findings that would revert intentional repository decisions.
+  Thanks @obviyus.
 - Added explicit timeouts for disabled-target workflow guard jobs and
   concurrency groups for write-side repair workflows. Thanks @ds4psb-ai.
 - Gave manual exact-item review dispatches their own concurrency group so
