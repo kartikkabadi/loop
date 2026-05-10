@@ -592,10 +592,10 @@ jobs:
             --state "Planning review" \
             --detail "Planner is scanning GitHub for the next review candidates. Candidate counts and shard details will be posted after planning completes." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          pnpm run repair:publish-main -- \
+          timeout 20s pnpm run repair:publish-main -- \
             --message "chore: mark sweep planning started" \
             --path "results/sweep-status/${target_slug}.json" \
-            --rebase-strategy theirs
+            --rebase-strategy theirs || echo "::warning::Skipped slow planning-started dashboard publish so candidate selection can start."
 
       - id: mode
         env:

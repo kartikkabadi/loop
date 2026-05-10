@@ -3180,6 +3180,17 @@ test("sweep workflow publishes target-scoped state paths", () => {
   assert.doesNotMatch(workflow, /--path results\/sweep-status\s*\\/);
 });
 
+test("sweep planning-started status publish is bounded", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const block = workflow.slice(
+    workflow.indexOf("- name: Publish planning-started status"),
+    workflow.indexOf("- id: mode"),
+  );
+
+  assert.match(block, /timeout 20s pnpm run repair:publish-main/);
+  assert.match(block, /Skipped slow planning-started dashboard publish/);
+});
+
 test("review prompt asks for concise public review fields", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 
