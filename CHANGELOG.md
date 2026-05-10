@@ -40,6 +40,9 @@ checkpoint, and status-only commits are intentionally omitted.
   Codex capacity.
 - Bounded the initial planner dashboard publish to 20 seconds so slow generated
   state pushes cannot delay candidate selection or review shard startup.
+- Switched review and commit-review capacity probes from `gh run list` to the
+  GitHub Actions REST runs list so repository-dispatch review workers are counted
+  when sizing new shard and commit-review batches.
 - Ignored non-SHA likely-owner provenance values when rendering public commit
   links, avoiding broken `/commit/...` URLs in review comments. Thanks @samzong.
 - Kept missing changelog entries as maintainer-owned ClawSweeper repair work instead of asking PR authors to add them. Thanks @obviyus.

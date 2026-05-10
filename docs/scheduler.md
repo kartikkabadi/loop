@@ -243,6 +243,11 @@ are capped at 20 seconds. They are useful telemetry, but they must not delay
 candidate selection or the review shard matrix; the publish job writes the final
 dashboard state after review artifacts land.
 
+The plan jobs calculate live capacity from the GitHub Actions REST runs list,
+normalized to the same fields as `gh run list`. The REST endpoint is used because
+`gh run list` can miss active repository-dispatch runs in some local and Actions
+contexts, which would make the scheduler undercount active review workers.
+
 ## Cadence
 
 The planner considers only open issues and PRs that pass `shouldPlanItem`.
@@ -450,9 +455,8 @@ schedule remains the fallback if dispatch is delayed.
 Useful commands:
 
 ```bash
-gh run list --repo openclaw/clawsweeper --limit 100 \
-  --json databaseId,workflowName,displayTitle,event,status,conclusion,createdAt,headSha,url \
-  --jq '.[] | select(.workflowName == "ClawSweeper")'
+gh api 'repos/openclaw/clawsweeper/actions/runs?per_page=100' \
+  --jq '.workflow_runs[] | select(.name == "ClawSweeper") | {id,name,display_title,event,status,conclusion,created_at,head_sha,html_url}'
 
 gh run view <run-id> --repo openclaw/clawsweeper --json jobs \
   --jq '[.jobs[] | select(.name | startswith("Review shard")) | select(.status=="in_progress")] | length'

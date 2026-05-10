@@ -3196,6 +3196,27 @@ test("sweep planning-started status publish is bounded", () => {
   assert.match(block, /Skipped slow planning-started dashboard publish/);
 });
 
+test("review capacity probes use REST actions run listing", () => {
+  const sweepWorkflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const sweepBlock = sweepWorkflow.slice(
+    sweepWorkflow.indexOf("- id: mode"),
+    sweepWorkflow.indexOf("- id: select"),
+  );
+  const commitWorkflow = readFileSync(".github/workflows/commit-review.yml", "utf8");
+  const commitBlock = commitWorkflow.slice(
+    commitWorkflow.indexOf("- name: Select commits"),
+    commitWorkflow.indexOf('if [ "$ENABLED" = "false" ]'),
+  );
+
+  for (const block of [sweepBlock, commitBlock]) {
+    assert.match(block, /active_runs_json\(\)/);
+    assert.match(block, /actions\/runs\?per_page=100/);
+    assert.match(block, /workflowName:\.name/);
+    assert.match(block, /displayTitle:\.display_title/);
+    assert.doesNotMatch(block, /gh run list/);
+  }
+});
+
 test("review prompt asks for concise public review fields", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 

@@ -607,20 +607,26 @@ jobs:
           worker_limit() {
             pnpm --dir clawsweeper run --silent workflow -- worker-limit "$@"
           }
+          active_runs_json() {
+            gh api "repos/${{ github.repository }}/actions/runs?per_page=100" \
+              --jq '[.workflow_runs[] | {databaseId:.id, workflowName:.name, displayTitle:.display_title, status:.status}]' 2>/dev/null \
+              || printf '[]'
+          }
+          ACTIVE_RUNS_JSON="$(active_runs_json)"
           active_run_count() {
-            gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,status 2>/dev/null \
+            printf '%s' "$ACTIVE_RUNS_JSON" \
               | WORKFLOW_NAME="$1" jq '[.[] | select(.workflowName == env.WORKFLOW_NAME) | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested")] | length' 2>/dev/null \
               || printf '0'
           }
           active_sweep_exact_count() {
-            gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,displayTitle,status 2>/dev/null \
+            printf '%s' "$ACTIVE_RUNS_JSON" \
               | jq '[.[] | select(.workflowName == "ClawSweeper") | select((.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and (.displayTitle | startswith("Review event item ")))] | length' 2>/dev/null \
               || printf '0'
           }
           active_sweep_background_workers() {
             local runs total id title status active_shards
             total=0
-            runs="$(gh run list --repo "${{ github.repository }}" --limit 100 --json databaseId,workflowName,displayTitle,status 2>/dev/null \
+            runs="$(printf '%s' "$ACTIVE_RUNS_JSON" \
               | CURRENT_RUN_ID="${GITHUB_RUN_ID:-0}" jq -r '.[] | select((.databaseId | tostring) != env.CURRENT_RUN_ID) | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | select(.displayTitle == "Review ClawSweeper items" or .displayTitle == "Review hot ClawSweeper items") | [.databaseId, .displayTitle, .status] | @tsv' 2>/dev/null || true)"
             while IFS=$'\t' read -r id title status; do
               if [ -z "$id" ]; then
