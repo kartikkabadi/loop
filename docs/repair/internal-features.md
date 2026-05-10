@@ -499,7 +499,8 @@ ClawSweeper `pass`, `approved`, or `no-changes` verdict markers become
 `clawsweeper_auto_merge`. Autofix and draft PRs never merge. Automerge merges
 only when the marker SHA matches the current PR head, checks are green, GitHub
 mergeability is clean, no human-review label is present, the PR is not draft,
-and both `CLAWSWEEPER_ALLOW_MERGE=1` and `CLAWSWEEPER_ALLOW_AUTOMERGE=1` are set.
+and `CLAWSWEEPER_ALLOW_MERGE=1` is set. The `clawsweeper:automerge` opt-in is
+the per-PR automerge authorization.
 Otherwise it leaves the PR open and labels it `clawsweeper:human-review` and
 `clawsweeper:merge-ready` when merge gates are closed.
 
@@ -573,9 +574,6 @@ Important gates:
   Workflows treat any value except literal `1` as closed.
 - `CLAWSWEEPER_ALLOW_MERGE`: allows ClawSweeper to merge. Keep this `0` unless a
   maintainer explicitly opens it.
-- `CLAWSWEEPER_ALLOW_AUTOMERGE`: allows the comment router to merge a
-  `clawsweeper:automerge` PR after ClawSweeper passes the exact current head.
-  Keep this `0` unless a maintainer explicitly opens an automerge window.
 - `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE`: lets scheduled comment routing post
   replies and dispatch workers.
 

@@ -73,7 +73,7 @@ ClawSweeper for the current head, and lets ClawSweeper repair trusted
 `needs-changes` findings for up to ten rounds without merging. Automerge adds
 `clawsweeper:automerge` and can merge only after a trusted pass verdict for the
 exact current head plus a non-draft PR, green checks, clean mergeability, and
-explicit `CLAWSWEEPER_ALLOW_MERGE=1` and `CLAWSWEEPER_ALLOW_AUTOMERGE=1` gates.
+explicit `CLAWSWEEPER_ALLOW_MERGE=1` global merge permission.
 
 ClawSweeper commit findings have a separate intake lane. A
 `clawsweeper_commit_finding` dispatch fetches the latest markdown commit report,
@@ -189,7 +189,7 @@ recommendations and still passes the normal deterministic gates.
 PRs stay fix-only until GitHub marks them ready for review. `approve` is
 maintainer-only exact-head approval after a human-review pause; it clears pause
 labels and merges only when the normal automerge readiness checks and merge
-gates pass. `stop` labels the item for human review.
+gate pass. `stop` labels the item for human review.
 It also removes repair-loop labels, so older automerge/autofix commands and
 trusted pass markers cannot continue the loop after the stop.
 
@@ -319,7 +319,7 @@ The workflow needs:
 - a read-only GitHub token for worker inspection
 - a separate write-scoped GitHub token for the deterministic applicator
 - execution gates that default closed: set `CLAWSWEEPER_ALLOW_EXECUTE=1` and `CLAWSWEEPER_ALLOW_FIX_PR=1` only for an intentional execution window; otherwise execute/autonomous dispatches render plan-only output and skip mutation steps
-- merge is separately gated by `CLAWSWEEPER_ALLOW_MERGE`; automerge additionally requires `CLAWSWEEPER_ALLOW_AUTOMERGE`; both default to `0`, and merge-ready PRs are labeled `clawsweeper:human-review` and `clawsweeper:merge-ready` for a maintainer to merge manually
+- merge is separately gated by `CLAWSWEEPER_ALLOW_MERGE`, which defaults to `0`; merge-ready PRs are labeled `clawsweeper:human-review` and `clawsweeper:merge-ready` for a maintainer to merge manually when the global gate is closed
 - optional `CLAWSWEEPER_CODEX_CLI_VERSION` variable to pin and refresh the cached Codex CLI
 - optional `CLAWSWEEPER_MODEL` override for dispatch scripts; default Codex
   model is `gpt-5.5`; repair workers default to high reasoning on the fast

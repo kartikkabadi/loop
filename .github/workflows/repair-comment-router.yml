@@ -117,7 +117,6 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app
-          CLAWSWEEPER_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_ALLOW_AUTOMERGE || '0' }}
           CLAWSWEEPER_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_ALLOW_MERGE || '0' }}
         run: |
           set -euo pipefail
@@ -193,7 +192,6 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app
-          CLAWSWEEPER_ALLOW_AUTOMERGE: ${{ vars.CLAWSWEEPER_ALLOW_AUTOMERGE || '0' }}
           CLAWSWEEPER_ALLOW_MERGE: ${{ vars.CLAWSWEEPER_ALLOW_MERGE || '0' }}
         run: |
           set -euo pipefail

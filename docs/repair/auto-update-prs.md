@@ -152,14 +152,13 @@ posts an idempotent outcome comment on the opted-in PR. That comment records
 that no branch push, rebase, replacement PR, merge, or ClawSweeper re-review
 was started, and includes the worker summary plus planned/skipped actions.
 
-Automerge has two explicit gates:
+Automerge has one explicit global merge gate:
 
 ```bash
 CLAWSWEEPER_ALLOW_MERGE=1
-CLAWSWEEPER_ALLOW_AUTOMERGE=1
 ```
 
-If ClawSweeper passes the exact current head while either gate is closed,
+If ClawSweeper passes the exact current head while the global merge gate is closed,
 ClawSweeper labels the PR `clawsweeper:merge-ready` and comments instead of
 merging.
 
@@ -204,7 +203,8 @@ Accepted repair verdicts:
 `clawsweeper:autofix` or `clawsweeper:automerge`, a pass verdict for the exact
 current head ends the current repair round. Autofix never merges. Automerge can
 merge only after required checks, mergeability, review state, non-draft status,
-and both merge gates are green. `needs-human` and `human-review` pause the loop
+and the global merge gate are all green. `needs-human` and `human-review` pause
+the loop
 by adding `clawsweeper:human-review`; `/clawsweeper stop` is stronger and also
 removes repair-loop labels so older automerge/autofix comments cannot resume the
 loop. If ClawSweeper wants the bounded repair/rebase loop to continue, it must
@@ -212,7 +212,7 @@ emit an accepted repair verdict or action marker.
 
 After a `needs-human` pause, `/clawsweeper approve` is a maintainer-only exact-head
 approval. It clears pause labels and uses the same merge readiness checks and
-merge gates as a trusted ClawSweeper pass marker.
+global merge gate as a trusted ClawSweeper pass marker.
 
 ## Duplicate Guards
 
@@ -280,7 +280,7 @@ Automerge also refuses to merge when:
 - the pass marker does not name the reviewed head SHA;
 - the PR is draft, not based on `main`, not mergeable, or has non-green checks;
 - GitHub reports requested changes or required review;
-- `CLAWSWEEPER_ALLOW_MERGE` or `CLAWSWEEPER_ALLOW_AUTOMERGE` is not `1`.
+- `CLAWSWEEPER_ALLOW_MERGE` is not `1`.
 
 For automerge-labeled PRs, live mergeability blocks that are repairable are not
 terminal. If GitHub reports `mergeable: CONFLICTING`, `mergeStateStatus:

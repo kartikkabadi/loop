@@ -393,8 +393,6 @@ function isPotentiallyUserFacingPath(file: string): boolean {
 
 export function automergeGateBlockReason(env: LooseRecord = process.env) {
   if (env.CLAWSWEEPER_ALLOW_MERGE !== "1") return "merge requires CLAWSWEEPER_ALLOW_MERGE=1";
-  if (env.CLAWSWEEPER_ALLOW_AUTOMERGE !== "1")
-    return "automerge requires CLAWSWEEPER_ALLOW_AUTOMERGE=1";
   return "";
 }
 
