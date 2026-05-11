@@ -28,7 +28,7 @@ jobs:
       CF_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN || secrets.OPENCLAW_CLOUDFLARE_API_TOKEN }}
       CLAWSWEEPER_STATUS_URL: https://clawsweeper-status.openclaw.workers.dev
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./.github/actions/setup-pnpm
 
