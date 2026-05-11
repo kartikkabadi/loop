@@ -83,21 +83,20 @@ source head, ClawSweeper runs repair-delta validation and skips the internal
 Codex `/review`. The exact-head ClawSweeper review and GitHub checks still gate
 the pushed head before merge.
 
-For the narrow "missing `CHANGELOG.md` entry" automerge case, the cluster worker
-can skip the read-only Codex planning pass after it hydrates the live PR and
-confirms the only needed repair is a changelog entry on a writable branch. It
-writes the same structured `build_fix_artifact` result deterministically, then
-the executor applies the changelog entry, validates the repair delta, pushes,
-and waits for the normal exact-head gates.
+For adopted automerge/autofix PR repairs, the cluster worker skips the
+read-only Codex planning pass after it hydrates the live PR. It writes a generic
+structured `build_fix_artifact` result deterministically: repair the contributor
+branch, keep the source PR credited, rebase onto latest `main`, address PR
+comments/review findings/check failures, add the changelog entry when required,
+and validate. This removes one model round trip from every opted-in repair while
+keeping live evidence, permissions, security boundaries, push, review, checks,
+and merge gating in deterministic code.
 
-For substantive automerge repairs, Codex owns the first rebase. The executor
-fetches the current base and contributor branch, prepares the target toolchain,
-then prompts Codex to inspect the PR comments/review threads/check logs, rebase
-onto latest `origin/main`, resolve conflicts, fix CI, run tests, and keep
-iterating until the checkout is merge-ready or an external blocker is proven.
-Read-only `gh` is allowed inside that prompt for comments, review threads,
-check status, and check logs; GitHub mutations still stay with the deterministic
-executor.
+The executor fetches the current base and contributor branch, prepares the
+target toolchain, then prompts Codex to do the edit work directly. Codex may use
+read-only `gh` for comments, review threads, check status, and check logs; it
+must keep iterating until the checkout is merge-ready or an external blocker is
+proven. GitHub mutations still stay with the deterministic executor.
 
 The Codex prompt treats artifact validation commands as hints for automerge
 repair, with `pnpm check:changed` as the OpenClaw default local gate. Adopted

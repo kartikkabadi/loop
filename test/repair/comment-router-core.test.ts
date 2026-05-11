@@ -509,11 +509,11 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
   assert.deepEqual(job.frontmatter.blocked_actions, ["close", "merge"]);
   assert.deepEqual(job.frontmatter.allowed_actions, ["comment", "label", "fix", "raise_pr"]);
   assert.match(job.body, /repair_contributor_branch/);
-  assert.match(job.body, /emit `changelog_required: true`/);
-  assert.match(job.body, /include `CHANGELOG\.md` in `likely_files`/);
-  assert.match(job.body, /tell the Codex edit pass to add or repair/);
-  assert.match(job.body, /Never add forbidden `Thanks @codex`/);
-  assert.match(job.body, /without a `Thanks @\.\.\.` line/);
+  assert.match(job.body, /Codex edit pass can make this PR merge-ready/);
+  assert.match(job.body, /rebase onto latest main/);
+  assert.match(job.body, /fix CI\/check failures/);
+  assert.match(job.body, /add a changelog entry when required/);
+  assert.match(job.body, /Never add forbidden changelog credit lines/);
   assert.match(job.body, /router owns final merge/);
 });
 

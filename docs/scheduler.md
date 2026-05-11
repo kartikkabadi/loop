@@ -138,11 +138,12 @@ non-doc/test files and do not already include `CHANGELOG.md` go straight to the
 adopted repair worker, so the changelog fix happens in the first loop instead
 of being discovered only at the final merge gate.
 
-For that exact missing-changelog case, the adopted repair worker can skip the
-read-only Codex planning pass after live hydration proves the branch is writable
-and the only missing repair artifact is `CHANGELOG.md`. It emits the structured
-fix artifact directly; the execute stage still owns validation, push,
-exact-head review, checks, and merge gating.
+After live hydration, adopted automerge/autofix repairs now skip the read-only
+Codex planning pass entirely. The worker emits a generic structured fix
+artifact directly: repair the contributor branch, rebase onto current `main`,
+address comments/review findings/failing checks, add a changelog entry when
+required, and validate. The execute stage still owns all GitHub mutations,
+validation authority, push, exact-head review, checks, and merge gating.
 
 For explicit base-sync-only repairs, the repair executor first tries a
 deterministic fast path: rebase onto current `main`, apply known mechanical
