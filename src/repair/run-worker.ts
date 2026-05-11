@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
+import { deterministicAutomergeResult } from "./deterministic-automerge-result.js";
 import {
   assertAllowedOwner,
   makeRunDir,
@@ -99,6 +100,16 @@ if (!dryRun) {
   }
   promptContext.clusterPlanPath = path.join(runDir, "cluster-plan.json");
   promptContext.fixArtifactPath = path.join(runDir, "fix-artifact.json");
+  const deterministicResult = readDeterministicResultIfAvailable({
+    job,
+    mode,
+    clusterPlanPath: promptContext.clusterPlanPath,
+  });
+  if (deterministicResult) {
+    fs.writeFileSync(resultPath, `${JSON.stringify(deterministicResult, null, 2)}\n`);
+    console.log(`result: ${path.relative(repoRoot(), resultPath)}`);
+    process.exit(0);
+  }
 } else if (mode === "autonomous") {
   const plannerArgs = [
     path.join(repoRoot(), "dist/repair/plan-cluster.js"),
@@ -173,6 +184,17 @@ if (!fs.existsSync(resultPath)) {
 await repairResultIfNeeded();
 
 console.log(`result: ${path.relative(repoRoot(), resultPath)}`);
+
+function readDeterministicResultIfAvailable({
+  job,
+  mode,
+  clusterPlanPath,
+}: LooseRecord): LooseRecord | null {
+  if (process.env.CLAWSWEEPER_DETERMINISTIC_AUTOMERGE_REPAIRS === "0") return null;
+  if (!fs.existsSync(String(clusterPlanPath))) return null;
+  const clusterPlan = JSON.parse(fs.readFileSync(String(clusterPlanPath), "utf8"));
+  return deterministicAutomergeResult({ job, mode, clusterPlan });
+}
 
 function runCodex({
   input,

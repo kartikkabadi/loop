@@ -83,6 +83,13 @@ source head, ClawSweeper runs repair-delta validation and skips the internal
 Codex `/review`. The exact-head ClawSweeper review and GitHub checks still gate
 the pushed head before merge.
 
+For the narrow "missing `CHANGELOG.md` entry" automerge case, the cluster worker
+can skip the read-only Codex planning pass after it hydrates the live PR and
+confirms the only needed repair is a changelog entry on a writable branch. It
+writes the same structured `build_fix_artifact` result deterministically, then
+the executor applies the changelog entry, validates the repair delta, pushes,
+and waits for the normal exact-head gates.
+
 For substantive automerge repairs, Codex owns the first rebase. The executor
 fetches the current base and contributor branch, prepares the target toolchain,
 then prompts Codex to inspect the PR comments/review threads/check logs, rebase

@@ -138,6 +138,12 @@ non-doc/test files and do not already include `CHANGELOG.md` go straight to the
 adopted repair worker, so the changelog fix happens in the first loop instead
 of being discovered only at the final merge gate.
 
+For that exact missing-changelog case, the adopted repair worker can skip the
+read-only Codex planning pass after live hydration proves the branch is writable
+and the only missing repair artifact is `CHANGELOG.md`. It emits the structured
+fix artifact directly; the execute stage still owns validation, push,
+exact-head review, checks, and merge gating.
+
 For explicit base-sync-only repairs, the repair executor first tries a
 deterministic fast path: rebase onto current `main`, apply known mechanical
 conflict resolvers such as isolated `CHANGELOG.md` conflicts and generated
