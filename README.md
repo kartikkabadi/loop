@@ -198,7 +198,7 @@ can be used for one-off live routing.
 
 Live dashboard and generated state: https://github.com/openclaw/clawsweeper-state
 
-Live pipeline dashboard: https://clawsweeper-status.openclaw.workers.dev/
+Live pipeline dashboard: <private-fallback-endpoint>
 
 The Cloudflare dashboard is observability-only: it shows active workers,
 repair/automerge pipeline rows, CI state, recent failures, and automerge timing
