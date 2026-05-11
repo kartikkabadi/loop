@@ -1,0 +1,156 @@
+name: spam scanner
+
+on:
+  repository_dispatch:
+    types: [clawsweeper_spam_comment]
+  workflow_dispatch:
+    inputs:
+      force_reprocess:
+        description: "Replay matching comments even if this comment version is already in the ledger"
+        required: true
+        default: false
+        type: boolean
+      target_repo:
+        description: "Repository to scan for spam comments"
+        required: true
+        default: openclaw/openclaw
+        type: string
+      lookback_minutes:
+        description: "How far back to scan comments"
+        required: true
+        default: "180"
+        type: string
+      since:
+        description: "Optional ISO timestamp lower bound for scanned comments"
+        required: false
+        default: ""
+        type: string
+      max_comments:
+        description: "Maximum recent comments to inspect"
+        required: true
+        default: "100"
+        type: string
+      comment_ids:
+        description: "Optional comma-separated issue comment ids"
+        required: false
+        default: ""
+        type: string
+      review_comment_ids:
+        description: "Optional comma-separated pull request review comment ids"
+        required: false
+        default: ""
+        type: string
+      model:
+        description: "Cheap spam scanner model"
+        required: true
+        default: gpt-instant
+        type: string
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+
+concurrency:
+  group: spam-scanner-${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || vars.CLAWSWEEPER_TARGET_REPO || 'openclaw/openclaw' }}
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          filter: blob:none
+          fetch-depth: 0
+          sparse-checkout: |
+            .github
+            results
+            scripts/hydrate-state.ts
+            src/repair
+            package.json
+            pnpm-lock.yaml
+            tsconfig.repair.json
+          sparse-checkout-cone-mode: false
+
+      - name: Create GitHub App token
+        id: app_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
+          permission-contents: write
+          permission-issues: read
+          permission-pull-requests: read
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}
+
+      - uses: ./.github/actions/setup-pnpm
+        with:
+          build-script: build:repair
+
+      - name: Scan spam comments
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set -euo pipefail
+          target_repo="${{ github.event_name == 'workflow_dispatch' && inputs.target_repo || vars.CLAWSWEEPER_TARGET_REPO || 'openclaw/openclaw' }}"
+          lookback_minutes="${{ github.event_name == 'workflow_dispatch' && inputs.lookback_minutes || vars.CLAWSWEEPER_SPAM_LOOKBACK_MINUTES || '180' }}"
+          since="${{ github.event_name == 'workflow_dispatch' && inputs.since || '' }}"
+          max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_SPAM_MAX_COMMENTS || '100' }}"
+          comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.comment_ids || '' }}"
+          review_comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.review_comment_ids || '' }}"
+          model="${{ github.event_name == 'workflow_dispatch' && inputs.model || vars.CLAWSWEEPER_SPAM_MODEL || 'gpt-instant' }}"
+          force_reprocess="${{ github.event_name == 'workflow_dispatch' && inputs.force_reprocess || 'false' }}"
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
+            lookback_minutes="${{ github.event.client_payload.lookback_minutes || vars.CLAWSWEEPER_SPAM_LOOKBACK_MINUTES || '180' }}"
+            since=""
+            max_comments="${{ github.event.client_payload.max_comments || '1' }}"
+            comment_ids="${{ github.event.client_payload.comment_id || '' }}"
+            review_comment_ids="${{ github.event.client_payload.review_comment_id || '' }}"
+            model="${{ github.event.client_payload.model || vars.CLAWSWEEPER_SPAM_MODEL || 'gpt-instant' }}"
+            force_reprocess="${{ github.event.client_payload.force_reprocess || 'false' }}"
+          fi
+
+          args=(
+            --write-report
+            --repo "$target_repo"
+            --lookback-minutes "$lookback_minutes"
+            --max-comments "$max_comments"
+            --model "$model"
+          )
+          if [ -n "$since" ]; then
+            args+=(--since "$since")
+          fi
+          if [ -n "$comment_ids" ]; then
+            args+=(--comment-ids "$comment_ids")
+          fi
+          if [ -n "$review_comment_ids" ]; then
+            args+=(--review-comment-ids "$review_comment_ids")
+          fi
+          if [ "$force_reprocess" = "true" ]; then
+            args+=(--force-reprocess)
+          fi
+          pnpm run repair:spam-scan -- "${args[@]}"
+
+      - name: Commit spam scanner audit
+        if: always()
+        run: |
+          pnpm run repair:publish-main -- \
+            --message "chore: record ClawSweeper spam scan" \
+            --path results/spam-scanner.json \
+            --path results/spam-scanner-latest.json \
+            --path results/spam-audit \
+            --rebase-strategy theirs
