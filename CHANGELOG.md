@@ -44,6 +44,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Enabled a bounded live PR-check fallback for the first visible dashboard rows
   so CI badges still show target checks when KV is absent or cache locality
   hides a posted status event.
+- Tightened the live dashboard desktop layout so the pipeline table scrolls
+  inside its lane instead of colliding with the side panels.
 - Served the last good live dashboard snapshot from a longer edge cache when
   GitHub rate limits transient live refreshes, avoiding zeroed-out status pages.
 - Kept the live dashboard stable during refreshes by caching status snapshots at

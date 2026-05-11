@@ -721,14 +721,14 @@ a:hover { color: #89c8ff; text-decoration: underline; }
 .violet { color: var(--violet); }
 .split {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 500px);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+  gap: 24px;
   align-items: start;
 }
 .split > div,
 .split > aside { min-width: 0; }
 .pipeline-col { overflow: hidden; }
-.side-col { position: relative; z-index: 1; }
+.side-col { min-width: 0; }
 #pipeline,
 #automerge,
 #events {
@@ -736,10 +736,12 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   overflow: hidden;
   border-radius: 14px;
 }
-#pipeline table th:nth-child(1) { width: 120px; }
+#pipeline { overflow-x: auto; }
+#pipeline table { min-width: 820px; }
+#pipeline table th:nth-child(1) { width: 112px; }
 #pipeline table th:nth-child(2) { width: auto; }
-#pipeline table th:nth-child(3) { width: 110px; }
-#pipeline table th:nth-child(4) { width: 100px; }
+#pipeline table th:nth-child(3) { width: 100px; }
+#pipeline table th:nth-child(4) { width: 118px; }
 #pipeline table th:nth-child(5) { width: 68px; }
 #pipeline table th:nth-child(6) { width: 50px; }
 #pipeline table td:nth-child(2) {
@@ -784,8 +786,8 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   font-style: italic;
 }
 .empty::before { content: "🦀 "; opacity: 0.3; }
-@media (max-width: 1180px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } header { align-items: start; flex-direction: column; } }
-@media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } #pipeline { overflow-x: auto; } #pipeline table { min-width: 720px; } }
+@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } header { align-items: start; flex-direction: column; } }
+@media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } #pipeline table { min-width: 760px; } }
 @media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid { grid-template-columns: 1fr; } th:nth-child(4), td:nth-child(4), th:nth-child(6), td:nth-child(6) { display: none; } }
 </style>
 </head>
