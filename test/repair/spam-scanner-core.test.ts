@@ -38,6 +38,34 @@ test("protected authors are not sent to cheap spam model", () => {
   const owner = comment({ author: "maintainer", author_association: "OWNER" });
   assert.equal(isProtectedSpamAuthor(owner), true);
   assert.equal(shouldSendToCheapModel(owner), false);
+  const contributor = comment({ author: "contributor", author_association: "CONTRIBUTOR" });
+  assert.equal(isProtectedSpamAuthor(contributor), true);
+  assert.equal(shouldSendToCheapModel(contributor), false);
+});
+
+test("technical PR comments with GitHub context links are not spam candidates", () => {
+  const signals = deterministicSpamSignals(
+    comment({
+      author: "external-contributor",
+      author_association: "NONE",
+      body: `## Runtime Evidence
+
+Verified manually in the dev Control UI at http://localhost:5173.
+
+Screenshot: https://raw.githubusercontent.com/external-contributor/openclaw/branch/docs/assets/proof.png
+Run: https://github.com/openclaw/clawsweeper/actions/runs/123
+
+\`\`\`text
+2026-05-11T09:44:25.938Z [ws] res ok config.set
+\`\`\`
+`,
+    }),
+  );
+  assert.equal(signals.candidate, false);
+  assert.equal(
+    shouldSendToCheapModel(comment({ body: "See https://github.com/openclaw/openclaw" })),
+    false,
+  );
 });
 
 test("model input is compact and keeps deterministic hints", () => {

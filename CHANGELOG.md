@@ -30,6 +30,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Tightened spam scanner prefilters so GitHub context links and contributor
+  proof comments do not trigger audit records as spam candidates.
 - Derived repair dispatch worker caps from `job_intent` when no explicit cap is
   provided, reducing per-workflow lane branching while preserving the global
   worker budget.

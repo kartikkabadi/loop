@@ -25,7 +25,7 @@ export type SpamModelResult = {
   should_investigate: boolean;
 };
 
-const PROTECTED_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
+const PROTECTED_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR", "CONTRIBUTOR"]);
 const SOLICITATION_PATTERNS = [
   /\bweb scraping\b/i,
   /\bdata extraction\b/i,
@@ -45,6 +45,15 @@ const SHORTENER_HOSTS = new Set([
   "cutt.ly",
   "is.gd",
   "buff.ly",
+]);
+const CONTEXT_LINK_HOSTS = new Set([
+  "github.com",
+  "gist.github.com",
+  "raw.githubusercontent.com",
+  "githubusercontent.com",
+  "localhost",
+  "127.0.0.1",
+  "::1",
 ]);
 
 export function normalizeSpamComment(comment: LooseRecord, kind: SpamScanComment["kind"]) {
@@ -89,6 +98,8 @@ export function deterministicSpamSignals(comment: SpamScanComment) {
   const body = comment.body;
   const urls = extractUrls(body);
   const hosts = urls.map((url) => urlHost(url)).filter(Boolean);
+  const externalHosts = hosts.filter((host) => !isContextLinkHost(host));
+  const externalUrlCount = externalHosts.length;
   const signals: string[] = [];
 
   if (String(comment.minimized_reason ?? "").match(/spam|abuse/i)) {
@@ -98,9 +109,9 @@ export function deterministicSpamSignals(comment: SpamScanComment) {
   if (SOLICITATION_PATTERNS.filter((pattern) => pattern.test(body)).length >= 2) {
     signals.push("solicitation_language");
   }
-  if (urls.length >= 2) signals.push("multiple_links");
-  if (comment.author_association === "NONE" && urls.length > 0) {
-    signals.push("outside_author_with_link");
+  if (externalUrlCount >= 2) signals.push("multiple_external_links");
+  if (comment.author_association === "NONE" && externalUrlCount > 0) {
+    signals.push("outside_author_with_external_link");
   }
   if (body.length < 900 && urls.length > 0 && /\$\s*\d+/.test(body)) {
     signals.push("priced_service_pitch");
@@ -215,10 +226,18 @@ function extractUrls(body: string) {
 
 function urlHost(value: string) {
   try {
-    return new URL(value).hostname.toLowerCase().replace(/^www\./, "");
+    const url = new URL(value);
+    if (url.hostname === "::1" || url.hostname === "[::1]") return "::1";
+    return url.hostname.toLowerCase().replace(/^www\./, "");
   } catch {
     return "";
   }
+}
+
+function isContextLinkHost(host: string) {
+  const normalized = host.toLowerCase().replace(/^www\./, "");
+  if (CONTEXT_LINK_HOSTS.has(normalized)) return true;
+  return normalized.endsWith(".github.com") || normalized.endsWith(".githubusercontent.com");
 }
 
 function redactUrl(value: string) {

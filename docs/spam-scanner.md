@@ -84,11 +84,15 @@ Deterministic signals are intentionally simple and cheap:
 
 - GitHub minimized reason contains `spam` or `abuse`
 - known URL shortener
-- multiple links
-- outside author with a link
+- multiple non-GitHub external links
+- outside author with a non-GitHub external link
 - service-pitch wording such as web scraping, data extraction, flash sale, or
   sample work
 - priced short service pitch
+
+GitHub, raw GitHub content, and localhost links are treated as project context,
+not spam links. Maintainer, collaborator, member, contributor, and trusted bot
+comments are not sent to the cheap model.
 
 Only comments with deterministic signals are sent to `gpt-4o-mini`. The model
 returns strict JSON:
