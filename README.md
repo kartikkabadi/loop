@@ -20,6 +20,8 @@ At a high level ClawSweeper:
 - closes only unchanged, high-confidence, policy-allowed proposals
 - routes maintainer commands such as `@clawsweeper review`,
   `@clawsweeper fix`, `@clawsweeper autofix`, and `@clawsweeper automerge`
+- can acknowledge maintainer comment commands through an optional GitHub App
+  webhook before the GitHub Actions fallback starts
 - repairs opted-in PRs through a bounded Codex review/fix loop before merge
 - can open guarded implementation PRs for strict, reproducible bug issues
 - reviews code-bearing commits that land on target `main` branches

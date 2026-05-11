@@ -40,6 +40,7 @@ export type CommentRouterConfig = {
   since: string;
   itemNumbers: Set<number>;
   commentIds: Set<number>;
+  statusCommentId: number | null;
   allowedAssociations: Set<string>;
   allowedRepositoryPermissions: Set<string>;
   trustedBots: Set<string>;
@@ -154,6 +155,10 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
         .join(","),
       "comment-ids",
     ),
+    statusCommentId: optionalNumber(
+      args["status-comment-id"] ?? process.env.CLAWSWEEPER_STATUS_COMMENT_ID,
+      "status-comment-id",
+    ),
     allowedAssociations: upperCaseSet(
       process.env.CLAWSWEEPER_COMMENT_ALLOWED_ASSOCIATIONS ??
         DEFAULT_ALLOWED_ASSOCIATIONS.join(","),
@@ -192,6 +197,14 @@ function upperCaseSet(value: JsonValue): Set<string> {
       .map((item) => item.trim().toUpperCase())
       .filter(Boolean),
   );
+}
+
+function optionalNumber(value: JsonValue, label: string): number | null {
+  if (value === undefined || value === null || String(value).trim() === "") return null;
+  const parsed = Number.parseInt(String(value), 10);
+  if (!Number.isInteger(parsed) || parsed <= 0)
+    throw new Error(`${label} must be a positive integer`);
+  return parsed;
 }
 
 function numberSet(value: JsonValue, name: string): Set<number> {

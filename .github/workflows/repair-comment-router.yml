@@ -69,7 +69,7 @@ env:
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
 
 concurrency:
-  group: repair-comment-router-${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}
+  group: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.comment_id && format('repair-comment-router-{0}-comment-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.comment_id) || format('repair-comment-router-{0}', github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw') }}
   cancel-in-progress: false
 
 jobs:
@@ -133,9 +133,12 @@ jobs:
             target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
             lookback_minutes="${{ github.event.client_payload.lookback_minutes || vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}"
             since=""
-            max_comments="${{ github.event.client_payload.max_comments || vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '20' }}"
+            max_comments="${{ github.event.client_payload.max_comments || '1' }}"
             item_numbers="${{ github.event.client_payload.item_number || '' }}"
             comment_ids="${{ github.event.client_payload.comment_id || '' }}"
+            status_comment_id="${{ github.event.client_payload.status_comment_id || '' }}"
+          else
+            status_comment_id=""
           fi
 
           args=(
@@ -155,6 +158,9 @@ jobs:
           fi
           if [ -n "$comment_ids" ]; then
             args+=(--comment-ids "$comment_ids")
+          fi
+          if [ -n "$status_comment_id" ]; then
+            args+=(--status-comment-id "$status_comment_id")
           fi
           if [ "$force_reprocess" = "true" ]; then
             args+=(--force-reprocess)
@@ -208,9 +214,12 @@ jobs:
             target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
             lookback_minutes="${{ github.event.client_payload.lookback_minutes || vars.CLAWSWEEPER_COMMENT_LOOKBACK_MINUTES || '180' }}"
             since=""
-            max_comments="${{ github.event.client_payload.max_comments || vars.CLAWSWEEPER_COMMENT_MAX_COMMENTS || '20' }}"
+            max_comments="${{ github.event.client_payload.max_comments || '1' }}"
             item_numbers="${{ github.event.client_payload.item_number || '' }}"
             comment_ids="${{ github.event.client_payload.comment_id || '' }}"
+            status_comment_id="${{ github.event.client_payload.status_comment_id || '' }}"
+          else
+            status_comment_id=""
           fi
 
           args=(
@@ -230,6 +239,9 @@ jobs:
           fi
           if [ -n "$comment_ids" ]; then
             args+=(--comment-ids "$comment_ids")
+          fi
+          if [ -n "$status_comment_id" ]; then
+            args+=(--status-comment-id "$status_comment_id")
           fi
           if [ "$force_reprocess" = "true" ]; then
             args+=(--force-reprocess)

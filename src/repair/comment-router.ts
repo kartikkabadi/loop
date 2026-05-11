@@ -112,6 +112,7 @@ const {
   since,
   itemNumbers,
   commentIds,
+  statusCommentId,
   allowedAssociations,
   allowedRepositoryPermissions,
   trustedBots,
@@ -170,6 +171,12 @@ for (const comment of comments) {
     author_association: String(comment.author_association ?? "").toUpperCase(),
     comment_created_at: comment.created_at,
     comment_updated_at: comment.updated_at,
+    status_comment_id:
+      statusCommentId &&
+      commentIds.size <= 1 &&
+      String(comment.id) === String([...commentIds][0] ?? "")
+        ? statusCommentId
+        : null,
     trigger: parsed.trigger,
     command: parsed.command,
     intent: parsed.intent,
@@ -216,6 +223,7 @@ const report: LooseRecord = {
   max_comments: maxComments,
   item_numbers: [...itemNumbers],
   comment_ids: [...commentIds],
+  status_comment_id: statusCommentId,
   max_autoclose_targets: maxAutocloseTargets,
   scanned_comments: comments.length,
   commands_seen: commands.length,
@@ -2625,7 +2633,8 @@ function hasExistingModeStatusResponse(number: JsonValue, intent: JsonValue) {
 }
 
 function postComment(command: LooseRecord, body: string) {
-  const existing = findExistingCommandStatusComment(command);
+  const existing =
+    findExistingCommandStatusComment(command) ?? findPrecreatedCommandStatusComment(command);
   const nextBody = usesSharedAutomergeStatus(command)
     ? mergeAutomergeTimelineSection({
         body,
@@ -2656,6 +2665,18 @@ function postComment(command: LooseRecord, body: string) {
     payloadPath,
   ]);
   return { mode: "created", comment_id: null };
+}
+
+function findPrecreatedCommandStatusComment(command: LooseRecord) {
+  const statusCommentId = Number(command.status_comment_id ?? 0);
+  if (!Number.isInteger(statusCommentId) || statusCommentId <= 0) return null;
+  const comment = fetchIssueComment(statusCommentId);
+  if (!comment || !isTrustedStatusComment(comment)) return null;
+  if (issueNumberFromUrl(comment.issue_url) !== Number(command.issue_number)) return null;
+  if (!String(comment.body ?? "").includes(`clawsweeper-command-ack:${command.comment_id}`)) {
+    return null;
+  }
+  return comment;
 }
 
 function automergeTimelineEvents(command: LooseRecord, body: string) {

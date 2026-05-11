@@ -253,14 +253,26 @@ Live preflight hydrates job-provided refs by default and records linked refs wit
 `pnpm run repair:comment-router` scans recent issue and PR comments in the target repo.
 Target repositories can also forward matching `issue_comment` events as
 `clawsweeper_comment` repository dispatches with the exact comment id. Those
-comments get an immediate `eyes` reaction from the ClawSweeper app, and the
-scheduled sweep remains a five-minute fallback.
+comments get an immediate `eyes` reaction from the ClawSweeper app. Maintainer
+commands also get one queued status comment that the router edits in place after
+it classifies the command, so the visible reply is available as soon as the
+target dispatcher starts. Exact comment dispatches scan only the source comment
+and use per-comment receiver concurrency; the scheduled sweep remains a
+five-minute fallback.
 The status comment itself uses one compact badge: `🦞👀` for acknowledgement,
 `🦞🧹` for review, `🦞🔧` for repair/build/fix work, and `🦞✅` for completed or
 paused work.
 It accepts only maintainer-authored commands, gated by GitHub
 `author_association` values `OWNER`, `MEMBER`, or `COLLABORATOR` by default.
 Contributor comments are ignored without a reply.
+
+For lower latency than GitHub Actions startup can provide, the optional webhook
+receiver runs `pnpm run repair:comment-webhook` behind a GitHub App webhook for
+`issue_comment` events. It verifies `CLAWSWEEPER_WEBHOOK_SECRET`, mints an
+installation token from the ClawSweeper GitHub App credentials, posts the same
+queued status comment, reacts with `eyes`, and dispatches the existing router
+with `max_comments: "1"`. The target workflow remains the fallback when the
+webhook service is down or not installed for a repository.
 
 Supported triggers:
 

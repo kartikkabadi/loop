@@ -118,6 +118,7 @@ jobs:
           ITEM_NUMBER: ${{ github.event.issue.number }}
           COMMENT_ID: ${{ github.event.comment.id }}
           COMMENT_BODY: ${{ github.event.comment.body }}
+          AUTHOR_ASSOCIATION: ${{ github.event.comment.author_association }}
           SOURCE_ACTION: ${{ github.event.action }}
         run: |
           if [ -z "$DISPATCH_TOKEN" ]; then
@@ -136,29 +137,66 @@ jobs:
               "repos/$TARGET_REPO/issues/comments/$COMMENT_ID/reactions" \
               -f content="eyes" >/dev/null || true
           fi
+          status_comment_id=""
+          if [ -n "$TARGET_TOKEN" ]; then
+            case "$AUTHOR_ASSOCIATION" in
+              OWNER|MEMBER|COLLABORATOR)
+                status_body="$(cat <<EOF
+<!-- clawsweeper-command-ack:$COMMENT_ID -->
+🦞👀
+ClawSweeper picked this up.
+
+Command router queued. I will update this comment with the next step.
+EOF
+)"
+                status_payload="$(jq -nc --arg body "$status_body" '{body:$body}')"
+                status_response="$(GH_TOKEN="$TARGET_TOKEN" gh api \
+                  "repos/$TARGET_REPO/issues/$ITEM_NUMBER/comments" \
+                  --method POST \
+                  --input - <<< "$status_payload")"
+                status_comment_id="$(jq -r '.id // empty' <<< "$status_response")"
+                ;;
+            esac
+          fi
           payload="$(jq -nc \
             --arg target_repo "$TARGET_REPO" \
             --argjson item_number "$ITEM_NUMBER" \
             --argjson comment_id "$COMMENT_ID" \
+            --arg status_comment_id "$status_comment_id" \
             --arg source_event "issue_comment" \
             --arg source_action "$SOURCE_ACTION" \
-            '{event_type:"clawsweeper_comment",client_payload:{target_repo:$target_repo,item_number:$item_number,comment_id:$comment_id,source_event:$source_event,source_action:$source_action}}')"
+            '{event_type:"clawsweeper_comment",client_payload:({target_repo:$target_repo,item_number:$item_number,comment_id:$comment_id,source_event:$source_event,source_action:$source_action,max_comments:"1"} + (if $status_comment_id != "" then {status_comment_id:($status_comment_id|tonumber)} else {} end))}')"
           GH_TOKEN="$DISPATCH_TOKEN" gh api repos/openclaw/clawsweeper/dispatches \
             --method POST \
             --input - <<< "$payload"
 ```
 
 Comments are a lightweight trigger only when the body contains a ClawSweeper
-command. The target workflow reacts with `eyes` immediately and dispatches
-`clawsweeper_comment` to the comment router with the exact comment id, so it
-does not need to wait for the scheduled sweep. Bot-authored label churn is also
-ignored. Human label changes are debounced and may run after an active
-dispatcher, but they must not cancel a content-changing dispatch before it posts
-to ClawSweeper. Content-changing events such as issue edits and PR synchronizes
-cancel stale target-side dispatch jobs and mark their receiver dispatch as
-superseding. On the receiver, event-item runs are keyed by repository and item
-number and the newest event cancels any older receiver run for that same item,
-because the review always fetches the current live item state.
+command. The target workflow reacts with `eyes`, creates one visible queued
+status comment for maintainer-authored commands, and dispatches
+`clawsweeper_comment` to the comment router with the exact source comment id and
+queued status comment id. The router edits that queued comment in place instead
+of posting a second reply. Exact comment dispatches scan only that comment and
+use a per-comment receiver concurrency group, so one maintainer command does not
+wait behind an unrelated command on the same repository. The scheduled sweep
+remains a five-minute fallback. Bot-authored label churn is also ignored. Human
+label changes are debounced and may run after an active dispatcher, but they
+must not cancel a content-changing dispatch before it posts to ClawSweeper.
+Content-changing events such as issue edits and PR synchronizes cancel stale
+target-side dispatch jobs and mark their receiver dispatch as superseding. On
+the receiver, event-item runs are keyed by repository and item number and the
+newest event cancels any older receiver run for that same item, because the
+review always fetches the current live item state.
+
+For sub-5s acknowledgement, run the optional webhook receiver instead of waiting
+for GitHub Actions to start the target dispatcher. Build and run
+`pnpm run build:repair && pnpm run repair:comment-webhook` behind a GitHub App
+webhook endpoint for `issue_comment` events. It verifies
+`CLAWSWEEPER_WEBHOOK_SECRET`, mints an installation token from
+`CLAWSWEEPER_APP_ID` or `CLAWSWEEPER_APP_CLIENT_ID` plus
+`CLAWSWEEPER_APP_PRIVATE_KEY`, posts the same queued status comment, reacts with
+`eyes`, and dispatches the existing comment router with `max_comments: "1"` and
+the status comment id. Keep the Actions dispatcher installed as the fallback.
 
 The receiver keeps the review lane proposal-only, then runs exact apply for the
 selected item with only immediate-safe close reasons enabled:
