@@ -86,6 +86,7 @@ import {
   repairBranchPushRaceReason,
 } from "./repair-branch-push-errors.js";
 import {
+  canSkipInternalCodexReviewForRepairDelta,
   prepareTargetToolchain,
   preflightTargetValidationPlan,
   repairDeltaValidationPlan,
@@ -2375,6 +2376,21 @@ function validateAndReviewLoop({
         baseBranch,
       );
       runDiffCheck({ targetDir, baseBranch });
+      if (canSkipInternalCodexReviewForRepairDelta(validationPlan)) {
+        return {
+          status: "passed_repair_delta_validation",
+          summary:
+            "Repair changed only docs/changelog files since the adopted PR source head; repair-delta validation passed, and exact-head ClawSweeper review plus GitHub checks still gate merge after push.",
+          findings: [],
+          findings_addressed: true,
+          evidence: [
+            "Repair-delta validation passed.",
+            "Internal Codex /review skipped for docs/changelog-only repair delta.",
+            "Exact-head ClawSweeper review is dispatched after the branch push before automerge.",
+          ],
+          validation_commands_run: validationCommands,
+        };
+      }
     } catch (error) {
       if (attempt < maxReviewAttempts && isFixableValidationError(error)) {
         lastReview = {

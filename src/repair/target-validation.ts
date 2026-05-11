@@ -267,6 +267,10 @@ export function repairDeltaValidationPlan(
   };
 }
 
+export function canSkipInternalCodexReviewForRepairDelta(plan: LooseRecord) {
+  return String(plan?.scope ?? "") === "repair-delta-docs";
+}
+
 function restoreTargetLockfile(cwd: string) {
   const lockfile = "pnpm-lock.yaml";
   if (!fs.existsSync(path.join(cwd, lockfile))) return;

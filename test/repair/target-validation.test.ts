@@ -6,6 +6,7 @@ import path from "node:path";
 import test from "node:test";
 
 import {
+  canSkipInternalCodexReviewForRepairDelta,
   preflightTargetValidationPlan,
   repairDeltaValidationPlan,
   requiredValidationCommands,
@@ -255,6 +256,7 @@ test("adopted OpenClaw PR repairs validate changelog-only repair deltas without 
   assert.deepEqual(requiredValidationCommands(plan.commands, cwd, plan.options), [
     `git diff --check ${sourceHead}..HEAD`,
   ]);
+  assert.equal(canSkipInternalCodexReviewForRepairDelta(plan), true);
 });
 
 test("adopted OpenClaw PR repairs keep full changed gate for code repair deltas", () => {
@@ -287,6 +289,7 @@ test("adopted OpenClaw PR repairs keep full changed gate for code repair deltas"
     "pnpm test src/index.test.ts",
     "pnpm check:changed",
   ]);
+  assert.equal(canSkipInternalCodexReviewForRepairDelta(plan), false);
 });
 
 test("changed validation retries one transient check:changed failure", () => {

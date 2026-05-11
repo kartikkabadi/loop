@@ -78,6 +78,11 @@ and generated config checksum conflicts where the replayed commit changed only
 selected checksum entries. That deterministic fast path is only for explicit
 base-sync-only artifacts.
 
+For adopted PR repairs that add only docs or changelog files after the reviewed
+source head, ClawSweeper runs repair-delta validation and skips the internal
+Codex `/review`. The exact-head ClawSweeper review and GitHub checks still gate
+the pushed head before merge.
+
 For substantive automerge repairs, Codex owns the first rebase. The executor
 fetches the current base and contributor branch, prepares the target toolchain,
 then prompts Codex to inspect the PR comments/review threads/check logs, rebase
