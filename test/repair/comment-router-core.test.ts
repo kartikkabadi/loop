@@ -38,6 +38,7 @@ import {
   pausedModeStatusBlocksReplay,
   parseTrustedAutomation,
   repairableCheckBlockers,
+  repairLoopPauseLabels,
   repairLoopStopPauseReason,
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
@@ -772,6 +773,19 @@ test("parseTrustedAutomation accepts trusted ClawSweeper pass verdicts for autom
   assert.equal(parsed.intent, "clawsweeper_auto_merge");
   assert.equal(parsed.expected_head_sha, "abc123");
   assert.match(parsed.repair_reason, /verdict: pass/);
+});
+
+test("repairLoopPauseLabels identifies pause labels for trusted pass resume", () => {
+  assert.deepEqual(
+    repairLoopPauseLabels([
+      "clawsweeper:automerge",
+      "ClawSweeper:Human-Review",
+      "clawsweeper:merge-ready",
+    ]),
+    ["clawsweeper:human-review", "clawsweeper:merge-ready"],
+  );
+  assert.deepEqual(repairLoopPauseLabels(["clawsweeper:automerge"]), []);
+  assert.deepEqual(repairLoopPauseLabels(null), []);
 });
 
 test("parseTrustedAutomation repairs trusted pass verdicts that still contain P findings", () => {

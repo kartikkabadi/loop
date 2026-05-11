@@ -33,6 +33,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Cleared stale `clawsweeper:human-review` and `clawsweeper:merge-ready` pause labels when a later exact-head trusted pass arrives for an automerge PR, so transient cancelled reviews no longer strand maintainer opt-ins.
 - Tightened spam scanner prefilters so GitHub context links and contributor
   proof comments do not trigger audit records as spam candidates.
 - Removed stale spam audit files when a reprocessed comment no longer matches

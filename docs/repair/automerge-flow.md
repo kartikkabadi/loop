@@ -122,6 +122,8 @@ Every automerge decision is bound to a concrete PR head SHA.
 - A repair push changes the head SHA and invalidates older pass markers.
 - A re-review is required after every repair push.
 - The router skips stale trusted markers instead of merging a later head.
+- A later trusted pass for the exact current head can clear stale pause labels
+  from an earlier failed or cancelled review; `/clawsweeper stop` still wins.
 - Merge commands use the reviewed head SHA so GitHub cannot merge a moved head
   accidentally.
 

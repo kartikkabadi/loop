@@ -196,7 +196,8 @@ recommendations and still passes the normal deterministic gates.
 PRs stay fix-only until GitHub marks them ready for review. `approve` is
 maintainer-only exact-head approval after a human-review pause; it clears pause
 labels and merges only when the normal automerge readiness checks and merge
-gate pass. `stop` labels the item for human review.
+gate pass. A later trusted pass for the exact current head also clears stale
+pause labels before continuing automerge. `stop` labels the item for human review.
 It also removes repair-loop labels, so older automerge/autofix commands and
 trusted pass markers cannot continue the loop after the stop.
 

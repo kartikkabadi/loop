@@ -204,11 +204,11 @@ Accepted repair verdicts:
 current head ends the current repair round. Autofix never merges. Automerge can
 merge only after required checks, mergeability, review state, non-draft status,
 and the global merge gate are all green. `needs-human` and `human-review` pause
-the loop
-by adding `clawsweeper:human-review`; `/clawsweeper stop` is stronger and also
-removes repair-loop labels so older automerge/autofix comments cannot resume the
-loop. If ClawSweeper wants the bounded repair/rebase loop to continue, it must
-emit an accepted repair verdict or action marker.
+the loop by adding `clawsweeper:human-review`; a later trusted pass for the exact
+current head clears stale pause labels and continues automerge. `/clawsweeper
+stop` is stronger and also removes repair-loop labels so older automerge/autofix
+comments cannot resume the loop. If ClawSweeper wants the bounded repair/rebase
+loop to continue, it must emit an accepted repair verdict or action marker.
 
 There is one narrow approval shortcut for existing reviews: if ClawSweeper's
 `needs-human` text says no repair lane is needed and the maintainer action is to

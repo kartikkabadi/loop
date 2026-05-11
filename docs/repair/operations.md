@@ -387,12 +387,14 @@ ClawSweeper for the current head, and then reacts to trusted ClawSweeper
 markers. `needs-changes` repairs the source branch when safe or opens a credited
 replacement when it is not. `pass`, `approved`, or `no-changes` never merge
 autofix or draft PRs. Automerge may merge only when the marker SHA matches the
-current head, checks and mergeability are clean, no human-review label is
-present, the PR is not draft, and `CLAWSWEEPER_ALLOW_MERGE=1` is set. The
+current head, checks and mergeability are clean, pause labels have been cleared,
+the PR is not draft, and `CLAWSWEEPER_ALLOW_MERGE=1` is set. The
 `clawsweeper:automerge` opt-in is the per-PR merge authorization. A trusted
 `needs-human` or `human-review` verdict on an opted-in PR adds
-`clawsweeper:human-review` and pauses the loop. ClawSweeper must emit an
-accepted repair verdict or action marker to dispatch the repair/rebase loop.
+`clawsweeper:human-review` and pauses the loop; a later trusted pass for the
+exact current head clears stale pause labels before continuing automerge.
+ClawSweeper must emit an accepted repair verdict or action marker to dispatch
+the repair/rebase loop.
 
 After a pause, `/clawsweeper approve` is maintainer-only exact-head approval. It
 clears `clawsweeper:human-review`, then merges through the same readiness checks

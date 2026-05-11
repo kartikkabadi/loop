@@ -51,6 +51,7 @@ import {
   pausedModeStatusBlocksReplay,
   parseTrustedAutomation,
   repairableCheckBlockers,
+  repairLoopPauseLabels,
   repairLoopStopPauseReason,
   reviewedHeadShaBlockReason,
   renderAutomergeJob,
@@ -790,10 +791,11 @@ function classifyAutomergePass(
   });
   if (headBlock) return { ...command, status: "skipped", reason: headBlock };
   const pauseLabels = pauseLabelsOn(command.target);
-  if (pauseLabels.length > 0) {
-    return { ...command, status: "skipped", reason: "PR is paused for human review" };
-  }
-  const pauseLabelActions: LooseRecord[] = [];
+  const pauseLabelActions = pauseLabels.map((label) => ({
+    action: "remove_label",
+    label,
+    status: execute ? "pending" : "planned",
+  }));
   const failedCheckBlockers = repairableCheckBlockers(command.target?.checks);
   if (failedCheckBlockers.length > 0) {
     return classifyPassedAutomergeRepair(
@@ -2934,7 +2936,7 @@ function hasLabel(target: LooseRecord, name: string) {
 }
 
 function pauseLabelsOn(target: LooseRecord) {
-  return [HUMAN_REVIEW_LABEL, MERGE_READY_LABEL].filter((name) => hasLabel(target, name));
+  return repairLoopPauseLabels(target?.labels ?? []);
 }
 
 function unique<T>(items: T[]): T[] {
