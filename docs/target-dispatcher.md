@@ -141,14 +141,12 @@ jobs:
           if [ -n "$TARGET_TOKEN" ]; then
             case "$AUTHOR_ASSOCIATION" in
               OWNER|MEMBER|COLLABORATOR)
-                status_body="$(cat <<EOF
-<!-- clawsweeper-command-ack:$COMMENT_ID -->
-🦞👀
-ClawSweeper picked this up.
-
-Command router queued. I will update this comment with the next step.
-EOF
-)"
+                status_body="$(printf '%s\n' \
+                  "<!-- clawsweeper-command-ack:$COMMENT_ID -->" \
+                  "🦞👀" \
+                  "ClawSweeper picked this up." \
+                  "" \
+                  "Command router queued. I will update this comment with the next step.")"
                 status_payload="$(jq -nc --arg body "$status_body" '{body:$body}')"
                 status_response="$(GH_TOKEN="$TARGET_TOKEN" gh api \
                   "repos/$TARGET_REPO/issues/$ITEM_NUMBER/comments" \
