@@ -3267,6 +3267,21 @@ test("review capacity probes use REST actions run listing", () => {
   }
 });
 
+test("github activity workflow coalesces noisy observer runs", () => {
+  const workflow = readFileSync(".github/workflows/github-activity.yml", "utf8");
+
+  assert.match(workflow, /group: >-/);
+  assert.match(workflow, /github-activity-\$\{\{ github\.event_name \}\}/);
+  assert.match(workflow, /github\.event\.repository\.full_name/);
+  assert.match(workflow, /github\.event\.issue\.number/);
+  assert.match(workflow, /github\.event\.client_payload\.activity\.subject\.number/);
+  assert.match(workflow, /cancel-in-progress: true/);
+  assert.doesNotMatch(
+    workflow,
+    /group: github-activity-\$\{\{ github\.event_name \}\}-\$\{\{ github\.run_id \}\}/,
+  );
+});
+
 test("review prompt asks for concise public review fields", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 

@@ -51,7 +51,7 @@ export type GithubActivityNotifierRuntime = {
 const DEFAULT_REPORT_PATH = "notifications/github-activity-report.json";
 const BODY_EXCERPT_LIMIT = 1200;
 const CLAWSWEEPER_COMMAND_RE =
-  /(^|\s)(@(clawsweeper|openclaw-clawsweeper)(\[bot\])?\b|\/(clawsweeper|review|automerge|autoclose)\b)/i;
+  /(^|\s)(@(clawsweeper|openclaw-clawsweeper)(\[bot\])?\b|\/(clawsweeper|review|re-review|re-run|rerun|automerge|autoclose)\b)/i;
 
 export function normalizeGithubActivity({
   eventName,

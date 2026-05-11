@@ -370,6 +370,29 @@ test("routineGithubActivityReason keeps explicit ClawSweeper commands visible", 
   });
 
   assert.equal(routineGithubActivityReason(activity!), null);
+
+  const rerun = normalizeGithubActivity({
+    eventName: "issue_comment",
+    payload: {
+      action: "edited",
+      repository: { full_name: "openclaw/openclaw" },
+      sender: { login: "contributor" },
+      issue: {
+        number: 124,
+        title: "Fix scroll behavior",
+        state: "open",
+        html_url: "https://github.com/openclaw/openclaw/pull/124",
+        pull_request: {},
+      },
+      comment: {
+        id: 1000,
+        html_url: "https://github.com/openclaw/openclaw/pull/124#issuecomment-1000",
+        body: "/re-run",
+      },
+    },
+  });
+
+  assert.equal(routineGithubActivityReason(rerun!), null);
 });
 
 test("routineGithubActivityReason filters duplicate PR synchronize and successful automation", () => {
