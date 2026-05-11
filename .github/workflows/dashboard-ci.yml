@@ -8,7 +8,7 @@ on:
       - ClawSweeper Commit Review
       - repair cluster worker
       - repair comment router
-    types: [requested, in_progress, completed]
+    types: [completed]
   schedule:
     - cron: "*/5 * * * *"
 
