@@ -46,7 +46,8 @@ checkpoint, and status-only commits are intentionally omitted.
   hides a posted status event, while preserving workflow status if GitHub
   rejects the live enrichment request.
 - Tightened the live dashboard desktop layout so the pipeline table scrolls
-  inside its lane instead of colliding with the side panels.
+  inside its lane instead of colliding with the side panels, with compact mode
+  labels for dense worker rows.
 - Served the last good live dashboard snapshot from a longer edge cache when
   GitHub rate limits transient live refreshes, avoiding zeroed-out status pages.
 - Kept the live dashboard stable during refreshes by caching status snapshots at

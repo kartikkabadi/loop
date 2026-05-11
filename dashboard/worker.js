@@ -855,6 +855,14 @@ function pipelineItemDetail(row) {
   const title = compactText(row.title);
   return workflow && workflow !== title ? workflow : "";
 }
+function modeLabel(mode) {
+  return {
+    "background-review": "bg-review",
+    "commit-review": "commit",
+    "exact-review": "exact",
+    "hot-review": "hot",
+  }[mode] || mode;
+}
 function metric(label, value, sub, pct, color) {
   return '<div class="metric"><span>' + esc(label) + '</span><strong>' + esc(value) + '</strong><div class="muted">' + esc(sub || "") + '</div><div class="band"><i style="width:' + Math.max(0, Math.min(100, pct || 0)) + '%;background:' + (color || "var(--blue)") + '"></i></div></div>';
 }
@@ -924,7 +932,7 @@ function renderPipeline(rows) {
   }
   document.getElementById("pipeline").innerHTML = '<table><thead><tr><th>Mode</th><th>Item</th><th>Stage</th><th>CI</th><th>Elapsed</th><th>Run</th></tr></thead><tbody>' + rows.map(row => {
     const detail = pipelineItemDetail(row);
-    return '<tr><td><span class="pill">' + esc(row.mode) + '</span></td><td><span class="item-main" title="' + esc(compactText(row.title)) + '">' + pipelineItemLabel(row) + '</span>' + (detail ? '<div class="muted">' + esc(detail) + '</div>' : "") + '</td><td>' + esc(row.stage) + '<div class="muted">' + esc(row.status) + '</div></td><td>' + ciBadge(row.ci) + '</td><td>' + elapsed(row.elapsed_ms) + '</td><td>' + link(row.run_url, "run") + '</td></tr>';
+    return '<tr><td><span class="pill" title="' + esc(row.mode) + '">' + esc(modeLabel(row.mode)) + '</span></td><td><span class="item-main" title="' + esc(compactText(row.title)) + '">' + pipelineItemLabel(row) + '</span>' + (detail ? '<div class="muted">' + esc(detail) + '</div>' : "") + '</td><td>' + esc(row.stage) + '<div class="muted">' + esc(row.status) + '</div></td><td>' + ciBadge(row.ci) + '</td><td>' + elapsed(row.elapsed_ms) + '</td><td>' + link(row.run_url, "run") + '</td></tr>';
   }).join("") + '</tbody></table>';
 }
 function renderAutomerge(rows) {
