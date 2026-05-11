@@ -265,6 +265,36 @@ test("summarizeChecks separates pending checks from terminal blockers", () => {
   assert.deepEqual(checks.terminalBlockers, ["failed-required:FAILURE"]);
 });
 
+test("summarizeChecks uses the latest run for duplicate check names", () => {
+  const checks = summarizeChecks([
+    {
+      name: "Real behavior proof",
+      workflowName: "Real behavior proof",
+      status: "COMPLETED",
+      conclusion: "FAILURE",
+      completedAt: "2026-05-10T06:01:06Z",
+    },
+    {
+      name: "Real behavior proof",
+      workflowName: "Real behavior proof",
+      status: "COMPLETED",
+      conclusion: "SUCCESS",
+      completedAt: "2026-05-11T00:53:06Z",
+    },
+    {
+      name: "CI",
+      workflowName: "CI",
+      status: "COMPLETED",
+      conclusion: "SUCCESS",
+      completedAt: "2026-05-11T00:53:10Z",
+    },
+  ]);
+
+  assert.equal(checks.total, 2);
+  assert.deepEqual(checks.blockers, []);
+  assert.equal(checks.counts.SUCCESS, 2);
+});
+
 test("skipped automerge ledger entries stay retryable", () => {
   assert.equal(
     shouldSuppressProcessedCommentVersion({

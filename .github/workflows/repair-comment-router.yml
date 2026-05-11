@@ -137,6 +137,7 @@ jobs:
             item_numbers="${{ github.event.client_payload.item_number || '' }}"
             comment_ids="${{ github.event.client_payload.comment_id || '' }}"
             status_comment_id="${{ github.event.client_payload.status_comment_id || '' }}"
+            force_reprocess="${{ github.event.client_payload.force_reprocess || 'false' }}"
           else
             status_comment_id=""
           fi
@@ -218,6 +219,7 @@ jobs:
             item_numbers="${{ github.event.client_payload.item_number || '' }}"
             comment_ids="${{ github.event.client_payload.comment_id || '' }}"
             status_comment_id="${{ github.event.client_payload.status_comment_id || '' }}"
+            force_reprocess="${{ github.event.client_payload.force_reprocess || 'false' }}"
           else
             status_comment_id=""
           fi

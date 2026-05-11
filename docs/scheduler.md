@@ -125,6 +125,13 @@ The automerge status comment is the live progress surface. It is edited in
 place and records review, repair, re-review, and merge events with durations,
 run links, and commit links.
 
+If a no-op automerge repair finds that the PR was already the canonical fix, the
+worker does not stop at the observational result. It immediately continues the
+state machine: either queueing a fresh exact-head review, or, when the existing
+ClawSweeper review only asked a maintainer to land the canonical PR and the
+maintainer already opted into automerge, queueing the merge gate for that exact
+review comment.
+
 For explicit base-sync-only repairs, the repair executor first tries a
 deterministic fast path: rebase onto current `main`, apply known mechanical
 conflict resolvers such as isolated `CHANGELOG.md` conflicts and generated

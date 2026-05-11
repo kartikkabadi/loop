@@ -30,6 +30,7 @@ import {
   issueImplementationClusterId,
   issueImplementationJobBranch,
   issueImplementationJobPath,
+  isCanonicalLandingNeedsHumanText,
   isMaintainerCommandAllowed,
   parseCommand,
   pausedModeStatusBlocksReplay,
@@ -766,6 +767,27 @@ test("parseTrustedAutomation treats trusted ClawSweeper needs-human as a pause",
   assert.equal(parsed.intent, "clawsweeper_needs_human");
   assert.equal(parsed.expected_head_sha, "abc123");
   assert.match(parsed.repair_reason, /needs-human/);
+});
+
+test("canonical landing needs-human text can be approved by later automerge opt-in", () => {
+  assert.equal(
+    isCanonicalLandingNeedsHumanText(
+      "No repair lane is needed because the PR already contains the narrow fix; maintainer action is to land one canonical fix.",
+    ),
+    true,
+  );
+  assert.equal(
+    isCanonicalLandingNeedsHumanText(
+      "No repair lane is needed, but Security needs attention before merge.",
+    ),
+    false,
+  );
+  assert.equal(
+    isCanonicalLandingNeedsHumanText(
+      "Maintainer action is to land the canonical fix.\n- [P1] Still broken",
+    ),
+    false,
+  );
 });
 
 test("parseTrustedAutomation explains security-sensitive human-review pauses", () => {

@@ -41,6 +41,7 @@ import {
   commandStatusMarkerPrefix,
   existingCommandStatusBlocksReplay,
   existingModeStatusBlocksReplay,
+  isCanonicalLandingNeedsHumanText,
   isMaintainerCommandAllowed,
   issueImplementationClusterId,
   issueImplementationJobPath,
@@ -901,6 +902,18 @@ function classifyNeedsHuman(
     markerName: "human-review",
   });
   if (headBlock) return { ...command, status: "skipped", reason: headBlock };
+  if (maintainerAutomergeOptInApprovesNeedsHuman(command)) {
+    return {
+      ...command,
+      intent: "clawsweeper_auto_merge",
+      repair_reason: `${command.repair_reason ?? "structured ClawSweeper verdict: needs-human"}; later maintainer automerge opt-in approves landing the canonical PR`,
+      status: "ready",
+      actions: [
+        { action: "merge", status: execute ? "pending" : "planned" },
+        { action: "comment", status: execute ? "pending" : "planned" },
+      ],
+    };
+  }
   return {
     ...command,
     status: "ready",
@@ -909,6 +922,19 @@ function classifyNeedsHuman(
       { action: "comment", status: execute ? "pending" : "planned" },
     ],
   };
+}
+
+function maintainerAutomergeOptInApprovesNeedsHuman(command: LooseRecord) {
+  if (!command.trusted_bot) return false;
+  if (!hasLabel(command.target, AUTOMERGE_LABEL)) return false;
+  if (hasLabel(command.target, HUMAN_REVIEW_LABEL)) return false;
+  const reason = String(command.repair_reason ?? "");
+  if (!isCanonicalLandingNeedsHumanText(reason)) return false;
+  const verdictTime = Date.parse(
+    String(command.comment_updated_at ?? command.comment_created_at ?? ""),
+  );
+  const optInTime = latestAutomergeResumeAt(command);
+  return Number.isFinite(verdictTime) && optInTime > verdictTime;
 }
 
 function automergeBlocked(command: LooseRecord, reason: string) {

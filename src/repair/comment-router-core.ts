@@ -480,6 +480,15 @@ export function automergeReadinessRepairReason(reason: JsonValue): string | null
   return null;
 }
 
+export function isCanonicalLandingNeedsHumanText(value: JsonValue) {
+  const text = String(value ?? "");
+  if (!text) return false;
+  if (/security-sensitive|needs attention|review finding|\[P[0-3]\]/i.test(text)) return false;
+  return /no repair lane is needed|maintainer action is to land|land .*canonical|canonical .*fix/i.test(
+    text,
+  );
+}
+
 export function commandHasAction(command: LooseRecord, actionName: string): boolean {
   return (command.actions ?? []).some((action: JsonValue) => action.action === actionName);
 }

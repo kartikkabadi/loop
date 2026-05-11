@@ -37,6 +37,7 @@ import {
   automergeShepherdWaitConfig,
   canUseAutomergeFastRebase,
 } from "./automerge-shepherd.js";
+import { isCanonicalLandingNeedsHumanText } from "./comment-router-core.js";
 import { parsePullRequestUrl, pullRequestNumberFromUrl } from "./github-ref.js";
 import {
   clawsweeperGitUserEmail,
@@ -65,7 +66,7 @@ import {
 import { canTreatRebaseAsCompleteRepair } from "./fix-edit-policy.js";
 import { applyMechanicalChangelogFix } from "./mechanical-changelog.js";
 import { tryResolveMechanicalRebaseConflicts } from "./mechanical-rebase-conflicts.js";
-import { compactText } from "./text-utils.js";
+import { compactText, escapeRegExp } from "./text-utils.js";
 import {
   shouldCloseSupersededSourcePrs,
   shouldSeedReplacementBranchFromSource,
@@ -3245,6 +3246,7 @@ function appendAutomergeRepairOutcomeComment(report: LooseRecord, resultPath: st
     return;
   }
 
+  const continuation = continueAutomergeAfterNoopRepair({ target });
   const body = automergeRepairOutcomeComment({
     marker,
     result,
@@ -3272,7 +3274,8 @@ function appendAutomergeRepairOutcomeComment(report: LooseRecord, resultPath: st
         status: "no branch change",
         details: report?.reason ?? "no executable fix action",
       },
-    ],
+      automergeNoopContinuationTimelineEvent(continuation),
+    ].filter(Boolean),
   });
   if (existingStatus?.id) {
     patchIssueComment(
@@ -3288,7 +3291,95 @@ function appendAutomergeRepairOutcomeComment(report: LooseRecord, resultPath: st
     marker,
     comment_id: existingStatus?.id ? String(existingStatus.id) : null,
     commented_at: new Date().toISOString(),
+    automerge_continuation: continuation,
   });
+}
+
+function continueAutomergeAfterNoopRepair({ target }: LooseRecord) {
+  const commit = automergeOutcomeReviewedSha();
+  if (!commit) return { status: "skipped", reason: "missing reviewed head SHA" };
+  const view = fetchPullRequestViewForRepo({ repo: result.repo, number: target });
+  const comments = issueCommentsFor(target);
+  const readiness = automergeShepherdReadiness({
+    view,
+    comments,
+    headSha: String(commit),
+  });
+  if (["ready", "blocked"].includes(String(readiness.status))) {
+    return {
+      status: readiness.status,
+      reason: readiness.reason,
+      router_dispatch: dispatchAutomergeCommentRouter({ target, reason: readiness.reason }),
+      head_sha: commit,
+    };
+  }
+  if (String(readiness.status) === "waiting") {
+    const approvedNeedsHuman = maintainerApprovedNeedsHumanComment({
+      comments,
+      headSha: commit,
+    });
+    if (approvedNeedsHuman) {
+      return {
+        status: "ready",
+        reason: "later maintainer automerge opt-in approves the existing canonical-landing review",
+        router_dispatch: dispatchAutomergeCommentRouter({
+          target,
+          reason: "maintainer automerge opt-in after canonical-landing review",
+          commentId: approvedNeedsHuman.id,
+          maxComments: "1",
+          forceReprocess: true,
+        }),
+        head_sha: commit,
+      };
+    }
+    return {
+      status: readiness.status,
+      reason: readiness.reason,
+      review_dispatch: dispatchAutomergeReviewAfterBranchRepair({ target, commit }),
+      head_sha: commit,
+    };
+  }
+  return { status: readiness.status, reason: readiness.reason, head_sha: commit };
+}
+
+function maintainerApprovedNeedsHumanComment({ comments, headSha }: LooseRecord) {
+  return [...(comments ?? [])].reverse().find((comment: LooseRecord) => {
+    if (!isTrustedStatusComment(comment)) return false;
+    const body = String(comment.body ?? "");
+    if (
+      !new RegExp(
+        `clawsweeper-verdict:needs-human[^>]*\\bsha=${escapeRegExp(String(headSha))}\\b`,
+        "i",
+      ).test(body)
+    )
+      return false;
+    return isCanonicalLandingNeedsHumanText(body);
+  });
+}
+
+function automergeNoopContinuationTimelineEvent(continuation: LooseRecord): LooseRecord | null {
+  const headSha = continuation.head_sha ?? automergeOutcomeReviewedSha();
+  if (continuation.review_dispatch?.status === "executed") {
+    return {
+      id: `review-queued:${headSha}:${continuation.review_dispatch.dispatched_at}`,
+      label: "review queued",
+      at: continuation.review_dispatch.dispatched_at,
+      headSha,
+      repo: result.repo,
+      status: "after no-op repair",
+    };
+  }
+  if (continuation.router_dispatch?.status === "executed") {
+    return {
+      id: `merge-check-queued:${headSha}:${continuation.router_dispatch.dispatched_at}`,
+      label: "merge check queued",
+      at: continuation.router_dispatch.dispatched_at,
+      headSha,
+      repo: result.repo,
+      status: continuation.reason ?? continuation.status,
+    };
+  }
+  return null;
 }
 
 function updateAutomergeStatusCommentForBranchRepair({
@@ -3436,7 +3527,13 @@ function waitForAutomergeAfterBranchRepair({ target, commit }: LooseRecord) {
   };
 }
 
-function dispatchAutomergeCommentRouter({ target, reason }: LooseRecord) {
+function dispatchAutomergeCommentRouter({
+  target,
+  reason,
+  commentId = null,
+  maxComments = "20",
+  forceReprocess = false,
+}: LooseRecord) {
   const reviewRepo = String(process.env.CLAWSWEEPER_REVIEW_REPO ?? "openclaw/clawsweeper").trim();
   const dispatchedAt = new Date().toISOString();
   const payloadPath = writePayload(`automerge-router-dispatch-${target}-${Date.now()}`, {
@@ -3444,7 +3541,9 @@ function dispatchAutomergeCommentRouter({ target, reason }: LooseRecord) {
     client_payload: {
       target_repo: result.repo,
       item_number: String(target),
-      max_comments: "20",
+      ...(commentId ? { comment_id: String(commentId) } : {}),
+      max_comments: String(maxComments),
+      force_reprocess: forceReprocess ? "true" : "false",
       source_event: "repair_completed",
       source_action: "automerge_shepherd_ready",
       reason,

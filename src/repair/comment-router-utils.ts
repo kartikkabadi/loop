@@ -13,11 +13,12 @@ const DEFAULT_IGNORED_CHECKS = [
 
 export function summarizeChecks(checks: LooseRecord[]) {
   const ignored = ignoredCheckNames();
+  const latestChecks = latestCheckRuns(checks);
   const counts: Record<string, number> = {};
   const blockers: LooseRecord[] = [];
   const pending: LooseRecord[] = [];
   const terminalBlockers: LooseRecord[] = [];
-  for (const check of checks) {
+  for (const check of latestChecks) {
     const name = String(check.name ?? check.context ?? "unknown check");
     const workflow = String(check.workflowName ?? "");
     const ignoredCheck = ignored.has(name.toLowerCase()) || ignored.has(workflow.toLowerCase());
@@ -37,7 +38,33 @@ export function summarizeChecks(checks: LooseRecord[]) {
       terminalBlockers.push(blocker);
     }
   }
-  return { total: checks.length, counts, blockers, pending, terminalBlockers };
+  return { total: latestChecks.length, counts, blockers, pending, terminalBlockers };
+}
+
+function latestCheckRuns(checks: LooseRecord[]) {
+  const byKey = new Map<string, LooseRecord>();
+  for (const check of checks) {
+    const key = checkIdentity(check);
+    const previous = byKey.get(key);
+    if (!previous || checkTimestamp(check) >= checkTimestamp(previous)) {
+      byKey.set(key, check);
+    }
+  }
+  return [...byKey.values()];
+}
+
+function checkIdentity(check: LooseRecord) {
+  const name = String(check.name ?? check.context ?? "unknown check").toLowerCase();
+  const workflow = String(check.workflowName ?? "").toLowerCase();
+  return `${workflow}\n${name}`;
+}
+
+function checkTimestamp(check: LooseRecord) {
+  for (const field of ["completedAt", "completed_at", "startedAt", "started_at"]) {
+    const parsed = Date.parse(String(check[field] ?? ""));
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 0;
 }
 
 export function shouldSuppressProcessedCommentVersion(entry: LooseRecord) {
