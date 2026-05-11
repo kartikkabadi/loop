@@ -72,6 +72,7 @@ jobs:
           fetch-depth: 0
           sparse-checkout: |
             .github
+            config
             results
             scripts/hydrate-state.ts
             src/repair
