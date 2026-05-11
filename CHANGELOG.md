@@ -9,6 +9,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Added
 
+- Added the first Cloudflare live dashboard for ClawSweeper observability, with
+  active worker counts, pipeline rows, CI state, automerge timing, and optional
+  signed status-event ingest.
 - Added a canonical repair `job_intent` contract and orchestration docs so
   automerge, issue implementation, commit finding, low-signal cleanup, and
   ordinary repair jobs share one routing surface.

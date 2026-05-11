@@ -1,0 +1,42 @@
+name: ClawSweeper Live Dashboard
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/**"
+      - "scripts/dashboard-smoke.mjs"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/dashboard.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clawsweeper-live-dashboard
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy dashboard Worker
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: <cloudflare-account-id>
+      CLOUDFLARE_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN || secrets.OPENCLAW_CLOUDFLARE_API_TOKEN }}
+      CF_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN || secrets.OPENCLAW_CLOUDFLARE_API_TOKEN }}
+      CLAWSWEEPER_STATUS_URL: https://clawsweeper-status.openclaw.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Verify Cloudflare token is configured
+        run: test -n "$CLOUDFLARE_API_TOKEN"
+
+      - name: Deploy Worker
+        run: pnpm run dashboard:deploy
+
+      - name: Smoke test live dashboard
+        run: pnpm run dashboard:smoke -- "$CLAWSWEEPER_STATUS_URL"

@@ -1,0 +1,11 @@
+name = "clawsweeper-status"
+main = "worker.js"
+account_id = "<cloudflare-account-id>"
+compatibility_date = "2026-05-11"
+workers_dev = true
+
+[vars]
+CLAWSWEEPER_REPO = "openclaw/clawsweeper"
+TARGET_REPOS = "openclaw/openclaw,openclaw/clawhub,openclaw/clawsweeper,openclaw/fs-safe"
+WORKER_BUDGET = "80"
+CACHE_TTL_SECONDS = "20"
