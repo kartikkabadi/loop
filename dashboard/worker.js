@@ -38,18 +38,26 @@ async function statusSnapshot(env, ctx) {
   if (cached) return cached;
 
   const generatedAt = new Date().toISOString();
+  const errors = [];
   const repo = env.CLAWSWEEPER_REPO || "openclaw/clawsweeper";
   const targetRepos = String(env.TARGET_REPOS || "openclaw/openclaw").split(",").map((value) => value.trim()).filter(Boolean);
   const budget = numberFrom(env.WORKER_BUDGET, 80);
-  const runs = await githubJson(env, `/repos/${repo}/actions/runs?per_page=100`);
+  const runs = await githubJson(env, `/repos/${repo}/actions/runs?per_page=100`).catch((error) => {
+    errors.push(`workflow runs: ${error.message}`);
+    return null;
+  });
   const workflowRuns = Array.isArray(runs?.workflow_runs) ? runs.workflow_runs : [];
   const activeRuns = workflowRuns.filter((run) => ACTIVE_RUN_STATUSES.has(String(run.status)));
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
   const activeJobs = await estimateActiveCodexJobs(env, repo, activeRuns.slice(0, 16));
+  errors.push(...activeJobs.errors);
   const pipeline = await pipelineItems(env, activeRuns.slice(0, 30));
-  const automerge = await recentAutomerge(env, targetRepos[0] || "openclaw/openclaw");
+  const automerge = await recentAutomerge(env, targetRepos[0] || "openclaw/openclaw").catch((error) => {
+    errors.push(`automerge timing: ${error.message}`);
+    return { average_ms: null, samples: 0, items: [] };
+  });
   const events = await readEvents(env);
 
   const snapshot = {
@@ -80,6 +88,7 @@ async function statusSnapshot(env, ctx) {
     diagnostics: {
       active_job_sample: activeJobs.sample,
       github_rate: activeJobs.rate,
+      errors: errors.slice(0, 20),
     },
   };
   if (env.STATUS_STORE) {
@@ -91,9 +100,13 @@ async function statusSnapshot(env, ctx) {
 async function estimateActiveCodexJobs(env, repo, runs) {
   let count = 0;
   const sample = [];
+  const errors = [];
   let rate = null;
   for (const run of runs) {
-    const jobs = await githubJson(env, `/repos/${repo}/actions/runs/${run.id}/jobs?per_page=100`);
+    const jobs = await githubJson(env, `/repos/${repo}/actions/runs/${run.id}/jobs?per_page=100`).catch((error) => {
+      errors.push(`jobs for run ${run.id}: ${error.message}`);
+      return null;
+    });
     rate = jobs?.rate ?? rate;
     const active = Array.isArray(jobs?.jobs)
       ? jobs.jobs.filter((job) => ACTIVE_RUN_STATUSES.has(String(job.status)) && codexJobName(String(job.name || "")))
@@ -109,7 +122,7 @@ async function estimateActiveCodexJobs(env, repo, runs) {
       });
     }
   }
-  return { count, sample: sample.slice(0, 25), rate };
+  return { count, sample: sample.slice(0, 25), rate, errors };
 }
 
 async function pipelineItems(env, runs) {
