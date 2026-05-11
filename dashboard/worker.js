@@ -1,7 +1,9 @@
 const ACTIVE_RUN_STATUSES = new Set(["queued", "in_progress", "waiting", "requested", "pending"]);
 const TERMINAL_BAD_CONCLUSIONS = new Set(["failure", "timed_out", "action_required"]);
 const EVENT_LIMIT = 200;
-const AVERAGE_LIMIT = 8;
+const AVERAGE_LIMIT = 4;
+const GITHUB_TIMEOUT_MS = 4500;
+const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 
 export default {
   async fetch(request, env, ctx) {
@@ -12,11 +14,45 @@ export default {
     if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
     if (url.pathname === "/api/health") return json({ ok: true, service: "clawsweeper-status" });
     if (url.pathname === "/api/events" && request.method === "POST") return ingestEvent(request, env);
-    if (url.pathname === "/api/status") return json(await statusSnapshot(env, ctx));
+    if (url.pathname === "/api/status") return statusJson(request, env, ctx);
     if (url.pathname === "/" || url.pathname === "/index.html") return html(dashboardHtml());
     return json({ error: "not_found" }, 404);
   },
 };
+
+async function statusJson(request, env, ctx) {
+  const ttl = numberFrom(env.CACHE_TTL_SECONDS, 20);
+  const cache = caches.default;
+  const cacheKey = new Request(new URL("/api/status-cache", request.url).toString(), { method: "GET" });
+  const cached = await cache.match(cacheKey);
+  if (cached) return cors(new Response(cached.body, cached));
+
+  const snapshot = await statusSnapshot(env, ctx);
+  const body = JSON.stringify(snapshot, null, 2);
+  const hasErrors = Boolean(snapshot.diagnostics?.errors?.length);
+  const looksEmpty = !snapshot.pipeline.length && snapshot.fleet.active_workflow_runs === 0 && hasErrors;
+  if (!looksEmpty) {
+    ctx?.waitUntil?.(
+      cache.put(
+        cacheKey,
+        new Response(body, {
+          headers: {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": `public, max-age=${ttl}`,
+          },
+        }),
+      ),
+    );
+  }
+  return cors(
+    new Response(body, {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+      },
+    }),
+  );
+}
 
 async function ingestEvent(request, env) {
   const token = bearerToken(request);
@@ -51,14 +87,24 @@ async function statusSnapshot(env, ctx) {
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
-  const activeJobs = await estimateActiveCodexJobs(env, repo, activeRuns.slice(0, 16));
+  const [activeJobs, pipeline, automerge, events] = await Promise.all([
+    estimateActiveCodexJobs(activeRuns),
+    withTimeout(pipelineItems(env, activeRuns.slice(0, 30)), OPTIONAL_SECTION_TIMEOUT_MS, "pipeline").catch((error) => {
+      errors.push(error.message);
+      return activeRuns.slice(0, 30).map((run) => classifyRun(run));
+    }),
+    withTimeout(recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"), OPTIONAL_SECTION_TIMEOUT_MS, "automerge timing").catch(
+      (error) => {
+        errors.push(error.message);
+        return { average_ms: null, samples: 0, items: [] };
+      },
+    ),
+    readEvents(env).catch((error) => {
+      errors.push(`events: ${error.message}`);
+      return [];
+    }),
+  ]);
   errors.push(...activeJobs.errors);
-  const pipeline = await pipelineItems(env, activeRuns.slice(0, 30));
-  const automerge = await recentAutomerge(env, targetRepos[0] || "openclaw/openclaw").catch((error) => {
-    errors.push(`automerge timing: ${error.message}`);
-    return { average_ms: null, samples: 0, items: [] };
-  });
-  const events = await readEvents(env);
 
   const snapshot = {
     schema_version: 1,
@@ -97,32 +143,20 @@ async function statusSnapshot(env, ctx) {
   return snapshot;
 }
 
-async function estimateActiveCodexJobs(env, repo, runs) {
-  let count = 0;
-  const sample = [];
-  const errors = [];
-  let rate = null;
-  for (const run of runs) {
-    const jobs = await githubJson(env, `/repos/${repo}/actions/runs/${run.id}/jobs?per_page=100`).catch((error) => {
-      errors.push(`jobs for run ${run.id}: ${error.message}`);
-      return null;
-    });
-    rate = jobs?.rate ?? rate;
-    const active = Array.isArray(jobs?.jobs)
-      ? jobs.jobs.filter((job) => ACTIVE_RUN_STATUSES.has(String(job.status)) && codexJobName(String(job.name || "")))
-      : [];
-    count += active.length;
-    for (const job of active.slice(0, 8)) {
-      sample.push({
-        run_url: run.html_url,
-        run_title: run.display_title || run.name,
-        job: job.name,
-        status: job.status,
-        started_at: job.started_at,
-      });
-    }
-  }
-  return { count, sample: sample.slice(0, 25), rate, errors };
+async function estimateActiveCodexJobs(runs) {
+  const codexRuns = runs.filter((run) => codexJobName(`${run.name || ""} ${run.display_title || ""}`));
+  return {
+    count: codexRuns.length,
+    sample: codexRuns.slice(0, 25).map((run) => ({
+      run_url: run.html_url,
+      run_title: run.display_title || run.name,
+      job: run.name,
+      status: run.status,
+      started_at: run.created_at,
+    })),
+    rate: null,
+    errors: [],
+  };
 }
 
 async function pipelineItems(env, runs) {
@@ -133,7 +167,7 @@ async function pipelineItems(env, runs) {
     if (item.item_number && item.repository) prCandidates.push(item);
     items.push(item);
   }
-  await Promise.all(prCandidates.slice(0, 8).map((item) => attachCiStatus(env, item)));
+  if (env.INCLUDE_CI_STATUS === "1") await Promise.all(prCandidates.slice(0, 4).map((item) => attachCiStatus(env, item)));
   return items.sort((left, right) => laneRank(left.mode) - laneRank(right.mode) || Date.parse(right.started_at || "") - Date.parse(left.started_at || ""));
 }
 
@@ -258,15 +292,26 @@ async function readEvents(env) {
 }
 
 async function githubJson(env, path) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort("timeout"), GITHUB_TIMEOUT_MS);
   const response = await fetch(`https://api.github.com${path}`, {
+    signal: controller.signal,
     headers: {
       Accept: "application/vnd.github+json",
       "User-Agent": "openclaw-clawsweeper-status",
       ...(env.GITHUB_TOKEN ? { Authorization: `Bearer ${env.GITHUB_TOKEN}` } : {}),
     },
-  });
+  }).finally(() => clearTimeout(timeout));
   if (!response.ok) throw new Error(`GitHub ${response.status} for ${path}`);
   return response.json();
+}
+
+async function withTimeout(promise, timeoutMs, label) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(`${label}: timed out after ${timeoutMs}ms`)), timeoutMs);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
 }
 
 function normalizeEvent(body) {
@@ -374,11 +419,11 @@ function dashboardHtml() {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ClawSweeper Live</title>
+<title>🦞 ClawSweeper Live</title>
 <style>
 :root {
   color-scheme: dark;
-  --bg: #090d13;
+  --bg: #0a0e14;
   --panel: #111821;
   --panel-2: #151f2b;
   --line: #2a3646;
@@ -389,34 +434,165 @@ function dashboardHtml() {
   --amber: #f3b759;
   --red: #f46d75;
   --violet: #b99cff;
+  --accent: #ff6b6b;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
-main { width: min(1440px, calc(100vw - 32px)); margin: 0 auto; padding: 24px 0 48px; }
-header { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
-h1 { margin: 0; font-size: 28px; line-height: 1.1; letter-spacing: 0; }
-h2 { margin: 28px 0 10px; font-size: 16px; }
+@keyframes wave {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(1deg); }
+}
+@keyframes bubble {
+  0% { transform: translateY(0) scale(1); opacity: 0.05; }
+  50% { opacity: 0.08; }
+  100% { transform: translateY(-400px) scale(1.2); opacity: 0; }
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(103, 183, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(78, 216, 145, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(185, 156, 255, 0.02) 0%, transparent 50%);
+  background-attachment: fixed;
+  color: var(--text);
+  font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+  position: relative;
+  overflow-x: hidden;
+}
+body::before {
+  content: "";
+  position: fixed;
+  bottom: -50px;
+  left: -50px;
+  right: -50px;
+  height: 120px;
+  background: radial-gradient(ellipse at bottom, rgba(103, 183, 255, 0.05) 0%, transparent 70%);
+  animation: wave 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+main { width: min(1440px, calc(100vw - 32px)); margin: 0 auto; padding: 24px 0 48px; position: relative; z-index: 1; }
+header { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+h1::before { content: "🦞"; font-size: 32px; animation: wave 3s ease-in-out infinite; }
+h2 {
+  margin: 28px 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .muted { color: var(--muted); }
-.grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
-.metric { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-height: 84px; }
-.metric strong { display: block; font-size: 26px; line-height: 1.1; margin-top: 8px; }
-.metric span { color: var(--muted); font-size: 12px; text-transform: uppercase; }
-.band { height: 6px; margin-top: 10px; background: #1f2a36; border-radius: 999px; overflow: hidden; }
-.band > i { display: block; height: 100%; background: var(--blue); width: 0; }
-table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-th { color: var(--muted); font-size: 12px; text-transform: uppercase; background: #0d131b; }
+.grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.metric {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  min-height: 92px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.metric:hover {
+  border-color: rgba(103, 183, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.metric::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(103, 183, 255, 0.08) 0%, transparent 70%);
+  border-radius: 0 16px 0 100%;
+  pointer-events: none;
+}
+.metric strong { display: block; font-size: 28px; line-height: 1.1; margin-top: 8px; font-weight: 700; }
+.metric span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+.band { height: 7px; margin-top: 12px; background: #1a2532; border-radius: 999px; overflow: hidden; position: relative; }
+.band::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.band > i { display: block; height: 100%; background: var(--blue); width: 0; transition: width 0.6s ease; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  background: #0d131b;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+tbody tr { transition: background-color 0.15s ease; }
+tbody tr:hover { background: rgba(103, 183, 255, 0.03); }
 tr:last-child td { border-bottom: 0; }
-a { color: var(--blue); text-decoration: none; }
-a:hover { text-decoration: underline; }
-.pill { display: inline-flex; align-items: center; gap: 6px; min-height: 22px; padding: 2px 8px; border-radius: 999px; background: #202c3a; color: var(--text); font-size: 12px; white-space: nowrap; }
+a { color: var(--blue); text-decoration: none; transition: color 0.15s ease; }
+a:hover { color: #89c8ff; text-decoration: underline; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #1a2532;
+  border: 1px solid #2a3646;
+  color: var(--text);
+  font-size: 12px;
+  white-space: nowrap;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.pill:hover { border-color: rgba(103, 183, 255, 0.4); }
 .green { color: var(--green); }
 .amber { color: var(--amber); }
 .red { color: var(--red); }
 .violet { color: var(--violet); }
-.split { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(320px, .7fr); gap: 16px; }
+.split { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(320px, .7fr); gap: 18px; }
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; }
-.empty { padding: 18px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+.empty {
+  padding: 24px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-align: center;
+  font-style: italic;
+}
+.empty::before { content: "🦀 "; opacity: 0.3; }
 @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } header { align-items: start; flex-direction: column; } }
 @media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid { grid-template-columns: 1fr; } th:nth-child(4), td:nth-child(4), th:nth-child(6), td:nth-child(6) { display: none; } }
 </style>
@@ -426,20 +602,20 @@ a:hover { text-decoration: underline; }
   <header>
     <div>
       <h1>ClawSweeper Live</h1>
-      <div class="muted" id="subtitle">Loading pipeline state...</div>
+      <div class="muted" id="subtitle">🌊 Loading pipeline state...</div>
     </div>
     <div class="muted mono" id="updated"></div>
   </header>
   <section class="grid" id="metrics"></section>
   <section class="split">
     <div>
-      <h2>Pipeline</h2>
+      <h2>🌀 Active Pipeline</h2>
       <div id="pipeline"></div>
     </div>
     <div>
-      <h2>Automerge Timing</h2>
+      <h2>⚡ Automerge Speed</h2>
       <div id="automerge"></div>
-      <h2>Recent Events</h2>
+      <h2>📡 Recent Activity</h2>
       <div id="events"></div>
     </div>
   </section>
@@ -475,19 +651,53 @@ function ciBadge(ci) {
   const cls = ci.state === "green" ? "green" : ci.state === "red" ? "red" : ci.state === "pending" ? "amber" : "";
   return '<span class="pill ' + cls + '">' + esc(ci.state) + ' ' + esc(ci.failing || 0) + '/' + esc(ci.pending || 0) + '/' + esc(ci.total || 0) + '</span>';
 }
+let lastData = null;
+let loading = false;
+
+try {
+  lastData = JSON.parse(localStorage.getItem("clawsweeper:last-status") || "null");
+  if (lastData) renderDashboard(lastData, "Showing cached status while refreshing...");
+} catch {}
+
 async function load() {
+  if (loading) return;
+  loading = true;
+  let data;
+  try {
   const response = await fetch("/api/status", { cache: "no-store" });
-  const data = await response.json();
+  if (!response.ok) throw new Error("/api/status returned " + response.status);
+  data = await response.json();
+  const hasErrors = Boolean(data.diagnostics && Array.isArray(data.diagnostics.errors) && data.diagnostics.errors.length);
+  const looksEmpty = !data.pipeline?.length && data.fleet?.active_workflow_runs === 0 && hasErrors;
+  if (looksEmpty && lastData) {
+    renderDashboard(lastData, "Live refresh failed; showing last good status.");
+    return;
+  }
+  lastData = data;
+  if (!looksEmpty) localStorage.setItem("clawsweeper:last-status", JSON.stringify(data));
+  renderDashboard(data, hasErrors ? "Updated with partial GitHub telemetry." : "");
+  } catch (error) {
+    if (lastData) {
+      renderDashboard(lastData, "Live refresh failed; showing last good status.");
+    } else {
+      document.getElementById("subtitle").textContent = "Failed to load status: " + error.message;
+    }
+  } finally {
+    loading = false;
+  }
+}
+
+function renderDashboard(data, note) {
   document.getElementById("subtitle").textContent = data.source.target_repositories.join(", ");
-  document.getElementById("updated").textContent = "Updated " + since(data.generated_at);
+  document.getElementById("updated").textContent = "Updated " + since(data.generated_at) + (note ? " · " + note : "");
   const fleet = data.fleet;
   document.getElementById("metrics").innerHTML = [
-    metric("Active Codex", fmt.format(fleet.active_codex_jobs), "budget " + fleet.worker_budget, fleet.budget_used_percent, "var(--green)"),
-    metric("Workflow Runs", fmt.format(fleet.active_workflow_runs), "active", Math.min(100, fleet.active_workflow_runs * 3), "var(--blue)"),
-    metric("Queued", fmt.format(fleet.queued_workflow_runs), "waiting/requested", Math.min(100, fleet.queued_workflow_runs * 10), "var(--amber)"),
-    metric("Recent Failures", fmt.format(fleet.failed_recent_runs), "last fetched page", Math.min(100, fleet.failed_recent_runs * 15), fleet.failed_recent_runs ? "var(--red)" : "var(--green)"),
-    metric("Automerge Avg", data.averages.automerge_command_to_merge_ms ? elapsed(data.averages.automerge_command_to_merge_ms) : "n/a", data.averages.automerge_samples + " samples", 60, "var(--violet)"),
-    metric("Budget Used", fleet.budget_used_percent + "%", "estimated", fleet.budget_used_percent, "var(--green)")
+    metric("🦾 Claw Workers", fmt.format(fleet.active_codex_jobs), "budget " + fleet.worker_budget, fleet.budget_used_percent, "var(--green)"),
+    metric("🌊 Active Sweeps", fmt.format(fleet.active_workflow_runs), "in motion", Math.min(100, fleet.active_workflow_runs * 3), "var(--blue)"),
+    metric("⏳ Queue Depth", fmt.format(fleet.queued_workflow_runs), "waiting to surface", Math.min(100, fleet.queued_workflow_runs * 10), "var(--amber)"),
+    metric("💥 Recent Snags", fmt.format(fleet.failed_recent_runs), "last page", Math.min(100, fleet.failed_recent_runs * 15), fleet.failed_recent_runs ? "var(--red)" : "var(--green)"),
+    metric("⚡ Merge Speed", data.averages.automerge_command_to_merge_ms ? elapsed(data.averages.automerge_command_to_merge_ms) : "n/a", data.averages.automerge_samples + " samples", 60, "var(--violet)"),
+    metric("🎯 Capacity", fleet.budget_used_percent + "%", "fleet utilization", fleet.budget_used_percent, "var(--green)")
   ].join("");
   renderPipeline(data.pipeline || []);
   renderAutomerge(data.recent.automerge || []);
@@ -495,7 +705,7 @@ async function load() {
 }
 function renderPipeline(rows) {
   if (!rows.length) {
-    document.getElementById("pipeline").innerHTML = '<div class="empty">No active pipeline rows.</div>';
+    document.getElementById("pipeline").innerHTML = '<div class="empty">All quiet in the depths... no active sweeps</div>';
     return;
   }
   document.getElementById("pipeline").innerHTML = '<table><thead><tr><th>Mode</th><th>Item</th><th>Stage</th><th>CI</th><th>Elapsed</th><th>Run</th></tr></thead><tbody>' + rows.map(row => {
@@ -505,21 +715,19 @@ function renderPipeline(rows) {
 }
 function renderAutomerge(rows) {
   if (!rows.length) {
-    document.getElementById("automerge").innerHTML = '<div class="empty">No recent automerge samples.</div>';
+    document.getElementById("automerge").innerHTML = '<div class="empty">No automerge data yet... claws resting</div>';
     return;
   }
   document.getElementById("automerge").innerHTML = '<table><thead><tr><th>PR</th><th>Duration</th><th>Merged</th></tr></thead><tbody>' + rows.map(row => '<tr><td>' + link(row.url, "#" + row.number) + '<div class="muted">' + esc(row.title) + '</div></td><td>' + (row.duration_ms ? elapsed(row.duration_ms) : "unknown") + '</td><td>' + (row.merged_at ? since(row.merged_at) : "") + '</td></tr>').join("") + '</tbody></table>';
 }
 function renderEvents(rows) {
   if (!rows.length) {
-    document.getElementById("events").innerHTML = '<div class="empty">No explicit status events received yet.</div>';
+    document.getElementById("events").innerHTML = '<div class="empty">Listening for signals from the fleet...</div>';
     return;
   }
   document.getElementById("events").innerHTML = '<table><thead><tr><th>Stage</th><th>Status</th><th>When</th></tr></thead><tbody>' + rows.map(row => '<tr><td>' + esc(row.mode) + " / " + esc(row.stage) + '<div class="muted">' + (row.item_url ? link(row.item_url, row.title || row.item_url) : esc(row.title || row.event_type)) + '</div></td><td>' + esc(row.status) + '</td><td>' + since(row.received_at) + '</td></tr>').join("") + '</tbody></table>';
 }
-load().catch(error => {
-  document.getElementById("subtitle").textContent = "Failed to load status: " + error.message;
-});
+load();
 setInterval(load, 15000);
 </script>
 </body>

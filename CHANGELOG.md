@@ -33,6 +33,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Kept the live dashboard stable during refreshes by caching status snapshots at
+  the edge, retaining the last good browser snapshot, and reducing rate-prone
+  GitHub detail calls so transient 403s no longer blank the pipeline.
 - Cleared stale `clawsweeper:human-review` and `clawsweeper:merge-ready` pause labels when a later exact-head trusted pass arrives for an automerge PR, so transient cancelled reviews no longer strand maintainer opt-ins.
 - Tightened spam scanner prefilters so GitHub context links and contributor
   proof comments do not trigger audit records as spam candidates.
