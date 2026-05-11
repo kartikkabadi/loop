@@ -194,9 +194,10 @@ edits, duplicate PR synchronizes, and successful automation events are skipped
 unless they contain an explicit ClawSweeper command or mention. This keeps noisy
 GitHub churn from consuming hook-session model turns.
 
-The workflow coalesces observer runs by event, repository, and item/check/run
-subject, cancelling older in-progress observer runs for the same subject. Exact
-review, repair, automerge, and command-router workflows have separate
+The workflow coalesces observer runs by event, repository, and action,
+cancelling older in-progress observer runs during bursts. This activity stream
+is intentionally lossy because it is not a source of truth. Exact review,
+repair, automerge, apply, and command-router workflows have separate
 concurrency groups and are not cancelled by this observer lane.
 
 The workflow intentionally uses the runner-provided Node runtime plus a lean
