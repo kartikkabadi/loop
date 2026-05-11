@@ -4,6 +4,7 @@ const EVENT_LIMIT = 200;
 const AVERAGE_LIMIT = 4;
 const GITHUB_TIMEOUT_MS = 4500;
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
+const STALE_CACHE_TTL_SECONDS = 900;
 
 export default {
   async fetch(request, env, ctx) {
@@ -22,26 +23,33 @@ export default {
 
 async function statusJson(request, env, ctx) {
   const ttl = numberFrom(env.CACHE_TTL_SECONDS, 20);
+  const staleTtl = numberFrom(env.STALE_CACHE_TTL_SECONDS, STALE_CACHE_TTL_SECONDS);
   const cache = caches.default;
-  const cacheKey = new Request(new URL("/api/status-cache", request.url).toString(), { method: "GET" });
-  const cached = await cache.match(cacheKey);
+  const cached = await cache.match(statusCacheRequest(request, "fresh"));
   if (cached) return cors(new Response(cached.body, cached));
 
   const snapshot = await statusSnapshot(env, ctx);
   const body = JSON.stringify(snapshot, null, 2);
   const hasErrors = Boolean(snapshot.diagnostics?.errors?.length);
   const looksEmpty = !snapshot.pipeline.length && snapshot.fleet.active_workflow_runs === 0 && hasErrors;
+  if (looksEmpty) {
+    const stale = await cache.match(statusCacheRequest(request, "stale"));
+    if (stale) return cors(new Response(stale.body, stale));
+  }
   if (!looksEmpty) {
+    const responseHeaders = {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": `public, max-age=${ttl}`,
+    };
+    const staleResponseHeaders = {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": `public, max-age=${staleTtl}`,
+    };
     ctx?.waitUntil?.(
-      cache.put(
-        cacheKey,
-        new Response(body, {
-          headers: {
-            "content-type": "application/json; charset=utf-8",
-            "cache-control": `public, max-age=${ttl}`,
-          },
-        }),
-      ),
+      Promise.all([
+        cache.put(statusCacheRequest(request, "fresh"), new Response(body, { headers: responseHeaders })),
+        cache.put(statusCacheRequest(request, "stale"), new Response(body, { headers: staleResponseHeaders })),
+      ]),
     );
   }
   return cors(
@@ -52,6 +60,10 @@ async function statusJson(request, env, ctx) {
       },
     }),
   );
+}
+
+function statusCacheRequest(request, bucket) {
+  return new Request(new URL(`/api/status-cache/${bucket}`, request.url).toString(), { method: "GET" });
 }
 
 async function ingestEvent(request, env) {

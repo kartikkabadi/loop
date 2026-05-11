@@ -35,6 +35,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 - Kept the live dashboard's playful icon treatment while tightening the pipeline
   grid so long commit-review SHAs no longer overlap the automerge/status rail.
+- Served the last good live dashboard snapshot from a longer edge cache when
+  GitHub rate limits transient live refreshes, avoiding zeroed-out status pages.
 - Kept the live dashboard stable during refreshes by caching status snapshots at
   the edge, retaining the last good browser snapshot, and reducing rate-prone
   GitHub detail calls so transient 403s no longer blank the pipeline.
