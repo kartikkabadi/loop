@@ -35,8 +35,8 @@ pnpm run dashboard:deploy
 GitHub deploys use `.github/workflows/dashboard.yml`. Configure either
 `OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN` or `OPENCLAW_CLOUDFLARE_API_TOKEN` with
 Workers Scripts edit permission before enabling the workflow as the production
-deploy path. The deploy workflow syncs the `CLAWSWEEPER_STATUS_INGEST_TOKEN`
-GitHub secret into the Worker as `INGEST_TOKEN`.
+deploy path. The deploy workflow injects the `CLAWSWEEPER_STATUS_INGEST_TOKEN`
+GitHub secret into a temporary Wrangler config as the Worker `INGEST_TOKEN`.
 
 ## Access Model
 
