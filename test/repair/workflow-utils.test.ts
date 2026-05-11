@@ -16,11 +16,17 @@ import {
   plannedItemNumberCsv,
   proposedItemNumbers,
 } from "../../dist/repair/workflow-utils.js";
-import { workerLimit } from "../../dist/repair/limits.js";
+import { AUTOMATION_LIMITS, WORKER_CONFIG, workerLimit } from "../../dist/repair/limits.js";
 
 test("workflow utilities expose automation limits", () => {
-  assert.equal(automationLimit("review_shards.normal_default"), 70);
-  assert.equal(automationLimit("repair_live_runs.default"), 40);
+  assert.equal(
+    automationLimit("review_shards.normal_default"),
+    AUTOMATION_LIMITS.review_shards.normal_default,
+  );
+  assert.equal(
+    automationLimit("repair_live_runs.default"),
+    AUTOMATION_LIMITS.repair_live_runs.default,
+  );
   assert.throws(() => automationLimit("missing.default"), /unknown automation limit/);
 });
 
@@ -30,15 +36,22 @@ test("workflow utilities accept positional automation limit CLI paths", () => {
     ["dist/repair/workflow-utils.js", "limit", "review_shards.normal_default"],
     { cwd: process.cwd(), encoding: "utf8" },
   );
-  assert.equal(output, "70");
+  assert.equal(output, String(AUTOMATION_LIMITS.review_shards.normal_default));
 });
 
 test("worker scheduler lets background lanes yield to active work", () => {
-  assert.equal(workerLimit("normal_review"), 70);
-  assert.equal(workerLimit("normal_review", { activeCritical: 30, activeBackground: 20 }), 20);
-  assert.equal(workerLimit("commit_review"), 5);
-  assert.equal(workerLimit("commit_review", { activeCritical: 90 }), 1);
-  assert.equal(workerLimit("repair"), 40);
+  const quietBackgroundCapacity =
+    WORKER_CONFIG.workers.max -
+    WORKER_CONFIG.workers.reserve_for_interactive -
+    WORKER_CONFIG.workers.expansion_reserve;
+  assert.equal(
+    workerLimit("normal_review"),
+    Math.min(AUTOMATION_LIMITS.review_shards.normal_default, quietBackgroundCapacity),
+  );
+  assert.equal(workerLimit("normal_review", { activeCritical: 24, activeBackground: 16 }), 10);
+  assert.equal(workerLimit("commit_review"), AUTOMATION_LIMITS.commit_review.page_size_default);
+  assert.equal(workerLimit("commit_review", { activeCritical: 72 }), 1);
+  assert.equal(workerLimit("repair"), AUTOMATION_LIMITS.repair_live_runs.default);
 });
 
 test("workflow utilities derive artifact item numbers and action counts", () => {
