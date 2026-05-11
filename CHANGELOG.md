@@ -41,6 +41,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Replaced `ci unknown` on active live-dashboard rows with immediate workflow
   run health and stored target-check badges when the CI refresher has published
   pull request status.
+- Enabled a bounded live PR-check fallback for the first visible dashboard rows
+  so CI badges still show target checks when KV is absent or cache locality
+  hides a posted status event.
 - Served the last good live dashboard snapshot from a longer edge cache when
   GitHub rate limits transient live refreshes, avoiding zeroed-out status pages.
 - Kept the live dashboard stable during refreshes by caching status snapshots at

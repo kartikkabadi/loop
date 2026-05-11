@@ -78,7 +78,9 @@ pnpm run dashboard:refresh-ci
 The UI renders `run pending/green/red` until stored target checks arrive, then
 switches to `checks pending/green/red` with failing/pending/total counts. CI
 snapshots expire after two hours so old PR head state does not stick to fresh
-pipeline rows.
+pipeline rows. Production also enables a bounded live fallback for the first
+few active PR rows so visible rows do not remain on workflow-only status when KV
+is absent or a cache event lands in another Cloudflare colo.
 
 ## What It Shows
 

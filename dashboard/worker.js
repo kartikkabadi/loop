@@ -183,7 +183,12 @@ async function pipelineItems(env, runs) {
   }
   await attachStoredCiStatuses(env, prCandidates);
   if (env.INCLUDE_CI_STATUS === "1") {
-    await Promise.all(prCandidates.filter((item) => !item.ci || item.ci.state === "unknown").slice(0, 4).map((item) => attachCiStatus(env, item)));
+    await Promise.all(
+      prCandidates
+        .filter((item) => !item.ci || item.ci.source === "workflow" || item.ci.state === "unknown")
+        .slice(0, 4)
+        .map((item) => attachCiStatus(env, item)),
+    );
   }
   return items.sort((left, right) => laneRank(left.mode) - laneRank(right.mode) || Date.parse(right.started_at || "") - Date.parse(left.started_at || ""));
 }
