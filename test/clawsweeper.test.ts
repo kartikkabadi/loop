@@ -928,7 +928,7 @@ test("review policy changes force fresh complete reports back into planning", ()
   assert.equal(shouldReviewItem(item(), review, now, "old-policy"), false);
 });
 
-test("hot new items review hourly before falling back to daily or weekly cadence", () => {
+test("hot new items review daily unless target-side activity requires hourly cadence", () => {
   const now = Date.parse("2026-04-26T12:00:00Z");
   const review = (reviewedAt, itemUpdatedAt) => ({
     path: "items/123.md",
@@ -950,7 +950,7 @@ test("hot new items review hourly before falling back to daily or weekly cadence
       now,
       "current",
     ),
-    true,
+    false,
   );
   assert.equal(
     shouldReviewItem(
@@ -958,11 +958,23 @@ test("hot new items review hourly before falling back to daily or weekly cadence
         createdAt: "2026-04-24T00:00:00Z",
         updatedAt: "2026-04-24T00:00:00Z",
       }),
-      review("2026-04-26T11:45:00Z", "2026-04-24T00:00:00Z"),
+      review("2026-04-25T10:00:00Z", "2026-04-24T00:00:00Z"),
       now,
       "current",
     ),
-    false,
+    true,
+  );
+  assert.equal(
+    shouldReviewItem(
+      item({
+        createdAt: "2026-04-24T00:00:00Z",
+        updatedAt: "2026-04-26T11:10:00Z",
+      }),
+      review("2026-04-26T10:00:00Z", "2026-04-24T00:00:00Z"),
+      now,
+      "current",
+    ),
+    true,
   );
   assert.equal(
     shouldReviewItem(

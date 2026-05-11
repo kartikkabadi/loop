@@ -652,6 +652,7 @@ const FRESH_DAYS = 7;
 const HOT_REVIEW_DAYS = 7;
 const RECENT_ISSUE_DAYS = 30;
 const HOURLY_REVIEW_MS = 60 * 60 * 1000;
+const DEFAULT_BACKFILL_REVIEW_AGE_MINUTES = 360;
 const DAILY_REVIEW_DAYS = 1;
 const WEEKLY_REVIEW_DAYS = 7;
 const STALE_INSUFFICIENT_INFO_MIN_AGE_DAYS = 60;
@@ -2533,7 +2534,7 @@ function isCreatedWithinDays(
 
 function reviewCadenceMs(item: Item, review: ExistingReview | null, now = Date.now()): number {
   if (hasActivitySinceReview(item, review)) return HOURLY_REVIEW_MS;
-  if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now)) return HOURLY_REVIEW_MS;
+  if (isCreatedWithinDays(item, HOT_REVIEW_DAYS, now)) return DAILY_REVIEW_DAYS * DAY_MS;
   if (item.kind === "pull_request") return DAILY_REVIEW_DAYS * DAY_MS;
   const createdAt = Date.parse(item.createdAt);
   if (Number.isFinite(createdAt) && now - createdAt < RECENT_ISSUE_DAYS * DAY_MS) {
@@ -6561,7 +6562,9 @@ function planCommand(args: Args): void {
   const shardCount = numberArg(args.shard_count, DEFAULT_PLAN_SHARD_COUNT);
   const minimumActiveShards = numberArg(args.min_active_shards, 0);
   const minimumBackfillReviewAgeMs =
-    numberArg(args.min_backfill_review_age_minutes, 30) * 60 * 1000;
+    numberArg(args.min_backfill_review_age_minutes, DEFAULT_BACKFILL_REVIEW_AGE_MINUTES) *
+    60 *
+    1000;
   const itemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const hasItemNumbersInput = typeof args.item_numbers === "string" && args.item_numbers.trim();
   const hotIntake = boolArg(args.hot_intake);
@@ -7776,7 +7779,7 @@ function cadenceBucketForReview(
   const kind = (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue";
   const createdAt = Date.parse(frontMatterValue(markdown, "item_created_at") ?? "");
   if (Number.isFinite(createdAt) && now - createdAt < HOT_REVIEW_DAYS * DAY_MS) {
-    return { bucket: "hourlyHotItems", cadenceMs: HOURLY_REVIEW_MS };
+    return { bucket: "hourlyHotItems", cadenceMs: DAILY_REVIEW_DAYS * DAY_MS };
   }
   if (kind === "pull_request") {
     return { bucket: "dailyPullRequests", cadenceMs: DAILY_REVIEW_DAYS * DAY_MS };
@@ -7919,8 +7922,8 @@ function dashboardStats(
     total: byKind.issue.total + byKind.pull_request.total,
   });
   const hourly = emptyDashboardCadenceBucket();
-  addDashboardCadenceBucket(hourly, hourlyHotItems);
   const daily = emptyDashboardCadenceBucket();
+  addDashboardCadenceBucket(daily, hourlyHotItems);
   const cappedDailyPullRequests = capDashboardCadenceBucket(dailyPullRequests, open.pullRequests);
   addDashboardCadenceBucket(daily, cappedDailyPullRequests);
   addDashboardCadenceBucket(daily, dailyNewIssues);
@@ -8269,8 +8272,7 @@ ${snapshot.status}
 
 | Metric | Coverage |
 | --- | ---: |
-| Hourly cadence coverage | ${formatCadenceBucket(stats.cadence.hourly)} |
-| Hourly hot item cadence (<${HOT_REVIEW_DAYS}d) | ${formatCadenceBucket(stats.cadence.hourlyHotItems)} |
+| First-week item cadence (<${HOT_REVIEW_DAYS}d) | ${formatCadenceBucket(stats.cadence.hourlyHotItems)} |
 | Daily cadence coverage | ${formatCadenceBucket(stats.cadence.daily)} |
 | Daily PR cadence | ${formatCadenceBucket(stats.cadence.dailyPullRequests)} |
 | Daily new issue cadence (<${RECENT_ISSUE_DAYS}d) | ${formatCadenceBucket(stats.cadence.dailyNewIssues)} |

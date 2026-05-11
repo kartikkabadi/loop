@@ -201,7 +201,7 @@ Current defaults:
   to 250 GitHub pages after reserving interactive and expansion capacity
 - normal active floor: 24 shards for `openclaw/openclaw` scheduled runs and
   workflow-dispatch continuations; stale current-review backfill is eligible
-  after 30 minutes
+  after 6 hours
 - manual normal backfill: defaults to 56 shards, batch size 3, scans up to 250
   GitHub pages unless overridden, and stops early once scanned due candidates
   fill planned capacity
@@ -250,7 +250,7 @@ live Codex count past the global budget.
 The active floor is not a separate lane and does not change close/apply safety.
 It only changes normal planning when due backlog is below the desired floor:
 after selecting all due candidates, the planner fills up to 24 nonempty shards
-with eligible items whose latest complete review is at least 30 minutes old.
+with eligible items whose latest complete review is at least 6 hours old.
 Capacity status reports this as `floor: due backlog below active floor`. If the
 central worker scheduler returns fewer than 24 allowed shards, the smaller
 worker allowance wins.
@@ -279,8 +279,8 @@ allocated.
 
 Review cadence:
 
-- items created in the last 7 days: hourly
 - items with target-side activity since the last real review: hourly
+- items created in the last 7 days without new target-side activity: daily
 - pull requests outside the hot window: daily
 - issues created in the last 30 days: daily
 - older inactive issues: weekly
