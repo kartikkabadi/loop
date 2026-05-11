@@ -5,6 +5,7 @@ const AVERAGE_LIMIT = 4;
 const GITHUB_TIMEOUT_MS = 4500;
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 const STALE_CACHE_TTL_SECONDS = 900;
+const CI_STATUS_TTL_SECONDS = 7200;
 
 export default {
   async fetch(request, env, ctx) {
@@ -75,8 +76,10 @@ async function ingestEvent(request, env) {
   const event = normalizeEvent(body);
   const current = await readEvents(env);
   const events = [event, ...current].slice(0, EVENT_LIMIT);
-  await env.STATUS_STORE.put("events", JSON.stringify(events));
-  await env.STATUS_STORE.put("latest-event", JSON.stringify(event));
+  const writes = [env.STATUS_STORE.put("events", JSON.stringify(events)), env.STATUS_STORE.put("latest-event", JSON.stringify(event))];
+  const ci = normalizeCiStatus(body);
+  if (ci) writes.push(writeCiStatus(env, ci));
+  await Promise.all(writes);
   return json({ ok: true, event });
 }
 
@@ -179,7 +182,10 @@ async function pipelineItems(env, runs) {
     if (item.item_number && item.repository) prCandidates.push(item);
     items.push(item);
   }
-  if (env.INCLUDE_CI_STATUS === "1") await Promise.all(prCandidates.slice(0, 4).map((item) => attachCiStatus(env, item)));
+  await attachStoredCiStatuses(env, prCandidates);
+  if (env.INCLUDE_CI_STATUS === "1") {
+    await Promise.all(prCandidates.filter((item) => !item.ci || item.ci.state === "unknown").slice(0, 4).map((item) => attachCiStatus(env, item)));
+  }
   return items.sort((left, right) => laneRank(left.mode) - laneRank(right.mode) || Date.parse(right.started_at || "") - Date.parse(left.started_at || ""));
 }
 
@@ -223,8 +229,41 @@ function classifyRun(run) {
     started_at: run.created_at,
     updated_at: run.updated_at,
     elapsed_ms: Date.now() - Date.parse(run.created_at || new Date().toISOString()),
-    ci: null,
+    ci: workflowRunCi(run),
   };
+}
+
+function workflowRunCi(run) {
+  const status = String(run.status || "");
+  const conclusion = String(run.conclusion || "");
+  if (status === "completed") {
+    return {
+      state: TERMINAL_BAD_CONCLUSIONS.has(conclusion) ? "red" : "green",
+      source: "workflow",
+      label: conclusion || "completed",
+      total: 1,
+      failing: TERMINAL_BAD_CONCLUSIONS.has(conclusion) ? 1 : 0,
+      pending: 0,
+    };
+  }
+  return {
+    state: "pending",
+    source: "workflow",
+    label: status || "running",
+    total: 1,
+    failing: 0,
+    pending: 1,
+  };
+}
+
+async function attachStoredCiStatuses(env, items) {
+  if (!env.STATUS_STORE || !items.length) return;
+  await Promise.all(
+    items.map(async (item) => {
+      const stored = await readCiStatus(env, item.repository, item.item_number);
+      if (stored) item.ci = stored;
+    }),
+  );
 }
 
 async function attachCiStatus(env, item) {
@@ -241,9 +280,10 @@ async function attachCiStatus(env, item) {
       total: runs.length,
       failing: failing.length,
       pending: pending.length,
+      source: "live",
     };
   } catch (error) {
-    item.ci = { state: "unknown", error: String(error?.message || error) };
+    item.ci = { state: "unknown", source: "live", error: String(error?.message || error) };
   }
 }
 
@@ -303,6 +343,27 @@ async function readEvents(env) {
   return Array.isArray(parsed) ? parsed : [];
 }
 
+async function writeCiStatus(env, ci) {
+  await env.STATUS_STORE.put(ciStatusKey(ci.repository, ci.item_number), JSON.stringify(ci), {
+    expirationTtl: numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS),
+  });
+}
+
+async function readCiStatus(env, repository, itemNumber) {
+  if (!repository || !itemNumber) return null;
+  const text = await env.STATUS_STORE.get(ciStatusKey(repository, itemNumber));
+  if (!text) return null;
+  const ci = JSON.parse(text);
+  if (Date.now() - Date.parse(ci.updated_at || ci.received_at || "") > numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS) * 1000) {
+    return null;
+  }
+  return ci;
+}
+
+function ciStatusKey(repository, itemNumber) {
+  return `ci:${repository}#${itemNumber}`;
+}
+
 async function githubJson(env, path) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort("timeout"), GITHUB_TIMEOUT_MS);
@@ -341,6 +402,38 @@ function normalizeEvent(body) {
     duration_ms: numberOrNull(body.duration_ms),
     note: nullableString(body.note),
   };
+}
+
+function normalizeCiStatus(body) {
+  const ci = body.ci && typeof body.ci === "object" ? body.ci : body.event_type === "ci.status" ? body : null;
+  if (!ci) return null;
+  const repository = nullableString(ci.repository ?? body.repository);
+  const itemNumber = numberOrNull(ci.item_number ?? body.item_number);
+  if (!repository || !Number.isInteger(itemNumber) || itemNumber <= 0) return null;
+  const state = normalizeCiState(ci.state ?? ci.status ?? body.status);
+  return {
+    state,
+    source: stringField(ci.source ?? body.source, "stored"),
+    label: nullableString(ci.label),
+    repository,
+    item_number: itemNumber,
+    item_url: nullableString(ci.item_url ?? body.item_url) || `https://github.com/${repository}/pull/${itemNumber}`,
+    run_url: nullableString(ci.run_url ?? body.run_url),
+    head_sha: nullableString(ci.head_sha ?? body.head_sha),
+    total: Math.max(0, numberOrNull(ci.total) ?? 0),
+    failing: Math.max(0, numberOrNull(ci.failing) ?? 0),
+    pending: Math.max(0, numberOrNull(ci.pending) ?? 0),
+    updated_at: nullableString(ci.updated_at) || new Date().toISOString(),
+    received_at: new Date().toISOString(),
+  };
+}
+
+function normalizeCiState(value) {
+  const text = String(value ?? "").trim().toLowerCase();
+  if (["green", "success", "passed", "pass"].includes(text)) return "green";
+  if (["red", "failure", "failed", "error", "timed_out", "action_required", "cancelled", "startup_failure"].includes(text)) return "red";
+  if (["pending", "queued", "waiting", "requested", "in_progress", "running"].includes(text)) return "pending";
+  return "unknown";
 }
 
 function workflowRunSummary(run) {
@@ -736,7 +829,9 @@ function metric(label, value, sub, pct, color) {
 function ciBadge(ci) {
   if (!ci) return '<span class="pill">ci unknown</span>';
   const cls = ci.state === "green" ? "green" : ci.state === "red" ? "red" : ci.state === "pending" ? "amber" : "";
-  return '<span class="pill ' + cls + '">' + esc(ci.state) + ' ' + esc(ci.failing || 0) + '/' + esc(ci.pending || 0) + '/' + esc(ci.total || 0) + '</span>';
+  const prefix = ci.source === "workflow" ? "run" : "checks";
+  const detail = ci.total ? " " + esc(ci.failing || 0) + "/" + esc(ci.pending || 0) + "/" + esc(ci.total || 0) : "";
+  return '<span class="pill ' + cls + '" title="' + esc(ci.label || ci.source || "") + '">' + esc(prefix) + " " + esc(ci.state) + detail + '</span>';
 }
 let lastData = null;
 let loading = false;

@@ -21,7 +21,7 @@ Worker:
 - name: `clawsweeper-status`
 - current deployment: `https://clawsweeper.openclaw.ai/`
 - fallback workers.dev deployment: `<private-fallback-endpoint>`
-- intended machine ingest: `https://clawsweeper-status-ingest.openclaw.ai/api/events`
+- machine ingest: `<private-ingest-endpoint>`
 
 Deploy with the OpenClaw Cloudflare token:
 
@@ -34,8 +34,11 @@ pnpm run dashboard:deploy
 
 GitHub deploys use `.github/workflows/dashboard.yml`. Configure either
 `OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN` or `OPENCLAW_CLOUDFLARE_API_TOKEN` with
-Workers Scripts edit permission before enabling the workflow as the production
-deploy path.
+Workers Scripts edit plus KV namespace permissions before enabling the workflow
+as the production deploy path. The deploy workflow creates or reuses the
+`clawsweeper-status-store` KV namespace, binds it as `STATUS_STORE`, and syncs
+the `CLAWSWEEPER_STATUS_INGEST_TOKEN` GitHub secret into the Worker as
+`INGEST_TOKEN`.
 
 ## Access Model
 
@@ -48,16 +51,36 @@ Worker or edit Cloudflare Access/DNS. Add the Workers deploy secret, the
 `openclaw.ai` routes, and the Access policy after the Services token has Workers
 Scripts edit, Zone DNS/route, and Zero Trust Access permissions.
 
-The ingest hostname is separate so workflow events can be sent with a bearer
-secret without a browser login. Ingest requires the `STATUS_STORE` KV binding
-and `INGEST_TOKEN` Worker secret; the live-read dashboard does not require them.
+Workflow events are sent with a bearer secret without a browser login. Ingest
+requires the `STATUS_STORE` KV binding and `INGEST_TOKEN` Worker secret; the
+dashboard still renders without them, but stored events and target-PR CI badges
+will be unavailable.
 
 ```bash
-curl -X POST https://clawsweeper-status-ingest.openclaw.ai/api/events \
+curl -X POST <private-ingest-endpoint> \
   -H "Authorization: Bearer $CLAWSWEEPER_STATUS_INGEST_TOKEN" \
   -H "Content-Type: application/json" \
   --data '{"event_type":"status.test","mode":"e2e","stage":"probe","status":"ok"}'
 ```
+
+## CI Status
+
+The dashboard does not fan out from the browser to GitHub check APIs. Active
+pipeline rows use the ClawSweeper workflow run status as an immediate fallback,
+then `.github/workflows/dashboard-ci.yml` refreshes target pull request check
+state and posts compact `ci.status` events into KV:
+
+```bash
+CLAWSWEEPER_STATUS_URL=https://clawsweeper.openclaw.ai \
+CLAWSWEEPER_STATUS_INGEST_TOKEN=... \
+GITHUB_TOKEN=... \
+pnpm run dashboard:refresh-ci
+```
+
+The UI renders `run pending/green/red` until stored target checks arrive, then
+switches to `checks pending/green/red` with failing/pending/total counts. CI
+snapshots expire after two hours so old PR head state does not stick to fresh
+pipeline rows.
 
 ## What It Shows
 

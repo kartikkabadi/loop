@@ -1,0 +1,40 @@
+name: ClawSweeper Live Dashboard CI Status
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - ClawSweeper
+      - ClawSweeper Commit Review
+      - repair cluster worker
+      - repair comment router
+    types: [requested, in_progress, completed]
+  schedule:
+    - cron: "*/5 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clawsweeper-live-dashboard-ci
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    name: Refresh live dashboard PR CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      CLAWSWEEPER_STATUS_URL: https://clawsweeper.openclaw.ai
+      CLAWSWEEPER_STATUS_INGEST_URL: <private-ingest-endpoint>
+      CLAWSWEEPER_STATUS_INGEST_TOKEN: ${{ secrets.CLAWSWEEPER_STATUS_INGEST_TOKEN }}
+      CLAWSWEEPER_STATUS_CI_LIMIT: "30"
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          filter: blob:none
+          fetch-depth: 1
+
+      - name: Refresh PR CI telemetry
+        run: node scripts/dashboard-refresh-ci.mjs

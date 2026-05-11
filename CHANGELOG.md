@@ -12,6 +12,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added the first Cloudflare live dashboard for ClawSweeper observability, with
   active worker counts, pipeline rows, CI state, automerge timing, and optional
   signed status-event ingest.
+- Added a live-dashboard CI refresher workflow that posts target pull request
+  check summaries into Cloudflare KV, so active rows can show stored PR check
+  state without slow browser-time GitHub fanout.
 - Added a canonical repair `job_intent` contract and orchestration docs so
   automerge, issue implementation, commit finding, low-signal cleanup, and
   ordinary repair jobs share one routing surface.
@@ -35,6 +38,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 - Kept the live dashboard's playful icon treatment while tightening the pipeline
   grid so long commit-review SHAs no longer overlap the automerge/status rail.
+- Replaced `ci unknown` on active live-dashboard rows with immediate workflow
+  run health and stored target-check badges when the CI refresher has published
+  pull request status.
 - Served the last good live dashboard snapshot from a longer edge cache when
   GitHub rate limits transient live refreshes, avoiding zeroed-out status pages.
 - Kept the live dashboard stable during refreshes by caching status snapshots at
