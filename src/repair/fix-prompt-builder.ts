@@ -39,6 +39,7 @@ export function buildFixPrompt({
     "- always fetch latest origin/main and rebase or otherwise sync this branch onto that latest main before returning;",
     "- run local git status/diff/log/rebase/merge commands needed to reconcile this branch with current origin/main;",
     "- when git conflicts exist, resolve every conflict marker and leave the checkout in a normal non-rebasing state;",
+    "- use one repair loop: rebase to latest main, inspect review comments and failing checks, make the narrowest fix, run validation, and repeat until the branch is merge-ready or a concrete external blocker is proven;",
     "- preserve contributor credit in changelog/docs when the fix is user-facing;",
     "- address review-bot concerns named in the artifact;",
     "- resolve actionable human review comments, bot comments, and requested changes named in the artifact;",

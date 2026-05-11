@@ -9,6 +9,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Added
 
+- Added a canonical repair `job_intent` contract and orchestration docs so
+  automerge, issue implementation, commit finding, low-signal cleanup, and
+  ordinary repair jobs share one routing surface.
 - Added an audit-only spam scanner lane for new GitHub issue comments and PR
   review comments. It uses deterministic prefilters plus `gpt-instant` to write
   durable spam audit records without blocking users or mutating repositories.
@@ -27,6 +30,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Derived repair dispatch worker caps from `job_intent` when no explicit cap is
+  provided, reducing per-workflow lane branching while preserving the global
+  worker budget.
 - Treated explicit `clawsweeper:automerge` opt-in as the per-PR automerge
   authorization, leaving only the global merge gate so maintainer-approved
   automerge PRs do not stall behind a second environment flag.

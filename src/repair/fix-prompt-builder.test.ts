@@ -74,6 +74,7 @@ test("fix prompt makes Codex own the validation loop", () => {
   });
 
   assert.match(prompt, /Validation loop:/);
+  assert.match(prompt, /use one repair loop: rebase to latest main/);
   assert.match(prompt, /run the changed-surface validation in this checkout before returning/);
   assert.match(prompt, /expected validation commands: pnpm check:changed ; pnpm test:repair/);
   assert.match(prompt, /fix the failure and rerun until it passes/);

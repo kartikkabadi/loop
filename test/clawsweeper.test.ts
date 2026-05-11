@@ -3286,6 +3286,15 @@ test("github activity workflow coalesces noisy observer runs", () => {
   assert.doesNotMatch(workflow, /github\.event\.client_payload\.activity\.subject\.number/);
 });
 
+test("issue implementation workflow lets job intent choose dispatch capacity", () => {
+  const workflow = readFileSync(".github/workflows/repair-issue-implementation-intake.yml", "utf8");
+
+  assert.match(workflow, /cap_args=\(\)/);
+  assert.match(workflow, /--max-live-workers "\$MAX_LIVE_WORKERS"/);
+  assert.match(workflow, /"\$\{cap_args\[@\]\}"/);
+  assert.doesNotMatch(workflow, /worker-limit issue_implementation/);
+});
+
 test("review prompt asks for concise public review fields", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 

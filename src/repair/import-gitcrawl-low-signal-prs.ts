@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { hasSecuritySignalText, parseArgs, repoRoot } from "./lib.js";
+import { renderJobIntentFrontmatter } from "./job-intent.js";
 
 const args = parseArgs(process.argv.slice(2));
 const repo = String(args.repo ?? "openclaw/openclaw");
@@ -158,6 +159,7 @@ function writeJob(batch: JsonValue, index: JsonValue) {
     `repo: ${repo}`,
     `cluster_id: ${clusterId}`,
     `mode: ${mode}`,
+    renderJobIntentFrontmatter("low_signal_pr_cleanup"),
     "triage_policy: low_signal_prs",
     "allowed_actions:",
     "  - comment",

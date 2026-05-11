@@ -116,7 +116,8 @@ commit review `4`, repair `36`, and hard caps `90`.
 
 - `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` overrides
   `commit_review.page_size_default`.
-- `CLAWSWEEPER_MAX_LIVE_WORKERS` overrides `repair_live_runs.default`.
+- `CLAWSWEEPER_MAX_LIVE_WORKERS` overrides the `job_intent`-derived repair
+  dispatch cap.
 - `CLAWSWEEPER_AUTOMERGE_MAX_LIVE_WORKERS` overrides
   `repair_live_runs.automerge_default`.
 - `CLAWSWEEPER_AUTO_IMPLEMENT_MAX_LIVE_WORKERS` overrides

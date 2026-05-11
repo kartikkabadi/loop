@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import { parseArgs, parseJob, repoRoot, validateJob } from "./lib.js";
 import { ghJsonBestEffort } from "./github-cli.js";
 import { escapeRegExp } from "./text-utils.js";
+import { renderJobIntentFrontmatter } from "./job-intent.js";
 
 const args = parseArgs(process.argv.slice(2));
 const fromReport = args["from-report"] ?? args.from_report;
@@ -139,6 +140,7 @@ function renderJob({
 repo: ${repo}
 cluster_id: ${clusterId}
 mode: ${mode}
+${renderJobIntentFrontmatter("repair_cluster")}
 allowed_actions:
   - comment
   - label

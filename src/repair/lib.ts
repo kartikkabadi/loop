@@ -3,6 +3,7 @@ import path from "node:path";
 import { repoRoot } from "./paths.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import { isRepairMode, type RepairJobFrontmatter } from "./domain-types.js";
+import { isRepairJobIntent } from "./job-intent.js";
 
 export { repoRoot } from "./paths.js";
 export type {
@@ -183,6 +184,7 @@ export function validateJob(job: ParsedJob | LooseRecord) {
   }
   for (const key of [
     "canonical_hint",
+    "job_intent",
     "target_checkout",
     "triage_policy",
     "security_policy",
@@ -198,6 +200,9 @@ export function validateJob(job: ParsedJob | LooseRecord) {
   }
   if (commitFindingJob && !/^[0-9a-f]{40}$/i.test(String(fm.commit_sha ?? ""))) {
     errors.push("commit finding jobs require commit_sha");
+  }
+  if (fm.job_intent !== undefined && !isRepairJobIntent(fm.job_intent)) {
+    errors.push(`unsupported job_intent: ${fm.job_intent}`);
   }
   if (fm.security_sensitive === true) {
     errors.push(

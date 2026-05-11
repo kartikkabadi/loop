@@ -5,7 +5,9 @@ import {
   hasDeterministicSecuritySignal,
   hasSecuritySignalText,
   parseArgs,
+  parseSimpleYaml,
   renderPrompt,
+  validateJob,
 } from "../../dist/repair/lib.js";
 
 test("parseArgs ignores package-manager double dash separators", () => {
@@ -34,6 +36,19 @@ test("renderPrompt loads tracked repair prompt templates", () => {
   );
   assert.match(prompt, /## Job file/);
   assert.match(prompt, /Repair smoke\./);
+});
+
+test("validateJob rejects unknown canonical job intents", () => {
+  const frontmatter = parseSimpleYaml(`repo: openclaw/openclaw
+cluster_id: smoke
+mode: autonomous
+job_intent: surprise
+allowed_actions:
+  - comment
+candidates:
+  - "#1"
+`);
+  assert.deepEqual(validateJob({ frontmatter }), ["unsupported job_intent: surprise"]);
 });
 
 test("security signal detection ignores non-security advisory wording", () => {

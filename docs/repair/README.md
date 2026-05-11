@@ -6,6 +6,9 @@ ClawSweeper is a conservative OpenClaw maintainer tool for one-cluster issue and
 
 It takes a curated GitHub issue/PR cluster, asks a Codex worker to classify the items, and applies only narrow, auditable cleanup actions when the evidence is strong. It shares the same ClawSweeper repo and GitHub App as the commit and backlog sweepers, but runs as a separate repair lane with stricter mutation gates.
 
+For the canonical repair `job_intent` contract and workflow/TypeScript boundary,
+see [`docs/orchestration.md`](../orchestration.md).
+
 Allowed automated close reasons:
 
 - duplicate of a clear canonical thread
@@ -233,12 +236,11 @@ pnpm run repair:import-gitcrawl-low-signal -- --limit 20 --batch-size 5 --mode a
 # refs while continuing ordinary bug/dedupe work.
 pnpm run repair:import-gitcrawl -- --from-gitcrawl --limit 40 --mode autonomous --suffix autonomous-smoke --allow-instant-close --allow-merge --allow-fix-pr --allow-post-merge-close
 
-# Dispatch reviewed jobs. Dispatch, requeue, and self-heal refuse to exceed
-# 32 live cluster-worker runs by default. That cap is derived from workers.max in
-# config/automation-limits.json; tune the global budget there first, or use
-# CLAWSWEEPER_MAX_LIVE_WORKERS/--max-live-workers for a one-lane override. With
-# --wait-for-capacity, dispatch can drain a larger file list in capacity-sized
-# waves instead of refusing the whole batch.
+# Dispatch reviewed jobs. Dispatch derives its default live-worker cap from the
+# job's job_intent and config/automation-limits.json. Tune the global budget
+# there first, or use CLAWSWEEPER_MAX_LIVE_WORKERS/--max-live-workers for a
+# one-lane override. With --wait-for-capacity, dispatch can drain a larger file
+# list in capacity-sized waves instead of refusing the whole batch.
 CLAWSWEEPER_MAX_LIVE_WORKERS=32 pnpm run repair:dispatch -- jobs/openclaw/inbox/cluster-example.md \
   --mode autonomous \
   --runner blacksmith-4vcpu-ubuntu-2404 \
@@ -329,7 +331,7 @@ The workflow needs:
   model is `gpt-5.5`; repair workers default to high reasoning on the fast
   service tier, and accidental `xhigh` reasoning overrides are normalized back
   to `high`
-- optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; default is derived from `workers.max` and is currently `32`
+- optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; dispatch defaults are derived from `job_intent` and `workers.max`
 - optional `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA` variable for replacement PR backpressure; default is `50` open ClawSweeper PRs per touched area, `0` disables the area cap, and common changelog/release-note files are ignored for this check
 - ClawSweeper commit-finding repair PRs are labeled `clawsweeper:commit-finding`
 - optional `CLAWSWEEPER_CODEX_TIMEOUT_MS`, `CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS`,

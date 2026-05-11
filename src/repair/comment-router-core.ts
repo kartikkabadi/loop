@@ -1,4 +1,5 @@
 import type { JsonValue, LooseRecord } from "./json-types.js";
+import { renderJobIntentFrontmatter } from "./job-intent.js";
 export const REPAIR_INTENTS = new Set([
   "fix_ci",
   "address_review",
@@ -189,6 +190,7 @@ export function renderAutomergeJob({
 repo: ${repo}
 cluster_id: ${clusterId}
 mode: autonomous
+${renderJobIntentFrontmatter("automerge_pr")}
 allowed_actions:
   - comment
   - label
@@ -294,6 +296,7 @@ This job came from ClawSweeper's reproducible bug lane. Treat it as bug-only:
 repo: ${repo}
 cluster_id: ${clusterId}
 mode: autonomous
+${renderJobIntentFrontmatter("implement_issue")}
 allowed_actions:
   - comment
   - label

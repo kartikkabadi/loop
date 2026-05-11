@@ -25,6 +25,7 @@ export type RepairJobFrontmatter = JsonObject & {
   canonical?: JsonArray;
   cluster_id: string;
   cluster_refs?: JsonArray;
+  job_intent?: string;
   mode: RepairMode;
   repo: string;
   require_fix_before_close?: boolean;

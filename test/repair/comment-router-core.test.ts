@@ -509,6 +509,7 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
   };
 
   assert.deepEqual(validateJob(job), []);
+  assert.equal(job.frontmatter.job_intent, "automerge_pr");
   assert.equal(job.frontmatter.source, "pr_automerge");
   assert.equal(job.frontmatter.allow_fix_pr, true);
   assert.equal(job.frontmatter.allow_merge, false);
@@ -540,6 +541,7 @@ test("renderIssueImplementationJob validates and opens one non-closing fix PR la
   };
 
   assert.deepEqual(validateJob(job), []);
+  assert.equal(job.frontmatter.job_intent, "implement_issue");
   assert.equal(job.frontmatter.source, "issue_implementation");
   assert.equal(job.frontmatter.allow_fix_pr, true);
   assert.equal(job.frontmatter.allow_merge, false);

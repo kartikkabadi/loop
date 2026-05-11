@@ -16,7 +16,8 @@ import {
 } from "./lib.js";
 import { sleepMs } from "./timing.js";
 import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
-import { AUTOMATION_LIMITS } from "./limits.js";
+import { AUTOMATION_LIMITS, workerLimit, type WorkerLane } from "./limits.js";
+import { repairJobIntentForFrontmatter, workerLaneForRepairJobIntent } from "./job-intent.js";
 
 const args = parseArgs(process.argv.slice(2));
 const defaultRunner = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
@@ -28,11 +29,11 @@ const executionRunner = args["execution-runner"] ?? args.execution_runner ?? def
 const workflow = args.workflow ?? REPAIR_CLUSTER_WORKFLOW;
 const repo = String(args.repo ?? currentProjectRepo());
 const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
-const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const ref = args.ref ? String(args.ref) : "";
 const files = args._;
 const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
+const jobWorkerLanes = new Map<string, WorkerLane>();
 
 if (files.length === 0) {
   console.error(
@@ -54,6 +55,10 @@ for (const file of files) {
   }
 
   const relative = job.relativePath;
+  jobWorkerLanes.set(
+    relative,
+    workerLaneForRepairJobIntent(repairJobIntentForFrontmatter(job.frontmatter)),
+  );
   if (!fs.existsSync(path.join(repoRoot(), relative))) {
     failed = true;
     console.error(`job does not exist inside repo: ${file}`);
@@ -63,6 +68,7 @@ for (const file of files) {
 }
 
 const jobs = failed ? [] : validatedJobs.filter((relative) => shouldDispatchJob(relative));
+const maxLiveWorkers = dispatchMaxLiveWorkers(jobs);
 
 if (!failed) {
   const requested = waitForCapacity ? Math.min(jobs.length, 1) : jobs.length;
@@ -151,3 +157,22 @@ function shouldDispatchJob(relative: JsonValue) {
 }
 
 if (failed) process.exit(1);
+
+function dispatchMaxLiveWorkers(jobPaths: JsonValue[]): number {
+  if (
+    args["max-live-workers"] !== undefined ||
+    args.max_live_workers !== undefined ||
+    process.env.CLAWSWEEPER_MAX_LIVE_WORKERS
+  ) {
+    return readMaxLiveWorkers(args);
+  }
+  const lane = strongestWorkerLane(jobPaths);
+  return readMaxLiveWorkers({ "max-live-workers": workerLimit(lane) });
+}
+
+function strongestWorkerLane(jobPaths: JsonValue[]): WorkerLane {
+  const lanes = new Set(jobPaths.map((jobPath) => jobWorkerLanes.get(String(jobPath))));
+  if (lanes.has("automerge_repair")) return "automerge_repair";
+  if (lanes.has("issue_implementation")) return "issue_implementation";
+  return "repair";
+}

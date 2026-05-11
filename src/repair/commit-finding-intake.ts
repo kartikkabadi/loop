@@ -17,6 +17,7 @@ import {
   type CommitFindingReportReadResult,
 } from "./commit-finding-report.js";
 import { readJsonFileIfExists as readJsonIfExists } from "./json-file.js";
+import { renderJobIntentFrontmatter } from "./job-intent.js";
 import { commitFindingPrTitle } from "./pr-title.js";
 import { escapeRegExp, slug } from "./text-utils.js";
 
@@ -184,6 +185,7 @@ function writeJob(context: LooseRecord, reportMarkdown: JsonValue) {
 repo: ${context.targetRepo}
 cluster_id: ${context.clusterId}
 mode: autonomous
+${renderJobIntentFrontmatter("commit_finding")}
 allowed_actions:
   - comment
   - label

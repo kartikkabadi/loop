@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { hasSecuritySignalText, parseArgs, repoRoot } from "./lib.js";
+import { renderJobIntentFrontmatter } from "./job-intent.js";
 
 const args = parseArgs(process.argv.slice(2));
 const repo = String(args.repo ?? "openclaw/openclaw");
@@ -147,6 +148,7 @@ for (const clusterId of clusterIds) {
     `repo: ${repo}`,
     `cluster_id: ${clusterSlug}`,
     `mode: ${mode}`,
+    renderJobIntentFrontmatter("repair_cluster"),
     "allowed_actions:",
     "  - comment",
     "  - label",

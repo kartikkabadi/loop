@@ -8,6 +8,12 @@ The global worker budget comes from `config/automation-limits.json`; see
 [Automation Limits](limits.md) for the derived lane limits and GitHub variable
 overrides.
 
+Repair and automerge jobs also carry the canonical `job_intent` frontmatter
+described in [ClawSweeper Orchestration](orchestration.md). Workflow inputs can
+still override live-worker caps, but when they do not, `repair:dispatch` derives
+the priority lane from `job_intent` instead of relying on workflow-specific
+defaults.
+
 ClawSweeper has three issue/PR scheduler paths:
 
 - exact event review for one target issue or pull request

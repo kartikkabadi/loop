@@ -149,14 +149,15 @@ jobs:
           MODEL: ${{ github.event.inputs.model || vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
         run: |
           set -euo pipefail
-          if [ -z "$MAX_LIVE_WORKERS" ]; then
-            MAX_LIVE_WORKERS="$(pnpm run --silent workflow -- worker-limit issue_implementation)"
+          cap_args=()
+          if [ -n "$MAX_LIVE_WORKERS" ]; then
+            cap_args=(--max-live-workers "$MAX_LIVE_WORKERS")
           fi
           git pull --rebase
           pnpm run repair:dispatch -- "${{ steps.prepare.outputs.job_path }}" \
             --mode autonomous \
             --wait-for-capacity \
-            --max-live-workers "$MAX_LIVE_WORKERS" \
+            "${cap_args[@]}" \
             --runner "$RUNNER" \
             --execution-runner "$EXECUTION_RUNNER" \
             --model "$MODEL" \
