@@ -176,6 +176,65 @@ test("dashboard falls back to edge cache storage when KV is not bound", async ()
   }
 });
 
+test("dashboard keeps workflow CI status when live PR checks fail", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.includes("/repos/openclaw/clawsweeper/actions/runs")) {
+      return jsonResponse({
+        workflow_runs: [
+          {
+            id: 1,
+            name: "ClawSweeper",
+            display_title: "Review event item openclaw/openclaw#80609",
+            status: "in_progress",
+            conclusion: null,
+            html_url: "https://github.com/openclaw/clawsweeper/actions/runs/1",
+            created_at: new Date(Date.now() - 60_000).toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ],
+      });
+    }
+    if (url.includes("/repos/openclaw/openclaw/pulls/80609")) {
+      return new Response(JSON.stringify({ message: "rate limited" }), { status: 403 });
+    }
+    if (url.includes("/search/issues")) return jsonResponse({ items: [] });
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+        INCLUDE_CI_STATUS: "1",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.equal(status.pipeline[0].ci.state, "pending");
+    assert.equal(status.pipeline[0].ci.source, "workflow");
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
 async function activePrFetch(input: RequestInfo | URL) {
   const url = String(input);
   if (url.includes("/repos/openclaw/clawsweeper/actions/runs")) {

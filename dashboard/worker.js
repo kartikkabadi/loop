@@ -287,7 +287,7 @@ async function attachCiStatus(env, item) {
       source: "live",
     };
   } catch (error) {
-    item.ci = { state: "unknown", source: "live", error: String(error?.message || error) };
+    if (!item.ci) item.ci = { state: "unknown", source: "live", error: String(error?.message || error) };
   }
 }
 

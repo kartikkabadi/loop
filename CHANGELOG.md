@@ -43,7 +43,8 @@ checkpoint, and status-only commits are intentionally omitted.
   pull request status.
 - Enabled a bounded live PR-check fallback for the first visible dashboard rows
   so CI badges still show target checks when KV is absent or cache locality
-  hides a posted status event.
+  hides a posted status event, while preserving workflow status if GitHub
+  rejects the live enrichment request.
 - Tightened the live dashboard desktop layout so the pipeline table scrolls
   inside its lane instead of colliding with the side panels.
 - Served the last good live dashboard snapshot from a longer edge cache when
