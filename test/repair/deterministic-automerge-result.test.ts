@@ -33,6 +33,14 @@ function clusterPlan(overrides = {}) {
         pull_request: {
           branch_writable: true,
           files_truncated: 0,
+          checks: [
+            {
+              name: "checks-node-core-fast",
+              state: "failure",
+              link: "https://github.com/openclaw/openclaw/actions/runs/1/job/2",
+            },
+            { name: "lint", state: "success" },
+          ],
           files: [
             { filename: "extensions/memory-core/src/tools.ts" },
             { filename: "extensions/memory-core/src/tools.test.ts" },
@@ -66,6 +74,8 @@ test("deterministic automerge result emits generic direct-Codex repair artifact"
   assert.deepEqual(result?.fix_artifact.source_prs, [
     "https://github.com/openclaw/openclaw/pull/71898",
   ]);
+  assert.match(result?.actions[0].evidence.join("\n"), /Failing check: checks-node-core-fast/);
+  assert.match(result?.fix_artifact.pr_body, /Known failing checks/);
 });
 
 test("deterministic automerge result does not require a changelog blocker", () => {

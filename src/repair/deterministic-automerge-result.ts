@@ -34,9 +34,11 @@ export function deterministicAutomergeResult({
     "Rebase onto latest main, address PR comments and review findings, fix CI/check failures, add required changelog if needed, and validate before returning.",
   ].join(" ");
   const likelyFiles = likelyRepairFiles(files, Boolean(changelogReason));
+  const failedChecks = failingCheckEvidence(canonical);
   const evidence = [
     `Source PR: ${prUrl}`,
     canonical.pull_request?.head_sha ? `Current head: ${canonical.pull_request.head_sha}` : null,
+    ...failedChecks,
     canonical.pull_request?.branch_writable === false
       ? `Branch writable: false (${canonical.pull_request?.branch_write_reason ?? "unknown"})`
       : "Branch writable: true or executor will fall back safely",
@@ -60,7 +62,12 @@ export function deterministicAutomergeResult({
       `Makes ${prUrl} merge-ready for the ClawSweeper ${repairMode} loop.`,
       "",
       "The edit pass should inspect the live PR diff, review comments, and failing checks; rebase if needed; keep the contributor branch credited; and stop only when validation is green or an external blocker is proven.",
-    ].join("\n"),
+      failedChecks.length > 0
+        ? `Known failing checks:\n${failedChecks.map((check) => `- ${check}`).join("\n")}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n"),
     source_prs: [prUrl],
     repair_strategy: "repair_contributor_branch",
     allow_no_pr: false,
@@ -128,6 +135,26 @@ function likelyRepairFiles(files: string[], changelogRequired: boolean): string[
   if (changelogRequired && !likely.includes("CHANGELOG.md")) likely.push("CHANGELOG.md");
   if (likely.length === 0) likely.push("CHANGELOG.md");
   return uniqueStrings(likely);
+}
+
+function failingCheckEvidence(item: LooseRecord): string[] {
+  return (item.pull_request?.checks ?? [])
+    .filter((check: JsonValue) => {
+      const state = String(check?.state ?? check?.conclusion ?? check?.status ?? "").toLowerCase();
+      const bucket = String(check?.bucket ?? "").toLowerCase();
+      return (
+        ["failure", "failed", "error", "timed_out", "action_required"].includes(state) ||
+        ["fail", "failing", "failed"].includes(bucket)
+      );
+    })
+    .map((check: JsonValue) => {
+      const name = String(check?.name ?? "unnamed check").trim();
+      const state = String(check?.state ?? check?.conclusion ?? check?.status ?? "unknown").trim();
+      const link = String(check?.link ?? check?.html_url ?? "").trim();
+      return `Failing check: ${name}:${state}${link ? ` (${link})` : ""}`;
+    })
+    .filter(Boolean)
+    .slice(0, 12);
 }
 
 function uniqueStrings(values: JsonValue[]): string[] {

@@ -92,6 +92,12 @@ and validate. This removes one model round trip from every opted-in repair while
 keeping live evidence, permissions, security boundaries, push, review, checks,
 and merge gating in deterministic code.
 
+For automerge, failed exact-head checks are repair scope even when the failing
+file is outside the original PR's changed files. The Codex edit pass should
+first rebase to latest `main`, inspect the check logs, then either fix the
+narrow failure on the branch or prove that current `main` is independently
+blocked.
+
 The executor fetches the current base and contributor branch, prepares the
 target toolchain, then prompts Codex to do the edit work directly. Codex may use
 read-only `gh` for comments, review threads, check status, and check logs; it
