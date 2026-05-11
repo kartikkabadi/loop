@@ -54,6 +54,54 @@ test("comment webhook rejects contributor commands before visible ack", () => {
   assert.match(result.reason, /not allowed/);
 });
 
+test("comment webhook accepts author read-only re-review commands", () => {
+  const result = classifyIssueCommentWebhook({
+    event: "issue_comment",
+    payload: {
+      action: "created",
+      repository: { full_name: "openclaw/openclaw" },
+      issue: { number: 76991, user: { login: "nickmopen" } },
+      installation: { id: 123 },
+      comment: {
+        id: 456,
+        body: "@clawsweeper Re-run",
+        author_association: "CONTRIBUTOR",
+        user: { login: "NickMOpen" },
+      },
+    },
+  });
+
+  assert.deepEqual(result, {
+    accepted: true,
+    targetRepo: "openclaw/openclaw",
+    itemNumber: 76991,
+    commentId: 456,
+    installationId: 123,
+    sourceAction: "created",
+  });
+});
+
+test("comment webhook rejects non-author read-only re-review commands", () => {
+  const result = classifyIssueCommentWebhook({
+    event: "issue_comment",
+    payload: {
+      action: "created",
+      repository: { full_name: "openclaw/openclaw" },
+      issue: { number: 76991, user: { login: "nickmopen" } },
+      installation: { id: 123 },
+      comment: {
+        id: 456,
+        body: "@clawsweeper re-run",
+        author_association: "CONTRIBUTOR",
+        user: { login: "somebody-else" },
+      },
+    },
+  });
+
+  assert.equal(result.accepted, false);
+  assert.match(result.reason, /not allowed/);
+});
+
 test("fast ack comment carries source comment marker", () => {
   const body = renderFastAckComment(456);
 

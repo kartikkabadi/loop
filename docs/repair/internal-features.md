@@ -441,6 +441,7 @@ Supported commands:
 /review
 /clawsweeper status
 /clawsweeper re-review
+/clawsweeper re-run
 /clawsweeper fix ci
 /clawsweeper address review
 /clawsweeper rebase
@@ -450,6 +451,7 @@ Supported commands:
 /clawsweeper explain
 /clawsweeper stop
 @clawsweeper re-review
+@clawsweeper re-run
 @clawsweeper review
 @openclaw-clawsweeper fix ci
 @clawsweeper why did automerge stop here?
@@ -458,8 +460,9 @@ Supported commands:
 Behavior:
 
 - `status` and `explain`: post a short status response.
-- `review` and `re-review`: dispatch ClawSweeper review again for an open issue
-  or PR.
+- `review`, `re-review`, and `re-run`: dispatch ClawSweeper review again for an
+  open issue or PR. Authors may use only these read-only review commands on
+  their own open item; maintainer permission remains required for write actions.
 - Freeform `@clawsweeper ...` maintainer mentions: dispatch a read-only assist
   review with the mention text as one-off instructions. The model can answer or
   recommend existing structured safe actions, but cannot directly merge, close,

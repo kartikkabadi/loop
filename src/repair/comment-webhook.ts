@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import http from "node:http";
 
 import type { JsonValue, LooseRecord } from "./json-types.js";
+import { parseCommand } from "./comment-router-core.js";
 
 const DEFAULT_PORT = 8787;
 const COMMAND_PATTERN =
@@ -114,7 +115,10 @@ export function classifyIssueCommentWebhook({
   if (!COMMAND_PATTERN.test(String(comment.body ?? ""))) {
     return { accepted: false, reason: "no ClawSweeper command" };
   }
-  if (!ALLOWED_ASSOCIATIONS.has(association)) {
+  if (
+    !ALLOWED_ASSOCIATIONS.has(association) &&
+    !isAuthorReadOnlyWebhookCommand({ comment, issue })
+  ) {
     return {
       accepted: false,
       reason: `author association ${association || "unknown"} is not allowed`,
@@ -144,6 +148,26 @@ export function classifyIssueCommentWebhook({
     installationId,
     sourceAction: String(payload.action ?? "created"),
   };
+}
+
+function isAuthorReadOnlyWebhookCommand({
+  comment,
+  issue,
+}: {
+  comment: LooseRecord;
+  issue: LooseRecord;
+}) {
+  const parsed = parseCommand(String(comment.body ?? ""));
+  if (parsed?.intent !== "re_review") return false;
+  const commentAuthor = normalizedLogin(asRecord(comment.user).login);
+  const issueAuthor = normalizedLogin(asRecord(issue.user).login);
+  return Boolean(commentAuthor && issueAuthor && commentAuthor === issueAuthor);
+}
+
+function normalizedLogin(value: JsonValue) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase();
 }
 
 export function renderFastAckComment(sourceCommentId: number) {

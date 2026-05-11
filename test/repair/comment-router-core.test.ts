@@ -31,6 +31,7 @@ import {
   issueImplementationClusterId,
   issueImplementationJobBranch,
   issueImplementationJobPath,
+  isAuthorReadOnlyCommandAllowed,
   isCanonicalLandingNeedsHumanText,
   isMaintainerCommandAllowed,
   parseCommand,
@@ -107,6 +108,11 @@ test("parseCommand recognizes maintainer slash commands", () => {
   assert.deepEqual(parseCommand("/clawsweeper re-review"), {
     trigger: "slash",
     command: "re-review",
+    intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper re-run"), {
+    trigger: "slash",
+    command: "re-run",
     intent: "re_review",
   });
   assert.deepEqual(parseCommand("/review"), {
@@ -642,6 +648,11 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
   assert.deepEqual(parseCommand("@clawsweeper re-review"), {
     trigger: "mention",
     command: "re-review",
+    intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper Re-run"), {
+    trigger: "mention",
+    command: "re-run",
     intent: "re_review",
   });
   assert.deepEqual(parseCommand("@clawsweeper review"), {
@@ -1719,5 +1730,29 @@ test("maintainer command authorization requires maintainer repository permission
       allowedAssociations,
     }),
     true,
+  );
+});
+
+test("author read-only command authorization only allows own re-review", () => {
+  assert.equal(
+    isAuthorReadOnlyCommandAllowed({
+      command: { intent: "re_review", author: "NickMOpen" },
+      target: { kind: "pull_request", author: "nickmopen" },
+    }),
+    true,
+  );
+  assert.equal(
+    isAuthorReadOnlyCommandAllowed({
+      command: { intent: "fix_ci", author: "nickmopen" },
+      target: { kind: "pull_request", author: "nickmopen" },
+    }),
+    false,
+  );
+  assert.equal(
+    isAuthorReadOnlyCommandAllowed({
+      command: { intent: "re_review", author: "somebody-else" },
+      target: { kind: "pull_request", author: "nickmopen" },
+    }),
+    false,
   );
 });

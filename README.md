@@ -142,6 +142,7 @@ Common commands:
 ```text
 @clawsweeper status
 @clawsweeper re-review
+@clawsweeper re-run
 @clawsweeper review
 @clawsweeper fix ci
 @clawsweeper address review
@@ -155,8 +156,8 @@ Common commands:
 ```
 
 - `status` and `explain` post a short target summary.
-- `review` and `re-review` dispatch a fresh ClawSweeper issue/PR review without
-  starting repair.
+- `review`, `re-review`, and `re-run` dispatch a fresh ClawSweeper issue/PR
+  review without starting repair.
 - Command status replies are marker-backed and edited in place per
   issue/PR, intent, and head SHA. The visible badge is one lobster plus the
   current state: `👀` for acknowledgement, `🧹` for review, `🔧` for repair, and
@@ -184,10 +185,12 @@ Common commands:
   closes the item and bounded linked same-repo targets with an explicit
   maintainer reason.
 
-Only maintainers are accepted. The router checks repository collaborator
-permission (`admin`, `maintain`, or `write`) and falls back to trusted
-`author_association` values when permission lookup is unavailable. Contributor
-commands are ignored without a reply. Scheduled comment routing is dry unless
+Only maintainers are accepted for write actions. The router checks repository
+collaborator permission (`admin`, `maintain`, or `write`) and falls back to
+trusted `author_association` values when permission lookup is unavailable. The
+single contributor exception is read-only: an issue or PR author may ask
+`@clawsweeper re-review` or `@clawsweeper re-run` on their own open item.
+Other contributor commands are ignored without a reply. Scheduled comment routing is dry unless
 `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1`; workflow dispatch with `execute=true`
 can be used for one-off live routing.
 

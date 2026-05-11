@@ -148,6 +148,7 @@ Supported commands:
 /review
 /clawsweeper status
 /clawsweeper re-review
+/clawsweeper re-run
 /clawsweeper implement
 /clawsweeper build
 /clawsweeper fix ci
@@ -160,6 +161,7 @@ Supported commands:
 /clawsweeper explain
 /clawsweeper stop
 @clawsweeper re-review
+@clawsweeper re-run
 @clawsweeper review
 @clawsweeper implement
 @clawsweeper fix
@@ -170,8 +172,10 @@ Supported commands:
 @clawsweeper why did automerge stop here?
 ```
 
-`status` and `explain` post a short status reply. `review` and `re-review`
-dispatch ClawSweeper review again for an open issue or PR. `fix ci`, `address review`,
+`status` and `explain` post a short status reply. `review`, `re-review`, and
+`re-run` dispatch ClawSweeper review again for an open issue or PR. Issue and PR
+authors may use only these read-only review commands on their own open item.
+`fix ci`, `address review`,
 and `rebase` dispatch the normal `repair-cluster-worker.yml` repair path, but only for
 existing ClawSweeper PRs identified by the `clawsweeper/*` branch.
 `implement`, `fix`, `build`, `create pr`, and `fix issue` work only on open issues.

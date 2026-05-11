@@ -572,6 +572,20 @@ export function isMaintainerCommandAllowed({
   return association === "OWNER" && associationSet.has(association);
 }
 
+export function isAuthorReadOnlyCommandAllowed({ command, target }: LooseRecord) {
+  const intent = String(command?.intent ?? "");
+  if (intent !== "re_review") return false;
+  const author = normalizedLogin(command?.author);
+  const targetAuthor = normalizedLogin(target?.author);
+  return Boolean(author && targetAuthor && author === targetAuthor);
+}
+
+function normalizedLogin(value: JsonValue) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase();
+}
+
 export function buildAutomergeMergeArgs({
   issueNumber,
   repo,
@@ -1254,9 +1268,18 @@ function normalizeIntent(command: LooseRecord) {
     return "implement_issue";
   }
   if (
-    ["review", "re-review", "rereview", "review again", "rerun review", "run review"].includes(
-      command,
-    )
+    [
+      "review",
+      "re-review",
+      "rereview",
+      "review again",
+      "rerun",
+      "re-run",
+      "rerun review",
+      "re-run review",
+      "run review",
+      "run again",
+    ].includes(command)
   )
     return "re_review";
   if (["rebase", "update branch", "sync"].includes(command)) return "rebase";

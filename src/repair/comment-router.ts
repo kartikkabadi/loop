@@ -42,6 +42,7 @@ import {
   commandStatusMarkerPrefix,
   existingCommandStatusBlocksReplay,
   existingModeStatusBlocksReplay,
+  isAuthorReadOnlyCommandAllowed,
   isCanonicalLandingNeedsHumanText,
   isMaintainerCommandAllowed,
   issueImplementationClusterId,
@@ -335,20 +336,14 @@ function classifyCommand(command: LooseRecord): JsonValue {
   if (command.comment_version_key && processedCommentVersions.has(command.comment_version_key)) {
     return { ...command, status: "skipped", reason: "comment version already processed in ledger" };
   }
+  let authorization: LooseRecord | null = null;
   if (command.trusted_bot) {
     if (!trustedBots.has(String(command.author ?? "").toLowerCase())) {
       return { ...command, status: "ignored", reason: "trusted automation author is not allowed" };
     }
   } else {
-    const authorization = resolveMaintainerCommandAuthorization(command);
+    authorization = resolveMaintainerCommandAuthorization(command);
     command.author_repository_permission = authorization.repositoryPermission;
-    if (!authorization.allowed) {
-      return {
-        ...command,
-        status: "ignored",
-        reason: authorization.reason,
-      };
-    }
   }
   if (!command.issue_number) {
     return { ...command, status: "ignored", reason: "could not resolve issue or PR number" };
@@ -361,6 +356,18 @@ function classifyCommand(command: LooseRecord): JsonValue {
     ? classifyPullTarget(pull, command.issue_number)
     : classifyIssueTarget(issue, command.issue_number);
   const next = { ...command, target };
+  if (
+    !command.trusted_bot &&
+    authorization &&
+    !authorization.allowed &&
+    !isAuthorReadOnlyCommandAllowed({ command, target })
+  ) {
+    return {
+      ...next,
+      status: "ignored",
+      reason: authorization.reason,
+    };
+  }
 
   if (
     existingCommandStatusBlocksReplay({
@@ -2264,6 +2271,7 @@ function classifyIssueTarget(issue: LooseRecord, issueNumber: JsonValue): JsonVa
     kind: "issue",
     state: issue.state ?? null,
     title: issue.title ?? null,
+    author: issue.user?.login ?? null,
     labels: (issue.labels ?? []).map((item: JsonValue) => item.name ?? item),
     cluster_id: jobPath ? implementationCluster : null,
     job_path: jobPath,
