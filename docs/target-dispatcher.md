@@ -148,11 +148,17 @@ jobs:
                   "" \
                   "Command router queued. I will update this comment with the next step.")"
                 status_payload="$(jq -nc --arg body "$status_body" '{body:$body}')"
-                status_response="$(GH_TOKEN="$TARGET_TOKEN" gh api \
+                status_err="$(mktemp)"
+                if status_response="$(GH_TOKEN="$TARGET_TOKEN" gh api \
                   "repos/$TARGET_REPO/issues/$ITEM_NUMBER/comments" \
                   --method POST \
-                  --input - <<< "$status_payload")"
-                status_comment_id="$(jq -r '.id // empty' <<< "$status_response")"
+                  --input - <<< "$status_payload" 2>"$status_err")"; then
+                  status_comment_id="$(jq -r '.id // empty' <<< "$status_response")"
+                else
+                  cat "$status_err" >&2
+                  echo "::warning::Could not create ClawSweeper queued status comment; dispatching command router without one."
+                fi
+                rm -f "$status_err"
                 ;;
             esac
           fi
@@ -170,14 +176,17 @@ jobs:
 ```
 
 Comments are a lightweight trigger only when the body contains a ClawSweeper
-command. The target workflow reacts with `eyes`, creates one visible queued
-status comment for maintainer-authored commands, and dispatches
-`clawsweeper_comment` to the comment router with the exact source comment id and
-queued status comment id. The router edits that queued comment in place instead
-of posting a second reply. Exact comment dispatches scan only that comment and
-use a per-comment receiver concurrency group, so one maintainer command does not
-wait behind an unrelated command on the same repository. The scheduled sweep
-remains a five-minute fallback. Bot-authored label churn is also ignored. Human
+command. The target workflow reacts with `eyes` and creates one visible queued
+status comment for maintainer-authored commands when target write permission is
+available, but both acknowledgement writes are best-effort. It must still
+dispatch `clawsweeper_comment` to the comment router when acknowledgement or
+queued-comment creation gets a target-repository 403. The dispatch carries the
+exact source comment id and, when available, the queued status comment id. The
+router edits that queued comment in place instead of posting a second reply.
+Exact comment dispatches scan only that comment and use a per-comment receiver
+concurrency group, so one maintainer command does not wait behind an unrelated
+command on the same repository. The scheduled sweep remains a five-minute
+fallback. Bot-authored label churn is also ignored. Human
 label changes are debounced and may run after an active dispatcher, but they
 must not cancel a content-changing dispatch before it posts to ClawSweeper.
 Content-changing events such as issue edits and PR synchronizes cancel stale
