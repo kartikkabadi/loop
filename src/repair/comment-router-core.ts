@@ -446,6 +446,24 @@ export function automergeRebaseRepairReason(target: LooseRecord = {}): string | 
   return null;
 }
 
+export function automergeActivationRepairReason({
+  intent,
+  repo,
+  title,
+  files,
+  target = {},
+}: LooseRecord): string | null {
+  const failedChecksRepairReason = automergeFailedChecksRepairReason(target.checks ?? {});
+  if (failedChecksRepairReason) return failedChecksRepairReason;
+
+  const rebaseRepairReason = automergeRebaseRepairReason(target);
+  if (rebaseRepairReason) return rebaseRepairReason;
+
+  if (String(intent ?? "") !== "automerge") return null;
+  if (!automergeChangelogBlockReason({ repo, title, files })) return null;
+  return "CHANGELOG.md entry is required before automerge; dispatch a focused changelog repair";
+}
+
 export function automergeMergeFailureRepairReason(reason: JsonValue): string | null {
   const text = String(reason ?? "")
     .trim()

@@ -24,6 +24,7 @@ import {
   autoRepairHeadKey,
   automergeChangelogBlockReason,
   automergeFailedChecksRepairReason,
+  automergeActivationRepairReason,
   automergeGateBlockReason,
   automergeClusterId,
   automergeJobPath,
@@ -499,7 +500,16 @@ function classifyCommand(command: LooseRecord): JsonValue {
     const pauseLabels = pauseLabelsOn(target);
     const failedChecksRepairReason = automergeFailedChecksRepairReason(target.checks);
     const rebaseRepairReason = automergeRebaseRepairReason(target);
-    const activationRepairReason = failedChecksRepairReason ?? rebaseRepairReason;
+    const activationRepairReason =
+      failedChecksRepairReason ??
+      rebaseRepairReason ??
+      automergeActivationRepairReason({
+        intent: command.intent,
+        repo: command.repo,
+        title: target.title,
+        files: target.files,
+        target,
+      });
     if (
       command.trusted_bot &&
       command.automation_source === "repair_loop_label_sweep" &&

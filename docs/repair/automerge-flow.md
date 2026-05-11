@@ -57,6 +57,8 @@ Repairable states include:
 - `mergeable: CONFLICTING`;
 - `mergeStateStatus: DIRTY`;
 - `mergeStateStatus: BEHIND`;
+- missing `CHANGELOG.md` entry for user-facing OpenClaw `fix`, `feat`, or
+  `perf` PRs;
 - terminal required-check failures such as `FAILURE`, `ERROR`,
   `ACTION_REQUIRED`, `STARTUP_FAILURE`, or `TIMED_OUT`;
 - accepted ClawSweeper repair verdicts or action markers for the exact current

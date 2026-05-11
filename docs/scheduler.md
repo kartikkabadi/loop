@@ -132,6 +132,12 @@ ClawSweeper review only asked a maintainer to land the canonical PR and the
 maintainer already opted into automerge, queueing the merge gate for that exact
 review comment.
 
+Automerge activation also checks the OpenClaw changelog policy before spending
+an exact-head review pass. User-facing `fix`, `feat`, and `perf` PRs that touch
+non-doc/test files and do not already include `CHANGELOG.md` go straight to the
+adopted repair worker, so the changelog fix happens in the first loop instead
+of being discovered only at the final merge gate.
+
 For explicit base-sync-only repairs, the repair executor first tries a
 deterministic fast path: rebase onto current `main`, apply known mechanical
 conflict resolvers such as isolated `CHANGELOG.md` conflicts and generated

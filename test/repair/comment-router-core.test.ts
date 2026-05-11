@@ -8,6 +8,7 @@ import {
   autocloseReasonFromCommand,
   autoRepairBlockReason,
   autoRepairHeadKey,
+  automergeActivationRepairReason,
   automergeChangelogBlockReason,
   automergeFailedChecksRepairReason,
   automergeClusterId,
@@ -582,6 +583,33 @@ test("automerge changelog gate ignores docs-only and tests-only changes", () => 
       repo: "openclaw/openclaw",
       title: "fix(sdk): align test expectation",
       files: [{ path: "packages/sdk/src/index.test.ts" }],
+    }),
+    null,
+  );
+});
+
+test("automerge activation sends missing changelog directly to repair", () => {
+  assert.equal(
+    automergeActivationRepairReason({
+      intent: "automerge",
+      repo: "openclaw/openclaw",
+      title: "fix(memory): preserve session corpus labels",
+      files: [
+        { path: "extensions/memory-core/src/tools.ts" },
+        { path: "extensions/memory-core/src/tools.test.ts" },
+      ],
+      target: { checks: { blockers: [] }, merge_state_status: "CLEAN", mergeable: "MERGEABLE" },
+    }),
+    "CHANGELOG.md entry is required before automerge; dispatch a focused changelog repair",
+  );
+
+  assert.equal(
+    automergeActivationRepairReason({
+      intent: "autofix",
+      repo: "openclaw/openclaw",
+      title: "fix(memory): preserve session corpus labels",
+      files: [{ path: "extensions/memory-core/src/tools.ts" }],
+      target: { checks: { blockers: [] }, merge_state_status: "CLEAN", mergeable: "MERGEABLE" },
     }),
     null,
   );
