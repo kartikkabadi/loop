@@ -215,6 +215,12 @@ Current defaults:
 The hard planner cap is 80 shards. The workflow clamps invalid or larger
 `shard_count` inputs to 80.
 
+Broad background review also clamps manual `shard_count` input to the current
+lane allowance from `worker-limit`. Pending or planning background sweeps reserve
+their quiet lane size until their matrix shards exist, so overlapping manual or
+scheduled dispatches cannot temporarily exceed the shared worker budget while
+GitHub is still expanding jobs.
+
 Planning is also the runtime build point for matrix review. The plan job installs
 with pinned Node 24 and `pnpm@10.33.2`, builds `dist/` once, and uploads that
 runtime artifact. Review shards download the built `dist/` and run

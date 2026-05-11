@@ -52,6 +52,10 @@ checkpoint, and status-only commits are intentionally omitted.
   instead of reserving an entire 35-70 shard lane for every planning or
   publishing background run, so saturated backlog runs keep using available
   Codex capacity.
+- Reserved pending/planning background sweep matrices at their quiet lane size
+  and capped broad manual `shard_count` inputs by live scheduler allowance, so
+  overlapping manual or scheduled review runs stay inside the Codex worker
+  budget while GitHub expands matrix jobs.
 - Bounded the initial planner dashboard publish to 20 seconds so slow generated
   state pushes cannot delay candidate selection or review shard startup.
 - Switched review and commit-review capacity probes from `gh run list` to the

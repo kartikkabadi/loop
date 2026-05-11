@@ -3267,6 +3267,27 @@ test("review capacity probes use REST actions run listing", () => {
   }
 });
 
+test("background review capacity reserves expanding matrices and caps broad manual input", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const modeBlock = workflow.slice(
+    workflow.indexOf("- id: mode"),
+    workflow.indexOf("- id: select"),
+  );
+  const commitWorkflow = readFileSync(".github/workflows/commit-review.yml", "utf8");
+  const commitBlock = commitWorkflow.slice(
+    commitWorkflow.indexOf("- name: Select commits"),
+    commitWorkflow.indexOf('if [ "$ENABLED" = "false" ]'),
+  );
+
+  assert.match(modeBlock, /limit review_shards\.hot_intake_default/);
+  assert.match(modeBlock, /limit review_shards\.normal_default/);
+  assert.match(modeBlock, /lane_shard_cap="\$normal_shards"/);
+  assert.match(modeBlock, /lane_shard_cap="\$hot_intake_shards"/);
+  assert.match(modeBlock, /Capping broad background review shards/);
+  assert.match(commitBlock, /limit review_shards\.hot_intake_default/);
+  assert.match(commitBlock, /limit review_shards\.normal_default/);
+});
+
 test("github activity workflow coalesces noisy observer runs", () => {
   const workflow = readFileSync(".github/workflows/github-activity.yml", "utf8");
 

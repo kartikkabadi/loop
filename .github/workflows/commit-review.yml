@@ -193,10 +193,15 @@ jobs:
               if ! [[ "$active_shards" =~ ^[0-9]+$ ]]; then
                 active_shards=0
               fi
-              # Planning, publish, queued, and not-yet-expanded matrix runs still occupy
-              # scheduler attention, but they should not reserve a whole 35-70 shard lane.
+              # Planning, publish, queued, and not-yet-expanded matrix runs have not
+              # created shard jobs yet. Reserve their quiet lane size so commit review
+              # does not over-allocate while a sweep matrix is still expanding.
               if [ "$active_shards" -lt 1 ]; then
-                active_shards=1
+                if [ "$title" = "Review hot ClawSweeper items" ]; then
+                  active_shards="$(pnpm --dir clawsweeper run --silent workflow -- limit review_shards.hot_intake_default)"
+                else
+                  active_shards="$(pnpm --dir clawsweeper run --silent workflow -- limit review_shards.normal_default)"
+                fi
               fi
               total=$((total + active_shards))
             done <<< "$runs"

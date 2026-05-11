@@ -84,6 +84,12 @@ The scheduler does this for background lanes:
 6. cap the result at the lane's derived quiet-system ceiling
 7. return at least 1 so an enabled lane can still make slow progress
 
+Background sweeps that are still planning or expanding their matrix reserve
+their quiet lane size. That avoids a race where a second background planner sees
+the first run before its shard jobs exist and over-allocates the shared Codex
+budget. Broad manual review `shard_count` inputs are also capped by the current
+lane allowance; exact-item runs still use the exact-item lane.
+
 Priority lanes do not subtract the interactive reserve. They cap themselves at
 their derived lane ceiling and at the remaining global budget after other active
 priority work.

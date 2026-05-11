@@ -639,10 +639,15 @@ jobs:
               if ! [[ "$active_shards" =~ ^[0-9]+$ ]]; then
                 active_shards=0
               fi
-              # Planning, publish, queued, and not-yet-expanded matrix runs still occupy
-              # scheduler attention, but they should not reserve a whole 28-56 shard lane.
+              # Planning, publish, queued, and not-yet-expanded matrix runs have not
+              # created shard jobs yet. Reserve their quiet lane size so a second
+              # planner cannot over-allocate before the first matrix expands.
               if [ "$active_shards" -lt 1 ]; then
-                active_shards=1
+                if [ "$title" = "Review hot ClawSweeper items" ]; then
+                  active_shards="$(limit review_shards.hot_intake_default)"
+                else
+                  active_shards="$(limit review_shards.normal_default)"
+                fi
               fi
               total=$((total + active_shards))
             done <<< "$runs"
@@ -696,6 +701,19 @@ jobs:
           fi
           if [ "$shard_count" -gt "$hard_shard_cap" ]; then
             shard_count="$hard_shard_cap"
+          fi
+          if [ -z "$exact_item" ]; then
+            lane_shard_cap="$normal_shards"
+            if [ "$hot_intake" = "true" ]; then
+              lane_shard_cap="$hot_intake_shards"
+            fi
+            if ! [[ "$lane_shard_cap" =~ ^[0-9]+$ ]] || [ "$lane_shard_cap" -lt 1 ]; then
+              lane_shard_cap="1"
+            fi
+            if [ "$shard_count" -gt "$lane_shard_cap" ]; then
+              echo "::notice::Capping broad background review shards from $shard_count to scheduler allowance $lane_shard_cap."
+              shard_count="$lane_shard_cap"
+            fi
           fi
           {
             echo "batch_size=$batch_size"
