@@ -4,6 +4,7 @@ dist/
 .env
 .artifacts/
 artifacts/
+dashboard/.wrangler/
 .clawsweeper-repair/
 .claude/
 tmp/
