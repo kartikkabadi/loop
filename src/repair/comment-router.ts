@@ -909,6 +909,15 @@ function classifyNeedsHuman(
       repair_reason: `${command.repair_reason ?? "structured ClawSweeper verdict: needs-human"}; later maintainer automerge opt-in approves landing the canonical PR`,
       status: "ready",
       actions: [
+        ...(hasLabel(command.target, HUMAN_REVIEW_LABEL)
+          ? [
+              {
+                action: "remove_label",
+                label: HUMAN_REVIEW_LABEL,
+                status: execute ? "pending" : "planned",
+              },
+            ]
+          : []),
         { action: "merge", status: execute ? "pending" : "planned" },
         { action: "comment", status: execute ? "pending" : "planned" },
       ],
@@ -927,7 +936,6 @@ function classifyNeedsHuman(
 function maintainerAutomergeOptInApprovesNeedsHuman(command: LooseRecord) {
   if (!command.trusted_bot) return false;
   if (!hasLabel(command.target, AUTOMERGE_LABEL)) return false;
-  if (hasLabel(command.target, HUMAN_REVIEW_LABEL)) return false;
   const reason = String(command.repair_reason ?? "");
   if (!isCanonicalLandingNeedsHumanText(reason)) return false;
   const verdictTime = Date.parse(
