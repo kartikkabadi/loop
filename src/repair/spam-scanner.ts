@@ -16,13 +16,14 @@ import {
   type SpamModelResult,
   type SpamScanComment,
 } from "./spam-scanner-core.js";
+import { compactText } from "./text-utils.js";
 
 const args = parseArgs(process.argv.slice(2));
 const targetRepo = stringSetting(
   args.repo ?? process.env.CLAWSWEEPER_TARGET_REPO,
   "openclaw/openclaw",
 );
-const model = stringSetting(args.model ?? process.env.CLAWSWEEPER_SPAM_MODEL, "gpt-instant");
+const model = stringSetting(args.model ?? process.env.CLAWSWEEPER_SPAM_MODEL, "gpt-4o-mini");
 const lookbackMinutes = positiveInteger(
   args["lookback-minutes"] ?? process.env.CLAWSWEEPER_SPAM_LOOKBACK_MINUTES ?? 180,
   "lookback-minutes",
@@ -62,17 +63,25 @@ const processed = new Set(
 const comments = await listCandidateComments();
 const scanComments = comments.filter((comment) => !processed.has(commentVersionKey(comment)));
 const candidates = scanComments.filter((comment) => shouldSendToCheapModel(comment, trustedBots));
-const modelResults =
-  candidates.length > 0
-    ? await scanWithCheapModel(candidates, model)
-    : new Map<string, SpamModelResult>();
+let modelError: string | null = null;
+let modelResults = new Map<string, SpamModelResult>();
+if (candidates.length > 0) {
+  try {
+    modelResults = await scanWithCheapModel(candidates, model);
+  } catch (error) {
+    modelError = compactText(error instanceof Error ? error.message : String(error), 500);
+    console.warn(
+      `[spam-scanner] cheap model scan failed; writing deterministic audit only: ${modelError}`,
+    );
+  }
+}
 const audited = candidates.map((comment) => ({
   comment,
   result: modelResults.get(comment.id) ?? null,
 }));
 
 for (const audit of audited) {
-  writeAuditRecord(audit.comment, audit.result);
+  writeAuditRecord(audit.comment, audit.result, modelError);
 }
 
 const report = {
@@ -86,15 +95,16 @@ const report = {
   new_comments: scanComments.length,
   model_candidates: candidates.length,
   audited: audited.length,
+  model_error: modelError,
   high_signal: audited.filter((audit) => audit.result?.spam_signal === "high").length,
   medium_signal: audited.filter((audit) => audit.result?.spam_signal === "medium").length,
   action: "none",
-  entries: audited.map((audit) => auditSummary(audit.comment, audit.result)),
+  entries: audited.map((audit) => auditSummary(audit.comment, audit.result, modelError)),
 };
 
 appendLedger(
   audited.map((audit) => ({
-    ...auditSummary(audit.comment, audit.result),
+    ...auditSummary(audit.comment, audit.result, modelError),
     comment_version_key: commentVersionKey(audit.comment),
     processed_at: report.generated_at,
   })),
@@ -260,7 +270,11 @@ function outputText(data: LooseRecord) {
     .trim();
 }
 
-function auditSummary(comment: SpamScanComment, result: SpamModelResult | null) {
+function auditSummary(
+  comment: SpamScanComment,
+  result: SpamModelResult | null,
+  scanModelError: string | null = null,
+) {
   return {
     comment_key: spamAuditKey(comment),
     comment_id: comment.id,
@@ -272,7 +286,8 @@ function auditSummary(comment: SpamScanComment, result: SpamModelResult | null) 
     spam_signal: result?.spam_signal ?? "deterministic_candidate",
     confidence: result?.confidence ?? 0,
     should_investigate: result?.should_investigate ?? false,
-    reasons: result?.reasons ?? [],
+    reasons: result?.reasons ?? (scanModelError ? [`model_error: ${scanModelError}`] : []),
+    model_error: scanModelError,
   };
 }
 
@@ -308,7 +323,11 @@ function appendLedger(entries: LooseRecord[]) {
   fs.writeFileSync(ledgerPath(), `${JSON.stringify(next, null, 2)}\n`);
 }
 
-function writeAuditRecord(comment: SpamScanComment, result: SpamModelResult | null) {
+function writeAuditRecord(
+  comment: SpamScanComment,
+  result: SpamModelResult | null,
+  scanModelError: string | null,
+) {
   const file = path.join(
     repoRoot(),
     "results",
@@ -317,10 +336,9 @@ function writeAuditRecord(comment: SpamScanComment, result: SpamModelResult | nu
     `${spamAuditKey(comment)}.json`,
   );
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(
-    file,
-    `${JSON.stringify(renderSpamAuditRecord({ comment, model, result }), null, 2)}\n`,
-  );
+  const record: LooseRecord = renderSpamAuditRecord({ comment, model, result });
+  record.model_error = scanModelError;
+  fs.writeFileSync(file, `${JSON.stringify(record, null, 2)}\n`);
 }
 
 function writeReports(report: LooseRecord) {

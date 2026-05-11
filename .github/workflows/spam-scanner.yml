@@ -43,7 +43,7 @@ on:
       model:
         description: "Cheap spam scanner model"
         required: true
-        default: gpt-instant
+        default: gpt-4o-mini
         type: string
   schedule:
     - cron: "17 * * * *"
@@ -112,7 +112,7 @@ jobs:
           max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_SPAM_MAX_COMMENTS || '100' }}"
           comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.comment_ids || '' }}"
           review_comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.review_comment_ids || '' }}"
-          model="${{ github.event_name == 'workflow_dispatch' && inputs.model || vars.CLAWSWEEPER_SPAM_MODEL || 'gpt-instant' }}"
+          model="${{ github.event_name == 'workflow_dispatch' && inputs.model || vars.CLAWSWEEPER_SPAM_MODEL || 'gpt-4o-mini' }}"
           force_reprocess="${{ github.event_name == 'workflow_dispatch' && inputs.force_reprocess || 'false' }}"
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
             target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
@@ -121,7 +121,7 @@ jobs:
             max_comments="${{ github.event.client_payload.max_comments || '1' }}"
             comment_ids="${{ github.event.client_payload.comment_id || '' }}"
             review_comment_ids="${{ github.event.client_payload.review_comment_id || '' }}"
-            model="${{ github.event.client_payload.model || vars.CLAWSWEEPER_SPAM_MODEL || 'gpt-instant' }}"
+            model="${{ github.event.client_payload.model || vars.CLAWSWEEPER_SPAM_MODEL || 'gpt-4o-mini' }}"
             force_reprocess="${{ github.event.client_payload.force_reprocess || 'false' }}"
           fi
 

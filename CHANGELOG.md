@@ -13,7 +13,7 @@ checkpoint, and status-only commits are intentionally omitted.
   automerge, issue implementation, commit finding, low-signal cleanup, and
   ordinary repair jobs share one routing surface.
 - Added an audit-only spam scanner lane for new GitHub issue comments and PR
-  review comments. It uses deterministic prefilters plus `gpt-instant` to write
+  review comments. It uses deterministic prefilters plus `gpt-4o-mini` to write
   durable spam audit records without blocking users or mutating repositories.
 - Added a light privacy reminder and stronger screenshot-or-video nudge to real behavior proof review guidance.
 - Added agent-led real behavior proof judgement so ClawSweeper can inspect linked screenshots, videos, logs, and terminal output with a read-only GitHub token, explain the proof verdict in the review comment, tell contributors how to trigger a fresh review after adding proof, and sync `proof: sufficient` when the evidence is convincing.

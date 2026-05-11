@@ -4,7 +4,7 @@ Read when changing ClawSweeper comment spam detection, audit records, or org
 blocking policy.
 
 The spam scanner is an audit-only intake lane. It watches new GitHub comments,
-applies cheap deterministic filters, sends likely candidates to `gpt-instant`,
+applies cheap deterministic filters, sends likely candidates to `gpt-4o-mini`,
 and writes durable audit records. It does not block users, hide comments, label
 items, reply, or mutate target repositories.
 
@@ -14,7 +14,7 @@ Spam cost scales with new comments, not with the total open issue count.
 Default behavior:
 
 - target repo: `openclaw/openclaw`
-- model: `gpt-instant`
+- model: `gpt-4o-mini`
 - schedule: hourly cron at minute 17
 - catch-up window: 3 hours
 - cap: 100 comments
@@ -36,7 +36,7 @@ Inputs:
 - `max_comments`: cap across issue comments and PR review comments
 - `comment_ids`: exact issue comment replay
 - `review_comment_ids`: exact PR review comment replay
-- `model`: cheap scanner model, default `gpt-instant`
+- `model`: cheap scanner model, default `gpt-4o-mini`
 - `force_reprocess`: ignore the processed-version ledger for replay
 
 The workflow checks out the live ClawSweeper repo plus hydrated generated state,
@@ -90,7 +90,7 @@ Deterministic signals are intentionally simple and cheap:
   sample work
 - priced short service pitch
 
-Only comments with deterministic signals are sent to `gpt-instant`. The model
+Only comments with deterministic signals are sent to `gpt-4o-mini`. The model
 returns strict JSON:
 
 - `spam_signal`: `none`, `low`, `medium`, or `high`
@@ -101,6 +101,10 @@ returns strict JSON:
 The model result is not an enforcement decision. In audit-only mode it only
 decides whether an audit record is worth writing and whether a later Codex
 investigation lane should prioritize the comment.
+
+If the configured model is missing or the model call fails, the workflow still
+publishes deterministic audit records with `model_error` instead of failing the
+spam lane. Model failures must not block monitoring.
 
 ## Safety
 
@@ -155,6 +159,6 @@ gh workflow run spam-scanner.yml \
   -f target_repo=openclaw/openclaw \
   -f lookback_minutes=180 \
   -f max_comments=100 \
-  -f model=gpt-instant \
+  -f model=gpt-4o-mini \
   -f force_reprocess=false
 ```
