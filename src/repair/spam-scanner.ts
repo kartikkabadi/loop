@@ -79,9 +79,15 @@ const audited = candidates.map((comment) => ({
   comment,
   result: modelResults.get(comment.id) ?? null,
 }));
+const auditedKeys = new Set(audited.map((audit) => spamAuditKey(audit.comment)));
 
 for (const audit of audited) {
   writeAuditRecord(audit.comment, audit.result, modelError);
+}
+if (writeReport) {
+  for (const comment of scanComments) {
+    if (!auditedKeys.has(spamAuditKey(comment))) removeAuditRecord(comment);
+  }
 }
 
 const report = {
@@ -328,17 +334,25 @@ function writeAuditRecord(
   result: SpamModelResult | null,
   scanModelError: string | null,
 ) {
-  const file = path.join(
+  const file = auditRecordPath(comment);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const record: LooseRecord = renderSpamAuditRecord({ comment, model, result });
+  record.model_error = scanModelError;
+  fs.writeFileSync(file, `${JSON.stringify(record, null, 2)}\n`);
+}
+
+function removeAuditRecord(comment: SpamScanComment) {
+  fs.rmSync(auditRecordPath(comment), { force: true });
+}
+
+function auditRecordPath(comment: SpamScanComment) {
+  return path.join(
     repoRoot(),
     "results",
     "spam-audit",
     targetRepo.replace("/", "-"),
     `${spamAuditKey(comment)}.json`,
   );
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  const record: LooseRecord = renderSpamAuditRecord({ comment, model, result });
-  record.model_error = scanModelError;
-  fs.writeFileSync(file, `${JSON.stringify(record, null, 2)}\n`);
 }
 
 function writeReports(report: LooseRecord) {

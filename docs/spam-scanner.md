@@ -77,6 +77,8 @@ Outputs in `openclaw/clawsweeper-state`:
 
 Audit records include the comment URL, author association, body hash, short body
 excerpt, deterministic signals, model, model result, and `action: none`.
+When a reprocessed comment no longer qualifies as a candidate, its stale
+per-comment audit file is removed from generated state.
 
 ## Detection
 
