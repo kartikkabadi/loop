@@ -13,7 +13,7 @@ checkpoint, and status-only commits are intentionally omitted.
   active worker counts, pipeline rows, CI state, automerge timing, and optional
   signed status-event ingest.
 - Added a live-dashboard CI refresher workflow that posts target pull request
-  check summaries into Cloudflare KV, so active rows can show stored PR check
+  check summaries into Worker storage, so active rows can show stored PR check
   state without slow browser-time GitHub fanout.
 - Added a canonical repair `job_intent` contract and orchestration docs so
   automerge, issue implementation, commit finding, low-signal cleanup, and

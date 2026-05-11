@@ -34,11 +34,9 @@ pnpm run dashboard:deploy
 
 GitHub deploys use `.github/workflows/dashboard.yml`. Configure either
 `OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN` or `OPENCLAW_CLOUDFLARE_API_TOKEN` with
-Workers Scripts edit plus KV namespace permissions before enabling the workflow
-as the production deploy path. The deploy workflow creates or reuses the
-`clawsweeper-status-store` KV namespace, binds it as `STATUS_STORE`, and syncs
-the `CLAWSWEEPER_STATUS_INGEST_TOKEN` GitHub secret into the Worker as
-`INGEST_TOKEN`.
+Workers Scripts edit permission before enabling the workflow as the production
+deploy path. The deploy workflow syncs the `CLAWSWEEPER_STATUS_INGEST_TOKEN`
+GitHub secret into the Worker as `INGEST_TOKEN`.
 
 ## Access Model
 
@@ -52,9 +50,9 @@ Worker or edit Cloudflare Access/DNS. Add the Workers deploy secret, the
 Scripts edit, Zone DNS/route, and Zero Trust Access permissions.
 
 Workflow events are sent with a bearer secret without a browser login. Ingest
-requires the `STATUS_STORE` KV binding and `INGEST_TOKEN` Worker secret; the
-dashboard still renders without them, but stored events and target-PR CI badges
-will be unavailable.
+requires the `INGEST_TOKEN` Worker secret. If the optional `STATUS_STORE` KV
+binding exists, events and CI status use KV. Without KV, the Worker falls back
+to Cloudflare edge cache so badges stay fast but less durable across colos.
 
 ```bash
 curl -X POST <private-ingest-endpoint> \

@@ -70,13 +70,12 @@ function statusCacheRequest(request, bucket) {
 async function ingestEvent(request, env) {
   const token = bearerToken(request);
   if (!env.INGEST_TOKEN || token !== env.INGEST_TOKEN) return json({ error: "unauthorized" }, 401);
-  if (!env.STATUS_STORE) return json({ error: "STATUS_STORE is not configured" }, 500);
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object") return json({ error: "invalid_json" }, 400);
   const event = normalizeEvent(body);
   const current = await readEvents(env);
   const events = [event, ...current].slice(0, EVENT_LIMIT);
-  const writes = [env.STATUS_STORE.put("events", JSON.stringify(events)), env.STATUS_STORE.put("latest-event", JSON.stringify(event))];
+  const writes = [writeStoredJson(env, "events", events), writeStoredJson(env, "latest-event", event)];
   const ci = normalizeCiStatus(body);
   if (ci) writes.push(writeCiStatus(env, ci));
   await Promise.all(writes);
@@ -257,7 +256,7 @@ function workflowRunCi(run) {
 }
 
 async function attachStoredCiStatuses(env, items) {
-  if (!env.STATUS_STORE || !items.length) return;
+  if (!items.length) return;
   await Promise.all(
     items.map(async (item) => {
       const stored = await readCiStatus(env, item.repository, item.item_number);
@@ -336,24 +335,18 @@ async function readCachedSnapshot(env, ttlSeconds) {
 }
 
 async function readEvents(env) {
-  if (!env.STATUS_STORE) return [];
-  const text = await env.STATUS_STORE.get("events");
-  if (!text) return [];
-  const parsed = JSON.parse(text);
+  const parsed = await readStoredJson(env, "events");
   return Array.isArray(parsed) ? parsed : [];
 }
 
 async function writeCiStatus(env, ci) {
-  await env.STATUS_STORE.put(ciStatusKey(ci.repository, ci.item_number), JSON.stringify(ci), {
-    expirationTtl: numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS),
-  });
+  await writeStoredJson(env, ciStatusKey(ci.repository, ci.item_number), ci, numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS));
 }
 
 async function readCiStatus(env, repository, itemNumber) {
   if (!repository || !itemNumber) return null;
-  const text = await env.STATUS_STORE.get(ciStatusKey(repository, itemNumber));
-  if (!text) return null;
-  const ci = JSON.parse(text);
+  const ci = await readStoredJson(env, ciStatusKey(repository, itemNumber));
+  if (!ci) return null;
   if (Date.now() - Date.parse(ci.updated_at || ci.received_at || "") > numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS) * 1000) {
     return null;
   }
@@ -362,6 +355,38 @@ async function readCiStatus(env, repository, itemNumber) {
 
 function ciStatusKey(repository, itemNumber) {
   return `ci:${repository}#${itemNumber}`;
+}
+
+async function readStoredJson(env, key) {
+  if (env.STATUS_STORE) {
+    const text = await env.STATUS_STORE.get(key);
+    return text ? JSON.parse(text) : null;
+  }
+  const cached = await caches.default.match(storeCacheRequest(key));
+  return cached ? cached.json() : null;
+}
+
+async function writeStoredJson(env, key, value, ttlSeconds = numberFrom(env.STORE_CACHE_TTL_SECONDS, STALE_CACHE_TTL_SECONDS)) {
+  const body = JSON.stringify(value);
+  if (env.STATUS_STORE) {
+    await env.STATUS_STORE.put(key, body, { expirationTtl: ttlSeconds });
+    return;
+  }
+  await caches.default.put(
+    storeCacheRequest(key),
+    new Response(body, {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": `public, max-age=${ttlSeconds}`,
+      },
+    }),
+  );
+}
+
+function storeCacheRequest(key) {
+  return new Request(`https://clawsweeper.internal/store/${encodeURIComponent(key)}`, {
+    method: "GET",
+  });
 }
 
 async function githubJson(env, path) {
