@@ -47,7 +47,9 @@ import {
   reviewActionForDecision,
   reviewPriority,
   renderReviewCommentFromReport,
+  renderReviewContextBudgetForTest,
   renderWorkPlanFromReport,
+  reviewContextLedgerForTest,
   reviewDecisionSchemaText,
   reviewPromptTelemetryForTest,
   reviewPromptTemplate,
@@ -463,6 +465,68 @@ test("review prompt telemetry records durable cost proxies", () => {
   assert.ok(telemetry.contextChars >= JSON.stringify(context, null, 2).length);
   assert.ok(telemetry.promptChars > telemetry.staticPromptChars + telemetry.contextChars);
   assert.equal(telemetry.additionalPromptChars, "keep extra instructions visible".length);
+});
+
+test("review context ledger records ordered section budgets", () => {
+  const context = {
+    issue: { number: 123, title: "Sample PR" },
+    comments: [{ author: "alice", body: "Please review this." }],
+    timeline: [{ event: "committed", sha: "abc123" }],
+    relatedItems: [{ number: 122, title: "Related issue" }],
+    pullRequest: { number: 123, additions: 12 },
+    pullFiles: [
+      { filename: "src/example.ts", patch: "line\n".repeat(20) },
+      { filename: "test/example.test.ts", patch: "test\n".repeat(20) },
+    ],
+    pullCommits: [{ sha: "abc123", message: "fix example" }],
+    pullReviewComments: [],
+    counts: {
+      comments: 10,
+      commentsHydrated: 1,
+      commentsTruncated: true,
+      timeline: 1,
+      relatedItems: 1,
+      pullFiles: 120,
+      pullFilesHydrated: 2,
+      pullFilesTruncated: true,
+      pullCommits: 1,
+      pullCommitsHydrated: 1,
+      pullCommitsTruncated: false,
+      pullReviewComments: 0,
+      pullReviewCommentsHydrated: 0,
+      pullReviewCommentsTruncated: false,
+    },
+  };
+
+  const ledger = reviewContextLedgerForTest(context);
+
+  assert.deepEqual(
+    ledger.map(({ section, entries, total, hydrated, truncated }) => [
+      section,
+      entries,
+      total,
+      hydrated,
+      truncated,
+    ]),
+    [
+      ["issue", 1, undefined, undefined, undefined],
+      ["comments", 1, 10, 1, true],
+      ["timeline", 1, 1, undefined, undefined],
+      ["relatedItems", 1, 1, undefined, undefined],
+      ["pullRequest", 1, undefined, undefined, undefined],
+      ["pullFiles", 2, 120, 2, true],
+      ["pullCommits", 1, 1, 1, false],
+      ["counts", 14, undefined, undefined, undefined],
+    ],
+  );
+  assert.equal(
+    ledger.find((entry) => entry.section === "pullFiles")?.chars,
+    JSON.stringify(context.pullFiles, null, 2).length,
+  );
+  assert.match(
+    renderReviewContextBudgetForTest(context),
+    /- PR files: 2\/120 hydrated, truncated, \d+ chars/,
+  );
 });
 
 test("protected labels are normalized and excluded from normal planning", () => {
