@@ -23,7 +23,9 @@ import {
   fixedPullRequestFromCommitPullsForTest,
   formatRecentClosedRows,
   githubContextWindowPlan,
+  ghPagedLinkHeaderContextWindow,
   ghPagedContextWindow,
+  githubLinkLastPageNumber,
   githubPaginatedPath,
   ghRetryKind,
   hotIntakeRecencyMs,
@@ -350,6 +352,96 @@ test("ghPagedContextWindow falls back to full pagination when total is missing",
       page: () => {
         throw new Error("page fetch should not be used without a total count");
       },
+    },
+  );
+
+  assert.deepEqual(window, {
+    items: [1, 2, 3],
+    total: 3,
+    hydrated: 3,
+    truncated: false,
+  });
+});
+
+test("githubLinkLastPageNumber extracts the final REST page", () => {
+  assert.equal(
+    githubLinkLastPageNumber(
+      '<https://api.github.com/repositories/123/issues/1/timeline?per_page=100&page=2>; rel="next", <https://api.github.com/repositories/123/issues/1/timeline?per_page=100&page=30>; rel="last"',
+    ),
+    30,
+  );
+  assert.equal(githubLinkLastPageNumber(undefined), null);
+});
+
+test("ghPagedLinkHeaderContextWindow uses GitHub link headers for large timeline tails", () => {
+  const fetchedPages: number[] = [];
+  const window = ghPagedLinkHeaderContextWindow<number>(
+    "repos/openclaw/openclaw/issues/123/timeline",
+    80,
+    {
+      pageWithHeaders: (_path, page) => {
+        fetchedPages.push(page);
+        const start = (page - 1) * 100 + 1;
+        return {
+          items: Array.from({ length: 100 }, (_, index) => start + index),
+          lastPageNumber: page === 1 ? 30 : null,
+        };
+      },
+      paged: () => {
+        throw new Error("full pagination should not be used with link headers");
+      },
+    },
+  );
+
+  assert.deepEqual(fetchedPages, [1, 30]);
+  assert.deepEqual(window.items, [
+    ...Array.from({ length: 40 }, (_, index) => index + 1),
+    ...Array.from({ length: 40 }, (_, index) => index + 2961),
+  ]);
+  assert.equal(window.total, 3000);
+  assert.equal(window.hydrated, 80);
+  assert.equal(window.truncated, true);
+});
+
+test("ghPagedLinkHeaderContextWindow keeps timeline tails that cross the first page", () => {
+  const fetchedPages: number[] = [];
+  const window = ghPagedLinkHeaderContextWindow<number>(
+    "repos/openclaw/openclaw/issues/123/timeline",
+    80,
+    {
+      pageWithHeaders: (_path, page) => {
+        fetchedPages.push(page);
+        if (page === 1) {
+          return {
+            items: Array.from({ length: 100 }, (_, index) => index + 1),
+            lastPageNumber: 2,
+          };
+        }
+        return { items: [101], lastPageNumber: null };
+      },
+    },
+  );
+
+  assert.deepEqual(fetchedPages, [1, 2]);
+  assert.deepEqual(window.items, [
+    ...Array.from({ length: 40 }, (_, index) => index + 1),
+    ...Array.from({ length: 40 }, (_, index) => index + 62),
+  ]);
+  assert.equal(window.total, 101);
+  assert.equal(window.hydrated, 80);
+  assert.equal(window.truncated, true);
+});
+
+test("ghPagedLinkHeaderContextWindow falls back when link headers are unavailable", () => {
+  const window = ghPagedLinkHeaderContextWindow<number>(
+    "repos/openclaw/openclaw/issues/123/timeline",
+    80,
+    {
+      pageWithHeaders: () => ({
+        items: Array.from({ length: 100 }, (_, index) => index + 1),
+        lastPageNumber: null,
+      }),
+      paged: () => [1, 2, 3],
     },
   );
 

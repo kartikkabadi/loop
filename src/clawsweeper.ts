@@ -317,6 +317,8 @@ interface ItemContext {
     commentsHydrated?: number;
     commentsTruncated?: boolean;
     timeline: number;
+    timelineHydrated?: number;
+    timelineTruncated?: boolean;
     closingPullRequests?: number;
     relatedItems?: number;
     pullFiles?: number;
@@ -2200,6 +2202,45 @@ function ghPage<T>(path: string, page: number): T[] {
   return Array.isArray(items) ? (items as T[]) : [];
 }
 
+export interface GithubPageWithHeaders<T> {
+  items: T[];
+  lastPageNumber: number | null;
+}
+
+export function githubLinkLastPageNumber(header: string | undefined): number | null {
+  if (!header) return null;
+  for (const part of header.split(",")) {
+    if (!part.includes('rel="last"')) continue;
+    const page = part.match(/[?&]page=(\d+)/)?.[1];
+    if (!page) continue;
+    const value = Number(page);
+    if (Number.isSafeInteger(value) && value > 0) return value;
+  }
+  return null;
+}
+
+function ghPageWithHeaders<T>(path: string, page: number, perPage = 100): GithubPageWithHeaders<T> {
+  const apiPath = githubPagePath(path, page, perPage);
+  const output = ghWithRetry(["api", "-i", apiPath]);
+  const normalized = output.replace(/\r\n/g, "\n");
+  const separator = normalized.lastIndexOf("\n\n");
+  const headerText = separator >= 0 ? normalized.slice(0, separator) : "";
+  const bodyText = separator >= 0 ? normalized.slice(separator + 2) : normalized;
+  let linkHeader: string | undefined;
+  for (const line of headerText.split("\n")) {
+    const delimiter = line.indexOf(":");
+    if (delimiter <= 0) continue;
+    if (line.slice(0, delimiter).trim().toLowerCase() === "link") {
+      linkHeader = line.slice(delimiter + 1).trim();
+    }
+  }
+  const parsed = parseGhJson<unknown>(bodyText, ["api", "-i", apiPath]);
+  return {
+    items: Array.isArray(parsed) ? (parsed as T[]) : [],
+    lastPageNumber: githubLinkLastPageNumber(linkHeader),
+  };
+}
+
 function githubCount(value: unknown): number | null {
   const count =
     typeof value === "number" ? value : typeof value === "string" ? Number(value) : Number.NaN;
@@ -2273,6 +2314,72 @@ export function ghPagedContextWindow<T>(
   if (plan.keepEnd > 0) {
     for (let page = plan.tailFirstPageNumber; page <= plan.lastPageNumber; page += 1) {
       tailPages.push(...(page === 1 && plan.keepStart > 0 ? firstPage : fetchPage(path, page)));
+    }
+  }
+  const tailItems = tailPages.slice(plan.tailOffset, plan.tailOffset + plan.keepEnd);
+  const items = [...headItems, ...tailItems];
+  return {
+    items,
+    total,
+    hydrated: items.length,
+    truncated: total > items.length,
+  };
+}
+
+export function ghPagedLinkHeaderContextWindow<T>(
+  path: string,
+  promptLimit: number,
+  fetchers: {
+    pageWithHeaders?: (path: string, page: number, perPage: number) => GithubPageWithHeaders<T>;
+    paged?: (path: string) => T[];
+  } = {},
+): ContextHydration<T> {
+  const fetchPage = fetchers.pageWithHeaders ?? ghPageWithHeaders<T>;
+  const fetchPaged = fetchers.paged ?? ghPaged<T>;
+  const boundedLimit = Math.max(0, Math.floor(promptLimit));
+  const perPage = 100;
+  const pages = new Map<number, T[]>();
+  const readPage = (page: number): GithubPageWithHeaders<T> => {
+    const cached = pages.get(page);
+    if (cached) return { items: cached, lastPageNumber: null };
+    const result = fetchPage(path, page, perPage);
+    pages.set(page, result.items);
+    return result;
+  };
+
+  const first = readPage(1);
+  const lastPageNumber = first.lastPageNumber ?? (first.items.length < perPage ? 1 : null);
+  if (lastPageNumber === null) {
+    const items = fetchPaged(path);
+    return { items, total: items.length, hydrated: items.length, truncated: false };
+  }
+
+  const lastPage = Math.max(1, lastPageNumber);
+  const lastItems = lastPage === 1 ? first.items : readPage(lastPage).items;
+  const total = Math.max(0, (lastPage - 1) * perPage + lastItems.length);
+  if (total === 0 || boundedLimit === 0) {
+    return { items: [], total, hydrated: 0, truncated: total > 0 };
+  }
+
+  if (total <= boundedLimit) {
+    const items: T[] = [];
+    for (let page = 1; page <= lastPage; page += 1) {
+      items.push(...(page === 1 ? first.items : readPage(page).items));
+    }
+    return {
+      items,
+      total: Math.max(total, items.length),
+      hydrated: items.length,
+      truncated: false,
+    };
+  }
+
+  const plan = githubContextWindowPlan(total, boundedLimit, perPage);
+  const headItems = first.items.slice(0, plan.keepStart);
+  const tailPages: T[] = [];
+  if (plan.keepEnd > 0) {
+    for (let page = plan.tailFirstPageNumber; page <= plan.lastPageNumber; page += 1) {
+      tailPages.push(...(page === 1 ? first.items : readPage(page).items));
     }
   }
   const tailItems = tailPages.slice(plan.tailOffset, plan.tailOffset + plan.keepEnd);
@@ -3402,16 +3509,22 @@ function collectItemContext(item: Item): ItemContext {
     24,
   );
   const comments = commentsWindow.items;
-  const timeline = ghPaged<unknown>(`repos/${targetRepo()}/issues/${item.number}/timeline`);
+  const timelineWindow = ghPagedLinkHeaderContextWindow<unknown>(
+    `repos/${targetRepo()}/issues/${item.number}/timeline`,
+    80,
+  );
+  const timeline = timelineWindow.items;
   const context: ItemContext = {
     issue: compactIssue(issue),
     comments: compactMappedWindow(comments, commentsWindow.total, 24, compactComment),
-    timeline: compactMappedSlice(timeline, 80, compactTimelineEvent),
+    timeline: compactMappedWindow(timeline, timelineWindow.total, 80, compactTimelineEvent),
     counts: {
       comments: commentsWindow.total,
       commentsHydrated: commentsWindow.hydrated,
       commentsTruncated: commentsWindow.truncated,
-      timeline: timeline.length,
+      timeline: timelineWindow.total,
+      timelineHydrated: timelineWindow.hydrated,
+      timelineTruncated: timelineWindow.truncated,
     },
   };
   let pullRequest: unknown = null;
@@ -3425,7 +3538,9 @@ function collectItemContext(item: Item): ItemContext {
         comments: commentsWindow.total,
         commentsHydrated: commentsWindow.hydrated,
         commentsTruncated: commentsWindow.truncated,
-        timeline: timeline.length,
+        timeline: timelineWindow.total,
+        timelineHydrated: timelineWindow.hydrated,
+        timelineTruncated: timelineWindow.truncated,
         closingPullRequests: closingPullRequests.length,
       };
     }
@@ -3470,7 +3585,9 @@ function collectItemContext(item: Item): ItemContext {
       comments: commentsWindow.total,
       commentsHydrated: commentsWindow.hydrated,
       commentsTruncated: commentsWindow.truncated,
-      timeline: timeline.length,
+      timeline: timelineWindow.total,
+      timelineHydrated: timelineWindow.hydrated,
+      timelineTruncated: timelineWindow.truncated,
       pullFiles: pullFilesWindow.total,
       pullFilesHydrated: pullFilesWindow.hydrated,
       pullFilesTruncated: pullFilesWindow.truncated,
@@ -6521,7 +6638,12 @@ ${options.action.closeComment ? options.action.closeComment : "_No close comment
     options.context.counts?.commentsHydrated,
     options.context.counts?.commentsTruncated,
   )}
-- timeline events: ${options.context.counts?.timeline ?? options.context.timeline.length}
+- timeline events: ${contextCountText(
+    options.context.counts?.timeline,
+    options.context.timeline.length,
+    options.context.counts?.timelineHydrated,
+    options.context.counts?.timelineTruncated,
+  )}
 - related items: ${options.context.counts?.relatedItems ?? options.context.relatedItems?.length ?? 0}
 - PR files: ${contextCountText(
     options.context.counts?.pullFiles,
