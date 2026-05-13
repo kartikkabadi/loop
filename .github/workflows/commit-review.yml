@@ -133,9 +133,12 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - name: Use state token
+      - name: Create state token
         id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+        uses: ./clawsweeper/.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
 
       - uses: ./clawsweeper/.github/actions/setup-state
         with:
@@ -347,9 +350,12 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - name: Use state token
+      - name: Create state token
         id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+        uses: ./clawsweeper/.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
 
       - uses: ./clawsweeper/.github/actions/setup-state
         with:
@@ -461,9 +467,12 @@ jobs:
           filter: blob:none
           fetch-depth: 0
 
-      - name: Use state token
+      - name: Create state token
         id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
 
       - uses: ./.github/actions/setup-state
         with:

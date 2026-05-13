@@ -92,9 +92,16 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
+      - name: Create state token
+        id: state-token
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+
       - uses: ./.github/actions/setup-state
         with:
-          token: ${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}
+          token: ${{ steps.state-token.outputs.token }}
 
       - uses: ./.github/actions/setup-pnpm
         with:

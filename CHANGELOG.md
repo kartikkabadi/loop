@@ -36,6 +36,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Replaced the state-repository PAT dependency with a short-lived GitHub App token for ClawSweeper state checkouts and publishes, so rotated PATs no longer break `openclaw/clawsweeper-state` access.
 - Clarified uneditable source PR replacement comments and PR bodies so they state
   the push-rights blocker, explain why source PRs are closed after a replacement
   opens, and show preserved co-author credit.
