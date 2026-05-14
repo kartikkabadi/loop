@@ -1,4 +1,5 @@
 const ACTIVE_RUN_STATUSES = new Set(["queued", "in_progress", "waiting", "requested", "pending"]);
+const ACTIVE_RUN_STATUS_FILTERS = ["in_progress", "queued", "waiting", "requested", "pending"];
 const TERMINAL_BAD_CONCLUSIONS = new Set(["failure", "timed_out", "action_required"]);
 const EVENT_LIMIT = 200;
 const AVERAGE_LIMIT = 4;
@@ -10,12 +11,17 @@ const CI_STATUS_TTL_SECONDS = 7200;
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    if (url.hostname.includes("-ingest.") && url.pathname !== "/api/events" && url.pathname !== "/api/health") {
+    if (
+      url.hostname.includes("-ingest.") &&
+      url.pathname !== "/api/events" &&
+      url.pathname !== "/api/health"
+    ) {
       return json({ error: "not_found" }, 404);
     }
     if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
     if (url.pathname === "/api/health") return json({ ok: true, service: "clawsweeper-status" });
-    if (url.pathname === "/api/events" && request.method === "POST") return ingestEvent(request, env);
+    if (url.pathname === "/api/events" && request.method === "POST")
+      return ingestEvent(request, env);
     if (url.pathname === "/api/status") return statusJson(request, env, ctx);
     if (url.pathname === "/" || url.pathname === "/index.html") return html(dashboardHtml());
     return json({ error: "not_found" }, 404);
@@ -32,7 +38,8 @@ async function statusJson(request, env, ctx) {
   const snapshot = await statusSnapshot(env, ctx);
   const body = JSON.stringify(snapshot, null, 2);
   const hasErrors = Boolean(snapshot.diagnostics?.errors?.length);
-  const looksEmpty = !snapshot.pipeline.length && snapshot.fleet.active_workflow_runs === 0 && hasErrors;
+  const looksEmpty =
+    !snapshot.pipeline.length && snapshot.fleet.active_workflow_runs === 0 && hasErrors;
   if (looksEmpty) {
     const stale = await cache.match(statusCacheRequest(request, "stale"));
     if (stale) return cors(new Response(stale.body, stale));
@@ -48,8 +55,14 @@ async function statusJson(request, env, ctx) {
     };
     ctx?.waitUntil?.(
       Promise.all([
-        cache.put(statusCacheRequest(request, "fresh"), new Response(body, { headers: responseHeaders })),
-        cache.put(statusCacheRequest(request, "stale"), new Response(body, { headers: staleResponseHeaders })),
+        cache.put(
+          statusCacheRequest(request, "fresh"),
+          new Response(body, { headers: responseHeaders }),
+        ),
+        cache.put(
+          statusCacheRequest(request, "stale"),
+          new Response(body, { headers: staleResponseHeaders }),
+        ),
       ]),
     );
   }
@@ -64,7 +77,9 @@ async function statusJson(request, env, ctx) {
 }
 
 function statusCacheRequest(request, bucket) {
-  return new Request(new URL(`/api/status-cache/${bucket}`, request.url).toString(), { method: "GET" });
+  return new Request(new URL(`/api/status-cache/${bucket}`, request.url).toString(), {
+    method: "GET",
+  });
 }
 
 async function ingestEvent(request, env) {
@@ -75,7 +90,10 @@ async function ingestEvent(request, env) {
   const event = normalizeEvent(body);
   const current = await readEvents(env);
   const events = [event, ...current].slice(0, EVENT_LIMIT);
-  const writes = [writeStoredJson(env, "events", events), writeStoredJson(env, "latest-event", event)];
+  const writes = [
+    writeStoredJson(env, "events", events),
+    writeStoredJson(env, "latest-event", event),
+  ];
   const ci = normalizeCiStatus(body);
   if (ci) writes.push(writeCiStatus(env, ci));
   await Promise.all(writes);
@@ -90,29 +108,44 @@ async function statusSnapshot(env, ctx) {
   const generatedAt = new Date().toISOString();
   const errors = [];
   const repo = env.CLAWSWEEPER_REPO || "openclaw/clawsweeper";
-  const targetRepos = String(env.TARGET_REPOS || "openclaw/openclaw").split(",").map((value) => value.trim()).filter(Boolean);
+  const targetRepos = String(env.TARGET_REPOS || "openclaw/openclaw")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
   const budget = numberFrom(env.WORKER_BUDGET, 80);
-  const runs = await githubJson(env, `/repos/${repo}/actions/runs?per_page=100`).catch((error) => {
-    errors.push(`workflow runs: ${error.message}`);
-    return null;
-  });
+  const [runs, filteredActiveRuns] = await Promise.all([
+    githubJson(env, `/repos/${repo}/actions/runs?per_page=100`).catch((error) => {
+      errors.push(`workflow runs: ${error.message}`);
+      return null;
+    }),
+    activeWorkflowRuns(env, repo, errors),
+  ]);
   const workflowRuns = Array.isArray(runs?.workflow_runs) ? runs.workflow_runs : [];
-  const activeRuns = workflowRuns.filter((run) => ACTIVE_RUN_STATUSES.has(String(run.status)));
+  const activeRuns = uniqueWorkflowRuns([
+    ...filteredActiveRuns,
+    ...workflowRuns.filter((run) => ACTIVE_RUN_STATUSES.has(String(run.status))),
+  ]).sort(newestWorkflowRunFirst);
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
   const [activeJobs, pipeline, automerge, events] = await Promise.all([
     estimateActiveCodexJobs(activeRuns),
-    withTimeout(pipelineItems(env, activeRuns.slice(0, 30)), OPTIONAL_SECTION_TIMEOUT_MS, "pipeline").catch((error) => {
+    withTimeout(
+      pipelineItems(env, activeRuns.slice(0, 30)),
+      OPTIONAL_SECTION_TIMEOUT_MS,
+      "pipeline",
+    ).catch((error) => {
       errors.push(error.message);
       return activeRuns.slice(0, 30).map((run) => classifyRun(run));
     }),
-    withTimeout(recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"), OPTIONAL_SECTION_TIMEOUT_MS, "automerge timing").catch(
-      (error) => {
-        errors.push(error.message);
-        return { average_ms: null, samples: 0, items: [] };
-      },
-    ),
+    withTimeout(
+      recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"),
+      OPTIONAL_SECTION_TIMEOUT_MS,
+      "automerge timing",
+    ).catch((error) => {
+      errors.push(error.message);
+      return { average_ms: null, samples: 0, items: [] };
+    }),
     readEvents(env).catch((error) => {
       errors.push(`events: ${error.message}`);
       return [];
@@ -158,7 +191,9 @@ async function statusSnapshot(env, ctx) {
 }
 
 async function estimateActiveCodexJobs(runs) {
-  const codexRuns = runs.filter((run) => codexJobName(`${run.name || ""} ${run.display_title || ""}`));
+  const codexRuns = runs.filter((run) =>
+    codexJobName(`${run.name || ""} ${run.display_title || ""}`),
+  );
   return {
     count: codexRuns.length,
     sample: codexRuns.slice(0, 25).map((run) => ({
@@ -171,6 +206,40 @@ async function estimateActiveCodexJobs(runs) {
     rate: null,
     errors: [],
   };
+}
+
+async function activeWorkflowRuns(env, repo, errors) {
+  const pages = await Promise.all(
+    ACTIVE_RUN_STATUS_FILTERS.map(async (status) => {
+      const runs = await githubJson(
+        env,
+        `/repos/${repo}/actions/runs?status=${status}&per_page=100`,
+      ).catch((error) => {
+        errors.push(`workflow runs ${status}: ${error.message}`);
+        return null;
+      });
+      return Array.isArray(runs?.workflow_runs) ? runs.workflow_runs : [];
+    }),
+  );
+  return uniqueWorkflowRuns(pages.flat()).filter((run) =>
+    ACTIVE_RUN_STATUSES.has(String(run.status)),
+  );
+}
+
+function uniqueWorkflowRuns(runs) {
+  const seen = new Map();
+  for (const run of runs) {
+    const key =
+      run?.id ??
+      run?.html_url ??
+      `${run?.name || ""}:${run?.display_title || ""}:${run?.created_at || ""}`;
+    if (key) seen.set(String(key), run);
+  }
+  return [...seen.values()];
+}
+
+function newestWorkflowRunFirst(left, right) {
+  return Date.parse(right.created_at || "") - Date.parse(left.created_at || "");
 }
 
 async function pipelineItems(env, runs) {
@@ -190,7 +259,11 @@ async function pipelineItems(env, runs) {
         .map((item) => attachCiStatus(env, item)),
     );
   }
-  return items.sort((left, right) => laneRank(left.mode) - laneRank(right.mode) || Date.parse(right.started_at || "") - Date.parse(left.started_at || ""));
+  return items.sort(
+    (left, right) =>
+      laneRank(left.mode) - laneRank(right.mode) ||
+      Date.parse(right.started_at || "") - Date.parse(left.started_at || ""),
+  );
 }
 
 function classifyRun(run) {
@@ -274,9 +347,16 @@ async function attachCiStatus(env, item) {
   try {
     const pr = await githubJson(env, `/repos/${item.repository}/pulls/${item.item_number}`);
     if (!pr?.head?.sha) return;
-    const checks = await githubJson(env, `/repos/${item.repository}/commits/${pr.head.sha}/check-runs?per_page=100`);
+    const checks = await githubJson(
+      env,
+      `/repos/${item.repository}/commits/${pr.head.sha}/check-runs?per_page=100`,
+    );
     const runs = Array.isArray(checks?.check_runs) ? checks.check_runs : [];
-    const failing = runs.filter((check) => check.status === "completed" && !["success", "neutral", "skipped"].includes(String(check.conclusion)));
+    const failing = runs.filter(
+      (check) =>
+        check.status === "completed" &&
+        !["success", "neutral", "skipped"].includes(String(check.conclusion)),
+    );
     const pending = runs.filter((check) => check.status !== "completed");
     item.ci = {
       state: failing.length ? "red" : pending.length ? "pending" : "green",
@@ -287,7 +367,8 @@ async function attachCiStatus(env, item) {
       source: "live",
     };
   } catch (error) {
-    if (!item.ci) item.ci = { state: "unknown", source: "live", error: String(error?.message || error) };
+    if (!item.ci)
+      item.ci = { state: "unknown", source: "live", error: String(error?.message || error) };
   }
 }
 
@@ -316,9 +397,13 @@ async function recentAutomerge(env, repo) {
       merge_commit_sha: pr?.merge_commit_sha || null,
     });
   }
-  const durations = items.map((item) => item.duration_ms).filter((value) => Number.isFinite(value) && value >= 0);
+  const durations = items
+    .map((item) => item.duration_ms)
+    .filter((value) => Number.isFinite(value) && value >= 0);
   return {
-    average_ms: durations.length ? Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length) : null,
+    average_ms: durations.length
+      ? Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length)
+      : null,
     samples: durations.length,
     items,
   };
@@ -326,7 +411,11 @@ async function recentAutomerge(env, repo) {
 
 function firstAutomergeCommandAt(comments) {
   if (!Array.isArray(comments)) return null;
-  const command = comments.find((comment) => /@clawsweeper\s+auto\s*-?\s*merge|@clawsweeper\s+automerge|\/clawsweeper\s+auto\s*-?\s*merge|\/clawsweeper\s+automerge/i.test(String(comment.body || "")));
+  const command = comments.find((comment) =>
+    /@clawsweeper\s+auto\s*-?\s*merge|@clawsweeper\s+automerge|\/clawsweeper\s+auto\s*-?\s*merge|\/clawsweeper\s+automerge/i.test(
+      String(comment.body || ""),
+    ),
+  );
   return command?.created_at || null;
 }
 
@@ -345,14 +434,22 @@ async function readEvents(env) {
 }
 
 async function writeCiStatus(env, ci) {
-  await writeStoredJson(env, ciStatusKey(ci.repository, ci.item_number), ci, numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS));
+  await writeStoredJson(
+    env,
+    ciStatusKey(ci.repository, ci.item_number),
+    ci,
+    numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS),
+  );
 }
 
 async function readCiStatus(env, repository, itemNumber) {
   if (!repository || !itemNumber) return null;
   const ci = await readStoredJson(env, ciStatusKey(repository, itemNumber));
   if (!ci) return null;
-  if (Date.now() - Date.parse(ci.updated_at || ci.received_at || "") > numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS) * 1000) {
+  if (
+    Date.now() - Date.parse(ci.updated_at || ci.received_at || "") >
+    numberFrom(env.CI_STATUS_TTL_SECONDS, CI_STATUS_TTL_SECONDS) * 1000
+  ) {
     return null;
   }
   return ci;
@@ -371,7 +468,12 @@ async function readStoredJson(env, key) {
   return cached ? cached.json() : null;
 }
 
-async function writeStoredJson(env, key, value, ttlSeconds = numberFrom(env.STORE_CACHE_TTL_SECONDS, STALE_CACHE_TTL_SECONDS)) {
+async function writeStoredJson(
+  env,
+  key,
+  value,
+  ttlSeconds = numberFrom(env.STORE_CACHE_TTL_SECONDS, STALE_CACHE_TTL_SECONDS),
+) {
   const body = JSON.stringify(value);
   if (env.STATUS_STORE) {
     await env.STATUS_STORE.put(key, body, { expirationTtl: ttlSeconds });
@@ -412,7 +514,10 @@ async function githubJson(env, path) {
 async function withTimeout(promise, timeoutMs, label) {
   let timeoutId;
   const timeout = new Promise((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error(`${label}: timed out after ${timeoutMs}ms`)), timeoutMs);
+    timeoutId = setTimeout(
+      () => reject(new Error(`${label}: timed out after ${timeoutMs}ms`)),
+      timeoutMs,
+    );
   });
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
 }
@@ -435,7 +540,12 @@ function normalizeEvent(body) {
 }
 
 function normalizeCiStatus(body) {
-  const ci = body.ci && typeof body.ci === "object" ? body.ci : body.event_type === "ci.status" ? body : null;
+  const ci =
+    body.ci && typeof body.ci === "object"
+      ? body.ci
+      : body.event_type === "ci.status"
+        ? body
+        : null;
   if (!ci) return null;
   const repository = nullableString(ci.repository ?? body.repository);
   const itemNumber = numberOrNull(ci.item_number ?? body.item_number);
@@ -447,7 +557,9 @@ function normalizeCiStatus(body) {
     label: nullableString(ci.label),
     repository,
     item_number: itemNumber,
-    item_url: nullableString(ci.item_url ?? body.item_url) || `https://github.com/${repository}/pull/${itemNumber}`,
+    item_url:
+      nullableString(ci.item_url ?? body.item_url) ||
+      `https://github.com/${repository}/pull/${itemNumber}`,
     run_url: nullableString(ci.run_url ?? body.run_url),
     head_sha: nullableString(ci.head_sha ?? body.head_sha),
     total: Math.max(0, numberOrNull(ci.total) ?? 0),
@@ -459,10 +571,25 @@ function normalizeCiStatus(body) {
 }
 
 function normalizeCiState(value) {
-  const text = String(value ?? "").trim().toLowerCase();
+  const text = String(value ?? "")
+    .trim()
+    .toLowerCase();
   if (["green", "success", "passed", "pass"].includes(text)) return "green";
-  if (["red", "failure", "failed", "error", "timed_out", "action_required", "cancelled", "startup_failure"].includes(text)) return "red";
-  if (["pending", "queued", "waiting", "requested", "in_progress", "running"].includes(text)) return "pending";
+  if (
+    [
+      "red",
+      "failure",
+      "failed",
+      "error",
+      "timed_out",
+      "action_required",
+      "cancelled",
+      "startup_failure",
+    ].includes(text)
+  )
+    return "red";
+  if (["pending", "queued", "waiting", "requested", "in_progress", "running"].includes(text))
+    return "pending";
   return "unknown";
 }
 
@@ -484,15 +611,17 @@ function codexJobName(name) {
 }
 
 function laneRank(mode) {
-  return {
-    automerge: 0,
-    repair: 1,
-    "exact-review": 2,
-    "hot-review": 3,
-    apply: 4,
-    "commit-review": 5,
-    "background-review": 6,
-  }[mode] ?? 9;
+  return (
+    {
+      automerge: 0,
+      repair: 1,
+      "exact-review": 2,
+      "hot-review": 3,
+      apply: 4,
+      "commit-review": 5,
+      "background-review": 6,
+    }[mode] ?? 9
+  );
 }
 
 function bearerToken(request) {
