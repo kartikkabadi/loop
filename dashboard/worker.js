@@ -3,6 +3,7 @@ const ACTIVE_RUN_STATUS_FILTERS = ["in_progress", "queued", "waiting", "requeste
 const TERMINAL_BAD_CONCLUSIONS = new Set(["failure", "timed_out", "action_required"]);
 const EVENT_LIMIT = 200;
 const AVERAGE_LIMIT = 4;
+const RECENT_CLOSED_LIMIT = 8;
 const GITHUB_TIMEOUT_MS = 4500;
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 const STALE_CACHE_TTL_SECONDS = 900;
@@ -128,7 +129,7 @@ async function statusSnapshot(env, ctx) {
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
-  const [activeJobs, pipeline, automerge, events] = await Promise.all([
+  const [activeJobs, pipeline, automerge, closedItems, events] = await Promise.all([
     estimateActiveCodexJobs(activeRuns),
     withTimeout(
       pipelineItems(env, activeRuns.slice(0, 30)),
@@ -145,6 +146,14 @@ async function statusSnapshot(env, ctx) {
     ).catch((error) => {
       errors.push(error.message);
       return { average_ms: null, samples: 0, items: [] };
+    }),
+    withTimeout(
+      recentClosedItems(env, targetRepos),
+      OPTIONAL_SECTION_TIMEOUT_MS,
+      "recent closed",
+    ).catch((error) => {
+      errors.push(error.message);
+      return [];
     }),
     readEvents(env).catch((error) => {
       errors.push(`events: ${error.message}`);
@@ -175,6 +184,7 @@ async function statusSnapshot(env, ctx) {
     pipeline,
     recent: {
       automerge: automerge.items,
+      closed_items: closedItems,
       events: events.slice(0, 25),
       failed_runs: failedRuns.slice(0, 10).map((run) => workflowRunSummary(run)),
     },
@@ -407,6 +417,32 @@ async function recentAutomerge(env, repo) {
     samples: durations.length,
     items,
   };
+}
+
+async function recentClosedItems(env, repos) {
+  const rows = await Promise.all(
+    repos.map(async (repo) => {
+      const issues = await githubJson(
+        env,
+        `/repos/${repo}/issues?state=closed&sort=updated&direction=desc&per_page=${RECENT_CLOSED_LIMIT}`,
+      ).catch(() => []);
+      return (Array.isArray(issues) ? issues : [])
+        .filter((item) => item?.closed_at)
+        .map((item) => ({
+          repository: repo,
+          number: item.number,
+          type: item.pull_request ? "PR" : "Issue",
+          title: item.title || "",
+          url: item.html_url,
+          closed_at: item.closed_at,
+          closed_by: item.closed_by?.login || null,
+        }));
+    }),
+  );
+  return rows
+    .flat()
+    .sort((left, right) => Date.parse(right.closed_at || "") - Date.parse(left.closed_at || ""))
+    .slice(0, RECENT_CLOSED_LIMIT);
 }
 
 function firstAutomergeCommandAt(comments) {
@@ -860,6 +896,7 @@ a:hover { color: #89c8ff; text-decoration: underline; }
 .side-col { min-width: 0; }
 #pipeline,
 #automerge,
+#closed,
 #events {
   min-width: 0;
   overflow: hidden;
@@ -904,6 +941,15 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+#closed table th:nth-child(1) { width: auto; }
+#closed table th:nth-child(2) { width: 90px; }
+#closed table td:nth-child(1) .muted {
+  display: -webkit-box;
+  margin-top: 2px;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; }
 .empty {
   padding: 24px;
@@ -938,6 +984,8 @@ a:hover { color: #89c8ff; text-decoration: underline; }
     <aside class="side-col">
       <h2>⚡ Automerge Speed</h2>
       <div id="automerge"></div>
+      <h2>✅ Last Closed Issues/PRs</h2>
+      <div id="closed"></div>
       <h2>📡 Recent Activity</h2>
       <div id="events"></div>
     </aside>
@@ -1052,6 +1100,7 @@ function renderDashboard(data, note) {
   ].join("");
   renderPipeline(data.pipeline || []);
   renderAutomerge(data.recent.automerge || []);
+  renderClosedItems(data.recent.closed_items || []);
   renderEvents(data.recent.events || []);
 }
 function renderPipeline(rows) {
@@ -1070,6 +1119,13 @@ function renderAutomerge(rows) {
     return;
   }
   document.getElementById("automerge").innerHTML = '<table><thead><tr><th>PR</th><th>Duration</th><th>Merged</th></tr></thead><tbody>' + rows.map(row => '<tr><td>' + link(row.url, "#" + row.number) + '<div class="muted">' + esc(row.title) + '</div></td><td>' + (row.duration_ms ? elapsed(row.duration_ms) : "unknown") + '</td><td>' + (row.merged_at ? since(row.merged_at) : "") + '</td></tr>').join("") + '</tbody></table>';
+}
+function renderClosedItems(rows) {
+  if (!rows.length) {
+    document.getElementById("closed").innerHTML = '<div class="empty">No recent closes found...</div>';
+    return;
+  }
+  document.getElementById("closed").innerHTML = '<table><thead><tr><th>Item</th><th>Closed</th></tr></thead><tbody>' + rows.map(row => '<tr><td><span class="pill">' + esc(row.type) + '</span> ' + link(row.url, row.repository + "#" + row.number) + '<div class="muted">' + esc(row.title) + '</div></td><td>' + since(row.closed_at) + '</td></tr>').join("") + '</tbody></table>';
 }
 function renderEvents(rows) {
   if (!rows.length) {

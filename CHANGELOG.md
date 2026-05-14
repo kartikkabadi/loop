@@ -12,6 +12,8 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added the first Cloudflare live dashboard for ClawSweeper observability, with
   active worker counts, pipeline rows, CI state, automerge timing, and optional
   signed status-event ingest.
+- Added a live-dashboard panel for the latest closed issues and pull requests
+  across configured target repositories.
 - Added a live-dashboard CI refresher workflow that posts target pull request
   check summaries into Worker storage, so active rows can show stored PR check
   state without slow browser-time GitHub fanout.

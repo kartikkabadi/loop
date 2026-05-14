@@ -340,6 +340,75 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
   }
 });
 
+test("dashboard exposes recently closed issues and pull requests", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/repos/openclaw/openclaw/issues") {
+      return jsonResponse([
+        {
+          number: 81,
+          title: "Fix stale terminal resize state",
+          html_url: "https://github.com/openclaw/openclaw/pull/81",
+          closed_at: "2026-05-14T09:30:00Z",
+          closed_by: { login: "clawsweeper[bot]" },
+          pull_request: {},
+        },
+        {
+          number: 80,
+          title: "Remove old session warning",
+          html_url: "https://github.com/openclaw/openclaw/issues/80",
+          closed_at: "2026-05-14T09:35:00Z",
+          closed_by: { login: "clawsweeper[bot]" },
+        },
+      ]);
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.deepEqual(
+      status.recent.closed_items.map((item: { type: string; number: number }) => ({
+        type: item.type,
+        number: item.number,
+      })),
+      [
+        { type: "Issue", number: 80 },
+        { type: "PR", number: 81 },
+      ],
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
 async function activePrFetch(input: RequestInfo | URL) {
   const url = String(input);
   if (url.includes("/repos/openclaw/clawsweeper/actions/runs")) {
@@ -358,6 +427,7 @@ async function activePrFetch(input: RequestInfo | URL) {
       ],
     });
   }
+  if (url.includes("/repos/openclaw/openclaw/issues")) return jsonResponse([]);
   if (url.includes("/search/issues")) return jsonResponse({ items: [] });
   throw new Error(`unexpected fetch ${url}`);
 }
