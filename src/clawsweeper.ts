@@ -4569,7 +4569,7 @@ function closeIntro(reason: CloseReason): string {
   }
 }
 
-function closeOutro(reason: CloseReason): string {
+function closeOutro(reason: CloseReason, canonicalLinks: string[] = []): string {
   switch (reason) {
     case "implemented_on_main":
       return "So I’m closing this as already implemented rather than keeping a duplicate issue open.";
@@ -4578,7 +4578,9 @@ function closeOutro(reason: CloseReason): string {
     case "clawhub":
       return `So I’m closing this as a scope-fit item for the plugin/community path. Please upload or publish it through ${markdownLink("ClawHub.com", targetProfile().communityUrl ?? "https://clawhub.ai/")} so it can live as an installable community skill instead of a bundled OpenClaw core change.`;
     case "duplicate_or_superseded":
-      return "So I’m closing this here and keeping the remaining discussion on the canonical linked item.";
+      return canonicalLinks.length
+        ? `So I’m closing this here and keeping the remaining discussion on ${formatCanonicalLinks(canonicalLinks)}.`
+        : "So I’m closing this here because the remaining work is already tracked in the canonical issue.";
     case "not_actionable_in_repo":
       return "So I’m closing this as outside the OpenClaw source repository rather than keeping it open as core work.";
     default:
@@ -4592,9 +4594,73 @@ function issueOrPullReferenceNumbers(value: string): string[] {
   ].map((match) => match[1] ?? match[2] ?? "");
 }
 
+function issueOrPullReferenceUrls(value: string): string[] {
+  return [
+    ...value.matchAll(
+      /https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/(?:issues|pull)\/\d+/g,
+    ),
+  ].map((match) => match[0]);
+}
+
+function itemPublicUrl(item?: { repo?: string; kind?: ItemKind; number?: number }): string {
+  if (!item?.number || !Number.isInteger(item.number) || item.number <= 0) return "";
+  return repoUrlFor(
+    item.repo ?? targetRepo(),
+    `/${item.kind === "pull_request" ? "pull" : "issues"}/${item.number}`,
+  );
+}
+
 function addsIssueOrPullReference(candidate: string, summaryLine: string): boolean {
   const summaryRefs = new Set(issueOrPullReferenceNumbers(summaryLine));
   return issueOrPullReferenceNumbers(candidate).some((ref) => ref && !summaryRefs.has(ref));
+}
+
+function duplicateCanonicalTexts(options: {
+  reason: CloseReason;
+  bestSolutionLine: string;
+  evidence: Evidence[];
+}): string[] {
+  if (options.reason !== "duplicate_or_superseded") return [];
+  return [
+    options.bestSolutionLine,
+    ...options.evidence
+      .filter((entry) => /\b(?:canonical|duplicate|superseded|implementation)\b/i.test(entry.label))
+      .map((entry) => sentence(entry.detail)),
+  ];
+}
+
+function duplicateCanonicalLinkTexts(options: {
+  reason: CloseReason;
+  bestSolutionLine: string;
+  evidence: Evidence[];
+}): string[] {
+  if (options.reason !== "duplicate_or_superseded") return [];
+  return [
+    options.bestSolutionLine,
+    ...options.evidence
+      .filter((entry) => /\b(?:canonical|duplicate|superseded|implementation)\b/i.test(entry.label))
+      .map((entry) => sentence(entry.detail)),
+  ];
+}
+
+function duplicateCanonicalLinks(options: {
+  reason: CloseReason;
+  bestSolutionLine: string;
+  evidence: Evidence[];
+  currentItem?: { repo?: string; kind?: ItemKind; number?: number } | undefined;
+}): string[] {
+  const seen = new Set<string>();
+  const links: string[] = [];
+  const currentItemUrl = itemPublicUrl(options.currentItem);
+  for (const text of duplicateCanonicalLinkTexts(options)) {
+    for (const link of issueOrPullReferenceUrls(text)) {
+      if (link === currentItemUrl) continue;
+      if (seen.has(link)) continue;
+      seen.add(link);
+      links.push(link);
+    }
+  }
+  return links;
 }
 
 function duplicateCanonicalPathLine(options: {
@@ -4603,13 +4669,7 @@ function duplicateCanonicalPathLine(options: {
   bestSolutionLine: string;
   evidence: Evidence[];
 }): string {
-  if (options.reason !== "duplicate_or_superseded") return "";
-  const candidates = [
-    options.bestSolutionLine,
-    ...options.evidence
-      .filter((entry) => /\b(?:canonical|duplicate|superseded|implementation)\b/i.test(entry.label))
-      .map((entry) => sentence(entry.detail)),
-  ];
+  const candidates = duplicateCanonicalTexts(options);
   const canonical =
     candidates.find(
       (candidate) => candidate && addsIssueOrPullReference(candidate, options.summaryLine),
@@ -4618,6 +4678,12 @@ function duplicateCanonicalPathLine(options: {
       (candidate) => candidate && publicReviewTextDiffers(candidate, options.summaryLine),
     );
   return canonical ? `Canonical path: ${canonical}` : "";
+}
+
+function formatCanonicalLinks(links: string[]): string {
+  if (links.length <= 1) return links[0] ?? "the canonical issue";
+  if (links.length === 2) return `${links[0]} and ${links[1]}`;
+  return `${links.slice(0, -1).join(", ")}, and ${links[links.length - 1]}`;
 }
 
 function reportEvidence(markdown: string): Evidence[] {
@@ -5410,6 +5476,7 @@ function renderCloseComment(options: {
   fixedPullRequest?: FixedPullRequest | null;
   securityReview?: SecurityReview;
   reviewLine: string;
+  currentItem?: { repo?: string; kind?: ItemKind; number?: number } | undefined;
 }): string {
   const evidence = options.evidence.slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = (options.likelyOwners ?? []).slice(0, 5).map(likelyOwnerLine);
@@ -5425,6 +5492,12 @@ function renderCloseComment(options: {
     );
   }
   const bestSolutionLine = sentence(options.bestSolution ?? "");
+  const canonicalLinks = duplicateCanonicalLinks({
+    reason: options.reason,
+    bestSolutionLine,
+    evidence: options.evidence,
+    currentItem: options.currentItem,
+  });
   const canonicalPathLine = duplicateCanonicalPathLine({
     reason: options.reason,
     summaryLine,
@@ -5446,7 +5519,7 @@ function renderCloseComment(options: {
   if (evidence.length) details.push("", "What I checked:", "", ...evidence);
   if (likelyOwners.length) details.push("", "Likely related people:", "", ...likelyOwners);
 
-  const outro = closeOutro(options.reason);
+  const outro = closeOutro(options.reason, canonicalLinks);
   if (outro) lines.push("", outro);
   if (options.reviewLine) details.push("", options.reviewLine);
   const detailsBlock = collapsedDetailsBlock("Review details", details);
@@ -5468,6 +5541,11 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
       fixedPullRequest: fixedPullRequestFromReport(markdown),
       securityReview: reportSecurityReview(markdown),
       reviewLine: closeReviewLineFromReport(markdown),
+      currentItem: {
+        repo: markdownRepository(markdown),
+        number: Number(frontMatterValue(markdown, "number")),
+        kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
+      },
     }),
     Number(frontMatterValue(markdown, "number")),
     (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
@@ -5503,6 +5581,7 @@ function normalizeComment(
   decision: Decision,
   git: GitInfo,
   runtime?: Pick<ReviewRuntime, "model" | "reasoningEffort">,
+  item?: { repo?: string; kind?: ItemKind; number?: number },
 ): string {
   return renderCloseComment({
     reason: decision.closeReason,
@@ -5515,6 +5594,7 @@ function normalizeComment(
     fixedPullRequest: decision.fixedPullRequest ?? null,
     securityReview: decision.securityReview,
     reviewLine: closeReviewLineFromDecision(decision, git, runtime),
+    currentItem: item,
   });
 }
 
@@ -6247,7 +6327,12 @@ export function reviewActionForDecision(options: {
     requireCloseComment: false,
   });
   if (!validation.ok) return { actionTaken: validation.actionTaken, closeComment: "" };
-  const closeComment = normalizeComment(options.decision, options.git, options.runtime);
+  const closeComment = normalizeComment(
+    options.decision,
+    options.git,
+    options.runtime,
+    options.item,
+  );
   if (!hasUsableCloseComment(closeComment)) {
     return { actionTaken: "skipped_invalid_decision", closeComment: "" };
   }

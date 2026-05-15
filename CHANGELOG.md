@@ -76,6 +76,8 @@ checkpoint, and status-only commits are intentionally omitted.
   candidates across recent comment churn.
 - Kept repeated broad spam sweeps from spending their scan cap on already
   processed deterministic candidates.
+- Put duplicate/superseded canonical issue and pull request links directly in
+  the public close sentence instead of only inside review details.
 - Removed stale spam audit files when a reprocessed comment no longer matches
   the scanner candidate filters.
 - Derived repair dispatch worker caps from `job_intent` when no explicit cap is

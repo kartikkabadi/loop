@@ -1500,6 +1500,10 @@ test("duplicate or superseded closes are allowed with evidence and comment", () 
     action.closeComment,
     /Canonical path: Keep the design thread on https:\/\/github\.com\/openclaw\/openclaw\/issues\/63829, with https:\/\/github\.com\/openclaw\/openclaw\/pull\/67584 as the active implementation path\./,
   );
+  assert.match(
+    action.closeComment,
+    /So I’m closing this here and keeping the remaining discussion on https:\/\/github\.com\/openclaw\/openclaw\/issues\/63829 and https:\/\/github\.com\/openclaw\/openclaw\/pull\/67584\./,
+  );
   assert.ok(
     action.closeComment.indexOf("Canonical path:") <
       action.closeComment.indexOf("<details>\n<summary>Review details</summary>"),
@@ -1552,6 +1556,134 @@ test("duplicate or superseded comments prefer canonical refs over generic best s
   assert.match(
     action.closeComment,
     /Canonical path: Older tracker exists at https:\/\/github\.com\/openclaw\/openclaw\/issues\/63829\./,
+  );
+  assert.match(
+    action.closeComment,
+    /So I’m closing this here and keeping the remaining discussion on https:\/\/github\.com\/openclaw\/openclaw\/issues\/63829\./,
+  );
+});
+
+test("duplicate or superseded close sentence surfaces multiple canonical refs", () => {
+  const action = reviewActionForDecision({
+    item: item(),
+    decision: closeDecision({
+      closeReason: "duplicate_or_superseded",
+      summary:
+        "Close as duplicate: the remaining timeout contract work is tracked in canonical timeout threads.",
+      bestSolution: "Resolve timeout precedence in the canonical timeout-policy threads.",
+      evidence: [
+        {
+          label: "Canonical provider-timeout issue remains open",
+          detail:
+            "Live GitHub context for https://github.com/openclaw/openclaw/issues/77744 covers provider timeout behavior.",
+        },
+        {
+          label: "Canonical idle-timeout policy issue remains open",
+          detail:
+            "Live GitHub context for https://github.com/openclaw/openclaw/issues/78361 covers user-facing idle-timeout precedence.",
+        },
+      ],
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(
+    action.closeComment,
+    /So I’m closing this here and keeping the remaining discussion on https:\/\/github\.com\/openclaw\/openclaw\/issues\/77744 and https:\/\/github\.com\/openclaw\/openclaw\/issues\/78361\./,
+  );
+  assert.ok(
+    action.closeComment.indexOf("https://github.com/openclaw/openclaw/issues/77744") <
+      action.closeComment.indexOf("<details>\n<summary>Review details</summary>"),
+  );
+});
+
+test("duplicate or superseded close sentence ignores ambiguous shorthand refs", () => {
+  const action = reviewActionForDecision({
+    item: item({ number: 123 }),
+    decision: closeDecision({
+      closeReason: "duplicate_or_superseded",
+      summary: "Close #123 as duplicate of PR #456.",
+      bestSolution: "Close #123 as duplicate of PR #456.",
+      evidence: [
+        {
+          label: "canonical pull request",
+          detail: "PR #456 tracks the same work.",
+        },
+      ],
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(
+    action.closeComment,
+    /So I’m closing this here because the remaining work is already tracked in the canonical issue\./,
+  );
+  assert.doesNotMatch(
+    action.closeComment,
+    /https:\/\/github\.com\/openclaw\/openclaw\/issues\/123/,
+  );
+  assert.doesNotMatch(
+    action.closeComment,
+    /https:\/\/github\.com\/openclaw\/openclaw\/issues\/456/,
+  );
+});
+
+test("duplicate or superseded close sentence filters current item URLs", () => {
+  const action = reviewActionForDecision({
+    item: item({ number: 123 }),
+    decision: closeDecision({
+      closeReason: "duplicate_or_superseded",
+      summary: "Close as duplicate of the canonical tracker.",
+      bestSolution: "Keep remaining work on https://github.com/openclaw/openclaw/issues/456.",
+      evidence: [
+        {
+          label: "Duplicate report context",
+          detail:
+            "https://github.com/openclaw/openclaw/issues/123 is the duplicate report being closed.",
+        },
+        {
+          label: "Canonical issue",
+          detail: "https://github.com/openclaw/openclaw/issues/456 tracks the same work.",
+        },
+      ],
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(
+    action.closeComment,
+    /So I’m closing this here and keeping the remaining discussion on https:\/\/github\.com\/openclaw\/openclaw\/issues\/456\./,
+  );
+  assert.doesNotMatch(
+    action.closeComment,
+    /So I’m closing this here and keeping the remaining discussion on https:\/\/github\.com\/openclaw\/openclaw\/issues\/123/,
+  );
+});
+
+test("duplicate or superseded close sentence includes duplicate-labeled canonical URL", () => {
+  const action = reviewActionForDecision({
+    item: item({ number: 123 }),
+    decision: closeDecision({
+      closeReason: "duplicate_or_superseded",
+      summary: "Close as duplicate of the older tracker.",
+      bestSolution: "Follow the linked duplicate tracker.",
+      evidence: [
+        {
+          label: "Duplicate issue",
+          detail: "https://github.com/openclaw/openclaw/issues/456 is the older open tracker.",
+        },
+      ],
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(
+    action.closeComment,
+    /So I’m closing this here and keeping the remaining discussion on https:\/\/github\.com\/openclaw\/openclaw\/issues\/456\./,
   );
 });
 
