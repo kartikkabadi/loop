@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildSpamModelInput,
+  commentVersionKey,
   deterministicSpamSignals,
   isProtectedSpamAuthor,
   normalizeModelResults,
+  prioritizeSpamScanComments,
   shouldSendToCheapModel,
   type SpamScanComment,
 } from "../../dist/repair/spam-scanner-core.js";
@@ -103,6 +105,40 @@ Re-review progress:
 
   assert.equal(deterministicSpamSignals(progress).candidate, false);
   assert.equal(shouldSendToCheapModel(progress), false);
+});
+
+test("broad scan priority skips processed spam candidates before capping", () => {
+  const processedOne = comment({
+    id: "1",
+    updated_at: "2026-05-11T00:03:00Z",
+  });
+  const processedTwo = comment({
+    id: "2",
+    updated_at: "2026-05-11T00:02:00Z",
+  });
+  const unprocessedSpam = comment({
+    id: "3",
+    updated_at: "2026-05-11T00:01:00Z",
+  });
+  const ordinaryComment = comment({
+    id: "4",
+    updated_at: "2026-05-11T00:00:00Z",
+    body: "Thanks, I added a regression test in https://github.com/openclaw/openclaw/pull/1",
+  });
+
+  const prioritized = prioritizeSpamScanComments({
+    comments: [processedOne, processedTwo, unprocessedSpam, ordinaryComment],
+    maxComments: 2,
+    processedCommentVersionKeys: new Set([
+      commentVersionKey(processedOne),
+      commentVersionKey(processedTwo),
+    ]),
+  });
+
+  assert.deepEqual(
+    prioritized.map((entry) => entry.id),
+    ["3", "4"],
+  );
 });
 
 test("model input is compact and keeps deterministic hints", () => {

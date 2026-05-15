@@ -73,6 +73,8 @@ checkpoint, and status-only commits are intentionally omitted.
   comments, and ordinary external evidence/log links do not trigger audit
   records as spam candidates, while broad scans prioritize real spam-shaped
   candidates across recent comment churn.
+- Kept repeated broad spam sweeps from spending their scan cap on already
+  processed deterministic candidates.
 - Removed stale spam audit files when a reprocessed comment no longer matches
   the scanner candidate filters.
 - Derived repair dispatch worker caps from `job_intent` when no explicit cap is

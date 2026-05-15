@@ -8,10 +8,9 @@ import { assertRepo, commaSet, positiveInteger } from "./comment-router-utils.js
 import {
   buildSpamModelInput,
   commentVersionKey,
-  deterministicSpamSignals,
-  isProtectedSpamAuthor,
   normalizeModelResults,
   normalizeSpamComment,
+  prioritizeSpamScanComments,
   renderSpamAuditRecord,
   shouldSendToCheapModel,
   spamAuditKey,
@@ -54,7 +53,7 @@ const trustedBots = commaSet(
 assertRepo(targetRepo, "repo");
 
 const ledger = readLedger();
-const processed = new Set(
+const processed = new Set<string>(
   forceReprocess
     ? []
     : (ledger.entries ?? [])
@@ -150,15 +149,12 @@ async function listCandidateComments() {
   const unique = uniqueComments(comments);
   hydrateMinimization(unique);
   if (exactScan) return unique.slice(0, maxComments);
-  const deterministicCandidates = unique
-    .filter((comment) => !isProtectedSpamAuthor(comment, trustedBots))
-    .filter((comment) => deterministicSpamSignals(comment).candidate)
-    .slice(0, maxComments);
-  const candidateKeys = new Set(deterministicCandidates.map((comment) => spamAuditKey(comment)));
-  const filler = unique
-    .filter((comment) => !candidateKeys.has(spamAuditKey(comment)))
-    .slice(0, Math.max(0, maxComments - deterministicCandidates.length));
-  return [...deterministicCandidates, ...filler];
+  return prioritizeSpamScanComments({
+    comments: unique,
+    maxComments,
+    processedCommentVersionKeys: processed,
+    trustedBots,
+  });
 }
 
 function broadFetchLimit(limit: number) {
