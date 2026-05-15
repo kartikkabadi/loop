@@ -27,6 +27,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             .github/actions
+            config/automation-limits.json
             src/repair
             package.json
             pnpm-lock.yaml
