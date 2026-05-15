@@ -356,6 +356,7 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
     const url = new URL(String(input));
     const closedAt = new Date(Date.now() - 60_000).toISOString();
     const olderClosedAt = new Date(Date.now() - 120_000).toISOString();
+    const oldestClosedAt = new Date(Date.now() - 180_000).toISOString();
     if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
       return jsonResponse({ workflow_runs: [] });
     }
@@ -368,6 +369,13 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
           closed_at: olderClosedAt,
           closed_by: { login: "clawsweeper[bot]" },
           pull_request: {},
+        },
+        {
+          number: 82,
+          title: "Alternate app closed issue",
+          html_url: "https://github.com/openclaw/openclaw/issues/82",
+          closed_at: oldestClosedAt,
+          closed_by: { login: "openclaw-clawsweeper[bot]" },
         },
         {
           number: 80,
@@ -413,18 +421,19 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
       [
         { type: "Issue", number: 80, closed_by: "clawsweeper[bot]" },
         { type: "PR", number: 81, closed_by: "clawsweeper[bot]" },
+        { type: "Issue", number: 82, closed_by: "openclaw-clawsweeper[bot]" },
       ],
     );
     assert.deepEqual(status.recent.closed_stats, {
       window_hours: 24,
       since: status.recent.closed_stats.since,
-      total: 2,
-      issues: 1,
+      total: 3,
+      issues: 2,
       prs: 1,
       by_repository: {
         "openclaw/openclaw": {
-          total: 2,
-          issues: 1,
+          total: 3,
+          issues: 2,
           prs: 1,
         },
       },

@@ -42,6 +42,7 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added live spam comment intake for GitHub activity events so deterministic
   spam candidates dispatch exact comment scans immediately instead of waiting
   for the hourly audit sweep.
+- Counted both trusted ClawSweeper bot logins in live-dashboard close stats.
 - Counted active live-dashboard workflow runs from GitHub status-filtered Actions pages so older in-progress reviews are not hidden by newer completed runs.
 - Reworked live-dashboard tables into compact linked rows so pipeline run links,
   CI state, and side-panel items fit without cramped columns.

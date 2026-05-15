@@ -6,7 +6,7 @@ const AVERAGE_LIMIT = 4;
 const RECENT_CLOSED_LIMIT = 8;
 const CLOSED_STATS_HOURS = 24;
 const CLOSED_STATS_PAGE_LIMIT = 10;
-const CLAWSWEEPER_BOT_LOGIN = "clawsweeper[bot]";
+const DEFAULT_CLAWSWEEPER_BOT_LOGINS = ["clawsweeper[bot]", "openclaw-clawsweeper[bot]"];
 const GITHUB_TIMEOUT_MS = 4500;
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 const STALE_CACHE_TTL_SECONDS = 900;
@@ -425,8 +425,9 @@ async function recentAutomerge(env, repo) {
 
 async function recentClawsweeperClosed(env, repos) {
   const since = new Date(Date.now() - CLOSED_STATS_HOURS * 60 * 60 * 1000).toISOString();
+  const trustedBotLogins = clawsweeperBotLogins(env);
   const rows = await Promise.all(
-    repos.map((repo) => recentClawsweeperClosedForRepo(env, repo, since)),
+    repos.map((repo) => recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins)),
   );
   const items = rows
     .flat()
@@ -437,7 +438,7 @@ async function recentClawsweeperClosed(env, repos) {
   };
 }
 
-async function recentClawsweeperClosedForRepo(env, repo, since) {
+async function recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins) {
   const items = [];
   for (let page = 1; page <= CLOSED_STATS_PAGE_LIMIT; page += 1) {
     const issues = await githubJson(
@@ -448,7 +449,7 @@ async function recentClawsweeperClosedForRepo(env, repo, since) {
     ).catch(() => []);
     const pageItems = Array.isArray(issues) ? issues : [];
     for (const item of pageItems) {
-      if (!isClawsweeperClosedItem(item, since)) continue;
+      if (!isClawsweeperClosedItem(item, since, trustedBotLogins)) continue;
       items.push({
         repository: repo,
         number: item.number,
@@ -464,10 +465,18 @@ async function recentClawsweeperClosedForRepo(env, repo, since) {
   return items;
 }
 
-function isClawsweeperClosedItem(item, since) {
+function isClawsweeperClosedItem(item, since, trustedBotLogins) {
   if (!item?.closed_at) return false;
-  if (item.closed_by?.login !== CLAWSWEEPER_BOT_LOGIN) return false;
+  if (!trustedBotLogins.has(String(item.closed_by?.login || ""))) return false;
   return Date.parse(item.closed_at) >= Date.parse(since);
+}
+
+function clawsweeperBotLogins(env) {
+  const configured = String(env.CLAWSWEEPER_BOT_LOGINS || "")
+    .split(",")
+    .map((login) => login.trim())
+    .filter(Boolean);
+  return new Set(configured.length ? configured : DEFAULT_CLAWSWEEPER_BOT_LOGINS);
 }
 
 function closedStats(items, since) {
