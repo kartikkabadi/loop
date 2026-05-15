@@ -3,11 +3,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseArgs, repoRoot } from "./lib.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
-import { ghJsonWithRetry as ghJson, ghPagedWithRetry as ghPaged } from "./github-cli.js";
+import { ghJsonWithRetry as ghJson, ghPagedLimitWithRetry as ghPagedLimit } from "./github-cli.js";
 import { assertRepo, commaSet, positiveInteger } from "./comment-router-utils.js";
 import {
   buildSpamModelInput,
   commentVersionKey,
+  deterministicSpamSignals,
+  isProtectedSpamAuthor,
   normalizeModelResults,
   normalizeSpamComment,
   renderSpamAuditRecord,
@@ -121,12 +123,15 @@ console.log(JSON.stringify(report, null, 2));
 
 async function listCandidateComments() {
   const comments: SpamScanComment[] = [];
+  const exactScan = commentIds.size > 0 || reviewCommentIds.size > 0;
+  const fetchLimit = exactScan ? maxComments : broadFetchLimit(maxComments);
   if (commentIds.size > 0) {
     for (const id of commentIds) comments.push(fetchIssueComment(id));
   } else {
     comments.push(
-      ...ghPaged<LooseRecord>(
-        `repos/${targetRepo}/issues/comments?since=${encodeURIComponent(since)}&per_page=100`,
+      ...ghPagedLimit<LooseRecord>(
+        `repos/${targetRepo}/issues/comments?since=${encodeURIComponent(since)}&sort=updated&direction=desc`,
+        fetchLimit,
       ).map((comment) => normalizeSpamComment(comment, "issue_comment")),
     );
   }
@@ -135,15 +140,29 @@ async function listCandidateComments() {
     for (const id of reviewCommentIds) comments.push(fetchReviewComment(id));
   } else if (commentIds.size === 0) {
     comments.push(
-      ...ghPaged<LooseRecord>(
-        `repos/${targetRepo}/pulls/comments?since=${encodeURIComponent(since)}&per_page=100`,
+      ...ghPagedLimit<LooseRecord>(
+        `repos/${targetRepo}/pulls/comments?since=${encodeURIComponent(since)}&sort=updated&direction=desc`,
+        fetchLimit,
       ).map((comment) => normalizeSpamComment(comment, "pull_request_review_comment")),
     );
   }
 
-  const unique = uniqueComments(comments).slice(0, maxComments);
+  const unique = uniqueComments(comments);
   hydrateMinimization(unique);
-  return unique;
+  if (exactScan) return unique.slice(0, maxComments);
+  const deterministicCandidates = unique
+    .filter((comment) => !isProtectedSpamAuthor(comment, trustedBots))
+    .filter((comment) => deterministicSpamSignals(comment).candidate)
+    .slice(0, maxComments);
+  const candidateKeys = new Set(deterministicCandidates.map((comment) => spamAuditKey(comment)));
+  const filler = unique
+    .filter((comment) => !candidateKeys.has(spamAuditKey(comment)))
+    .slice(0, Math.max(0, maxComments - deterministicCandidates.length));
+  return [...deterministicCandidates, ...filler];
+}
+
+function broadFetchLimit(limit: number) {
+  return Math.min(Math.max(limit * 25, limit), 2500);
 }
 
 function fetchIssueComment(id: number) {

@@ -110,18 +110,26 @@ export function deterministicSpamSignals(comment: SpamScanComment) {
     signals.push("solicitation_language");
   }
   if (externalUrlCount >= 2) signals.push("multiple_external_links");
-  if (comment.author_association === "NONE" && externalUrlCount > 0) {
-    signals.push("outside_author_with_external_link");
-  }
   if (body.length < 900 && urls.length > 0 && /\$\s*\d+/.test(body)) {
     signals.push("priced_service_pitch");
   }
+  if (
+    comment.author_association === "NONE" &&
+    externalUrlCount > 0 &&
+    signals.some((signal) => signal !== "multiple_external_links")
+  ) {
+    signals.push("outside_author_with_external_link");
+  }
 
   return {
-    candidate: signals.length > 0,
+    candidate: signals.some(isSpamCandidateSignal),
     signals,
     urls: urls.map((url) => redactUrl(url)),
   };
+}
+
+function isSpamCandidateSignal(signal: string) {
+  return signal !== "multiple_external_links" && signal !== "outside_author_with_external_link";
 }
 
 export function shouldSendToCheapModel(comment: SpamScanComment, trustedBots = new Set<string>()) {

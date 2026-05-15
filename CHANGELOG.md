@@ -69,8 +69,10 @@ checkpoint, and status-only commits are intentionally omitted.
   the edge, retaining the last good browser snapshot, and reducing rate-prone
   GitHub detail calls so transient 403s no longer blank the pipeline.
 - Cleared stale `clawsweeper:human-review` and `clawsweeper:merge-ready` pause labels when a later exact-head trusted pass arrives for an automerge PR, so transient cancelled reviews no longer strand maintainer opt-ins.
-- Tightened spam scanner prefilters so GitHub context links and contributor
-  proof comments do not trigger audit records as spam candidates.
+- Tightened spam scanner prefilters so GitHub context links, contributor proof
+  comments, and ordinary external evidence/log links do not trigger audit
+  records as spam candidates, while broad scans prioritize real spam-shaped
+  candidates across recent comment churn.
 - Removed stale spam audit files when a reprocessed comment no longer matches
   the scanner candidate filters.
 - Derived repair dispatch worker caps from `job_intent` when no explicit cap is
