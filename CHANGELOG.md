@@ -14,6 +14,7 @@ checkpoint, and status-only commits are intentionally omitted.
   signed status-event ingest.
 - Added a live-dashboard panel for the latest closed issues and pull requests
   across configured target repositories.
+- Added 24-hour ClawSweeper-owned close stats to the live dashboard.
 - Added a live-dashboard CI refresher workflow that posts target pull request
   check summaries into Worker storage, so active rows can show stored PR check
   state without slow browser-time GitHub fanout.

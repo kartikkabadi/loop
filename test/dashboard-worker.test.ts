@@ -340,7 +340,7 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
   }
 });
 
-test("dashboard exposes recently closed issues and pull requests", async () => {
+test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;
   Object.defineProperty(globalThis, "caches", {
@@ -354,6 +354,8 @@ test("dashboard exposes recently closed issues and pull requests", async () => {
   });
   globalThis.fetch = async (input) => {
     const url = new URL(String(input));
+    const closedAt = new Date(Date.now() - 60_000).toISOString();
+    const olderClosedAt = new Date(Date.now() - 120_000).toISOString();
     if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
       return jsonResponse({ workflow_runs: [] });
     }
@@ -363,7 +365,7 @@ test("dashboard exposes recently closed issues and pull requests", async () => {
           number: 81,
           title: "Fix stale terminal resize state",
           html_url: "https://github.com/openclaw/openclaw/pull/81",
-          closed_at: "2026-05-14T09:30:00Z",
+          closed_at: olderClosedAt,
           closed_by: { login: "clawsweeper[bot]" },
           pull_request: {},
         },
@@ -371,8 +373,15 @@ test("dashboard exposes recently closed issues and pull requests", async () => {
           number: 80,
           title: "Remove old session warning",
           html_url: "https://github.com/openclaw/openclaw/issues/80",
-          closed_at: "2026-05-14T09:35:00Z",
+          closed_at: closedAt,
           closed_by: { login: "clawsweeper[bot]" },
+        },
+        {
+          number: 79,
+          title: "Human closed issue",
+          html_url: "https://github.com/openclaw/openclaw/issues/79",
+          closed_at: closedAt,
+          closed_by: { login: "steipete" },
         },
       ]);
     }
@@ -394,15 +403,33 @@ test("dashboard exposes recently closed issues and pull requests", async () => {
     );
     const status = await response.json();
     assert.deepEqual(
-      status.recent.closed_items.map((item: { type: string; number: number }) => ({
-        type: item.type,
-        number: item.number,
-      })),
+      status.recent.closed_items.map(
+        (item: { type: string; number: number; closed_by: string }) => ({
+          type: item.type,
+          number: item.number,
+          closed_by: item.closed_by,
+        }),
+      ),
       [
-        { type: "Issue", number: 80 },
-        { type: "PR", number: 81 },
+        { type: "Issue", number: 80, closed_by: "clawsweeper[bot]" },
+        { type: "PR", number: 81, closed_by: "clawsweeper[bot]" },
       ],
     );
+    assert.deepEqual(status.recent.closed_stats, {
+      window_hours: 24,
+      since: status.recent.closed_stats.since,
+      total: 2,
+      issues: 1,
+      prs: 1,
+      by_repository: {
+        "openclaw/openclaw": {
+          total: 2,
+          issues: 1,
+          prs: 1,
+        },
+      },
+    });
+    assert.ok(new Date(status.recent.closed_stats.since).getTime() <= Date.now());
   } finally {
     globalThis.fetch = originalFetch;
     Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });

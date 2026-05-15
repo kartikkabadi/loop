@@ -4,6 +4,9 @@ const TERMINAL_BAD_CONCLUSIONS = new Set(["failure", "timed_out", "action_requir
 const EVENT_LIMIT = 200;
 const AVERAGE_LIMIT = 4;
 const RECENT_CLOSED_LIMIT = 8;
+const CLOSED_STATS_HOURS = 24;
+const CLOSED_STATS_PAGE_LIMIT = 10;
+const CLAWSWEEPER_BOT_LOGIN = "clawsweeper[bot]";
 const GITHUB_TIMEOUT_MS = 4500;
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 const STALE_CACHE_TTL_SECONDS = 900;
@@ -129,7 +132,7 @@ async function statusSnapshot(env, ctx) {
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
-  const [activeJobs, pipeline, automerge, closedItems, events] = await Promise.all([
+  const [activeJobs, pipeline, automerge, closed, events] = await Promise.all([
     estimateActiveCodexJobs(activeRuns),
     withTimeout(
       pipelineItems(env, activeRuns.slice(0, 30)),
@@ -148,12 +151,12 @@ async function statusSnapshot(env, ctx) {
       return { average_ms: null, samples: 0, items: [] };
     }),
     withTimeout(
-      recentClosedItems(env, targetRepos),
+      recentClawsweeperClosed(env, targetRepos),
       OPTIONAL_SECTION_TIMEOUT_MS,
       "recent closed",
     ).catch((error) => {
       errors.push(error.message);
-      return [];
+      return { items: [], stats: emptyClosedStats(generatedAt) };
     }),
     readEvents(env).catch((error) => {
       errors.push(`events: ${error.message}`);
@@ -184,7 +187,8 @@ async function statusSnapshot(env, ctx) {
     pipeline,
     recent: {
       automerge: automerge.items,
-      closed_items: closedItems,
+      closed_items: closed.items,
+      closed_stats: closed.stats,
       events: events.slice(0, 25),
       failed_runs: failedRuns.slice(0, 10).map((run) => workflowRunSummary(run)),
     },
@@ -419,30 +423,88 @@ async function recentAutomerge(env, repo) {
   };
 }
 
-async function recentClosedItems(env, repos) {
+async function recentClawsweeperClosed(env, repos) {
+  const since = new Date(Date.now() - CLOSED_STATS_HOURS * 60 * 60 * 1000).toISOString();
   const rows = await Promise.all(
-    repos.map(async (repo) => {
-      const issues = await githubJson(
-        env,
-        `/repos/${repo}/issues?state=closed&sort=updated&direction=desc&per_page=${RECENT_CLOSED_LIMIT}`,
-      ).catch(() => []);
-      return (Array.isArray(issues) ? issues : [])
-        .filter((item) => item?.closed_at)
-        .map((item) => ({
-          repository: repo,
-          number: item.number,
-          type: item.pull_request ? "PR" : "Issue",
-          title: item.title || "",
-          url: item.html_url,
-          closed_at: item.closed_at,
-          closed_by: item.closed_by?.login || null,
-        }));
-    }),
+    repos.map((repo) => recentClawsweeperClosedForRepo(env, repo, since)),
   );
-  return rows
+  const items = rows
     .flat()
-    .sort((left, right) => Date.parse(right.closed_at || "") - Date.parse(left.closed_at || ""))
-    .slice(0, RECENT_CLOSED_LIMIT);
+    .sort((left, right) => Date.parse(right.closed_at || "") - Date.parse(left.closed_at || ""));
+  return {
+    items: items.slice(0, RECENT_CLOSED_LIMIT),
+    stats: closedStats(items, since),
+  };
+}
+
+async function recentClawsweeperClosedForRepo(env, repo, since) {
+  const items = [];
+  for (let page = 1; page <= CLOSED_STATS_PAGE_LIMIT; page += 1) {
+    const issues = await githubJson(
+      env,
+      `/repos/${repo}/issues?state=closed&sort=updated&direction=desc&since=${encodeURIComponent(
+        since,
+      )}&per_page=100&page=${page}`,
+    ).catch(() => []);
+    const pageItems = Array.isArray(issues) ? issues : [];
+    for (const item of pageItems) {
+      if (!isClawsweeperClosedItem(item, since)) continue;
+      items.push({
+        repository: repo,
+        number: item.number,
+        type: item.pull_request ? "PR" : "Issue",
+        title: item.title || "",
+        url: item.html_url,
+        closed_at: item.closed_at,
+        closed_by: item.closed_by?.login || null,
+      });
+    }
+    if (pageItems.length < 100) break;
+  }
+  return items;
+}
+
+function isClawsweeperClosedItem(item, since) {
+  if (!item?.closed_at) return false;
+  if (item.closed_by?.login !== CLAWSWEEPER_BOT_LOGIN) return false;
+  return Date.parse(item.closed_at) >= Date.parse(since);
+}
+
+function closedStats(items, since) {
+  const byRepo = {};
+  let issues = 0;
+  let prs = 0;
+  for (const item of items) {
+    const repoStats = byRepo[item.repository] || { total: 0, issues: 0, prs: 0 };
+    repoStats.total += 1;
+    if (item.type === "PR") {
+      prs += 1;
+      repoStats.prs += 1;
+    } else {
+      issues += 1;
+      repoStats.issues += 1;
+    }
+    byRepo[item.repository] = repoStats;
+  }
+  return {
+    window_hours: CLOSED_STATS_HOURS,
+    since,
+    total: items.length,
+    issues,
+    prs,
+    by_repository: byRepo,
+  };
+}
+
+function emptyClosedStats(generatedAt) {
+  return {
+    window_hours: CLOSED_STATS_HOURS,
+    since: new Date(Date.parse(generatedAt) - CLOSED_STATS_HOURS * 60 * 60 * 1000).toISOString(),
+    total: 0,
+    issues: 0,
+    prs: 0,
+    by_repository: {},
+  };
 }
 
 function firstAutomergeCommandAt(comments) {
@@ -998,6 +1060,32 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   gap: 8px;
   white-space: nowrap;
 }
+.closed-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.closed-stat {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  min-width: 0;
+}
+.closed-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.closed-stat strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 22px;
+  line-height: 1;
+}
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; }
 .empty {
   padding: 24px;
@@ -1011,7 +1099,7 @@ a:hover { color: #89c8ff; text-decoration: underline; }
 .empty::before { content: "🦀 "; opacity: 0.3; }
 @media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } header { align-items: start; flex-direction: column; } }
 @media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .work-row { grid-template-columns: 1fr; align-items: start; } .work-state, .stage-block, .timebox { justify-content: start; justify-items: start; } }
-@media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid { grid-template-columns: 1fr; } .side-row { grid-template-columns: 1fr; } .side-meta { justify-content: flex-start; } }
+@media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid, .closed-stats { grid-template-columns: 1fr; } .side-row { grid-template-columns: 1fr; } .side-meta { justify-content: flex-start; } }
 </style>
 </head>
 <body>
@@ -1032,7 +1120,8 @@ a:hover { color: #89c8ff; text-decoration: underline; }
     <aside class="side-col">
       <h2>⚡ Automerge Speed</h2>
       <div id="automerge"></div>
-      <h2>✅ Last Closed Issues/PRs</h2>
+      <h2>✅ Closed by ClawSweeper</h2>
+      <div id="closed-stats"></div>
       <div id="closed"></div>
       <h2>📡 Recent Activity</h2>
       <div id="events"></div>
@@ -1151,6 +1240,7 @@ function renderDashboard(data, note) {
   ].join("");
   renderPipeline(data.pipeline || []);
   renderAutomerge(data.recent.automerge || []);
+  renderClosedStats(data.recent.closed_stats);
   renderClosedItems(data.recent.closed_items || []);
   renderEvents(data.recent.events || []);
 }
@@ -1173,10 +1263,14 @@ function renderAutomerge(rows) {
 }
 function renderClosedItems(rows) {
   if (!rows.length) {
-    document.getElementById("closed").innerHTML = '<div class="empty">No recent closes found...</div>';
+    document.getElementById("closed").innerHTML = '<div class="empty">No ClawSweeper closes found...</div>';
     return;
   }
   document.getElementById("closed").innerHTML = '<div class="side-list">' + rows.map(row => '<article class="side-row"><div class="side-main"><div class="row-top"><span class="pill">' + esc(row.type) + '</span>' + linkClass(row.url, row.repository + "#" + row.number, "item-link") + '</div><div class="muted side-title">' + esc(row.title) + '</div></div><div class="side-meta">' + since(row.closed_at) + '</div></article>').join("") + '</div>';
+}
+function renderClosedStats(stats) {
+  const safe = stats || { total: 0, issues: 0, prs: 0, window_hours: 24 };
+  document.getElementById("closed-stats").innerHTML = '<div class="closed-stats"><div class="closed-stat"><span>' + esc((safe.window_hours || 24) + "h total") + '</span><strong>' + fmt.format(safe.total || 0) + '</strong></div><div class="closed-stat"><span>Issues</span><strong>' + fmt.format(safe.issues || 0) + '</strong></div><div class="closed-stat"><span>PRs</span><strong>' + fmt.format(safe.prs || 0) + '</strong></div></div>';
 }
 function renderEvents(rows) {
   if (!rows.length) {
