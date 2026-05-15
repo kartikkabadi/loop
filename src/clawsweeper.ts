@@ -4586,6 +4586,40 @@ function closeOutro(reason: CloseReason): string {
   }
 }
 
+function issueOrPullReferenceNumbers(value: string): string[] {
+  return [
+    ...value.matchAll(/https:\/\/github\.com\/[^\s)]+\/(?:issues|pull)\/(\d+)|#(\d+)\b/g),
+  ].map((match) => match[1] ?? match[2] ?? "");
+}
+
+function addsIssueOrPullReference(candidate: string, summaryLine: string): boolean {
+  const summaryRefs = new Set(issueOrPullReferenceNumbers(summaryLine));
+  return issueOrPullReferenceNumbers(candidate).some((ref) => ref && !summaryRefs.has(ref));
+}
+
+function duplicateCanonicalPathLine(options: {
+  reason: CloseReason;
+  summaryLine: string;
+  bestSolutionLine: string;
+  evidence: Evidence[];
+}): string {
+  if (options.reason !== "duplicate_or_superseded") return "";
+  const candidates = [
+    options.bestSolutionLine,
+    ...options.evidence
+      .filter((entry) => /\b(?:canonical|duplicate|superseded|implementation)\b/i.test(entry.label))
+      .map((entry) => sentence(entry.detail)),
+  ];
+  const canonical =
+    candidates.find(
+      (candidate) => candidate && addsIssueOrPullReference(candidate, options.summaryLine),
+    ) ??
+    candidates.find(
+      (candidate) => candidate && publicReviewTextDiffers(candidate, options.summaryLine),
+    );
+  return canonical ? `Canonical path: ${canonical}` : "";
+}
+
 function reportEvidence(markdown: string): Evidence[] {
   const evidence = reviewSectionValue(markdown, "evidence");
   const entries: Evidence[] = [];
@@ -5390,8 +5424,15 @@ function renderCloseComment(options: {
       )}.`,
     );
   }
-  const details: string[] = [];
   const bestSolutionLine = sentence(options.bestSolution ?? "");
+  const canonicalPathLine = duplicateCanonicalPathLine({
+    reason: options.reason,
+    summaryLine,
+    bestSolutionLine,
+    evidence: options.evidence,
+  });
+  if (canonicalPathLine) lines.push("", canonicalPathLine);
+  const details: string[] = [];
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, summaryLine)) {
     details.push("Best possible solution:", "", bestSolutionLine);
   }

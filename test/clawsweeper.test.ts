@@ -1475,6 +1475,9 @@ test("duplicate or superseded closes are allowed with evidence and comment", () 
     item: item(),
     decision: closeDecision({
       closeReason: "duplicate_or_superseded",
+      summary: "Close as duplicate: an older open tracker already covers this.",
+      bestSolution:
+        "Keep the design thread on https://github.com/openclaw/openclaw/issues/63829, with https://github.com/openclaw/openclaw/pull/67584 as the active implementation path.",
       evidence: [
         {
           label: "canonical issue",
@@ -1493,6 +1496,63 @@ test("duplicate or superseded closes are allowed with evidence and comment", () 
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /duplicate or superseded/);
   assert.match(action.closeComment, /swept through the related work/);
+  assert.match(
+    action.closeComment,
+    /Canonical path: Keep the design thread on https:\/\/github\.com\/openclaw\/openclaw\/issues\/63829, with https:\/\/github\.com\/openclaw\/openclaw\/pull\/67584 as the active implementation path\./,
+  );
+  assert.ok(
+    action.closeComment.indexOf("Canonical path:") <
+      action.closeComment.indexOf("<details>\n<summary>Review details</summary>"),
+  );
+});
+
+test("duplicate or superseded comments surface canonical refs appended to summary text", () => {
+  const action = reviewActionForDecision({
+    item: item(),
+    decision: closeDecision({
+      closeReason: "duplicate_or_superseded",
+      summary: "Close as duplicate: an older tracker already covers this.",
+      bestSolution:
+        "Close as duplicate: an older tracker already covers this in https://github.com/openclaw/openclaw/issues/63829.",
+      evidence: [
+        {
+          label: "canonical issue",
+          detail: "Older tracker exists at https://github.com/openclaw/openclaw/issues/63829.",
+        },
+      ],
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(
+    action.closeComment,
+    /Canonical path: Close as duplicate: an older tracker already covers this in https:\/\/github\.com\/openclaw\/openclaw\/issues\/63829\./,
+  );
+});
+
+test("duplicate or superseded comments prefer canonical refs over generic best solution", () => {
+  const action = reviewActionForDecision({
+    item: item(),
+    decision: closeDecision({
+      closeReason: "duplicate_or_superseded",
+      summary: "Close as duplicate: an older tracker already covers this.",
+      bestSolution: "Keep following the canonical issue.",
+      evidence: [
+        {
+          label: "canonical issue",
+          detail: "Older tracker exists at https://github.com/openclaw/openclaw/issues/63829.",
+        },
+      ],
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(
+    action.closeComment,
+    /Canonical path: Older tracker exists at https:\/\/github\.com\/openclaw\/openclaw\/issues\/63829\./,
+  );
 });
 
 test("apply close reason filters support exact fast-close lanes", () => {
@@ -3432,6 +3492,20 @@ test("github activity workflow coalesces noisy observer runs", () => {
   assert.doesNotMatch(workflow, /github\.event\.issue\.number/);
   assert.doesNotMatch(workflow, /github\.event\.pull_request\.number/);
   assert.doesNotMatch(workflow, /github\.event\.client_payload\.activity\.subject\.number/);
+});
+
+test("spam scanner exact dispatches publish only per-comment audit records", () => {
+  const workflow = readFileSync(".github/workflows/spam-scanner.yml", "utf8");
+
+  assert.match(workflow, /format\('spam-scanner-\{0\}-issue-comment-\{1\}'/);
+  assert.match(workflow, /format\('spam-scanner-\{0\}-review-comment-\{1\}'/);
+  assert.match(workflow, /results\/spam-audit\/\$\{target_slug\}\/issue_comment-\$\{id\}\.json/);
+  assert.match(
+    workflow,
+    /results\/spam-audit\/\$\{target_slug\}\/pull_request_review_comment-\$\{id\}\.json/,
+  );
+  assert.match(workflow, /--path results\/spam-scanner\.json/);
+  assert.match(workflow, /cancel-in-progress: false/);
 });
 
 test("issue implementation workflow lets job intent choose dispatch capacity", () => {
