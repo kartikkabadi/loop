@@ -39,6 +39,8 @@ import {
   parseGhJson,
   parseGhJsonLines,
   parseDecision,
+  priorityLabelsForTest,
+  priorityLabelSchemeForTest,
   protectedLabels,
   realBehaviorProofSufficientLabelsForTest,
   relatedTitleSearchTerms,
@@ -3539,6 +3541,41 @@ test("ClawSweeper Telegram proof judgement controls the Mantis proof label", () 
     ),
     ["channel: telegram"],
   );
+});
+
+test("ClawSweeper priority label scheme exposes P0 through P3 labels", () => {
+  assert.deepEqual(priorityLabelSchemeForTest(), [
+    {
+      name: "priority:P0",
+      color: "B60205",
+      description:
+        "Critical: production-breaking, data-loss, security-impacting, or blocks core project operation; needs immediate maintainer attention.",
+    },
+    {
+      name: "priority:P1",
+      color: "D93F0B",
+      description:
+        "High: important user-facing bug, serious regression, broken major workflow, or urgent maintainer-priority work; should be handled soon.",
+    },
+    {
+      name: "priority:P2",
+      color: "FBCA04",
+      description:
+        "Medium: meaningful bug, incomplete behavior, polish issue, or useful improvement with limited blast radius; normal backlog priority.",
+    },
+    {
+      name: "priority:P3",
+      color: "0E8A16",
+      description:
+        "Low: minor cleanup, documentation, cosmetic polish, small ergonomics issue, or speculative improvement; handle when convenient.",
+    },
+  ]);
+});
+
+test("ClawSweeper priority labels follow the highest-severity review finding", () => {
+  assert.deepEqual(priorityLabelsForTest(["bug"], [2]), ["bug", "priority:P2"]);
+  assert.deepEqual(priorityLabelsForTest(["bug", "priority:P3"], [1, 3]), ["bug", "priority:P1"]);
+  assert.deepEqual(priorityLabelsForTest(["priority:P0", "bug"], []), ["bug"]);
 });
 
 test("review workflow gives Codex a read-only inspection token", () => {

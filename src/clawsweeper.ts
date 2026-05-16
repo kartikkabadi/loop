@@ -675,6 +675,39 @@ const PROOF_SUFFICIENT_LABEL_DESCRIPTION = "Contributor real behavior proof is s
 const TELEGRAM_VISIBLE_PROOF_LABEL = "mantis: telegram-visible-proof";
 const TELEGRAM_VISIBLE_PROOF_LABEL_COLOR = "5319e7";
 const TELEGRAM_VISIBLE_PROOF_LABEL_DESCRIPTION = "Mantis should capture Telegram visible proof.";
+const PRIORITY_LABELS = [
+  {
+    priority: 0,
+    name: "priority:P0",
+    color: "B60205",
+    description:
+      "Critical: production-breaking, data-loss, security-impacting, or blocks core project operation; needs immediate maintainer attention.",
+  },
+  {
+    priority: 1,
+    name: "priority:P1",
+    color: "D93F0B",
+    description:
+      "High: important user-facing bug, serious regression, broken major workflow, or urgent maintainer-priority work; should be handled soon.",
+  },
+  {
+    priority: 2,
+    name: "priority:P2",
+    color: "FBCA04",
+    description:
+      "Medium: meaningful bug, incomplete behavior, polish issue, or useful improvement with limited blast radius; normal backlog priority.",
+  },
+  {
+    priority: 3,
+    name: "priority:P3",
+    color: "0E8A16",
+    description:
+      "Low: minor cleanup, documentation, cosmetic polish, small ergonomics issue, or speculative improvement; handle when convenient.",
+  },
+] as const;
+const PRIORITY_LABEL_NAMES: ReadonlySet<string> = new Set(
+  PRIORITY_LABELS.map((label) => label.name),
+);
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -5042,6 +5075,83 @@ export function telegramVisibleProofLabelsForTest(
   return nextTelegramVisibleProofLabels(labels, { status: proofStatus });
 }
 
+type PriorityLabelSpec = (typeof PRIORITY_LABELS)[number];
+
+function priorityLabelForFindings(
+  findings: readonly Pick<ReviewFinding, "priority">[],
+): PriorityLabelSpec | null {
+  const priority = Math.min(...findings.map((finding) => finding.priority));
+  return PRIORITY_LABELS.find((label) => label.priority === priority) ?? null;
+}
+
+function nextPriorityLabels(
+  labels: readonly string[],
+  findings: readonly Pick<ReviewFinding, "priority">[],
+): string[] {
+  const nextLabels = labels.filter((label) => !PRIORITY_LABEL_NAMES.has(label));
+  const priorityLabel = priorityLabelForFindings(findings);
+  if (priorityLabel) nextLabels.push(priorityLabel.name);
+  return nextLabels;
+}
+
+export function priorityLabelSchemeForTest(): {
+  name: string;
+  color: string;
+  description: string;
+}[] {
+  return PRIORITY_LABELS.map(({ name, color, description }) => ({ name, color, description }));
+}
+
+export function priorityLabelsForTest(
+  labels: readonly string[],
+  priorities: readonly number[],
+): string[] {
+  const findings = priorities
+    .filter((priority): priority is ReviewFinding["priority"] => [0, 1, 2, 3].includes(priority))
+    .map((priority) => ({ priority }));
+  return nextPriorityLabels(labels, findings);
+}
+
+function ensurePriorityLabel(label: PriorityLabelSpec): void {
+  try {
+    ghWithRetry(
+      ["label", "create", label.name, "--color", label.color, "--description", label.description],
+      2,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!/already exists/i.test(message)) throw error;
+  }
+}
+
+function syncPriorityLabel(options: {
+  number: number;
+  labels: readonly string[];
+  findings: readonly Pick<ReviewFinding, "priority">[];
+  dryRun: boolean;
+}): string[] {
+  const nextLabels = nextPriorityLabels(options.labels, options.findings);
+  const labelsToRemove = options.labels.filter(
+    (label) => PRIORITY_LABEL_NAMES.has(label) && !nextLabels.includes(label),
+  );
+  const labelToAdd = nextLabels.find(
+    (label) => PRIORITY_LABEL_NAMES.has(label) && !options.labels.includes(label),
+  );
+  if (labelsToRemove.length === 0 && !labelToAdd) return nextLabels;
+  if (options.dryRun) return nextLabels;
+  if (labelToAdd) {
+    const priorityLabel = PRIORITY_LABELS.find((label) => label.name === labelToAdd);
+    if (priorityLabel) ensurePriorityLabel(priorityLabel);
+  }
+  for (const label of labelsToRemove) {
+    ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+  }
+  if (labelToAdd) {
+    ghWithRetry(["issue", "edit", String(options.number), "--add-label", labelToAdd]);
+  }
+  return nextLabels;
+}
+
 function syncTelegramVisibleProofLabel(options: {
   number: number;
   labels: readonly string[];
@@ -7133,6 +7243,12 @@ function applyDecisionsCommand(args: Args): void {
         number,
         labels: item.labels,
         proof: reportTelegramVisibleProof(markdown),
+        dryRun,
+      });
+      item.labels = syncPriorityLabel({
+        number,
+        labels: item.labels,
+        findings: reportReviewFindings(markdown),
         dryRun,
       });
     }
