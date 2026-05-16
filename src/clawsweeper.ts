@@ -64,6 +64,7 @@ type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
+type TriagePriority = "P0" | "P1" | "P2" | "P3" | "none";
 type ItemCategory =
   | "bug"
   | "regression"
@@ -179,6 +180,7 @@ interface ExistingReview {
   reviewedAt: string | undefined;
   itemUpdatedAt: string | undefined;
   reviewCommentSyncedAt: string | undefined;
+  labelsSyncedAt: string | undefined;
   decision: string | undefined;
   reviewStatus: string | undefined;
   reviewPolicy: string | undefined;
@@ -273,6 +275,7 @@ interface Decision {
   likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
+  triagePriority: TriagePriority;
   itemCategory: ItemCategory;
   reproductionStatus: ReproductionStatus;
   reproductionConfidence: Confidence;
@@ -670,9 +673,111 @@ const AUTOMERGE_LABEL = "clawsweeper:automerge";
 const AUTOFIX_LABEL = "clawsweeper:autofix";
 const PROOF_OVERRIDE_LABEL = "proof: override";
 const PROOF_SUFFICIENT_LABEL = "proof: sufficient";
+const PROOF_SUFFICIENT_LABEL_COLOR = "0e8a16";
+const PROOF_SUFFICIENT_LABEL_DESCRIPTION = "Contributor real behavior proof is sufficient.";
 const TELEGRAM_VISIBLE_PROOF_LABEL = "mantis: telegram-visible-proof";
 const TELEGRAM_VISIBLE_PROOF_LABEL_COLOR = "5319e7";
 const TELEGRAM_VISIBLE_PROOF_LABEL_DESCRIPTION = "Mantis should capture Telegram visible proof.";
+const PRIORITY_LABELS = [
+  {
+    priority: 0,
+    triagePriority: "P0",
+    name: "P0",
+    color: "B60205",
+    description: "Critical impact; needs immediate maintainer attention.",
+  },
+  {
+    priority: 1,
+    triagePriority: "P1",
+    name: "P1",
+    color: "D93F0B",
+    description: "High-priority user-facing bug, regression, or broken workflow.",
+  },
+  {
+    priority: 2,
+    triagePriority: "P2",
+    name: "P2",
+    color: "FBCA04",
+    description: "Normal backlog priority with limited blast radius.",
+  },
+  {
+    priority: 3,
+    triagePriority: "P3",
+    name: "P3",
+    color: "0E8A16",
+    description: "Low-priority cleanup, docs, polish, ergonomics, or speculative work.",
+  },
+] as const;
+const PRIORITY_LABEL_NAMES: ReadonlySet<string> = new Set(
+  PRIORITY_LABELS.map((label) => label.name),
+);
+const ISSUE_ADVISORY_LABELS = [
+  {
+    name: "clawsweeper:current-main-repro",
+    color: "1D76DB",
+    description: "ClawSweeper found a high-confidence current-main issue reproduction.",
+  },
+  {
+    name: "clawsweeper:source-repro",
+    color: "1D76DB",
+    description: "ClawSweeper found a high-confidence source-level issue reproduction.",
+  },
+  {
+    name: "clawsweeper:not-repro-on-main",
+    color: "C2E0C6",
+    description:
+      "ClawSweeper found high-confidence evidence that this issue no longer reproduces on main.",
+  },
+  {
+    name: "clawsweeper:needs-live-repro",
+    color: "FBCA04",
+    description:
+      "ClawSweeper needs live local, crabbox, or manual validation to confirm this issue.",
+  },
+  {
+    name: "clawsweeper:needs-info",
+    color: "D876E3",
+    description: "ClawSweeper needs more reporter information before it can verify this issue.",
+  },
+  {
+    name: "clawsweeper:linked-pr-open",
+    color: "5319E7",
+    description: "ClawSweeper found an open linked pull request for this issue.",
+  },
+  {
+    name: "clawsweeper:no-new-fix-pr",
+    color: "BFDADC",
+    description: "ClawSweeper does not recommend queueing a new automated fix PR for this issue.",
+  },
+  {
+    name: "clawsweeper:queueable-fix",
+    color: "0E8A16",
+    description: "ClawSweeper marked this issue as an existing queue_fix_pr work candidate.",
+  },
+  {
+    name: "clawsweeper:fix-shape-clear",
+    color: "0E8A16",
+    description: "ClawSweeper found a clear likely implementation shape for this issue.",
+  },
+  {
+    name: "clawsweeper:needs-maintainer-review",
+    color: "FBCA04",
+    description: "ClawSweeper marked this issue as needing maintainer review before automation.",
+  },
+  {
+    name: "clawsweeper:needs-product-decision",
+    color: "FBCA04",
+    description: "ClawSweeper marked this issue as needing a product or behavior decision.",
+  },
+  {
+    name: "clawsweeper:needs-security-review",
+    color: "B60205",
+    description: "ClawSweeper marked this issue as needing security-sensitive review.",
+  },
+] as const;
+const ISSUE_ADVISORY_LABEL_NAMES = new Set(
+  ISSUE_ADVISORY_LABELS.map((label) => label.name.toLowerCase()),
+);
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -687,6 +792,7 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
 const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
+const TRIAGE_PRIORITIES = new Set<TriagePriority>(["P0", "P1", "P2", "P3", "none"]);
 const ITEM_CATEGORIES = new Set<ItemCategory>([
   "bug",
   "regression",
@@ -752,6 +858,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "likelyOwners",
   "risks",
   "bestSolution",
+  "triagePriority",
   "itemCategory",
   "reproductionStatus",
   "reproductionConfidence",
@@ -1315,6 +1422,7 @@ function normalizeDecisionForItem(
     ...decision,
     reviewFindings,
     bestSolution: CLEAN_OPENCLAW_PR_REVIEW_NEXT_STEP,
+    triagePriority: decision.triagePriority,
     overallCorrectness:
       decision.overallCorrectness === "patch is incorrect"
         ? "patch is correct"
@@ -1429,6 +1537,11 @@ export function parseDecision(value: unknown, item?: DecisionNormalizationItem):
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
+    triagePriority: requireEnum(
+      record.triagePriority,
+      TRIAGE_PRIORITIES,
+      "decision.triagePriority",
+    ),
     itemCategory: requireEnum(record.itemCategory, ITEM_CATEGORIES, "decision.itemCategory"),
     reproductionStatus: requireEnum(
       record.reproductionStatus,
@@ -2145,12 +2258,20 @@ function compactPullFile(value: unknown): unknown {
   const file = asRecord(value);
   return {
     filename: file.filename,
+    previous_filename: file.previous_filename,
     status: file.status,
     additions: file.additions,
     deletions: file.deletions,
     changes: file.changes,
     patch: truncateText(file.patch, 2000),
   };
+}
+
+function compactPullFilePaths(value: unknown): string[] {
+  const file = asRecord(value);
+  return [file.filename, file.previous_filename].filter(
+    (path): path is string => typeof path === "string" && path.length > 0,
+  );
 }
 
 function compactPullCommit(value: unknown): unknown {
@@ -2291,7 +2412,8 @@ function ensureDir(path: string): void {
 
 function frontMatterValue(markdown: string, key: string): string | undefined {
   const match = markdown.match(new RegExp(`^${key}:\\s*(.+)$`, "m"));
-  return match?.[1]?.trim().replace(/^"|"$/g, "");
+  const value = match?.[1]?.trim();
+  return value?.startsWith('"') && value.endsWith('"') ? value.slice(1, -1) : value;
 }
 
 export function applyDecisionPriority(markdown: string, applyKind: ApplyKind): number {
@@ -2379,6 +2501,10 @@ function frontMatterStringArray(markdown: string, key: string): string[] {
     .filter(Boolean);
 }
 
+function frontMatterBoolean(markdown: string, key: string): boolean {
+  return /^true$/i.test(frontMatterValue(markdown, key) ?? "");
+}
+
 function existingReview(
   item: Pick<Item, "number" | "repo">,
   itemsDir: string,
@@ -2397,6 +2523,7 @@ function existingReview(
     reviewedAt: frontMatterValue(markdown, "reviewed_at"),
     itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
     reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+    labelsSyncedAt: frontMatterValue(markdown, "labels_synced_at"),
     decision: frontMatterValue(markdown, "decision"),
     reviewStatus: effectiveReviewStatus(markdown),
     reviewPolicy: frontMatterValue(markdown, "review_policy"),
@@ -2424,6 +2551,7 @@ function buildExistingReviewIndex(itemsDir: string): ExistingReviewIndex {
       reviewedAt: frontMatterValue(markdown, "reviewed_at"),
       itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
       reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+      labelsSyncedAt: frontMatterValue(markdown, "labels_synced_at"),
       decision: frontMatterValue(markdown, "decision"),
       reviewStatus: effectiveReviewStatus(markdown),
       reviewPolicy: frontMatterValue(markdown, "review_policy"),
@@ -2501,13 +2629,18 @@ function hasActivitySinceReview(item: Item, review: ExistingReview | null): bool
   const updatedAt = Date.parse(item.updatedAt);
   const reviewedAt = reviewedAtMs(review);
   const reviewCommentSyncedAt = timestampMs(review.reviewCommentSyncedAt);
+  const labelsSyncedAt = timestampMs(review.labelsSyncedAt);
+  const botOwnedSyncedAt = Math.max(
+    reviewCommentSyncedAt ?? -Infinity,
+    labelsSyncedAt ?? -Infinity,
+  );
   if (review.itemUpdatedAt) {
     if (item.updatedAt === review.itemUpdatedAt) return false;
     if (Number.isFinite(updatedAt) && reviewedAt !== null && updatedAt <= reviewedAt) return false;
     if (
       Number.isFinite(updatedAt) &&
-      reviewCommentSyncedAt !== null &&
-      updatedAt <= reviewCommentSyncedAt
+      Number.isFinite(botOwnedSyncedAt) &&
+      updatedAt <= botOwnedSyncedAt
     ) {
       return false;
     }
@@ -2515,8 +2648,8 @@ function hasActivitySinceReview(item: Item, review: ExistingReview | null): bool
   }
   if (
     Number.isFinite(updatedAt) &&
-    reviewCommentSyncedAt !== null &&
-    updatedAt <= reviewCommentSyncedAt
+    Number.isFinite(botOwnedSyncedAt) &&
+    updatedAt <= botOwnedSyncedAt
   ) {
     return false;
   }
@@ -3680,6 +3813,7 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
+    triagePriority: "none",
     itemCategory: "unclear",
     reproductionStatus: "unclear",
     reproductionConfidence: "low",
@@ -4556,7 +4690,7 @@ function closeIntro(reason: CloseReason): string {
   }
 }
 
-function closeOutro(reason: CloseReason): string {
+function closeOutro(reason: CloseReason, canonicalLinks: string[] = []): string {
   switch (reason) {
     case "implemented_on_main":
       return "So I’m closing this as already implemented rather than keeping a duplicate issue open.";
@@ -4565,12 +4699,112 @@ function closeOutro(reason: CloseReason): string {
     case "clawhub":
       return `So I’m closing this as a scope-fit item for the plugin/community path. Please upload or publish it through ${markdownLink("ClawHub.com", targetProfile().communityUrl ?? "https://clawhub.ai/")} so it can live as an installable community skill instead of a bundled OpenClaw core change.`;
     case "duplicate_or_superseded":
-      return "So I’m closing this here and keeping the remaining discussion on the canonical linked item.";
+      return canonicalLinks.length
+        ? `So I’m closing this here and keeping the remaining discussion on ${formatCanonicalLinks(canonicalLinks)}.`
+        : "So I’m closing this here because the remaining work is already tracked in the canonical issue.";
     case "not_actionable_in_repo":
       return "So I’m closing this as outside the OpenClaw source repository rather than keeping it open as core work.";
     default:
       return "";
   }
+}
+
+function issueOrPullReferenceNumbers(value: string): string[] {
+  return [
+    ...value.matchAll(/https:\/\/github\.com\/[^\s)]+\/(?:issues|pull)\/(\d+)|#(\d+)\b/g),
+  ].map((match) => match[1] ?? match[2] ?? "");
+}
+
+function issueOrPullReferenceUrls(value: string): string[] {
+  return [
+    ...value.matchAll(
+      /https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/(?:issues|pull)\/\d+/g,
+    ),
+  ].map((match) => match[0]);
+}
+
+function itemPublicUrl(item?: { repo?: string; kind?: ItemKind; number?: number }): string {
+  if (!item?.number || !Number.isInteger(item.number) || item.number <= 0) return "";
+  return repoUrlFor(
+    item.repo ?? targetRepo(),
+    `/${item.kind === "pull_request" ? "pull" : "issues"}/${item.number}`,
+  );
+}
+
+function addsIssueOrPullReference(candidate: string, summaryLine: string): boolean {
+  const summaryRefs = new Set(issueOrPullReferenceNumbers(summaryLine));
+  return issueOrPullReferenceNumbers(candidate).some((ref) => ref && !summaryRefs.has(ref));
+}
+
+function duplicateCanonicalTexts(options: {
+  reason: CloseReason;
+  bestSolutionLine: string;
+  evidence: Evidence[];
+}): string[] {
+  if (options.reason !== "duplicate_or_superseded") return [];
+  return [
+    options.bestSolutionLine,
+    ...options.evidence
+      .filter((entry) => /\b(?:canonical|duplicate|superseded|implementation)\b/i.test(entry.label))
+      .map((entry) => sentence(entry.detail)),
+  ];
+}
+
+function duplicateCanonicalLinkTexts(options: {
+  reason: CloseReason;
+  bestSolutionLine: string;
+  evidence: Evidence[];
+}): string[] {
+  if (options.reason !== "duplicate_or_superseded") return [];
+  return [
+    options.bestSolutionLine,
+    ...options.evidence
+      .filter((entry) => /\b(?:canonical|duplicate|superseded|implementation)\b/i.test(entry.label))
+      .map((entry) => sentence(entry.detail)),
+  ];
+}
+
+function duplicateCanonicalLinks(options: {
+  reason: CloseReason;
+  bestSolutionLine: string;
+  evidence: Evidence[];
+  currentItem?: { repo?: string; kind?: ItemKind; number?: number } | undefined;
+}): string[] {
+  const seen = new Set<string>();
+  const links: string[] = [];
+  const currentItemUrl = itemPublicUrl(options.currentItem);
+  for (const text of duplicateCanonicalLinkTexts(options)) {
+    for (const link of issueOrPullReferenceUrls(text)) {
+      if (link === currentItemUrl) continue;
+      if (seen.has(link)) continue;
+      seen.add(link);
+      links.push(link);
+    }
+  }
+  return links;
+}
+
+function duplicateCanonicalPathLine(options: {
+  reason: CloseReason;
+  summaryLine: string;
+  bestSolutionLine: string;
+  evidence: Evidence[];
+}): string {
+  const candidates = duplicateCanonicalTexts(options);
+  const canonical =
+    candidates.find(
+      (candidate) => candidate && addsIssueOrPullReference(candidate, options.summaryLine),
+    ) ??
+    candidates.find(
+      (candidate) => candidate && publicReviewTextDiffers(candidate, options.summaryLine),
+    );
+  return canonical ? `Canonical path: ${canonical}` : "";
+}
+
+function formatCanonicalLinks(links: string[]): string {
+  if (links.length <= 1) return links[0] ?? "the canonical issue";
+  if (links.length === 2) return `${links[0]} and ${links[1]}`;
+  return `${links.slice(0, -1).join(", ")}, and ${links[links.length - 1]}`;
 }
 
 function reportEvidence(markdown: string): Evidence[] {
@@ -4664,6 +4898,11 @@ function reportOverallConfidenceScore(markdown: string): number {
   const raw = sectionLineValue(section, "Overall confidence");
   const score = raw ? Number(raw) : 0;
   return Number.isFinite(score) && score >= 0 && score <= 1 ? score : 0;
+}
+
+function triagePriorityFromReport(markdown: string): TriagePriority {
+  const value = frontMatterValue(markdown, "triage_priority");
+  return TRIAGE_PRIORITIES.has(value as TriagePriority) ? (value as TriagePriority) : "none";
 }
 
 function reportReviewFindings(markdown: string): ReviewFinding[] {
@@ -4764,6 +5003,15 @@ function defaultRealBehaviorProof(markdown: string): RealBehaviorProof {
       needsContributorAction: false,
     };
   }
+  if (isDocsOnlyPullRequestReport(markdown)) {
+    return {
+      status: "not_applicable",
+      summary:
+        "Real behavior proof is not required because this PR only changes files under docs/.",
+      evidenceKind: "not_applicable",
+      needsContributorAction: false,
+    };
+  }
   return {
     status: "not_applicable",
     summary:
@@ -4776,10 +5024,12 @@ function defaultRealBehaviorProof(markdown: string): RealBehaviorProof {
 }
 
 function reportRealBehaviorProof(markdown: string): RealBehaviorProof {
+  const defaultProof = defaultRealBehaviorProof(markdown);
+  if (defaultProof.status === "override" || isDocsOnlyPullRequestReport(markdown)) {
+    return defaultProof;
+  }
   const section = reviewSectionValue(markdown, "realBehaviorProof");
   if (!section.trim()) {
-    const defaultProof = defaultRealBehaviorProof(markdown);
-    if (defaultProof.status === "override") return defaultProof;
     if (isExternalPullRequestReport(markdown)) {
       return {
         status: "missing",
@@ -4863,6 +5113,21 @@ function normalizeRealBehaviorProof(proof: RealBehaviorProof): RealBehaviorProof
   return proof;
 }
 
+function pullRequestFilePathsFromReport(markdown: string): string[] {
+  return frontMatterStringArray(markdown, "pull_files");
+}
+
+function isDocsPath(file: string): boolean {
+  return file.startsWith("docs/");
+}
+
+function isDocsOnlyPullRequestReport(markdown: string): boolean {
+  if (frontMatterValue(markdown, "type") !== "pull_request") return false;
+  if (frontMatterBoolean(markdown, "pull_files_truncated")) return false;
+  const files = pullRequestFilePathsFromReport(markdown);
+  return files.length > 0 && files.every(isDocsPath);
+}
+
 function nextRealBehaviorProofSufficientLabels(
   labels: readonly string[],
   proof: Pick<RealBehaviorProof, "status">,
@@ -4899,6 +5164,252 @@ export function telegramVisibleProofLabelsForTest(
     ? (status as TelegramVisibleProofStatus)
     : "not_needed";
   return nextTelegramVisibleProofLabels(labels, { status: proofStatus });
+}
+
+type PriorityLabelSpec = (typeof PRIORITY_LABELS)[number];
+
+function priorityLabelForTriage(priority: TriagePriority): PriorityLabelSpec | null {
+  return PRIORITY_LABELS.find((label) => label.triagePriority === priority) ?? null;
+}
+
+function nextPriorityLabels(labels: readonly string[], triagePriority: TriagePriority): string[] {
+  const nextLabels = labels.filter((label) => !PRIORITY_LABEL_NAMES.has(label));
+  const priorityLabel = priorityLabelForTriage(triagePriority);
+  if (priorityLabel) nextLabels.push(priorityLabel.name);
+  return nextLabels;
+}
+
+export function priorityLabelSchemeForTest(): {
+  name: string;
+  color: string;
+  description: string;
+}[] {
+  return PRIORITY_LABELS.map(({ name, color, description }) => ({ name, color, description }));
+}
+
+export function priorityLabelsForTest(labels: readonly string[], triagePriority: string): string[] {
+  const priority = TRIAGE_PRIORITIES.has(triagePriority as TriagePriority)
+    ? (triagePriority as TriagePriority)
+    : "none";
+  return nextPriorityLabels(labels, priority);
+}
+
+function ensurePriorityLabel(label: PriorityLabelSpec): void {
+  try {
+    ghWithRetry(
+      ["label", "create", label.name, "--color", label.color, "--description", label.description],
+      2,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!/already exists/i.test(message)) throw error;
+  }
+}
+
+interface IssueAdvisoryLabelState {
+  type: string | undefined;
+  itemCategory: string | undefined;
+  reproductionStatus: string | undefined;
+  reproductionConfidence: string | undefined;
+  requiresProductDecision: boolean;
+  securityReviewStatus: string | undefined;
+  workCandidate: string | undefined;
+  workStatus: string | undefined;
+  workConfidence: string | undefined;
+  hasWorkShape: boolean;
+  hasOpenLinkedPullRequest: boolean;
+}
+
+function isIssueAdvisoryLabel(label: string): boolean {
+  return ISSUE_ADVISORY_LABEL_NAMES.has(label.toLowerCase());
+}
+
+function wantedIssueAdvisoryLabels(state: IssueAdvisoryLabelState): Set<string> {
+  const labels = new Set<string>();
+  if (state.type !== "issue") return labels;
+  if (state.reproductionConfidence === "high") {
+    if (state.reproductionStatus === "reproduced") labels.add("clawsweeper:current-main-repro");
+    if (state.reproductionStatus === "source_reproducible") labels.add("clawsweeper:source-repro");
+    if (state.reproductionStatus === "not_reproduced") labels.add("clawsweeper:not-repro-on-main");
+  }
+  if (
+    state.reproductionStatus === "source_reproducible" &&
+    state.reproductionConfidence !== "high"
+  ) {
+    labels.add("clawsweeper:needs-live-repro");
+  }
+  if (state.reproductionStatus === "unclear" && state.reproductionConfidence !== "high") {
+    labels.add("clawsweeper:needs-info");
+  }
+  if (state.hasOpenLinkedPullRequest) {
+    labels.add("clawsweeper:linked-pr-open");
+  }
+  if (
+    state.workCandidate === "queue_fix_pr" &&
+    state.workStatus === "candidate" &&
+    state.workConfidence === "high"
+  ) {
+    labels.add("clawsweeper:queueable-fix");
+  }
+  if (
+    state.workConfidence === "high" &&
+    state.hasWorkShape &&
+    (state.workCandidate === "queue_fix_pr" || state.workCandidate === "manual_review")
+  ) {
+    labels.add("clawsweeper:fix-shape-clear");
+  }
+  if (state.workCandidate === "manual_review" || state.workStatus === "manual_review") {
+    labels.add("clawsweeper:needs-maintainer-review");
+  }
+  if (state.requiresProductDecision) {
+    labels.add("clawsweeper:needs-product-decision");
+  }
+  if (state.itemCategory === "security" || state.securityReviewStatus === "needs_attention") {
+    labels.add("clawsweeper:needs-security-review");
+  }
+  if (
+    state.hasOpenLinkedPullRequest ||
+    state.workCandidate === "manual_review" ||
+    state.workStatus === "manual_review" ||
+    state.requiresProductDecision ||
+    state.itemCategory === "security" ||
+    state.securityReviewStatus === "needs_attention"
+  ) {
+    labels.add("clawsweeper:no-new-fix-pr");
+  }
+  return labels;
+}
+
+function nextIssueAdvisoryLabels(
+  labels: readonly string[],
+  state: IssueAdvisoryLabelState,
+): string[] {
+  const wantedLabels = wantedIssueAdvisoryLabels(state);
+  const nextLabels = labels.filter((label) => !isIssueAdvisoryLabel(label));
+  for (const label of ISSUE_ADVISORY_LABELS) {
+    if (wantedLabels.has(label.name)) nextLabels.push(label.name);
+  }
+  return nextLabels;
+}
+
+export function issueAdvisoryLabelsForTest(
+  labels: readonly string[],
+  state: Partial<IssueAdvisoryLabelState>,
+): string[] {
+  return nextIssueAdvisoryLabels(labels, {
+    type: state.type,
+    itemCategory: state.itemCategory,
+    reproductionStatus: state.reproductionStatus,
+    reproductionConfidence: state.reproductionConfidence,
+    requiresProductDecision: state.requiresProductDecision ?? false,
+    securityReviewStatus: state.securityReviewStatus,
+    workCandidate: state.workCandidate,
+    workStatus: state.workStatus,
+    workConfidence: state.workConfidence,
+    hasWorkShape: state.hasWorkShape ?? false,
+    hasOpenLinkedPullRequest: state.hasOpenLinkedPullRequest ?? false,
+  });
+}
+
+function issueAdvisoryLabelStateFromReport(
+  markdown: string,
+  options: { hasOpenLinkedPullRequest?: boolean } = {},
+): IssueAdvisoryLabelState {
+  const workLikelyFiles = frontMatterStringArray(markdown, "work_likely_files");
+  const workValidation = frontMatterStringArray(markdown, "work_validation");
+  const workPrompt = reviewSectionValue(markdown, "repairWorkPrompt").trim();
+  return {
+    type: frontMatterValue(markdown, "type"),
+    itemCategory: frontMatterValue(markdown, "item_category"),
+    reproductionStatus: frontMatterValue(markdown, "reproduction_status"),
+    reproductionConfidence: frontMatterValue(markdown, "reproduction_confidence"),
+    requiresProductDecision: frontMatterValue(markdown, "requires_product_decision") === "true",
+    securityReviewStatus: reportSecurityReview(markdown).status,
+    workCandidate: frontMatterValue(markdown, "work_candidate"),
+    workStatus: frontMatterValue(markdown, "work_status"),
+    workConfidence: frontMatterValue(markdown, "work_confidence"),
+    hasWorkShape: Boolean(workPrompt || workLikelyFiles.length || workValidation.length),
+    hasOpenLinkedPullRequest: options.hasOpenLinkedPullRequest === true,
+  };
+}
+
+function ensureIssueAdvisoryLabel(name: string): void {
+  const definition = ISSUE_ADVISORY_LABELS.find((label) => label.name === name);
+  if (!definition) return;
+  try {
+    ghWithRetry(
+      [
+        "label",
+        "create",
+        definition.name,
+        "--color",
+        definition.color,
+        "--description",
+        definition.description,
+      ],
+      2,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!/already exists/i.test(message)) throw error;
+  }
+}
+
+function syncPriorityLabel(options: {
+  number: number;
+  labels: readonly string[];
+  triagePriority: TriagePriority;
+  dryRun: boolean;
+}): { labels: string[]; changed: boolean } {
+  const nextLabels = nextPriorityLabels(options.labels, options.triagePriority);
+  const labelsToRemove = options.labels.filter(
+    (label) => PRIORITY_LABEL_NAMES.has(label) && !nextLabels.includes(label),
+  );
+  const labelToAdd = nextLabels.find(
+    (label) => PRIORITY_LABEL_NAMES.has(label) && !options.labels.includes(label),
+  );
+  const changed = labelsToRemove.length > 0 || Boolean(labelToAdd);
+  if (!changed) return { labels: nextLabels, changed };
+  if (options.dryRun) return { labels: nextLabels, changed };
+  if (labelToAdd) {
+    const priorityLabel = PRIORITY_LABELS.find((label) => label.name === labelToAdd);
+    if (priorityLabel) ensurePriorityLabel(priorityLabel);
+  }
+  for (const label of labelsToRemove) {
+    ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+  }
+  if (labelToAdd) {
+    ghWithRetry(["issue", "edit", String(options.number), "--add-label", labelToAdd]);
+  }
+  return { labels: nextLabels, changed };
+}
+
+function syncIssueAdvisoryLabels(options: {
+  number: number;
+  labels: readonly string[];
+  state: IssueAdvisoryLabelState;
+  dryRun: boolean;
+}): { labels: string[]; changed: boolean } {
+  const nextLabels = nextIssueAdvisoryLabels(options.labels, options.state);
+  const currentLabelKeys = new Set(options.labels.map((label) => label.toLowerCase()));
+  const nextLabelKeys = new Set(nextLabels.map((label) => label.toLowerCase()));
+  const labelsToAdd = nextLabels.filter(
+    (label) => isIssueAdvisoryLabel(label) && !currentLabelKeys.has(label.toLowerCase()),
+  );
+  const labelsToRemove = options.labels.filter(
+    (label) => isIssueAdvisoryLabel(label) && !nextLabelKeys.has(label.toLowerCase()),
+  );
+  const changed = labelsToAdd.length > 0 || labelsToRemove.length > 0;
+  if (!changed) return { labels: nextLabels, changed };
+  if (options.dryRun) return { labels: nextLabels, changed };
+  for (const label of labelsToAdd) {
+    ensureIssueAdvisoryLabel(label);
+    ghWithRetry(["issue", "edit", String(options.number), "--add-label", label]);
+  }
+  for (const label of labelsToRemove) {
+    ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+  }
+  return { labels: nextLabels, changed };
 }
 
 function syncTelegramVisibleProofLabel(options: {
@@ -4943,6 +5454,38 @@ function ensureTelegramVisibleProofLabel(): void {
   }
 }
 
+function missingLabelError(error: unknown, label: string): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(`'${label}' not found`) || message.includes(`"${label}" not found`);
+}
+
+export function isMissingGitHubLabelErrorForTest(message: string, label: string): boolean {
+  return missingLabelError(new Error(message), label);
+}
+
+function ensureRealBehaviorProofSufficientLabel(): boolean {
+  try {
+    ghWithRetry(
+      [
+        "label",
+        "create",
+        PROOF_SUFFICIENT_LABEL,
+        "--color",
+        PROOF_SUFFICIENT_LABEL_COLOR,
+        "--description",
+        PROOF_SUFFICIENT_LABEL_DESCRIPTION,
+      ],
+      2,
+    );
+    return true;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/already exists/i.test(message)) return true;
+    console.warn(`Skipping optional label sync for ${PROOF_SUFFICIENT_LABEL}: ${message}`);
+    return false;
+  }
+}
+
 function syncRealBehaviorProofSufficientLabel(options: {
   number: number;
   labels: readonly string[];
@@ -4954,13 +5497,24 @@ function syncRealBehaviorProofSufficientLabel(options: {
   const wantsLabel = nextLabels.includes(PROOF_SUFFICIENT_LABEL);
   if (hadLabel === wantsLabel) return nextLabels;
   if (options.dryRun) return nextLabels;
-  ghWithRetry([
-    "issue",
-    "edit",
-    String(options.number),
-    wantsLabel ? "--add-label" : "--remove-label",
-    PROOF_SUFFICIENT_LABEL,
-  ]);
+  if (wantsLabel && !ensureRealBehaviorProofSufficientLabel()) return [...options.labels];
+  try {
+    ghWithRetry([
+      "issue",
+      "edit",
+      String(options.number),
+      wantsLabel ? "--add-label" : "--remove-label",
+      PROOF_SUFFICIENT_LABEL,
+    ]);
+  } catch (error) {
+    if (!missingLabelError(error, PROOF_SUFFICIENT_LABEL)) throw error;
+    console.warn(
+      `Skipping optional label sync for ${PROOF_SUFFICIENT_LABEL}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+    return wantsLabel ? [...options.labels] : nextLabels;
+  }
   return nextLabels;
 }
 
@@ -4979,6 +5533,7 @@ function isExternalPullRequestReport(markdown: string): boolean {
 function realBehaviorProofBlocksMerge(markdown: string): boolean {
   if (!isExternalPullRequestReport(markdown)) return false;
   if (frontMatterStringArray(markdown, "labels").includes(PROOF_OVERRIDE_LABEL)) return false;
+  if (isDocsOnlyPullRequestReport(markdown)) return false;
   const proof = reportRealBehaviorProof(markdown);
   return (
     proof.needsContributorAction ||
@@ -5124,6 +5679,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
+    triagePriority: triagePriorityFromReport(markdown),
     itemCategory:
       (frontMatterValue(markdown, "item_category") as ItemCategory | undefined) ?? "unclear",
     reproductionStatus:
@@ -5336,6 +5892,7 @@ function renderCloseComment(options: {
   fixedPullRequest?: FixedPullRequest | null;
   securityReview?: SecurityReview;
   reviewLine: string;
+  currentItem?: { repo?: string; kind?: ItemKind; number?: number } | undefined;
 }): string {
   const evidence = options.evidence.slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = (options.likelyOwners ?? []).slice(0, 5).map(likelyOwnerLine);
@@ -5350,8 +5907,21 @@ function renderCloseComment(options: {
       )}.`,
     );
   }
-  const details: string[] = [];
   const bestSolutionLine = sentence(options.bestSolution ?? "");
+  const canonicalLinks = duplicateCanonicalLinks({
+    reason: options.reason,
+    bestSolutionLine,
+    evidence: options.evidence,
+    currentItem: options.currentItem,
+  });
+  const canonicalPathLine = duplicateCanonicalPathLine({
+    reason: options.reason,
+    summaryLine,
+    bestSolutionLine,
+    evidence: options.evidence,
+  });
+  if (canonicalPathLine) lines.push("", canonicalPathLine);
+  const details: string[] = [];
   if (bestSolutionLine && publicReviewTextDiffers(bestSolutionLine, summaryLine)) {
     details.push("Best possible solution:", "", bestSolutionLine);
   }
@@ -5365,7 +5935,7 @@ function renderCloseComment(options: {
   if (evidence.length) details.push("", "What I checked:", "", ...evidence);
   if (likelyOwners.length) details.push("", "Likely related people:", "", ...likelyOwners);
 
-  const outro = closeOutro(options.reason);
+  const outro = closeOutro(options.reason, canonicalLinks);
   if (outro) lines.push("", outro);
   if (options.reviewLine) details.push("", options.reviewLine);
   const detailsBlock = collapsedDetailsBlock("Review details", details);
@@ -5387,6 +5957,11 @@ function renderCloseCommentFromReport(markdown: string, reason: CloseReason): st
       fixedPullRequest: fixedPullRequestFromReport(markdown),
       securityReview: reportSecurityReview(markdown),
       reviewLine: closeReviewLineFromReport(markdown),
+      currentItem: {
+        repo: markdownRepository(markdown),
+        number: Number(frontMatterValue(markdown, "number")),
+        kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
+      },
     }),
     Number(frontMatterValue(markdown, "number")),
     (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
@@ -5422,6 +5997,7 @@ function normalizeComment(
   decision: Decision,
   git: GitInfo,
   runtime?: Pick<ReviewRuntime, "model" | "reasoningEffort">,
+  item?: { repo?: string; kind?: ItemKind; number?: number },
 ): string {
   return renderCloseComment({
     reason: decision.closeReason,
@@ -5434,6 +6010,7 @@ function normalizeComment(
     fixedPullRequest: decision.fixedPullRequest ?? null,
     securityReview: decision.securityReview,
     reviewLine: closeReviewLineFromDecision(decision, git, runtime),
+    currentItem: item,
   });
 }
 
@@ -6166,7 +6743,12 @@ export function reviewActionForDecision(options: {
     requireCloseComment: false,
   });
   if (!validation.ok) return { actionTaken: validation.actionTaken, closeComment: "" };
-  const closeComment = normalizeComment(options.decision, options.git, options.runtime);
+  const closeComment = normalizeComment(
+    options.decision,
+    options.git,
+    options.runtime,
+    options.item,
+  );
   if (!hasUsableCloseComment(closeComment)) {
     return { actionTaken: "skipped_invalid_decision", closeComment: "" };
   }
@@ -6294,6 +6876,16 @@ function renderTelegramVisibleProofReportSection(decision: Decision): string {
   ].join("\n");
 }
 
+export function pullRequestFilePathsFromContextForTest(context: {
+  pullFiles?: unknown[];
+}): string[] {
+  return (context.pullFiles ?? []).flatMap(compactPullFilePaths);
+}
+
+function pullRequestFilePathsFromContext(context: ItemContext): string[] {
+  return pullRequestFilePathsFromContextForTest(context);
+}
+
 function markdownFor(options: {
   item: Item;
   context: ItemContext;
@@ -6349,6 +6941,8 @@ function markdownFor(options: {
   const telegramVisibleProof = renderTelegramVisibleProofReportSection(options.decision);
   const workCandidateSection = renderWorkCandidateReportSection(options.decision);
   const repairWorkPromptSection = renderRepairWorkPromptReportSection(options.decision);
+  const pullFiles = pullRequestFilePathsFromContext(options.context);
+  const pullFilesTruncated = Boolean(options.context.counts?.pullFilesTruncated);
   return `---
 number: ${options.item.number}
 repository: ${options.item.repo}
@@ -6409,6 +7003,9 @@ work_prompt_sha256: ${options.decision.workPrompt ? sha256(options.decision.work
 work_cluster_refs: ${jsonFrontMatterValue(options.decision.workClusterRefs)}
 work_validation: ${jsonFrontMatterValue(options.decision.workValidation)}
 work_likely_files: ${jsonFrontMatterValue(options.decision.workLikelyFiles)}
+triage_priority: ${options.decision.triagePriority}
+pull_files: ${jsonFrontMatterValue(pullFiles)}
+pull_files_truncated: ${pullFilesTruncated}
 item_category: ${options.decision.itemCategory}
 reproduction_status: ${options.decision.reproductionStatus}
 reproduction_confidence: ${options.decision.reproductionConfidence}
@@ -6886,6 +7483,9 @@ function applyDecisionsCommand(args: Args): void {
     }
     const { item, state } = fetchItem(number);
     let currentContext: ItemContext | undefined;
+    let currentClosingPullRequests: unknown[] | undefined;
+    let clawSweeperLabelsChanged = false;
+    let issueAdvisoryLabelsChanged = false;
     const currentItemContext = (): ItemContext => {
       currentContext ??= collectItemContext(item);
       return currentContext;
@@ -6953,6 +7553,9 @@ function applyDecisionsCommand(args: Args): void {
     }
     const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
     const reviewCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingReviewComment);
+    const unchangedSinceReview = storedUpdatedAt
+      ? !updatedSinceReview || reviewCommentOnlyUpdate
+      : false;
     if (state !== "open") {
       if (item.closedAt) {
         markdown = replaceFrontMatterValue(markdown, "current_item_closed_at", item.closedAt);
@@ -7027,9 +7630,39 @@ function applyDecisionsCommand(args: Args): void {
         continue;
       }
     }
+    const isCurrentCompleteReport =
+      frontMatterValue(markdown, "review_status") === "complete" && unchangedSinceReview;
+    if (state === "open" && isCurrentCompleteReport) {
+      const syncResult = syncPriorityLabel({
+        number,
+        labels: item.labels,
+        triagePriority: triagePriorityFromReport(markdown),
+        dryRun,
+      });
+      item.labels = syncResult.labels;
+      clawSweeperLabelsChanged ||= syncResult.changed;
+      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    }
+    if (state === "open" && item.kind === "issue" && !isCloseProposal && isCurrentCompleteReport) {
+      currentClosingPullRequests = closingPullRequestsForIssue(number);
+      const syncResult = syncIssueAdvisoryLabels({
+        number,
+        labels: item.labels,
+        state: issueAdvisoryLabelStateFromReport(markdown, {
+          hasOpenLinkedPullRequest:
+            openClosingPullRequestApplyReason(currentClosingPullRequests) !== null,
+        }),
+        dryRun,
+      });
+      item.labels = syncResult.labels;
+      issueAdvisoryLabelsChanged = syncResult.changed;
+      clawSweeperLabelsChanged ||= syncResult.changed;
+      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    }
     if (isCloseProposal && item.kind === "issue") {
+      currentClosingPullRequests ??= closingPullRequestsForIssue(number);
       const openClosingPullRequestReason = openClosingPullRequestApplyReason(
-        closingPullRequestsForIssue(number),
+        currentClosingPullRequests,
       );
       if (openClosingPullRequestReason) {
         if (markApplySkipped("skipped_open_closing_pr", openClosingPullRequestReason)) break;
@@ -7067,6 +7700,19 @@ function applyDecisionsCommand(args: Args): void {
       needsReviewCommentHashSync,
       needsReviewCommentReferenceSync,
     });
+    if (clawSweeperLabelsChanged && !dryRun) {
+      markdown = replaceFrontMatterValue(markdown, "labels_synced_at", new Date().toISOString());
+    }
+    const labelSyncReason = issueAdvisoryLabelsChanged
+      ? dryRun
+        ? "dry-run: would sync advisory issue labels"
+        : "synced advisory issue labels"
+      : dryRun
+        ? "dry-run: would sync ClawSweeper labels"
+        : "synced ClawSweeper labels";
+    const labelSyncProgressMessage = issueAdvisoryLabelsChanged
+      ? `synced advisory issue labels #${number}`
+      : `synced ClawSweeper labels #${number}`;
     if (needsReviewCommentSync) {
       const lockedReason = needsReviewCommentBodySync ? lockedConversationApplyReason(item) : null;
       if (lockedReason) {
@@ -7107,6 +7753,21 @@ function applyDecisionsCommand(args: Args): void {
       });
       processedCount += 1;
       maybeLogProgress(`synced review comment #${number}`);
+      if (processedCount >= processedLimit) break;
+    }
+    if (
+      clawSweeperLabelsChanged &&
+      !needsReviewCommentSync &&
+      (!isCloseProposal || syncCommentsOnly)
+    ) {
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "kept_open",
+        reason: labelSyncReason,
+      });
+      processedCount += 1;
+      maybeLogProgress(labelSyncProgressMessage);
       if (processedCount >= processedLimit) break;
     }
     if (syncCommentsOnly) continue;

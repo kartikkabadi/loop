@@ -12,6 +12,9 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added the first Cloudflare live dashboard for ClawSweeper observability, with
   active worker counts, pipeline rows, CI state, automerge timing, and optional
   signed status-event ingest.
+- Added a live-dashboard panel for the latest closed issues and pull requests
+  across configured target repositories.
+- Added 24-hour ClawSweeper-owned close stats to the live dashboard.
 - Added a live-dashboard CI refresher workflow that posts target pull request
   check summaries into Worker storage, so active rows can show stored PR check
   state without slow browser-time GitHub fanout.
@@ -24,6 +27,11 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added a light privacy reminder and stronger screenshot-or-video nudge to real behavior proof review guidance.
 - Added agent-led real behavior proof judgement so ClawSweeper can inspect linked screenshots, videos, logs, and terminal output with a read-only GitHub token, explain the proof verdict in the review comment, tell contributors how to trigger a fresh review after adding proof, and sync `proof: sufficient` when the evidence is convincing.
 - Added a real behavior proof assessment to PR reviews so missing, mock-only, or insufficient contributor proof blocks pass/automerge markers and asks for screenshots, terminal output, redacted logs, recordings, linked artifacts, or copied live output instead.
+- Added advisory issue labels for reproduction, linked-PR, work-lane,
+  missing-info, product-decision, and security-review routing states, projected
+  from existing review report fields without changing repair, merge, or close
+  behavior. Label-only syncs now record `labels_synced_at` so scheduler cadence
+  ignores ClawSweeper-owned label `updated_at` churn. Thanks @brokemac79.
 - Added `config/automation-limits.json` plus docs and a drift check so review,
   commit-review, repair, and issue-implementation capacity defaults have one
   checked-in source of truth.
@@ -36,6 +44,16 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Kept event re-review progress updates scoped to ClawSweeper-owned status
+  comments, so empty command markers cannot cause unrelated human comments to be
+  edited. Thanks @hxy91819.
+- Added live spam comment intake for GitHub activity events so deterministic
+  spam candidates dispatch exact comment scans immediately instead of waiting
+  for the hourly audit sweep.
+- Counted both trusted ClawSweeper bot logins in live-dashboard close stats.
+- Counted active live-dashboard workflow runs from GitHub status-filtered Actions pages so older in-progress reviews are not hidden by newer completed runs.
+- Reworked live-dashboard tables into compact linked rows so pipeline run links,
+  CI state, and side-panel items fit without cramped columns.
 - Replaced the state-repository PAT dependency with a short-lived GitHub App token for ClawSweeper state checkouts and publishes, so rotated PATs no longer break `openclaw/clawsweeper-state` access.
 - Clarified uneditable source PR replacement comments and PR bodies so they state
   the push-rights blocker, explain why source PRs are closed after a replacement
@@ -60,8 +78,16 @@ checkpoint, and status-only commits are intentionally omitted.
   the edge, retaining the last good browser snapshot, and reducing rate-prone
   GitHub detail calls so transient 403s no longer blank the pipeline.
 - Cleared stale `clawsweeper:human-review` and `clawsweeper:merge-ready` pause labels when a later exact-head trusted pass arrives for an automerge PR, so transient cancelled reviews no longer strand maintainer opt-ins.
-- Tightened spam scanner prefilters so GitHub context links and contributor
-  proof comments do not trigger audit records as spam candidates.
+- Tightened spam scanner prefilters so GitHub context links, contributor proof
+  comments, and ordinary external evidence/log links do not trigger audit
+  records as spam candidates, while broad scans prioritize real spam-shaped
+  candidates across recent comment churn.
+- Kept repeated broad spam sweeps from spending their scan cap on already
+  processed deterministic candidates.
+- Put duplicate/superseded canonical issue and pull request links directly in
+  the public close sentence instead of only inside review details.
+- Kept event re-reviews from failing when a target repository has not created
+  the optional `proof: sufficient` label yet.
 - Removed stale spam audit files when a reprocessed comment no longer matches
   the scanner candidate filters.
 - Derived repair dispatch worker caps from `job_intent` when no explicit cap is
