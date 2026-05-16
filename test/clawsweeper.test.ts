@@ -3558,28 +3558,33 @@ test("ClawSweeper priority label scheme exposes P0 through P3 labels", () => {
     {
       name: "P0",
       color: "B60205",
-      description:
-        "Critical: production-breaking, data-loss, security-impacting, or blocks core project operation; needs immediate maintainer attention.",
+      description: "Critical impact; needs immediate maintainer attention.",
     },
     {
       name: "P1",
       color: "D93F0B",
-      description:
-        "High: important user-facing bug, serious regression, broken major workflow, or urgent maintainer-priority work; should be handled soon.",
+      description: "High-priority user-facing bug, regression, or broken workflow.",
     },
     {
       name: "P2",
       color: "FBCA04",
-      description:
-        "Medium: meaningful bug, incomplete behavior, polish issue, or useful improvement with limited blast radius; normal backlog priority.",
+      description: "Normal backlog priority with limited blast radius.",
     },
     {
       name: "P3",
       color: "0E8A16",
-      description:
-        "Low: minor cleanup, documentation, cosmetic polish, small ergonomics issue, or speculative improvement; handle when convenient.",
+      description: "Low-priority cleanup, docs, polish, ergonomics, or speculative work.",
     },
   ]);
+});
+
+test("ClawSweeper priority label descriptions fit GitHub label limits", () => {
+  for (const label of priorityLabelSchemeForTest()) {
+    assert.ok(
+      label.description.length <= 100,
+      `${label.name} description is ${label.description.length} characters`,
+    );
+  }
 });
 
 test("ClawSweeper priority labels follow triage priority", () => {
