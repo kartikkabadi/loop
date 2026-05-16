@@ -44,6 +44,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Cleared ClawSweeper-owned `eyes` reactions from target issues and pull
+  requests when event reviews complete, while preserving user reactions. Thanks
+  @samzong.
 - Kept event re-review progress updates scoped to ClawSweeper-owned status
   comments, so empty command markers cannot cause unrelated human comments to be
   edited. Thanks @hxy91819.
