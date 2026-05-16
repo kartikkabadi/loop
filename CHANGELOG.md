@@ -44,6 +44,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Kept event re-review progress updates scoped to ClawSweeper-owned status
+  comments, so empty command markers cannot cause unrelated human comments to be
+  edited. Thanks @hxy91819.
 - Added live spam comment intake for GitHub activity events so deterministic
   spam candidates dispatch exact comment scans immediately instead of waiting
   for the hourly audit sweep.
