@@ -477,19 +477,54 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$GH_TOKEN"
-          err="$(mktemp)"
-          if gh api -X POST \
-            -H "Accept: application/vnd.github+json" \
-            "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions" \
-            -f content="+1" 2>"$err" >/dev/null; then
-            echo "Added +1 reaction to $TARGET_REPO#$ITEM_NUMBER."
-          elif grep -qi "HTTP 422\\|already exists" "$err"; then
-            echo "+1 reaction already exists on $TARGET_REPO#$ITEM_NUMBER."
-          else
-            cat "$err" >&2
-            exit 1
-          fi
-          rm -f "$err"
+          add_completion_reaction() {
+            local err
+            err="$(mktemp)"
+            if gh api -X POST \
+              -H "Accept: application/vnd.github+json" \
+              "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions" \
+              -f content="+1" 2>"$err" >/dev/null; then
+              echo "Added +1 reaction to $TARGET_REPO#$ITEM_NUMBER."
+            elif grep -qi "HTTP 422\\|already exists" "$err"; then
+              echo "+1 reaction already exists on $TARGET_REPO#$ITEM_NUMBER."
+            else
+              cat "$err" >&2
+              rm -f "$err"
+              exit 1
+            fi
+            rm -f "$err"
+          }
+          remove_own_eyes_reactions() {
+            local ids
+            local err
+            err="$(mktemp)"
+            if ! ids="$(gh api -X GET \
+              -H "Accept: application/vnd.github+json" \
+              "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions" \
+              -f content="eyes" \
+              -F per_page=100 \
+              --paginate \
+              --jq '.[] | select(.content == "eyes") | select(.user.login == "clawsweeper" or .user.login == "clawsweeper[bot]" or .user.login == "openclaw-clawsweeper[bot]") | .id' 2>"$err")"; then
+              cat "$err" >&2
+              rm -f "$err"
+              return 0
+            fi
+            rm -f "$err"
+            while IFS= read -r reaction_id; do
+              [ -n "$reaction_id" ] || continue
+              err="$(mktemp)"
+              if gh api -X DELETE \
+                -H "Accept: application/vnd.github+json" \
+                "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions/$reaction_id" 2>"$err" >/dev/null; then
+                echo "Removed eyes reaction $reaction_id from $TARGET_REPO#$ITEM_NUMBER."
+              else
+                cat "$err" >&2
+              fi
+              rm -f "$err"
+            done <<< "$ids"
+          }
+          add_completion_reaction
+          remove_own_eyes_reactions
 
   plan:
     name: Plan review candidates

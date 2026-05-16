@@ -4400,6 +4400,20 @@ test("review workflow gives Codex a read-only inspection token", () => {
   assert.match(workflow, /CLAWSWEEPER_PROOF_INSPECTION_TOKEN/);
 });
 
+test("event review completion removes ClawSweeper eyes reaction", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const block = workflow.slice(
+    workflow.indexOf("- name: React to target item completion"),
+    workflow.indexOf("\n\n  plan:"),
+  );
+
+  assert.match(block, /-f content="\+1"/);
+  assert.match(block, /-f content="eyes"/);
+  assert.match(block, /repos\/\$TARGET_REPO\/issues\/\$ITEM_NUMBER\/reactions\/\$reaction_id/);
+  assert.match(block, /"openclaw-clawsweeper\[bot\]"/);
+  assert.doesNotMatch(block, /issues\/comments\/\$ITEM_NUMBER\/reactions/);
+});
+
 test("manual exact-item review dispatches avoid broad review concurrency", () => {
   const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
 
