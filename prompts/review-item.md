@@ -69,6 +69,18 @@ outside OpenClaw core. Set `requiresNewFeature`, `requiresNewConfigOption`, and
 `requiresProductDecision` independently. Any true value means the item is not a
 strict bug-fix automation candidate even if useful.
 
+Set `triagePriority` as ClawSweeper's maintainer-facing priority label for both
+issues and pull requests. This is not the same as `reviewFindings[].priority`
+and is not limited to PR patch defects. Use `P0` for critical production-breaking,
+data-loss, security-impacting, or core-operation-blocking work that needs
+immediate maintainer attention. Use `P1` for important user-facing bugs, serious
+regressions, broken major workflows, or urgent maintainer-priority work that
+should be handled soon. Use `P2` for meaningful bugs, incomplete behavior,
+polish issues, or useful improvements with limited blast radius and normal
+backlog priority. Use `P3` for minor cleanup, documentation, cosmetic polish,
+small ergonomics issues, or speculative improvements. Use `none` only when
+ClawSweeper should intentionally leave priority labels absent.
+
 Populate structured reproduction metadata separately from the public prose.
 Use `reproductionStatus: "reproduced"` only when there is a concrete,
 current-main reproduction path for the bug with high confidence. Use
@@ -90,7 +102,7 @@ likely owner.
 
 For PRs, include a dedicated security review pass in addition to the functional review. Inspect whether the diff could introduce a security or supply-chain regression, especially when it touches CI workflows, GitHub Action refs, dependency sources, lockfiles, install/build/release scripts, package publishing metadata, secrets handling, permissions, downloaded artifacts, generated/vendor/minified files, or other code execution paths. Check whether those changes are consistent with the PR title, body, discussion, and stated purpose before deciding. Be cautious when a small or unrelated functional change also introduces new third-party code execution, broadens secret or permission access, changes package resolution, adds lifecycle hooks, downloads and executes artifacts, or mixes infrastructure changes into otherwise cosmetic work. Do not infer malicious intent without concrete evidence. Always summarize this pass in `securityReview`; set `status: "cleared"` when the diff has no concrete security or supply-chain concern, `status: "needs_attention"` when there is a concrete concern, and `status: "not_applicable"` for non-PR items without a security-sensitive report. Put concrete security concerns in `securityReview.concerns` with file/line when possible, and also include blocking concerns in `risks` and `evidence` when they affect the merge/close decision.
 
-For PRs, include a dedicated `realBehaviorProof` assessment before any pass, automerge, or repair verdict. External PRs must show that the contributor ran the changed behavior after the fix in a real setup. Unit tests, mocks, snapshots, lint, typechecks, and CI are supplemental only; they are not real behavior proof by themselves. Treat screenshots, recordings, terminal screenshots, console output, copied live output, linked artifacts, and redacted runtime logs as valid proof, including for non-visual CLI, console, text, or error-message changes. Prefer asking for screenshots or videos when they can show the behavior, including terminal screenshots for text or console changes, while keeping logs and live output acceptable. Remind contributors to redact private information like IP addresses, API keys, phone numbers, non-public endpoints, and other private details before posting evidence. A plain app screenshot is sufficient only for behavior it directly shows. Do not mark screenshot-only proof sufficient for browser runtime, CSP, CORS, `connect-src`, auth callback, network, or security changes when the proof only says no console error, warning, or violation is visible; require console output, a network trace, terminal/live output, logs, a recording with diagnostics, or a linked artifact that actually shows the runtime path. Use your tools and best judgement: inspect the PR body, comments, links, screenshots, videos, logs, terminal output, and changed behavior context; you may download/open GitHub attachment links, generate stills or contact sheets from videos, inspect terminal screenshots and logs, and compare the proof against the PR diff. Use the provided scratch directory for downloaded artifacts and keep the target checkout read-only. Use `status: "sufficient"` only when the evidence convincingly shows after-fix real behavior and an observed improved result. Use `status: "missing"` when proof is absent, `status: "mock_only"` when proof is only tests/mocks/CI, `status: "insufficient"` when the evidence is unrelated, unviewable, too weak, or does not show the changed real behavior after the fix, `status: "override"` when the PR has `proof: override`, and `status: "not_applicable"` for non-PR items or maintainer/bot PRs where the gate does not apply. When proof is missing, mock-only, or insufficient, set `needsContributorAction: true`, make the PR a human-only merge blocker, and do not request ClawSweeper repair markers because automation cannot prove the contributor's setup for them.
+For PRs, include a dedicated `realBehaviorProof` assessment before any pass, automerge, or repair verdict. External PRs must show that the contributor ran the changed behavior after the fix in a real setup, except when the PR changes only files under `docs/`; docs-only PRs should use `status: "not_applicable"` with `needsContributorAction: false`. Unit tests, mocks, snapshots, lint, typechecks, and CI are supplemental only; they are not real behavior proof by themselves. Treat screenshots, recordings, terminal screenshots, console output, copied live output, linked artifacts, and redacted runtime logs as valid proof, including for non-visual CLI, console, text, or error-message changes. Prefer asking for screenshots or videos when they can show the behavior, including terminal screenshots for text or console changes, while keeping logs and live output acceptable. Remind contributors to redact private information like IP addresses, API keys, phone numbers, non-public endpoints, and other private details before posting evidence. A plain app screenshot is sufficient only for behavior it directly shows. Do not mark screenshot-only proof sufficient for browser runtime, CSP, CORS, `connect-src`, auth callback, network, or security changes when the proof only says no console error, warning, or violation is visible; require console output, a network trace, terminal/live output, logs, a recording with diagnostics, or a linked artifact that actually shows the runtime path. Use your tools and best judgement: inspect the PR body, comments, links, screenshots, videos, logs, terminal output, and changed behavior context; you may download/open GitHub attachment links, generate stills or contact sheets from videos, inspect terminal screenshots and logs, and compare the proof against the PR diff. Use the provided scratch directory for downloaded artifacts and keep the target checkout read-only. Use `status: "sufficient"` only when the evidence convincingly shows after-fix real behavior and an observed improved result. Use `status: "missing"` when proof is absent, `status: "mock_only"` when proof is only tests/mocks/CI, `status: "insufficient"` when the evidence is unrelated, unviewable, too weak, or does not show the changed real behavior after the fix, `status: "override"` when the PR has `proof: override`, and `status: "not_applicable"` for non-PR items, maintainer/bot PRs where the gate does not apply, or PRs that change only files under `docs/`. When proof is missing, mock-only, or insufficient, set `needsContributorAction: true`, make the PR a human-only merge blocker, and do not request ClawSweeper repair markers because automation cannot prove the contributor's setup for them.
 
 For PRs, always fill `telegramVisibleProof`. Use `status: "needed"` only when the PR touches Telegram behavior and the user-visible change can be easily demonstrated by the `telegram-crabbox-e2e-proof` skill, such as message formatting, slash-command output, reply text, attachments, reactions, threading, mentions, or other visible Telegram chat behavior. Use `status: "not_needed"` for non-Telegram PRs and for Telegram changes that are internal-only, test-only, docs-only, logging-only, retry/network reliability only, auth/secret plumbing only, or otherwise not meaningfully visible in a short Telegram Desktop recording.
 
@@ -372,13 +384,13 @@ and `not_applicable` for ordinary non-PR issue triage where no patch security
 review applies.
 
 Always fill `realBehaviorProof`. For external PRs, this is a merge gate, not a
-nice-to-have. Missing, mock-only, or insufficient proof should appear near the
-top of the public review as "needs real behavior proof before merge"; tell the
-contributor that screenshots or videos are preferred when they can show the
-behavior; terminal screenshots, console output, copied live output, linked artifacts,
-recordings, and redacted logs count. Remind contributors to redact private
-information like IP addresses, API keys, phone numbers, non-public endpoints,
-and other private details before posting evidence. For non-visual browser
+nice-to-have, except when every changed file is under `docs/`. Missing, mock-only,
+or insufficient proof should appear near the top of the public review as "needs
+real behavior proof before merge"; tell the contributor that screenshots or videos
+are preferred when they can show the behavior; terminal screenshots, console output,
+copied live output, linked artifacts, recordings, and redacted logs count. Remind
+contributors to redact private information like IP addresses, API keys, phone numbers,
+non-public endpoints, and other private details before posting evidence. For non-visual browser
 runtime, network, CSP, or security behavior, do not accept an ordinary app
 screenshot or "no visible console violation" claim without visible diagnostic
 output. If the proof links to public or GitHub-hosted media, inspect it when
@@ -394,6 +406,12 @@ Always fill `telegramVisibleProof`. This only controls the
 visible chat behavior the `telegram-crabbox-e2e-proof` skill can show in a
 short recording. Mark it `not_needed` for non-Telegram PRs or Telegram work
 that is not usefully visible in that recording.
+
+Always fill `triagePriority`. ClawSweeper syncs this value to one of the GitHub
+labels `P0`, `P1`, `P2`, or `P3` so maintainers can find issues and pull requests
+by priority. Choose the priority from user impact, severity, confidence, and
+maintainer urgency for the item as a whole, not just from PR review findings or
+whether ClawSweeper can automatically repair it.
 
 Always fill the work-lane fields too. For non-candidates, use
 `workCandidate: "none"`, low confidence/priority, an empty `workPrompt`, and

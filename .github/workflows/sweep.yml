@@ -264,12 +264,14 @@ jobs:
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
           ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
           COMMAND_STATUS_MARKER: ${{ github.event.client_payload.command_status_marker || '' }}
+          STATUS_COMMENT_ID: ${{ github.event.client_payload.status_comment_id || '' }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           pnpm run repair:update-command-status -- \
             --repo "$TARGET_REPO" \
             --item-number "$ITEM_NUMBER" \
             --marker "$COMMAND_STATUS_MARKER" \
+            --status-comment-id "$STATUS_COMMENT_ID" \
             --state "Review in progress" \
             --detail "Targeted re-review run started; Codex is reviewing the item." \
             --run-url "$RUN_URL" \
@@ -339,9 +341,12 @@ jobs:
             --shard-count 1 \
             "${additional_prompt_arg[@]}"
 
-      - name: Use state token
+      - name: Create state token
         id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
 
       - uses: ./.github/actions/setup-state
         with:
@@ -388,6 +393,7 @@ jobs:
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
           ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
           COMMAND_STATUS_MARKER: ${{ github.event.client_payload.command_status_marker || '' }}
+          STATUS_COMMENT_ID: ${{ github.event.client_payload.status_comment_id || '' }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           REVIEW_OUTCOME: ${{ steps.review-exact-event-item.outcome }}
           PUBLISH_OUTCOME: ${{ steps.publish-event-result.outcome }}
@@ -403,6 +409,7 @@ jobs:
             --repo "$TARGET_REPO" \
             --item-number "$ITEM_NUMBER" \
             --marker "$COMMAND_STATUS_MARKER" \
+            --status-comment-id "$STATUS_COMMENT_ID" \
             --state "$state" \
             --detail "$detail" \
             --run-url "$RUN_URL"
@@ -470,19 +477,54 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$GH_TOKEN"
-          err="$(mktemp)"
-          if gh api -X POST \
-            -H "Accept: application/vnd.github+json" \
-            "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions" \
-            -f content="+1" 2>"$err" >/dev/null; then
-            echo "Added +1 reaction to $TARGET_REPO#$ITEM_NUMBER."
-          elif grep -qi "HTTP 422\\|already exists" "$err"; then
-            echo "+1 reaction already exists on $TARGET_REPO#$ITEM_NUMBER."
-          else
-            cat "$err" >&2
-            exit 1
-          fi
-          rm -f "$err"
+          add_completion_reaction() {
+            local err
+            err="$(mktemp)"
+            if gh api -X POST \
+              -H "Accept: application/vnd.github+json" \
+              "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions" \
+              -f content="+1" 2>"$err" >/dev/null; then
+              echo "Added +1 reaction to $TARGET_REPO#$ITEM_NUMBER."
+            elif grep -qi "HTTP 422\\|already exists" "$err"; then
+              echo "+1 reaction already exists on $TARGET_REPO#$ITEM_NUMBER."
+            else
+              cat "$err" >&2
+              rm -f "$err"
+              exit 1
+            fi
+            rm -f "$err"
+          }
+          remove_own_eyes_reactions() {
+            local ids
+            local err
+            err="$(mktemp)"
+            if ! ids="$(gh api -X GET \
+              -H "Accept: application/vnd.github+json" \
+              "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions" \
+              -f content="eyes" \
+              -F per_page=100 \
+              --paginate \
+              --jq '.[] | select(.content == "eyes") | select(.user.login == "clawsweeper" or .user.login == "clawsweeper[bot]" or .user.login == "openclaw-clawsweeper[bot]") | .id' 2>"$err")"; then
+              cat "$err" >&2
+              rm -f "$err"
+              return 0
+            fi
+            rm -f "$err"
+            while IFS= read -r reaction_id; do
+              [ -n "$reaction_id" ] || continue
+              err="$(mktemp)"
+              if gh api -X DELETE \
+                -H "Accept: application/vnd.github+json" \
+                "repos/$TARGET_REPO/issues/$ITEM_NUMBER/reactions/$reaction_id" 2>"$err" >/dev/null; then
+                echo "Removed eyes reaction $reaction_id from $TARGET_REPO#$ITEM_NUMBER."
+              else
+                cat "$err" >&2
+              fi
+              rm -f "$err"
+            done <<< "$ids"
+          }
+          add_completion_reaction
+          remove_own_eyes_reactions
 
   plan:
     name: Plan review candidates
@@ -556,9 +598,12 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - name: Use state token
+      - name: Create state token
         id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+        uses: ./clawsweeper/.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
 
       - uses: ./clawsweeper/.github/actions/setup-state
         with:
@@ -1015,9 +1060,12 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - name: Use state token
+      - name: Create state token
         id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
 
       - uses: ./.github/actions/setup-state
         with:
@@ -1455,9 +1503,12 @@ jobs:
             echo "token=$FALLBACK_TOKEN" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Use state token
+      - name: Create state token
         id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
 
       - uses: ./.github/actions/setup-state
         with:
@@ -1553,9 +1604,12 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
-      - name: Use state token
+      - name: Create state token
         id: state-token
-        run: echo "token=${{ secrets.CLAWSWEEPER_STATE_REPOSITORY_TOKEN }}" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
 
       - uses: ./.github/actions/setup-state
         with:

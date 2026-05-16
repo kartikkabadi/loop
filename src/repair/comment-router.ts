@@ -1581,7 +1581,14 @@ function repairJobModeForCommand(command: LooseRecord) {
 
 function dispatchClawSweeperReview(command: LooseRecord) {
   const commandStatus =
-    command.intent === "re_review" ? { command_status_marker: commandStatusMarker(command) } : {};
+    command.intent === "re_review"
+      ? {
+          command_status_marker: commandStatusMarker(command),
+          ...(command.status_comment_id
+            ? { status_comment_id: String(command.status_comment_id) }
+            : {}),
+        }
+      : {};
   const payload = JSON.stringify({
     event_type: "clawsweeper_item",
     client_payload: {
