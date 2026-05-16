@@ -504,7 +504,7 @@ jobs:
               -f content="eyes" \
               -F per_page=100 \
               --paginate \
-              --jq '.[] | select(.content == "eyes") | select((.user.login // "") as $login | ["clawsweeper","clawsweeper[bot]","openclaw-clawsweeper[bot]"] | index($login)) | .id' 2>"$err")"; then
+              --jq '.[] | select(.content == "eyes") | select(.user.login == "clawsweeper" or .user.login == "clawsweeper[bot]" or .user.login == "openclaw-clawsweeper[bot]") | .id' 2>"$err")"; then
               cat "$err" >&2
               rm -f "$err"
               return 0
