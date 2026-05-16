@@ -64,6 +64,7 @@ type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
+type TriagePriority = "P0" | "P1" | "P2" | "P3" | "none";
 type ItemCategory =
   | "bug"
   | "regression"
@@ -273,6 +274,7 @@ interface Decision {
   likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
+  triagePriority: TriagePriority;
   itemCategory: ItemCategory;
   reproductionStatus: ReproductionStatus;
   reproductionConfidence: Confidence;
@@ -675,6 +677,43 @@ const PROOF_SUFFICIENT_LABEL_DESCRIPTION = "Contributor real behavior proof is s
 const TELEGRAM_VISIBLE_PROOF_LABEL = "mantis: telegram-visible-proof";
 const TELEGRAM_VISIBLE_PROOF_LABEL_COLOR = "5319e7";
 const TELEGRAM_VISIBLE_PROOF_LABEL_DESCRIPTION = "Mantis should capture Telegram visible proof.";
+const PRIORITY_LABELS = [
+  {
+    priority: 0,
+    triagePriority: "P0",
+    name: "P0",
+    color: "B60205",
+    description:
+      "Critical: production-breaking, data-loss, security-impacting, or blocks core project operation; needs immediate maintainer attention.",
+  },
+  {
+    priority: 1,
+    triagePriority: "P1",
+    name: "P1",
+    color: "D93F0B",
+    description:
+      "High: important user-facing bug, serious regression, broken major workflow, or urgent maintainer-priority work; should be handled soon.",
+  },
+  {
+    priority: 2,
+    triagePriority: "P2",
+    name: "P2",
+    color: "FBCA04",
+    description:
+      "Medium: meaningful bug, incomplete behavior, polish issue, or useful improvement with limited blast radius; normal backlog priority.",
+  },
+  {
+    priority: 3,
+    triagePriority: "P3",
+    name: "P3",
+    color: "0E8A16",
+    description:
+      "Low: minor cleanup, documentation, cosmetic polish, small ergonomics issue, or speculative improvement; handle when convenient.",
+  },
+] as const;
+const PRIORITY_LABEL_NAMES: ReadonlySet<string> = new Set(
+  PRIORITY_LABELS.map((label) => label.name),
+);
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -689,6 +728,7 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
 const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
+const TRIAGE_PRIORITIES = new Set<TriagePriority>(["P0", "P1", "P2", "P3", "none"]);
 const ITEM_CATEGORIES = new Set<ItemCategory>([
   "bug",
   "regression",
@@ -754,6 +794,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "likelyOwners",
   "risks",
   "bestSolution",
+  "triagePriority",
   "itemCategory",
   "reproductionStatus",
   "reproductionConfidence",
@@ -1317,6 +1358,7 @@ function normalizeDecisionForItem(
     ...decision,
     reviewFindings,
     bestSolution: CLEAN_OPENCLAW_PR_REVIEW_NEXT_STEP,
+    triagePriority: decision.triagePriority,
     overallCorrectness:
       decision.overallCorrectness === "patch is incorrect"
         ? "patch is correct"
@@ -1431,6 +1473,11 @@ export function parseDecision(value: unknown, item?: DecisionNormalizationItem):
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
+    triagePriority: requireEnum(
+      record.triagePriority,
+      TRIAGE_PRIORITIES,
+      "decision.triagePriority",
+    ),
     itemCategory: requireEnum(record.itemCategory, ITEM_CATEGORIES, "decision.itemCategory"),
     reproductionStatus: requireEnum(
       record.reproductionStatus,
@@ -3695,6 +3742,7 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
+    triagePriority: "none",
     itemCategory: "unclear",
     reproductionStatus: "unclear",
     reproductionConfidence: "low",
@@ -4781,6 +4829,11 @@ function reportOverallConfidenceScore(markdown: string): number {
   return Number.isFinite(score) && score >= 0 && score <= 1 ? score : 0;
 }
 
+function triagePriorityFromReport(markdown: string): TriagePriority {
+  const value = frontMatterValue(markdown, "triage_priority");
+  return TRIAGE_PRIORITIES.has(value as TriagePriority) ? (value as TriagePriority) : "none";
+}
+
 function reportReviewFindings(markdown: string): ReviewFinding[] {
   const section = reviewSectionValue(markdown, "reviewFindings");
   const findings: ReviewFinding[] = [];
@@ -5040,6 +5093,74 @@ export function telegramVisibleProofLabelsForTest(
     ? (status as TelegramVisibleProofStatus)
     : "not_needed";
   return nextTelegramVisibleProofLabels(labels, { status: proofStatus });
+}
+
+type PriorityLabelSpec = (typeof PRIORITY_LABELS)[number];
+
+function priorityLabelForTriage(priority: TriagePriority): PriorityLabelSpec | null {
+  return PRIORITY_LABELS.find((label) => label.triagePriority === priority) ?? null;
+}
+
+function nextPriorityLabels(labels: readonly string[], triagePriority: TriagePriority): string[] {
+  const nextLabels = labels.filter((label) => !PRIORITY_LABEL_NAMES.has(label));
+  const priorityLabel = priorityLabelForTriage(triagePriority);
+  if (priorityLabel) nextLabels.push(priorityLabel.name);
+  return nextLabels;
+}
+
+export function priorityLabelSchemeForTest(): {
+  name: string;
+  color: string;
+  description: string;
+}[] {
+  return PRIORITY_LABELS.map(({ name, color, description }) => ({ name, color, description }));
+}
+
+export function priorityLabelsForTest(labels: readonly string[], triagePriority: string): string[] {
+  const priority = TRIAGE_PRIORITIES.has(triagePriority as TriagePriority)
+    ? (triagePriority as TriagePriority)
+    : "none";
+  return nextPriorityLabels(labels, priority);
+}
+
+function ensurePriorityLabel(label: PriorityLabelSpec): void {
+  try {
+    ghWithRetry(
+      ["label", "create", label.name, "--color", label.color, "--description", label.description],
+      2,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!/already exists/i.test(message)) throw error;
+  }
+}
+
+function syncPriorityLabel(options: {
+  number: number;
+  labels: readonly string[];
+  triagePriority: TriagePriority;
+  dryRun: boolean;
+}): string[] {
+  const nextLabels = nextPriorityLabels(options.labels, options.triagePriority);
+  const labelsToRemove = options.labels.filter(
+    (label) => PRIORITY_LABEL_NAMES.has(label) && !nextLabels.includes(label),
+  );
+  const labelToAdd = nextLabels.find(
+    (label) => PRIORITY_LABEL_NAMES.has(label) && !options.labels.includes(label),
+  );
+  if (labelsToRemove.length === 0 && !labelToAdd) return nextLabels;
+  if (options.dryRun) return nextLabels;
+  if (labelToAdd) {
+    const priorityLabel = PRIORITY_LABELS.find((label) => label.name === labelToAdd);
+    if (priorityLabel) ensurePriorityLabel(priorityLabel);
+  }
+  for (const label of labelsToRemove) {
+    ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+  }
+  if (labelToAdd) {
+    ghWithRetry(["issue", "edit", String(options.number), "--add-label", labelToAdd]);
+  }
+  return nextLabels;
 }
 
 function syncTelegramVisibleProofLabel(options: {
@@ -5309,6 +5430,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
+    triagePriority: triagePriorityFromReport(markdown),
     itemCategory:
       (frontMatterValue(markdown, "item_category") as ItemCategory | undefined) ?? "unclear",
     reproductionStatus:
@@ -6632,6 +6754,7 @@ work_prompt_sha256: ${options.decision.workPrompt ? sha256(options.decision.work
 work_cluster_refs: ${jsonFrontMatterValue(options.decision.workClusterRefs)}
 work_validation: ${jsonFrontMatterValue(options.decision.workValidation)}
 work_likely_files: ${jsonFrontMatterValue(options.decision.workLikelyFiles)}
+triage_priority: ${options.decision.triagePriority}
 pull_files: ${jsonFrontMatterValue(pullFiles)}
 pull_files_truncated: ${pullFilesTruncated}
 item_category: ${options.decision.itemCategory}
@@ -7133,6 +7256,14 @@ function applyDecisionsCommand(args: Args): void {
         number,
         labels: item.labels,
         proof: reportTelegramVisibleProof(markdown),
+        dryRun,
+      });
+    }
+    if (state === "open") {
+      item.labels = syncPriorityLabel({
+        number,
+        labels: item.labels,
+        triagePriority: triagePriorityFromReport(markdown),
         dryRun,
       });
     }

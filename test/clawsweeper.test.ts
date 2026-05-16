@@ -39,6 +39,8 @@ import {
   parseGhJson,
   parseGhJsonLines,
   parseDecision,
+  priorityLabelsForTest,
+  priorityLabelSchemeForTest,
   protectedLabels,
   realBehaviorProofSufficientLabelsForTest,
   relatedTitleSearchTerms,
@@ -148,6 +150,7 @@ function closeDecision(overrides = {}) {
     ],
     risks: [],
     bestSolution: "Keep the implementation as-is.",
+    triagePriority: "P2",
     itemCategory: "bug",
     reproductionStatus: "reproduced",
     reproductionConfidence: "high",
@@ -3399,6 +3402,14 @@ test("decision parser enforces required schema-shaped evidence", () => {
     () =>
       parseDecision({
         ...closeDecision(),
+        triagePriority: "urgent",
+      }),
+    /decision\.triagePriority/,
+  );
+  assert.throws(
+    () =>
+      parseDecision({
+        ...closeDecision(),
         requiresNewConfigOption: "false",
       }),
     /decision\.requiresNewConfigOption/,
@@ -3429,6 +3440,7 @@ test("decision parser enforces required schema-shaped evidence", () => {
     }),
   );
   assert.equal(workCandidate.workCandidate, "queue_fix_pr");
+  assert.equal(workCandidate.triagePriority, "P2");
   assert.equal(workCandidate.itemCategory, "bug");
   assert.equal(workCandidate.reproductionStatus, "reproduced");
   assert.equal(workCandidate.realBehaviorProof.status, "not_applicable");
@@ -3539,6 +3551,41 @@ test("ClawSweeper Telegram proof judgement controls the Mantis proof label", () 
     ),
     ["channel: telegram"],
   );
+});
+
+test("ClawSweeper priority label scheme exposes P0 through P3 labels", () => {
+  assert.deepEqual(priorityLabelSchemeForTest(), [
+    {
+      name: "P0",
+      color: "B60205",
+      description:
+        "Critical: production-breaking, data-loss, security-impacting, or blocks core project operation; needs immediate maintainer attention.",
+    },
+    {
+      name: "P1",
+      color: "D93F0B",
+      description:
+        "High: important user-facing bug, serious regression, broken major workflow, or urgent maintainer-priority work; should be handled soon.",
+    },
+    {
+      name: "P2",
+      color: "FBCA04",
+      description:
+        "Medium: meaningful bug, incomplete behavior, polish issue, or useful improvement with limited blast radius; normal backlog priority.",
+    },
+    {
+      name: "P3",
+      color: "0E8A16",
+      description:
+        "Low: minor cleanup, documentation, cosmetic polish, small ergonomics issue, or speculative improvement; handle when convenient.",
+    },
+  ]);
+});
+
+test("ClawSweeper priority labels follow triage priority", () => {
+  assert.deepEqual(priorityLabelsForTest(["bug"], "P2"), ["bug", "P2"]);
+  assert.deepEqual(priorityLabelsForTest(["bug", "P3"], "P1"), ["bug", "P1"]);
+  assert.deepEqual(priorityLabelsForTest(["P0", "bug"], "none"), ["bug"]);
 });
 
 test("review workflow gives Codex a read-only inspection token", () => {
@@ -3700,6 +3747,9 @@ test("review prompts require reproduction and solution assessment details", () =
   assert.match(itemPrompt, /Always fill `reproductionAssessment`/);
   assert.match(itemPrompt, /itemCategory: "bug"/);
   assert.match(itemPrompt, /itemCategory: "skill"/);
+  assert.match(itemPrompt, /Always fill `triagePriority`/);
+  assert.match(itemPrompt, /maintainers\s+can find issues and pull requests\s+by priority/);
+  assert.match(itemPrompt, /not just\s+from PR review findings/);
   assert.match(itemPrompt, /skills\/<vendor>/);
   assert.match(itemPrompt, /upload or publish it through ClawHub\.com/);
   assert.match(itemPrompt, /requiresNewConfigOption/);
