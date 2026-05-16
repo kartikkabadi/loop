@@ -584,6 +584,8 @@ test("review context ledger records ordered section budgets", () => {
       commentsHydrated: 1,
       commentsTruncated: true,
       timeline: 1,
+      timelineHydrated: 1,
+      timelineTruncated: false,
       relatedItems: 1,
       pullFiles: 120,
       pullFilesHydrated: 2,
@@ -610,12 +612,12 @@ test("review context ledger records ordered section budgets", () => {
     [
       ["issue", 1, undefined, undefined, undefined],
       ["comments", 1, 10, 1, true],
-      ["timeline", 1, 1, undefined, undefined],
+      ["timeline", 1, 1, 1, false],
       ["relatedItems", 1, 1, undefined, undefined],
       ["pullRequest", 1, undefined, undefined, undefined],
       ["pullFiles", 2, 120, 2, true],
       ["pullCommits", 1, 1, 1, false],
-      ["counts", 14, undefined, undefined, undefined],
+      ["counts", 16, undefined, undefined, undefined],
     ],
   );
   assert.equal(
@@ -626,6 +628,7 @@ test("review context ledger records ordered section budgets", () => {
     renderReviewContextBudgetForTest(context),
     /- PR files: 2\/120 hydrated, truncated, \d+ chars/,
   );
+  assert.match(renderReviewContextBudgetForTest(context), /- timeline events: 1\/1 hydrated/);
 });
 
 test("protected labels are normalized and excluded from normal planning", () => {

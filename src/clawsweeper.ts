@@ -6047,6 +6047,8 @@ function reviewContextLedger(context: ItemContext): ReviewContextLedgerEntry[] {
       value: context.timeline,
       entries: context.timeline.length,
       total: counts?.timeline,
+      hydrated: counts?.timelineHydrated,
+      truncated: counts?.timelineTruncated,
     }),
     reviewContextLedgerEntry({
       section: "closingPullRequests",
