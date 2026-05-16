@@ -3556,25 +3556,25 @@ test("ClawSweeper Telegram proof judgement controls the Mantis proof label", () 
 test("ClawSweeper priority label scheme exposes P0 through P3 labels", () => {
   assert.deepEqual(priorityLabelSchemeForTest(), [
     {
-      name: "priority:P0",
+      name: "P0",
       color: "B60205",
       description:
         "Critical: production-breaking, data-loss, security-impacting, or blocks core project operation; needs immediate maintainer attention.",
     },
     {
-      name: "priority:P1",
+      name: "P1",
       color: "D93F0B",
       description:
         "High: important user-facing bug, serious regression, broken major workflow, or urgent maintainer-priority work; should be handled soon.",
     },
     {
-      name: "priority:P2",
+      name: "P2",
       color: "FBCA04",
       description:
         "Medium: meaningful bug, incomplete behavior, polish issue, or useful improvement with limited blast radius; normal backlog priority.",
     },
     {
-      name: "priority:P3",
+      name: "P3",
       color: "0E8A16",
       description:
         "Low: minor cleanup, documentation, cosmetic polish, small ergonomics issue, or speculative improvement; handle when convenient.",
@@ -3583,9 +3583,9 @@ test("ClawSweeper priority label scheme exposes P0 through P3 labels", () => {
 });
 
 test("ClawSweeper priority labels follow triage priority", () => {
-  assert.deepEqual(priorityLabelsForTest(["bug"], "P2"), ["bug", "priority:P2"]);
-  assert.deepEqual(priorityLabelsForTest(["bug", "priority:P3"], "P1"), ["bug", "priority:P1"]);
-  assert.deepEqual(priorityLabelsForTest(["priority:P0", "bug"], "none"), ["bug"]);
+  assert.deepEqual(priorityLabelsForTest(["bug"], "P2"), ["bug", "P2"]);
+  assert.deepEqual(priorityLabelsForTest(["bug", "P3"], "P1"), ["bug", "P1"]);
+  assert.deepEqual(priorityLabelsForTest(["P0", "bug"], "none"), ["bug"]);
 });
 
 test("review workflow gives Codex a read-only inspection token", () => {
@@ -3748,7 +3748,7 @@ test("review prompts require reproduction and solution assessment details", () =
   assert.match(itemPrompt, /itemCategory: "bug"/);
   assert.match(itemPrompt, /itemCategory: "skill"/);
   assert.match(itemPrompt, /Always fill `triagePriority`/);
-  assert.match(itemPrompt, /maintainers can\s+find issues and pull requests by priority/);
+  assert.match(itemPrompt, /maintainers\s+can find issues and pull requests\s+by priority/);
   assert.match(itemPrompt, /not just\s+from PR review findings/);
   assert.match(itemPrompt, /skills\/<vendor>/);
   assert.match(itemPrompt, /upload or publish it through ClawHub\.com/);

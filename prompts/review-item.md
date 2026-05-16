@@ -407,11 +407,11 @@ visible chat behavior the `telegram-crabbox-e2e-proof` skill can show in a
 short recording. Mark it `not_needed` for non-Telegram PRs or Telegram work
 that is not usefully visible in that recording.
 
-Always fill `triagePriority`. ClawSweeper syncs this value to one of
-`priority:P0`, `priority:P1`, `priority:P2`, or `priority:P3` so maintainers can
-find issues and pull requests by priority. Choose the priority from user impact,
-severity, confidence, and maintainer urgency for the item as a whole, not just
-from PR review findings or whether ClawSweeper can automatically repair it.
+Always fill `triagePriority`. ClawSweeper syncs this value to one of the GitHub
+labels `P0`, `P1`, `P2`, or `P3` so maintainers can find issues and pull requests
+by priority. Choose the priority from user impact, severity, confidence, and
+maintainer urgency for the item as a whole, not just from PR review findings or
+whether ClawSweeper can automatically repair it.
 
 Always fill the work-lane fields too. For non-candidates, use
 `workCandidate: "none"`, low confidence/priority, an empty `workPrompt`, and
