@@ -64,6 +64,7 @@ type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
+type TriagePriority = "P0" | "P1" | "P2" | "P3" | "none";
 type ItemCategory =
   | "bug"
   | "regression"
@@ -179,6 +180,7 @@ interface ExistingReview {
   reviewedAt: string | undefined;
   itemUpdatedAt: string | undefined;
   reviewCommentSyncedAt: string | undefined;
+  labelsSyncedAt: string | undefined;
   decision: string | undefined;
   reviewStatus: string | undefined;
   reviewPolicy: string | undefined;
@@ -273,6 +275,7 @@ interface Decision {
   likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
+  triagePriority: TriagePriority;
   itemCategory: ItemCategory;
   reproductionStatus: ReproductionStatus;
   reproductionConfidence: Confidence;
@@ -670,9 +673,111 @@ const AUTOMERGE_LABEL = "clawsweeper:automerge";
 const AUTOFIX_LABEL = "clawsweeper:autofix";
 const PROOF_OVERRIDE_LABEL = "proof: override";
 const PROOF_SUFFICIENT_LABEL = "proof: sufficient";
+const PROOF_SUFFICIENT_LABEL_COLOR = "0e8a16";
+const PROOF_SUFFICIENT_LABEL_DESCRIPTION = "Contributor real behavior proof is sufficient.";
 const TELEGRAM_VISIBLE_PROOF_LABEL = "mantis: telegram-visible-proof";
 const TELEGRAM_VISIBLE_PROOF_LABEL_COLOR = "5319e7";
 const TELEGRAM_VISIBLE_PROOF_LABEL_DESCRIPTION = "Mantis should capture Telegram visible proof.";
+const PRIORITY_LABELS = [
+  {
+    priority: 0,
+    triagePriority: "P0",
+    name: "P0",
+    color: "B60205",
+    description: "Critical impact; needs immediate maintainer attention.",
+  },
+  {
+    priority: 1,
+    triagePriority: "P1",
+    name: "P1",
+    color: "D93F0B",
+    description: "High-priority user-facing bug, regression, or broken workflow.",
+  },
+  {
+    priority: 2,
+    triagePriority: "P2",
+    name: "P2",
+    color: "FBCA04",
+    description: "Normal backlog priority with limited blast radius.",
+  },
+  {
+    priority: 3,
+    triagePriority: "P3",
+    name: "P3",
+    color: "0E8A16",
+    description: "Low-priority cleanup, docs, polish, ergonomics, or speculative work.",
+  },
+] as const;
+const PRIORITY_LABEL_NAMES: ReadonlySet<string> = new Set(
+  PRIORITY_LABELS.map((label) => label.name),
+);
+const ISSUE_ADVISORY_LABELS = [
+  {
+    name: "clawsweeper:current-main-repro",
+    color: "1D76DB",
+    description: "ClawSweeper found a high-confidence current-main issue reproduction.",
+  },
+  {
+    name: "clawsweeper:source-repro",
+    color: "1D76DB",
+    description: "ClawSweeper found a high-confidence source-level issue reproduction.",
+  },
+  {
+    name: "clawsweeper:not-repro-on-main",
+    color: "C2E0C6",
+    description:
+      "ClawSweeper found high-confidence evidence that this issue no longer reproduces on main.",
+  },
+  {
+    name: "clawsweeper:needs-live-repro",
+    color: "FBCA04",
+    description:
+      "ClawSweeper needs live local, crabbox, or manual validation to confirm this issue.",
+  },
+  {
+    name: "clawsweeper:needs-info",
+    color: "D876E3",
+    description: "ClawSweeper needs more reporter information before it can verify this issue.",
+  },
+  {
+    name: "clawsweeper:linked-pr-open",
+    color: "5319E7",
+    description: "ClawSweeper found an open linked pull request for this issue.",
+  },
+  {
+    name: "clawsweeper:no-new-fix-pr",
+    color: "BFDADC",
+    description: "ClawSweeper does not recommend queueing a new automated fix PR for this issue.",
+  },
+  {
+    name: "clawsweeper:queueable-fix",
+    color: "0E8A16",
+    description: "ClawSweeper marked this issue as an existing queue_fix_pr work candidate.",
+  },
+  {
+    name: "clawsweeper:fix-shape-clear",
+    color: "0E8A16",
+    description: "ClawSweeper found a clear likely implementation shape for this issue.",
+  },
+  {
+    name: "clawsweeper:needs-maintainer-review",
+    color: "FBCA04",
+    description: "ClawSweeper marked this issue as needing maintainer review before automation.",
+  },
+  {
+    name: "clawsweeper:needs-product-decision",
+    color: "FBCA04",
+    description: "ClawSweeper marked this issue as needing a product or behavior decision.",
+  },
+  {
+    name: "clawsweeper:needs-security-review",
+    color: "B60205",
+    description: "ClawSweeper marked this issue as needing security-sensitive review.",
+  },
+] as const;
+const ISSUE_ADVISORY_LABEL_NAMES = new Set(
+  ISSUE_ADVISORY_LABELS.map((label) => label.name.toLowerCase()),
+);
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -687,6 +792,7 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
 const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
+const TRIAGE_PRIORITIES = new Set<TriagePriority>(["P0", "P1", "P2", "P3", "none"]);
 const ITEM_CATEGORIES = new Set<ItemCategory>([
   "bug",
   "regression",
@@ -752,6 +858,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "likelyOwners",
   "risks",
   "bestSolution",
+  "triagePriority",
   "itemCategory",
   "reproductionStatus",
   "reproductionConfidence",
@@ -1315,6 +1422,7 @@ function normalizeDecisionForItem(
     ...decision,
     reviewFindings,
     bestSolution: CLEAN_OPENCLAW_PR_REVIEW_NEXT_STEP,
+    triagePriority: decision.triagePriority,
     overallCorrectness:
       decision.overallCorrectness === "patch is incorrect"
         ? "patch is correct"
@@ -1429,6 +1537,11 @@ export function parseDecision(value: unknown, item?: DecisionNormalizationItem):
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
+    triagePriority: requireEnum(
+      record.triagePriority,
+      TRIAGE_PRIORITIES,
+      "decision.triagePriority",
+    ),
     itemCategory: requireEnum(record.itemCategory, ITEM_CATEGORIES, "decision.itemCategory"),
     reproductionStatus: requireEnum(
       record.reproductionStatus,
@@ -2410,6 +2523,7 @@ function existingReview(
     reviewedAt: frontMatterValue(markdown, "reviewed_at"),
     itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
     reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+    labelsSyncedAt: frontMatterValue(markdown, "labels_synced_at"),
     decision: frontMatterValue(markdown, "decision"),
     reviewStatus: effectiveReviewStatus(markdown),
     reviewPolicy: frontMatterValue(markdown, "review_policy"),
@@ -2437,6 +2551,7 @@ function buildExistingReviewIndex(itemsDir: string): ExistingReviewIndex {
       reviewedAt: frontMatterValue(markdown, "reviewed_at"),
       itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
       reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+      labelsSyncedAt: frontMatterValue(markdown, "labels_synced_at"),
       decision: frontMatterValue(markdown, "decision"),
       reviewStatus: effectiveReviewStatus(markdown),
       reviewPolicy: frontMatterValue(markdown, "review_policy"),
@@ -2514,13 +2629,18 @@ function hasActivitySinceReview(item: Item, review: ExistingReview | null): bool
   const updatedAt = Date.parse(item.updatedAt);
   const reviewedAt = reviewedAtMs(review);
   const reviewCommentSyncedAt = timestampMs(review.reviewCommentSyncedAt);
+  const labelsSyncedAt = timestampMs(review.labelsSyncedAt);
+  const botOwnedSyncedAt = Math.max(
+    reviewCommentSyncedAt ?? -Infinity,
+    labelsSyncedAt ?? -Infinity,
+  );
   if (review.itemUpdatedAt) {
     if (item.updatedAt === review.itemUpdatedAt) return false;
     if (Number.isFinite(updatedAt) && reviewedAt !== null && updatedAt <= reviewedAt) return false;
     if (
       Number.isFinite(updatedAt) &&
-      reviewCommentSyncedAt !== null &&
-      updatedAt <= reviewCommentSyncedAt
+      Number.isFinite(botOwnedSyncedAt) &&
+      updatedAt <= botOwnedSyncedAt
     ) {
       return false;
     }
@@ -2528,8 +2648,8 @@ function hasActivitySinceReview(item: Item, review: ExistingReview | null): bool
   }
   if (
     Number.isFinite(updatedAt) &&
-    reviewCommentSyncedAt !== null &&
-    updatedAt <= reviewCommentSyncedAt
+    Number.isFinite(botOwnedSyncedAt) &&
+    updatedAt <= botOwnedSyncedAt
   ) {
     return false;
   }
@@ -3693,6 +3813,7 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
+    triagePriority: "none",
     itemCategory: "unclear",
     reproductionStatus: "unclear",
     reproductionConfidence: "low",
@@ -4779,6 +4900,11 @@ function reportOverallConfidenceScore(markdown: string): number {
   return Number.isFinite(score) && score >= 0 && score <= 1 ? score : 0;
 }
 
+function triagePriorityFromReport(markdown: string): TriagePriority {
+  const value = frontMatterValue(markdown, "triage_priority");
+  return TRIAGE_PRIORITIES.has(value as TriagePriority) ? (value as TriagePriority) : "none";
+}
+
 function reportReviewFindings(markdown: string): ReviewFinding[] {
   const section = reviewSectionValue(markdown, "reviewFindings");
   const findings: ReviewFinding[] = [];
@@ -5040,6 +5166,252 @@ export function telegramVisibleProofLabelsForTest(
   return nextTelegramVisibleProofLabels(labels, { status: proofStatus });
 }
 
+type PriorityLabelSpec = (typeof PRIORITY_LABELS)[number];
+
+function priorityLabelForTriage(priority: TriagePriority): PriorityLabelSpec | null {
+  return PRIORITY_LABELS.find((label) => label.triagePriority === priority) ?? null;
+}
+
+function nextPriorityLabels(labels: readonly string[], triagePriority: TriagePriority): string[] {
+  const nextLabels = labels.filter((label) => !PRIORITY_LABEL_NAMES.has(label));
+  const priorityLabel = priorityLabelForTriage(triagePriority);
+  if (priorityLabel) nextLabels.push(priorityLabel.name);
+  return nextLabels;
+}
+
+export function priorityLabelSchemeForTest(): {
+  name: string;
+  color: string;
+  description: string;
+}[] {
+  return PRIORITY_LABELS.map(({ name, color, description }) => ({ name, color, description }));
+}
+
+export function priorityLabelsForTest(labels: readonly string[], triagePriority: string): string[] {
+  const priority = TRIAGE_PRIORITIES.has(triagePriority as TriagePriority)
+    ? (triagePriority as TriagePriority)
+    : "none";
+  return nextPriorityLabels(labels, priority);
+}
+
+function ensurePriorityLabel(label: PriorityLabelSpec): void {
+  try {
+    ghWithRetry(
+      ["label", "create", label.name, "--color", label.color, "--description", label.description],
+      2,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!/already exists/i.test(message)) throw error;
+  }
+}
+
+interface IssueAdvisoryLabelState {
+  type: string | undefined;
+  itemCategory: string | undefined;
+  reproductionStatus: string | undefined;
+  reproductionConfidence: string | undefined;
+  requiresProductDecision: boolean;
+  securityReviewStatus: string | undefined;
+  workCandidate: string | undefined;
+  workStatus: string | undefined;
+  workConfidence: string | undefined;
+  hasWorkShape: boolean;
+  hasOpenLinkedPullRequest: boolean;
+}
+
+function isIssueAdvisoryLabel(label: string): boolean {
+  return ISSUE_ADVISORY_LABEL_NAMES.has(label.toLowerCase());
+}
+
+function wantedIssueAdvisoryLabels(state: IssueAdvisoryLabelState): Set<string> {
+  const labels = new Set<string>();
+  if (state.type !== "issue") return labels;
+  if (state.reproductionConfidence === "high") {
+    if (state.reproductionStatus === "reproduced") labels.add("clawsweeper:current-main-repro");
+    if (state.reproductionStatus === "source_reproducible") labels.add("clawsweeper:source-repro");
+    if (state.reproductionStatus === "not_reproduced") labels.add("clawsweeper:not-repro-on-main");
+  }
+  if (
+    state.reproductionStatus === "source_reproducible" &&
+    state.reproductionConfidence !== "high"
+  ) {
+    labels.add("clawsweeper:needs-live-repro");
+  }
+  if (state.reproductionStatus === "unclear" && state.reproductionConfidence !== "high") {
+    labels.add("clawsweeper:needs-info");
+  }
+  if (state.hasOpenLinkedPullRequest) {
+    labels.add("clawsweeper:linked-pr-open");
+  }
+  if (
+    state.workCandidate === "queue_fix_pr" &&
+    state.workStatus === "candidate" &&
+    state.workConfidence === "high"
+  ) {
+    labels.add("clawsweeper:queueable-fix");
+  }
+  if (
+    state.workConfidence === "high" &&
+    state.hasWorkShape &&
+    (state.workCandidate === "queue_fix_pr" || state.workCandidate === "manual_review")
+  ) {
+    labels.add("clawsweeper:fix-shape-clear");
+  }
+  if (state.workCandidate === "manual_review" || state.workStatus === "manual_review") {
+    labels.add("clawsweeper:needs-maintainer-review");
+  }
+  if (state.requiresProductDecision) {
+    labels.add("clawsweeper:needs-product-decision");
+  }
+  if (state.itemCategory === "security" || state.securityReviewStatus === "needs_attention") {
+    labels.add("clawsweeper:needs-security-review");
+  }
+  if (
+    state.hasOpenLinkedPullRequest ||
+    state.workCandidate === "manual_review" ||
+    state.workStatus === "manual_review" ||
+    state.requiresProductDecision ||
+    state.itemCategory === "security" ||
+    state.securityReviewStatus === "needs_attention"
+  ) {
+    labels.add("clawsweeper:no-new-fix-pr");
+  }
+  return labels;
+}
+
+function nextIssueAdvisoryLabels(
+  labels: readonly string[],
+  state: IssueAdvisoryLabelState,
+): string[] {
+  const wantedLabels = wantedIssueAdvisoryLabels(state);
+  const nextLabels = labels.filter((label) => !isIssueAdvisoryLabel(label));
+  for (const label of ISSUE_ADVISORY_LABELS) {
+    if (wantedLabels.has(label.name)) nextLabels.push(label.name);
+  }
+  return nextLabels;
+}
+
+export function issueAdvisoryLabelsForTest(
+  labels: readonly string[],
+  state: Partial<IssueAdvisoryLabelState>,
+): string[] {
+  return nextIssueAdvisoryLabels(labels, {
+    type: state.type,
+    itemCategory: state.itemCategory,
+    reproductionStatus: state.reproductionStatus,
+    reproductionConfidence: state.reproductionConfidence,
+    requiresProductDecision: state.requiresProductDecision ?? false,
+    securityReviewStatus: state.securityReviewStatus,
+    workCandidate: state.workCandidate,
+    workStatus: state.workStatus,
+    workConfidence: state.workConfidence,
+    hasWorkShape: state.hasWorkShape ?? false,
+    hasOpenLinkedPullRequest: state.hasOpenLinkedPullRequest ?? false,
+  });
+}
+
+function issueAdvisoryLabelStateFromReport(
+  markdown: string,
+  options: { hasOpenLinkedPullRequest?: boolean } = {},
+): IssueAdvisoryLabelState {
+  const workLikelyFiles = frontMatterStringArray(markdown, "work_likely_files");
+  const workValidation = frontMatterStringArray(markdown, "work_validation");
+  const workPrompt = reviewSectionValue(markdown, "repairWorkPrompt").trim();
+  return {
+    type: frontMatterValue(markdown, "type"),
+    itemCategory: frontMatterValue(markdown, "item_category"),
+    reproductionStatus: frontMatterValue(markdown, "reproduction_status"),
+    reproductionConfidence: frontMatterValue(markdown, "reproduction_confidence"),
+    requiresProductDecision: frontMatterValue(markdown, "requires_product_decision") === "true",
+    securityReviewStatus: reportSecurityReview(markdown).status,
+    workCandidate: frontMatterValue(markdown, "work_candidate"),
+    workStatus: frontMatterValue(markdown, "work_status"),
+    workConfidence: frontMatterValue(markdown, "work_confidence"),
+    hasWorkShape: Boolean(workPrompt || workLikelyFiles.length || workValidation.length),
+    hasOpenLinkedPullRequest: options.hasOpenLinkedPullRequest === true,
+  };
+}
+
+function ensureIssueAdvisoryLabel(name: string): void {
+  const definition = ISSUE_ADVISORY_LABELS.find((label) => label.name === name);
+  if (!definition) return;
+  try {
+    ghWithRetry(
+      [
+        "label",
+        "create",
+        definition.name,
+        "--color",
+        definition.color,
+        "--description",
+        definition.description,
+      ],
+      2,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!/already exists/i.test(message)) throw error;
+  }
+}
+
+function syncPriorityLabel(options: {
+  number: number;
+  labels: readonly string[];
+  triagePriority: TriagePriority;
+  dryRun: boolean;
+}): { labels: string[]; changed: boolean } {
+  const nextLabels = nextPriorityLabels(options.labels, options.triagePriority);
+  const labelsToRemove = options.labels.filter(
+    (label) => PRIORITY_LABEL_NAMES.has(label) && !nextLabels.includes(label),
+  );
+  const labelToAdd = nextLabels.find(
+    (label) => PRIORITY_LABEL_NAMES.has(label) && !options.labels.includes(label),
+  );
+  const changed = labelsToRemove.length > 0 || Boolean(labelToAdd);
+  if (!changed) return { labels: nextLabels, changed };
+  if (options.dryRun) return { labels: nextLabels, changed };
+  if (labelToAdd) {
+    const priorityLabel = PRIORITY_LABELS.find((label) => label.name === labelToAdd);
+    if (priorityLabel) ensurePriorityLabel(priorityLabel);
+  }
+  for (const label of labelsToRemove) {
+    ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+  }
+  if (labelToAdd) {
+    ghWithRetry(["issue", "edit", String(options.number), "--add-label", labelToAdd]);
+  }
+  return { labels: nextLabels, changed };
+}
+
+function syncIssueAdvisoryLabels(options: {
+  number: number;
+  labels: readonly string[];
+  state: IssueAdvisoryLabelState;
+  dryRun: boolean;
+}): { labels: string[]; changed: boolean } {
+  const nextLabels = nextIssueAdvisoryLabels(options.labels, options.state);
+  const currentLabelKeys = new Set(options.labels.map((label) => label.toLowerCase()));
+  const nextLabelKeys = new Set(nextLabels.map((label) => label.toLowerCase()));
+  const labelsToAdd = nextLabels.filter(
+    (label) => isIssueAdvisoryLabel(label) && !currentLabelKeys.has(label.toLowerCase()),
+  );
+  const labelsToRemove = options.labels.filter(
+    (label) => isIssueAdvisoryLabel(label) && !nextLabelKeys.has(label.toLowerCase()),
+  );
+  const changed = labelsToAdd.length > 0 || labelsToRemove.length > 0;
+  if (!changed) return { labels: nextLabels, changed };
+  if (options.dryRun) return { labels: nextLabels, changed };
+  for (const label of labelsToAdd) {
+    ensureIssueAdvisoryLabel(label);
+    ghWithRetry(["issue", "edit", String(options.number), "--add-label", label]);
+  }
+  for (const label of labelsToRemove) {
+    ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+  }
+  return { labels: nextLabels, changed };
+}
+
 function syncTelegramVisibleProofLabel(options: {
   number: number;
   labels: readonly string[];
@@ -5082,6 +5454,38 @@ function ensureTelegramVisibleProofLabel(): void {
   }
 }
 
+function missingLabelError(error: unknown, label: string): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(`'${label}' not found`) || message.includes(`"${label}" not found`);
+}
+
+export function isMissingGitHubLabelErrorForTest(message: string, label: string): boolean {
+  return missingLabelError(new Error(message), label);
+}
+
+function ensureRealBehaviorProofSufficientLabel(): boolean {
+  try {
+    ghWithRetry(
+      [
+        "label",
+        "create",
+        PROOF_SUFFICIENT_LABEL,
+        "--color",
+        PROOF_SUFFICIENT_LABEL_COLOR,
+        "--description",
+        PROOF_SUFFICIENT_LABEL_DESCRIPTION,
+      ],
+      2,
+    );
+    return true;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/already exists/i.test(message)) return true;
+    console.warn(`Skipping optional label sync for ${PROOF_SUFFICIENT_LABEL}: ${message}`);
+    return false;
+  }
+}
+
 function syncRealBehaviorProofSufficientLabel(options: {
   number: number;
   labels: readonly string[];
@@ -5093,13 +5497,24 @@ function syncRealBehaviorProofSufficientLabel(options: {
   const wantsLabel = nextLabels.includes(PROOF_SUFFICIENT_LABEL);
   if (hadLabel === wantsLabel) return nextLabels;
   if (options.dryRun) return nextLabels;
-  ghWithRetry([
-    "issue",
-    "edit",
-    String(options.number),
-    wantsLabel ? "--add-label" : "--remove-label",
-    PROOF_SUFFICIENT_LABEL,
-  ]);
+  if (wantsLabel && !ensureRealBehaviorProofSufficientLabel()) return [...options.labels];
+  try {
+    ghWithRetry([
+      "issue",
+      "edit",
+      String(options.number),
+      wantsLabel ? "--add-label" : "--remove-label",
+      PROOF_SUFFICIENT_LABEL,
+    ]);
+  } catch (error) {
+    if (!missingLabelError(error, PROOF_SUFFICIENT_LABEL)) throw error;
+    console.warn(
+      `Skipping optional label sync for ${PROOF_SUFFICIENT_LABEL}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+    return wantsLabel ? [...options.labels] : nextLabels;
+  }
   return nextLabels;
 }
 
@@ -5264,6 +5679,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
+    triagePriority: triagePriorityFromReport(markdown),
     itemCategory:
       (frontMatterValue(markdown, "item_category") as ItemCategory | undefined) ?? "unclear",
     reproductionStatus:
@@ -6587,6 +7003,7 @@ work_prompt_sha256: ${options.decision.workPrompt ? sha256(options.decision.work
 work_cluster_refs: ${jsonFrontMatterValue(options.decision.workClusterRefs)}
 work_validation: ${jsonFrontMatterValue(options.decision.workValidation)}
 work_likely_files: ${jsonFrontMatterValue(options.decision.workLikelyFiles)}
+triage_priority: ${options.decision.triagePriority}
 pull_files: ${jsonFrontMatterValue(pullFiles)}
 pull_files_truncated: ${pullFilesTruncated}
 item_category: ${options.decision.itemCategory}
@@ -7066,6 +7483,9 @@ function applyDecisionsCommand(args: Args): void {
     }
     const { item, state } = fetchItem(number);
     let currentContext: ItemContext | undefined;
+    let currentClosingPullRequests: unknown[] | undefined;
+    let clawSweeperLabelsChanged = false;
+    let issueAdvisoryLabelsChanged = false;
     const currentItemContext = (): ItemContext => {
       currentContext ??= collectItemContext(item);
       return currentContext;
@@ -7133,6 +7553,9 @@ function applyDecisionsCommand(args: Args): void {
     }
     const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
     const reviewCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingReviewComment);
+    const unchangedSinceReview = storedUpdatedAt
+      ? !updatedSinceReview || reviewCommentOnlyUpdate
+      : false;
     if (state !== "open") {
       if (item.closedAt) {
         markdown = replaceFrontMatterValue(markdown, "current_item_closed_at", item.closedAt);
@@ -7207,9 +7630,39 @@ function applyDecisionsCommand(args: Args): void {
         continue;
       }
     }
+    const isCurrentCompleteReport =
+      frontMatterValue(markdown, "review_status") === "complete" && unchangedSinceReview;
+    if (state === "open" && isCurrentCompleteReport) {
+      const syncResult = syncPriorityLabel({
+        number,
+        labels: item.labels,
+        triagePriority: triagePriorityFromReport(markdown),
+        dryRun,
+      });
+      item.labels = syncResult.labels;
+      clawSweeperLabelsChanged ||= syncResult.changed;
+      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    }
+    if (state === "open" && item.kind === "issue" && !isCloseProposal && isCurrentCompleteReport) {
+      currentClosingPullRequests = closingPullRequestsForIssue(number);
+      const syncResult = syncIssueAdvisoryLabels({
+        number,
+        labels: item.labels,
+        state: issueAdvisoryLabelStateFromReport(markdown, {
+          hasOpenLinkedPullRequest:
+            openClosingPullRequestApplyReason(currentClosingPullRequests) !== null,
+        }),
+        dryRun,
+      });
+      item.labels = syncResult.labels;
+      issueAdvisoryLabelsChanged = syncResult.changed;
+      clawSweeperLabelsChanged ||= syncResult.changed;
+      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    }
     if (isCloseProposal && item.kind === "issue") {
+      currentClosingPullRequests ??= closingPullRequestsForIssue(number);
       const openClosingPullRequestReason = openClosingPullRequestApplyReason(
-        closingPullRequestsForIssue(number),
+        currentClosingPullRequests,
       );
       if (openClosingPullRequestReason) {
         if (markApplySkipped("skipped_open_closing_pr", openClosingPullRequestReason)) break;
@@ -7247,6 +7700,19 @@ function applyDecisionsCommand(args: Args): void {
       needsReviewCommentHashSync,
       needsReviewCommentReferenceSync,
     });
+    if (clawSweeperLabelsChanged && !dryRun) {
+      markdown = replaceFrontMatterValue(markdown, "labels_synced_at", new Date().toISOString());
+    }
+    const labelSyncReason = issueAdvisoryLabelsChanged
+      ? dryRun
+        ? "dry-run: would sync advisory issue labels"
+        : "synced advisory issue labels"
+      : dryRun
+        ? "dry-run: would sync ClawSweeper labels"
+        : "synced ClawSweeper labels";
+    const labelSyncProgressMessage = issueAdvisoryLabelsChanged
+      ? `synced advisory issue labels #${number}`
+      : `synced ClawSweeper labels #${number}`;
     if (needsReviewCommentSync) {
       const lockedReason = needsReviewCommentBodySync ? lockedConversationApplyReason(item) : null;
       if (lockedReason) {
@@ -7287,6 +7753,21 @@ function applyDecisionsCommand(args: Args): void {
       });
       processedCount += 1;
       maybeLogProgress(`synced review comment #${number}`);
+      if (processedCount >= processedLimit) break;
+    }
+    if (
+      clawSweeperLabelsChanged &&
+      !needsReviewCommentSync &&
+      (!isCloseProposal || syncCommentsOnly)
+    ) {
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "kept_open",
+        reason: labelSyncReason,
+      });
+      processedCount += 1;
+      maybeLogProgress(labelSyncProgressMessage);
       if (processedCount >= processedLimit) break;
     }
     if (syncCommentsOnly) continue;

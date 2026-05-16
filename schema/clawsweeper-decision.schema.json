@@ -12,6 +12,7 @@
     "likelyOwners",
     "risks",
     "bestSolution",
+    "triagePriority",
     "itemCategory",
     "reproductionStatus",
     "reproductionConfidence",
@@ -150,6 +151,11 @@
     "bestSolution": {
       "type": "string",
       "description": "The best possible product/code/docs direction for this item, whether the item should close or stay open. Do not repeat the change summary, workReason, or risk list."
+    },
+    "triagePriority": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2", "P3", "none"],
+      "description": "ClawSweeper-maintained triage priority for maintainers to sort issues and pull requests. Use P0 for critical production-breaking, data-loss, security-impacting, or core-operation-blocking work; P1 for important user-facing bugs, serious regressions, broken major workflows, or urgent maintainer-priority work; P2 for meaningful bugs, incomplete behavior, polish issues, or useful improvements with limited blast radius; P3 for minor cleanup, documentation, cosmetic polish, small ergonomics issues, or speculative improvements; use none only when no priority label should be applied."
     },
     "itemCategory": {
       "type": "string",
