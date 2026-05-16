@@ -24,7 +24,9 @@ import {
   fixedPullRequestFromCommitPullsForTest,
   formatRecentClosedRows,
   githubContextWindowPlan,
+  ghPagedLinkHeaderContextWindow,
   ghPagedContextWindow,
+  githubLinkLastPageNumber,
   githubPaginatedPath,
   ghRetryKind,
   hotIntakeRecencyMs,
@@ -357,6 +359,96 @@ test("ghPagedContextWindow falls back to full pagination when total is missing",
       page: () => {
         throw new Error("page fetch should not be used without a total count");
       },
+    },
+  );
+
+  assert.deepEqual(window, {
+    items: [1, 2, 3],
+    total: 3,
+    hydrated: 3,
+    truncated: false,
+  });
+});
+
+test("githubLinkLastPageNumber extracts the final REST page", () => {
+  assert.equal(
+    githubLinkLastPageNumber(
+      '<https://api.github.com/repositories/123/issues/1/timeline?per_page=100&page=2>; rel="next", <https://api.github.com/repositories/123/issues/1/timeline?per_page=100&page=30>; rel="last"',
+    ),
+    30,
+  );
+  assert.equal(githubLinkLastPageNumber(undefined), null);
+});
+
+test("ghPagedLinkHeaderContextWindow uses GitHub link headers for large timeline tails", () => {
+  const fetchedPages: number[] = [];
+  const window = ghPagedLinkHeaderContextWindow<number>(
+    "repos/openclaw/openclaw/issues/123/timeline",
+    80,
+    {
+      pageWithHeaders: (_path, page) => {
+        fetchedPages.push(page);
+        const start = (page - 1) * 100 + 1;
+        return {
+          items: Array.from({ length: 100 }, (_, index) => start + index),
+          lastPageNumber: page === 1 ? 30 : null,
+        };
+      },
+      paged: () => {
+        throw new Error("full pagination should not be used with link headers");
+      },
+    },
+  );
+
+  assert.deepEqual(fetchedPages, [1, 30]);
+  assert.deepEqual(window.items, [
+    ...Array.from({ length: 40 }, (_, index) => index + 1),
+    ...Array.from({ length: 40 }, (_, index) => index + 2961),
+  ]);
+  assert.equal(window.total, 3000);
+  assert.equal(window.hydrated, 80);
+  assert.equal(window.truncated, true);
+});
+
+test("ghPagedLinkHeaderContextWindow keeps timeline tails that cross the first page", () => {
+  const fetchedPages: number[] = [];
+  const window = ghPagedLinkHeaderContextWindow<number>(
+    "repos/openclaw/openclaw/issues/123/timeline",
+    80,
+    {
+      pageWithHeaders: (_path, page) => {
+        fetchedPages.push(page);
+        if (page === 1) {
+          return {
+            items: Array.from({ length: 100 }, (_, index) => index + 1),
+            lastPageNumber: 2,
+          };
+        }
+        return { items: [101], lastPageNumber: null };
+      },
+    },
+  );
+
+  assert.deepEqual(fetchedPages, [1, 2]);
+  assert.deepEqual(window.items, [
+    ...Array.from({ length: 40 }, (_, index) => index + 1),
+    ...Array.from({ length: 40 }, (_, index) => index + 62),
+  ]);
+  assert.equal(window.total, 101);
+  assert.equal(window.hydrated, 80);
+  assert.equal(window.truncated, true);
+});
+
+test("ghPagedLinkHeaderContextWindow falls back when link headers are unavailable", () => {
+  const window = ghPagedLinkHeaderContextWindow<number>(
+    "repos/openclaw/openclaw/issues/123/timeline",
+    80,
+    {
+      pageWithHeaders: () => ({
+        items: Array.from({ length: 100 }, (_, index) => index + 1),
+        lastPageNumber: null,
+      }),
+      paged: () => [1, 2, 3],
     },
   );
 
@@ -3294,7 +3386,10 @@ const rawArgs = process.argv.slice(2);
 const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
 appendFileSync(logPath, JSON.stringify(args) + "\\n");
 const path = args[1] || "";
-if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/321\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  const timeline = Array.from({ length: 100 }, (_, index) => ({ id: index + 1 }));
+  console.log('HTTP/2 200\\nlink: <https://api.github.com/repos/openclaw/clawsweeper/issues/321/timeline?per_page=100&page=2>; rel="last"\\n\\n' + JSON.stringify(timeline));
+} else if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
   console.log(JSON.stringify([[{
     id: 9321,
     html_url: "https://github.com/openclaw/clawsweeper/issues/321#issuecomment-9321",
@@ -3353,6 +3448,15 @@ if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
     assert.equal(
       calls.some((args) => args[0] === "label" && args[1] === "create"),
       false,
+    );
+    assert.equal(
+      calls.some(
+        (args) =>
+          args[0] === "api" &&
+          (args[1] ?? "").endsWith("/issues/321/timeline?per_page=100") &&
+          args.includes("--paginate"),
+      ),
+      true,
     );
     assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
       {
