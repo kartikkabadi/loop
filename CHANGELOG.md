@@ -27,6 +27,11 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added a light privacy reminder and stronger screenshot-or-video nudge to real behavior proof review guidance.
 - Added agent-led real behavior proof judgement so ClawSweeper can inspect linked screenshots, videos, logs, and terminal output with a read-only GitHub token, explain the proof verdict in the review comment, tell contributors how to trigger a fresh review after adding proof, and sync `proof: sufficient` when the evidence is convincing.
 - Added a real behavior proof assessment to PR reviews so missing, mock-only, or insufficient contributor proof blocks pass/automerge markers and asks for screenshots, terminal output, redacted logs, recordings, linked artifacts, or copied live output instead.
+- Added advisory issue labels for reproduction, linked-PR, work-lane,
+  missing-info, product-decision, and security-review routing states, projected
+  from existing review report fields without changing repair, merge, or close
+  behavior. Label-only syncs now record `labels_synced_at` so scheduler cadence
+  ignores ClawSweeper-owned label `updated_at` churn. Thanks @brokemac79.
 - Added `config/automation-limits.json` plus docs and a drift check so review,
   commit-review, repair, and issue-implementation capacity defaults have one
   checked-in source of truth.

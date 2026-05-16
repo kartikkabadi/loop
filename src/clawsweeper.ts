@@ -180,6 +180,7 @@ interface ExistingReview {
   reviewedAt: string | undefined;
   itemUpdatedAt: string | undefined;
   reviewCommentSyncedAt: string | undefined;
+  labelsSyncedAt: string | undefined;
   decision: string | undefined;
   reviewStatus: string | undefined;
   reviewPolicy: string | undefined;
@@ -709,6 +710,73 @@ const PRIORITY_LABELS = [
 ] as const;
 const PRIORITY_LABEL_NAMES: ReadonlySet<string> = new Set(
   PRIORITY_LABELS.map((label) => label.name),
+);
+const ISSUE_ADVISORY_LABELS = [
+  {
+    name: "clawsweeper:current-main-repro",
+    color: "1D76DB",
+    description: "ClawSweeper found a high-confidence current-main issue reproduction.",
+  },
+  {
+    name: "clawsweeper:source-repro",
+    color: "1D76DB",
+    description: "ClawSweeper found a high-confidence source-level issue reproduction.",
+  },
+  {
+    name: "clawsweeper:not-repro-on-main",
+    color: "C2E0C6",
+    description:
+      "ClawSweeper found high-confidence evidence that this issue no longer reproduces on main.",
+  },
+  {
+    name: "clawsweeper:needs-live-repro",
+    color: "FBCA04",
+    description:
+      "ClawSweeper needs live local, crabbox, or manual validation to confirm this issue.",
+  },
+  {
+    name: "clawsweeper:needs-info",
+    color: "D876E3",
+    description: "ClawSweeper needs more reporter information before it can verify this issue.",
+  },
+  {
+    name: "clawsweeper:linked-pr-open",
+    color: "5319E7",
+    description: "ClawSweeper found an open linked pull request for this issue.",
+  },
+  {
+    name: "clawsweeper:no-new-fix-pr",
+    color: "BFDADC",
+    description: "ClawSweeper does not recommend queueing a new automated fix PR for this issue.",
+  },
+  {
+    name: "clawsweeper:queueable-fix",
+    color: "0E8A16",
+    description: "ClawSweeper marked this issue as an existing queue_fix_pr work candidate.",
+  },
+  {
+    name: "clawsweeper:fix-shape-clear",
+    color: "0E8A16",
+    description: "ClawSweeper found a clear likely implementation shape for this issue.",
+  },
+  {
+    name: "clawsweeper:needs-maintainer-review",
+    color: "FBCA04",
+    description: "ClawSweeper marked this issue as needing maintainer review before automation.",
+  },
+  {
+    name: "clawsweeper:needs-product-decision",
+    color: "FBCA04",
+    description: "ClawSweeper marked this issue as needing a product or behavior decision.",
+  },
+  {
+    name: "clawsweeper:needs-security-review",
+    color: "B60205",
+    description: "ClawSweeper marked this issue as needing security-sensitive review.",
+  },
+] as const;
+const ISSUE_ADVISORY_LABEL_NAMES = new Set(
+  ISSUE_ADVISORY_LABELS.map((label) => label.name.toLowerCase()),
 );
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
@@ -2455,6 +2523,7 @@ function existingReview(
     reviewedAt: frontMatterValue(markdown, "reviewed_at"),
     itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
     reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+    labelsSyncedAt: frontMatterValue(markdown, "labels_synced_at"),
     decision: frontMatterValue(markdown, "decision"),
     reviewStatus: effectiveReviewStatus(markdown),
     reviewPolicy: frontMatterValue(markdown, "review_policy"),
@@ -2482,6 +2551,7 @@ function buildExistingReviewIndex(itemsDir: string): ExistingReviewIndex {
       reviewedAt: frontMatterValue(markdown, "reviewed_at"),
       itemUpdatedAt: frontMatterValue(markdown, "item_updated_at"),
       reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+      labelsSyncedAt: frontMatterValue(markdown, "labels_synced_at"),
       decision: frontMatterValue(markdown, "decision"),
       reviewStatus: effectiveReviewStatus(markdown),
       reviewPolicy: frontMatterValue(markdown, "review_policy"),
@@ -2559,13 +2629,18 @@ function hasActivitySinceReview(item: Item, review: ExistingReview | null): bool
   const updatedAt = Date.parse(item.updatedAt);
   const reviewedAt = reviewedAtMs(review);
   const reviewCommentSyncedAt = timestampMs(review.reviewCommentSyncedAt);
+  const labelsSyncedAt = timestampMs(review.labelsSyncedAt);
+  const botOwnedSyncedAt = Math.max(
+    reviewCommentSyncedAt ?? -Infinity,
+    labelsSyncedAt ?? -Infinity,
+  );
   if (review.itemUpdatedAt) {
     if (item.updatedAt === review.itemUpdatedAt) return false;
     if (Number.isFinite(updatedAt) && reviewedAt !== null && updatedAt <= reviewedAt) return false;
     if (
       Number.isFinite(updatedAt) &&
-      reviewCommentSyncedAt !== null &&
-      updatedAt <= reviewCommentSyncedAt
+      Number.isFinite(botOwnedSyncedAt) &&
+      updatedAt <= botOwnedSyncedAt
     ) {
       return false;
     }
@@ -2573,8 +2648,8 @@ function hasActivitySinceReview(item: Item, review: ExistingReview | null): bool
   }
   if (
     Number.isFinite(updatedAt) &&
-    reviewCommentSyncedAt !== null &&
-    updatedAt <= reviewCommentSyncedAt
+    Number.isFinite(botOwnedSyncedAt) &&
+    updatedAt <= botOwnedSyncedAt
   ) {
     return false;
   }
@@ -5131,12 +5206,161 @@ function ensurePriorityLabel(label: PriorityLabelSpec): void {
   }
 }
 
+interface IssueAdvisoryLabelState {
+  type: string | undefined;
+  itemCategory: string | undefined;
+  reproductionStatus: string | undefined;
+  reproductionConfidence: string | undefined;
+  requiresProductDecision: boolean;
+  securityReviewStatus: string | undefined;
+  workCandidate: string | undefined;
+  workStatus: string | undefined;
+  workConfidence: string | undefined;
+  hasWorkShape: boolean;
+  hasOpenLinkedPullRequest: boolean;
+}
+
+function isIssueAdvisoryLabel(label: string): boolean {
+  return ISSUE_ADVISORY_LABEL_NAMES.has(label.toLowerCase());
+}
+
+function wantedIssueAdvisoryLabels(state: IssueAdvisoryLabelState): Set<string> {
+  const labels = new Set<string>();
+  if (state.type !== "issue") return labels;
+  if (state.reproductionConfidence === "high") {
+    if (state.reproductionStatus === "reproduced") labels.add("clawsweeper:current-main-repro");
+    if (state.reproductionStatus === "source_reproducible") labels.add("clawsweeper:source-repro");
+    if (state.reproductionStatus === "not_reproduced") labels.add("clawsweeper:not-repro-on-main");
+  }
+  if (
+    state.reproductionStatus === "source_reproducible" &&
+    state.reproductionConfidence !== "high"
+  ) {
+    labels.add("clawsweeper:needs-live-repro");
+  }
+  if (state.reproductionStatus === "unclear" && state.reproductionConfidence !== "high") {
+    labels.add("clawsweeper:needs-info");
+  }
+  if (state.hasOpenLinkedPullRequest) {
+    labels.add("clawsweeper:linked-pr-open");
+  }
+  if (
+    state.workCandidate === "queue_fix_pr" &&
+    state.workStatus === "candidate" &&
+    state.workConfidence === "high"
+  ) {
+    labels.add("clawsweeper:queueable-fix");
+  }
+  if (
+    state.workConfidence === "high" &&
+    state.hasWorkShape &&
+    (state.workCandidate === "queue_fix_pr" || state.workCandidate === "manual_review")
+  ) {
+    labels.add("clawsweeper:fix-shape-clear");
+  }
+  if (state.workCandidate === "manual_review" || state.workStatus === "manual_review") {
+    labels.add("clawsweeper:needs-maintainer-review");
+  }
+  if (state.requiresProductDecision) {
+    labels.add("clawsweeper:needs-product-decision");
+  }
+  if (state.itemCategory === "security" || state.securityReviewStatus === "needs_attention") {
+    labels.add("clawsweeper:needs-security-review");
+  }
+  if (
+    state.hasOpenLinkedPullRequest ||
+    state.workCandidate === "manual_review" ||
+    state.workStatus === "manual_review" ||
+    state.requiresProductDecision ||
+    state.itemCategory === "security" ||
+    state.securityReviewStatus === "needs_attention"
+  ) {
+    labels.add("clawsweeper:no-new-fix-pr");
+  }
+  return labels;
+}
+
+function nextIssueAdvisoryLabels(
+  labels: readonly string[],
+  state: IssueAdvisoryLabelState,
+): string[] {
+  const wantedLabels = wantedIssueAdvisoryLabels(state);
+  const nextLabels = labels.filter((label) => !isIssueAdvisoryLabel(label));
+  for (const label of ISSUE_ADVISORY_LABELS) {
+    if (wantedLabels.has(label.name)) nextLabels.push(label.name);
+  }
+  return nextLabels;
+}
+
+export function issueAdvisoryLabelsForTest(
+  labels: readonly string[],
+  state: Partial<IssueAdvisoryLabelState>,
+): string[] {
+  return nextIssueAdvisoryLabels(labels, {
+    type: state.type,
+    itemCategory: state.itemCategory,
+    reproductionStatus: state.reproductionStatus,
+    reproductionConfidence: state.reproductionConfidence,
+    requiresProductDecision: state.requiresProductDecision ?? false,
+    securityReviewStatus: state.securityReviewStatus,
+    workCandidate: state.workCandidate,
+    workStatus: state.workStatus,
+    workConfidence: state.workConfidence,
+    hasWorkShape: state.hasWorkShape ?? false,
+    hasOpenLinkedPullRequest: state.hasOpenLinkedPullRequest ?? false,
+  });
+}
+
+function issueAdvisoryLabelStateFromReport(
+  markdown: string,
+  options: { hasOpenLinkedPullRequest?: boolean } = {},
+): IssueAdvisoryLabelState {
+  const workLikelyFiles = frontMatterStringArray(markdown, "work_likely_files");
+  const workValidation = frontMatterStringArray(markdown, "work_validation");
+  const workPrompt = reviewSectionValue(markdown, "repairWorkPrompt").trim();
+  return {
+    type: frontMatterValue(markdown, "type"),
+    itemCategory: frontMatterValue(markdown, "item_category"),
+    reproductionStatus: frontMatterValue(markdown, "reproduction_status"),
+    reproductionConfidence: frontMatterValue(markdown, "reproduction_confidence"),
+    requiresProductDecision: frontMatterValue(markdown, "requires_product_decision") === "true",
+    securityReviewStatus: reportSecurityReview(markdown).status,
+    workCandidate: frontMatterValue(markdown, "work_candidate"),
+    workStatus: frontMatterValue(markdown, "work_status"),
+    workConfidence: frontMatterValue(markdown, "work_confidence"),
+    hasWorkShape: Boolean(workPrompt || workLikelyFiles.length || workValidation.length),
+    hasOpenLinkedPullRequest: options.hasOpenLinkedPullRequest === true,
+  };
+}
+
+function ensureIssueAdvisoryLabel(name: string): void {
+  const definition = ISSUE_ADVISORY_LABELS.find((label) => label.name === name);
+  if (!definition) return;
+  try {
+    ghWithRetry(
+      [
+        "label",
+        "create",
+        definition.name,
+        "--color",
+        definition.color,
+        "--description",
+        definition.description,
+      ],
+      2,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!/already exists/i.test(message)) throw error;
+  }
+}
+
 function syncPriorityLabel(options: {
   number: number;
   labels: readonly string[];
   triagePriority: TriagePriority;
   dryRun: boolean;
-}): string[] {
+}): { labels: string[]; changed: boolean } {
   const nextLabels = nextPriorityLabels(options.labels, options.triagePriority);
   const labelsToRemove = options.labels.filter(
     (label) => PRIORITY_LABEL_NAMES.has(label) && !nextLabels.includes(label),
@@ -5144,8 +5368,9 @@ function syncPriorityLabel(options: {
   const labelToAdd = nextLabels.find(
     (label) => PRIORITY_LABEL_NAMES.has(label) && !options.labels.includes(label),
   );
-  if (labelsToRemove.length === 0 && !labelToAdd) return nextLabels;
-  if (options.dryRun) return nextLabels;
+  const changed = labelsToRemove.length > 0 || Boolean(labelToAdd);
+  if (!changed) return { labels: nextLabels, changed };
+  if (options.dryRun) return { labels: nextLabels, changed };
   if (labelToAdd) {
     const priorityLabel = PRIORITY_LABELS.find((label) => label.name === labelToAdd);
     if (priorityLabel) ensurePriorityLabel(priorityLabel);
@@ -5156,7 +5381,35 @@ function syncPriorityLabel(options: {
   if (labelToAdd) {
     ghWithRetry(["issue", "edit", String(options.number), "--add-label", labelToAdd]);
   }
-  return nextLabels;
+  return { labels: nextLabels, changed };
+}
+
+function syncIssueAdvisoryLabels(options: {
+  number: number;
+  labels: readonly string[];
+  state: IssueAdvisoryLabelState;
+  dryRun: boolean;
+}): { labels: string[]; changed: boolean } {
+  const nextLabels = nextIssueAdvisoryLabels(options.labels, options.state);
+  const currentLabelKeys = new Set(options.labels.map((label) => label.toLowerCase()));
+  const nextLabelKeys = new Set(nextLabels.map((label) => label.toLowerCase()));
+  const labelsToAdd = nextLabels.filter(
+    (label) => isIssueAdvisoryLabel(label) && !currentLabelKeys.has(label.toLowerCase()),
+  );
+  const labelsToRemove = options.labels.filter(
+    (label) => isIssueAdvisoryLabel(label) && !nextLabelKeys.has(label.toLowerCase()),
+  );
+  const changed = labelsToAdd.length > 0 || labelsToRemove.length > 0;
+  if (!changed) return { labels: nextLabels, changed };
+  if (options.dryRun) return { labels: nextLabels, changed };
+  for (const label of labelsToAdd) {
+    ensureIssueAdvisoryLabel(label);
+    ghWithRetry(["issue", "edit", String(options.number), "--add-label", label]);
+  }
+  for (const label of labelsToRemove) {
+    ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+  }
+  return { labels: nextLabels, changed };
 }
 
 function syncTelegramVisibleProofLabel(options: {
@@ -7230,6 +7483,9 @@ function applyDecisionsCommand(args: Args): void {
     }
     const { item, state } = fetchItem(number);
     let currentContext: ItemContext | undefined;
+    let currentClosingPullRequests: unknown[] | undefined;
+    let clawSweeperLabelsChanged = false;
+    let issueAdvisoryLabelsChanged = false;
     const currentItemContext = (): ItemContext => {
       currentContext ??= collectItemContext(item);
       return currentContext;
@@ -7252,14 +7508,6 @@ function applyDecisionsCommand(args: Args): void {
         number,
         labels: item.labels,
         proof: reportTelegramVisibleProof(markdown),
-        dryRun,
-      });
-    }
-    if (state === "open") {
-      item.labels = syncPriorityLabel({
-        number,
-        labels: item.labels,
-        triagePriority: triagePriorityFromReport(markdown),
         dryRun,
       });
     }
@@ -7305,6 +7553,9 @@ function applyDecisionsCommand(args: Args): void {
     }
     const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
     const reviewCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingReviewComment);
+    const unchangedSinceReview = storedUpdatedAt
+      ? !updatedSinceReview || reviewCommentOnlyUpdate
+      : false;
     if (state !== "open") {
       if (item.closedAt) {
         markdown = replaceFrontMatterValue(markdown, "current_item_closed_at", item.closedAt);
@@ -7379,9 +7630,39 @@ function applyDecisionsCommand(args: Args): void {
         continue;
       }
     }
+    const isCurrentCompleteReport =
+      frontMatterValue(markdown, "review_status") === "complete" && unchangedSinceReview;
+    if (state === "open" && isCurrentCompleteReport) {
+      const syncResult = syncPriorityLabel({
+        number,
+        labels: item.labels,
+        triagePriority: triagePriorityFromReport(markdown),
+        dryRun,
+      });
+      item.labels = syncResult.labels;
+      clawSweeperLabelsChanged ||= syncResult.changed;
+      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    }
+    if (state === "open" && item.kind === "issue" && !isCloseProposal && isCurrentCompleteReport) {
+      currentClosingPullRequests = closingPullRequestsForIssue(number);
+      const syncResult = syncIssueAdvisoryLabels({
+        number,
+        labels: item.labels,
+        state: issueAdvisoryLabelStateFromReport(markdown, {
+          hasOpenLinkedPullRequest:
+            openClosingPullRequestApplyReason(currentClosingPullRequests) !== null,
+        }),
+        dryRun,
+      });
+      item.labels = syncResult.labels;
+      issueAdvisoryLabelsChanged = syncResult.changed;
+      clawSweeperLabelsChanged ||= syncResult.changed;
+      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    }
     if (isCloseProposal && item.kind === "issue") {
+      currentClosingPullRequests ??= closingPullRequestsForIssue(number);
       const openClosingPullRequestReason = openClosingPullRequestApplyReason(
-        closingPullRequestsForIssue(number),
+        currentClosingPullRequests,
       );
       if (openClosingPullRequestReason) {
         if (markApplySkipped("skipped_open_closing_pr", openClosingPullRequestReason)) break;
@@ -7419,6 +7700,19 @@ function applyDecisionsCommand(args: Args): void {
       needsReviewCommentHashSync,
       needsReviewCommentReferenceSync,
     });
+    if (clawSweeperLabelsChanged && !dryRun) {
+      markdown = replaceFrontMatterValue(markdown, "labels_synced_at", new Date().toISOString());
+    }
+    const labelSyncReason = issueAdvisoryLabelsChanged
+      ? dryRun
+        ? "dry-run: would sync advisory issue labels"
+        : "synced advisory issue labels"
+      : dryRun
+        ? "dry-run: would sync ClawSweeper labels"
+        : "synced ClawSweeper labels";
+    const labelSyncProgressMessage = issueAdvisoryLabelsChanged
+      ? `synced advisory issue labels #${number}`
+      : `synced ClawSweeper labels #${number}`;
     if (needsReviewCommentSync) {
       const lockedReason = needsReviewCommentBodySync ? lockedConversationApplyReason(item) : null;
       if (lockedReason) {
@@ -7459,6 +7753,21 @@ function applyDecisionsCommand(args: Args): void {
       });
       processedCount += 1;
       maybeLogProgress(`synced review comment #${number}`);
+      if (processedCount >= processedLimit) break;
+    }
+    if (
+      clawSweeperLabelsChanged &&
+      !needsReviewCommentSync &&
+      (!isCloseProposal || syncCommentsOnly)
+    ) {
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "kept_open",
+        reason: labelSyncReason,
+      });
+      processedCount += 1;
+      maybeLogProgress(labelSyncProgressMessage);
       if (processedCount >= processedLimit) break;
     }
     if (syncCommentsOnly) continue;
