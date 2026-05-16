@@ -3633,7 +3633,10 @@ function planCandidates(options: {
   };
 }
 
-function collectItemContext(item: Item): ItemContext {
+function collectItemContext(
+  item: Item,
+  options: { fullTimelineForRelations?: boolean } = {},
+): ItemContext {
   const issue = ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${item.number}`]);
   const issueRecord = asRecord(issue);
   const commentsWindow = ghPagedContextWindow<unknown>(
@@ -3732,11 +3735,15 @@ function collectItemContext(item: Item): ItemContext {
       pullReviewCommentsTruncated: pullReviewCommentsWindow.truncated,
     };
   }
+  const relationTimeline =
+    options.fullTimelineForRelations && timelineWindow.truncated
+      ? ghPaged<unknown>(`repos/${targetRepo()}/issues/${item.number}/timeline`)
+      : timeline;
   const relatedOptions: Parameters<typeof relatedItemsContext>[0] = {
     item,
     issue,
     comments,
-    timeline,
+    timeline: relationTimeline,
   };
   if (pullRequest) relatedOptions.pullRequest = pullRequest;
   if (pullReviewComments) relatedOptions.pullReviewComments = pullReviewComments;
@@ -3750,6 +3757,10 @@ function collectItemContext(item: Item): ItemContext {
       timeline: context.counts?.timeline ?? timeline.length,
       relatedItems: relatedItems.length,
     };
+    if (context.counts?.timelineHydrated !== undefined)
+      counts.timelineHydrated = context.counts.timelineHydrated;
+    if (context.counts?.timelineTruncated !== undefined)
+      counts.timelineTruncated = context.counts.timelineTruncated;
     if (context.counts?.pullFiles !== undefined) counts.pullFiles = context.counts.pullFiles;
     if (context.counts?.pullFilesHydrated !== undefined)
       counts.pullFilesHydrated = context.counts.pullFilesHydrated;
@@ -7609,7 +7620,7 @@ function applyDecisionsCommand(args: Args): void {
     let clawSweeperLabelsChanged = false;
     let issueAdvisoryLabelsChanged = false;
     const currentItemContext = (): ItemContext => {
-      currentContext ??= collectItemContext(item);
+      currentContext ??= collectItemContext(item, { fullTimelineForRelations: true });
       return currentContext;
     };
     if (syncCommentsOnly && state !== "open") {

@@ -3386,7 +3386,10 @@ const rawArgs = process.argv.slice(2);
 const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
 appendFileSync(logPath, JSON.stringify(args) + "\\n");
 const path = args[1] || "";
-if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/321\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  const timeline = Array.from({ length: 100 }, (_, index) => ({ id: index + 1 }));
+  console.log('HTTP/2 200\\nlink: <https://api.github.com/repos/openclaw/clawsweeper/issues/321/timeline?per_page=100&page=2>; rel="last"\\n\\n' + JSON.stringify(timeline));
+} else if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
   console.log(JSON.stringify([[{
     id: 9321,
     html_url: "https://github.com/openclaw/clawsweeper/issues/321#issuecomment-9321",
@@ -3445,6 +3448,15 @@ if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
     assert.equal(
       calls.some((args) => args[0] === "label" && args[1] === "create"),
       false,
+    );
+    assert.equal(
+      calls.some(
+        (args) =>
+          args[0] === "api" &&
+          /\/issues\/321\/timeline\?per_page=100$/.test(args[1] ?? "") &&
+          args.includes("--paginate"),
+      ),
+      true,
     );
     assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
       {
