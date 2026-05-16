@@ -670,6 +670,8 @@ const AUTOMERGE_LABEL = "clawsweeper:automerge";
 const AUTOFIX_LABEL = "clawsweeper:autofix";
 const PROOF_OVERRIDE_LABEL = "proof: override";
 const PROOF_SUFFICIENT_LABEL = "proof: sufficient";
+const PROOF_SUFFICIENT_LABEL_COLOR = "0e8a16";
+const PROOF_SUFFICIENT_LABEL_DESCRIPTION = "Contributor real behavior proof is sufficient.";
 const TELEGRAM_VISIBLE_PROOF_LABEL = "mantis: telegram-visible-proof";
 const TELEGRAM_VISIBLE_PROOF_LABEL_COLOR = "5319e7";
 const TELEGRAM_VISIBLE_PROOF_LABEL_DESCRIPTION = "Mantis should capture Telegram visible proof.";
@@ -5082,6 +5084,38 @@ function ensureTelegramVisibleProofLabel(): void {
   }
 }
 
+function missingLabelError(error: unknown, label: string): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes(`'${label}' not found`) || message.includes(`"${label}" not found`);
+}
+
+export function isMissingGitHubLabelErrorForTest(message: string, label: string): boolean {
+  return missingLabelError(new Error(message), label);
+}
+
+function ensureRealBehaviorProofSufficientLabel(): boolean {
+  try {
+    ghWithRetry(
+      [
+        "label",
+        "create",
+        PROOF_SUFFICIENT_LABEL,
+        "--color",
+        PROOF_SUFFICIENT_LABEL_COLOR,
+        "--description",
+        PROOF_SUFFICIENT_LABEL_DESCRIPTION,
+      ],
+      2,
+    );
+    return true;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/already exists/i.test(message)) return true;
+    console.warn(`Skipping optional label sync for ${PROOF_SUFFICIENT_LABEL}: ${message}`);
+    return false;
+  }
+}
+
 function syncRealBehaviorProofSufficientLabel(options: {
   number: number;
   labels: readonly string[];
@@ -5093,13 +5127,24 @@ function syncRealBehaviorProofSufficientLabel(options: {
   const wantsLabel = nextLabels.includes(PROOF_SUFFICIENT_LABEL);
   if (hadLabel === wantsLabel) return nextLabels;
   if (options.dryRun) return nextLabels;
-  ghWithRetry([
-    "issue",
-    "edit",
-    String(options.number),
-    wantsLabel ? "--add-label" : "--remove-label",
-    PROOF_SUFFICIENT_LABEL,
-  ]);
+  if (wantsLabel && !ensureRealBehaviorProofSufficientLabel()) return [...options.labels];
+  try {
+    ghWithRetry([
+      "issue",
+      "edit",
+      String(options.number),
+      wantsLabel ? "--add-label" : "--remove-label",
+      PROOF_SUFFICIENT_LABEL,
+    ]);
+  } catch (error) {
+    if (!missingLabelError(error, PROOF_SUFFICIENT_LABEL)) throw error;
+    console.warn(
+      `Skipping optional label sync for ${PROOF_SUFFICIENT_LABEL}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+    return wantsLabel ? [...options.labels] : nextLabels;
+  }
   return nextLabels;
 }
 

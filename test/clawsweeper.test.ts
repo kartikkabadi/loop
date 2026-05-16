@@ -31,6 +31,7 @@ import {
   isGitHubNotFoundError,
   isGitHubRequiresAuthenticationError,
   isLockedConversationCommentError,
+  isMissingGitHubLabelErrorForTest,
   isProtectedItem,
   itemNumbersArg,
   lockedConversationApplyReason,
@@ -3507,6 +3508,23 @@ test("ClawSweeper proof judgement controls the sufficient proof label", () => {
     ["proof: supplied"],
   );
   assert.deepEqual(realBehaviorProofSufficientLabelsForTest(["proof: sufficient"], "missing"), []);
+});
+
+test("ClawSweeper proof label sync recognizes missing optional labels", () => {
+  assert.equal(
+    isMissingGitHubLabelErrorForTest(
+      "failed to update https://github.com/openclaw/fs-safe/pull/18: 'proof: sufficient' not found",
+      "proof: sufficient",
+    ),
+    true,
+  );
+  assert.equal(
+    isMissingGitHubLabelErrorForTest(
+      "failed to update https://github.com/openclaw/fs-safe/pull/18: 'other label' not found",
+      "proof: sufficient",
+    ),
+    false,
+  );
 });
 
 test("ClawSweeper Telegram proof judgement controls the Mantis proof label", () => {

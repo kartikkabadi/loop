@@ -78,6 +78,8 @@ checkpoint, and status-only commits are intentionally omitted.
   processed deterministic candidates.
 - Put duplicate/superseded canonical issue and pull request links directly in
   the public close sentence instead of only inside review details.
+- Kept event re-reviews from failing when a target repository has not created
+  the optional `proof: sufficient` label yet.
 - Removed stale spam audit files when a reprocessed comment no longer matches
   the scanner candidate filters.
 - Derived repair dispatch worker caps from `job_intent` when no explicit cap is
