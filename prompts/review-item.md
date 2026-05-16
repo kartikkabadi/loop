@@ -69,6 +69,18 @@ outside OpenClaw core. Set `requiresNewFeature`, `requiresNewConfigOption`, and
 `requiresProductDecision` independently. Any true value means the item is not a
 strict bug-fix automation candidate even if useful.
 
+Set `triagePriority` as ClawSweeper's maintainer-facing priority label for both
+issues and pull requests. This is not the same as `reviewFindings[].priority`
+and is not limited to PR patch defects. Use `P0` for critical production-breaking,
+data-loss, security-impacting, or core-operation-blocking work that needs
+immediate maintainer attention. Use `P1` for important user-facing bugs, serious
+regressions, broken major workflows, or urgent maintainer-priority work that
+should be handled soon. Use `P2` for meaningful bugs, incomplete behavior,
+polish issues, or useful improvements with limited blast radius and normal
+backlog priority. Use `P3` for minor cleanup, documentation, cosmetic polish,
+small ergonomics issues, or speculative improvements. Use `none` only when
+ClawSweeper should intentionally leave priority labels absent.
+
 Populate structured reproduction metadata separately from the public prose.
 Use `reproductionStatus: "reproduced"` only when there is a concrete,
 current-main reproduction path for the bug with high confidence. Use
@@ -394,6 +406,12 @@ Always fill `telegramVisibleProof`. This only controls the
 visible chat behavior the `telegram-crabbox-e2e-proof` skill can show in a
 short recording. Mark it `not_needed` for non-Telegram PRs or Telegram work
 that is not usefully visible in that recording.
+
+Always fill `triagePriority`. ClawSweeper syncs this value to one of
+`priority:P0`, `priority:P1`, `priority:P2`, or `priority:P3` so maintainers can
+find issues and pull requests by priority. Choose the priority from user impact,
+severity, confidence, and maintainer urgency for the item as a whole, not just
+from PR review findings or whether ClawSweeper can automatically repair it.
 
 Always fill the work-lane fields too. For non-candidates, use
 `workCandidate: "none"`, low confidence/priority, an empty `workPrompt`, and

@@ -64,6 +64,7 @@ type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
+type TriagePriority = "P0" | "P1" | "P2" | "P3" | "none";
 type ItemCategory =
   | "bug"
   | "regression"
@@ -273,6 +274,7 @@ interface Decision {
   likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
+  triagePriority: TriagePriority;
   itemCategory: ItemCategory;
   reproductionStatus: ReproductionStatus;
   reproductionConfidence: Confidence;
@@ -678,6 +680,7 @@ const TELEGRAM_VISIBLE_PROOF_LABEL_DESCRIPTION = "Mantis should capture Telegram
 const PRIORITY_LABELS = [
   {
     priority: 0,
+    triagePriority: "P0",
     name: "priority:P0",
     color: "B60205",
     description:
@@ -685,6 +688,7 @@ const PRIORITY_LABELS = [
   },
   {
     priority: 1,
+    triagePriority: "P1",
     name: "priority:P1",
     color: "D93F0B",
     description:
@@ -692,6 +696,7 @@ const PRIORITY_LABELS = [
   },
   {
     priority: 2,
+    triagePriority: "P2",
     name: "priority:P2",
     color: "FBCA04",
     description:
@@ -699,6 +704,7 @@ const PRIORITY_LABELS = [
   },
   {
     priority: 3,
+    triagePriority: "P3",
     name: "priority:P3",
     color: "0E8A16",
     description:
@@ -722,6 +728,7 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
 const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
+const TRIAGE_PRIORITIES = new Set<TriagePriority>(["P0", "P1", "P2", "P3", "none"]);
 const ITEM_CATEGORIES = new Set<ItemCategory>([
   "bug",
   "regression",
@@ -787,6 +794,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "likelyOwners",
   "risks",
   "bestSolution",
+  "triagePriority",
   "itemCategory",
   "reproductionStatus",
   "reproductionConfidence",
@@ -1350,6 +1358,7 @@ function normalizeDecisionForItem(
     ...decision,
     reviewFindings,
     bestSolution: CLEAN_OPENCLAW_PR_REVIEW_NEXT_STEP,
+    triagePriority: decision.triagePriority,
     overallCorrectness:
       decision.overallCorrectness === "patch is incorrect"
         ? "patch is correct"
@@ -1464,6 +1473,11 @@ export function parseDecision(value: unknown, item?: DecisionNormalizationItem):
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
+    triagePriority: requireEnum(
+      record.triagePriority,
+      TRIAGE_PRIORITIES,
+      "decision.triagePriority",
+    ),
     itemCategory: requireEnum(record.itemCategory, ITEM_CATEGORIES, "decision.itemCategory"),
     reproductionStatus: requireEnum(
       record.reproductionStatus,
@@ -3728,6 +3742,7 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
     ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
+    triagePriority: "none",
     itemCategory: "unclear",
     reproductionStatus: "unclear",
     reproductionConfidence: "low",
@@ -4814,6 +4829,11 @@ function reportOverallConfidenceScore(markdown: string): number {
   return Number.isFinite(score) && score >= 0 && score <= 1 ? score : 0;
 }
 
+function triagePriorityFromReport(markdown: string): TriagePriority {
+  const value = frontMatterValue(markdown, "triage_priority");
+  return TRIAGE_PRIORITIES.has(value as TriagePriority) ? (value as TriagePriority) : "none";
+}
+
 function reportReviewFindings(markdown: string): ReviewFinding[] {
   const section = reviewSectionValue(markdown, "reviewFindings");
   const findings: ReviewFinding[] = [];
@@ -5077,19 +5097,13 @@ export function telegramVisibleProofLabelsForTest(
 
 type PriorityLabelSpec = (typeof PRIORITY_LABELS)[number];
 
-function priorityLabelForFindings(
-  findings: readonly Pick<ReviewFinding, "priority">[],
-): PriorityLabelSpec | null {
-  const priority = Math.min(...findings.map((finding) => finding.priority));
-  return PRIORITY_LABELS.find((label) => label.priority === priority) ?? null;
+function priorityLabelForTriage(priority: TriagePriority): PriorityLabelSpec | null {
+  return PRIORITY_LABELS.find((label) => label.triagePriority === priority) ?? null;
 }
 
-function nextPriorityLabels(
-  labels: readonly string[],
-  findings: readonly Pick<ReviewFinding, "priority">[],
-): string[] {
+function nextPriorityLabels(labels: readonly string[], triagePriority: TriagePriority): string[] {
   const nextLabels = labels.filter((label) => !PRIORITY_LABEL_NAMES.has(label));
-  const priorityLabel = priorityLabelForFindings(findings);
+  const priorityLabel = priorityLabelForTriage(triagePriority);
   if (priorityLabel) nextLabels.push(priorityLabel.name);
   return nextLabels;
 }
@@ -5102,14 +5116,11 @@ export function priorityLabelSchemeForTest(): {
   return PRIORITY_LABELS.map(({ name, color, description }) => ({ name, color, description }));
 }
 
-export function priorityLabelsForTest(
-  labels: readonly string[],
-  priorities: readonly number[],
-): string[] {
-  const findings = priorities
-    .filter((priority): priority is ReviewFinding["priority"] => [0, 1, 2, 3].includes(priority))
-    .map((priority) => ({ priority }));
-  return nextPriorityLabels(labels, findings);
+export function priorityLabelsForTest(labels: readonly string[], triagePriority: string): string[] {
+  const priority = TRIAGE_PRIORITIES.has(triagePriority as TriagePriority)
+    ? (triagePriority as TriagePriority)
+    : "none";
+  return nextPriorityLabels(labels, priority);
 }
 
 function ensurePriorityLabel(label: PriorityLabelSpec): void {
@@ -5127,10 +5138,10 @@ function ensurePriorityLabel(label: PriorityLabelSpec): void {
 function syncPriorityLabel(options: {
   number: number;
   labels: readonly string[];
-  findings: readonly Pick<ReviewFinding, "priority">[];
+  triagePriority: TriagePriority;
   dryRun: boolean;
 }): string[] {
-  const nextLabels = nextPriorityLabels(options.labels, options.findings);
+  const nextLabels = nextPriorityLabels(options.labels, options.triagePriority);
   const labelsToRemove = options.labels.filter(
     (label) => PRIORITY_LABEL_NAMES.has(label) && !nextLabels.includes(label),
   );
@@ -5419,6 +5430,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
+    triagePriority: triagePriorityFromReport(markdown),
     itemCategory:
       (frontMatterValue(markdown, "item_category") as ItemCategory | undefined) ?? "unclear",
     reproductionStatus:
@@ -6742,6 +6754,7 @@ work_prompt_sha256: ${options.decision.workPrompt ? sha256(options.decision.work
 work_cluster_refs: ${jsonFrontMatterValue(options.decision.workClusterRefs)}
 work_validation: ${jsonFrontMatterValue(options.decision.workValidation)}
 work_likely_files: ${jsonFrontMatterValue(options.decision.workLikelyFiles)}
+triage_priority: ${options.decision.triagePriority}
 pull_files: ${jsonFrontMatterValue(pullFiles)}
 pull_files_truncated: ${pullFilesTruncated}
 item_category: ${options.decision.itemCategory}
@@ -7245,10 +7258,12 @@ function applyDecisionsCommand(args: Args): void {
         proof: reportTelegramVisibleProof(markdown),
         dryRun,
       });
+    }
+    if (state === "open") {
       item.labels = syncPriorityLabel({
         number,
         labels: item.labels,
-        findings: reportReviewFindings(markdown),
+        triagePriority: triagePriorityFromReport(markdown),
         dryRun,
       });
     }

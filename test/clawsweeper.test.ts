@@ -150,6 +150,7 @@ function closeDecision(overrides = {}) {
     ],
     risks: [],
     bestSolution: "Keep the implementation as-is.",
+    triagePriority: "P2",
     itemCategory: "bug",
     reproductionStatus: "reproduced",
     reproductionConfidence: "high",
@@ -3401,6 +3402,14 @@ test("decision parser enforces required schema-shaped evidence", () => {
     () =>
       parseDecision({
         ...closeDecision(),
+        triagePriority: "urgent",
+      }),
+    /decision\.triagePriority/,
+  );
+  assert.throws(
+    () =>
+      parseDecision({
+        ...closeDecision(),
         requiresNewConfigOption: "false",
       }),
     /decision\.requiresNewConfigOption/,
@@ -3431,6 +3440,7 @@ test("decision parser enforces required schema-shaped evidence", () => {
     }),
   );
   assert.equal(workCandidate.workCandidate, "queue_fix_pr");
+  assert.equal(workCandidate.triagePriority, "P2");
   assert.equal(workCandidate.itemCategory, "bug");
   assert.equal(workCandidate.reproductionStatus, "reproduced");
   assert.equal(workCandidate.realBehaviorProof.status, "not_applicable");
@@ -3572,10 +3582,10 @@ test("ClawSweeper priority label scheme exposes P0 through P3 labels", () => {
   ]);
 });
 
-test("ClawSweeper priority labels follow the highest-severity review finding", () => {
-  assert.deepEqual(priorityLabelsForTest(["bug"], [2]), ["bug", "priority:P2"]);
-  assert.deepEqual(priorityLabelsForTest(["bug", "priority:P3"], [1, 3]), ["bug", "priority:P1"]);
-  assert.deepEqual(priorityLabelsForTest(["priority:P0", "bug"], []), ["bug"]);
+test("ClawSweeper priority labels follow triage priority", () => {
+  assert.deepEqual(priorityLabelsForTest(["bug"], "P2"), ["bug", "priority:P2"]);
+  assert.deepEqual(priorityLabelsForTest(["bug", "priority:P3"], "P1"), ["bug", "priority:P1"]);
+  assert.deepEqual(priorityLabelsForTest(["priority:P0", "bug"], "none"), ["bug"]);
 });
 
 test("review workflow gives Codex a read-only inspection token", () => {
@@ -3737,6 +3747,9 @@ test("review prompts require reproduction and solution assessment details", () =
   assert.match(itemPrompt, /Always fill `reproductionAssessment`/);
   assert.match(itemPrompt, /itemCategory: "bug"/);
   assert.match(itemPrompt, /itemCategory: "skill"/);
+  assert.match(itemPrompt, /Always fill `triagePriority`/);
+  assert.match(itemPrompt, /maintainers can\s+find issues and pull requests by priority/);
+  assert.match(itemPrompt, /not just\s+from PR review findings/);
   assert.match(itemPrompt, /skills\/<vendor>/);
   assert.match(itemPrompt, /upload or publish it through ClawHub\.com/);
   assert.match(itemPrompt, /requiresNewConfigOption/);
