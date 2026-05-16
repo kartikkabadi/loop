@@ -31,7 +31,7 @@ checkpoint, and status-only commits are intentionally omitted.
   missing-info, product-decision, and security-review routing states, projected
   from existing review report fields without changing repair, merge, or close
   behavior. Label-only syncs now record `labels_synced_at` so scheduler cadence
-  ignores ClawSweeper-owned label `updated_at` churn.
+  ignores ClawSweeper-owned label `updated_at` churn. Thanks @brokemac79.
 - Added `config/automation-limits.json` plus docs and a drift check so review,
   commit-review, repair, and issue-implementation capacity defaults have one
   checked-in source of truth.
