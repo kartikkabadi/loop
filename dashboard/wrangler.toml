@@ -11,6 +11,6 @@ custom_domain = true
 [vars]
 CLAWSWEEPER_REPO = "openclaw/clawsweeper"
 TARGET_REPOS = "openclaw/openclaw,openclaw/clawhub,openclaw/clawsweeper,openclaw/fs-safe"
-WORKER_BUDGET = "80"
+WORKER_BUDGET = "72"
 CACHE_TTL_SECONDS = "20"
 INCLUDE_CI_STATUS = "1"

@@ -45,6 +45,9 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Reduced the shared Codex worker budget by 10% so review, commit-review,
+  repair, automerge, issue-implementation, and dashboard utilization lanes use
+  lower default fan-out.
 - Cleared ClawSweeper-owned `eyes` reactions from target issues and pull
   requests when event reviews complete, while preserving user reactions. Thanks
   @samzong.

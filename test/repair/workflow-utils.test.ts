@@ -48,9 +48,9 @@ test("worker scheduler lets background lanes yield to active work", () => {
     workerLimit("normal_review"),
     Math.min(AUTOMATION_LIMITS.review_shards.normal_default, quietBackgroundCapacity),
   );
-  assert.equal(workerLimit("normal_review", { activeCritical: 24, activeBackground: 16 }), 10);
+  assert.equal(workerLimit("normal_review", { activeCritical: 21, activeBackground: 13 }), 8);
   assert.equal(workerLimit("commit_review"), AUTOMATION_LIMITS.commit_review.page_size_default);
-  assert.equal(workerLimit("commit_review", { activeCritical: 72 }), 1);
+  assert.equal(workerLimit("commit_review", { activeCritical: 64 }), 1);
   assert.equal(workerLimit("repair"), AUTOMATION_LIMITS.repair_live_runs.default);
 });
 

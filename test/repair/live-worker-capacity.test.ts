@@ -11,19 +11,19 @@ import {
 } from "../../dist/repair/live-worker-capacity.js";
 
 test("live worker capacity refuses limits above the global Codex cap", () => {
-  assert.equal(MAX_LIVE_WORKERS, 80);
-  assert.equal(readMaxLiveWorkers({ "max-live-workers": "80" }), 80);
+  assert.equal(MAX_LIVE_WORKERS, 72);
+  assert.equal(readMaxLiveWorkers({ "max-live-workers": "72" }), 72);
   assert.throws(
-    () => readMaxLiveWorkers({ "max-live-workers": "81" }),
-    /max-live-workers must be <= 80/,
+    () => readMaxLiveWorkers({ "max-live-workers": "73" }),
+    /max-live-workers must be <= 72/,
   );
 });
 
 test("live worker capacity accepts env default within the global Codex cap", () => {
   const previous = process.env.CLAWSWEEPER_MAX_LIVE_WORKERS;
-  process.env.CLAWSWEEPER_MAX_LIVE_WORKERS = "75";
+  process.env.CLAWSWEEPER_MAX_LIVE_WORKERS = "65";
   try {
-    assert.equal(readMaxLiveWorkers(), 75);
+    assert.equal(readMaxLiveWorkers(), 65);
   } finally {
     if (previous === undefined) delete process.env.CLAWSWEEPER_MAX_LIVE_WORKERS;
     else process.env.CLAWSWEEPER_MAX_LIVE_WORKERS = previous;
