@@ -2178,6 +2178,39 @@ Reason: Maintainers should review the tests after the targeted lane is green.
   assert.match(comment, /Codex review: needs maintainer review before merge\./);
   assert.match(
     comment,
+    /\*\*Workflow note:\*\* Future ClawSweeper reviews update this same comment in place\./,
+  );
+  assert.match(comment, /<summary>How this review workflow works<\/summary>/);
+  assert.match(
+    comment,
+    /- Re-runs edit this comment so the latest verdict, findings, and automation markers stay together instead of adding duplicate bot comments\./,
+  );
+  assert.match(
+    comment,
+    /- A fresh review can be triggered by maintainer comments, exact-item GitHub events, scheduled\/background review runs, or manual workflow dispatch\./,
+  );
+  assert.match(
+    comment,
+    /- PR\/issue authors can comment `@clawsweeper re-review` or `@clawsweeper re-run` on their own open PR or issue to request a fresh review only\./,
+  );
+  assert.match(
+    comment,
+    /- Maintainers can also comment `@clawsweeper review` to request a fresh review only\./,
+  );
+  assert.match(
+    comment,
+    /- Fresh-review commands do not start repair, autofix, rebase, CI repair, or automerge\./,
+  );
+  assert.match(
+    comment,
+    /- Maintainer-only repair and merge flows require explicit commands such as `@clawsweeper autofix`, `@clawsweeper automerge`, `@clawsweeper fix ci`, or `@clawsweeper address review`\./,
+  );
+  assert.match(
+    comment,
+    /- Maintainers can comment `@clawsweeper explain` to ask for more context, or `@clawsweeper stop` to stop active automation\./,
+  );
+  assert.match(
+    comment,
     /\*\*Summary\*\*\nAdds regression coverage for session-scoped model overrides\./,
   );
   assert.match(comment, /\*\*Next step before merge\*\*/);
@@ -2383,6 +2416,10 @@ Reason: The fix is narrow and can be made on the PR branch.
   );
 
   assert.match(comment, /Codex review: needs changes before merge\./);
+  assert.match(
+    comment,
+    /\*\*Workflow note:\*\* Future ClawSweeper reviews update this same comment in place\./,
+  );
   assert.match(
     comment,
     /\*\*Review findings\*\*\n- \[P1\] Validate replace paths — `src\/config\/apply\.ts:42-44`/,

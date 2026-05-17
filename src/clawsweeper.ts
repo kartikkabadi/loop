@@ -6538,6 +6538,24 @@ function appendReviewQuestionDetails(
   }
 }
 
+function reviewWorkflowCallout(): string[] {
+  return [
+    "**Workflow note:** Future ClawSweeper reviews update this same comment in place.",
+    "",
+    collapsedDetailsBlock("How this review workflow works", [
+      "- ClawSweeper keeps one durable marker-backed review comment per issue or PR.",
+      "- Re-runs edit this comment so the latest verdict, findings, and automation markers stay together instead of adding duplicate bot comments.",
+      "- A fresh review can be triggered by maintainer comments, exact-item GitHub events, scheduled/background review runs, or manual workflow dispatch.",
+      "- PR/issue authors can comment `@clawsweeper re-review` or `@clawsweeper re-run` on their own open PR or issue to request a fresh review only.",
+      "- Maintainers can also comment `@clawsweeper review` to request a fresh review only.",
+      "- Fresh-review commands do not start repair, autofix, rebase, CI repair, or automerge.",
+      "- Maintainer-only repair and merge flows require explicit commands such as `@clawsweeper autofix`, `@clawsweeper automerge`, `@clawsweeper fix ci`, or `@clawsweeper address review`.",
+      "- Maintainers can comment `@clawsweeper explain` to ask for more context, or `@clawsweeper stop` to stop active automation.",
+    ]),
+    "",
+  ];
+}
+
 function renderKeepOpenCommentFromReport(markdown: string): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
@@ -6580,6 +6598,7 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
               ? "Codex review: needs maintainer review before merge."
               : "Codex review: keeping this open for maintainer follow-up; there is still a little grit to resolve.",
     "",
+    ...reviewWorkflowCallout(),
   ];
   if (isPullRequest) {
     appendPublicSection(
