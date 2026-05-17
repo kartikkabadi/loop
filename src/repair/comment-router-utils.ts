@@ -103,10 +103,17 @@ export function selectCommentsForRouting({
 }
 
 export function isAllowedMutationActor(login: JsonValue, trustedBots: Iterable<string>) {
-  const actor = normalizeGitHubActor(login);
+  const actor = String(login ?? "")
+    .trim()
+    .toLowerCase();
   if (!actor) return false;
   for (const trustedBot of trustedBots) {
-    if (normalizeGitHubActor(trustedBot) === actor) return true;
+    if (
+      String(trustedBot ?? "")
+        .trim()
+        .toLowerCase() === actor
+    )
+      return true;
   }
   return false;
 }
