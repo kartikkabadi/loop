@@ -43,10 +43,10 @@ import {
   existingCommandStatusBlocksReplay,
   existingModeStatusBlocksReplay,
   isAuthorReadOnlyCommandAllowed,
-  isCanonicalLandingNeedsHumanText,
   isMaintainerCommandAllowed,
   issueImplementationClusterId,
   issueImplementationJobPath,
+  maintainerAutomergeOptInApprovesNeedsHuman as maintainerAutomergeOptInApprovesNeedsHumanReason,
   parseCommand,
   pausedModeStatusBlocksReplay,
   parseTrustedAutomation,
@@ -955,13 +955,12 @@ function classifyNeedsHuman(
 function maintainerAutomergeOptInApprovesNeedsHuman(command: LooseRecord) {
   if (!command.trusted_bot) return false;
   if (!hasLabel(command.target, AUTOMERGE_LABEL)) return false;
-  const reason = String(command.repair_reason ?? "");
-  if (!isCanonicalLandingNeedsHumanText(reason)) return false;
-  const verdictTime = Date.parse(
-    String(command.comment_updated_at ?? command.comment_created_at ?? ""),
-  );
-  const optInTime = latestAutomergeResumeAt(command);
-  return Number.isFinite(verdictTime) && optInTime > verdictTime;
+  return maintainerAutomergeOptInApprovesNeedsHumanReason({
+    reason: command.repair_reason,
+    commentCreatedAt: command.comment_created_at,
+    commentUpdatedAt: command.comment_updated_at,
+    optInTime: latestAutomergeResumeAt(command),
+  });
 }
 
 function automergeBlocked(command: LooseRecord, reason: string) {
@@ -2307,6 +2306,7 @@ function classifyPullTarget(pull: LooseRecord, issueNumber: JsonValue): JsonValu
     head_sha: pull.headRefOid ?? null,
     author,
     labels,
+    files: pull.files ?? [],
     is_clawsweeper_pr: branch.startsWith(headPrefix),
     cluster_id: clusterId ?? (adoptedJobPath ? automergeCluster : null),
     job_path: jobPath,

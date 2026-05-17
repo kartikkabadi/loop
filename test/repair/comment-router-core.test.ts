@@ -34,6 +34,7 @@ import {
   isAuthorReadOnlyCommandAllowed,
   isCanonicalLandingNeedsHumanText,
   isMaintainerCommandAllowed,
+  maintainerAutomergeOptInApprovesNeedsHuman,
   parseCommand,
   pausedModeStatusBlocksReplay,
   parseTrustedAutomation,
@@ -571,6 +572,15 @@ test("automerge changelog gate blocks user-facing OpenClaw changes without chang
   assert.equal(
     automergeChangelogBlockReason({
       repo: "openclaw/openclaw",
+      title: "fix(agents): normalize Copilot replay tool IDs",
+      files: [{ filename: "src/agents/openai-transport-stream.ts" }],
+    }),
+    "CHANGELOG.md entry is required for user-facing ClawSweeper automerge changes",
+  );
+
+  assert.equal(
+    automergeChangelogBlockReason({
+      repo: "openclaw/openclaw",
       title: "fix(discord): cool down Cloudflare 429 responses",
       files: [{ path: "CHANGELOG.md" }, { path: "extensions/discord/src/api.ts" }],
     }),
@@ -824,10 +834,16 @@ test("parseTrustedAutomation treats trusted ClawSweeper needs-human as a pause",
   assert.match(parsed.repair_reason, /needs-human/);
 });
 
-test("canonical landing needs-human text can be approved by later automerge opt-in", () => {
+test("canonical landing needs-human text can be approved by active automerge opt-in", () => {
   assert.equal(
     isCanonicalLandingNeedsHumanText(
       "No repair lane is needed because the PR already contains the narrow fix; maintainer action is to land one canonical fix.",
+    ),
+    true,
+  );
+  assert.equal(
+    isCanonicalLandingNeedsHumanText(
+      "The PR is an active automerge candidate with no code finding, but the protected label and missing real behavior proof require maintainer handling.",
     ),
     true,
   );
@@ -841,6 +857,34 @@ test("canonical landing needs-human text can be approved by later automerge opt-
     isCanonicalLandingNeedsHumanText(
       "Maintainer action is to land the canonical fix.\n- [P1] Still broken",
     ),
+    false,
+  );
+  assert.equal(
+    maintainerAutomergeOptInApprovesNeedsHuman({
+      reason:
+        "The PR is an active automerge candidate with no code finding, but missing proof needs maintainer handling.",
+      commentCreatedAt: "2026-05-17T00:45:00Z",
+      commentUpdatedAt: "2026-05-17T00:55:00Z",
+      optInTime: "2026-05-17T00:50:00Z",
+    }),
+    true,
+  );
+  assert.equal(
+    maintainerAutomergeOptInApprovesNeedsHuman({
+      reason:
+        "The PR is an active automerge candidate with no code finding, but missing proof needs maintainer handling.",
+      commentCreatedAt: "2026-05-17T00:55:00Z",
+      optInTime: "2026-05-17T00:50:00Z",
+    }),
+    true,
+  );
+  assert.equal(
+    maintainerAutomergeOptInApprovesNeedsHuman({
+      reason:
+        "The PR is an active automerge candidate with no code finding, but missing proof needs maintainer handling.",
+      commentCreatedAt: "2026-05-17T00:55:00Z",
+      optInTime: 0,
+    }),
     false,
   );
 });

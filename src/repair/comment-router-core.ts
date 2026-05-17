@@ -379,7 +379,7 @@ export function automergeChangelogBlockReason({ repo, title, files }: LooseRecor
 function normalizeChangedPaths(files: JsonValue): string[] {
   if (!Array.isArray(files)) return [];
   return files
-    .map((file) => (typeof file === "string" ? file : file?.path))
+    .map((file) => (typeof file === "string" ? file : (file?.path ?? file?.filename)))
     .map((file) => String(file ?? "").trim())
     .filter(Boolean);
 }
@@ -513,9 +513,24 @@ export function isCanonicalLandingNeedsHumanText(value: JsonValue) {
   const text = String(value ?? "");
   if (!text) return false;
   if (/security-sensitive|needs attention|review finding|\[P[0-3]\]/i.test(text)) return false;
-  return /no repair lane is needed|maintainer action is to land|land .*canonical|canonical .*fix/i.test(
-    text,
+  return (
+    /no repair lane is needed|maintainer action is to land|land .*canonical|canonical .*fix/i.test(
+      text,
+    ) || /active automerge candidate with no code finding/i.test(text)
   );
+}
+
+export function maintainerAutomergeOptInApprovesNeedsHuman({
+  reason,
+  commentCreatedAt,
+  commentUpdatedAt,
+  optInTime,
+}: LooseRecord) {
+  if (!isCanonicalLandingNeedsHumanText(reason)) return false;
+  const verdictTime = Date.parse(String(commentCreatedAt ?? commentUpdatedAt ?? ""));
+  const resumeTime =
+    typeof optInTime === "number" ? optInTime : Date.parse(String(optInTime ?? ""));
+  return Number.isFinite(verdictTime) && Number.isFinite(resumeTime) && resumeTime > 0;
 }
 
 export function commandHasAction(command: LooseRecord, actionName: string): boolean {
