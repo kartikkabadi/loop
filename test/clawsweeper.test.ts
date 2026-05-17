@@ -1,7 +1,16 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -39,6 +48,7 @@ import {
   isProtectedItem,
   itemNumbersArg,
   lockedConversationApplyReason,
+  makeTreeReadOnlyForTest,
   openClosingPullRequestApplyReason,
   parseGhJson,
   parseGhJsonLines,
@@ -56,6 +66,7 @@ import {
   renderReviewCommentFromReport,
   renderReviewContextBudgetForTest,
   renderWorkPlanFromReport,
+  restoreTreeModesForTest,
   reviewContextLedgerForTest,
   reviewDecisionSchemaText,
   reviewPromptTelemetryForTest,
@@ -4788,6 +4799,45 @@ test("review workflow gives Codex a read-only inspection token", () => {
   assert.match(workflow, /id: codex-inspection-token/);
   assert.match(workflow, /permission-issues: read/);
   assert.match(workflow, /CLAWSWEEPER_PROOF_INSPECTION_TOKEN/);
+});
+
+test("read-only checkout mode restores file modes and leaves git metadata writable", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const target = join(root, "target");
+    const nested = join(target, "src");
+    const gitDir = join(target, ".git");
+    mkdirSync(nested, { recursive: true });
+    mkdirSync(gitDir, { recursive: true });
+    const sourceFile = join(nested, "app.ts");
+    const executableFile = join(target, "tool.sh");
+    const gitConfig = join(gitDir, "config");
+    writeFileSync(sourceFile, "export const value = 1;\n");
+    writeFileSync(executableFile, "#!/bin/sh\n");
+    writeFileSync(gitConfig, "[core]\n");
+    chmodSync(target, 0o755);
+    chmodSync(nested, 0o750);
+    chmodSync(sourceFile, 0o640);
+    chmodSync(executableFile, 0o755);
+    chmodSync(gitDir, 0o700);
+    chmodSync(gitConfig, 0o600);
+
+    const snapshots = makeTreeReadOnlyForTest(target);
+    assert.equal(statSync(target).mode & 0o777, 0o555);
+    assert.equal(statSync(nested).mode & 0o777, 0o555);
+    assert.equal(statSync(sourceFile).mode & 0o777, 0o444);
+    assert.equal(statSync(executableFile).mode & 0o777, 0o555);
+    assert.equal(statSync(gitDir).mode & 0o777, 0o700);
+    assert.equal(statSync(gitConfig).mode & 0o777, 0o600);
+
+    restoreTreeModesForTest(snapshots);
+    assert.equal(statSync(target).mode & 0o777, 0o755);
+    assert.equal(statSync(nested).mode & 0o777, 0o750);
+    assert.equal(statSync(sourceFile).mode & 0o777, 0o640);
+    assert.equal(statSync(executableFile).mode & 0o777, 0o755);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test("event review completion removes ClawSweeper eyes reaction", () => {

@@ -4075,14 +4075,45 @@ function openclawDirtyStatus(openclawDir: string): string {
   });
 }
 
-function makeTreeReadOnly(path: string): void {
+interface FileModeSnapshot {
+  path: string;
+  mode: number;
+}
+
+function makeTreeReadOnly(path: string, snapshots: FileModeSnapshot[] = []): FileModeSnapshot[] {
+  const stat = statSync(path);
+  snapshots.push({ path, mode: stat.mode });
   for (const entry of readdirSync(path, { withFileTypes: true })) {
     const child = join(path, entry.name);
     if (entry.isSymbolicLink()) continue;
-    if (entry.isDirectory()) makeTreeReadOnly(child);
-    else chmodSync(child, statSync(child).mode & 0o111 ? 0o555 : 0o444);
+    if (entry.name === ".git" && entry.isDirectory()) continue;
+    if (entry.isDirectory()) makeTreeReadOnly(child, snapshots);
+    else {
+      const childStat = statSync(child);
+      snapshots.push({ path: child, mode: childStat.mode });
+      chmodSync(child, childStat.mode & 0o111 ? 0o555 : 0o444);
+    }
   }
   chmodSync(path, 0o555);
+  return snapshots;
+}
+
+function restoreTreeModes(snapshots: readonly FileModeSnapshot[]): void {
+  for (const snapshot of [...snapshots].reverse()) {
+    try {
+      chmodSync(snapshot.path, snapshot.mode);
+    } catch {
+      // Best-effort cleanup after review; missing temp files should not hide the review result.
+    }
+  }
+}
+
+export function makeTreeReadOnlyForTest(path: string): FileModeSnapshot[] {
+  return makeTreeReadOnly(path);
+}
+
+export function restoreTreeModesForTest(snapshots: readonly FileModeSnapshot[]): void {
+  restoreTreeModes(snapshots);
 }
 
 function runCodex(options: {
@@ -7679,124 +7710,128 @@ function reviewCommand(args: Args): void {
   ensureDir(artifactDir);
   const git = gitInfo(openclawDir);
   const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, sandboxMode, serviceTier });
-  if (readonlyOpenclaw) makeTreeReadOnly(openclawDir);
-  const selectionOptions: Parameters<typeof selectCandidates>[0] = {
-    batchSize,
-    maxPages,
-    shardIndex,
-    shardCount,
-    itemsDir,
-    reviewPolicy,
-  };
-  if (itemNumber) selectionOptions.itemNumber = itemNumber;
-  if (itemNumbers) selectionOptions.itemNumbers = itemNumbers;
-  if (hotIntake) selectionOptions.hotIntake = true;
-  const { candidates, scannedPages } = selectCandidates(selectionOptions);
-  console.error(
-    `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} selected=${candidates.length} scanned_pages=${scannedPages}`,
-  );
-  writeFileSync(
-    join(artifactDir, "selection.json"),
-    JSON.stringify({ shardIndex, shardCount, scannedPages, candidates, reviewPolicy }, null, 2),
-  );
-  let completed = 0;
-  let codexFailures = 0;
-  for (const item of candidates) {
+  const readonlyModeSnapshots = readonlyOpenclaw ? makeTreeReadOnly(openclawDir) : [];
+  try {
+    const selectionOptions: Parameters<typeof selectCandidates>[0] = {
+      batchSize,
+      maxPages,
+      shardIndex,
+      shardCount,
+      itemsDir,
+      reviewPolicy,
+    };
+    if (itemNumber) selectionOptions.itemNumber = itemNumber;
+    if (itemNumbers) selectionOptions.itemNumbers = itemNumbers;
+    if (hotIntake) selectionOptions.hotIntake = true;
+    const { candidates, scannedPages } = selectCandidates(selectionOptions);
     console.error(
-      `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start #${item.number} (${completed + 1}/${candidates.length})`,
+      `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} selected=${candidates.length} scanned_pages=${scannedPages}`,
     );
-    const contextStartedAt = Date.now();
-    const context = collectItemContext(item);
-    const contextElapsedMs = Date.now() - contextStartedAt;
-    const codexWorkDir = join(artifactDir, "codex");
-    const proofScratchDir = join(codexWorkDir, "proof-scratch", String(item.number));
-    const prompt = buildReviewPrompt(item, context, git, additionalPrompt, { proofScratchDir });
-    const snapshotHash = itemSnapshotHash(item, context);
-    try {
-      const startComment = postReviewStartStatusComment({
-        item,
-        position: completed + 1,
-        total: candidates.length,
-        shardIndex,
-        shardCount,
-      });
+    writeFileSync(
+      join(artifactDir, "selection.json"),
+      JSON.stringify({ shardIndex, shardCount, scannedPages, candidates, reviewPolicy }, null, 2),
+    );
+    let completed = 0;
+    let codexFailures = 0;
+    for (const item of candidates) {
       console.error(
-        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=${startComment} #${item.number}`,
+        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start #${item.number} (${completed + 1}/${candidates.length})`,
       );
-    } catch (error) {
-      console.error(
-        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=failed #${item.number}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
-    let decision: Decision;
-    let codexElapsedMs = 0;
-    const codexStartedAt = Date.now();
-    try {
-      decision = runCodex({
-        item,
-        context,
-        git,
+      const contextStartedAt = Date.now();
+      const context = collectItemContext(item);
+      const contextElapsedMs = Date.now() - contextStartedAt;
+      const codexWorkDir = join(artifactDir, "codex");
+      const proofScratchDir = join(codexWorkDir, "proof-scratch", String(item.number));
+      const prompt = buildReviewPrompt(item, context, git, additionalPrompt, { proofScratchDir });
+      const snapshotHash = itemSnapshotHash(item, context);
+      try {
+        const startComment = postReviewStartStatusComment({
+          item,
+          position: completed + 1,
+          total: candidates.length,
+          shardIndex,
+          shardCount,
+        });
+        console.error(
+          `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=${startComment} #${item.number}`,
+        );
+      } catch (error) {
+        console.error(
+          `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=failed #${item.number}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+      let decision: Decision;
+      let codexElapsedMs = 0;
+      const codexStartedAt = Date.now();
+      try {
+        decision = runCodex({
+          item,
+          context,
+          git,
+          model,
+          openclawDir,
+          reasoningEffort,
+          sandboxMode,
+          serviceTier,
+          timeoutMs,
+          workDir: codexWorkDir,
+          additionalPrompt,
+          proofScratchDir,
+          prompt: prompt.text,
+        });
+      } catch (error) {
+        codexFailures += 1;
+        decision = codexFailureDecision(
+          null,
+          error instanceof Error ? error.message : String(error),
+          "Per-item Codex failure; continuing with the rest of the shard.",
+        );
+      } finally {
+        codexElapsedMs = Date.now() - codexStartedAt;
+      }
+      decision = attachFixedPullRequest(decision, item, context);
+      const runtime = {
         model,
-        openclawDir,
         reasoningEffort,
         sandboxMode,
         serviceTier,
-        timeoutMs,
-        workDir: codexWorkDir,
-        additionalPrompt,
-        proofScratchDir,
-        prompt: prompt.text,
-      });
-    } catch (error) {
-      codexFailures += 1;
-      decision = codexFailureDecision(
-        null,
-        error instanceof Error ? error.message : String(error),
-        "Per-item Codex failure; continuing with the rest of the shard.",
+        ...prompt.telemetry,
+        contextElapsedMs,
+        codexElapsedMs,
+      };
+      const action = reviewActionForDecision({ item, decision, git, runtime });
+      writeFileSync(
+        join(artifactDir, reportFileName(item.repo, item.number)),
+        markdownFor({
+          item,
+          context,
+          decision,
+          git,
+          action,
+          reviewMode: "propose",
+          snapshotHash,
+          reviewPolicy,
+          runtime,
+        }),
+        "utf8",
       );
-    } finally {
-      codexElapsedMs = Date.now() - codexStartedAt;
+      completed += 1;
+      console.error(
+        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} done #${item.number} (${completed}/${candidates.length}) decision=${decision.decision} confidence=${decision.confidence} action=${action.actionTaken}`,
+      );
     }
-    decision = attachFixedPullRequest(decision, item, context);
-    const runtime = {
-      model,
-      reasoningEffort,
-      sandboxMode,
-      serviceTier,
-      ...prompt.telemetry,
-      contextElapsedMs,
-      codexElapsedMs,
-    };
-    const action = reviewActionForDecision({ item, decision, git, runtime });
-    writeFileSync(
-      join(artifactDir, reportFileName(item.repo, item.number)),
-      markdownFor({
-        item,
-        context,
-        decision,
-        git,
-        action,
-        reviewMode: "propose",
-        snapshotHash,
-        reviewPolicy,
-        runtime,
-      }),
-      "utf8",
-    );
-    completed += 1;
     console.error(
-      `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} done #${item.number} (${completed}/${candidates.length}) decision=${decision.decision} confidence=${decision.confidence} action=${action.actionTaken}`,
+      `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} complete reviewed=${completed}`,
     );
-  }
-  console.error(
-    `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} complete reviewed=${completed}`,
-  );
-  if (codexFailures > 0) {
-    throw new Error(
-      `Codex failed for ${codexFailures} item${codexFailures === 1 ? "" : "s"}; review artifacts were written and the workflow recovery lane can requeue the planned set.`,
-    );
+    if (codexFailures > 0) {
+      throw new Error(
+        `Codex failed for ${codexFailures} item${codexFailures === 1 ? "" : "s"}; review artifacts were written and the workflow recovery lane can requeue the planned set.`,
+      );
+    }
+  } finally {
+    restoreTreeModes(readonlyModeSnapshots);
   }
 }
 
