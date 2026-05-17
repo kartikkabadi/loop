@@ -440,15 +440,18 @@ async function recentClawsweeperClosed(env, repos) {
 
 async function recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins) {
   const items = [];
-  for (let page = 1; page <= CLOSED_STATS_PAGE_LIMIT; page += 1) {
-    const issues = await githubJson(
-      env,
-      `/repos/${repo}/issues?state=closed&sort=updated&direction=desc&since=${encodeURIComponent(
-        since,
-      )}&per_page=100&page=${page}`,
-    ).catch(() => []);
-    const pageItems = Array.isArray(issues) ? issues : [];
-    for (const item of pageItems) {
+  const firstPage = await githubJson(env, closedIssuesPath(repo, since, 1)).catch(() => []);
+  const pages = [Array.isArray(firstPage) ? firstPage : []];
+  if (pages[0].length >= 100 && CLOSED_STATS_PAGE_LIMIT > 1) {
+    const remainingPages = await Promise.all(
+      Array.from({ length: CLOSED_STATS_PAGE_LIMIT - 1 }, (_, index) =>
+        githubJson(env, closedIssuesPath(repo, since, index + 2)).catch(() => []),
+      ),
+    );
+    pages.push(...remainingPages.map((issues) => (Array.isArray(issues) ? issues : [])));
+  }
+  for (const issues of pages) {
+    for (const item of issues) {
       if (!isClawsweeperClosedItem(item, since, trustedBotLogins)) continue;
       items.push({
         repository: repo,
@@ -460,9 +463,14 @@ async function recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins
         closed_by: item.closed_by?.login || null,
       });
     }
-    if (pageItems.length < 100) break;
   }
   return items;
+}
+
+function closedIssuesPath(repo, since, page) {
+  return `/repos/${repo}/issues?state=closed&sort=updated&direction=desc&since=${encodeURIComponent(
+    since,
+  )}&per_page=100&page=${page}`;
 }
 
 function isClawsweeperClosedItem(item, since, trustedBotLogins) {

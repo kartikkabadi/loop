@@ -352,6 +352,7 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
       },
     },
   });
+  const issuePages: string[] = [];
   globalThis.fetch = async (input) => {
     const url = new URL(String(input));
     const closedAt = new Date(Date.now() - 60_000).toISOString();
@@ -360,7 +361,11 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
     if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
       return jsonResponse({ workflow_runs: [] });
     }
-    if (url.pathname === "/repos/openclaw/openclaw/issues") {
+    if (
+      url.pathname === "/repos/openclaw/openclaw/issues" &&
+      url.searchParams.get("page") === "1"
+    ) {
+      issuePages.push(url.searchParams.get("page") || "");
       return jsonResponse([
         {
           number: 81,
@@ -392,6 +397,10 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
           closed_by: { login: "steipete" },
         },
       ]);
+    }
+    if (url.pathname === "/repos/openclaw/openclaw/issues") {
+      issuePages.push(url.searchParams.get("page") || "");
+      return jsonResponse([]);
     }
     if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
     throw new Error(`unexpected fetch ${url}`);
@@ -439,6 +448,94 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
       },
     });
     assert.ok(new Date(status.recent.closed_stats.since).getTime() <= Date.now());
+    assert.deepEqual(issuePages, ["1"]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard fetches additional closed pages only when the first page is full", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  const issuePages: string[] = [];
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    const closedAt = new Date(Date.now() - 60_000).toISOString();
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/repos/openclaw/openclaw/issues") {
+      const page = url.searchParams.get("page") || "";
+      issuePages.push(page);
+      if (page === "1") {
+        return jsonResponse(
+          Array.from({ length: 100 }, (_, index) => ({
+            number: index + 1,
+            title: `Human closed issue ${index + 1}`,
+            html_url: `https://github.com/openclaw/openclaw/issues/${index + 1}`,
+            closed_at: closedAt,
+            closed_by: { login: "steipete" },
+          })),
+        );
+      }
+      if (page === "2") {
+        return jsonResponse([
+          {
+            number: 101,
+            title: "ClawSweeper closed overflow page issue",
+            html_url: "https://github.com/openclaw/openclaw/issues/101",
+            closed_at: closedAt,
+            closed_by: { login: "clawsweeper[bot]" },
+          },
+        ]);
+      }
+      return jsonResponse([]);
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.deepEqual(
+      issuePages.sort((left, right) => Number(left) - Number(right)),
+      ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+    );
+    assert.deepEqual(status.recent.closed_stats, {
+      window_hours: 24,
+      since: status.recent.closed_stats.since,
+      total: 1,
+      issues: 1,
+      prs: 0,
+      by_repository: {
+        "openclaw/openclaw": {
+          total: 1,
+          issues: 1,
+          prs: 0,
+        },
+      },
+    });
   } finally {
     globalThis.fetch = originalFetch;
     Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });

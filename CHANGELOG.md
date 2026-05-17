@@ -45,6 +45,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Fetched live-dashboard closed-item pages concurrently so the ClawSweeper close stats do not time out and render as zero during busy periods.
 - Coalesced duplicate spam comment intake deliveries by target comment so noisy edited-comment bursts stop wasting runner slots.
 - Required exact trusted-bot login matches before allowing comment-router mutation actions.
 - Limited `/autoclose` linked-target expansion to same-repo items explicitly referenced in the maintainer command text.
