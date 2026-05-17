@@ -3,17 +3,23 @@ import { setTimeout as sleep } from "node:timers/promises";
 import { ghJsonWithRetry, ghPagedWithRetry, ghText } from "./github-cli.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import { repoRoot } from "./paths.js";
-import { issueNumberFromUrl, normalizeGitHubActor, writePayload } from "./comment-router-utils.js";
+import { DEFAULT_TRUSTED_BOTS } from "./config.js";
+import {
+  commaSet,
+  isAllowedMutationActor,
+  issueNumberFromUrl,
+  writePayload,
+} from "./comment-router-utils.js";
 
 const PROGRESS_START = "<!-- clawsweeper-command-progress:start -->";
 const PROGRESS_END = "<!-- clawsweeper-command-progress:end -->";
-const TRUSTED_STATUS_COMMENT_ACTORS = new Set(["clawsweeper", "openclaw-clawsweeper"]);
 
 type Options = {
   repo: string;
   itemNumber: string;
   marker: string;
   statusCommentId: number | null;
+  trustedBots: Set<string>;
   state: string;
   detail: string;
   runUrl: string;
@@ -67,7 +73,7 @@ async function findCommandStatusComment(options: Options): Promise<LooseRecord |
 }
 
 function fetchExactStatusComment(
-  options: Pick<Options, "repo" | "itemNumber" | "statusCommentId">,
+  options: Pick<Options, "repo" | "itemNumber" | "statusCommentId" | "trustedBots">,
 ) {
   if (!options.statusCommentId) return null;
   try {
@@ -75,7 +81,7 @@ function fetchExactStatusComment(
       ["api", `repos/${options.repo}/issues/comments/${options.statusCommentId}`],
       { attempts: 3 },
     );
-    if (!isTrustedStatusComment(comment)) return null;
+    if (!isTrustedStatusComment(comment, options.trustedBots)) return null;
     if (issueNumberFromUrl(comment.issue_url) !== Number(options.itemNumber)) return null;
     return comment;
   } catch {
@@ -85,12 +91,13 @@ function fetchExactStatusComment(
 
 export function selectCommandStatusComment(
   comments: LooseRecord[],
-  options: Pick<Options, "marker" | "statusCommentId">,
+  options: Pick<Options, "marker" | "statusCommentId" | "trustedBots">,
 ) {
   if (options.statusCommentId) {
     const exact = comments.find(
       (comment) =>
-        Number(comment.id ?? 0) === options.statusCommentId && isTrustedStatusComment(comment),
+        Number(comment.id ?? 0) === options.statusCommentId &&
+        isTrustedStatusComment(comment, options.trustedBots),
     );
     if (exact) return exact;
   }
@@ -98,7 +105,7 @@ export function selectCommandStatusComment(
   return comments
     .filter(
       (comment) =>
-        isTrustedStatusComment(comment) &&
+        isTrustedStatusComment(comment, options.trustedBots) &&
         typeof comment.body === "string" &&
         comment.body.includes(options.marker),
     )
@@ -148,8 +155,11 @@ export function parseOptions(argv: string[]): Options {
     repo: args.repo ?? process.env.TARGET_REPO ?? "",
     itemNumber: args["item-number"] ?? process.env.ITEM_NUMBER ?? "",
     marker: args.marker ?? process.env.COMMAND_STATUS_MARKER ?? "",
-    statusCommentId: optionalNumber(
-      args["status-comment-id"] ?? process.env.CLAWSWEEPER_STATUS_COMMENT_ID,
+    statusCommentId: optionalNumber(args["status-comment-id"] ?? process.env.STATUS_COMMENT_ID),
+    trustedBots: commaSet(
+      args["trusted-bots"] ??
+        process.env.CLAWSWEEPER_TRUSTED_BOTS ??
+        DEFAULT_TRUSTED_BOTS.join(","),
     ),
     state: args.state ?? process.env.COMMAND_STATUS_STATE ?? "",
     detail: args.detail ?? process.env.COMMAND_STATUS_DETAIL ?? "",
@@ -179,6 +189,6 @@ function optionalNumber(value: JsonValue) {
   return number;
 }
 
-function isTrustedStatusComment(comment: LooseRecord) {
-  return TRUSTED_STATUS_COMMENT_ACTORS.has(normalizeGitHubActor(comment.user?.login));
+function isTrustedStatusComment(comment: LooseRecord, trustedBots: Set<string>) {
+  return isAllowedMutationActor(comment.user?.login, trustedBots);
 }

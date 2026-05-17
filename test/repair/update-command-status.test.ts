@@ -7,6 +7,29 @@ import {
   selectCommandStatusComment,
 } from "../../dist/repair/update-command-status.js";
 
+function withEnv(values: Record<string, string | undefined>, run: () => void) {
+  const previous = new Map<string, string | undefined>();
+  for (const [name, value] of Object.entries(values)) {
+    previous.set(name, process.env[name]);
+    if (value === undefined) {
+      delete process.env[name];
+    } else {
+      process.env[name] = value;
+    }
+  }
+  try {
+    run();
+  } finally {
+    for (const [name, value] of previous) {
+      if (value === undefined) {
+        delete process.env[name];
+      } else {
+        process.env[name] = value;
+      }
+    }
+  }
+}
+
 test("parseOptions preserves empty string arguments", () => {
   const options = parseOptions([
     "--repo",
@@ -21,6 +44,14 @@ test("parseOptions preserves empty string arguments", () => {
 
   assert.equal(options.marker, "");
   assert.equal(options.statusCommentId, null);
+});
+
+test("parseOptions reads STATUS_COMMENT_ID env fallback", () => {
+  withEnv({ STATUS_COMMENT_ID: "4466202000" }, () => {
+    const options = parseOptions(["--repo", "openclaw/openclaw", "--item-number", "81564"]);
+
+    assert.equal(options.statusCommentId, 4466202000);
+  });
 });
 
 test("empty markers do not target human comments that mention true", () => {
@@ -47,6 +78,7 @@ test("empty markers do not target human comments that mention true", () => {
     {
       marker: options.marker,
       statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
     },
   );
 
@@ -55,6 +87,7 @@ test("empty markers do not target human comments that mention true", () => {
 
 test("selectCommandStatusComment prefers exact status comment ids", () => {
   const marker = "<!-- clawsweeper-command-status:81564:re_review:320c867f -->";
+  const options = parseOptions(["--marker", marker, "--status-comment-id", "4466202000"]);
   const selected = selectCommandStatusComment(
     [
       {
@@ -69,8 +102,9 @@ test("selectCommandStatusComment prefers exact status comment ids", () => {
       },
     ],
     {
-      marker,
-      statusCommentId: 4466202000,
+      marker: options.marker,
+      statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
     },
   );
 
@@ -79,6 +113,7 @@ test("selectCommandStatusComment prefers exact status comment ids", () => {
 
 test("selectCommandStatusComment ignores human comments during marker fallback", () => {
   const marker = "<!-- clawsweeper-command-status:81564:re_review:320c867f -->";
+  const options = parseOptions(["--marker", marker]);
   const selected = selectCommandStatusComment(
     [
       {
@@ -93,12 +128,69 @@ test("selectCommandStatusComment ignores human comments during marker fallback",
       },
     ],
     {
-      marker,
-      statusCommentId: null,
+      marker: options.marker,
+      statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
     },
   );
 
   assert.equal(selected?.id, 4466202000);
+});
+
+test("selectCommandStatusComment honors custom trusted bots for exact ids", () => {
+  const marker = "<!-- clawsweeper-command-status:81564:re_review:320c867f -->";
+  const options = parseOptions([
+    "--marker",
+    marker,
+    "--status-comment-id",
+    "4466202000",
+    "--trusted-bots",
+    "custom-clawsweeper[bot]",
+  ]);
+  const selected = selectCommandStatusComment(
+    [
+      {
+        id: 4466202000,
+        user: { login: "custom-clawsweeper[bot]" },
+        body: "<!-- clawsweeper-command-ack:4466201487 -->\nClawSweeper picked this up.",
+      },
+    ],
+    {
+      marker: options.marker,
+      statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
+    },
+  );
+
+  assert.equal(selected?.id, 4466202000);
+});
+
+test("selectCommandStatusComment honors custom trusted bots during marker fallback", () => {
+  const marker = "<!-- clawsweeper-command-status:81564:re_review:320c867f -->";
+  withEnv({ CLAWSWEEPER_TRUSTED_BOTS: "custom-clawsweeper[bot]" }, () => {
+    const options = parseOptions(["--marker", marker]);
+    const selected = selectCommandStatusComment(
+      [
+        {
+          id: 4465717559,
+          user: { login: "hxy91819" },
+          body: marker,
+        },
+        {
+          id: 4466202000,
+          user: { login: "custom-clawsweeper[bot]" },
+          body: `${marker}\nClawSweeper picked this up.`,
+        },
+      ],
+      {
+        marker: options.marker,
+        statusCommentId: options.statusCommentId,
+        trustedBots: options.trustedBots,
+      },
+    );
+
+    assert.equal(selected?.id, 4466202000);
+  });
 });
 
 test("mergeCommandProgressSection replaces existing progress blocks in place", () => {
