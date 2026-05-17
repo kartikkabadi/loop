@@ -45,6 +45,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Ignored stale queued repair workflow runs when reserving live worker capacity, so abandoned Actions queue entries no longer block automerge repair dispatches.
 - Kept active automerge opt-ins moving through canonical no-finding human-review pauses instead of requiring a second maintainer approval.
 - Retried sweep target repository checkouts without cached Git references when
   a stale partial-clone cache breaks shard startup.

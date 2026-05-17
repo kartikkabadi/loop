@@ -61,6 +61,7 @@ test("workflow run normalization prefers the human Actions URL", () => {
     "queued",
   );
   assert.equal(run.url, "https://github.com/openclaw/clawsweeper/actions/runs/123");
+  assert.equal(run.updatedAt, null);
 });
 
 test("active workflow runs are filtered from one recent-runs fetch", () => {
@@ -70,6 +71,7 @@ test("active workflow runs are filtered from one recent-runs fetch", () => {
     workflow: "repair-cluster.yml",
     runNamePrefix: "repair cluster ",
     excludeRunNamePrefix: "repair cluster skip",
+    nowMs: Date.parse("2026-05-05T00:06:00.000Z"),
     fetchWorkflowRuns: ({ repo, workflow }) => {
       calls.push({ repo, workflow });
       return [
@@ -111,5 +113,38 @@ test("active workflow runs are filtered from one recent-runs fetch", () => {
   assert.deepEqual(
     runs.map((run) => run.databaseId),
     [3, 2],
+  );
+});
+
+test("stale queued workflow runs do not consume repair capacity", () => {
+  const runs = listActiveWorkflowRuns({
+    nowMs: Date.parse("2026-05-05T08:00:00.000Z"),
+    staleQueuedMs: 60 * 60 * 1000,
+    fetchWorkflowRuns: () => [
+      {
+        id: 1,
+        status: "queued",
+        display_title: "repair cluster stale queued.md",
+        created_at: "2026-05-05T00:00:00.000Z",
+        updated_at: "2026-05-05T00:00:00.000Z",
+      },
+      {
+        id: 2,
+        status: "waiting",
+        display_title: "repair cluster fresh waiting.md",
+        created_at: "2026-05-05T07:30:00.000Z",
+      },
+      {
+        id: 3,
+        status: "in_progress",
+        display_title: "repair cluster old but running.md",
+        created_at: "2026-05-04T00:00:00.000Z",
+      },
+    ],
+  });
+
+  assert.deepEqual(
+    runs.map((run) => run.databaseId),
+    [2, 3],
   );
 });

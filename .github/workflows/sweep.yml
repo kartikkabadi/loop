@@ -661,26 +661,31 @@ jobs:
             pnpm --dir clawsweeper run --silent workflow -- worker-limit "$@"
           }
           active_runs_json() {
-            gh api "repos/${{ github.repository }}/actions/runs?per_page=100" \
-              --jq '[.workflow_runs[] | {databaseId:.id, workflowName:.name, displayTitle:.display_title, status:.status}]' 2>/dev/null \
-              || printf '[]'
+            {
+              for run_status in in_progress pending queued waiting requested; do
+                gh api "repos/${{ github.repository }}/actions/runs?per_page=100&status=${run_status}" \
+                  --jq '.workflow_runs[] | {databaseId:.id, workflowName:.name, displayTitle:.display_title, status:.status, createdAt:.created_at, updatedAt:.updated_at}' 2>/dev/null \
+                  || true
+              done
+            } | jq -s 'unique_by(.databaseId)'
           }
           ACTIVE_RUNS_JSON="$(active_runs_json)"
+          STALE_QUEUED_CUTOFF="$(date -u -d '6 hours ago' '+%Y-%m-%dT%H:%M:%SZ')"
           active_run_count() {
             printf '%s' "$ACTIVE_RUNS_JSON" \
-              | WORKFLOW_NAME="$1" jq '[.[] | select(.workflowName == env.WORKFLOW_NAME) | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested")] | length' 2>/dev/null \
+              | WORKFLOW_NAME="$1" STALE_QUEUED_CUTOFF="$STALE_QUEUED_CUTOFF" jq '[.[] | select(.workflowName == env.WORKFLOW_NAME) | select(.status == "in_progress" or ((.status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and ((.updatedAt // .createdAt // "") >= env.STALE_QUEUED_CUTOFF)))] | length' 2>/dev/null \
               || printf '0'
           }
           active_sweep_exact_count() {
             printf '%s' "$ACTIVE_RUNS_JSON" \
-              | jq '[.[] | select(.workflowName == "ClawSweeper") | select((.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and (.displayTitle | startswith("Review event item ")))] | length' 2>/dev/null \
+              | STALE_QUEUED_CUTOFF="$STALE_QUEUED_CUTOFF" jq '[.[] | select(.workflowName == "ClawSweeper") | select((.status == "in_progress" or ((.status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and ((.updatedAt // .createdAt // "") >= env.STALE_QUEUED_CUTOFF))) and (.displayTitle | startswith("Review event item ")))] | length' 2>/dev/null \
               || printf '0'
           }
           active_sweep_background_workers() {
             local runs total id title status active_shards
             total=0
             runs="$(printf '%s' "$ACTIVE_RUNS_JSON" \
-              | CURRENT_RUN_ID="${GITHUB_RUN_ID:-0}" jq -r '.[] | select((.databaseId | tostring) != env.CURRENT_RUN_ID) | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | select(.displayTitle == "Review ClawSweeper items" or .displayTitle == "Review hot ClawSweeper items") | [.databaseId, .displayTitle, .status] | @tsv' 2>/dev/null || true)"
+              | CURRENT_RUN_ID="${GITHUB_RUN_ID:-0}" STALE_QUEUED_CUTOFF="$STALE_QUEUED_CUTOFF" jq -r '.[] | select((.databaseId | tostring) != env.CURRENT_RUN_ID) | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or ((.status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and ((.updatedAt // .createdAt // "") >= env.STALE_QUEUED_CUTOFF))) | select(.displayTitle == "Review ClawSweeper items" or .displayTitle == "Review hot ClawSweeper items") | [.databaseId, .displayTitle, .status] | @tsv' 2>/dev/null || true)"
             while IFS=$'\t' read -r id title status; do
               if [ -z "$id" ]; then
                 continue
@@ -1918,17 +1923,25 @@ jobs:
           set -euo pipefail
           hot_intake_shards="$(pnpm run --silent workflow -- limit review_shards.hot_intake_default)"
           normal_shards="$(pnpm run --silent workflow -- limit review_shards.normal_default)"
-          runs_json="$(gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,displayTitle,status,createdAt)"
+          runs_json="$(gh run list --repo "${{ github.repository }}" --limit 100 --json workflowName,displayTitle,status,createdAt,updatedAt)"
           eval "$(
             RUNS_JSON="$runs_json" node <<'NODE'
           const runs = JSON.parse(process.env.RUNS_JSON || "[]");
           const now = Date.now();
+          const staleQueuedMs = 6 * 60 * 60 * 1000;
           const active = new Set(["in_progress", "pending", "queued", "waiting", "requested"]);
+          const queued = new Set(["pending", "queued", "waiting", "requested"]);
+          function activeRun(run) {
+            if (!active.has(String(run.status))) return false;
+            if (!queued.has(String(run.status))) return true;
+            const lastChangedAt = Date.parse(String(run.updatedAt || run.createdAt || ""));
+            return !Number.isFinite(lastChangedAt) || now - lastChangedAt <= staleQueuedMs;
+          }
           function recent(title, windowMs) {
             return runs.some((run) => {
               if (run.workflowName !== "ClawSweeper") return false;
               if (run.displayTitle !== title) return false;
-              if (active.has(String(run.status))) return true;
+              if (activeRun(run)) return true;
               const createdAt = Date.parse(String(run.createdAt || ""));
               return Number.isFinite(createdAt) && now - createdAt < windowMs;
             });

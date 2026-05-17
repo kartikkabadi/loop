@@ -4812,6 +4812,7 @@ test("review capacity probes use REST actions run listing", () => {
   for (const block of [sweepBlock, commitBlock]) {
     assert.match(block, /active_runs_json\(\)/);
     assert.match(block, /actions\/runs\?per_page=100/);
+    assert.match(block, /status=\$\{run_status\}/);
     assert.match(block, /workflowName:\.name/);
     assert.match(block, /displayTitle:\.display_title/);
     assert.doesNotMatch(block, /gh run list/);
@@ -4832,6 +4833,8 @@ test("background review capacity reserves expanding matrices and caps broad manu
 
   assert.match(modeBlock, /limit review_shards\.hot_intake_default/);
   assert.match(modeBlock, /limit review_shards\.normal_default/);
+  assert.match(modeBlock, /STALE_QUEUED_CUTOFF/);
+  assert.match(modeBlock, /updatedAt:\.updated_at/);
   assert.match(modeBlock, /lane_shard_cap="\$normal_shards"/);
   assert.match(modeBlock, /lane_shard_cap="\$hot_intake_shards"/);
   assert.match(modeBlock, /Capping broad background review shards/);
