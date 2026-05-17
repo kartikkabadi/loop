@@ -11,6 +11,14 @@ const GITHUB_TIMEOUT_MS = 4500;
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 const STALE_CACHE_TTL_SECONDS = 900;
 const CI_STATUS_TTL_SECONDS = 7200;
+const SUPPORT_WORKFLOW_NAMES = new Set([
+  "CI",
+  "CodeQL",
+  "ClawSweeper Live Dashboard",
+  "ClawSweeper Live Dashboard CI Status",
+  "github activity to openclaw",
+  "spam comment intake",
+]);
 
 export default {
   async fetch(request, env, ctx) {
@@ -129,18 +137,20 @@ async function statusSnapshot(env, ctx) {
     ...filteredActiveRuns,
     ...workflowRuns.filter((run) => ACTIVE_RUN_STATUSES.has(String(run.status))),
   ]).sort(newestWorkflowRunFirst);
+  const workerRuns = activeRuns.filter((run) => !isSupportWorkflowRun(run));
+  const supportRuns = activeRuns.filter((run) => isSupportWorkflowRun(run));
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
   const [activeJobs, pipeline, automerge, closed, storedEvents] = await Promise.all([
-    estimateActiveCodexJobs(activeRuns),
+    estimateActiveCodexJobs(workerRuns),
     withTimeout(
-      pipelineItems(env, activeRuns.slice(0, 30)),
+      pipelineItems(env, workerRuns.slice(0, 30)),
       OPTIONAL_SECTION_TIMEOUT_MS,
       "pipeline",
     ).catch((error) => {
       errors.push(error.message);
-      return activeRuns.slice(0, 30).map((run) => classifyRun(run));
+      return workerRuns.slice(0, 30).map((run) => classifyRun(run));
     }),
     withTimeout(
       recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"),
@@ -174,8 +184,11 @@ async function statusSnapshot(env, ctx) {
     },
     fleet: {
       worker_budget: budget,
-      active_workflow_runs: activeRuns.length,
-      queued_workflow_runs: activeRuns.filter((run) => run.status !== "in_progress").length,
+      active_workflow_runs: workerRuns.length,
+      queued_workflow_runs: workerRuns.filter((run) => run.status !== "in_progress").length,
+      support_workflow_runs: supportRuns.length,
+      support_queued_workflow_runs: supportRuns.filter((run) => run.status !== "in_progress")
+        .length,
       active_codex_jobs: activeJobs.count,
       failed_recent_runs: failedRuns.length,
       budget_used_percent: budget > 0 ? Math.round((activeJobs.count / budget) * 100) : 0,
@@ -250,6 +263,15 @@ function uniqueWorkflowRuns(runs) {
     if (key) seen.set(String(key), run);
   }
   return [...seen.values()];
+}
+
+function isSupportWorkflowRun(run) {
+  const name = String(run?.name || "").trim();
+  if (SUPPORT_WORKFLOW_NAMES.has(name)) return true;
+  const title = String(run?.display_title || "").trim();
+  if (SUPPORT_WORKFLOW_NAMES.has(title)) return true;
+  const lower = `${name} ${title}`.toLowerCase();
+  return lower.includes("dashboard ci status") || lower.includes("github_activity");
 }
 
 function newestWorkflowRunFirst(left, right) {
@@ -1320,8 +1342,8 @@ function renderDashboard(data, note) {
   const fleet = data.fleet;
   document.getElementById("metrics").innerHTML = [
     metric("🦾 Claw Workers", fmt.format(fleet.active_codex_jobs), "budget " + fleet.worker_budget, fleet.budget_used_percent, "var(--green)"),
-    metric("🌊 Active Sweeps", fmt.format(fleet.active_workflow_runs), "in motion", Math.min(100, fleet.active_workflow_runs * 3), "var(--blue)"),
-    metric("⏳ Queue Depth", fmt.format(fleet.queued_workflow_runs), "waiting to surface", Math.min(100, fleet.queued_workflow_runs * 10), "var(--amber)"),
+    metric("🌊 Active Sweeps", fmt.format(fleet.active_workflow_runs), "support " + fmt.format(fleet.support_workflow_runs || 0), Math.min(100, fleet.active_workflow_runs * 3), "var(--blue)"),
+    metric("⏳ Queue Depth", fmt.format(fleet.queued_workflow_runs), "support queue " + fmt.format(fleet.support_queued_workflow_runs || 0), Math.min(100, fleet.queued_workflow_runs * 10), "var(--amber)"),
     metric("💥 Recent Snags", fmt.format(fleet.failed_recent_runs), "last page", Math.min(100, fleet.failed_recent_runs * 15), fleet.failed_recent_runs ? "var(--red)" : "var(--green)"),
     metric("⚡ Merge Speed", data.averages.automerge_command_to_merge_ms ? elapsed(data.averages.automerge_command_to_merge_ms) : "n/a", data.averages.automerge_samples + " samples", 60, "var(--violet)"),
     metric("🎯 Capacity", fleet.budget_used_percent + "%", "fleet utilization", fleet.budget_used_percent, "var(--green)")

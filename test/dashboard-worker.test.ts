@@ -354,6 +354,26 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
               created_at: "2026-05-14T06:15:00Z",
               updated_at: "2026-05-14T06:20:00Z",
             },
+            {
+              id: 5,
+              name: "spam comment intake",
+              display_title: "github_activity",
+              status: "in_progress",
+              conclusion: null,
+              html_url: "https://github.com/openclaw/clawsweeper/actions/runs/5",
+              created_at: "2026-05-14T06:18:00Z",
+              updated_at: "2026-05-14T06:19:00Z",
+            },
+            {
+              id: 6,
+              name: "ClawSweeper Live Dashboard CI Status",
+              display_title: "ClawSweeper Live Dashboard CI Status",
+              status: "in_progress",
+              conclusion: null,
+              html_url: "https://github.com/openclaw/clawsweeper/actions/runs/6",
+              created_at: "2026-05-14T06:19:00Z",
+              updated_at: "2026-05-14T06:20:00Z",
+            },
           ],
         });
       }
@@ -369,6 +389,16 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
               html_url: "https://github.com/openclaw/clawsweeper/actions/runs/4",
               created_at: "2026-05-14T06:05:00Z",
               updated_at: "2026-05-14T06:06:00Z",
+            },
+            {
+              id: 7,
+              name: "github activity to openclaw",
+              display_title: "github_activity",
+              status: "queued",
+              conclusion: null,
+              html_url: "https://github.com/openclaw/clawsweeper/actions/runs/7",
+              created_at: "2026-05-14T06:04:00Z",
+              updated_at: "2026-05-14T06:05:00Z",
             },
           ],
         });
@@ -394,6 +424,8 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
     const status = await response.json();
     assert.equal(status.fleet.active_workflow_runs, 3);
     assert.equal(status.fleet.queued_workflow_runs, 1);
+    assert.equal(status.fleet.support_workflow_runs, 3);
+    assert.equal(status.fleet.support_queued_workflow_runs, 1);
     assert.deepEqual(
       status.pipeline.map((row: { id: number }) => row.id),
       [2, 4, 3],
