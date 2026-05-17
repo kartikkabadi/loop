@@ -4969,6 +4969,18 @@ test("github activity workflow coalesces noisy observer runs", () => {
   assert.doesNotMatch(workflow, /github\.event\.client_payload\.activity\.subject\.number/);
 });
 
+test("spam comment intake coalesces duplicate comment deliveries", () => {
+  const workflow = readFileSync(".github/workflows/spam-comment-intake.yml", "utf8");
+
+  assert.match(workflow, /group: >-/);
+  assert.match(workflow, /spam-comment-intake-\$\{\{ github\.event\.client_payload\.target_repo/);
+  assert.match(workflow, /github\.event\.client_payload\.comment_id/);
+  assert.match(workflow, /github\.event\.client_payload\.review_comment_id/);
+  assert.match(workflow, /github\.event\.client_payload\.activity\.comment\.id/);
+  assert.match(workflow, /github\.run_id/);
+  assert.match(workflow, /cancel-in-progress: true/);
+});
+
 test("spam scanner exact dispatches publish only per-comment audit records", () => {
   const workflow = readFileSync(".github/workflows/spam-scanner.yml", "utf8");
 

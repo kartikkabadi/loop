@@ -45,6 +45,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Coalesced duplicate spam comment intake deliveries by target comment so noisy edited-comment bursts stop wasting runner slots.
 - Required exact trusted-bot login matches before allowing comment-router mutation actions.
 - Limited `/autoclose` linked-target expansion to same-repo items explicitly referenced in the maintainer command text.
 - Restored target checkout file modes after read-only review runs and kept `.git` metadata writable for local Git inspection.
