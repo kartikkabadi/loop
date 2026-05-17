@@ -498,6 +498,26 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
       env,
     );
     assert.equal(ingest.status, 200);
+    const prClose = await worker.fetch(
+      new Request("<private-ingest-endpoint>", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer test-token",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          event_type: "clawsweeper.item_closed",
+          mode: "item_closed",
+          stage: "close_fixed_by_candidate",
+          status: "executed",
+          repository: "openclaw/openclaw",
+          item_url: "https://github.com/openclaw/openclaw/issues/81",
+          title: "Explicit PR close event",
+        }),
+      }),
+      env,
+    );
+    assert.equal(prClose.status, 200);
     const blocked = await worker.fetch(
       new Request("<private-ingest-endpoint>", {
         method: "POST",
@@ -549,12 +569,14 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
           status: string;
           item_number: number;
           source: string;
+          title: string;
         }) => ({
           mode: event.mode,
           stage: event.stage,
           status: event.status,
           item_number: event.item_number,
           source: event.source,
+          title: event.title,
         }),
       ),
       [
@@ -564,6 +586,15 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
           status: "blocked",
           item_number: undefined,
           source: undefined,
+          title: "Blocked close event",
+        },
+        {
+          mode: "item_closed",
+          stage: "close_fixed_by_candidate",
+          status: "executed",
+          item_number: undefined,
+          source: undefined,
+          title: "Explicit PR close event",
         },
         {
           mode: "item_closed",
@@ -571,13 +602,7 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
           status: "executed",
           item_number: undefined,
           source: undefined,
-        },
-        {
-          mode: "closed",
-          stage: "PR",
-          status: "closed",
-          item_number: 81,
-          source: "closed_items",
+          title: "Real close event",
         },
         {
           mode: "closed",
@@ -585,6 +610,7 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
           status: "closed",
           item_number: 82,
           source: "closed_items",
+          title: "Alternate app closed issue",
         },
       ],
     );

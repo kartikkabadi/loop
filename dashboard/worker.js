@@ -482,16 +482,18 @@ function isClawsweeperClosedItem(item, since, trustedBotLogins) {
 function recentActivityEvents(storedEvents, closedItems) {
   const rows = [];
   const seen = new Set();
-  const storedItemUrls = new Set();
+  const storedCloseItemKeys = new Set();
   for (const event of Array.isArray(storedEvents) ? storedEvents : []) {
     const key = activityEventKey(event);
     if (seen.has(key)) continue;
     seen.add(key);
-    if (isStoredCloseEvent(event) && event.item_url) storedItemUrls.add(event.item_url);
+    const itemKey = activityItemKey(event);
+    if (isStoredCloseEvent(event) && itemKey) storedCloseItemKeys.add(itemKey);
     rows.push(event);
   }
   for (const item of Array.isArray(closedItems) ? closedItems : []) {
-    if (item.url && storedItemUrls.has(item.url)) continue;
+    const itemKey = activityItemKey(item);
+    if (itemKey && storedCloseItemKeys.has(itemKey)) continue;
     const event = activityEventFromClosedItem(item);
     const key = activityEventKey(event);
     if (seen.has(key)) continue;
@@ -529,6 +531,19 @@ function activityEventKey(event) {
     event.item_number || "",
     event.id || event.received_at || "",
   ].join(":");
+}
+
+function activityItemKey(event) {
+  if (event.repository && event.item_number) return `${event.repository}#${event.item_number}`;
+  const url = nullableString(event.item_url || event.url);
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    const match = parsed.pathname.match(/^\/([^/]+\/[^/]+)\/(?:issues|pull)\/(\d+)(?:\/|$)/);
+    return match ? `${match[1]}#${match[2]}` : null;
+  } catch {
+    return null;
+  }
 }
 
 function isStoredCloseEvent(event) {
