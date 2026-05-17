@@ -1452,6 +1452,18 @@ test("renderResponse reports maintainer autoclose results", () => {
   assert.doesNotMatch(body, /ClawSweeper Repair/i);
 });
 
+test("renderResponse documents explicit autoclose linked-target scope", () => {
+  const body = renderResponse({
+    comment_id: "461",
+    intent: "autoclose",
+    reason: "autoclose requires a maintainer close reason",
+    target: { head_sha: null },
+  });
+
+  assert.match(body, /explicitly referenced in the command text/);
+  assert.doesNotMatch(body, /bounded linked open same-repo items/);
+});
+
 test("renderResponse reports automerge repair dispatches", () => {
   const body = renderResponse(
     {

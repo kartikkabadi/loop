@@ -45,6 +45,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Limited `/autoclose` linked-target expansion to same-repo items explicitly referenced in the maintainer command text.
 - Restored target checkout file modes after read-only review runs and kept `.git` metadata writable for local Git inspection.
 - Counted unverified local-checkout apply records against the apply processed limit so one stale report cannot be retried forever while later records still mutate.
 - Ignored stale queued repair workflow runs when reserving live worker capacity, so abandoned Actions queue entries no longer block automerge repair dispatches.

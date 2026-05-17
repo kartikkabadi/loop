@@ -1059,7 +1059,7 @@ export function renderResponse(command: LooseRecord, dispatched: LooseRecord) {
         ? []
         : [
             "",
-            "Usage: `/autoclose <maintainer close reason>`. I will close this item and bounded linked open same-repo items.",
+            "Usage: `/autoclose <maintainer close reason>`. I will close this item and any open same-repo items explicitly referenced in the command text.",
           ]),
     ].join("\n");
   }

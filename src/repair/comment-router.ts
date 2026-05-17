@@ -1835,7 +1835,7 @@ function discoverAutocloseTargets({ command, issue, pull }: LooseRecord): JsonVa
   return targets;
 }
 
-function collectAutocloseCandidateNumbers({ command, issue, pull }: LooseRecord): number[] {
+function collectAutocloseCandidateNumbers({ command }: LooseRecord): number[] {
   const numbers = new Set<number>();
   const add = (value: JsonValue) => {
     const number = Number(value);
@@ -1843,25 +1843,7 @@ function collectAutocloseCandidateNumbers({ command, issue, pull }: LooseRecord)
   };
   add(command.issue_number);
   addAutocloseNumbersFromText(numbers, command.autoclose_message);
-  addAutocloseNumbersFromText(numbers, issue.body);
-  addAutocloseNumbersFromText(numbers, pull?.body);
-  for (const linked of pull?.closingIssuesReferences ?? []) add(linked.number);
-  for (const number of fetchTimelineLinkedNumbers(command.issue_number)) add(number);
   return [...numbers];
-}
-
-function fetchTimelineLinkedNumbers(number: JsonValue): number[] {
-  try {
-    const timeline = ghPaged(`repos/${targetRepo}/issues/${number}/timeline?per_page=100`);
-    const numbers = new Set<number>();
-    for (const event of timeline) {
-      addAutocloseNumbersFromText(numbers, event?.body);
-      addAutocloseNumbersFromText(numbers, event?.source?.issue?.html_url);
-    }
-    return [...numbers];
-  } catch {
-    return [];
-  }
 }
 
 function addAutocloseNumbersFromText(numbers: Set<number>, text: string) {
