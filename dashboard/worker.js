@@ -132,7 +132,7 @@ async function statusSnapshot(env, ctx) {
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
-  const [activeJobs, pipeline, automerge, closed, events] = await Promise.all([
+  const [activeJobs, pipeline, automerge, closed, storedEvents] = await Promise.all([
     estimateActiveCodexJobs(activeRuns),
     withTimeout(
       pipelineItems(env, activeRuns.slice(0, 30)),
@@ -189,7 +189,7 @@ async function statusSnapshot(env, ctx) {
       automerge: automerge.items,
       closed_items: closed.items,
       closed_stats: closed.stats,
-      events: events.slice(0, 25),
+      events: recentActivityEvents(storedEvents, closed.items),
       failed_runs: failedRuns.slice(0, 10).map((run) => workflowRunSummary(run)),
     },
     diagnostics: {
@@ -477,6 +477,62 @@ function isClawsweeperClosedItem(item, since, trustedBotLogins) {
   if (!item?.closed_at) return false;
   if (!trustedBotLogins.has(String(item.closed_by?.login || ""))) return false;
   return Date.parse(item.closed_at) >= Date.parse(since);
+}
+
+function recentActivityEvents(storedEvents, closedItems) {
+  const rows = [];
+  const seen = new Set();
+  const storedItemUrls = new Set();
+  for (const event of Array.isArray(storedEvents) ? storedEvents : []) {
+    const key = activityEventKey(event);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (isStoredCloseEvent(event) && event.item_url) storedItemUrls.add(event.item_url);
+    rows.push(event);
+  }
+  for (const item of Array.isArray(closedItems) ? closedItems : []) {
+    if (item.url && storedItemUrls.has(item.url)) continue;
+    const event = activityEventFromClosedItem(item);
+    const key = activityEventKey(event);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    rows.push(event);
+  }
+  return rows
+    .sort(
+      (left, right) =>
+        Date.parse(right.received_at || right.closed_at || "") -
+        Date.parse(left.received_at || left.closed_at || ""),
+    )
+    .slice(0, 25);
+}
+
+function activityEventFromClosedItem(item) {
+  return {
+    event_type: "clawsweeper.item_closed",
+    mode: "closed",
+    stage: item.type || "item",
+    status: "closed",
+    repository: item.repository,
+    item_number: item.number,
+    item_url: item.url,
+    title: item.title,
+    received_at: item.closed_at,
+    source: "closed_items",
+  };
+}
+
+function activityEventKey(event) {
+  return [
+    event.event_type || "",
+    event.item_url || "",
+    event.item_number || "",
+    event.id || event.received_at || "",
+  ].join(":");
+}
+
+function isStoredCloseEvent(event) {
+  return event.event_type === "clawsweeper.item_closed" && event.status === "executed";
 }
 
 function clawsweeperBotLogins(env) {

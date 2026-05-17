@@ -176,6 +176,70 @@ test("dashboard falls back to edge cache storage when KV is not bound", async ()
   }
 });
 
+test("dashboard preserves repeated untargeted activity events", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  globalThis.fetch = activePrFetch;
+
+  try {
+    const env = {
+      INGEST_TOKEN: "test-token",
+      STATUS_STORE: new MemoryKv(),
+      CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+      TARGET_REPOS: "openclaw/openclaw",
+      CACHE_TTL_SECONDS: "0",
+    };
+    for (const title of ["Probe one", "Probe two"]) {
+      const ingest = await worker.fetch(
+        new Request("<private-ingest-endpoint>", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer test-token",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            event_type: "status.test",
+            mode: "test",
+            stage: "probe",
+            status: "ok",
+            title,
+          }),
+        }),
+        env,
+      );
+      assert.equal(ingest.status, 200);
+    }
+
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      env,
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.deepEqual(
+      status.recent.events
+        .filter((event: { event_type: string }) => event.event_type === "status.test")
+        .map((event: { title: string }) => event.title)
+        .sort(),
+      ["Probe one", "Probe two"],
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
 test("dashboard keeps workflow CI status when live PR checks fail", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;
@@ -407,13 +471,57 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
   };
 
   try {
+    const env = {
+      INGEST_TOKEN: "test-token",
+      STATUS_STORE: new MemoryKv(),
+      CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+      TARGET_REPOS: "openclaw/openclaw",
+      CACHE_TTL_SECONDS: "0",
+    };
+    const ingest = await worker.fetch(
+      new Request("<private-ingest-endpoint>", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer test-token",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          event_type: "clawsweeper.item_closed",
+          mode: "item_closed",
+          stage: "close_duplicate",
+          status: "executed",
+          repository: "openclaw/openclaw",
+          item_url: "https://github.com/openclaw/openclaw/issues/80",
+          title: "Real close event",
+        }),
+      }),
+      env,
+    );
+    assert.equal(ingest.status, 200);
+    const blocked = await worker.fetch(
+      new Request("<private-ingest-endpoint>", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer test-token",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          event_type: "clawsweeper.close_blocked",
+          mode: "close_blocked",
+          stage: "close_duplicate",
+          status: "blocked",
+          repository: "openclaw/openclaw",
+          item_url: "https://github.com/openclaw/openclaw/issues/82",
+          title: "Blocked close event",
+        }),
+      }),
+      env,
+    );
+    assert.equal(blocked.status, 200);
+
     const response = await worker.fetch(
       new Request("https://clawsweeper.openclaw.ai/api/status"),
-      {
-        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
-        TARGET_REPOS: "openclaw/openclaw",
-        CACHE_TTL_SECONDS: "0",
-      },
+      env,
       {
         waitUntil: () => undefined,
       },
@@ -431,6 +539,53 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
         { type: "Issue", number: 80, closed_by: "clawsweeper[bot]" },
         { type: "PR", number: 81, closed_by: "clawsweeper[bot]" },
         { type: "Issue", number: 82, closed_by: "openclaw-clawsweeper[bot]" },
+      ],
+    );
+    assert.deepEqual(
+      status.recent.events.map(
+        (event: {
+          mode: string;
+          stage: string;
+          status: string;
+          item_number: number;
+          source: string;
+        }) => ({
+          mode: event.mode,
+          stage: event.stage,
+          status: event.status,
+          item_number: event.item_number,
+          source: event.source,
+        }),
+      ),
+      [
+        {
+          mode: "close_blocked",
+          stage: "close_duplicate",
+          status: "blocked",
+          item_number: undefined,
+          source: undefined,
+        },
+        {
+          mode: "item_closed",
+          stage: "close_duplicate",
+          status: "executed",
+          item_number: undefined,
+          source: undefined,
+        },
+        {
+          mode: "closed",
+          stage: "PR",
+          status: "closed",
+          item_number: 81,
+          source: "closed_items",
+        },
+        {
+          mode: "closed",
+          stage: "Issue",
+          status: "closed",
+          item_number: 82,
+          source: "closed_items",
+        },
       ],
     );
     assert.deepEqual(status.recent.closed_stats, {
