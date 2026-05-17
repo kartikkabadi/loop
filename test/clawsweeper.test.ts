@@ -4351,22 +4351,22 @@ test("ClawSweeper priority label scheme exposes P0 through P3 labels", () => {
     {
       name: "P0",
       color: "B60205",
-      description: "Critical impact; needs immediate maintainer attention.",
+      description: "Emergency: data loss, security bypass, crash loop, or unusable core runtime.",
     },
     {
       name: "P1",
       color: "D93F0B",
-      description: "High-priority user-facing bug, regression, or broken workflow.",
+      description: "Urgent regression or broken agent/channel workflow affecting real users now.",
     },
     {
       name: "P2",
       color: "FBCA04",
-      description: "Normal backlog priority with limited blast radius.",
+      description: "Normal priority bug or improvement with limited blast radius.",
     },
     {
       name: "P3",
       color: "0E8A16",
-      description: "Low-priority cleanup, docs, polish, ergonomics, or speculative work.",
+      description: "Low-risk cleanup, docs, polish, ergonomics, or speculative feature.",
     },
   ]);
 });
@@ -4376,6 +4376,28 @@ test("ClawSweeper priority label descriptions fit GitHub label limits", () => {
     assert.ok(
       label.description.length <= 100,
       `${label.name} description is ${label.description.length} characters`,
+    );
+  }
+});
+
+test("ClawSweeper priority label descriptions stay aligned with prompt and schema", () => {
+  const schema = JSON.parse(reviewDecisionSchemaText()) as {
+    properties?: {
+      triagePriority?: {
+        description?: string;
+      };
+    };
+  };
+  const schemaDescription = schema.properties?.triagePriority?.description ?? "";
+  const prompt = reviewPromptTemplate();
+  for (const label of priorityLabelSchemeForTest()) {
+    assert.ok(
+      prompt.includes(`\`${label.name}\`: ${label.description}`),
+      `${label.name} description is missing from the review prompt`,
+    );
+    assert.ok(
+      schemaDescription.includes(`${label.name}: ${label.description}`),
+      `${label.name} description is missing from the schema`,
     );
   }
 });
