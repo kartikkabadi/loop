@@ -1,5 +1,5 @@
 name = "clawsweeper-status"
-main = "worker.js"
+main = "worker.ts"
 account_id = "<cloudflare-account-id>"
 compatibility_date = "2026-05-11"
 workers_dev = true
