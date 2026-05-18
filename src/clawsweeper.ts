@@ -126,6 +126,8 @@ type PrStatusLabelKind =
   | "needs_proof"
   | "waiting_on_author"
   | "ready_for_maintainer_look";
+type PrEggState = "incubating" | "warming" | "wobbling" | "hatched";
+type PrEggRarity = "common" | "uncommon" | "rare" | "glimmer" | "legendary";
 type TelegramVisibleProofStatus = "needed" | "not_needed";
 type MantisRecommendationStatus = "recommended" | "not_recommended";
 type MantisRecommendationScenario =
@@ -5454,6 +5456,129 @@ function publicPrRatingLine(rating: PrRating, proof: RealBehaviorProof): string 
   return lines.join("\n");
 }
 
+function prEggIdentitySeedFromReport(markdown: string): string {
+  const repo = markdownRepository(markdown);
+  const number = frontMatterValue(markdown, "number") ?? "unknown";
+  return `${repo}#${number}`;
+}
+
+function prEggVisualSeedFromReport(markdown: string): string {
+  const identitySeed = prEggIdentitySeedFromReport(markdown);
+  const headSha = frontMatterValue(markdown, "pull_head_sha") ?? "unknown";
+  return `${identitySeed}@${headSha}`;
+}
+
+function prEggStateFromReport(
+  markdown: string,
+  options: {
+    realBehaviorProof: RealBehaviorProof;
+    prRating: PrRating;
+    reviewFindings: readonly Pick<ReviewFinding, "priority">[];
+    securityReview: Pick<SecurityReview, "status">;
+    overallCorrectness: OverallCorrectness;
+    statusKind?: PrStatusLabelKind | null;
+  },
+): PrEggState {
+  const isReady =
+    options.prRating.nextSteps.length === 0 &&
+    isReadyForMaintainerLook({
+      realBehaviorProof: options.realBehaviorProof,
+      reviewFindings: options.reviewFindings,
+      securityReview: options.securityReview,
+      overallCorrectness: options.overallCorrectness,
+    });
+  if (isReady) return "hatched";
+  if (options.statusKind === "re_review_loop") return "wobbling";
+  const hasUnresolvedWork =
+    options.prRating.nextSteps.length > 0 ||
+    hasUnresolvedContributorWork({
+      realBehaviorProof: options.realBehaviorProof,
+      reviewFindings: options.reviewFindings,
+      securityReview: options.securityReview,
+      overallCorrectness: options.overallCorrectness,
+    });
+  return hasUnresolvedWork ? "warming" : "incubating";
+}
+
+function prEggProofUnlocked(proof: Pick<RealBehaviorProof, "status">): boolean {
+  return (
+    proof.status === "sufficient" ||
+    proof.status === "override" ||
+    proof.status === "not_applicable"
+  );
+}
+
+function publicPrEggLine(
+  markdown: string,
+  options: {
+    realBehaviorProof: RealBehaviorProof;
+    prRating: PrRating;
+    reviewFindings: readonly Pick<ReviewFinding, "priority">[];
+    securityReview: Pick<SecurityReview, "status">;
+    overallCorrectness: OverallCorrectness;
+    statusKind?: PrStatusLabelKind | null;
+  },
+): string {
+  if (!prEggProofUnlocked(options.realBehaviorProof)) {
+    return [
+      "🎁 Pass real behavior proof to wake the egg and unlock a hatchable treat.",
+      "",
+      "<details>",
+      "<summary>Where did the egg go?</summary>",
+      "",
+      "- The egg game starts only after the PR passes the real-behavior proof check.",
+      "- Before that, no creature, rarity, or ASCII portrait is rolled. The treat waits for real proof.",
+      "- This is still just collectible flavor: proof affects review readiness, not creature quality.",
+      "",
+      "</details>",
+    ].join("\n");
+  }
+
+  const identitySeed = prEggIdentitySeedFromReport(markdown);
+  const visualSeed = prEggVisualSeedFromReport(markdown);
+  const state = prEggStateFromReport(markdown, options);
+  const explainer = [
+    "",
+    "<details>",
+    "<summary>What is this egg doing here?</summary>",
+    "",
+    "- Eggs appear after the PR passes real-behavior proof. It is here for vibes, not verdicts: it does not change labels, ratings, merge decisions, or automation.",
+    "- The shell reacts to review momentum: open follow-up work warms it up, re-review makes it wobble, and a clean final review lets it hatch.",
+    "- The hatch is seeded from this repository and PR number, so the same PR keeps the same creature; the reviewed head SHA can only change safe visual details.",
+    "- Rarity is just collectible sparkle: 🥚 common, 🌱 uncommon, 💎 rare, ✨ glimmer, and 🌈 legendary.",
+    "",
+    "</details>",
+  ];
+  if (state === "hatched") {
+    const creature = prEggCreature(identitySeed, visualSeed);
+    const shareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(creature.shareText)}`;
+    return [
+      `✨ Hatched: ${creature.rarityLabel} ${creature.name}`,
+      "",
+      "```text",
+      creature.portrait,
+      "```",
+      `Trait: ${creature.trait}.`,
+      `Share on X: ${markdownLink("post this hatch", shareUrl)}`,
+      `Copy: ${creature.shareText}`,
+      ...explainer,
+    ].join("\n");
+  }
+  const stateLines: Record<Exclude<PrEggState, "hatched">, string> = {
+    incubating: "🥚 Incubating: this PR egg is tucked into the review nest.",
+    warming: "🔥 Warming up: proof, findings, or rank-up moves are still in progress.",
+    wobbling: "🔁 Wobbling: a re-review loop is active, so the shell is rattling.",
+  };
+  return [
+    stateLines[state],
+    "",
+    "```text",
+    pickSeeded(PR_EGG_ART, visualSeed, state),
+    "```",
+    ...explainer,
+  ].join("\n");
+}
+
 function publicMantisRecommendationBlock(recommendation: MantisRecommendation): string {
   if (recommendation.status !== "recommended" || recommendation.scenario === "none") return "";
   const comment = recommendation.maintainerComment.trim();
@@ -5521,7 +5646,9 @@ function closeOutro(reason: CloseReason, canonicalLinks: string[] = []): string 
 
 function issueOrPullReferenceNumbers(value: string): string[] {
   return [
-    ...value.matchAll(/https:\/\/github\.com\/[^\s)]+\/(?:issues|pull)\/(\d+)|#(\d+)\b/g),
+    ...value.matchAll(
+      /https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/(?:issues|pull)\/(\d+)|#(\d+)\b/g,
+    ),
   ].map((match) => match[1] ?? match[2] ?? "");
 }
 
@@ -6102,6 +6229,210 @@ function hasShinyProof(proof: Pick<RealBehaviorProof, "status" | "evidenceKind">
       proof.evidenceKind === "screenshot" ||
       proof.evidenceKind === "linked_artifact")
   );
+}
+
+const PR_EGG_ART = [
+  "       .-.\n     .'   '.\n    /       \\\n   |         |\n    \\       /\n     '.___.'",
+  "       .-.\n    .-'   '-.\n   /  .- -.  \\\n  |  /     \\  |\n   \\  '._.'  /\n    '-.___.-'",
+  "       .-.\n    .-'   '-.\n   /  _   _  \\\n  |  (_) (_)  |\n   \\   ___   /\n    '.___._.'",
+];
+
+const PR_EGG_RARITIES: { rarity: PrEggRarity; label: string; cutoff: number }[] = [
+  { rarity: "common", label: "🥚 common", cutoff: 7000 },
+  { rarity: "uncommon", label: "🌱 uncommon", cutoff: 9000 },
+  { rarity: "rare", label: "💎 rare", cutoff: 9800 },
+  { rarity: "glimmer", label: "✨ glimmer", cutoff: 9990 },
+  { rarity: "legendary", label: "🌈 legendary", cutoff: 10000 },
+];
+
+const PR_EGG_ADJECTIVES = [
+  "Gilded",
+  "Moonlit",
+  "Velvet",
+  "Neon",
+  "Tiny",
+  "Brave",
+  "Clockwork",
+  "Pearl",
+  "Mossy",
+  "Cosmic",
+  "Sunspot",
+  "Frosted",
+];
+
+const PR_EGG_SPECIES = [
+  "Shellbean",
+  "Clawlet",
+  "Lint Imp",
+  "Merge Sprite",
+  "Proofling",
+  "Diff Drake",
+  "Patch Peep",
+  "Review Wisp",
+  "Branchling",
+  "Test Hopper",
+  "Crabkin",
+  "Signal Puff",
+];
+
+const PR_EGG_TRAITS = [
+  "keeps receipts",
+  "sniffs out flaky tests",
+  "guards the happy path",
+  "collects tiny proofs",
+  "purrs at green checks",
+  "stacks clean commits",
+  "polishes edge cases",
+  "watches the merge queue",
+  "finds missing screenshots",
+  "sleeps inside passing CI",
+  "sparkles near resolved comments",
+  "hums during re-review",
+];
+
+const PR_EGG_SPRITE_WIDTH = 29;
+const PR_EGG_SPRITE_HEIGHT = 12;
+
+function prEggSpriteLines(lines: readonly string[]): string[] {
+  return Array.from({ length: PR_EGG_SPRITE_HEIGHT }, (_value, index) =>
+    (lines[index] ?? "").padEnd(PR_EGG_SPRITE_WIDTH, " ").slice(0, PR_EGG_SPRITE_WIDTH),
+  );
+}
+
+const PR_EGG_BASE_SPRITES = [
+  prEggSpriteLines([
+    "        /\\     /\\        ",
+    "      _/  \\___/  \\_      ",
+    "     /  ( o   o )  \\     ",
+    "    |      \\_/      |    ",
+    "    |   /\\  ===  /\\ |    ",
+    "     \\_/  \\_____/  \\_/   ",
+    "        _/|_| |_|\\_      ",
+    "       /__| | | |__\\     ",
+    "          ' ' ' '        ",
+    "         /_/     \\_\\     ",
+  ]),
+  prEggSpriteLines([
+    "        .--^^^^--.       ",
+    "     .-'  o    o  '-.    ",
+    "    /       \\__/      \\   ",
+    "   |    /\\  ____  /\\   |  ",
+    "   |   /  \\/____\\/  \\  |  ",
+    "    \\  \\_.------._/  /  ",
+    "     '._  `----'  _.'   ",
+    "        '-.____.-'      ",
+    "       _/|_|  |_|\\_     ",
+    "      /__|      |__\\    ",
+  ]),
+  prEggSpriteLines([
+    "       _..------.._      ",
+    "    .-'  .-.  .-.  '-.   ",
+    "   /    ( * )( * )    \\  ",
+    "  |        .--.        | ",
+    "  |   <\\   ====   />   | ",
+    "   \\    '.______.'    /  ",
+    "    '-._   ____   _.-'   ",
+    "        `-.____.-'       ",
+    "       __/|_||_|\\__      ",
+    "      /__.'    '.__\\     ",
+  ]),
+  prEggSpriteLines([
+    "       /\\  .---.  /\\     ",
+    "      /  \\/     \\/  \\    ",
+    "     /   ( -   - )   \\   ",
+    "    |       ._.       |  ",
+    "    |   /|  ===  |\\   |  ",
+    "     \\  \\|______/|/  /   ",
+    "      '._  `--'  _.'     ",
+    "         '-.__.-'        ",
+    "       _/|_|  |_|\\_      ",
+    "      /__|      |__\\     ",
+  ]),
+];
+
+function hashNumber(seed: string, salt: string): number {
+  return Number.parseInt(sha256(`${salt}:${seed}`).slice(0, 12), 16);
+}
+
+function pickSeeded<T>(values: readonly T[], seed: string, salt: string): T {
+  return values[hashNumber(seed, salt) % values.length]!;
+}
+
+function decoratePrEggSprite(
+  lines: readonly string[],
+  seed: string,
+  rarity: PrEggRarity,
+): string[] {
+  const body = lines.filter((line) => line.trim().length > 0);
+  const sigil = pickSeeded(["*", "+", "=", "~"], seed, "sprite-sigil");
+  if (rarity === "legendary") {
+    return prEggSpriteLines(["*====[ LEGENDARY ]====*", ...body, "*=====================*"]);
+  }
+  if (rarity === "glimmer") {
+    return prEggSpriteLines([
+      ...body,
+      "       `-----------'       ",
+      `.${sigil}~~~~~~~~~~~~~~~~~~~${sigil}.`,
+    ]);
+  }
+  if (rarity === "rare") {
+    return prEggSpriteLines([
+      ...body,
+      "       `-----------'       ",
+      ` ${sigil}===================${sigil}`,
+    ]);
+  }
+  return prEggSpriteLines([...body, "       .-----------.       ", "      '-------------'      "]);
+}
+
+function composePrEggSprite(seed: string, rarity: PrEggRarity): string {
+  const base = pickSeeded(PR_EGG_BASE_SPRITES, seed, "base-sprite");
+  return decoratePrEggSprite(base, seed, rarity).join("\n");
+}
+
+function prEggRarity(seed: string): { rarity: PrEggRarity; label: string } {
+  const roll = hashNumber(seed, "rarity") % 10000;
+  return PR_EGG_RARITIES.find((entry) => roll < entry.cutoff) ?? PR_EGG_RARITIES[0]!;
+}
+
+function prEggCreature(
+  identitySeed: string,
+  visualSeed = identitySeed,
+): {
+  name: string;
+  rarity: PrEggRarity;
+  rarityLabel: string;
+  trait: string;
+  portrait: string;
+  shareText: string;
+} {
+  const rarity = prEggRarity(identitySeed);
+  const name = `${pickSeeded(PR_EGG_ADJECTIVES, identitySeed, "adjective")} ${pickSeeded(
+    PR_EGG_SPECIES,
+    identitySeed,
+    "species",
+  )}`;
+  const shareText = `My PR egg hatched a ${rarity.label} ${name} in ClawSweeper.`;
+  return {
+    name,
+    rarity: rarity.rarity,
+    rarityLabel: rarity.label,
+    trait: pickSeeded(PR_EGG_TRAITS, identitySeed, "trait"),
+    portrait: composePrEggSprite(visualSeed, rarity.rarity),
+    shareText,
+  };
+}
+
+export function prEggCreatureForTest(
+  identitySeed: string,
+  visualSeed = identitySeed,
+): ReturnType<typeof prEggCreature> {
+  return prEggCreature(identitySeed, visualSeed);
+}
+
+export function prEggSpriteMetricsForTest(seed: string): { lines: string[]; width: number } {
+  const lines = composePrEggSprite(seed, "common").split("\n");
+  return { lines, width: PR_EGG_SPRITE_WIDTH };
 }
 
 function defaultRatingNextSteps(options: {
@@ -8021,7 +8352,10 @@ function reviewWorkflowCallout(): string[] {
   ];
 }
 
-function renderKeepOpenCommentFromReport(markdown: string): string {
+function renderKeepOpenCommentFromReport(
+  markdown: string,
+  options: { prStatusKind?: PrStatusLabelKind | null } = {},
+): string {
   const evidence = reportEvidence(markdown).slice(0, 6).map(closeEvidenceLine);
   const likelyOwners = reportLikelyOwners(markdown).slice(0, 5).map(likelyOwnerLine);
   const reviewFindings = reportReviewFindings(markdown);
@@ -8094,6 +8428,18 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     appendPublicSection(lines, "PR rating", publicPrRatingLine(prRating, realBehaviorProof));
     appendPublicSection(
       lines,
+      "PR egg",
+      publicPrEggLine(markdown, {
+        realBehaviorProof,
+        prRating,
+        reviewFindings,
+        securityReview,
+        overallCorrectness: reportOverallCorrectness(markdown),
+        statusKind: options.prStatusKind ?? null,
+      }),
+    );
+    appendPublicSection(
+      lines,
       "Real behavior proof",
       publicRealBehaviorProofLine(realBehaviorProof),
     );
@@ -8158,12 +8504,16 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
   );
 }
 
-export function renderReviewCommentFromReport(markdown: string, reason: CloseReason): string {
+export function renderReviewCommentFromReport(
+  markdown: string,
+  reason: CloseReason,
+  options: { prStatusKind?: PrStatusLabelKind | null } = {},
+): string {
   const decision = frontMatterValue(markdown, "decision");
   const body =
     decision === "close" && reason !== "none"
       ? renderCloseCommentFromReport(markdown, reason)
-      : renderKeepOpenCommentFromReport(markdown);
+      : renderKeepOpenCommentFromReport(markdown, options);
   const markers = reviewAutomationMarkersFromReport(markdown);
   return markers ? `${body.trimEnd()}\n\n${markers}` : body;
 }
@@ -9631,6 +9981,7 @@ function applyDecisionsCommand(args: Args): void {
       if (processedCount >= processedLimit) break;
       continue;
     }
+    let currentPrStatusKind: PrStatusLabelKind | null = null;
     if (state === "open" && item.kind === "pull_request") {
       item.labels = syncRealBehaviorProofSufficientLabel({
         number,
@@ -9644,10 +9995,15 @@ function applyDecisionsCommand(args: Args): void {
         rating: reportPrRating(markdown),
         dryRun,
       });
+      currentPrStatusKind = prStatusLabelKindFromReport(
+        markdown,
+        currentItemContext(),
+        item.labels,
+      );
       item.labels = syncPrStatusLabel({
         number,
         labels: item.labels,
-        statusKind: prStatusLabelKindFromReport(markdown, currentItemContext(), item.labels),
+        statusKind: currentPrStatusKind,
         dryRun,
       });
       item.labels = syncTelegramVisibleProofLabel({
@@ -9658,7 +10014,9 @@ function applyDecisionsCommand(args: Args): void {
       });
     }
     markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
-    const reviewComment = renderReviewCommentFromReport(markdown, closeReason ?? "none");
+    const reviewComment = renderReviewCommentFromReport(markdown, closeReason ?? "none", {
+      prStatusKind: currentPrStatusKind,
+    });
     const existingReviewComment = issueReviewComment(number, [
       reviewComment,
       reviewSectionValue(markdown, "closeComment"),

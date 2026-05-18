@@ -58,6 +58,8 @@ import {
   mergeRiskLabelSchemeForTest,
   prRatingLabelsForTest,
   prRatingLabelSchemeForTest,
+  prEggCreatureForTest,
+  prEggSpriteMetricsForTest,
   prStatusLabelsForTest,
   prStatusLabelSchemeForTest,
   priorityLabelsForTest,
@@ -1929,6 +1931,35 @@ test("duplicate or superseded close sentence filters current item URLs", () => {
   );
 });
 
+test("duplicate or superseded reference extraction ignores repeated malformed GitHub URLs", () => {
+  const repeatedMalformedUrl = Array.from({ length: 100 }, () => "https://github.com/").join("");
+  const action = reviewActionForDecision({
+    item: item({ number: 123 }),
+    decision: closeDecision({
+      closeReason: "duplicate_or_superseded",
+      summary: `Close as duplicate after checking ${repeatedMalformedUrl}.`,
+      bestSolution: "Keep remaining work on https://github.com/openclaw/openclaw/issues/456.",
+      evidence: [
+        {
+          label: "Malformed URL noise",
+          detail: repeatedMalformedUrl,
+        },
+        {
+          label: "Canonical issue",
+          detail: "https://github.com/openclaw/openclaw/issues/456 tracks the same work.",
+        },
+      ],
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(
+    action.closeComment,
+    /So I’m closing this here and keeping the remaining discussion on https:\/\/github\.com\/openclaw\/openclaw\/issues\/456\./,
+  );
+});
+
 test("duplicate or superseded close sentence includes duplicate-labeled canonical URL", () => {
   const action = reviewActionForDecision({
     item: item({ number: 123 }),
@@ -2798,6 +2829,392 @@ Full review comments:
   assert.match(comment, /Proof: 🦀 challenger crab ✨ media proof bonus/);
   assert.match(comment, /Shiny media proof means a screenshot, video, or linked artifact/);
   assert.doesNotMatch(comment, /Rank-up moves:/);
+});
+
+test("pull request review comments tease PR egg until proof passes", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "74470",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "high",
+    author: "contributor",
+    author_association: "CONTRIBUTOR",
+    labels: JSON.stringify([]),
+    work_candidate: "none",
+    pull_head_sha: "abc123def456",
+  })}
+
+## Summary
+
+Keep this PR open until proof is added.
+
+## What This Changes
+
+Fixes the gateway status output.
+
+## Best Possible Solution
+
+Add proof and re-review.
+
+${realBehaviorProofReportSection({
+  status: "missing",
+  evidenceKind: "none",
+  needsContributorAction: true,
+  summary: "The PR has no real behavior proof yet.",
+})}
+
+${prRatingReportSection({
+  overallTier: "F",
+  proofTier: "F",
+  patchTier: "B",
+  overallLabel: "🧂 unranked krab",
+  proofLabel: "🧂 unranked krab",
+  patchLabel: "🐚 platinum hermit",
+  summary: "Proof is missing, so this PR is not ready yet.",
+  nextSteps: "- Add after-fix proof from a real setup.",
+})}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`;
+
+  const comment = renderReviewCommentFromReport(report, "none");
+  const eggSection = comment.match(/\*\*PR egg\*\*[\s\S]*?\*\*Real behavior proof\*\*/)?.[0] ?? "";
+
+  assert.match(eggSection, /\*\*PR egg\*\*\n🎁 Pass real behavior proof/);
+  assert.match(eggSection, /wake the egg and unlock a hatchable treat/);
+  assert.match(eggSection, /<summary>Where did the egg go\?<\/summary>/);
+  assert.match(eggSection, /no creature, rarity, or ASCII portrait is rolled/);
+  assert.doesNotMatch(eggSection, /```text/);
+  assert.doesNotMatch(eggSection, /🔥 Warming up:/);
+  assert.doesNotMatch(eggSection, /✨ Hatched:/);
+  assert.doesNotMatch(eggSection, /Share on X:/);
+});
+
+test("pull request review comments render warming PR egg after proof passes", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "74470",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "high",
+    author: "contributor",
+    author_association: "CONTRIBUTOR",
+    labels: JSON.stringify([]),
+    work_candidate: "none",
+    pull_head_sha: "abc123def456",
+  })}
+
+## Summary
+
+Keep this PR open until the follow-up is resolved.
+
+## What This Changes
+
+Fixes the gateway status output.
+
+## Best Possible Solution
+
+Resolve the remaining review follow-up.
+
+${realBehaviorProofReportSection({
+  status: "sufficient",
+  evidenceKind: "terminal",
+  needsContributorAction: false,
+  summary: "The PR includes terminal output from a real setup.",
+})}
+
+${prRatingReportSection({
+  overallTier: "B",
+  proofTier: "A",
+  patchTier: "B",
+  overallLabel: "🐚 platinum hermit",
+  proofLabel: "🦀 challenger crab",
+  patchLabel: "🐚 platinum hermit",
+  summary: "Proof is present, but one follow-up remains.",
+  nextSteps: "- Resolve the remaining maintainer follow-up.",
+})}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`;
+
+  const comment = renderReviewCommentFromReport(report, "none");
+  const eggSection = comment.match(/\*\*PR egg\*\*[\s\S]*?\*\*Real behavior proof\*\*/)?.[0] ?? "";
+
+  assert.match(eggSection, /\*\*PR egg\*\*\n🔥 Warming up:/);
+  assert.match(eggSection, /```text\n[\s\S]+?\n```/);
+  assert.match(eggSection, /<summary>What is this egg doing here\?<\/summary>/);
+  assert.match(eggSection, /Eggs appear after the PR passes real-behavior proof/);
+  assert.match(eggSection, /It is here for vibes, not verdicts/);
+  assert.match(eggSection, /🥚 common, 🌱 uncommon, 💎 rare, ✨ glimmer, and 🌈 legendary/);
+  assert.doesNotMatch(eggSection, /🎁 Pass real behavior proof/);
+  assert.doesNotMatch(eggSection, /✨ Hatched:/);
+  assert.doesNotMatch(eggSection, /Share on X:/);
+});
+
+test("pull request review comments hatch deterministic collectible PR egg", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "74471",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "high",
+    author: "contributor",
+    author_association: "CONTRIBUTOR",
+    labels: JSON.stringify(["protected: maintainer-authored"]),
+    work_candidate: "none",
+    pull_head_sha: "abc123def456",
+  })}
+
+## Summary
+
+Keep this clean PR open for maintainer review.
+
+## What This Changes
+
+Fixes the gateway status output.
+
+## Best Possible Solution
+
+Merge after maintainer review.
+
+${realBehaviorProofReportSection()}
+
+${prRatingReportSection({
+  overallTier: "B",
+  proofTier: "A",
+  patchTier: "B",
+  summary: "This PR has strong proof and normal merge-ready implementation quality.",
+  nextSteps: "",
+})}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`;
+
+  const first = renderReviewCommentFromReport(report, "none");
+  const second = renderReviewCommentFromReport(report, "none");
+
+  assert.match(first, /\*\*PR egg\*\*\n✨ Hatched: [^\n]+/);
+  assert.match(first, /```text\n[\s\S]+?\n```/);
+  assert.match(first, /Trait: [^.]+\./);
+  assert.match(first, /Share on X: \[post this hatch\]\(https:\/\/x\.com\/intent\/tweet\?text=/);
+  assert.match(first, /Copy: My PR egg hatched a [^\n]+ in ClawSweeper\./);
+  assert.match(first, /same PR keeps the same creature/);
+  assert.equal(
+    first.match(/\*\*PR egg\*\*[\s\S]*?\*\*Real behavior proof\*\*/)?.[0],
+    second.match(/\*\*PR egg\*\*[\s\S]*?\*\*Real behavior proof\*\*/)?.[0],
+  );
+});
+
+test("PR egg hatch identity stays stable across reviewed PR revisions", () => {
+  const reportForHead = (headSha: string) => `${reportFrontMatter({
+    type: "pull_request",
+    number: "74471",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "high",
+    author: "contributor",
+    author_association: "CONTRIBUTOR",
+    labels: JSON.stringify(["protected: maintainer-authored"]),
+    work_candidate: "none",
+    pull_head_sha: headSha,
+  })}
+
+## Summary
+
+Keep this clean PR open for maintainer review.
+
+## What This Changes
+
+Fixes the gateway status output.
+
+## Best Possible Solution
+
+Merge after maintainer review.
+
+${realBehaviorProofReportSection()}
+
+${prRatingReportSection({
+  overallTier: "B",
+  proofTier: "A",
+  patchTier: "B",
+  summary: "This PR has strong proof and normal merge-ready implementation quality.",
+  nextSteps: "",
+})}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`;
+
+  const first = renderReviewCommentFromReport(reportForHead("abc123def456"), "none");
+  const second = renderReviewCommentFromReport(reportForHead("def456abc123"), "none");
+
+  assert.equal(first.match(/✨ Hatched: [^\n]+/)?.[0], second.match(/✨ Hatched: [^\n]+/)?.[0]);
+  assert.equal(first.match(/Trait: [^\n]+/)?.[0], second.match(/Trait: [^\n]+/)?.[0]);
+  assert.equal(first.match(/Copy: [^\n]+/)?.[0], second.match(/Copy: [^\n]+/)?.[0]);
+  assert.match(first, /same PR keeps the same creature/);
+});
+
+test("PR egg wobbling follows current re-review status signal", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "74473",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "high",
+    author: "contributor",
+    author_association: "CONTRIBUTOR",
+    labels: JSON.stringify([]),
+    work_candidate: "none",
+    pull_head_sha: "abc123def456",
+  })}
+
+## Summary
+
+Keep this PR open during the requested re-review loop.
+
+## What This Changes
+
+Fixes the gateway status output.
+
+## Best Possible Solution
+
+Re-review the latest author update.
+
+${realBehaviorProofReportSection({
+  status: "sufficient",
+  evidenceKind: "terminal",
+  needsContributorAction: false,
+  summary: "The PR includes terminal output from a real setup.",
+})}
+
+${prRatingReportSection({
+  overallTier: "B",
+  proofTier: "A",
+  patchTier: "B",
+  overallLabel: "🐚 platinum hermit",
+  proofLabel: "🦀 challenger crab",
+  patchLabel: "🐚 platinum hermit",
+  summary: "Proof is present, but one follow-up remains.",
+  nextSteps: "- Wait for the requested re-review result.",
+})}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`;
+
+  assert.match(
+    renderReviewCommentFromReport(report, "none", { prStatusKind: "re_review_loop" }),
+    /\*\*PR egg\*\*\n🔁 Wobbling:/,
+  );
+  assert.match(renderReviewCommentFromReport(report, "none"), /\*\*PR egg\*\*\n🔥 Warming up:/);
+});
+
+test("issues do not render PR egg game", () => {
+  const report = `${reportFrontMatter({
+    type: "issue",
+    number: "74472",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "medium",
+    work_candidate: "none",
+  })}
+
+## Summary
+
+Keep this issue open for more reproduction detail.
+
+## Best Possible Solution
+
+Ask for reproduction details.
+`;
+
+  const comment = renderReviewCommentFromReport(report, "none");
+
+  assert.doesNotMatch(comment, /\*\*PR egg\*\*/);
+});
+
+test("PR egg creature generation exposes emoji rarity collectibles", () => {
+  const stable = prEggCreatureForTest("openclaw/openclaw#74471@abc123def456");
+  assert.deepEqual(stable, prEggCreatureForTest("openclaw/openclaw#74471@abc123def456"));
+  assert.match(stable.rarityLabel, /^(🥚 common|🌱 uncommon|💎 rare|✨ glimmer|🌈 legendary)$/);
+
+  let glimmerOrLegendary: ReturnType<typeof prEggCreatureForTest> | null = null;
+  for (let index = 0; index < 50000; index += 1) {
+    const candidate = prEggCreatureForTest(`rarity-seed-${index}`);
+    if (candidate.rarity === "glimmer" || candidate.rarity === "legendary") {
+      glimmerOrLegendary = candidate;
+      break;
+    }
+  }
+
+  assert.ok(glimmerOrLegendary);
+  assert.match(glimmerOrLegendary.rarityLabel, /^(✨ glimmer|🌈 legendary)$/);
+  assert.match(glimmerOrLegendary.shareText, /^My PR egg hatched a .+ in ClawSweeper\.$/);
+});
+
+test("PR egg ASCII sprites render fixed-width deterministic silhouettes", () => {
+  const first = prEggSpriteMetricsForTest("openclaw/openclaw#74471@abc123def456");
+  const second = prEggSpriteMetricsForTest("openclaw/openclaw#74471@abc123def456");
+  const other = prEggSpriteMetricsForTest("openclaw/openclaw#74471@def456abc123");
+
+  assert.deepEqual(first, second);
+  assert.equal(first.lines.length, 12);
+  assert.equal(first.width, 29);
+  assert.ok(first.lines.some((line) => /[^\s]/.test(line)));
+  for (const line of first.lines) {
+    assert.equal(line.length, first.width);
+    assert.doesNotMatch(line, /[\p{Extended_Pictographic}]/u);
+    assert.match(line, /\S/, "sprite lines should stay visually dense");
+  }
+  assert.ok(
+    first.lines.some((line, index) => line !== other.lines[index]),
+    "different head SHAs should alter at least one composed sprite layer",
+  );
 });
 
 test("docs-only external PRs do not require real behavior proof", () => {
