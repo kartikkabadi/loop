@@ -2240,11 +2240,11 @@ Reason: Maintainers should review the tests after the targeted lane is green.
   );
   assert.match(
     comment,
-    /- A fresh review can be triggered by maintainer comments, exact-item GitHub events, scheduled\/background review runs, or manual workflow dispatch\./,
+    /- A fresh review can be triggered by eligible `@clawsweeper re-review` comments, exact-item GitHub events, scheduled\/background review runs, or manual workflow dispatch\./,
   );
   assert.match(
     comment,
-    /- PR\/issue authors can comment `@clawsweeper re-review` or `@clawsweeper re-run` on their own open PR or issue to request a fresh review only\./,
+    /- PR\/issue authors and users with repository write access can comment `@clawsweeper re-review` or `@clawsweeper re-run` on an open PR or issue to request a fresh review only\./,
   );
   assert.match(
     comment,

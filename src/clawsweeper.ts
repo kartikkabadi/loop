@@ -5169,7 +5169,7 @@ function publicSecurityReviewLine(review: SecurityReview): string {
 }
 
 function realBehaviorProofReReviewGuidance(): string {
-  return "After adding proof, update the PR body; ClawSweeper should re-review automatically. If it does not, ask a maintainer to comment `@clawsweeper re-review`.";
+  return "After adding proof, update the PR body; ClawSweeper should re-review automatically. If it does not, the PR author or someone with repository write access can comment `@clawsweeper re-review`.";
 }
 
 function realBehaviorProofBlockerSummary(summary: string, fallback: string): string {
@@ -7425,8 +7425,8 @@ function reviewWorkflowCallout(): string[] {
     collapsedDetailsBlock("How this review workflow works", [
       "- ClawSweeper keeps one durable marker-backed review comment per issue or PR.",
       "- Re-runs edit this comment so the latest verdict, findings, and automation markers stay together instead of adding duplicate bot comments.",
-      "- A fresh review can be triggered by maintainer comments, exact-item GitHub events, scheduled/background review runs, or manual workflow dispatch.",
-      "- PR/issue authors can comment `@clawsweeper re-review` or `@clawsweeper re-run` on their own open PR or issue to request a fresh review only.",
+      "- A fresh review can be triggered by eligible `@clawsweeper re-review` comments, exact-item GitHub events, scheduled/background review runs, or manual workflow dispatch.",
+      "- PR/issue authors and users with repository write access can comment `@clawsweeper re-review` or `@clawsweeper re-run` on an open PR or issue to request a fresh review only.",
       "- Maintainers can also comment `@clawsweeper review` to request a fresh review only.",
       "- Fresh-review commands do not start repair, autofix, rebase, CI repair, or automerge.",
       "- Maintainer-only repair and merge flows require explicit commands such as `@clawsweeper autofix`, `@clawsweeper automerge`, `@clawsweeper fix ci`, or `@clawsweeper address review`.",

@@ -199,9 +199,9 @@ Common commands:
 
 Only maintainers are accepted for write actions. The router checks repository
 collaborator permission (`admin`, `maintain`, or `write`) and falls back to
-trusted `author_association` values when permission lookup is unavailable. The
-single contributor exception is read-only: an issue or PR author may ask
-`@clawsweeper re-review` or `@clawsweeper re-run` on their own open item.
+trusted `author_association` values when permission lookup is unavailable.
+Users with repository write access and issue/PR authors may ask
+`@clawsweeper re-review` or `@clawsweeper re-run` for a fresh read-only review.
 Other contributor commands are ignored without a reply. Scheduled comment routing is dry unless
 `CLAWSWEEPER_COMMENT_ROUTER_EXECUTE=1`; workflow dispatch with `execute=true`
 can be used for one-off live routing.

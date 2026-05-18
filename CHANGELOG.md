@@ -45,6 +45,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Clarified re-review guidance so PR/issue authors and users with repository write access can request a fresh read-only review without a maintainer relay.
 - Mirrored ClawSweeper repair publish events into the live dashboard ingest so the Recent Activity panel shows fleet signals.
 - Filled the live dashboard Recent Activity panel from recent ClawSweeper closes when no explicit activity events have arrived yet.
 - Deduped live-dashboard PR close activity across explicit `/issues/` events and backfilled `/pull/` rows.
