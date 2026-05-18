@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { generateKeyPairSync } from "node:crypto";
 import test from "node:test";
 
 import worker from "../dashboard/worker.js";
@@ -755,6 +756,471 @@ test("dashboard fetches additional closed pages only when the first page is full
   }
 });
 
+test("triage focused views use direct search when broad snapshot is capped", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  let readyPerPage = "";
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/openclaw/labels") {
+      return jsonResponse([
+        { name: "clawsweeper:queueable-fix", color: "0E8A16", description: "" },
+        { name: "clawsweeper:no-new-fix-pr", color: "BFDADC", description: "" },
+      ]);
+    }
+    if (url.pathname === "/search/issues") {
+      const query = url.searchParams.get("q") || "";
+      const page = url.searchParams.get("page") || "1";
+      if (
+        query.includes('label:"clawsweeper:queueable-fix"') &&
+        query.includes('-label:"clawsweeper:no-new-fix-pr"')
+      ) {
+        readyPerPage = url.searchParams.get("per_page") || "";
+        return jsonResponse({
+          total_count: 2,
+          items: [
+            triageIssue(102, ["clawsweeper:queueable-fix"]),
+            triageIssue(100, ["clawsweeper:queueable-fix"]),
+          ],
+        });
+      }
+      if (query.includes('label:"clawsweeper:no-new-fix-pr","clawsweeper:queueable-fix"')) {
+        return jsonResponse({
+          total_count: 501,
+          items:
+            page === "1"
+              ? [
+                  triageIssue(102, ["clawsweeper:queueable-fix"]),
+                  triageIssue(101, ["clawsweeper:queueable-fix", "clawsweeper:no-new-fix-pr"]),
+                ]
+              : [],
+        });
+      }
+      return jsonResponse({ total_count: 0, items: [] });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/triage"),
+      {
+        TARGET_REPOS: "openclaw/openclaw",
+        TRIAGE_ITEMS_PER_VIEW: "500",
+        TRIAGE_CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const snapshot = await response.json();
+    const root = snapshot.views.find((view: { id: string }) => view.id === "clawsweeper");
+    const ready = snapshot.views.find((view: { id: string }) => view.id === "ready-candidates");
+    assert.equal(root.item_limit, 500);
+    assert.equal(ready.total_count, 2);
+    assert.equal(ready.item_limit, 100);
+    assert.equal(readyPerPage, "100");
+    assert.deepEqual(
+      ready.items.map((item: { number: number }) => item.number),
+      [102, 100],
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("triage focused fallbacks reserve search budget for later repos", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  let searchRequests = 0;
+  let sawSecondRepoLastRootPage = false;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname.endsWith("/labels")) {
+      return jsonResponse([
+        { name: "clawsweeper:queueable-fix", color: "0E8A16", description: "" },
+        { name: "clawsweeper:no-new-fix-pr", color: "BFDADC", description: "" },
+      ]);
+    }
+    if (url.pathname === "/search/issues") {
+      searchRequests += 1;
+      const query = url.searchParams.get("q") || "";
+      const page = url.searchParams.get("page") || "1";
+      const repo = query.includes("repo:openclaw/other") ? "openclaw/other" : "openclaw/openclaw";
+      if (repo === "openclaw/other" && page === "4") {
+        sawSecondRepoLastRootPage = true;
+      }
+      if (
+        query.includes('label:"clawsweeper:queueable-fix"') &&
+        query.includes('-label:"clawsweeper:no-new-fix-pr"')
+      ) {
+        return jsonResponse({
+          total_count: 1,
+          items: [triageIssue(repo, 200, ["clawsweeper:queueable-fix"])],
+        });
+      }
+      if (query.includes('label:"clawsweeper:no-new-fix-pr","clawsweeper:queueable-fix"')) {
+        return jsonResponse({
+          total_count: 401,
+          items: [triageIssue(repo, Number(page), ["clawsweeper:queueable-fix"])],
+        });
+      }
+      return jsonResponse({ total_count: 0, items: [] });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/triage"),
+      {
+        TRIAGE_TARGET_REPOS: "openclaw/openclaw,openclaw/other",
+        TRIAGE_ITEMS_PER_VIEW: "500",
+        TRIAGE_CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const snapshot = await response.json();
+    assert.equal(searchRequests, 9);
+    assert.equal(snapshot.source.search_request_budget_remaining, 0);
+    assert.equal(sawSecondRepoLastRootPage, true);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("triage focused search errors fall back to loaded broad rows", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname.endsWith("/labels")) {
+      return jsonResponse([
+        { name: "clawsweeper:queueable-fix", color: "0E8A16", description: "" },
+        { name: "clawsweeper:no-new-fix-pr", color: "BFDADC", description: "" },
+      ]);
+    }
+    if (url.pathname === "/search/issues") {
+      const query = url.searchParams.get("q") || "";
+      const page = url.searchParams.get("page") || "1";
+      if (
+        query.includes('label:"clawsweeper:queueable-fix"') &&
+        query.includes('-label:"clawsweeper:no-new-fix-pr"')
+      ) {
+        throw new Error("focused search failed");
+      }
+      if (query.includes('label:"clawsweeper:no-new-fix-pr","clawsweeper:queueable-fix"')) {
+        return jsonResponse({
+          total_count: 501,
+          items:
+            page === "1"
+              ? [
+                  triageIssue(102, ["clawsweeper:queueable-fix"]),
+                  triageIssue(101, ["clawsweeper:queueable-fix", "clawsweeper:no-new-fix-pr"]),
+                ]
+              : [],
+        });
+      }
+      return jsonResponse({ total_count: 0, items: [] });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/triage"),
+      {
+        TARGET_REPOS: "openclaw/openclaw",
+        TRIAGE_ITEMS_PER_VIEW: "500",
+        TRIAGE_CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const snapshot = await response.json();
+    const ready = snapshot.views.find((view: { id: string }) => view.id === "ready-candidates");
+    assert.equal(ready.total_count, 1);
+    assert.deepEqual(
+      ready.items.map((item: { number: number }) => item.number),
+      [102],
+    );
+    assert.match(snapshot.diagnostics.errors.join("\n"), /focused search failed/);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("triage skips repos after root search budget is exhausted", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  let searchRequests = 0;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname.endsWith("/labels")) {
+      return jsonResponse([
+        { name: "clawsweeper:queueable-fix", color: "0E8A16", description: "" },
+      ]);
+    }
+    if (url.pathname === "/search/issues") {
+      searchRequests += 1;
+      return jsonResponse({
+        total_count: 1,
+        items: [triageIssue(searchRequests, ["clawsweeper:queueable-fix"])],
+      });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const repos = Array.from({ length: 10 }, (_, index) => `openclaw/repo-${index}`).join(",");
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/triage"),
+      {
+        TRIAGE_TARGET_REPOS: repos,
+        TRIAGE_CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const snapshot = await response.json();
+    assert.equal(searchRequests, 9);
+    assert.equal(snapshot.source.search_request_budget_remaining, 0);
+    assert.match(snapshot.diagnostics.errors.join("\n"), /repo-9 triage skipped/);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("triage debits failed root searches from the search budget", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  let searchRequests = 0;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname.endsWith("/labels")) {
+      return jsonResponse([
+        { name: "clawsweeper:queueable-fix", color: "0E8A16", description: "" },
+      ]);
+    }
+    if (url.pathname === "/search/issues") {
+      searchRequests += 1;
+      throw new Error("root search failed");
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const repos = Array.from({ length: 10 }, (_, index) => `openclaw/repo-${index}`).join(",");
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/triage"),
+      {
+        TRIAGE_TARGET_REPOS: repos,
+        TRIAGE_CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const snapshot = await response.json();
+    assert.equal(searchRequests, 9);
+    assert.equal(snapshot.source.search_request_budget_remaining, 0);
+    assert.match(snapshot.diagnostics.errors.join("\n"), /repo-9 triage skipped/);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("triage uses ClawSweeper GitHub App credentials when no static token is configured", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  const { privateKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    privateKeyEncoding: { type: "pkcs8", format: "pem" },
+    publicKeyEncoding: { type: "spki", format: "pem" },
+  });
+  let sawAppJwt = false;
+  let sawInstallationToken = false;
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(String(input));
+    const authorization = String(new Headers(init?.headers).get("authorization") || "");
+    if (url.pathname === "/repos/openclaw/openclaw/installation") {
+      sawAppJwt = authorization.startsWith("Bearer ");
+      return jsonResponse({ id: 12345 });
+    }
+    if (url.pathname === "/app/installations/12345/access_tokens") {
+      sawAppJwt = authorization.startsWith("Bearer ");
+      return jsonResponse({
+        token: "installation-token",
+        expires_at: new Date(Date.now() + 3_600_000).toISOString(),
+      });
+    }
+    if (url.pathname === "/repos/openclaw/openclaw/labels") {
+      sawInstallationToken = authorization === "Bearer installation-token";
+      return jsonResponse([{ name: "clawsweeper:queueable-fix", color: "0E8A16" }]);
+    }
+    if (url.pathname === "/search/issues") {
+      sawInstallationToken = authorization === "Bearer installation-token";
+      return jsonResponse({
+        total_count: 1,
+        items: [triageIssue(101, ["clawsweeper:queueable-fix"])],
+      });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/triage"),
+      {
+        CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
+        CLAWSWEEPER_APP_PRIVATE_KEY: String(privateKey),
+        TARGET_REPOS: "openclaw/openclaw",
+        TRIAGE_CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const snapshot = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(snapshot.source.search_request_budget_remaining, 27);
+    assert.equal(sawAppJwt, true);
+    assert.equal(sawInstallationToken, true);
+    assert.doesNotMatch(snapshot.diagnostics.errors.join("\n"), /GITHUB_TOKEN/);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard shares in-flight GitHub App installation token across parallel requests", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  const { privateKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    privateKeyEncoding: { type: "pkcs8", format: "pem" },
+    publicKeyEncoding: { type: "spki", format: "pem" },
+  });
+  let tokenRequests = 0;
+  let badBearer = "";
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(String(input));
+    const authorization = String(new Headers(init?.headers).get("authorization") || "");
+    if (url.pathname === "/repos/openclaw/openclaw/installation") {
+      return jsonResponse({ id: 12345 });
+    }
+    if (url.pathname === "/app/installations/12345/access_tokens") {
+      tokenRequests += 1;
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      return jsonResponse({
+        token: "installation-token",
+        expires_at: new Date(Date.now() + 3_600_000).toISOString(),
+      });
+    }
+    if (url.hostname === "api.github.com") {
+      if (authorization !== "Bearer installation-token") badBearer = authorization;
+      if (url.pathname.endsWith("/actions/runs")) return jsonResponse({ workflow_runs: [] });
+      if (url.pathname === "/search/issues") return jsonResponse({ total_count: 0, items: [] });
+      if (url.pathname.endsWith("/issues")) return jsonResponse([]);
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_APP_CLIENT_ID: "Iv23parallel",
+        CLAWSWEEPER_APP_PRIVATE_KEY: String(privateKey),
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    assert.equal(response.status, 200);
+    assert.equal(tokenRequests, 1);
+    assert.equal(badBearer, "");
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
 async function activePrFetch(input: RequestInfo | URL) {
   const url = String(input);
   if (url.includes("/repos/openclaw/clawsweeper/actions/runs")) {
@@ -776,6 +1242,29 @@ async function activePrFetch(input: RequestInfo | URL) {
   if (url.includes("/repos/openclaw/openclaw/issues")) return jsonResponse([]);
   if (url.includes("/search/issues")) return jsonResponse({ items: [] });
   throw new Error(`unexpected fetch ${url}`);
+}
+
+function triageIssue(number: number, labelNames: string[]): Record<string, unknown>;
+function triageIssue(repo: string, number: number, labelNames: string[]): Record<string, unknown>;
+function triageIssue(
+  repoOrNumber: string | number,
+  numberOrLabels: number | string[],
+  maybeLabels?: string[],
+) {
+  const repo = typeof repoOrNumber === "string" ? repoOrNumber : "openclaw/openclaw";
+  const number = typeof repoOrNumber === "string" ? Number(numberOrLabels) : repoOrNumber;
+  const labelNames = typeof repoOrNumber === "string" ? maybeLabels || [] : numberOrLabels;
+  return {
+    number,
+    title: `Issue ${number}`,
+    html_url: `https://github.com/${repo}/issues/${number}`,
+    created_at: `2026-05-01T00:${String(number % 60).padStart(2, "0")}:00Z`,
+    updated_at: `2026-05-02T00:${String(number % 60).padStart(2, "0")}:00Z`,
+    comments: 0,
+    user: { login: "reporter" },
+    assignees: [],
+    labels: labelNames.map((name) => ({ name, color: "0E8A16" })),
+  };
 }
 
 function jsonResponse(value: unknown) {

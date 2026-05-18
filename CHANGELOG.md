@@ -18,6 +18,7 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added a live-dashboard CI refresher workflow that posts target pull request
   check summaries into Worker storage, so active rows can show stored PR check
   state without slow browser-time GitHub fanout.
+- Added a read-only live triage dashboard for ClawSweeper advisory-label views, focused issue queues, and linked pull request visibility. Thanks @brokemac79.
 - Added a canonical repair `job_intent` contract and orchestration docs so
   automerge, issue implementation, commit finding, low-signal cleanup, and
   ordinary repair jobs share one routing surface.

@@ -19,6 +19,70 @@ const SUPPORT_WORKFLOW_NAMES = new Set([
   "github activity to openclaw",
   "spam comment intake",
 ]);
+const TRIAGE_CACHE_TTL_SECONDS = 120;
+const DEFAULT_TRIAGE_ITEMS_PER_VIEW = 500;
+const MAX_TRIAGE_ITEMS_PER_VIEW = 1000;
+const TRIAGE_SEARCH_PAGE_SIZE = 100;
+const TRIAGE_FOCUSED_FALLBACK_ITEMS_PER_VIEW = 100;
+const TRIAGE_LINKED_PR_ITEM_LIMIT = 240;
+const TRIAGE_LINKED_PR_BATCH_SIZE = 25;
+const TRIAGE_LABEL_PREFIX = "clawsweeper:";
+const GITHUB_APP_TOKEN_REFRESH_SKEW_MS = 120_000;
+const GITHUB_APP_TOKEN_DEFAULT_TTL_MS = 50 * 60_000;
+const TRIAGE_VIEWS = [
+  {
+    id: "clawsweeper",
+    title: "ClawSweeper",
+    description: "Open issues carrying any ClawSweeper label.",
+    anyLabels: "discovered",
+  },
+  {
+    id: "ready-candidates",
+    title: "Ready candidates",
+    description: "Queueable fixes without a no-new-fix-pr blocker.",
+    allLabels: ["clawsweeper:queueable-fix"],
+    withoutLabels: ["clawsweeper:no-new-fix-pr"],
+  },
+  {
+    id: "queueable-blocked",
+    title: "Queueable but blocked",
+    description: "Queueable-looking fixes where ClawSweeper also recommends no new fix PR.",
+    allLabels: ["clawsweeper:queueable-fix", "clawsweeper:no-new-fix-pr"],
+  },
+  {
+    id: "already-has-pr",
+    title: "Already has PR",
+    description: "Issues where ClawSweeper found an open linked pull request.",
+    allLabels: ["clawsweeper:linked-pr-open"],
+  },
+  {
+    id: "needs-info",
+    title: "Needs info",
+    description: "Issues needing reporter details before ClawSweeper can verify behavior.",
+    allLabels: ["clawsweeper:needs-info"],
+  },
+  {
+    id: "needs-maintainer-review",
+    title: "Needs maintainer review",
+    description: "Issues where a human maintainer decision is the next useful step.",
+    allLabels: ["clawsweeper:needs-maintainer-review"],
+  },
+  {
+    id: "product-security",
+    title: "Product or security",
+    description: "Issues needing product, behavior, or security-sensitive review.",
+    anyLabels: ["clawsweeper:needs-product-decision", "clawsweeper:needs-security-review"],
+  },
+  {
+    id: "needs-live-repro",
+    title: "Needs live repro",
+    description:
+      "Issues where source evidence exists but live validation would improve confidence.",
+    allLabels: ["clawsweeper:needs-live-repro"],
+  },
+];
+
+let githubAppTokenCache = null;
 
 export default {
   async fetch(request, env, ctx) {
@@ -35,7 +99,9 @@ export default {
     if (url.pathname === "/api/events" && request.method === "POST")
       return ingestEvent(request, env);
     if (url.pathname === "/api/status") return statusJson(request, env, ctx);
+    if (url.pathname === "/api/triage") return triageJson(request, env, ctx);
     if (url.pathname === "/" || url.pathname === "/index.html") return html(dashboardHtml());
+    if (url.pathname === "/triage" || url.pathname === "/triage.html") return html(triageHtml());
     return json({ error: "not_found" }, 404);
   },
 };
@@ -90,6 +156,67 @@ async function statusJson(request, env, ctx) {
 
 function statusCacheRequest(request, bucket) {
   return new Request(new URL(`/api/status-cache/${bucket}`, request.url).toString(), {
+    method: "GET",
+  });
+}
+
+async function triageJson(request, env, ctx) {
+  const ttl = numberFrom(env.TRIAGE_CACHE_TTL_SECONDS, TRIAGE_CACHE_TTL_SECONDS);
+  const staleTtl = numberFrom(env.STALE_CACHE_TTL_SECONDS, STALE_CACHE_TTL_SECONDS);
+  const cache = caches.default;
+  const cached = await cache.match(triageCacheRequest(request, "fresh"));
+  if (cached) return cors(new Response(cached.body, cached));
+
+  const snapshot = await triageSnapshot(env);
+  const body = JSON.stringify(snapshot, null, 2);
+  const looksEmpty = triageSnapshotLooksEmpty(snapshot);
+  if (looksEmpty) {
+    const stale = await cache.match(triageCacheRequest(request, "stale"));
+    if (stale) return cors(new Response(stale.body, stale));
+  }
+  if (!looksEmpty) {
+    const responseHeaders = {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": `public, max-age=${ttl}`,
+    };
+    const staleResponseHeaders = {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": `public, max-age=${staleTtl}`,
+    };
+    ctx?.waitUntil?.(
+      Promise.all([
+        cache.put(
+          triageCacheRequest(request, "fresh"),
+          new Response(body, { headers: responseHeaders }),
+        ),
+        cache.put(
+          triageCacheRequest(request, "stale"),
+          new Response(body, { headers: staleResponseHeaders }),
+        ),
+      ]),
+    );
+  }
+  return cors(
+    new Response(body, {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+      },
+    }),
+  );
+}
+
+function triageSnapshotLooksEmpty(snapshot) {
+  const hasErrors = Boolean(snapshot.diagnostics?.errors?.length);
+  const loadedItems = (snapshot.views || []).reduce(
+    (total, view) => total + (Array.isArray(view.items) ? view.items.length : 0),
+    0,
+  );
+  return !loadedItems && hasErrors;
+}
+
+function triageCacheRequest(request, bucket) {
+  return new Request(new URL(`/api/triage-cache/v2/${bucket}`, request.url).toString(), {
     method: "GET",
   });
 }
@@ -215,6 +342,635 @@ async function statusSnapshot(env, ctx) {
     ctx?.waitUntil?.(env.STATUS_STORE.put("snapshot", JSON.stringify(snapshot)));
   }
   return snapshot;
+}
+
+async function triageSnapshot(env) {
+  const generatedAt = new Date().toISOString();
+  const errors = [];
+  const repos = triageTargetRepos(env);
+  const searchBudget = { remaining: triageSearchRequestBudget(env) };
+  const itemLimit = triageItemsPerView(env, repos.length, searchBudget.remaining);
+  const repoSnapshots = [];
+  for (let index = 0; index < repos.length; index += 1) {
+    const repo = repos[index];
+    if (searchBudget.remaining < 1) {
+      errors.push(`${repo} triage skipped: search budget exhausted before broad snapshot`);
+      repoSnapshots.push(emptyTriageRepoSnapshot(repo));
+      continue;
+    }
+    repoSnapshots.push(
+      await triageSnapshotForRepo(
+        env,
+        repo,
+        errors,
+        itemLimit,
+        searchBudget,
+        repos.length - index - 1,
+      ),
+    );
+  }
+  const views = mergeTriageRepoViews(repoSnapshots, itemLimit);
+  await attachTriageLinkedPullRequests(env, views, errors);
+  const counts = Object.fromEntries(views.map((view) => [view.id, view.total_count]));
+  return {
+    schema_version: 1,
+    generated_at: generatedAt,
+    source: {
+      target_repositories: repos,
+      label_prefix: TRIAGE_LABEL_PREFIX,
+      item_limit_per_view: itemLimit,
+      search_request_budget_remaining: searchBudget.remaining,
+    },
+    counts,
+    views,
+    diagnostics: {
+      errors: errors.slice(0, 20),
+    },
+  };
+}
+
+async function attachTriageLinkedPullRequests(env, views, errors) {
+  const allItems = allTriageItems(views);
+  for (const item of allItems) item.linked_pull_requests = [];
+  const items = uniqueTriageItems(views);
+  if (!items.length) return;
+  if (!hasGithubAuth(env)) {
+    errors.push(
+      "linked pull requests: GITHUB_TOKEN or ClawSweeper GitHub App credentials are required for GraphQL enrichment",
+    );
+    return;
+  }
+  const limitedItems = items.slice(0, TRIAGE_LINKED_PR_ITEM_LIMIT);
+  if (items.length > limitedItems.length) {
+    errors.push(
+      `linked pull requests: limited to ${limitedItems.length} of ${items.length} loaded issues`,
+    );
+  }
+  const byRepo = new Map();
+  for (const item of limitedItems) {
+    const bucket = byRepo.get(item.repository) || [];
+    bucket.push(item);
+    byRepo.set(item.repository, bucket);
+  }
+  await Promise.all(
+    [...byRepo.entries()].map(async ([repo, repoItems]) => {
+      for (let index = 0; index < repoItems.length; index += TRIAGE_LINKED_PR_BATCH_SIZE) {
+        const batch = repoItems.slice(index, index + TRIAGE_LINKED_PR_BATCH_SIZE);
+        await attachTriageLinkedPullRequestBatch(env, repo, batch).catch((error) => {
+          errors.push(`${repo} linked pull requests: ${error.message}`);
+        });
+      }
+    }),
+  );
+  syncLinkedPullRequestsToDuplicateItems(views, limitedItems);
+}
+
+function allTriageItems(views) {
+  return views.flatMap((view) => view.items || []);
+}
+
+function syncLinkedPullRequestsToDuplicateItems(views, linkedItems) {
+  const linkedByKey = new Map(
+    linkedItems.map((item) => [triageItemKey(item), item.linked_pull_requests || []]),
+  );
+  for (const item of allTriageItems(views)) {
+    if (triageItemHasLabel(item, "clawsweeper:linked-pr-open")) {
+      item.linked_pull_requests = linkedByKey.get(triageItemKey(item)) || [];
+    }
+  }
+}
+
+function triageItemKey(item) {
+  return `${item.repository}#${item.number}`;
+}
+
+function uniqueTriageItems(views) {
+  const seen = new Map();
+  for (const view of views) {
+    for (const item of view.items || []) {
+      const key = triageItemKey(item);
+      if (!seen.has(key) && triageItemHasLabel(item, "clawsweeper:linked-pr-open")) {
+        seen.set(key, item);
+      }
+    }
+  }
+  return [...seen.values()].sort(newestTriageCreatedFirst);
+}
+
+function triageItemHasLabel(item, labelName) {
+  return (item.labels || []).some(
+    (label) => String(label.name || "").toLowerCase() === labelName.toLowerCase(),
+  );
+}
+
+async function attachTriageLinkedPullRequestBatch(env, repo, items) {
+  const [owner, name] = repo.split("/");
+  if (!owner || !name || !items.length) return;
+  const aliases = items
+    .map(
+      (item, index) => `
+        issue${index}: issue(number: ${Number(item.number)}) {
+          timelineItems(first: 100, itemTypes: [CROSS_REFERENCED_EVENT, CONNECTED_EVENT]) {
+            nodes {
+              __typename
+              ... on CrossReferencedEvent {
+                willCloseTarget
+                source {
+                  __typename
+                  ... on PullRequest {
+                    number
+                    title
+                    url
+                    state
+                    repository { nameWithOwner }
+                  }
+                }
+              }
+              ... on ConnectedEvent {
+                subject {
+                  __typename
+                  ... on PullRequest {
+                    number
+                    title
+                    url
+                    state
+                    repository { nameWithOwner }
+                  }
+                }
+              }
+            }
+          }
+        }`,
+    )
+    .join("\n");
+  const data = await githubGraphql(
+    env,
+    `query TriageLinkedPullRequests($owner: String!, $name: String!) {
+      repository(owner: $owner, name: $name) {
+        ${aliases}
+      }
+    }`,
+    { owner, name },
+  );
+  const repository = data?.repository || {};
+  for (let index = 0; index < items.length; index += 1) {
+    items[index].linked_pull_requests = linkedPullRequestsFromTimeline(
+      repository[`issue${index}`]?.timelineItems?.nodes || [],
+    );
+  }
+}
+
+function linkedPullRequestsFromTimeline(nodes) {
+  const prs = new Map();
+  for (const node of nodes || []) {
+    const source =
+      node?.source?.__typename === "PullRequest"
+        ? node.source
+        : node?.subject?.__typename === "PullRequest"
+          ? node.subject
+          : null;
+    if (!source?.url || !source?.number) continue;
+    const repository = source.repository?.nameWithOwner || "";
+    const key = `${repository}#${source.number}`;
+    prs.set(key, {
+      repository,
+      number: source.number,
+      title: source.title || "",
+      url: source.url,
+      state: normalizePullRequestState(source.state),
+      will_close: Boolean(node.willCloseTarget),
+    });
+  }
+  return [...prs.values()].sort(compareLinkedPullRequests);
+}
+
+function compareLinkedPullRequests(left, right) {
+  const stateRank = { open: 0, merged: 1, closed: 2 };
+  const leftRank = stateRank[left.state] ?? 9;
+  const rightRank = stateRank[right.state] ?? 9;
+  if (leftRank !== rightRank) return leftRank - rightRank;
+  return Number(right.number || 0) - Number(left.number || 0);
+}
+
+function normalizePullRequestState(state) {
+  const text = String(state || "").toLowerCase();
+  if (text === "merged") return "merged";
+  if (text === "closed") return "closed";
+  if (text === "open") return "open";
+  return "unknown";
+}
+
+function emptyTriageRepoSnapshot(repo) {
+  return {
+    repository: repo,
+    labels: [],
+    views: TRIAGE_VIEWS.map((view) => ({
+      id: view.id,
+      repository: repo,
+      title: view.title,
+      description: view.description,
+      query: null,
+      github_url: null,
+      total_count: 0,
+      items: [],
+    })),
+  };
+}
+
+async function triageSnapshotForRepo(
+  env,
+  repo,
+  errors,
+  itemLimit,
+  searchBudget,
+  remainingRepoCount,
+) {
+  const repoLabels = await repoClawsweeperLabels(env, repo).catch((error) => {
+    errors.push(`${repo} labels: ${error.message}`);
+    return [];
+  });
+  const discoveredLabels = repoLabels.map((label) => label.name);
+  const rootView = await triageViewForRepo(
+    env,
+    repo,
+    TRIAGE_VIEWS[0],
+    discoveredLabels,
+    errors,
+    itemLimit,
+  );
+  if (rootView.query) {
+    searchBudget.remaining -= rootView.search_failed
+      ? triageSearchPageCount(itemLimit, itemLimit)
+      : triageSearchPageCount(itemLimit, rootView.total_count);
+  }
+  const rootIsComplete = rootView.total_count <= rootView.items.length;
+  const fallbackItemLimit = Math.min(itemLimit, TRIAGE_FOCUSED_FALLBACK_ITEMS_PER_VIEW);
+  const reservedRootSearches = remainingRepoCount * triageSearchPageCount(itemLimit, itemLimit);
+  const focusedViews = [];
+  let budgetExhausted = false;
+  for (const view of TRIAGE_VIEWS.slice(1)) {
+    if (rootIsComplete) {
+      focusedViews.push(
+        triageViewFromItems(repo, view, discoveredLabels, rootView.items, itemLimit),
+      );
+      continue;
+    }
+    const query = triageSearchQuery(repo, view, discoveredLabels);
+    if (query && searchBudget.remaining - reservedRootSearches >= 1) {
+      searchBudget.remaining -= triageSearchPageCount(fallbackItemLimit, fallbackItemLimit);
+      focusedViews.push(
+        await triageViewForRepo(
+          env,
+          repo,
+          view,
+          discoveredLabels,
+          errors,
+          fallbackItemLimit,
+          rootView.items,
+          itemLimit,
+        ),
+      );
+      continue;
+    }
+    if (query) budgetExhausted = true;
+    focusedViews.push(triageViewFromItems(repo, view, discoveredLabels, rootView.items, itemLimit));
+  }
+  if (budgetExhausted) {
+    errors.push(
+      `${repo} focused triage fallback: search budget exhausted; using loaded broad rows`,
+    );
+  }
+  const views = [rootView, ...focusedViews];
+  return {
+    repository: repo,
+    labels: repoLabels,
+    views,
+  };
+}
+
+function triageViewFromItems(repo, definition, discoveredLabels, sourceItems, itemLimit) {
+  const query = triageSearchQuery(repo, definition, discoveredLabels);
+  if (!query) {
+    return {
+      id: definition.id,
+      repository: repo,
+      title: definition.title,
+      description: definition.description,
+      query: null,
+      github_url: null,
+      item_limit: itemLimit,
+      total_count: 0,
+      items: [],
+    };
+  }
+  const items = (sourceItems || [])
+    .filter((item) => triageItemMatchesView(item, definition, discoveredLabels))
+    .sort(newestTriageCreatedFirst)
+    .slice(0, itemLimit);
+  return {
+    id: definition.id,
+    repository: repo,
+    title: definition.title,
+    description: definition.description,
+    query,
+    github_url: githubSearchUrl(query),
+    item_limit: itemLimit,
+    total_count: items.length,
+    items,
+  };
+}
+
+function triageItemMatchesView(item, definition, discoveredLabels) {
+  const labels = new Set((item.labels || []).map((label) => label.name.toLowerCase()));
+  const available = new Set(discoveredLabels.map((label) => label.toLowerCase()));
+  const allLabels = (definition.allLabels || []).filter((label) =>
+    available.has(label.toLowerCase()),
+  );
+  const withoutLabels = (definition.withoutLabels || []).filter((label) =>
+    available.has(label.toLowerCase()),
+  );
+  let anyLabels = [];
+  if (definition.anyLabels === "discovered") {
+    anyLabels = discoveredLabels;
+  } else {
+    anyLabels = (definition.anyLabels || []).filter((label) => available.has(label.toLowerCase()));
+  }
+  if ((definition.allLabels || []).length && allLabels.length !== definition.allLabels.length) {
+    return false;
+  }
+  if (definition.anyLabels && anyLabels.length === 0) return false;
+  if (allLabels.some((label) => !labels.has(label.toLowerCase()))) return false;
+  if (withoutLabels.some((label) => labels.has(label.toLowerCase()))) return false;
+  if (anyLabels.length && !anyLabels.some((label) => labels.has(label.toLowerCase()))) {
+    return false;
+  }
+  return true;
+}
+
+function triageItemsPerView(env, repoCount = 1, searchBudget = triageSearchRequestBudget(env)) {
+  const configured = Math.min(
+    MAX_TRIAGE_ITEMS_PER_VIEW,
+    Math.max(1, numberFrom(env.TRIAGE_ITEMS_PER_VIEW, DEFAULT_TRIAGE_ITEMS_PER_VIEW)),
+  );
+  const rootPagesPerRepo = Math.max(
+    1,
+    Math.floor(Math.max(1, searchBudget - 1) / Math.max(1, repoCount)),
+  );
+  return Math.min(configured, rootPagesPerRepo * TRIAGE_SEARCH_PAGE_SIZE);
+}
+
+function triageSearchRequestBudget(env) {
+  return hasGithubAuth(env) ? 28 : 9;
+}
+
+function triageSearchPageCount(limit, totalCount) {
+  return Math.ceil(Math.min(limit, Math.max(1, Number(totalCount || 0))) / TRIAGE_SEARCH_PAGE_SIZE);
+}
+
+function mergeTriageRepoViews(repoSnapshots, itemLimit) {
+  return TRIAGE_VIEWS.map((definition) => {
+    const repoViews = repoSnapshots.map((repo) =>
+      repo.views.find((view) => view.id === definition.id),
+    );
+    const items = repoViews
+      .flatMap((view) => view?.items || [])
+      .sort(newestTriageCreatedFirst)
+      .slice(0, itemLimit);
+    const totalCount = repoViews.reduce((total, view) => total + (view?.total_count || 0), 0);
+    const combinedQuery = combinedTriageSearchQuery(repoSnapshots, definition, repoViews);
+    const viewItemLimit =
+      Math.max(...repoViews.map((view) => view?.item_limit || 0).filter(Boolean)) || itemLimit;
+    return {
+      id: definition.id,
+      title: definition.title,
+      description: definition.description,
+      total_count: totalCount,
+      query: combinedQuery,
+      github_url: combinedQuery ? githubSearchUrl(combinedQuery) : null,
+      item_limit: viewItemLimit,
+      items,
+    };
+  });
+}
+
+function combinedTriageSearchQuery(repoSnapshots, definition, repoViews) {
+  const repos = repoViews
+    .filter((view) => view?.query)
+    .map((view) => view.repository)
+    .filter(Boolean);
+  if (!repos.length) return null;
+  const parts = [...repos.map((repo) => `repo:${repo}`), "is:issue", "is:open"];
+  if (definition.anyLabels === "discovered") {
+    const labels = [
+      ...new Set(
+        repoSnapshots
+          .filter((repo) => repos.includes(repo.repository))
+          .flatMap((repo) => repo.labels.map((label) => label.name)),
+      ),
+    ].sort();
+    if (!labels.length) return null;
+    parts.push(`label:${labels.map(quoteSearchValue).join(",")}`);
+  } else if (definition.anyLabels?.length) {
+    parts.push(`label:${definition.anyLabels.map(quoteSearchValue).join(",")}`);
+  }
+  for (const label of definition.allLabels || []) parts.push(`label:${quoteSearchValue(label)}`);
+  for (const label of definition.withoutLabels || [])
+    parts.push(`-label:${quoteSearchValue(label)}`);
+  return parts.join(" ");
+}
+
+async function triageViewForRepo(
+  env,
+  repo,
+  definition,
+  discoveredLabels,
+  errors,
+  itemLimit,
+  fallbackSourceItems = null,
+  fallbackItemLimit = itemLimit,
+) {
+  const query = triageSearchQuery(repo, definition, discoveredLabels);
+  if (!query) {
+    return {
+      id: definition.id,
+      repository: repo,
+      title: definition.title,
+      description: definition.description,
+      query: null,
+      github_url: null,
+      item_limit: itemLimit,
+      total_count: 0,
+      items: [],
+    };
+  }
+  const search = await githubIssueSearch(env, query, itemLimit).catch((error) => {
+    errors.push(`${repo} ${definition.id}: ${error.message}`);
+    if (fallbackSourceItems) {
+      return {
+        ...triageViewFromItems(
+          repo,
+          definition,
+          discoveredLabels,
+          fallbackSourceItems,
+          fallbackItemLimit,
+        ),
+        search_failed: true,
+      };
+    }
+    return {
+      id: definition.id,
+      repository: repo,
+      title: definition.title,
+      description: definition.description,
+      query,
+      github_url: githubSearchUrl(query),
+      item_limit: itemLimit,
+      total_count: 0,
+      items: [],
+      search_failed: true,
+    };
+  });
+  if (search.search_failed) return search;
+  return {
+    id: definition.id,
+    repository: repo,
+    title: definition.title,
+    description: definition.description,
+    query,
+    github_url: githubSearchUrl(query),
+    item_limit: itemLimit,
+    total_count: search.total_count || 0,
+    items: Array.isArray(search.items)
+      ? search.items.map((issue) => normalizeTriageIssue(repo, issue))
+      : [],
+  };
+}
+
+function triageSearchQuery(repo, definition, discoveredLabels) {
+  const available = new Set(discoveredLabels.map((label) => label.toLowerCase()));
+  const allLabels = (definition.allLabels || []).filter((label) =>
+    available.has(label.toLowerCase()),
+  );
+  const withoutLabels = (definition.withoutLabels || []).filter((label) =>
+    available.has(label.toLowerCase()),
+  );
+  let anyLabels = [];
+  if (definition.anyLabels === "discovered") {
+    anyLabels = discoveredLabels;
+  } else {
+    anyLabels = (definition.anyLabels || []).filter((label) => available.has(label.toLowerCase()));
+  }
+  if ((definition.allLabels || []).length && allLabels.length !== definition.allLabels.length) {
+    return null;
+  }
+  if (definition.anyLabels && anyLabels.length === 0) return null;
+  const parts = [`repo:${repo}`, "is:issue", "is:open"];
+  if (anyLabels.length) parts.push(`label:${anyLabels.map(quoteSearchValue).join(",")}`);
+  for (const label of allLabels) parts.push(`label:${quoteSearchValue(label)}`);
+  for (const label of withoutLabels) parts.push(`-label:${quoteSearchValue(label)}`);
+  return parts.join(" ");
+}
+
+function newestTriageCreatedFirst(left, right) {
+  const created = Date.parse(right?.created_at || "") - Date.parse(left?.created_at || "");
+  if (Number.isFinite(created) && created !== 0) return created;
+  const updated = Date.parse(right?.updated_at || "") - Date.parse(left?.updated_at || "");
+  if (Number.isFinite(updated) && updated !== 0) return updated;
+  const leftNumber = Number(left?.number);
+  const rightNumber = Number(right?.number);
+  if (Number.isFinite(leftNumber) && Number.isFinite(rightNumber) && leftNumber !== rightNumber) {
+    return rightNumber - leftNumber;
+  }
+  return 0;
+}
+
+async function repoClawsweeperLabels(env, repo) {
+  const labels = [];
+  for (let page = 1; page <= 4; page += 1) {
+    const rows = await githubJson(env, `/repos/${repo}/labels?per_page=100&page=${page}`);
+    if (!Array.isArray(rows) || rows.length === 0) break;
+    labels.push(
+      ...rows
+        .filter((label) => String(label.name || "").startsWith(TRIAGE_LABEL_PREFIX))
+        .map((label) => ({
+          name: String(label.name || ""),
+          color: String(label.color || ""),
+          description: String(label.description || ""),
+        })),
+    );
+    if (rows.length < 100) break;
+  }
+  return labels.sort((left, right) => left.name.localeCompare(right.name));
+}
+
+async function githubIssueSearch(env, query, perPage) {
+  const limit = Math.min(MAX_TRIAGE_ITEMS_PER_VIEW, Math.max(1, perPage));
+  const pageSize = Math.min(TRIAGE_SEARCH_PAGE_SIZE, limit);
+  const firstPage = await githubIssueSearchPage(env, query, pageSize, 1);
+  const totalCount = Number(firstPage?.total_count || 0);
+  const items = Array.isArray(firstPage?.items) ? [...firstPage.items] : [];
+  const wantedItems = Math.min(limit, totalCount || items.length);
+  const pageCount = Math.ceil(wantedItems / pageSize);
+  for (let page = 2; page <= pageCount; page += 1) {
+    const nextPage = await githubIssueSearchPage(env, query, pageSize, page);
+    if (!Array.isArray(nextPage?.items) || nextPage.items.length === 0) break;
+    items.push(...nextPage.items);
+  }
+  return {
+    ...firstPage,
+    total_count: totalCount,
+    items: items.slice(0, limit),
+  };
+}
+
+async function githubIssueSearchPage(env, query, perPage, page) {
+  return githubJson(
+    env,
+    `/search/issues?q=${encodeURIComponent(query)}&per_page=${perPage}&page=${page}&sort=created&order=desc`,
+  );
+}
+
+function normalizeTriageIssue(repo, issue) {
+  return {
+    repository: repo,
+    number: issue.number,
+    title: issue.title || "",
+    url: issue.html_url,
+    created_at: issue.created_at,
+    updated_at: issue.updated_at,
+    comments: issue.comments || 0,
+    author: issue.user?.login || null,
+    assignees: Array.isArray(issue.assignees)
+      ? issue.assignees.map((assignee) => assignee.login).filter(Boolean)
+      : [],
+    labels: Array.isArray(issue.labels)
+      ? issue.labels.map((label) => ({
+          name: String(label.name || ""),
+          color: String(label.color || ""),
+        }))
+      : [],
+  };
+}
+
+function triageTargetRepos(env) {
+  const configured = String(env.TRIAGE_TARGET_REPOS || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (configured.length) return configured;
+  const targetRepos = String(env.TARGET_REPOS || "openclaw/openclaw")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  return targetRepos.length ? [targetRepos[0]] : ["openclaw/openclaw"];
+}
+
+function quoteSearchValue(value) {
+  return JSON.stringify(String(value));
+}
+
+function githubSearchUrl(query) {
+  return `https://github.com/issues?q=${encodeURIComponent(query)}&s=created&o=desc`;
 }
 
 async function estimateActiveCodexJobs(runs) {
@@ -705,6 +1461,7 @@ function storeCacheRequest(key) {
 }
 
 async function githubJson(env, path) {
+  const token = await githubAuthToken(env);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort("timeout"), GITHUB_TIMEOUT_MS);
   const response = await fetch(`https://api.github.com${path}`, {
@@ -712,11 +1469,247 @@ async function githubJson(env, path) {
     headers: {
       Accept: "application/vnd.github+json",
       "User-Agent": "openclaw-clawsweeper-status",
-      ...(env.GITHUB_TOKEN ? { Authorization: `Bearer ${env.GITHUB_TOKEN}` } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   }).finally(() => clearTimeout(timeout));
   if (!response.ok) throw new Error(`GitHub ${response.status} for ${path}`);
   return response.json();
+}
+
+async function githubGraphql(env, query, variables) {
+  const token = await githubAuthToken(env);
+  if (!token) throw new Error("GitHub auth is required for GraphQL");
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort("timeout"), OPTIONAL_SECTION_TIMEOUT_MS);
+  const response = await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    signal: controller.signal,
+    headers: {
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
+      "User-Agent": "openclaw-clawsweeper-status",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ query, variables }),
+  }).finally(() => clearTimeout(timeout));
+  if (!response.ok) throw new Error(`GitHub GraphQL ${response.status}`);
+  const payload = await response.json();
+  if (Array.isArray(payload.errors) && payload.errors.length) {
+    throw new Error(payload.errors.map((error) => error.message).join("; "));
+  }
+  return payload.data;
+}
+
+function hasGithubAuth(env) {
+  return Boolean(env.GITHUB_TOKEN || githubAppCredentials(env));
+}
+
+async function githubAuthToken(env) {
+  if (env.GITHUB_TOKEN) return String(env.GITHUB_TOKEN);
+  const credentials = githubAppCredentials(env);
+  if (!credentials) return "";
+
+  const now = Date.now();
+  const repos = triageTargetRepos(env);
+  const cacheKey = [
+    credentials.issuer,
+    credentials.installationId || repos[0] || "",
+    repos.join(","),
+  ].join("|");
+  if (
+    githubAppTokenCache?.key === cacheKey &&
+    githubAppTokenCache.expiresAtMs - GITHUB_APP_TOKEN_REFRESH_SKEW_MS > now
+  ) {
+    return githubAppTokenCache.token;
+  }
+  if (githubAppTokenCache?.key === cacheKey && githubAppTokenCache.promise) {
+    return githubAppTokenCache.promise;
+  }
+
+  const promise = createGithubAppInstallationToken(env, credentials, repos)
+    .then((result) => {
+      githubAppTokenCache = {
+        key: cacheKey,
+        token: result.token,
+        expiresAtMs: result.expiresAtMs,
+      };
+      return result.token;
+    })
+    .catch((error) => {
+      githubAppTokenCache = null;
+      throw error;
+    });
+  githubAppTokenCache = {
+    key: cacheKey,
+    token: "",
+    expiresAtMs: 0,
+    promise,
+  };
+  return promise;
+}
+
+function githubAppCredentials(env) {
+  const issuer = stringEnv(env.CLAWSWEEPER_APP_ID) || stringEnv(env.CLAWSWEEPER_APP_CLIENT_ID);
+  const privateKey = normalizePrivateKey(env.CLAWSWEEPER_APP_PRIVATE_KEY);
+  if (!issuer || !privateKey) return null;
+  return {
+    issuer,
+    privateKey,
+    installationId: stringEnv(env.CLAWSWEEPER_APP_INSTALLATION_ID),
+  };
+}
+
+async function createGithubAppInstallationToken(env, credentials, repos) {
+  const appJwt = await signGithubAppJwt(credentials.issuer, credentials.privateKey);
+  const installationId =
+    credentials.installationId || (await githubAppInstallationId(appJwt, repos[0]));
+  const payload = await githubAppJson(
+    `/app/installations/${installationId}/access_tokens`,
+    appJwt,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        permissions: {
+          actions: "read",
+          checks: "read",
+          contents: "read",
+          issues: "read",
+          pull_requests: "read",
+        },
+      }),
+      errorLabel: "GitHub App token",
+    },
+  );
+  const token = String(payload.token || "");
+  if (!token) throw new Error("GitHub App token response missing token");
+  const expiresAtMs = payload.expires_at
+    ? Date.parse(payload.expires_at)
+    : Date.now() + GITHUB_APP_TOKEN_DEFAULT_TTL_MS;
+  return { token, expiresAtMs };
+}
+
+async function githubAppInstallationId(appJwt, repo) {
+  if (!repo || !repo.includes("/")) throw new Error("GitHub App installation repo is required");
+  const payload = await githubAppJson(`/repos/${repo}/installation`, appJwt, {
+    errorLabel: "GitHub App installation",
+  });
+  const installationId = Number(payload.id);
+  if (!Number.isInteger(installationId) || installationId <= 0) {
+    throw new Error(`GitHub App installation response missing id for ${repo}`);
+  }
+  return String(installationId);
+}
+
+async function githubAppJson(path, appJwt, options = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort("timeout"), GITHUB_TIMEOUT_MS);
+  const response = await fetch(`https://api.github.com${path}`, {
+    method: options.method || "GET",
+    signal: controller.signal,
+    headers: {
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
+      "User-Agent": "openclaw-clawsweeper-status",
+      Authorization: `Bearer ${appJwt}`,
+    },
+    body: options.body,
+  }).finally(() => clearTimeout(timeout));
+  if (!response.ok) throw new Error(`${options.errorLabel || "GitHub App"} ${response.status}`);
+  return response.json();
+}
+
+async function signGithubAppJwt(issuer, privateKey) {
+  const now = Math.floor(Date.now() / 1000);
+  const header = base64UrlEncode(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const payload = base64UrlEncode(JSON.stringify({ iat: now - 60, exp: now + 540, iss: issuer }));
+  const input = `${header}.${payload}`;
+  const key = await crypto.subtle.importKey(
+    "pkcs8",
+    pemToPkcs8(privateKey),
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign(
+    "RSASSA-PKCS1-v1_5",
+    key,
+    new TextEncoder().encode(input),
+  );
+  return `${input}.${base64UrlEncode(new Uint8Array(signature))}`;
+}
+
+function normalizePrivateKey(value) {
+  return stringEnv(value)?.replace(/\\n/g, "\n") || "";
+}
+
+function pemToPkcs8(pem) {
+  const pkcs8 = pemBody(pem, "PRIVATE KEY");
+  if (pkcs8) return pkcs8;
+  const pkcs1 = pemBody(pem, "RSA PRIVATE KEY");
+  if (!pkcs1) throw new Error("GitHub App private key must be PEM encoded");
+  return wrapPkcs1PrivateKey(pkcs1);
+}
+
+function pemBody(pem, label) {
+  const pattern = new RegExp(`-----BEGIN ${label}-----([\\s\\S]+?)-----END ${label}-----`, "m");
+  const match = String(pem).match(pattern);
+  if (!match) return null;
+  const binary = atob(match[1].replace(/\s+/g, ""));
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+}
+
+function wrapPkcs1PrivateKey(pkcs1) {
+  const version = new Uint8Array([0x02, 0x01, 0x00]);
+  const algorithm = new Uint8Array([
+    0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00,
+  ]);
+  const octetString = derElement(0x04, pkcs1);
+  return derElement(0x30, concatBytes(version, algorithm, octetString));
+}
+
+function derElement(tag, value) {
+  return concatBytes(new Uint8Array([tag]), derLength(value.length), value);
+}
+
+function derLength(length) {
+  if (length < 0x80) return new Uint8Array([length]);
+  const bytes = [];
+  let value = length;
+  while (value > 0) {
+    bytes.unshift(value & 0xff);
+    value >>= 8;
+  }
+  return new Uint8Array([0x80 | bytes.length, ...bytes]);
+}
+
+function concatBytes(...parts) {
+  const total = parts.reduce((sum, part) => sum + part.length, 0);
+  const output = new Uint8Array(total);
+  let offset = 0;
+  for (const part of parts) {
+    output.set(part, offset);
+    offset += part.length;
+  }
+  return output;
+}
+
+function base64UrlEncode(value) {
+  const bytes =
+    typeof value === "string"
+      ? new TextEncoder().encode(value)
+      : value instanceof Uint8Array
+        ? value
+        : new Uint8Array(value);
+  let binary = "";
+  for (let index = 0; index < bytes.length; index += 1) {
+    binary += String.fromCharCode(bytes[index]);
+  }
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function stringEnv(value) {
+  const text = String(value || "").trim();
+  return text ? text : "";
 }
 
 async function withTimeout(promise, timeoutMs, label) {
@@ -885,6 +1878,699 @@ function cors(response) {
   return response;
 }
 
+function triageHtml() {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ClawSweeper Triage</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0a0e14;
+  --panel: #111821;
+  --panel-2: #151f2b;
+  --line: #2a3646;
+  --text: #e7edf5;
+  --muted: #9aa8ba;
+  --blue: #67b7ff;
+  --green: #4ed891;
+  --amber: #f3b759;
+  --red: #f46d75;
+  --violet: #b99cff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(103, 183, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(78, 216, 145, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(185, 156, 255, 0.02) 0%, transparent 50%);
+  background-attachment: fixed;
+  color: var(--text);
+  font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+}
+main { width: min(1560px, calc(100vw - 40px)); margin: 0 auto; padding: 28px 0 48px; }
+header { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+h1 { margin: 0; font-size: 28px; line-height: 1.1; letter-spacing: 0; }
+h2 { margin: 24px 0 12px; font-size: 16px; font-weight: 600; letter-spacing: 0; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { color: #89c8ff; text-decoration: underline; }
+.muted { color: var(--muted); }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; }
+.top-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.pill,
+.tab,
+.query-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #1a2532;
+  border: 1px solid #2a3646;
+  color: var(--text);
+  font-size: 12px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.query-link { color: var(--blue); }
+.grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.metric {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  min-height: 88px;
+  overflow: hidden;
+}
+.metric strong { display: block; font-size: 28px; line-height: 1.1; margin-top: 8px; font-weight: 700; }
+.metric span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+.tabs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+}
+button.tab {
+  cursor: pointer;
+  font: inherit;
+}
+button.tab[aria-selected="true"] {
+  background: rgba(103, 183, 255, 0.16);
+  border-color: rgba(103, 183, 255, 0.55);
+}
+.view-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 12px 0;
+}
+.view-title { display: grid; gap: 3px; min-width: 0; }
+.view-title strong { font-size: 18px; }
+.controls {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  flex-wrap: wrap;
+}
+.control-group {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.field {
+  display: grid;
+  gap: 5px;
+  min-width: 220px;
+}
+.field span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+input,
+select,
+.secondary-button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0d131b;
+  color: var(--text);
+  padding: 7px 10px;
+  font: inherit;
+}
+input { min-width: min(460px, calc(100vw - 40px)); }
+select { min-width: 190px; }
+input:focus,
+select:focus,
+.secondary-button:focus {
+  outline: 2px solid rgba(103, 183, 255, 0.4);
+  outline-offset: 1px;
+}
+.secondary-button {
+  cursor: pointer;
+  min-width: 70px;
+  font-weight: 600;
+}
+.table-wrap {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+}
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  position: relative;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  background: #0d131b;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+tbody tr:hover { background: rgba(103, 183, 255, 0.03); }
+tr:last-child td { border-bottom: 0; }
+.issue-cell { display: grid; gap: 4px; min-width: 0; }
+.issue-title {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+  font-weight: 650;
+}
+.label-list { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.assignee-list { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.pr-list { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.label-pill,
+.priority-filter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 19px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: #1a2532;
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.25;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.label-pill.clawsweeper { border-color: rgba(103, 183, 255, 0.35); }
+.label-pill:hover,
+.priority-filter:hover {
+  border-color: rgba(103, 183, 255, 0.55);
+  color: #ffffff;
+}
+.priority-filter {
+  border-color: rgba(243, 183, 89, 0.42);
+  background: rgba(243, 183, 89, 0.1);
+  color: var(--amber);
+}
+.assignee-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 19px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(103, 183, 255, 0.28);
+  background: rgba(103, 183, 255, 0.1);
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.25;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.pr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 19px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: #1a2532;
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.25;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.pr-chip.open { border-color: rgba(78, 216, 145, 0.45); color: var(--green); }
+.pr-chip.merged { border-color: rgba(185, 156, 255, 0.45); color: var(--violet); }
+.pr-chip.closed { border-color: rgba(244, 109, 117, 0.45); color: var(--red); }
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  z-index: 2;
+  cursor: col-resize;
+  touch-action: none;
+}
+.resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 22%;
+  bottom: 22%;
+  left: 3px;
+  width: 1px;
+  background: transparent;
+}
+.resize-handle:hover::after,
+body.resizing-col .resize-handle::after {
+  background: rgba(103, 183, 255, 0.55);
+}
+body.resizing-col {
+  cursor: col-resize;
+  user-select: none;
+}
+.priority { color: var(--amber); }
+.empty,
+.error {
+  padding: 24px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-align: center;
+}
+.error { color: var(--red); border-color: rgba(244,109,117,0.35); }
+@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } header, .view-head { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } }
+@media (max-width: 760px) { main { width: min(100vw - 20px, 1560px); padding-top: 16px; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>ClawSweeper Triage</h1>
+      <div class="muted" id="subtitle">Loading advisory issue labels...</div>
+    </div>
+    <div class="top-links">
+      <a class="pill" href="/">Live pipeline</a>
+      <span class="muted mono" id="updated"></span>
+    </div>
+  </header>
+  <section class="grid" id="metrics"></section>
+  <section class="controls" id="controls">
+    <div class="control-group">
+      <label class="field">
+        <span>Filter</span>
+        <input id="issue-filter" type="search" placeholder="Title, number, author, assignee, label...">
+      </label>
+      <button class="secondary-button" id="clear-filter" type="button">Clear</button>
+      <label class="field">
+        <span>Sort</span>
+        <select id="issue-sort">
+          <option value="created-desc">Newest issue first</option>
+          <option value="created-asc">Oldest issue first</option>
+          <option value="number-desc">Highest issue number first</option>
+          <option value="number-asc">Lowest issue number first</option>
+          <option value="updated-desc">Recently updated first</option>
+          <option value="updated-asc">Least recently updated first</option>
+          <option value="comments-desc">Most comments first</option>
+          <option value="comments-asc">Fewest comments first</option>
+        </select>
+      </label>
+    </div>
+    <span class="muted mono" id="visible-count">Showing 0 loaded</span>
+  </section>
+  <nav class="tabs" id="tabs" aria-label="Triage views"></nav>
+  <section class="view-head">
+    <div class="view-title">
+      <strong id="view-name">Loading</strong>
+      <span class="muted" id="view-description"></span>
+    </div>
+    <a class="query-link" id="github-query" href="https://github.com/issues" target="_blank" rel="noreferrer">Open GitHub query</a>
+  </section>
+  <section id="table"></section>
+  <h2>Diagnostics</h2>
+  <section id="diagnostics" class="muted"></section>
+</main>
+<script>
+const fmt = new Intl.NumberFormat();
+const rel = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
+const COLUMN_ORDER = ["issue", "assignees", "priority", "prs", "labels", "updated", "comments"];
+const COLUMN_LABELS = {
+  issue: "Issue",
+  assignees: "Assignees",
+  priority: "Priority",
+  prs: "Linked PRs",
+  labels: "Labels",
+  updated: "Updated",
+  comments: "Comments",
+};
+const COLUMN_DEFAULTS = {
+  issue: 420,
+  assignees: 140,
+  priority: 92,
+  prs: 180,
+  labels: 430,
+  updated: 130,
+  comments: 96,
+};
+const COLUMN_MIN = {
+  issue: 240,
+  assignees: 100,
+  priority: 76,
+  prs: 120,
+  labels: 220,
+  updated: 110,
+  comments: 84,
+};
+function storageGet(key) {
+  try {
+    return localStorage.getItem(key) || "";
+  } catch {
+    return "";
+  }
+}
+function storageSet(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {}
+}
+let state = null;
+let activeView = location.hash.replace(/^#/, "") || storageGet("clawsweeper:triage-view") || "clawsweeper";
+let filterText = storageGet("clawsweeper:triage-filter");
+let sortMode = storageGet("clawsweeper:triage-sort") || "created-desc";
+let filterTimer = null;
+let columnWidths = loadColumnWidths();
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+}
+function loadColumnWidths() {
+  let saved = {};
+  try {
+    saved = JSON.parse(storageGet("clawsweeper:triage-columns") || "{}");
+  } catch {
+    saved = {};
+  }
+  return Object.fromEntries(COLUMN_ORDER.map(key => {
+    const width = Number(saved[key]);
+    return [key, Math.max(COLUMN_MIN[key], Number.isFinite(width) ? width : COLUMN_DEFAULTS[key])];
+  }));
+}
+function saveColumnWidths() {
+  storageSet("clawsweeper:triage-columns", JSON.stringify(columnWidths));
+}
+function tableWidth() {
+  return COLUMN_ORDER.reduce((total, key) => total + columnWidths[key], 0);
+}
+function columnPercent(key) {
+  const total = Math.max(1, tableWidth());
+  return ((columnWidths[key] / total) * 100).toFixed(3) + "%";
+}
+function colgroupHtml() {
+  return COLUMN_ORDER.map(key => '<col data-col="' + esc(key) + '" style="width:' + esc(columnPercent(key)) + '">').join("");
+}
+function headerCell(key) {
+  const label = COLUMN_LABELS[key] || key;
+  return '<th><span>' + esc(label) + '</span><span class="resize-handle" role="separator" aria-label="Resize ' + esc(label) + ' column" data-resize-col="' + esc(key) + '"></span></th>';
+}
+function tableHeaderHtml() {
+  return COLUMN_ORDER.map(headerCell).join("");
+}
+function applyColumnWidths() {
+  const table = document.querySelector("#table table");
+  if (table) table.style.width = "100%";
+  document.querySelectorAll("#table col[data-col]").forEach(col => {
+    const key = col.getAttribute("data-col");
+    if (columnWidths[key]) col.style.width = columnPercent(key);
+  });
+}
+function since(iso) {
+  const diff = Date.parse(iso) - Date.now();
+  const minutes = Math.round(diff / 60000);
+  if (!Number.isFinite(minutes)) return "";
+  if (Math.abs(minutes) < 90) return rel.format(minutes, "minute");
+  return rel.format(Math.round(minutes / 60), "hour");
+}
+function compact(value) {
+  return String(value ?? "").replace(/\\s+/g, " ").trim();
+}
+function metric(label, count, detail) {
+  return '<article class="metric"><span>' + esc(label) + '</span><strong>' + esc(fmt.format(count || 0)) + '</strong><div class="muted">' + esc(detail || "") + '</div></article>';
+}
+function labelPill(label) {
+  const name = label.name || String(label);
+  const color = label.color ? '#' + label.color : '';
+  const style = color ? ' style="background: color-mix(in srgb, ' + esc(color) + ' 22%, #1a2532); border-color: color-mix(in srgb, ' + esc(color) + ' 55%, #2a3646);"' : '';
+  const cls = name.startsWith("clawsweeper:") ? "label-pill clawsweeper" : "label-pill";
+  return '<button class="' + cls + '" type="button" data-filter-value="' + esc(name) + '"' + style + ' title="Filter by ' + esc(name) + '">' + esc(name) + '</button>';
+}
+function assigneePills(row) {
+  const assignees = Array.isArray(row.assignees) ? row.assignees : [];
+  if (!assignees.length) return '<span class="muted">Unassigned</span>';
+  return assignees.map(assignee => '<span class="assignee-pill">' + esc(assignee) + '</span>').join("");
+}
+function linkedPullRequestPills(row) {
+  const prs = Array.isArray(row.linked_pull_requests) ? row.linked_pull_requests : [];
+  if (!prs.length) return '<span class="muted">-</span>';
+  return prs
+    .map((pr) => {
+      const state = pr.state || "unknown";
+      const label = state.toUpperCase() + " #" + pr.number;
+      return '<a class="pr-chip ' + esc(state) + '" href="' + esc(pr.url) + '" target="_blank" rel="noreferrer" title="' + esc(pr.repository + "#" + pr.number + ": " + pr.title) + '">' + esc(label) + '</a>';
+    })
+    .join("");
+}
+function priorityFor(row) {
+  return (row.labels || []).map(label => label.name).find(name => /^P[0-3]$/.test(name || "")) || "";
+}
+function searchableText(row) {
+  const assignees = row.assignees || [];
+  return [
+    row.title,
+    row.repository,
+    "#" + row.number,
+    row.number,
+    row.author,
+    ...(assignees.length ? assignees : ["unassigned"]),
+    ...(row.linked_pull_requests || []).flatMap(pr => [
+      pr.repository,
+      "#" + pr.number,
+      pr.title,
+      pr.state,
+    ]),
+    priorityFor(row),
+    ...(row.labels || []).map(label => label.name)
+  ].join(" ").toLowerCase();
+}
+function filteredRows(rows) {
+  const terms = filterText.toLowerCase().split(/\\s+/).filter(Boolean);
+  const visible = terms.length
+    ? rows.filter(row => terms.every(term => searchableText(row).includes(term)))
+    : rows.slice();
+  return visible.sort(compareRows);
+}
+function compareRows(left, right) {
+  if (sortMode === "created-asc") return Date.parse(left.created_at || "") - Date.parse(right.created_at || "");
+  if (sortMode === "number-desc") return Number(right.number || 0) - Number(left.number || 0);
+  if (sortMode === "number-asc") return Number(left.number || 0) - Number(right.number || 0);
+  if (sortMode === "updated-desc") return Date.parse(right.updated_at || "") - Date.parse(left.updated_at || "");
+  if (sortMode === "updated-asc") return Date.parse(left.updated_at || "") - Date.parse(right.updated_at || "");
+  if (sortMode === "comments-desc") return Number(right.comments || 0) - Number(left.comments || 0);
+  if (sortMode === "comments-asc") return Number(left.comments || 0) - Number(right.comments || 0);
+  return Date.parse(right.created_at || "") - Date.parse(left.created_at || "");
+}
+function renderTabs(views) {
+  document.getElementById("tabs").innerHTML = views.map(view =>
+    '<button class="tab" type="button" data-view="' + esc(view.id) + '" aria-selected="' + (view.id === activeView ? "true" : "false") + '">' +
+    esc(view.title) + ' <span class="muted">' + esc(fmt.format(view.total_count || 0)) + '</span></button>'
+  ).join("");
+  document.querySelectorAll("[data-view]").forEach(button => {
+    button.addEventListener("click", () => {
+      activeView = button.dataset.view;
+      storageSet("clawsweeper:triage-view", activeView);
+      history.replaceState(null, "", "#" + activeView);
+      render();
+    });
+  });
+}
+function renderMetrics(views) {
+  const byId = Object.fromEntries(views.map(view => [view.id, view.total_count || 0]));
+  document.getElementById("metrics").innerHTML = [
+    metric("ClawSweeper issues", byId.clawsweeper, "any discovered clawsweeper label"),
+    metric("Ready candidates", byId["ready-candidates"], "queueable and unblocked"),
+    metric("Blocked queue", byId["queueable-blocked"], "queueable but no-new-fix-pr"),
+    metric("Linked PRs", byId["already-has-pr"], "open fix PR already found"),
+    metric("Needs review", byId["needs-maintainer-review"], "maintainer decision next"),
+    metric("Product/security", byId["product-security"], "policy or security call")
+  ].join("");
+}
+function renderTable(view) {
+  document.getElementById("view-name").textContent = view.title + " (" + fmt.format(view.total_count || 0) + ")";
+  document.getElementById("view-description").textContent = view.description || "";
+  const query = document.getElementById("github-query");
+  query.href = view.github_url || "https://github.com/issues";
+  query.style.display = view.github_url ? "inline-flex" : "none";
+  renderRows(view);
+}
+function renderRows(view) {
+  const rows = filteredRows(view.items || []);
+  const visibleCount = document.getElementById("visible-count");
+  if (visibleCount) {
+    const loaded = (view.items || []).length;
+    const total = view.total_count || loaded;
+    const limit = view.item_limit || state?.source?.item_limit_per_view || loaded;
+    const totalText = total > loaded ? " \\u00b7 " + fmt.format(total) + " total" : "";
+    visibleCount.textContent =
+      "Showing " +
+      fmt.format(rows.length) +
+      " of " +
+      fmt.format(loaded) +
+      " loaded" +
+      totalText +
+      " \u00b7 max " +
+      fmt.format(limit) +
+      " for this view";
+  }
+  if (!view.items || !view.items.length) {
+    document.getElementById("table").innerHTML = '<div class="empty">No matching issues in the current snapshot.</div>';
+    return;
+  }
+  if (!rows.length) {
+    document.getElementById("table").innerHTML = '<div class="empty">No issues match the current filter.</div>';
+    return;
+  }
+  const tableRows = rows.map(row => {
+    const priority = priorityFor(row);
+    const issueLabel = row.repository + "#" + row.number;
+    const priorityCell = priority
+      ? '<button class="priority-filter" type="button" data-filter-value="' + esc(priority) + '" title="Filter by ' + esc(priority) + '">' + esc(priority) + '</button>'
+      : "-";
+    return '<tr>' +
+      '<td><div class="issue-cell"><a class="issue-title" href="' + esc(row.url) + '" target="_blank" rel="noreferrer">' + esc(compact(row.title)) + '</a><span class="muted mono">' + esc(issueLabel) + (row.author ? " opened by " + esc(row.author) : "") + '</span></div></td>' +
+      '<td><div class="assignee-list">' + assigneePills(row) + '</div></td>' +
+      '<td class="priority">' + priorityCell + '</td>' +
+      '<td><div class="pr-list">' + linkedPullRequestPills(row) + '</div></td>' +
+      '<td><div class="label-list">' + (row.labels || []).map(labelPill).join("") + '</div></td>' +
+      '<td><span title="' + esc(row.updated_at || "") + '">' + esc(since(row.updated_at)) + '</span></td>' +
+      '<td>' + esc(fmt.format(row.comments || 0)) + '</td>' +
+      '</tr>';
+  }).join("");
+  document.getElementById("table").innerHTML =
+    '<div class="table-wrap"><table><colgroup>' +
+    colgroupHtml() +
+    '</colgroup><thead><tr>' + tableHeaderHtml() + '</tr></thead><tbody>' +
+    tableRows +
+    '</tbody></table></div>';
+}
+function currentView() {
+  const views = state?.views || [];
+  return views.find(view => view.id === activeView) || views[0] || null;
+}
+function initControls() {
+  const input = document.getElementById("issue-filter");
+  const sort = document.getElementById("issue-sort");
+  input.value = filterText;
+  sort.value = sortMode;
+  input.addEventListener("input", () => {
+    clearTimeout(filterTimer);
+    filterTimer = setTimeout(() => {
+      filterText = input.value;
+      storageSet("clawsweeper:triage-filter", filterText);
+      const view = currentView();
+      if (view) renderRows(view);
+    }, 80);
+  });
+  document.getElementById("clear-filter").addEventListener("click", () => {
+    filterText = "";
+    input.value = "";
+    storageSet("clawsweeper:triage-filter", filterText);
+    const view = currentView();
+    if (view) renderRows(view);
+    input.focus();
+  });
+  sort.addEventListener("change", event => {
+    sortMode = event.target.value;
+    storageSet("clawsweeper:triage-sort", sortMode);
+    const view = currentView();
+    if (view) renderRows(view);
+  });
+  document.getElementById("table").addEventListener("click", event => {
+    const target = event.target.closest("[data-filter-value]");
+    if (!target) return;
+    filterText = target.getAttribute("data-filter-value") || "";
+    input.value = filterText;
+    storageSet("clawsweeper:triage-filter", filterText);
+    const view = currentView();
+    if (view) renderRows(view);
+    input.focus();
+  });
+  document.getElementById("table").addEventListener("pointerdown", event => {
+    const handle = event.target.closest("[data-resize-col]");
+    if (!handle) return;
+    event.preventDefault();
+    const key = handle.getAttribute("data-resize-col");
+    if (!COLUMN_ORDER.includes(key)) return;
+    const startX = event.clientX;
+    const startWidth = columnWidths[key] || COLUMN_DEFAULTS[key];
+    document.body.classList.add("resizing-col");
+    const onMove = moveEvent => {
+      columnWidths[key] = Math.round(Math.max(COLUMN_MIN[key], startWidth + moveEvent.clientX - startX));
+      applyColumnWidths();
+    };
+    const onUp = () => {
+      document.body.classList.remove("resizing-col");
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerup", onUp);
+      document.removeEventListener("pointercancel", onUp);
+      saveColumnWidths();
+    };
+    document.addEventListener("pointermove", onMove);
+    document.addEventListener("pointerup", onUp);
+    document.addEventListener("pointercancel", onUp);
+  });
+}
+function renderDiagnostics(data) {
+  const errors = data.diagnostics?.errors || [];
+  document.getElementById("diagnostics").innerHTML = errors.length
+    ? '<div class="error">' + errors.map(esc).join("<br>") + '</div>'
+    : '<div class="empty">No dashboard diagnostics in this snapshot.</div>';
+}
+function render() {
+  if (!state) return;
+  const views = state.views || [];
+  if (!views.find(view => view.id === activeView) && views.length) activeView = views[0].id;
+  document.getElementById("subtitle").textContent = (state.source?.target_repositories || []).join(", ") + " - read-only GitHub Search snapshot";
+  document.getElementById("updated").textContent = "Updated " + since(state.generated_at);
+  renderMetrics(views);
+  renderTabs(views);
+  renderTable(views.find(view => view.id === activeView) || views[0] || {});
+  renderDiagnostics(state);
+}
+async function load() {
+  try {
+    const response = await fetch("/api/triage", { cache: "no-store" });
+    if (!response.ok) throw new Error("/api/triage returned " + response.status);
+    state = await response.json();
+    render();
+  } catch (error) {
+    document.getElementById("subtitle").textContent = "Failed to load triage data: " + error.message;
+    document.getElementById("table").innerHTML = '<div class="error">' + esc(error.message) + '</div>';
+  }
+}
+initControls();
+load();
+setInterval(load, 120000);
+</script>
+</body>
+</html>`;
+}
+
 function dashboardHtml() {
   return `<!doctype html>
 <html lang="en">
@@ -1036,6 +2722,7 @@ tbody tr:hover { background: rgba(103, 183, 255, 0.03); }
 tr:last-child td { border-bottom: 0; }
 a { color: var(--blue); text-decoration: none; transition: color 0.15s ease; }
 a:hover { color: #89c8ff; text-decoration: underline; }
+.top-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .pill {
   display: inline-flex;
   align-items: center;
@@ -1207,7 +2894,7 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   font-style: italic;
 }
 .empty::before { content: "🦀 "; opacity: 0.3; }
-@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } header { align-items: start; flex-direction: column; } }
+@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } }
 @media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .work-row { grid-template-columns: 1fr; align-items: start; } .work-state, .stage-block, .timebox { justify-content: start; justify-items: start; } }
 @media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid, .closed-stats { grid-template-columns: 1fr; } .side-row { grid-template-columns: 1fr; } .side-meta { justify-content: flex-start; } }
 </style>
@@ -1219,7 +2906,10 @@ a:hover { color: #89c8ff; text-decoration: underline; }
       <h1>ClawSweeper Live</h1>
       <div class="muted" id="subtitle">🌊 Loading pipeline state...</div>
     </div>
-    <div class="muted mono" id="updated"></div>
+    <div class="top-links">
+      <a class="pill" href="/triage">Issue triage</a>
+      <span class="muted mono" id="updated"></span>
+    </div>
   </header>
   <section class="grid" id="metrics"></section>
   <section class="split">
