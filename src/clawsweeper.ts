@@ -847,6 +847,43 @@ const IMPACT_LABELS = [
 const IMPACT_LABEL_NAMES: ReadonlySet<string> = new Set(IMPACT_LABELS.map((label) => label.name));
 const ISSUE_ADVISORY_LABELS = [
   {
+    name: "issue-rating: 🦀 challenger crab",
+    color: "1F883D",
+    description:
+      "Exceptional issue quality: high-confidence current-main reproduction and actionable evidence.",
+  },
+  {
+    name: "issue-rating: 🦞 diamond lobster",
+    color: "0969DA",
+    description:
+      "Very strong issue quality with high-confidence source-level or clear reproduction.",
+  },
+  {
+    name: "issue-rating: 🐚 platinum hermit",
+    color: "0F766E",
+    description: "Good issue quality with a plausible reproduction path needing some confirmation.",
+  },
+  {
+    name: "issue-rating: 🦐 gold shrimp",
+    color: "B7791F",
+    description: "Decent issue quality, but reproduction details are still incomplete.",
+  },
+  {
+    name: "issue-rating: 🦪 silver shellfish",
+    color: "7A828E",
+    description: "Thin issue quality; more reproduction proof or environment detail is needed.",
+  },
+  {
+    name: "issue-rating: 🧂 unranked krab",
+    color: "8C2F39",
+    description: "Issue quality is currently too unclear to act on safely.",
+  },
+  {
+    name: "issue-rating: 🌊 off-meta tidepool",
+    color: "6E7781",
+    description: "Issue quality rating does not apply to this item.",
+  },
+  {
     name: "clawsweeper:current-main-repro",
     color: "0A3069",
     description: "ClawSweeper found a high-confidence current-main issue reproduction.",
@@ -5955,9 +5992,45 @@ function isIssueAdvisoryLabel(label: string): boolean {
   return ISSUE_ADVISORY_LABEL_NAMES.has(label.toLowerCase());
 }
 
+function issueRatingLabelForState(state: IssueAdvisoryLabelState): string {
+  if (state.type !== "issue") return "";
+  if (state.reproductionStatus === "not_applicable") {
+    return "issue-rating: 🌊 off-meta tidepool";
+  }
+  if (state.reproductionStatus === "reproduced" && state.reproductionConfidence === "high") {
+    return "issue-rating: 🦀 challenger crab";
+  }
+  if (
+    (state.reproductionStatus === "source_reproducible" ||
+      state.reproductionStatus === "reproduced") &&
+    state.reproductionConfidence === "high"
+  ) {
+    return "issue-rating: 🦞 diamond lobster";
+  }
+  if (
+    (state.reproductionStatus === "source_reproducible" ||
+      state.reproductionStatus === "reproduced") &&
+    state.reproductionConfidence === "medium"
+  ) {
+    return "issue-rating: 🐚 platinum hermit";
+  }
+  if (state.reproductionStatus === "unclear" && state.reproductionConfidence === "medium") {
+    return "issue-rating: 🦐 gold shrimp";
+  }
+  if (
+    state.reproductionStatus === "not_reproduced" ||
+    (state.reproductionStatus === "unclear" && state.reproductionConfidence === "low")
+  ) {
+    return "issue-rating: 🦪 silver shellfish";
+  }
+  return "issue-rating: 🧂 unranked krab";
+}
+
 function wantedIssueAdvisoryLabels(state: IssueAdvisoryLabelState): Set<string> {
   const labels = new Set<string>();
   if (state.type !== "issue") return labels;
+  const issueRatingLabel = issueRatingLabelForState(state);
+  if (issueRatingLabel) labels.add(issueRatingLabel);
   if (state.reproductionConfidence === "high") {
     if (state.reproductionStatus === "reproduced") labels.add("clawsweeper:current-main-repro");
     if (state.reproductionStatus === "source_reproducible") labels.add("clawsweeper:source-repro");
@@ -7017,6 +7090,50 @@ function publicSummaryBody(summaryLine: string, reproductionAssessment: string):
     .join("\n\n");
 }
 
+function issueReproductionHelpSuggestions(markdown: string): string[] {
+  if (frontMatterValue(markdown, "type") !== "issue") return [];
+  const reproductionStatus = frontMatterValue(markdown, "reproduction_status");
+  const reproductionConfidence = frontMatterValue(markdown, "reproduction_confidence");
+  if (reproductionStatus === "reproduced" && reproductionConfidence === "high") return [];
+  const reproductionAssessment = sentence(reviewSectionValue(markdown, "reproductionAssessment"));
+  if (/^yes\b/i.test(reproductionAssessment)) return [];
+  const sections = [
+    reviewSectionValue(markdown, "summary"),
+    reproductionAssessment,
+    reviewSectionValue(markdown, "solutionAssessment"),
+    reviewSectionValue(markdown, "evidence"),
+    reviewSectionValue(markdown, "risks"),
+  ];
+  const text = sections.join("\n").toLowerCase();
+  const suggestions: string[] = [];
+  const hasMedia = /\b(?:screenshot|screen shot|video|recording|gif|image)\b/i.test(text);
+  const hasSteps = /\b(?:step|steps|command|run|click|launch|workflow)\b/i.test(text);
+  const hasExpectedActual = /\bexpected\b/i.test(text) && /\bactual\b/i.test(text);
+  const hasLogs = /\b(?:log|logs|terminal|console|stack trace|traceback|output|error)\b/i.test(
+    text,
+  );
+  const hasVersionContext =
+    /\b(?:version|platform|os|macos|windows|linux|browser|provider|channel|config|settings)\b/i.test(
+      text,
+    );
+  if (!hasMedia) {
+    suggestions.push("Add a screenshot or short recording showing the behavior.");
+  }
+  if (!hasSteps) {
+    suggestions.push("Include the exact command, prompt, or workflow that triggered it.");
+  }
+  if (!hasExpectedActual) {
+    suggestions.push("Add expected vs actual behavior.");
+  }
+  if (!hasLogs) {
+    suggestions.push("Include redacted logs or terminal output.");
+  }
+  if (!hasVersionContext) {
+    suggestions.push("Share version, platform, channel/provider, and relevant config details.");
+  }
+  return suggestions.slice(0, 3);
+}
+
 function appendReviewQuestionDetails(
   details: string[],
   reproductionAssessment: string | undefined,
@@ -7108,6 +7225,16 @@ function renderKeepOpenCommentFromReport(markdown: string): string {
     );
   } else {
     appendPublicSection(lines, "Summary", publicSummaryBody(summaryLine, reproductionAssessment));
+  }
+  if (!isPullRequest) {
+    const reproductionHelp = issueReproductionHelpSuggestions(markdown);
+    if (reproductionHelp.length) {
+      appendPublicSection(
+        lines,
+        "Ways to help us reproduce this",
+        reproductionHelp.map((suggestion) => `- ${suggestion}`).join("\n"),
+      );
+    }
   }
   if (isPullRequest) {
     appendPublicSection(lines, "PR rating", publicPrRatingLine(prRating, realBehaviorProof));

@@ -2322,11 +2322,48 @@ Reason: The bug is narrow and source-reproducible.
     /\*\*Summary\*\*\nKeep open\. Slack typing callbacks are disabled in message-tool-only group replies\.\n\nReproducibility: yes\. A source-level reproduction is clear/,
   );
   assert.ok(comment.indexOf("Reproducibility: yes.") < comment.indexOf("**Next step**"));
+  assert.doesNotMatch(comment, /\*\*Ways to help us reproduce this\*\*/);
   assert.doesNotMatch(comment, /\*\*Security\*\*/);
   assert.doesNotMatch(comment, /Not applicable:/);
   assert.match(
     comment,
     /Do we have a high-confidence way to reproduce the issue\?\n\nYes\. A source-level reproduction is clear/,
+  );
+});
+
+test("issue keep-open review comments suggest concrete reproduction help", () => {
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "issue",
+      number: "75878",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "manual_review",
+      reproduction_status: "unclear",
+      reproduction_confidence: "low",
+    })}
+
+## Summary
+
+Keep open. The app sometimes does the wrong thing.
+
+## Reproduction Assessment
+
+Unclear. The report describes an intermittent visible failure but does not include enough information to reproduce it.
+
+## Best Possible Solution
+
+Ask for enough details to reproduce the issue before planning a fix.
+`,
+    "none",
+  );
+
+  assert.match(comment, /\*\*Ways to help us reproduce this\*\*/);
+  assert.match(comment, /- Add a screenshot or short recording showing the behavior\./);
+  assert.match(comment, /- Include the exact command, prompt, or workflow that triggered it\./);
+  assert.match(comment, /- Add expected vs actual behavior\./);
+  assert.ok(
+    comment.indexOf("**Ways to help us reproduce this**") < comment.indexOf("**Next step**"),
   );
 });
 
@@ -4934,7 +4971,7 @@ test("ClawSweeper issue advisory labels expose high-confidence reproduction stat
       reproductionStatus: "reproduced",
       reproductionConfidence: "high",
     }),
-    ["bug", "clawsweeper:current-main-repro"],
+    ["bug", "issue-rating: 🦀 challenger crab", "clawsweeper:current-main-repro"],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["bug"], {
@@ -4942,7 +4979,7 @@ test("ClawSweeper issue advisory labels expose high-confidence reproduction stat
       reproductionStatus: "source_reproducible",
       reproductionConfidence: "high",
     }),
-    ["bug", "clawsweeper:source-repro"],
+    ["bug", "issue-rating: 🦞 diamond lobster", "clawsweeper:source-repro"],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["bug"], {
@@ -4950,7 +4987,7 @@ test("ClawSweeper issue advisory labels expose high-confidence reproduction stat
       reproductionStatus: "reproduced",
       reproductionConfidence: "medium",
     }),
-    ["bug"],
+    ["bug", "issue-rating: 🐚 platinum hermit"],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["bug"], {
@@ -4958,7 +4995,7 @@ test("ClawSweeper issue advisory labels expose high-confidence reproduction stat
       reproductionStatus: "not_reproduced",
       reproductionConfidence: "high",
     }),
-    ["bug", "clawsweeper:not-repro-on-main"],
+    ["bug", "issue-rating: 🦪 silver shellfish", "clawsweeper:not-repro-on-main"],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["bug"], {
@@ -4966,7 +5003,7 @@ test("ClawSweeper issue advisory labels expose high-confidence reproduction stat
       reproductionStatus: "source_reproducible",
       reproductionConfidence: "medium",
     }),
-    ["bug", "clawsweeper:needs-live-repro"],
+    ["bug", "issue-rating: 🐚 platinum hermit", "clawsweeper:needs-live-repro"],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["bug"], {
@@ -4974,7 +5011,7 @@ test("ClawSweeper issue advisory labels expose high-confidence reproduction stat
       reproductionStatus: "unclear",
       reproductionConfidence: "low",
     }),
-    ["bug", "clawsweeper:needs-info"],
+    ["bug", "issue-rating: 🦪 silver shellfish", "clawsweeper:needs-info"],
   );
 });
 
@@ -4987,7 +5024,12 @@ test("ClawSweeper issue advisory labels expose work-lane routing state", () => {
       workConfidence: "high",
       hasWorkShape: true,
     }),
-    ["clawsweeper", "clawsweeper:queueable-fix", "clawsweeper:fix-shape-clear"],
+    [
+      "clawsweeper",
+      "issue-rating: 🧂 unranked krab",
+      "clawsweeper:queueable-fix",
+      "clawsweeper:fix-shape-clear",
+    ],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["clawsweeper"], {
@@ -4996,21 +5038,31 @@ test("ClawSweeper issue advisory labels expose work-lane routing state", () => {
       workStatus: "candidate",
       workConfidence: "medium",
     }),
-    ["clawsweeper"],
+    ["clawsweeper", "issue-rating: 🧂 unranked krab"],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["clawsweeper"], {
       type: "issue",
       workCandidate: "manual_review",
     }),
-    ["clawsweeper", "clawsweeper:no-new-fix-pr", "clawsweeper:needs-maintainer-review"],
+    [
+      "clawsweeper",
+      "issue-rating: 🧂 unranked krab",
+      "clawsweeper:no-new-fix-pr",
+      "clawsweeper:needs-maintainer-review",
+    ],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["clawsweeper"], {
       type: "issue",
       workStatus: "manual_review",
     }),
-    ["clawsweeper", "clawsweeper:no-new-fix-pr", "clawsweeper:needs-maintainer-review"],
+    [
+      "clawsweeper",
+      "issue-rating: 🧂 unranked krab",
+      "clawsweeper:no-new-fix-pr",
+      "clawsweeper:needs-maintainer-review",
+    ],
   );
 });
 
@@ -5020,28 +5072,48 @@ test("ClawSweeper issue advisory labels expose linked PR and human decision bloc
       type: "issue",
       hasOpenLinkedPullRequest: true,
     }),
-    ["bug", "clawsweeper:linked-pr-open", "clawsweeper:no-new-fix-pr"],
+    [
+      "bug",
+      "issue-rating: 🧂 unranked krab",
+      "clawsweeper:linked-pr-open",
+      "clawsweeper:no-new-fix-pr",
+    ],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["bug"], {
       type: "issue",
       requiresProductDecision: true,
     }),
-    ["bug", "clawsweeper:no-new-fix-pr", "clawsweeper:needs-product-decision"],
+    [
+      "bug",
+      "issue-rating: 🧂 unranked krab",
+      "clawsweeper:no-new-fix-pr",
+      "clawsweeper:needs-product-decision",
+    ],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["bug"], {
       type: "issue",
       securityReviewStatus: "needs_attention",
     }),
-    ["bug", "clawsweeper:no-new-fix-pr", "clawsweeper:needs-security-review"],
+    [
+      "bug",
+      "issue-rating: 🧂 unranked krab",
+      "clawsweeper:no-new-fix-pr",
+      "clawsweeper:needs-security-review",
+    ],
   );
   assert.deepEqual(
     issueAdvisoryLabelsForTest(["bug"], {
       type: "issue",
       itemCategory: "security",
     }),
-    ["bug", "clawsweeper:no-new-fix-pr", "clawsweeper:needs-security-review"],
+    [
+      "bug",
+      "issue-rating: 🧂 unranked krab",
+      "clawsweeper:no-new-fix-pr",
+      "clawsweeper:needs-security-review",
+    ],
   );
 });
 
@@ -5060,6 +5132,8 @@ test("ClawSweeper issue advisory labels remove stale owned labels and preserve o
         "clawsweeper:fix-shape-clear",
         "clawsweeper:needs-product-decision",
         "clawsweeper:needs-security-review",
+        "issue-rating: 🦞 diamond lobster",
+        "issue-rating: 🌊 off-meta tidepool",
         "clawsweeper:autofix",
         "clawsweeper:automerge",
         "clawsweeper:human-review",
@@ -5081,6 +5155,7 @@ test("ClawSweeper issue advisory labels remove stale owned labels and preserve o
       "clawsweeper:merge-ready",
       "proof: sufficient",
       "mantis: telegram-visible-proof",
+      "issue-rating: 🦀 challenger crab",
       "clawsweeper:current-main-repro",
     ],
   );
