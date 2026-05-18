@@ -93,12 +93,12 @@ find the affected problem class on both issues and pull requests. Use no more
 than 3 labels, only when the impact area is concretely supported by the item or
 diff, and keep this separate from `triagePriority` and
 `reviewFindings[].priority`:
-`impact:data-loss`: Can lose, corrupt, or silently drop user/session/config data.
-`impact:security`: Security boundary, credential, authz, sandbox, or sensitive-data risk.
-`impact:crash-loop`: Crash, hang, restart loop, or process-level availability failure.
-`impact:message-loss`: Channel message delivery can be lost, duplicated, or misrouted.
-`impact:session-state`: Session, memory, transcript, context, or agent state can drift or corrupt.
-`impact:auth-provider`: Auth, provider routing, model choice, or SecretRef resolution may break.
+`impact:data-loss`: This issue or PR is about lost, corrupted, or silently dropped user/session/config data.
+`impact:security`: This issue or PR is about security boundaries, credentials, authz, sandboxing, or sensitive data.
+`impact:crash-loop`: This issue or PR is about crashes, hangs, restart loops, or process-level availability.
+`impact:message-loss`: This issue or PR is about lost, duplicated, misrouted, or suppressed channel messages.
+`impact:session-state`: This issue or PR is about session, memory, transcript, context, or agent state drift.
+`impact:auth-provider`: This issue or PR is about auth, provider routing, model choice, or SecretRef resolution.
 Use an empty array when no owned impact label applies. Impact labels are
 searchable GitHub labels only; they describe what the item is about, not the
 risk of merging a PR. They do not close, merge, block, or replace review
@@ -111,16 +111,18 @@ problem class, while merge-risk labels describe what could go wrong specifically
 because this PR is merged. Use no more than 3 labels, only when the risk is
 concretely supported by the diff, current behavior, upgrade path, or GitHub
 discussion:
-`merge-risk: 🚨 compatibility`: 🚨 May break existing users, config, migrations, defaults, or upgrade paths.
-`merge-risk: 🚨 message-delivery`: 🚨 May drop, duplicate, misroute, suppress, or wrongly target messages.
-`merge-risk: 🚨 session-state`: 🚨 May lose, corrupt, stale, or mis-associate session, agent, or context state.
-`merge-risk: 🚨 auth-provider`: 🚨 May break OAuth, tokens, provider routing, model choice, or credentials.
-`merge-risk: 🚨 security-boundary`: 🚨 May affect sandboxing, authorization, credentials, or sensitive data.
-`merge-risk: 🚨 availability`: 🚨 May cause crashes, hangs, restart loops, stalls, or process outages.
-`merge-risk: 🚨 automation`: 🚨 May affect CI, automerge, proof capture, label sync, or maintainer automation.
+`merge-risk: 🚨 compatibility`: 🚨 Merging this PR could break existing users, config, migrations, defaults, or upgrades.
+`merge-risk: 🚨 message-delivery`: 🚨 Merging this PR could drop, duplicate, misroute, suppress, or wrongly target messages.
+`merge-risk: 🚨 session-state`: 🚨 Merging this PR could lose, corrupt, stale, or mis-associate session or agent state.
+`merge-risk: 🚨 auth-provider`: 🚨 Merging this PR could break OAuth, tokens, provider routing, model choice, or credentials.
+`merge-risk: 🚨 security-boundary`: 🚨 Merging this PR could weaken sandboxing, authorization, credentials, or sensitive data.
+`merge-risk: 🚨 availability`: 🚨 Merging this PR could cause crashes, hangs, restart loops, stalls, or process outages.
+`merge-risk: 🚨 automation`: 🚨 Merging this PR could break CI, automerge, proof capture, label sync, or automation.
 When merge risk is present, explain it in `risks` in maintainer-facing language
-and make `bestSolution` the best mitigation path. The public review comment will
-turn that into 1-3 choices and mark the best option `(recommended)`.
+and make `bestSolution` the best mitigation path. Write it as an imperative
+instruction a maintainer can paste into another LLM or into `@clawsweeper
+automerge` as special instructions. The public review comment will turn that
+into 1-3 maintainer choices and mark the best option `(recommended)`.
 
 Populate structured reproduction metadata separately from the public prose.
 Use `reproductionStatus: "reproduced"` only when there is a concrete,
@@ -569,7 +571,8 @@ risk is adequately covered by normal review/CI. For PRs with non-obvious
 compatibility, delivery, session-state, auth-provider, security-boundary,
 availability, or automation risk, add the matching `merge-risk:*` labels,
 explain why the risk matters in `risks`, and put the preferred mitigation in
-`bestSolution` so maintainers see a recommended choice before merge.
+`bestSolution` as a paste-ready instruction so maintainers see a recommended
+choice before merge.
 
 Always fill the work-lane fields too. For non-candidates, use
 `workCandidate: "none"`, low confidence/priority, an empty `workPrompt`, and

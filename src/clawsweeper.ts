@@ -821,32 +821,38 @@ const IMPACT_LABELS = [
   {
     name: "impact:data-loss",
     color: "B60205",
-    description: "Can lose, corrupt, or silently drop user/session/config data.",
+    description:
+      "This issue or PR is about lost, corrupted, or silently dropped user/session/config data.",
   },
   {
     name: "impact:security",
     color: "B60205",
-    description: "Security boundary, credential, authz, sandbox, or sensitive-data risk.",
+    description:
+      "This issue or PR is about security boundaries, credentials, authz, sandboxing, or sensitive data.",
   },
   {
     name: "impact:crash-loop",
     color: "D93F0B",
-    description: "Crash, hang, restart loop, or process-level availability failure.",
+    description:
+      "This issue or PR is about crashes, hangs, restart loops, or process-level availability.",
   },
   {
     name: "impact:message-loss",
     color: "D93F0B",
-    description: "Channel message delivery can be lost, duplicated, or misrouted.",
+    description:
+      "This issue or PR is about lost, duplicated, misrouted, or suppressed channel messages.",
   },
   {
     name: "impact:session-state",
     color: "F9D65C",
-    description: "Session, memory, transcript, context, or agent state can drift or corrupt.",
+    description:
+      "This issue or PR is about session, memory, transcript, context, or agent state drift.",
   },
   {
     name: "impact:auth-provider",
     color: "F9D65C",
-    description: "Auth, provider routing, model choice, or SecretRef resolution may break.",
+    description:
+      "This issue or PR is about auth, provider routing, model choice, or SecretRef resolution.",
   },
 ] as const satisfies readonly {
   name: ImpactLabelName;
@@ -858,38 +864,44 @@ const MERGE_RISK_LABELS = [
   {
     name: "merge-risk: 🚨 compatibility",
     color: "D1242F",
-    description: "🚨 May break existing users, config, migrations, defaults, or upgrade paths.",
+    description:
+      "🚨 Merging this PR could break existing users, config, migrations, defaults, or upgrades.",
   },
   {
     name: "merge-risk: 🚨 message-delivery",
     color: "D1242F",
-    description: "🚨 May drop, duplicate, misroute, suppress, or wrongly target messages.",
+    description:
+      "🚨 Merging this PR could drop, duplicate, misroute, suppress, or wrongly target messages.",
   },
   {
     name: "merge-risk: 🚨 session-state",
     color: "F97316",
-    description: "🚨 May lose, corrupt, stale, or mis-associate session, agent, or context state.",
+    description:
+      "🚨 Merging this PR could lose, corrupt, stale, or mis-associate session or agent state.",
   },
   {
     name: "merge-risk: 🚨 auth-provider",
     color: "F97316",
-    description: "🚨 May break OAuth, tokens, provider routing, model choice, or credentials.",
+    description:
+      "🚨 Merging this PR could break OAuth, tokens, provider routing, model choice, or credentials.",
   },
   {
     name: "merge-risk: 🚨 security-boundary",
     color: "B60205",
-    description: "🚨 May affect sandboxing, authorization, credentials, or sensitive data.",
+    description:
+      "🚨 Merging this PR could weaken sandboxing, authorization, credentials, or sensitive data.",
   },
   {
     name: "merge-risk: 🚨 availability",
     color: "D93F0B",
-    description: "🚨 May cause crashes, hangs, restart loops, stalls, or process outages.",
+    description:
+      "🚨 Merging this PR could cause crashes, hangs, restart loops, stalls, or process outages.",
   },
   {
     name: "merge-risk: 🚨 automation",
     color: "FBCA04",
     description:
-      "🚨 May affect CI, automerge, proof capture, label sync, or maintainer automation.",
+      "🚨 Merging this PR could break CI, automerge, proof capture, label sync, or automation.",
   },
 ] as const satisfies readonly {
   name: MergeRiskLabelName;
@@ -7296,7 +7308,7 @@ function publicMergeRiskLine(
   const choices = mergeRiskResolutionChoices(bestSolutionLine, nextStepLine);
   return [
     `Why this matters: ${risks}`,
-    choices.length ? ["", "Choices:", ...choices].join("\n") : "",
+    choices.length ? ["", "Maintainer choices:", ...choices].join("\n") : "",
   ]
     .filter(Boolean)
     .join("\n");
@@ -7305,15 +7317,38 @@ function publicMergeRiskLine(
 function mergeRiskResolutionChoices(bestSolutionLine: string, nextStepLine: string): string[] {
   const choices: string[] = [];
   const recommended = sentence(bestSolutionLine) || sentence(nextStepLine);
-  if (recommended) choices.push(`1. ${recommended} (recommended)`);
+  if (recommended) choices.push(mergeRiskAutomergeChoice(recommended, true));
   const alternate = sentence(nextStepLine);
   if (alternate && !publicReviewTextIsSame(alternate, recommended)) {
-    choices.push(`2. ${alternate}`);
+    choices.push(mergeRiskAgentChoice(alternate));
   }
   if (choices.length === 0) {
-    choices.push("1. Decide whether the merge risk is acceptable before merging. (recommended)");
+    choices.push(
+      mergeRiskAutomergeChoice("Decide whether the merge risk is acceptable before merging.", true),
+    );
   }
   return choices.slice(0, 3);
+}
+
+function mergeRiskAutomergeChoice(instruction: string, recommended: boolean): string {
+  return [
+    `1. ${recommended ? "(recommended) " : ""}Start ClawSweeper automerge with special instructions:`,
+    "",
+    "```text",
+    "@clawsweeper automerge",
+    `Special instructions: ${instruction}`,
+    "```",
+  ].join("\n");
+}
+
+function mergeRiskAgentChoice(instruction: string): string {
+  return [
+    "2. Ask an LLM or repair agent to update the PR before merge:",
+    "",
+    "```text",
+    `Fix this PR before merge: ${instruction}`,
+    "```",
+  ].join("\n");
 }
 
 function issueReproductionHelpSuggestions(markdown: string): string[] {
