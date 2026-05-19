@@ -4,7 +4,7 @@ run-name: ${{ github.event_name == 'repository_dispatch' && format('Review event
 
 on:
   repository_dispatch:
-    types: [clawsweeper_item]
+    types: [clawsweeper_item, clawsweeper_hatch]
   workflow_dispatch:
     inputs:
       target_repo:
@@ -149,7 +149,7 @@ jobs:
 
   event-review-apply:
     name: Review, comment, and apply event item
-    if: ${{ github.event_name == 'repository_dispatch' && !(github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
+    if: ${{ github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_hatch' && !(github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
@@ -1259,6 +1259,7 @@ jobs:
         timeout-minutes: 15
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           set -euo pipefail
@@ -1298,6 +1299,7 @@ jobs:
           pnpm run repair:publish-main -- \
             --message "chore: sync selected review comments" \
             --path "records/${target_slug}" \
+            --path assets/pr-eggs \
             --path apply-report.json \
             --path "results/sweep-status/${target_slug}.json" \
             --rebase-strategy theirs
@@ -1307,6 +1309,7 @@ jobs:
         timeout-minutes: 30
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           set -euo pipefail
@@ -1351,6 +1354,7 @@ jobs:
           pnpm run repair:publish-main -- \
             --message "chore: apply selected sweep decisions" \
             --path "records/${target_slug}" \
+            --path assets/pr-eggs \
             --path apply-report.json \
             --path "results/sweep-status/${target_slug}.json" \
             --rebase-strategy theirs
@@ -1590,7 +1594,7 @@ jobs:
 
   apply-existing:
     name: Apply close proposals
-    if: ${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && !(github.event_name == 'schedule' && github.event.schedule == '8,23,38,53 * * * *' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
+    if: ${{ ((github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_hatch') || (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && !(github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') && !(github.event_name == 'schedule' && github.event.schedule == '8,23,38,53 * * * *' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -1602,7 +1606,7 @@ jobs:
       - name: Resolve target repository
         id: target
         run: |
-          target_repo="${{ github.event.inputs.target_repo || '' }}"
+          target_repo="${{ github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo || github.event.inputs.target_repo || '' }}"
           if [ -z "$target_repo" ]; then
             case "${{ github.event.schedule || '' }}" in
               "8,23,38,53 * * * *")
@@ -1654,6 +1658,7 @@ jobs:
       - name: Apply unchanged proposed decisions with checkpoints
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
           CLAWSWEEPER_PUBLISH_THROTTLE_STATUS: "true"
           CLAWSWEEPER_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -1666,16 +1671,21 @@ jobs:
           min_age_minutes="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_min_age_minutes || '' }}"
           apply_kind="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_kind || 'all' }}"
           apply_close_reasons="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_reasons || 'all' }}"
+          hatch_pr_egg_image="${{ github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_hatch' && github.event.client_payload.hatch_pr_egg_image == 'true' && 'true' || 'false' }}"
           stale_min_age_days="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_stale_min_age_days || '60' }}"
           close_delay_ms="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_delay_ms || '2000' }}"
           progress_every="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_progress_every || '10' }}"
           checkpoint_size="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_checkpoint_size || '50' }}"
-          item_numbers="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_item_numbers || '' }}"
-          sync_comments_only="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_sync_comments_only || 'false' }}"
+          item_numbers="${{ github.event_name == 'repository_dispatch' && github.event.client_payload.item_number || github.event.inputs.apply_item_numbers || '' }}"
+          sync_comments_only="${{ github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_hatch' && 'true' || (github.event_name == 'workflow_dispatch' && github.event.inputs.apply_sync_comments_only || 'false') }}"
           comment_sync_min_age_days="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_comment_sync_min_age_days || '7' }}"
           sync_comments_arg=()
           if [ "$sync_comments_only" = "true" ]; then
             sync_comments_arg=(--sync-comments-only)
+          fi
+          hatch_pr_egg_image_arg=()
+          if [ "$hatch_pr_egg_image" = "true" ]; then
+            hatch_pr_egg_image_arg=(--hatch-pr-egg-image)
           fi
           min_age_minutes_arg=()
           if [ -n "$min_age_minutes" ]; then
@@ -1768,11 +1778,12 @@ jobs:
               --processed-limit "$((checkpoint_size * 20))" \
               --comment-sync-min-age-days "$comment_sync_min_age_days" \
               "${item_numbers_arg[@]}" \
+              "${hatch_pr_egg_image_arg[@]}" \
               "${sync_comments_arg[@]}"
             cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
             result_count="$(pnpm run --silent workflow -- count-report --report ".artifacts/apply-reports/apply-report-$checkpoint.json")"
             synced_count="$(pnpm run --silent workflow -- count-actions --report ".artifacts/apply-reports/apply-report-$checkpoint.json" --action review_comment_synced)"
-            publish_changes "chore: sync sweep review comments checkpoint $checkpoint" records apply-report.json
+            publish_changes "chore: sync sweep review comments checkpoint $checkpoint" records assets/pr-eggs apply-report.json
             pnpm run status -- \
               --target-repo "$TARGET_REPO" \
               --state "Apply comments synced" \
@@ -1807,6 +1818,7 @@ jobs:
               --processed-limit "$((chunk_limit * 20))" \
               --comment-sync-min-age-days "$comment_sync_min_age_days" \
               "${item_numbers_arg[@]}" \
+              "${hatch_pr_egg_image_arg[@]}" \
               "${sync_comments_arg[@]}"
             cp apply-report.json ".artifacts/apply-reports/apply-report-$checkpoint.json"
             pnpm run workflow -- merge-apply-reports --dir .artifacts/apply-reports --output apply-report.json
@@ -1814,7 +1826,7 @@ jobs:
             result_count="$(pnpm run --silent workflow -- count-report --report ".artifacts/apply-reports/apply-report-$checkpoint.json")"
             closed_total=$((closed_total + closed_in_chunk))
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
-            publish_changes "chore: apply sweep decisions checkpoint $checkpoint" records apply-report.json
+            publish_changes "chore: apply sweep decisions checkpoint $checkpoint" records assets/pr-eggs apply-report.json
             pnpm run status -- \
               --target-repo "$TARGET_REPO" \
               --state "Apply in progress" \
@@ -1865,6 +1877,7 @@ jobs:
           pnpm run repair:publish-main -- \
             --message "chore: apply sweep decisions" \
             --path "records/${target_slug}" \
+            --path assets/pr-eggs \
             --path apply-report.json \
             --path "results/sweep-status/${target_slug}.json" \
             --rebase-strategy apply-records

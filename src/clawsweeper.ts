@@ -128,6 +128,16 @@ type PrStatusLabelKind =
   | "ready_for_maintainer_look";
 type PrEggState = "incubating" | "warming" | "wobbling" | "hatched";
 type PrEggRarity = "common" | "uncommon" | "rare" | "glimmer" | "legendary";
+type PrEggImageTraits = {
+  location: string;
+  accessory: string;
+  palette: string;
+  mood: string;
+  pose: string;
+  texture: string;
+  lighting: string;
+  backgroundDetail: string;
+};
 type TelegramVisibleProofStatus = "needed" | "not_needed";
 type MantisRecommendationStatus = "recommended" | "not_recommended";
 type MantisRecommendationScenario =
@@ -4868,6 +4878,14 @@ function markdownLink(label: string, url: string): string {
   return `[${label.replaceAll("|", "\\|")}](${url})`;
 }
 
+function escapeHtmlAttribute(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
 function linkedSha(sha: string): string {
   return markdownLink(shortSha(sha), commitUrl(sha));
 }
@@ -5570,6 +5588,7 @@ function publicPrEggLine(
     "- Eggs appear after the PR passes real-behavior proof. It is here for vibes, not verdicts: it does not change labels, ratings, merge decisions, or automation.",
     "- The shell reacts to review momentum: open follow-up work warms it up, re-review makes it wobble, and a clean final review lets it hatch.",
     "- How to hatch it: reach `status: 👀 ready for maintainer look` or `status: 🚀 automerge armed`; that usually means sufficient real-behavior proof, no blocking P0/P1/P2 findings, no security attention needed, and clean correctness.",
+    "- When the egg is hatchable, the PR author or a maintainer can comment `@clawsweeper hatch` to generate its image.",
     "- The hatch is seeded from this repository and PR number, so the same PR keeps the same creature; the reviewed head SHA can only change safe visual details.",
     "- Rarity is just collectible sparkle: 🥚 common, 🌱 uncommon, 💎 rare, ✨ glimmer, and 🌈 legendary.",
     "",
@@ -5577,17 +5596,27 @@ function publicPrEggLine(
   ];
   if (state === "hatched") {
     const creature = prEggCreature(identitySeed, visualSeed);
+    const imageUrl = frontMatterValue(markdown, "pr_egg_image_url");
+    const imageBlock =
+      imageUrl && imageUrl !== "unknown"
+        ? [
+            `<img src="${escapeHtmlAttribute(imageUrl)}" width="${PR_EGG_IMAGE_DISPLAY_SIZE}" height="${PR_EGG_IMAGE_DISPLAY_SIZE}" alt="${escapeHtmlAttribute(`Hatched PR egg: ${creature.rarityLabel} ${creature.name}`)}">`,
+            "",
+          ]
+        : [];
     const shareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(
       creature.shareText,
     )}&url=${encodeURIComponent(prEggShareTargetUrl(markdown))}`;
     return [
       `✨ Hatched: ${creature.rarityLabel} ${creature.name}`,
       "",
+      ...imageBlock,
       "```text",
       creature.portrait,
       "```",
       `Rarity: ${creature.rarityLabel}.`,
       `Trait: ${creature.trait}.`,
+      `Image traits: location ${creature.imageTraits.location}; accessory ${creature.imageTraits.accessory}; palette ${creature.imageTraits.palette}; mood ${creature.imageTraits.mood}; pose ${creature.imageTraits.pose}; shell ${creature.imageTraits.texture}; lighting ${creature.imageTraits.lighting}; background ${creature.imageTraits.backgroundDetail}.`,
       `Share on X: ${markdownLink("post this hatch", shareUrl)}`,
       `Copy: ${creature.shareText}`,
       ...explainer,
@@ -5606,6 +5635,90 @@ function publicPrEggLine(
     "```",
     ...explainer,
   ].join("\n");
+}
+
+function prEggImageRelativePath(markdown: string): string {
+  const repo = markdownRepository(markdown);
+  const profile = repositoryProfileFor(repo);
+  const number = frontMatterValue(markdown, "number") ?? "unknown";
+  return `assets/pr-eggs/${profile.slug}/${number}.png`;
+}
+
+function prEggImagePublicUrl(relativePath: string): string {
+  const base =
+    process.env.CLAWSWEEPER_PR_EGG_IMAGE_BASE_URL ??
+    "https://raw.githubusercontent.com/openclaw/clawsweeper-state/state";
+  const encodedPath = relativePath.split("/").map(encodeURIComponent).join("/");
+  return `${base.replace(/\/+$/, "")}/${encodedPath}`;
+}
+
+function prEggImageGenerationEnabled(): boolean {
+  if (process.env.CLAWSWEEPER_PR_EGG_IMAGES === "0") return false;
+  return Boolean(process.env.OPENAI_API_KEY);
+}
+
+function prEggImageAlreadyRecorded(markdown: string): boolean {
+  const url = frontMatterValue(markdown, "pr_egg_image_url");
+  return Boolean(url && url !== "unknown");
+}
+
+function shouldEnsurePrEggImage(
+  markdown: string,
+  statusKind: PrStatusLabelKind | null | undefined,
+): boolean {
+  return (
+    frontMatterValue(markdown, "type") === "pull_request" &&
+    prEggProofUnlocked(reportRealBehaviorProof(markdown)) &&
+    prEggStateFromStatus(statusKind) === "hatched" &&
+    !prEggImageAlreadyRecorded(markdown)
+  );
+}
+
+async function ensurePrEggImage(markdown: string): Promise<string | null> {
+  if (prEggImageAlreadyRecorded(markdown)) return markdown;
+  const relativePath = prEggImageRelativePath(markdown);
+  const assetPath = resolve(ROOT, relativePath);
+  if (existsSync(assetPath)) {
+    return replaceFrontMatterValue(markdown, "pr_egg_image_url", prEggImagePublicUrl(relativePath));
+  }
+  if (!prEggImageGenerationEnabled()) return null;
+
+  const identitySeed = prEggIdentitySeedFromReport(markdown);
+  const visualSeed = prEggVisualSeedFromReport(markdown);
+  const image = await generatePrEggImage(prEggImagePrompt(prEggCreature(identitySeed, visualSeed)));
+  ensureDir(dirname(assetPath));
+  writeFileSync(assetPath, image);
+  return replaceFrontMatterValue(markdown, "pr_egg_image_url", prEggImagePublicUrl(relativePath));
+}
+
+async function generatePrEggImage(prompt: string): Promise<Buffer> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) throw new Error("OPENAI_API_KEY missing");
+  const response = await fetch("https://api.openai.com/v1/images/generations", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${apiKey}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: process.env.CLAWSWEEPER_PR_EGG_IMAGE_MODEL ?? PR_EGG_IMAGE_MODEL,
+      prompt,
+      size: PR_EGG_IMAGE_SOURCE_SIZE,
+      quality: process.env.CLAWSWEEPER_PR_EGG_IMAGE_QUALITY ?? PR_EGG_IMAGE_QUALITY,
+      output_format: "png",
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(
+      `OpenAI PR egg image generation failed: HTTP ${response.status} ${await response.text()}`,
+    );
+  }
+  const body = (await response.json()) as {
+    data?: { b64_json?: string; url?: string }[];
+  };
+  const encoded = body.data?.[0]?.b64_json;
+  if (!encoded) throw new Error("OpenAI PR egg image response did not include b64_json");
+  return Buffer.from(encoded, "base64");
 }
 
 function publicMantisRecommendationBlock(recommendation: MantisRecommendation): string {
@@ -6319,6 +6432,131 @@ const PR_EGG_TRAITS = [
   "hums during re-review",
 ];
 
+const PR_EGG_LOCATIONS = [
+  "CI tidepool",
+  "merge queue dock",
+  "flaky test forest",
+  "release reef",
+  "review cove",
+  "branch lighthouse",
+  "artifact grotto",
+  "status garden",
+  "diff observatory",
+  "proof lagoon",
+  "workflow harbor",
+  "green-check meadow",
+];
+
+const PR_EGG_ACCESSORIES = [
+  "tiny test log scroll",
+  "green check lantern",
+  "miniature diff map",
+  "shell-shaped keyboard",
+  "review stamp",
+  "commit compass",
+  "proof snapshot camera",
+  "little merge flag",
+  "CI status badge",
+  "lint brush",
+  "rollback rope",
+  "release bell",
+];
+
+const PR_EGG_PALETTES = [
+  "pearl, teal, and neon green",
+  "moonlit blue and soft silver",
+  "coral, mint, and warm cream",
+  "charcoal, cyan, and signal green",
+  "sunrise gold and clean white",
+  "moss green and polished brass",
+  "violet, aqua, and starlight",
+  "rose quartz and slate",
+  "cobalt, lime, and pearl",
+  "amber, ink, and glacier blue",
+  "seafoam, black, and opal",
+  "plum, gold, and soft gray",
+];
+
+const PR_EGG_MOODS = [
+  "curious",
+  "proud",
+  "sleepy but ready",
+  "focused",
+  "celebratory",
+  "watchful",
+  "mischievous",
+  "calm",
+  "determined",
+  "sparkly",
+  "patient",
+  "bright-eyed",
+];
+
+const PR_EGG_POSES = [
+  "holding its accessory up for inspection",
+  "standing beside its cracked shell",
+  "peeking out from the egg shell",
+  "guarding a tiny green check",
+  "waving from a small platform",
+  "sitting proudly on a smooth stone",
+  "leaning over a miniature review desk",
+  "nestled inside a glowing shell",
+  "pointing at a small proof artifact",
+  "balancing on a branch marker",
+  "curling around a status light",
+  "stepping out of a freshly hatched shell",
+];
+
+const PR_EGG_TEXTURES = [
+  "smooth pearl shell",
+  "soft speckled shell",
+  "glossy opal shell",
+  "matte ceramic shell",
+  "translucent glimmer shell",
+  "brushed metal shell",
+  "soft velvet shell",
+  "polished stone shell",
+  "paper lantern shell",
+  "frosted glass shell",
+  "woven fiber shell",
+  "starlit enamel shell",
+];
+
+const PR_EGG_LIGHTING = [
+  "soft studio lighting",
+  "gentle morning glow",
+  "tiny status-light glow",
+  "moonlit rim light",
+  "warm desk-lamp glow",
+  "clean product lighting",
+  "subtle sparkle highlights",
+  "cool dashboard glow",
+  "soft underwater shimmer",
+  "golden review-room light",
+  "calm overcast light",
+  "bright celebratory glints",
+];
+
+const PR_EGG_BACKGROUND_DETAILS = [
+  "small green status lights",
+  "tiny shells and proof notes",
+  "subtle branch markers",
+  "miniature CI buoys",
+  "soft code-shaped tiles",
+  "little resolved-comment flags",
+  "smooth stones and checkmarks",
+  "tiny artifact crates",
+  "gentle dashboard dots",
+  "small review tokens",
+  "quiet workflow signs",
+  "delicate sparkle particles",
+];
+
+const PR_EGG_IMAGE_DISPLAY_SIZE = 256;
+const PR_EGG_IMAGE_SOURCE_SIZE = "1024x1024";
+const PR_EGG_IMAGE_MODEL = "gpt-image-1-mini";
+const PR_EGG_IMAGE_QUALITY = "low";
+
 const PR_EGG_SPRITE_WIDTH = 29;
 const PR_EGG_SPRITE_HEIGHT = 12;
 
@@ -6419,6 +6657,26 @@ function composePrEggSprite(seed: string, rarity: PrEggRarity): string {
   return decoratePrEggSprite(base, seed, rarity).join("\n");
 }
 
+function prEggImagePrompt(creature: {
+  name: string;
+  rarityLabel: string;
+  trait: string;
+  imageTraits: PrEggImageTraits;
+}): string {
+  const traits = creature.imageTraits;
+  return [
+    "Create a square collectible mascot badge for a GitHub pull request hatch.",
+    `Subject: a cute hatched PR egg creature named ${creature.name}.`,
+    `Rarity: ${creature.rarityLabel}. Personality trait: ${creature.trait}.`,
+    `Scene location: ${traits.location}. Accessory: ${traits.accessory}.`,
+    `Palette: ${traits.palette}. Mood: ${traits.mood}. Pose: ${traits.pose}.`,
+    `Shell material: ${traits.texture}. Lighting: ${traits.lighting}.`,
+    `Background detail: ${traits.backgroundDetail}.`,
+    "Style: polished modern product mascot illustration, clean readable silhouette, centered full-body character, crisp shapes that remain legible when displayed at 256x256.",
+    "Constraints: no text, no letters, no numbers, no logos, no UI chrome, no screenshots, no realistic people, no copyrighted characters.",
+  ].join(" ");
+}
+
 function prEggRarity(seed: string): { rarity: PrEggRarity; label: string } {
   const roll = hashNumber(seed, "rarity") % 10000;
   return PR_EGG_RARITIES.find((entry) => roll < entry.cutoff) ?? PR_EGG_RARITIES[0]!;
@@ -6432,6 +6690,7 @@ function prEggCreature(
   rarity: PrEggRarity;
   rarityLabel: string;
   trait: string;
+  imageTraits: PrEggImageTraits;
   portrait: string;
   shareText: string;
 } {
@@ -6447,6 +6706,16 @@ function prEggCreature(
     rarity: rarity.rarity,
     rarityLabel: rarity.label,
     trait: pickSeeded(PR_EGG_TRAITS, identitySeed, "trait"),
+    imageTraits: {
+      location: pickSeeded(PR_EGG_LOCATIONS, identitySeed, "location"),
+      accessory: pickSeeded(PR_EGG_ACCESSORIES, identitySeed, "accessory"),
+      palette: pickSeeded(PR_EGG_PALETTES, identitySeed, "palette"),
+      mood: pickSeeded(PR_EGG_MOODS, identitySeed, "mood"),
+      pose: pickSeeded(PR_EGG_POSES, identitySeed, "pose"),
+      texture: pickSeeded(PR_EGG_TEXTURES, identitySeed, "texture"),
+      lighting: pickSeeded(PR_EGG_LIGHTING, identitySeed, "lighting"),
+      backgroundDetail: pickSeeded(PR_EGG_BACKGROUND_DETAILS, identitySeed, "background-detail"),
+    },
     portrait: composePrEggSprite(visualSeed, rarity.rarity),
     shareText,
   };
@@ -6457,6 +6726,10 @@ export function prEggCreatureForTest(
   visualSeed = identitySeed,
 ): ReturnType<typeof prEggCreature> {
   return prEggCreature(identitySeed, visualSeed);
+}
+
+export function prEggImagePromptForTest(identitySeed: string, visualSeed = identitySeed): string {
+  return prEggImagePrompt(prEggCreature(identitySeed, visualSeed));
 }
 
 export function prEggSpriteMetricsForTest(seed: string): { lines: string[]; width: number } {
@@ -9943,7 +10216,7 @@ function reviewCommand(args: Args): void {
   }
 }
 
-function applyDecisionsCommand(args: Args): void {
+async function applyDecisionsCommand(args: Args): Promise<void> {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
@@ -9962,6 +10235,7 @@ function applyDecisionsCommand(args: Args): void {
   const progressEvery = Math.max(1, numberArg(args.progress_every, 10));
   const dryRun = boolArg(args.dry_run);
   const syncCommentsOnly = boolArg(args.sync_comments_only);
+  const hatchPrEggImage = boolArg(args.hatch_pr_egg_image);
   const commentSyncMinAgeDays = numberArg(args.comment_sync_min_age_days, 0);
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
   const reportPath = resolve(stringArg(args.report_path, join(ROOT, "apply-report.json")));
@@ -10134,6 +10408,22 @@ function applyDecisionsCommand(args: Args): void {
       });
     }
     markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    if (
+      !dryRun &&
+      hatchPrEggImage &&
+      item.kind === "pull_request" &&
+      shouldEnsurePrEggImage(markdown, currentPrStatusKind)
+    ) {
+      try {
+        markdown = (await ensurePrEggImage(markdown)) ?? markdown;
+      } catch (error) {
+        console.error(
+          `[apply] ${new Date().toISOString()} skipped PR egg image for #${number}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+    }
     const reviewComment = renderReviewCommentFromReport(markdown, closeReason ?? "none", {
       prStatusKind: currentPrStatusKind,
     });
@@ -11821,13 +12111,13 @@ function checkCommand(): void {
   console.log("ok");
 }
 
-export function main(argv = process.argv.slice(2)): void {
+export async function main(argv = process.argv.slice(2)): Promise<void> {
   const args = parseArgs(argv);
   const command = args._[0] ?? "review";
   if (command === "plan") planCommand(args);
   else if (command === "review") reviewCommand(args);
   else if (command === "apply-artifacts") applyArtifactsCommand(args);
-  else if (command === "apply-decisions") applyDecisionsCommand(args);
+  else if (command === "apply-decisions") await applyDecisionsCommand(args);
   else if (command === "audit") auditCommand(args);
   else if (command === "reconcile") reconcileCommand(args);
   else if (command === "dashboard") {
@@ -11844,4 +12134,9 @@ export function main(argv = process.argv.slice(2)): void {
   }
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.stack || error.message : String(error));
+    process.exit(1);
+  });
+}
