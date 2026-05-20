@@ -31,6 +31,7 @@ import {
   codexEnv,
   dashboardClosedAt,
   fixedPullRequestFromCommitPullsForTest,
+  featureShowcaseLabelsForTest,
   formatRecentClosedRows,
   githubContextWindowPlan,
   ghPagedLinkHeaderContextWindow,
@@ -233,6 +234,10 @@ function closeDecision(overrides = {}) {
       scenario: "none",
       reason: "Mantis proof is not useful for this issue triage.",
       maintainerComment: "",
+    },
+    featureShowcase: {
+      status: "none",
+      reason: "This item is not an unusually compelling feature idea.",
     },
     overallCorrectness: "not a patch",
     overallConfidenceScore: 0.75,
@@ -2782,6 +2787,157 @@ Full review comments:
     comment,
     /- `impact:message-loss`: The diff touches message retry and delivery ordering\./,
   );
+});
+
+test("public PR review details justify derived rating label changes", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "84006",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "high",
+    author: "contributor",
+    author_association: "CONTRIBUTOR",
+    labels: JSON.stringify(["rating: 🦞 diamond lobster"]),
+    work_candidate: "none",
+    triage_priority: "none",
+    impact_labels: JSON.stringify([]),
+    merge_risk_labels: JSON.stringify([]),
+    label_justifications: JSON.stringify([]),
+  })}
+
+## Summary
+
+Keep this PR open for maintainer review.
+
+## What This Changes
+
+Changes a PR under active review.
+
+## Best Possible Solution
+
+Add proof before merge.
+
+${realBehaviorProofReportSection({
+  status: "insufficient",
+  needsContributorAction: true,
+  summary: "The PR still needs current real-environment proof for the changed behavior.",
+})}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`;
+
+  const comment = renderReviewCommentFromReport(report, "none");
+
+  assert.match(comment, /Label changes:/);
+  assert.match(
+    comment,
+    /- add `rating: 🦪 silver shellfish`: Current PR rating is 🦪 silver shellfish because proof is 🦪 silver shellfish, patch quality is 🦞 diamond lobster, and PR readiness rating was derived from proof quality, review findings, security review, and reviewer confidence\./,
+  );
+  assert.match(
+    comment,
+    /- remove `rating: 🦞 diamond lobster`: Current PR rating is `rating: 🦪 silver shellfish`, so this older rating label is no longer current\./,
+  );
+  assert.match(comment, /Label justifications:/);
+  assert.match(
+    comment,
+    /- `rating: 🦪 silver shellfish`: Current PR rating is 🦪 silver shellfish because proof is 🦪 silver shellfish, patch quality is 🦞 diamond lobster, and PR readiness rating was derived from proof quality, review findings, security review, and reviewer confidence\. Replaced prior `rating: 🦞 diamond lobster`\./,
+  );
+});
+
+test("public PR review details justify stale owned label removals", () => {
+  const report = `${reportFrontMatter({
+    type: "pull_request",
+    number: "84007",
+    decision: "keep_open",
+    close_reason: "none",
+    review_status: "complete",
+    confidence: "high",
+    author: "contributor",
+    author_association: "CONTRIBUTOR",
+    labels: JSON.stringify(["status: 📣 needs proof"]),
+    work_candidate: "none",
+    triage_priority: "none",
+    impact_labels: JSON.stringify([]),
+    merge_risk_labels: JSON.stringify([]),
+    label_justifications: JSON.stringify([]),
+  })}
+
+## Summary
+
+Keep this PR open for maintainer review.
+
+## What This Changes
+
+Updates an already-reviewed PR.
+
+## Best Possible Solution
+
+Add current real behavior proof before merge.
+
+${realBehaviorProofReportSection({
+  status: "insufficient",
+  evidenceKind: "none",
+  needsContributorAction: true,
+  summary: "The current review has no usable real behavior proof.",
+})}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`;
+
+  const comment = renderReviewCommentFromReport(report, "none", {
+    prStatusKind: "needs_proof",
+    previousLabels: [
+      "P1",
+      "impact:message-loss",
+      "merge-risk: 🚨 compatibility",
+      "proof: sufficient",
+      "proof: 🎥 video",
+      "mantis: telegram-visible-proof",
+      "status: 📣 needs proof",
+    ],
+  });
+
+  assert.match(comment, /Label changes:/);
+  assert.match(comment, /- remove `P1`: Current review triage priority is none\./);
+  assert.match(
+    comment,
+    /- remove `impact:message-loss`: Current review selected no impact labels\./,
+  );
+  assert.match(
+    comment,
+    /- remove `merge-risk: 🚨 compatibility`: Current PR review selected no merge-risk labels\./,
+  );
+  assert.match(
+    comment,
+    /- remove `proof: sufficient`: Current real behavior proof status is insufficient, not sufficient\./,
+  );
+  assert.match(
+    comment,
+    /- remove `proof: 🎥 video`: Current real behavior proof evidence kind is none\./,
+  );
+  assert.match(
+    comment,
+    /- remove `mantis: telegram-visible-proof`: Current Telegram visible-proof status is not_needed\./,
+  );
+  assert.doesNotMatch(comment, /remove `status: 📣 needs proof`/);
 });
 
 test("public PR review details justify derived rating label changes", () => {
@@ -5502,6 +5658,8 @@ test("apply-decisions records PR label sync as ClawSweeper-owned churn", () => {
         author: "contributor",
         author_association: "CONTRIBUTOR",
         labels: JSON.stringify([]),
+        item_category: "feature",
+        requires_new_feature: "true",
         item_snapshot_hash: "snapshot-a",
         item_updated_at: "2026-05-19T20:00:00Z",
         pull_head_sha: "abc123def456",
@@ -5514,6 +5672,12 @@ This PR has complete review metadata and needs only ClawSweeper-owned labels.
 ${realBehaviorProofReportSection({ evidenceKind: "screenshot" })}
 
 ${prRatingReportSection({ overallTier: "A" })}
+
+## Feature Showcase
+
+Status: showcase
+
+Reason: This unlocks a notably useful maintainer workflow that did not exist before.
 
 ## Review Findings
 
@@ -5604,6 +5768,25 @@ if (args[0] === "api" && /\\/issues\\/74478$/.test(path)) {
     assert.match(report, /proof: sufficient/);
     assert.match(report, /proof: 📸 screenshot/);
     assert.match(report, /rating: 🦞 diamond lobster/);
+    assert.match(report, /feature: ✨ showcase/);
+    const calls = readFileSync(logPath, "utf8")
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line));
+    assert(
+      calls.some(
+        (args) => args[0] === "label" && args[1] === "create" && args[2] === "feature: ✨ showcase",
+      ),
+    );
+    assert(
+      calls.some(
+        (args) =>
+          args[0] === "issue" &&
+          args[1] === "edit" &&
+          args.includes("--add-label") &&
+          args.includes("feature: ✨ showcase"),
+      ),
+    );
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -7490,6 +7673,20 @@ test("decision schema keeps draft and protected workflow state out of PR rank", 
   );
 });
 
+test("review prompt and schema describe positive-only feature showcase labels", () => {
+  const prompt = readFileSync("prompts/review-item.md", "utf8");
+  const schema = JSON.parse(readFileSync("schema/clawsweeper-decision.schema.json", "utf8"));
+  const featureShowcase = schema.properties.featureShowcase;
+
+  assert.match(prompt, /featureShowcase/);
+  assert.match(prompt, /positive-only maintainer spotlight/);
+  assert.match(prompt, /really compelling feature ideas/);
+  assert.match(prompt, /not a merge gate/);
+  assert.match(featureShowcase.description, /Positive-only maintainer spotlight/);
+  assert.match(featureShowcase.description, /not a merge gate/);
+  assert.deepEqual(featureShowcase.properties.status.enum, ["showcase", "none"]);
+});
+
 test("review prompt classifies Telegram visible proof candidates", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 
@@ -7676,6 +7873,66 @@ test("ClawSweeper PR rating label scheme exposes boring internal tiers", () => {
       { tier: "F", name: "rating: 🧂 unranked krab", color: "8C2F39" },
       { tier: "NA", name: "rating: 🌊 off-meta tidepool", color: "6E7781" },
     ],
+  );
+});
+
+test("ClawSweeper feature showcase label is positive-only and high signal", () => {
+  assert.deepEqual(
+    featureShowcaseLabelsForTest(["enhancement"], {
+      itemCategory: "feature",
+      status: "showcase",
+      securityReviewStatus: "cleared",
+      overallCorrectness: "patch is correct",
+    }),
+    ["enhancement", "feature: ✨ showcase"],
+  );
+  assert.deepEqual(
+    featureShowcaseLabelsForTest(["enhancement"], {
+      itemCategory: "feature",
+      status: "none",
+      securityReviewStatus: "cleared",
+      overallCorrectness: "patch is correct",
+    }),
+    ["enhancement"],
+  );
+  assert.deepEqual(
+    featureShowcaseLabelsForTest(["feature: ✨ showcase"], {
+      itemCategory: "feature",
+      status: "none",
+      securityReviewStatus: "cleared",
+      overallCorrectness: "patch is correct",
+    }),
+    ["feature: ✨ showcase"],
+  );
+});
+
+test("ClawSweeper feature showcase label does not apply to unsafe or non-feature PRs", () => {
+  assert.deepEqual(
+    featureShowcaseLabelsForTest(["bug"], {
+      itemCategory: "bug",
+      status: "showcase",
+      securityReviewStatus: "cleared",
+      overallCorrectness: "patch is correct",
+    }),
+    ["bug"],
+  );
+  assert.deepEqual(
+    featureShowcaseLabelsForTest(["enhancement"], {
+      itemCategory: "feature",
+      status: "showcase",
+      securityReviewStatus: "needs_attention",
+      overallCorrectness: "patch is correct",
+    }),
+    ["enhancement"],
+  );
+  assert.deepEqual(
+    featureShowcaseLabelsForTest(["enhancement"], {
+      itemCategory: "feature",
+      status: "showcase",
+      securityReviewStatus: "cleared",
+      overallCorrectness: "patch is incorrect",
+    }),
+    ["enhancement"],
   );
 });
 
