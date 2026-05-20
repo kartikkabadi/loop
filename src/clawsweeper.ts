@@ -3751,6 +3751,16 @@ function fetchItem(number: number): { item: Item; state: string } {
   };
 }
 
+function fetchPullRequestMerged(number: number): boolean {
+  const pull = ghJson<{ merged?: boolean; merged_at?: string | null }>([
+    "api",
+    `repos/${targetRepo()}/pulls/${number}`,
+    "--jq",
+    "{merged:.merged,merged_at:.merged_at}",
+  ]);
+  return pull.merged === true || typeof pull.merged_at === "string";
+}
+
 function fetchOpenItemCounts(): OpenItemCounts {
   const [owner, name] = targetRepo().split("/");
   if (!owner || !name) throw new Error(`Invalid target repo: ${targetRepo()}`);
@@ -5536,10 +5546,30 @@ function prStatusLabelKindFromLabels(labels: readonly string[]): PrStatusLabelKi
 }
 
 function prEggStatusLabelKindFromReportLabels(markdown: string): PrStatusLabelKind | null {
-  const fromParsedLabels = prStatusLabelKindFromLabels(frontMatterStringArray(markdown, "labels"));
+  const parsedLabels = frontMatterStringArray(markdown, "labels");
+  const fromParsedLabels = prStatusLabelKindFromLabels(parsedLabels);
   if (fromParsedLabels) return fromParsedLabels;
+  if (parsedLabels.includes(AUTOMERGE_LABEL)) return "automerge_armed";
   const rawLabels = frontMatterValue(markdown, "labels") ?? "";
+  if (rawLabels.includes(AUTOMERGE_LABEL)) return "automerge_armed";
   return PR_STATUS_LABELS.find((label) => rawLabels.includes(label.name))?.kind ?? null;
+}
+
+function prEggIsMergedFromReport(markdown: string): boolean {
+  return (
+    nonUnknownFrontMatter(markdown, "merged_at") !== null ||
+    nonUnknownFrontMatter(markdown, "pull_merged_at") !== null ||
+    frontMatterValue(markdown, "merged") === "true"
+  );
+}
+
+function prEggRenderStatusKind(
+  markdown: string,
+  statusKind: PrStatusLabelKind | null | undefined,
+): PrStatusLabelKind | null {
+  if (statusKind) return statusKind;
+  if (prEggIsMergedFromReport(markdown)) return "ready_for_maintainer_look";
+  return null;
 }
 
 function prEggStateFromStatus(statusKind: PrStatusLabelKind | null | undefined): PrEggState {
@@ -5584,7 +5614,7 @@ function publicPrEggLine(
       "<summary>Where did the egg go?</summary>",
       "",
       "- The egg game starts only after the PR passes the real-behavior proof check.",
-      "- Before that, no creature, rarity, or ASCII portrait is rolled. The treat waits for real proof.",
+      "- Before that, no creature or rarity is rolled. The treat waits for real proof.",
       "- This is still just collectible flavor: proof affects review readiness, not creature quality.",
       "",
       "</details>",
@@ -5593,9 +5623,18 @@ function publicPrEggLine(
 
   const identitySeed = prEggIdentitySeedFromReport(markdown);
   const visualSeed = prEggVisualSeedFromReport(markdown);
-  const state = prEggStateFromStatus(options.statusKind);
-  const hatchInstruction =
-    "How to hatch it: once this PR reaches `status: 👀 ready for maintainer look` or `status: 🚀 automerge armed`, the PR author or a maintainer can comment `@clawsweeper hatch` to turn this ASCII egg into its generated creature image.";
+  const renderStatusKind = prEggRenderStatusKind(markdown, options.statusKind);
+  const state = prEggStateFromStatus(renderStatusKind);
+  const hatchInstruction = [
+    "### Hatch command",
+    "",
+    "Comment `@clawsweeper hatch` when this PR is hatchable.",
+    "",
+    "Hatchability rules:",
+    "- Merged PRs are hatchable.",
+    "- Open PRs are hatchable when they are `status: 👀 ready for maintainer look`, `status: 🚀 automerge armed`, or labeled `clawsweeper:automerge`.",
+    "- Closed unmerged PRs are hatchable only when one of those hatchable labels is still present in the durable record.",
+  ].join("\n");
   const explainer = [
     "",
     "<details>",
@@ -5603,7 +5642,7 @@ function publicPrEggLine(
     "",
     "- Eggs appear after the PR passes real-behavior proof. It is here for vibes, not verdicts: it does not change labels, ratings, merge decisions, or automation.",
     "- The shell reacts to review momentum: open follow-up work warms it up, re-review makes it wobble, and a clean final review lets it hatch.",
-    "- Hatchable usually means sufficient real-behavior proof, no blocking P0/P1/P2 findings, no security attention needed, and clean correctness.",
+    "- Hatchability usually comes from sufficient real-behavior proof, no blocking P0/P1/P2 findings, no security attention needed, and clean correctness. A merged PR is already final, so merge makes the egg hatchable independently.",
     "- The hatch is seeded from this repository and PR number, so the same PR keeps the same creature; the reviewed head SHA can only change safe visual details.",
     "- Rarity is just collectible sparkle: 🥚 common, 🌱 uncommon, 💎 rare, ✨ glimmer, and 🌈 legendary.",
     "",
@@ -5626,13 +5665,11 @@ function publicPrEggLine(
       `✨ Hatched: ${creature.rarityLabel} ${creature.name}`,
       "",
       ...imageBlock,
-      "```text",
-      creature.portrait,
-      "```",
+      hatchInstruction,
+      "",
       `Rarity: ${creature.rarityLabel}.`,
       `Trait: ${creature.trait}.`,
       `Image traits: location ${creature.imageTraits.location}; accessory ${creature.imageTraits.accessory}; palette ${creature.imageTraits.palette}; mood ${creature.imageTraits.mood}; pose ${creature.imageTraits.pose}; shell ${creature.imageTraits.texture}; lighting ${creature.imageTraits.lighting}; background ${creature.imageTraits.backgroundDetail}.`,
-      hatchInstruction,
       `Share on X: ${markdownLink("post this hatch", shareUrl)}`,
       `Copy: ${creature.shareText}`,
       ...explainer,
@@ -5643,15 +5680,7 @@ function publicPrEggLine(
     warming: "🔥 Warming up: proof, findings, or rank-up moves are still in progress.",
     wobbling: "🔁 Wobbling: a re-review loop is active, so the shell is rattling.",
   };
-  return [
-    stateLines[state],
-    hatchInstruction,
-    "",
-    "```text",
-    pickSeeded(PR_EGG_ART, visualSeed, state),
-    "```",
-    ...explainer,
-  ].join("\n");
+  return [stateLines[state], "", hatchInstruction, ...explainer].join("\n");
 }
 
 function publicPrEggLineFromReport(
@@ -6412,12 +6441,6 @@ function hasShinyProof(proof: Pick<RealBehaviorProof, "status" | "evidenceKind">
       proof.evidenceKind === "linked_artifact")
   );
 }
-
-const PR_EGG_ART = [
-  "       .-.\n     .'   '.\n    /       \\\n   |         |\n    \\       /\n     '.___.'",
-  "       .-.\n    .-'   '-.\n   /  .- -.  \\\n  |  /     \\  |\n   \\  '._.'  /\n    '-.___.-'",
-  "       .-.\n    .-'   '-.\n   /  _   _  \\\n  |  (_) (_)  |\n   \\   ___   /\n    '.___._.'",
-];
 
 const PR_EGG_RARITIES: { rarity: PrEggRarity; label: string; cutoff: number }[] = [
   { rarity: "common", label: "🥚 common", cutoff: 7000 },
@@ -10648,31 +10671,44 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       if (processedCount >= processedLimit) break;
     }
   };
-  if (!existsSync(itemsDir)) {
-    console.log("No items directory.");
-    recordMissingHatchResults(new Set());
-    ensureDir(dirname(reportPath));
-    writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
-    return;
-  }
-  const fileEntries = readdirSync(itemsDir)
-    .filter((name) => parseReportFileName(name) !== null)
-    .filter((name) => {
-      const markdown = readFileSync(join(itemsDir, name), "utf8");
-      if (!isMarkdownForActiveRepo(markdown, name)) return false;
-      return (
-        requestedItemNumberSet.size === 0 || requestedItemNumberSet.has(numberForMarkdownFile(name))
-      );
+  const reportEntriesForDir = (
+    dir: string,
+    location: "items" | "closed",
+  ): Array<{
+    name: string;
+    number: number;
+    path: string;
+    location: "items" | "closed";
+    priority: number;
+    applyCheckedAt: number;
+  }> => {
+    if (!existsSync(dir)) return [];
+    return readdirSync(dir)
+      .filter((name) => parseReportFileName(name) !== null)
+      .filter((name) => {
+        const markdown = readFileSync(join(dir, name), "utf8");
+        if (!isMarkdownForActiveRepo(markdown, name)) return false;
+        return (
+          requestedItemNumberSet.size === 0 ||
+          requestedItemNumberSet.has(numberForMarkdownFile(name))
+        );
+      })
+      .map((name) => ({
+        name,
+        number: numberForMarkdownFile(name),
+        path: join(dir, name),
+        location,
+        ...applyQueueSortFields(readFileSync(join(dir, name), "utf8"), syncCommentsOnly, applyKind),
+      }));
+  };
+  const fileEntries = [
+    ...reportEntriesForDir(itemsDir, "items"),
+    ...(hatchOnly ? reportEntriesForDir(closedDir, "closed") : []),
+  ]
+    .filter((entry, index, entries) => {
+      if (entry.location === "items") return true;
+      return entries.findIndex((candidate) => candidate.number === entry.number) === index;
     })
-    .map((name) => ({
-      name,
-      number: numberForMarkdownFile(name),
-      ...applyQueueSortFields(
-        readFileSync(join(itemsDir, name), "utf8"),
-        syncCommentsOnly,
-        applyKind,
-      ),
-    }))
     .sort(
       (left, right) =>
         left.priority - right.priority ||
@@ -10680,6 +10716,13 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         left.number - right.number,
     );
   const files = fileEntries.map((entry) => entry.name);
+  if (fileEntries.length === 0 && !existsSync(itemsDir)) {
+    console.log("No items directory.");
+    recordMissingHatchResults(new Set());
+    ensureDir(dirname(reportPath));
+    writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
+    return;
+  }
   logProgress(
     `starting apply: files=${files.length} dry_run=${dryRun} apply_kind=${applyKind} min_age=${minAgeDescription} apply_close_reasons=${closeReasonFilterText(applyCloseReasons)} stale_min_age_days=${staleMinAgeDays} close_delay_ms=${closeDelayMs} sync_comments_only=${syncCommentsOnly} comment_sync_min_age_days=${commentSyncMinAgeDays} max_runtime_ms=${maxRuntimeMs} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
   );
@@ -10689,7 +10732,12 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
     return;
   }
-  for (const file of files) {
+  for (const entry of fileEntries) {
+    const file = entry.name;
+    const path = entry.path;
+    if (entry.location === "closed" && !hatchOnly) continue;
+    if (entry.location === "closed" && requestedItemNumberSet.size === 0) continue;
+    if (entry.location === "closed" && !requestedItemNumberSet.has(entry.number)) continue;
     if (runtimeBudgetExceeded(startedAtMs, maxRuntimeMs, Date.now())) {
       results.push({
         number: 0,
@@ -10699,9 +10747,8 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       logProgress(`stopping apply: max runtime ${maxRuntimeMs}ms reached`);
       break;
     }
-    const path = join(itemsDir, file);
     let markdown = readFileSync(path, "utf8");
-    const repo = markdownRepository(markdown, join(itemsDir, file));
+    const repo = markdownRepository(markdown, path);
     const number = numberForMarkdownFile(file);
     const decision = frontMatterValue(markdown, "decision");
     const confidence = frontMatterValue(markdown, "confidence");
@@ -10735,6 +10782,9 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       continue;
     }
     if (!storedHash || (action !== "proposed_close" && action !== "kept_open")) {
+      if (!hatchOnly) continue;
+    }
+    if (!hatchOnly && !storedHash) {
       continue;
     }
     const isCloseProposal =
@@ -10742,7 +10792,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       confidence === "high" &&
       Boolean(closeReason && ALLOWED_REASONS.has(closeReason)) &&
       action === "proposed_close";
-    if (decision === "close" && !isCloseProposal) {
+    if (decision === "close" && !isCloseProposal && !hatchOnly) {
       continue;
     }
     const { item, state } = fetchItem(number);
@@ -10755,15 +10805,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       currentContext ??= collectItemContext(item, { fullTimelineForRelations: true });
       return currentContext;
     };
-    if (syncCommentsOnly && state !== "open") {
-      results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
-      processedCount += 1;
-      maybeLogProgress(`skipped comment sync #${number}: already ${state}`);
-      if (processedCount >= processedLimit) break;
-      continue;
-    }
     if (hatchOnly) {
-      const statusKind = prEggStatusLabelKindFromReportLabels(markdown);
       if (item.kind !== "pull_request") {
         results.push({ number, action: "kept_open", reason: "hatch requires a pull request" });
         processedCount += 1;
@@ -10771,6 +10813,10 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         if (processedCount >= processedLimit) break;
         continue;
       }
+      const merged = state !== "open" && fetchPullRequestMerged(number);
+      const statusKind = merged
+        ? "ready_for_maintainer_look"
+        : prEggStatusLabelKindFromReportLabels(markdown);
       if (!dryRun && shouldEnsurePrEggImage(markdown, statusKind)) {
         try {
           markdown = (await ensurePrEggImage(markdown)) ?? markdown;
@@ -10791,6 +10837,13 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       });
       processedCount += 1;
       maybeLogProgress(`synced PR egg hatch comment #${number}`);
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
+    if (syncCommentsOnly && state !== "open") {
+      results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
+      processedCount += 1;
+      maybeLogProgress(`skipped comment sync #${number}: already ${state}`);
       if (processedCount >= processedLimit) break;
       continue;
     }
