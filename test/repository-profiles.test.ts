@@ -31,11 +31,24 @@ test("generic OpenClaw fallback supports conservative event-only onboarding", ()
   assert.equal(profile.displayName, "example-tool");
   assert.equal(profile.checkoutDir, "example-tool");
   assert.match(profile.promptNote, /generic OpenClaw onboarding profile/);
+  assert.match(profile.promptNote, /current default branch/);
   assert.deepEqual(profile.applyCloseRules.issue, []);
   assert.deepEqual(profile.applyCloseRules.pull_request, [
     "implemented_on_main",
     "mostly_implemented_on_main",
   ]);
+});
+
+test("generic steipete fallback starts review-only", () => {
+  const profile = repositoryProfileFor("Steipete/example-tool");
+
+  assert.equal(profile.targetRepo, "steipete/example-tool");
+  assert.equal(profile.slug, "steipete-example-tool");
+  assert.equal(profile.displayName, "example-tool");
+  assert.equal(profile.checkoutDir, "example-tool");
+  assert.match(profile.promptNote, /generic personal-repository onboarding profile/);
+  assert.deepEqual(profile.applyCloseRules.issue, []);
+  assert.deepEqual(profile.applyCloseRules.pull_request, []);
 });
 
 test("generic OpenClaw fallback keeps denied repositories unsupported", () => {
@@ -45,7 +58,7 @@ test("generic OpenClaw fallback keeps denied repositories unsupported", () => {
   );
 });
 
-test("generic fallback does not support repositories outside OpenClaw", () => {
+test("generic fallback does not support repositories outside configured owners", () => {
   assert.throws(
     () => repositoryProfileFor("other-org/example-tool"),
     /Unsupported target repo: other-org\/example-tool/,

@@ -1,10 +1,10 @@
 name: ClawSweeper
 
-run-name: ${{ github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'Audit ClawSweeper state' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
+run-name: ${{ (github.event_name == 'schedule' && (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')) && 'Fan out ClawSweeper targets' || (github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_target_sweep' && github.event.client_payload.hot_intake == 'true') && format('Review hot target repo {0}', github.event.client_payload.target_repo || 'openclaw/openclaw') || (github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_target_sweep') && format('Review target repo {0}', github.event.client_payload.target_repo || 'openclaw/openclaw') || github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'Audit ClawSweeper state' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
 
 on:
   repository_dispatch:
-    types: [clawsweeper_item, clawsweeper_hatch]
+    types: [clawsweeper_item, clawsweeper_hatch, clawsweeper_target_sweep]
   workflow_dispatch:
     inputs:
       target_repo:
@@ -122,6 +122,9 @@ on:
     - cron: "48 * * * *"
     - cron: "8,23,38,53 * * * *"
     - cron: "6,21,36,51 * * * *"
+    - cron: "4/15 * * * *"
+    - cron: "41 * * * *"
+    - cron: "37 */6 * * *"
 
 permissions:
   contents: write
@@ -134,7 +137,7 @@ env:
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
 
 concurrency:
-  group: ${{ github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '')) && format('clawsweeper-intake-exact-{0}', github.event.inputs.item_number || github.event.inputs.item_numbers) || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake-v2' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '17 */6 * * *') && 'openclaw/clawsweeper' || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw'))) }}
+  group: ${{ (github.event_name == 'schedule' && (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')) && format('clawsweeper-target-fanout-{0}', github.event.schedule || github.run_id) || github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '')) && format('clawsweeper-intake-exact-{0}', github.event.inputs.item_number || github.event.inputs.item_numbers) || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake-v2' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '17 */6 * * *') && 'openclaw/clawsweeper' || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw'))) }}
   cancel-in-progress: ${{ github.event_name == 'repository_dispatch' }}
 
 jobs:
@@ -150,7 +153,7 @@ jobs:
 
   event-review-apply:
     name: Review, comment, and apply event item
-    if: ${{ github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_hatch' && !(github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
+    if: ${{ github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_hatch' && github.event.action != 'clawsweeper_target_sweep' && !(github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
@@ -170,10 +173,15 @@ jobs:
         run: |
           set -euo pipefail
           target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
+          target_branch="${{ github.event.client_payload.target_branch || 'main' }}"
           item_number="${{ github.event.client_payload.item_number || '' }}"
           item_kind="${{ github.event.client_payload.item_kind || '' }}"
           if ! printf '%s' "$target_repo" | grep -Eq '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'; then
             echo "Invalid target_repo: $target_repo" >&2
+            exit 1
+          fi
+          if ! printf '%s' "$target_branch" | grep -Eq '^[A-Za-z0-9_.\/-]+$'; then
+            echo "Invalid target_branch: $target_branch" >&2
             exit 1
           fi
           if ! printf '%s' "$item_number" | grep -Eq '^[0-9]+$'; then
@@ -197,6 +205,7 @@ jobs:
             echo "target_repo=$target_repo"
             echo "target_repo_owner=$target_owner"
             echo "target_repo_name=$target_name"
+            echo "target_branch=$target_branch"
             echo "target_checkout_dir=$target_checkout_dir"
             echo "item_number=$item_number"
           } >> "$GITHUB_OUTPUT"
@@ -300,28 +309,29 @@ jobs:
           url="https://github.com/${{ steps.target.outputs.target_repo }}.git"
           cache_dir="${{ steps.target.outputs.target_checkout_dir }}-cache.git"
           checkout_dir="${{ steps.target.outputs.target_checkout_dir }}"
+          target_branch="${{ steps.target.outputs.target_branch }}"
           if [ -d "$cache_dir" ]; then
             git -C "$cache_dir" remote set-url origin "$url"
             git -C "$cache_dir" config remote.origin.promisor true
             git -C "$cache_dir" config remote.origin.partialclonefilter blob:none
             if [ -f "$cache_dir/shallow" ]; then
-              cache_fetch=(git -C "$cache_dir" fetch --prune --unshallow --filter=blob:none origin main)
+              cache_fetch=(git -C "$cache_dir" fetch --prune --unshallow --filter=blob:none origin "$target_branch")
             else
-              cache_fetch=(git -C "$cache_dir" fetch --prune --filter=blob:none origin main)
+              cache_fetch=(git -C "$cache_dir" fetch --prune --filter=blob:none origin "$target_branch")
             fi
             if ! "${cache_fetch[@]}"; then
               echo "::warning::Cached target repository fetch failed; rebuilding cache."
               rm -rf "$cache_dir"
-              git clone --bare --filter=blob:none --single-branch --branch main "$url" "$cache_dir"
+              git clone --bare --filter=blob:none --single-branch --branch "$target_branch" "$url" "$cache_dir"
             fi
           else
-            git clone --bare --filter=blob:none --single-branch --branch main "$url" "$cache_dir"
+            git clone --bare --filter=blob:none --single-branch --branch "$target_branch" "$url" "$cache_dir"
           fi
-          if ! git clone --reference-if-able "$cache_dir" --dissociate --filter=blob:none --branch main --single-branch "$url" "$checkout_dir"; then
+          if ! git clone --reference-if-able "$cache_dir" --dissociate --filter=blob:none --branch "$target_branch" --single-branch "$url" "$checkout_dir"; then
             echo "::warning::Cached target checkout failed; retrying without cache reference."
             rm -rf "$checkout_dir" "$cache_dir"
-            git clone --bare --filter=blob:none --single-branch --branch main "$url" "$cache_dir"
-            git clone --filter=blob:none --branch main --single-branch "$url" "$checkout_dir"
+            git clone --bare --filter=blob:none --single-branch --branch "$target_branch" "$url" "$cache_dir"
+            git clone --filter=blob:none --branch "$target_branch" --single-branch "$url" "$checkout_dir"
           fi
           git -C "$checkout_dir" rev-parse --short HEAD
 
@@ -543,9 +553,80 @@ jobs:
           add_completion_reaction
           remove_own_eyes_reactions
 
+  target-fanout:
+    name: Fan out target repository sweeps
+    if: ${{ github.event_name == 'schedule' && (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          filter: blob:none
+          fetch-depth: 0
+
+      - name: Create state token
+        id: state-token
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+
+      - uses: ./.github/actions/setup-pnpm
+        with:
+          build-script: build:repair
+
+      - name: Create OpenClaw inventory token
+        id: openclaw-token
+        continue-on-error: true
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+
+      - name: Create steipete inventory token
+        id: steipete-token
+        continue-on-error: true
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: steipete
+
+      - name: Dispatch selected targets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLAWSWEEPER_DISPATCH_TOKEN: ${{ github.token }}
+          CLAWSWEEPER_INVENTORY_TOKEN_OPENCLAW: ${{ steps.openclaw-token.outputs.token }}
+          CLAWSWEEPER_INVENTORY_TOKEN_STEIPETE: ${{ steps.steipete-token.outputs.token }}
+          FANOUT_MODE: ${{ github.event.schedule == '41 * * * *' && 'normal-review' || (github.event.schedule == '37 */6 * * *' && 'audit' || 'hot-intake') }}
+          FANOUT_LIMIT: ${{ github.event.schedule == '41 * * * *' && '6' || (github.event.schedule == '37 */6 * * *' && '12' || '10') }}
+        run: |
+          set -euo pipefail
+          pnpm run target-fanout -- \
+            --mode "$FANOUT_MODE" \
+            --limit "$FANOUT_LIMIT" \
+            --repo "$GITHUB_REPOSITORY" \
+            --workflow sweep.yml \
+            --ref main
+
+      - name: Publish fanout cursor
+        run: |
+          pnpm run repair:publish-main -- \
+            --message "chore: update target fanout cursor" \
+            --path results/target-fanout-cursors \
+            --rebase-strategy theirs
+
   plan:
     name: Plan review candidates
-    if: ${{ github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '6,21,36,51 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *')))) && !(github.event_name == 'schedule' && (github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *') && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
+    if: ${{ (github.event_name != 'repository_dispatch' || github.event.action == 'clawsweeper_target_sweep') && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '6,21,36,51 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *') || (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')))) && !(github.event_name == 'schedule' && (github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *') && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') && !(github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -566,6 +647,7 @@ jobs:
       capacity_reason: ${{ steps.select.outputs.capacity_reason }}
       shard_count: ${{ steps.mode.outputs.shard_count }}
       target_checkout_dir: ${{ steps.target.outputs.target_checkout_dir }}
+      target_branch: ${{ steps.target.outputs.target_branch }}
       target_repo: ${{ steps.target.outputs.target_repo }}
       target_repo_name: ${{ steps.target.outputs.target_repo_name }}
       target_repo_owner: ${{ steps.target.outputs.target_repo_owner }}
@@ -580,6 +662,7 @@ jobs:
         id: target
         run: |
           target_repo="${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || '' }}"
+          target_branch="${{ github.event.client_payload.target_branch || 'main' }}"
           if [ -z "$target_repo" ]; then
             case "${{ github.event.schedule || '' }}" in
               "2/5 * * * *"|"22 * * * *"|"8,23,38,53 * * * *"|"12 */6 * * *")
@@ -587,8 +670,12 @@ jobs:
                 ;;
               *)
                 target_repo="openclaw/openclaw"
-                ;;
+              ;;
             esac
+          fi
+          if ! printf '%s' "$target_branch" | grep -Eq '^[A-Za-z0-9_.\/-]+$'; then
+            echo "Invalid target_branch: $target_branch" >&2
+            exit 1
           fi
           target_owner="${target_repo%%/*}"
           target_name="${target_repo#*/}"
@@ -600,6 +687,7 @@ jobs:
             echo "target_repo=$target_repo"
             echo "target_repo_owner=$target_owner"
             echo "target_repo_name=$target_name"
+            echo "target_branch=$target_branch"
             echo "target_checkout_dir=$target_checkout_dir"
           } >> "$GITHUB_OUTPUT"
 
@@ -692,7 +780,7 @@ jobs:
             local runs total id title status active_shards
             total=0
             runs="$(printf '%s' "$ACTIVE_RUNS_JSON" \
-              | CURRENT_RUN_ID="${GITHUB_RUN_ID:-0}" STALE_QUEUED_CUTOFF="$STALE_QUEUED_CUTOFF" jq -r '.[] | select((.databaseId | tostring) != env.CURRENT_RUN_ID) | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or ((.status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and ((.updatedAt // .createdAt // "") >= env.STALE_QUEUED_CUTOFF))) | select(.displayTitle == "Review ClawSweeper items" or .displayTitle == "Review hot ClawSweeper items") | [.databaseId, .displayTitle, .status] | @tsv' 2>/dev/null || true)"
+              | CURRENT_RUN_ID="${GITHUB_RUN_ID:-0}" STALE_QUEUED_CUTOFF="$STALE_QUEUED_CUTOFF" jq -r '.[] | select((.databaseId | tostring) != env.CURRENT_RUN_ID) | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or ((.status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and ((.updatedAt // .createdAt // "") >= env.STALE_QUEUED_CUTOFF))) | select(.displayTitle == "Review ClawSweeper items" or .displayTitle == "Review hot ClawSweeper items" or (.displayTitle | startswith("Review target repo ")) or (.displayTitle | startswith("Review hot target repo "))) | [.databaseId, .displayTitle, .status] | @tsv' 2>/dev/null || true)"
             while IFS=$'\t' read -r id title status; do
               if [ -z "$id" ]; then
                 continue
@@ -710,7 +798,7 @@ jobs:
               # created shard jobs yet. Reserve their quiet lane size so a second
               # planner cannot over-allocate before the first matrix expands.
               if [ "$active_shards" -lt 1 ]; then
-                if [ "$title" = "Review hot ClawSweeper items" ]; then
+                if [ "$title" = "Review hot ClawSweeper items" ] || [[ "$title" == Review\ hot\ target\ repo\ * ]]; then
                   active_shards="$(limit review_shards.hot_intake_default)"
                 else
                   active_shards="$(limit review_shards.normal_default)"
@@ -728,7 +816,7 @@ jobs:
           active_background_workers="$(( $(active_run_count "ClawSweeper Commit Review") * commit_page_size + $(active_sweep_background_workers) ))"
           hot_intake_shards="$(worker_limit hot_intake --active-critical "$active_critical_workers" --active-background "$active_background_workers")"
           normal_shards="$(worker_limit normal_review --active-critical "$active_critical_workers" --active-background "$active_background_workers")"
-          hot_intake="${{ ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'true' || 'false' }}"
+          hot_intake="${{ ((github.event_name == 'repository_dispatch' && github.event.client_payload.hot_intake == 'true') || (github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'true' || 'false' }}"
           exact_item="${{ github.event.client_payload.item_number || github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}"
           target_repo="${{ steps.target.outputs.target_repo }}"
           if [ "$hot_intake" = "true" ] && [ -n "$exact_item" ]; then
@@ -737,7 +825,10 @@ jobs:
             max_pages="1"
           elif [ "$hot_intake" = "true" ]; then
             batch_size="1"
-            shard_count="$hot_intake_shards"
+            shard_count="${{ github.event.client_payload.shard_count || '' }}"
+            if [ -z "$shard_count" ]; then
+              shard_count="$hot_intake_shards"
+            fi
             max_pages="10"
             min_active_shards="0"
             min_backfill_review_age_minutes="360"
@@ -745,14 +836,14 @@ jobs:
             if [ "${{ github.event_name }}" = "schedule" ]; then
               batch_size="1"
             else
-              batch_size="${{ github.event.inputs.batch_size || '3' }}"
+              batch_size="${{ github.event.client_payload.batch_size || github.event.inputs.batch_size || '3' }}"
             fi
             if [ "$target_repo" = "openclaw/openclaw" ]; then
               min_active_shards="$normal_active_floor"
             else
               min_active_shards="0"
             fi
-            shard_count="${{ github.event.inputs.shard_count || '' }}"
+            shard_count="${{ github.event.client_payload.shard_count || github.event.inputs.shard_count || '' }}"
             if [ -z "$shard_count" ]; then
               shard_count="$normal_shards"
             fi
@@ -784,7 +875,7 @@ jobs:
           fi
           {
             echo "batch_size=$batch_size"
-            echo "codex_timeout_ms=${{ github.event.inputs.codex_timeout_ms || '600000' }}"
+            echo "codex_timeout_ms=${{ github.event.client_payload.codex_timeout_ms || github.event.inputs.codex_timeout_ms || '600000' }}"
             echo "hot_intake=$hot_intake"
             echo "max_pages=$max_pages"
             echo "min_active_shards=$min_active_shards"
@@ -939,28 +1030,29 @@ jobs:
           url="https://github.com/${{ needs.plan.outputs.target_repo }}.git"
           cache_dir="${{ needs.plan.outputs.target_checkout_dir }}-cache.git"
           checkout_dir="${{ needs.plan.outputs.target_checkout_dir }}"
+          target_branch="${{ needs.plan.outputs.target_branch }}"
           if [ -d "$cache_dir" ]; then
             git -C "$cache_dir" remote set-url origin "$url"
             git -C "$cache_dir" config remote.origin.promisor true
             git -C "$cache_dir" config remote.origin.partialclonefilter blob:none
             if [ -f "$cache_dir/shallow" ]; then
-              cache_fetch=(git -C "$cache_dir" fetch --prune --unshallow --filter=blob:none origin main)
+              cache_fetch=(git -C "$cache_dir" fetch --prune --unshallow --filter=blob:none origin "$target_branch")
             else
-              cache_fetch=(git -C "$cache_dir" fetch --prune --filter=blob:none origin main)
+              cache_fetch=(git -C "$cache_dir" fetch --prune --filter=blob:none origin "$target_branch")
             fi
             if ! "${cache_fetch[@]}"; then
               echo "::warning::Cached target repository fetch failed; rebuilding cache."
               rm -rf "$cache_dir"
-              git clone --bare --filter=blob:none --single-branch --branch main "$url" "$cache_dir"
+              git clone --bare --filter=blob:none --single-branch --branch "$target_branch" "$url" "$cache_dir"
             fi
           else
-            git clone --bare --filter=blob:none --single-branch --branch main "$url" "$cache_dir"
+            git clone --bare --filter=blob:none --single-branch --branch "$target_branch" "$url" "$cache_dir"
           fi
-          if ! git clone --reference-if-able "$cache_dir" --dissociate --filter=blob:none --branch main --single-branch "$url" "$checkout_dir"; then
+          if ! git clone --reference-if-able "$cache_dir" --dissociate --filter=blob:none --branch "$target_branch" --single-branch "$url" "$checkout_dir"; then
             echo "::warning::Cached target checkout failed; retrying without cache reference."
             rm -rf "$checkout_dir" "$cache_dir"
-            git clone --bare --filter=blob:none --single-branch --branch main "$url" "$cache_dir"
-            git clone --filter=blob:none --branch main --single-branch "$url" "$checkout_dir"
+            git clone --bare --filter=blob:none --single-branch --branch "$target_branch" "$url" "$cache_dir"
+            git clone --filter=blob:none --branch "$target_branch" --single-branch "$url" "$checkout_dir"
           fi
           git -C "$checkout_dir" rev-parse --short HEAD
 
@@ -1073,7 +1165,7 @@ jobs:
   publish:
     name: Publish review artifacts
     needs: [plan, review]
-    if: ${{ always() && needs.plan.result == 'success' && needs.review.result != 'cancelled' && needs.plan.outputs.target_repo != '' && github.event_name != 'repository_dispatch' && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '6,21,36,51 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *')))) }}
+    if: ${{ always() && needs.plan.result == 'success' && needs.review.result != 'cancelled' && needs.plan.outputs.target_repo != '' && (github.event_name != 'repository_dispatch' || github.event.action == 'clawsweeper_target_sweep') && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '6,21,36,51 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *')))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -1128,7 +1220,7 @@ jobs:
       - name: Apply review artifacts
         env:
           GH_TOKEN: ${{ github.token }}
-          EXACT_ITEM: ${{ github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}
+          EXACT_ITEM: ${{ github.event.client_payload.item_number || github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}
           HOT_INTAKE: ${{ needs.plan.outputs.hot_intake }}
           MAX_PAGES: ${{ needs.plan.outputs.max_pages }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
@@ -1160,7 +1252,7 @@ jobs:
 
       - name: Commit review records
         env:
-          EXACT_ITEM: ${{ github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}
+          EXACT_ITEM: ${{ github.event.client_payload.item_number || github.event.inputs.item_number || github.event.inputs.item_numbers || '' }}
           GH_TOKEN: ${{ github.token }}
           HOT_INTAKE: ${{ needs.plan.outputs.hot_intake }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
@@ -1231,7 +1323,7 @@ jobs:
           done < /tmp/issue-implementation-candidates.tsv
 
       - name: Dispatch background review comment sync
-        if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && github.event_name != 'repository_dispatch' && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
+        if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && (github.event_name != 'repository_dispatch' || github.event.action == 'clawsweeper_target_sweep') && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
@@ -1260,7 +1352,7 @@ jobs:
           echo "::warning::Unable to dispatch background comment sync after three attempts; apply/comment-sync backstops can pick it up later."
 
       - name: Sync selected review comments
-        if: ${{ success() && (github.event_name == 'repository_dispatch' || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
+        if: ${{ success() && ((github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_target_sweep') || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
         timeout-minutes: 15
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
@@ -1365,7 +1457,7 @@ jobs:
             --rebase-strategy theirs
 
       - name: Continue sweep
-        if: ${{ success() && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
+        if: ${{ success() && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && github.event_name != 'repository_dispatch' && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

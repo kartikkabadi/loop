@@ -7,29 +7,31 @@ failures.
 ClawSweeper has two target-repository paths:
 
 - configured dashboard targets in `config/target-repositories.json`
-- a conservative generic fallback for exact event/manual reviews of
-  `openclaw/*` repositories
+- conservative generic fallbacks for exact event/manual reviews of configured
+  owner inventories such as `openclaw/*` and `steipete/*`
 
 `openclaw/openclaw` remains a built-in profile because it has broader
 auto-close policy. Other configured targets default to safer repo-local rules:
 issues are review/comment-only, and PRs may auto-close only when the same
 change is certainly already implemented on `main`.
 
-## Generic OpenClaw Fallback
+## Generic Fallbacks
 
-The fallback lets a newly installed OpenClaw repo dispatch to ClawSweeper
+The fallback lets a newly installed repository dispatch to ClawSweeper
 without a TypeScript change. It is intentionally narrow:
 
-- owner must be `openclaw`
+- owner must be listed in `generic_fallbacks`
 - repo name must match `allow_repo_name_pattern`
 - denied repositories are rejected
-- issues cannot be auto-closed
-- PRs can auto-close only for `implemented_on_main` or age-gated
-  `mostly_implemented_on_main`
-- scheduled dashboard/backfill rows are not added automatically
+- scheduled fanout is public-only unless a private state publication path exists
+- auto-close policy comes from that owner fallback
+- `openclaw/*` issues cannot be auto-closed; PRs can auto-close only for
+  `implemented_on_main` or age-gated `mostly_implemented_on_main`
+- `steipete/*` starts review/comment-only for issues and PRs
+- scheduled dashboard/backfill rows are added only through target fanout
 
 This is enough for event-driven review after the target repo has the dispatcher
-workflow and GitHub App installation. It is not a blanket scheduled rollout.
+workflow and GitHub App installation.
 
 ## Add One Repository
 
@@ -51,13 +53,19 @@ reason to allow broader issue closes.
 
 ## Add Many Repositories
 
-Batch rollout should be incremental:
+Batch rollout should use target fanout:
 
 - install the app and dispatcher on a small group first
-- leave scheduled backfill off
+- leave auto-close disabled unless the owner/repo profile explicitly enables it
 - verify event review/comment sync on one issue or PR per repo
-- add config entries for repos that should show in the dashboard
-- enable scheduled backfill/apply only after repo-specific safety rules exist
+- use `pnpm run target-fanout -- plan --mode hot-intake --limit 10 --dry-run`
+  to inspect the current owner inventory and selected dispatch commands
+- let the scheduled fanout cursor dispatch small batches across
+  `target_inventory.owners`
+- fanout passes each repository's default branch as `target_branch`, so repos
+  that use `master` or another branch do not fall back to `main`
+- add config entries only for repos that need repo-specific guidance or broader
+  close policy
 
 If a target dispatch reaches ClawSweeper but receiver token creation fails, the
 App is usually not installed on that target repo. If the target workflow skips

@@ -8705,7 +8705,7 @@ test("manual exact-item review dispatches avoid broad review concurrency", () =>
 test("sweep workflow requires hatch command dispatch provenance for PR egg images", () => {
   const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
 
-  assert.match(workflow, /types: \[clawsweeper_item, clawsweeper_hatch\]/);
+  assert.match(workflow, /types: \[clawsweeper_item, clawsweeper_hatch[^\]]*\]/);
   assert.doesNotMatch(workflow, /^\s+hatch_pr_egg_image:\s*$/m);
   assert.match(
     workflow,
@@ -8757,9 +8757,90 @@ test("sweep target checkouts retry without cached references", () => {
     assert.match(block, /rm -rf "\$checkout_dir" "\$cache_dir"/);
     assert.match(
       block,
-      /git clone --filter=blob:none --branch main --single-branch "\$url" "\$checkout_dir"/,
+      /git clone --filter=blob:none --branch "\$target_branch" --single-branch "\$url" "\$checkout_dir"/,
     );
   }
+});
+
+test("target sweep runs count as background review capacity", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const capacityBlock = workflow.slice(
+    workflow.indexOf("active_sweep_background_workers()"),
+    workflow.indexOf(
+      'active_critical_workers="$',
+      workflow.indexOf("active_sweep_background_workers()"),
+    ),
+  );
+
+  assert.match(workflow, /Review hot target repo/);
+  assert.match(capacityBlock, /startswith\("Review target repo "\)/);
+  assert.match(capacityBlock, /startswith\("Review hot target repo "\)/);
+  assert.match(capacityBlock, /Review\\ hot\\ target\\ repo/);
+});
+
+test("target hot sweep dispatches honor shard cap payload", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const modeBlock = workflow.slice(
+    workflow.indexOf("- id: mode"),
+    workflow.indexOf("\n      - id: select"),
+  );
+
+  assert.match(modeBlock, /elif \[ "\$hot_intake" = "true" \]; then/);
+  assert.match(
+    modeBlock,
+    /shard_count="\$\{\{ github\.event\.client_payload\.shard_count \|\| '' \}\}"/,
+  );
+  assert.match(modeBlock, /shard_count="\$hot_intake_shards"/);
+});
+
+test("review git info follows checked-out target branch", () => {
+  const source = readFileSync("src/clawsweeper.ts", "utf8");
+
+  assert.match(source, /function reviewTargetBranch/);
+  assert.match(source, /rev-parse", "--abbrev-ref", "HEAD"/);
+  assert.match(source, /refs\/remotes\/origin\/\$\{targetBranch\}/);
+});
+
+test("sweep workflow_dispatch input count stays under GitHub limit", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const inputBlock = workflow.slice(
+    workflow.indexOf("  workflow_dispatch:\n    inputs:"),
+    workflow.indexOf("\n  schedule:"),
+  );
+  const inputNames = [...inputBlock.matchAll(/^      [A-Za-z0-9_]+:/gm)];
+
+  assert.ok(inputNames.length <= 25, `workflow_dispatch has ${inputNames.length} inputs`);
+});
+
+test("sweep review continuations stay workflow-dispatch compatible", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const continueBlock = workflow.slice(
+    workflow.indexOf("- name: Continue sweep"),
+    workflow.indexOf("\n\n  recover-review-failures:"),
+  );
+  const recoveryBlock = workflow.slice(
+    workflow.indexOf("args=(\n            workflow run sweep.yml"),
+    workflow.indexOf("\n\n  audit-dashboard:"),
+  );
+
+  for (const block of [continueBlock, recoveryBlock]) {
+    assert.match(block, /-f target_repo="\$\{\{ needs\.plan\.outputs\.target_repo \}\}"/);
+    assert.doesNotMatch(block, /-f target_branch=/);
+  }
+});
+
+test("target sweep dispatches preserve disabled ClawHub guard", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const planHeader = workflow.slice(
+    workflow.indexOf("\n  plan:"),
+    workflow.indexOf("\n    runs-on:", workflow.indexOf("\n  plan:")),
+  );
+
+  assert.match(planHeader, /github\.event\.action == 'clawsweeper_target_sweep'/);
+  assert.match(
+    planHeader,
+    /github\.event_name == 'repository_dispatch' && github\.event\.client_payload\.target_repo == 'openclaw\/clawhub' && vars\.CLAWSWEEPER_ENABLE_CLAWHUB != '1'/,
+  );
 });
 
 test("sweep planning-started status publish is bounded", () => {

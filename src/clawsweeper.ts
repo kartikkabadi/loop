@@ -4433,8 +4433,17 @@ function collectItemContext(
 }
 
 function gitInfo(openclawDir: string): GitInfo {
-  run("git", ["fetch", "origin", "main", "--depth=50"], { cwd: openclawDir });
-  const mainSha = run("git", ["rev-parse", "origin/main"], { cwd: openclawDir });
+  const targetBranch = reviewTargetBranch(openclawDir);
+  run(
+    "git",
+    ["fetch", "origin", `${targetBranch}:refs/remotes/origin/${targetBranch}`, "--depth=50"],
+    {
+      cwd: openclawDir,
+    },
+  );
+  const mainSha = run("git", ["rev-parse", `refs/remotes/origin/${targetBranch}`], {
+    cwd: openclawDir,
+  });
   let latestRelease: LatestRelease | null = null;
   try {
     latestRelease = ghJson<LatestRelease>([
@@ -4459,6 +4468,12 @@ function gitInfo(openclawDir: string): GitInfo {
     }
   }
   return { mainSha, latestRelease };
+}
+
+function reviewTargetBranch(openclawDir: string): string {
+  const branch = run("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: openclawDir });
+  if (/^[A-Za-z0-9_./-]+$/.test(branch) && branch !== "HEAD") return branch;
+  return "main";
 }
 
 export function reviewPromptTemplate(): string {

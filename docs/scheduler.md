@@ -90,18 +90,29 @@ group, so targeted maintainer checks do not wait behind broad normal backfill.
 - issues are review/comment-only; PRs may auto-close only when already
   implemented on `main`
 
-Other `openclaw/*` repositories:
+Generic `openclaw/*` and `steipete/*` repositories:
 
-- exact event/manual review: supported through the generic conservative
-  fallback after the target dispatcher and GitHub App installation are present
-- scheduled review/apply/audit: not enabled automatically
-- issues are review/comment-only; PRs may auto-close only when already
-  implemented on `main`
+- exact event/manual review: supported through configured generic fallbacks after
+  the target dispatcher and GitHub App installation are present
+- scheduled review/audit: target fanout dispatches small cursor-based batches
+  from `target_inventory.owners`
+- generic OpenClaw issues are review/comment-only; generic OpenClaw PRs may
+  auto-close only when already implemented on the default branch or age-gated
+  mostly implemented there
+- generic `steipete/*` repositories are review/comment-only for issues and PRs
 
 Manual `workflow_dispatch` can override `target_repo`, `item_number`,
 `item_numbers`, `batch_size`, `shard_count`, `hot_intake`, and apply inputs.
 Exact item dispatches use a dedicated concurrency group and exact planner
 matrix rather than the broad normal-review queue.
+
+Target fanout dispatches review batches through `repository_dispatch` so each
+selected repository can carry its inventory default branch without consuming
+manual workflow inputs. Scheduled fanout uses:
+
+- hot intake: `4/15 * * * *`, 10 target repositories per cursor step
+- normal review: `41 * * * *`, 6 target repositories per cursor step
+- audit: `37 */6 * * *`, 12 target repositories per cursor step
 
 Exact event review also starts Codex before generated-state hydration. The
 single-item review only needs the target repository and live GitHub item state;
@@ -523,3 +534,9 @@ logic in `src/clawsweeper.ts`, then update dashboard labels and this document.
 To add a new target repository, add a repository profile, wire schedule target
 resolution and concurrency target resolution in `.github/workflows/sweep.yml`,
 then confirm the generated state paths remain flat under one repo slug.
+
+To add a new generic owner, add a `generic_fallbacks` entry and include that
+owner in `target_inventory.owners`; target fanout will dispatch explicit
+per-repository runs without adding owner-specific cron case blocks. Keep
+scheduled fanout public-only unless the generated records publish to a private
+state surface.

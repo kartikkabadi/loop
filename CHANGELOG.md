@@ -43,6 +43,7 @@ checkpoint, and status-only commits are intentionally omitted.
   and linked them from the dashboard work-candidate tables. Thanks @FerFroid.
 - Added a generated 1200x630 social preview card plus large-image Open Graph and
   Twitter metadata for the docs site.
+- Added target fanout so ClawSweeper can dispatch conservative scheduled review and audit batches across eligible `openclaw/*` and `steipete/*` repositories.
 
 ### Fixed
 

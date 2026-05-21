@@ -26,9 +26,9 @@ export interface RepositoryProfile {
 }
 
 interface TargetRepositoryConfig {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   repositories: readonly ConfiguredRepositoryProfile[];
-  openclawFallback?: OpenClawFallbackConfig;
+  genericFallbacks: readonly GenericFallbackConfig[];
 }
 
 interface ConfiguredRepositoryProfile {
@@ -41,7 +41,7 @@ interface ConfiguredRepositoryProfile {
   applyCloseRules: Partial<Record<RepositoryItemKind, readonly RepositoryCloseReason[]>>;
 }
 
-interface OpenClawFallbackConfig {
+interface GenericFallbackConfig {
   owner: string;
   denyRepositories: readonly string[];
   allowRepoNamePattern: RegExp;
@@ -99,7 +99,7 @@ export function repositoryProfileFor(targetRepo: string): RepositoryProfile {
   if (fallback) return fallback;
 
   throw new Error(
-    `Unsupported target repo: ${targetRepo}. Known repos: ${REPOSITORY_PROFILES.map((candidate) => candidate.targetRepo).join(", ")}. Generic fallback: ${fallbackDescription()}`,
+    `Unsupported target repo: ${targetRepo}. Known repos: ${REPOSITORY_PROFILES.map((candidate) => candidate.targetRepo).join(", ")}. Generic fallbacks: ${fallbackDescription()}`,
   );
 }
 
@@ -135,11 +135,13 @@ function configuredRepositoryProfile(profile: ConfiguredRepositoryProfile): Repo
 }
 
 function fallbackRepositoryProfile(normalizedTargetRepo: string): RepositoryProfile | undefined {
-  const fallback = TARGET_REPOSITORY_CONFIG.openclawFallback;
-  if (!fallback) return undefined;
-
   const [owner, repoName] = normalizedTargetRepo.split("/");
-  if (!owner || !repoName || owner !== fallback.owner) return undefined;
+  if (!owner || !repoName) return undefined;
+
+  const fallback = TARGET_REPOSITORY_CONFIG.genericFallbacks.find(
+    (candidate) => candidate.owner === owner,
+  );
+  if (!fallback) return undefined;
   if (fallback.denyRepositories.includes(normalizedTargetRepo)) return undefined;
   if (!fallback.allowRepoNamePattern.test(repoName)) return undefined;
 
@@ -156,11 +158,16 @@ function fallbackRepositoryProfile(normalizedTargetRepo: string): RepositoryProf
 }
 
 function fallbackDescription(): string {
-  const fallback = TARGET_REPOSITORY_CONFIG.openclawFallback;
-  if (!fallback) return "disabled";
-  const denied =
-    fallback.denyRepositories.length === 0 ? "" : ` except ${fallback.denyRepositories.join(", ")}`;
-  return `${fallback.owner}/*${denied}`;
+  if (TARGET_REPOSITORY_CONFIG.genericFallbacks.length === 0) return "disabled";
+  return TARGET_REPOSITORY_CONFIG.genericFallbacks
+    .map((fallback) => {
+      const denied =
+        fallback.denyRepositories.length === 0
+          ? ""
+          : ` except ${fallback.denyRepositories.join(", ")}`;
+      return `${fallback.owner}/*${denied}`;
+    })
+    .join(", ");
 }
 
 function slugForRepo(targetRepo: string): string {
@@ -170,7 +177,7 @@ function slugForRepo(targetRepo: string): string {
 function readTargetRepositoryConfig(
   filePath = join(repoRoot(), "config", "target-repositories.json"),
 ): TargetRepositoryConfig {
-  if (!existsSync(filePath)) return { schemaVersion: 1, repositories: [] };
+  if (!existsSync(filePath)) return { schemaVersion: 1, repositories: [], genericFallbacks: [] };
   const parsed = JSON.parse(readFileSync(filePath, "utf8")) as unknown;
   return validateTargetRepositoryConfig(parsed);
 }
@@ -178,14 +185,27 @@ function readTargetRepositoryConfig(
 function validateTargetRepositoryConfig(value: unknown): TargetRepositoryConfig {
   const config = record(value, "target repository config");
   const schemaVersion = numberValue(config.schema_version, "schema_version");
-  if (schemaVersion !== 1)
+  if (schemaVersion !== 1 && schemaVersion !== 2)
     throw new Error(`Unsupported target repository config schema: ${schemaVersion}`);
   const repositories = arrayValue(config.repositories, "repositories").map((entry, index) =>
     validateConfiguredRepositoryProfile(entry, `repositories[${index}]`),
   );
-  const result: TargetRepositoryConfig = { schemaVersion: 1, repositories };
+  const genericFallbacks =
+    config.generic_fallbacks !== undefined
+      ? arrayValue(config.generic_fallbacks, "generic_fallbacks").map((entry, index) =>
+          validateGenericFallbackConfig(entry, `generic_fallbacks[${index}]`),
+        )
+      : [];
+  const result: TargetRepositoryConfig = {
+    schemaVersion: schemaVersion as 1 | 2,
+    repositories,
+    genericFallbacks,
+  };
   if (config.openclaw_fallback !== undefined) {
-    result.openclawFallback = validateOpenClawFallbackConfig(config.openclaw_fallback);
+    result.genericFallbacks = [
+      ...result.genericFallbacks,
+      validateGenericFallbackConfig(config.openclaw_fallback, "openclaw_fallback"),
+    ];
   }
   return result;
 }
@@ -211,26 +231,17 @@ function validateConfiguredRepositoryProfile(
   return result;
 }
 
-function validateOpenClawFallbackConfig(value: unknown): OpenClawFallbackConfig {
-  const fallback = record(value, "openclaw_fallback");
-  const pattern = stringValue(
-    fallback.allow_repo_name_pattern,
-    "openclaw_fallback.allow_repo_name_pattern",
-  );
+function validateGenericFallbackConfig(value: unknown, label: string): GenericFallbackConfig {
+  const fallback = record(value, label);
+  const pattern = stringValue(fallback.allow_repo_name_pattern, `${label}.allow_repo_name_pattern`);
   return {
-    owner: stringValue(fallback.owner, "openclaw_fallback.owner").toLowerCase(),
-    denyRepositories: arrayValue(
-      fallback.deny_repositories,
-      "openclaw_fallback.deny_repositories",
-    ).map((entry, index) =>
-      normalizeRepo(repoValue(entry, `openclaw_fallback.deny_repositories[${index}]`)),
+    owner: stringValue(fallback.owner, `${label}.owner`).toLowerCase(),
+    denyRepositories: arrayValue(fallback.deny_repositories, `${label}.deny_repositories`).map(
+      (entry, index) => normalizeRepo(repoValue(entry, `${label}.deny_repositories[${index}]`)),
     ),
     allowRepoNamePattern: new RegExp(pattern),
-    promptNote: stringValue(fallback.prompt_note, "openclaw_fallback.prompt_note"),
-    applyCloseRules: closeRulesValue(
-      fallback.apply_close_rules,
-      "openclaw_fallback.apply_close_rules",
-    ),
+    promptNote: stringValue(fallback.prompt_note, `${label}.prompt_note`),
+    applyCloseRules: closeRulesValue(fallback.apply_close_rules, `${label}.apply_close_rules`),
   };
 }
 

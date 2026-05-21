@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "repositories": [
     {
       "target_repo": "openclaw/clawhub",
@@ -33,14 +33,34 @@
       }
     }
   ],
-  "openclaw_fallback": {
-    "owner": "openclaw",
-    "deny_repositories": ["openclaw/clawsweeper-state", "openclaw/.github"],
-    "allow_repo_name_pattern": "^[A-Za-z0-9_.-]+$",
-    "prompt_note": "Use the {target_repo} source tree and current main branch. This repository is using the generic OpenClaw onboarding profile, so keep review conservative: issues are review/comment-only, and pull requests may be auto-closed only when the exact change is certainly already implemented on main or age-gated mostly implemented on main.",
-    "apply_close_rules": {
-      "issue": [],
-      "pull_request": ["implemented_on_main", "mostly_implemented_on_main"]
+  "generic_fallbacks": [
+    {
+      "owner": "openclaw",
+      "deny_repositories": ["openclaw/clawsweeper-state", "openclaw/.github"],
+      "allow_repo_name_pattern": "^[A-Za-z0-9_.-]+$",
+      "prompt_note": "Use the {target_repo} source tree and current default branch. This repository is using the generic OpenClaw onboarding profile, so keep review conservative: issues are review/comment-only, and pull requests may be auto-closed only when the exact change is certainly already implemented on the default branch or age-gated mostly implemented there.",
+      "apply_close_rules": {
+        "issue": [],
+        "pull_request": ["implemented_on_main", "mostly_implemented_on_main"]
+      }
+    },
+    {
+      "owner": "steipete",
+      "deny_repositories": [],
+      "allow_repo_name_pattern": "^[A-Za-z0-9_.-]+$",
+      "prompt_note": "Use the {target_repo} source tree and current default branch. This repository is using the generic personal-repository onboarding profile, so review conservatively and do not auto-close issues or pull requests unless a repository-specific profile later enables that policy.",
+      "apply_close_rules": {
+        "issue": [],
+        "pull_request": []
+      }
     }
+  ],
+  "target_inventory": {
+    "owners": ["openclaw", "steipete"],
+    "deny_repositories": ["openclaw/clawsweeper-state", "openclaw/.github"],
+    "include_private": false,
+    "include_archived": false,
+    "include_forks": false,
+    "require_issues": true
   }
 }

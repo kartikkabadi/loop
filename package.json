@@ -56,6 +56,7 @@
     "repair:publish-result": "node dist/repair/publish-result.js",
     "repair:review-results": "node dist/repair/review-results.js",
     "repair:message-samples": "node dist/repair/render-message-samples.js",
+    "target-fanout": "node dist/repair/target-fanout.js",
     "dashboard:deploy": "npx wrangler@4.90.0 deploy --config dashboard/wrangler.toml",
     "dashboard:dev": "npx wrangler@4.90.0 dev --config dashboard/wrangler.toml",
     "dashboard:refresh-ci": "node scripts/dashboard-refresh-ci.mjs",
