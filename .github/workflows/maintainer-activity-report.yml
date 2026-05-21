@@ -82,12 +82,15 @@ jobs:
       - name: Configure Cloudflare Access
         working-directory: maintainers
         env:
-          CLOUDFLARE_API_TOKEN: ${{ env.CLOUDFLARE_API_TOKEN }}
-          CF_API_TOKEN: ${{ env.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_ACCESS_API_TOKEN }}
+          CF_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_ACCESS_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          test -n "${CLOUDFLARE_API_TOKEN:-}"
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "::notice title=Cloudflare Access not configured::Set OPENCLAW_CLOUDFLARE_ACCESS_API_TOKEN with Zero Trust Access write scope to enforce GitHub org login for reports.openclaw.ai."
+            exit 0
+          fi
           node scripts/ensure-cloudflare-maintainer-reports.mjs \
             --domain "$REPORTS_DOMAIN" \
             --project "$REPORTS_PROJECT" \
