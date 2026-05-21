@@ -18,6 +18,11 @@ on:
         required: true
         default: true
         type: boolean
+      comments:
+        description: "Collect issue/PR comments; slower, host cron should normally own this"
+        required: true
+        default: false
+        type: boolean
   schedule:
     - cron: "17 8 * * *"
     - cron: "47 8 * * 1"
@@ -112,7 +117,8 @@ jobs:
             esac
           fi
           node .agents/skills/openclaw-maintainer-activity/scripts/generate-maintainer-activity-history.mjs \
-            --period "$period"
+            --period "$period" \
+            ${{ github.event_name == 'workflow_dispatch' && inputs.comments && '' || '--no-comments' }}
 
       - name: Commit report history
         working-directory: maintainers
