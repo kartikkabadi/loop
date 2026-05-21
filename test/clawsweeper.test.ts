@@ -8652,6 +8652,59 @@ test("review workflow gives Codex a read-only inspection token", () => {
   assert.match(workflow, /CLAWSWEEPER_PROOF_INSPECTION_TOKEN/);
 });
 
+test("sweep target tokens fall back when an org app installation is missing", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const stepBlocks = (name: string) =>
+    workflow
+      .split(`- name: ${name}`)
+      .slice(1)
+      .map((block) => block.split("\n      - ")[0]);
+
+  assert.match(
+    workflow,
+    /CLAWSWEEPER_INVENTORY_TOKEN_STEIPETE: \$\{\{ steps\.steipete-token\.outputs\.token \|\| '__public__' \}\}/,
+  );
+  const openclawInventoryBlocks = stepBlocks("Create OpenClaw inventory token");
+  assert.equal(openclawInventoryBlocks.length, 1);
+  assert.doesNotMatch(openclawInventoryBlocks[0] ?? "", /continue-on-error: true/);
+  for (const name of [
+    "Create target read token",
+    "Create target write token",
+    "Create target review token",
+    "Create target Codex inspection token",
+  ]) {
+    const blocks = stepBlocks(name);
+    assert.ok(blocks.length > 0, `missing workflow step: ${name}`);
+    for (const block of blocks) {
+      assert.match(block, /continue-on-error: true/);
+    }
+  }
+  assert.match(
+    workflow,
+    /GH_TOKEN: \$\{\{ steps\.target-read-token\.outputs\.token \|\| github\.token \}\}/,
+  );
+  assert.match(
+    workflow,
+    /CLAWSWEEPER_PROOF_INSPECTION_TOKEN: \$\{\{ steps\.codex-inspection-token\.outputs\.token \|\| github\.token \}\}/,
+  );
+  assert.ok(
+    workflow.includes(
+      "if: ${{ success() && steps.target-write-token.outputs.token != '' && needs.plan.outputs.hot_intake != 'true'",
+    ),
+  );
+  assert.ok(
+    workflow.includes(
+      "if: ${{ success() && steps.target-write-token.outputs.token != '' && ((github.event_name == 'repository_dispatch'",
+    ),
+  );
+  assert.ok(
+    workflow.includes(
+      "if: ${{ success() && steps.target-write-token.outputs.token != '' && github.event.inputs.apply_after_review == 'true' }}",
+    ),
+  );
+  assert.doesNotMatch(workflow, new RegExp("OPENCLAW_" + "GH_TOKEN"));
+});
+
 test("read-only checkout mode restores file modes and leaves git metadata writable", () => {
   const root = mkdtempSync(tmpPrefix);
   try {

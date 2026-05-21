@@ -212,6 +212,7 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -224,6 +225,7 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -584,7 +586,6 @@ jobs:
 
       - name: Create OpenClaw inventory token
         id: openclaw-token
-        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -605,7 +606,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           CLAWSWEEPER_DISPATCH_TOKEN: ${{ github.token }}
           CLAWSWEEPER_INVENTORY_TOKEN_OPENCLAW: ${{ steps.openclaw-token.outputs.token }}
-          CLAWSWEEPER_INVENTORY_TOKEN_STEIPETE: ${{ steps.steipete-token.outputs.token }}
+          CLAWSWEEPER_INVENTORY_TOKEN_STEIPETE: ${{ steps.steipete-token.outputs.token || '__public__' }}
           FANOUT_MODE: ${{ github.event.schedule == '41 * * * *' && 'normal-review' || (github.event.schedule == '37 */6 * * *' && 'audit' || 'hot-intake') }}
           FANOUT_LIMIT: ${{ github.event.schedule == '41 * * * *' && '6' || (github.event.schedule == '37 */6 * * *' && '12' || '10') }}
         run: |
@@ -693,6 +694,7 @@ jobs:
 
       - name: Create target read token
         id: target-read-token
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -895,7 +897,7 @@ jobs:
           MIN_ACTIVE_SHARDS: ${{ steps.mode.outputs.min_active_shards }}
           MIN_BACKFILL_REVIEW_AGE_MINUTES: ${{ steps.mode.outputs.min_backfill_review_age_minutes }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
-          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token || github.token }}
         run: |
           set -euo pipefail
           item_arg=()
@@ -978,6 +980,7 @@ jobs:
 
       - name: Create target review token
         id: target-read-token
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -990,6 +993,7 @@ jobs:
 
       - name: Create target Codex inspection token
         id: codex-inspection-token
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -1065,8 +1069,8 @@ jobs:
         continue-on-error: true
         working-directory: clawsweeper
         env:
-          GH_TOKEN: ${{ steps.target-read-token.outputs.token }}
-          CLAWSWEEPER_PROOF_INSPECTION_TOKEN: ${{ steps.codex-inspection-token.outputs.token }}
+          GH_TOKEN: ${{ steps.target-read-token.outputs.token || github.token }}
+          CLAWSWEEPER_PROOF_INSPECTION_TOKEN: ${{ steps.codex-inspection-token.outputs.token || github.token }}
           ADDITIONAL_PROMPT: ${{ github.event.inputs.additional_prompt || github.event.client_payload.additional_prompt || '' }}
         run: |
           hot_intake_arg=()
@@ -1176,6 +1180,7 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
@@ -1323,7 +1328,7 @@ jobs:
           done < /tmp/issue-implementation-candidates.tsv
 
       - name: Dispatch background review comment sync
-        if: ${{ success() && needs.plan.outputs.hot_intake != 'true' && (github.event_name != 'repository_dispatch' || github.event.action == 'clawsweeper_target_sweep') && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
+        if: ${{ success() && steps.target-write-token.outputs.token != '' && needs.plan.outputs.hot_intake != 'true' && (github.event_name != 'repository_dispatch' || github.event.action == 'clawsweeper_target_sweep') && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
@@ -1352,7 +1357,7 @@ jobs:
           echo "::warning::Unable to dispatch background comment sync after three attempts; apply/comment-sync backstops can pick it up later."
 
       - name: Sync selected review comments
-        if: ${{ success() && ((github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_target_sweep') || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
+        if: ${{ success() && steps.target-write-token.outputs.token != '' && ((github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_target_sweep') || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
         timeout-minutes: 15
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
@@ -1402,7 +1407,7 @@ jobs:
             --rebase-strategy theirs
 
       - name: Apply selected safe close proposals
-        if: ${{ success() && github.event.inputs.apply_after_review == 'true' }}
+        if: ${{ success() && steps.target-write-token.outputs.token != '' && github.event.inputs.apply_after_review == 'true' }}
         timeout-minutes: 30
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
@@ -1724,6 +1729,7 @@ jobs:
 
       - name: Create target write token
         id: target-write-token
+        continue-on-error: true
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}

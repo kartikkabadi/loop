@@ -52,6 +52,7 @@ interface FanoutOptions {
 }
 
 const DEFAULT_CURSOR_DIR = join(repoRoot(), "results", "target-fanout-cursors");
+const PUBLIC_INVENTORY_TOKEN = "__public__";
 
 export async function runTargetFanout(argv: string[]): Promise<void> {
   const args = parseArgs(argv);
@@ -300,9 +301,19 @@ function runGh(args: readonly string[], env: NodeJS.ProcessEnv): string {
 function inventoryEnv(owner: string): NodeJS.ProcessEnv | null {
   const key = `CLAWSWEEPER_INVENTORY_TOKEN_${owner.replace(/[^A-Za-z0-9]/g, "_").toUpperCase()}`;
   const token = process.env[key] || process.env.CLAWSWEEPER_INVENTORY_TOKEN;
+  if (token === PUBLIC_INVENTORY_TOKEN) return publicInventoryEnv();
   if (token) return { GH_TOKEN: token, GITHUB_TOKEN: token };
   if (process.env.GITHUB_ACTIONS === "true") return null;
   return { GH_TOKEN: "", GITHUB_TOKEN: "" };
+}
+
+function publicInventoryEnv(): NodeJS.ProcessEnv {
+  const token =
+    process.env.CLAWSWEEPER_PUBLIC_INVENTORY_TOKEN ||
+    process.env.CLAWSWEEPER_DISPATCH_TOKEN ||
+    process.env.GITHUB_TOKEN ||
+    process.env.GH_TOKEN;
+  return token ? { GH_TOKEN: token, GITHUB_TOKEN: token } : {};
 }
 
 function dispatchEnv(): NodeJS.ProcessEnv {

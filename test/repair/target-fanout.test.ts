@@ -102,6 +102,71 @@ process.exit(2);
   );
 });
 
+test("target fanout can use anonymous public inventory in Actions", () => {
+  const dir = mkdtempSync(join(tmpdir(), "clawsweeper-fanout-"));
+  const logPath = join(dir, "gh.log");
+  const cursorPath = join(dir, "cursor.json");
+  const ghPath = join(dir, "gh.js");
+  writeFileSync(
+    ghPath,
+    `#!/usr/bin/env node
+const fs = require("node:fs");
+const args = process.argv.slice(2);
+fs.appendFileSync(${JSON.stringify(logPath)}, JSON.stringify({args, ghToken: process.env.GH_TOKEN || ""}) + "\\n");
+if (args[0] === "repo" && args[1] === "list") {
+  const owner = args[2];
+  const data = owner === "openclaw"
+    ? [{nameWithOwner:"openclaw/B",isArchived:false,isDisabled:false,isFork:false,hasIssuesEnabled:true,visibility:"PUBLIC",defaultBranchRef:{name:"main"}}]
+    : [{nameWithOwner:"steipete/A",isArchived:false,isDisabled:false,isFork:false,hasIssuesEnabled:true,visibility:"PUBLIC",defaultBranchRef:{name:"main"}}];
+  process.stdout.write(JSON.stringify(data));
+  process.exit(0);
+}
+if (args[0] === "api" && args[1].endsWith("/dispatches")) process.exit(0);
+process.exit(2);
+`,
+  );
+  chmodSync(ghPath, 0o755);
+
+  const output = execFileSync(
+    process.execPath,
+    [
+      "dist/repair/target-fanout.js",
+      "--mode",
+      "hot-intake",
+      "--limit",
+      "2",
+      "--cursor-path",
+      cursorPath,
+      "--repo",
+      "openclaw/clawsweeper",
+    ],
+    {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        GITHUB_ACTIONS: "true",
+        GH_BIN: ghPath,
+        CLAWSWEEPER_DISPATCH_TOKEN: "dispatch-token",
+        CLAWSWEEPER_INVENTORY_TOKEN_OPENCLAW: "inventory-openclaw",
+        CLAWSWEEPER_INVENTORY_TOKEN_STEIPETE: "__public__",
+      },
+    },
+  );
+
+  const summary = JSON.parse(output) as { dispatched: string[]; total: number };
+  assert.equal(summary.total, 2);
+  assert.deepEqual(summary.dispatched, ["openclaw/b", "steipete/a"]);
+  const calls = readFileSync(logPath, "utf8")
+    .trim()
+    .split("\n")
+    .map((line) => JSON.parse(line) as { args: string[]; ghToken: string });
+  assert.deepEqual(
+    calls.filter((call) => call.args[0] === "repo").map((call) => call.ghToken),
+    ["inventory-openclaw", "dispatch-token"],
+  );
+});
+
 test("target fanout selection advances cursor with wraparound", () => {
   const repositories = [
     { targetRepo: "openclaw/a", defaultBranch: "main", visibility: "PUBLIC" },
