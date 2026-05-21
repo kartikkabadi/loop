@@ -1,0 +1,176 @@
+name: OpenClaw maintainer activity report
+
+on:
+  workflow_dispatch:
+    inputs:
+      period:
+        description: "Report period to generate"
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - day
+          - week
+          - month
+      deploy:
+        description: "Deploy reports.openclaw.ai"
+        required: true
+        default: true
+        type: boolean
+  schedule:
+    - cron: "17 8 * * *"
+    - cron: "47 8 * * 1"
+    - cron: "17 9 1 * *"
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+  CLOUDFLARE_ACCOUNT_ID: <cloudflare-account-id>
+  CLOUDFLARE_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN || secrets.OPENCLAW_CLOUDFLARE_API_TOKEN }}
+  CF_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN || secrets.OPENCLAW_CLOUDFLARE_API_TOKEN }}
+  REPORTS_DOMAIN: reports.openclaw.ai
+  REPORTS_PROJECT: openclaw-maintainer-reports
+
+concurrency:
+  group: openclaw-maintainer-activity-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    name: Generate and publish maintainer reports
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 45
+    steps:
+      - name: Create maintainer repo token
+        id: maintainers_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: maintainers
+          permission-contents: write
+
+      - name: Create OpenClaw read token
+        id: openclaw_read_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          permission-contents: read
+          permission-issues: read
+          permission-pull-requests: read
+
+      - name: Check out maintainers
+        uses: actions/checkout@v6
+        with:
+          repository: openclaw/maintainers
+          path: maintainers
+          token: ${{ steps.maintainers_token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Configure Cloudflare Access
+        working-directory: maintainers
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ env.CLOUDFLARE_API_TOKEN }}
+          CF_API_TOKEN: ${{ env.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          test -n "${CLOUDFLARE_API_TOKEN:-}"
+          node scripts/ensure-cloudflare-maintainer-reports.mjs \
+            --domain "$REPORTS_DOMAIN" \
+            --project "$REPORTS_PROJECT" \
+            --github-org openclaw
+
+      - name: Generate reports
+        working-directory: maintainers
+        env:
+          GH_TOKEN: ${{ steps.openclaw_read_token.outputs.token }}
+          DISCRAWL_NO_AUTO_UPDATE: "1"
+        run: |
+          set -euo pipefail
+          period="${{ github.event_name == 'workflow_dispatch' && inputs.period || 'day' }}"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            case "${{ github.event.schedule }}" in
+              "47 8 * * 1") period="week" ;;
+              "17 9 1 * *") period="month" ;;
+              *) period="day" ;;
+            esac
+          fi
+          node .agents/skills/openclaw-maintainer-activity/scripts/generate-maintainer-activity-history.mjs \
+            --period "$period"
+
+      - name: Commit report history
+        working-directory: maintainers
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- reports; then
+            echo "No report changes."
+            exit 0
+          fi
+          git config user.name "openclaw-clawsweeper[bot]"
+          git config user.email "openclaw-clawsweeper[bot]@users.noreply.github.com"
+          git add reports
+          git commit -m "chore: publish maintainer activity report"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Deploy reports.openclaw.ai
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.deploy }}
+        working-directory: maintainers
+        run: |
+          set -euo pipefail
+          test -n "${CLOUDFLARE_API_TOKEN:-}"
+          npx wrangler@4.90.0 pages project create "$REPORTS_PROJECT" --production-branch main || true
+          npx wrangler@4.90.0 pages deploy reports \
+            --project-name "$REPORTS_PROJECT" \
+            --branch main \
+            --commit-dirty=true
+
+      - name: Notify maintainers
+        if: ${{ always() }}
+        working-directory: maintainers
+        env:
+          CLAWSWEEPER_OPENCLAW_HOOK_URL: ${{ secrets.CLAWSWEEPER_OPENCLAW_HOOK_URL }}
+          CLAWSWEEPER_OPENCLAW_HOOK_TOKEN: ${{ secrets.CLAWSWEEPER_OPENCLAW_HOOK_TOKEN }}
+          CLAWSWEEPER_OPENCLAW_AGENT_ID: ${{ vars.CLAWSWEEPER_OPENCLAW_AGENT_ID || 'clawsweeper' }}
+          CLAWSWEEPER_DISCORD_TARGET: ${{ vars.CLAWSWEEPER_DISCORD_TARGET || 'channel:1456744319972282449' }}
+        run: |
+          set -euo pipefail
+          latest_json="$(node -e 'const fs=require("fs"); const idx=JSON.parse(fs.readFileSync("reports/index.json","utf8")); process.stdout.write(idx.latest.day ? "reports/" + idx.latest.day.data : "");')"
+          if [ -z "$latest_json" ] || [ ! -f "$latest_json" ]; then
+            echo "No daily report JSON found; skipping notification."
+            exit 0
+          fi
+          message="$(node scripts/maintainer-report-highlights.mjs "$latest_json" "https://${REPORTS_DOMAIN}/day/$(basename "$(dirname "$latest_json")")/")"
+          if [ -z "${CLAWSWEEPER_OPENCLAW_HOOK_URL:-}" ] || [ -z "${CLAWSWEEPER_OPENCLAW_HOOK_TOKEN:-}" ]; then
+            echo "$message"
+            echo "Hook not configured; skipping Discord notification."
+            exit 0
+          fi
+          hook_url="$CLAWSWEEPER_OPENCLAW_HOOK_URL"
+          case "$hook_url" in
+            */hooks) hook_url="$hook_url/agent" ;;
+            */hooks/) hook_url="${hook_url}agent" ;;
+          esac
+          body="$(jq -n \
+            --arg agentId "$CLAWSWEEPER_OPENCLAW_AGENT_ID" \
+            --arg message "$message" \
+            --arg to "$CLAWSWEEPER_DISCORD_TARGET" \
+            --arg key "maintainer-report:${GITHUB_RUN_ID}" \
+            '{agentId:$agentId,message:$message,deliver:true,channel:"discord",to:$to,idempotencyKey:$key,thinking:"low",timeoutSeconds:300}')"
+          curl -fsS "$hook_url" \
+            -H "Authorization: Bearer $CLAWSWEEPER_OPENCLAW_HOOK_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$body"
