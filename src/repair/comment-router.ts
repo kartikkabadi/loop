@@ -33,7 +33,6 @@ import {
   automergeReadinessRepairReason,
   automergeRebaseRepairReason,
   automergeTransientWaitConfig,
-  assistDispatchClientPayload,
   buildAutomergeMergeArgs,
   buildAutomergeSquashMessage,
   commandHasAction,
@@ -402,23 +401,12 @@ function classifyCommand(command: LooseRecord): JsonValue {
       actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
     };
   }
-  if (command.intent === "freeform_assist" || command.intent === "visual_assist") {
-    const isVisualAssist = command.intent === "visual_assist";
+  if (command.intent === "freeform_assist") {
     if (String(issue.state ?? "").toLowerCase() !== "open") {
       return {
         ...next,
         status: "ready",
-        reason: isVisualAssist
-          ? "visual explainers require an open pull request"
-          : "freeform assist requires an open issue or PR",
-        actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
-      };
-    }
-    if (isVisualAssist && target.kind !== "pull_request") {
-      return {
-        ...next,
-        status: "ready",
-        reason: "visual explainers are currently PR-only",
+        reason: "freeform assist requires an open issue or PR",
         actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
       };
     }
@@ -429,7 +417,6 @@ function classifyCommand(command: LooseRecord): JsonValue {
         {
           action: "dispatch_assist",
           workflow: "assist.yml",
-          mode: isVisualAssist ? "visual" : "text",
           status: execute ? "pending" : "planned",
         },
         { action: "comment", status: execute ? "pending" : "planned" },
@@ -1397,11 +1384,7 @@ function executeCommand(command: LooseRecord) {
         return action;
       });
     }
-    if (
-      (command.intent === "freeform_assist" || command.intent === "visual_assist") &&
-      command.issue_number &&
-      shouldDispatchAssist
-    ) {
+    if (command.intent === "freeform_assist" && command.issue_number && shouldDispatchAssist) {
       const clawsweeper = dispatchClawSweeperAssist(command);
       dispatched = { ...dispatched, clawsweeper };
       command.actions = command.actions.map((action: JsonValue) => {
@@ -1954,7 +1937,18 @@ function dispatchClawSweeperReview(command: LooseRecord) {
 function dispatchClawSweeperAssist(command: LooseRecord) {
   const payload = JSON.stringify({
     event_type: "clawsweeper_assist",
-    client_payload: assistDispatchClientPayload(command),
+    client_payload: {
+      target_repo: command.repo,
+      item_number: String(command.issue_number),
+      item_kind: command.target?.kind ?? "",
+      comment_id: String(command.comment_id ?? ""),
+      comment_url: String(command.comment_url ?? ""),
+      author: String(command.author ?? ""),
+      question: String(command.freeform_prompt ?? command.command ?? "").slice(0, 3000),
+      model: "gpt-5.5",
+      reasoning_effort: "low",
+      timeout_ms: "120000",
+    },
   });
   const result = ghSpawn(
     ["api", `repos/${reviewRepo}/dispatches`, "--method", "POST", "--input", "-"],

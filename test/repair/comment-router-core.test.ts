@@ -19,7 +19,6 @@ import {
   automergeJobPath,
   automergeReadinessRepairReason,
   automergeTransientWaitConfig,
-  assistDispatchClientPayload,
   buildAutomergeMergeArgs,
   buildAutomergeSquashMessage,
   commandHasAction,
@@ -836,51 +835,6 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
     intent: "freeform_assist",
     freeform_prompt: "is this blocked on flaky CI?",
   });
-  assert.deepEqual(parseCommand("@clawsweeper visual focus on risky files"), {
-    trigger: "mention",
-    command: "visual focus on risky files",
-    intent: "visual_assist",
-    visual_prompt: "focus on risky files",
-  });
-  assert.deepEqual(parseCommand("/clawsweeper viz"), {
-    trigger: "slash",
-    command: "viz",
-    intent: "visual_assist",
-    visual_prompt: "",
-  });
-  assert.deepEqual(parseCommand("@clawsweeper visualize CI failures"), {
-    trigger: "mention",
-    command: "visualize ci failures",
-    intent: "visual_assist",
-    visual_prompt: "CI failures",
-  });
-  const visualPayload = assistDispatchClientPayload({
-    intent: "visual_assist",
-    repo: "openclaw/openclaw",
-    issue_number: 72343,
-    comment_id: "4512657637",
-    comment_url: "https://github.com/openclaw/openclaw/pull/72343#issuecomment-4512657637",
-    author: "maintainer",
-    target: { kind: "pull_request" },
-    visual_prompt: "eli5",
-  });
-  assert.deepEqual(Object.keys(visualPayload).sort(), [
-    "author",
-    "comment_id",
-    "comment_url",
-    "item_number",
-    "mode",
-    "model",
-    "question",
-    "reasoning_effort",
-    "target_repo",
-    "timeout_ms",
-  ]);
-  assert.equal(Object.keys(visualPayload).length, 10);
-  assert.equal(visualPayload.mode, "visual");
-  assert.equal(visualPayload.question, "eli5");
-  assert.equal(visualPayload.reasoning_effort, "medium");
-  assert.equal(visualPayload.timeout_ms, "480000");
   assert.deepEqual(parseCommand("/clawsweeper explain why this PR is not automerge-ready"), {
     trigger: "slash",
     command: "explain why this pr is not automerge-ready",
@@ -1701,30 +1655,6 @@ test("renderResponse reports freeform assist dispatches as read-only", () => {
   assert.match(body, /separate answer comment/);
   assert.match(body, /will not edit the durable ClawSweeper review comment/);
   assert.match(body, /why did automerge stop here/);
-  assert.doesNotMatch(body, /repair worker/);
-});
-
-test("renderResponse reports visual assist dispatches as read-only artifacts", () => {
-  const body = renderResponse(
-    {
-      comment_id: "463",
-      intent: "visual_assist",
-      visual_prompt: "focus on risky files",
-      target: { head_sha: "def463" },
-    },
-    {
-      clawsweeper: {
-        workflow: "assist.yml",
-        event: "repository_dispatch",
-      },
-    },
-  );
-
-  assert.match(body, /visual explainer is being generated/);
-  assert.match(body, /read-only visual pass/);
-  assert.match(body, /artifact link comment/);
-  assert.match(body, /will not edit the durable ClawSweeper review comment/);
-  assert.match(body, /focus on risky files/);
   assert.doesNotMatch(body, /repair worker/);
 });
 
