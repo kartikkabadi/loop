@@ -150,11 +150,23 @@ function failingCheckEvidence(item: LooseRecord): string[] {
     .map((check: JsonValue) => {
       const name = String(check?.name ?? "unnamed check").trim();
       const state = String(check?.state ?? check?.conclusion ?? check?.status ?? "unknown").trim();
-      const link = String(check?.link ?? check?.html_url ?? "").trim();
-      return `Failing check: ${name}:${state}${link ? ` (${link})` : ""}`;
+      const details = safeCheckDetails(check?.link ?? check?.html_url);
+      return `Failing check: ${name}:${state}${details ? ` (${details})` : ""}`;
     })
     .filter(Boolean)
     .slice(0, 12);
+}
+
+function safeCheckDetails(value: JsonValue): string {
+  const link = String(value ?? "").trim();
+  if (!link) return "";
+  try {
+    const url = new URL(link);
+    if (url.hostname === "github.com") return link;
+    return `external check details on ${url.hostname}`;
+  } catch {
+    return "";
+  }
 }
 
 function uniqueStrings(values: JsonValue[]): string[] {

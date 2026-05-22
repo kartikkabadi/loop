@@ -39,6 +39,11 @@ function clusterPlan(overrides = {}) {
               state: "failure",
               link: "https://github.com/openclaw/openclaw/actions/runs/1/job/2",
             },
+            {
+              name: "Socket Security",
+              state: "failure",
+              link: "https://socket.dev/dashboard/org/openclaw/report/123",
+            },
             { name: "lint", state: "success" },
           ],
           files: [
@@ -75,6 +80,11 @@ test("deterministic automerge result emits generic direct-Codex repair artifact"
     "https://github.com/openclaw/openclaw/pull/71898",
   ]);
   assert.match(result?.actions[0].evidence.join("\n"), /Failing check: checks-node-core-fast/);
+  assert.match(
+    result?.actions[0].evidence.join("\n"),
+    /Failing check: Socket Security:failure \(external check details on socket\.dev\)/,
+  );
+  assert.doesNotMatch(result?.actions[0].evidence.join("\n"), /https:\/\/socket\.dev/);
   assert.match(result?.fix_artifact.pr_body, /Known failing checks/);
 });
 
