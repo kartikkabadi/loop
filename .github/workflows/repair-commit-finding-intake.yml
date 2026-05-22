@@ -118,6 +118,7 @@ jobs:
       - uses: ./.github/actions/setup-state
         with:
           token: ${{ steps.state-token.outputs.token }}
+          fetch-depth: 1
 
       - name: Prepare commit finding intake
         id: prepare
