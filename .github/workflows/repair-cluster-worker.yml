@@ -123,6 +123,7 @@ jobs:
       - uses: ./.github/actions/setup-state
         with:
           token: ${{ steps.state-token.outputs.token }}
+          fetch-depth: 1
 
       - name: Check job file
         id: check_job
@@ -318,6 +319,7 @@ jobs:
       - uses: ./.github/actions/setup-state
         with:
           token: ${{ steps.state-token.outputs.token }}
+          fetch-depth: 1
 
       - name: Check job file
         id: check_job
