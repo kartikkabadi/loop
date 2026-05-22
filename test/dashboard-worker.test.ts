@@ -28,6 +28,10 @@ class MemoryCache {
   }
 }
 
+function isoAgo(ms: number) {
+  return new Date(Date.now() - ms).toISOString();
+}
+
 test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   const response = await worker.fetch(new Request("https://clawsweeper.openclaw.ai/"));
   assert.equal(response.headers.get("content-type"), "text/html; charset=utf-8");
@@ -360,8 +364,8 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
               status: "in_progress",
               conclusion: null,
               html_url: "https://github.com/openclaw/clawsweeper/actions/runs/2",
-              created_at: "2026-05-14T06:10:00Z",
-              updated_at: "2026-05-14T06:20:00Z",
+              created_at: isoAgo(25 * 60_000),
+              updated_at: isoAgo(20 * 60_000),
             },
             {
               id: 3,
@@ -370,8 +374,8 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
               status: "in_progress",
               conclusion: null,
               html_url: "https://github.com/openclaw/clawsweeper/actions/runs/3",
-              created_at: "2026-05-14T06:15:00Z",
-              updated_at: "2026-05-14T06:20:00Z",
+              created_at: isoAgo(20 * 60_000),
+              updated_at: isoAgo(15 * 60_000),
             },
             {
               id: 5,
@@ -380,8 +384,8 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
               status: "in_progress",
               conclusion: null,
               html_url: "https://github.com/openclaw/clawsweeper/actions/runs/5",
-              created_at: "2026-05-14T06:18:00Z",
-              updated_at: "2026-05-14T06:19:00Z",
+              created_at: isoAgo(18 * 60_000),
+              updated_at: isoAgo(16 * 60_000),
             },
             {
               id: 6,
@@ -390,8 +394,8 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
               status: "in_progress",
               conclusion: null,
               html_url: "https://github.com/openclaw/clawsweeper/actions/runs/6",
-              created_at: "2026-05-14T06:19:00Z",
-              updated_at: "2026-05-14T06:20:00Z",
+              created_at: isoAgo(17 * 60_000),
+              updated_at: isoAgo(15 * 60_000),
             },
           ],
         });
@@ -406,8 +410,8 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
               status: "queued",
               conclusion: null,
               html_url: "https://github.com/openclaw/clawsweeper/actions/runs/4",
-              created_at: "2026-05-14T06:05:00Z",
-              updated_at: "2026-05-14T06:06:00Z",
+              created_at: isoAgo(30 * 60_000),
+              updated_at: isoAgo(29 * 60_000),
             },
             {
               id: 7,
@@ -416,8 +420,8 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
               status: "queued",
               conclusion: null,
               html_url: "https://github.com/openclaw/clawsweeper/actions/runs/7",
-              created_at: "2026-05-14T06:04:00Z",
-              updated_at: "2026-05-14T06:05:00Z",
+              created_at: isoAgo(31 * 60_000),
+              updated_at: isoAgo(30 * 60_000),
             },
           ],
         });
@@ -448,6 +452,80 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
     assert.deepEqual(
       status.pipeline.map((row: { id: number }) => row.id),
       [2, 4, 3],
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard ignores stale queued workflow ghosts", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      const status = url.searchParams.get("status");
+      if (!status) return jsonResponse({ workflow_runs: [] });
+      if (status === "queued") {
+        return jsonResponse({
+          workflow_runs: [
+            {
+              id: 1,
+              name: "ClawSweeper Commit Review",
+              display_title: "clawsweeper_commit_review",
+              status: "queued",
+              conclusion: null,
+              html_url: "https://github.com/openclaw/clawsweeper/actions/runs/1",
+              created_at: isoAgo(7 * 24 * 60 * 60_000),
+              updated_at: isoAgo(7 * 24 * 60 * 60_000),
+            },
+            {
+              id: 2,
+              name: "Review event item openclaw/openclaw#81002",
+              display_title: "Review event item openclaw/openclaw#81002",
+              status: "queued",
+              conclusion: null,
+              html_url: "https://github.com/openclaw/clawsweeper/actions/runs/2",
+              created_at: isoAgo(10 * 60_000),
+              updated_at: isoAgo(9 * 60_000),
+            },
+          ],
+        });
+      }
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.equal(status.fleet.active_workflow_runs, 1);
+    assert.equal(status.fleet.queued_workflow_runs, 1);
+    assert.deepEqual(
+      status.pipeline.map((row: { id: number }) => row.id),
+      [2],
     );
   } finally {
     globalThis.fetch = originalFetch;

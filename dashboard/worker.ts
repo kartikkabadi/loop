@@ -1,4 +1,5 @@
 const ACTIVE_RUN_STATUSES = new Set(["queued", "in_progress", "waiting", "requested", "pending"]);
+const QUEUED_RUN_STATUSES = new Set(["queued", "waiting", "requested", "pending"]);
 type DashboardEnv = Record<string, unknown>;
 type DashboardContext = { waitUntil?: (promise: Promise<unknown>) => void };
 type GithubAppJsonOptions = { method?: string; body?: BodyInit; errorLabel?: string };
@@ -17,6 +18,7 @@ const CLOSED_STATS_HOURS = 24;
 const CLOSED_STATS_PAGE_LIMIT = 10;
 const DEFAULT_CLAWSWEEPER_BOT_LOGINS = ["clawsweeper[bot]", "openclaw-clawsweeper[bot]"];
 const GITHUB_TIMEOUT_MS = 4500;
+const DEFAULT_STALE_QUEUED_WORKFLOW_MS = 6 * 60 * 60 * 1000;
 const CLAWSWEEPER_REVIEW_REPO = "openclaw/clawsweeper";
 const CLAWSWEEPER_COMMAND_PATTERN =
   /(^|[ \t\r\n])@(?:clawsweeper|openclaw-clawsweeper)\b(?:\[bot\])?|(^|[ \t\r\n])\/(?:clawsweeper|review|re-review|rerun[ -]?review|status|explain|fix|build|implement|create[ -]?pr|fix[ -]?issue|autofix|auto[ -]?fix|automerge|auto[ -]?merge|approve|stop|autoclose)\b/i;
@@ -877,7 +879,7 @@ async function statusSnapshot(env, ctx) {
   const workflowRuns = Array.isArray(runs?.workflow_runs) ? runs.workflow_runs : [];
   const activeRuns = uniqueWorkflowRuns([
     ...filteredActiveRuns,
-    ...workflowRuns.filter((run) => ACTIVE_RUN_STATUSES.has(String(run.status))),
+    ...workflowRuns.filter((run) => isActiveWorkflowRun(run)),
   ]).sort(newestWorkflowRunFirst);
   const workerRuns = activeRuns.filter((run) => !isSupportWorkflowRun(run));
   const supportRuns = activeRuns.filter((run) => isSupportWorkflowRun(run));
@@ -1834,9 +1836,16 @@ async function activeWorkflowRuns(env, repo, errors) {
       return Array.isArray(runs?.workflow_runs) ? runs.workflow_runs : [];
     }),
   );
-  return uniqueWorkflowRuns(pages.flat()).filter((run) =>
-    ACTIVE_RUN_STATUSES.has(String(run.status)),
-  );
+  return uniqueWorkflowRuns(pages.flat()).filter((run) => isActiveWorkflowRun(run));
+}
+
+function isActiveWorkflowRun(run) {
+  const status = String(run?.status || "");
+  if (!ACTIVE_RUN_STATUSES.has(status)) return false;
+  if (!QUEUED_RUN_STATUSES.has(status)) return true;
+  const changedAt = Date.parse(String(run?.updated_at || run?.created_at || ""));
+  if (!Number.isFinite(changedAt)) return true;
+  return Date.now() - changedAt <= DEFAULT_STALE_QUEUED_WORKFLOW_MS;
 }
 
 function uniqueWorkflowRuns(runs) {
