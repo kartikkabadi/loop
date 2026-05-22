@@ -247,6 +247,36 @@ test("workflow utilities select eligible proposed close records", () => {
       "",
     ].join("\n"),
   );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-15.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: close",
+      "confidence: high",
+      "action_taken: proposed_close",
+      "close_reason: low_signal_unmergeable_pr",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-16.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: issue",
+      "decision: close",
+      "confidence: high",
+      "action_taken: proposed_close",
+      "close_reason: low_signal_unmergeable_pr",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
 
   const selected = withCwd(root, () =>
     proposedItemNumbers({
@@ -259,7 +289,7 @@ test("workflow utilities select eligible proposed close records", () => {
     }),
   );
 
-  assert.deepEqual(selected, [5, 12]);
+  assert.deepEqual(selected, [5, 12, 15]);
 });
 
 test("workflow utilities select cursor-based PR comment sync batches", () => {

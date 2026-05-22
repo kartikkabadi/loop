@@ -155,6 +155,7 @@ type CloseReason =
   | "cannot_reproduce"
   | "clawhub"
   | "duplicate_or_superseded"
+  | "low_signal_unmergeable_pr"
   | "not_actionable_in_repo"
   | "incoherent"
   | "stale_insufficient_info"
@@ -1163,6 +1164,7 @@ const ALLOWED_REASONS = new Set<CloseReason>([
   "cannot_reproduce",
   "clawhub",
   "duplicate_or_superseded",
+  "low_signal_unmergeable_pr",
   "not_actionable_in_repo",
   "incoherent",
   "stale_insufficient_info",
@@ -2368,6 +2370,44 @@ export function closeReasonApplyAgeSkipReason(
   if (!isOlderThanMs(item.createdAt, options.minAgeMs, now)) {
     return `created less than or equal to ${options.minAgeDescription} ago`;
   }
+  return null;
+}
+
+function maintainerAssociatedEntries(entries: readonly unknown[]): unknown[] {
+  return entries.filter((entry) =>
+    isMaintainerAuthorAssociation(asRecord(entry).author_association),
+  );
+}
+
+function lowSignalUnmergeablePrApplyBlockReason(number: number): string | null {
+  const issue = ghJson<{ assignees?: unknown[] }>([
+    "api",
+    `repos/${targetRepo()}/issues/${number}`,
+    "--jq",
+    "{assignees:[.assignees[]? | {login:.login}]}",
+  ]);
+  if ((issue.assignees ?? []).length > 0) return "assigned PR has maintainer/human signal";
+
+  const pull = ghJson<{ requested_reviewers?: unknown[]; requested_teams?: unknown[] }>([
+    "api",
+    `repos/${targetRepo()}/pulls/${number}`,
+    "--jq",
+    "{requested_reviewers:[.requested_reviewers[]? | {login:.login}],requested_teams:[.requested_teams[]? | {slug:.slug}]}",
+  ]);
+  if ((pull.requested_reviewers ?? []).length > 0 || (pull.requested_teams ?? []).length > 0) {
+    return "requested reviewers or teams indicate active review signal";
+  }
+
+  const maintainerComments = maintainerAssociatedEntries(
+    ghPaged<unknown>(`repos/${targetRepo()}/issues/${number}/comments`),
+  );
+  if (maintainerComments.length > 0) return "maintainer issue comment blocks low-signal auto-close";
+
+  const maintainerReviews = maintainerAssociatedEntries(
+    ghPaged<unknown>(`repos/${targetRepo()}/pulls/${number}/reviews`),
+  );
+  if (maintainerReviews.length > 0) return "maintainer PR review blocks low-signal auto-close";
+
   return null;
 }
 
@@ -5375,6 +5415,8 @@ function closeReasonText(reason: CloseReason): string {
       return "belongs on ClawHub";
     case "duplicate_or_superseded":
       return "duplicate or superseded";
+    case "low_signal_unmergeable_pr":
+      return "low-signal unmergeable PR";
     case "not_actionable_in_repo":
       return "not actionable in this repository";
     case "incoherent":
@@ -6405,6 +6447,8 @@ function closeIntro(reason: CloseReason): string {
       return `Thanks for the idea. I checked the current extension path, and this is a better fit for ${markdownLink("ClawHub.com", targetProfile().communityUrl ?? "https://clawhub.ai/")} than OpenClaw core.`;
     case "duplicate_or_superseded":
       return "Thanks for the context here. I swept through the related work, and this is now duplicate or superseded.";
+    case "low_signal_unmergeable_pr":
+      return "Thanks for the contribution. I reviewed the branch, and this PR is not a good landing base for OpenClaw.";
     case "not_actionable_in_repo":
       return "Thanks for writing this up. I checked the repo boundary, and this lives outside the OpenClaw source shell.";
     case "incoherent":
@@ -6428,6 +6472,8 @@ function closeOutro(reason: CloseReason, canonicalLinks: string[] = []): string 
       return canonicalLinks.length
         ? `So I’m closing this here and keeping the remaining discussion on ${formatCanonicalLinks(canonicalLinks)}.`
         : "So I’m closing this here because the remaining work is already tracked in the canonical issue.";
+    case "low_signal_unmergeable_pr":
+      return "So I’m closing this PR rather than keeping an unmergeable branch open. A new narrow PR that carries only the useful part is welcome.";
     case "not_actionable_in_repo":
       return "So I’m closing this as outside the OpenClaw source repository rather than keeping it open as core work.";
     default:
@@ -10339,6 +10385,13 @@ export function validateCloseDecision(
       reason: "mostly_implemented_on_main is allowed only for pull requests",
     };
   }
+  if (item.kind !== "pull_request" && decision.closeReason === "low_signal_unmergeable_pr") {
+    return {
+      ok: false,
+      actionTaken: "skipped_invalid_decision",
+      reason: "low_signal_unmergeable_pr is allowed only for pull requests",
+    };
+  }
   if (item.kind === "pull_request" && decision.closeReason === "stale_insufficient_info") {
     return {
       ok: false,
@@ -12632,6 +12685,14 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: ${ageSkipReason}`);
       if (processedCount >= processedLimit) break;
+      continue;
+    }
+    const lowSignalBlockReason =
+      closeReason === "low_signal_unmergeable_pr"
+        ? lowSignalUnmergeablePrApplyBlockReason(number)
+        : null;
+    if (lowSignalBlockReason) {
+      if (markApplySkipped("kept_open", lowSignalBlockReason)) break;
       continue;
     }
     logProgress(`closing #${number}`);

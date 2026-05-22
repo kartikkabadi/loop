@@ -46,6 +46,7 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added a generated 1200x630 social preview card plus large-image Open Graph and
   Twitter metadata for the docs site.
 - Added target fanout so ClawSweeper can dispatch conservative scheduled review and audit batches across eligible `openclaw/*` and `steipete/*` repositories.
+- Added a PR-only low-signal close reason so ClawSweeper can automatically close net-negative branches whose useful part is tiny but whose diff is mostly unrelated or unmergeable churn.
 
 ### Fixed
 

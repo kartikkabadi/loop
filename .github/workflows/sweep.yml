@@ -98,7 +98,7 @@ on:
       apply_after_review_close_reasons:
         description: "Close reasons enabled for immediate post-review apply"
         required: false
-        default: "implemented_on_main,duplicate_or_superseded"
+        default: "implemented_on_main,duplicate_or_superseded,low_signal_unmergeable_pr"
       apply_after_review_min_age_minutes:
         description: "Minute-level item age floor for immediate post-review apply"
         required: false
@@ -384,7 +384,7 @@ jobs:
           REPO_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
           ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
-          CLOSE_REASONS: ${{ github.event.client_payload.apply_close_reasons || 'implemented_on_main,duplicate_or_superseded' }}
+          CLOSE_REASONS: ${{ github.event.client_payload.apply_close_reasons || 'implemented_on_main,duplicate_or_superseded,low_signal_unmergeable_pr' }}
           MIN_AGE_MINUTES: ${{ github.event.client_payload.apply_min_age_minutes || '0' }}
         run: pnpm run repair:publish-event-result
 
@@ -1424,7 +1424,7 @@ jobs:
             exit 0
           fi
           item_count="$(pnpm run --silent workflow -- count-csv --items "$item_numbers")"
-          close_reasons="${{ github.event.inputs.apply_after_review_close_reasons || 'implemented_on_main,duplicate_or_superseded' }}"
+          close_reasons="${{ github.event.inputs.apply_after_review_close_reasons || 'implemented_on_main,duplicate_or_superseded,low_signal_unmergeable_pr' }}"
           min_age_minutes="${{ github.event.inputs.apply_after_review_min_age_minutes || '0' }}"
           git pull --rebase
           pnpm run apply-decisions -- \

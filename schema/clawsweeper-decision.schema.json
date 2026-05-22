@@ -60,6 +60,7 @@
         "cannot_reproduce",
         "clawhub",
         "duplicate_or_superseded",
+        "low_signal_unmergeable_pr",
         "not_actionable_in_repo",
         "incoherent",
         "stale_insufficient_info",

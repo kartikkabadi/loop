@@ -1621,6 +1621,17 @@ test("invalid close semantics are rejected", () => {
     "mostly_implemented_on_main is allowed only for pull requests",
   );
 
+  const lowSignalIssue = validateCloseDecision(
+    item({ kind: "issue" }),
+    closeDecision({ closeReason: "low_signal_unmergeable_pr" }),
+  );
+  assert.equal(lowSignalIssue.ok, false);
+  assert.equal(lowSignalIssue.actionTaken, "skipped_invalid_decision");
+  assert.equal(
+    lowSignalIssue.reason,
+    "low_signal_unmergeable_pr is allowed only for pull requests",
+  );
+
   const missingEvidence = validateCloseDecision(item(), closeDecision({ evidence: [] }));
   assert.equal(missingEvidence.ok, false);
   assert.equal(missingEvidence.actionTaken, "skipped_invalid_decision");
@@ -1780,6 +1791,48 @@ test("implemented-on-main closes require fix provenance", () => {
     }),
   );
   assert.equal(mostlyImplementedPr.ok, true);
+
+  const lowSignalPr = validateCloseDecision(
+    item({ kind: "pull_request" }),
+    closeDecision({
+      closeReason: "low_signal_unmergeable_pr",
+      summary: "The useful docs note is tiny, but the branch adds unrelated reference churn.",
+      closeComment:
+        "Closing this as low-signal unmergeable after Codex review.\n\n- Useful part: the clamp note is worth preserving in a narrow PR.\n- Unmergeable branch: most of this diff is unrelated copied reference material.",
+    }),
+  );
+  assert.equal(lowSignalPr.ok, true);
+});
+
+test("low-signal unmergeable PR closes explain the narrow useful path", () => {
+  const action = reviewActionForDecision({
+    item: item({ kind: "pull_request" }),
+    decision: closeDecision({
+      closeReason: "low_signal_unmergeable_pr",
+      summary:
+        "The useful clamp documentation is small, but this branch is mostly unrelated reference churn.",
+      evidence: [
+        {
+          label: "unrelated diff",
+          detail:
+            "The PR adds a large copied provider reference block while the stated docs fix is one field note.",
+          file: "docs/gateway/configuration-reference.md",
+          line: 95,
+          command: "gh pr diff 72085 --repo openclaw/openclaw --name-only",
+          sha: "588bf29604ffb0d599c5acb6417e962ae9f95e1f",
+        },
+      ],
+      closeComment:
+        "Closing this as low-signal unmergeable after Codex review.\n\n- Useful part: the clamp docs note is worth preserving.\n- Unmergeable branch: this branch adds a large unrelated reference block, so it is not a good landing base.",
+    }),
+    git,
+  });
+
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(action.closeComment, /not a good landing base/);
+  assert.match(action.closeComment, /new narrow PR/);
+  assert.match(action.closeComment, /useful clamp documentation is small/);
+  assert.match(action.closeComment, /copied provider reference block/);
 });
 
 test("duplicate or superseded closes are allowed with evidence and comment", () => {
@@ -4650,6 +4703,24 @@ function implementedCloseReport(overrides = {}) {
   })}\n\n## Evidence\n\n- **main fix:** git show confirms current main has the replacement implementation and it is not in the latest release yet\n  - file: [src/clawsweeper.ts](https://github.com/openclaw/clawsweeper/blob/1234567890abcdef1234567890abcdef12345678/src/clawsweeper.ts)\n  - sha: [1234567890ab](https://github.com/openclaw/clawsweeper/commit/1234567890abcdef1234567890abcdef12345678)\n\n## Close Comment\n\nClosing this because the requested behavior is already on main.\n`;
 }
 
+function lowSignalCloseReport(overrides = {}) {
+  return `${workPlanCandidateReport({
+    repository: "openclaw/openclaw",
+    type: "pull_request",
+    decision: "close",
+    action_taken: "proposed_close",
+    close_reason: "low_signal_unmergeable_pr",
+    confidence: "high",
+    work_candidate: "none",
+    work_status: "none",
+    item_snapshot_hash: "reviewed-snapshot",
+    item_created_at: "2026-05-01T00:00:00Z",
+    item_updated_at: "2026-05-01T00:00:00Z",
+    author_association: "CONTRIBUTOR",
+    ...overrides,
+  })}\n\n## Evidence\n\n- **branch shape:** PR diff is mostly unrelated provider churn around a tiny possible useful tweak\n\n## Close Comment\n\nClosing this PR because the branch is not a useful landing base.\n`;
+}
+
 function stalePullRequestReport(overrides = {}) {
   return `${workPlanCandidateReport({
     repository: "openclaw/openclaw",
@@ -4828,6 +4899,7 @@ function withMockGh(root: string, script: string, run: () => void): void {
 }
 
 function runApplyDecisionsForTest(options: {
+  targetRepo?: string;
   itemsDir: string;
   closedDir: string;
   plansDir: string;
@@ -4838,7 +4910,7 @@ function runApplyDecisionsForTest(options: {
     "dist/clawsweeper.js",
     "apply-decisions",
     "--target-repo",
-    "openclaw/clawsweeper",
+    options.targetRepo ?? "openclaw/clawsweeper",
     "--items-dir",
     options.itemsDir,
     "--closed-dir",
@@ -6446,6 +6518,138 @@ if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/321\\/timeline(?:\\?|$
         number: 321,
         action: "closed",
         reason: "already implemented on main; posted close-applied comment",
+      },
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions keeps low-signal PRs open when live maintainer comments exist", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    const logPath = join(root, "gh.log");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    const closeReport = lowSignalCloseReport({ number: 322, title: "Add provider clamp" });
+    const synced = reportWithSyncedReviewComment(closeReport, 322, "low_signal_unmergeable_pr");
+    writeFileSync(join(itemsDir, "322.md"), synced.report, "utf8");
+
+    const ghMock = `
+const { appendFileSync } = require("fs");
+const logPath = ${JSON.stringify(logPath)};
+const comment = ${JSON.stringify(synced.comment)};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+appendFileSync(logPath, JSON.stringify(args) + "\\n");
+const path = args[1] || "";
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/322\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  console.log("HTTP/2 200\\n\\n[]");
+} else if (args[0] === "api" && /\\/issues\\/322\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[
+    {
+      id: 9322,
+      html_url: "https://github.com/openclaw/clawsweeper/pull/322#issuecomment-9322",
+      created_at: "2026-05-01T01:00:00Z",
+      updated_at: "2026-05-01T01:00:00Z",
+      author_association: "NONE",
+      user: { login: "clawsweeper[bot]" },
+      body: comment
+    },
+    {
+      id: 9323,
+      html_url: "https://github.com/openclaw/clawsweeper/pull/322#issuecomment-9323",
+      created_at: "2026-05-01T01:30:00Z",
+      updated_at: "2026-05-01T01:30:00Z",
+      author_association: "MEMBER",
+      user: { login: "maintainer" },
+      body: "I am taking a look."
+    }
+  ]]));
+} else if (args[0] === "api" && /\\/issues\\/322\\/timeline(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/322$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 322,
+    title: "Add provider clamp",
+    html_url: "https://github.com/openclaw/clawsweeper/pull/322",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    assignees: [],
+    comments: 2,
+    pull_request: { url: "https://api.github.com/repos/openclaw/clawsweeper/pulls/322" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/322$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 322,
+    html_url: "https://github.com/openclaw/clawsweeper/pull/322",
+    state: "open",
+    changed_files: 4,
+    commits: 1,
+    review_comments: 0,
+    requested_reviewers: [],
+    requested_teams: [],
+    head: { sha: "head-sha", ref: "branch", repo: { full_name: "fork/clawsweeper" } },
+    base: { sha: "base-sha", ref: "main", repo: { full_name: "openclaw/clawsweeper" } },
+    user: { login: "reporter" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/322\\/reviews(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/pulls\\/322\\/(files|commits|comments)(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "issue" && args[1] === "edit") {
+  console.log("");
+} else if (args[0] === "label") {
+  console.log("");
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        targetRepo: "openclaw/openclaw",
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: [
+          "--apply-kind",
+          "all",
+          "--processed-limit",
+          "2",
+          "--apply-close-reasons",
+          "low_signal_unmergeable_pr",
+        ],
+      });
+    });
+
+    const calls = readFileSync(logPath, "utf8")
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => JSON.parse(line) as string[]);
+    assert.equal(
+      calls.some((args) => args[0] === "pr" && args[1] === "close"),
+      false,
+    );
+    assert.equal(existsSync(join(closedDir, "322.md")), false);
+    assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+      {
+        number: 322,
+        action: "kept_open",
+        reason: "maintainer issue comment blocks low-signal auto-close",
       },
     ]);
   } finally {

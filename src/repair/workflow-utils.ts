@@ -275,6 +275,7 @@ export function proposedItemNumbers(options: ProposedItemOptions): number[] {
     "duplicate_or_superseded",
     "incoherent",
     "implemented_on_main",
+    "low_signal_unmergeable_pr",
     "mostly_implemented_on_main",
     "not_actionable_in_repo",
     "stale_insufficient_info",
@@ -528,6 +529,7 @@ function allowedForTarget(
     );
   if (type === "pull_request" && reason === "stale_insufficient_info") return false;
   if (type !== "pull_request" && reason === "mostly_implemented_on_main") return false;
+  if (type !== "pull_request" && reason === "low_signal_unmergeable_pr") return false;
   return allowedReasons.has(reason);
 }
 

@@ -194,7 +194,9 @@ function eventOptionsFromEnv(): EventOptions {
   return {
     targetRepo: envValue("TARGET_REPO"),
     itemNumber: envValue("ITEM_NUMBER"),
-    closeReasons: process.env.CLOSE_REASONS || "implemented_on_main,duplicate_or_superseded",
+    closeReasons:
+      process.env.CLOSE_REASONS ||
+      "implemented_on_main,duplicate_or_superseded,low_signal_unmergeable_pr",
     minAgeMinutes: process.env.MIN_AGE_MINUTES || "0",
     reportPath: ".artifacts/event-apply-report.json",
     snapshotDir: ".artifacts/event-record-snapshot",
