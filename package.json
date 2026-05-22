@@ -41,6 +41,7 @@
     "repair:publish-main": "node dist/repair/publish-main.js",
     "repair:notify-merge": "node dist/repair/notify-merge.js",
     "repair:notify-events": "node dist/repair/notify-events.js",
+    "repair:notify-maintainer-report": "node dist/repair/notify-maintainer-report.js",
     "repair:notify-github-activity": "node dist/repair/notify-github-activity.js",
     "repair:spam-comment-intake": "node dist/repair/spam-comment-intake.js",
     "repair:spam-scan": "node dist/repair/spam-scanner.js",

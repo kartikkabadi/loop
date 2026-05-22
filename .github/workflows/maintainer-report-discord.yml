@@ -1,0 +1,77 @@
+name: maintainer report to discord
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Fetch and summarize without posting to Discord"
+        required: true
+        default: false
+        type: boolean
+      date:
+        description: "Optional YYYY-MM-DD daily report key"
+        required: false
+        default: ""
+        type: string
+  schedule:
+    - cron: "37 9 * * *"
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+  REPORTS_PUBLIC_BASE_URL: https://reports.openclaw.ai/
+
+concurrency:
+  group: openclaw-maintainer-report-discord
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    name: Summarize maintainer report
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 10
+    steps:
+      - name: Create maintainer repo token
+        id: maintainers_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: maintainers
+          permission-contents: read
+
+      - uses: actions/checkout@v6
+        with:
+          filter: blob:none
+          persist-credentials: false
+
+      - uses: actions/checkout@v6
+        with:
+          repository: openclaw/maintainers
+          path: maintainers
+          token: ${{ steps.maintainers_token.outputs.token }}
+          filter: blob:none
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-pnpm
+        with:
+          build-script: build:repair
+
+      - name: Post report summary
+        env:
+          CLAWSWEEPER_OPENCLAW_HOOK_URL: ${{ secrets.CLAWSWEEPER_OPENCLAW_HOOK_URL }}
+          CLAWSWEEPER_OPENCLAW_HOOK_TOKEN: ${{ secrets.CLAWSWEEPER_OPENCLAW_HOOK_TOKEN }}
+          CLAWSWEEPER_OPENCLAW_AGENT_ID: ${{ vars.CLAWSWEEPER_OPENCLAW_AGENT_ID || 'clawsweeper' }}
+          CLAWSWEEPER_DISCORD_TARGET: ${{ vars.CLAWSWEEPER_DISCORD_TARGET || 'channel:1456744319972282449' }}
+          REPORTS_BASE_URL: file://${{ github.workspace }}/maintainers/reports/
+          REPORTS_ACCESS_CLIENT_ID: ${{ secrets.OPENCLAW_REPORTS_ACCESS_CLIENT_ID || secrets.CLOUDFLARE_ACCESS_CLIENT_ID }}
+          REPORTS_ACCESS_CLIENT_SECRET: ${{ secrets.OPENCLAW_REPORTS_ACCESS_CLIENT_SECRET || secrets.CLOUDFLARE_ACCESS_CLIENT_SECRET }}
+          CLAWSWEEPER_MAINTAINER_REPORT_DATE: ${{ github.event_name == 'workflow_dispatch' && inputs.date || '' }}
+          CLAWSWEEPER_MAINTAINER_REPORT_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '0' }}
+          CLAWSWEEPER_MAINTAINER_REPORT_STRICT: "1"
+          CLAWSWEEPER_MAINTAINER_REPORT_DELIVER: "1"
+        run: pnpm run repair:notify-maintainer-report -- --write-report
