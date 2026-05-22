@@ -721,12 +721,15 @@ test("review context ledger records ordered section budgets", () => {
   assert.match(renderReviewContextBudgetForTest(context), /- timeline events: 1\/1 hydrated/);
 });
 
-test("protected labels are normalized and excluded from normal planning", () => {
+test("protected labels are normalized and only maintainer-only items stay plannable", () => {
   assert.deepEqual(protectedLabels(["Security", "bug", "maintainer", "SECURITY"]), [
     "security",
     "maintainer",
   ]);
   assert.equal(isProtectedItem(item({ labels: ["release-blocker"] })), true);
+  assert.equal(shouldPlanItem(item({ authorAssociation: "MEMBER" })), true);
+  assert.equal(shouldPlanItem(item({ labels: ["maintainer"] })), true);
+  assert.equal(shouldPlanItem(item({ labels: ["maintainer", "security"] })), false);
   assert.equal(shouldPlanItem(item({ labels: ["beta-blocker"] })), false);
   assert.equal(shouldPlanItem(item({ labels: ["bug"] })), true);
 });
@@ -844,6 +847,36 @@ test("protected labels block close proposals even for otherwise valid decisions"
     git,
   });
   assert.equal(action.actionTaken, "skipped_protected_label");
+  assert.equal(action.closeComment, "");
+});
+
+test("verified fixed maintainer items can become close proposals", () => {
+  const validation = validateCloseDecision(item({ labels: ["maintainer"] }), closeDecision());
+  assert.deepEqual(validation, { ok: true });
+
+  const action = reviewActionForDecision({
+    item: item({ authorAssociation: "MEMBER", labels: ["maintainer"] }),
+    decision: closeDecision(),
+    git,
+  });
+  assert.equal(action.actionTaken, "proposed_close");
+  assert.match(action.closeComment, /already implemented/);
+});
+
+test("maintainer items stay protected for non-fixed close reasons", () => {
+  const validation = validateCloseDecision(
+    item({ labels: ["maintainer"] }),
+    closeDecision({ closeReason: "duplicate_or_superseded" }),
+  );
+  assert.equal(validation.ok, false);
+  assert.equal(validation.actionTaken, "skipped_protected_label");
+
+  const action = reviewActionForDecision({
+    item: item({ authorAssociation: "MEMBER" }),
+    decision: closeDecision({ closeReason: "duplicate_or_superseded" }),
+    git,
+  });
+  assert.equal(action.actionTaken, "skipped_maintainer_authored");
   assert.equal(action.closeComment, "");
 });
 
@@ -4554,6 +4587,24 @@ Render generated plan markdown from existing report fields.
 `;
 }
 
+function implementedCloseReport(overrides = {}) {
+  return `${workPlanCandidateReport({
+    decision: "close",
+    action_taken: "proposed_close",
+    close_reason: "implemented_on_main",
+    confidence: "high",
+    work_candidate: "none",
+    work_status: "none",
+    item_snapshot_hash: "reviewed-snapshot",
+    item_updated_at: "2026-05-01T00:00:00Z",
+    reproduction_status: "reproduced",
+    reproduction_confidence: "high",
+    fixed_sha: "1234567890abcdef1234567890abcdef12345678",
+    fixed_at: "2026-05-01T02:00:00Z",
+    ...overrides,
+  })}\n\n## Evidence\n\n- **main fix:** git show confirms current main has the replacement implementation and it is not in the latest release yet\n  - file: [src/clawsweeper.ts](https://github.com/openclaw/clawsweeper/blob/1234567890abcdef1234567890abcdef12345678/src/clawsweeper.ts)\n  - sha: [1234567890ab](https://github.com/openclaw/clawsweeper/commit/1234567890abcdef1234567890abcdef12345678)\n\n## Close Comment\n\nClosing this because the requested behavior is already on main.\n`;
+}
+
 function markedReviewCommentForTest(number: number, body: string): string {
   return `${body.trimEnd()}\n\n<!-- clawsweeper-review item=${number} -->`;
 }
@@ -6148,9 +6199,9 @@ if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/321\\/timeline(?:\\?|$
     state: "open",
     locked: false,
     active_lock_reason: null,
-    author_association: "CONTRIBUTOR",
+    author_association: "MEMBER",
     user: { login: "reporter" },
-    labels: [],
+    labels: ["maintainer"],
     comments: 1,
     pull_request: { url: "https://api.github.com/repos/openclaw/clawsweeper/pulls/321" }
   }));
@@ -6225,6 +6276,192 @@ if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/321\\/timeline(?:\\?|$
         number: 321,
         action: "closed",
         reason: "already implemented on main; posted close-applied comment",
+      },
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions retries legacy fixed close skips", () => {
+  for (const actionTaken of ["skipped_maintainer_authored", "skipped_invalid_decision"]) {
+    const root = mkdtempSync(tmpPrefix);
+    try {
+      const itemsDir = join(root, "items");
+      const closedDir = join(root, "closed");
+      const plansDir = join(root, "plans");
+      const reportPath = join(root, "apply-report.json");
+      const logPath = join(root, "gh.log");
+      mkdirSync(itemsDir, { recursive: true });
+      mkdirSync(plansDir, { recursive: true });
+      const closeReport = implementedCloseReport({
+        type: "pull_request",
+        action_taken: actionTaken,
+        author_association: "MEMBER",
+        labels: JSON.stringify(["maintainer"]),
+      }).replace(
+        "## Close Comment\n\nClosing this because the requested behavior is already on main.\n",
+        "## Close Comment\n\n_No close comment posted._\n",
+      );
+      const synced = reportWithSyncedReviewComment(closeReport, 321, "implemented_on_main");
+      writeFileSync(join(itemsDir, "321.md"), synced.report, "utf8");
+
+      const ghMock = `
+const { appendFileSync } = require("fs");
+const logPath = ${JSON.stringify(logPath)};
+const comment = ${JSON.stringify(synced.comment)};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+appendFileSync(logPath, JSON.stringify(args) + "\\n");
+const path = args[1] || "";
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/321\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  console.log("HTTP/2 200\\n\\n[]");
+} else if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[{
+    id: 9321,
+    html_url: "https://github.com/openclaw/clawsweeper/pull/321#issuecomment-9321",
+    created_at: "2026-05-01T01:00:00Z",
+    updated_at: "2026-05-01T01:00:00Z",
+    user: { login: "clawsweeper[bot]" },
+    body: comment
+  }]]));
+} else if (args[0] === "api" && /\\/issues\\/321\\/timeline(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/321$/.test(path)) {
+  if (args.includes("--method") && args.includes("PATCH")) {
+    console.log(JSON.stringify({ state: "closed" }));
+  } else {
+    console.log(JSON.stringify({
+      number: 321,
+      title: "Render work plans",
+      html_url: "https://github.com/openclaw/clawsweeper/pull/321",
+      created_at: "2026-05-01T00:00:00Z",
+      updated_at: "2026-05-01T00:00:00Z",
+      closed_at: null,
+      state: "open",
+      locked: false,
+      active_lock_reason: null,
+      author_association: "MEMBER",
+      user: { login: "maintainer" },
+      labels: ["maintainer"],
+      comments: 1,
+      pull_request: { url: "https://api.github.com/repos/openclaw/clawsweeper/pulls/321" }
+    }));
+  }
+} else if (args[0] === "issue" && args[1] === "view") {
+  console.log(JSON.stringify({ closedByPullRequestsReferences: [] }));
+} else if (args[0] === "api" && /\\/pulls\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    html_url: "https://github.com/openclaw/clawsweeper/pull/321",
+    state: "open",
+    changed_files: 0,
+    commits: 0,
+    review_comments: 0,
+    head: { sha: "head-sha", ref: "branch", repo: { full_name: "fork/clawsweeper" } },
+    base: { sha: "base-sha", ref: "main", repo: { full_name: "openclaw/clawsweeper" } },
+    user: { login: "maintainer" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/321\\/(files|commits|comments)(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "label" || args[0] === "issue") {
+  console.log("");
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+      withMockGh(root, ghMock, () => {
+        runApplyDecisionsForTest({
+          itemsDir,
+          closedDir,
+          plansDir,
+          reportPath,
+          extraArgs: ["--dry-run", "--apply-kind", "all", "--processed-limit", "2"],
+        });
+      });
+
+      assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+        {
+          number: 321,
+          action: "review_comment_synced",
+          reason: "would update durable Codex review comment",
+        },
+        {
+          number: 321,
+          action: "closed",
+          reason:
+            "dry-run: would close as already implemented on main; dry-run: would post close-applied comment",
+        },
+      ]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+});
+
+test("apply-decisions archives live-closed skipped records without reopening close gates", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    const logPath = join(root, "gh.log");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    const skippedReport = implementedCloseReport({
+      action_taken: "skipped_open_closing_pr",
+      close_reason: "duplicate_or_superseded",
+    }).replace(/^local_checkout_access: verified\n/m, "");
+    writeFileSync(join(itemsDir, "321.md"), skippedReport, "utf8");
+
+    const ghMock = `
+const { appendFileSync } = require("fs");
+const logPath = ${JSON.stringify(logPath)};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+appendFileSync(logPath, JSON.stringify(args) + "\\n");
+const path = args[1] || "";
+if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Render work plans",
+    html_url: "https://github.com/openclaw/clawsweeper/issues/321",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: "2026-05-02T00:00:00Z",
+    state: "closed",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 0,
+    pull_request: null
+  }));
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({ itemsDir, closedDir, plansDir, reportPath });
+    });
+
+    assert.equal(existsSync(join(itemsDir, "321.md")), false);
+    assert.ok(existsSync(join(closedDir, "321.md")));
+    assert.match(
+      readFileSync(join(closedDir, "321.md"), "utf8"),
+      /^action_taken: skipped_already_closed$/m,
+    );
+    assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+      {
+        number: 321,
+        action: "skipped_already_closed",
+        reason: "state is closed",
       },
     ]);
   } finally {
@@ -7152,15 +7389,33 @@ test("apply mode prioritizes matching close proposals before comment sync", () =
     close_reason: "implemented_on_main",
     action_taken: "proposed_close",
   });
+  const legacyMaintainerSkip = reportFrontMatter({
+    decision: "close",
+    close_reason: "implemented_on_main",
+    action_taken: "skipped_maintainer_authored",
+  });
+  const legacyInvalidDecision = reportFrontMatter({
+    decision: "close",
+    close_reason: "implemented_on_main",
+    action_taken: "skipped_invalid_decision",
+  });
   const pullRequestClose = reportFrontMatter({
     type: "pull_request",
     decision: "close",
     close_reason: "implemented_on_main",
     action_taken: "proposed_close",
   });
+  const duplicateSkip = reportFrontMatter({
+    decision: "close",
+    close_reason: "duplicate_or_superseded",
+    action_taken: "skipped_invalid_decision",
+  });
 
   assert.equal(applyDecisionPriority(issueClose, "issue"), 0);
+  assert.equal(applyDecisionPriority(legacyMaintainerSkip, "issue"), 0);
+  assert.equal(applyDecisionPriority(legacyInvalidDecision, "issue"), 0);
   assert.equal(applyDecisionPriority(pullRequestClose, "issue"), 1);
+  assert.equal(applyDecisionPriority(duplicateSkip, "issue"), 2);
   assert.equal(applyDecisionPriority(reportFrontMatter(), "issue"), 2);
 });
 
@@ -9306,6 +9561,7 @@ test("audit detects live/local state drift and unsafe proposed records", () => {
       item({ number: 1, title: "tracked open" }),
       item({ number: 2, title: "missing open" }),
       item({ number: 3, title: "reopened archived" }),
+      item({ number: 9, title: "maintainer implemented" }),
     ],
     itemRecords: [
       auditRecord(1),
@@ -9313,6 +9569,12 @@ test("audit detects live/local state drift and unsafe proposed records", () => {
       auditRecord(5),
       auditRecord(6, {
         labels: ["security"],
+        decision: "close",
+        closeReason: "implemented_on_main",
+        action: "proposed_close",
+      }),
+      auditRecord(9, {
+        labels: ["maintainer"],
         decision: "close",
         closeReason: "implemented_on_main",
         action: "proposed_close",
@@ -9373,15 +9635,15 @@ test("audit classifies missing open records by actionable reason", () => {
   });
 
   assert.equal(expectedQueueLag.counts.missingOpen, 3);
-  assert.equal(expectedQueueLag.counts.missingEligibleOpen, 0);
-  assert.equal(expectedQueueLag.counts.missingMaintainerOpen, 1);
+  assert.equal(expectedQueueLag.counts.missingEligibleOpen, 1);
+  assert.equal(expectedQueueLag.counts.missingMaintainerOpen, 0);
   assert.equal(expectedQueueLag.counts.missingProtectedOpen, 1);
   assert.equal(expectedQueueLag.counts.missingRecentOpen, 1);
   assert.deepEqual(
     expectedQueueLag.findings.missingOpen.map((finding) => finding.missingReason),
-    ["maintainer_authored", "protected_label", "recently_created"],
+    ["eligible", "protected_label", "recently_created"],
   );
-  assert.equal(auditHasStrictFailures(expectedQueueLag), false);
+  assert.equal(auditHasStrictFailures(expectedQueueLag), true);
 
   const actionableDrift = auditFromSnapshot({
     ...base,

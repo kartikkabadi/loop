@@ -1183,6 +1183,20 @@ const ITEM_CATEGORIES = new Set<ItemCategory>([
   "security",
   "unclear",
 ]);
+const RETRYABLE_CLOSE_SKIP_ACTIONS = new Set<string>([
+  "skipped_maintainer_authored",
+  "skipped_invalid_decision",
+]);
+const CLOSED_STATE_PROBE_ACTIONS = new Set<string>([
+  "skipped_already_closed",
+  "skipped_changed_since_review",
+  "skipped_maintainer_authored",
+  "skipped_protected_label",
+  "skipped_invalid_decision",
+  "skipped_open_closing_pr",
+  "skipped_same_author_pair",
+  "skipped_locked_conversation",
+]);
 const REPRODUCTION_STATUSES = new Set<ReproductionStatus>([
   "reproduced",
   "source_reproducible",
@@ -2250,6 +2264,10 @@ function isMaintainerAuthored(item: Pick<Item, "authorAssociation">): boolean {
   return isMaintainerAuthorAssociation(item.authorAssociation);
 }
 
+function isVerifiedFixedCloseReason(reason: unknown): boolean {
+  return reason === "implemented_on_main";
+}
+
 function normalizeLabelName(label: string): string {
   return label.trim().toLowerCase();
 }
@@ -2267,12 +2285,18 @@ export function isProtectedItem(item: Pick<Item, "labels">): boolean {
   return protectedLabels(item.labels).length > 0;
 }
 
-function protectedLabelReason(labels: readonly string[]): string {
-  return `protected label: ${protectedLabels(labels).join(", ")}`;
+function applyBlockingProtectedLabels(labels: readonly string[], closeReason: unknown): string[] {
+  const blocked = protectedLabels(labels);
+  if (!isVerifiedFixedCloseReason(closeReason)) return blocked;
+  return blocked.filter((label) => label !== "maintainer");
+}
+
+function applyProtectedLabelReason(labels: readonly string[], closeReason: unknown): string {
+  return `protected label: ${applyBlockingProtectedLabels(labels, closeReason).join(", ")}`;
 }
 
 export function shouldPlanItem(item: Pick<Item, "authorAssociation" | "labels">): boolean {
-  return !isMaintainerAuthored(item) && !isProtectedItem(item);
+  return protectedLabels(item.labels).every((label) => label === "maintainer");
 }
 
 function isOlderThanDays(isoTimestamp: string, days: number, now = Date.now()): boolean {
@@ -3140,20 +3164,64 @@ function frontMatterValue(markdown: string, key: string): string | undefined {
   return value?.startsWith('"') && value.endsWith('"') ? value.slice(1, -1) : value;
 }
 
-export function applyDecisionPriority(markdown: string, applyKind: ApplyKind): number {
-  const closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
-  const itemKind = frontMatterValue(markdown, "type") as ItemKind | undefined;
+function reportCloseReason(markdown: string): CloseReason | undefined {
+  const closeReason = frontMatterValue(markdown, "close_reason");
+  return closeReason && ALLOWED_REASONS.has(closeReason as CloseReason)
+    ? (closeReason as CloseReason)
+    : undefined;
+}
+
+function reportItemKind(markdown: string): ItemKind | undefined {
+  const itemKind = frontMatterValue(markdown, "type");
+  return itemKind === "issue" || itemKind === "pull_request" ? itemKind : undefined;
+}
+
+function hasHighConfidenceAllowedCloseMetadata(markdown: string): boolean {
+  const closeReason = reportCloseReason(markdown);
+  const itemKind = reportItemKind(markdown);
+  return !(
+    frontMatterValue(markdown, "decision") !== "close" ||
+    frontMatterValue(markdown, "confidence") !== "high" ||
+    !closeReason ||
+    !itemKind
+  );
+}
+
+function hasAutoCloseAllowedMetadata(markdown: string): boolean {
+  const closeReason = reportCloseReason(markdown);
+  const itemKind = reportItemKind(markdown);
+  if (!closeReason || !itemKind || !hasHighConfidenceAllowedCloseMetadata(markdown)) return false;
   const profile = repositoryProfileFor(markdownRepository(markdown));
+  return isAutoCloseAllowed(profile, itemKind, closeReason);
+}
+
+function isRetryableCloseSkipReport(markdown: string): boolean {
+  const action = frontMatterValue(markdown, "action_taken");
+  const closeReason = reportCloseReason(markdown);
+  return (
+    Boolean(action && RETRYABLE_CLOSE_SKIP_ACTIONS.has(action)) &&
+    isVerifiedFixedCloseReason(closeReason) &&
+    hasHighConfidenceAllowedCloseMetadata(markdown)
+  );
+}
+
+function isApplyCloseCandidateReport(markdown: string): boolean {
+  const action = frontMatterValue(markdown, "action_taken");
+  return (
+    hasHighConfidenceAllowedCloseMetadata(markdown) &&
+    (action === "proposed_close" || isRetryableCloseSkipReport(markdown))
+  );
+}
+
+function shouldProbeClosedStateReport(markdown: string): boolean {
+  const action = frontMatterValue(markdown, "action_taken");
+  return action === "proposed_close" || Boolean(action && CLOSED_STATE_PROBE_ACTIONS.has(action));
+}
+
+export function applyDecisionPriority(markdown: string, applyKind: ApplyKind): number {
+  const itemKind = reportItemKind(markdown);
   const isCloseProposal =
-    frontMatterValue(markdown, "decision") === "close" &&
-    frontMatterValue(markdown, "confidence") === "high" &&
-    frontMatterValue(markdown, "action_taken") === "proposed_close" &&
-    Boolean(
-      closeReason &&
-      itemKind &&
-      ALLOWED_REASONS.has(closeReason) &&
-      isAutoCloseAllowed(profile, itemKind, closeReason),
-    );
+    isApplyCloseCandidateReport(markdown) && hasAutoCloseAllowedMetadata(markdown);
   if (!isCloseProposal) return 2;
   if (applyKind === "all" || itemKind === applyKind || !itemKind) return 0;
   return 1;
@@ -9907,11 +9975,11 @@ export function validateCloseDecision(
       reason: "not a close decision",
     };
   }
-  if (isProtectedItem(item)) {
+  if (applyBlockingProtectedLabels(item.labels, decision.closeReason).length > 0) {
     return {
       ok: false,
       actionTaken: "skipped_protected_label",
-      reason: protectedLabelReason(item.labels),
+      reason: applyProtectedLabelReason(item.labels, decision.closeReason),
     };
   }
   if (!canClose(decision)) {
@@ -10556,7 +10624,10 @@ export function reviewActionForDecision(options: {
   runtime?: Pick<ReviewRuntime, "model" | "reasoningEffort">;
 }): Action {
   if (options.decision.decision !== "close") return { actionTaken: "kept_open", closeComment: "" };
-  if (isMaintainerAuthored(options.item)) {
+  if (
+    isMaintainerAuthored(options.item) &&
+    !isVerifiedFixedCloseReason(options.decision.closeReason)
+  ) {
     return { actionTaken: "skipped_maintainer_authored", closeComment: "" };
   }
   const validation = validateCloseDecision(options.item, options.decision, {
@@ -11417,12 +11488,14 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     const repo = markdownRepository(markdown, path);
     const number = numberForMarkdownFile(file);
     const decision = frontMatterValue(markdown, "decision");
-    const confidence = frontMatterValue(markdown, "confidence");
     const closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
     const action = frontMatterValue(markdown, "action_taken");
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
     const storedAuthorAssociation = frontMatterValue(markdown, "author_association");
+    const shouldProbeClosedState = shouldProbeClosedStateReport(markdown);
+    const isRetryableSkippedClose = isRetryableCloseSkipReport(markdown);
+    const verifiedLocalCheckout = hasVerifiedLocalCheckoutAccess(markdown);
     const archiveClosed = (nextMarkdown: string): void => {
       if (dryRun) return;
       ensureDir(closedDir);
@@ -11448,22 +11521,21 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         "kept_open",
         `GitHub rejected ${labelKind} label sync with Requires authentication`,
       );
-    if (!hasVerifiedLocalCheckoutAccess(markdown)) {
+    if (!verifiedLocalCheckout && !shouldProbeClosedState) {
       if (markApplySkipped("kept_open", "review lacks verified local checkout access")) break;
       continue;
     }
-    if (!storedHash || (action !== "proposed_close" && action !== "kept_open")) {
+    if (
+      !storedHash ||
+      (action !== "proposed_close" && action !== "kept_open" && !shouldProbeClosedState)
+    ) {
       if (!hatchOnly) continue;
     }
-    if (!hatchOnly && !storedHash) {
+    if (!hatchOnly && !storedHash && !shouldProbeClosedState) {
       continue;
     }
-    const isCloseProposal =
-      decision === "close" &&
-      confidence === "high" &&
-      Boolean(closeReason && ALLOWED_REASONS.has(closeReason)) &&
-      action === "proposed_close";
-    if (decision === "close" && !isCloseProposal && !hatchOnly) {
+    const isCloseProposal = isApplyCloseCandidateReport(markdown);
+    if (decision === "close" && !isCloseProposal && !hatchOnly && !shouldProbeClosedState) {
       continue;
     }
     const { item, state } = fetchItem(number);
@@ -11517,6 +11589,18 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       maybeLogProgress(`skipped comment sync #${number}: already ${state}`);
       if (processedCount >= processedLimit) break;
       continue;
+    }
+    if (state === "open" && !verifiedLocalCheckout) {
+      if (isCloseProposal) {
+        if (markApplySkipped("kept_open", "review lacks verified local checkout access")) break;
+      }
+      continue;
+    }
+    if (state === "open" && shouldProbeClosedState && !isCloseProposal) {
+      continue;
+    }
+    if (isRetryableSkippedClose) {
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "proposed_close");
     }
     let currentPrStatusKind: PrStatusLabelKind | null = null;
     if (state === "open" && item.kind === "pull_request") {
@@ -11623,17 +11707,20 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       item.kind === "pull_request" && !isCloseProposal
         ? issueCommentWithMarker(number, hatchCommentMarker(number))
         : undefined;
-    if (isProtectedItem(item)) {
+    const protectedApplyReason = applyProtectedLabelReason(item.labels, closeReason);
+    if (applyBlockingProtectedLabels(item.labels, closeReason).length > 0) {
       if (isCloseProposal) {
-        if (markApplySkipped("skipped_protected_label", protectedLabelReason(item.labels))) break;
+        if (markApplySkipped("skipped_protected_label", protectedApplyReason)) break;
       }
       if (isCloseProposal) continue;
     }
     const currentAuthorAssociation = normalizeAuthorAssociation(item.authorAssociation);
     const reviewedAuthorAssociation = normalizeAuthorAssociation(storedAuthorAssociation);
     if (
-      isMaintainerAuthorAssociation(currentAuthorAssociation) ||
-      isMaintainerAuthorAssociation(reviewedAuthorAssociation)
+      isCloseProposal &&
+      !isVerifiedFixedCloseReason(closeReason) &&
+      (isMaintainerAuthorAssociation(currentAuthorAssociation) ||
+        isMaintainerAuthorAssociation(reviewedAuthorAssociation))
     ) {
       const authorAssociation = isMaintainerAuthorAssociation(currentAuthorAssociation)
         ? currentAuthorAssociation
@@ -11968,6 +12055,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     const currentReportValidation = validateCloseDecision(
       { repo, kind: item.kind, labels: item.labels },
       reportDecision(markdown, closeReason),
+      { requireCloseComment: !isRetryableSkippedClose },
     );
     if (!currentReportValidation.ok && currentReportValidation.actionTaken !== "kept_open") {
       if (markApplySkipped(currentReportValidation.actionTaken, currentReportValidation.reason))
@@ -12187,8 +12275,10 @@ function isRecentlyCreatedMissingOpen(item: Item, generatedAtMs: number): boolea
 }
 
 function missingOpenReason(item: Item, generatedAtMs: number): MissingOpenReason {
-  if (isMaintainerAuthored(item)) return "maintainer_authored";
-  if (isProtectedItem(item)) return "protected_label";
+  if (!shouldPlanItem(item)) {
+    if (isProtectedItem(item)) return "protected_label";
+    if (isMaintainerAuthored(item)) return "maintainer_authored";
+  }
   if (isRecentlyCreatedMissingOpen(item, generatedAtMs)) return "recently_created";
   return "eligible";
 }
@@ -12265,7 +12355,11 @@ export function auditFromSnapshot(options: {
       return recordFinding(record, closedRecord ? { closedPath: closedRecord.path } : {});
     });
   const protectedProposed = options.itemRecords
-    .filter((record) => record.action === "proposed_close" && isProtectedItem(record))
+    .filter(
+      (record) =>
+        record.action === "proposed_close" &&
+        applyBlockingProtectedLabels(record.labels, record.closeReason).length > 0,
+    )
     .map((record) => recordFinding(record));
   const staleReviews = options.itemRecords
     .filter((record) => record.reviewStatus.startsWith("stale_"))

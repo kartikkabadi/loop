@@ -49,6 +49,13 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Allowed verified `implemented_on_main` close proposals to close
+  maintainer-authored or `maintainer`-labeled items automatically, while keeping
+  other protected-label and non-fixed maintainer closes blocked.
+- Retried legacy `skipped_maintainer_authored` and `skipped_invalid_decision`
+  reports when they are now verified `implemented_on_main` close candidates.
+- Archived live-closed skipped apply records from `items/` during apply so the
+  open-state dashboard sheds stale records faster.
 - Kept stale GitHub Actions queued ghosts out of the live dashboard capacity and pipeline counts after GitHub leaves old queued runs around for hours.
 - Kept event apply runs from failing when GitHub rejects ClawSweeper advisory label sync with a 401; the item is now recorded as kept open for a later retry instead of crashing the workflow.
 - Restored UTF-8 emoji labels on the live dashboard after mojibake slipped into the Worker HTML template.
