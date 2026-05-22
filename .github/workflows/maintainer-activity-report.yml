@@ -18,6 +18,11 @@ on:
         required: true
         default: true
         type: boolean
+      generate:
+        description: "Generate report files before deploy"
+        required: true
+        default: true
+        type: boolean
       comments:
         description: "Collect issue/PR comments; slower, host cron should normally own this"
         required: true
@@ -100,6 +105,7 @@ jobs:
             --github-org openclaw
 
       - name: Generate reports
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.generate }}
         working-directory: maintainers
         env:
           GH_TOKEN: ${{ steps.openclaw_read_token.outputs.token }}
@@ -119,6 +125,7 @@ jobs:
             ${{ github.event_name == 'workflow_dispatch' && inputs.comments && '' || '--no-comments' }}
 
       - name: Commit report history
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.generate }}
         working-directory: maintainers
         run: |
           set -euo pipefail
@@ -145,8 +152,9 @@ jobs:
             echo "::error title=Cloudflare Pages token missing::Set OPENCLAW_CLOUDFLARE_PAGES_API_TOKEN for the OpenClaw Cloudflare account. The existing Workers token is intentionally not used for Pages deploys."
             exit 1
           fi
-          npx wrangler@4.90.0 pages project create "$REPORTS_PROJECT" --production-branch main || true
-          npx wrangler@4.90.0 pages deploy reports \
+          npx wrangler@4.93.1 pages project create "$REPORTS_PROJECT" --production-branch main || true
+          npx wrangler@4.93.1 pages deploy reports \
             --project-name "$REPORTS_PROJECT" \
             --branch main \
-            --commit-dirty=true
+            --commit-dirty=false \
+            --skip-caching
