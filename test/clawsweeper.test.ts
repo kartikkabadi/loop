@@ -6700,6 +6700,720 @@ if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/(320|321)\\/timeline(?
   }
 });
 
+test("apply-decisions upgrades live no-diff kept-open PRs to duplicate closes", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    writeFileSync(
+      join(itemsDir, "322.md"),
+      workPlanCandidateReport({
+        number: 322,
+        repository: "openclaw/openclaw",
+        type: "pull_request",
+        title: "Empty PR",
+        url: "https://github.com/openclaw/openclaw/pull/322",
+        decision: "keep_open",
+        close_reason: "none",
+        action_taken: "kept_open",
+        item_snapshot_hash: "reviewed-snapshot",
+        item_created_at: "2026-05-01T00:00:00Z",
+        item_updated_at: "2026-05-01T00:00:00Z",
+        pull_head_sha: "head-sha",
+      }),
+      "utf8",
+    );
+
+    const ghMock = `
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+const path = args[1] || "";
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/322\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  console.log("HTTP/2 200\\n\\n[]");
+} else if (args[0] === "api" && /\\/issues\\/322\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/322\\/timeline(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/322$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 322,
+    title: "Empty PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/322",
+    body: "No remaining diff.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 0,
+    pull_request: { url: "https://api.github.com/repos/openclaw/openclaw/pulls/322" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/322$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 322,
+    title: "Empty PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/322",
+    state: "open",
+    changed_files: 0,
+    commits: 0,
+    review_comments: 0,
+    body: "No remaining diff.",
+    head: { sha: "head-sha", ref: "branch", repo: { full_name: "fork/openclaw" } },
+    base: { sha: "base-sha", ref: "main", repo: { full_name: "openclaw/openclaw" } },
+    user: { login: "reporter" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/322\\/(files|commits|comments)(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "label" || args[0] === "issue") {
+  console.log("");
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: [
+          "--target-repo",
+          "openclaw/openclaw",
+          "--dry-run",
+          "--apply-kind",
+          "all",
+          "--processed-limit",
+          "3",
+        ],
+      });
+    });
+
+    assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+      {
+        number: 322,
+        action: "review_comment_synced",
+        reason: "would create durable Codex review comment",
+      },
+      {
+        number: 322,
+        action: "closed",
+        reason:
+          "dry-run: would close as duplicate or superseded; dry-run: would post close-applied comment",
+      },
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions starts same-author pair closes from the PR side", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    const issueSynced = reportWithSyncedReviewComment(
+      implementedCloseReport({
+        repository: "openclaw/openclaw",
+        number: 320,
+        type: "issue",
+        title: "Paired issue",
+        author: "reporter",
+        action_taken: "skipped_same_author_pair",
+      }),
+      320,
+      "implemented_on_main",
+    );
+    const pullSynced = reportWithSyncedReviewComment(
+      implementedCloseReport({
+        repository: "openclaw/openclaw",
+        number: 321,
+        type: "pull_request",
+        title: "Paired PR",
+        author: "reporter",
+        action_taken: "skipped_same_author_pair",
+      }),
+      321,
+      "implemented_on_main",
+    );
+    writeFileSync(join(itemsDir, "320.md"), issueSynced.report, "utf8");
+    writeFileSync(join(itemsDir, "321.md"), pullSynced.report, "utf8");
+
+    const ghMock = `
+const comments = {
+  320: ${JSON.stringify(issueSynced.comment)},
+  321: ${JSON.stringify(pullSynced.comment)}
+};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+const path = args[1] || "";
+const issueNumber = (path.match(/\\/issues\\/(\\d+)/) || [])[1];
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/(320|321)\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  console.log("HTTP/2 200\\n\\n[]");
+} else if (args[0] === "api" && /\\/issues\\/(320|321)\\/comments(?:\\?|$)/.test(path)) {
+  const number = Number(issueNumber);
+  console.log(JSON.stringify([[{
+    id: 9000 + number,
+    html_url: "https://github.com/openclaw/openclaw/issues/" + number + "#issuecomment-" + (9000 + number),
+    created_at: "2026-05-01T01:00:00Z",
+    updated_at: "2026-05-01T01:00:00Z",
+    user: { login: "clawsweeper[bot]" },
+    body: comments[number]
+  }]]));
+} else if (args[0] === "api" && /\\/issues\\/(320|321)\\/timeline(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/320$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 320,
+    title: "Paired issue",
+    html_url: "https://github.com/openclaw/openclaw/issues/320",
+    body: "See #321.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 1,
+    pull_request: null
+  }));
+} else if (args[0] === "api" && /\\/issues\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Paired PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/321",
+    body: "Fixes #320.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 1,
+    pull_request: { url: "https://api.github.com/repos/openclaw/openclaw/pulls/321" }
+  }));
+} else if (args[0] === "issue" && args[1] === "view") {
+  console.log(JSON.stringify({ closedByPullRequestsReferences: [] }));
+} else if (args[0] === "api" && /\\/pulls\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Paired PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/321",
+    state: "open",
+    changed_files: 0,
+    commits: 0,
+    review_comments: 0,
+    body: "Fixes #320.",
+    head: { sha: "head-sha", ref: "branch", repo: { full_name: "fork/openclaw" } },
+    base: { sha: "base-sha", ref: "main", repo: { full_name: "openclaw/openclaw" } },
+    user: { login: "reporter" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/321\\/(files|commits|comments)(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "label" || args[0] === "issue") {
+  console.log("");
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: [
+          "--target-repo",
+          "openclaw/openclaw",
+          "--dry-run",
+          "--apply-kind",
+          "all",
+          "--processed-limit",
+          "4",
+        ],
+      });
+    });
+
+    const report = JSON.parse(readFileSync(reportPath, "utf8")) as Array<{
+      number: number;
+      action: string;
+    }>;
+    assert.deepEqual(
+      report.filter((entry) => entry.action === "closed").map((entry) => entry.number),
+      [321, 320],
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions keeps same-author PR blocked when counterpart drifted", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    const issueSynced = reportWithSyncedReviewComment(
+      implementedCloseReport({
+        repository: "openclaw/openclaw",
+        number: 320,
+        type: "issue",
+        title: "Paired issue",
+        author: "reporter",
+        action_taken: "skipped_same_author_pair",
+      }),
+      320,
+      "implemented_on_main",
+    );
+    const pullSynced = reportWithSyncedReviewComment(
+      implementedCloseReport({
+        repository: "openclaw/openclaw",
+        number: 321,
+        type: "pull_request",
+        title: "Paired PR",
+        author: "reporter",
+        action_taken: "skipped_same_author_pair",
+      }),
+      321,
+      "implemented_on_main",
+    );
+    writeFileSync(join(itemsDir, "320.md"), issueSynced.report, "utf8");
+    writeFileSync(join(itemsDir, "321.md"), pullSynced.report, "utf8");
+
+    const ghMock = `
+const comments = {
+  320: ${JSON.stringify(issueSynced.comment)},
+  321: ${JSON.stringify(pullSynced.comment)}
+};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+const path = args[1] || "";
+const issueNumber = (path.match(/\\/issues\\/(\\d+)/) || [])[1];
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/(320|321)\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  console.log("HTTP/2 200\\n\\n[]");
+} else if (args[0] === "api" && /\\/issues\\/(320|321)\\/comments(?:\\?|$)/.test(path)) {
+  const number = Number(issueNumber);
+  console.log(JSON.stringify([[{
+    id: 9000 + number,
+    html_url: "https://github.com/openclaw/openclaw/issues/" + number + "#issuecomment-" + (9000 + number),
+    created_at: "2026-05-01T01:00:00Z",
+    updated_at: "2026-05-01T01:00:00Z",
+    user: { login: "clawsweeper[bot]" },
+    body: comments[number]
+  }]]));
+} else if (args[0] === "api" && /\\/issues\\/(320|321)\\/timeline(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/320$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 320,
+    title: "Paired issue",
+    html_url: "https://github.com/openclaw/openclaw/issues/320",
+    body: "See #321.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-02T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 1,
+    pull_request: null
+  }));
+} else if (args[0] === "api" && /\\/issues\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Paired PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/321",
+    body: "Fixes #320.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 1,
+    pull_request: { url: "https://api.github.com/repos/openclaw/openclaw/pulls/321" }
+  }));
+} else if (args[0] === "issue" && args[1] === "view") {
+  console.log(JSON.stringify({ closedByPullRequestsReferences: [] }));
+} else if (args[0] === "api" && /\\/pulls\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Paired PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/321",
+    state: "open",
+    changed_files: 0,
+    commits: 0,
+    review_comments: 0,
+    body: "Fixes #320.",
+    head: { sha: "head-sha", ref: "branch", repo: { full_name: "fork/openclaw" } },
+    base: { sha: "base-sha", ref: "main", repo: { full_name: "openclaw/openclaw" } },
+    user: { login: "reporter" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/321\\/(files|commits|comments)(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "label" || args[0] === "issue") {
+  console.log("");
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: [
+          "--target-repo",
+          "openclaw/openclaw",
+          "--dry-run",
+          "--apply-kind",
+          "all",
+          "--processed-limit",
+          "1",
+        ],
+      });
+    });
+
+    assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+      {
+        number: 321,
+        action: "skipped_same_author_pair",
+        reason: "open issue #320 (Paired issue) by the same author is paired with this PR",
+      },
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions keeps same-author PR blocked when counterpart comment needs sync", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    const issueSynced = reportWithSyncedReviewComment(
+      implementedCloseReport({
+        repository: "openclaw/openclaw",
+        number: 320,
+        type: "issue",
+        title: "Paired issue",
+        author: "reporter",
+        action_taken: "skipped_same_author_pair",
+      }),
+      320,
+      "implemented_on_main",
+    );
+    const pullSynced = reportWithSyncedReviewComment(
+      implementedCloseReport({
+        repository: "openclaw/openclaw",
+        number: 321,
+        type: "pull_request",
+        title: "Paired PR",
+        author: "reporter",
+        action_taken: "skipped_same_author_pair",
+      }),
+      321,
+      "implemented_on_main",
+    );
+    writeFileSync(join(itemsDir, "320.md"), issueSynced.report, "utf8");
+    writeFileSync(join(itemsDir, "321.md"), pullSynced.report, "utf8");
+
+    const ghMock = `
+const pullComment = ${JSON.stringify(pullSynced.comment)};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+const path = args[1] || "";
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/(320|321)\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  console.log("HTTP/2 200\\n\\n[]");
+} else if (args[0] === "api" && /\\/issues\\/320\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[{
+    id: 9321,
+    html_url: "https://github.com/openclaw/openclaw/issues/321#issuecomment-9321",
+    created_at: "2026-05-01T01:00:00Z",
+    updated_at: "2026-05-01T01:00:00Z",
+    user: { login: "clawsweeper[bot]" },
+    body: pullComment
+  }]]));
+} else if (args[0] === "api" && /\\/issues\\/(320|321)\\/timeline(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/320$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 320,
+    title: "Paired issue",
+    html_url: "https://github.com/openclaw/openclaw/issues/320",
+    body: "See #321.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 0,
+    pull_request: null
+  }));
+} else if (args[0] === "api" && /\\/issues\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Paired PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/321",
+    body: "Fixes #320.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 1,
+    pull_request: { url: "https://api.github.com/repos/openclaw/openclaw/pulls/321" }
+  }));
+} else if (args[0] === "issue" && args[1] === "view") {
+  console.log(JSON.stringify({ closedByPullRequestsReferences: [] }));
+} else if (args[0] === "api" && /\\/pulls\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Paired PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/321",
+    state: "open",
+    changed_files: 0,
+    commits: 0,
+    review_comments: 0,
+    body: "Fixes #320.",
+    head: { sha: "head-sha", ref: "branch", repo: { full_name: "fork/openclaw" } },
+    base: { sha: "base-sha", ref: "main", repo: { full_name: "openclaw/openclaw" } },
+    user: { login: "reporter" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/321\\/(files|commits|comments)(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "label" || args[0] === "issue") {
+  console.log("");
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: [
+          "--target-repo",
+          "openclaw/openclaw",
+          "--dry-run",
+          "--apply-kind",
+          "all",
+          "--processed-limit",
+          "1",
+        ],
+      });
+    });
+
+    assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+      {
+        number: 321,
+        action: "skipped_same_author_pair",
+        reason: "open issue #320 (Paired issue) by the same author is paired with this PR",
+      },
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions keeps same-author PR blocked when counterpart reason is disabled", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    const issueSynced = reportWithSyncedReviewComment(
+      implementedCloseReport({
+        repository: "openclaw/openclaw",
+        number: 320,
+        type: "issue",
+        title: "Paired issue",
+        author: "reporter",
+        action_taken: "skipped_same_author_pair",
+      }),
+      320,
+      "implemented_on_main",
+    );
+    const pullSynced = reportWithSyncedReviewComment(
+      implementedCloseReport({
+        repository: "openclaw/openclaw",
+        number: 321,
+        type: "pull_request",
+        title: "Paired duplicate PR",
+        author: "reporter",
+        action_taken: "skipped_same_author_pair",
+        close_reason: "duplicate_or_superseded",
+      }),
+      321,
+      "duplicate_or_superseded",
+    );
+    writeFileSync(join(itemsDir, "320.md"), issueSynced.report, "utf8");
+    writeFileSync(join(itemsDir, "321.md"), pullSynced.report, "utf8");
+
+    const ghMock = `
+const comments = {
+  320: ${JSON.stringify(issueSynced.comment)},
+  321: ${JSON.stringify(pullSynced.comment)}
+};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+const path = args[1] || "";
+const issueNumber = (path.match(/\\/issues\\/(\\d+)/) || [])[1];
+if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/321\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  console.log("HTTP/2 200\\n\\n[]");
+} else if (args[0] === "api" && /\\/issues\\/(320|321)\\/comments(?:\\?|$)/.test(path)) {
+  const number = Number(issueNumber);
+  console.log(JSON.stringify([[{
+    id: 9000 + number,
+    html_url: "https://github.com/openclaw/openclaw/issues/" + number + "#issuecomment-" + (9000 + number),
+    created_at: "2026-05-01T01:00:00Z",
+    updated_at: "2026-05-01T01:00:00Z",
+    user: { login: "clawsweeper[bot]" },
+    body: comments[number]
+  }]]));
+} else if (args[0] === "api" && /\\/issues\\/321\\/timeline(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/320$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 320,
+    title: "Paired issue",
+    html_url: "https://github.com/openclaw/openclaw/issues/320",
+    body: "See #321.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 1,
+    pull_request: null
+  }));
+} else if (args[0] === "api" && /\\/issues\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Paired duplicate PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/321",
+    body: "Fixes #320.",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    comments: 1,
+    pull_request: { url: "https://api.github.com/repos/openclaw/openclaw/pulls/321" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Paired duplicate PR",
+    html_url: "https://github.com/openclaw/openclaw/pull/321",
+    state: "open",
+    changed_files: 0,
+    commits: 0,
+    review_comments: 0,
+    body: "Fixes #320.",
+    head: { sha: "head-sha", ref: "branch", repo: { full_name: "fork/openclaw" } },
+    base: { sha: "base-sha", ref: "main", repo: { full_name: "openclaw/openclaw" } },
+    user: { login: "reporter" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/321\\/(files|commits|comments)(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "label" || args[0] === "issue") {
+  console.log("");
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: [
+          "--target-repo",
+          "openclaw/openclaw",
+          "--dry-run",
+          "--apply-kind",
+          "all",
+          "--apply-close-reasons",
+          "duplicate_or_superseded",
+          "--processed-limit",
+          "1",
+        ],
+      });
+    });
+
+    assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+      {
+        number: 321,
+        action: "skipped_same_author_pair",
+        reason: "open issue #320 (Paired issue) by the same author is paired with this PR",
+      },
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("apply-decisions archives live-closed skipped records without reopening close gates", () => {
   const root = mkdtempSync(tmpPrefix);
   try {
@@ -7731,7 +8445,7 @@ test("apply mode prioritizes matching close proposals before comment sync", () =
   assert.equal(applyDecisionPriority(legacyInvalidDecision, "issue"), 0);
   assert.equal(applyDecisionPriority(legacyKeptOpen, "issue"), 0);
   assert.equal(applyDecisionPriority(pairBlockedOpenClosingPr, "issue"), 1);
-  assert.equal(applyDecisionPriority(pairBlockedSameAuthor, "issue"), 2);
+  assert.equal(applyDecisionPriority(pairBlockedSameAuthor, "issue"), 1);
   assert.equal(applyDecisionPriority(pullRequestClose, "issue"), 1);
   assert.equal(applyDecisionPriority(duplicateSkip, "issue"), 2);
   assert.equal(applyDecisionPriority(reportFrontMatter(), "issue"), 2);

@@ -1187,7 +1187,10 @@ const RETRYABLE_CLOSE_SKIP_ACTIONS = new Set<string>([
   "skipped_maintainer_authored",
   "skipped_invalid_decision",
 ]);
-const PAIR_BLOCKED_CLOSE_ACTIONS = new Set<string>(["skipped_open_closing_pr"]);
+const PAIR_BLOCKED_CLOSE_ACTIONS = new Set<string>([
+  "skipped_open_closing_pr",
+  "skipped_same_author_pair",
+]);
 const CLOSED_STATE_PROBE_ACTIONS = new Set<string>([
   "skipped_already_closed",
   "skipped_changed_since_review",
@@ -3257,6 +3260,13 @@ export function applyDecisionPriority(markdown: string, applyKind: ApplyKind): n
   const isCloseProposal =
     isApplyCloseCandidateReport(markdown) && hasAutoCloseAllowedMetadata(markdown);
   if (!isCloseProposal) return 2;
+  if (
+    frontMatterValue(markdown, "action_taken") === "skipped_same_author_pair" &&
+    itemKind === "pull_request" &&
+    (applyKind === "all" || applyKind === "pull_request")
+  ) {
+    return 0;
+  }
   if (isPairBlockedCloseReport(markdown)) return 1;
   if (applyKind === "all" || itemKind === applyKind || !itemKind) return 0;
   return 1;
@@ -8859,6 +8869,42 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
   };
 }
 
+function livePullRequestHasNoDiff(context: ItemContext): boolean {
+  const pull = asRecord(context.pullRequest);
+  return (
+    pull.changedFiles === 0 &&
+    context.counts?.pullFilesTruncated !== true &&
+    (context.pullFiles?.length ?? 0) === 0
+  );
+}
+
+function upgradeNoDiffPullRequestReport(markdown: string, item: Item): string {
+  const command = `gh api repos/${item.repo}/pulls/${item.number} --jq '{state:.state,changed_files:.changed_files,base:.base.ref,head:.head.sha}'`;
+  let upgraded = markdown;
+  upgraded = replaceFrontMatterValue(upgraded, "decision", "close");
+  upgraded = replaceFrontMatterValue(upgraded, "close_reason", "duplicate_or_superseded");
+  upgraded = replaceFrontMatterValue(upgraded, "confidence", "high");
+  upgraded = replaceFrontMatterValue(upgraded, "action_taken", "proposed_close");
+  upgraded = replaceFrontMatterValue(upgraded, "work_candidate", "none");
+  upgraded = replaceFrontMatterValue(upgraded, "work_status", "none");
+  upgraded = replaceSectionValue(
+    upgraded,
+    REVIEW_SECTIONS.bestSolution,
+    "Close this PR: GitHub reports no changed files against the current base branch, so the branch is already empty or superseded by `main`.",
+  );
+  upgraded = replaceSectionValue(
+    upgraded,
+    REVIEW_SECTIONS.evidence,
+    `- **live no-diff PR:** GitHub reports \`changed_files: 0\` for this open PR, so there is no remaining branch diff to merge.\n  - command: \`${command}\``,
+  );
+  upgraded = replaceSectionValue(
+    upgraded,
+    REVIEW_SECTIONS.closeComment,
+    renderCloseCommentFromReport(upgraded, "duplicate_or_superseded"),
+  );
+  return upgraded;
+}
+
 function workPlanPathForReport(file: string, plansDir = defaultPlansDir()): string {
   return join(plansDir, basename(file));
 }
@@ -11488,6 +11534,9 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         left.number - right.number,
     );
   const files = fileEntries.map((entry) => entry.name);
+  const openFileEntryByNumber = new Map(
+    fileEntries.filter((entry) => entry.location === "items").map((entry) => [entry.number, entry]),
+  );
   const closedThisRun = new Set<string>();
   if (fileEntries.length === 0 && !existsSync(itemsDir)) {
     console.log("No items directory.");
@@ -11524,7 +11573,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     const repo = markdownRepository(markdown, path);
     const number = numberForMarkdownFile(file);
     const decision = frontMatterValue(markdown, "decision");
-    const closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
+    let closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
     const action = frontMatterValue(markdown, "action_taken");
     const storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     const storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
@@ -11579,7 +11628,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     if (!hatchOnly && !storedHash && !shouldProbeClosedState) {
       continue;
     }
-    const isCloseProposal = isApplyCloseCandidateReport(markdown);
+    let isCloseProposal = isApplyCloseCandidateReport(markdown);
     if (decision === "close" && !isCloseProposal && !hatchOnly && !shouldProbeClosedState) {
       continue;
     }
@@ -11592,6 +11641,168 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     const currentItemContext = (): ItemContext => {
       currentContext ??= collectItemContext(item, { fullTimelineForRelations: true });
       return currentContext;
+    };
+    const sameAuthorPairStartCloseable = new Map<string, boolean>();
+    const currentCloseGatesPassed = (): boolean => {
+      if (!closeReason || !closeReasonEnabled(closeReason, applyCloseReasons)) return false;
+      if (needsReviewCommentSync) return false;
+      if (
+        !validateCloseDecision(
+          { repo, kind: item.kind, labels: item.labels },
+          reportDecision(markdown, closeReason),
+          {
+            requireCloseComment: !isRetryableSkippedClose,
+          },
+        ).ok
+      ) {
+        return false;
+      }
+      return (
+        closeReasonApplyAgeSkipReason(item, closeReason, {
+          minAgeMs,
+          minAgeDescription,
+          staleMinAgeDays,
+        }) === null
+      );
+    };
+    const canStartSameAuthorPairCloseInThisRun = (
+      counterpartNumber: number,
+      counterpartKind: ItemKind,
+    ): boolean => {
+      const cacheKey = `${counterpartNumber}:${counterpartKind}`;
+      const cached = sameAuthorPairStartCloseable.get(cacheKey);
+      if (cached !== undefined) return cached;
+
+      let result = false;
+      if (
+        item.kind === "pull_request" &&
+        counterpartKind === "issue" &&
+        applyKind === "all" &&
+        closedCount + 2 <= limit &&
+        processedCount + 2 <= processedLimit &&
+        currentCloseGatesPassed()
+      ) {
+        const counterpartEntry = openFileEntryByNumber.get(counterpartNumber);
+        if (counterpartEntry) {
+          const counterpartMarkdown = readFileSync(counterpartEntry.path, "utf8");
+          const counterpartRepo = markdownRepository(counterpartMarkdown, counterpartEntry.path);
+          const counterpartReason = reportCloseReason(counterpartMarkdown);
+          if (
+            counterpartRepo === repo &&
+            reportItemKind(counterpartMarkdown) === counterpartKind &&
+            counterpartReason &&
+            closeReasonEnabled(counterpartReason, applyCloseReasons) &&
+            isApplyCloseCandidateReport(counterpartMarkdown) &&
+            hasAutoCloseAllowedMetadata(counterpartMarkdown) &&
+            hasVerifiedLocalCheckoutAccess(counterpartMarkdown)
+          ) {
+            const { item: counterpartItem, state: counterpartState } = fetchItem(counterpartNumber);
+            const counterpartReviewedAuthorAssociation = normalizeAuthorAssociation(
+              frontMatterValue(counterpartMarkdown, "author_association"),
+            );
+            const counterpartStoredUpdatedAt = frontMatterValue(
+              counterpartMarkdown,
+              "item_updated_at",
+            );
+            const counterpartStoredHash = frontMatterValue(
+              counterpartMarkdown,
+              "item_snapshot_hash",
+            );
+            const counterpartReviewCommentBody = renderReviewCommentFromReport(
+              counterpartMarkdown,
+              counterpartReason,
+            );
+            const counterpartReviewComment = issueReviewComment(counterpartNumber, [
+              counterpartReviewCommentBody,
+              reviewSectionValue(counterpartMarkdown, "closeComment"),
+            ]);
+            const counterpartMarkedReviewComment = markedReviewCommentBody(
+              counterpartNumber,
+              counterpartReviewCommentBody,
+            );
+            const counterpartNeedsReviewCommentSync = shouldSyncReviewComment({
+              syncCommentsOnly: false,
+              isCloseProposal: true,
+              commentSyncMinAgeDays,
+              reviewCommentSyncedAt: frontMatterValue(
+                counterpartMarkdown,
+                "review_comment_synced_at",
+              ),
+              hasExistingReviewComment: Boolean(counterpartReviewComment),
+              needsReviewCommentBodySync: !commentBodyMatches(
+                counterpartReviewComment,
+                counterpartMarkedReviewComment,
+              ),
+              needsReviewCommentHashSync:
+                frontMatterValue(counterpartMarkdown, "review_comment_sha256") !==
+                sha256(counterpartMarkedReviewComment),
+              needsReviewCommentReferenceSync:
+                frontMatterValue(counterpartMarkdown, "review_comment_id") === "unknown" ||
+                frontMatterValue(counterpartMarkdown, "review_comment_url") === "unknown",
+              forceReviewCommentBodySync: false,
+            });
+            const counterpartReviewCommentOnlyUpdate =
+              counterpartItem.updatedAt === commentUpdatedAt(counterpartReviewComment);
+            const counterpartUpdatedSinceReview = Boolean(
+              counterpartStoredUpdatedAt &&
+              counterpartItem.updatedAt !== counterpartStoredUpdatedAt,
+            );
+            const counterpartContext = collectItemContext(counterpartItem, {
+              fullTimelineForRelations: true,
+            });
+            const counterpartSnapshotChanged =
+              !counterpartStoredUpdatedAt &&
+              counterpartStoredHash &&
+              itemSnapshotHash(counterpartItem, counterpartContext) !== counterpartStoredHash &&
+              !counterpartReviewCommentOnlyUpdate;
+            const counterpartOpenClosingPullRequestReason = openClosingPullRequestApplyReason(
+              closingPullRequestsForIssue(counterpartNumber),
+              (pullNumber, pullRepo) =>
+                canClosePairCounterpartInThisRun(pullNumber, pullRepo) ||
+                (pullNumber === number && (pullRepo === undefined || pullRepo === repo)),
+            );
+            const counterpartSameAuthorReason = sameAuthorCounterpartApplyReason(
+              counterpartItem,
+              counterpartContext.relatedItems ?? [],
+              (relatedNumber, relatedKind) =>
+                canClosePairCounterpartInThisRun(relatedNumber) ||
+                (relatedNumber === number && relatedKind === item.kind),
+            );
+            result =
+              counterpartState === "open" &&
+              counterpartItem.kind === counterpartKind &&
+              applyBlockingProtectedLabels(counterpartItem.labels, counterpartReason).length ===
+                0 &&
+              (isVerifiedFixedCloseReason(counterpartReason) ||
+                (!isMaintainerAuthorAssociation(
+                  normalizeAuthorAssociation(counterpartItem.authorAssociation),
+                ) &&
+                  !isMaintainerAuthorAssociation(counterpartReviewedAuthorAssociation))) &&
+              (!counterpartUpdatedSinceReview || counterpartReviewCommentOnlyUpdate) &&
+              !counterpartSnapshotChanged &&
+              !counterpartNeedsReviewCommentSync &&
+              validateCloseDecision(
+                {
+                  repo: counterpartRepo,
+                  kind: counterpartItem.kind,
+                  labels: counterpartItem.labels,
+                },
+                reportDecision(counterpartMarkdown, counterpartReason),
+                { requireCloseComment: !isRetryableCloseSkipReport(counterpartMarkdown) },
+              ).ok &&
+              closeReasonApplyAgeSkipReason(counterpartItem, counterpartReason, {
+                minAgeMs,
+                minAgeDescription,
+                staleMinAgeDays,
+              }) === null &&
+              counterpartOpenClosingPullRequestReason === null &&
+              counterpartSameAuthorReason === null;
+          }
+        }
+      }
+
+      sameAuthorPairStartCloseable.set(cacheKey, result);
+      return result;
     };
     if (hatchOnly) {
       if (item.kind !== "pull_request") {
@@ -11646,6 +11857,20 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     }
     if (isUpgradedCloseCandidate) {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "proposed_close");
+    }
+    if (
+      state === "open" &&
+      !isCloseProposal &&
+      item.kind === "pull_request" &&
+      decision === "keep_open" &&
+      action === "kept_open" &&
+      storedUpdatedAt &&
+      item.updatedAt === storedUpdatedAt &&
+      livePullRequestHasNoDiff(currentItemContext())
+    ) {
+      markdown = upgradeNoDiffPullRequestReport(markdown, item);
+      closeReason = "duplicate_or_superseded";
+      isCloseProposal = true;
     }
     let currentPrStatusKind: PrStatusLabelKind | null = null;
     if (state === "open" && item.kind === "pull_request") {
@@ -11939,17 +12164,6 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         continue;
       }
     }
-    if (isCloseProposal) {
-      const sameAuthorCounterpartReason = sameAuthorCounterpartApplyReason(
-        item,
-        currentItemContext().relatedItems ?? [],
-        (counterpartNumber) => canClosePairCounterpartInThisRun(counterpartNumber),
-      );
-      if (sameAuthorCounterpartReason) {
-        if (markApplySkipped("skipped_same_author_pair", sameAuthorCounterpartReason)) break;
-        continue;
-      }
-    }
     const reviewCommentHash = sha256(markedReviewComment);
     const existingReviewCommentMatches = commentBodyMatches(
       existingReviewComment,
@@ -11976,6 +12190,19 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       needsReviewCommentReferenceSync,
       forceReviewCommentBodySync: clawSweeperLabelsChanged,
     });
+    if (isCloseProposal) {
+      const sameAuthorCounterpartReason = sameAuthorCounterpartApplyReason(
+        item,
+        currentItemContext().relatedItems ?? [],
+        (counterpartNumber, counterpartKind) =>
+          canClosePairCounterpartInThisRun(counterpartNumber) ||
+          canStartSameAuthorPairCloseInThisRun(counterpartNumber, counterpartKind),
+      );
+      if (sameAuthorCounterpartReason) {
+        if (markApplySkipped("skipped_same_author_pair", sameAuthorCounterpartReason)) break;
+        continue;
+      }
+    }
     if (clawSweeperLabelsChanged && !dryRun) {
       markdown = replaceFrontMatterValue(markdown, "labels_synced_at", new Date().toISOString());
     }
