@@ -49,6 +49,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Restored UTF-8 emoji labels on the live dashboard after mojibake slipped into the Worker HTML template.
 - Kept scheduled target fanout covering public `steipete/*` repositories when the ClawSweeper GitHub App is not installed for that owner.
 - Reduced the shared Codex worker budget from 72 to 57 so background review, commit-review, repair, and issue-implementation lanes run about 20% fewer parallel workers.
 - Clarified re-review guidance so PR/issue authors and users with repository write access can request a fresh read-only review without a maintainer relay.
