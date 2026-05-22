@@ -117,10 +117,11 @@ export function listActiveWorkflowRuns({
   staleQueuedMs = process.env.CLAWSWEEPER_STALE_QUEUED_WORKFLOW_MS ??
     DEFAULT_STALE_QUEUED_WORKFLOW_MS,
   fetchWorkflowRuns = fetchRecentWorkflowRuns,
+  env,
 }: LooseRecord = {}) {
   const fetchRuns =
     typeof fetchWorkflowRuns === "function" ? fetchWorkflowRuns : fetchRecentWorkflowRuns;
-  const workflowRuns = fetchRuns({ repo, workflow });
+  const workflowRuns = fetchRuns({ repo, workflow, env });
   const staleQueuedWindowMs = readNonNegativeInteger(staleQueuedMs, "stale queued workflow ms");
   const runs = Array.isArray(workflowRuns)
     ? workflowRuns
@@ -137,16 +138,19 @@ export function listActiveWorkflowRuns({
     );
 }
 
-function fetchRecentWorkflowRuns({ repo, workflow }: LooseRecord) {
+function fetchRecentWorkflowRuns({ repo, workflow, env }: LooseRecord) {
   return ACTIVE_WORKFLOW_STATUSES.flatMap((status) => {
-    const runs = ghJson([
-      "api",
-      "--method",
-      "GET",
-      `repos/${repo}/actions/workflows/${encodeURIComponent(workflow)}/runs?per_page=100&status=${encodeURIComponent(status)}`,
-      "--jq",
-      ".workflow_runs",
-    ]);
+    const runs = ghJson(
+      [
+        "api",
+        "--method",
+        "GET",
+        `repos/${repo}/actions/workflows/${encodeURIComponent(workflow)}/runs?per_page=100&status=${encodeURIComponent(status)}`,
+        "--jq",
+        ".workflow_runs",
+      ],
+      env ? { env } : {},
+    );
     return Array.isArray(runs) ? runs : [];
   });
 }

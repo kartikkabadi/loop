@@ -2110,6 +2110,7 @@ function activeRepairRunForCommand(command: LooseRecord) {
     jobPath,
     automergeRunNamePrefix,
     activeRunsByPrefix: activeRepairRunsByPrefix,
+    env: dispatchTokenEnv(),
   });
 }
 

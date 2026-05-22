@@ -18,6 +18,7 @@ checkpoint, and status-only commits are intentionally omitted.
 - Added a live-dashboard CI refresher workflow that posts target pull request
   check summaries into Worker storage, so active rows can show stored PR check
   state without slow browser-time GitHub fanout.
+- Added Cloudflare GitHub App webhook intake for eligible `openclaw/*` and `steipete/*` issue, pull request, and maintainer comment events so target repos can dispatch exact ClawSweeper runs without waiting for scheduled scans.
 - Added a read-only live triage dashboard for ClawSweeper advisory-label views, focused issue queues, and linked pull request visibility. Thanks @brokemac79.
 - Added a canonical repair `job_intent` contract and orchestration docs so
   automerge, issue implementation, commit finding, low-signal cleanup, and

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { generateKeyPairSync } from "node:crypto";
+import { createHmac, generateKeyPairSync } from "node:crypto";
 import test from "node:test";
 
 import worker from "../dashboard/worker.ts";
@@ -1156,6 +1156,322 @@ test("triage uses ClawSweeper GitHub App credentials when no static token is con
   }
 });
 
+test("hosted webhook accepts author read-only mention commands", async () => {
+  for (const body of ["@clawsweeper Re-run", "@clawsweeper hatch"]) {
+    const response = await worker.fetch(
+      signedGithubWebhookRequest({
+        event: "issue_comment",
+        secret: "test-secret",
+        payload: {
+          action: "created",
+          repository: {
+            full_name: "openclaw/openclaw",
+            private: false,
+            archived: false,
+            fork: false,
+            has_issues: true,
+          },
+          issue: { number: 76991, user: { login: "nickmopen" } },
+          installation: { id: 123 },
+          comment: {
+            id: 456,
+            body,
+            author_association: "CONTRIBUTOR",
+            user: { login: "NickMOpen" },
+          },
+        },
+      }),
+      { CLAWSWEEPER_WEBHOOK_SECRET: "test-secret" },
+    );
+    assert.equal(response.status, 503, `${body} should pass classification before app config`);
+    assert.deepEqual(await response.json(), { error: "github_app_not_configured" });
+  }
+});
+
+test("hosted webhook returns invalid_json for signed malformed bodies", async () => {
+  const response = await worker.fetch(
+    signedGithubWebhookBodyRequest({
+      event: "issue_comment",
+      secret: "test-secret",
+      body: "{",
+    }),
+    { CLAWSWEEPER_WEBHOOK_SECRET: "test-secret" },
+  );
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { error: "invalid_json" });
+});
+
+test("hosted webhook ignores ClawSweeper-owned label mutations", async () => {
+  const response = await worker.fetch(
+    signedGithubWebhookRequest({
+      event: "issues",
+      secret: "test-secret",
+      payload: {
+        action: "labeled",
+        repository: {
+          full_name: "openclaw/openclaw",
+          private: false,
+          archived: false,
+          fork: false,
+          has_issues: true,
+        },
+        issue: { number: 76991 },
+        installation: { id: 123 },
+        label: { name: "status: 👀 ready for maintainer look" },
+        sender: { login: "openclaw-clawsweeper[bot]" },
+      },
+    }),
+    { CLAWSWEEPER_WEBHOOK_SECRET: "test-secret" },
+  );
+  assert.equal(response.status, 202);
+  assert.deepEqual(await response.json(), {
+    ok: true,
+    accepted: false,
+    reason: "routine ClawSweeper label mutation",
+  });
+});
+
+test("hosted webhook dispatches item events with repository default branch", async () => {
+  const originalFetch = globalThis.fetch;
+  const { privateKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    privateKeyEncoding: { type: "pkcs8", format: "pem" },
+    publicKeyEncoding: { type: "spki", format: "pem" },
+  });
+  let dispatchBody: unknown = null;
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/installation") {
+      return jsonResponse({ id: 999 });
+    }
+    if (url.pathname === "/app/installations/999/access_tokens") {
+      return jsonResponse({ token: "dispatch-token" });
+    }
+    if (url.pathname === "/repos/openclaw/clawsweeper/dispatches") {
+      assert.equal(new Headers(init?.headers).get("authorization"), "Bearer dispatch-token");
+      dispatchBody = JSON.parse(String(init?.body));
+      return new Response(null, { status: 204 });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      signedGithubWebhookRequest({
+        event: "issues",
+        secret: "test-secret",
+        payload: {
+          action: "opened",
+          repository: {
+            full_name: "openclaw/gogcli",
+            default_branch: "trunk",
+            private: false,
+            archived: false,
+            fork: false,
+            has_issues: true,
+          },
+          issue: { number: 597 },
+          installation: { id: 123 },
+        },
+      }),
+      {
+        CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
+        CLAWSWEEPER_APP_PRIVATE_KEY: privateKey,
+        CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+      },
+    );
+
+    assert.equal(response.status, 202);
+    assert.deepEqual(await response.json(), { ok: true, dispatched: "clawsweeper_item" });
+    assert.deepEqual(dispatchBody, {
+      event_type: "clawsweeper_item",
+      client_payload: {
+        target_repo: "openclaw/gogcli",
+        target_branch: "trunk",
+        item_number: 597,
+        item_kind: "issue",
+        source_event: "issues",
+        source_action: "opened",
+        supersedes_in_progress: false,
+      },
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("hosted webhook dispatches human ClawSweeper-owned label events", async () => {
+  const originalFetch = globalThis.fetch;
+  const { privateKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    privateKeyEncoding: { type: "pkcs8", format: "pem" },
+    publicKeyEncoding: { type: "spki", format: "pem" },
+  });
+  let dispatchBody: unknown = null;
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/installation") {
+      return jsonResponse({ id: 999 });
+    }
+    if (url.pathname === "/app/installations/999/access_tokens") {
+      return jsonResponse({ token: "dispatch-token" });
+    }
+    if (url.pathname === "/repos/openclaw/clawsweeper/dispatches") {
+      assert.equal(new Headers(init?.headers).get("authorization"), "Bearer dispatch-token");
+      dispatchBody = JSON.parse(String(init?.body));
+      return new Response(null, { status: 204 });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      signedGithubWebhookRequest({
+        event: "issues",
+        secret: "test-secret",
+        payload: {
+          action: "labeled",
+          repository: {
+            full_name: "openclaw/gogcli",
+            default_branch: "main",
+            private: false,
+            archived: false,
+            fork: false,
+            has_issues: true,
+          },
+          issue: { number: 597 },
+          installation: { id: 123 },
+          label: { name: "status: 👀 ready for maintainer look" },
+          sender: { login: "steipete" },
+        },
+      }),
+      {
+        CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
+        CLAWSWEEPER_APP_PRIVATE_KEY: privateKey,
+        CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+      },
+    );
+
+    assert.equal(response.status, 202);
+    assert.deepEqual(await response.json(), { ok: true, dispatched: "clawsweeper_item" });
+    assert.deepEqual(dispatchBody, {
+      event_type: "clawsweeper_item",
+      client_payload: {
+        target_repo: "openclaw/gogcli",
+        target_branch: "main",
+        item_number: 597,
+        item_kind: "issue",
+        source_event: "issues",
+        source_action: "labeled",
+        supersedes_in_progress: false,
+      },
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("hosted webhook reuses existing fast ack comments on redelivery", async () => {
+  const originalFetch = globalThis.fetch;
+  const { privateKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    privateKeyEncoding: { type: "pkcs8", format: "pem" },
+    publicKeyEncoding: { type: "spki", format: "pem" },
+  });
+  let dispatchBody: unknown = null;
+  let postedAck = false;
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(String(input));
+    const authorization = new Headers(init?.headers).get("authorization");
+    if (url.pathname === "/repos/openclaw/clawsweeper/installation") {
+      return jsonResponse({ id: 999 });
+    }
+    if (url.pathname === "/app/installations/999/access_tokens") {
+      return jsonResponse({ token: "dispatch-token" });
+    }
+    if (url.pathname === "/app/installations/123/access_tokens") {
+      return jsonResponse({ token: "target-token" });
+    }
+    if (url.pathname === "/repos/openclaw/gogcli/issues/597/comments" && init?.method === "GET") {
+      assert.equal(authorization, "Bearer target-token");
+      assert.equal(url.searchParams.get("per_page"), "100");
+      return jsonResponse([
+        {
+          id: 777,
+          body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+          user: { login: "openclaw-clawsweeper[bot]" },
+        },
+      ]);
+    }
+    if (url.pathname === "/repos/openclaw/gogcli/issues/597/comments" && init?.method === "POST") {
+      postedAck = true;
+      return jsonResponse({ id: 888 });
+    }
+    if (url.pathname === "/repos/openclaw/gogcli/issues/comments/456/reactions") {
+      assert.equal(authorization, "Bearer target-token");
+      return jsonResponse({});
+    }
+    if (url.pathname === "/repos/openclaw/clawsweeper/dispatches") {
+      assert.equal(authorization, "Bearer dispatch-token");
+      dispatchBody = JSON.parse(String(init?.body));
+      return new Response(null, { status: 204 });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      signedGithubWebhookRequest({
+        event: "issue_comment",
+        secret: "test-secret",
+        payload: {
+          action: "created",
+          repository: {
+            full_name: "openclaw/gogcli",
+            default_branch: "trunk",
+            private: false,
+            archived: false,
+            fork: false,
+            has_issues: true,
+          },
+          issue: { number: 597, user: { login: "steipete" } },
+          installation: { id: 123 },
+          comment: {
+            id: 456,
+            body: "@clawsweeper status",
+            author_association: "OWNER",
+            user: { login: "steipete" },
+          },
+        },
+      }),
+      {
+        CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
+        CLAWSWEEPER_APP_PRIVATE_KEY: privateKey,
+        CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+      },
+    );
+
+    assert.equal(response.status, 202);
+    assert.deepEqual(await response.json(), { ok: true, status_comment_id: 777 });
+    assert.equal(postedAck, false);
+    assert.deepEqual(dispatchBody, {
+      event_type: "clawsweeper_comment",
+      client_payload: {
+        target_repo: "openclaw/gogcli",
+        target_branch: "trunk",
+        item_number: 597,
+        comment_id: 456,
+        status_comment_id: 777,
+        source_event: "issue_comment",
+        source_action: "created",
+        max_comments: "1",
+      },
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("dashboard shares in-flight GitHub App installation token across parallel requests", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;
@@ -1287,5 +1603,40 @@ function jsonResponse(value: unknown) {
     headers: {
       "content-type": "application/json",
     },
+  });
+}
+
+function signedGithubWebhookRequest({
+  event,
+  secret,
+  payload,
+}: {
+  event: string;
+  secret: string;
+  payload: unknown;
+}) {
+  const body = JSON.stringify(payload);
+  return signedGithubWebhookBodyRequest({ event, secret, body });
+}
+
+function signedGithubWebhookBodyRequest({
+  event,
+  secret,
+  body,
+}: {
+  event: string;
+  secret: string;
+  body: string;
+}) {
+  const signature = `sha256=${createHmac("sha256", secret).update(body).digest("hex")}`;
+  return new Request("https://clawsweeper.openclaw.ai/github/webhook", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-github-event": event,
+      "x-github-delivery": "test-delivery",
+      "x-hub-signature-256": signature,
+    },
+    body,
   });
 }

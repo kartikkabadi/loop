@@ -2,22 +2,52 @@
 import crypto from "node:crypto";
 import http from "node:http";
 
+import { repositoryProfileFor } from "../repository-profiles.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import { parseCommand } from "./comment-router-core.js";
 
 const DEFAULT_PORT = 8787;
+const REVIEW_REPO = "openclaw/clawsweeper";
 const COMMAND_PATTERN =
   /(^|[ \t\r\n])@(?:clawsweeper|openclaw-clawsweeper)\b(?:\[bot\])?|(^|[ \t\r\n])\/(?:clawsweeper|review|re-review|rerun[ -]?review|status|explain|fix|build|implement|create[ -]?pr|fix[ -]?issue|autofix|auto[ -]?fix|automerge|auto[ -]?merge|approve|stop|autoclose)\b/i;
 const ALLOWED_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
+const ISSUE_ITEM_ACTIONS = new Set(["opened", "reopened", "edited", "labeled", "unlabeled"]);
+const PULL_ITEM_ACTIONS = new Set([
+  "opened",
+  "reopened",
+  "synchronize",
+  "ready_for_review",
+  "converted_to_draft",
+  "edited",
+  "labeled",
+  "unlabeled",
+]);
 
 type AcceptedIssueCommentWebhook = {
   accepted: true;
+  type: "issue_comment";
   targetRepo: string;
+  targetBranch: string;
   itemNumber: number;
   commentId: number;
   installationId: number;
   sourceAction: string;
 };
+
+type AcceptedItemWebhook = {
+  accepted: true;
+  type: "item";
+  targetRepo: string;
+  targetBranch: string;
+  itemNumber: number;
+  itemKind: "issue" | "pull_request";
+  installationId: number;
+  sourceEvent: "issues" | "pull_request";
+  sourceAction: string;
+  supersedesInProgress: boolean;
+};
+
+type AcceptedWebhook = AcceptedIssueCommentWebhook | AcceptedItemWebhook;
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   startServer();
@@ -65,36 +95,56 @@ export async function handleGitHubWebhook({
   event: string;
   payload: LooseRecord;
 }) {
-  const decision = classifyIssueCommentWebhook({ event, payload });
+  const decision = classifyWebhook({ event, payload });
   if (!decision.accepted) return { statusCode: 202, body: decision };
-  const accepted = decision as AcceptedIssueCommentWebhook;
+  const accepted = decision as AcceptedWebhook;
 
-  const token = await createInstallationToken({
+  const appJwt = createAppJwt();
+  const dispatchToken = await createReviewRepoDispatchToken({ appJwt });
+
+  if (accepted.type === "item") {
+    await dispatchItemReview({ token: dispatchToken, accepted });
+    return { statusCode: 202, body: { ok: true, dispatched: "clawsweeper_item" } };
+  }
+
+  const targetToken = await createInstallationToken({
+    appJwt,
     installationId: accepted.installationId,
-    owner: "openclaw",
-    repositories: [accepted.targetRepo.split("/")[1] ?? "", "clawsweeper"],
+    label: accepted.targetRepo,
+    repositories: [repoName(accepted.targetRepo)],
+    permissions: {
+      issues: "write",
+      pull_requests: "write",
+    },
   });
   const statusCommentId = await createFastAckComment({
-    token,
+    token: targetToken,
     repo: accepted.targetRepo,
     itemNumber: accepted.itemNumber,
     sourceCommentId: accepted.commentId,
   });
   await addReaction({
-    token,
+    token: targetToken,
     repo: accepted.targetRepo,
     commentId: accepted.commentId,
     content: "eyes",
   });
   await dispatchCommentRouter({
-    token,
+    token: dispatchToken,
     targetRepo: accepted.targetRepo,
+    targetBranch: accepted.targetBranch,
     itemNumber: accepted.itemNumber,
     commentId: accepted.commentId,
     statusCommentId,
     sourceAction: accepted.sourceAction,
   });
   return { statusCode: 202, body: { ok: true, status_comment_id: statusCommentId } };
+}
+
+export function classifyWebhook({ event, payload }: { event: string; payload: LooseRecord }) {
+  const comment = classifyIssueCommentWebhook({ event, payload });
+  if (comment.accepted || comment.reason !== "not issue_comment") return comment;
+  return classifyItemWebhook({ event, payload });
 }
 
 export function classifyIssueCommentWebhook({
@@ -125,12 +175,13 @@ export function classifyIssueCommentWebhook({
     };
   }
   const targetRepo = String(repo.full_name ?? "");
+  const targetBranch = targetDefaultBranch(repo);
+  if (!isEligibleRepositoryPayload(repo)) {
+    return { accepted: false, reason: "repository not eligible" };
+  }
   const itemNumber = Number(issue.number);
   const commentId = Number(comment.id);
   const installationId = Number(asRecord(payload.installation).id);
-  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(targetRepo)) {
-    return { accepted: false, reason: "missing repository full_name" };
-  }
   if (!Number.isInteger(itemNumber) || itemNumber <= 0) {
     return { accepted: false, reason: "missing issue number" };
   }
@@ -142,12 +193,102 @@ export function classifyIssueCommentWebhook({
   }
   return {
     accepted: true,
+    type: "issue_comment",
     targetRepo,
+    targetBranch,
     itemNumber,
     commentId,
     installationId,
     sourceAction: String(payload.action ?? "created"),
   };
+}
+
+export function classifyItemWebhook({ event, payload }: { event: string; payload: LooseRecord }) {
+  const action = String(payload.action ?? "");
+  const repo = asRecord(payload.repository);
+  if (!isEligibleRepositoryPayload(repo))
+    return { accepted: false, reason: "repository not eligible" };
+  if (isIgnoredLabelMutation({ action, payload })) {
+    return { accepted: false, reason: "routine ClawSweeper label mutation" };
+  }
+  const targetRepo = String(repo.full_name ?? "");
+  const targetBranch = targetDefaultBranch(repo);
+  const installationId = Number(asRecord(payload.installation).id);
+  if (!Number.isInteger(installationId) || installationId <= 0) {
+    return { accepted: false, reason: "missing installation id" };
+  }
+
+  if (event === "issues") {
+    if (!ISSUE_ITEM_ACTIONS.has(action)) return { accepted: false, reason: "unsupported action" };
+    const issue = asRecord(payload.issue);
+    const itemNumber = Number(issue.number);
+    if (!Number.isInteger(itemNumber) || itemNumber <= 0) {
+      return { accepted: false, reason: "missing issue number" };
+    }
+    return {
+      accepted: true,
+      type: "item",
+      targetRepo,
+      targetBranch,
+      itemNumber,
+      itemKind: "issue",
+      installationId,
+      sourceEvent: "issues",
+      sourceAction: action,
+      supersedesInProgress: action === "edited",
+    };
+  }
+
+  if (event === "pull_request") {
+    if (!PULL_ITEM_ACTIONS.has(action)) return { accepted: false, reason: "unsupported action" };
+    const pull = asRecord(payload.pull_request);
+    const itemNumber = Number(pull.number);
+    if (!Number.isInteger(itemNumber) || itemNumber <= 0) {
+      return { accepted: false, reason: "missing pull request number" };
+    }
+    return {
+      accepted: true,
+      type: "item",
+      targetRepo,
+      targetBranch,
+      itemNumber,
+      itemKind: "pull_request",
+      installationId,
+      sourceEvent: "pull_request",
+      sourceAction: action,
+      supersedesInProgress: ["edited", "synchronize", "ready_for_review"].includes(action),
+    };
+  }
+
+  return { accepted: false, reason: "unsupported event" };
+}
+
+function isEligibleRepositoryPayload(repo: LooseRecord) {
+  const targetRepo = String(repo.full_name ?? "");
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(targetRepo)) return false;
+  if (Boolean(repo.private) || Boolean(repo.archived) || Boolean(repo.fork)) return false;
+  if (repo.has_issues === false) return false;
+  try {
+    repositoryProfileFor(targetRepo);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function targetDefaultBranch(repo: LooseRecord) {
+  const branch = String(repo.default_branch ?? "main").trim() || "main";
+  return /^[A-Za-z0-9_./-]+$/.test(branch) ? branch : "main";
+}
+
+function isIgnoredLabelMutation({ action, payload }: { action: string; payload: LooseRecord }) {
+  if (action !== "labeled" && action !== "unlabeled") return false;
+  return isClawsweeperWebhookSender(asRecord(payload.sender));
+}
+
+function isClawsweeperWebhookSender(sender: LooseRecord) {
+  const login = normalizedLogin(sender.login);
+  return login === "clawsweeper[bot]" || login === "openclaw-clawsweeper[bot]";
 }
 
 function isAuthorReadOnlyWebhookCommand({
@@ -172,12 +313,16 @@ function normalizedLogin(value: JsonValue) {
 
 export function renderFastAckComment(sourceCommentId: number) {
   return [
-    `<!-- clawsweeper-command-ack:${sourceCommentId} -->`,
+    fastAckMarker(sourceCommentId),
     "🦞👀",
     "ClawSweeper picked this up.",
     "",
     "Command router queued. I will update this comment with the next step.",
   ].join("\n");
+}
+
+function fastAckMarker(sourceCommentId: number) {
+  return `<!-- clawsweeper-command-ack:${sourceCommentId} -->`;
 }
 
 export function verifyGitHubSignature({
@@ -201,37 +346,61 @@ export function verifyGitHubSignature({
 }
 
 async function createInstallationToken({
+  appJwt,
   installationId,
-  owner,
+  label,
   repositories,
+  permissions,
 }: {
+  appJwt: string;
   installationId: number;
-  owner: string;
+  label: string;
   repositories: string[];
+  permissions: LooseRecord;
 }) {
-  const appIssuer = process.env.CLAWSWEEPER_APP_ID || process.env.CLAWSWEEPER_APP_CLIENT_ID;
-  const privateKey = normalizePrivateKey(process.env.CLAWSWEEPER_APP_PRIVATE_KEY ?? "");
-  if (!appIssuer || !privateKey)
-    throw new Error("GitHub App id/client id and private key are required");
-  const jwt = signAppJwt({ issuer: appIssuer, privateKey });
   const response = await githubFetch({
-    token: jwt,
+    token: appJwt,
     path: `/app/installations/${installationId}/access_tokens`,
     method: "POST",
     body: {
       repository_names: repositories.filter(Boolean),
-      permissions: {
-        actions: "write",
-        contents: "write",
-        issues: "write",
-        pull_requests: "write",
-      },
+      permissions,
     },
     authScheme: "Bearer",
   });
   const token = String(response.token ?? "");
-  if (!token) throw new Error(`installation token response missing token for ${owner}`);
+  if (!token) throw new Error(`installation token response missing token for ${label}`);
   return token;
+}
+
+async function createReviewRepoDispatchToken({ appJwt }: { appJwt: string }) {
+  const installation = await githubFetch({
+    token: appJwt,
+    path: `/repos/${REVIEW_REPO}/installation`,
+    method: "GET",
+    authScheme: "Bearer",
+  });
+  const installationId = Number(installation.id);
+  if (!Number.isInteger(installationId) || installationId <= 0) {
+    throw new Error(`review repo installation response missing id for ${REVIEW_REPO}`);
+  }
+  return createInstallationToken({
+    appJwt,
+    installationId,
+    label: REVIEW_REPO,
+    repositories: [repoName(REVIEW_REPO)],
+    permissions: {
+      contents: "write",
+    },
+  });
+}
+
+function createAppJwt() {
+  const appIssuer = process.env.CLAWSWEEPER_APP_ID || process.env.CLAWSWEEPER_APP_CLIENT_ID;
+  const privateKey = normalizePrivateKey(process.env.CLAWSWEEPER_APP_PRIVATE_KEY ?? "");
+  if (!appIssuer || !privateKey)
+    throw new Error("GitHub App id/client id and private key are required");
+  return signAppJwt({ issuer: appIssuer, privateKey });
 }
 
 function signAppJwt({ issuer, privateKey }: { issuer: string; privateKey: string }) {
@@ -254,6 +423,8 @@ async function createFastAckComment({
   itemNumber: number;
   sourceCommentId: number;
 }) {
+  const existingId = await findFastAckCommentId({ token, repo, itemNumber, sourceCommentId });
+  if (existingId) return existingId;
   const response = await githubFetch({
     token,
     path: `/repos/${repo}/issues/${itemNumber}/comments`,
@@ -263,6 +434,40 @@ async function createFastAckComment({
   const id = Number(response.id);
   if (!Number.isInteger(id) || id <= 0) throw new Error("fast ack comment response missing id");
   return id;
+}
+
+async function findFastAckCommentId({
+  token,
+  repo,
+  itemNumber,
+  sourceCommentId,
+}: {
+  token: string;
+  repo: string;
+  itemNumber: number;
+  sourceCommentId: number;
+}) {
+  const marker = fastAckMarker(sourceCommentId);
+  const since = encodeURIComponent(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+  for (let page = 1; page <= 5; page += 1) {
+    const response = await githubFetch({
+      token,
+      path: `/repos/${repo}/issues/${itemNumber}/comments?per_page=100&page=${page}&since=${since}`,
+      method: "GET",
+    });
+    if (!Array.isArray(response)) return null;
+    for (const comment of response) {
+      const record = asRecord(comment);
+      if (
+        String(record.body ?? "").includes(marker) &&
+        isClawsweeperWebhookSender(asRecord(record.user))
+      ) {
+        return Number(record.id) || null;
+      }
+    }
+    if (response.length < 100) return null;
+  }
+  return null;
 }
 
 async function addReaction({
@@ -288,9 +493,36 @@ async function addReaction({
   }
 }
 
+async function dispatchItemReview({
+  token,
+  accepted,
+}: {
+  token: string;
+  accepted: AcceptedItemWebhook;
+}) {
+  await githubFetch({
+    token,
+    path: `/repos/${REVIEW_REPO}/dispatches`,
+    method: "POST",
+    body: {
+      event_type: "clawsweeper_item",
+      client_payload: {
+        target_repo: accepted.targetRepo,
+        target_branch: accepted.targetBranch,
+        item_number: accepted.itemNumber,
+        item_kind: accepted.itemKind,
+        source_event: accepted.sourceEvent,
+        source_action: accepted.sourceAction,
+        supersedes_in_progress: accepted.supersedesInProgress,
+      },
+    },
+  });
+}
+
 async function dispatchCommentRouter({
   token,
   targetRepo,
+  targetBranch,
   itemNumber,
   commentId,
   statusCommentId,
@@ -298,6 +530,7 @@ async function dispatchCommentRouter({
 }: {
   token: string;
   targetRepo: string;
+  targetBranch: string;
   itemNumber: number;
   commentId: number;
   statusCommentId: number;
@@ -305,12 +538,13 @@ async function dispatchCommentRouter({
 }) {
   await githubFetch({
     token,
-    path: "/repos/openclaw/clawsweeper/dispatches",
+    path: `/repos/${REVIEW_REPO}/dispatches`,
     method: "POST",
     body: {
       event_type: "clawsweeper_comment",
       client_payload: {
         target_repo: targetRepo,
+        target_branch: targetBranch,
         item_number: itemNumber,
         comment_id: commentId,
         status_comment_id: statusCommentId,
@@ -365,6 +599,10 @@ function normalizePrivateKey(value: string) {
 
 function base64Url(value: string | Buffer) {
   return Buffer.from(value).toString("base64url");
+}
+
+function repoName(targetRepo: string) {
+  return targetRepo.split("/")[1] ?? "";
 }
 
 function asRecord(value: JsonValue): LooseRecord {

@@ -195,15 +195,16 @@ the receiver, event-item runs are keyed by repository and item number and the
 newest event cancels any older receiver run for that same item, because the
 review always fetches the current live item state.
 
-For sub-5s acknowledgement, run the optional webhook receiver instead of waiting
-for GitHub Actions to start the target dispatcher. Build and run
-`pnpm run build:repair && pnpm run repair:comment-webhook` behind a GitHub App
-webhook endpoint for `issue_comment` events. It verifies
-`CLAWSWEEPER_WEBHOOK_SECRET`, mints an installation token from
-`CLAWSWEEPER_APP_ID` or `CLAWSWEEPER_APP_CLIENT_ID` plus
-`CLAWSWEEPER_APP_PRIVATE_KEY`, posts the same queued status comment, reacts with
-`eyes`, and dispatches the existing comment router with `max_comments: "1"` and
-the status comment id. Keep the Actions dispatcher installed as the fallback.
+For sub-5s acknowledgement, use the GitHub App webhook receiver instead of
+waiting for GitHub Actions to start the target dispatcher. The hosted Worker
+endpoint is `/github/webhook`; the local equivalent is
+`pnpm run build:repair && pnpm run repair:comment-webhook`. It verifies
+`CLAWSWEEPER_WEBHOOK_SECRET`, accepts eligible public `openclaw/*` and
+`steipete/*` `issue_comment`, `issues`, and `pull_request` events, mints a
+target installation token for acknowledgement/comment reactions, mints the
+`openclaw/clawsweeper` installation token for repository dispatch, and dispatches
+exact `clawsweeper_comment` or `clawsweeper_item` runs. Keep the Actions
+dispatcher installed as the fallback.
 
 The receiver keeps the review lane proposal-only, then runs exact apply for the
 selected item with only immediate-safe close reasons enabled:

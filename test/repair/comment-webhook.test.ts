@@ -3,7 +3,9 @@ import crypto from "node:crypto";
 import test from "node:test";
 
 import {
+  classifyItemWebhook,
   classifyIssueCommentWebhook,
+  classifyWebhook,
   renderFastAckComment,
   verifyGitHubSignature,
 } from "../../dist/repair/comment-webhook.js";
@@ -13,7 +15,7 @@ test("comment webhook accepts maintainer ClawSweeper commands", () => {
     event: "issue_comment",
     payload: {
       action: "created",
-      repository: { full_name: "openclaw/openclaw" },
+      repository: { full_name: "openclaw/openclaw", default_branch: "trunk" },
       issue: { number: 71898 },
       installation: { id: 123 },
       comment: {
@@ -26,7 +28,9 @@ test("comment webhook accepts maintainer ClawSweeper commands", () => {
 
   assert.deepEqual(result, {
     accepted: true,
+    type: "issue_comment",
     targetRepo: "openclaw/openclaw",
+    targetBranch: "trunk",
     itemNumber: 71898,
     commentId: 456,
     installationId: 123,
@@ -73,7 +77,9 @@ test("comment webhook accepts author read-only re-review commands", () => {
 
   assert.deepEqual(result, {
     accepted: true,
+    type: "issue_comment",
     targetRepo: "openclaw/openclaw",
+    targetBranch: "main",
     itemNumber: 76991,
     commentId: 456,
     installationId: 123,
@@ -100,12 +106,35 @@ test("comment webhook accepts author read-only hatch commands", () => {
 
   assert.deepEqual(result, {
     accepted: true,
+    type: "issue_comment",
     targetRepo: "openclaw/openclaw",
+    targetBranch: "main",
     itemNumber: 76992,
     commentId: 457,
     installationId: 123,
     sourceAction: "created",
   });
+});
+
+test("comment webhook rejects commands from ineligible repositories", () => {
+  const result = classifyIssueCommentWebhook({
+    event: "issue_comment",
+    payload: {
+      action: "created",
+      repository: {
+        full_name: "openclaw/clawsweeper-state",
+        private: false,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      issue: { number: 1 },
+      installation: { id: 123 },
+      comment: { body: "/clawsweeper status", author_association: "MEMBER" },
+    },
+  });
+
+  assert.deepEqual(result, { accepted: false, reason: "repository not eligible" });
 });
 
 test("comment webhook rejects non-author read-only re-review commands", () => {
@@ -127,6 +156,206 @@ test("comment webhook rejects non-author read-only re-review commands", () => {
 
   assert.equal(result.accepted, false);
   assert.match(result.reason, /not allowed/);
+});
+
+test("webhook accepts eligible issue events for generic OpenClaw repositories", () => {
+  const result = classifyItemWebhook({
+    event: "issues",
+    payload: {
+      action: "opened",
+      repository: {
+        full_name: "openclaw/gogcli",
+        private: false,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      issue: { number: 597 },
+      installation: { id: 123 },
+    },
+  });
+
+  assert.deepEqual(result, {
+    accepted: true,
+    type: "item",
+    targetRepo: "openclaw/gogcli",
+    targetBranch: "main",
+    itemNumber: 597,
+    itemKind: "issue",
+    installationId: 123,
+    sourceEvent: "issues",
+    sourceAction: "opened",
+    supersedesInProgress: false,
+  });
+});
+
+test("webhook accepts eligible pull request events for generic steipete repositories", () => {
+  const result = classifyWebhook({
+    event: "pull_request",
+    payload: {
+      action: "synchronize",
+      repository: {
+        full_name: "steipete/summarize",
+        private: false,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      pull_request: { number: 42 },
+      installation: { id: 456 },
+    },
+  });
+
+  assert.deepEqual(result, {
+    accepted: true,
+    type: "item",
+    targetRepo: "steipete/summarize",
+    targetBranch: "main",
+    itemNumber: 42,
+    itemKind: "pull_request",
+    installationId: 456,
+    sourceEvent: "pull_request",
+    sourceAction: "synchronize",
+    supersedesInProgress: true,
+  });
+});
+
+test("webhook preserves valid repository default branch for item dispatch", () => {
+  const result = classifyItemWebhook({
+    event: "issues",
+    payload: {
+      action: "opened",
+      repository: {
+        full_name: "openclaw/gogcli",
+        default_branch: "trunk",
+        private: false,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      issue: { number: 597 },
+      installation: { id: 123 },
+    },
+  });
+
+  assert.equal(result.accepted, true);
+  assert.equal(result.targetBranch, "trunk");
+});
+
+test("webhook falls back to main for invalid repository default branch", () => {
+  const result = classifyItemWebhook({
+    event: "issues",
+    payload: {
+      action: "opened",
+      repository: {
+        full_name: "openclaw/gogcli",
+        default_branch: "bad branch",
+        private: false,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      issue: { number: 597 },
+      installation: { id: 123 },
+    },
+  });
+
+  assert.equal(result.accepted, true);
+  assert.equal(result.targetBranch, "main");
+});
+
+test("webhook rejects private and denied target repositories", () => {
+  const privateResult = classifyItemWebhook({
+    event: "issues",
+    payload: {
+      action: "opened",
+      repository: {
+        full_name: "steipete/private-tool",
+        private: true,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      issue: { number: 1 },
+      installation: { id: 456 },
+    },
+  });
+  assert.deepEqual(privateResult, { accepted: false, reason: "repository not eligible" });
+
+  const deniedResult = classifyItemWebhook({
+    event: "issues",
+    payload: {
+      action: "opened",
+      repository: {
+        full_name: "openclaw/clawsweeper-state",
+        private: false,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      issue: { number: 1 },
+      installation: { id: 456 },
+    },
+  });
+  assert.deepEqual(deniedResult, { accepted: false, reason: "repository not eligible" });
+});
+
+test("webhook ignores ClawSweeper-owned label mutations", () => {
+  const result = classifyItemWebhook({
+    event: "pull_request",
+    payload: {
+      action: "labeled",
+      repository: {
+        full_name: "openclaw/openclaw",
+        private: false,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      pull_request: { number: 76992 },
+      installation: { id: 123 },
+      label: { name: "status: 🚀 automerge armed" },
+      sender: { login: "openclaw-clawsweeper[bot]" },
+    },
+  });
+
+  assert.deepEqual(result, {
+    accepted: false,
+    reason: "routine ClawSweeper label mutation",
+  });
+});
+
+test("webhook preserves human ClawSweeper-owned label mutations", () => {
+  const result = classifyItemWebhook({
+    event: "issues",
+    payload: {
+      action: "labeled",
+      repository: {
+        full_name: "openclaw/gogcli",
+        private: false,
+        archived: false,
+        fork: false,
+        has_issues: true,
+      },
+      issue: { number: 597 },
+      installation: { id: 123 },
+      label: { name: "status: 👀 ready for maintainer look" },
+      sender: { login: "steipete" },
+    },
+  });
+
+  assert.deepEqual(result, {
+    accepted: true,
+    type: "item",
+    targetRepo: "openclaw/gogcli",
+    targetBranch: "main",
+    itemNumber: 597,
+    itemKind: "issue",
+    installationId: 123,
+    sourceEvent: "issues",
+    sourceAction: "labeled",
+    supersedesInProgress: false,
+  });
 });
 
 test("fast ack comment carries source comment marker", () => {

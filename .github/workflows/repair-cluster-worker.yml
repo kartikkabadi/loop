@@ -81,13 +81,34 @@ jobs:
         with:
           filter: blob:none
 
+      - name: Resolve target owner
+        id: target
+        env:
+          JOB_PATH: ${{ inputs.job }}
+        run: |
+          set -euo pipefail
+          case "$JOB_PATH" in
+            jobs/*/*) ;;
+            *)
+              echo "Invalid job path: $JOB_PATH" >&2
+              exit 1
+              ;;
+          esac
+          owner="${JOB_PATH#jobs/}"
+          owner="${owner%%/*}"
+          if ! printf '%s' "$owner" | grep -Eq '^[A-Za-z0-9_.-]+$'; then
+            echo "Invalid target owner: $owner" >&2
+            exit 1
+          fi
+          echo "target_owner=$owner" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub App token
         id: app_token
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
+          owner: ${{ steps.target.outputs.target_owner }}
           permission-contents: read
           permission-issues: read
           permission-pull-requests: read
@@ -141,12 +162,15 @@ jobs:
 
       - name: Validate job
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
+        env:
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:validate-job -- "${{ inputs.job }}"
 
       - name: Run worker
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: |
           worker_mode="${{ inputs.mode }}"
           if [ "$worker_mode" != "plan" ] && [ "${CLAWSWEEPER_ALLOW_EXECUTE}" != "1" ]; then
@@ -239,18 +263,50 @@ jobs:
         with:
           filter: blob:none
 
+      - name: Resolve target owner
+        id: target
+        env:
+          JOB_PATH: ${{ inputs.job }}
+        run: |
+          set -euo pipefail
+          case "$JOB_PATH" in
+            jobs/*/*) ;;
+            *)
+              echo "Invalid job path: $JOB_PATH" >&2
+              exit 1
+              ;;
+          esac
+          owner="${JOB_PATH#jobs/}"
+          owner="${owner%%/*}"
+          if ! printf '%s' "$owner" | grep -Eq '^[A-Za-z0-9_.-]+$'; then
+            echo "Invalid target owner: $owner" >&2
+            exit 1
+          fi
+          echo "target_owner=$owner" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub App token
         id: app_token
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || github.repository_owner }}
+          owner: ${{ steps.target.outputs.target_owner }}
           permission-actions: write
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
           permission-workflows: write
+
+      - name: Create central requeue token
+        id: requeue-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: clawsweeper
+          permission-actions: write
+          permission-contents: write
 
       - name: Create state token
         id: state-token
@@ -289,6 +345,8 @@ jobs:
 
       - name: Validate job
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
+        env:
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:validate-job -- "${{ inputs.job }}"
 
       - name: Execute credited fix artifact
@@ -296,24 +354,28 @@ jobs:
         timeout-minutes: 40
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:execute-fix -- "${{ inputs.job }}" --latest
 
       - name: Apply safe closure actions
         if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Post-flight finalize fix PRs
         if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:post-flight -- "${{ inputs.job }}" --latest
 
       - name: Apply post-flight closeouts
         if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Tag ClawSweeper targets
@@ -321,6 +383,7 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:tag-clawsweeper -- .clawsweeper-repair/runs --apply --live --open-branches false --report .clawsweeper-repair/runs/clawsweeper-label-report.json
 
       - name: Detect repair requeue requests
@@ -334,7 +397,7 @@ jobs:
       - name: Requeue source-head repair races
         if: ${{ steps.repair_requeue.outputs.count != '' && steps.repair_requeue.outputs.count != '0' }}
         env:
-          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          GH_TOKEN: ${{ steps.requeue-token.outputs.token }}
           CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app
         run: |
           set -euo pipefail

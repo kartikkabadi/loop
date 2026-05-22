@@ -17,6 +17,30 @@ const CLOSED_STATS_HOURS = 24;
 const CLOSED_STATS_PAGE_LIMIT = 10;
 const DEFAULT_CLAWSWEEPER_BOT_LOGINS = ["clawsweeper[bot]", "openclaw-clawsweeper[bot]"];
 const GITHUB_TIMEOUT_MS = 4500;
+const CLAWSWEEPER_REVIEW_REPO = "openclaw/clawsweeper";
+const CLAWSWEEPER_COMMAND_PATTERN =
+  /(^|[ \t\r\n])@(?:clawsweeper|openclaw-clawsweeper)\b(?:\[bot\])?|(^|[ \t\r\n])\/(?:clawsweeper|review|re-review|rerun[ -]?review|status|explain|fix|build|implement|create[ -]?pr|fix[ -]?issue|autofix|auto[ -]?fix|automerge|auto[ -]?merge|approve|stop|autoclose)\b/i;
+const CLAWSWEEPER_ALLOWED_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
+const CLAWSWEEPER_ISSUE_ITEM_ACTIONS = new Set([
+  "opened",
+  "reopened",
+  "edited",
+  "labeled",
+  "unlabeled",
+]);
+const CLAWSWEEPER_PULL_ITEM_ACTIONS = new Set([
+  "opened",
+  "reopened",
+  "synchronize",
+  "ready_for_review",
+  "converted_to_draft",
+  "edited",
+  "labeled",
+  "unlabeled",
+]);
+const CLAWSWEEPER_WEBHOOK_DENY_REPOS = new Set(["openclaw/clawsweeper-state", "openclaw/.github"]);
+const CLAWSWEEPER_AUTHOR_READ_ONLY_COMMAND =
+  "(?:review|re-review|rerun|re-run|rerun[ -]?review|re-run[ -]?review|status|explain|hatch|hatch egg|pr egg hatch|hatch pr egg)";
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 const STALE_CACHE_TTL_SECONDS = 900;
 const CI_STATUS_TTL_SECONDS = 7200;
@@ -175,6 +199,10 @@ export default {
     if (url.pathname === "/api/health") return json({ ok: true, service: "clawsweeper-status" });
     if (url.pathname === "/api/events" && request.method === "POST")
       return ingestEvent(request, env);
+    if (url.pathname === "/github/webhook" && request.method === "GET")
+      return json({ ok: true, service: "clawsweeper-github-webhook" });
+    if (url.pathname === "/github/webhook" && request.method === "POST")
+      return githubWebhook(request, env);
     if (url.pathname === "/api/status") return statusJson(request, env, ctx);
     if (url.pathname === "/api/triage") return triageJson(request, env, ctx);
     if (url.pathname === "/api/pr-proof-triage") return prProofTriageJson(request, env, ctx);
@@ -370,6 +398,460 @@ async function ingestEvent(request, env) {
   if (ci) writes.push(writeCiStatus(env, ci));
   await Promise.all(writes);
   return json({ ok: true, event });
+}
+
+async function githubWebhook(request, env) {
+  const secret = stringEnv(env.CLAWSWEEPER_WEBHOOK_SECRET);
+  if (!secret) return json({ error: "webhook_not_configured" }, 503);
+
+  const bodyText = await request.text();
+  const signature = request.headers.get("x-hub-signature-256") || "";
+  const signatureOk = await verifyGithubWebhookSignature({ secret, signature, bodyText });
+  if (!signatureOk) return json({ error: "invalid_signature" }, 401);
+
+  const event = request.headers.get("x-github-event") || "";
+  const payload = parseJsonObject(bodyText);
+  if (!payload) return json({ error: "invalid_json" }, 400);
+  if (event === "ping") {
+    return json(
+      {
+        ok: true,
+        event: "ping",
+        delivery: request.headers.get("x-github-delivery") || null,
+      },
+      202,
+    );
+  }
+
+  const decision = classifyGithubWebhook({ event, payload });
+  if (!decision.accepted) {
+    return json({ ok: true, accepted: false, reason: decision.reason }, 202);
+  }
+
+  const credentials = githubAppCredentials(env);
+  if (!credentials) return json({ error: "github_app_not_configured" }, 503);
+  const appJwt = await signGithubAppJwt(credentials.issuer, credentials.privateKey);
+  const dispatchToken = await createGithubAppTokenFor({
+    appJwt,
+    installationId: await githubAppInstallationId(appJwt, CLAWSWEEPER_REVIEW_REPO),
+    label: CLAWSWEEPER_REVIEW_REPO,
+    repositories: [repoName(CLAWSWEEPER_REVIEW_REPO)],
+    permissions: { contents: "write" },
+  });
+
+  if (decision.type === "item") {
+    await dispatchClawsweeperItem({ token: dispatchToken, decision });
+    return json({ ok: true, dispatched: "clawsweeper_item" }, 202);
+  }
+
+  const commentDecision = decision as any;
+  const targetToken = await createGithubAppTokenFor({
+    appJwt,
+    installationId: commentDecision.installationId,
+    label: commentDecision.targetRepo,
+    repositories: [repoName(commentDecision.targetRepo)],
+    permissions: {
+      issues: "write",
+      pull_requests: "write",
+    },
+  });
+  const statusCommentId = await createFastAckComment({
+    token: targetToken,
+    repo: commentDecision.targetRepo,
+    itemNumber: commentDecision.itemNumber,
+    sourceCommentId: commentDecision.commentId,
+  });
+  await addIssueCommentReaction({
+    token: targetToken,
+    repo: commentDecision.targetRepo,
+    commentId: commentDecision.commentId,
+    content: "eyes",
+  });
+  await dispatchClawsweeperComment({
+    token: dispatchToken,
+    decision: commentDecision,
+    statusCommentId,
+  });
+  return json({ ok: true, status_comment_id: statusCommentId }, 202);
+}
+
+function classifyGithubWebhook({ event, payload }) {
+  const comment = classifyGithubIssueCommentWebhook({ event, payload });
+  if (comment.accepted || comment.reason !== "not issue_comment") return comment;
+  return classifyGithubItemWebhook({ event, payload });
+}
+
+function classifyGithubIssueCommentWebhook({ event, payload }) {
+  if (event !== "issue_comment") return { accepted: false, reason: "not issue_comment" };
+  const action = String(payload.action || "");
+  if (!["created", "edited"].includes(action))
+    return { accepted: false, reason: "unsupported action" };
+  const comment = objectValue(payload.comment);
+  const issue = objectValue(payload.issue);
+  const repo = objectValue(payload.repository);
+  const association = String(comment.author_association || "").toUpperCase();
+  if (!CLAWSWEEPER_COMMAND_PATTERN.test(String(comment.body || ""))) {
+    return { accepted: false, reason: "no ClawSweeper command" };
+  }
+  if (
+    !CLAWSWEEPER_ALLOWED_ASSOCIATIONS.has(association) &&
+    !isAuthorReadOnlyGithubWebhookCommand({ comment, issue })
+  ) {
+    return {
+      accepted: false,
+      reason: `author association ${association || "unknown"} is not allowed`,
+    };
+  }
+  const targetRepo = String(repo.full_name || "");
+  const targetBranch = targetDefaultBranch(repo);
+  if (!isEligibleGithubWebhookRepository(repo)) {
+    return { accepted: false, reason: "repository not eligible" };
+  }
+  const itemNumber = Number(issue.number);
+  const commentId = Number(comment.id);
+  const installationId = Number(objectValue(payload.installation).id);
+  if (!Number.isInteger(itemNumber) || itemNumber <= 0) {
+    return { accepted: false, reason: "missing issue number" };
+  }
+  if (!Number.isInteger(commentId) || commentId <= 0) {
+    return { accepted: false, reason: "missing comment id" };
+  }
+  if (!Number.isInteger(installationId) || installationId <= 0) {
+    return { accepted: false, reason: "missing installation id" };
+  }
+  return {
+    accepted: true,
+    type: "issue_comment",
+    targetRepo,
+    targetBranch,
+    itemNumber,
+    commentId,
+    installationId,
+    sourceAction: action,
+  };
+}
+
+function classifyGithubItemWebhook({ event, payload }) {
+  const action = String(payload.action || "");
+  const repo = objectValue(payload.repository);
+  if (!isEligibleGithubWebhookRepository(repo)) {
+    return { accepted: false, reason: "repository not eligible" };
+  }
+  if (isIgnoredGithubWebhookLabelMutation({ action, payload })) {
+    return { accepted: false, reason: "routine ClawSweeper label mutation" };
+  }
+  const targetRepo = String(repo.full_name || "");
+  const targetBranch = targetDefaultBranch(repo);
+  const installationId = Number(objectValue(payload.installation).id);
+  if (!Number.isInteger(installationId) || installationId <= 0) {
+    return { accepted: false, reason: "missing installation id" };
+  }
+
+  if (event === "issues") {
+    if (!CLAWSWEEPER_ISSUE_ITEM_ACTIONS.has(action)) {
+      return { accepted: false, reason: "unsupported action" };
+    }
+    const itemNumber = Number(objectValue(payload.issue).number);
+    if (!Number.isInteger(itemNumber) || itemNumber <= 0) {
+      return { accepted: false, reason: "missing issue number" };
+    }
+    return {
+      accepted: true,
+      type: "item",
+      targetRepo,
+      targetBranch,
+      itemNumber,
+      itemKind: "issue",
+      installationId,
+      sourceEvent: "issues",
+      sourceAction: action,
+      supersedesInProgress: action === "edited",
+    };
+  }
+
+  if (event === "pull_request") {
+    if (!CLAWSWEEPER_PULL_ITEM_ACTIONS.has(action)) {
+      return { accepted: false, reason: "unsupported action" };
+    }
+    const itemNumber = Number(objectValue(payload.pull_request).number);
+    if (!Number.isInteger(itemNumber) || itemNumber <= 0) {
+      return { accepted: false, reason: "missing pull request number" };
+    }
+    return {
+      accepted: true,
+      type: "item",
+      targetRepo,
+      targetBranch,
+      itemNumber,
+      itemKind: "pull_request",
+      installationId,
+      sourceEvent: "pull_request",
+      sourceAction: action,
+      supersedesInProgress: ["edited", "synchronize", "ready_for_review"].includes(action),
+    };
+  }
+
+  return { accepted: false, reason: "unsupported event" };
+}
+
+function isEligibleGithubWebhookRepository(repo) {
+  const targetRepo = String(repo.full_name || "").toLowerCase();
+  if (!/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/.test(targetRepo)) return false;
+  if (Boolean(repo.private) || Boolean(repo.archived) || Boolean(repo.fork)) return false;
+  if (repo.has_issues === false) return false;
+  if (CLAWSWEEPER_WEBHOOK_DENY_REPOS.has(targetRepo)) return false;
+  const [owner] = targetRepo.split("/");
+  return owner === "openclaw" || owner === "steipete";
+}
+
+function targetDefaultBranch(repo) {
+  const branch = String(repo.default_branch || "main").trim() || "main";
+  return /^[A-Za-z0-9_./-]+$/.test(branch) ? branch : "main";
+}
+
+function isIgnoredGithubWebhookLabelMutation({ action, payload }) {
+  if (action !== "labeled" && action !== "unlabeled") return false;
+  return isClawsweeperGithubWebhookSender(objectValue(payload.sender));
+}
+
+function isClawsweeperGithubWebhookSender(sender) {
+  const login = normalizedLogin(sender.login);
+  return login === "clawsweeper[bot]" || login === "openclaw-clawsweeper[bot]";
+}
+
+function isAuthorReadOnlyGithubWebhookCommand({ comment, issue }) {
+  const body = String(comment.body || "");
+  const slashCommand = new RegExp(
+    `(^|[ \\t\\r\\n])/(?:clawsweeper\\s+)?${CLAWSWEEPER_AUTHOR_READ_ONLY_COMMAND}\\b`,
+    "i",
+  );
+  const mentionCommand = new RegExp(
+    `(^|[ \\t\\r\\n])@(?:clawsweeper|openclaw-clawsweeper)\\b(?:\\[bot\\])?\\s+${CLAWSWEEPER_AUTHOR_READ_ONLY_COMMAND}\\b`,
+    "i",
+  );
+  if (!slashCommand.test(body) && !mentionCommand.test(body)) {
+    return false;
+  }
+  const commentAuthor = normalizedLogin(objectValue(comment.user).login);
+  const issueAuthor = normalizedLogin(objectValue(issue.user).login);
+  return Boolean(commentAuthor && issueAuthor && commentAuthor === issueAuthor);
+}
+
+async function createGithubAppTokenFor({
+  appJwt,
+  installationId,
+  label,
+  repositories,
+  permissions,
+}) {
+  const payload = await githubAppJson(
+    `/app/installations/${installationId}/access_tokens`,
+    appJwt,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        repository_names: repositories.filter(Boolean),
+        permissions,
+      }),
+      errorLabel: `GitHub App token for ${label}`,
+    },
+  );
+  const token = String(payload.token || "");
+  if (!token) throw new Error(`GitHub App token response missing token for ${label}`);
+  return token;
+}
+
+async function createFastAckComment({ token, repo, itemNumber, sourceCommentId }) {
+  const existingId = await findFastAckCommentId({ token, repo, itemNumber, sourceCommentId });
+  if (existingId) return existingId;
+  const payload = await githubTokenJson({
+    token,
+    path: `/repos/${repo}/issues/${itemNumber}/comments`,
+    method: "POST",
+    body: { body: renderFastAckComment(sourceCommentId) },
+    errorLabel: "ClawSweeper ack comment",
+  });
+  return Number(payload.id) || null;
+}
+
+async function findFastAckCommentId({ token, repo, itemNumber, sourceCommentId }) {
+  const marker = fastAckMarker(sourceCommentId);
+  const since = encodeURIComponent(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+  for (let page = 1; page <= 5; page += 1) {
+    const payload = await githubTokenJson({
+      token,
+      path: `/repos/${repo}/issues/${itemNumber}/comments?per_page=100&page=${page}&since=${since}`,
+      method: "GET",
+      body: undefined,
+      errorLabel: "ClawSweeper ack comment lookup",
+    });
+    if (!Array.isArray(payload)) return null;
+    for (const comment of payload) {
+      if (
+        String(objectValue(comment).body || "").includes(marker) &&
+        isClawsweeperGithubWebhookSender(objectValue(objectValue(comment).user))
+      ) {
+        return Number(objectValue(comment).id) || null;
+      }
+    }
+    if (payload.length < 100) return null;
+  }
+  return null;
+}
+
+function renderFastAckComment(sourceCommentId) {
+  return [
+    fastAckMarker(sourceCommentId),
+    "🦞👀",
+    "ClawSweeper picked this up.",
+    "",
+    "Command router queued. I will update this comment with the next step.",
+  ].join("\n");
+}
+
+function fastAckMarker(sourceCommentId) {
+  return `<!-- clawsweeper-command-ack:${sourceCommentId} -->`;
+}
+
+async function addIssueCommentReaction({ token, repo, commentId, content }) {
+  await githubTokenJson({
+    token,
+    path: `/repos/${repo}/issues/comments/${commentId}/reactions`,
+    method: "POST",
+    body: { content },
+    errorLabel: "ClawSweeper comment reaction",
+  }).catch((error) => {
+    if (!String(error.message || "").includes("422")) throw error;
+    return null;
+  });
+}
+
+async function dispatchClawsweeperItem({ token, decision }) {
+  await githubTokenJson({
+    token,
+    path: `/repos/${CLAWSWEEPER_REVIEW_REPO}/dispatches`,
+    method: "POST",
+    body: {
+      event_type: "clawsweeper_item",
+      client_payload: {
+        target_repo: decision.targetRepo,
+        target_branch: decision.targetBranch,
+        item_number: decision.itemNumber,
+        item_kind: decision.itemKind,
+        source_event: decision.sourceEvent,
+        source_action: decision.sourceAction,
+        supersedes_in_progress: decision.supersedesInProgress,
+      },
+    },
+    errorLabel: "ClawSweeper item dispatch",
+  });
+}
+
+async function dispatchClawsweeperComment({ token, decision, statusCommentId }) {
+  await githubTokenJson({
+    token,
+    path: `/repos/${CLAWSWEEPER_REVIEW_REPO}/dispatches`,
+    method: "POST",
+    body: {
+      event_type: "clawsweeper_comment",
+      client_payload: {
+        target_repo: decision.targetRepo,
+        target_branch: decision.targetBranch,
+        item_number: decision.itemNumber,
+        comment_id: decision.commentId,
+        status_comment_id: statusCommentId,
+        source_event: "issue_comment",
+        source_action: decision.sourceAction,
+        max_comments: "1",
+      },
+    },
+    errorLabel: "ClawSweeper comment dispatch",
+  });
+}
+
+async function githubTokenJson({ token, path, method = "GET", body, errorLabel }) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort("timeout"), GITHUB_TIMEOUT_MS);
+  const init: RequestInit = {
+    method,
+    signal: controller.signal,
+    headers: {
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
+      "User-Agent": "openclaw-clawsweeper-webhook",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  if (body !== undefined) init.body = JSON.stringify(body);
+  const response = await fetch(`https://api.github.com${path}`, init).finally(() =>
+    clearTimeout(timeout),
+  );
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(
+      `${errorLabel || "GitHub"} ${response.status}${text ? `: ${text.slice(0, 240)}` : ""}`,
+    );
+  }
+  if (response.status === 204) return {};
+  return response.json();
+}
+
+async function verifyGithubWebhookSignature({ secret, signature, bodyText }) {
+  const actual = String(signature || "");
+  if (!actual.startsWith("sha256=")) return false;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const digest = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(bodyText));
+  const expected = `sha256=${hexEncode(new Uint8Array(digest))}`;
+  return constantTimeEqual(expected, actual);
+}
+
+function parseJsonObject(text) {
+  let value;
+  try {
+    value = JSON.parse(text || "null");
+  } catch {
+    return null;
+  }
+  return value && typeof value === "object" && !Array.isArray(value) ? value : null;
+}
+
+function objectValue(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+}
+
+function normalizedLogin(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function repoName(repo) {
+  return String(repo || "").split("/")[1] || "";
+}
+
+function hexEncode(bytes) {
+  let result = "";
+  for (let index = 0; index < bytes.length; index += 1) {
+    result += bytes[index].toString(16).padStart(2, "0");
+  }
+  return result;
+}
+
+function constantTimeEqual(left, right) {
+  const leftBytes = new TextEncoder().encode(String(left));
+  const rightBytes = new TextEncoder().encode(String(right));
+  let diff = leftBytes.length ^ rightBytes.length;
+  const length = Math.max(leftBytes.length, rightBytes.length);
+  for (let index = 0; index < length; index += 1) {
+    diff |= (leftBytes[index] || 0) ^ (rightBytes[index] || 0);
+  }
+  return diff === 0;
 }
 
 async function statusSnapshot(env, ctx) {

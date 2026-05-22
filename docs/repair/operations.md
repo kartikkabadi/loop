@@ -266,13 +266,15 @@ It accepts only maintainer-authored commands, gated by GitHub
 `author_association` values `OWNER`, `MEMBER`, or `COLLABORATOR` by default.
 Contributor comments are ignored without a reply.
 
-For lower latency than GitHub Actions startup can provide, the optional webhook
-receiver runs `pnpm run repair:comment-webhook` behind a GitHub App webhook for
-`issue_comment` events. It verifies `CLAWSWEEPER_WEBHOOK_SECRET`, mints an
-installation token from the ClawSweeper GitHub App credentials, posts the same
-queued status comment, reacts with `eyes`, and dispatches the existing router
-with `max_comments: "1"`. The target workflow remains the fallback when the
-webhook service is down or not installed for a repository.
+For lower latency than GitHub Actions startup can provide, the GitHub App
+webhook receiver runs at `/github/webhook` on the dashboard Worker, with
+`pnpm run repair:comment-webhook` as the local equivalent. It verifies
+`CLAWSWEEPER_WEBHOOK_SECRET`, accepts eligible public `openclaw/*` and
+`steipete/*` `issue_comment`, `issues`, and `pull_request` events, posts the
+same queued status comment for maintainer commands, reacts with `eyes`, and
+dispatches exact `clawsweeper_comment` or `clawsweeper_item` runs. The target
+workflow remains the fallback when the webhook service is down or not installed
+for a repository.
 
 Supported triggers:
 
