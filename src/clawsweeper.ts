@@ -11443,6 +11443,11 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       maybeLogProgress(`skipped #${number}: ${reason}`);
       return processedCount >= processedLimit;
     };
+    const markLabelSyncAuthSkipped = (labelKind: string): boolean =>
+      markApplySkipped(
+        "kept_open",
+        `GitHub rejected ${labelKind} label sync with Requires authentication`,
+      );
     if (!hasVerifiedLocalCheckoutAccess(markdown)) {
       if (markApplySkipped("kept_open", "review lacks verified local checkout access")) break;
       continue;
@@ -11733,51 +11738,63 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     const isCurrentCompleteReport =
       frontMatterValue(markdown, "review_status") === "complete" && unchangedSinceReview;
     if (state === "open" && isCurrentCompleteReport) {
-      const syncResult = syncPriorityLabel({
-        number,
-        labels: item.labels,
-        triagePriority: triagePriorityFromReport(markdown),
-        dryRun,
-      });
-      item.labels = syncResult.labels;
-      clawSweeperLabelsChanged ||= syncResult.changed;
-      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
-      const impactSyncResult = syncImpactLabels({
-        number,
-        labels: item.labels,
-        impactLabels: item.kind === "pull_request" ? [] : impactLabelsFromReport(markdown),
-        dryRun,
-      });
-      item.labels = impactSyncResult.labels;
-      clawSweeperLabelsChanged ||= impactSyncResult.changed;
-      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
-      if (item.kind === "pull_request") {
-        const mergeRiskSyncResult = syncMergeRiskLabels({
+      try {
+        const syncResult = syncPriorityLabel({
           number,
           labels: item.labels,
-          mergeRiskLabels: mergeRiskLabelsFromReport(markdown),
+          triagePriority: triagePriorityFromReport(markdown),
           dryRun,
         });
-        item.labels = mergeRiskSyncResult.labels;
-        clawSweeperLabelsChanged ||= mergeRiskSyncResult.changed;
+        item.labels = syncResult.labels;
+        clawSweeperLabelsChanged ||= syncResult.changed;
         markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+        const impactSyncResult = syncImpactLabels({
+          number,
+          labels: item.labels,
+          impactLabels: item.kind === "pull_request" ? [] : impactLabelsFromReport(markdown),
+          dryRun,
+        });
+        item.labels = impactSyncResult.labels;
+        clawSweeperLabelsChanged ||= impactSyncResult.changed;
+        markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+        if (item.kind === "pull_request") {
+          const mergeRiskSyncResult = syncMergeRiskLabels({
+            number,
+            labels: item.labels,
+            mergeRiskLabels: mergeRiskLabelsFromReport(markdown),
+            dryRun,
+          });
+          item.labels = mergeRiskSyncResult.labels;
+          clawSweeperLabelsChanged ||= mergeRiskSyncResult.changed;
+          markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+        }
+      } catch (error) {
+        if (!isGitHubRequiresAuthenticationError(error)) throw error;
+        if (markLabelSyncAuthSkipped("ClawSweeper")) break;
+        continue;
       }
     }
     if (state === "open" && item.kind === "issue" && !isCloseProposal && isCurrentCompleteReport) {
       currentClosingPullRequests = closingPullRequestsForIssue(number);
-      const syncResult = syncIssueAdvisoryLabels({
-        number,
-        labels: item.labels,
-        state: issueAdvisoryLabelStateFromReport(markdown, {
-          hasOpenLinkedPullRequest:
-            openClosingPullRequestApplyReason(currentClosingPullRequests) !== null,
-        }),
-        dryRun,
-      });
-      item.labels = syncResult.labels;
-      issueAdvisoryLabelsChanged = syncResult.changed;
-      clawSweeperLabelsChanged ||= syncResult.changed;
-      markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+      try {
+        const syncResult = syncIssueAdvisoryLabels({
+          number,
+          labels: item.labels,
+          state: issueAdvisoryLabelStateFromReport(markdown, {
+            hasOpenLinkedPullRequest:
+              openClosingPullRequestApplyReason(currentClosingPullRequests) !== null,
+          }),
+          dryRun,
+        });
+        item.labels = syncResult.labels;
+        issueAdvisoryLabelsChanged = syncResult.changed;
+        clawSweeperLabelsChanged ||= syncResult.changed;
+        markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+      } catch (error) {
+        if (!isGitHubRequiresAuthenticationError(error)) throw error;
+        if (markLabelSyncAuthSkipped("advisory issue")) break;
+        continue;
+      }
     }
     if (isCloseProposal && item.kind === "issue") {
       currentClosingPullRequests ??= closingPullRequestsForIssue(number);

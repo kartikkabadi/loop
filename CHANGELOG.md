@@ -49,6 +49,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Kept event apply runs from failing when GitHub rejects ClawSweeper advisory label sync with a 401; the item is now recorded as kept open for a later retry instead of crashing the workflow.
 - Restored UTF-8 emoji labels on the live dashboard after mojibake slipped into the Worker HTML template.
 - Sanitized non-`github.com` URLs out of repair worker `result.json` evidence (including `actions[].evidence`, `needs_human`, and every `merge_preflight` evidence list) before review so deploy-preview and other external links no longer trip the `evidence contains non-GitHub external URL` deterministic gate; deterministic automerge results, dry-run/blocked fallbacks, the Codex-written result, the result-repair retry, and synthetic commit-finding-intake results all share a single `src/repair/url-safety.ts` allow-list. The intake also rejects dispatched `report_url` overrides that are not on `github.com` and falls back to the canonical report path.
 - Kept scheduled target fanout covering public `steipete/*` repositories when the ClawSweeper GitHub App is not installed for that owner.

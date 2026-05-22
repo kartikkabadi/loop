@@ -6611,6 +6611,99 @@ if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
   }
 });
 
+test("apply-decisions skips cleanly when ClawSweeper label sync loses authentication", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    const logPath = join(root, "gh.log");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+
+    const synced = reportWithSyncedReviewComment(
+      workPlanCandidateReport({
+        number: 321,
+        reviewed_at: "2026-05-01T00:00:00Z",
+        item_snapshot_hash: "reviewed-snapshot-321",
+        item_updated_at: "2026-05-01T00:00:00Z",
+        impact_labels: JSON.stringify(["impact:message-loss"]),
+      }),
+      321,
+    );
+    const itemPath = join(itemsDir, "321.md");
+    writeFileSync(itemPath, synced.report, "utf8");
+
+    const ghMock = `
+const { appendFileSync } = require("fs");
+const logPath = ${JSON.stringify(logPath)};
+const comment = ${JSON.stringify(synced.comment)};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+appendFileSync(logPath, JSON.stringify(args) + "\\n");
+const path = args[1] || "";
+if (args[0] === "api" && /\\/issues\\/321\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[{
+    id: 9321,
+    html_url: "https://github.com/openclaw/clawsweeper/issues/321#issuecomment-9321",
+    created_at: "2026-05-01T01:00:00Z",
+    updated_at: "2026-05-01T01:00:00Z",
+    user: { login: "clawsweeper[bot]" },
+    body: comment
+  }]]));
+} else if (args[0] === "api" && /\\/issues\\/321$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 321,
+    title: "Render work plans",
+    html_url: "https://github.com/openclaw/clawsweeper/issues/321",
+    created_at: "2026-05-01T00:00:00Z",
+    updated_at: "2026-05-01T00:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "reporter" },
+    labels: [],
+    pull_request: null
+  }));
+} else if (args[0] === "issue" && args[1] === "view") {
+  console.log(JSON.stringify({ closedByPullRequestsReferences: [] }));
+} else if (args[0] === "label" && args[1] === "create") {
+  console.log("");
+} else if (args[0] === "issue" && args[1] === "edit" && args.includes("impact:message-loss")) {
+  console.error('error fetching labels: non-200 OK status code: 401 Unauthorized body: "{\\n  \\"message\\": \\"Requires authentication\\",\\n  \\"status\\": \\"401\\"\\n}"');
+  process.exit(1);
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+      });
+    });
+
+    assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+      {
+        number: 321,
+        action: "kept_open",
+        reason: "GitHub rejected ClawSweeper label sync with Requires authentication",
+      },
+    ]);
+    const report = readFileSync(itemPath, "utf8");
+    assert.match(report, /^apply_checked_at: /m);
+    assert.doesNotMatch(report, /^labels_synced_at: /m);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("security-needs-attention reports block unopted repair and automerge pass markers", () => {
   const securitySection = `
 ## Security Review
@@ -9508,6 +9601,16 @@ test("GitHub requires-authentication write errors are recognizable apply skips",
   );
   assert.equal(isGitHubRequiresAuthenticationError(error), true);
   assert.equal(shouldRetryGh(error), false);
+
+  const issueEditError = Object.assign(
+    new Error("Command failed: gh issue edit 85306 --add-label impact:message-loss"),
+    {
+      stderr:
+        'error fetching labels: non-200 OK status code: 401 Unauthorized body: "{\\n  \\"message\\": \\"Requires authentication\\",\\n  \\"status\\": \\"401\\"\\n}"',
+    },
+  );
+  assert.equal(isGitHubRequiresAuthenticationError(issueEditError), true);
+  assert.equal(shouldRetryGh(issueEditError), false);
 });
 
 test("locked conversation failures are non-retryable but recognizable apply skips", () => {

@@ -52,7 +52,10 @@ export function isGitHubNotFoundError(error: unknown): boolean {
 
 export function isGitHubRequiresAuthenticationError(error: unknown): boolean {
   const message = ghErrorText(error);
-  return /\bHTTP\s*401\b/i.test(message) && /\brequires authentication\b/i.test(message);
+  return (
+    /\b(?:HTTP|status(?: code)?)\s*:?\s*401\b/i.test(message) &&
+    /\brequires authentication\b/i.test(message)
+  );
 }
 
 export function ghRetryWaitMs(kind: GhRetryKind, attempt: number): number {
