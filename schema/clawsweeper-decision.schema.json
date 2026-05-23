@@ -25,6 +25,11 @@
     "requiresProductDecision",
     "reproductionAssessment",
     "solutionAssessment",
+    "visionFit",
+    "visionFitReason",
+    "visionFitEvidence",
+    "implementationComplexity",
+    "autoImplementationCandidate",
     "reviewFindings",
     "securityReview",
     "realBehaviorProof",
@@ -311,6 +316,32 @@
     "solutionAssessment": {
       "type": "string",
       "description": "Answer this exact question for public review details: Is this the best way to solve the issue? Include yes/no/unclear/not applicable and the evidence-backed rationale or safer alternative."
+    },
+    "visionFit": {
+      "type": "string",
+      "enum": ["aligned", "rejected", "unclear", "not_applicable"],
+      "description": "For issues, compare the requested work against the target repository VISION.md when present. Use aligned only when the issue fits current priorities or explicit future priorities and does not conflict with roadmap guardrails; rejected when VISION.md says the work should live elsewhere or not merge for now; unclear when evidence is mixed or VISION.md is unavailable; not_applicable for pull requests and non-product cleanup."
+    },
+    "visionFitReason": {
+      "type": "string",
+      "description": "One concise evidence-backed reason for the visionFit value. Mention VISION.md when it was inspected."
+    },
+    "visionFitEvidence": {
+      "type": "array",
+      "description": "Short VISION.md or repository-policy evidence strings supporting the vision-fit decision. Use [] when not applicable.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "implementationComplexity": {
+      "type": "string",
+      "enum": ["small", "medium", "large", "unclear", "not_applicable"],
+      "description": "Estimated implementation size for an autonomous issue-to-PR attempt. Use small only for one focused PR with clear files and validation; medium when several areas are touched but still bounded; large for broad architecture, multi-package, migration, or cross-product work; unclear when the shape is not known; not_applicable for PRs and close decisions."
+    },
+    "autoImplementationCandidate": {
+      "type": "string",
+      "enum": ["none", "strict_bug", "vision_fit"],
+      "description": "Whether this issue should be eligible for automatic PR intake after review. Use strict_bug only for the existing reproduced-bug lane. Use vision_fit only for high-confidence, VISION.md-aligned, small, queue_fix_pr issue work with clear validation and no security/product-decision blocker. Otherwise use none."
     },
     "reviewFindings": {
       "type": "array",

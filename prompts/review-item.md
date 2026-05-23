@@ -89,6 +89,29 @@ outside OpenClaw core. Set `requiresNewFeature`, `requiresNewConfigOption`, and
 `requiresProductDecision` independently. Any true value means the item is not a
 strict bug-fix automation candidate even if useful.
 
+For issues, also do a VISION.md fit pass when the target checkout has
+`VISION.md`. Read it before selecting `visionFit`. Use `visionFit: "aligned"`
+only when the requested work fits current priorities or explicit next
+priorities and does not conflict with roadmap guardrails such as core staying
+lean, plugins/ClawHub owning optional capability, or deferred work. Use
+`rejected` when VISION.md says the work should live elsewhere or not merge for
+now, `unclear` when VISION.md is missing or evidence is mixed, and
+`not_applicable` for pull requests and non-product cleanup. Put short concrete
+references in `visionFitEvidence`.
+
+Estimate `implementationComplexity` for issues. Use `small` only when one
+focused autonomous PR can plausibly implement it with clear likely files and a
+validation path; use `medium` for bounded multi-area work, `large` for broad
+architecture/migration/product work, `unclear` when the shape is unknown, and
+`not_applicable` for PRs and close decisions. Set
+`autoImplementationCandidate: "vision_fit"` only when an open issue is
+high-confidence, `visionFit: "aligned"`, `implementationComplexity: "small"`,
+`workCandidate: "queue_fix_pr"`, `workConfidence: "high"`, has a complete
+`workPrompt`, likely files, validation commands, no security/protected signal,
+no open linked PR, and no product-decision blocker. Set
+`autoImplementationCandidate: "strict_bug"` only for the existing reproduced
+bug lane described below. Otherwise use `none`.
+
 Set `triagePriority` as ClawSweeper's maintainer-facing priority label for both
 issues and pull requests. This is not the same as `reviewFindings[].priority`
 and is not limited to PR patch defects. Use the current GitHub label rubric:
@@ -370,7 +393,8 @@ bug-fix PR creation only when `itemCategory` is exactly `bug`,
 `requiresNewConfigOption`, and `requiresProductDecision` are all `false`.
 Keep the bug boundary narrow in `workPrompt`: fix broken existing behavior,
 add or update regression coverage, and stop if the implementation would add a
-feature/config/product-policy change.
+feature/config/product-policy change. Set `autoImplementationCandidate` to
+`strict_bug` for this strict bug lane.
 
 For pull requests, `workCandidate` is also the automation contract. Use
 `queue_fix_pr` only when there is a concrete, actionable repair that an
@@ -644,3 +668,6 @@ empty arrays. For manual-review items, use `workCandidate: "manual_review"` and
 explain the blocker in `workReason`. For fix-PR candidates, use
 `workCandidate: "queue_fix_pr"` and include a complete `workPrompt`,
 `workClusterRefs`, `workValidation`, and `workLikelyFiles`.
+Always fill the vision-fit fields too. For older/non-applicable paths use
+`visionFit: "not_applicable"`, `implementationComplexity: "not_applicable"`,
+`autoImplementationCandidate: "none"`, a short reason, and empty evidence.

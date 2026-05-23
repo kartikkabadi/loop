@@ -10,6 +10,8 @@ Reports store the lane fields in frontmatter:
 - `reproduction_status` and `reproduction_confidence`
 - `requires_new_feature`, `requires_new_config_option`, and
   `requires_product_decision`
+- `vision_fit`, `vision_fit_evidence`, and `implementation_complexity`
+- `auto_implementation_candidate`: `none`, `strict_bug`, or `vision_fit`
 - `work_candidate`: `none`, `manual_review`, or `queue_fix_pr`
 - `work_status`: `none`, `manual_review`, or `candidate`
 - `work_priority` and `work_confidence`
@@ -66,12 +68,15 @@ them from the source report instead of editing them by hand.
 
 ## Reproducible Bug Auto-Implementation
 
-The automatic issue implementation lane is stricter than the manual work queue.
-It can create a PR only for reviewed issues that are exactly:
+The automatic issue implementation lanes are stricter than the manual work
+queue. The strict bug lane can create a PR only for reviewed issues that are
+exactly:
 
 - `item_category: bug`
 - `reproduction_status: reproduced`
 - `reproduction_confidence: high`
+- `auto_implementation_candidate: strict_bug` when the report has this newer
+  field
 - `work_candidate: queue_fix_pr`
 - `work_confidence: high`
 - `requires_new_feature: false`
@@ -83,13 +88,33 @@ add a flag, setting, new mode, provider support, broad UX behavior, dependency,
 or maintainer policy choice, the review must not classify it as an automatic
 bug implementation candidate.
 
+The sibling vision-fit lane is opt-in with
+`CLAWSWEEPER_AUTO_IMPLEMENT_VISION_FIT=1`. It may create a PR only for reviewed
+issues that are exactly:
+
+- `auto_implementation_candidate: vision_fit`
+- `vision_fit: aligned`
+- `implementation_complexity: small`
+- `work_candidate: queue_fix_pr`
+- `work_confidence: high`
+- no security/protected signal
+- no product-decision blocker
+- complete repair prompt, likely files, validation commands, and VISION.md
+  evidence
+
+This lane allows small feature/docs/cleanup work when it fits `VISION.md`, but
+still stops before broad product or architecture work. Medium-or-larger aligned
+items remain manual work-lane candidates.
+
 After review publish, `sweep.yml` scans the just-produced artifacts and dispatches
-`repair-issue-implementation-intake.yml` for eligible reports when
-`CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS=1`. The intake workflow re-fetches the
-live issue, rejects protected/security/locked items, skips issues that already
-have an open PR reference or existing ClawSweeper implementation PR, writes the
-normal `source: issue_implementation` job, commits the ledger, then dispatches
-`repair-cluster-worker.yml` in autonomous mode.
+`repair-issue-implementation-intake.yml` for eligible reports when the matching
+lane variable is enabled. The intake workflow re-fetches the live issue, rejects
+protected/security/locked items, skips issues that already have an open PR
+reference or existing ClawSweeper implementation PR, writes the normal
+`source: issue_implementation` job, commits the ledger, then dispatches
+`repair-cluster-worker.yml` in autonomous mode. Jobs use
+`trigger_source: review_reproducible_bug` or `trigger_source: review_vision_fit`
+to preserve which lane queued the PR.
 
 Comment-triggered issue implementation uses the same durable job format. If a
 worker starts before the new state commit is visible in its checkout, the worker

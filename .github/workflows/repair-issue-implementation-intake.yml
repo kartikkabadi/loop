@@ -19,6 +19,11 @@ on:
         description: "Issue number with a strict reproducible bug review"
         required: true
         type: string
+      candidate_kind:
+        description: "Issue implementation candidate kind: strict_bug or vision_fit"
+        required: false
+        default: strict_bug
+        type: string
       report_repo:
         description: "Repository containing the ClawSweeper report"
         required: false
@@ -116,6 +121,7 @@ jobs:
           ENABLED: ${{ github.event.inputs.enabled || github.event.client_payload.enabled || vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS || 'false' }}
           TARGET_REPO: ${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}
           ITEM_NUMBER: ${{ github.event.inputs.item_number || github.event.client_payload.item_number }}
+          CANDIDATE_KIND: ${{ github.event.inputs.candidate_kind || github.event.client_payload.candidate_kind || 'strict_bug' }}
           REPORT_REPO: ${{ github.event.inputs.report_repo || github.event.client_payload.report_repo || 'openclaw/clawsweeper' }}
           REPORT_PATH: ${{ github.event.inputs.report_path || github.event.client_payload.report_path }}
           REPORT_URL: ${{ github.event.inputs.report_url || github.event.client_payload.report_url }}
@@ -126,6 +132,7 @@ jobs:
             --enabled "$ENABLED"
             --target-repo "$TARGET_REPO"
             --item-number "$ITEM_NUMBER"
+            --candidate-kind "$CANDIDATE_KIND"
             --report-repo "$REPORT_REPO"
           )
           if [ -n "${REPORT_PATH:-}" ]; then

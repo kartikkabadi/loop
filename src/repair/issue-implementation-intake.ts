@@ -10,7 +10,10 @@ import {
   issueImplementationJobPath,
   renderIssueImplementationJob,
   REVIEW_REPRODUCIBLE_BUG_TRIGGER_SOURCE,
+  REVIEW_VISION_FIT_TRIGGER_SOURCE,
 } from "./comment-router-core.js";
+
+type CandidateKind = "strict_bug" | "vision_fit";
 
 type IntakeDecision = {
   status: string;
@@ -35,6 +38,7 @@ function main() {
 
 function prepare() {
   const enabled = stringArg("enabled", "true");
+  const candidateKind = candidateKindArg();
   const targetRepo = stringArg("target-repo", stringArg("target_repo", "openclaw/openclaw"));
   const reportRepo = stringArg("report-repo", stringArg("report_repo", "openclaw/clawsweeper"));
   const itemNumber = positiveInteger(
@@ -57,6 +61,7 @@ function prepare() {
     enabled,
     targetRepo,
     itemNumber,
+    candidateKind,
     report,
     reportMarkdown,
     live,
@@ -80,6 +85,7 @@ function prepare() {
     reportMarkdown,
     live,
     decision,
+    candidateKind,
     jobPath,
     auditPath,
     preparedAt,
@@ -95,6 +101,7 @@ function prepare() {
     blockers: decision.blockers.join("; "),
     target_repo: targetRepo,
     item_number: itemNumber,
+    candidate_kind: candidateKind,
     report_path: reportPath,
     report_url: reportUrl,
     audit_path: relative(auditPath),
@@ -106,6 +113,7 @@ function prepare() {
 
 function candidates() {
   const enabled = stringArg("enabled", "true");
+  const candidateKind = candidateKindArg();
   const artifactDir = path.resolve(
     stringArg("artifact-dir", stringArg("artifact_dir", "artifacts")),
   );
@@ -120,7 +128,12 @@ function candidates() {
       const repository = report.frontmatter.repository || targetRepo;
       const reportPath = `records/${repoSlug(repository)}/items/${number}.md`;
       const reportUrl = `https://github.com/${reportRepo}/blob/main/${reportPath}`;
-      const decision = reportOnlyDecision({ targetRepo, report, reportMarkdown: markdown });
+      const decision = reportOnlyDecision({
+        targetRepo,
+        report,
+        reportMarkdown: markdown,
+        candidateKind,
+      });
       if (!decision.shouldRepair) continue;
       out.push({ item_number: number, report_path: reportPath, report_url: reportUrl });
     }
@@ -151,17 +164,27 @@ export function reportOnlyDecision({
   targetRepo,
   report,
   reportMarkdown,
+  candidateKind = "strict_bug",
 }: {
   targetRepo: string;
   report: ReviewReport;
   reportMarkdown: string;
+  candidateKind?: CandidateKind;
 }): IntakeDecision {
-  return eligibilityDecision({ targetRepo, report, reportMarkdown, live: null, enabled: "true" });
+  return eligibilityDecision({
+    targetRepo,
+    report,
+    reportMarkdown,
+    live: null,
+    enabled: "true",
+    candidateKind,
+  });
 }
 
 function intakeDecision({
   enabled,
   targetRepo,
+  candidateKind,
   report,
   reportMarkdown,
   live,
@@ -169,22 +192,25 @@ function intakeDecision({
   enabled: string;
   targetRepo: string;
   itemNumber: number;
+  candidateKind: CandidateKind;
   report: ReviewReport;
   reportMarkdown: string;
   live: LooseRecord;
 }): IntakeDecision {
-  return eligibilityDecision({ enabled, targetRepo, report, reportMarkdown, live });
+  return eligibilityDecision({ enabled, targetRepo, candidateKind, report, reportMarkdown, live });
 }
 
 function eligibilityDecision({
   enabled,
   targetRepo,
+  candidateKind,
   report,
   reportMarkdown,
   live,
 }: {
   enabled: string;
   targetRepo: string;
+  candidateKind: CandidateKind;
   report: ReviewReport;
   reportMarkdown: string;
   live: LooseRecord | null;
@@ -207,15 +233,32 @@ function eligibilityDecision({
     blockers.push(`work candidate is ${fm.work_candidate || "unknown"}`);
   if (fm.work_confidence !== "high")
     blockers.push(`work confidence is ${fm.work_confidence || "unknown"}`);
-  if (fm.item_category !== "bug")
-    blockers.push(`item category is ${fm.item_category || "unknown"}`);
-  if (fm.reproduction_status !== "reproduced")
-    blockers.push(`reproduction status is ${fm.reproduction_status || "unknown"}`);
-  if (fm.reproduction_confidence !== "high")
-    blockers.push(`reproduction confidence is ${fm.reproduction_confidence || "unknown"}`);
-  if (fm.requires_new_feature === "true") blockers.push("requires a new feature");
-  if (fm.requires_new_config_option === "true") blockers.push("requires a new config option");
-  if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
+  if (candidateKind === "strict_bug") {
+    if (fm.auto_implementation_candidate && fm.auto_implementation_candidate !== "strict_bug")
+      blockers.push(`auto implementation candidate is ${fm.auto_implementation_candidate}`);
+    if (fm.item_category !== "bug")
+      blockers.push(`item category is ${fm.item_category || "unknown"}`);
+    if (fm.reproduction_status !== "reproduced")
+      blockers.push(`reproduction status is ${fm.reproduction_status || "unknown"}`);
+    if (fm.reproduction_confidence !== "high")
+      blockers.push(`reproduction confidence is ${fm.reproduction_confidence || "unknown"}`);
+    if (fm.requires_new_feature === "true") blockers.push("requires a new feature");
+    if (fm.requires_new_config_option === "true") blockers.push("requires a new config option");
+    if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
+  } else {
+    if (fm.auto_implementation_candidate !== "vision_fit")
+      blockers.push(
+        `auto implementation candidate is ${fm.auto_implementation_candidate || "unknown"}`,
+      );
+    if (fm.vision_fit !== "aligned") blockers.push(`vision fit is ${fm.vision_fit || "unknown"}`);
+    if (fm.implementation_complexity !== "small")
+      blockers.push(`implementation complexity is ${fm.implementation_complexity || "unknown"}`);
+    if (!visionFitItemCategoryAllowed(fm.item_category))
+      blockers.push(`item category is ${fm.item_category || "unknown"}`);
+    if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
+    if (frontMatterStringArray(fm.vision_fit_evidence).length === 0)
+      blockers.push("missing vision-fit evidence");
+  }
   if (frontMatterStringArray(fm.labels).some(isProtectedLabel))
     blockers.push("protected label present");
   if (securitySensitiveText(reportMarkdown)) blockers.push("security-sensitive signal present");
@@ -259,22 +302,32 @@ function eligibilityDecision({
   return decision(
     "queued_for_repair",
     true,
-    "strict reproducible bug is eligible for ClawSweeper implementation",
+    candidateKind === "vision_fit"
+      ? "vision-fit issue is eligible for ClawSweeper implementation"
+      : "strict reproducible bug is eligible for ClawSweeper implementation",
   );
 }
 
 function writeJob(context: LooseRecord) {
   const fm = context.report.frontmatter as Record<string, string>;
   const issue = asRecord(context.live.issue);
+  const candidateKind = context.candidateKind as CandidateKind;
   const body = renderIssueImplementationJob({
     repo: context.targetRepo,
     issueNumber: context.itemNumber,
     title: issue.title || displayTitle(fm.title ?? "") || `Issue #${context.itemNumber}`,
-    implementationPrompt: strictImplementationPrompt(context),
-    triggerSource: REVIEW_REPRODUCIBLE_BUG_TRIGGER_SOURCE,
+    implementationPrompt:
+      candidateKind === "vision_fit"
+        ? visionFitImplementationPrompt(context)
+        : strictImplementationPrompt(context),
+    triggerSource:
+      candidateKind === "vision_fit"
+        ? REVIEW_VISION_FIT_TRIGGER_SOURCE
+        : REVIEW_REPRODUCIBLE_BUG_TRIGGER_SOURCE,
     reviewReportUrl: context.reportUrl,
     reviewReportPath: context.reportPath,
-    strictBugOnly: true,
+    strictBugOnly: candidateKind === "strict_bug",
+    visionFit: candidateKind === "vision_fit",
   });
   fs.mkdirSync(path.dirname(context.jobPath), { recursive: true });
   fs.writeFileSync(context.jobPath, body, "utf8");
@@ -315,6 +368,45 @@ function strictImplementationPrompt(context: LooseRecord) {
   ].join("\n");
 }
 
+function visionFitImplementationPrompt(context: LooseRecord) {
+  const fm = context.report.frontmatter as Record<string, string>;
+  const validation = frontMatterStringArray(fm.work_validation);
+  const likelyFiles = frontMatterStringArray(fm.work_likely_files);
+  const visionEvidence = frontMatterStringArray(fm.vision_fit_evidence);
+  const workPrompt = section(context.report.body, "Repair Work Prompt");
+  return [
+    "This was selected by ClawSweeper's vision-fit issue lane.",
+    "",
+    `Review report: ${context.reportUrl}`,
+    `Category: ${fm.item_category}`,
+    `Vision fit: ${fm.vision_fit}`,
+    `Implementation complexity: ${fm.implementation_complexity}`,
+    "",
+    "Vision evidence:",
+    "",
+    ...(visionEvidence.length ? visionEvidence.map((entry) => `- ${entry}`) : ["- unknown"]),
+    "",
+    "Implementation boundary:",
+    "",
+    "- read VISION.md before editing and stop if the issue no longer fits it",
+    "- keep one small focused PR",
+    "- stop if the work expands into medium/large scope or needs a product decision",
+    "- preserve plugin, ClawHub, extension, config, and docs boundaries from VISION.md",
+    "",
+    "Review work prompt:",
+    "",
+    workPrompt.trim() || fm.work_reason_sha256 || "Implement the narrow vision-fit issue.",
+    "",
+    "Likely files:",
+    "",
+    ...(likelyFiles.length ? likelyFiles.map((file) => `- ${file}`) : ["- unknown"]),
+    "",
+    "Validation:",
+    "",
+    ...(validation.length ? validation.map((command) => `- ${command}`) : ["- pnpm check:changed"]),
+  ].join("\n");
+}
+
 function writeAudit(context: LooseRecord) {
   fs.mkdirSync(path.dirname(context.auditPath), { recursive: true });
   const jobLine = context.decision.shouldRepair
@@ -332,6 +424,7 @@ prepared_at: ${context.preparedAt}
 # Issue Implementation Intake ${context.itemNumber}
 
 - Decision: \`${context.decision.status}\`
+- Candidate kind: \`${context.candidateKind}\`
 - Reason: ${context.decision.reason}
 - Report: ${context.reportUrl}
 - Branch: \`${issueImplementationJobBranch(context.targetRepo, context.itemNumber)}\`
@@ -453,6 +546,10 @@ function isProtectedLabel(label: string): boolean {
   );
 }
 
+function visionFitItemCategoryAllowed(value: string | undefined): boolean {
+  return ["bug", "regression", "feature", "skill", "docs", "cleanup"].includes(value ?? "");
+}
+
 function securitySensitiveText(text: string): boolean {
   return /\b(?:security|vulnerability|cve|ghsa|secret|credential|token|exploit|xss|csrf|ssrf|rce)\b/i.test(
     text,
@@ -468,6 +565,12 @@ function asRecord(value: unknown): Record<string, JsonValue> {
 function stringArg(key: string, fallback = ""): string {
   const value = args[key];
   return typeof value === "string" ? value : fallback;
+}
+
+function candidateKindArg(): CandidateKind {
+  const value = stringArg("candidate-kind", stringArg("candidate_kind", "strict_bug")).trim();
+  if (value === "strict_bug" || value === "vision_fit") return value;
+  die(`invalid candidate kind: ${value}`);
 }
 
 function positiveInteger(value: string, label: string): number {

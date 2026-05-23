@@ -206,6 +206,11 @@ function closeDecision(overrides = {}) {
       "Yes. Current main can be checked by inspecting src/example.ts and git blame evidence.",
     solutionAssessment:
       "Yes. Keeping the implementation as-is is the narrowest maintainable outcome.",
+    visionFit: "not_applicable",
+    visionFitReason: "Vision-fit assessment is not needed for this implemented close decision.",
+    visionFitEvidence: [],
+    implementationComplexity: "not_applicable",
+    autoImplementationCandidate: "none",
     reviewFindings: [],
     securityReview: {
       status: "not_applicable",

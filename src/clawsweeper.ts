@@ -155,6 +155,9 @@ type MantisRecommendationScenario =
   | "discord_thread_attachment"
   | "slack_desktop_smoke"
   | "visual_task";
+type VisionFitStatus = "aligned" | "rejected" | "unclear" | "not_applicable";
+type ImplementationComplexity = "small" | "medium" | "large" | "unclear" | "not_applicable";
+type AutoImplementationCandidate = "none" | "strict_bug" | "vision_fit";
 type CloseReason =
   | "implemented_on_main"
   | "mostly_implemented_on_main"
@@ -389,6 +392,11 @@ interface Decision {
   requiresProductDecision: boolean;
   reproductionAssessment: string;
   solutionAssessment: string;
+  visionFit: VisionFitStatus;
+  visionFitReason: string;
+  visionFitEvidence: string[];
+  implementationComplexity: ImplementationComplexity;
+  autoImplementationCandidate: AutoImplementationCandidate;
   reviewFindings: ReviewFinding[];
   securityReview: SecurityReview;
   realBehaviorProof: RealBehaviorProof;
@@ -1178,6 +1186,24 @@ const ALLOWED_REASONS = new Set<CloseReason>([
 const ALL_REASONS = new Set<CloseReason>([...ALLOWED_REASONS, "none"]);
 const DECISIONS = new Set<DecisionKind>(["close", "keep_open"]);
 const WORK_CANDIDATES = new Set<WorkCandidateKind>(["none", "manual_review", "queue_fix_pr"]);
+const VISION_FIT_STATUSES = new Set<VisionFitStatus>([
+  "aligned",
+  "rejected",
+  "unclear",
+  "not_applicable",
+]);
+const IMPLEMENTATION_COMPLEXITIES = new Set<ImplementationComplexity>([
+  "small",
+  "medium",
+  "large",
+  "unclear",
+  "not_applicable",
+]);
+const AUTO_IMPLEMENTATION_CANDIDATES = new Set<AutoImplementationCandidate>([
+  "none",
+  "strict_bug",
+  "vision_fit",
+]);
 const TRIAGE_PRIORITIES = new Set<TriagePriority>(["P0", "P1", "P2", "P3", "none"]);
 const ITEM_CATEGORIES = new Set<ItemCategory>([
   "bug",
@@ -1307,6 +1333,11 @@ const DECISION_SCHEMA_KEYS = new Set([
   "requiresProductDecision",
   "reproductionAssessment",
   "solutionAssessment",
+  "visionFit",
+  "visionFitReason",
+  "visionFitEvidence",
+  "implementationComplexity",
+  "autoImplementationCandidate",
   "reviewFindings",
   "securityReview",
   "realBehaviorProof",
@@ -1391,6 +1422,7 @@ const REVIEW_SECTIONS = {
   bestSolution: "Best Possible Solution",
   reproductionAssessment: "Reproduction Assessment",
   solutionAssessment: "Solution Assessment",
+  visionFit: "Vision Fit",
   reviewFindings: "Review Findings",
   securityReview: "Security Review",
   realBehaviorProof: "Real Behavior Proof",
@@ -2212,6 +2244,19 @@ export function parseDecision(value: unknown, item?: DecisionNormalizationItem):
       "decision.reproductionAssessment",
     ),
     solutionAssessment: requireString(record.solutionAssessment, "decision.solutionAssessment"),
+    visionFit: requireEnum(record.visionFit, VISION_FIT_STATUSES, "decision.visionFit"),
+    visionFitReason: requireString(record.visionFitReason, "decision.visionFitReason"),
+    visionFitEvidence: requireStringArray(record.visionFitEvidence, "decision.visionFitEvidence"),
+    implementationComplexity: requireEnum(
+      record.implementationComplexity,
+      IMPLEMENTATION_COMPLEXITIES,
+      "decision.implementationComplexity",
+    ),
+    autoImplementationCandidate: requireEnum(
+      record.autoImplementationCandidate,
+      AUTO_IMPLEMENTATION_CANDIDATES,
+      "decision.autoImplementationCandidate",
+    ),
     reviewFindings,
     securityReview: parseSecurityReview(record.securityReview, "decision.securityReview"),
     realBehaviorProof: parseRealBehaviorProof(
@@ -5018,6 +5063,11 @@ function codexFailureDecision(status: number | null, stderr: string, stdout = ""
       "Unclear. The review failed before ClawSweeper could establish a reproduction path.",
     solutionAssessment:
       "Unclear. Retry the review first so ClawSweeper can evaluate the actual issue and fix direction.",
+    visionFit: "not_applicable",
+    visionFitReason: "Vision-fit assessment did not run because the Codex review failed.",
+    visionFitEvidence: [],
+    implementationComplexity: "not_applicable",
+    autoImplementationCandidate: "none",
     reviewFindings: [],
     securityReview: {
       status: "not_applicable",
@@ -6988,6 +7038,51 @@ function reportFeatureShowcase(markdown: string): FeatureShowcase {
   };
 }
 
+function reportVisionFit(markdown: string): {
+  visionFit: VisionFitStatus;
+  visionFitReason: string;
+  visionFitEvidence: string[];
+  implementationComplexity: ImplementationComplexity;
+  autoImplementationCandidate: AutoImplementationCandidate;
+} {
+  const section = reviewSectionValue(markdown, "visionFit");
+  const visionValue =
+    sectionLineValue(section, "Status") ?? frontMatterValue(markdown, "vision_fit");
+  const complexityValue =
+    sectionLineValue(section, "Implementation complexity") ??
+    frontMatterValue(markdown, "implementation_complexity");
+  const candidateValue =
+    sectionLineValue(section, "Auto implementation candidate") ??
+    frontMatterValue(markdown, "auto_implementation_candidate");
+  const visionFit = VISION_FIT_STATUSES.has(visionValue as VisionFitStatus)
+    ? (visionValue as VisionFitStatus)
+    : "not_applicable";
+  const implementationComplexity = IMPLEMENTATION_COMPLEXITIES.has(
+    complexityValue as ImplementationComplexity,
+  )
+    ? (complexityValue as ImplementationComplexity)
+    : "not_applicable";
+  const autoImplementationCandidate = AUTO_IMPLEMENTATION_CANDIDATES.has(
+    candidateValue as AutoImplementationCandidate,
+  )
+    ? (candidateValue as AutoImplementationCandidate)
+    : "none";
+  return {
+    visionFit,
+    visionFitReason:
+      sectionLineValue(section, "Reason") ??
+      (visionFit === "not_applicable"
+        ? "Vision-fit assessment is not applicable to this older report."
+        : "No vision-fit reason was recorded in this report."),
+    visionFitEvidence:
+      sectionList(section, "Vision evidence").length > 0
+        ? sectionList(section, "Vision evidence")
+        : frontMatterStringArray(markdown, "vision_fit_evidence"),
+    implementationComplexity,
+    autoImplementationCandidate,
+  };
+}
+
 function screenshotProofNeedsRuntimeOutput(summary: string): boolean {
   if (
     /\b(?:no|without|absence of|zero|none)\b[^.]{0,120}\b(?:visible\s+)?(?:console|network|error|warning|violation|csp|cors)\b/i.test(
@@ -8930,6 +9025,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
   const triagePriority = triagePriorityFromReport(markdown);
   const impactLabels = kind === "pull_request" ? [] : impactLabelsFromReport(markdown);
   const mergeRiskLabels = mergeRiskLabelsFromReport(markdown);
+  const visionFit = reportVisionFit(markdown);
   return {
     decision: "close",
     closeReason,
@@ -8961,6 +9057,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     requiresProductDecision: frontMatterValue(markdown, "requires_product_decision") === "true",
     reproductionAssessment: reviewSectionValue(markdown, "reproductionAssessment"),
     solutionAssessment: reviewSectionValue(markdown, "solutionAssessment"),
+    ...visionFit,
     reviewFindings: reportReviewFindings(markdown),
     securityReview: reportSecurityReview(markdown),
     realBehaviorProof: reportRealBehaviorProof(markdown),
@@ -11147,6 +11244,22 @@ function renderRepairWorkPromptReportSection(decision: Decision): string {
   return workPrompt ? `\n\n## ${REVIEW_SECTIONS.repairWorkPrompt}\n\n${workPrompt}` : "";
 }
 
+function renderVisionFitReportSection(decision: Decision): string {
+  return [
+    `Status: ${decision.visionFit}`,
+    "",
+    `Implementation complexity: ${decision.implementationComplexity}`,
+    "",
+    `Auto implementation candidate: ${decision.autoImplementationCandidate}`,
+    "",
+    `Reason: ${sentence(decision.visionFitReason)}`,
+    "",
+    "Vision evidence:",
+    "",
+    markdownList(decision.visionFitEvidence),
+  ].join("\n");
+}
+
 function renderReviewFindingsReportSection(decision: Decision): string {
   const lines = [
     `Overall correctness: ${decision.overallCorrectness}`,
@@ -11338,6 +11451,7 @@ function markdownFor(options: {
   const reproductionAssessment =
     options.decision.reproductionAssessment.trim() || "_Not provided._";
   const solutionAssessment = options.decision.solutionAssessment.trim() || "_Not provided._";
+  const visionFit = renderVisionFitReportSection(options.decision);
   const reviewFindings = renderReviewFindingsReportSection(options.decision);
   const securityReview = renderSecurityReviewReportSection(options.decision);
   const realBehaviorProof = renderRealBehaviorProofReportSection(options.decision);
@@ -11425,6 +11539,10 @@ reproduction_confidence: ${options.decision.reproductionConfidence}
 requires_new_feature: ${options.decision.requiresNewFeature}
 requires_new_config_option: ${options.decision.requiresNewConfigOption}
 requires_product_decision: ${options.decision.requiresProductDecision}
+vision_fit: ${options.decision.visionFit}
+vision_fit_evidence: ${jsonFrontMatterValue(options.decision.visionFitEvidence)}
+implementation_complexity: ${options.decision.implementationComplexity}
+auto_implementation_candidate: ${options.decision.autoImplementationCandidate}
 real_behavior_proof_status: ${options.decision.realBehaviorProof.status}
 real_behavior_proof_evidence_kind: ${options.decision.realBehaviorProof.evidenceKind}
 real_behavior_proof_needs_contributor_action: ${options.decision.realBehaviorProof.needsContributorAction}
@@ -11496,6 +11614,10 @@ ${reproductionAssessment}
 ## ${REVIEW_SECTIONS.solutionAssessment}
 
 ${solutionAssessment}
+
+## ${REVIEW_SECTIONS.visionFit}
+
+${visionFit}
 
 ## ${REVIEW_SECTIONS.reviewFindings}
 
