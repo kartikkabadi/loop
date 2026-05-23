@@ -1603,6 +1603,119 @@ test("hosted webhook reuses existing fast ack comments on redelivery", async () 
   }
 });
 
+test("hosted webhook removes duplicate fast ack comments after concurrent redelivery", async () => {
+  const originalFetch = globalThis.fetch;
+  const { privateKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    privateKeyEncoding: { type: "pkcs8", format: "pem" },
+    publicKeyEncoding: { type: "spki", format: "pem" },
+  });
+  let commentLookups = 0;
+  let deletedAck = 0;
+  let dispatchBody: unknown = null;
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/installation") {
+      return jsonResponse({ id: 999 });
+    }
+    if (url.pathname === "/app/installations/999/access_tokens") {
+      return jsonResponse({ token: "dispatch-token" });
+    }
+    if (url.pathname === "/app/installations/123/access_tokens") {
+      return jsonResponse({ token: "target-token" });
+    }
+    if (url.pathname === "/repos/openclaw/gogcli/issues/597/comments" && init?.method === "GET") {
+      commentLookups += 1;
+      if (commentLookups === 1) return jsonResponse([]);
+      return jsonResponse([
+        {
+          id: 777,
+          created_at: "2026-05-24T00:00:00Z",
+          body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+          user: { login: "openclaw-clawsweeper[bot]" },
+        },
+        {
+          id: 888,
+          created_at: "2026-05-24T00:00:01Z",
+          body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+          user: { login: "openclaw-clawsweeper[bot]" },
+        },
+      ]);
+    }
+    if (url.pathname === "/repos/openclaw/gogcli/issues/597/comments" && init?.method === "POST") {
+      return jsonResponse({ id: 888 });
+    }
+    if (
+      url.pathname === "/repos/openclaw/gogcli/issues/comments/888" &&
+      init?.method === "DELETE"
+    ) {
+      deletedAck = 888;
+      return new Response(null, { status: 204 });
+    }
+    if (url.pathname === "/repos/openclaw/gogcli/issues/comments/456/reactions") {
+      return jsonResponse({});
+    }
+    if (url.pathname === "/repos/openclaw/clawsweeper/dispatches") {
+      dispatchBody = JSON.parse(String(init?.body));
+      return new Response(null, { status: 204 });
+    }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      signedGithubWebhookRequest({
+        event: "issue_comment",
+        secret: "test-secret",
+        payload: {
+          action: "created",
+          repository: {
+            full_name: "openclaw/gogcli",
+            default_branch: "trunk",
+            private: false,
+            archived: false,
+            fork: false,
+            has_issues: true,
+          },
+          issue: { number: 597, user: { login: "steipete" } },
+          installation: { id: 123 },
+          comment: {
+            id: 456,
+            body: "@clawsweeper build",
+            author_association: "OWNER",
+            user: { login: "steipete" },
+          },
+        },
+      }),
+      {
+        CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
+        CLAWSWEEPER_APP_PRIVATE_KEY: privateKey,
+        CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+      },
+    );
+
+    assert.equal(response.status, 202);
+    assert.deepEqual(await response.json(), { ok: true, status_comment_id: 777 });
+    assert.equal(deletedAck, 888);
+    assert.equal(commentLookups, 2);
+    assert.deepEqual(dispatchBody, {
+      event_type: "clawsweeper_comment",
+      client_payload: {
+        target_repo: "openclaw/gogcli",
+        target_branch: "trunk",
+        item_number: 597,
+        comment_id: 456,
+        status_comment_id: 777,
+        source_event: "issue_comment",
+        source_action: "created",
+        max_comments: "1",
+      },
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("dashboard shares in-flight GitHub App installation token across parallel requests", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;

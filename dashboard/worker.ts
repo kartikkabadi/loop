@@ -681,7 +681,7 @@ async function createGithubAppTokenFor({
 }
 
 async function createFastAckComment({ token, repo, itemNumber, sourceCommentId }) {
-  const existingId = await findFastAckCommentId({ token, repo, itemNumber, sourceCommentId });
+  const existingId = await pruneFastAckComments({ token, repo, itemNumber, sourceCommentId });
   if (existingId) return existingId;
   const payload = await githubTokenJson({
     token,
@@ -690,10 +690,44 @@ async function createFastAckComment({ token, repo, itemNumber, sourceCommentId }
     body: { body: renderFastAckComment(sourceCommentId) },
     errorLabel: "ClawSweeper ack comment",
   });
-  return Number(payload.id) || null;
+  return (
+    (await pruneFastAckComments({ token, repo, itemNumber, sourceCommentId })) ||
+    Number(payload.id) ||
+    null
+  );
 }
 
-async function findFastAckCommentId({ token, repo, itemNumber, sourceCommentId }) {
+async function pruneFastAckComments({ token, repo, itemNumber, sourceCommentId }) {
+  const comments = await listFastAckComments({ token, repo, itemNumber, sourceCommentId });
+  if (!comments.length) return null;
+  comments.sort((left, right) => {
+    const leftCreated = String(objectValue(left).created_at || "");
+    const rightCreated = String(objectValue(right).created_at || "");
+    return (
+      leftCreated.localeCompare(rightCreated) ||
+      (Number(objectValue(left).id) || 0) - (Number(objectValue(right).id) || 0)
+    );
+  });
+  const keepId = Number(objectValue(comments[0]).id) || null;
+  for (const comment of comments.slice(1)) {
+    const id = Number(objectValue(comment).id) || 0;
+    if (id <= 0 || id === keepId) continue;
+    await githubTokenJson({
+      token,
+      path: `/repos/${repo}/issues/comments/${id}`,
+      method: "DELETE",
+      body: undefined,
+      errorLabel: "ClawSweeper duplicate ack cleanup",
+    }).catch((error) => {
+      if (!String(error?.message || "").includes("404")) throw error;
+      return null;
+    });
+  }
+  return keepId;
+}
+
+async function listFastAckComments({ token, repo, itemNumber, sourceCommentId }) {
+  const comments = [];
   const marker = fastAckMarker(sourceCommentId);
   const since = encodeURIComponent(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
   for (let page = 1; page <= 5; page += 1) {
@@ -704,18 +738,18 @@ async function findFastAckCommentId({ token, repo, itemNumber, sourceCommentId }
       body: undefined,
       errorLabel: "ClawSweeper ack comment lookup",
     });
-    if (!Array.isArray(payload)) return null;
+    if (!Array.isArray(payload)) return comments;
     for (const comment of payload) {
       if (
         String(objectValue(comment).body || "").includes(marker) &&
         isClawsweeperGithubWebhookSender(objectValue(objectValue(comment).user))
       ) {
-        return Number(objectValue(comment).id) || null;
+        comments.push(comment);
       }
     }
-    if (payload.length < 100) return null;
+    if (payload.length < 100) return comments;
   }
-  return null;
+  return comments;
 }
 
 function renderFastAckComment(sourceCommentId) {

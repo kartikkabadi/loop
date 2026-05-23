@@ -430,7 +430,7 @@ async function createFastAckComment({
   itemNumber: number;
   sourceCommentId: number;
 }) {
-  const existingId = await findFastAckCommentId({ token, repo, itemNumber, sourceCommentId });
+  const existingId = await pruneFastAckComments({ token, repo, itemNumber, sourceCommentId });
   if (existingId) return existingId;
   const response = await githubFetch({
     token,
@@ -440,10 +440,10 @@ async function createFastAckComment({
   });
   const id = Number(response.id);
   if (!Number.isInteger(id) || id <= 0) throw new Error("fast ack comment response missing id");
-  return id;
+  return (await pruneFastAckComments({ token, repo, itemNumber, sourceCommentId })) ?? id;
 }
 
-async function findFastAckCommentId({
+async function pruneFastAckComments({
   token,
   repo,
   itemNumber,
@@ -454,6 +454,43 @@ async function findFastAckCommentId({
   itemNumber: number;
   sourceCommentId: number;
 }) {
+  const comments = await listFastAckComments({ token, repo, itemNumber, sourceCommentId });
+  if (comments.length === 0) return null;
+  comments.sort((left, right) => {
+    const leftCreated = String(left.created_at ?? "");
+    const rightCreated = String(right.created_at ?? "");
+    return (
+      leftCreated.localeCompare(rightCreated) || (Number(left.id) || 0) - (Number(right.id) || 0)
+    );
+  });
+  const keepId = Number(comments[0]?.id) || null;
+  for (const comment of comments.slice(1)) {
+    const id = Number(comment.id) || 0;
+    if (id <= 0 || id === keepId) continue;
+    await githubFetch({
+      token,
+      path: `/repos/${repo}/issues/comments/${id}`,
+      method: "DELETE",
+    }).catch((error) => {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes("404")) throw error;
+    });
+  }
+  return keepId;
+}
+
+async function listFastAckComments({
+  token,
+  repo,
+  itemNumber,
+  sourceCommentId,
+}: {
+  token: string;
+  repo: string;
+  itemNumber: number;
+  sourceCommentId: number;
+}) {
+  const comments: LooseRecord[] = [];
   const marker = fastAckMarker(sourceCommentId);
   const since = encodeURIComponent(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
   for (let page = 1; page <= 5; page += 1) {
@@ -462,19 +499,19 @@ async function findFastAckCommentId({
       path: `/repos/${repo}/issues/${itemNumber}/comments?per_page=100&page=${page}&since=${since}`,
       method: "GET",
     });
-    if (!Array.isArray(response)) return null;
+    if (!Array.isArray(response)) return comments;
     for (const comment of response) {
       const record = asRecord(comment);
       if (
         String(record.body ?? "").includes(marker) &&
         isClawsweeperWebhookSender(asRecord(record.user))
       ) {
-        return Number(record.id) || null;
+        comments.push(record);
       }
     }
-    if (response.length < 100) return null;
+    if (response.length < 100) return comments;
   }
-  return null;
+  return comments;
 }
 
 async function addReaction({
