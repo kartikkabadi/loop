@@ -451,7 +451,18 @@ function liveIssueContext({ repo, number }: { repo: string; number: number }) {
   ]);
   const branch = issueImplementationJobBranch(repo, number);
   const existingBranchPrs = ghJsonWithRetry(
-    ["pr", "list", "--repo", repo, "--head", branch, "--state", "open", "--json", "number,url"],
+    [
+      "api",
+      `repos/${owner}/${name}/pulls`,
+      "--method",
+      "GET",
+      "-f",
+      `head=${owner}:${branch}`,
+      "-f",
+      "state=open",
+      "--jq",
+      "[.[] | {number, url: .html_url}]",
+    ],
     { attempts: 3 },
   );
   const existingPrs = searchOpenPullRequestsMentioningIssue(repo, number);
