@@ -338,7 +338,7 @@ function fanoutMode(value: string): FanoutMode {
 }
 
 function defaultLimit(mode: FanoutMode): string {
-  if (mode === "hot-intake") return "10";
+  if (mode === "hot-intake") return "6";
   if (mode === "normal-review") return "6";
   return "12";
 }

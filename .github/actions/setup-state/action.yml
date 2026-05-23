@@ -27,7 +27,7 @@ inputs:
   filter:
     description: Git partial clone filter for the generated state repository.
     required: false
-    default: blob:none
+    default: ""
   fetch-depth:
     description: Git fetch depth for the generated state repository. Keep 0 for publish jobs that may rebase.
     required: false

@@ -11259,23 +11259,62 @@ test("background review capacity reserves expanding matrices and caps broad manu
   assert.match(commitBlock, /limit review_shards\.normal_default/);
 });
 
+test("sweep event reviews and target fanout avoid storm amplification", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const eventBlock = workflow.slice(
+    workflow.indexOf("event-review-apply:"),
+    workflow.indexOf("target-fanout:"),
+  );
+  const fanoutBlock = workflow.slice(workflow.indexOf("target-fanout:"), workflow.indexOf("plan:"));
+
+  assert.match(eventBlock, /concurrency:/);
+  assert.match(
+    eventBlock,
+    /clawsweeper-event-review-\$\{\{ github\.event\.client_payload\.target_repo/,
+  );
+  assert.match(eventBlock, /github\.event\.client_payload\.item_number/);
+  assert.match(eventBlock, /cancel-in-progress: true/);
+  assert.match(
+    fanoutBlock,
+    /FANOUT_LIMIT: \$\{\{ github\.event\.schedule == '41 \* \* \* \*' && '6' \|\| \(github\.event\.schedule == '37 \*\/6 \* \* \*' && '12' \|\| '6'\) \}\}/,
+  );
+});
+
+test("setup-state defaults to non-partial checkout for auth-safe hydration", () => {
+  const action = readFileSync(".github/actions/setup-state/action.yml", "utf8");
+  const filterBlock = action.slice(action.indexOf("filter:"), action.indexOf("fetch-depth:"));
+
+  assert.match(filterBlock, /default: ""/);
+  assert.doesNotMatch(filterBlock, /default: blob:none/);
+  assert.match(action, /filter: \$\{\{ inputs\.filter \}\}/);
+});
+
 test("github activity workflow coalesces noisy observer runs", () => {
   const workflow = readFileSync(".github/workflows/github-activity.yml", "utf8");
+  const concurrencyBlock = workflow.slice(
+    workflow.indexOf("concurrency:"),
+    workflow.indexOf("jobs:"),
+  );
 
-  assert.match(workflow, /group: >-/);
-  assert.match(workflow, /github-activity-\$\{\{ github\.event_name \}\}/);
-  assert.match(workflow, /github\.event\.repository\.full_name/);
-  assert.match(workflow, /github\.event\.action/);
-  assert.match(workflow, /github\.event\.client_payload\.activity\.type/);
-  assert.match(workflow, /github\.event\.client_payload\.activity\.action/);
-  assert.match(workflow, /cancel-in-progress: true/);
+  assert.match(concurrencyBlock, /group: >-/);
+  assert.match(
+    concurrencyBlock,
+    /github-activity-\$\{\{ github\.event\.client_payload\.activity\.repo/,
+  );
+  assert.match(concurrencyBlock, /github\.event\.repository\.full_name/);
+  assert.match(concurrencyBlock, /github\.event_name == 'workflow_run'/);
+  assert.match(workflow, /Check core API budget/);
+  assert.match(workflow, /CLAWSWEEPER_MIN_CORE_REMAINING/);
+  assert.match(concurrencyBlock, /cancel-in-progress: true/);
   assert.doesNotMatch(
-    workflow,
+    concurrencyBlock,
     /group: github-activity-\$\{\{ github\.event_name \}\}-\$\{\{ github\.run_id \}\}/,
   );
-  assert.doesNotMatch(workflow, /github\.event\.issue\.number/);
-  assert.doesNotMatch(workflow, /github\.event\.pull_request\.number/);
-  assert.doesNotMatch(workflow, /github\.event\.client_payload\.activity\.subject\.number/);
+  assert.doesNotMatch(concurrencyBlock, /github\.event\.action/);
+  assert.doesNotMatch(concurrencyBlock, /github\.event\.client_payload\.activity\.action/);
+  assert.doesNotMatch(concurrencyBlock, /github\.event\.issue\.number/);
+  assert.doesNotMatch(concurrencyBlock, /github\.event\.pull_request\.number/);
+  assert.doesNotMatch(concurrencyBlock, /github\.event\.client_payload\.activity\.subject\.number/);
 });
 
 test("spam comment intake coalesces duplicate comment deliveries", () => {
@@ -11283,9 +11322,13 @@ test("spam comment intake coalesces duplicate comment deliveries", () => {
 
   assert.match(workflow, /group: >-/);
   assert.match(workflow, /spam-comment-intake-\$\{\{ github\.event\.client_payload\.target_repo/);
+  assert.match(workflow, /github\.event\.client_payload\.activity\.issue\.number/);
+  assert.match(workflow, /github\.event\.client_payload\.activity\.pull_request\.number/);
   assert.match(workflow, /github\.event\.client_payload\.comment_id/);
   assert.match(workflow, /github\.event\.client_payload\.review_comment_id/);
   assert.match(workflow, /github\.event\.client_payload\.activity\.comment\.id/);
+  assert.match(workflow, /Check core API budget/);
+  assert.match(workflow, /CLAWSWEEPER_MIN_CORE_REMAINING/);
   assert.match(workflow, /github\.run_id/);
   assert.match(workflow, /cancel-in-progress: true/);
 });

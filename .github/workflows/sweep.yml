@@ -156,6 +156,9 @@ jobs:
     if: ${{ github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_hatch' && github.event.action != 'clawsweeper_target_sweep' && !(github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    concurrency:
+      group: clawsweeper-event-review-${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}-${{ github.event.client_payload.item_number || github.run_id }}
+      cancel-in-progress: true
     permissions:
       actions: write
       contents: write
@@ -608,7 +611,7 @@ jobs:
           CLAWSWEEPER_INVENTORY_TOKEN_OPENCLAW: ${{ steps.openclaw-token.outputs.token }}
           CLAWSWEEPER_INVENTORY_TOKEN_STEIPETE: ${{ steps.steipete-token.outputs.token || '__public__' }}
           FANOUT_MODE: ${{ github.event.schedule == '41 * * * *' && 'normal-review' || (github.event.schedule == '37 */6 * * *' && 'audit' || 'hot-intake') }}
-          FANOUT_LIMIT: ${{ github.event.schedule == '41 * * * *' && '6' || (github.event.schedule == '37 */6 * * *' && '12' || '10') }}
+          FANOUT_LIMIT: ${{ github.event.schedule == '41 * * * *' && '6' || (github.event.schedule == '37 */6 * * *' && '12' || '6') }}
         run: |
           set -euo pipefail
           pnpm run target-fanout -- \

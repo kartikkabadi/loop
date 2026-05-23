@@ -13,7 +13,7 @@ env:
 
 concurrency:
   group: >-
-    spam-comment-intake-${{ github.event.client_payload.target_repo || github.event.client_payload.activity.repo || 'openclaw/openclaw' }}-${{ github.event.client_payload.event_name || github.event.client_payload.activity.type || 'activity' }}-${{ github.event.client_payload.comment_id || github.event.client_payload.review_comment_id || github.event.client_payload.activity.comment.id || github.run_id }}
+    spam-comment-intake-${{ github.event.client_payload.target_repo || github.event.client_payload.activity.repo || 'openclaw/openclaw' }}-${{ github.event.client_payload.event_name || github.event.client_payload.activity.type || 'activity' }}-${{ github.event.client_payload.comment_id || github.event.client_payload.review_comment_id || github.event.client_payload.activity.comment.id || github.event.client_payload.activity.issue.number || github.event.client_payload.activity.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -26,7 +26,27 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 5
     steps:
+      - name: Check core API budget
+        id: core-budget
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MIN_CORE_REMAINING: ${{ vars.CLAWSWEEPER_MIN_CORE_REMAINING || '250' }}
+        run: |
+          set -euo pipefail
+          budget="$(gh api rate_limit --jq '[.resources.core.remaining, .resources.core.reset] | @tsv')"
+          remaining="${budget%%$'\t'*}"
+          reset="${budget##*$'\t'}"
+          threshold="$MIN_CORE_REMAINING"
+          if [ "$remaining" -lt "$threshold" ]; then
+            reset_iso="$(date -u -d "@$reset" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || echo "$reset")"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping spam comment intake; core remaining=$remaining threshold=$threshold reset=$reset_iso."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v6
+        if: steps.core-budget.outputs.skip != 'true'
         with:
           filter: blob:none
           persist-credentials: false
@@ -41,6 +61,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Create GitHub App token
+        if: steps.core-budget.outputs.skip != 'true'
         id: app_token
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
@@ -50,10 +71,12 @@ jobs:
           permission-contents: write
 
       - uses: ./.github/actions/setup-pnpm
+        if: steps.core-budget.outputs.skip != 'true'
         with:
           build-script: build:repair
 
       - name: Dispatch exact spam scan
+        if: steps.core-budget.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:spam-comment-intake -- --write-report

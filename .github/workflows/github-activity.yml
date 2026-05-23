@@ -58,7 +58,7 @@ env:
 
 concurrency:
   group: >-
-    github-activity-${{ github.event_name }}-${{ github.event.repository.full_name || github.event.client_payload.activity.repo || github.repository }}-${{ github.event.action || github.event.client_payload.activity.type || github.event.workflow_run.name || 'activity' }}-${{ github.event.client_payload.activity.action || github.event.workflow_run.conclusion || 'event' }}
+    github-activity-${{ github.event.client_payload.activity.repo || github.event.repository.full_name || github.repository }}-${{ github.event_name == 'workflow_run' && 'workflow-run' || 'activity' }}
   cancel-in-progress: true
 
 jobs:
@@ -72,16 +72,38 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 10
     steps:
+      - name: Check core API budget
+        id: core-budget
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MIN_CORE_REMAINING: ${{ vars.CLAWSWEEPER_MIN_CORE_REMAINING || '250' }}
+        run: |
+          set -euo pipefail
+          budget="$(gh api rate_limit --jq '[.resources.core.remaining, .resources.core.reset] | @tsv')"
+          remaining="${budget%%$'\t'*}"
+          reset="${budget##*$'\t'}"
+          threshold="$MIN_CORE_REMAINING"
+          if [ "$remaining" -lt "$threshold" ]; then
+            reset_iso="$(date -u -d "@$reset" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || echo "$reset")"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping noncritical GitHub activity notification; core remaining=$remaining threshold=$threshold reset=$reset_iso."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v6
+        if: steps.core-budget.outputs.skip != 'true'
         with:
           filter: blob:none
           persist-credentials: false
 
       - uses: ./.github/actions/setup-pnpm
+        if: steps.core-budget.outputs.skip != 'true'
         with:
           build-script: build:repair
 
       - name: Feed activity to OpenClaw
+        if: steps.core-budget.outputs.skip != 'true'
         env:
           CLAWSWEEPER_OPENCLAW_HOOK_URL: ${{ secrets.CLAWSWEEPER_OPENCLAW_HOOK_URL }}
           CLAWSWEEPER_OPENCLAW_HOOK_TOKEN: ${{ secrets.CLAWSWEEPER_OPENCLAW_HOOK_TOKEN }}
