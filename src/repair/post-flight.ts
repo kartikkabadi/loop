@@ -152,6 +152,10 @@ function finalizeFixPr(action: LooseRecord) {
     return { ...base, status: "blocked", reason: "fix PR URL is missing or outside target repo" };
   }
 
+  if (isIssueImplementationJob()) {
+    return finalizeIssueImplementationPr({ base, parsed });
+  }
+
   const deadline = Date.now() + POST_FLIGHT_WAIT_MS;
   let pull;
   let view;
@@ -269,6 +273,59 @@ function finalizeFixPr(action: LooseRecord) {
     fixup_lines: mergeMessage.fixupLines,
     waited_ms: waitedMs,
   };
+}
+
+function finalizeIssueImplementationPr({ base, parsed }: LooseRecord) {
+  const deadline = Date.now() + POST_FLIGHT_WAIT_MS;
+  let waitedMs = 0;
+  for (;;) {
+    const pull = fetchPullRequest(result.repo, parsed.number);
+    const view = fetchPullRequestView(result.repo, parsed.number);
+    const prBase = { ...base, pr: `#${parsed.number}`, title: view.title ?? pull.title ?? null };
+
+    if (pull.state !== "open") {
+      return {
+        ...prBase,
+        status: "blocked",
+        reason: `pull request is ${pull.state}`,
+        waited_ms: waitedMs,
+      };
+    }
+
+    const checkBlock = validateStatusChecks(view.statusCheckRollup ?? []);
+    if (!checkBlock) {
+      return {
+        ...prBase,
+        status: "ready",
+        reason:
+          "issue implementation PR checks are green; merge intentionally blocked for this lane",
+        mergeable: view.mergeable ?? null,
+        merge_state_status: view.mergeStateStatus ?? null,
+        review_decision: view.reviewDecision ?? null,
+        waited_ms: waitedMs,
+      };
+    }
+
+    if (
+      dryRun ||
+      !shouldWaitForIssueImplementationChecks(checkBlock, view) ||
+      Date.now() >= deadline
+    ) {
+      return {
+        ...prBase,
+        status: "blocked",
+        reason: checkBlock,
+        mergeable: view.mergeable ?? null,
+        merge_state_status: view.mergeStateStatus ?? null,
+        review_decision: view.reviewDecision ?? null,
+        waited_ms: waitedMs,
+      };
+    }
+
+    const sleepFor = Math.min(POST_FLIGHT_POLL_MS, Math.max(0, deadline - Date.now()));
+    sleepMs(sleepFor);
+    waitedMs += sleepFor;
+  }
 }
 
 function finalizePostMergeCloseouts(fixAction: LooseRecord, finalized: LooseRecord) {
@@ -398,6 +455,10 @@ function isAutomergeReplacementMerge(action: LooseRecord, pull: LooseRecord) {
   );
 }
 
+function isIssueImplementationJob() {
+  return job.frontmatter.source === "issue_implementation";
+}
+
 function hasLabel(labels: LooseRecord[], wanted: string) {
   return (labels ?? []).some(
     (label: JsonValue) => String(label?.name ?? label).toLowerCase() === wanted.toLowerCase(),
@@ -498,9 +559,11 @@ function validateStatusChecks(checks: LooseRecord[]) {
   if (!Array.isArray(checks) || checks.length === 0) return "no PR checks found";
   const ignored = ignoredCheckNames();
   const blockers: LooseRecord[] = [];
-  for (const check of checks) {
+  let considered = 0;
+  for (const check of latestCheckRuns(checks)) {
     const name = String(check.name ?? check.context ?? "unknown check");
-    if (ignored.has(name)) continue;
+    if (isIgnoredStatusCheck(check, ignored)) continue;
+    considered += 1;
     const status = String(check.status ?? check.state ?? "").toUpperCase();
     const conclusion = String(check.conclusion ?? "").toUpperCase();
     if (status && !["COMPLETED", "SUCCESS"].includes(status)) {
@@ -511,6 +574,7 @@ function validateStatusChecks(checks: LooseRecord[]) {
       blockers.push(`${name}: ${conclusion}`);
     }
   }
+  if (considered === 0) return "no PR checks found";
   if (blockers.length > 0) return `checks are not clean: ${blockers.slice(0, 5).join(", ")}`;
   return "";
 }
@@ -519,6 +583,7 @@ function shouldWaitForMergeReadiness({ mergeBlock, view }: LooseRecord) {
   const message = String(mergeBlock ?? "").toLowerCase();
   if (message.includes("mergeable state is unknown")) return true;
   if (message.includes("merge state status is unknown")) return true;
+  if (message === "no pr checks found") return true;
   if (message.includes("merge state status is unstable"))
     return hasPendingChecks(view.statusCheckRollup ?? []);
   if (message.includes("checks are not clean"))
@@ -526,16 +591,61 @@ function shouldWaitForMergeReadiness({ mergeBlock, view }: LooseRecord) {
   return false;
 }
 
+function shouldWaitForIssueImplementationChecks(checkBlock: string, view: LooseRecord) {
+  if (/^no PR checks found$/i.test(checkBlock)) return true;
+  return shouldWaitForMergeReadiness({ mergeBlock: checkBlock, view });
+}
+
 function hasPendingChecks(checks: LooseRecord[]) {
   const ignored = ignoredCheckNames();
-  return (checks ?? []).some((check: JsonValue) => {
-    const name = String(check.name ?? check.context ?? "unknown check");
-    if (ignored.has(name)) return false;
-    const status = String(check.status ?? check.state ?? "").toUpperCase();
-    const conclusion = String(check.conclusion ?? "").toUpperCase();
-    if (conclusion) return false;
-    return Boolean(status) && !["COMPLETED", "SUCCESS"].includes(status);
+  return latestCheckRuns(checks ?? []).some((check: JsonValue) => {
+    if (isIgnoredStatusCheck(check, ignored)) return false;
+    return isPendingStatusCheck(check);
   });
+}
+
+function isIgnoredStatusCheck(check: LooseRecord, ignored: Set<string>) {
+  const name = String(check.name ?? check.context ?? "unknown check").toLowerCase();
+  const workflow = String(check.workflowName ?? "").toLowerCase();
+  return ignored.has(name) || Boolean(workflow && ignored.has(workflow));
+}
+
+function latestCheckRuns(checks: LooseRecord[]) {
+  const byKey = new Map<string, LooseRecord>();
+  for (const check of checks) {
+    const key = checkIdentity(check);
+    const previous = byKey.get(key);
+    if (!previous || checkTimestamp(check) >= checkTimestamp(previous)) byKey.set(key, check);
+  }
+  return [...byKey.values()];
+}
+
+function checkIdentity(check: LooseRecord) {
+  const name = String(check.name ?? check.context ?? "unknown check").toLowerCase();
+  const workflow = String(check.workflowName ?? "").toLowerCase();
+  return `${workflow}\n${name}`;
+}
+
+function checkTimestamp(check: LooseRecord) {
+  for (const field of [
+    "startedAt",
+    "started_at",
+    "createdAt",
+    "created_at",
+    "completedAt",
+    "completed_at",
+  ]) {
+    const parsed = Date.parse(String(check[field] ?? ""));
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  if (isPendingStatusCheck(check)) return Number.MAX_SAFE_INTEGER;
+  return 0;
+}
+
+function isPendingStatusCheck(check: LooseRecord) {
+  const status = String(check.status ?? check.state ?? "").toUpperCase();
+  const conclusion = String(check.conclusion ?? "").toUpperCase();
+  return !conclusion && Boolean(status) && !["COMPLETED", "SUCCESS"].includes(status);
 }
 
 function ignoredCheckNames() {
@@ -546,6 +656,7 @@ function ignoredCheckNames() {
     configured
       .split(",")
       .map((item: JsonValue) => item.trim())
+      .map((item: string) => item.toLowerCase())
       .filter(Boolean),
   );
 }
