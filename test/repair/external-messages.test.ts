@@ -178,6 +178,27 @@ test("issueImplementationResultStatusComment appends and updates PR link section
   assert.equal(second.match(/clawsweeper-issue-implementation-result/g)?.length, 1);
 });
 
+test("issueImplementationResultStatusComment reports blocked terminal outcomes", () => {
+  const existing = [
+    "<!-- clawsweeper-command-status:85831:implement_issue:na -->",
+    "ClawSweeper issue implementation requested.",
+    "",
+    "Action: repair worker queued.",
+  ].join("\n");
+  const body = issueImplementationResultStatusComment({
+    existingBody: existing,
+    status: "blocked",
+    reason: "fix artifact is too broad for autonomous execution",
+    runUrl: "https://github.com/openclaw/clawsweeper/actions/runs/26346180012",
+    completedAt: "2026-05-23T23:22:29Z",
+  });
+
+  assert.match(body, /Result: implementation blocked/);
+  assert.match(body, /fix artifact is too broad for autonomous execution/);
+  assert.match(body, /https:\/\/github\.com\/openclaw\/clawsweeper\/actions\/runs\/26346180012/);
+  assert.doesNotMatch(body, /- PR:/);
+});
+
 test("external message provenance normalizes accidental xhigh reasoning", () => {
   const provenance = externalMessageProvenance({ model: "gpt-test", reasoning: "xhigh" });
   const body = automergeRepairOutcomeComment({

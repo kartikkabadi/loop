@@ -321,16 +321,23 @@ export function issueImplementationResultStatusComment({
   existingBody,
   prUrl,
   branch,
+  status,
+  reason,
   runUrl,
   completedAt,
 }: LooseRecord) {
   const marker = "<!-- clawsweeper-issue-implementation-result -->";
+  const normalizedStatus = String(status ?? (prUrl ? "opened" : "completed")).toLowerCase();
+  const resultLine = prUrl
+    ? "Result: implementation PR opened."
+    : `Result: implementation ${normalizedStatus}.`;
   const lines = [
     marker,
-    "Result: implementation PR opened.",
+    resultLine,
     "",
-    `- PR: ${prUrl}`,
+    prUrl ? `- PR: ${prUrl}` : null,
     branch ? `- Branch: \`${branch}\`` : null,
+    reason ? `- Reason: ${compactForComment(reason, 500)}` : null,
     runUrl ? `- Worker: ${runUrl}` : null,
     completedAt ? `- Updated: ${completedAt}` : null,
   ].filter(Boolean);

@@ -3314,7 +3314,7 @@ function findLatestResultPath() {
 }
 
 function writeReport(report: LooseRecord, resultPath: string) {
-  appendIssueImplementationPrLinkComment(report);
+  appendIssueImplementationStatusComment(report);
   appendAutomergeRepairOutcomeComment(report, resultPath);
   const reportPath =
     typeof args.report === "string"
@@ -3328,7 +3328,7 @@ function writeReport(report: LooseRecord, resultPath: string) {
   console.log(JSON.stringify(report, null, 2));
 }
 
-function appendIssueImplementationPrLinkComment(report: LooseRecord) {
+function appendIssueImplementationStatusComment(report: LooseRecord) {
   if (job.frontmatter.source !== "issue_implementation") return;
   if (!job.frontmatter.allowed_actions.includes("comment")) return;
   if (
@@ -3338,13 +3338,14 @@ function appendIssueImplementationPrLinkComment(report: LooseRecord) {
   )
     return;
 
-  const prAction = issueImplementationOpenedPrAction(report);
-  if (!prAction) return;
+  const prAction = issueImplementationPrAction(report);
+  const outcome = issueImplementationTerminalOutcome(report);
+  if (!prAction && !outcome) return;
   const issueNumber = issueImplementationTargetIssueNumber();
   const base = {
     action: "issue_implementation_status_comment",
     target: issueNumber ? `#${issueNumber}` : null,
-    pr_url: prAction.pr_url,
+    pr_url: prAction?.pr_url ?? null,
   };
   if (!issueNumber) {
     report.actions.push({ ...base, status: "skipped", reason: "missing source issue number" });
@@ -3367,8 +3368,10 @@ function appendIssueImplementationPrLinkComment(report: LooseRecord) {
 
   const body = issueImplementationResultStatusComment({
     existingBody: existing.body,
-    prUrl: prAction.pr_url,
-    branch: prAction.branch,
+    prUrl: prAction?.pr_url,
+    branch: prAction?.branch ?? outcome?.branch,
+    status: prAction ? (prAction.status ?? "opened") : (outcome?.status ?? report.status),
+    reason: prAction ? (prAction.reason ?? null) : (outcome?.reason ?? report.reason),
     runUrl: currentActionsRunUrl(),
     completedAt: new Date().toISOString(),
   });
@@ -3380,11 +3383,20 @@ function appendIssueImplementationPrLinkComment(report: LooseRecord) {
   });
 }
 
-function issueImplementationOpenedPrAction(report: LooseRecord) {
+function issueImplementationPrAction(report: LooseRecord) {
   return [...(report.actions ?? [])].reverse().find((action: JsonValue) => {
     if (action?.action !== "open_fix_pr") return false;
-    if (action?.status !== "opened") return false;
     return typeof action?.pr_url === "string" && action.pr_url.trim();
+  });
+}
+
+function issueImplementationTerminalOutcome(report: LooseRecord) {
+  return [...(report.actions ?? [])].reverse().find((action: JsonValue) => {
+    const status = String(action?.status ?? "").toLowerCase();
+    if (!["blocked", "skipped", "failed"].includes(status)) return false;
+    return ["execute_fix", "open_fix_pr", "repair_contributor_branch"].includes(
+      String(action?.action ?? ""),
+    );
   });
 }
 

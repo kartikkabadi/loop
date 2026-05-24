@@ -405,7 +405,10 @@ ${visionFitGuardrails}
 
 When code changes are appropriate, emit a fix artifact with
 \`repair_strategy: "new_fix_pr"\`, \`source_prs: []\`, this issue in
-\`linked_refs\`, and validation commands for the touched surface.
+\`linked_refs\`, and validation commands for the touched surface. Keep working
+until the PR branch is locally validated and ready for clean required CI; if CI
+or type/test validation fails, fix and rerun until it passes or a concrete
+external blocker is proven.
 
 ## Guardrails
 
