@@ -53,6 +53,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Reduced spam-scanner false positives on legitimate technical GitHub comments by teaching the audit model that on-topic repros, patches, logs, tests, measurements, and migration reports are expected project participation, not spam.
 - Allowed verified `implemented_on_main` close proposals to close
   maintainer-authored or `maintainer`-labeled items automatically, while keeping
   other protected-label and non-fixed maintainer closes blocked.

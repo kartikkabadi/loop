@@ -5,9 +5,11 @@ import {
   commentVersionKey,
   deterministicSpamSignals,
   isProtectedSpamAuthor,
+  legitimateTechnicalContextSignals,
   normalizeModelResults,
   prioritizeSpamScanComments,
   shouldSendToCheapModel,
+  SPAM_MODEL_SYSTEM_PROMPT,
   type SpamScanComment,
 } from "../../dist/repair/spam-scanner-core.js";
 
@@ -86,6 +88,51 @@ Run: https://github.com/openclaw/clawsweeper/actions/runs/123`,
   assert.equal(signals.candidate, false);
   assert.deepEqual(signals.signals, ["multiple_external_links"]);
   assert.equal(shouldSendToCheapModel(comment({ body: signals.urls.join("\n") })), false);
+});
+
+test("long technical patch evidence is framed as legitimate context, not spam", () => {
+  const empiricalPatch = comment({
+    author: "external-debugger",
+    author_association: "NONE",
+    html_url: "https://github.com/openclaw/openclaw/pull/78595#issuecomment-4412929836",
+    body: `# Empirical migration test on a populated install + working merge patch
+
+I ran this branch against a snapshot of my real ~/.openclaw. Goal: turn flagged
+P1s on the legacy-import paths into measured numbers and a tested fix.
+
+| Metric | Unpatched migration | Patched |
+| --- | --- | --- |
+| transcript_events rows | 6,901 | 8,325 |
+
+The patch adds mergeSqliteSessionTranscriptEvents and preserves newer SQLite
+events. git apply --check is clean.
+
+\`\`\`sh
+git apply migrate-fix.patch
+pnpm exec vitest run src/commands/doctor-session-transcripts.test.ts
+\`\`\`
+
+\`\`\`diff
+diff --git a/src/config/sessions/transcript-store.sqlite.ts b/src/config/sessions/transcript-store.sqlite.ts
++export function mergeSqliteSessionTranscriptEvents() {
++  return { merged: 1, skipped: 0 };
++}
+\`\`\`
+`,
+  });
+
+  const contextSignals = legitimateTechnicalContextSignals(empiricalPatch);
+  assert.ok(contextSignals.includes("code_block_or_patch"));
+  assert.ok(contextSignals.includes("patch_or_diff"));
+  assert.ok(contextSignals.includes("test_command"));
+  assert.ok(contextSignals.includes("reproduction_or_evidence"));
+  assert.ok(contextSignals.includes("debugging_or_migration_context"));
+  assert.ok(contextSignals.includes("technical_table"));
+
+  const input = buildSpamModelInput([empiricalPatch]);
+  assert.match(input.policy, /Technical repros, patches, logs, tests/);
+  assert.match(SPAM_MODEL_SYSTEM_PROMPT, /Classify on-topic technical contributions as not spam/);
+  assert.deepEqual(input.comments[0]?.legitimate_context_signals, contextSignals);
 });
 
 test("ClawSweeper-managed progress comments are not spam candidates", () => {
