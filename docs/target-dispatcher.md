@@ -29,6 +29,11 @@ issues stay open, and PRs can auto-close only when already implemented on
 `main`. Add a config entry only when the repo should appear in the dashboard or
 needs repo-specific review guidance.
 
+Exact event reviews enable related issue GitHub Search by default so newly
+opened issues get stronger duplicate and adjacent-report context. Set repository
+variable `CLAWSWEEPER_RELATED_GITHUB_SEARCH=0` on `openclaw/clawsweeper` to turn
+that enrichment off without editing the target dispatcher.
+
 ```yaml
 name: ClawSweeper Dispatch
 

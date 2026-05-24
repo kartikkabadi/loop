@@ -72,6 +72,7 @@ import {
   protectedLabels,
   realBehaviorProofMediaLabelsForTest,
   realBehaviorProofSufficientLabelsForTest,
+  relatedGitHubIssueSearchQueryForTest,
   relatedTitleSearchTerms,
   renderReviewStartStatusComment,
   reviewArtifactDestination,
@@ -11606,6 +11607,18 @@ test("related title search terms keep issue-specific words", () => {
     ["message", "before_send", "hook", "enable", "content-quality", "fallback"],
   );
 });
+
+test("related GitHub issue search query uses issue-only title terms", () => {
+  assert.equal(
+    relatedGitHubIssueSearchQueryForTest(
+      "openclaw/openclaw",
+      "[Bug] Telegram group photo-only messages do not trigger image understanding",
+    ),
+    'repo:openclaw/openclaw is:issue in:title,body telegram group "photo-only" messages',
+  );
+  assert.equal(relatedGitHubIssueSearchQueryForTest("openclaw/openclaw", "Bug"), null);
+});
+
 test("audit detects live/local state drift and unsafe proposed records", () => {
   const result = auditFromSnapshot({
     openItems: [

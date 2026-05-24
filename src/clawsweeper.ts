@@ -13,6 +13,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
+import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
 import {
   DEFAULT_TARGET_REPO,
@@ -1626,6 +1627,37 @@ function gh(args: string[]): string {
   return run("gh", ["--repo", targetRepo(), ...args]);
 }
 
+function ghBinArgs(): string[] {
+  const value = process.env.GH_BIN_ARGS;
+  if (!value) return [];
+  const parsed = JSON.parse(value) as unknown;
+  if (!Array.isArray(parsed) || !parsed.every((entry) => typeof entry === "string")) {
+    throw new Error("GH_BIN_ARGS must be a JSON string array");
+  }
+  return parsed;
+}
+
+function ghOnce(args: string[], timeoutMs: number): string {
+  const command = process.env.GH_BIN ?? "gh";
+  const resolvedArgs = args[0] === "api" ? args : ["--repo", targetRepo(), ...args];
+  const result = spawnSync(command, [...ghBinArgs(), ...resolvedArgs], {
+    cwd: ROOT,
+    encoding: "utf8",
+    env: { ...process.env, GIT_OPTIONAL_LOCKS: "0" },
+    maxBuffer: 8 * 1024 * 1024,
+    stdio: ["ignore", "pipe", "pipe"],
+    timeout: timeoutMs,
+  });
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    const stderr = typeof result.stderr === "string" ? result.stderr.trim() : "";
+    throw new Error(
+      [`Command failed: gh ${resolvedArgs.join(" ")}`, stderr].filter(Boolean).join("\n"),
+    );
+  }
+  return (result.stdout ?? "").trim();
+}
+
 function sleepMs(milliseconds: number): void {
   if (milliseconds <= 0) return;
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
@@ -1716,6 +1748,10 @@ function ghWithRetry(args: string[], attempts = 12): string {
 
 function ghJson<T>(args: string[]): T {
   return parseGhJson<T>(ghWithRetry(args), args);
+}
+
+function ghJsonOnce<T>(args: string[], timeoutMs: number): T {
+  return parseGhJson<T>(ghOnce(args, timeoutMs), args);
 }
 
 function ghJsonLines<T>(args: string[]): T[] {
@@ -2809,6 +2845,13 @@ const RELATED_TITLE_STOP_WORDS = new Set([
 ]);
 
 let localRelatedTitleIndexCache: { repo: string; entries: LocalRelatedTitleEntry[] } | null = null;
+type GitcrawlClusterSource = "legacy" | "portable";
+let gitcrawlClusterSourceCache: { dbPath: string; source: GitcrawlClusterSource | null } | null =
+  null;
+const RELATED_ITEMS_LIMIT = 12;
+const RELATED_GITHUB_SEARCH_LIMIT = 5;
+const RELATED_GITCRAWL_LIMIT = 6;
+const RELATED_GITHUB_SEARCH_TIMEOUT_MS = 15_000;
 
 export function relatedTitleSearchTerms(title: string, limit = 6): string[] {
   const seen = new Set<string>();
@@ -2908,10 +2951,9 @@ function localRelatedTitleIndex(): LocalRelatedTitleEntry[] {
   return entries;
 }
 
-function compactRelatedSearchItems(item: Item, mentioned: Set<number>): unknown[] {
+function compactLocalRelatedTitleItems(item: Item, seen: ReadonlySet<number>): unknown[] {
   const terms = relatedTitleSearchTerms(item.title);
   if (terms.length < 2) return [];
-  const seen = new Set<number>([item.number, ...mentioned]);
   return localRelatedTitleIndex()
     .flatMap((entry) => {
       if (seen.has(entry.number)) return [];
@@ -2932,6 +2974,304 @@ function compactRelatedSearchItems(item: Item, mentioned: Set<number>): unknown[
     }));
 }
 
+function envFlagEnabled(value: string | undefined): boolean {
+  if (!value) return false;
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
+function quoteGitHubSearchTerm(term: string): string {
+  return /^[a-z0-9_]+$/i.test(term) ? term : `"${term.replaceAll('"', "")}"`;
+}
+
+function relatedGitHubIssueSearchQuery(repo: string, title: string): string | null {
+  const terms = relatedTitleSearchTerms(title, 4);
+  if (terms.length < 2) return null;
+  return [`repo:${repo}`, "is:issue", "in:title,body", ...terms.map(quoteGitHubSearchTerm)].join(
+    " ",
+  );
+}
+
+export function relatedGitHubIssueSearchQueryForTest(repo: string, title: string): string | null {
+  return relatedGitHubIssueSearchQuery(repo, title);
+}
+
+function compactRelatedGitHubIssueSearchItems(item: Item, seen: ReadonlySet<number>): unknown[] {
+  if (item.kind !== "issue") return [];
+  if (!envFlagEnabled(process.env.CLAWSWEEPER_RELATED_GITHUB_SEARCH)) return [];
+  const query = relatedGitHubIssueSearchQuery(targetRepo(), item.title);
+  if (!query) return [];
+
+  try {
+    const response = asRecord(
+      ghJsonOnce<unknown>(
+        [
+          "api",
+          `search/issues?q=${encodeURIComponent(query)}&per_page=${RELATED_GITHUB_SEARCH_LIMIT}`,
+        ],
+        RELATED_GITHUB_SEARCH_TIMEOUT_MS,
+      ),
+    );
+    const items = Array.isArray(response.items) ? response.items : [];
+    return items
+      .map(asRecord)
+      .filter((candidate) => {
+        const number = candidate.number;
+        if (typeof number !== "number" || seen.has(number) || number === item.number) return false;
+        return !candidate.pull_request;
+      })
+      .slice(0, RELATED_GITHUB_SEARCH_LIMIT)
+      .map((candidate) => ({
+        mentionedIn: ["GitHub issue search"],
+        searchQuery: query,
+        searchScore: candidate.score,
+        issue: compactIssue(candidate),
+        commentCount: candidate.comments,
+      }));
+  } catch (error) {
+    console.error(
+      `Best-effort related issue GitHub search failed for #${item.number}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+    return [];
+  }
+}
+
+function parseJsonArrayBestEffort(value: unknown): unknown[] {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== "string" || !value.trim()) return [];
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function sqlSafeInteger(value: number): string {
+  if (!Number.isSafeInteger(value)) throw new Error(`unsafe SQL integer: ${value}`);
+  return String(value);
+}
+
+function sqlStringLiteral(value: string): string {
+  return `'${value.replaceAll("'", "''")}'`;
+}
+
+function sqliteScalarBestEffort(dbPath: string, sql: string): string | null {
+  const result = spawnSync("sqlite3", [dbPath, sql], {
+    cwd: ROOT,
+    encoding: "utf8",
+    maxBuffer: 1024 * 1024,
+    timeout: 10_000,
+  });
+  if (result.error || result.status !== 0) return null;
+  return result.stdout.trim();
+}
+
+function sqliteJsonBestEffort(dbPath: string, sql: string): unknown[] {
+  const result = spawnSync("sqlite3", ["-json", dbPath, sql], {
+    cwd: ROOT,
+    encoding: "utf8",
+    maxBuffer: 16 * 1024 * 1024,
+    timeout: 10_000,
+  });
+  if (result.error || result.status !== 0) return [];
+  try {
+    const parsed = JSON.parse(result.stdout.trim() || "[]") as unknown;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function gitcrawlDbPath(): string | null {
+  const configured = process.env.CLAWSWEEPER_GITCRAWL_DB?.trim();
+  if (configured) {
+    const configuredPath = resolve(ROOT, configured);
+    return existsSync(configuredPath) ? configuredPath : null;
+  }
+  const fallback = join(homedir(), ".config", "gitcrawl", "gitcrawl.db");
+  return existsSync(fallback) ? fallback : null;
+}
+
+function gitcrawlTableRows(dbPath: string, table: "clusters" | "cluster_groups"): number {
+  const countSql =
+    table === "clusters"
+      ? "select count(*) from clusters;"
+      : "select count(*) from cluster_groups;";
+  const exists =
+    sqliteScalarBestEffort(
+      dbPath,
+      `select count(*) from sqlite_master where type = 'table' and name = '${table}';`,
+    ) ?? "0";
+  if (Number(exists) <= 0) return 0;
+  return Number(sqliteScalarBestEffort(dbPath, countSql) ?? "0");
+}
+
+function detectGitcrawlClusterSource(dbPath: string): GitcrawlClusterSource | null {
+  if (gitcrawlClusterSourceCache?.dbPath === dbPath) return gitcrawlClusterSourceCache.source;
+  let source: GitcrawlClusterSource | null = null;
+  if (gitcrawlTableRows(dbPath, "clusters") > 0) {
+    source = "legacy";
+  } else if (gitcrawlTableRows(dbPath, "cluster_groups") > 0) {
+    source = "portable";
+  }
+  gitcrawlClusterSourceCache = { dbPath, source };
+  return source;
+}
+
+function gitcrawlRelatedIssueSql(
+  source: GitcrawlClusterSource,
+  itemNumber: number,
+  limit: number,
+  repo: string,
+): string {
+  const number = sqlSafeInteger(itemNumber);
+  const cappedLimit = sqlSafeInteger(Math.max(1, Math.min(limit, RELATED_ITEMS_LIMIT)));
+  const repoFullName = sqlStringLiteral(repo);
+  if (source === "portable") {
+    return `
+      select
+        cg.id as cluster_id,
+        (
+          select count(*)
+          from cluster_memberships cm_count
+          where cm_count.cluster_id = cg.id
+            and cm_count.state = 'active'
+        ) as member_count,
+        rt.number as representative_number,
+        rt.kind as representative_kind,
+        rt.state as representative_state,
+        rt.title as representative_title,
+        t.number,
+        t.kind,
+        t.state,
+        t.title,
+        t.body_excerpt as body,
+        t.labels_json,
+        t.updated_at
+      from cluster_groups cg
+      join cluster_memberships cm_self on cm_self.cluster_id = cg.id and cm_self.state = 'active'
+      join threads self on self.id = cm_self.thread_id
+      join repositories self_repo on self_repo.id = self.repo_id
+      join cluster_memberships cm on cm.cluster_id = cg.id and cm.state = 'active'
+      join threads t on t.id = cm.thread_id
+      join repositories thread_repo on thread_repo.id = t.repo_id
+      left join threads rt on rt.id = cg.representative_thread_id
+      where cg.status = 'active'
+        and cg.repo_id = self.repo_id
+        and self_repo.full_name = ${repoFullName}
+        and self.number = ${number}
+        and self.kind = 'issue'
+        and thread_repo.full_name = ${repoFullName}
+        and t.number != ${number}
+        and t.kind = 'issue'
+      order by case when t.state = 'open' then 0 else 1 end, t.updated_at desc, t.number desc
+      limit ${cappedLimit};
+    `;
+  }
+  return `
+    select
+      c.id as cluster_id,
+      c.member_count,
+      rt.number as representative_number,
+      rt.kind as representative_kind,
+      rt.state as representative_state,
+      rt.title as representative_title,
+      t.number,
+      t.kind,
+      t.state,
+      t.title,
+      t.body,
+      t.labels_json,
+      t.updated_at
+    from clusters c
+    join cluster_members cm_self on cm_self.cluster_id = c.id
+    join threads self on self.id = cm_self.thread_id
+    join repositories self_repo on self_repo.id = self.repo_id
+    join cluster_members cm on cm.cluster_id = c.id
+    join threads t on t.id = cm.thread_id
+    join repositories thread_repo on thread_repo.id = t.repo_id
+    left join threads rt on rt.id = c.representative_thread_id
+    where c.closed_at_local is null
+      and c.repo_id = self.repo_id
+      and self_repo.full_name = ${repoFullName}
+      and self.number = ${number}
+      and self.kind = 'issue'
+      and thread_repo.full_name = ${repoFullName}
+      and t.number != ${number}
+      and t.kind = 'issue'
+    order by case when t.state = 'open' then 0 else 1 end, t.updated_at desc, t.number desc
+    limit ${cappedLimit};
+  `;
+}
+
+function compactRelatedGitcrawlItems(item: Item, seen: ReadonlySet<number>): unknown[] {
+  if (item.kind !== "issue") return [];
+  const dbPath = gitcrawlDbPath();
+  if (!dbPath) return [];
+  const source = detectGitcrawlClusterSource(dbPath);
+  if (!source) return [];
+
+  return sqliteJsonBestEffort(
+    dbPath,
+    gitcrawlRelatedIssueSql(source, item.number, RELATED_GITCRAWL_LIMIT, targetRepo()),
+  )
+    .map(asRecord)
+    .filter((row) => typeof row.number === "number" && !seen.has(row.number))
+    .map((row) => ({
+      mentionedIn: ["gitcrawl cluster"],
+      gitcrawlCluster: {
+        id: row.cluster_id,
+        source,
+        memberCount: row.member_count,
+        representative: {
+          number: row.representative_number,
+          kind: row.representative_kind,
+          state: row.representative_state,
+          title: row.representative_title,
+        },
+      },
+      gitcrawlThread: {
+        number: row.number,
+        kind: row.kind,
+        state: row.state,
+        title: row.title,
+        updatedAt: row.updated_at,
+        labels: parseJsonArrayBestEffort(row.labels_json),
+        body: truncateText(typeof row.body === "string" ? row.body : "", 800),
+      },
+    }));
+}
+
+function relatedItemNumber(value: unknown): number | null {
+  const record = asRecord(value);
+  const issueNumber = asRecord(record.issue).number;
+  if (typeof issueNumber === "number") return issueNumber;
+  const localNumber = asRecord(record.localReport).number;
+  if (typeof localNumber === "number") return localNumber;
+  const gitcrawlNumber = asRecord(record.gitcrawlThread).number;
+  if (typeof gitcrawlNumber === "number") return gitcrawlNumber;
+  const directNumber = record.number;
+  return typeof directNumber === "number" ? directNumber : null;
+}
+
+function appendUniqueRelatedItems(
+  target: unknown[],
+  seen: Set<number>,
+  candidates: readonly unknown[],
+): void {
+  for (const candidate of candidates) {
+    const number = relatedItemNumber(candidate);
+    if (number !== null) {
+      if (seen.has(number)) continue;
+      seen.add(number);
+    }
+    target.push(candidate);
+    if (target.length >= RELATED_ITEMS_LIMIT) return;
+  }
+}
+
 function relatedItemsContext(options: {
   item: Item;
   issue: unknown;
@@ -2946,8 +3286,23 @@ function relatedItemsContext(options: {
     .slice(0, 10)
     .map(([number, mentionedIn]) => compactRelatedItem(number, mentionedIn))
     .filter((entry) => entry !== null);
-  const searchedRelated = compactRelatedSearchItems(options.item, new Set(mentions.keys()));
-  return [...explicitRelated, ...searchedRelated].slice(0, 12);
+  const seen = new Set<number>([options.item.number]);
+  const related: unknown[] = [];
+  appendUniqueRelatedItems(related, seen, explicitRelated);
+  if (related.length < RELATED_ITEMS_LIMIT) {
+    appendUniqueRelatedItems(related, seen, compactLocalRelatedTitleItems(options.item, seen));
+  }
+  if (related.length < RELATED_ITEMS_LIMIT) {
+    appendUniqueRelatedItems(related, seen, compactRelatedGitcrawlItems(options.item, seen));
+  }
+  if (related.length < RELATED_ITEMS_LIMIT) {
+    appendUniqueRelatedItems(
+      related,
+      seen,
+      compactRelatedGitHubIssueSearchItems(options.item, seen),
+    );
+  }
+  return related.slice(0, RELATED_ITEMS_LIMIT);
 }
 
 function normalizeAuthorLogin(value: unknown): string | null {

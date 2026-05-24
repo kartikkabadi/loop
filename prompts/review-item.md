@@ -7,8 +7,10 @@ repository's `AGENTS.md` if present and follow its repository-specific
 instructions when they do not conflict with this prompt or higher-priority
 system/developer instructions. Inspect the current `main` code, docs, tests, and
 history as needed. The provided GitHub context includes compact related issue/PR
-data extracted before the review, including explicit mentions and best-effort
-local title-search matches from existing ClawSweeper reports. You may use
+data extracted before the review, including explicit mentions, linked closing
+PRs, best-effort local title-search matches from existing ClawSweeper reports,
+optional gitcrawl cluster siblings, and optional GitHub issue-search matches.
+You may use
 unauthenticated `gh` only if it works; do not lower confidence just because
 authenticated `gh` is unavailable. Do not list `gh` auth, `GH_TOKEN`,
 shallow-clone, or unavailable-authenticated-GitHub caveats as risks when the
