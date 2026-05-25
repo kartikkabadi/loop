@@ -28,6 +28,11 @@ on:
         required: true
         default: false
         type: boolean
+      date:
+        description: "Optional YYYY-MM-DD report date"
+        required: false
+        default: ""
+        type: string
   schedule:
     - cron: "17 8 * * *"
     - cron: "47 8 * * 1"
@@ -42,6 +47,7 @@ env:
   CLOUDFLARE_ACCOUNT_ID: <cloudflare-account-id>
   REPORTS_DOMAIN: reports.openclaw.ai
   REPORTS_PROJECT: openclaw-maintainer-reports
+  CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_CODEX_CLI_VERSION || '0.128.0' }}
 
 concurrency:
   group: openclaw-maintainer-activity-report
@@ -87,6 +93,19 @@ jobs:
         with:
           node-version: 24
 
+      - name: Check out ClawSweeper
+        uses: actions/checkout@v6
+        with:
+          path: clawsweeper
+          filter: blob:none
+          persist-credentials: false
+
+      - uses: ./clawsweeper/.github/actions/setup-codex
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        with:
+          version: ${{ env.CODEX_CLI_VERSION }}
+
       - name: Configure Cloudflare Access
         working-directory: maintainers
         env:
@@ -113,6 +132,7 @@ jobs:
         run: |
           set -euo pipefail
           period="${{ github.event_name == 'workflow_dispatch' && inputs.period || 'day' }}"
+          report_date="${{ github.event_name == 'workflow_dispatch' && inputs.date || '' }}"
           if [ "${{ github.event_name }}" = "schedule" ]; then
             case "${{ github.event.schedule }}" in
               "47 8 * * 1") period="week" ;;
@@ -120,9 +140,14 @@ jobs:
               *) period="day" ;;
             esac
           fi
-          node .agents/skills/openclaw-maintainer-activity/scripts/generate-maintainer-activity-history.mjs \
-            --period "$period" \
-            ${{ github.event_name == 'workflow_dispatch' && inputs.comments && '' || '--no-comments' }}
+          args=(--period "$period")
+          if [ -n "$report_date" ]; then
+            args+=(--date "$report_date")
+          fi
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ] || [ "${{ inputs.comments }}" != "true" ]; then
+            args+=(--no-comments)
+          fi
+          node .agents/skills/openclaw-maintainer-activity/scripts/generate-maintainer-activity-history.mjs "${args[@]}"
 
       - name: Commit report history
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.generate }}
