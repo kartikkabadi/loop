@@ -13515,6 +13515,75 @@ test("issue implementation workflow lets job intent choose dispatch capacity", (
   assert.doesNotMatch(workflow, /worker-limit issue_implementation/);
 });
 
+test("repair workflows preserve existing dispatch while scheduled cluster intake stays gated", () => {
+  const cluster = readFileSync(".github/workflows/repair-cluster-worker.yml", "utf8");
+  const clusterIntake = readFileSync(".github/workflows/repair-cluster-intake.yml", "utf8");
+  const router = readFileSync(".github/workflows/repair-comment-router.yml", "utf8");
+  const finalizer = readFileSync(".github/workflows/repair-finalize-open-prs.yml", "utf8");
+  const selfHeal = readFileSync(".github/workflows/repair-self-heal.yml", "utf8");
+  const sweep = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const dispatchJobs = readFileSync("src/repair/dispatch-jobs.ts", "utf8");
+  const importGitcrawl = readFileSync("src/repair/import-gitcrawl-clusters.ts", "utf8");
+  const importLowSignal = readFileSync("src/repair/import-gitcrawl-low-signal-prs.ts", "utf8");
+  const issueImplementation = readFileSync(
+    ".github/workflows/repair-issue-implementation-intake.yml",
+    "utf8",
+  );
+  const commitFinding = readFileSync(".github/workflows/repair-commit-finding-intake.yml", "utf8");
+  const existingRepairWorkflows = [
+    cluster,
+    router,
+    finalizer,
+    selfHeal,
+    sweep,
+    issueImplementation,
+    commitFinding,
+  ].join("\n");
+
+  assert.doesNotMatch(existingRepairWorkflows, /CLAWSWEEPER_FEATURE_REPAIR_ENABLED/);
+  assert.match(sweep, /pnpm run repair:comment-router -- \\\n[\s\S]*--execute/);
+  assert.match(router, /\{ \[ "\$\{\{ github\.event_name \}\}" = "repository_dispatch" \]; \}/);
+  assert.match(issueImplementation, /ENABLED: \$\{\{ github\.event\.inputs\.enabled/);
+  assert.match(commitFinding, /ENABLED: \$\{\{ github\.event\.inputs\.enabled/);
+  assert.match(clusterIntake, /SCHEDULE_ENABLED/);
+  assert.match(clusterIntake, /CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED/);
+  const intakeJobHeader = clusterIntake.slice(
+    clusterIntake.indexOf("  intake:"),
+    clusterIntake.indexOf("    steps:"),
+  );
+  assert.match(
+    intakeJobHeader,
+    /if: \$\{\{ github\.event_name != 'schedule' \|\| vars\.CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED == '1' \}\}/,
+  );
+  assert.ok(
+    clusterIntake.indexOf("vars.CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED") <
+      clusterIntake.indexOf("actions/create-github-app-token"),
+    "scheduled cluster intake gate must appear before token creation",
+  );
+  assert.match(dispatchJobs, /repairJobUsesClusterLane/);
+  assert.doesNotMatch(dispatchJobs, /CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED/);
+  assert.doesNotMatch(importGitcrawl, /CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED/);
+  assert.doesNotMatch(importLowSignal, /CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED/);
+});
+
+test("cluster intake publishes generated repair state through state repo", () => {
+  const workflow = readFileSync(".github/workflows/repair-cluster-intake.yml", "utf8");
+  const stateTokenIndex = workflow.indexOf("uses: ./.github/actions/create-state-token");
+  const setupStateIndex = workflow.indexOf("uses: ./.github/actions/setup-state");
+  const importIndex = workflow.indexOf("- name: Import one cluster from gitcrawl-store");
+  const publishIndex = workflow.indexOf("- name: Publish intake jobs and ledger");
+
+  assert.notEqual(stateTokenIndex, -1);
+  assert.notEqual(setupStateIndex, -1);
+  assert.notEqual(importIndex, -1);
+  assert.notEqual(publishIndex, -1);
+  assert.ok(stateTokenIndex < setupStateIndex, "state token must be created before setup-state");
+  assert.ok(setupStateIndex < importIndex, "state repo must be hydrated before job import");
+  assert.ok(setupStateIndex < publishIndex, "state repo must be configured before publish-main");
+  assert.match(workflow, /--path jobs/);
+  assert.match(workflow, /--path results\/cluster-repair-intake/);
+});
+
 test("review prompt asks for concise public review fields", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 

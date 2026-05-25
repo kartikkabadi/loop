@@ -3457,14 +3457,26 @@ function sqliteJsonBestEffort(dbPath: string, sql: string): unknown[] {
   }
 }
 
-function gitcrawlDbPath(): string | null {
+function gitcrawlStoreDbFileName(repo: string): string {
+  return `${repo
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_.-]+/g, "__")}.sync.db`;
+}
+
+function gitcrawlDbPath(repo = targetRepo()): string | null {
   const configured = process.env.CLAWSWEEPER_GITCRAWL_DB?.trim();
   if (configured) {
     const configuredPath = resolve(ROOT, configured);
     return existsSync(configuredPath) ? configuredPath : null;
   }
-  const fallback = join(homedir(), ".config", "gitcrawl", "gitcrawl.db");
-  return existsSync(fallback) ? fallback : null;
+  const storeDbFileName = gitcrawlStoreDbFileName(repo);
+  const candidates = [
+    join(ROOT, "..", "gitcrawl-store", "data", storeDbFileName),
+    join(homedir(), ".config", "gitcrawl", "stores", "gitcrawl-store", "data", storeDbFileName),
+    join(homedir(), ".config", "gitcrawl", "gitcrawl.db"),
+  ];
+  return candidates.find((candidate) => existsSync(candidate)) ?? null;
 }
 
 function gitcrawlTableRows(dbPath: string, table: "clusters" | "cluster_groups"): number {
@@ -3581,14 +3593,15 @@ function gitcrawlRelatedIssueSql(
 
 function compactRelatedGitcrawlItems(item: Item, seen: ReadonlySet<number>): unknown[] {
   if (item.kind !== "issue") return [];
-  const dbPath = gitcrawlDbPath();
+  const repo = targetRepo();
+  const dbPath = gitcrawlDbPath(repo);
   if (!dbPath) return [];
   const source = detectGitcrawlClusterSource(dbPath);
   if (!source) return [];
 
   return sqliteJsonBestEffort(
     dbPath,
-    gitcrawlRelatedIssueSql(source, item.number, RELATED_GITCRAWL_LIMIT, targetRepo()),
+    gitcrawlRelatedIssueSql(source, item.number, RELATED_GITCRAWL_LIMIT, repo),
   )
     .map(asRecord)
     .filter((row) => typeof row.number === "number" && !seen.has(row.number))

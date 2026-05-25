@@ -13,6 +13,9 @@ export type WorkerConfig = {
     assist: {
       max: number;
     };
+    repair: {
+      cluster_max_live_runs: number;
+    };
   };
 };
 
@@ -36,6 +39,7 @@ export type AutomationLimits = {
     hard_cap: number;
     automerge_default: number;
     issue_implementation_default: number;
+    cluster_default: number;
   };
   issue_implementation: {
     dispatches_per_sweep_default: number;
@@ -49,6 +53,7 @@ export type WorkerLane =
   | "repair"
   | "automerge_repair"
   | "issue_implementation"
+  | "cluster_repair"
   | "exact_item"
   | "assist";
 
@@ -64,6 +69,7 @@ export function readWorkerConfig(
 
 export function deriveAutomationLimits(config: WorkerConfig): AutomationLimits {
   const max = config.workers.max;
+  const clusterRepairMax = Math.min(config.lanes.repair.cluster_max_live_runs, max);
   return {
     assist: {
       default: Math.min(config.lanes.assist.max, max),
@@ -84,6 +90,7 @@ export function deriveAutomationLimits(config: WorkerConfig): AutomationLimits {
       hard_cap: max,
       automerge_default: percent(max, 40),
       issue_implementation_default: percent(max, 40),
+      cluster_default: clusterRepairMax,
     },
     issue_implementation: {
       dispatches_per_sweep_default: percent(max, 4),
@@ -112,6 +119,8 @@ export function workerLimit(
     return priorityLimit(limits.repair_live_runs.automerge_default, activeCritical);
   if (lane === "issue_implementation")
     return priorityLimit(limits.repair_live_runs.issue_implementation_default, activeCritical);
+  if (lane === "cluster_repair")
+    return priorityLimit(limits.repair_live_runs.cluster_default, activeCritical);
   if (lane === "commit_review")
     return backgroundLimit(
       limits.commit_review.page_size_default,
@@ -158,6 +167,13 @@ function validateWorkerConfig(value: unknown): WorkerConfig {
       assist: {
         max: positiveInteger(value, "lanes.assist.max"),
       },
+      repair: {
+        cluster_max_live_runs: optionalPositiveInteger(
+          value,
+          "lanes.repair.cluster_max_live_runs",
+          1,
+        ),
+      },
     },
   };
 }
@@ -168,6 +184,19 @@ function percent(max: number, value: number): number {
 
 function positiveInteger(root: Record<string, unknown>, path: string): number {
   const value = getPath(root, path);
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 1) {
+    throw new Error(`automation limit ${path} must be a positive integer`);
+  }
+  return value;
+}
+
+function optionalPositiveInteger(
+  root: Record<string, unknown>,
+  path: string,
+  fallback: number,
+): number {
+  const value = getOptionalPath(root, path);
+  if (value === undefined) return fallback;
   if (typeof value !== "number" || !Number.isInteger(value) || value < 1) {
     throw new Error(`automation limit ${path} must be a positive integer`);
   }
@@ -187,10 +216,16 @@ function nonNegative(value: number): number {
 }
 
 function getPath(root: Record<string, unknown>, path: string): unknown {
+  const value = getOptionalPath(root, path);
+  if (value === undefined) throw new Error(`automation limit ${path} is missing`);
+  return value;
+}
+
+function getOptionalPath(root: Record<string, unknown>, path: string): unknown {
   let cursor: unknown = root;
   for (const segment of path.split(".")) {
     if (!isRecord(cursor) || !(segment in cursor)) {
-      throw new Error(`automation limit ${path} is missing`);
+      return undefined;
     }
     cursor = cursor[segment];
   }

@@ -44,10 +44,95 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /⚡ Merge Speed/);
   assert.match(html, /🎯 Capacity/);
   assert.match(html, /🌊 Loading pipeline state/);
+  assert.match(html, /🔎 Cluster Intake/);
   assert.match(html, /🌀 Active Pipeline/);
   assert.match(html, /✅ Closed by ClawSweeper/);
   assert.match(html, /📡 Recent Activity/);
+  assert.ok(html.indexOf("🔎 Cluster Intake") > html.indexOf("📡 Recent Activity"));
+  assert.match(html, /<strong>60m<\/strong><span>tick<\/span>/);
   assert.doesNotMatch(html, /ðŸ|â|âš|âœ/);
+});
+
+test("dashboard exposes scheduled cluster intake markers and runs", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  const marker = {
+    target_repo: "openclaw/openclaw",
+    last_processed_store_sha256: "abc123def4567890",
+    last_processed_store_exported_at: "2026-05-25T12:00:00Z",
+    generated_count: 1,
+    generated_jobs: ["jobs/openclaw/inbox/gitcrawl-42-login-fix.md"],
+    run_url: "https://github.com/openclaw/clawsweeper/actions/runs/42",
+    updated_at: "2026-05-25T12:08:00Z",
+  };
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (
+      url.pathname ===
+      "/repos/openclaw/clawsweeper/actions/workflows/repair-cluster-intake.yml/runs"
+    ) {
+      return jsonResponse({
+        workflow_runs: [
+          {
+            id: 42,
+            name: "repair cluster intake",
+            display_title: "repair cluster intake",
+            status: "completed",
+            conclusion: "success",
+            html_url: "https://github.com/openclaw/clawsweeper/actions/runs/42",
+            created_at: "2026-05-25T12:08:00Z",
+            updated_at: "2026-05-25T12:09:00Z",
+          },
+        ],
+      });
+    }
+    if (
+      url.pathname ===
+      "/repos/openclaw/clawsweeper/contents/results/cluster-repair-intake/openclaw-openclaw.json"
+    ) {
+      return jsonResponse({
+        content: Buffer.from(JSON.stringify(marker)).toString("base64"),
+      });
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    if (url.pathname === "/repos/openclaw/openclaw/issues") return jsonResponse([]);
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(new Request("https://clawsweeper.openclaw.ai/api/status"), {
+      STATUS_STORE: new MemoryKv(),
+      CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+      TARGET_REPOS: "openclaw/openclaw",
+      CACHE_TTL_SECONDS: "0",
+    });
+    assert.equal(response.status, 200);
+    const status = await response.json();
+    assert.equal(status.recent.cluster_repair.workflow, "repair-cluster-intake.yml");
+    assert.equal(status.recent.cluster_repair.schedule, "8 * * * *");
+    assert.equal(status.recent.cluster_repair.markers[0].status, "imported");
+    assert.equal(status.recent.cluster_repair.markers[0].generated_count, 1);
+    assert.equal(
+      status.recent.cluster_repair.markers[0].last_processed_store_short_sha,
+      "abc123def4",
+    );
+    assert.equal(status.recent.cluster_repair.latest_runs[0].url, marker.run_url);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
 });
 
 test("dashboard reads stored CI status for active PR rows", async () => {

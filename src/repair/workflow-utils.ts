@@ -95,6 +95,7 @@ function requiredWorkerLane(value: string): WorkerLane {
     "repair",
     "automerge_repair",
     "issue_implementation",
+    "cluster_repair",
     "exact_item",
     "assist",
   ]);

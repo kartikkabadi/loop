@@ -51,6 +51,16 @@ export function workerLaneForRepairJobIntent(intent: RepairJobIntent): WorkerLan
   return "repair";
 }
 
+export function repairJobUsesClusterLane(frontmatter: LooseRecord): boolean {
+  const intent = repairJobIntentForFrontmatter(frontmatter);
+  if (intent !== "repair_cluster") return false;
+
+  const clusterId = String(frontmatter.cluster_id ?? "")
+    .trim()
+    .toLowerCase();
+  return /^gitcrawl-\d+\b/.test(clusterId) || /^ghcrawl-\d+\b/.test(clusterId);
+}
+
 export function renderJobIntentFrontmatter(intent: RepairJobIntent): string {
   return `job_intent: ${intent}`;
 }

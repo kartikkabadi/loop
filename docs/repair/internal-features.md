@@ -39,6 +39,7 @@ Common creation paths:
 - `pnpm run repair:create-job -- --repo openclaw/openclaw --refs 123 --prompt-file /tmp/prompt.md`
 - `pnpm run repair:create-job -- --from-report ../clawsweeper/records/.../items/123.md`
 - gitcrawl import scripts for larger clustered backlog batches
+- `repair-cluster-intake.yml` for scheduled imported gitcrawl cluster drip-feed
 
 `create-job` checks for an existing matching PR or branch before writing a new
 job. That is the primary duplicate-PR guard.
@@ -582,6 +583,18 @@ PR directly.
 
 Important gates:
 
+- `CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED`: opt-in for the scheduled
+  `repair-cluster-intake.yml` imported-cluster intake. Direct repair import and
+  dispatch commands are not blocked by this variable; they keep the existing
+  repair execution gates. Gitcrawl cluster import skips clusters with at least
+  75% closed members by default; `--skip-closed-percent` is the explicit
+  override.
+- `CLAWSWEEPER_CLUSTER_REPAIR_IMPORT_LIMIT`: scheduled imported-cluster intake
+  limit; default `1` cluster per hourly `repair-cluster-intake.yml` run.
+  The upstream `openclaw/gitcrawl-store` refreshes `openclaw/openclaw` every 15
+  minutes, so the intake records the processed portable DB SHA in
+  `results/cluster-repair-intake/<repo>.json` and skips duplicate ticks against
+  the same store snapshot.
 - `CLAWSWEEPER_ALLOW_EXECUTE`: allows deterministic write lanes. Workflows treat
   any value except literal `1` as closed.
 - `CLAWSWEEPER_ALLOW_FIX_PR`: allows branch repair and replacement PR creation.
@@ -601,7 +614,9 @@ Important defaults:
   to `fast`.
 - `CLAWSWEEPER_CODEX_HEARTBEAT_MS`: repair-worker and execute-side Codex
   subprocess heartbeat interval; default `60000`.
-- `CLAWSWEEPER_MAX_LIVE_WORKERS`: dispatch capacity guard.
+- `CLAWSWEEPER_MAX_LIVE_WORKERS`: dispatch capacity guard. Existing repair
+  lanes derive their checked-in default from `workers.max`; imported gitcrawl
+  cluster jobs use `lanes.repair.cluster_max_live_runs`.
 - `CLAWSWEEPER_DISPATCH_RECHECK_MS`: short active-worker recheck before
   dispatching a repair worker; default `5000` to avoid duplicate queued workers
   when parallel routers race GitHub run visibility.

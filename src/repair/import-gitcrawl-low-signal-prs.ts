@@ -9,9 +9,7 @@ import { renderJobIntentFrontmatter } from "./job-intent.js";
 
 const args = parseArgs(process.argv.slice(2));
 const repo = String(args.repo ?? "openclaw/openclaw");
-const dbPath = path.resolve(
-  String(args.db ?? path.join(os.homedir(), ".config", "gitcrawl", "gitcrawl.db")),
-);
+const dbPath = resolveGitcrawlDbPath(repo, typeof args.db === "string" ? args.db : undefined);
 const outDir = path.resolve(
   String(args.out ?? path.join(repoRoot(), "jobs", repo.split("/")[0] ?? "unknown", "inbox")),
 );
@@ -32,6 +30,32 @@ if (!["plan", "execute", "autonomous"].includes(mode)) {
 if (!["stale", "recent", "score"].includes(sort)) {
   console.error("sort must be stale, recent, or score");
   process.exit(2);
+}
+function gitcrawlStoreDbFileName(repoFullName: string): string {
+  return `${repoFullName
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_.-]+/g, "__")}.sync.db`;
+}
+
+function resolveGitcrawlDbPath(repoFullName: string, explicitDb?: string): string {
+  const configured = explicitDb?.trim() || process.env.CLAWSWEEPER_GITCRAWL_DB?.trim();
+  if (configured) return path.resolve(configured);
+  const storeDbFileName = gitcrawlStoreDbFileName(repoFullName);
+  const candidates = [
+    path.join(repoRoot(), "..", "gitcrawl-store", "data", storeDbFileName),
+    path.join(
+      os.homedir(),
+      ".config",
+      "gitcrawl",
+      "stores",
+      "gitcrawl-store",
+      "data",
+      storeDbFileName,
+    ),
+    path.join(os.homedir(), ".config", "gitcrawl", "gitcrawl.db"),
+  ];
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates.at(-1)!;
 }
 
 const candidates = selectCandidates();

@@ -18,7 +18,12 @@ import {
   proposedItemNumbers,
   writeCommentSyncCursor,
 } from "../../dist/repair/workflow-utils.js";
-import { AUTOMATION_LIMITS, WORKER_CONFIG, workerLimit } from "../../dist/repair/limits.js";
+import {
+  AUTOMATION_LIMITS,
+  WORKER_CONFIG,
+  readWorkerConfig,
+  workerLimit,
+} from "../../dist/repair/limits.js";
 
 test("workflow utilities expose automation limits", () => {
   assert.equal(
@@ -54,9 +59,36 @@ test("worker scheduler lets background lanes yield to active work", () => {
   assert.equal(workerLimit("commit_review"), AUTOMATION_LIMITS.commit_review.page_size_default);
   assert.equal(workerLimit("commit_review", { activeCritical: 49 }), 1);
   assert.equal(workerLimit("repair"), AUTOMATION_LIMITS.repair_live_runs.default);
+  assert.equal(workerLimit("repair"), 22);
+  assert.equal(workerLimit("automerge_repair"), 22);
+  assert.equal(workerLimit("issue_implementation"), 22);
+  assert.equal(workerLimit("cluster_repair"), 1);
   assert.equal(AUTOMATION_LIMITS.assist.default, 5);
   assert.equal(workerLimit("assist"), 5);
   assert.equal(workerLimit("assist", { activeCritical: 55 }), 2);
+});
+
+test("worker config defaults imported cluster repair capacity for older configs", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-limits-"));
+  const configPath = path.join(root, "automation-limits.json");
+  write(
+    configPath,
+    JSON.stringify({
+      workers: {
+        max: 55,
+        reserve_for_interactive: 8,
+        expansion_reserve: 4,
+        minimum_background: 1,
+      },
+      lanes: {
+        assist: {
+          max: 5,
+        },
+      },
+    }),
+  );
+
+  assert.equal(readWorkerConfig(configPath).lanes.repair.cluster_max_live_runs, 1);
 });
 
 test("workflow utilities derive artifact item numbers and action counts", () => {

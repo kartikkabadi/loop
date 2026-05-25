@@ -44,11 +44,15 @@ adjacent reports, or irrelevant matches.
 
 When a local gitcrawl database exists, ClawSweeper reads same-cluster issue
 siblings from the same target repository as the reviewed issue and adds them to
-the same related-item prompt section.
+the same related-item prompt section. ClawSweeper does not run a gitcrawl fetch
+or download issues during review; it only reads an existing SQLite database.
 
-The default database path is:
+Database lookup order is:
 
 ```text
+CLAWSWEEPER_GITCRAWL_DB
+../gitcrawl-store/data/<owner>__<repo>.sync.db
+~/.config/gitcrawl/stores/gitcrawl-store/data/<owner>__<repo>.sync.db
 ~/.config/gitcrawl/gitcrawl.db
 ```
 
@@ -56,8 +60,10 @@ Use `CLAWSWEEPER_GITCRAWL_DB=/path/to/gitcrawl.db` to point at a different
 database. If the database or `sqlite3` is unavailable, this source is skipped
 silently and the review continues with the other context sources.
 
-Both current portable gitcrawl tables and the older legacy cluster tables are
-supported on a best-effort basis.
+For portable gitcrawl-store checkouts, freshness is maintained by the store
+workflow and by refreshing the local checkout, for example with
+`git pull --ff-only` before a run. Both current portable gitcrawl tables and the
+older legacy cluster tables are supported on a best-effort basis.
 
 ## Guardrails
 
