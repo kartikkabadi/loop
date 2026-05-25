@@ -257,18 +257,17 @@ function renderValidationLoopGuidance({
 
 function renderChangelogRule(fixArtifact: LooseRecord) {
   const policyRule =
-    "- target repository changelog policy wins over fix artifact credit notes: for openclaw/openclaw, add the required user-facing changelog entry, but never add forbidden `Thanks @codex`, `Thanks @openclaw`, or `Thanks @steipete` changelog attribution; preserve those source authors in PR body/history/source links instead, and use only allowed external GitHub usernames when a changelog thanks line is required; if only forbidden maintainers/bots are known, keep the changelog entry without a `Thanks @...` line;";
+    "- target repository release-note policy wins over fix artifact credit notes: for openclaw/openclaw, do not edit CHANGELOG.md during normal repair work; preserve user-facing release-note context and contributor/source PR attribution in PR body/history/source links or commit messages instead; never add forbidden `Thanks @codex`, `Thanks @openclaw`, or `Thanks @steipete` changelog attribution;";
   if (fixArtifact.changelog_required !== true) {
     return [
-      "- if you discover the target repository requires a changelog for this user-facing repair, add or repair that changelog entry before returning;",
+      "- if you discover the target repository requires release-note context for this user-facing repair, preserve it in the PR body or commit message before returning;",
       policyRule,
     ].join("\n");
   }
   return [
-    "- changelog_required is true: you must inspect CHANGELOG.md and add or repair the required entry before returning;",
-    "- the changelog entry must describe the user-facing change and preserve contributor/source PR attribution when available;",
+    "- changelog_required is true: preserve the user-facing change summary and contributor/source PR attribution in the PR body or commit message before returning;",
     policyRule,
-    "- do not leave the changelog for the automerge gate or a later repair pass.",
+    "- do not leave release-note context for a later repair pass.",
   ].join("\n");
 }
 

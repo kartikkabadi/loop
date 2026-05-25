@@ -2293,16 +2293,6 @@ function executeAutomerge(command: LooseRecord) {
     block = validateAutomergeReadiness({ command, view, target: latestTarget });
   }
   if (block) {
-    if (isAutomergeChangelogBlock(block)) {
-      return {
-        action: "merge",
-        status: "repair_needed",
-        reason: block,
-        repair_reason:
-          "CHANGELOG.md entry is required before automerge; dispatch a focused changelog repair",
-        merge_method: "squash",
-      };
-    }
     if (isTransientAutomergeBlock(block)) {
       return {
         action: "merge",
@@ -2504,10 +2494,6 @@ function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
   });
   if (changelogBlock) return changelogBlock;
   return "";
-}
-
-function isAutomergeChangelogBlock(reason: string) {
-  return /CHANGELOG\.md entry is required/i.test(String(reason ?? ""));
 }
 
 function isAutomergeCheckBlock(reason: string) {

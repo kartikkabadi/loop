@@ -650,7 +650,7 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
   assert.match(job.body, /Codex edit pass can make this PR merge-ready/);
   assert.match(job.body, /rebase onto latest main/);
   assert.match(job.body, /fix CI\/check failures/);
-  assert.match(job.body, /add a changelog entry when required/);
+  assert.match(job.body, /preserve release-note context when required/);
   assert.match(job.body, /Never add forbidden changelog credit lines/);
   assert.match(job.body, /router owns final merge/);
   assert.match(job.body, /Requested by: maintainer-user/);
@@ -688,7 +688,7 @@ test("renderIssueImplementationJob validates and opens one non-closing fix PR la
   assert.match(job.body, /Keep it scoped to the toolbar/);
 });
 
-test("automerge changelog gate blocks user-facing OpenClaw changes without changelog", () => {
+test("automerge changelog gate does not block user-facing OpenClaw changes", () => {
   assert.equal(
     automergeChangelogBlockReason({
       repo: "openclaw/openclaw",
@@ -698,7 +698,7 @@ test("automerge changelog gate blocks user-facing OpenClaw changes without chang
         { path: "extensions/discord/src/api.test.ts" },
       ],
     }),
-    "CHANGELOG.md entry is required for user-facing ClawSweeper automerge changes",
+    null,
   );
 
   assert.equal(
@@ -707,7 +707,7 @@ test("automerge changelog gate blocks user-facing OpenClaw changes without chang
       title: "fix(agents): normalize Copilot replay tool IDs",
       files: [{ filename: "src/agents/openai-transport-stream.ts" }],
     }),
-    "CHANGELOG.md entry is required for user-facing ClawSweeper automerge changes",
+    null,
   );
 
   assert.equal(
@@ -719,7 +719,7 @@ test("automerge changelog gate blocks user-facing OpenClaw changes without chang
         { path: "extensions/telegram/src/send.test.ts" },
       ],
     }),
-    "CHANGELOG.md entry is required for user-facing ClawSweeper automerge changes",
+    null,
   );
 
   assert.equal(
@@ -751,7 +751,7 @@ test("automerge changelog gate ignores docs-only and tests-only changes", () => 
   );
 });
 
-test("automerge activation sends missing changelog directly to repair", () => {
+test("automerge activation does not send missing changelog to repair", () => {
   assert.equal(
     automergeActivationRepairReason({
       intent: "automerge",
@@ -763,7 +763,7 @@ test("automerge activation sends missing changelog directly to repair", () => {
       ],
       target: { checks: { blockers: [] }, merge_state_status: "CLEAN", mergeable: "MERGEABLE" },
     }),
-    "CHANGELOG.md entry is required before automerge; dispatch a focused changelog repair",
+    null,
   );
 
   assert.equal(

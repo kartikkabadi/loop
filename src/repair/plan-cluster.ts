@@ -461,11 +461,11 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
           : "Disabled by job frontmatter.",
       canonical_fix:
         job.frontmatter.allow_fix_pr === true
-          ? "If no viable canonical PR exists, first repair a useful contributor PR when branch_writable is true. A same-repo head branch is writable even when GitHub reports maintainer_can_modify=false, so do not replace same-repo PRs for that raw flag alone. If branch_writable is false, draft/unmergeable, stale, unsafe, or too broad, replace it with fix_needed plus build_fix_artifact/open_fix_pr using repair_strategy=replace_uneditable_branch, narrow files, tests, changelog, branch_update_blockers, and source PR credit. Do not ask whether to wait when fix PRs are allowed."
+          ? "If no viable canonical PR exists, first repair a useful contributor PR when branch_writable is true. A same-repo head branch is writable even when GitHub reports maintainer_can_modify=false, so do not replace same-repo PRs for that raw flag alone. If branch_writable is false, draft/unmergeable, stale, unsafe, or too broad, replace it with fix_needed plus build_fix_artifact/open_fix_pr using repair_strategy=replace_uneditable_branch, narrow files, tests, release-note context, branch_update_blockers, and source PR credit. Do not ask whether to wait when fix PRs are allowed."
           : "Worker may identify canonical fixes but must not plan a fix PR.",
       merge:
         job.frontmatter.allow_merge === true
-          ? "Worker may recommend merge_canonical only after security is cleared, comments/review-bot findings are resolved, Codex /review has passed and findings are addressed, checks/review state/conflicts/changelog are clean, and merge_preflight is populated."
+          ? "Worker may recommend merge_canonical only after security is cleared, comments/review-bot findings are resolved, Codex /review has passed and findings are addressed, checks/review state/conflicts/release-note context are clean, and merge_preflight is populated."
           : "Merge recommendations must stay non-mutating.",
       post_merge_close:
         job.frontmatter.allow_post_merge_close === true
@@ -491,7 +491,7 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
       "before unknown merge recommendation, include merge_preflight proving security clearance, resolved comments, resolved bot comments, passed Codex /review, addressed review findings, and validation commands",
       "show canonical URL or explain needs_human",
       "use canonical/duplicate_of/candidate_fix refs only when those refs are hydrated preflight items; unhydrated PR refs found in comments belong in evidence or fix_artifact until hydrated",
-      "include targeted tests and changelog plan for fix artifacts",
+      "include targeted tests and release-note context for fix artifacts",
       "set fix_artifact.deterministic_rebase_only=true only for a pure base-sync repair with no review finding, failing validation, or code/content change to address; omit it for any substantive fix",
       "do not plan executable fix PRs for broad feature/config/docs rewrites; split them into narrower follow-up jobs or mark implementation blocked with exact sub-scopes",
       "if replacing a contributor PR, include source PR credit and the exact close comment that says ClawSweeper will preserve attribution",

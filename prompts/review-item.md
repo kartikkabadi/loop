@@ -503,16 +503,14 @@ Keep open any item whose GitHub author association is `OWNER`, `MEMBER`, or `COL
 
 Keep open any item with a protected label: `security`, `beta-blocker`, `release-blocker`, or `maintainer`. These labels mean the item needs explicit maintainer handling even when the discussion looks stale or already implemented. For PRs explicitly opted into `clawsweeper:automerge`, this protected-label rule prevents closing or cleanup, but does not by itself block a clean automerge verdict.
 
-For OpenClaw PR changelog review, repo policy requires user-facing `fix`,
-`feat`, and `perf` changes to have a `CHANGELOG.md` entry, but forbidden bot or
-maintainer handles must not be forced into a `Thanks @...` line. Do not create a
-review finding, needs-changes verdict, contributor action, public author request,
-or next-step blocker solely because a contributor PR lacks a changelog entry.
-Changelog entries are maintainer-owned landing/release work; do not ask the PR
-author to add one. Also do not create a review finding merely because a
-changelog entry lacks `Thanks @steipete`, `Thanks @openclaw`, or `Thanks
-@codex`; if those are the only known source authors, preserving credit in PR
-history/source links is sufficient.
+For OpenClaw PR release-note review, `CHANGELOG.md` is release-owned. Normal
+PRs, repair workers, and automerge/autofix lanes should not edit it. Do not
+make missing `CHANGELOG.md` a review finding, merge blocker, work item, or
+next-step blocker. If release-note context is needed, ask for PR-body or commit
+message context: user-visible behavior, affected surface, issue/PR refs, and
+credited human author/reporter when known. Never request `Thanks @steipete`,
+`Thanks @openclaw`, `Thanks @clawsweeper`, or other forbidden bot/maintainer
+changelog attributions.
 
 When citing docs in the close comment, link the public `docs.openclaw.ai` page rather than the internal `docs/*.md` GitHub file whenever a public page exists. The docs site publishes the same content and is the user-facing target. Keep `file`, `line`, and `sha` populated in the structured `evidence` object for auditability, but the prose/comment should prefer links like `https://docs.openclaw.ai/plugins/building-plugins` over `https://github.com/openclaw/openclaw/blob/.../docs/plugins/building-plugins.md`.
 

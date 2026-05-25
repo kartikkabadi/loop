@@ -272,9 +272,9 @@ Title: ${safeTitle}
 ClawSweeper should use this job only for the bounded ClawSweeper review/fix loop:
 
 - Emit a fix artifact with \`repair_strategy: "repair_contributor_branch"\` and \`source_prs: ["${prUrl}"]\` so the Codex edit pass can make this PR merge-ready.
-- The edit pass should rebase onto latest main, address PR comments and review findings, fix CI/check failures, add a changelog entry when required, run the relevant validation, and keep iterating until the branch is ready or an external blocker is proven.
+- The edit pass should rebase onto latest main, address PR comments and review findings, fix CI/check failures, preserve release-note context when required, run the relevant validation, and keep iterating until the branch is ready or an external blocker is proven.
 - If the PR branch cannot be safely updated, emit a narrow credited replacement only when the artifact can preserve the original contributor credit; otherwise return \`needs_human\`.
-- Never add forbidden changelog credit lines for \`@codex\`, \`@openclaw\`, or \`@steipete\`; preserve contributor credit through source links and commit/PR history.
+- Never add forbidden changelog credit lines for \`@codex\`, \`@openclaw\`, or \`@steipete\`; preserve contributor credit through source links, PR body, and commit/PR history.
 - ${finalMergeLine}
 - Keep repair scope limited to actionable ClawSweeper findings, failing relevant checks, and required review feedback on this PR.
 ${extraInstructions ? `\nMaintainer special instructions:\n\n${extraInstructions}\n` : ""}
@@ -417,40 +417,14 @@ external blocker is proven.
 - Keep one PR for this issue; reuse \`${branch}\` if it already exists.
 - Keep the diff narrow and avoid unrelated refactors.
 - Preserve issue context and link ${issueUrl} in the PR body.
-- Add a changelog entry when the target repo expects one.
+- Preserve release-note context in the PR body or commit message when the
+  target repo expects it.
 `;
 }
 
-export function automergeChangelogBlockReason({ repo, files }: LooseRecord): string | null {
+export function automergeChangelogBlockReason({ repo }: LooseRecord): string | null {
   if (String(repo ?? "").toLowerCase() !== "openclaw/openclaw") return null;
-
-  const paths = normalizeChangedPaths(files);
-  if (paths.some(isChangelogPath)) return null;
-  if (!paths.some(isPotentiallyUserFacingPath)) return null;
-
-  return "CHANGELOG.md entry is required for user-facing ClawSweeper automerge changes";
-}
-
-function normalizeChangedPaths(files: JsonValue): string[] {
-  if (!Array.isArray(files)) return [];
-  return files
-    .map((file) => (typeof file === "string" ? file : (file?.path ?? file?.filename)))
-    .map((file) => String(file ?? "").trim())
-    .filter(Boolean);
-}
-
-function isChangelogPath(file: string): boolean {
-  return /(^|\/)CHANGELOG\.md$/i.test(file);
-}
-
-function isPotentiallyUserFacingPath(file: string): boolean {
-  if (/^(?:docs|test|tests|\.github)\//.test(file)) return false;
-  if (/(?:^|\/)__tests__\//.test(file)) return false;
-  if (/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file)) return false;
-  if (/(?:^|\/)(?:README|CONTRIBUTING|CODE_OF_CONDUCT|SECURITY|SUPPORT|LICENSE)\.md$/i.test(file))
-    return false;
-  if (file.startsWith("docs/.generated/")) return false;
-  return true;
+  return null;
 }
 
 export function automergeGateBlockReason(env: LooseRecord = process.env) {
@@ -522,8 +496,8 @@ export function automergeActivationRepairReason({
   if (rebaseRepairReason) return rebaseRepairReason;
 
   if (String(intent ?? "") !== "automerge") return null;
-  if (!automergeChangelogBlockReason({ repo, title, files })) return null;
-  return "CHANGELOG.md entry is required before automerge; dispatch a focused changelog repair";
+  automergeChangelogBlockReason({ repo, title, files });
+  return null;
 }
 
 export function automergeMergeFailureRepairReason(reason: JsonValue): string | null {

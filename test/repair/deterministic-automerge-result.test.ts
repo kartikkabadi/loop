@@ -72,10 +72,9 @@ test("deterministic automerge result emits generic direct-Codex repair artifact"
   assert.deepEqual(result?.fix_artifact.likely_files, [
     "extensions/memory-core/src/tools.ts",
     "extensions/memory-core/src/tools.test.ts",
-    "CHANGELOG.md",
   ]);
   assert.deepEqual(result?.fix_artifact.affected_surfaces, ["extensions/memory-core"]);
-  assert.equal(result?.fix_artifact.changelog_required, true);
+  assert.equal(result?.fix_artifact.changelog_required, false);
   assert.deepEqual(result?.fix_artifact.source_prs, [
     "https://github.com/openclaw/openclaw/pull/71898",
   ]);

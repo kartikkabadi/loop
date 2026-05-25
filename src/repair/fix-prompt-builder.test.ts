@@ -23,7 +23,7 @@ function promptFor(fixArtifact: LooseRecord): string {
   });
 }
 
-test("fix prompt treats changelog-required artifacts as required edits", () => {
+test("fix prompt treats changelog-required artifacts as release-note context", () => {
   const prompt = promptFor({
     repair_strategy: "replace_uneditable_branch",
     pr_title: "fix(discord): document mention formatting guidance",
@@ -35,17 +35,16 @@ test("fix prompt treats changelog-required artifacts as required edits", () => {
   });
 
   assert.match(prompt, /changelog_required is true/);
-  assert.match(prompt, /must inspect CHANGELOG\.md and add or repair the required entry/);
+  assert.match(prompt, /preserve the user-facing change summary/);
   assert.match(
     prompt,
     /never add forbidden `Thanks @codex`, `Thanks @openclaw`, or `Thanks @steipete`/,
   );
-  assert.match(prompt, /preserve those source authors in PR body\/history\/source links instead/);
-  assert.match(prompt, /keep the changelog entry without a `Thanks @\.\.\.` line/);
-  assert.match(prompt, /do not leave the changelog for the automerge gate or a later repair pass/);
+  assert.match(prompt, /do not edit CHANGELOG\.md during normal repair work/);
+  assert.match(prompt, /do not leave release-note context for a later repair pass/);
 });
 
-test("fix prompt still asks Codex to add discovered changelog requirements", () => {
+test("fix prompt still asks Codex to preserve discovered release-note context", () => {
   const prompt = promptFor({
     repair_strategy: "repair_contributor_branch",
     pr_title: "fix(discord): document mention formatting guidance",
@@ -55,7 +54,7 @@ test("fix prompt still asks Codex to add discovered changelog requirements", () 
     likely_files: ["extensions/discord/src/message.ts"],
   });
 
-  assert.match(prompt, /if you discover the target repository requires a changelog/);
+  assert.match(prompt, /if you discover the target repository requires release-note context/);
 });
 
 test("fix prompt makes Codex own the validation loop", () => {

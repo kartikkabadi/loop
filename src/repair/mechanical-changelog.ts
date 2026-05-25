@@ -5,8 +5,10 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 
 export function applyMechanicalChangelogFix({
   fixArtifact,
+  repo,
   targetDir,
 }: LooseRecord): LooseRecord | null {
+  if (String(repo ?? "").toLowerCase() === "openclaw/openclaw") return null;
   if (!isChangelogOnlyFix(fixArtifact)) return null;
   const entry = mechanicalChangelogEntry(fixArtifact);
   if (!entry) return null;

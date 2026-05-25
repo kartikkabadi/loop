@@ -194,7 +194,7 @@ ${validation.length ? validation.map((step: JsonValue) => `- ${step}`).join("\n"
 - Do not merge.
 - Do not close issues before a fix PR is opened, landed, or explicitly proven unnecessary.
 - Keep one PR for this cluster; reuse \`${branch}\` if it already exists.
-- Preserve contributor credit and add a changelog entry when the target repo expects one.
+- Preserve contributor credit and release-note context when the target repo expects it.
 `;
 }
 

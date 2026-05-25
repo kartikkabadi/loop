@@ -64,3 +64,24 @@ test("mechanical changelog fix ignores non-changelog-only artifacts", () => {
     null,
   );
 });
+
+test("mechanical changelog fix skips OpenClaw release-owned changelog", () => {
+  const targetDir = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-changelog-"));
+  fs.writeFileSync(
+    path.join(targetDir, "CHANGELOG.md"),
+    "# Changelog\n\n## Unreleased\n\n### Fixes\n\n",
+  );
+
+  assert.equal(
+    applyMechanicalChangelogFix({
+      repo: "openclaw/openclaw",
+      targetDir,
+      fixArtifact: {
+        changelog_required: true,
+        likely_files: ["CHANGELOG.md"],
+        pr_title: "fix(runtime): repair status",
+      },
+    }),
+    null,
+  );
+});

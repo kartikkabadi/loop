@@ -13534,9 +13534,9 @@ test("review prompt keeps automerge opt-in from becoming generic manual review",
   assert.match(prompt, /`maintainer` label/);
   assert.match(prompt, /large `size:\*` label/);
   assert.match(prompt, /choose `queue_fix_pr` even when the\s+finding is process-only or P3/);
-  assert.match(prompt, /Changelog entries are maintainer-owned/);
-  assert.match(prompt, /do not create a\s+review finding,\s+needs-changes\s+verdict/i);
-  assert.match(prompt, /do not ask the PR\s+author to add one/);
+  assert.match(prompt, /`CHANGELOG\.md` is release-owned/);
+  assert.match(prompt, /Do not\s+make missing `CHANGELOG\.md` a review finding/i);
+  assert.match(prompt, /ask for PR-body or commit\s+message context/);
   assert.doesNotMatch(prompt, /missing required changelog\s+entry/);
   assert.match(prompt, /does not by itself block a clean automerge verdict/);
 });

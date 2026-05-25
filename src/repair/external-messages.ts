@@ -137,13 +137,13 @@ const automergeNoChangeClosers = [
 ];
 
 const carriedCreditLines = [
-  "Contributor credit is carried into the replacement PR body and changelog plan.",
-  "Contributor credit is copied into the replacement PR notes and changelog path.",
+  "Contributor credit is carried into the replacement PR body and release-note context.",
+  "Contributor credit is copied into the replacement PR notes and release-note context.",
   "The replacement PR carries the original credit trail forward.",
   "Attribution is preserved in the replacement PR body and release-note trail.",
   "The original contribution stays credited in the replacement PR context.",
   "Credit follows the fix over to the replacement PR. no sneaky treasure grab.",
-  "The replacement PR keeps the contributor trail visible for review and changelog credit.",
+  "The replacement PR keeps the contributor trail visible for review and release notes.",
   "Attribution stays attached; the replacement just gives the fix a writable branch.",
 ];
 

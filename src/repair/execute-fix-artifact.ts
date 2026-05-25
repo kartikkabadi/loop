@@ -1882,7 +1882,7 @@ function editValidatePrepareMerge({
     }
   }
   if (!producedChanges && !reconcileWithBase) {
-    const mechanicalFix = applyMechanicalChangelogFix({ fixArtifact, targetDir });
+    const mechanicalFix = applyMechanicalChangelogFix({ fixArtifact, repo: result.repo, targetDir });
     producedChanges = mechanicalFix?.status === "applied";
     if (producedChanges) logProgress("applied mechanical changelog fix");
   }

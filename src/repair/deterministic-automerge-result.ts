@@ -32,7 +32,7 @@ export function deterministicAutomergeResult({
   const repairMode = String(job?.frontmatter?.repair_mode ?? "automerge");
   const summary = [
     `Make PR ${ref} merge-ready for ClawSweeper ${repairMode}.`,
-    "Rebase onto latest main, address PR comments and review findings, fix CI/check failures, add required changelog if needed, and validate before returning.",
+    "Rebase onto latest main, address PR comments and review findings, fix CI/check failures, preserve release-note context, and validate before returning.",
   ].join(" ");
   const likelyFiles = likelyRepairFiles(files, Boolean(changelogReason));
   const failedChecks = failingCheckEvidence(canonical);
@@ -58,7 +58,7 @@ export function deterministicAutomergeResult({
     likely_files: likelyFiles,
     linked_refs: [ref],
     validation_commands: ["pnpm check:changed"],
-    changelog_required: Boolean(changelogReason),
+    changelog_required: false,
     credit_notes: [`Source PR: ${prUrl}`],
     pr_title: title,
     pr_body: [
