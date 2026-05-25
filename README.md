@@ -147,6 +147,10 @@ Issues with an open PR that references them using GitHub closing syntax such as
 that high-confidence PR candidate earlier in the same apply run.
 Open issue/PR pairs from the same author stay open together unless the paired
 item is already resolved or a maintainer explicitly asks to close one side.
+PR-to-PR duplicate/superseded closes also require a safe canonical target:
+ClawSweeper refuses to close one PR as replaced by another PR that is closed
+unmerged, missing positive real behavior proof, F-rated, already proposed for
+close, not cleanly mergeable, or otherwise not a viable landing path.
 
 Repository profiles can further narrow apply. ClawHub and ClawSweeper self-review
 are intentionally stricter: they review issues and PRs, but apply may close only

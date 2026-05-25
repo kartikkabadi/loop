@@ -9978,6 +9978,17 @@ interface PullRequestClosePromotion {
   closeComment: string;
 }
 
+interface LinkedPullRequestSupersession {
+  number: number;
+  title: string;
+  url: string;
+  state: string;
+  mergedAt: string | null;
+  mergeableState: string | null;
+  draft: boolean;
+  labels: string[];
+}
+
 function upgradePullRequestClosePromotionReport(
   markdown: string,
   item: Item,
@@ -10041,18 +10052,44 @@ function pullRequestUrlForNumber(number: number): string {
   return repoUrlFor(targetRepo(), `/pull/${number}`);
 }
 
-function linkedPullRequestNumbersFromText(text: string, currentNumber: number): number[] {
+function sameRepoPullRequestUrlRegex(): RegExp | null {
   const [owner, repo] = targetRepo().split("/");
-  if (!owner || !repo) return [];
+  if (!owner || !repo) return null;
   const escapedRepo = `${escapeRegExp(owner)}\\/${escapeRegExp(repo)}`;
+  return new RegExp(`https:\\/\\/github\\.com\\/${escapedRepo}\\/pull\\/(\\d+)\\b`, "gi");
+}
+
+function linkedPullRequestNumbersFromText(text: string, currentNumber: number): number[] {
+  const regex = sameRepoPullRequestUrlRegex();
+  if (!regex) return [];
   const numbers = new Set<number>();
-  for (const match of text.matchAll(
-    new RegExp(`https:\\/\\/github\\.com\\/${escapedRepo}\\/pull\\/(\\d+)\\b`, "gi"),
-  )) {
+  for (const match of text.matchAll(regex)) {
     const number = Number(match[1]);
     if (Number.isInteger(number) && number > 0 && number !== currentNumber) numbers.add(number);
   }
   return [...numbers];
+}
+
+function lineContainingIndex(text: string, index: number): string {
+  const start = text.lastIndexOf("\n", Math.max(0, index - 1)) + 1;
+  const end = text.indexOf("\n", index);
+  return text.slice(start, end === -1 ? text.length : end);
+}
+
+function linkedPullRequestSignalContextsFromText(
+  text: string,
+  currentNumber: number,
+  linkedNumber: number,
+): string[] {
+  const regex = sameRepoPullRequestUrlRegex();
+  if (!regex) return [];
+  const contexts: string[] = [];
+  for (const match of text.matchAll(regex)) {
+    const number = Number(match[1]);
+    if (number !== linkedNumber || number === currentNumber) continue;
+    contexts.push(lineContainingIndex(text, match.index ?? 0));
+  }
+  return contexts;
 }
 
 function linkedPullRequestNumbersFromReport(markdown: string, currentNumber: number): number[] {
@@ -10061,6 +10098,7 @@ function linkedPullRequestNumbersFromReport(markdown: string, currentNumber: num
     ...mergeRiskOptionsFromReport(markdown).flatMap((option) => [option.title, option.body]),
     reviewSectionValue(markdown, "bestSolution"),
     reviewSectionValue(markdown, "evidence"),
+    reviewSectionValue(markdown, "closeComment"),
   ];
   const numbers = new Set<number>();
   for (const text of texts) {
@@ -10069,14 +10107,6 @@ function linkedPullRequestNumbersFromReport(markdown: string, currentNumber: num
     }
   }
   return [...numbers];
-}
-
-function textHasLinkedPullRequest(
-  text: string,
-  currentNumber: number,
-  linkedNumber: number,
-): boolean {
-  return linkedPullRequestNumbersFromText(text, currentNumber).includes(linkedNumber);
 }
 
 function linkedPullRequestHasSupersessionSignal(
@@ -10091,22 +10121,20 @@ function linkedPullRequestHasSupersessionSignal(
     ...mergeRiskOptionsFromReport(markdown).flatMap((option) => [option.title, option.body]),
     reviewSectionValue(markdown, "bestSolution"),
     reviewSectionValue(markdown, "evidence"),
+    reviewSectionValue(markdown, "closeComment"),
   ];
-  return texts.some(
-    (text) => textHasLinkedPullRequest(text, currentNumber, linkedNumber) && signal.test(text),
+  return texts.some((text) =>
+    linkedPullRequestSignalContextsFromText(text, currentNumber, linkedNumber).some((context) =>
+      signal.test(context),
+    ),
   );
 }
 
 function linkedPullRequestSupersession(
   markdown: string,
   item: Item,
-): {
-  number: number;
-  title: string;
-  url: string;
-  state: string;
-  mergedAt: string | null;
-} | null {
+  options: { reportDirs?: readonly string[] } = {},
+): LinkedPullRequestSupersession | null {
   for (const number of linkedPullRequestNumbersFromReport(markdown, item.number)) {
     try {
       const hasSupersessionSignal = linkedPullRequestHasSupersessionSignal(
@@ -10117,17 +10145,164 @@ function linkedPullRequestSupersession(
       const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]));
       const state = stringOrUndefined(pull.state)?.toLowerCase() ?? "";
       const mergedAt = stringOrUndefined(pull.merged_at) ?? null;
-      if (state !== "open" && !mergedAt) continue;
       if (!hasSupersessionSignal) continue;
-      return {
+      const linkedPull = {
         number,
         title: stringOrUndefined(pull.title) ?? `PR #${number}`,
         url: stringOrUndefined(pull.html_url) ?? pullRequestUrlForNumber(number),
         state,
         mergedAt,
+        mergeableState: stringOrUndefined(pull.mergeable_state)?.toLowerCase() ?? null,
+        draft: pull.draft === true,
+        labels: linkedPullRequestLabels(number, pull),
       };
+      if (unsafeCanonicalPullRequestReason(linkedPull, options) !== null) continue;
+      return linkedPull;
     } catch {
       // Missing or cross-repo stale references are not close evidence.
+    }
+  }
+  return null;
+}
+
+function linkedPullRequestLabels(number: number, pull: Record<string, unknown>): string[] {
+  const labels = labelNames(pull.labels);
+  if (labels.length) return labels;
+  try {
+    return ghJson<string[]>([
+      "api",
+      `repos/${targetRepo()}/issues/${number}`,
+      "--jq",
+      "[.labels[].name]",
+    ]);
+  } catch {
+    return [];
+  }
+}
+
+function linkedPullRequestReportMarkdown(
+  number: number,
+  reportDirs: readonly string[] | undefined,
+): string | null {
+  if (!reportDirs?.length) return null;
+  const file = reportFileName(targetRepo(), number);
+  for (const dir of reportDirs) {
+    const path = join(dir, file);
+    if (existsSync(path)) return readFileSync(path, "utf8");
+  }
+  return null;
+}
+
+function proofPassedInReport(markdown: string | null): boolean {
+  if (!markdown) return false;
+  const proof = reportRealBehaviorProof(markdown);
+  return proof.status === "sufficient" || proof.status === "override";
+}
+
+function proofPassedInLabels(labels: readonly string[]): boolean {
+  return labels.some((label) => /^proof:\s*(sufficient|override)\b/i.test(label));
+}
+
+function unsafeCanonicalPullRequestReason(
+  linkedPull: LinkedPullRequestSupersession,
+  options: { reportDirs?: readonly string[] } = {},
+): string | null {
+  if (linkedPull.mergedAt) return null;
+  if (linkedPull.state !== "open") {
+    return `linked canonical PR #${linkedPull.number} is ${linkedPull.state || "not open"} and unmerged`;
+  }
+  if (linkedPull.draft) {
+    return `linked canonical PR #${linkedPull.number} is still draft`;
+  }
+  if (!linkedPull.mergeableState || linkedPull.mergeableState === "unknown") {
+    return `linked canonical PR #${linkedPull.number} mergeability is not known`;
+  }
+  if (linkedPull.mergeableState === "dirty") {
+    return `linked canonical PR #${linkedPull.number} has merge conflicts`;
+  }
+  if (linkedPull.mergeableState !== "clean") {
+    return `linked canonical PR #${linkedPull.number} is not cleanly mergeable (${linkedPull.mergeableState})`;
+  }
+
+  const report = linkedPullRequestReportMarkdown(linkedPull.number, options.reportDirs);
+  const labels = linkedPull.labels.map(normalizeLabelName);
+  const labelProofPassed = proofPassedInLabels(linkedPull.labels);
+  const liveNeedsProof = labels.some(
+    (label) =>
+      label === "triage: needs-real-behavior-proof" ||
+      (label.startsWith("status:") && label.includes("needs proof")),
+  );
+  const reportProofPassed = proofPassedInReport(report);
+  const proofPassed = reportProofPassed || labelProofPassed;
+
+  if (labels.some((label) => label.startsWith("rating:") && label.includes("unranked"))) {
+    return `linked canonical PR #${linkedPull.number} is F-rated`;
+  }
+  if (liveNeedsProof && !labelProofPassed) {
+    return `linked canonical PR #${linkedPull.number} is still waiting for real behavior proof`;
+  }
+
+  if (report) {
+    if (
+      frontMatterValue(report, "decision") === "close" &&
+      frontMatterValue(report, "confidence") === "high"
+    ) {
+      return `linked canonical PR #${linkedPull.number} is itself proposed for close`;
+    }
+    const proof = reportRealBehaviorProof(report);
+    if (
+      !proofPassed &&
+      (proof.status === "missing" ||
+        proof.status === "mock_only" ||
+        proof.status === "insufficient")
+    ) {
+      return `linked canonical PR #${linkedPull.number} is still waiting for real behavior proof`;
+    }
+    const rating = reportPrRating(report);
+    if (rating.overallTier === "F" || rating.proofTier === "F" || rating.patchTier === "F") {
+      return `linked canonical PR #${linkedPull.number} is F-rated`;
+    }
+  }
+  if (!proofPassed) {
+    return `linked canonical PR #${linkedPull.number} has no positive real behavior proof`;
+  }
+
+  return null;
+}
+
+function duplicateCanonicalPullRequestBlockReason(
+  markdown: string,
+  item: Item,
+  options: { reportDirs?: readonly string[] } = {},
+): string | null {
+  if (item.kind !== "pull_request") return null;
+  const linkedNumbers = linkedPullRequestNumbersFromReport(markdown, item.number);
+  const canonicalNumbers = linkedNumbers.filter((number) =>
+    linkedPullRequestHasSupersessionSignal(markdown, item.number, number),
+  );
+  const numbersToCheck =
+    canonicalNumbers.length > 0
+      ? canonicalNumbers
+      : linkedNumbers.length === 1
+        ? linkedNumbers
+        : [];
+  for (const number of numbersToCheck) {
+    try {
+      const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]));
+      const linkedPull: LinkedPullRequestSupersession = {
+        number,
+        title: stringOrUndefined(pull.title) ?? `PR #${number}`,
+        url: stringOrUndefined(pull.html_url) ?? pullRequestUrlForNumber(number),
+        state: stringOrUndefined(pull.state)?.toLowerCase() ?? "",
+        mergedAt: stringOrUndefined(pull.merged_at) ?? null,
+        mergeableState: stringOrUndefined(pull.mergeable_state)?.toLowerCase() ?? null,
+        draft: pull.draft === true,
+        labels: linkedPullRequestLabels(number, pull),
+      };
+      const reason = unsafeCanonicalPullRequestReason(linkedPull, options);
+      if (reason) return `${reason}; refusing duplicate/superseded auto-close`;
+    } catch {
+      return `linked canonical PR #${number} could not be read; refusing duplicate/superseded auto-close`;
     }
   }
   return null;
@@ -10192,8 +10367,9 @@ function pauseOrClosePromotion(
 function linkedPullRequestSupersessionPromotion(
   markdown: string,
   item: Item,
+  options: { reportDirs?: readonly string[] } = {},
 ): PullRequestClosePromotion | null {
-  const linkedPull = linkedPullRequestSupersession(markdown, item);
+  const linkedPull = linkedPullRequestSupersession(markdown, item, options);
   if (!linkedPull) return null;
   const stateText = linkedPull.mergedAt
     ? `merged at ${linkedPull.mergedAt}`
@@ -10214,6 +10390,7 @@ function pullRequestClosePromotion(
   item: Item,
   context: ItemContext,
   staleMinAgeDays: number,
+  options: { reportDirs?: readonly string[] } = {},
 ): PullRequestClosePromotion | null {
   if (item.kind !== "pull_request") return null;
   if (frontMatterValue(markdown, "decision") !== "keep_open") return null;
@@ -10221,7 +10398,7 @@ function pullRequestClosePromotion(
   if (frontMatterValue(markdown, "review_status") !== "complete") return null;
   if (closePromotionHasNonAutomationActivityAfterReview(markdown, context)) return null;
   return (
-    linkedPullRequestSupersessionPromotion(markdown, item) ??
+    linkedPullRequestSupersessionPromotion(markdown, item, options) ??
     pauseOrClosePromotion(markdown, item, staleMinAgeDays) ??
     staleFRatedPullRequestPromotion(markdown, item, staleMinAgeDays)
   );
@@ -13116,6 +13293,14 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       ) {
         return false;
       }
+      if (
+        closeReason === "duplicate_or_superseded" &&
+        duplicateCanonicalPullRequestBlockReason(markdown, item, {
+          reportDirs: [itemsDir, closedDir],
+        })
+      ) {
+        return false;
+      }
       return (
         closeReasonApplyAgeSkipReason(item, closeReason, {
           minAgeMs,
@@ -13351,6 +13536,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         item,
         promotionContext,
         staleMinAgeDays,
+        { reportDirs: [itemsDir, closedDir] },
       );
       if (promotion) {
         markdown = upgradePullRequestClosePromotionReport(
@@ -13828,6 +14014,16 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     if (!currentReportValidation.ok && currentReportValidation.actionTaken !== "kept_open") {
       if (markApplySkipped(currentReportValidation.actionTaken, currentReportValidation.reason))
         break;
+      continue;
+    }
+    const duplicateCanonicalBlockReason =
+      closeReason === "duplicate_or_superseded"
+        ? duplicateCanonicalPullRequestBlockReason(markdown, item, {
+            reportDirs: [itemsDir, closedDir],
+          })
+        : null;
+    if (duplicateCanonicalBlockReason) {
+      if (markApplySkipped("kept_open", duplicateCanonicalBlockReason)) break;
       continue;
     }
     const ageSkipReason = closeReasonApplyAgeSkipReason(item, closeReason, {
