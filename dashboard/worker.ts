@@ -3844,10 +3844,17 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   align-items: start;
 }
 .split > div,
-.split > aside { min-width: 0; }
+.split > aside,
+.left-col { min-width: 0; }
+.left-col {
+  display: grid;
+  gap: 0;
+  align-content: start;
+}
 .pipeline-col { overflow: hidden; }
-.cluster-col { grid-column: 1; }
-.side-col { grid-column: 2; grid-row: 1 / span 2; min-width: 0; }
+.cluster-col,
+.side-col { min-width: 0; }
+.cluster-col-mobile { display: none; }
 #pipeline,
 #automerge,
 #closed,
@@ -3992,7 +3999,7 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   font-style: italic;
 }
 .empty::before { content: "🦀 "; opacity: 0.3; }
-@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } .cluster-col, .side-col { grid-column: auto; grid-row: auto; } .side-col { order: 2; } .cluster-col { order: 3; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } }
+@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } .left-col { order: 1; } .side-col { order: 2; } .cluster-col-desktop { display: none; } .cluster-col-mobile { display: block; order: 3; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } }
 @media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .work-row { grid-template-columns: 1fr; align-items: start; } .work-state, .stage-block, .timebox { justify-content: start; justify-items: start; } }
 @media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid, .closed-stats { grid-template-columns: 1fr; } .side-row { grid-template-columns: 1fr; } .side-meta { justify-content: flex-start; } }
 </style>
@@ -4012,9 +4019,15 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   </header>
   <section class="grid" id="metrics"></section>
   <section class="split">
-    <div class="pipeline-col">
-      <h2>🌀 Active Pipeline</h2>
-      <div id="pipeline"></div>
+    <div class="left-col">
+      <div class="pipeline-col">
+        <h2>🌀 Active Pipeline</h2>
+        <div id="pipeline"></div>
+      </div>
+      <div class="cluster-col cluster-col-desktop">
+        <h2>🔎 Cluster Intake</h2>
+        <div class="cluster-repair"></div>
+      </div>
     </div>
     <aside class="side-col">
       <h2>⚡ Automerge Speed</h2>
@@ -4025,9 +4038,9 @@ a:hover { color: #89c8ff; text-decoration: underline; }
       <h2>📡 Recent Activity</h2>
       <div id="events"></div>
     </aside>
-    <div class="cluster-col">
+    <div class="cluster-col cluster-col-mobile">
       <h2>🔎 Cluster Intake</h2>
-      <div id="cluster-repair"></div>
+      <div class="cluster-repair"></div>
     </div>
   </section>
 </main>
@@ -4159,10 +4172,12 @@ function renderPipeline(rows) {
   }).join("") + '</div>';
 }
 function renderClusterRepair(cluster) {
-  const target = document.getElementById("cluster-repair");
-  if (!target) return;
+  const targets = Array.from(document.querySelectorAll(".cluster-repair"));
+  if (!targets.length) return;
   if (!cluster) {
-    target.innerHTML = '<div class="empty">No cluster intake telemetry in this snapshot.</div>';
+    for (const target of targets) {
+      target.innerHTML = '<div class="empty">No cluster intake telemetry in this snapshot.</div>';
+    }
     return;
   }
   const markerRows = (cluster.markers || []).map(marker => {
@@ -4172,8 +4187,11 @@ function renderClusterRepair(cluster) {
   }).join("");
   const runRows = (cluster.latest_runs || []).slice(0, 3).map(run => '<article class="side-row"><div class="side-main">' + linkClass(run.url, compactText(run.title || run.workflow), "item-link") + '<div class="muted side-title">' + esc(run.status || "") + (run.conclusion ? " · " + esc(run.conclusion) : "") + '</div></div><div class="side-meta"><span>' + esc(run.started_at ? since(run.started_at) : "") + '</span></div></article>').join("");
   const activeText = fmt.format((cluster.active_intake_runs || []).length) + " intake · " + fmt.format((cluster.active_worker_runs || []).length) + " workers";
-  target.innerHTML =
+  const html =
     '<div class="split"><div class="pipeline-col"><div class="muted" style="margin-bottom:8px">Runs on ' + esc(cluster.workflow || "repair-cluster-intake.yml") + " · " + esc(activeText) + '</div><div class="work-list">' + (markerRows || '<div class="empty">No processed-store markers yet.</div>') + '</div></div><aside class="side-col"><div class="muted" style="margin-bottom:8px">Recent intake workflow runs</div><div class="side-list">' + (runRows || '<div class="empty">No intake runs found.</div>') + '</div></aside></div>';
+  for (const target of targets) {
+    target.innerHTML = html;
+  }
 }
 function renderAutomerge(rows) {
   if (!rows.length) {
