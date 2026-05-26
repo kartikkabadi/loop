@@ -98,8 +98,9 @@ test("dashboard exposes scheduled cluster intake markers and runs", async () => 
     }
     if (
       url.pathname ===
-      "/repos/openclaw/clawsweeper/contents/results/cluster-repair-intake/openclaw-openclaw.json"
+      "/repos/openclaw/clawsweeper-state/contents/results/cluster-repair-intake/openclaw-openclaw.json"
     ) {
+      assert.equal(url.searchParams.get("ref"), "state");
       return jsonResponse({
         content: Buffer.from(JSON.stringify(marker)).toString("base64"),
       });

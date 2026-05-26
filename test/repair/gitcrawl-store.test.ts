@@ -57,6 +57,7 @@ test("scheduled cluster repair intake follows gitcrawl-store freshness cadence",
   assert.match(workflow, /last_processed_store_sha256/);
   assert.match(workflow, /CLAWSWEEPER_CLUSTER_REPAIR_IMPORT_LIMIT \|\| '1'/);
   assert.match(workflow, /pnpm run repair:dispatch/);
+  assert.doesNotMatch(workflow, /git pull --rebase origin main/);
   assert.match(limitsDocs, /default is `1` cluster per daily\s+run/);
   assert.match(repairDocs, /intake runs daily/);
   assert.match(internalDocs, /refreshes `openclaw\/openclaw` every 15\s+minutes/);
