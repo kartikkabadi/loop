@@ -20,6 +20,8 @@ const DEFAULT_CLAWSWEEPER_BOT_LOGINS = ["clawsweeper[bot]", "openclaw-clawsweepe
 const GITHUB_TIMEOUT_MS = 4500;
 const DEFAULT_STALE_QUEUED_WORKFLOW_MS = 6 * 60 * 60 * 1000;
 const CLAWSWEEPER_REVIEW_REPO = "openclaw/clawsweeper";
+const CLAWSWEEPER_STATE_REPO = "openclaw/clawsweeper-state";
+const CLAWSWEEPER_STATE_REF = "state";
 const CLUSTER_REPAIR_INTAKE_WORKFLOW = "repair-cluster-intake.yml";
 const CLAWSWEEPER_COMMAND_PATTERN =
   /(^|[ \t\r\n])@(?:clawsweeper|openclaw-clawsweeper)\b(?:\[bot\])?|(^|[ \t\r\n])\/(?:clawsweeper|review|re-review|rerun[ -]?review|status|explain|fix|build|implement|create[ -]?pr|fix[ -]?issue|autofix|auto[ -]?fix|automerge|auto[ -]?merge|approve|stop|autoclose)\b/i;
@@ -2107,7 +2109,7 @@ async function clusterRepairStatus(env, repo, targetRepos, activeRuns) {
       env,
       `/repos/${repo}/actions/workflows/${encodeURIComponent(CLUSTER_REPAIR_INTAKE_WORKFLOW)}/runs?per_page=5`,
     ).catch(() => ({ workflow_runs: [] })),
-    Promise.all(targetRepos.map((targetRepo) => readClusterRepairMarker(env, repo, targetRepo))),
+    Promise.all(targetRepos.map((targetRepo) => readClusterRepairMarker(env, targetRepo))),
   ]);
   const intakeRuns = Array.isArray(workflowRuns?.workflow_runs) ? workflowRuns.workflow_runs : [];
   return {
@@ -2123,13 +2125,15 @@ async function clusterRepairStatus(env, repo, targetRepos, activeRuns) {
   };
 }
 
-async function readClusterRepairMarker(env, repo, targetRepo) {
+async function readClusterRepairMarker(env, targetRepo) {
+  const stateRepo = String(env.CLAWSWEEPER_STATE_REPO || CLAWSWEEPER_STATE_REPO);
+  const stateRef = String(env.CLAWSWEEPER_STATE_REF || CLAWSWEEPER_STATE_REF);
   const repoSlug = String(targetRepo || "").replace(/\//g, "-");
   const markerPath = `results/cluster-repair-intake/${repoSlug}.json`;
   try {
     const content = await githubJson(
       env,
-      `/repos/${repo}/contents/${githubPath(markerPath)}?ref=main`,
+      `/repos/${stateRepo}/contents/${githubPath(markerPath)}?ref=${encodeURIComponent(stateRef)}`,
     );
     const marker = JSON.parse(decodeGithubContent(content?.content));
     const generatedJobs = Array.isArray(marker.generated_jobs) ? marker.generated_jobs : [];

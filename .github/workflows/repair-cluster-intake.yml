@@ -275,7 +275,6 @@ jobs:
         run: |
           set -euo pipefail
           mapfile -t jobs < .artifacts/cluster-repair-intake/generated-paths.txt
-          git pull --rebase origin main
           pnpm run repair:dispatch -- "${jobs[@]}" \
             --mode autonomous \
             --wait-for-capacity \
