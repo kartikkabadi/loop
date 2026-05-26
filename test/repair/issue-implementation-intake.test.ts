@@ -74,6 +74,44 @@ test("implementation intake rejects feature and config-option work", () => {
   }
 });
 
+test("implementation intake override permits soft blockers", () => {
+  const markdown = report({
+    item_category: "feature",
+    requires_new_feature: "true",
+    work_validation: JSON.stringify([]),
+  });
+  const decision = reportOnlyDecision({
+    targetRepo: "openclaw/openclaw",
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    operatorOverride: true,
+  });
+
+  assert.equal(decision.shouldRepair, true);
+  assert.equal(decision.status, "override_queued_for_repair");
+  assert.equal(decision.blockerClass, "soft");
+  assert.equal(decision.operatorOverride, true);
+  assert.match(decision.reason, /item category is feature/);
+});
+
+test("implementation intake override routes hard blockers to handoff", () => {
+  const markdown = report({
+    labels: JSON.stringify(["security"]),
+  });
+  const decision = reportOnlyDecision({
+    targetRepo: "openclaw/openclaw",
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    operatorOverride: true,
+  });
+
+  assert.equal(decision.shouldRepair, true);
+  assert.equal(decision.status, "override_handoff");
+  assert.equal(decision.blockerClass, "hard");
+  assert.equal(decision.operatorOverride, true);
+  assert.match(decision.reason, /protected label present/);
+});
+
 test("vision-fit reports are eligible for sibling implementation intake", () => {
   const markdown = report({
     item_category: "feature",
@@ -188,4 +226,30 @@ test("comment router default allows one same-head infrastructure retry", () => {
   const source = readFileSync("src/repair/config.ts", "utf8");
 
   assert.match(source, /CLAWSWEEPER_MAX_REPAIRS_PER_HEAD \?\? 2/);
+});
+
+test("comment router rewrites existing issue implementation jobs on override", () => {
+  const source = readFileSync("src/repair/comment-router.ts", "utf8");
+
+  assert.match(source, /command\.operator_override === true/);
+  assert.match(source, /fs\.writeFileSync\(\s*absolute,\s*renderIssueImplementationJob/s);
+  assert.match(source, /issueImplementationJobOptions\(command\)/);
+  assert.match(source, /statusDetail = "written"/);
+});
+
+test("comment router classifies protected issue build overrides as hard", () => {
+  const source = readFileSync("src/repair/comment-router.ts", "utf8");
+
+  assert.match(source, /issueImplementationOverrideBlockerClass\(command\)/);
+  assert.match(source, /target\.kind === "issue" && target\.job_path/);
+  assert.match(source, /issueImplementationLinkedPrSignal\(target\)/);
+  assert.match(source, /issueLinkedOpenPrReferences\(issue, issueNumber\)/);
+  assert.match(source, /open_prs: linkedOpenPrs/);
+  assert.match(source, /addPullRequestReferenceNumbersFromText/);
+  assert.match(source, /searchOpenPullRequestsMentioningIssue\(Number\(issueNumber\)\)/);
+  assert.match(source, /target\.body/);
+  assert.match(source, /target\.locked === true/);
+  assert.match(source, /labels\.some\(isIssueImplementationProtectedLabel\)/);
+  assert.match(source, /overrideBlockerClass,\n\s+overrideAction: command\.operator_override/);
+  assert.match(source, /prepare a non-mutating handoff for this issue/);
 });

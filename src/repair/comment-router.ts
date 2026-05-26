@@ -192,6 +192,7 @@ for (const comment of comments) {
     intent: parsed.intent,
     autoclose_message: parsed.autoclose_message ?? null,
     implementation_prompt: parsed.implementation_prompt ?? null,
+    operator_override: parsed.operator_override ?? null,
     trusted_bot: Boolean(parsed.trusted_bot),
     trusted_bot_author: parsed.trusted_bot_author ?? null,
     automation_source: parsed.automation_source ?? null,
@@ -1816,10 +1817,21 @@ function ensureAutomergeJob(command: LooseRecord) {
 
 function ensureIssueImplementationJob(command: LooseRecord) {
   if (command.target?.job_path) {
+    let statusDetail = "existing";
+    if (command.operator_override === true) {
+      const absolute = path.join(repoRoot(), command.target.job_path);
+      if (fs.existsSync(absolute)) {
+        fs.writeFileSync(
+          absolute,
+          renderIssueImplementationJob(issueImplementationJobOptions(command)),
+        );
+        statusDetail = "written";
+      }
+    }
     return {
       job_path: command.target.job_path,
       mode: command.target.mode ?? dispatchMode(command.target.job_path),
-      status_detail: "existing",
+      status_detail: statusDetail,
     };
   }
   if (command.target?.kind !== "issue" || !command.issue_number) {
@@ -1835,14 +1847,7 @@ function ensureIssueImplementationJob(command: LooseRecord) {
     fs.mkdirSync(path.dirname(absolute), { recursive: true });
     fs.writeFileSync(
       absolute,
-      renderIssueImplementationJob({
-        repo: command.repo,
-        issueNumber: command.issue_number,
-        title: command.target.title,
-        commentUrl: command.comment_url,
-        author: command.author,
-        implementationPrompt: command.implementation_prompt,
-      }),
+      renderIssueImplementationJob(issueImplementationJobOptions(command)),
     );
     statusDetail = "written";
   }
@@ -1863,6 +1868,72 @@ function ensureIssueImplementationJob(command: LooseRecord) {
     cluster_id: command.target.cluster_id,
     status_detail: statusDetail,
   };
+}
+
+function issueImplementationJobOptions(command: LooseRecord) {
+  const overrideBlockerClass = issueImplementationOverrideBlockerClass(command);
+  return {
+    repo: command.repo,
+    issueNumber: command.issue_number,
+    title: command.target.title,
+    commentUrl: command.comment_url,
+    author: command.author,
+    implementationPrompt: command.implementation_prompt,
+    operatorOverride: command.operator_override === true,
+    overrideRequestedBy: command.author,
+    overrideReason: command.operator_override
+      ? "maintainer requested /clawsweeper build override"
+      : null,
+    overrideBlockerClass,
+    overrideAction: command.operator_override
+      ? overrideBlockerClass === "hard"
+        ? "prepare a non-mutating handoff for this issue"
+        : "try the narrowest useful reviewable PR for this issue"
+      : null,
+  };
+}
+
+function issueImplementationOverrideBlockerClass(command: LooseRecord) {
+  if (command.operator_override !== true) return null;
+  const target = command.target ?? {};
+  if (target.kind === "issue" && target.job_path) return "hard";
+  if (target.kind === "issue" && issueImplementationLinkedPrSignal(target)) return "hard";
+  if (target.kind === "issue" && target.state && target.state !== "open") return "hard";
+  if (target.kind === "issue" && target.locked === true) return "hard";
+  const labels = (target.labels ?? []).map((label: JsonValue) => String(label));
+  if (labels.some(isIssueImplementationProtectedLabel)) return "hard";
+  if (
+    issueImplementationSecuritySignal([target.title, target.body, labels.join("\n")].join("\n"))
+  ) {
+    return "hard";
+  }
+  return "soft";
+}
+
+function issueImplementationLinkedPrSignal(target: LooseRecord) {
+  const candidates = [
+    target.linked_prs,
+    target.linkedPrs,
+    target.existing_prs,
+    target.existingPrs,
+    target.open_prs,
+    target.openPrs,
+    target.pull_request_urls,
+    target.pullRequestUrls,
+  ];
+  return candidates.some((value) => Array.isArray(value) && value.length > 0);
+}
+
+function isIssueImplementationProtectedLabel(label: string) {
+  return ["security", "beta-blocker", "release-blocker", "maintainer"].includes(
+    label.trim().toLowerCase(),
+  );
+}
+
+function issueImplementationSecuritySignal(text: string) {
+  return /\b(?:security|vulnerability|cve|ghsa|secret|credential|token|exploit|xss|csrf|ssrf|rce)\b/i.test(
+    text,
+  );
 }
 
 function repairJobModeForCommand(command: LooseRecord) {
@@ -2517,18 +2588,77 @@ function classifyIssueTarget(issue: LooseRecord, issueNumber: JsonValue): JsonVa
   const implementationCluster = issueImplementationClusterId(targetRepo, issueNumber);
   const implementationPath = issueImplementationJobPath(targetRepo, issueNumber);
   const jobPath = existingJobPath(implementationCluster, targetRepo);
+  const linkedOpenPrs = issueLinkedOpenPrReferences(issue, issueNumber);
   return {
     kind: "issue",
     state: issue.state ?? null,
+    locked: issue.locked ?? null,
     title: issue.title ?? null,
+    body: issue.body ?? null,
     author: issue.user?.login ?? null,
     labels: (issue.labels ?? []).map((item: JsonValue) => item.name ?? item),
     cluster_id: jobPath ? implementationCluster : null,
     job_path: jobPath,
+    open_prs: linkedOpenPrs,
     issue_implementation_cluster_id: implementationCluster,
     issue_implementation_job_path: jobPath ?? implementationPath,
     mode: jobPath ? dispatchMode(jobPath) : "autonomous",
   };
+}
+
+function issueLinkedOpenPrReferences(issue: LooseRecord, issueNumber: JsonValue) {
+  const refs = new Set<number>();
+  const comments = issueCommentsFor(issueNumber).map((comment) => comment.body);
+  for (const text of [issue.title, issue.body, ...comments]) {
+    addPullRequestReferenceNumbersFromText(refs, text);
+  }
+  for (const number of searchOpenPullRequestsMentioningIssue(Number(issueNumber))) {
+    refs.add(number);
+  }
+  const current = Number(issueNumber);
+  return [...refs]
+    .filter((number) => Number.isFinite(number) && number !== current)
+    .filter((number) => {
+      try {
+        const linked = fetchIssue(number);
+        return Boolean(linked.pull_request) && String(linked.state ?? "").toLowerCase() === "open";
+      } catch {
+        return true;
+      }
+    })
+    .map((number) => `#${number}`);
+}
+
+function searchOpenPullRequestsMentioningIssue(issueNumber: number) {
+  try {
+    const result = ghJson(
+      [
+        "api",
+        "search/issues",
+        "-f",
+        `q=repo:${targetRepo} is:pr is:open "${issueNumber}"`,
+        "--jq",
+        ".items",
+      ],
+      { attempts: TARGET_LOOKUP_RETRY_ATTEMPTS },
+    );
+    return Array.isArray(result) ? result.map((item) => Number(item.number)).filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+}
+
+function addPullRequestReferenceNumbersFromText(numbers: Set<number>, text: JsonValue) {
+  const value = String(text ?? "");
+  if (!value) return;
+  const urlPattern = new RegExp(
+    `https://github\\.com/${escapeRegExp(targetRepo)}/pull/(\\d+)`,
+    "gi",
+  );
+  for (const match of value.matchAll(urlPattern)) numbers.add(Number(match[1]));
+  for (const match of value.matchAll(/\b(?:pr|pull request)\s+#(\d+)\b/gi)) {
+    numbers.add(Number(match[1]));
+  }
 }
 
 function classifyPullTarget(pull: LooseRecord, issueNumber: JsonValue): JsonValue {

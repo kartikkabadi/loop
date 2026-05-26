@@ -32,6 +32,7 @@ import {
   existingModeStatusBlocksReplay,
   hasCommandResponseMarker,
   issueImplementationClusterId,
+  issueImplementationBlockerClass,
   issueImplementationJobBranch,
   issueImplementationJobPath,
   isAuthorReadOnlyCommandAllowed,
@@ -172,6 +173,20 @@ test("parseCommand recognizes maintainer slash commands", () => {
     command: "build add export support",
     intent: "implement_issue",
     implementation_prompt: "add export support",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper build override"), {
+    trigger: "slash",
+    command: "build override",
+    intent: "implement_issue",
+    implementation_prompt: "",
+    operator_override: true,
+  });
+  assert.deepEqual(parseCommand("/clawsweeper build override\nKeep the handoff concrete."), {
+    trigger: "slash",
+    command: "build override keep the handoff concrete",
+    intent: "implement_issue",
+    implementation_prompt: "Keep the handoff concrete.",
+    operator_override: true,
   });
   assert.deepEqual(parseCommand("/clawsweeper create pr keep the fix narrow"), {
     trigger: "slash",
@@ -686,6 +701,47 @@ test("renderIssueImplementationJob validates and opens one non-closing fix PR la
   assert.match(job.body, /repair_strategy: "new_fix_pr"/);
   assert.match(job.body, /Do not close the issue from this lane/);
   assert.match(job.body, /Keep it scoped to the toolbar/);
+});
+
+test("renderIssueImplementationJob records maintainer build override metadata", () => {
+  const raw = renderIssueImplementationJob({
+    repo: "openclaw/openclaw",
+    issueNumber: 74114,
+    title: "Plan unsafe issue",
+    author: "maintainer-user",
+    operatorOverride: true,
+    overrideRequestedBy: "maintainer-user",
+    overrideReason: "maintainer requested /clawsweeper build override",
+    overrideBlockerClass: "hard",
+    overrideAction: "produce a safe non-code plan, decomposition, or human-review handoff",
+  });
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  assert.ok(match);
+  const job = {
+    frontmatter: parseSimpleYaml(match[1]),
+    body: match[2].trim(),
+  };
+
+  assert.deepEqual(validateJob(job), []);
+  assert.equal(job.frontmatter.operator_override, true);
+  assert.equal(job.frontmatter.override_requested_by, "maintainer-user");
+  assert.equal(job.frontmatter.override_reason, "maintainer requested /clawsweeper build override");
+  assert.equal(job.frontmatter.override_blocker_class, "hard");
+  assert.equal(job.frontmatter.allow_fix_pr, false);
+  assert.equal(job.frontmatter.security_sensitive, false);
+  assert.deepEqual(job.frontmatter.allowed_actions, ["comment", "label"]);
+  assert.deepEqual(job.frontmatter.blocked_actions, ["fix", "raise_pr", "close", "merge"]);
+  assert.match(job.body, /hard blocker/);
+  assert.match(job.body, /non-code artifact/);
+  assert.match(job.body, /do not emit a `new_fix_pr` artifact/);
+  assert.doesNotMatch(job.body, /repair_strategy: "new_fix_pr"/);
+});
+
+test("issue implementation blocker classifier treats linked PR evidence as hard", () => {
+  assert.equal(issueImplementationBlockerClass("open PR already mentions this issue"), "hard");
+  assert.equal(issueImplementationBlockerClass("work cluster references a PR"), "hard");
+  assert.equal(issueImplementationBlockerClass("report repository is openclaw/other"), "hard");
+  assert.equal(issueImplementationBlockerClass("missing validation commands"), "soft");
 });
 
 test("automerge changelog gate does not block user-facing OpenClaw changes", () => {
@@ -1672,6 +1728,26 @@ test("renderResponse reports issue implementation repair dispatches", () => {
   assert.match(body, /Action: repair worker queued/);
   assert.match(body, /does not merge or close the issue/);
   assert.doesNotMatch(body, /automerge/);
+});
+
+test("renderResponse includes build override path for issue implementation refusals", () => {
+  const body = renderResponse(
+    {
+      comment_id: "464",
+      intent: "implement_issue",
+      issue_number: 74113,
+      reason: "implementation PR creation requires an open issue",
+      target: { kind: "issue", head_sha: null },
+    },
+    null,
+  );
+
+  assert.match(body, /could not start an implementation PR/);
+  assert.match(body, /Reason: implementation PR creation requires an open issue/);
+  assert.match(body, /Blocker: hard/);
+  assert.match(body, /Evidence: implementation PR creation requires an open issue/);
+  assert.match(body, /Override: `\/clawsweeper build override`/);
+  assert.match(body, /safe non-code plan/);
 });
 
 test("renderResponse reports freeform assist dispatches as read-only", () => {
