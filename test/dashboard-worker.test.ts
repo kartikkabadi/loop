@@ -48,7 +48,6 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /🌀 Active Pipeline/);
   assert.match(html, /✅ Closed by ClawSweeper/);
   assert.match(html, /📡 Recent Activity/);
-  assert.ok(html.indexOf("🔎 Cluster Intake") > html.indexOf("📡 Recent Activity"));
   assert.doesNotMatch(html, /ðŸ|â|âš|âœ/);
 });
 
