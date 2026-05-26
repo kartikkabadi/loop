@@ -19,25 +19,20 @@ on:
         default: true
         type: boolean
       generate:
-        description: "Generate report files before deploy"
-        required: true
-        default: true
-        type: boolean
-      comments:
-        description: "Collect issue/PR comments; slower, host cron should normally own this"
+        description: "Generate report files before deploy; Hetzner cron owns normal generation"
         required: true
         default: false
+        type: boolean
+      comments:
+        description: "Collect issue/PR comments when manually regenerating"
+        required: true
+        default: true
         type: boolean
       date:
         description: "Optional YYYY-MM-DD report date"
         required: false
         default: ""
         type: string
-  schedule:
-    - cron: "17 8 * * *"
-    - cron: "47 8 * * 1"
-    - cron: "17 9 1 * *"
-
 permissions:
   contents: read
 
