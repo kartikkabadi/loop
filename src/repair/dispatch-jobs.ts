@@ -17,13 +17,17 @@ import {
 import { sleepMs } from "./timing.js";
 import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 import { AUTOMATION_LIMITS, workerLimit, type WorkerLane } from "./limits.js";
-import { repairJobIntentForFrontmatter, workerLaneForRepairJobIntent } from "./job-intent.js";
+import {
+  repairJobIntentForFrontmatter,
+  repairJobUsesClusterLane,
+  workerLaneForRepairJobIntent,
+} from "./job-intent.js";
 
 const args = parseArgs(process.argv.slice(2));
 const defaultRunner = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
 const defaultExecutionRunner =
   process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
-const mode = args.mode ?? "plan";
+const mode = String(args.mode ?? "plan");
 const runner = args.runner ?? defaultRunner;
 const executionRunner = args["execution-runner"] ?? args.execution_runner ?? defaultExecutionRunner;
 const workflow = args.workflow ?? REPAIR_CLUSTER_WORKFLOW;
@@ -171,7 +175,15 @@ function dispatchMaxLiveWorkers(jobPaths: JsonValue[]): number {
 }
 
 function strongestWorkerLane(jobPaths: JsonValue[]): WorkerLane {
-  const lanes = new Set(jobPaths.map((jobPath) => jobWorkerLanes.get(String(jobPath))));
+  const lanes = new Set(
+    jobPaths.map((jobPath) => {
+      const job = parseJob(String(jobPath));
+      return repairJobUsesClusterLane(job.frontmatter)
+        ? "cluster_repair"
+        : jobWorkerLanes.get(String(jobPath));
+    }),
+  );
+  if (lanes.has("cluster_repair")) return "cluster_repair";
   if (lanes.has("automerge_repair")) return "automerge_repair";
   if (lanes.has("issue_implementation")) return "issue_implementation";
   return "repair";

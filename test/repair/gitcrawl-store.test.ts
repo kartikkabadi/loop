@@ -1,0 +1,73 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+
+test("gitcrawl readers prefer portable gitcrawl-store before legacy local DB", () => {
+  const sources = [
+    readFileSync("src/clawsweeper.ts", "utf8"),
+    readFileSync("src/repair/import-gitcrawl-clusters.ts", "utf8"),
+    readFileSync("src/repair/import-gitcrawl-low-signal-prs.ts", "utf8"),
+  ];
+
+  for (const source of sources) {
+    assert.match(source, /CLAWSWEEPER_GITCRAWL_DB/);
+    assert.match(source, /gitcrawl-store/);
+    assert.match(source, /\.sync\.db/);
+    assert.match(source, /replace\(/);
+    assert(source.indexOf("gitcrawl-store") < source.indexOf('.config", "gitcrawl", "gitcrawl.db'));
+  }
+});
+
+test("gitcrawl docs describe external store freshness instead of per-run crawling", () => {
+  const relatedDocs = readFileSync("docs/related-issue-discovery.md", "utf8");
+  const repairDocs = readFileSync("docs/repair/README.md", "utf8");
+
+  assert.match(relatedDocs, /does not run a gitcrawl fetch\s+or download issues during review/);
+  assert.match(relatedDocs, /git pull --ff-only/);
+  assert.match(repairDocs, /does not crawl or download\s+issues during repair import/);
+  assert.match(repairDocs, /git -C \.\.\/gitcrawl-store pull --ff-only/);
+});
+
+test("gitcrawl cluster import drip-feeds mostly open clusters by default", () => {
+  const source = readFileSync("src/repair/import-gitcrawl-clusters.ts", "utf8");
+  const limitsDocs = readFileSync("docs/limits.md", "utf8");
+  const repairDocs = readFileSync("docs/repair/README.md", "utf8");
+
+  assert.match(source, /const allowEmpty = Boolean\(args\["allow-empty"\]\)/);
+  assert.match(source, /const allowInstantClose = booleanArg\("allow-instant-close", false\)/);
+  assert.match(source, /const skipClosedPercent = percentArg\("skip-closed-percent", 75\)/);
+  assert.match(source, /skip mostly-closed cluster/);
+  assert.match(source, /closedPercent >= skipClosedPercent/);
+  assert.match(
+    source,
+    /\(\(closed_count \* 100\) \/ member_count\) < \$\{sqlNumber\(skipClosedPercent\)\}/,
+  );
+  assert.match(limitsDocs, /75% closed members are skipped/);
+  assert.match(repairDocs, /75%\+ closed clusters by default/);
+});
+
+test("scheduled cluster repair intake follows gitcrawl-store freshness cadence", () => {
+  const workflow = readFileSync(".github/workflows/repair-cluster-intake.yml", "utf8");
+  const limitsDocs = readFileSync("docs/limits.md", "utf8");
+  const repairDocs = readFileSync("docs/repair/README.md", "utf8");
+  const internalDocs = readFileSync("docs/repair/internal-features.md", "utf8");
+
+  assert.match(workflow, /cron: "8 \* \* \* \*"/);
+  assert.match(workflow, /gitcrawl-store refreshes openclaw\/openclaw every 15 minutes/);
+  assert.match(workflow, /last_processed_store_sha256/);
+  assert.match(workflow, /CLAWSWEEPER_CLUSTER_REPAIR_IMPORT_LIMIT \|\| '1'/);
+  assert.match(workflow, /pnpm run repair:dispatch/);
+  assert.match(limitsDocs, /default is `1` cluster every\s+hour/);
+  assert.match(repairDocs, /intake runs hourly/);
+  assert.match(internalDocs, /refreshes `openclaw\/openclaw` every 15\s+minutes/);
+});
+
+test("gitcrawl cluster import is not blocked by the scheduled intake gate", () => {
+  const source = readFileSync("src/repair/import-gitcrawl-clusters.ts", "utf8");
+  const lowSignalSource = readFileSync("src/repair/import-gitcrawl-low-signal-prs.ts", "utf8");
+  const dispatchJobs = readFileSync("src/repair/dispatch-jobs.ts", "utf8");
+
+  assert.doesNotMatch(source, /CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED/);
+  assert.doesNotMatch(lowSignalSource, /CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED/);
+  assert.doesNotMatch(dispatchJobs, /CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED/);
+});

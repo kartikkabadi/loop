@@ -8,6 +8,9 @@
   "lanes": {
     "assist": {
       "max": 5
+    },
+    "repair": {
+      "cluster_max_live_runs": 1
     }
   }
 }

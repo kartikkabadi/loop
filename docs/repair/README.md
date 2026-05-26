@@ -37,6 +37,15 @@ vulnerabilities unless there is a real trust-boundary bypass.
 The repair lane is intentionally narrower than the sweep lanes. The sweepers scan OpenClaw commits and backlog items on a cadence; repair handles targeted clusters that were already grouped by a human, gitcrawl, or another dedupe tool.
 
 Cluster discovery currently comes from [openclaw/gitcrawl](https://github.com/openclaw/gitcrawl).
+ClawSweeper reads existing gitcrawl SQLite state; it does not crawl or download
+issues during repair import. By default, import scripts prefer a checked-out
+portable store at `../gitcrawl-store/data/<owner>__<repo>.sync.db`, then
+`~/.config/gitcrawl/stores/gitcrawl-store/data/<owner>__<repo>.sync.db`, then
+the legacy `~/.config/gitcrawl/gitcrawl.db`. Use `--db` or
+`CLAWSWEEPER_GITCRAWL_DB` to override. Store freshness is maintained outside
+ClawSweeper by the gitcrawl-store refresh workflow and by refreshing the local
+checkout, for example `git -C ../gitcrawl-store pull --ff-only`, before
+importing jobs.
 
 <img width="3582" height="2160" alt="image" src="https://github.com/user-attachments/assets/20b816cc-72ab-479e-bc18-84f5b2b53745" />
 
@@ -230,19 +239,36 @@ pnpm run repair:worker -- jobs/openclaw/inbox/cluster-example.md --mode plan --d
 pnpm run repair:build-fix-artifact -- jobs/openclaw/inbox/autonomous-example.md --offline
 
 # Stage low-signal PR sweep jobs from local gitcrawl data.
+# Uses --db/CLAWSWEEPER_GITCRAWL_DB, a local gitcrawl-store checkout, or the
+# legacy ~/.config/gitcrawl/gitcrawl.db; it never fetches GitHub issues itself.
 pnpm run repair:import-gitcrawl-low-signal -- --limit 20 --batch-size 5 --mode autonomous --sort stale
 
-# Stage the next largest active gitcrawl clusters, skipping already-imported and
-# fully security-sensitive clusters by default. Mixed clusters can route security
-# refs while continuing ordinary bug/dedupe work.
+# Stage the next largest active gitcrawl clusters, skipping already-imported,
+# security-sensitive, feature-request, and 75%+ closed clusters by default.
+# Mixed clusters can route security refs while continuing ordinary bug/dedupe work.
 pnpm run repair:import-gitcrawl -- --from-gitcrawl --limit 40 --mode autonomous --suffix autonomous-smoke --allow-instant-close --allow-merge --allow-fix-pr --allow-post-merge-close
 
+# Automatic imported-cluster intake runs through repair-cluster-intake.yml.
+# gitcrawl-store refreshes openclaw/openclaw every 15 minutes; the ClawSweeper
+# intake runs hourly, records the processed portable DB SHA in
+# results/cluster-repair-intake/<repo>.json, and skips repeated ticks for the
+# same store snapshot. It imports at most one cluster by default and dispatches
+# through the one-worker cluster_repair lane.
+
 # Dispatch reviewed jobs. Dispatch derives its default live-worker cap from the
-# job's job_intent and config/automation-limits.json. Tune the global budget
-# there first, or use CLAWSWEEPER_MAX_LIVE_WORKERS/--max-live-workers for a
-# one-lane override. With --wait-for-capacity, dispatch can drain a larger file
+# job's job_intent and config/automation-limits.json. Existing repair lanes
+# keep the normal 40%-of-workers.max cap, currently 22; imported gitcrawl
+# cluster jobs default to lanes.repair.cluster_max_live_runs, currently 1.
+# Use CLAWSWEEPER_MAX_LIVE_WORKERS/--max-live-workers for a one-lane override.
+# With --wait-for-capacity, dispatch can drain a larger file
 # list in capacity-sized waves instead of refusing the whole batch.
-CLAWSWEEPER_MAX_LIVE_WORKERS=22 pnpm run repair:dispatch -- jobs/openclaw/inbox/cluster-example.md \
+CLAWSWEEPER_MAX_LIVE_WORKERS=22 pnpm run repair:dispatch -- jobs/openclaw/inbox/ordinary-example.md \
+  --mode autonomous \
+  --runner blacksmith-4vcpu-ubuntu-2404 \
+  --execution-runner blacksmith-16vcpu-ubuntu-2404
+
+# Imported gitcrawl cluster jobs drip-feed by default.
+CLAWSWEEPER_MAX_LIVE_WORKERS=1 pnpm run repair:dispatch -- jobs/openclaw/inbox/cluster-example.md \
   --mode autonomous \
   --runner blacksmith-4vcpu-ubuntu-2404 \
   --execution-runner blacksmith-16vcpu-ubuntu-2404
@@ -326,13 +352,21 @@ The workflow needs:
 - a read-only GitHub token for worker inspection
 - a separate write-scoped GitHub token for the deterministic applicator
 - execution gates that default closed: set `CLAWSWEEPER_ALLOW_EXECUTE=1` and `CLAWSWEEPER_ALLOW_FIX_PR=1` only for an intentional execution window; otherwise execute/autonomous dispatches render plan-only output and skip mutation steps
+- `CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED=1` opt-in for the scheduled
+  `repair-cluster-intake.yml` imported-cluster intake. Direct repair import and
+  dispatch commands are not blocked by this variable; they keep the existing
+  repair execution gates. Gitcrawl cluster import skips clusters with at least
+  75% closed members by default; pass `--skip-closed-percent` only for an
+  intentional broader import.
+- optional `CLAWSWEEPER_CLUSTER_REPAIR_IMPORT_LIMIT` variable for the scheduled
+  imported-cluster intake; default is `1` cluster per hourly run.
 - merge is separately gated by `CLAWSWEEPER_ALLOW_MERGE`, which defaults to `0`; merge-ready PRs are labeled `clawsweeper:human-review` and `clawsweeper:merge-ready` for a maintainer to merge manually when the global gate is closed
 - optional `CLAWSWEEPER_CODEX_CLI_VERSION` variable to pin and refresh the cached Codex CLI
 - optional `CLAWSWEEPER_MODEL` override for dispatch scripts; default Codex
   model is `gpt-5.5`; repair workers default to high reasoning on the fast
   service tier, and accidental `xhigh` reasoning overrides are normalized back
   to `high`
-- optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; dispatch defaults are derived from `job_intent` and `workers.max`
+- optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; dispatch defaults are derived from `job_intent`, cluster-lane classification, `workers.max`, and `lanes.repair.cluster_max_live_runs`
 - optional `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA` variable for replacement PR backpressure; default is `50` open ClawSweeper PRs per touched area, `0` disables the area cap, and common changelog/release-note files are ignored for this check
 - ClawSweeper commit-finding repair PRs are labeled `clawsweeper:commit-finding`
 - optional `CLAWSWEEPER_CODEX_TIMEOUT_MS`, `CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS`,

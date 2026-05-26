@@ -20,6 +20,8 @@ const DEFAULT_CLAWSWEEPER_BOT_LOGINS = ["clawsweeper[bot]", "openclaw-clawsweepe
 const GITHUB_TIMEOUT_MS = 4500;
 const DEFAULT_STALE_QUEUED_WORKFLOW_MS = 6 * 60 * 60 * 1000;
 const CLAWSWEEPER_REVIEW_REPO = "openclaw/clawsweeper";
+const CLUSTER_REPAIR_INTAKE_WORKFLOW = "repair-cluster-intake.yml";
+const CLUSTER_REPAIR_INTAKE_CRON = "8 * * * *";
 const CLAWSWEEPER_COMMAND_PATTERN =
   /(^|[ \t\r\n])@(?:clawsweeper|openclaw-clawsweeper)\b(?:\[bot\])?|(^|[ \t\r\n])\/(?:clawsweeper|review|re-review|rerun[ -]?review|status|explain|fix|build|implement|create[ -]?pr|fix[ -]?issue|autofix|auto[ -]?fix|automerge|auto[ -]?merge|approve|stop|autoclose)\b/i;
 const CLAWSWEEPER_ALLOWED_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
@@ -937,7 +939,7 @@ async function statusSnapshot(env, ctx) {
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
-  const [activeJobs, pipeline, automerge, closed, storedEvents] = await Promise.all([
+  const [activeJobs, pipeline, clusterRepair, automerge, closed, storedEvents] = await Promise.all([
     estimateActiveCodexJobs(workerRuns),
     withTimeout(
       pipelineItems(env, workerRuns.slice(0, 30)),
@@ -946,6 +948,14 @@ async function statusSnapshot(env, ctx) {
     ).catch((error) => {
       errors.push(error.message);
       return workerRuns.slice(0, 30).map((run) => classifyRun(run));
+    }),
+    withTimeout(
+      clusterRepairStatus(env, repo, targetRepos, activeRuns),
+      OPTIONAL_SECTION_TIMEOUT_MS,
+      "cluster repair intake",
+    ).catch((error) => {
+      errors.push(error.message);
+      return emptyClusterRepairStatus(targetRepos);
     }),
     withTimeout(
       recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"),
@@ -994,6 +1004,7 @@ async function statusSnapshot(env, ctx) {
     },
     pipeline,
     recent: {
+      cluster_repair: clusterRepair,
       automerge: automerge.items,
       closed_items: closed.items,
       closed_stats: closed.stats,
@@ -2089,6 +2100,107 @@ async function recentAutomerge(env, repo) {
     samples: durations.length,
     items,
   };
+}
+
+async function clusterRepairStatus(env, repo, targetRepos, activeRuns) {
+  const [workflowRuns, markers] = await Promise.all([
+    githubJson(
+      env,
+      `/repos/${repo}/actions/workflows/${encodeURIComponent(CLUSTER_REPAIR_INTAKE_WORKFLOW)}/runs?per_page=5`,
+    ).catch(() => ({ workflow_runs: [] })),
+    Promise.all(targetRepos.map((targetRepo) => readClusterRepairMarker(env, repo, targetRepo))),
+  ]);
+  const intakeRuns = Array.isArray(workflowRuns?.workflow_runs) ? workflowRuns.workflow_runs : [];
+  return {
+    workflow: CLUSTER_REPAIR_INTAKE_WORKFLOW,
+    schedule: CLUSTER_REPAIR_INTAKE_CRON,
+    markers,
+    latest_runs: intakeRuns.slice(0, 5).map(workflowRunSummary),
+    active_intake_runs: activeRuns
+      .filter((run) => workflowRunNameIncludes(run, "repair cluster intake"))
+      .map(workflowRunSummary),
+    active_worker_runs: activeRuns
+      .filter((run) => workflowRunNameIncludes(run, "repair cluster worker"))
+      .map(workflowRunSummary),
+  };
+}
+
+async function readClusterRepairMarker(env, repo, targetRepo) {
+  const repoSlug = String(targetRepo || "").replace(/\//g, "-");
+  const markerPath = `results/cluster-repair-intake/${repoSlug}.json`;
+  try {
+    const content = await githubJson(
+      env,
+      `/repos/${repo}/contents/${githubPath(markerPath)}?ref=main`,
+    );
+    const marker = JSON.parse(decodeGithubContent(content?.content));
+    const generatedJobs = Array.isArray(marker.generated_jobs) ? marker.generated_jobs : [];
+    const storeSha = nullableString(marker.last_processed_store_sha256);
+    return {
+      target_repo: nullableString(marker.target_repo) || targetRepo,
+      marker_path: markerPath,
+      status: generatedJobs.length > 0 ? "imported" : "checked",
+      last_processed_store_sha256: storeSha,
+      last_processed_store_short_sha: storeSha ? storeSha.slice(0, 10) : null,
+      last_processed_store_exported_at: nullableString(marker.last_processed_store_exported_at),
+      generated_count: Math.max(0, numberOrNull(marker.generated_count) ?? generatedJobs.length),
+      generated_jobs: generatedJobs.slice(0, 8).map((job) => String(job)),
+      run_url: nullableString(marker.run_url),
+      updated_at: nullableString(marker.updated_at),
+    };
+  } catch {
+    return {
+      target_repo: targetRepo,
+      marker_path: markerPath,
+      status: "not_recorded",
+      last_processed_store_sha256: null,
+      last_processed_store_short_sha: null,
+      last_processed_store_exported_at: null,
+      generated_count: 0,
+      generated_jobs: [],
+      run_url: null,
+      updated_at: null,
+    };
+  }
+}
+
+function emptyClusterRepairStatus(targetRepos) {
+  return {
+    workflow: CLUSTER_REPAIR_INTAKE_WORKFLOW,
+    schedule: CLUSTER_REPAIR_INTAKE_CRON,
+    markers: targetRepos.map((targetRepo) => ({
+      target_repo: targetRepo,
+      marker_path: `results/cluster-repair-intake/${String(targetRepo).replace(/\//g, "-")}.json`,
+      status: "unavailable",
+      last_processed_store_sha256: null,
+      last_processed_store_short_sha: null,
+      last_processed_store_exported_at: null,
+      generated_count: 0,
+      generated_jobs: [],
+      run_url: null,
+      updated_at: null,
+    })),
+    latest_runs: [],
+    active_intake_runs: [],
+    active_worker_runs: [],
+  };
+}
+
+function workflowRunNameIncludes(run, needle) {
+  return `${run?.name || ""} ${run?.display_title || ""}`.toLowerCase().includes(needle);
+}
+
+function githubPath(value) {
+  return String(value).split("/").map(encodeURIComponent).join("/");
+}
+
+function decodeGithubContent(value) {
+  const binary = atob(String(value || "").replace(/\s/g, ""));
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new TextDecoder().decode(bytes);
 }
 
 async function recentClawsweeperClosed(env, repos) {
@@ -3737,7 +3849,8 @@ a:hover { color: #89c8ff; text-decoration: underline; }
 .split > div,
 .split > aside { min-width: 0; }
 .pipeline-col { overflow: hidden; }
-.side-col { min-width: 0; }
+.cluster-col { grid-column: 1; }
+.side-col { grid-column: 2; grid-row: 1 / span 2; min-width: 0; }
 #pipeline,
 #automerge,
 #closed,
@@ -3879,7 +3992,7 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   font-style: italic;
 }
 .empty::before { content: "🦀 "; opacity: 0.3; }
-@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } }
+@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } .cluster-col, .side-col { grid-column: auto; grid-row: auto; } .side-col { order: 2; } .cluster-col { order: 3; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } }
 @media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .work-row { grid-template-columns: 1fr; align-items: start; } .work-state, .stage-block, .timebox { justify-content: start; justify-items: start; } }
 @media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid, .closed-stats { grid-template-columns: 1fr; } .side-row { grid-template-columns: 1fr; } .side-meta { justify-content: flex-start; } }
 </style>
@@ -3912,6 +4025,10 @@ a:hover { color: #89c8ff; text-decoration: underline; }
       <h2>📡 Recent Activity</h2>
       <div id="events"></div>
     </aside>
+    <div class="cluster-col">
+      <h2>🔎 Cluster Intake</h2>
+      <div id="cluster-repair"></div>
+    </div>
   </section>
 </main>
 <script>
@@ -4024,6 +4141,7 @@ function renderDashboard(data, note) {
     metric("⚡ Merge Speed", data.averages.automerge_command_to_merge_ms ? elapsed(data.averages.automerge_command_to_merge_ms) : "n/a", data.averages.automerge_samples + " samples", 60, "var(--violet)"),
     metric("🎯 Capacity", fleet.budget_used_percent + "%", "fleet utilization", fleet.budget_used_percent, "var(--green)")
   ].join("");
+  renderClusterRepair(data.recent?.cluster_repair);
   renderPipeline(data.pipeline || []);
   renderAutomerge(data.recent.automerge || []);
   renderClosedStats(data.recent.closed_stats);
@@ -4039,6 +4157,23 @@ function renderPipeline(rows) {
     const detail = pipelineItemDetail(row);
     return '<article class="work-row"><div class="work-main" title="' + esc(compactText(row.title)) + '"><div class="row-top"><span class="pill" title="' + esc(row.mode) + '">' + esc(modeLabel(row.mode)) + '</span>' + pipelineItemLabel(row) + '</div>' + (detail ? '<div class="muted work-title">' + esc(detail) + '</div>' : "") + '</div><div class="work-state"><div class="stage-block"><strong>' + esc(row.stage) + '</strong><span class="muted">' + esc(row.status) + '</span></div>' + ciBadge(row.ci) + linkClass(row.run_url, "run", "pill run-link") + '</div><div class="timebox"><strong>' + elapsed(row.elapsed_ms) + '</strong><span>elapsed</span></div></article>';
   }).join("") + '</div>';
+}
+function renderClusterRepair(cluster) {
+  const target = document.getElementById("cluster-repair");
+  if (!target) return;
+  if (!cluster) {
+    target.innerHTML = '<div class="empty">No cluster intake telemetry in this snapshot.</div>';
+    return;
+  }
+  const markerRows = (cluster.markers || []).map(marker => {
+    const jobs = (marker.generated_jobs || []).slice(0, 3).map(job => '<span class="pill mono">' + esc(job.split("/").pop() || job) + '</span>').join("");
+    const jobText = marker.generated_count ? fmt.format(marker.generated_count) + " job" + (marker.generated_count === 1 ? "" : "s") : "no jobs";
+    return '<article class="work-row"><div class="work-main"><div class="row-top"><span class="pill">' + esc(marker.status || "unknown") + '</span><span class="item-link">' + esc(marker.target_repo || "unknown repo") + '</span></div><div class="muted work-title">store ' + esc(marker.last_processed_store_short_sha || "unknown") + " · " + esc(jobText) + (marker.last_processed_store_exported_at ? " · exported " + esc(since(marker.last_processed_store_exported_at)) : "") + '</div><div class="row-top">' + jobs + '</div></div><div class="work-state"><div class="stage-block"><strong>' + esc(marker.updated_at ? since(marker.updated_at) : "never") + '</strong><span class="muted">marker</span></div>' + linkClass(marker.run_url, "run", "pill run-link") + '</div><div class="timebox"><strong>60m</strong><span>tick</span></div></article>';
+  }).join("");
+  const runRows = (cluster.latest_runs || []).slice(0, 3).map(run => '<article class="side-row"><div class="side-main">' + linkClass(run.url, compactText(run.title || run.workflow), "item-link") + '<div class="muted side-title">' + esc(run.status || "") + (run.conclusion ? " · " + esc(run.conclusion) : "") + '</div></div><div class="side-meta"><span>' + esc(run.started_at ? since(run.started_at) : "") + '</span></div></article>').join("");
+  const activeText = fmt.format((cluster.active_intake_runs || []).length) + " intake · " + fmt.format((cluster.active_worker_runs || []).length) + " workers";
+  target.innerHTML =
+    '<div class="split"><div class="pipeline-col"><div class="muted" style="margin-bottom:8px">Runs on ' + esc(cluster.workflow || "repair-cluster-intake.yml") + " at " + esc(cluster.schedule || "8 * * * *") + " · " + esc(activeText) + '</div><div class="work-list">' + (markerRows || '<div class="empty">No processed-store markers yet.</div>') + '</div></div><aside class="side-col"><div class="muted" style="margin-bottom:8px">Recent intake workflow runs</div><div class="side-list">' + (runRows || '<div class="empty">No intake runs found.</div>') + '</div></aside></div>';
 }
 function renderAutomerge(rows) {
   if (!rows.length) {

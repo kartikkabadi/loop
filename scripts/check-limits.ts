@@ -9,6 +9,11 @@ type WorkerConfig = {
     expansion_reserve: number;
     minimum_background: number;
   };
+  lanes: {
+    repair: {
+      cluster_max_live_runs: number;
+    };
+  };
 };
 
 type AutomationLimits = {
@@ -28,6 +33,7 @@ type AutomationLimits = {
     hard_cap: number;
     automerge_default: number;
     issue_implementation_default: number;
+    cluster_default: number;
   };
   issue_implementation: {
     dispatches_per_sweep_default: number;
@@ -67,8 +73,15 @@ const expectations: { file: string; label: string; pattern: RegExp }[] = [
   },
   {
     file: "docs/repair/README.md",
-    label: "repair live run default",
+    label: "normal repair live run default",
     pattern: new RegExp(`CLAWSWEEPER_MAX_LIVE_WORKERS=${limits.repair_live_runs.default}\\b`),
+  },
+  {
+    file: "docs/repair/README.md",
+    label: "imported cluster repair live run example",
+    pattern: new RegExp(
+      `CLAWSWEEPER_MAX_LIVE_WORKERS=${limits.repair_live_runs.cluster_default}\\b`,
+    ),
   },
   {
     file: "docs/scheduler.md",
@@ -139,6 +152,7 @@ function flattenLimits(value: unknown, prefix = ""): Record<string, number> {
 
 function deriveAutomationLimits(workerConfig: WorkerConfig): AutomationLimits {
   const max = workerConfig.workers.max;
+  const clusterRepairMax = Math.min(workerConfig.lanes.repair.cluster_max_live_runs, max);
   return {
     review_shards: {
       normal_default: percent(max, 70),
@@ -156,6 +170,7 @@ function deriveAutomationLimits(workerConfig: WorkerConfig): AutomationLimits {
       hard_cap: max,
       automerge_default: percent(max, 40),
       issue_implementation_default: percent(max, 40),
+      cluster_default: clusterRepairMax,
     },
     issue_implementation: {
       dispatches_per_sweep_default: percent(max, 4),

@@ -9,15 +9,17 @@ import { renderJobIntentFrontmatter } from "./job-intent.js";
 
 const args = parseArgs(process.argv.slice(2));
 const repo = String(args.repo ?? "openclaw/openclaw");
-const dbPath = path.resolve(
-  String(args.db ?? path.join(os.homedir(), ".config", "gitcrawl", "gitcrawl.db")),
-);
+const mode = String(args.mode ?? "plan");
+if (!["plan", "execute", "autonomous"].includes(mode)) {
+  console.error("mode must be plan, execute, or autonomous");
+  process.exit(2);
+}
 const outDir = path.resolve(
   String(args.out ?? path.join(repoRoot(), "jobs", repo.split("/")[0] ?? "unknown", "inbox")),
 );
-const mode = String(args.mode ?? "plan");
+const dbPath = resolveGitcrawlDbPath(repo, typeof args.db === "string" ? args.db : undefined);
 const suffix = typeof args.suffix === "string" ? args.suffix : "";
-const allowInstantClose = Boolean(args["allow-instant-close"]);
+const allowInstantClose = booleanArg("allow-instant-close", false);
 const editEnabledByDefault = mode === "autonomous" || mode === "execute";
 const allowMerge = booleanArg("allow-merge", editEnabledByDefault);
 const allowFixPr = booleanArg("allow-fix-pr", editEnabledByDefault);
@@ -26,10 +28,12 @@ const skipExisting = args["skip-existing"] !== "false";
 const skipSecurity = args["include-security"] !== true && args["skip-security"] !== "false";
 const skipFeatureRequests =
   args["include-feature-requests"] !== true && args["skip-feature-requests"] !== "false";
+const allowEmpty = Boolean(args["allow-empty"]);
 const fromGitcrawl = Boolean(args["from-gitcrawl"] || args["from-ghcrawl"] || args.all);
 const limit = numberArg("limit", 40);
 const minSize = numberArg("min-size", 2);
 const minOpenMembers = numberArg("min-open-members", 1);
+const skipClosedPercent = percentArg("skip-closed-percent", 75);
 let clusterIds = args._.map((value: string) => Number(value)).filter(Boolean);
 const selectingFromGitcrawl = clusterIds.length === 0 && fromGitcrawl;
 const clusterSource = detectClusterSource();
@@ -39,14 +43,40 @@ if (selectingFromGitcrawl) {
 }
 
 if (clusterIds.length === 0) {
+  if (selectingFromGitcrawl && allowEmpty) {
+    console.error("no eligible gitcrawl clusters found");
+    process.exit(0);
+  }
   console.error(
-    "usage: node scripts/import-gitcrawl-clusters.ts <cluster-id> [...] [--from-gitcrawl] [--limit N] [--min-size N] [--min-open-members N] [--repo owner/repo] [--db path] [--out dir] [--mode plan|autonomous] [--suffix name] [--allow-instant-close] [--allow-merge true|false] [--allow-fix-pr true|false] [--allow-post-merge-close true|false]",
+    "usage: node scripts/import-gitcrawl-clusters.ts <cluster-id> [...] [--from-gitcrawl] [--allow-empty] [--limit N] [--min-size N] [--min-open-members N] [--skip-closed-percent N] [--repo owner/repo] [--db path] [--out dir] [--mode plan|autonomous] [--suffix name] [--allow-instant-close] [--allow-merge true|false] [--allow-fix-pr true|false] [--allow-post-merge-close true|false]",
   );
   process.exit(2);
 }
-if (!["plan", "execute", "autonomous"].includes(mode)) {
-  console.error("mode must be plan, execute, or autonomous");
-  process.exit(2);
+function gitcrawlStoreDbFileName(repoFullName: string): string {
+  return `${repoFullName
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_.-]+/g, "__")}.sync.db`;
+}
+
+function resolveGitcrawlDbPath(repoFullName: string, explicitDb?: string): string {
+  const configured = explicitDb?.trim() || process.env.CLAWSWEEPER_GITCRAWL_DB?.trim();
+  if (configured) return path.resolve(configured);
+  const storeDbFileName = gitcrawlStoreDbFileName(repoFullName);
+  const candidates = [
+    path.join(repoRoot(), "..", "gitcrawl-store", "data", storeDbFileName),
+    path.join(
+      os.homedir(),
+      ".config",
+      "gitcrawl",
+      "stores",
+      "gitcrawl-store",
+      "data",
+      storeDbFileName,
+    ),
+    path.join(os.homedir(), ".config", "gitcrawl", "gitcrawl.db"),
+  ];
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates.at(-1)!;
 }
 
 fs.mkdirSync(outDir, { recursive: true });
@@ -114,8 +144,16 @@ for (const clusterId of clusterIds) {
     title: first.representative_title,
   };
   const openMembers = members.filter((member: JsonValue) => member.state === "open");
+  const closedMembers = members.filter((member: JsonValue) => member.state !== "open");
   if (openMembers.length === 0) {
     console.error(`skip closed-only cluster: ${clusterId} ${representative.title ?? ""}`);
+    continue;
+  }
+  const closedPercent = Math.floor((closedMembers.length * 100) / members.length);
+  if (closedPercent >= skipClosedPercent) {
+    console.error(
+      `skip mostly-closed cluster: ${clusterId} ${representative.title ?? ""} (${closedPercent}% closed >= ${skipClosedPercent}%)`,
+    );
     continue;
   }
   if (openMembers.length < minOpenMembers) {
@@ -124,7 +162,6 @@ for (const clusterId of clusterIds) {
     );
     continue;
   }
-  const closedMembers = members.filter((member: JsonValue) => member.state !== "open");
   const issueCount = members.filter((member: JsonValue) => member.kind === "issue").length;
   const pullRequestCount = members.filter(
     (member: JsonValue) => member.kind === "pull_request",
@@ -237,12 +274,17 @@ function selectClusterIds() {
     return sqliteJson(`
       select
         cg.id,
-        count(*) as member_count
+        count(*) as member_count,
+        sum(case when t.state = 'open' then 1 else 0 end) as open_count,
+        sum(case when t.state != 'open' then 1 else 0 end) as closed_count
       from cluster_groups cg
       join cluster_memberships cm on cm.cluster_id = cg.id and cm.state = 'active'
+      join threads t on t.id = cm.thread_id
       where cg.status = 'active'
       group by cg.id
       having member_count >= ${sqlNumber(minSize)}
+        and open_count >= ${sqlNumber(minOpenMembers)}
+        and ((closed_count * 100) / member_count) < ${sqlNumber(skipClosedPercent)}
       order by member_count desc, cg.id asc
     `)
       .map((row: JsonValue) => Number(row.id))
@@ -251,11 +293,18 @@ function selectClusterIds() {
   return sqliteJson(`
     select
       c.id,
-      c.member_count
+      count(*) as member_count,
+      sum(case when t.state = 'open' then 1 else 0 end) as open_count,
+      sum(case when t.state != 'open' then 1 else 0 end) as closed_count
     from clusters c
+    join cluster_members cm on cm.cluster_id = c.id
+    join threads t on t.id = cm.thread_id
     where c.closed_at_local is null
-      and c.member_count >= ${sqlNumber(minSize)}
-    order by c.member_count desc, c.id asc
+    group by c.id
+    having member_count >= ${sqlNumber(minSize)}
+      and open_count >= ${sqlNumber(minOpenMembers)}
+      and ((closed_count * 100) / member_count) < ${sqlNumber(skipClosedPercent)}
+    order by member_count desc, c.id asc
   `)
     .map((row: JsonValue) => Number(row.id))
     .filter(Boolean);
@@ -382,6 +431,14 @@ function numberArg(name: string, fallback: JsonValue) {
   const value = Number(args[name] ?? fallback);
   if (!Number.isInteger(value) || value < 1)
     throw new Error(`--${name} must be a positive integer`);
+  return value;
+}
+
+function percentArg(name: string, fallback: JsonValue) {
+  const value = Number(args[name] ?? fallback);
+  if (!Number.isInteger(value) || value < 1 || value > 100) {
+    throw new Error(`--${name} must be an integer from 1 to 100`);
+  }
   return value;
 }
 

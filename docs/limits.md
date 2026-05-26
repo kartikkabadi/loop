@@ -4,9 +4,11 @@ Read when changing ClawSweeper throughput, Codex fan-out, commit review paging,
 or repair dispatch capacity.
 
 `config/automation-limits.json` is the source of truth for the global worker
-budget. It deliberately has only one main knob, `workers.max`, because that is
+budget. It deliberately has one main global knob, `workers.max`, because that is
 the number we normally tune when Codex or GitHub rate limits get tight. Most
-lane-specific limits are derived from that budget; safety thresholds such as
+lane-specific limits are derived from that budget; imported cluster repair has
+a separate explicit knob so it can stay at one live worker unless a maintainer
+intentionally opens it wider. Safety thresholds such as
 close age floors, apply delays, retry counts, and comment caps stay near the
 code that owns those decisions.
 
@@ -36,13 +38,16 @@ The mental model:
 | `workers.expansion_reserve` | 20 | Extra slots background lanes leave open for independently planned matrix expansion. |
 | `workers.minimum_background` | 10 | Target floor for background progress when enough global capacity is available. |
 | `lanes.assist.max` | 5 | Maximum concurrent lightweight assist jobs. |
+| `lanes.repair.cluster_max_live_runs` | 1 | Default live repair workflow cap for imported gitcrawl cluster dispatches. |
 
 ## Derived Limits
 
-Derived limits are intentionally percentages of `workers.max`. With
+Review, commit, and existing repair limits are intentionally percentages of
+`workers.max`; imported cluster repair has its own lane knob. With
 `workers.max = 57`, normal review can use 39 workers, hot intake can use 19,
-commit review can use 2 commits per page, and repair lanes can dispatch 22 live
-workers.
+commit review can use 2 commits per page, existing repair lanes dispatch 22
+live workers by default, and imported cluster repair dispatches one live worker
+by default.
 
 | Name | Current | Meaning |
 | --- | ---: | --- |
@@ -55,9 +60,10 @@ workers.
 | `commit_review.page_size_default` | 2 | Commits selected per commit-review page. |
 | `commit_review.page_size_hard_cap` | 57 | Maximum commit-review page size. |
 | `repair_live_runs.default` | 22 | Default live repair workflow run cap for manual dispatch/requeue/self-heal. |
-| `repair_live_runs.hard_cap` | 57 | Absolute live repair run cap accepted by the CLI. |
+| `repair_live_runs.hard_cap` | 57 | Absolute live repair run cap accepted by explicit CLI/env overrides with this config. |
 | `repair_live_runs.automerge_default` | 22 | Live repair run cap for automerge comment-router dispatches. |
 | `repair_live_runs.issue_implementation_default` | 22 | Live repair run cap for issue-to-PR implementation intake. |
+| `repair_live_runs.cluster_default` | 1 | Live repair run cap for imported gitcrawl cluster dispatches. |
 | `issue_implementation.dispatches_per_sweep_default` | 2 | Maximum implementation intake jobs queued from one review publish run. |
 
 Formula summary:
@@ -67,8 +73,11 @@ Formula summary:
 - hot intake: 35% of `workers.max`
 - commit review page size: 5% of `workers.max`
 - repair, automerge repair, and issue implementation: 40% of `workers.max`
+- imported cluster repair: `lanes.repair.cluster_max_live_runs`, clamped to
+  `workers.max`
 - issue implementation dispatches per sweep: 4% of `workers.max`
-- hard caps: `workers.max`
+- review/commit hard caps: `workers.max`
+- repair hard cap: `workers.max`
 
 ## Dynamic Scheduling
 
@@ -103,9 +112,9 @@ Examples with the current config:
 - Quiet system: manual normal review can request 39 shards; scheduled normal
   review gets 27 after reserving 10 slots for exact/manual/urgent work and 20
   slots for in-flight matrix expansion.
-- 21 active repair workers and 13 active background workers: normal review gets
-  1 because `57 - 10 interactive reserve - 20 expansion reserve - 21 priority
-  - 13 background = -7`, and enabled lanes keep a minimum of one worker.
+- 1 active repair worker and 13 active background workers: normal review gets
+  13 because `57 - 10 interactive reserve - 20 expansion reserve - 1 priority
+  - 13 background = 13`.
 - 49 active priority workers: commit review gets 1, so commit review yields but
   does not fully stall.
 
@@ -118,14 +127,27 @@ pnpm run --silent workflow -- worker-limit normal_review
 pnpm run --silent workflow -- worker-limit commit_review --active-critical 64
 ```
 
-Change `workers.max` first when tuning rate-limit pressure. For example, setting
-`workers.max` to `90` automatically makes normal review `63`, hot intake `31`,
-commit review `4`, repair `36`, and hard caps `90`.
+Change `workers.max` first when tuning review-side rate-limit pressure. For
+example, setting `workers.max` to `90` automatically makes normal review `63`,
+hot intake `31`, and commit review `4`. Existing repair lanes keep their
+40% derived caps, while imported cluster repair remains at one live worker until
+`lanes.repair.cluster_max_live_runs` is raised.
 
 ## Runtime Overrides
 
 - `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` overrides
   `commit_review.page_size_default`.
+- `CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED=1` enables the scheduled
+  `repair-cluster-intake.yml` imported-cluster intake. Direct repair import and
+  dispatch commands are not blocked by this variable; they keep the existing
+  repair execution gates. Gitcrawl cluster import also drip-feeds by default:
+  clusters with at least 75% closed members are skipped unless
+  `--skip-closed-percent` is overridden.
+- `CLAWSWEEPER_CLUSTER_REPAIR_IMPORT_LIMIT` overrides the scheduled
+  `repair-cluster-intake.yml` import limit. The default is `1` cluster every
+  hour; the upstream gitcrawl-store refreshes every 15 minutes, and ClawSweeper
+  records the processed store SHA so repeated ticks against the same snapshot
+  skip.
 - `CLAWSWEEPER_MAX_LIVE_WORKERS` overrides the `job_intent`-derived repair
   dispatch cap.
 - `CLAWSWEEPER_AUTOMERGE_MAX_LIVE_WORKERS` overrides

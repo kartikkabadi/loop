@@ -1,0 +1,285 @@
+name: repair cluster intake
+
+on:
+  workflow_dispatch:
+    inputs:
+      enabled:
+        description: "Run cluster repair intake"
+        required: false
+        default: "1"
+        type: string
+      target_repo:
+        description: "Target repository"
+        required: true
+        default: "openclaw/openclaw"
+        type: string
+      limit:
+        description: "Maximum imported gitcrawl clusters per run"
+        required: false
+        default: "1"
+        type: string
+      runner:
+        description: "Runner label for repair planning/review work"
+        required: false
+        default: blacksmith-4vcpu-ubuntu-2404
+        type: string
+      execution_runner:
+        description: "Runner label for fix/apply execution work"
+        required: false
+        default: blacksmith-16vcpu-ubuntu-2404
+        type: string
+      model:
+        description: "Codex model for repair worker"
+        required: false
+        default: gpt-5.5
+        type: string
+      force_store:
+        description: "Ignore the processed-store ledger and retry the current gitcrawl-store snapshot"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    # gitcrawl-store refreshes openclaw/openclaw every 15 minutes. This intake
+    # runs hourly and records the processed portable DB SHA so a
+    # delayed or duplicate tick does not enqueue work from the same store twice.
+    - cron: "8 * * * *"
+
+permissions:
+  actions: write
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+  CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
+  CLAWSWEEPER_MODEL: ${{ vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
+  CLAWSWEEPER_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_GIT_USER_NAME || 'clawsweeper[bot]' }}
+  CLAWSWEEPER_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_GIT_USER_EMAIL || '274271284+clawsweeper[bot]@users.noreply.github.com' }}
+
+concurrency:
+  group: cluster-repair-intake-${{ github.event.inputs.target_repo || vars.CLAWSWEEPER_CLUSTER_REPAIR_TARGET_REPO || 'openclaw/openclaw' }}
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    if: ${{ github.event_name != 'schedule' || vars.CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED == '1' }}
+    runs-on: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_CLUSTER_REPAIR_INTAKE_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
+    timeout-minutes: 45
+    steps:
+      - name: Create central GitHub App token
+        id: central-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: clawsweeper
+          permission-actions: write
+          permission-contents: write
+
+      - name: Create gitcrawl-store token
+        id: store-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: gitcrawl-store
+          permission-contents: read
+
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.central-token.outputs.token }}
+          filter: blob:none
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-pnpm
+        with:
+          build-script: build:repair
+
+      - name: Create state token
+        id: state-token
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+          fetch-depth: 1
+
+      - uses: actions/checkout@v6
+        with:
+          repository: openclaw/gitcrawl-store
+          token: ${{ steps.store-token.outputs.token }}
+          path: gitcrawl-store
+          fetch-depth: 1
+
+      - name: Ensure SQLite CLI
+        run: |
+          if ! command -v sqlite3 >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y sqlite3
+          fi
+
+      - name: Prepare intake
+        id: prepare
+        env:
+          ENABLED: ${{ github.event.inputs.enabled || '1' }}
+          SCHEDULE_ENABLED: ${{ vars.CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED == '1' && '1' || '0' }}
+          TARGET_REPO: ${{ github.event.inputs.target_repo || vars.CLAWSWEEPER_CLUSTER_REPAIR_TARGET_REPO || 'openclaw/openclaw' }}
+          FORCE_STORE: ${{ github.event.inputs.force_store == 'true' && '1' || '0' }}
+        run: |
+          set -euo pipefail
+          if [ "$ENABLED" != "1" ]; then
+            echo "should_import=false" >> "$GITHUB_OUTPUT"
+            echo "should_dispatch=false" >> "$GITHUB_OUTPUT"
+            echo "Cluster repair intake is disabled for this manual dispatch."
+            exit 0
+          fi
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ] && [ "$SCHEDULE_ENABLED" != "1" ]; then
+            echo "should_import=false" >> "$GITHUB_OUTPUT"
+            echo "should_dispatch=false" >> "$GITHUB_OUTPUT"
+            echo "Scheduled cluster repair intake is disabled. Set CLAWSWEEPER_FEATURE_CLUSTER_REPAIR_ENABLED=1."
+            exit 0
+          fi
+
+          repo_slug="${TARGET_REPO//\//-}"
+          db_name="${TARGET_REPO,,}"
+          db_name="${db_name//\//__}.sync.db"
+          manifest_path="gitcrawl-store/data/${db_name}.manifest.json"
+          db_path="gitcrawl-store/data/${db_name}"
+          ledger_path="results/cluster-repair-intake/${repo_slug}.json"
+          if [ ! -f "$manifest_path" ]; then
+            echo "::error::Missing gitcrawl-store manifest: ${manifest_path}"
+            exit 1
+          fi
+          if [ ! -f "$db_path" ]; then
+            echo "::error::Missing gitcrawl-store DB: ${db_path}"
+            exit 1
+          fi
+
+          store_sha="$(node -e "const fs=require('fs'); const m=JSON.parse(fs.readFileSync(process.argv[1], 'utf8')); console.log(m.sha256 || '')" "$manifest_path")"
+          exported_at="$(node -e "const fs=require('fs'); const m=JSON.parse(fs.readFileSync(process.argv[1], 'utf8')); console.log(m.exportedAt || '')" "$manifest_path")"
+          previous_sha=""
+          if [ -f "$ledger_path" ]; then
+            previous_sha="$(node -e "const fs=require('fs'); const p=process.argv[1]; const r=JSON.parse(fs.readFileSync(p, 'utf8')); console.log(r.last_processed_store_sha256 || '')" "$ledger_path")"
+          fi
+
+          {
+            echo "target_repo=${TARGET_REPO}"
+            echo "repo_slug=${repo_slug}"
+            echo "db_path=${db_path}"
+            echo "manifest_path=${manifest_path}"
+            echo "ledger_path=${ledger_path}"
+            echo "store_sha=${store_sha}"
+            echo "exported_at=${exported_at}"
+          } >> "$GITHUB_OUTPUT"
+
+          if [ "$FORCE_STORE" != "1" ] && [ -n "$store_sha" ] && [ "$store_sha" = "$previous_sha" ]; then
+            echo "should_import=false" >> "$GITHUB_OUTPUT"
+            echo "should_dispatch=false" >> "$GITHUB_OUTPUT"
+            echo "Already processed gitcrawl-store SHA ${store_sha}; skipping intake."
+            exit 0
+          fi
+          echo "should_import=true" >> "$GITHUB_OUTPUT"
+
+      - name: Import one cluster from gitcrawl-store
+        id: import
+        if: ${{ steps.prepare.outputs.should_import == 'true' }}
+        env:
+          TARGET_REPO: ${{ steps.prepare.outputs.target_repo }}
+          DB_PATH: ${{ steps.prepare.outputs.db_path }}
+          LIMIT: ${{ github.event.inputs.limit || vars.CLAWSWEEPER_CLUSTER_REPAIR_IMPORT_LIMIT || '1' }}
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/cluster-repair-intake
+          generated_log=".artifacts/cluster-repair-intake/generated.txt"
+          pnpm run repair:import-gitcrawl -- \
+            --from-gitcrawl \
+            --repo "$TARGET_REPO" \
+            --db "$DB_PATH" \
+            --allow-empty \
+            --limit "$LIMIT" \
+            --mode autonomous \
+            --allow-fix-pr true \
+            --allow-merge false \
+            --allow-instant-close false \
+            --allow-post-merge-close true \
+            2> >(tee .artifacts/cluster-repair-intake/import-stderr.txt >&2) \
+            | tee "$generated_log"
+
+          mapfile -t generated < <(grep '^jobs/' "$generated_log" || true)
+          printf '%s\n' "${generated[@]}" > .artifacts/cluster-repair-intake/generated-paths.txt
+          {
+            echo "count=${#generated[@]}"
+            if [ "${#generated[@]}" -gt 0 ]; then
+              echo "should_dispatch=true"
+            else
+              echo "should_dispatch=false"
+            fi
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Record intake ledger
+        if: ${{ steps.prepare.outputs.should_import == 'true' }}
+        env:
+          LEDGER_PATH: ${{ steps.prepare.outputs.ledger_path }}
+          TARGET_REPO: ${{ steps.prepare.outputs.target_repo }}
+          STORE_SHA: ${{ steps.prepare.outputs.store_sha }}
+          EXPORTED_AT: ${{ steps.prepare.outputs.exported_at }}
+          MANIFEST_PATH: ${{ steps.prepare.outputs.manifest_path }}
+          GENERATED_COUNT: ${{ steps.import.outputs.count || '0' }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$LEDGER_PATH")"
+          node <<'NODE'
+          const fs = require("fs");
+          const generatedPath = ".artifacts/cluster-repair-intake/generated-paths.txt";
+          const generated = (fs.existsSync(generatedPath) ? fs.readFileSync(generatedPath, "utf8") : "")
+            .split(/\r?\n/)
+            .map((line) => line.trim())
+            .filter(Boolean);
+          const ledger = {
+            schema: "clawsweeper-cluster-repair-intake-v1",
+            target_repo: process.env.TARGET_REPO,
+            last_processed_store_sha256: process.env.STORE_SHA,
+            last_processed_store_exported_at: process.env.EXPORTED_AT,
+            manifest_path: process.env.MANIFEST_PATH,
+            generated_count: Number(process.env.GENERATED_COUNT || generated.length || 0),
+            generated_jobs: generated,
+            run_url: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+            updated_at: new Date().toISOString(),
+          };
+          fs.writeFileSync(process.env.LEDGER_PATH, `${JSON.stringify(ledger, null, 2)}\n`);
+          NODE
+
+      - name: Publish intake jobs and ledger
+        if: ${{ steps.prepare.outputs.should_import == 'true' }}
+        run: |
+          set -euo pipefail
+          pnpm run repair:publish-main -- \
+            --message "chore: record cluster repair intake" \
+            --path jobs \
+            --path results/cluster-repair-intake \
+            --max-attempts 12 \
+            --push-attempts 4
+
+      - name: Dispatch imported cluster repair
+        if: ${{ steps.import.outputs.should_dispatch == 'true' }}
+        env:
+          GH_TOKEN: ${{ steps.central-token.outputs.token }}
+          RUNNER: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
+          EXECUTION_RUNNER: ${{ github.event.inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
+          MODEL: ${{ github.event.inputs.model || vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
+        run: |
+          set -euo pipefail
+          mapfile -t jobs < .artifacts/cluster-repair-intake/generated-paths.txt
+          git pull --rebase origin main
+          pnpm run repair:dispatch -- "${jobs[@]}" \
+            --mode autonomous \
+            --wait-for-capacity \
+            --runner "$RUNNER" \
+            --execution-runner "$EXECUTION_RUNNER" \
+            --model "$MODEL" \
+            --ref main
