@@ -10319,6 +10319,8 @@ interface LinkedPullRequestSupersession {
   mergeableState: string | null;
   draft: boolean;
   labels: string[];
+  files: string[];
+  filesKnown: boolean;
 }
 
 function upgradePullRequestClosePromotionReport(
@@ -10478,7 +10480,8 @@ function linkedPullRequestSupersession(
       const state = stringOrUndefined(pull.state)?.toLowerCase() ?? "";
       const mergedAt = stringOrUndefined(pull.merged_at) ?? null;
       if (!hasSupersessionSignal) continue;
-      const linkedPull = {
+      const linkedFiles = linkedPullRequestFiles(number);
+      const linkedPull: LinkedPullRequestSupersession = {
         number,
         title: stringOrUndefined(pull.title) ?? `PR #${number}`,
         url: stringOrUndefined(pull.html_url) ?? pullRequestUrlForNumber(number),
@@ -10487,7 +10490,10 @@ function linkedPullRequestSupersession(
         mergeableState: stringOrUndefined(pull.mergeable_state)?.toLowerCase() ?? null,
         draft: pull.draft === true,
         labels: linkedPullRequestLabels(number, pull),
+        files: linkedFiles.files,
+        filesKnown: linkedFiles.known,
       };
+      if (linkedPullCannotSupersedeDocsOnlySource(markdown, linkedPull)) continue;
       if (unsafeCanonicalPullRequestReason(linkedPull, options) !== null) continue;
       return linkedPull;
     } catch {
@@ -10510,6 +10516,29 @@ function linkedPullRequestLabels(number: number, pull: Record<string, unknown>):
   } catch {
     return [];
   }
+}
+
+function linkedPullRequestFiles(number: number): { files: string[]; known: boolean } {
+  try {
+    const files = ghJson<unknown[]>([
+      "api",
+      `repos/${targetRepo()}/pulls/${number}/files?per_page=100`,
+      "--jq",
+      "[.[].filename]",
+    ]);
+    return { files: files.filter((file): file is string => typeof file === "string"), known: true };
+  } catch {
+    return { files: [], known: false };
+  }
+}
+
+function linkedPullCannotSupersedeDocsOnlySource(
+  sourceMarkdown: string,
+  linkedPull: LinkedPullRequestSupersession,
+): boolean {
+  if (!isDocsOnlyPullRequestReport(sourceMarkdown)) return false;
+  if (!linkedPull.filesKnown) return true;
+  return linkedPull.files.length === 0 || !linkedPull.files.every(isDocsPath);
 }
 
 function linkedPullRequestReportMarkdown(
@@ -10621,6 +10650,7 @@ function duplicateCanonicalPullRequestBlockReason(
   for (const number of numbersToCheck) {
     try {
       const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]));
+      const linkedFiles = linkedPullRequestFiles(number);
       const linkedPull: LinkedPullRequestSupersession = {
         number,
         title: stringOrUndefined(pull.title) ?? `PR #${number}`,
@@ -10630,7 +10660,12 @@ function duplicateCanonicalPullRequestBlockReason(
         mergeableState: stringOrUndefined(pull.mergeable_state)?.toLowerCase() ?? null,
         draft: pull.draft === true,
         labels: linkedPullRequestLabels(number, pull),
+        files: linkedFiles.files,
+        filesKnown: linkedFiles.known,
       };
+      if (linkedPullCannotSupersedeDocsOnlySource(markdown, linkedPull)) {
+        return `linked canonical PR #${number} does not cover the docs-only source diff; refusing duplicate/superseded auto-close`;
+      }
       const reason = unsafeCanonicalPullRequestReason(linkedPull, options);
       if (reason) return `${reason}; refusing duplicate/superseded auto-close`;
     } catch {
@@ -11951,6 +11986,12 @@ function canClose(decision: Decision): boolean {
   );
 }
 
+function closeDecisionHasKeepOpenContradiction(decision: Decision): boolean {
+  return [decision.summary, decision.bestSolution, decision.closeComment].some((text) =>
+    /^\s*Keep open\s*:/im.test(text),
+  );
+}
+
 export function validateCloseDecision(
   item: Pick<Item, "kind" | "labels"> & Partial<Pick<Item, "repo">>,
   decision: Decision,
@@ -12009,6 +12050,13 @@ export function validateCloseDecision(
   }
   if (!decision.summary.trim()) {
     return { ok: false, actionTaken: "skipped_invalid_decision", reason: "missing summary" };
+  }
+  if (closeDecisionHasKeepOpenContradiction(decision)) {
+    return {
+      ok: false,
+      actionTaken: "skipped_invalid_decision",
+      reason: "close decision contains Keep open guidance",
+    };
   }
   if (requireCloseComment && !hasUsableCloseComment(decision.closeComment)) {
     return {

@@ -1931,6 +1931,17 @@ test("invalid close semantics are rejected", () => {
   assert.equal(missingEvidence.ok, false);
   assert.equal(missingEvidence.actionTaken, "skipped_invalid_decision");
 
+  const contradictoryClose = validateCloseDecision(
+    item(),
+    closeDecision({
+      summary: "Keep open: this is useful but needs a wording fix before merge.",
+      closeReason: "duplicate_or_superseded",
+    }),
+  );
+  assert.equal(contradictoryClose.ok, false);
+  assert.equal(contradictoryClose.actionTaken, "skipped_invalid_decision");
+  assert.equal(contradictoryClose.reason, "close decision contains Keep open guidance");
+
   const missingSource = validateCloseDecision(
     item(),
     closeDecision({
@@ -5561,6 +5572,21 @@ if (args[0] === "api" && args[1] === "-i" && new RegExp("/issues/" + number + "/
       labels: labels.map((name) => ({ name })),
     }));
   }
+} else if (args[0] === "api" && /\\/pulls\\/(\\d+)\\/files(?:\\?|$)/.test(path)) {
+  const linkedNumber = Number((path.match(/\\/pulls\\/(\\d+)\\/files/) || [])[1]);
+  if (linkedNumber !== number && !linkedPulls[linkedNumber]) {
+    console.error("unexpected linked pull files", linkedNumber);
+    process.exit(1);
+  }
+  const sourceFiles = [{ filename: "src/runtime.ts" }, { filename: "test/runtime.test.ts" }];
+  const files = linkedNumber === number ? sourceFiles : linkedPulls[linkedNumber].files || sourceFiles;
+  if (jq === "[.[].filename]") {
+    console.log(JSON.stringify(files.map((file) =>
+      typeof file === "string" ? file : file && file.filename ? file.filename : null,
+    ).filter(Boolean)));
+  } else {
+    console.log(JSON.stringify([files]));
+  }
 } else if (args[0] === "api" && new RegExp("/pulls/" + number + "/(files|commits|comments)(?:\\\\?|$)").test(path)) {
   console.log(JSON.stringify([[]]));
 } else if (args[0] === "label" || args[0] === "issue") {
@@ -8227,6 +8253,84 @@ test("apply-decisions promotes PRs superseded by linked pull requests", () => {
     assert.match(
       report.find((entry) => entry.action === "closed")?.reason ?? "",
       /duplicate or superseded/,
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions does not promote docs-only PRs superseded by code-only pull requests", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    const synced = reportWithSyncedReviewComment(
+      stalePullRequestReport({
+        number: 337,
+        title: "ENETDOWN docs companion",
+        pr_rating_overall: "D",
+        pr_rating_proof: "D",
+        pr_rating_patch: "D",
+        pull_files: JSON.stringify(["docs/gateway/troubleshooting.md", "docs/platforms/macos.md"]),
+        pull_files_truncated: false,
+        work_cluster_refs: JSON.stringify([
+          "Superseded by https://github.com/openclaw/openclaw/pull/400",
+        ]),
+      }),
+      337,
+      "none",
+    );
+    writeFileSync(join(itemsDir, "337.md"), synced.report, "utf8");
+
+    withMockGh(
+      root,
+      promotionGhMock({
+        number: 337,
+        title: "ENETDOWN docs companion",
+        comment: synced.comment,
+        linkedPulls: {
+          400: {
+            number: 400,
+            title: "Canonical ENETDOWN runtime fix",
+            html_url: "https://github.com/openclaw/openclaw/pull/400",
+            state: "closed",
+            merged_at: "2026-05-26T17:40:32Z",
+            mergeable_state: "clean",
+            labels: ["proof: sufficient"],
+            files: [
+              "src/infra/unhandled-rejections.ts",
+              "extensions/telegram/src/network-errors.ts",
+            ],
+          },
+        },
+      }),
+      () => {
+        runApplyDecisionsForTest({
+          itemsDir,
+          closedDir,
+          plansDir,
+          reportPath,
+          extraArgs: [
+            "--target-repo",
+            "openclaw/openclaw",
+            "--dry-run",
+            "--apply-kind",
+            "all",
+            "--processed-limit",
+            "3",
+          ],
+        });
+      },
+    );
+
+    const report = JSON.parse(readFileSync(reportPath, "utf8")) as Array<{ action: string }>;
+    assert.equal(
+      report.some((entry) => entry.action === "closed"),
+      false,
     );
   } finally {
     rmSync(root, { recursive: true, force: true });
