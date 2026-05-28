@@ -1,3 +1,5 @@
+![ClawSweeper banner](docs/assets/readme-banner.jpg)
+
 # 🦞🧹 ClawSweeper
 
 ClawSweeper is the conservative maintenance bot for OpenClaw repositories. It
