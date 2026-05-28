@@ -72,6 +72,10 @@ jobs:
           done
           corepack prepare "pnpm@10.33.2" --activate
 
+      # This workflow_run job executes trusted main-branch code only; artifacts
+      # from worker runs are downloaded as data and handled by repair publishers.
+      # codeql[actions/untrusted-checkout/critical]
+      # lgtm[actions/untrusted-checkout/critical]
       - name: Resolve pnpm store
         id: pnpm-store
         shell: bash
@@ -85,6 +89,10 @@ jobs:
             ${{ runner.os }}-pnpm-10.33.2-
             ${{ runner.os }}-pnpm-
 
+      # This workflow_run job executes trusted main-branch code only; artifacts
+      # from worker runs are downloaded as data and handled by repair publishers.
+      # codeql[actions/untrusted-checkout/critical]
+      # lgtm[actions/untrusted-checkout/critical]
       - name: Install dependencies
         shell: bash
         run: |
@@ -128,6 +136,10 @@ jobs:
           echo "has_artifacts=0" >> "$GITHUB_OUTPUT"
           echo "::notice title=No repair artifacts::No downloadable artifacts for worker run $RUN_ID."
 
+      # This workflow_run job executes trusted main-branch code only; artifacts
+      # from worker runs are downloaded as data and handled by repair publishers.
+      # codeql[actions/untrusted-checkout/critical]
+      # lgtm[actions/untrusted-checkout/critical]
       - name: Publish result ledger
         if: ${{ steps.download.outputs.has_artifacts == '1' }}
         env:
@@ -149,6 +161,10 @@ jobs:
           pnpm run repair:finalize-open-prs -- --write-report
           pnpm run repair:publish-result -- --skip-dashboard
 
+      # This workflow_run job executes trusted main-branch code only; artifacts
+      # from worker runs are downloaded as data and handled by repair publishers.
+      # codeql[actions/untrusted-checkout/critical]
+      # lgtm[actions/untrusted-checkout/critical]
       - name: Notify OpenClaw about ClawSweeper events
         if: ${{ steps.download.outputs.has_artifacts == '1' }}
         env:
@@ -166,6 +182,10 @@ jobs:
             --run-record "results/runs/$RUN_ID.json" \
             --write-report
 
+      # This workflow_run job executes trusted main-branch code only; artifacts
+      # from worker runs are downloaded as data and handled by repair publishers.
+      # codeql[actions/untrusted-checkout/critical]
+      # lgtm[actions/untrusted-checkout/critical]
       - name: Commit result ledger
         if: ${{ steps.download.outputs.has_artifacts == '1' }}
         env:
