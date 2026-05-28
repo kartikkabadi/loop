@@ -1,6 +1,6 @@
-![ClawSweeper banner](docs/assets/readme-banner.jpg)
-
 # 🦞🧹 ClawSweeper
+
+![ClawSweeper banner](docs/assets/readme-banner.jpg)
 
 ClawSweeper is the conservative maintenance bot for OpenClaw repositories. It
 keeps the backlog reviewed, keeps maintainer-visible GitHub comments tidy, and
