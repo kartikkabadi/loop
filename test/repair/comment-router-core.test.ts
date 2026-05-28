@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -19,6 +20,7 @@ import {
   automergeJobPath,
   automergeReadinessRepairReason,
   automergeTransientWaitConfig,
+  buildClawSweeperAssistDispatchPayload,
   buildAutomergeMergeArgs,
   buildAutomergeSquashMessage,
   commandHasAction,
@@ -943,6 +945,12 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
     intent: "visualize",
     visual_lens: "state",
   });
+  assert.deepEqual(parseCommand("@clawsweeper visualize"), {
+    trigger: "mention",
+    command: "visualize",
+    intent: "visualize",
+    visual_lens: "auto",
+  });
   assert.deepEqual(parseCommand("/clawsweeper visualize"), {
     trigger: "slash",
     command: "visualize",
@@ -1808,6 +1816,88 @@ test("renderResponse reports visualize dispatches as marker-backed read-only bri
   assert.match(body, /marker-backed visual brief comment/);
   assert.match(body, /Lens: `state`/);
   assert.doesNotMatch(body, /repair worker/);
+});
+
+test("visualize assist dispatch payload stays within repository_dispatch key limit", () => {
+  const payload = buildClawSweeperAssistDispatchPayload({
+    repo: "openclaw/clawsweeper",
+    issue_number: 202,
+    target: { kind: "issue" },
+    comment_id: "4545883320",
+    comment_url: "https://github.com/openclaw/clawsweeper/issues/202#issuecomment-4545883320",
+    author: "maintainer",
+    command: "visualize state",
+    intent: "visualize",
+    visual_lens: "state",
+  });
+
+  const clientPayload = payload.client_payload;
+  assert.equal(payload.event_type, "clawsweeper_assist");
+  assert.equal(Object.keys(clientPayload).length <= 10, true);
+  assert.equal(clientPayload.target_repo, "openclaw/clawsweeper");
+  assert.equal(clientPayload.item_number, "202");
+  assert.equal(clientPayload.question, "visualize state");
+  assert.equal(clientPayload.assist.mode, "visual");
+  assert.equal(clientPayload.assist.lens, "state");
+  assert.equal(clientPayload.assist.model, "gpt-5.5");
+  assert.equal(clientPayload.assist.reasoning_effort, "low");
+  assert.equal(clientPayload.assist.timeout_ms, "120000");
+  assert.equal("mode" in clientPayload, false);
+  assert.equal("lens" in clientPayload, false);
+});
+
+test("bare visualize dispatch defaults to auto lens within repository_dispatch key limit", () => {
+  const parsed = parseCommand("@clawsweeper visualize");
+  assert.deepEqual(parsed, {
+    trigger: "mention",
+    command: "visualize",
+    intent: "visualize",
+    visual_lens: "auto",
+  });
+
+  const payload = buildClawSweeperAssistDispatchPayload({
+    repo: "openclaw/clawsweeper",
+    issue_number: 213,
+    target: { kind: "pull_request" },
+    comment_id: "4560428808",
+    comment_url: "https://github.com/openclaw/clawsweeper/pull/213#issuecomment-4560428808",
+    author: "maintainer",
+    ...parsed,
+  });
+
+  const clientPayload = payload.client_payload;
+  assert.equal(payload.event_type, "clawsweeper_assist");
+  assert.equal(Object.keys(clientPayload).length <= 10, true);
+  assert.equal(clientPayload.question, "visualize");
+  assert.equal(clientPayload.assist.mode, "visual");
+  assert.equal(clientPayload.assist.lens, "auto");
+  assert.equal("mode" in clientPayload, false);
+  assert.equal("lens" in clientPayload, false);
+});
+
+test("assist workflow preserves flat field fallbacks after nested dispatch fields", () => {
+  const workflow = readFileSync(".github/workflows/assist.yml", "utf8");
+
+  assert.match(
+    workflow,
+    /MODE: \$\{\{ github\.event\.client_payload\.assist\.mode \|\| github\.event\.client_payload\.mode \|\| inputs\.mode \|\| 'assist' \}\}/,
+  );
+  assert.match(
+    workflow,
+    /LENS: \$\{\{ github\.event\.client_payload\.assist\.lens \|\| github\.event\.client_payload\.lens \|\| inputs\.lens \|\| 'auto' \}\}/,
+  );
+  assert.match(
+    workflow,
+    /MODEL: \$\{\{ github\.event\.client_payload\.assist\.model \|\| github\.event\.client_payload\.model \|\| 'gpt-5\.5' \}\}/,
+  );
+  assert.match(
+    workflow,
+    /REASONING_EFFORT: \$\{\{ github\.event\.client_payload\.assist\.reasoning_effort \|\| github\.event\.client_payload\.reasoning_effort \|\| 'low' \}\}/,
+  );
+  assert.match(
+    workflow,
+    /TIMEOUT_MS: \$\{\{ github\.event\.client_payload\.assist\.timeout_ms \|\| github\.event\.client_payload\.timeout_ms \|\| '120000' \}\}/,
+  );
 });
 
 test("renderResponse reports maintainer autoclose results", () => {
