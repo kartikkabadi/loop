@@ -43,6 +43,8 @@ const CLAWSWEEPER_PULL_ITEM_ACTIONS = new Set([
   "labeled",
   "unlabeled",
 ]);
+const FAST_ACK_SETTLE_DELAYS_MS = [250, 1500];
+const inFlightFastAcks = new Map();
 const CLAWSWEEPER_WEBHOOK_DENY_REPOS = new Set(["openclaw/clawsweeper-state", "openclaw/.github"]);
 const CLAWSWEEPER_AUTHOR_READ_ONLY_COMMAND =
   "(?:review|re-review|rerun|re-run|rerun[ -]?review|re-run[ -]?review|status|explain)";
@@ -207,7 +209,7 @@ export default {
     if (url.pathname === "/github/webhook" && request.method === "GET")
       return json({ ok: true, service: "clawsweeper-github-webhook" });
     if (url.pathname === "/github/webhook" && request.method === "POST")
-      return githubWebhook(request, env);
+      return githubWebhook(request, env, ctx);
     if (url.pathname === "/api/status") return statusJson(request, env, ctx);
     if (url.pathname === "/api/triage") return triageJson(request, env, ctx);
     if (url.pathname === "/api/pr-proof-triage") return prProofTriageJson(request, env, ctx);
@@ -405,7 +407,7 @@ async function ingestEvent(request, env) {
   return json({ ok: true, event });
 }
 
-async function githubWebhook(request, env) {
+async function githubWebhook(request, env, ctx) {
   const secret = stringEnv(env.CLAWSWEEPER_WEBHOOK_SECRET);
   if (!secret) return json({ error: "webhook_not_configured" }, 503);
 
@@ -460,7 +462,7 @@ async function githubWebhook(request, env) {
       pull_requests: "write",
     },
   });
-  const statusCommentId = await createFastAckComment({
+  const statusCommentId = await createFastAckCommentOnce({
     token: targetToken,
     repo: commentDecision.targetRepo,
     itemNumber: commentDecision.itemNumber,
@@ -476,6 +478,13 @@ async function githubWebhook(request, env) {
     token: dispatchToken,
     decision: commentDecision,
     statusCommentId,
+  });
+  settleFastAckComments({
+    token: targetToken,
+    repo: commentDecision.targetRepo,
+    itemNumber: commentDecision.itemNumber,
+    sourceCommentId: commentDecision.commentId,
+    waitUntil: ctx?.waitUntil?.bind(ctx),
   });
   return json({ ok: true, status_comment_id: statusCommentId }, 202);
 }
@@ -681,6 +690,41 @@ async function createFastAckComment({ token, repo, itemNumber, sourceCommentId }
     Number(payload.id) ||
     null
   );
+}
+
+function settleFastAckComments({ token, repo, itemNumber, sourceCommentId, waitUntil }) {
+  const cleanup = async () => {
+    for (const delayMs of FAST_ACK_SETTLE_DELAYS_MS) {
+      await sleep(delayMs);
+      await pruneFastAckComments({ token, repo, itemNumber, sourceCommentId });
+    }
+  };
+  const promise = cleanup().catch((error) => {
+    console.error(`ClawSweeper fast ack cleanup failed: ${error?.message || error}`);
+  });
+  if (waitUntil) waitUntil(promise);
+}
+
+async function createFastAckCommentOnce({ token, repo, itemNumber, sourceCommentId }) {
+  const key = fastAckKey({ repo, itemNumber, sourceCommentId });
+  const pending = inFlightFastAcks.get(key);
+  if (pending) return pending;
+  const next = createFastAckComment({ token, repo, itemNumber, sourceCommentId }).finally(() => {
+    inFlightFastAcks.delete(key);
+  });
+  inFlightFastAcks.set(key, next);
+  return next;
+}
+
+function fastAckKey({ repo, itemNumber, sourceCommentId }) {
+  return `${String(repo).toLowerCase()}:${itemNumber}:${sourceCommentId}`;
+}
+
+function sleep(delayMs) {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, delayMs);
+    timer.unref?.();
+  });
 }
 
 async function pruneFastAckComments({ token, repo, itemNumber, sourceCommentId }) {
