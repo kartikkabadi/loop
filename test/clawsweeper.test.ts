@@ -9781,6 +9781,126 @@ Confirm both merge risks before merge.
   assert.doesNotMatch(comment, /- \[P1\] Blocked workflow actions.*\n- Timeout fallback/s);
 });
 
+test("pull request risk text does not priority-prefix routine CI noise", () => {
+  const routineCiRisk = "CI checks are red on this branch and may be unrelated to the diff.";
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74269",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "none",
+      pull_head_sha: "abc123def456",
+    })}
+
+## Summary
+
+Keep this PR open while maintainers verify check state.
+
+## What This Changes
+
+Updates review guidance.
+
+## Best Possible Solution
+
+Merge after the unrelated CI state is understood.
+
+## Risks / Open Questions
+
+${routineCiRisk}
+`,
+    "none",
+  );
+
+  assert.match(comment, /\*\*Risk before merge\*\*/);
+  assert.match(comment, new RegExp(`- ${routineCiRisk.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`));
+  assert.doesNotMatch(
+    comment,
+    new RegExp(`\\[P[12]\\] ${routineCiRisk.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`),
+  );
+});
+
+test("pull request risk text keeps diff-caused CI risk actionable", () => {
+  const actionableCiRisk = "The workflow change could cause CI checks to fail after merge.";
+  const comment = renderReviewCommentFromReport(
+    `${reportFrontMatter({
+      type: "pull_request",
+      number: "74270",
+      decision: "keep_open",
+      close_reason: "none",
+      work_candidate: "none",
+      pull_head_sha: "abc123def457",
+    })}
+
+## Summary
+
+Keep this PR open while maintainers verify workflow behavior.
+
+## What This Changes
+
+Updates workflow handling.
+
+## Best Possible Solution
+
+Merge after the workflow risk is addressed.
+
+## Risks / Open Questions
+
+${actionableCiRisk}
+`,
+    "none",
+  );
+
+  assert.match(comment, /\*\*Risk before merge\*\*/);
+  assert.match(
+    comment,
+    new RegExp(`- \\[P1\\] ${actionableCiRisk.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`),
+  );
+});
+
+test("pull request risk text keeps diff-caused status and required check risks actionable", () => {
+  const riskLines = [
+    "The workflow change could cause status checks to fail after merge.",
+    "The workflow change could cause required checks to fail after merge.",
+  ];
+  for (const [index, riskLine] of riskLines.entries()) {
+    const comment = renderReviewCommentFromReport(
+      `${reportFrontMatter({
+        type: "pull_request",
+        number: String(74271 + index),
+        decision: "keep_open",
+        close_reason: "none",
+        work_candidate: "none",
+        pull_head_sha: `abc123def45${8 + index}`,
+      })}
+
+## Summary
+
+Keep this PR open while maintainers verify workflow behavior.
+
+## What This Changes
+
+Updates workflow handling.
+
+## Best Possible Solution
+
+Merge after the workflow risk is addressed.
+
+## Risks / Open Questions
+
+${riskLine}
+`,
+      "none",
+    );
+
+    assert.match(comment, /\*\*Risk before merge\*\*/);
+    assert.match(
+      comment,
+      new RegExp(`- \\[P1\\] ${riskLine.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`),
+    );
+  }
+});
+
 test("OpenClaw pull request comments render PR surface inside evidence details", () => {
   const comment = renderReviewCommentFromReport(
     `${reportFrontMatter({
@@ -11565,6 +11685,27 @@ test("ClawSweeper priority label descriptions stay aligned with prompt and schem
   }
 });
 
+test("review prompt keeps unrelated CI noise out of triage priority", () => {
+  const schema = JSON.parse(reviewDecisionSchemaText()) as {
+    properties?: {
+      triagePriority?: {
+        description?: string;
+      };
+    };
+  };
+  const schemaDescription = schema.properties?.triagePriority?.description ?? "";
+  const prompt = reviewPromptTemplate();
+
+  assert.match(prompt, /Do not raise `triagePriority` solely because CI or status checks/);
+  assert.match(
+    prompt,
+    /failing,\s+pending,\s+missing,\s+flaky,\s+or require routine maintainer follow-up/,
+  );
+  assert.match(prompt, /PR diff plausibly caused an urgent regression/);
+  assert.match(schemaDescription, /Do not raise priority solely because CI or status checks/);
+  assert.match(schemaDescription, /diff-caused urgent regressions/);
+});
+
 test("ClawSweeper priority labels follow triage priority", () => {
   assert.deepEqual(priorityLabelsForTest(["bug"], "P2"), ["bug", "P2"]);
   assert.deepEqual(priorityLabelsForTest(["bug", "P3"], "P1"), ["bug", "P1"]);
@@ -11763,6 +11904,25 @@ test("ClawSweeper merge-risk label descriptions stay aligned with prompt and sch
       `${label.name} description is missing from the schema`,
     );
   }
+});
+
+test("review prompt uses automation merge risk only for diff-caused automation risk", () => {
+  const schema = JSON.parse(reviewDecisionSchemaText()) as {
+    properties?: {
+      mergeRiskLabels?: {
+        description?: string;
+      };
+    };
+  };
+  const schemaDescription = schema.properties?.mergeRiskLabels?.description ?? "";
+  const prompt = reviewPromptTemplate();
+
+  assert.match(prompt, /Do not use `merge-risk: 🚨 automation` only because CI is red/);
+  assert.match(prompt, /pending,\s+flaky,\s+or absent/);
+  assert.match(prompt, /PR diff changes automation behavior/);
+  assert.match(prompt, /plausibly causes CI,\s+automerge,\s+proof capture,\s+label sync/);
+  assert.match(schemaDescription, /Do not use merge-risk: 🚨 automation only because CI is red/);
+  assert.match(schemaDescription, /PR diff changes automation behavior/);
 });
 
 test("ClawSweeper merge-risk labels remove stale owned labels and preserve unrelated labels", () => {
