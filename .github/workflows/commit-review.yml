@@ -3,8 +3,6 @@ name: ClawSweeper Commit Review
 run-name: Commit review ${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || 'openclaw/openclaw' }}@${{ github.event.inputs.commit_sha || github.event.client_payload.after_sha || github.event.client_payload.commit_sha || '?' }}
 
 on:
-  repository_dispatch:
-    types: [clawsweeper_commit_review]
   workflow_dispatch:
     inputs:
       enabled:
@@ -577,15 +575,12 @@ jobs:
           ADDITIONAL_PROMPT: ${{ github.event.inputs.additional_prompt || github.event.client_payload.additional_prompt || '' }}
         run: |
           set -euo pipefail
-          payload="$(jq -nc \
-            --arg target_repo "$TARGET_REPO" \
-            --arg before_sha "$BEFORE_SHA" \
-            --arg after_sha "$AFTER_SHA" \
-            --arg ref "refs/heads/main" \
-            --arg additional_prompt "$ADDITIONAL_PROMPT" \
-            --argjson commit_offset "$NEXT_OFFSET" \
-            --argjson create_checks "$CREATE_CHECKS" \
-            '{event_type:"clawsweeper_commit_review",client_payload:{target_repo:$target_repo,before_sha:$before_sha,after_sha:$after_sha,ref:$ref,commit_offset:$commit_offset,enabled:true,create_checks:$create_checks,additional_prompt:$additional_prompt}}')"
-          gh api repos/${{ github.repository }}/dispatches \
-            --method POST \
-            --input - <<< "$payload"
+          gh workflow run commit-review.yml \
+            --repo "${{ github.repository }}" \
+            -f enabled=true \
+            -f target_repo="$TARGET_REPO" \
+            -f commit_sha="$AFTER_SHA" \
+            -f before_sha="$BEFORE_SHA" \
+            -f commit_offset="$NEXT_OFFSET" \
+            -f create_checks="$CREATE_CHECKS" \
+            -f additional_prompt="$ADDITIONAL_PROMPT"

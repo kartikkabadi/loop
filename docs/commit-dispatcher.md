@@ -1,10 +1,13 @@
 # Commit Review Dispatcher
 
-`openclaw/clawsweeper` can review commits that land on a target repository's
-`main` branch. The target repository forwards `push` events with
-`repository_dispatch`; ClawSweeper expands the pushed range into one worker per
-commit, writes one markdown report per commit, and optionally creates a GitHub
-Check Run on each reviewed commit when checks are enabled.
+Automatic push-triggered commit review is disabled in the production
+`openclaw/clawsweeper` receiver. Maintainers can still run
+`.github/workflows/commit-review.yml` manually for selected commits or ranges.
+
+Historically, target repositories forwarded `push` events with
+`repository_dispatch`; ClawSweeper expanded the pushed range into one worker per
+commit, wrote one markdown report per commit, and optionally created a GitHub
+Check Run on each reviewed commit when checks were enabled.
 
 Reports are stored at:
 
@@ -15,7 +18,8 @@ records/<repo-slug>/commits/<40-char-sha>.md
 That path is canonical. Rerunning a commit review overwrites the existing report
 for that SHA, including manual reruns with an additional prompt.
 
-Copy this workflow into each target repository as
+If automatic push-range review is re-enabled later, copy this workflow into each
+target repository as
 `.github/workflows/clawsweeper-commit-dispatch.yml`, or merge the `push` trigger
 and `Dispatch commit review` step into the combined dispatcher from
 [target-dispatcher.md](target-dispatcher.md). `openclaw/openclaw` uses the

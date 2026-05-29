@@ -26,7 +26,7 @@ At a high level ClawSweeper:
   webhook before the GitHub Actions fallback starts
 - repairs opted-in PRs through a bounded Codex review/fix loop before merge
 - can open guarded implementation PRs for strict, reproducible bug issues
-- reviews code-bearing commits that land on target `main` branches
+- can manually review selected code-bearing commits on target `main` branches
 - publishes dashboard, audit, repair, and activity state to
   `openclaw/clawsweeper-state`
 
@@ -110,10 +110,11 @@ weakening the strict bug gate.
 
 ### Commit Reviews
 
-Push events on target `main` branches can dispatch to
-`.github/workflows/commit-review.yml`. The workflow expands the commit range,
-skips non-code-only commits cheaply, starts one Codex worker per code-bearing
-commit, and writes `records/<repo-slug>/commits/<sha>.md`.
+Automatic push-triggered commit review is disabled. Maintainers can still run
+`.github/workflows/commit-review.yml` manually for selected commits or ranges.
+The workflow expands the selected range, skips non-code-only commits cheaply,
+starts one Codex worker per code-bearing commit, and writes
+`records/<repo-slug>/commits/<sha>.md`.
 
 Commit reports are the source of truth. Optional target commit Check Runs are
 disabled by default and can be enabled per run or repository. Reports with
@@ -389,7 +390,8 @@ Commit review is intentionally separate from issue/PR cleanup. It never closes
 items, writes comments, or fixes code.
 
 - Target repositories forward `push` events from `main` with
-  `repository_dispatch`.
+  `repository_dispatch` only when the lane is re-enabled; the production
+  receiver currently accepts manual dispatch only.
 - Manual runs can pass `commit_sha`, optional `before_sha`, optional
   `additional_prompt`, `enabled`, and `create_checks`.
 - The receiver verifies the selected commits are reachable from `origin/main`.
@@ -572,10 +574,9 @@ target repo and exact item number; ClawSweeper then runs one event job that
 reviews, comments, and checks immediate safe apply instead of waiting for the
 next hot-intake cron or bulk publish lane.
 
-Target repositories can opt into main-branch commit review with
-[docs/commit-dispatcher.md](docs/commit-dispatcher.md). That dispatcher sends
-push ranges to this repository, where ClawSweeper expands the range and writes
-one commit report per SHA.
+Main-branch commit review is manual-only in production. See
+[docs/commit-dispatcher.md](docs/commit-dispatcher.md) for the historical target
+dispatcher shape if automatic push-range review is re-enabled later.
 
 ## Checks
 

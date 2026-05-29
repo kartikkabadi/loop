@@ -1,15 +1,15 @@
 # Commit Sweeper
 
-Commit Sweeper reviews commits that land on a target repository's `main` branch.
-It is intentionally separate from the issue/PR cleanup sweeper: it does not
-close items, write comments, or try to fix code. It produces one markdown report
-per commit. It can optionally publish a GitHub Check Run for the commit when
-`create_checks=true`.
+Commit Sweeper manually reviews selected commits on a target repository's
+`main` branch. It is intentionally separate from the issue/PR cleanup sweeper:
+it does not close items, write comments, or try to fix code. It produces one
+markdown report per commit. It can optionally publish a GitHub Check Run for the
+commit when `create_checks=true`.
 
 ## Goals
 
-- Review every code-bearing commit on `main` for regressions, bugs, and security
-  issues.
+- Review selected code-bearing commits on `main` for regressions, bugs, and
+  security issues.
 - Use one Codex worker per reviewed commit.
 - Keep reports human-readable and markdown-first.
 - Keep the storage path canonical so each commit has at most one report.
@@ -54,10 +54,9 @@ the commit without first rediscovering a date bucket.
 
 ## Triggers
 
-Target repositories dispatch `push` events from `main` to
-`openclaw/clawsweeper` with `repository_dispatch`.
-
-The receiver workflow is `.github/workflows/commit-review.yml`.
+Automatic target `push` dispatch is disabled in production. The receiver
+workflow is `.github/workflows/commit-review.yml` and currently runs from manual
+`workflow_dispatch` only.
 
 Manual workflow dispatch supports:
 
@@ -103,11 +102,12 @@ available for maintainer-visible work. The checked-in default lives in
 - start one matrix worker per code-bearing commit
 - write skipped reports for non-code commits
 - commit all reports
-- dispatch the next page when more commits remain
+- dispatch the next page with `workflow_dispatch` when more commits remain
 
-A 200-commit push runs as multiple continuation runs at the effective page size.
-Leave `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` unset to use dynamic scheduling.
-Raise the page size only when the org has enough rate-limit headroom.
+A 200-commit manual range runs as multiple continuation runs at the effective
+page size. Leave `CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` unset to use dynamic
+scheduling. Raise the page size only when the org has enough rate-limit
+headroom.
 
 ## Cheap Classification
 

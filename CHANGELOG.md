@@ -58,6 +58,7 @@ checkpoint, and status-only commits are intentionally omitted.
 ### Fixed
 
 - Required OpenClaw config-surface changes to pause automerge for maintainer review instead of emitting pass markers, with durable config-surface report metadata. Thanks @osolmaz.
+- Disabled automatic push-triggered commit review while keeping manual commit-review workflow dispatch available.
 - Treated target `AGENTS.md` files as optional repository-authored review policy
   in item and commit review prompts while preserving ClawSweeper repository
   profile and fallback behavior (#185, building on #173). Thanks @Takhoffman.
