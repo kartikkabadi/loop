@@ -12651,6 +12651,9 @@ test("review capacity probes use REST actions run listing", () => {
     assert.match(block, /status=\$\{run_status\}/);
     assert.match(block, /workflowName:\.name/);
     assert.match(block, /displayTitle:\.display_title/);
+    assert.match(block, /createdAt:\.created_at/);
+    assert.match(block, /updatedAt:\.updated_at/);
+    assert.match(block, /STALE_QUEUED_CUTOFF/);
     assert.doesNotMatch(block, /gh run list/);
   }
 });
@@ -12676,6 +12679,8 @@ test("background review capacity reserves expanding matrices and caps broad manu
   assert.match(modeBlock, /Capping broad background review shards/);
   assert.match(commitBlock, /limit review_shards\.hot_intake_default/);
   assert.match(commitBlock, /limit review_shards\.normal_default/);
+  assert.match(commitBlock, /STALE_QUEUED_CUTOFF/);
+  assert.match(commitBlock, /updatedAt:\.updated_at/);
 });
 
 test("sweep event reviews and target fanout avoid storm amplification", () => {

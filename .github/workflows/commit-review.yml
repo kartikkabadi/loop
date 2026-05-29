@@ -169,22 +169,23 @@ jobs:
             {
               for run_status in in_progress pending queued waiting requested; do
                 gh api "repos/${{ github.repository }}/actions/runs?per_page=100&status=${run_status}" \
-                  --jq '.workflow_runs[] | {databaseId:.id, workflowName:.name, displayTitle:.display_title, status:.status}' 2>/dev/null \
+                  --jq '.workflow_runs[] | {databaseId:.id, workflowName:.name, displayTitle:.display_title, status:.status, createdAt:.created_at, updatedAt:.updated_at}' 2>/dev/null \
                   || true
               done
             } | jq -s 'unique_by(.databaseId)'
           }
           ACTIVE_RUNS_JSON="$(active_runs_json)"
+          STALE_QUEUED_CUTOFF="$(date -u -d '6 hours ago' '+%Y-%m-%dT%H:%M:%SZ')"
           active_run_count() {
             printf '%s' "$ACTIVE_RUNS_JSON" \
-              | WORKFLOW_NAME="$1" jq '[.[] | select(.workflowName == env.WORKFLOW_NAME) | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested")] | length' 2>/dev/null \
+              | WORKFLOW_NAME="$1" STALE_QUEUED_CUTOFF="$STALE_QUEUED_CUTOFF" jq '[.[] | select(.workflowName == env.WORKFLOW_NAME) | select(.status == "in_progress" or ((.status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and ((.updatedAt // .createdAt // "") >= env.STALE_QUEUED_CUTOFF)))] | length' 2>/dev/null \
               || printf '0'
           }
           active_sweep_background_workers() {
             local runs total id title status active_shards
             total=0
             runs="$(printf '%s' "$ACTIVE_RUNS_JSON" \
-              | jq -r '.[] | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | select(.displayTitle == "Review ClawSweeper items" or .displayTitle == "Review hot ClawSweeper items") | [.databaseId, .displayTitle, .status] | @tsv' 2>/dev/null || true)"
+              | STALE_QUEUED_CUTOFF="$STALE_QUEUED_CUTOFF" jq -r '.[] | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or ((.status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and ((.updatedAt // .createdAt // "") >= env.STALE_QUEUED_CUTOFF))) | select(.displayTitle == "Review ClawSweeper items" or .displayTitle == "Review hot ClawSweeper items") | [.databaseId, .displayTitle, .status] | @tsv' 2>/dev/null || true)"
             while IFS=$'\t' read -r id title status; do
               if [ -z "$id" ]; then
                 continue
@@ -214,7 +215,7 @@ jobs:
           }
           active_sweep_exact_count() {
             printf '%s' "$ACTIVE_RUNS_JSON" \
-              | jq '[.[] | select(.workflowName == "ClawSweeper") | select(.status == "in_progress" or .status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") | select(.displayTitle | startswith("Review event item "))] | length' 2>/dev/null \
+              | STALE_QUEUED_CUTOFF="$STALE_QUEUED_CUTOFF" jq '[.[] | select(.workflowName == "ClawSweeper") | select((.status == "in_progress" or ((.status == "pending" or .status == "queued" or .status == "waiting" or .status == "requested") and ((.updatedAt // .createdAt // "") >= env.STALE_QUEUED_CUTOFF))) and (.displayTitle | startswith("Review event item ")))] | length' 2>/dev/null \
               || printf '0'
           }
           if [ -z "$PAGE_SIZE" ]; then
