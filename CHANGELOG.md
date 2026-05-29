@@ -57,6 +57,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Skipped open-but-locked repair apply targets before close or merge mutations and converted GitHub locked-conversation write denials into terminal skipped records. Thanks @AsishKumarDalal.
 - Required OpenClaw config-surface changes to pause automerge for maintainer review instead of emitting pass markers, with durable config-surface report metadata. Thanks @osolmaz.
 - Disabled automatic push-triggered commit review while keeping manual commit-review workflow dispatch available.
 - Treated target `AGENTS.md` files as optional repository-authored review policy

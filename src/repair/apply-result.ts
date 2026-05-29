@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -20,6 +21,7 @@ import {
 } from "./github-cli.js";
 import { issueNumberFromRef } from "./github-ref.js";
 import { isLockedConversationCommentError } from "../github-retry.js";
+import { lockedConversationSkip, lockedConversationSkipIfLocked } from "./apply-locks.js";
 import {
   CLAWSWEEPER_LABEL,
   CLAWSWEEPER_LABEL_COLOR,
@@ -154,7 +156,6 @@ function findLatestResultPath() {
   return candidates[0].path;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function readFixExecutionReport(_result?: JsonValue) {
   const reportPath = path.join(path.dirname(resultPath), "fix-execution-report.json");
   if (!fs.existsSync(reportPath)) return null;
@@ -297,14 +298,6 @@ function applyCloseAction({
     return { ...base, status: "blocked", reason: replacementCloseoutBlock };
 
   const live = fetchIssue(result.repo, target);
-  if (live.locked === true) {
-    return {
-      ...base,
-      status: "skipped",
-      reason: "target is locked",
-      live_state: live.state,
-    };
-  }
   const kind = live.pull_request ? "pull_request" : "issue";
   const authorAssociation = normalizeAuthorAssociation(live.author_association);
   if (hasSecuritySignal(live)) {
@@ -372,6 +365,8 @@ function applyCloseAction({
       live_state: live.state,
     };
   }
+  const lockedSkip = lockedConversationSkipIfLocked(base, live);
+  if (lockedSkip) return lockedSkip;
 
   if (dryRun) {
     return {
@@ -391,12 +386,7 @@ function applyCloseAction({
     closeIssueOrPullRequest(result.repo, target, kind, classification);
   } catch (error) {
     if (isLockedConversationCommentError(error)) {
-      return {
-        ...base,
-        status: "skipped",
-        reason: "target is locked (terminal 403)",
-        live_state: live.state,
-      };
+      return lockedConversationSkip(base, live, { terminalWriteError: true });
     }
     throw error;
   }
@@ -430,14 +420,6 @@ function applyMergeAction({
   }
 
   const live = fetchIssue(result.repo, target);
-  if (live.locked === true) {
-    return {
-      ...base,
-      status: "skipped",
-      reason: "target is locked",
-      live_state: live.state,
-    };
-  }
   if (!live.pull_request) {
     return {
       ...base,
@@ -490,6 +472,8 @@ function applyMergeAction({
       merge_commit_sha: pullRequest.merge_commit_sha ?? view.mergeCommit?.oid ?? null,
     };
   }
+  const lockedSkip = lockedConversationSkipIfLocked(base, live);
+  if (lockedSkip) return { ...lockedSkip, merge_method: "squash" };
 
   const mergeBlock = validateMergeablePullRequest({ pullRequest, view });
   if (mergeBlock) {
@@ -562,10 +546,8 @@ function applyMergeAction({
   } catch (error) {
     if (isLockedConversationCommentError(error)) {
       return {
-        ...base,
-        status: "skipped",
-        reason: "target is locked (terminal 403)",
-        live_state: live.state,
+        ...lockedConversationSkip(base, live, { terminalWriteError: true }),
+        merge_method: "squash",
       };
     }
     throw error;
@@ -975,7 +957,6 @@ function fetchIssue(repo: string, number: JsonValue) {
   return ghJson(["api", `repos/${repo}/issues/${number}`]);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function fetchPullRequest(repo: string, number: JsonValue) {
   return ghJson(["api", `repos/${repo}/pulls/${number}`]);
 }
