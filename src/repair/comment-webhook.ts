@@ -22,7 +22,7 @@ const PULL_ITEM_ACTIONS = new Set([
   "labeled",
   "unlabeled",
 ]);
-const FAST_ACK_SETTLE_DELAYS_MS = [250, 1500];
+const DEFAULT_FAST_ACK_SETTLE_DELAYS_MS = [250, 1500, 10_000];
 const inFlightFastAcks = new Map<string, Promise<number>>();
 
 type AcceptedIssueCommentWebhook = {
@@ -145,6 +145,7 @@ export async function handleGitHubWebhook({
     repo: accepted.targetRepo,
     itemNumber: accepted.itemNumber,
     sourceCommentId: accepted.commentId,
+    delaysMs: fastAckSettleDelaysMs(process.env.CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS),
   });
   return { statusCode: 202, body: { ok: true, status_comment_id: statusCommentId } };
 }
@@ -460,14 +461,16 @@ function settleFastAckComments({
   repo,
   itemNumber,
   sourceCommentId,
+  delaysMs = DEFAULT_FAST_ACK_SETTLE_DELAYS_MS,
 }: {
   token: string;
   repo: string;
   itemNumber: number;
   sourceCommentId: number;
+  delaysMs?: number[];
 }) {
   const cleanup = async () => {
-    for (const delayMs of FAST_ACK_SETTLE_DELAYS_MS) {
+    for (const delayMs of delaysMs) {
       await sleep(delayMs);
       await pruneFastAckComments({ token, repo, itemNumber, sourceCommentId });
     }
@@ -476,6 +479,14 @@ function settleFastAckComments({
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[clawsweeper webhook] fast ack cleanup failed: ${message}`);
   });
+}
+
+function fastAckSettleDelaysMs(value: string | undefined) {
+  const delays = String(value ?? "")
+    .split(",")
+    .map((entry) => Number.parseInt(entry.trim(), 10))
+    .filter((delay) => Number.isFinite(delay) && delay >= 0);
+  return delays.length > 0 ? delays : DEFAULT_FAST_ACK_SETTLE_DELAYS_MS;
 }
 
 async function createFastAckCommentOnce({
@@ -531,17 +542,13 @@ async function pruneFastAckComments({
 }) {
   const comments = await listFastAckComments({ token, repo, itemNumber, sourceCommentId });
   if (comments.length === 0) return null;
-  comments.sort((left, right) => {
-    const leftCreated = String(left.created_at ?? "");
-    const rightCreated = String(right.created_at ?? "");
-    return (
-      leftCreated.localeCompare(rightCreated) || (Number(left.id) || 0) - (Number(right.id) || 0)
-    );
-  });
+  const hasStatusComment = comments.some(isStatusBearingFastAckComment);
+  comments.sort(compareFastAckKeepPriority);
   const keepId = Number(comments[0]?.id) || null;
-  for (const comment of comments.slice(1)) {
+  for (const comment of comments) {
     const id = Number(comment.id) || 0;
     if (id <= 0 || id === keepId) continue;
+    if (hasStatusComment && isStatusBearingFastAckComment(comment)) continue;
     await githubFetch({
       token,
       path: `/repos/${repo}/issues/comments/${id}`,
@@ -552,6 +559,38 @@ async function pruneFastAckComments({
     });
   }
   return keepId;
+}
+
+function compareFastAckKeepPriority(left: LooseRecord, right: LooseRecord) {
+  const leftStatus = isStatusBearingFastAckComment(left) ? 1 : 0;
+  const rightStatus = isStatusBearingFastAckComment(right) ? 1 : 0;
+  if (leftStatus !== rightStatus) return rightStatus - leftStatus;
+  if (leftStatus > 0) return compareCommentsByUpdatedAtDesc(left, right);
+  return compareCommentsByCreatedAt(left, right);
+}
+
+function isStatusBearingFastAckComment(comment: LooseRecord) {
+  const body = String(comment.body ?? "");
+  return (
+    body.includes("clawsweeper-command-status:") ||
+    body.includes("<!-- clawsweeper-command-progress:start -->")
+  );
+}
+
+function compareCommentsByUpdatedAtDesc(left: LooseRecord, right: LooseRecord) {
+  const leftUpdated = String(left.updated_at ?? left.created_at ?? "");
+  const rightUpdated = String(right.updated_at ?? right.created_at ?? "");
+  return (
+    rightUpdated.localeCompare(leftUpdated) || (Number(right.id) || 0) - (Number(left.id) || 0)
+  );
+}
+
+function compareCommentsByCreatedAt(left: LooseRecord, right: LooseRecord) {
+  const leftCreated = String(left.created_at ?? "");
+  const rightCreated = String(right.created_at ?? "");
+  return (
+    leftCreated.localeCompare(rightCreated) || (Number(left.id) || 0) - (Number(right.id) || 0)
+  );
 }
 
 async function listFastAckComments({

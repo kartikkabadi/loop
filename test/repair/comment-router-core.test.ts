@@ -28,6 +28,7 @@ import {
   createCachedIssueCommentsLookupAsync,
   commandResponseMarker,
   commandResponseMarkerPrefix,
+  commandStatusMarkerFromBody,
   commandStatusMarkerPrefix,
   createCachedLabelNumberLookup,
   existingCommandStatusBlocksReplay,
@@ -43,6 +44,7 @@ import {
   maintainerAutomergeOptInApprovesNeedsHuman,
   parseCommand,
   parseRoutedCommentCommand,
+  planCommandAckConvergence,
   pausedModeStatusBlocksReplay,
   parseTrustedAutomation,
   repairableCheckBlockers,
@@ -60,6 +62,79 @@ import {
 } from "../../dist/repair/comment-router-core.js";
 import { CLAWSWEEPER_CO_AUTHOR_TRAILER } from "../../dist/repair/co-author-credit.js";
 import { parseSimpleYaml, validateJob } from "../../dist/repair/lib.js";
+
+test("planCommandAckConvergence scopes duplicate cleanup to the current status marker", () => {
+  const requestedStatus = "<!-- clawsweeper-command-status:81564:re_review:new -->";
+  const otherStatus = "<!-- clawsweeper-command-status:81564:re_review:old -->";
+  const comments = [
+    {
+      id: 101,
+      created_at: "2026-05-29T10:00:00Z",
+      updated_at: "2026-05-29T10:01:00Z",
+      body: `${otherStatus}\n<!-- clawsweeper-command-ack:456 -->\nOld status.`,
+    },
+    {
+      id: 102,
+      created_at: "2026-05-29T10:02:00Z",
+      updated_at: "2026-05-29T10:02:00Z",
+      body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+    },
+    {
+      id: 103,
+      created_at: "2026-05-29T10:03:00Z",
+      updated_at: "2026-05-29T10:05:00Z",
+      body: `${requestedStatus}\n<!-- clawsweeper-command-ack:456 -->\nCurrent status.`,
+    },
+    {
+      id: 104,
+      created_at: "2026-05-29T10:04:00Z",
+      updated_at: "2026-05-29T10:04:00Z",
+      body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+    },
+  ];
+
+  const plan = planCommandAckConvergence(comments, requestedStatus);
+
+  assert.equal(plan.keep?.id, 103);
+  assert.deepEqual(
+    plan.prunable.map((comment) => comment.id),
+    [102, 104],
+  );
+  assert.equal(commandStatusMarkerFromBody(comments[0].body), otherStatus);
+});
+
+test("planCommandAckConvergence keeps a new bare ack over an unrelated status comment", () => {
+  const requestedStatus = "<!-- clawsweeper-command-status:81564:re_review:new -->";
+  const otherStatus = "<!-- clawsweeper-command-status:81564:re_review:old -->";
+  const comments = [
+    {
+      id: 101,
+      created_at: "2026-05-29T10:00:00Z",
+      updated_at: "2026-05-29T10:01:00Z",
+      body: `${otherStatus}\n<!-- clawsweeper-command-ack:456 -->\nOld status.`,
+    },
+    {
+      id: 102,
+      created_at: "2026-05-29T10:02:00Z",
+      updated_at: "2026-05-29T10:02:00Z",
+      body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+    },
+    {
+      id: 103,
+      created_at: "2026-05-29T10:03:00Z",
+      updated_at: "2026-05-29T10:03:00Z",
+      body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+    },
+  ];
+
+  const plan = planCommandAckConvergence(comments, requestedStatus);
+
+  assert.equal(plan.keep?.id, 102);
+  assert.deepEqual(
+    plan.prunable.map((comment) => comment.id),
+    [103],
+  );
+});
 
 test("parseCommand recognizes maintainer slash commands", () => {
   assert.deepEqual(parseCommand("/clawsweeper fix ci"), {

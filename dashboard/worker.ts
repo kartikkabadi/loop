@@ -43,7 +43,7 @@ const CLAWSWEEPER_PULL_ITEM_ACTIONS = new Set([
   "labeled",
   "unlabeled",
 ]);
-const FAST_ACK_SETTLE_DELAYS_MS = [250, 1500];
+const DEFAULT_FAST_ACK_SETTLE_DELAYS_MS = [250, 1500, 10_000];
 const inFlightFastAcks = new Map();
 const CLAWSWEEPER_WEBHOOK_DENY_REPOS = new Set(["openclaw/clawsweeper-state", "openclaw/.github"]);
 const CLAWSWEEPER_AUTHOR_READ_ONLY_COMMAND =
@@ -484,6 +484,7 @@ async function githubWebhook(request, env, ctx) {
     repo: commentDecision.targetRepo,
     itemNumber: commentDecision.itemNumber,
     sourceCommentId: commentDecision.commentId,
+    delaysMs: fastAckSettleDelaysMs(env.CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS),
     waitUntil: ctx?.waitUntil?.bind(ctx),
   });
   return json({ ok: true, status_comment_id: statusCommentId }, 202);
@@ -692,9 +693,16 @@ async function createFastAckComment({ token, repo, itemNumber, sourceCommentId }
   );
 }
 
-function settleFastAckComments({ token, repo, itemNumber, sourceCommentId, waitUntil }) {
+function settleFastAckComments({
+  token,
+  repo,
+  itemNumber,
+  sourceCommentId,
+  delaysMs = DEFAULT_FAST_ACK_SETTLE_DELAYS_MS,
+  waitUntil,
+}) {
   const cleanup = async () => {
-    for (const delayMs of FAST_ACK_SETTLE_DELAYS_MS) {
+    for (const delayMs of delaysMs) {
       await sleep(delayMs);
       await pruneFastAckComments({ token, repo, itemNumber, sourceCommentId });
     }
@@ -703,6 +711,14 @@ function settleFastAckComments({ token, repo, itemNumber, sourceCommentId, waitU
     console.error(`ClawSweeper fast ack cleanup failed: ${error?.message || error}`);
   });
   if (waitUntil) waitUntil(promise);
+}
+
+function fastAckSettleDelaysMs(value) {
+  const delays = String(value || "")
+    .split(",")
+    .map((entry) => Number.parseInt(entry.trim(), 10))
+    .filter((delay) => Number.isFinite(delay) && delay >= 0);
+  return delays.length > 0 ? delays : DEFAULT_FAST_ACK_SETTLE_DELAYS_MS;
 }
 
 async function createFastAckCommentOnce({ token, repo, itemNumber, sourceCommentId }) {
@@ -730,18 +746,13 @@ function sleep(delayMs) {
 async function pruneFastAckComments({ token, repo, itemNumber, sourceCommentId }) {
   const comments = await listFastAckComments({ token, repo, itemNumber, sourceCommentId });
   if (!comments.length) return null;
-  comments.sort((left, right) => {
-    const leftCreated = String(objectValue(left).created_at || "");
-    const rightCreated = String(objectValue(right).created_at || "");
-    return (
-      leftCreated.localeCompare(rightCreated) ||
-      (Number(objectValue(left).id) || 0) - (Number(objectValue(right).id) || 0)
-    );
-  });
+  const hasStatusComment = comments.some(isStatusBearingFastAckComment);
+  comments.sort(compareFastAckKeepPriority);
   const keepId = Number(objectValue(comments[0]).id) || null;
-  for (const comment of comments.slice(1)) {
+  for (const comment of comments) {
     const id = Number(objectValue(comment).id) || 0;
     if (id <= 0 || id === keepId) continue;
+    if (hasStatusComment && isStatusBearingFastAckComment(comment)) continue;
     await githubTokenJson({
       token,
       path: `/repos/${repo}/issues/comments/${id}`,
@@ -754,6 +765,40 @@ async function pruneFastAckComments({ token, repo, itemNumber, sourceCommentId }
     });
   }
   return keepId;
+}
+
+function compareFastAckKeepPriority(left, right) {
+  const leftStatus = isStatusBearingFastAckComment(left) ? 1 : 0;
+  const rightStatus = isStatusBearingFastAckComment(right) ? 1 : 0;
+  if (leftStatus !== rightStatus) return rightStatus - leftStatus;
+  if (leftStatus > 0) return compareCommentsByUpdatedAtDesc(left, right);
+  return compareCommentsByCreatedAt(left, right);
+}
+
+function isStatusBearingFastAckComment(comment) {
+  const body = String(objectValue(comment).body || "");
+  return (
+    body.includes("clawsweeper-command-status:") ||
+    body.includes("<!-- clawsweeper-command-progress:start -->")
+  );
+}
+
+function compareCommentsByUpdatedAtDesc(left, right) {
+  const leftUpdated = String(objectValue(left).updated_at || objectValue(left).created_at || "");
+  const rightUpdated = String(objectValue(right).updated_at || objectValue(right).created_at || "");
+  return (
+    rightUpdated.localeCompare(leftUpdated) ||
+    (Number(objectValue(right).id) || 0) - (Number(objectValue(left).id) || 0)
+  );
+}
+
+function compareCommentsByCreatedAt(left, right) {
+  const leftCreated = String(objectValue(left).created_at || "");
+  const rightCreated = String(objectValue(right).created_at || "");
+  return (
+    leftCreated.localeCompare(rightCreated) ||
+    (Number(objectValue(left).id) || 0) - (Number(objectValue(right).id) || 0)
+  );
 }
 
 async function listFastAckComments({ token, repo, itemNumber, sourceCommentId }) {

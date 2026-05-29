@@ -1628,6 +1628,7 @@ test("hosted webhook reuses existing fast ack comments on redelivery", async () 
         CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
         CLAWSWEEPER_APP_PRIVATE_KEY: privateKey,
         CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+        CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS: "0",
       },
     );
 
@@ -1647,6 +1648,7 @@ test("hosted webhook reuses existing fast ack comments on redelivery", async () 
         max_comments: "1",
       },
     });
+    await new Promise((resolve) => setTimeout(resolve, 0));
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -1739,6 +1741,7 @@ test("hosted webhook coalesces concurrent duplicate fast ack comments", async ()
     CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
     CLAWSWEEPER_APP_PRIVATE_KEY: privateKey,
     CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+    CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS: "0",
   };
 
   try {
@@ -1772,6 +1775,7 @@ test("hosted webhook coalesces concurrent duplicate fast ack comments", async ()
       ),
       [777, 777],
     );
+    await new Promise((resolve) => setTimeout(resolve, 0));
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -1865,6 +1869,7 @@ test("hosted webhook removes duplicate fast ack comments after concurrent redeli
         CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
         CLAWSWEEPER_APP_PRIVATE_KEY: privateKey,
         CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+        CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS: "0",
       },
     );
 
@@ -1885,6 +1890,7 @@ test("hosted webhook removes duplicate fast ack comments after concurrent redeli
         max_comments: "1",
       },
     });
+    await new Promise((resolve) => setTimeout(resolve, 0));
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -1933,16 +1939,25 @@ test("hosted webhook schedules post-dispatch fast ack cleanup", async () => {
         {
           id: 888,
           created_at: "2026-05-28T13:00:01Z",
-          body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+          updated_at: "2026-05-28T13:00:02Z",
+          body: [
+            "<!-- clawsweeper-command-status:597:implement_issue:abc123 -->",
+            "<!-- clawsweeper-command-ack:456 -->",
+            "ClawSweeper issue implementation requested.",
+            "<!-- clawsweeper-command-progress:start -->",
+            "Implementation progress:",
+            "- State: In progress",
+            "<!-- clawsweeper-command-progress:end -->",
+          ].join("\n"),
           user: { login: "openclaw-clawsweeper[bot]" },
         },
       ]);
     }
     if (
-      url.pathname === "/repos/openclaw/gogcli/issues/comments/888" &&
+      url.pathname === "/repos/openclaw/gogcli/issues/comments/777" &&
       init?.method === "DELETE"
     ) {
-      deletedAck = 888;
+      deletedAck = 777;
       return new Response(null, { status: 204 });
     }
     if (url.pathname === "/repos/openclaw/gogcli/issues/comments/456/reactions") {
@@ -1983,6 +1998,7 @@ test("hosted webhook schedules post-dispatch fast ack cleanup", async () => {
         CLAWSWEEPER_APP_CLIENT_ID: "Iv23test",
         CLAWSWEEPER_APP_PRIVATE_KEY: privateKey,
         CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+        CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS: "0,0,0",
       },
       {
         waitUntil(promise: Promise<unknown>) {
@@ -1995,7 +2011,7 @@ test("hosted webhook schedules post-dispatch fast ack cleanup", async () => {
     assert.deepEqual(await response.json(), { ok: true, status_comment_id: 777 });
     assert.equal(waitUntilPromises.length, 1);
     await Promise.all(waitUntilPromises);
-    assert.equal(deletedAck, 888);
+    assert.equal(deletedAck, 777);
   } finally {
     globalThis.fetch = originalFetch;
   }

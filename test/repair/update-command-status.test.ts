@@ -111,6 +111,186 @@ test("selectCommandStatusComment prefers exact status comment ids", () => {
   assert.equal(selected?.id, 4466202000);
 });
 
+test("selectCommandStatusComment converges duplicate bare fast ack comments to the oldest", () => {
+  const marker = "<!-- clawsweeper-command-status:81564:re_review:320c867f -->";
+  const options = parseOptions(["--marker", marker, "--status-comment-id", "4466202000"]);
+  const selected = selectCommandStatusComment(
+    [
+      {
+        id: 4466202000,
+        created_at: "2026-05-29T19:19:48Z",
+        user: { login: "clawsweeper[bot]" },
+        body: "<!-- clawsweeper-command-ack:4466201487 -->\nClawSweeper picked this up.",
+      },
+      {
+        id: 4466201000,
+        created_at: "2026-05-29T19:19:39Z",
+        user: { login: "clawsweeper[bot]" },
+        body: "<!-- clawsweeper-command-ack:4466201487 -->\nClawSweeper picked this up.",
+      },
+    ],
+    {
+      marker: options.marker,
+      statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
+    },
+  );
+
+  assert.equal(selected?.id, 4466201000);
+});
+
+test("selectCommandStatusComment preserves status-bearing fast ack comments", () => {
+  const marker = "<!-- clawsweeper-command-status:81564:re_review:320c867f -->";
+  const options = parseOptions(["--marker", marker, "--status-comment-id", "4466201000"]);
+  const selected = selectCommandStatusComment(
+    [
+      {
+        id: 4466201000,
+        created_at: "2026-05-29T19:19:39Z",
+        updated_at: "2026-05-29T19:19:39Z",
+        user: { login: "clawsweeper[bot]" },
+        body: "<!-- clawsweeper-command-ack:4466201487 -->\nClawSweeper picked this up.",
+      },
+      {
+        id: 4466202000,
+        created_at: "2026-05-29T19:19:48Z",
+        updated_at: "2026-05-29T19:21:00Z",
+        user: { login: "clawsweeper[bot]" },
+        body: [
+          "<!-- clawsweeper-command-status:81564:re_review:320c867f -->",
+          "<!-- clawsweeper-command-ack:4466201487 -->",
+          "ClawSweeper re-review requested.",
+          "<!-- clawsweeper-command-progress:start -->",
+          "Re-review progress:",
+          "- State: Complete",
+          "<!-- clawsweeper-command-progress:end -->",
+        ].join("\n"),
+      },
+    ],
+    {
+      marker: options.marker,
+      statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
+    },
+  );
+
+  assert.equal(selected?.id, 4466202000);
+});
+
+test("selectCommandStatusComment scopes shared ack markers to the requested status marker", () => {
+  const oldMarker = "<!-- clawsweeper-command-status:81564:re_review:old -->";
+  const newMarker = "<!-- clawsweeper-command-status:81564:re_review:new -->";
+  const options = parseOptions(["--marker", oldMarker, "--status-comment-id", "4466201000"]);
+  const selected = selectCommandStatusComment(
+    [
+      {
+        id: 4466201000,
+        created_at: "2026-05-29T19:19:39Z",
+        updated_at: "2026-05-29T19:20:00Z",
+        user: { login: "clawsweeper[bot]" },
+        body: [
+          oldMarker,
+          "<!-- clawsweeper-command-ack:4466201487 -->",
+          "ClawSweeper re-review requested.",
+          "<!-- clawsweeper-command-progress:start -->",
+          "Re-review progress:",
+          "- State: In progress",
+          "<!-- clawsweeper-command-progress:end -->",
+        ].join("\n"),
+      },
+      {
+        id: 4466202000,
+        created_at: "2026-05-29T19:21:00Z",
+        updated_at: "2026-05-29T19:22:00Z",
+        user: { login: "clawsweeper[bot]" },
+        body: [
+          newMarker,
+          "<!-- clawsweeper-command-ack:4466201487 -->",
+          "ClawSweeper re-review requested.",
+          "<!-- clawsweeper-command-progress:start -->",
+          "Re-review progress:",
+          "- State: Complete",
+          "<!-- clawsweeper-command-progress:end -->",
+        ].join("\n"),
+      },
+    ],
+    {
+      marker: options.marker,
+      statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
+    },
+  );
+
+  assert.equal(selected?.id, 4466201000);
+});
+
+test("selectCommandStatusComment skips stale exact status-bearing ack comments", () => {
+  const oldMarker = "<!-- clawsweeper-command-status:81564:re_review:old -->";
+  const newMarker = "<!-- clawsweeper-command-status:81564:re_review:new -->";
+  const options = parseOptions(["--marker", newMarker, "--status-comment-id", "4466201000"]);
+  const selected = selectCommandStatusComment(
+    [
+      {
+        id: 4466201000,
+        created_at: "2026-05-29T19:19:39Z",
+        updated_at: "2026-05-29T19:20:00Z",
+        user: { login: "clawsweeper[bot]" },
+        body: [
+          oldMarker,
+          "<!-- clawsweeper-command-ack:4466201487 -->",
+          "ClawSweeper re-review requested.",
+          "<!-- clawsweeper-command-progress:start -->",
+          "Re-review progress:",
+          "- State: In progress",
+          "<!-- clawsweeper-command-progress:end -->",
+        ].join("\n"),
+      },
+      {
+        id: 4466202000,
+        created_at: "2026-05-29T19:21:00Z",
+        updated_at: "2026-05-29T19:22:00Z",
+        user: { login: "clawsweeper[bot]" },
+        body: [newMarker, "ClawSweeper re-review requested."].join("\n"),
+      },
+    ],
+    {
+      marker: options.marker,
+      statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
+    },
+  );
+
+  assert.equal(selected?.id, 4466202000);
+});
+
+test("selectCommandStatusComment matches full fast ack markers", () => {
+  const marker = "<!-- clawsweeper-command-status:81564:re_review:320c867f -->";
+  const options = parseOptions(["--marker", marker, "--status-comment-id", "12"]);
+  const selected = selectCommandStatusComment(
+    [
+      {
+        id: 12,
+        created_at: "2026-05-29T19:19:39Z",
+        user: { login: "clawsweeper[bot]" },
+        body: "<!-- clawsweeper-command-ack:12 -->\nClawSweeper picked this up.",
+      },
+      {
+        id: 123,
+        created_at: "2026-05-29T19:19:48Z",
+        user: { login: "clawsweeper[bot]" },
+        body: "<!-- clawsweeper-command-ack:123 -->\nClawSweeper picked this up.",
+      },
+    ],
+    {
+      marker: options.marker,
+      statusCommentId: options.statusCommentId,
+      trustedBots: options.trustedBots,
+    },
+  );
+
+  assert.equal(selected?.id, 12);
+});
+
 test("selectCommandStatusComment ignores human comments during marker fallback", () => {
   const marker = "<!-- clawsweeper-command-status:81564:re_review:320c867f -->";
   const options = parseOptions(["--marker", marker]);

@@ -408,6 +408,7 @@ test("concurrent duplicate command webhooks converge on one fast ack comment", a
   const previousAppId = process.env.CLAWSWEEPER_APP_ID;
   const previousClientId = process.env.CLAWSWEEPER_APP_CLIENT_ID;
   const previousPrivateKey = process.env.CLAWSWEEPER_APP_PRIVATE_KEY;
+  const previousSettleDelays = process.env.CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS;
   const { privateKey } = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 });
   const comments: Array<{ id: number; body: string; created_at: string; user: { login: string } }> =
     [];
@@ -416,6 +417,7 @@ test("concurrent duplicate command webhooks converge on one fast ack comment", a
   let dispatches = 0;
   process.env.CLAWSWEEPER_APP_ID = "12345";
   delete process.env.CLAWSWEEPER_APP_CLIENT_ID;
+  process.env.CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS = "0,0,0";
   process.env.CLAWSWEEPER_APP_PRIVATE_KEY = privateKey
     .export({ type: "pkcs1", format: "pem" })
     .toString();
@@ -488,11 +490,13 @@ test("concurrent duplicate command webhooks converge on one fast ack comment", a
     assert.equal(dispatches, 2);
     assert.equal(comments.length, 1);
     assert.match(comments[0]?.body ?? "", /clawsweeper-command-ack:456/);
+    await new Promise((resolve) => setTimeout(resolve, 0));
   } finally {
     globalThis.fetch = previousFetch;
     restoreEnv("CLAWSWEEPER_APP_ID", previousAppId);
     restoreEnv("CLAWSWEEPER_APP_CLIENT_ID", previousClientId);
     restoreEnv("CLAWSWEEPER_APP_PRIVATE_KEY", previousPrivateKey);
+    restoreEnv("CLAWSWEEPER_FAST_ACK_SETTLE_DELAYS_MS", previousSettleDelays);
   }
 });
 
@@ -548,8 +552,17 @@ test("comment webhook settles duplicate fast ack comments after dispatch", async
         },
         {
           id: 9002,
-          body: "<!-- clawsweeper-command-ack:456 -->\nClawSweeper picked this up.",
+          body: [
+            "<!-- clawsweeper-command-status:71898:re_review:abc123 -->",
+            "<!-- clawsweeper-command-ack:456 -->",
+            "ClawSweeper re-review requested.",
+            "<!-- clawsweeper-command-progress:start -->",
+            "Re-review progress:",
+            "- State: In progress",
+            "<!-- clawsweeper-command-progress:end -->",
+          ].join("\n"),
           created_at: "2026-05-28T13:00:01Z",
+          updated_at: "2026-05-28T13:00:02Z",
           user: { login: "clawsweeper[bot]" },
         },
       ]);
@@ -560,8 +573,8 @@ test("comment webhook settles duplicate fast ack comments after dispatch", async
     if (path === "/repos/openclaw/clawsweeper/dispatches" && method === "POST") {
       return jsonResponse({});
     }
-    if (path === "/repos/openclaw/openclaw/issues/comments/9002" && method === "DELETE") {
-      deletedAck = 9002;
+    if (path === "/repos/openclaw/openclaw/issues/comments/9001" && method === "DELETE") {
+      deletedAck = 9001;
       resolveDeleted?.();
       return jsonResponse({});
     }
@@ -587,7 +600,7 @@ test("comment webhook settles duplicate fast ack comments after dispatch", async
 
     assert.deepEqual(result, { statusCode: 202, body: { ok: true, status_comment_id: 9001 } });
     await deleted;
-    assert.equal(deletedAck, 9002);
+    assert.equal(deletedAck, 9001);
   } finally {
     globalThis.fetch = previousFetch;
     restoreEnv("CLAWSWEEPER_APP_ID", previousAppId);
