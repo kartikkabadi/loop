@@ -87,6 +87,7 @@ jobs:
             jobs
             results
             scripts/hydrate-state.ts
+            src/github-retry.ts
             src/repair
             src/repository-profiles.ts
             package.json
