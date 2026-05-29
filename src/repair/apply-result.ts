@@ -20,6 +20,8 @@ import {
   ghTextWithRetry as ghWithRetry,
 } from "./github-cli.js";
 import { issueNumberFromRef } from "./github-ref.js";
+import { isLockedConversationCommentError } from "../github-retry.js";
+import { lockedConversationSkip, lockedConversationSkipIfLocked } from "./apply-locks.js";
 import {
   CLAWSWEEPER_LABEL,
   CLAWSWEEPER_LABEL_COLOR,
@@ -363,6 +365,8 @@ function applyCloseAction({
       live_state: live.state,
     };
   }
+  const lockedSkip = lockedConversationSkipIfLocked(base, live);
+  if (lockedSkip) return lockedSkip;
 
   if (dryRun) {
     return {
@@ -375,10 +379,17 @@ function applyCloseAction({
     };
   }
 
-  if (!existingComment) {
-    postIssueComment(result.repo, target, body);
+  try {
+    if (!existingComment) {
+      postIssueComment(result.repo, target, body);
+    }
+    closeIssueOrPullRequest(result.repo, target, kind, classification);
+  } catch (error) {
+    if (isLockedConversationCommentError(error)) {
+      return lockedConversationSkip(base, live, { terminalWriteError: true });
+    }
+    throw error;
   }
-  closeIssueOrPullRequest(result.repo, target, kind, classification);
 
   return {
     ...base,
@@ -403,6 +414,7 @@ function applyMergeAction({
   if (!allowedRefs.has(target)) {
     return { ...base, status: "blocked", reason: "merge target is not listed in job refs" };
   }
+
   if (action.target_kind !== "pull_request") {
     return { ...base, status: "blocked", reason: "merge action requires pull_request target_kind" };
   }
@@ -460,6 +472,8 @@ function applyMergeAction({
       merge_commit_sha: pullRequest.merge_commit_sha ?? view.mergeCommit?.oid ?? null,
     };
   }
+  const lockedSkip = lockedConversationSkipIfLocked(base, live);
+  if (lockedSkip) return { ...lockedSkip, merge_method: "squash" };
 
   const mergeBlock = validateMergeablePullRequest({ pullRequest, view });
   if (mergeBlock) {
@@ -527,7 +541,17 @@ function applyMergeAction({
     bodyFile,
   ];
   if (pullRequest.head?.sha) mergeArgs.push("--match-head-commit", String(pullRequest.head.sha));
-  ghWithRetry(mergeArgs);
+  try {
+    ghWithRetry(mergeArgs);
+  } catch (error) {
+    if (isLockedConversationCommentError(error)) {
+      return {
+        ...lockedConversationSkip(base, live, { terminalWriteError: true }),
+        merge_method: "squash",
+      };
+    }
+    throw error;
+  }
   const merged = fetchPullRequest(result.repo, target);
   return {
     ...base,
@@ -552,6 +576,7 @@ function validateClosePolicy({ job, actionName }: LooseRecord) {
     return "close is blocked by job frontmatter";
   if ((job.frontmatter.blocked_actions ?? []).includes("comment"))
     return "comment is blocked by job frontmatter";
+
   if (
     !["close_low_signal", "post_merge_close"].includes(actionName) &&
     job.frontmatter.allow_instant_close !== true
