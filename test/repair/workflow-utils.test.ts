@@ -16,6 +16,7 @@ import {
   planOutputFields,
   plannedItemNumberCsv,
   proposedItemNumbers,
+  proposedPrCloseCoverageItemNumbers,
   writeCommentSyncCursor,
 } from "../../dist/repair/workflow-utils.js";
 import {
@@ -145,8 +146,14 @@ test("workflow utilities count repair results that require requeue", () => {
     path.join(root, "runs/b/result.json"),
     JSON.stringify({ actions: [{ action: "repair_contributor_branch", status: "pushed" }] }),
   );
+  write(
+    path.join(root, "runs/c/apply-report.json"),
+    JSON.stringify({
+      actions: [{ action: "close_duplicate", status: "blocked", requeue_required: true }],
+    }),
+  );
 
-  assert.equal(countRequeueRequired(path.join(root, "runs")), 1);
+  assert.equal(countRequeueRequired(path.join(root, "runs")), 2);
 });
 
 test("workflow utilities merge checkpoint reports in numeric order", () => {
@@ -309,6 +316,242 @@ test("workflow utilities select eligible proposed close records", () => {
       "",
     ].join("\n"),
   );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-17.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: close",
+      "confidence: high",
+      "action_taken: retry_pr_close_coverage_proof",
+      "close_reason: duplicate_or_superseded",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-18.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: close",
+      "confidence: high",
+      "action_taken: kept_open",
+      "close_reason: duplicate_or_superseded",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-19.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: close",
+      "confidence: high",
+      "action_taken: skipped_pr_close_coverage_proof",
+      "close_reason: duplicate_or_superseded",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-20.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-21.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      `item_created_at: ${oldDate}`,
+      `work_cluster_refs: ${JSON.stringify(["Superseded by https://github.com/openclaw/openclaw/pull/400"])}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-22.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      "pr_rating_overall: F",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-24.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      `item_created_at: ${oldDate}`,
+      `work_cluster_refs: ${JSON.stringify(["Superseded by openclaw/openclaw#400"])}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-25.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      `item_created_at: ${oldDate}`,
+      `work_cluster_refs: ${JSON.stringify(["Superseded by #400"])}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-23.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      "pr_rating_overall: F",
+      `item_created_at: ${new Date().toISOString()}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-26.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: close",
+      "confidence: high",
+      "action_taken: skipped_same_author_pair",
+      "close_reason: duplicate_or_superseded",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-27.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: issue",
+      "decision: close",
+      "confidence: high",
+      "action_taken: skipped_open_closing_pr",
+      "close_reason: implemented_on_main",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-28.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: close",
+      "confidence: high",
+      "action_taken: skipped_invalid_decision",
+      "close_reason: duplicate_or_superseded",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-29.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: close",
+      "confidence: high",
+      "action_taken: skipped_maintainer_authored",
+      "close_reason: duplicate_or_superseded",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-30.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: issue",
+      "decision: close",
+      "confidence: high",
+      "action_taken: skipped_invalid_decision",
+      "close_reason: implemented_on_main",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-31.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: issue",
+      "decision: close",
+      "confidence: high",
+      "action_taken: skipped_maintainer_authored",
+      "close_reason: implemented_on_main",
+      `item_created_at: ${oldDate}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
 
   const selected = withCwd(root, () =>
     proposedItemNumbers({
@@ -321,7 +564,7 @@ test("workflow utilities select eligible proposed close records", () => {
     }),
   );
 
-  assert.deepEqual(selected, [5, 12, 15]);
+  assert.deepEqual(selected, [5, 12, 15, 17, 18, 21, 22, 24, 25, 26, 27, 30, 31]);
 });
 
 test("workflow utilities allow ClawHub implemented-on-main issue proposals", () => {
@@ -356,6 +599,22 @@ test("workflow utilities allow ClawHub implemented-on-main issue proposals", () 
       "",
     ].join("\n"),
   );
+  write(
+    path.join(root, "records/openclaw-clawhub/items/openclaw-clawhub-9.md"),
+    [
+      "---",
+      "repository: openclaw/clawhub",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      "item_created_at: 2024-01-01T00:00:00Z",
+      "---",
+      "",
+    ].join("\n"),
+  );
 
   const selected = withCwd(root, () =>
     proposedItemNumbers({
@@ -371,12 +630,150 @@ test("workflow utilities allow ClawHub implemented-on-main issue proposals", () 
   assert.deepEqual(selected, [7]);
 });
 
+test("workflow utilities select proposed PR closes that can need coverage proof", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const oldDate = "2024-01-01T00:00:00Z";
+  writeProposedRecord(root, 5, "issue", "proposed_close", "implemented_on_main", oldDate);
+  writeProposedRecord(
+    root,
+    6,
+    "pull_request",
+    "proposed_close",
+    "duplicate_or_superseded",
+    oldDate,
+  );
+  writeProposedRecord(root, 7, "issue", "proposed_close", "duplicate_or_superseded", oldDate);
+  writeProposedRecord(
+    root,
+    8,
+    "pull_request",
+    "retry_pr_close_coverage_proof",
+    "duplicate_or_superseded",
+    oldDate,
+  );
+  writeProposedRecord(
+    root,
+    9,
+    "pull_request",
+    "proposed_close",
+    "low_signal_unmergeable_pr",
+    oldDate,
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-10.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      `item_created_at: ${oldDate}`,
+      `work_cluster_refs: ${JSON.stringify(["Superseded by #400"])}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-11.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      `item_created_at: ${oldDate}`,
+      `work_cluster_refs: ${JSON.stringify(["Superseded by [PR #400](https://github.com/other/repo/pull/400)"])}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-12.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      `item_created_at: ${oldDate}`,
+      `merge_risk_options: ${JSON.stringify([
+        {
+          category: "pause_or_close",
+          recommended: true,
+          title: "Pause or close",
+          body: "No replacement PR is identified.",
+        },
+      ])}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
+  write(
+    path.join(root, "records/openclaw-openclaw/items/openclaw-openclaw-13.md"),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      "type: pull_request",
+      "decision: keep_open",
+      "review_status: complete",
+      "local_checkout_access: verified",
+      "action_taken: kept_open",
+      "close_reason: none",
+      `item_created_at: ${oldDate}`,
+      "pr_rating_overall: F",
+      "---",
+      "",
+    ].join("\n"),
+  );
+
+  const options = {
+    targetRepo: "openclaw/openclaw",
+    applyKind: "all",
+    applyCloseReasons: "all",
+    staleMinAgeDays: 60,
+    minAgeDays: 0,
+    minAgeMinutes: null,
+  };
+
+  assert.deepEqual(
+    withCwd(root, () => proposedPrCloseCoverageItemNumbers(options)),
+    [6, 8, 10],
+  );
+  assert.deepEqual(
+    withCwd(root, () =>
+      proposedPrCloseCoverageItemNumbers({
+        ...options,
+        itemNumbers: new Set([5, 6]),
+      }),
+    ),
+    [6],
+  );
+  assert.deepEqual(
+    withCwd(root, () =>
+      proposedPrCloseCoverageItemNumbers({
+        ...options,
+        applyCloseReasons: "implemented_on_main",
+      }),
+    ),
+    [],
+  );
+});
+
 test("workflow utilities select cursor-based PR comment sync batches", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
   const cursorPath = path.join(root, "results/comment-sync-cursors/openclaw-openclaw.json");
   writeCommentSyncRecord(root, 10, "pull_request", "kept_open");
   writeCommentSyncRecord(root, 20, "pull_request", "proposed_close");
-  writeCommentSyncRecord(root, 30, "pull_request", "kept_open");
+  writeCommentSyncRecord(root, 30, "pull_request", "skipped_pr_close_coverage_proof");
   writeCommentSyncRecord(root, 40, "issue", "kept_open");
   writeCommentSyncRecord(root, 50, "pull_request", "reviewed");
 
@@ -452,6 +849,24 @@ function withCwd(cwd, callback) {
 function write(file, content) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, content);
+}
+
+function writeProposedRecord(root, number, type, actionTaken, closeReason, itemCreatedAt) {
+  write(
+    path.join(root, `records/openclaw-openclaw/items/openclaw-openclaw-${number}.md`),
+    [
+      "---",
+      "repository: openclaw/openclaw",
+      `type: ${type}`,
+      "decision: close",
+      "confidence: high",
+      `action_taken: ${actionTaken}`,
+      `close_reason: ${closeReason}`,
+      `item_created_at: ${itemCreatedAt}`,
+      "---",
+      "",
+    ].join("\n"),
+  );
 }
 
 function writeCommentSyncRecord(root, number, type, actionTaken) {

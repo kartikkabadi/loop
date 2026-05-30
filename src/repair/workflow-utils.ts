@@ -69,6 +69,9 @@ function runCli(): void {
     case "proposed-item-numbers":
       process.stdout.write(proposedItemNumbers(proposedItemOptions()).join(","));
       break;
+    case "proposed-pr-close-coverage-item-numbers":
+      process.stdout.write(proposedPrCloseCoverageItemNumbers(proposedItemOptions()).join(","));
+      break;
     case "comment-sync-batch":
       printOutput(commentSyncBatchOutput(commentSyncBatchOptions()));
       break;
@@ -253,6 +256,7 @@ type ProposedItemOptions = {
   staleMinAgeDays: number;
   minAgeDays: number;
   minAgeMinutes: number | null;
+  itemNumbers?: ReadonlySet<number> | null;
 };
 
 type CommentSyncBatchOptions = {
@@ -263,6 +267,19 @@ type CommentSyncBatchOptions = {
 };
 
 export function proposedItemNumbers(options: ProposedItemOptions): number[] {
+  return selectedProposedItemNumbers(options, "all");
+}
+
+export function proposedPrCloseCoverageItemNumbers(options: ProposedItemOptions): number[] {
+  return selectedProposedItemNumbers(options, "pr-close-coverage-proof");
+}
+
+type ProposedItemSelection = "all" | "pr-close-coverage-proof";
+
+function selectedProposedItemNumbers(
+  options: ProposedItemOptions,
+  selection: ProposedItemSelection,
+): number[] {
   const targetSlug = options.targetRepo
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
@@ -299,16 +316,40 @@ export function proposedItemNumbers(options: ProposedItemOptions): number[] {
     .readdirSync(itemsDir)
     .filter((name) => /(?:^|[a-z0-9-]-)\d+\.md$/.test(name))
     .flatMap((name) => {
+      const number = numberFor(name);
+      if (options.itemNumbers && !options.itemNumbers.has(number)) return [];
       const markdown = fs.readFileSync(path.join(itemsDir, name), "utf8");
       if (repoFor(markdown, name) !== options.targetRepo) return [];
       const type = frontMatterValue(markdown, "type");
       if (options.applyKind !== "all" && type && type !== options.applyKind) return [];
-      if (frontMatterValue(markdown, "decision") !== "close") return [];
-      if (frontMatterValue(markdown, "confidence") !== "high") return [];
-      if (frontMatterValue(markdown, "action_taken") !== "proposed_close") return [];
+      const decision = frontMatterValue(markdown, "decision");
+      const action = frontMatterValue(markdown, "action_taken");
+      const confidence = frontMatterValue(markdown, "confidence");
       const reason = frontMatterValue(markdown, "close_reason");
-      if (!allowedForTarget(options.targetRepo, type, reason, allowedReasons)) return [];
-      if (allowedCloseReasons && !allowedCloseReasons.has(reason)) return [];
+      const selectableClose =
+        decision === "close" &&
+        confidence === "high" &&
+        isSelectableCloseAction(action, reason) &&
+        allowedForTarget(options.targetRepo, type, reason, allowedReasons) &&
+        (!allowedCloseReasons || allowedCloseReasons.has(reason));
+      const selectablePromotion =
+        decision === "keep_open" &&
+        action === "kept_open" &&
+        type === "pull_request" &&
+        frontMatterValue(markdown, "review_status") === "complete" &&
+        frontMatterValue(markdown, "local_checkout_access") === "verified" &&
+        hasPullRequestClosePromotionSignal(markdown, options.targetRepo, {
+          staleMinAgeMs: options.staleMinAgeDays * 24 * 60 * 60 * 1000,
+        }) &&
+        allowedForTarget(options.targetRepo, type, "duplicate_or_superseded", allowedReasons) &&
+        (!allowedCloseReasons || allowedCloseReasons.has("duplicate_or_superseded"));
+      const selectableProofPromotion =
+        selectablePromotion && hasLinkedPullRequestSupersessionSignal(markdown, options.targetRepo);
+      if (!selectableClose && !selectablePromotion) return [];
+      const prCloseCoverageProofCanRun =
+        type === "pull_request" &&
+        ((selectableClose && reason === "duplicate_or_superseded") || selectableProofPromotion);
+      if (selection === "pr-close-coverage-proof" && !prCloseCoverageProofCanRun) return [];
       if (
         (reason === "stale_insufficient_info" || reason === "mostly_implemented_on_main") &&
         !olderThan(
@@ -319,9 +360,111 @@ export function proposedItemNumbers(options: ProposedItemOptions): number[] {
         return [];
       }
       if (!olderThan(frontMatterValue(markdown, "item_created_at"), minAgeMs)) return [];
-      return [numberFor(name)];
+      return [number];
     })
     .sort((left, right) => left - right);
+}
+
+const SELECTABLE_CLOSE_ACTIONS = new Set([
+  "proposed_close",
+  "retry_pr_close_coverage_proof",
+  "kept_open",
+  "skipped_open_closing_pr",
+  "skipped_same_author_pair",
+]);
+
+const RETRYABLE_CLOSE_SKIP_ACTIONS = new Set([
+  "skipped_maintainer_authored",
+  "skipped_invalid_decision",
+]);
+
+function isSelectableCloseAction(action: string, reason: string): boolean {
+  if (RETRYABLE_CLOSE_SKIP_ACTIONS.has(action)) return reason === "implemented_on_main";
+  return SELECTABLE_CLOSE_ACTIONS.has(action);
+}
+
+function hasPullRequestClosePromotionSignal(
+  markdown: string,
+  targetRepo: string,
+  options: { staleMinAgeMs: number },
+): boolean {
+  return (
+    hasLinkedPullRequestSupersessionSignal(markdown, targetRepo) ||
+    ((hasRecommendedPauseOrCloseOption(markdown) || hasStaleFRatedPullRequestSignal(markdown)) &&
+      olderThan(frontMatterValue(markdown, "item_created_at"), options.staleMinAgeMs))
+  );
+}
+
+function hasLinkedPullRequestSupersessionSignal(markdown: string, targetRepo: string): boolean {
+  const pullRef = sameRepoPullRequestRefRegex(targetRepo);
+  if (!pullRef) return false;
+  const signal =
+    /\b(supersed(?:e|ed|es|ing)|replace(?:s|d|ment)?|duplicate|duplicated|canonical|covered by|landed in)\b/i;
+  return closePromotionSignalTexts(markdown).some(
+    (text) =>
+      pullRef.test(normalizePullRequestMarkdownLinks(text, targetRepo)) && signal.test(text),
+  );
+}
+
+function normalizePullRequestMarkdownLinks(value: string, targetRepo: string): string {
+  const sameRepoPullRequestUrl = sameRepoPullRequestUrlRegex(targetRepo);
+  if (!sameRepoPullRequestUrl) return value;
+  return value.replace(markdownLinkRegex(), (_link, target: string) =>
+    sameRepoPullRequestUrl.test(target) ? target : " ",
+  );
+}
+
+function markdownLinkRegex(): RegExp {
+  return /\[[^\]\n]{1,200}\]\(([^\s)]{1,1000})\)/gi;
+}
+
+function sameRepoPullRequestUrlRegex(targetRepo: string): RegExp | null {
+  const [owner, repo] = targetRepo.split("/");
+  if (!owner || !repo) return null;
+  const escapedRepo = `${escapeRegExp(owner)}\\/${escapeRegExp(repo)}`;
+  return new RegExp(`^https:\\/\\/github\\.com\\/${escapedRepo}\\/pull\\/\\d+\\b`, "i");
+}
+
+function sameRepoPullRequestRefRegex(targetRepo: string): RegExp | null {
+  const [owner, repo] = targetRepo.split("/");
+  if (!owner || !repo) return null;
+  const escapedRepo = `${escapeRegExp(owner)}\\/${escapeRegExp(repo)}`;
+  return new RegExp(
+    [
+      `https:\\/\\/github\\.com\\/${escapedRepo}\\/pull\\/\\d+\\b`,
+      `(?:^|[^\\w/.-])${escapedRepo}#\\d+\\b`,
+      "(?:^|[^\\w/#-])#\\d+\\b",
+    ].join("|"),
+    "i",
+  );
+}
+
+function hasRecommendedPauseOrCloseOption(markdown: string): boolean {
+  return jsonArrayFrontMatter(markdown, "merge_risk_options").some((entry) => {
+    if (!isJsonObject(entry)) return false;
+    return entry.category === "pause_or_close" && entry.recommended === true;
+  });
+}
+
+function hasStaleFRatedPullRequestSignal(markdown: string): boolean {
+  return (
+    frontMatterValue(markdown, "pr_rating_overall") === "F" ||
+    frontMatterValue(markdown, "pr_rating_proof") === "F" ||
+    sectionLineValue(markdown, "Overall tier") === "F" ||
+    sectionLineValue(markdown, "Proof tier") === "F"
+  );
+}
+
+function closePromotionSignalTexts(markdown: string): string[] {
+  return [
+    ...stringArrayFrontMatter(markdown, "work_cluster_refs"),
+    ...jsonArrayFrontMatter(markdown, "merge_risk_options").flatMap((entry) =>
+      isJsonObject(entry) ? [stringValue(entry.title), stringValue(entry.body)] : [],
+    ),
+    sectionValue(markdown, "Best Possible Solution"),
+    sectionValue(markdown, "Evidence"),
+    sectionValue(markdown, "Close Comment"),
+  ].filter(Boolean);
 }
 
 export function commentSyncBatchOutput(options: CommentSyncBatchOptions): Record<string, string> {
@@ -373,6 +516,7 @@ function proposedItemOptions(): ProposedItemOptions {
     staleMinAgeDays: numberArg("stale-min-age-days", 60),
     minAgeDays: numberArg("min-age-days", 0),
     minAgeMinutes: optionalString("min-age-minutes") ? numberArg("min-age-minutes", 0) : null,
+    itemNumbers: itemNumberSet(optionalString("item-numbers")),
   };
 }
 
@@ -404,7 +548,13 @@ function commentSyncCandidates(targetRepo: string, applyKind: string): number[] 
       if (frontMatterValue(markdown, "review_status") !== "complete") return [];
       if (!frontMatterValue(markdown, "item_snapshot_hash")) return [];
       const actionTaken = frontMatterValue(markdown, "action_taken");
-      if (actionTaken !== "kept_open" && actionTaken !== "proposed_close") return [];
+      if (
+        actionTaken !== "kept_open" &&
+        actionTaken !== "proposed_close" &&
+        actionTaken !== "skipped_pr_close_coverage_proof"
+      ) {
+        return [];
+      }
       return [numberFor(name)];
     })
     .sort((left, right) => left - right);
@@ -432,7 +582,7 @@ function resultFiles(reportDir: string): string[] {
   return fs
     .readdirSync(reportDir, { recursive: true })
     .map((entry) => path.join(reportDir, String(entry)))
-    .filter((candidate) => path.basename(candidate) === "result.json")
+    .filter((candidate) => ["apply-report.json", "result.json"].includes(path.basename(candidate)))
     .filter((candidate) => fs.statSync(candidate).isFile());
 }
 
@@ -494,6 +644,15 @@ function csvItems(value: string): string[] {
     .filter(Boolean);
 }
 
+function itemNumberSet(value: string): ReadonlySet<number> | null {
+  if (!value) return null;
+  const numbers = csvItems(value).map((item) => Number(item));
+  if (numbers.some((number) => !Number.isInteger(number) || number <= 0)) {
+    throw new Error("--item-numbers must be comma-separated positive integers");
+  }
+  return new Set(numbers);
+}
+
 function checkpointNumber(name: string): number {
   return Number(name.match(/\d+/)?.[0] ?? 0);
 }
@@ -505,6 +664,43 @@ function frontMatterValue(markdown: string, key: string): string {
       ?.trim()
       .replace(/^"|"$/g, "") ?? ""
   );
+}
+
+function jsonArrayFrontMatter(markdown: string, key: string): JsonValue[] {
+  const raw = frontMatterValue(markdown, key);
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function stringArrayFrontMatter(markdown: string, key: string): string[] {
+  return jsonArrayFrontMatter(markdown, key).filter(
+    (entry): entry is string => typeof entry === "string",
+  );
+}
+
+function sectionValue(markdown: string, heading: string): string {
+  const match = markdown.match(
+    new RegExp(`(?:^|\\n)## ${escapeRegExp(heading)}\\n\\n([\\s\\S]*?)(?=\\n## |\\n?$)`),
+  );
+  return match?.[1]?.trim() ?? "";
+}
+
+function sectionLineValue(markdown: string, key: string): string {
+  const match = markdown.match(new RegExp(`^${escapeRegExp(key)}:\\s*(.+)$`, "m"));
+  return match?.[1]?.trim() ?? "";
+}
+
+function stringValue(value: JsonValue): string {
+  return typeof value === "string" ? value : "";
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function repoFor(markdown: string, name: string): string {

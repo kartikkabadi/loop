@@ -45,6 +45,17 @@ import {
   type PrSurfaceFile,
 } from "./pr-surface-stats.js";
 import {
+  compactPrCloseCoverageProofComment,
+  compactPrCloseCoverageProofText,
+  formatPrCloseCoverageProofDetailList,
+  prCloseCoverageProofCandidateCanClose,
+  prCloseCoverageProofCloseDecision,
+  runPrCloseCoverageProofModel,
+  type PrCloseCoverageProofModelResult,
+  type PrCloseCoverageProofPullRequestView,
+  type PrCloseCoverageProofRuntime,
+} from "./pr-close-coverage-proof.js";
+import {
   boolArg,
   itemNumbersArg,
   numberArg,
@@ -180,6 +191,8 @@ type ActionTaken =
   | "skipped_already_closed"
   | "skipped_maintainer_authored"
   | "skipped_protected_label"
+  | "skipped_pr_close_coverage_proof"
+  | "retry_pr_close_coverage_proof"
   | "skipped_invalid_decision"
   | "skipped_missing_record"
   | "skipped_runtime_budget";
@@ -831,6 +844,12 @@ const DEFAULT_SERVICE_TIER = "";
 const REVIEW_POLICY_VERSION = "2026-05-30-policy-v19";
 const REVIEW_ITEM_PROMPT_PATH = join(ROOT, "prompts", "review-item.md");
 const CLAWSWEEPER_DECISION_SCHEMA_PATH = join(ROOT, "schema", "clawsweeper-decision.schema.json");
+const PR_CLOSE_COVERAGE_PROOF_PROMPT_PATH = join(ROOT, "prompts", "pr-close-coverage-proof.md");
+const PR_CLOSE_COVERAGE_PROOF_SCHEMA_PATH = join(
+  ROOT,
+  "schema",
+  "clawsweeper-pr-close-coverage-proof.schema.json",
+);
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const REVIEW_START_STATUS_MARKER_PREFIX = "<!-- clawsweeper-review-status";
 const AUTOMERGE_LABEL = "clawsweeper:automerge";
@@ -1259,6 +1278,7 @@ const CLOSED_STATE_PROBE_ACTIONS = new Set<string>([
   "skipped_changed_since_review",
   "skipped_maintainer_authored",
   "skipped_protected_label",
+  "skipped_pr_close_coverage_proof",
   "skipped_invalid_decision",
   "skipped_open_closing_pr",
   "skipped_same_author_pair",
@@ -1484,6 +1504,7 @@ const REVIEW_SECTIONS = {
   risks: "Risks / Open Questions",
   closeComment: "Close Comment",
 } as const;
+const PR_CLOSE_COVERAGE_PROOF_SECTION = "PR Close Coverage Proof";
 
 type ReviewSection = keyof typeof REVIEW_SECTIONS;
 
@@ -1802,6 +1823,7 @@ function sha256(text: string): string {
 
 let reviewPromptTemplateCache: string | undefined;
 let reviewDecisionSchemaCache: string | undefined;
+let prCloseCoverageProofPromptTemplateCache: string | undefined;
 
 function itemSnapshotHash(item: Item, context: ItemContext): string {
   const snapshotItem = {
@@ -2718,6 +2740,8 @@ function isClawSweeperNoiseComment(value: unknown, number: number): boolean {
   if (/clawsweeper-visual\s+item=/i.test(body)) return true;
   if (/clawsweeper-command(?:-status|-ack)?:/i.test(body)) return true;
   if (/clawsweeper-review-status:/i.test(body)) return true;
+  if (/clawsweeper-close-applied\s+item=/i.test(body)) return true;
+  if (/clawsweeper-repair:close:/i.test(body)) return true;
   if (/^ClawSweeper status: review started\./i.test(body)) return true;
   return false;
 }
@@ -4127,6 +4151,13 @@ function isRetryableKeptOpenCloseReport(markdown: string): boolean {
   );
 }
 
+function isRetryablePrCloseCoverageProofReport(markdown: string): boolean {
+  return (
+    frontMatterValue(markdown, "action_taken") === "retry_pr_close_coverage_proof" &&
+    hasHighConfidenceAllowedCloseMetadata(markdown)
+  );
+}
+
 function isPairBlockedCloseReport(markdown: string): boolean {
   const action = frontMatterValue(markdown, "action_taken");
   return (
@@ -4141,6 +4172,7 @@ function isApplyCloseCandidateReport(markdown: string): boolean {
     hasHighConfidenceAllowedCloseMetadata(markdown) &&
     (action === "proposed_close" ||
       isRetryableCloseSkipReport(markdown) ||
+      isRetryablePrCloseCoverageProofReport(markdown) ||
       isRetryableKeptOpenCloseReport(markdown) ||
       isPairBlockedCloseReport(markdown))
   );
@@ -5512,6 +5544,14 @@ function reviewTargetBranch(openclawDir: string): string {
 export function reviewPromptTemplate(): string {
   reviewPromptTemplateCache ??= readFileSync(REVIEW_ITEM_PROMPT_PATH, "utf8");
   return reviewPromptTemplateCache;
+}
+
+function prCloseCoverageProofPromptTemplate(): string {
+  prCloseCoverageProofPromptTemplateCache ??= readFileSync(
+    PR_CLOSE_COVERAGE_PROOF_PROMPT_PATH,
+    "utf8",
+  );
+  return prCloseCoverageProofPromptTemplateCache;
 }
 
 export function reviewDecisionSchemaText(): string {
@@ -9885,6 +9925,9 @@ function upgradeNoDiffPullRequestReport(markdown: string, item: Item): string {
   upgraded = replaceFrontMatterValue(upgraded, "close_reason", "duplicate_or_superseded");
   upgraded = replaceFrontMatterValue(upgraded, "confidence", "high");
   upgraded = replaceFrontMatterValue(upgraded, "action_taken", "proposed_close");
+  upgraded = replaceFrontMatterValue(upgraded, "pr_close_coverage_proof_fallback_refs", "false");
+  upgraded = replaceFrontMatterValue(upgraded, "work_cluster_refs", "[]");
+  upgraded = replaceFrontMatterValue(upgraded, "merge_risk_options", "[]");
   upgraded = replaceFrontMatterValue(upgraded, "work_candidate", "none");
   upgraded = replaceFrontMatterValue(upgraded, "work_status", "none");
   upgraded = replaceSectionValue(
@@ -9909,6 +9952,7 @@ interface PullRequestClosePromotion {
   bestSolution: string;
   evidence: string;
   closeComment: string;
+  coverageProofFallbackRefs: boolean;
 }
 
 interface LinkedPullRequestSupersession {
@@ -9935,6 +9979,11 @@ function upgradePullRequestClosePromotionReport(
   upgraded = replaceFrontMatterValue(upgraded, "close_reason", "duplicate_or_superseded");
   upgraded = replaceFrontMatterValue(upgraded, "confidence", "high");
   upgraded = replaceFrontMatterValue(upgraded, "action_taken", "proposed_close");
+  upgraded = replaceFrontMatterValue(
+    upgraded,
+    "pr_close_coverage_proof_fallback_refs",
+    promotion.coverageProofFallbackRefs ? "true" : "false",
+  );
   upgraded = replaceFrontMatterValue(upgraded, "work_candidate", "none");
   upgraded = replaceFrontMatterValue(upgraded, "work_status", "none");
   upgraded = replaceFrontMatterValue(upgraded, "item_updated_at", item.updatedAt);
@@ -9955,10 +10004,20 @@ function closePromotionHasNonAutomationActivityAfterReview(
 ): boolean {
   const reviewedAtMs = timestampMs(frontMatterValue(markdown, "reviewed_at"));
   if (reviewedAtMs === null) return true;
+  return contextHasNonAutomationActivityAfter(context, reviewedAtMs);
+}
+
+function contextHasNonAutomationActivityAfter(
+  context: ItemContext,
+  reviewedAtMs: number,
+  options: { truncationCountsAsActivity?: boolean } = {},
+): boolean {
+  const truncationCountsAsActivity = options.truncationCountsAsActivity ?? true;
   if (
-    context.counts?.commentsTruncated ||
-    context.counts?.timelineTruncated ||
-    context.counts?.pullReviewCommentsTruncated
+    truncationCountsAsActivity &&
+    (context.counts?.commentsTruncated ||
+      context.counts?.timelineTruncated ||
+      context.counts?.pullReviewCommentsTruncated)
   ) {
     return true;
   }
@@ -9987,28 +10046,193 @@ function pullRequestUrlForNumber(number: number): string {
   return repoUrlFor(targetRepo(), `/pull/${number}`);
 }
 
+function sameRepoPullRequestRefRegex(): RegExp | null {
+  const [owner, repo] = targetRepo().split("/");
+  if (!owner || !repo) return null;
+  const escapedRepo = `${escapeRegExp(owner)}\\/${escapeRegExp(repo)}`;
+  return new RegExp(
+    [
+      `https:\\/\\/github\\.com\\/${escapedRepo}\\/pull\\/(\\d+)\\b`,
+      `(?:^|[^\\w/.-])${escapedRepo}#(\\d+)\\b`,
+      "(?:^|[^\\w/#-])#(\\d+)\\b",
+    ].join("|"),
+    "gi",
+  );
+}
+
 function sameRepoPullRequestUrlRegex(): RegExp | null {
   const [owner, repo] = targetRepo().split("/");
   if (!owner || !repo) return null;
   const escapedRepo = `${escapeRegExp(owner)}\\/${escapeRegExp(repo)}`;
-  return new RegExp(`https:\\/\\/github\\.com\\/${escapedRepo}\\/pull\\/(\\d+)\\b`, "gi");
+  return new RegExp(`^https:\\/\\/github\\.com\\/${escapedRepo}\\/pull\\/\\d+\\b`, "i");
 }
 
-function linkedPullRequestNumbersFromText(text: string, currentNumber: number): number[] {
-  const regex = sameRepoPullRequestUrlRegex();
-  if (!regex) return [];
-  const numbers = new Set<number>();
-  for (const match of text.matchAll(regex)) {
-    const number = Number(match[1]);
-    if (Number.isInteger(number) && number > 0 && number !== currentNumber) numbers.add(number);
+function markdownLinkRegex(): RegExp {
+  return /\[([^\]\n]{1,200})\]\(([^\s)]{1,1000})\)/gi;
+}
+
+const PULL_REQUEST_LINK_LABEL_START = "__clawsweeper_pr_link_label_start__";
+const PULL_REQUEST_LINK_LABEL_END = "__clawsweeper_pr_link_label_end__";
+
+function pullRequestLinkLabel(label: string): string {
+  const refRegex = sameRepoPullRequestRefRegex();
+  const trimmed = (refRegex ? label.replace(refRegex, " ") : label).trim();
+  return trimmed
+    ? `${PULL_REQUEST_LINK_LABEL_START} ${trimmed} ${PULL_REQUEST_LINK_LABEL_END} `
+    : "";
+}
+
+function stripLeadingPullRequestLinkLabels(value: string): string {
+  const pattern = new RegExp(
+    `^\\s*${escapeRegExp(PULL_REQUEST_LINK_LABEL_START)}[\\s\\S]*?${escapeRegExp(
+      PULL_REQUEST_LINK_LABEL_END,
+    )}\\s*`,
+  );
+  let remaining = value;
+  while (pattern.test(remaining)) {
+    remaining = remaining.replace(pattern, "");
   }
-  return [...numbers];
+  return remaining;
 }
 
-function lineContainingIndex(text: string, index: number): string {
-  const start = text.lastIndexOf("\n", Math.max(0, index - 1)) + 1;
-  const end = text.indexOf("\n", index);
-  return text.slice(start, end === -1 ? text.length : end);
+function normalizePullRequestMarkdownLinks(value: string): string {
+  const sameRepoPullRequestUrl = sameRepoPullRequestUrlRegex();
+  if (!sameRepoPullRequestUrl) return value;
+  return value.replace(markdownLinkRegex(), (_link: string, label: string, target: string) =>
+    sameRepoPullRequestUrl.test(target) ? `${pullRequestLinkLabel(label)}${target}` : " ",
+  );
+}
+
+type PullRequestRefKind = "pull_url" | "same_repo_shorthand" | "bare";
+
+interface PullRequestRef {
+  number: number;
+  kind: PullRequestRefKind;
+}
+
+function pullRequestRefFromMatch(match: RegExpMatchArray): PullRequestRef | null {
+  const number = Number(match[1] ?? match[2] ?? match[3]);
+  if (!Number.isInteger(number) || number <= 0) return null;
+  if (match[1]) return { number, kind: "pull_url" };
+  if (match[2]) return { number, kind: "same_repo_shorthand" };
+  return { number, kind: "bare" };
+}
+
+function pullRequestRefKindRank(kind: PullRequestRefKind): number {
+  if (kind === "pull_url") return 3;
+  if (kind === "same_repo_shorthand") return 2;
+  return 1;
+}
+
+function setStrongestPullRequestRef(refs: Map<number, PullRequestRef>, ref: PullRequestRef): void {
+  const existing = refs.get(ref.number);
+  if (!existing || pullRequestRefKindRank(ref.kind) > pullRequestRefKindRank(existing.kind)) {
+    refs.set(ref.number, ref);
+  }
+}
+
+function pullRequestRefMatchIndex(match: RegExpMatchArray): number {
+  const matchStart = match.index ?? 0;
+  const matchedText = match[0] ?? "";
+  if (match[1]) return matchStart;
+  if (match[2]) {
+    const needle = `${targetRepo()}#${match[2]}`;
+    const offset = matchedText.toLowerCase().indexOf(needle.toLowerCase());
+    return matchStart + (offset >= 0 ? offset : Math.max(0, matchedText.length - needle.length));
+  }
+  if (match[3]) {
+    const needle = `#${match[3]}`;
+    const offset = matchedText.indexOf(needle);
+    return matchStart + (offset >= 0 ? offset : Math.max(0, matchedText.length - needle.length));
+  }
+  return matchStart;
+}
+
+function linkedPullRequestRefsFromText(text: string, currentNumber: number): PullRequestRef[] {
+  const regex = sameRepoPullRequestRefRegex();
+  if (!regex) return [];
+  const normalizedText = normalizePullRequestMarkdownLinks(text);
+  const refs = new Map<number, PullRequestRef>();
+  for (const match of normalizedText.matchAll(regex)) {
+    const ref = pullRequestRefFromMatch(match);
+    if (ref && ref.number !== currentNumber) setStrongestPullRequestRef(refs, ref);
+  }
+  return [...refs.values()];
+}
+
+function relationshipClauseContainingIndex(text: string, index: number): string {
+  const lineStart = text.lastIndexOf("\n", Math.max(0, index - 1)) + 1;
+  const lineEnd = text.indexOf("\n", index);
+  const line = text.slice(lineStart, lineEnd === -1 ? text.length : lineEnd);
+  const relativeIndex = Math.max(0, index - lineStart);
+  let start = 0;
+  let end = line.length;
+  const boundary = /[;,|]|\.(?=\s|$)|\s+(?:and|but|while)\s+/gi;
+
+  for (const match of line.matchAll(boundary)) {
+    const boundaryStart = match.index ?? 0;
+    const boundaryEnd = boundaryStart + match[0].length;
+    if (relationshipBoundaryContinuesPullRequestRefList(line, boundaryStart, boundaryEnd)) {
+      continue;
+    }
+    if (boundaryEnd <= relativeIndex) {
+      start = boundaryEnd;
+      continue;
+    }
+    if (boundaryStart > relativeIndex) {
+      end = boundaryStart;
+      break;
+    }
+  }
+
+  return line.slice(start, end).trim();
+}
+
+function relationshipBoundaryContinuesPullRequestRefList(
+  line: string,
+  boundaryStart: number,
+  boundaryEnd: number,
+): boolean {
+  const boundaryText = line.slice(boundaryStart, boundaryEnd).trim().toLowerCase();
+  if (!["and", ",", ";"].includes(boundaryText)) return false;
+  if (!textEndsWithPullRequestRef(line.slice(0, boundaryStart))) return false;
+  return textStartsWithStandalonePullRequestRef(line.slice(boundaryEnd));
+}
+
+function textEndsWithPullRequestRef(value: string): boolean {
+  const regex = sameRepoPullRequestRefRegex();
+  if (!regex) return false;
+  const normalized = normalizePullRequestMarkdownLinks(value);
+  let lastRefEnd = -1;
+  for (const match of normalized.matchAll(regex)) {
+    lastRefEnd = (match.index ?? 0) + (match[0]?.length ?? 0);
+  }
+  return lastRefEnd >= 0 && /^[\s,;]*$/.test(normalized.slice(lastRefEnd));
+}
+
+function textStartsWithStandalonePullRequestRef(value: string): boolean {
+  const regex = sameRepoPullRequestRefRegex();
+  if (!regex) return false;
+  let remaining = stripLeadingPullRequestLinkLabels(
+    normalizePullRequestMarkdownLinks(value)
+      .trimStart()
+      .replace(/^and\s+/i, ""),
+  );
+  let sawRef = false;
+  while (remaining) {
+    regex.lastIndex = 0;
+    const match = regex.exec(remaining);
+    if (!match || pullRequestRefMatchIndex(match) !== 0) return false;
+    sawRef = true;
+    remaining = stripLeadingPullRequestLinkLabels(
+      remaining.slice((match.index ?? 0) + (match[0]?.length ?? 0)).trimStart(),
+    );
+    if (!remaining || /^[\s,;.)\]]+$/.test(remaining)) return true;
+    const separator = remaining.match(/^(?:[,;]\s*(?:and\s+)?|and\s+)/i);
+    if (!separator) return false;
+    remaining = stripLeadingPullRequestLinkLabels(remaining.slice(separator[0].length).trimStart());
+  }
+  return sawRef;
 }
 
 function linkedPullRequestSignalContextsFromText(
@@ -10016,18 +10240,24 @@ function linkedPullRequestSignalContextsFromText(
   currentNumber: number,
   linkedNumber: number,
 ): string[] {
-  const regex = sameRepoPullRequestUrlRegex();
+  const regex = sameRepoPullRequestRefRegex();
   if (!regex) return [];
+  const normalizedText = normalizePullRequestMarkdownLinks(text);
   const contexts: string[] = [];
-  for (const match of text.matchAll(regex)) {
-    const number = Number(match[1]);
-    if (number !== linkedNumber || number === currentNumber) continue;
-    contexts.push(lineContainingIndex(text, match.index ?? 0));
+  for (const match of normalizedText.matchAll(regex)) {
+    const ref = pullRequestRefFromMatch(match);
+    if (!ref || ref.number !== linkedNumber || ref.number === currentNumber) continue;
+    contexts.push(
+      relationshipClauseContainingIndex(normalizedText, pullRequestRefMatchIndex(match)),
+    );
   }
   return contexts;
 }
 
-function linkedPullRequestNumbersFromReport(markdown: string, currentNumber: number): number[] {
+function linkedPullRequestRefsFromReport(
+  markdown: string,
+  currentNumber: number,
+): PullRequestRef[] {
   const texts = [
     ...frontMatterStringArray(markdown, "work_cluster_refs"),
     ...mergeRiskOptionsFromReport(markdown).flatMap((option) => [option.title, option.body]),
@@ -10035,13 +10265,17 @@ function linkedPullRequestNumbersFromReport(markdown: string, currentNumber: num
     reviewSectionValue(markdown, "evidence"),
     reviewSectionValue(markdown, "closeComment"),
   ];
-  const numbers = new Set<number>();
+  const refs = new Map<number, PullRequestRef>();
   for (const text of texts) {
-    for (const number of linkedPullRequestNumbersFromText(text, currentNumber)) {
-      numbers.add(number);
+    for (const ref of linkedPullRequestRefsFromText(text, currentNumber)) {
+      setStrongestPullRequestRef(refs, ref);
     }
   }
-  return [...numbers];
+  return [...refs.values()];
+}
+
+function linkedPullRequestNumbersFromReport(markdown: string, currentNumber: number): number[] {
+  return linkedPullRequestRefsFromReport(markdown, currentNumber).map((ref) => ref.number);
 }
 
 function linkedPullRequestHasSupersessionSignal(
@@ -10238,17 +10472,8 @@ function duplicateCanonicalPullRequestBlockReason(
   options: { reportDirs?: readonly string[] } = {},
 ): string | null {
   if (item.kind !== "pull_request") return null;
-  const linkedNumbers = linkedPullRequestNumbersFromReport(markdown, item.number);
-  const canonicalNumbers = linkedNumbers.filter((number) =>
-    linkedPullRequestHasSupersessionSignal(markdown, item.number, number),
-  );
-  const numbersToCheck =
-    canonicalNumbers.length > 0
-      ? canonicalNumbers
-      : linkedNumbers.length === 1
-        ? linkedNumbers
-        : [];
-  for (const number of numbersToCheck) {
+  for (const ref of prCloseCoverageProofCandidateRefs(markdown, item)) {
+    const { number } = ref;
     try {
       const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]));
       const linkedFiles = linkedPullRequestFiles(number);
@@ -10270,10 +10495,285 @@ function duplicateCanonicalPullRequestBlockReason(
       const reason = unsafeCanonicalPullRequestReason(linkedPull, options);
       if (reason) return `${reason}; refusing duplicate/superseded auto-close`;
     } catch {
+      if (ref.kind !== "pull_url" && shorthandRefIsIssue(number)) continue;
       return `linked canonical PR #${number} could not be read; refusing duplicate/superseded auto-close`;
     }
   }
   return null;
+}
+
+function shorthandRefIsIssue(number: number): boolean {
+  try {
+    const issue = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${number}`]));
+    return !issue.pull_request;
+  } catch {
+    return false;
+  }
+}
+
+function linkedRefCanBePullRequest(ref: PullRequestRef): boolean {
+  if (ref.kind === "pull_url") return true;
+  try {
+    ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${ref.number}`]);
+    return true;
+  } catch {
+    return !shorthandRefIsIssue(ref.number);
+  }
+}
+
+function prCloseCoverageProofCandidateRefs(markdown: string, item: Item): PullRequestRef[] {
+  if (item.kind !== "pull_request") return [];
+  const linkedRefs = linkedPullRequestRefsFromReport(markdown, item.number);
+  const canonicalRefs = linkedRefs
+    .filter((ref) => linkedPullRequestHasSupersessionSignal(markdown, item.number, ref.number))
+    .filter(linkedRefCanBePullRequest);
+  if (canonicalRefs.length > 0) return canonicalRefs;
+  if (frontMatterValue(markdown, "pr_close_coverage_proof_fallback_refs") === "false") return [];
+  const possiblePullRequestRefs = linkedRefs.filter(linkedRefCanBePullRequest);
+  return possiblePullRequestRefs.length === 1 ? possiblePullRequestRefs : [];
+}
+
+interface PrCloseCoverageProofGateBlock {
+  actionTaken: ActionTaken;
+  reason: string;
+}
+
+interface PrCloseCoverageProofCoveringWitness {
+  number: number;
+  updatedAt: string | null;
+  url: string;
+  proof: PrCloseCoverageProofModelResult;
+}
+
+type PrCloseCoverageProofGateResult =
+  | { status: "allowed"; covering: PrCloseCoverageProofCoveringWitness }
+  | { status: "blocked"; block: PrCloseCoverageProofGateBlock }
+  | null;
+
+function sourcePrCloseCoveragePullRequestView(
+  item: Item,
+  context: ItemContext,
+): PrCloseCoverageProofPullRequestView {
+  const issue = asRecord(context.issue);
+  const pull = asRecord(context.pullRequest);
+  return {
+    number: item.number,
+    title: stringOrUndefined(pull.title) ?? stringOrUndefined(issue.title) ?? item.title,
+    url: item.url,
+    state: "open",
+    mergedAt: null,
+    body: compactPrCloseCoverageProofText(
+      stringOrUndefined(pull.body) ?? stringOrUndefined(issue.body) ?? "",
+    ),
+    updatedAt: item.updatedAt,
+    comments: (context.comments ?? []).map(compactPrCloseCoverageProofComment),
+    commentsTruncated: Boolean(context.counts?.commentsTruncated),
+  };
+}
+
+function coveringPrCloseCoveragePullRequestView(
+  number: number,
+): PrCloseCoverageProofPullRequestView {
+  const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]));
+  const issue = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${number}`]));
+  const commentsWindow = ghPagedContextWindow<unknown>(
+    `repos/${targetRepo()}/issues/${number}/comments`,
+    numberOrUndefined(issue.comments),
+    40,
+  );
+  const filteredComments = filterReviewContextComments(commentsWindow.items, number);
+  return {
+    number,
+    title: stringOrUndefined(pull.title) ?? stringOrUndefined(issue.title) ?? `PR #${number}`,
+    url:
+      stringOrUndefined(pull.html_url) ??
+      stringOrUndefined(issue.html_url) ??
+      pullRequestUrlForNumber(number),
+    state: stringOrUndefined(pull.state)?.toLowerCase() ?? "",
+    mergedAt: stringOrUndefined(pull.merged_at) ?? null,
+    body: compactPrCloseCoverageProofText(
+      stringOrUndefined(pull.body) ?? stringOrUndefined(issue.body) ?? "",
+    ),
+    updatedAt: stringOrUndefined(pull.updated_at) ?? stringOrUndefined(issue.updated_at) ?? null,
+    comments: filteredComments.included.map(compactPrCloseCoverageProofComment),
+    commentsTruncated: commentsWindow.truncated,
+  };
+}
+
+function coveringPrCloseCoveragePullRequestUpdatedAt(number: number): string | null {
+  const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]));
+  const pullUpdatedAt = stringOrUndefined(pull.updated_at);
+  if (pullUpdatedAt) return pullUpdatedAt;
+  const issue = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${number}`]));
+  return stringOrUndefined(issue.updated_at) ?? null;
+}
+
+function prCloseCoverageProofSignalSnippets(
+  markdown: string,
+  currentNumber: number,
+  linkedNumber: number,
+): string[] {
+  const texts = [
+    ...frontMatterStringArray(markdown, "work_cluster_refs"),
+    ...mergeRiskOptionsFromReport(markdown).flatMap((option) => [option.title, option.body]),
+    reviewSectionValue(markdown, "bestSolution"),
+    reviewSectionValue(markdown, "evidence"),
+    reviewSectionValue(markdown, "closeComment"),
+  ];
+  return texts
+    .flatMap((text) => linkedPullRequestSignalContextsFromText(text, currentNumber, linkedNumber))
+    .map((text) => compactPrCloseCoverageProofText(text, 500))
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
+function prCloseCoverageProofGateResult(options: {
+  markdown: string;
+  item: Item;
+  context: ItemContext;
+  runtime: PrCloseCoverageProofRuntime;
+}): PrCloseCoverageProofGateResult {
+  const candidateRefs = prCloseCoverageProofCandidateRefs(options.markdown, options.item);
+  if (candidateRefs.length === 0) return null;
+
+  const source = sourcePrCloseCoveragePullRequestView(options.item, options.context);
+  let firstKeepOpenBlock: PrCloseCoverageProofGateBlock | null = null;
+  let checkedPullRequestCandidate = false;
+  for (const candidateRef of candidateRefs) {
+    const linkedNumber = candidateRef.number;
+    let covering: PrCloseCoverageProofPullRequestView;
+    try {
+      covering = coveringPrCloseCoveragePullRequestView(linkedNumber);
+    } catch (error) {
+      if (candidateRef.kind !== "pull_url" && shorthandRefIsIssue(linkedNumber)) continue;
+      return {
+        status: "blocked",
+        block: {
+          actionTaken: "retry_pr_close_coverage_proof",
+          reason: `PR close coverage proof could not hydrate linked canonical PR #${linkedNumber}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        },
+      };
+    }
+    checkedPullRequestCandidate = true;
+    if (!prCloseCoverageProofCandidateCanClose(covering)) {
+      return {
+        status: "blocked",
+        block: {
+          actionTaken: "kept_open",
+          reason: `linked canonical PR #${linkedNumber} is ${covering.state || "not open"} and unmerged; refusing duplicate/superseded auto-close`,
+        },
+      };
+    }
+    try {
+      const proof = runPrCloseCoverageProofModel({
+        source,
+        covering,
+        markdown: options.markdown,
+        relationshipSignalSnippets: prCloseCoverageProofSignalSnippets(
+          options.markdown,
+          options.item.number,
+          linkedNumber,
+        ),
+        runtime: options.runtime,
+      });
+      const closeDecision = prCloseCoverageProofCloseDecision(proof);
+      if (closeDecision.close) {
+        return {
+          status: "allowed",
+          covering: {
+            number: covering.number,
+            updatedAt: covering.updatedAt,
+            url: covering.url,
+            proof: closeDecision.proof,
+          },
+        };
+      }
+      firstKeepOpenBlock ??= {
+        actionTaken: "skipped_pr_close_coverage_proof",
+        reason: `PR close coverage proof kept this PR open against ${covering.url}: ${closeDecision.reason}`,
+      };
+    } catch (error) {
+      return {
+        status: "blocked",
+        block: {
+          actionTaken: "retry_pr_close_coverage_proof",
+          reason: `PR close coverage proof failed for linked canonical PR #${linkedNumber}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        },
+      };
+    }
+  }
+  if (!checkedPullRequestCandidate) return null;
+  return {
+    status: "blocked",
+    block: firstKeepOpenBlock ?? {
+      actionTaken: "skipped_pr_close_coverage_proof",
+      reason: "PR close coverage proof did not allow close",
+    },
+  };
+}
+
+function renderPrCloseCoverageProofReportSection(
+  covering: PrCloseCoverageProofCoveringWitness,
+): string {
+  return [
+    "Decision: covered",
+    `Covering PR: ${covering.url}`,
+    `Reason: ${covering.proof.reason}`,
+    "",
+    "Covered work:",
+    formatPrCloseCoverageProofDetailList(covering.proof.coveredWork),
+    "",
+    "Unique source work:",
+    formatPrCloseCoverageProofDetailList(covering.proof.uniqueSourceWork),
+  ].join("\n");
+}
+
+function applyPrCloseCoverageProofReportSection(
+  markdown: string,
+  gateResult: PrCloseCoverageProofGateResult | undefined,
+): string {
+  if (gateResult?.status !== "allowed") return markdown;
+  return replaceSectionValue(
+    markdown,
+    PR_CLOSE_COVERAGE_PROOF_SECTION,
+    renderPrCloseCoverageProofReportSection(gateResult.covering),
+  );
+}
+
+function applyPrCloseCoverageProofBlockedReport(
+  markdown: string,
+  block: PrCloseCoverageProofGateBlock,
+): string {
+  const previousEvidence = reviewSectionValue(markdown, "evidence");
+  let next = replaceFrontMatterValue(markdown, "decision", "keep_open");
+  next = replaceFrontMatterValue(next, "close_reason", "none");
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.summary,
+    `Keep this PR open. ${sentence(block.reason)}`,
+  );
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.bestSolution,
+    "Keep this PR open until a linked canonical PR proves it covers this PR's unique work, or a maintainer confirms closure.",
+  );
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.evidence,
+    [`- **PR close coverage proof:** ${block.reason}`, previousEvidence.trim()]
+      .filter(Boolean)
+      .join("\n"),
+  );
+  next = replaceSectionValue(next, REVIEW_SECTIONS.closeComment, "_No close comment posted._");
+  return replaceSectionValue(
+    next,
+    PR_CLOSE_COVERAGE_PROOF_SECTION,
+    ["Decision: keep_open", `Reason: ${block.reason}`].join("\n"),
+  );
 }
 
 function recommendedPauseOrCloseOption(markdown: string): MergeRiskOption | null {
@@ -10302,6 +10802,7 @@ function staleFRatedPullRequestPromotion(
     return null;
   }
   return {
+    coverageProofFallbackRefs: false,
     bestSolution:
       "Close this stale PR. The latest review rated it F, the branch still lacks merge-ready proof, and there has been no human follow-up after the durable review.",
     evidence: [
@@ -10322,6 +10823,7 @@ function pauseOrClosePromotion(
   const option = recommendedPauseOrCloseOption(markdown);
   if (!option || !isOlderThanDays(item.createdAt, staleMinAgeDays)) return null;
   return {
+    coverageProofFallbackRefs: false,
     bestSolution: `Close this stale PR as superseded: ${option.title}. ${option.body}`,
     evidence: [
       `- **recommended close path:** the latest review's recommended merge-risk option is \`${option.title}\`, categorized as \`pause_or_close\`.`,
@@ -10343,6 +10845,7 @@ function linkedPullRequestSupersessionPromotion(
     ? `merged at ${linkedPull.mergedAt}`
     : "still open as the canonical replacement";
   return {
+    coverageProofFallbackRefs: true,
     bestSolution: `Close this PR as superseded by ${linkedPull.url}.`,
     evidence: [
       `- **linked superseding PR:** ${linkedPull.url} (${linkedPull.title}) is ${stateText}.`,
@@ -11801,6 +12304,9 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
   if (configSurfaceReviewRequired(markdown)) {
     return humanReviewMarkers();
   }
+  if (frontMatterValue(markdown, "action_taken") === "skipped_pr_close_coverage_proof") {
+    return humanReviewMarkers();
+  }
   const hasRealBehaviorProofBlocker = realBehaviorProofBlocksMerge(markdown);
   if (securityNeedsAttention) {
     const markers = [`<!-- clawsweeper-security:security-sensitive ${baseAttrs} -->`];
@@ -12119,15 +12625,30 @@ function renderCloseAppliedComment(options: {
   markdown: string;
   itemUrl: string;
 }): string {
+  const coverageProofLine = closeAppliedCoverageProofLine(options.markdown);
   return [
     "ClawSweeper applied the proposed close for this PR.",
     "",
     "- Action: closed this PR.",
     `- Close reason: ${closeReasonText(options.closeReason)}.`,
     `- Evidence: ${closeAppliedEvidenceLink(options.markdown, options.itemUrl)}.`,
+    coverageProofLine,
     "",
     closeAppliedCommentMarker(options.number),
-  ].join("\n");
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n");
+}
+
+function closeAppliedCoverageProofLine(markdown: string): string | null {
+  const proof = sectionValue(markdown, PR_CLOSE_COVERAGE_PROOF_SECTION);
+  if (!proof) return null;
+  const reason = sectionLineValue(proof, "Reason");
+  if (!reason) return null;
+  const covering = sectionLineValue(proof, "Covering PR");
+  return [`- Coverage proof: ${sentence(reason)}`, covering ? ` Covering PR: ${covering}.` : ""]
+    .join("")
+    .trim();
 }
 
 function ensureCloseAppliedComment(options: {
@@ -12998,6 +13519,21 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
   const commentSyncMinAgeDays = numberArg(args.comment_sync_min_age_days, 0);
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
   const reportPath = resolve(stringArg(args.report_path, join(ROOT, "apply-report.json")));
+  const artifactDir = resolve(stringArg(args.artifact_dir, join(ROOT, "artifacts", "apply")));
+  const prCloseCoverageProofRuntime: PrCloseCoverageProofRuntime = {
+    model: stringArg(args.codex_model, DEFAULT_CODEX_MODEL),
+    reasoningEffort: stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT),
+    sandboxMode: stringArg(args.codex_sandbox, "read-only"),
+    serviceTier: stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER),
+    timeoutMs: numberArg(args.codex_timeout_ms, 600_000),
+    workDir: join(artifactDir, "pr-close-coverage-proof"),
+    rootDir: ROOT,
+    schemaPath: PR_CLOSE_COVERAGE_PROOF_SCHEMA_PATH,
+    promptTemplate: prCloseCoverageProofPromptTemplate(),
+    ...(process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN
+      ? { ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN }
+      : {}),
+  };
   const startedAtMs = Date.now();
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const requestedItemNumberSet = new Set(requestedItemNumbers);
@@ -13098,6 +13634,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     const isRetryableSkippedClose = isRetryableCloseSkipReport(markdown);
     const isUpgradedCloseCandidate =
       isRetryableSkippedClose ||
+      isRetryablePrCloseCoverageProofReport(markdown) ||
       isRetryableKeptOpenCloseReport(markdown) ||
       isPairBlockedCloseReport(markdown);
     const verifiedLocalCheckout = hasVerifiedLocalCheckoutAccess(markdown);
@@ -13137,7 +13674,11 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     }
     if (
       !storedHash ||
-      (action !== "proposed_close" && action !== "kept_open" && !shouldProbeClosedState)
+      (action !== "proposed_close" &&
+        action !== "kept_open" &&
+        action !== "skipped_pr_close_coverage_proof" &&
+        action !== "retry_pr_close_coverage_proof" &&
+        !shouldProbeClosedState)
     ) {
       continue;
     }
@@ -13154,9 +13695,38 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     let currentClosingPullRequests: unknown[] | undefined;
     let clawSweeperLabelsChanged = false;
     let issueAdvisoryLabelsChanged = false;
+    const allowedSelfMutationUpdatedAts = new Set<string>();
     const currentItemContext = (): ItemContext => {
       currentContext ??= collectItemContext(item, { fullTimelineForRelations: true });
       return currentContext;
+    };
+    const rememberSelfMutationUpdatedAt = (): void => {
+      if (!dryRun) allowedSelfMutationUpdatedAts.add(fetchItem(number).item.updatedAt);
+    };
+    let cachedPrCloseCoverageProofGateResult: PrCloseCoverageProofGateResult | undefined;
+    let prCloseCoverageProofGateChecked = false;
+    let prCloseCoverageProofStartedAtMs: number | null = null;
+    const currentPrCloseCoverageProofGateBlock = (): PrCloseCoverageProofGateBlock | null => {
+      if (cachedPrCloseCoverageProofGateResult === undefined) {
+        prCloseCoverageProofGateChecked = true;
+        if (
+          frontMatterValue(markdown, "decision") === "close" &&
+          closeReason === "duplicate_or_superseded"
+        ) {
+          prCloseCoverageProofStartedAtMs = Date.now();
+          cachedPrCloseCoverageProofGateResult = prCloseCoverageProofGateResult({
+            markdown,
+            item,
+            context: currentItemContext(),
+            runtime: prCloseCoverageProofRuntime,
+          });
+        } else {
+          cachedPrCloseCoverageProofGateResult = null;
+        }
+      }
+      return cachedPrCloseCoverageProofGateResult?.status === "blocked"
+        ? cachedPrCloseCoverageProofGateResult.block
+        : null;
     };
     const sameAuthorPairStartCloseable = new Map<string, boolean>();
     const currentCloseGatesPassed = (): boolean => {
@@ -13181,13 +13751,17 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       ) {
         return false;
       }
-      return (
+      if (
         closeReasonApplyAgeSkipReason(item, closeReason, {
           minAgeMs,
           minAgeDescription,
           staleMinAgeDays,
-        }) === null
-      );
+        })
+      ) {
+        return false;
+      }
+      if (currentPrCloseCoverageProofGateBlock()) return false;
+      return true;
     };
     const canStartSameAuthorPairCloseInThisRun = (
       counterpartNumber: number,
@@ -13341,7 +13915,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       }
       continue;
     }
-    if (state === "open" && shouldProbeClosedState && !isCloseProposal) {
+    if (state === "open" && shouldProbeClosedState && !isCloseProposal && !syncCommentsOnly) {
       continue;
     }
     if (isUpgradedCloseCandidate) {
@@ -13360,6 +13934,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       markdown = upgradeNoDiffPullRequestReport(markdown, item);
       closeReason = "duplicate_or_superseded";
       isCloseProposal = true;
+      cachedPrCloseCoverageProofGateResult = undefined;
     }
     if (
       state === "open" &&
@@ -13387,6 +13962,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         storedHash = itemSnapshotHash(item, promotionContext);
         closeReason = "duplicate_or_superseded";
         isCloseProposal = true;
+        cachedPrCloseCoverageProofGateResult = undefined;
       }
     }
     let currentPrStatusKind: PrStatusLabelKind | null = null;
@@ -13452,6 +14028,9 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       clawSweeperLabelsChanged ||= telegramVisibleProofSyncResult.changed;
     }
     markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+    if (clawSweeperLabelsChanged && !dryRun) {
+      rememberSelfMutationUpdatedAt();
+    }
     const renderOptions: ReviewCommentRenderOptions = {
       prStatusKind: currentPrStatusKind,
       previousLabels,
@@ -13460,7 +14039,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       renderOptions.hasOpenLinkedPullRequest =
         openClosingPullRequestApplyReason(currentClosingPullRequests) !== null;
     }
-    const reviewComment = renderReviewCommentFromReport(
+    let reviewComment = renderReviewCommentFromReport(
       markdown,
       closeReason ?? "none",
       renderOptions,
@@ -13469,7 +14048,12 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       reviewComment,
       reviewSectionValue(markdown, "closeComment"),
     ]);
-    const markedReviewComment = markedReviewCommentBody(number, reviewComment);
+    const existingReviewCommentUpdatedAt = commentUpdatedAt(existingReviewComment);
+    if (existingReviewCommentUpdatedAt) {
+      allowedSelfMutationUpdatedAts.add(existingReviewCommentUpdatedAt);
+    }
+    let markedReviewComment = markedReviewCommentBody(number, reviewComment);
+    let proofBlockedForCommentSync: PrCloseCoverageProofGateBlock | null = null;
     const protectedApplyReason = applyProtectedLabelReason(item.labels, closeReason);
     if (applyBlockingProtectedLabels(item.labels, closeReason).length > 0) {
       if (isCloseProposal) {
@@ -13511,6 +14095,127 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     const unchangedSinceReview = storedUpdatedAt
       ? !updatedSinceReview || reviewCommentOnlyUpdate
       : false;
+    const markChangedSinceReview = (options: {
+      reason: string;
+      currentUpdatedAt?: string | undefined;
+      currentSnapshotHash?: string | undefined;
+    }): boolean => {
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
+      if (options.currentUpdatedAt) {
+        markdown = replaceFrontMatterValue(
+          markdown,
+          "current_item_updated_at",
+          options.currentUpdatedAt,
+        );
+      }
+      if (options.currentSnapshotHash) {
+        markdown = replaceFrontMatterValue(
+          markdown,
+          "current_item_snapshot_hash",
+          options.currentSnapshotHash,
+        );
+      }
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "skipped_changed_since_review",
+        reason: options.reason,
+      });
+      processedCount += 1;
+      maybeLogProgress(`skipped #${number}: ${options.reason}`);
+      return processedCount >= processedLimit;
+    };
+    const postProofFreshnessBlock = (): {
+      reason: string;
+      currentUpdatedAt?: string;
+      currentSnapshotHash?: string;
+    } | null => {
+      if (
+        !prCloseCoverageProofGateChecked ||
+        cachedPrCloseCoverageProofGateResult?.status !== "allowed"
+      ) {
+        return null;
+      }
+      const refreshed = fetchItem(number);
+      if (refreshed.state !== "open") {
+        return {
+          reason: `state changed to ${refreshed.state}`,
+          currentUpdatedAt: refreshed.item.updatedAt,
+        };
+      }
+      const refreshedSelfMutationOnlyUpdate = allowedSelfMutationUpdatedAts.has(
+        refreshed.item.updatedAt,
+      );
+      let refreshedContext: ItemContext | null = null;
+      const selfMutationMaskedNonAutomationActivity = (): boolean => {
+        if (prCloseCoverageProofStartedAtMs === null) return true;
+        refreshedContext ??= collectItemContext(refreshed.item, { fullTimelineForRelations: true });
+        return contextHasNonAutomationActivityAfter(
+          refreshedContext,
+          prCloseCoverageProofStartedAtMs,
+          { truncationCountsAsActivity: false },
+        );
+      };
+      if (storedUpdatedAt && refreshed.item.updatedAt !== storedUpdatedAt) {
+        if (refreshedSelfMutationOnlyUpdate) {
+          if (!selfMutationMaskedNonAutomationActivity()) return null;
+          return {
+            reason: "non-automation activity after coverage proof",
+            currentUpdatedAt: refreshed.item.updatedAt,
+          };
+        }
+        return {
+          reason: "updated_at changed",
+          currentUpdatedAt: refreshed.item.updatedAt,
+        };
+      }
+      if (!storedUpdatedAt && storedHash) {
+        const refreshedHash = itemSnapshotHash(
+          refreshed.item,
+          (refreshedContext ??= collectItemContext(refreshed.item, {
+            fullTimelineForRelations: true,
+          })),
+        );
+        if (refreshedHash !== storedHash) {
+          if (refreshedSelfMutationOnlyUpdate && !selfMutationMaskedNonAutomationActivity()) {
+            return null;
+          }
+          return {
+            reason: refreshedSelfMutationOnlyUpdate
+              ? "non-automation activity after coverage proof"
+              : "snapshot changed",
+            currentSnapshotHash: refreshedHash,
+          };
+        }
+      }
+      return null;
+    };
+    const postProofCoveringPrFreshnessBlock = (): PrCloseCoverageProofGateBlock | null => {
+      if (
+        !prCloseCoverageProofGateChecked ||
+        cachedPrCloseCoverageProofGateResult?.status !== "allowed"
+      ) {
+        return null;
+      }
+      const { covering } = cachedPrCloseCoverageProofGateResult;
+      if (!covering.updatedAt) return null;
+      try {
+        const currentUpdatedAt = coveringPrCloseCoveragePullRequestUpdatedAt(covering.number);
+        if (currentUpdatedAt === covering.updatedAt) return null;
+        return {
+          actionTaken: "retry_pr_close_coverage_proof",
+          reason: `linked canonical PR #${covering.number} changed after coverage proof`,
+        };
+      } catch (error) {
+        return {
+          actionTaken: "retry_pr_close_coverage_proof",
+          reason: `PR close coverage proof could not recheck linked canonical PR #${covering.number}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        };
+      }
+    };
     if (state !== "open") {
       if (item.closedAt) {
         markdown = replaceFrontMatterValue(markdown, "current_item_closed_at", item.closedAt);
@@ -13607,6 +14312,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         item.labels = impactSyncResult.labels;
         clawSweeperLabelsChanged ||= impactSyncResult.changed;
         markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+        let mergeRiskLabelsChanged = false;
         if (item.kind === "pull_request") {
           const mergeRiskSyncResult = syncMergeRiskLabels({
             number,
@@ -13615,8 +14321,12 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
             dryRun,
           });
           item.labels = mergeRiskSyncResult.labels;
+          mergeRiskLabelsChanged = mergeRiskSyncResult.changed;
           clawSweeperLabelsChanged ||= mergeRiskSyncResult.changed;
           markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+        }
+        if (syncResult.changed || impactSyncResult.changed || mergeRiskLabelsChanged) {
+          rememberSelfMutationUpdatedAt();
         }
       } catch (error) {
         if (!isGitHubRequiresAuthenticationError(error)) throw error;
@@ -13640,6 +14350,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         issueAdvisoryLabelsChanged = syncResult.changed;
         clawSweeperLabelsChanged ||= syncResult.changed;
         markdown = replaceFrontMatterValue(markdown, "labels", JSON.stringify(item.labels));
+        if (syncResult.changed) rememberSelfMutationUpdatedAt();
       } catch (error) {
         if (!isGitHubRequiresAuthenticationError(error)) throw error;
         if (markLabelSyncAuthSkipped("advisory issue")) break;
@@ -13657,18 +14368,18 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         continue;
       }
     }
-    const reviewCommentHash = sha256(markedReviewComment);
-    const existingReviewCommentMatches = commentBodyMatches(
+    let reviewCommentHash = sha256(markedReviewComment);
+    let existingReviewCommentMatches = commentBodyMatches(
       existingReviewComment,
       markedReviewComment,
     );
-    const needsReviewCommentBodySync = !existingReviewComment || !existingReviewCommentMatches;
-    const needsReviewCommentHashSync =
+    let needsReviewCommentBodySync = !existingReviewComment || !existingReviewCommentMatches;
+    let needsReviewCommentHashSync =
       frontMatterValue(markdown, "review_comment_sha256") !== reviewCommentHash;
-    const needsReviewCommentReferenceSync =
+    let needsReviewCommentReferenceSync =
       frontMatterValue(markdown, "review_comment_id") === "unknown" ||
       frontMatterValue(markdown, "review_comment_url") === "unknown";
-    const needsReviewCommentSync = shouldSyncReviewComment({
+    let needsReviewCommentSync = shouldSyncReviewComment({
       syncCommentsOnly,
       isCloseProposal,
       commentSyncMinAgeDays,
@@ -13679,6 +14390,90 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       needsReviewCommentReferenceSync,
       forceReviewCommentBodySync: clawSweeperLabelsChanged,
     });
+    if (
+      isCloseProposal &&
+      closeReason === "duplicate_or_superseded" &&
+      !syncCommentsOnly &&
+      (applyKind === "all" || item.kind === applyKind) &&
+      closeReasonEnabled(closeReason, applyCloseReasons)
+    ) {
+      const preSyncReportValidation = validateCloseDecision(
+        { repo, kind: item.kind, labels: item.labels },
+        reportDecision(markdown, closeReason),
+        { requireCloseComment: !isRetryableSkippedClose },
+      );
+      const preSyncValidationPassed =
+        preSyncReportValidation.ok || preSyncReportValidation.actionTaken === "kept_open";
+      if (
+        preSyncValidationPassed &&
+        !duplicateCanonicalPullRequestBlockReason(markdown, item, {
+          reportDirs: [itemsDir, closedDir],
+        }) &&
+        !closeReasonApplyAgeSkipReason(item, closeReason, {
+          minAgeMs,
+          minAgeDescription,
+          staleMinAgeDays,
+        })
+      ) {
+        const prCloseCoverageBlock = currentPrCloseCoverageProofGateBlock();
+        if (prCloseCoverageBlock) {
+          if (prCloseCoverageBlock.actionTaken !== "skipped_pr_close_coverage_proof") {
+            if (markApplySkipped(prCloseCoverageBlock.actionTaken, prCloseCoverageBlock.reason))
+              break;
+            continue;
+          }
+          proofBlockedForCommentSync = prCloseCoverageBlock;
+          markdown = applyPrCloseCoverageProofBlockedReport(markdown, prCloseCoverageBlock);
+          markdown = replaceFrontMatterValue(
+            markdown,
+            "action_taken",
+            prCloseCoverageBlock.actionTaken,
+          );
+          markdown = replaceFrontMatterValue(
+            markdown,
+            "apply_checked_at",
+            new Date().toISOString(),
+          );
+          closeReason = "none";
+          isCloseProposal = false;
+          reviewComment = renderReviewCommentFromReport(markdown, closeReason, renderOptions);
+          markedReviewComment = markedReviewCommentBody(number, reviewComment);
+          reviewCommentHash = sha256(markedReviewComment);
+          existingReviewCommentMatches = commentBodyMatches(
+            existingReviewComment,
+            markedReviewComment,
+          );
+          needsReviewCommentBodySync = !existingReviewComment || !existingReviewCommentMatches;
+          needsReviewCommentHashSync =
+            frontMatterValue(markdown, "review_comment_sha256") !== reviewCommentHash;
+          needsReviewCommentReferenceSync =
+            frontMatterValue(markdown, "review_comment_id") === "unknown" ||
+            frontMatterValue(markdown, "review_comment_url") === "unknown";
+          needsReviewCommentSync = shouldSyncReviewComment({
+            syncCommentsOnly,
+            isCloseProposal,
+            commentSyncMinAgeDays,
+            reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+            hasExistingReviewComment: Boolean(existingReviewComment),
+            needsReviewCommentBodySync,
+            needsReviewCommentHashSync,
+            needsReviewCommentReferenceSync,
+            forceReviewCommentBodySync: true,
+          });
+        }
+        const coveringFreshnessBlock = postProofCoveringPrFreshnessBlock();
+        if (coveringFreshnessBlock) {
+          if (markApplySkipped(coveringFreshnessBlock.actionTaken, coveringFreshnessBlock.reason))
+            break;
+          continue;
+        }
+        const freshnessBlock = postProofFreshnessBlock();
+        if (freshnessBlock) {
+          if (markChangedSinceReview(freshnessBlock)) break;
+          continue;
+        }
+      }
+    }
     if (isCloseProposal) {
       const sameAuthorCounterpartReason = sameAuthorCounterpartApplyReason(
         item,
@@ -13723,6 +14518,10 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         } else {
           try {
             syncedComment = upsertReviewComment(number, reviewComment, existingReviewComment);
+            const syncedCommentUpdatedAt = commentUpdatedAt(syncedComment);
+            if (syncedCommentUpdatedAt) {
+              allowedSelfMutationUpdatedAts.add(syncedCommentUpdatedAt);
+            }
             syncReasons.push("updated durable Codex review comment");
           } catch (error) {
             const commentAuthError = isGitHubRequiresAuthenticationError(error);
@@ -13746,12 +14545,28 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       if (!dryRun) writeFileSync(path, markdown, "utf8");
       results.push({
         number,
-        action: "review_comment_synced",
-        reason: syncReasons.join("; "),
+        action: proofBlockedForCommentSync?.actionTaken ?? "review_comment_synced",
+        reason: proofBlockedForCommentSync
+          ? [proofBlockedForCommentSync.reason, ...syncReasons].join("; ")
+          : syncReasons.join("; "),
       });
       processedCount += 1;
       maybeLogProgress(`synced review comment #${number}`);
       if (processedCount >= processedLimit) break;
+    }
+    if (proofBlockedForCommentSync) {
+      if (!needsReviewCommentSync) {
+        if (!dryRun) writeFileSync(path, markdown, "utf8");
+        results.push({
+          number,
+          action: proofBlockedForCommentSync.actionTaken,
+          reason: proofBlockedForCommentSync.reason,
+        });
+        processedCount += 1;
+        maybeLogProgress(`skipped #${number}: ${proofBlockedForCommentSync.reason}`);
+        if (processedCount >= processedLimit) break;
+      }
+      continue;
     }
     if (
       clawSweeperLabelsChanged &&
@@ -13830,6 +14645,39 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       maybeLogProgress(`skipped #${number}: ${ageSkipReason}`);
       if (processedCount >= processedLimit) break;
       continue;
+    }
+    const prCloseCoverageBlock =
+      closeReason === "duplicate_or_superseded" ? currentPrCloseCoverageProofGateBlock() : null;
+    if (prCloseCoverageBlock) {
+      if (markApplySkipped(prCloseCoverageBlock.actionTaken, prCloseCoverageBlock.reason)) break;
+      continue;
+    }
+    const postProofDuplicateCanonicalBlockReason =
+      closeReason === "duplicate_or_superseded"
+        ? duplicateCanonicalPullRequestBlockReason(markdown, item, {
+            reportDirs: [itemsDir, closedDir],
+          })
+        : null;
+    if (postProofDuplicateCanonicalBlockReason) {
+      if (markApplySkipped("kept_open", postProofDuplicateCanonicalBlockReason)) break;
+      continue;
+    }
+    const coveringFreshnessBlock = postProofCoveringPrFreshnessBlock();
+    if (coveringFreshnessBlock) {
+      if (markApplySkipped(coveringFreshnessBlock.actionTaken, coveringFreshnessBlock.reason))
+        break;
+      continue;
+    }
+    const freshnessBlock = postProofFreshnessBlock();
+    if (freshnessBlock) {
+      if (markChangedSinceReview(freshnessBlock)) break;
+      continue;
+    }
+    if (closeReason === "duplicate_or_superseded") {
+      markdown = applyPrCloseCoverageProofReportSection(
+        markdown,
+        cachedPrCloseCoverageProofGateResult,
+      );
     }
     const lowSignalBlockReason =
       closeReason === "low_signal_unmergeable_pr"
