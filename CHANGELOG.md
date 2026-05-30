@@ -10,6 +10,7 @@ checkpoint, and status-only commits are intentionally omitted.
 ### Added
 
 - Added coverage-proof gating before duplicate or superseded PR close proposals, so ClawSweeper verifies a covering PR really subsumes the source before closing it. Thanks @jesse-merhi.
+- Added proof nudge reminders that periodically prompt PR authors to attach real behavior proof before review or merge automation can progress. Thanks @brokemac79.
 - Added richer related issue context in review prompts from linked PRs, local reports, gitcrawl clusters, and exact-event GitHub issue search. Thanks @brokemac79.
 - Added the first Cloudflare live dashboard for ClawSweeper observability, with
   active worker counts, pipeline rows, CI state, automerge timing, and optional
