@@ -737,6 +737,90 @@ interface ApplyResult {
   reason: string;
 }
 
+type ProofNudgeAction =
+  | "proof_nudge_posted"
+  | "proof_nudge_planned"
+  | "skipped_not_pull_request"
+  | "skipped_not_open"
+  | "skipped_missing_label"
+  | "skipped_policy_exempt"
+  | "skipped_stale_report_head"
+  | "skipped_recent_author_activity"
+  | "skipped_recent_review"
+  | "skipped_recent_nudge"
+  | "skipped_maintainer_authored"
+  | "skipped_bot_authored"
+  | "skipped_protected_label"
+  | "skipped_locked_conversation"
+  | "skipped_no_live_head"
+  | "skipped_runtime_budget";
+
+interface ProofNudgeResult {
+  repo?: string | undefined;
+  number: number;
+  action: ProofNudgeAction;
+  reason: string;
+  url?: string | undefined;
+  headSha?: string | undefined;
+  reviewedAt?: string | undefined;
+}
+
+interface ProofNudgeComment {
+  author?: string | undefined;
+  body?: string | undefined;
+  createdAt?: string | undefined;
+  updatedAt?: string | undefined;
+}
+
+interface ProofNudgeMarker {
+  item?: number;
+  sha?: string;
+  at?: string;
+  v?: string;
+}
+
+interface ProofNudgeEligibilityOptions {
+  item: Pick<
+    Item,
+    | "kind"
+    | "number"
+    | "title"
+    | "author"
+    | "authorAssociation"
+    | "updatedAt"
+    | "labels"
+    | "locked"
+    | "activeLockReason"
+  >;
+  markdown: string;
+  comments?: readonly ProofNudgeComment[];
+  headSha?: string | undefined;
+  headCommittedAt?: string | undefined;
+  authorEditedAt?: string | undefined;
+  authorReviewActivityAt?: string | undefined;
+  now?: number;
+  minAgeDays?: number;
+  cooldownDays?: number;
+}
+
+interface ProofNudgeEligibility {
+  eligible: boolean;
+  action: Exclude<
+    ProofNudgeAction,
+    "proof_nudge_posted" | "skipped_not_open" | "skipped_runtime_budget"
+  >;
+  reason: string;
+  latestActivityAt?: string | undefined;
+  latestNudgeAt?: string | undefined;
+}
+
+interface ProofNudgePullRequestDetails {
+  headSha?: string | undefined;
+  headRepo?: string | undefined;
+  headCommittedAt?: string | undefined;
+  draft?: boolean;
+}
+
 interface ReconcileResult {
   openItemsSeen: number;
   pagesScanned: number;
@@ -856,6 +940,13 @@ const AUTOMERGE_LABEL = "clawsweeper:automerge";
 const AUTOFIX_LABEL = "clawsweeper:autofix";
 const PROOF_OVERRIDE_LABEL = "proof: override";
 const PROOF_SUFFICIENT_LABEL = "proof: sufficient";
+const PROOF_SUPPLIED_LABEL = "proof: supplied";
+const REAL_BEHAVIOR_PROOF_REQUIRED_LABEL = "triage: needs-real-behavior-proof";
+const PROOF_NUDGE_MARKER_PREFIX = "<!-- clawsweeper-proof-nudge";
+const PROOF_NUDGE_MARKER_VERSION = "1";
+const DEFAULT_PROOF_NUDGE_LIMIT = 10;
+const DEFAULT_PROOF_NUDGE_MIN_AGE_DAYS = 5;
+const DEFAULT_PROOF_NUDGE_COOLDOWN_DAYS = 7;
 const PROOF_SUFFICIENT_LABEL_COLOR = "1A7F37";
 const PROOF_SUFFICIENT_LABEL_DESCRIPTION = "Contributor real behavior proof is sufficient.";
 const FEATURE_SHOWCASE_LABEL = "feature: ✨ showcase";
@@ -9702,6 +9793,408 @@ function realBehaviorProofBlocksMerge(markdown: string): boolean {
   );
 }
 
+function realBehaviorProofNeedsContributorNudge(markdown: string): boolean {
+  if (frontMatterValue(markdown, "review_status") !== "complete") return false;
+  if (!isExternalPullRequestReport(markdown)) return false;
+  if (frontMatterStringArray(markdown, "labels").includes(PROOF_OVERRIDE_LABEL)) return false;
+  if (isDocsOnlyPullRequestReport(markdown)) return false;
+  const proof = reportRealBehaviorProof(markdown);
+  return (
+    proof.needsContributorAction ||
+    proof.status === "missing" ||
+    proof.status === "mock_only" ||
+    proof.status === "insufficient"
+  );
+}
+
+function normalizedLabelSet(labels: readonly string[]): Set<string> {
+  return new Set(labels.map(normalizeLabelName));
+}
+
+function hasNormalizedLabel(labels: readonly string[], label: string): boolean {
+  return normalizedLabelSet(labels).has(normalizeLabelName(label));
+}
+
+function proofNudgeProtectedLabels(labels: readonly string[]): string[] {
+  return labels.map(normalizeLabelName).filter((label, index, normalized) => {
+    if (normalized.indexOf(label) !== index) return false;
+    return (
+      label === "maintainer" ||
+      label === "security" ||
+      label === "beta-blocker" ||
+      label === "release-blocker" ||
+      label === "clawsweeper:needs-security-review" ||
+      label.startsWith("release") ||
+      label.includes("security")
+    );
+  });
+}
+
+function isReleaseTitle(title: string | undefined): boolean {
+  return /^(?:release|chore\(release\)|version bump)(?=\b|:)/i.test(title?.trim() ?? "");
+}
+
+function proofNudgeReportProtectedReason(markdown: string): string | undefined {
+  if (frontMatterValue(markdown, "item_category") === "security") {
+    return "latest report item category is security";
+  }
+  if (reportSecurityReview(markdown).status === "needs_attention") {
+    return "latest report security review needs attention";
+  }
+  return undefined;
+}
+
+function proofNudgeMarker(options: { number: number; headSha: string; timestamp: string }): string {
+  return `${PROOF_NUDGE_MARKER_PREFIX} item="${options.number}" sha="${options.headSha}" at="${options.timestamp}" v="${PROOF_NUDGE_MARKER_VERSION}" -->`;
+}
+
+function isProofNudgeMarkerWhitespace(char: string | undefined): boolean {
+  return char === " " || char === "\n" || char === "\r" || char === "\t" || char === "\f";
+}
+
+function parseProofNudgeMarkerAttributes(text: string): ProofNudgeMarker {
+  const marker: ProofNudgeMarker = {};
+  const attributes = text.slice(0, 512);
+  let index = 0;
+  while (index < attributes.length) {
+    while (index < attributes.length && isProofNudgeMarkerWhitespace(attributes[index])) index += 1;
+    const keyStart = index;
+    const first = attributes.charCodeAt(index);
+    if (!((first >= 65 && first <= 90) || (first >= 97 && first <= 122))) {
+      index += 1;
+      continue;
+    }
+    index += 1;
+    while (index < attributes.length) {
+      const char = attributes.charCodeAt(index);
+      const isAttributeKeyChar =
+        (char >= 65 && char <= 90) ||
+        (char >= 97 && char <= 122) ||
+        (char >= 48 && char <= 57) ||
+        char === 45 ||
+        char === 95;
+      if (!isAttributeKeyChar) break;
+      index += 1;
+    }
+    const key = attributes.slice(keyStart, index).toLowerCase();
+    while (index < attributes.length && isProofNudgeMarkerWhitespace(attributes[index])) index += 1;
+    if (attributes[index] !== "=") continue;
+    index += 1;
+    while (index < attributes.length && isProofNudgeMarkerWhitespace(attributes[index])) index += 1;
+    let value = "";
+    if (attributes[index] === '"') {
+      index += 1;
+      const valueStart = index;
+      while (index < attributes.length && attributes[index] !== '"') index += 1;
+      value = attributes.slice(valueStart, index);
+      if (attributes[index] === '"') index += 1;
+    } else {
+      const valueStart = index;
+      while (
+        index < attributes.length &&
+        attributes[index] !== ">" &&
+        !isProofNudgeMarkerWhitespace(attributes[index])
+      ) {
+        index += 1;
+      }
+      value = attributes.slice(valueStart, index);
+    }
+    if (key === "item") {
+      const item = Number(value);
+      if (Number.isInteger(item) && item > 0) marker.item = item;
+    } else if (key === "sha") {
+      marker.sha = value;
+    } else if (key === "at") {
+      marker.at = value;
+    } else if (key === "v") {
+      marker.v = value;
+    }
+  }
+  return marker;
+}
+
+function proofNudgeMarkersFromCommentBody(body: string | undefined): ProofNudgeMarker[] {
+  if (!body?.includes(PROOF_NUDGE_MARKER_PREFIX)) return [];
+  const markers: ProofNudgeMarker[] = [];
+  let index = 0;
+  while (index < body.length && markers.length < 20) {
+    const markerStart = body.indexOf(PROOF_NUDGE_MARKER_PREFIX, index);
+    if (markerStart < 0) break;
+    const attributesStart = markerStart + PROOF_NUDGE_MARKER_PREFIX.length;
+    const markerEnd = body.indexOf("-->", attributesStart);
+    if (markerEnd < 0) break;
+    markers.push(parseProofNudgeMarkerAttributes(body.slice(attributesStart, markerEnd)));
+    index = markerEnd + 3;
+  }
+  return markers;
+}
+
+function isProofNudgeMarkerCommentAuthor(author: string | undefined): boolean {
+  const login = author?.trim();
+  return Boolean(login && PATCHABLE_REVIEW_COMMENT_AUTHORS.has(login));
+}
+
+function proofNudgeMarkersFromComments(comments: readonly ProofNudgeComment[]): ProofNudgeMarker[] {
+  return comments
+    .filter((comment) => isProofNudgeMarkerCommentAuthor(comment.author))
+    .flatMap((comment) => proofNudgeMarkersFromCommentBody(comment.body));
+}
+
+function latestIsoTimestamp(values: readonly (string | undefined)[]): string | undefined {
+  let latest: string | undefined;
+  for (const value of values) latest = latestTimestamp(latest, value);
+  return latest;
+}
+
+function latestAuthorCommentAt(
+  comments: readonly ProofNudgeComment[],
+  author: string | undefined,
+): string | undefined {
+  const normalizedAuthor = author?.trim().toLowerCase();
+  if (!normalizedAuthor) return undefined;
+  return latestIsoTimestamp(
+    comments
+      .filter((comment) => comment.author?.toLowerCase() === normalizedAuthor)
+      .map((comment) => comment.updatedAt ?? comment.createdAt),
+  );
+}
+
+function latestAuthorPullRequestEditAt(
+  number: number,
+  author: string | undefined,
+): string | undefined {
+  const normalizedAuthor = author?.trim().toLowerCase();
+  if (!normalizedAuthor) return undefined;
+  return latestIsoTimestamp(
+    ghPaged<unknown>(`repos/${targetRepo()}/issues/${number}/timeline`)
+      .filter((event) => {
+        const record = asRecord(event);
+        return record.event === "edited" && login(record.actor)?.toLowerCase() === normalizedAuthor;
+      })
+      .map((event) => stringOrUndefined(asRecord(event).created_at)),
+  );
+}
+
+function latestAuthorPullRequestReviewActivityAt(
+  number: number,
+  author: string | undefined,
+): string | undefined {
+  const normalizedAuthor = author?.trim().toLowerCase();
+  if (!normalizedAuthor) return undefined;
+  const reviewCommentActivity = ghPaged<unknown>(`repos/${targetRepo()}/pulls/${number}/comments`)
+    .filter((comment) => login(asRecord(comment).user)?.toLowerCase() === normalizedAuthor)
+    .map((comment) => {
+      const record = asRecord(comment);
+      return stringOrUndefined(record.updated_at) ?? stringOrUndefined(record.created_at);
+    });
+  const submittedReviewActivity = ghPaged<unknown>(`repos/${targetRepo()}/pulls/${number}/reviews`)
+    .filter((review) => login(asRecord(review).user)?.toLowerCase() === normalizedAuthor)
+    .map((review) => {
+      const record = asRecord(review);
+      return stringOrUndefined(record.submitted_at) ?? stringOrUndefined(record.submittedAt);
+    });
+  return latestIsoTimestamp([...reviewCommentActivity, ...submittedReviewActivity]);
+}
+
+function latestProofNudgeAt(
+  comments: readonly ProofNudgeComment[],
+  options: { number: number; headSha: string },
+): string | undefined {
+  return latestIsoTimestamp(
+    proofNudgeMarkersFromComments(comments)
+      .filter(
+        (marker) =>
+          marker.item === options.number &&
+          marker.sha === options.headSha &&
+          timestampMs(marker.at) !== null,
+      )
+      .map((marker) => marker.at),
+  );
+}
+
+function staleProofNudgeReportHead(markdown: string, headSha: string | undefined): boolean {
+  if (!headSha) return false;
+  const reportHeadSha = frontMatterValue(markdown, "pull_head_sha");
+  const normalizedReportHeadSha = reportHeadSha?.trim() ?? "";
+  if (!normalizedReportHeadSha || normalizedReportHeadSha.toLowerCase() === "unknown") return true;
+  return normalizedReportHeadSha !== headSha.trim();
+}
+
+function proofNudgeEligibility(options: ProofNudgeEligibilityOptions): ProofNudgeEligibility {
+  const now = options.now ?? Date.now();
+  const minAgeMs = Math.max(0, options.minAgeDays ?? DEFAULT_PROOF_NUDGE_MIN_AGE_DAYS) * DAY_MS;
+  const cooldownMs =
+    Math.max(0, options.cooldownDays ?? DEFAULT_PROOF_NUDGE_COOLDOWN_DAYS) * DAY_MS;
+  const comments = options.comments ?? [];
+  if (options.item.kind !== "pull_request") {
+    return {
+      eligible: false,
+      action: "skipped_not_pull_request",
+      reason: `type is ${options.item.kind}`,
+    };
+  }
+  if (!hasNormalizedLabel(options.item.labels, REAL_BEHAVIOR_PROOF_REQUIRED_LABEL)) {
+    return {
+      eligible: false,
+      action: "skipped_missing_label",
+      reason: `${REAL_BEHAVIOR_PROOF_REQUIRED_LABEL} is not present`,
+    };
+  }
+  const lockedReason = lockedConversationApplyReason(options.item);
+  if (lockedReason) {
+    return {
+      eligible: false,
+      action: "skipped_locked_conversation",
+      reason: lockedReason,
+    };
+  }
+  if (
+    hasNormalizedLabel(options.item.labels, PROOF_OVERRIDE_LABEL) ||
+    hasNormalizedLabel(options.item.labels, PROOF_SUFFICIENT_LABEL) ||
+    hasNormalizedLabel(options.item.labels, PROOF_SUPPLIED_LABEL)
+  ) {
+    return {
+      eligible: false,
+      action: "skipped_policy_exempt",
+      reason: "proof is already supplied, sufficient, or overridden",
+    };
+  }
+  if (isMaintainerAuthored(options.item)) {
+    return {
+      eligible: false,
+      action: "skipped_maintainer_authored",
+      reason: `author association is ${normalizeAuthorAssociation(options.item.authorAssociation)}`,
+    };
+  }
+  if (isAutomationReportAuthor(options.item.author)) {
+    return {
+      eligible: false,
+      action: "skipped_bot_authored",
+      reason: `author is ${options.item.author}`,
+    };
+  }
+  const protectedLabelsForNudge = proofNudgeProtectedLabels(options.item.labels);
+  if (protectedLabelsForNudge.length > 0 || isReleaseTitle(options.item.title)) {
+    const reason = protectedLabelsForNudge.length
+      ? `protected label: ${protectedLabelsForNudge.join(", ")}`
+      : "release-style PR title";
+    return { eligible: false, action: "skipped_protected_label", reason };
+  }
+  const reportProtectedReason = proofNudgeReportProtectedReason(options.markdown);
+  if (reportProtectedReason) {
+    return { eligible: false, action: "skipped_protected_label", reason: reportProtectedReason };
+  }
+  if (!realBehaviorProofNeedsContributorNudge(options.markdown)) {
+    return {
+      eligible: false,
+      action: "skipped_policy_exempt",
+      reason: "latest ClawSweeper proof policy does not require contributor action",
+    };
+  }
+  if (!options.headSha) {
+    return {
+      eligible: false,
+      action: "skipped_no_live_head",
+      reason: "live PR head SHA could not be inspected",
+    };
+  }
+  if (staleProofNudgeReportHead(options.markdown, options.headSha)) {
+    return {
+      eligible: false,
+      action: "skipped_stale_report_head",
+      reason: "live PR head SHA differs from the reviewed report",
+    };
+  }
+  const reviewedAt = frontMatterValue(options.markdown, "reviewed_at");
+  if (reviewedAt && !isOlderThanMs(reviewedAt, minAgeMs, now)) {
+    return {
+      eligible: false,
+      action: "skipped_recent_review",
+      reason: `latest ClawSweeper review is newer than ${options.minAgeDays ?? DEFAULT_PROOF_NUDGE_MIN_AGE_DAYS} day(s)`,
+      latestActivityAt: reviewedAt,
+    };
+  }
+  const latestActivityAt = latestIsoTimestamp([
+    latestAuthorCommentAt(comments, options.item.author),
+    options.authorEditedAt,
+    options.authorReviewActivityAt,
+    options.headCommittedAt,
+  ]);
+  if (latestActivityAt && !isOlderThanMs(latestActivityAt, minAgeMs, now)) {
+    return {
+      eligible: false,
+      action: "skipped_recent_author_activity",
+      reason: `author comment, PR review activity, PR body edit, or head commit is newer than ${options.minAgeDays ?? DEFAULT_PROOF_NUDGE_MIN_AGE_DAYS} day(s)`,
+      latestActivityAt,
+    };
+  }
+  const latestNudgeAt = latestProofNudgeAt(comments, {
+    number: options.item.number,
+    headSha: options.headSha,
+  });
+  if (latestNudgeAt && !isOlderThanMs(latestNudgeAt, cooldownMs, now)) {
+    return {
+      eligible: false,
+      action: "skipped_recent_nudge",
+      reason: `same-head nudge is inside the ${options.cooldownDays ?? DEFAULT_PROOF_NUDGE_COOLDOWN_DAYS} day cooldown`,
+      latestNudgeAt,
+    };
+  }
+  return {
+    eligible: true,
+    action: "proof_nudge_planned",
+    reason: "needs real behavior proof and is past the nudge age/cooldown gates",
+    latestActivityAt,
+    latestNudgeAt,
+  };
+}
+
+export function proofNudgeEligibilityForTest(
+  options: ProofNudgeEligibilityOptions,
+): ProofNudgeEligibility {
+  return proofNudgeEligibility(options);
+}
+
+function renderProofNudgeComment(options: {
+  item: Pick<Item, "number" | "author">;
+  headSha: string;
+  timestamp: string;
+}): string {
+  const mention =
+    options.item.author && !isAutomationReportAuthor(options.item.author)
+      ? `@${options.item.author} `
+      : "";
+  return [
+    `${mention}thanks for the PR. ClawSweeper is still waiting on real behavior proof before this can move forward.`,
+    "",
+    "Useful proof can be a screenshot, short video, terminal output, copied live output, linked artifact, or redacted logs that show the changed behavior after the fix. Please redact private tokens, phone numbers, private endpoints, customer data, and anything else sensitive.",
+    "",
+    "Once proof is added to the PR body or a comment, ClawSweeper or a maintainer can re-check it.",
+    "",
+    proofNudgeMarker({
+      number: options.item.number,
+      headSha: options.headSha,
+      timestamp: options.timestamp,
+    }),
+  ].join("\n");
+}
+
+export function renderProofNudgeCommentForTest(options: {
+  number: number;
+  author?: string;
+  headSha?: string;
+  timestamp?: string;
+}): string {
+  return renderProofNudgeComment({
+    item: {
+      number: options.number,
+      author: options.author ?? "contributor",
+    },
+    headSha: options.headSha ?? "abc123def456",
+    timestamp: options.timestamp ?? "2026-01-10T00:00:00.000Z",
+  });
+}
+
 function parseBoldListHeading(line: string): { label: string; detail: string } | null {
   const prefix = "- **";
   if (!line.startsWith(prefix)) return null;
@@ -14750,6 +15243,261 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
   console.log(JSON.stringify(results, null, 2));
 }
 
+function proofNudgeComments(number: number): ProofNudgeComment[] {
+  return ghPaged<unknown>(`repos/${targetRepo()}/issues/${number}/comments`).map((comment) => {
+    const record = asRecord(comment);
+    return {
+      author: login(record.user),
+      body: stringOrUndefined(record.body),
+      createdAt: stringOrUndefined(record.created_at),
+      updatedAt: stringOrUndefined(record.updated_at),
+    };
+  });
+}
+
+function fetchPullRequestProofNudgeDetails(number: number): ProofNudgePullRequestDetails {
+  const pull = ghJson<Record<string, unknown>>([
+    "api",
+    `repos/${targetRepo()}/pulls/${number}`,
+    "--jq",
+    "{draft,head:{sha:.head.sha,repo:{full_name:(.head.repo.full_name // null)}}}",
+  ]);
+  const head = asRecord(pull.head);
+  const headRepo = stringOrUndefined(asRecord(head.repo).full_name);
+  const headSha = stringOrUndefined(head.sha);
+  const details: ProofNudgePullRequestDetails = {
+    headSha,
+    headRepo,
+    draft: pull.draft === true,
+  };
+  if (!headRepo || !headSha) return details;
+  try {
+    const commit = ghJson<Record<string, unknown>>([
+      "api",
+      `repos/${headRepo}/commits/${headSha}`,
+      "--jq",
+      "{authorDate:.commit.author.date,committerDate:.commit.committer.date}",
+    ]);
+    details.headCommittedAt = latestIsoTimestamp([
+      stringOrUndefined(commit.authorDate),
+      stringOrUndefined(commit.committerDate),
+    ]);
+  } catch (error) {
+    console.warn(
+      `Skipping head commit date for #${number}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+  return details;
+}
+
+function postProofNudgeComment(number: number, body: string): Record<string, unknown> {
+  const payload = writeCommentPayload(number, body);
+  return ghJson<Record<string, unknown>>([
+    "api",
+    `repos/${targetRepo()}/issues/${number}/comments`,
+    "--method",
+    "POST",
+    "--input",
+    payload,
+    "--jq",
+    "{id,html_url}",
+  ]);
+}
+
+function proofNudgeCandidateRecords(
+  itemsDir: string,
+  requestedItemNumbers: readonly number[],
+): {
+  file: string;
+  markdown: string;
+  number: number;
+  likelyProofNudge: boolean;
+  reviewedAt?: string | undefined;
+  sortAt: number;
+}[] {
+  const requested = new Set(requestedItemNumbers);
+  return markdownFiles(itemsDir)
+    .map((file) => {
+      const path = join(itemsDir, file);
+      const markdown = readFileSync(path, "utf8");
+      const number = numberForMarkdownFile(file);
+      const reviewedAt = frontMatterValue(markdown, "reviewed_at");
+      const sortAt =
+        timestampMs(reviewedAt) ??
+        timestampMs(frontMatterValue(markdown, "item_updated_at")) ??
+        Number.NEGATIVE_INFINITY;
+      const likelyProofNudge = realBehaviorProofNeedsContributorNudge(markdown);
+      return { file, markdown, number, likelyProofNudge, reviewedAt, sortAt };
+    })
+    .filter(({ file, markdown, number }) => {
+      if (requested.size > 0 && !requested.has(number)) return false;
+      if (!isMarkdownForActiveRepo(markdown, join(itemsDir, file))) return false;
+      if (frontMatterValue(markdown, "type") !== "pull_request") return false;
+      return true;
+    })
+    .sort(
+      (left, right) =>
+        Number(right.likelyProofNudge) - Number(left.likelyProofNudge) ||
+        left.sortAt - right.sortAt ||
+        left.number - right.number,
+    );
+}
+
+export function proofNudgeCandidateRecordsForTest(
+  itemsDir: string,
+  requestedItemNumbers: readonly number[] = [],
+): ReturnType<typeof proofNudgeCandidateRecords> {
+  return proofNudgeCandidateRecords(itemsDir, requestedItemNumbers);
+}
+
+function proofNudgesCommand(args: Args): void {
+  repoFromArgs(args);
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
+  const limit = Math.max(0, numberArg(args.limit, DEFAULT_PROOF_NUDGE_LIMIT));
+  const processedLimit = Math.max(1, numberArg(args.processed_limit, Math.max(limit * 20, 50)));
+  const minAgeDays = Math.max(0, numberArg(args.min_age_days, DEFAULT_PROOF_NUDGE_MIN_AGE_DAYS));
+  const cooldownDays = Math.max(
+    0,
+    numberArg(args.cooldown_days, DEFAULT_PROOF_NUDGE_COOLDOWN_DAYS),
+  );
+  const execute = boolArg(args.execute);
+  const dryRun = !execute;
+  const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
+  const reportPath = resolve(stringArg(args.report_path, join(ROOT, "proof-nudge-report.json")));
+  const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
+  const startedAtMs = Date.now();
+  const results: ProofNudgeResult[] = [];
+  let processedCount = 0;
+  let nudgeCount = 0;
+
+  if (!existsSync(itemsDir)) {
+    ensureDir(dirname(reportPath));
+    writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
+    console.log(JSON.stringify(results, null, 2));
+    return;
+  }
+
+  const candidates = proofNudgeCandidateRecords(itemsDir, requestedItemNumbers);
+  const logProgress = (message: string): void => {
+    const counts = results.reduce<Record<string, number>>((accumulator, result) => {
+      accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
+      return accumulator;
+    }, {});
+    console.error(
+      [
+        `[proof-nudges] ${new Date().toISOString()} ${message}`,
+        `nudges=${nudgeCount}/${limit}`,
+        `processed=${processedCount}/${processedLimit}`,
+        `dry_run=${dryRun}`,
+        `counts=${JSON.stringify(counts)}`,
+      ].join(" "),
+    );
+  };
+
+  logProgress(
+    `starting proof nudges: candidates=${candidates.length} min_age_days=${minAgeDays} cooldown_days=${cooldownDays} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+  );
+  for (const candidate of candidates) {
+    if (nudgeCount >= limit) break;
+    if (processedCount >= processedLimit) break;
+    if (runtimeBudgetExceeded(startedAtMs, maxRuntimeMs, Date.now())) {
+      results.push({
+        repo: targetRepo(),
+        number: 0,
+        action: "skipped_runtime_budget",
+        reason: `max runtime ${maxRuntimeMs}ms reached`,
+      });
+      logProgress(`stopping proof nudges: max runtime ${maxRuntimeMs}ms reached`);
+      break;
+    }
+
+    const resultBase = {
+      repo: markdownRepository(candidate.markdown, join(itemsDir, candidate.file)),
+      number: candidate.number,
+      reviewedAt: candidate.reviewedAt,
+    };
+    const { item, state } = fetchItem(candidate.number);
+    if (state !== "open") {
+      results.push({
+        ...resultBase,
+        action: "skipped_not_open",
+        reason: `state is ${state}`,
+      });
+      processedCount += 1;
+      continue;
+    }
+    const pullDetails =
+      item.kind === "pull_request" ? fetchPullRequestProofNudgeDetails(candidate.number) : {};
+    const comments = item.kind === "pull_request" ? proofNudgeComments(candidate.number) : [];
+    const authorEditedAt =
+      item.kind === "pull_request"
+        ? latestAuthorPullRequestEditAt(candidate.number, item.author)
+        : undefined;
+    const authorReviewActivityAt =
+      item.kind === "pull_request"
+        ? latestAuthorPullRequestReviewActivityAt(candidate.number, item.author)
+        : undefined;
+    const eligibility = proofNudgeEligibility({
+      item,
+      markdown: candidate.markdown,
+      comments,
+      headSha: pullDetails.headSha,
+      headCommittedAt: pullDetails.headCommittedAt,
+      authorEditedAt,
+      authorReviewActivityAt,
+      minAgeDays,
+      cooldownDays,
+    });
+    if (!eligibility.eligible) {
+      results.push({
+        ...resultBase,
+        action: eligibility.action,
+        reason: eligibility.reason,
+        headSha: pullDetails.headSha,
+      });
+      processedCount += 1;
+      continue;
+    }
+
+    const timestamp = new Date().toISOString();
+    const headSha = pullDetails.headSha;
+    if (!headSha) {
+      results.push({
+        ...resultBase,
+        action: "skipped_no_live_head",
+        reason: "live PR head SHA could not be inspected",
+      });
+      processedCount += 1;
+      continue;
+    }
+    const body = renderProofNudgeComment({ item, headSha, timestamp });
+    if (dryRun) {
+      results.push({
+        ...resultBase,
+        action: "proof_nudge_planned",
+        reason: eligibility.reason,
+        headSha,
+      });
+    } else {
+      const comment = postProofNudgeComment(candidate.number, body);
+      results.push({
+        ...resultBase,
+        action: "proof_nudge_posted",
+        reason: eligibility.reason,
+        url: commentUrl(comment) ?? undefined,
+        headSha,
+      });
+    }
+    processedCount += 1;
+    nudgeCount += 1;
+    logProgress(`${dryRun ? "planned" : "posted"} proof nudge #${candidate.number}`);
+  }
+  ensureDir(dirname(reportPath));
+  writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
+  logProgress("finished proof nudges");
+  console.log(JSON.stringify(results, null, 2));
+}
+
 function applyArtifactsCommand(args: Args): void {
   repoFromArgs(args);
   const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts"));
@@ -16127,6 +16875,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   else if (command === "review") reviewCommand(args);
   else if (command === "apply-artifacts") applyArtifactsCommand(args);
   else if (command === "apply-decisions") await applyDecisionsCommand(args);
+  else if (command === "proof-nudges") proofNudgesCommand(args);
   else if (command === "audit") auditCommand(args);
   else if (command === "reconcile") reconcileCommand(args);
   else if (command === "dashboard") {

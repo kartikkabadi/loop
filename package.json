@@ -13,6 +13,7 @@
     "review": "node dist/clawsweeper.js review",
     "apply-artifacts": "node dist/clawsweeper.js apply-artifacts",
     "apply-decisions": "node dist/clawsweeper.js apply-decisions",
+    "proof-nudges": "node dist/clawsweeper.js proof-nudges",
     "audit": "node dist/clawsweeper.js audit",
     "reconcile": "node dist/clawsweeper.js reconcile",
     "status": "node dist/clawsweeper.js status",
