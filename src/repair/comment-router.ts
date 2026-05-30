@@ -367,13 +367,18 @@ function classifyCommand(command: LooseRecord): JsonValue {
   const target = pull
     ? classifyPullTarget(pull, command.issue_number)
     : classifyIssueTarget(issue, command.issue_number);
-  const next = { ...command, target };
-  if (
+  const authorReadOnlyAllowed =
     !command.trusted_bot &&
     authorization &&
     !authorization.allowed &&
-    !isAuthorReadOnlyCommandAllowed({ command, target })
-  ) {
+    isAuthorReadOnlyCommandAllowed({ command, target });
+  const next = {
+    ...command,
+    target,
+    maintainer_authorized: Boolean(authorization?.allowed),
+    author_readonly_authorized: Boolean(authorReadOnlyAllowed),
+  };
+  if (!command.trusted_bot && authorization && !authorization.allowed && !authorReadOnlyAllowed) {
     return {
       ...next,
       status: "ignored",
@@ -1998,6 +2003,20 @@ function dispatchClawSweeperAssist(command: LooseRecord) {
 function freeformReviewPrompt(command: LooseRecord): string {
   const prompt = String(command.freeform_prompt ?? "").trim();
   if (!prompt) return "";
+  if (command.intent === "re_review") {
+    if (command.maintainer_authorized !== true) return "";
+    return [
+      "Maintainer context from an @clawsweeper re-review command.",
+      "",
+      `Author: ${command.author ?? "unknown"}`,
+      `Comment: ${command.comment_url ?? "unknown"}`,
+      "",
+      "Requested focus:",
+      prompt.slice(0, 3000),
+      "",
+      "Use this only as read-only review context. Do not merge, close, label, or push code from the model.",
+    ].join("\n");
+  }
   return [
     "Maintainer freeform @clawsweeper request.",
     "",

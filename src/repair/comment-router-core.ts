@@ -1586,6 +1586,10 @@ function commandFromText(trigger: JsonValue, value: JsonValue) {
   const parsed: LooseRecord = { trigger, command: parsedCommand, intent };
   if (intent === "autoclose") parsed.autoclose_message = autocloseReasonFromCommand(rawCommand);
   if (intent === "freeform_assist") parsed.freeform_prompt = assistPromptFromCommand(rawCommand);
+  if (intent === "re_review") {
+    const prompt = reviewPromptFromCommand(rawText);
+    if (prompt) parsed.freeform_prompt = prompt;
+  }
   if (intent === "visualize") parsed.visual_lens = visualLensFromCommand(rawCommand);
   if (intent === "implement_issue") {
     parsed.implementation_prompt = implementationPromptFromCommand(rawText);
@@ -1652,6 +1656,16 @@ function assistPromptFromCommand(command: LooseRecord) {
   return prompt.replace(/^(?:ask|explain)\b[:\s-]*/i, "").trim() || prompt;
 }
 
+function reviewPromptFromCommand(command: LooseRecord) {
+  return String(command ?? "")
+    .trim()
+    .replace(
+      /^(?:review(?:\s+again)?|re-?review|rereview|re-?run(?:\s+review)?|rerun(?:\s+review)?|run\s+(?:review|again))\b[:\s-]*/i,
+      "",
+    )
+    .trim();
+}
+
 export const VISUAL_LENSES = new Set([
   "ux",
   "flow",
@@ -1715,18 +1729,19 @@ function normalizeIntent(command: LooseRecord) {
     return "implement_issue";
   }
   if (
-    [
-      "review",
-      "re-review",
-      "rereview",
-      "review again",
-      "rerun",
-      "re-run",
-      "rerun review",
-      "re-run review",
-      "run review",
-      "run again",
-    ].includes(command)
+    command === "review" ||
+    command === "re-review" ||
+    command === "rereview" ||
+    command === "review again" ||
+    command === "rerun" ||
+    command === "re-run" ||
+    command === "rerun review" ||
+    command === "re-run review" ||
+    command === "run review" ||
+    command === "run again" ||
+    /^(?:review(?:\s+again)?|re-?review|rereview|re-?run(?:\s+review)?|rerun(?:\s+review)?|run\s+(?:review|again))\b[:\s-]+\S/i.test(
+      command,
+    )
   )
     return "re_review";
   if (["rebase", "update branch", "sync"].includes(command)) return "rebase";

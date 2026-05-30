@@ -12484,6 +12484,23 @@ test("event re-review status explains superseded cancellations", () => {
   assert.match(block, /A newer re-review for this item started before this run finished/);
 });
 
+test("comment commands keep the router-to-sweep dispatch contract", () => {
+  const routerWorkflow = readFileSync(".github/workflows/repair-comment-router.yml", "utf8");
+  const sweepWorkflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const routerSource = readFileSync("src/repair/comment-router.ts", "utf8");
+
+  assert.match(routerWorkflow, /types:\s*\[clawsweeper_comment\]/);
+  assert.match(routerWorkflow, /pnpm run repair:comment-router/);
+  assert.match(
+    routerWorkflow,
+    /status_comment_id="\$\{\{ github\.event\.client_payload\.status_comment_id \|\| '' \}\}"/,
+  );
+  assert.match(routerWorkflow, /--status-comment-id "\$status_comment_id"/);
+  assert.match(routerSource, /event_type:\s*"clawsweeper_item"/);
+  assert.match(sweepWorkflow, /types:\s*\[clawsweeper_item,\s*clawsweeper_target_sweep\]/);
+  assert.doesNotMatch(sweepWorkflow, /types:\s*\[[^\]]*clawsweeper_comment/);
+});
+
 test("manual exact-item review dispatches avoid broad review concurrency", () => {
   const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
 

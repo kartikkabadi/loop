@@ -40,6 +40,7 @@ import {
   issueImplementationJobPath,
   isCanonicalLandingNeedsHumanText,
   latestRepairLoopResumeTime,
+  isAuthorReadOnlyCommandAllowed,
   isMaintainerCommandAllowed,
   maintainerAutomergeOptInApprovesNeedsHuman,
   parseCommand,
@@ -944,6 +945,30 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
     trigger: "mention",
     command: "review",
     intent: "re_review",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper re-review based on latest comments"), {
+    trigger: "mention",
+    command: "re-review based on latest comments",
+    intent: "re_review",
+    freeform_prompt: "based on latest comments",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper re-review: focus on CI"), {
+    trigger: "mention",
+    command: "re-review: focus on ci",
+    intent: "re_review",
+    freeform_prompt: "focus on CI",
+  });
+  assert.deepEqual(parseCommand("@clawsweeper review based on full details in the issue."), {
+    trigger: "mention",
+    command: "review based on full details in the issue",
+    intent: "re_review",
+    freeform_prompt: "based on full details in the issue.",
+  });
+  assert.deepEqual(parseCommand("/clawsweeper re-run after my last comment"), {
+    trigger: "slash",
+    command: "re-run after my last comment",
+    intent: "re_review",
+    freeform_prompt: "after my last comment",
   });
   assert.deepEqual(parseCommand("@clawsweeper implement"), {
     trigger: "mention",
@@ -2614,5 +2639,27 @@ test("maintainer command authorization requires maintainer repository permission
       allowedAssociations,
     }),
     true,
+  );
+});
+
+test("issue authors can request read-only re-review with trailing context", () => {
+  const command = {
+    ...parseCommand("@clawsweeper re-review based on latest comments"),
+    author: "issue-author",
+  };
+
+  assert.equal(
+    isAuthorReadOnlyCommandAllowed({
+      command,
+      target: { author: "issue-author" },
+    }),
+    true,
+  );
+  assert.equal(
+    isAuthorReadOnlyCommandAllowed({
+      command,
+      target: { author: "someone-else" },
+    }),
+    false,
   );
 });
