@@ -39,6 +39,44 @@ test("comment webhook accepts maintainer ClawSweeper commands", () => {
   });
 });
 
+test("comment webhook rejects inline ClawSweeper mentions before visible ack", () => {
+  const result = classifyIssueCommentWebhook({
+    event: "issue_comment",
+    payload: {
+      action: "created",
+      repository: { full_name: "openclaw/openclaw", default_branch: "main" },
+      issue: { number: 87801 },
+      installation: { id: 123 },
+      comment: {
+        id: 456,
+        body: "the closed PR 87835 was closed as already implemented by PR 87890 @clawsweeper re-review and if necessary close this issue",
+        author_association: "MEMBER",
+      },
+    },
+  });
+
+  assert.deepEqual(result, { accepted: false, reason: "no routable ClawSweeper command" });
+});
+
+test("comment webhook accepts ClawSweeper mention commands on their own line", () => {
+  const result = classifyIssueCommentWebhook({
+    event: "issue_comment",
+    payload: {
+      action: "created",
+      repository: { full_name: "openclaw/openclaw", default_branch: "main" },
+      issue: { number: 87801 },
+      installation: { id: 123 },
+      comment: {
+        id: 456,
+        body: "The issue may already be fixed.\n@clawsweeper re-review based on the latest comments\nThanks.",
+        author_association: "MEMBER",
+      },
+    },
+  });
+
+  assert.equal(result.accepted, true);
+});
+
 test("comment webhook rejects contributor commands before visible ack", () => {
   const result = classifyIssueCommentWebhook({
     event: "issue_comment",

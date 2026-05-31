@@ -1075,6 +1075,12 @@ test("parseCommand recognizes ClawSweeper bot mentions", () => {
 
 test("parseCommand ignores unrelated comments", () => {
   assert.equal(parseCommand("please fix ci when you get a chance"), null);
+  assert.equal(
+    parseCommand(
+      "the closed PR 87835 was closed as already implemented by PR 87890 @clawsweeper re-review and if necessary close this issue",
+    ),
+    null,
+  );
   assert.equal(parseCommand("/not-clawsweeper fix ci"), null);
 });
 

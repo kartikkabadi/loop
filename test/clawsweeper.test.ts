@@ -16213,7 +16213,7 @@ test("review git info follows checked-out target branch", () => {
 });
 
 test("sweep workflow_dispatch input count stays under GitHub limit", () => {
-  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8").replace(/\r\n/g, "\n");
   const inputBlock = workflow.slice(
     workflow.indexOf("  workflow_dispatch:\n    inputs:"),
     workflow.indexOf("\n  schedule:"),
@@ -16224,7 +16224,7 @@ test("sweep workflow_dispatch input count stays under GitHub limit", () => {
 });
 
 test("sweep review continuations stay workflow-dispatch compatible", () => {
-  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8").replace(/\r\n/g, "\n");
   const continueBlock = workflow.slice(
     workflow.indexOf("- name: Continue sweep"),
     workflow.indexOf("\n\n  recover-review-failures:"),
@@ -16418,7 +16418,7 @@ test("repair workflows preserve existing dispatch while scheduled cluster intake
   const router = readFileSync(".github/workflows/repair-comment-router.yml", "utf8");
   const finalizer = readFileSync(".github/workflows/repair-finalize-open-prs.yml", "utf8");
   const selfHeal = readFileSync(".github/workflows/repair-self-heal.yml", "utf8");
-  const sweep = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const sweep = readFileSync(".github/workflows/sweep.yml", "utf8").replace(/\r\n/g, "\n");
   const dispatchJobs = readFileSync("src/repair/dispatch-jobs.ts", "utf8");
   const importGitcrawl = readFileSync("src/repair/import-gitcrawl-clusters.ts", "utf8");
   const importLowSignal = readFileSync("src/repair/import-gitcrawl-low-signal-prs.ts", "utf8");

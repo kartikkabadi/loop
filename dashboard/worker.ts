@@ -1,3 +1,8 @@
+import {
+  commandTextForClawSweeperFastAck,
+  isClawSweeperReReviewCommandText,
+} from "../src/repair/comment-command-text.ts";
+
 const ACTIVE_RUN_STATUSES = new Set(["queued", "in_progress", "waiting", "requested", "pending"]);
 const QUEUED_RUN_STATUSES = new Set(["queued", "waiting", "requested", "pending"]);
 type DashboardEnv = Record<string, unknown>;
@@ -23,8 +28,6 @@ const CLAWSWEEPER_REVIEW_REPO = "openclaw/clawsweeper";
 const CLAWSWEEPER_STATE_REPO = "openclaw/clawsweeper-state";
 const CLAWSWEEPER_STATE_REF = "state";
 const CLUSTER_REPAIR_INTAKE_WORKFLOW = "repair-cluster-intake.yml";
-const CLAWSWEEPER_COMMAND_PATTERN =
-  /(^|[ \t\r\n])@(?:clawsweeper|openclaw-clawsweeper)\b(?:\[bot\])?|(^|[ \t\r\n])\/(?:clawsweeper|review|re-review|rerun[ -]?review|status|explain|fix|build|implement|create[ -]?pr|fix[ -]?issue|autofix|auto[ -]?fix|automerge|auto[ -]?merge|approve|stop|autoclose)\b/i;
 const CLAWSWEEPER_ALLOWED_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 const CLAWSWEEPER_ISSUE_ITEM_ACTIONS = new Set([
   "opened",
@@ -46,8 +49,6 @@ const CLAWSWEEPER_PULL_ITEM_ACTIONS = new Set([
 const DEFAULT_FAST_ACK_SETTLE_DELAYS_MS = [250, 1500, 10_000];
 const inFlightFastAcks = new Map();
 const CLAWSWEEPER_WEBHOOK_DENY_REPOS = new Set(["openclaw/clawsweeper-state", "openclaw/.github"]);
-const CLAWSWEEPER_AUTHOR_READ_ONLY_COMMAND =
-  "(?:review|re-review|rerun|re-run|rerun[ -]?review|re-run[ -]?review|status|explain)";
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 const STALE_CACHE_TTL_SECONDS = 900;
 const CI_STATUS_TTL_SECONDS = 7200;
@@ -505,12 +506,11 @@ function classifyGithubIssueCommentWebhook({ event, payload }) {
   const issue = objectValue(payload.issue);
   const repo = objectValue(payload.repository);
   const association = String(comment.author_association || "").toUpperCase();
-  if (!CLAWSWEEPER_COMMAND_PATTERN.test(String(comment.body || ""))) {
-    return { accepted: false, reason: "no ClawSweeper command" };
-  }
+  const commandText = commandTextForClawSweeperFastAck(String(comment.body || ""));
+  if (!commandText) return { accepted: false, reason: "no routable ClawSweeper command" };
   if (
     !CLAWSWEEPER_ALLOWED_ASSOCIATIONS.has(association) &&
-    !isAuthorReadOnlyGithubWebhookCommand({ comment, issue })
+    !isAuthorReadOnlyGithubWebhookCommand({ comment, issue, commandText })
   ) {
     return {
       accepted: false,
@@ -634,19 +634,8 @@ function isClawsweeperGithubWebhookSender(sender) {
   return login === "clawsweeper[bot]" || login === "openclaw-clawsweeper[bot]";
 }
 
-function isAuthorReadOnlyGithubWebhookCommand({ comment, issue }) {
-  const body = String(comment.body || "");
-  const slashCommand = new RegExp(
-    `(^|[ \\t\\r\\n])/(?:clawsweeper\\s+)?${CLAWSWEEPER_AUTHOR_READ_ONLY_COMMAND}\\b`,
-    "i",
-  );
-  const mentionCommand = new RegExp(
-    `(^|[ \\t\\r\\n])@(?:clawsweeper|openclaw-clawsweeper)\\b(?:\\[bot\\])?\\s+${CLAWSWEEPER_AUTHOR_READ_ONLY_COMMAND}\\b`,
-    "i",
-  );
-  if (!slashCommand.test(body) && !mentionCommand.test(body)) {
-    return false;
-  }
+function isAuthorReadOnlyGithubWebhookCommand({ comment, issue, commandText }) {
+  if (!isClawSweeperReReviewCommandText(commandText)) return false;
   const commentAuthor = normalizedLogin(objectValue(comment.user).login);
   const issueAuthor = normalizedLogin(objectValue(issue.user).login);
   return Boolean(commentAuthor && issueAuthor && commentAuthor === issueAuthor);

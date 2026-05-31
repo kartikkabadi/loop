@@ -175,6 +175,7 @@ export function classifyIssueCommentWebhook({
     return { accepted: false, reason: "no ClawSweeper command" };
   }
   const parsedCommand = parseCommand(String(comment.body ?? ""));
+  if (!parsedCommand) return { accepted: false, reason: "no routable ClawSweeper command" };
   if (
     !ALLOWED_ASSOCIATIONS.has(association) &&
     !isAuthorReadOnlyWebhookCommand({ comment, issue })

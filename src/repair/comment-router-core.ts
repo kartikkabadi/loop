@@ -4,6 +4,11 @@ import {
   clawsweeperCoAuthorKey,
   coAuthorKey,
 } from "./co-author-credit.js";
+import {
+  extractClawSweeperCommandLine,
+  isClawSweeperReReviewCommandText,
+  reviewPromptFromClawSweeperCommandText,
+} from "./comment-command-text.js";
 import { renderJobIntentFrontmatter } from "./job-intent.js";
 import { compactText } from "./text-utils.js";
 export const REPAIR_INTENTS = new Set([
@@ -1023,59 +1028,30 @@ function isAfterAutoRepairResumeBoundary(entry: AutoRepairDispatchEntry, resumeB
 }
 
 export function parseCommand(body: string) {
-  const lines = String(body ?? "").split(/\r?\n/);
-  for (let index = 0; index < lines.length; index += 1) {
-    const line = lines[index] ?? "";
-    const automerge = line.match(/^\s*\/auto(?:-|\s+)?merge\s*$/i);
-    if (automerge) return commandFromText("slash", "automerge");
-    const autoclose = line.match(/^\s*\/autoclose(?:\s+(.+))?\s*$/i);
-    if (autoclose) return commandFromText("slash", `autoclose ${autoclose[1] ?? ""}`.trim());
-    const review = line.match(/^\s*\/review(?:\s+(.+))?\s*$/i);
-    if (review) return commandFromText("slash", review[1] ? `review ${review[1]}` : "review");
-    const slash = line.match(/^\s*\/clawsweeper(?:\s+(.+))?\s*$/i);
-    if (slash) {
-      const command = commandFromText("slash", slash[1] ?? "status");
-      const rest = lines
-        .slice(index + 1)
-        .join("\n")
-        .trim();
-      if (command.intent === "automerge" && rest) {
-        command.automerge_instructions = rest;
-        return command;
-      }
-      if (command.intent === "implement_issue") {
-        if (rest)
-          return commandFromText("slash", `${issueImplementationRestPrefix(command)}\n${rest}`);
-      }
+  const commandLine = extractClawSweeperCommandLine(body);
+  if (!commandLine) return null;
+  const command = commandFromText(commandLine.trigger, commandLine.commandText);
+  if (!commandLine.supportsContinuation) return command;
+  const rest = commandLine.rest;
+  if (command.intent !== "freeform_assist") {
+    if (command.intent === "implement_issue" && rest) {
+      return commandFromText(
+        commandLine.trigger,
+        `${issueImplementationRestPrefix(command)}\n${rest}`,
+      );
+    }
+    if (command.intent === "automerge" && rest) {
+      command.automerge_instructions = rest;
       return command;
     }
-    const mention = line.match(
-      /^\s*@(?:clawsweeper|openclaw-clawsweeper)(?:\[bot\])?(?:(?:\s*[:,]\s*|\s+)(.+))?\s*$/i,
-    );
-    if (mention) {
-      const command = commandFromText("mention", mention[1] ?? "status");
-      if (command.intent !== "freeform_assist") {
-        const rest = lines
-          .slice(index + 1)
-          .join("\n")
-          .trim();
-        if (command.intent === "implement_issue" && rest)
-          return commandFromText("mention", `${issueImplementationRestPrefix(command)}\n${rest}`);
-        if (command.intent === "automerge" && rest) {
-          command.automerge_instructions = rest;
-          return command;
-        }
-        if (command.command === "status" && rest) return commandFromText("mention", rest);
-        return command;
-      }
-      const rest = lines
-        .slice(index + 1)
-        .join("\n")
-        .trim();
-      return rest ? commandFromText("mention", `${mention[1]}\n${rest}`) : command;
+    if (commandLine.trigger === "mention" && command.command === "status" && rest) {
+      return commandFromText(commandLine.trigger, rest);
     }
+    return command;
   }
-  return null;
+  return commandLine.trigger === "mention" && rest
+    ? commandFromText(commandLine.trigger, `${commandLine.commandText}\n${rest}`)
+    : command;
 }
 
 export function parseTrustedAutomation(
@@ -1657,13 +1633,7 @@ function assistPromptFromCommand(command: LooseRecord) {
 }
 
 function reviewPromptFromCommand(command: LooseRecord) {
-  return String(command ?? "")
-    .trim()
-    .replace(
-      /^(?:review(?:\s+again)?|re-?review|rereview|re-?run(?:\s+review)?|rerun(?:\s+review)?|run\s+(?:review|again))\b[:\s-]*/i,
-      "",
-    )
-    .trim();
+  return reviewPromptFromClawSweeperCommandText(command);
 }
 
 export const VISUAL_LENSES = new Set([
@@ -1728,22 +1698,7 @@ function normalizeIntent(command: LooseRecord) {
   ) {
     return "implement_issue";
   }
-  if (
-    command === "review" ||
-    command === "re-review" ||
-    command === "rereview" ||
-    command === "review again" ||
-    command === "rerun" ||
-    command === "re-run" ||
-    command === "rerun review" ||
-    command === "re-run review" ||
-    command === "run review" ||
-    command === "run again" ||
-    /^(?:review(?:\s+again)?|re-?review|rereview|re-?run(?:\s+review)?|rerun(?:\s+review)?|run\s+(?:review|again))\b[:\s-]+\S/i.test(
-      command,
-    )
-  )
-    return "re_review";
+  if (isClawSweeperReReviewCommandText(command)) return "re_review";
   if (["rebase", "update branch", "sync"].includes(command)) return "rebase";
   if (["autofix", "auto fix", "fix when needed", "repair only", "autofix on"].includes(command)) {
     return "autofix";

@@ -1337,7 +1337,11 @@ test("triage uses ClawSweeper GitHub App credentials when no static token is con
 });
 
 test("hosted webhook accepts author read-only mention commands", async () => {
-  for (const body of ["@clawsweeper Re-run"]) {
+  for (const body of [
+    "@clawsweeper Re-run",
+    "@clawsweeper\nre-review based on latest comments",
+    "The issue may already be fixed.\n@clawsweeper re-review based on latest comments\nThanks.",
+  ]) {
     const response = await worker.fetch(
       signedGithubWebhookRequest({
         event: "issue_comment",
@@ -1366,6 +1370,41 @@ test("hosted webhook accepts author read-only mention commands", async () => {
     assert.equal(response.status, 503, `${body} should pass classification before app config`);
     assert.deepEqual(await response.json(), { error: "github_app_not_configured" });
   }
+});
+
+test("hosted webhook ignores inline ClawSweeper mentions before fast ack", async () => {
+  const response = await worker.fetch(
+    signedGithubWebhookRequest({
+      event: "issue_comment",
+      secret: "test-secret",
+      payload: {
+        action: "created",
+        repository: {
+          full_name: "openclaw/openclaw",
+          private: false,
+          archived: false,
+          fork: false,
+          has_issues: true,
+        },
+        issue: { number: 87801, user: { login: "issue-author" } },
+        installation: { id: 123 },
+        comment: {
+          id: 456,
+          body: "the closed PR 87835 was closed as already implemented by PR 87890 @clawsweeper re-review and if necessary close this issue",
+          author_association: "MEMBER",
+          user: { login: "brokemac79" },
+        },
+      },
+    }),
+    { CLAWSWEEPER_WEBHOOK_SECRET: "test-secret" },
+  );
+
+  assert.equal(response.status, 202);
+  assert.deepEqual(await response.json(), {
+    ok: true,
+    accepted: false,
+    reason: "no routable ClawSweeper command",
+  });
 });
 
 test("hosted webhook returns invalid_json for signed malformed bodies", async () => {
