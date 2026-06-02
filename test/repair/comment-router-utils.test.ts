@@ -241,6 +241,12 @@ test("summarizeChecks ignores cancelled default non-gating checks", () => {
       conclusion: "CANCELLED",
     },
     {
+      name: "notify",
+      workflowName: "notify",
+      status: "COMPLETED",
+      conclusion: "CANCELLED",
+    },
+    {
       name: "CI",
       workflowName: "CI",
       status: "COMPLETED",
@@ -248,9 +254,9 @@ test("summarizeChecks ignores cancelled default non-gating checks", () => {
     },
   ]);
 
-  assert.equal(checks.total, 3);
+  assert.equal(checks.total, 4);
   assert.deepEqual(checks.blockers, []);
-  assert.equal(checks.counts.CANCELLED, 2);
+  assert.equal(checks.counts.CANCELLED, 3);
 });
 
 test("summarizeChecks still blocks cancelled required checks", () => {

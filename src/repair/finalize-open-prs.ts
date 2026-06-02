@@ -22,7 +22,7 @@ import { compactText, escapeRegExp } from "./text-utils.js";
 const DEFAULT_HEAD_PREFIX = "clawsweeper/";
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
 const CLEAN_MERGE_STATES = new Set(["CLEAN", "HAS_HOOKS"]);
-const DEFAULT_IGNORED_CHECKS = ["auto-response", "Labeler", "Stale"];
+const DEFAULT_IGNORED_CHECKS = ["auto-response", "Labeler", "notify", "Stale"];
 const MERGEABILITY_POLL_MS = numberEnv("CLAWSWEEPER_FINALIZER_MERGEABILITY_POLL_MS", 5000);
 const MERGEABILITY_POLL_ATTEMPTS = numberEnv("CLAWSWEEPER_FINALIZER_MERGEABILITY_POLL_ATTEMPTS", 3);
 
