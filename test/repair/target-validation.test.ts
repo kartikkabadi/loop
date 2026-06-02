@@ -292,6 +292,45 @@ test("adopted OpenClaw PR repairs keep full changed gate for code repair deltas"
   assert.equal(canSkipInternalCodexReviewForRepairDelta(plan), false);
 });
 
+test("bun-based target repos do not get pnpm check:changed injected", () => {
+  const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
+
+  assert.deepEqual(
+    requiredValidationCommands([], cwd, validationOptions("openclaw/clawhub", clawhubToolchain())),
+    ["bun run check"],
+  );
+});
+
+test("bun-based target repos pass preflight when their script exists", () => {
+  const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
+
+  assert.deepEqual(
+    preflightTargetValidationPlan(
+      { fixArtifact: { validation_commands: ["bun run check"] }, targetDir: cwd },
+      validationOptions("openclaw/clawhub", clawhubToolchain()),
+    ),
+    {
+      status: "passed",
+      resolved_commands: ["bun run check"],
+      available_scripts: ["check"],
+    },
+  );
+});
+
+test("bun-based target repos surface the real script gap instead of mapping to pnpm check:changed", () => {
+  const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
+
+  const result = preflightTargetValidationPlan(
+    { fixArtifact: { validation_commands: ["pnpm check:changed"] }, targetDir: cwd },
+    validationOptions("openclaw/clawhub", clawhubToolchain()),
+  );
+
+  assert.equal(result.status, "blocked");
+  assert.equal(result.code, "validation_script_missing");
+  assert.equal(result.missing_script, "check:changed");
+  assert.deepEqual(result.available_scripts, ["check"]);
+});
+
 test("changed validation retries one transient check:changed failure", () => {
   const cwd = gitPackageFixture({
     "check:changed":
@@ -331,6 +370,26 @@ function packageFixture(scripts) {
   return cwd;
 }
 
+function bunPackageFixture(scripts) {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-bun-"));
+  fs.writeFileSync(
+    path.join(cwd, "package.json"),
+    `${JSON.stringify({ scripts, packageManager: "bun@1.1.0" }, null, 2)}\n`,
+  );
+  fs.writeFileSync(path.join(cwd, "bun.lock"), "");
+  return cwd;
+}
+
+function clawhubToolchain() {
+  return {
+    toolchain: {
+      packageManager: "bun",
+      baseValidationCommands: ["bun run check"],
+      changedGate: null,
+    },
+  };
+}
+
 function gitPackageFixture(scripts) {
   const cwd = packageFixture(scripts);
   git(cwd, "init", "-b", "main");
@@ -350,11 +409,12 @@ function git(cwd, ...args) {
   return execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
 }
 
-function validationOptions(targetRepo) {
+function validationOptions(targetRepo, extra = {}) {
   return {
     allowExpensiveValidation: false,
     installTargetDeps: false,
     strictTargetValidation: false,
     targetRepo,
+    ...extra,
   };
 }
