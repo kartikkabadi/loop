@@ -404,6 +404,58 @@ test("resolveTargetRepoToolchain keeps the OpenClaw changed gate even without co
   }
 });
 
+test("resolveTargetRepoToolchain stays total when the config file is missing", () => {
+  // P1 invariant: a missing/unreadable config must NEVER throw out of the
+  // resolver, otherwise requiredValidationCommands / prepareTargetToolchain
+  // would propagate the error and block automerge across all target repos.
+  // The expected fallback is: openclaw/openclaw still gets its hard safety
+  // net, every other repo degrades to DEFAULT_TOOLCHAIN (pnpm, no gate) —
+  // i.e. pre-PR behavior, never an exception.
+  const missingPath = path.join(
+    os.tmpdir(),
+    `clawsweeper-missing-config-${Date.now()}-${Math.random().toString(36).slice(2)}.json`,
+  );
+  __resetTargetRepoToolchainCache();
+  try {
+    const openclaw = resolveTargetRepoToolchain("openclaw/openclaw", missingPath);
+    assert.deepEqual(openclaw.changedGate, {
+      command: "pnpm check:changed",
+      requiredScript: "check:changed",
+    });
+    const clawhub = resolveTargetRepoToolchain("openclaw/clawhub", missingPath);
+    assert.equal(clawhub.packageManager, "pnpm");
+    assert.deepEqual(clawhub.baseValidationCommands, []);
+    assert.equal(clawhub.changedGate, null);
+    const vendor = resolveTargetRepoToolchain("vendor/anything", missingPath);
+    assert.equal(vendor.packageManager, "pnpm");
+    assert.equal(vendor.changedGate, null);
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
+test("resolveTargetRepoToolchain stays total when the config file is malformed JSON", () => {
+  // P1 invariant: a corrupt config file must degrade to default behavior, not
+  // throw. Same fallback shape as the missing-file case above.
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-bad-config-"));
+  const configPath = path.join(tmpDir, "target-repositories.json");
+  fs.writeFileSync(configPath, "{not valid json,,,");
+  __resetTargetRepoToolchainCache();
+  try {
+    assert.doesNotThrow(() => resolveTargetRepoToolchain("openclaw/openclaw", configPath));
+    const openclaw = resolveTargetRepoToolchain("openclaw/openclaw", configPath);
+    assert.deepEqual(openclaw.changedGate, {
+      command: "pnpm check:changed",
+      requiredScript: "check:changed",
+    });
+    const vendor = resolveTargetRepoToolchain("vendor/anything", configPath);
+    assert.equal(vendor.packageManager, "pnpm");
+    assert.equal(vendor.changedGate, null);
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
 test("changed validation retries one transient check:changed failure", () => {
   const cwd = gitPackageFixture({
     "check:changed":

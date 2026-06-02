@@ -79,11 +79,26 @@ export function resolveTargetRepoToolchain(
 export function __resetTargetRepoToolchainCache(): void {
   cached = null;
   cachedFilePath = null;
+  warnedMessages.clear();
 }
 
 function loadTable(filePath: string): ResolvedToolchainTable {
   if (cached && cachedFilePath === filePath) return cached;
-  const table = readToolchainTable(filePath);
+  // Resolver MUST be a total function: any unexpected I/O or parse error here
+  // would otherwise propagate up through requiredValidationCommands /
+  // prepareTargetToolchain and block automerge across ALL target repositories.
+  // Fall back to an empty table (≡ DEFAULT_TOOLCHAIN for every repo, plus the
+  // openclaw/openclaw hard safety net) so a transient FS race or unexpected
+  // schema can never globally brick the repair pipeline.
+  let table: ResolvedToolchainTable;
+  try {
+    table = readToolchainTable(filePath);
+  } catch (error) {
+    warnOnce(
+      `failed to load ${filePath}, falling back to default toolchain: ${formatError(error)}`,
+    );
+    table = { byRepo: new Map(), byOwner: new Map() };
+  }
   cached = table;
   cachedFilePath = filePath;
   return table;
@@ -148,17 +163,35 @@ function parseToolchainEntry(
 }
 
 function parsePackageManager(value: unknown): TargetPackageManager | null {
-  if (typeof value !== "string") return null;
+  if (value === undefined || value === null) return null;
+  if (typeof value !== "string") {
+    warnOnce(`package_manager must be a string, got ${typeof value}; ignoring`);
+    return null;
+  }
   const normalized = value.trim().toLowerCase() as TargetPackageManager;
-  return SUPPORTED_PACKAGE_MANAGERS.has(normalized) ? normalized : null;
+  if (!SUPPORTED_PACKAGE_MANAGERS.has(normalized)) {
+    warnOnce(
+      `unsupported package_manager ${JSON.stringify(value)}, expected one of pnpm|bun|npm; ignoring`,
+    );
+    return null;
+  }
+  return normalized;
 }
 
 function parseChangedGate(value: unknown): TargetChangedGate | null {
   if (value === null || value === undefined) return null;
-  if (!isObject(value)) return null;
+  if (!isObject(value)) {
+    warnOnce(`changed_gate must be an object or null, got ${typeof value}`);
+    return null;
+  }
   const command = stringOrEmpty(value.command);
   const requiredScript = stringOrEmpty(value.required_script);
-  if (!command || !requiredScript) return null;
+  if (!command || !requiredScript) {
+    warnOnce(
+      `changed_gate is missing required fields (command, required_script); ignoring entry`,
+    );
+    return null;
+  }
   return { command, requiredScript };
 }
 
@@ -181,4 +214,25 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 function defaultConfigPath(): string {
   return join(repoRoot(), "config", "target-repositories.json");
+}
+
+/** Tracks already-emitted warning strings so a misconfigured config does not flood stderr. */
+const warnedMessages = new Set<string>();
+
+function warnOnce(message: string): void {
+  if (warnedMessages.has(message)) return;
+  warnedMessages.add(message);
+  // Use console.warn (stderr) so this surfaces in CI/worker logs without
+  // affecting stdout-based artifacts that the worker emits.
+  console.warn(`[clawsweeper] target-toolchain-config: ${message}`);
+}
+
+function formatError(error: unknown): string {
+  if (error instanceof Error) return `${error.name}: ${error.message}`;
+  return String(error);
+}
+
+/** Test-only: clear the per-message warning suppression cache. */
+export function __resetTargetRepoToolchainWarnings(): void {
+  warnedMessages.clear();
 }
