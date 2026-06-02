@@ -8,11 +8,16 @@ import test from "node:test";
 import {
   canSkipInternalCodexReviewForRepairDelta,
   preflightTargetValidationPlan,
+  prepareTargetToolchain,
   repairDeltaValidationPlan,
   requiredValidationCommands,
   runAllowedValidationCommands,
 } from "../../dist/repair/target-validation.js";
 import { compactText } from "../../dist/repair/text-utils.js";
+import {
+  __resetTargetRepoToolchainCache,
+  resolveTargetRepoToolchain,
+} from "../../dist/repair/target-toolchain-config.js";
 import { parseAllowedValidationCommand } from "../../dist/repair/validation-command-utils.js";
 
 test("OpenClaw repairs require changed-surface validation even when omitted", () => {
@@ -30,9 +35,37 @@ test("OpenClaw repairs require changed-surface validation even when omitted", ()
 });
 
 test("non-OpenClaw repairs do not get OpenClaw changed gate injection", () => {
+  // The target repo's checkout happens to expose a `check:changed` script,
+  // but the per-repo toolchain (resolved from config/target-repositories.json)
+  // declares ClawHub as bun-based with `changed_gate: null`, so the executor
+  // must NOT inject `pnpm check:changed`. It is fine — and expected — that
+  // ClawHub's own declared validation commands (e.g. `bun run check`) appear;
+  // the invariant under test here is purely "no pnpm check:changed leakage".
   const cwd = packageFixture({ "check:changed": "node check.js" });
 
-  assert.deepEqual(requiredValidationCommands([], cwd, validationOptions("openclaw/clawhub")), []);
+  const resolved = requiredValidationCommands([], cwd, validationOptions("openclaw/clawhub"));
+  assert.ok(
+    !resolved.includes("pnpm check:changed"),
+    `expected no pnpm check:changed leakage for non-OpenClaw repo, got ${JSON.stringify(resolved)}`,
+  );
+});
+
+test("ClawSweeper repairs preserve their configured changed gate from the real config", () => {
+  const cwd = packageFixture({ "check:changed": "node check.js" });
+
+  __resetTargetRepoToolchainCache();
+  try {
+    assert.deepEqual(
+      requiredValidationCommands(
+        ["pnpm check:changed"],
+        cwd,
+        validationOptions("openclaw/clawsweeper"),
+      ),
+      ["pnpm check:changed"],
+    );
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
 });
 
 test("validation preflight reports injected OpenClaw changed gate", () => {
@@ -292,6 +325,251 @@ test("adopted OpenClaw PR repairs keep full changed gate for code repair deltas"
   assert.equal(canSkipInternalCodexReviewForRepairDelta(plan), false);
 });
 
+test("bun-based target repos do not get pnpm check:changed injected", () => {
+  const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
+
+  assert.deepEqual(
+    requiredValidationCommands([], cwd, validationOptions("openclaw/clawhub", clawhubToolchain())),
+    ["bun run check"],
+  );
+});
+
+test("bun-based target repos pass preflight when their script exists", () => {
+  const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
+
+  assert.deepEqual(
+    preflightTargetValidationPlan(
+      { fixArtifact: { validation_commands: ["bun run check"] }, targetDir: cwd },
+      validationOptions("openclaw/clawhub", clawhubToolchain()),
+    ),
+    {
+      status: "passed",
+      resolved_commands: ["bun run check"],
+      available_scripts: ["check"],
+    },
+  );
+});
+
+test("bun-based target repos drop stale pnpm check:changed and pass on their real validation command", () => {
+  // Regression guard for the stale-deterministic-artifact path: an automerge
+  // artifact authored before per-repo toolchain config (or any future caller
+  // that still ships `pnpm check:changed` for a non-pnpm target) must not be
+  // able to terminally preflight ClawHub on `validation_script_missing`.
+  // Instead the bun toolchain's baseValidationCommands (`bun run check`)
+  // should drive preflight to `passed`.
+  const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
+
+  const result = preflightTargetValidationPlan(
+    { fixArtifact: { validation_commands: ["pnpm check:changed"] }, targetDir: cwd },
+    validationOptions("openclaw/clawhub", clawhubToolchain()),
+  );
+
+  assert.equal(result.status, "passed");
+  assert.deepEqual(result.resolved_commands, ["bun run check"]);
+  assert.deepEqual(result.available_scripts, ["check"]);
+});
+
+test("non-gated target repos preserve fallback validation when no replacement exists", () => {
+  // A deterministic fallback `pnpm check:changed` is stale only when the active
+  // toolchain has a replacement command. For generic pnpm/no-base toolchains,
+  // preserving it makes preflight block on a missing script instead of silently
+  // passing with zero validation commands.
+  const cwd = packageFixture({ test: "node test.js" });
+
+  const result = preflightTargetValidationPlan(
+    { fixArtifact: { validation_commands: ["pnpm check:changed"] }, targetDir: cwd },
+    validationOptions("openclaw/fs-safe", {
+      toolchain: {
+        packageManager: "pnpm",
+        baseValidationCommands: [],
+        changedGate: null,
+      },
+    }),
+  );
+
+  assert.equal(result.status, "blocked");
+  assert.equal(result.code, "validation_script_missing");
+  assert.equal(result.missing_script, "check:changed");
+  assert.deepEqual(result.resolved_commands, ["pnpm check:changed"]);
+});
+
+test("repair execution provisions pinned Bun before target validation can invoke it", () => {
+  const workflow = fs.readFileSync(".github/workflows/repair-cluster-worker.yml", "utf8");
+  const setupBunIndex = workflow.indexOf("- name: Setup pinned Bun for target validation");
+  const executeFixIndex = workflow.indexOf("- name: Execute credited fix artifact");
+
+  assert.ok(setupBunIndex >= 0, "expected repair execution workflow to set up Bun");
+  assert.ok(executeFixIndex >= 0, "expected repair execution workflow to execute fix artifacts");
+  assert.ok(setupBunIndex < executeFixIndex, "expected Bun setup before repair:execute-fix");
+
+  const setupBunStep = workflow.slice(setupBunIndex, executeFixIndex);
+  assert.match(setupBunStep, /uses: oven-sh\/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6/);
+  assert.match(setupBunStep, /bun-version: 1\.3\.10/);
+});
+
+test("bun-based target toolchain installs deps and runs configured validation", () => {
+  const cwd = gitBunPackageFixture({ check: "bun x tsc --noEmit" });
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  attachOrigin(cwd);
+
+  const { binDir, logPath } = fakeBunFixture(cwd);
+  withPathPrefix(binDir, () => {
+    prepareTargetToolchain(cwd, {
+      ...validationOptions("openclaw/clawhub", clawhubToolchain()),
+      installTargetDeps: true,
+      installTimeoutMs: 5000,
+      setupTimeoutMs: 5000,
+    });
+    assert.deepEqual(
+      runAllowedValidationCommands(
+        ["bun run check"],
+        cwd,
+        validationOptions("openclaw/clawhub", clawhubToolchain()),
+      ),
+      ["bun run check"],
+    );
+  });
+
+  assert.deepEqual(fs.readFileSync(logPath, "utf8").trim().split(/\r?\n/), [
+    "--version",
+    "install --frozen-lockfile",
+    "run check",
+  ]);
+});
+
+test("bun-based target repos still report unrelated missing scripts as blocked", () => {
+  // Sanitize is intentionally narrow: only the canonical `pnpm check:changed`
+  // shape gets dropped. Any other genuinely missing script (e.g. a typo) must
+  // continue to surface as `validation_script_missing` so callers see real
+  // gaps instead of silent passes.
+  const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
+
+  const result = preflightTargetValidationPlan(
+    { fixArtifact: { validation_commands: ["bun run nonexistent-script"] }, targetDir: cwd },
+    validationOptions("openclaw/clawhub", clawhubToolchain()),
+  );
+
+  assert.equal(result.status, "blocked");
+  assert.equal(result.code, "validation_script_missing");
+  assert.equal(result.missing_script, "nonexistent-script");
+});
+
+test("resolveTargetRepoToolchain reads openclaw/clawhub from the real config without overrides", () => {
+  // Real-config integration test: prove that the compiled dist/ artifact still
+  // resolves config/target-repositories.json relative to the project root, so
+  // the worker actually picks up `bun` for ClawHub at runtime (not just under
+  // an injected toolchain in unit tests).
+  __resetTargetRepoToolchainCache();
+  try {
+    const toolchain = resolveTargetRepoToolchain("openclaw/clawhub");
+    assert.equal(toolchain.packageManager, "bun");
+    assert.deepEqual(toolchain.baseValidationCommands, ["bun run check"]);
+    assert.equal(toolchain.changedGate, null);
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
+test("resolveTargetRepoToolchain keeps the OpenClaw changed gate even without core_target_overrides", () => {
+  // Regression guard for the earlier ordering bug: if core_target_overrides is
+  // ever removed but a generic openclaw fallback is kept (changed_gate: null),
+  // openclaw/openclaw must still receive the pnpm check:changed gate.
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-toolchain-config-"));
+  const configPath = path.join(tmpDir, "target-repositories.json");
+  fs.writeFileSync(
+    configPath,
+    `${JSON.stringify(
+      {
+        schema_version: 2,
+        repositories: [],
+        generic_fallbacks: [
+          {
+            owner: "openclaw",
+            deny_repositories: [],
+            allow_repo_name_pattern: "^[A-Za-z0-9_.-]+$",
+            prompt_note: "generic",
+            apply_close_rules: { issue: [], pull_request: [] },
+            package_manager: "pnpm",
+            validation_commands: [],
+            changed_gate: null,
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
+  __resetTargetRepoToolchainCache();
+  try {
+    const toolchain = resolveTargetRepoToolchain("openclaw/openclaw", configPath);
+    assert.deepEqual(toolchain.changedGate, {
+      command: "pnpm check:changed",
+      requiredScript: "check:changed",
+    });
+    assert.equal(toolchain.packageManager, "pnpm");
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
+test("resolveTargetRepoToolchain stays total when the config file is missing", () => {
+  // P1 invariant: a missing/unreadable config must NEVER throw out of the
+  // resolver, otherwise requiredValidationCommands / prepareTargetToolchain
+  // would propagate the error and block automerge across all target repos.
+  // The expected fallback is: openclaw/openclaw still gets its hard safety
+  // net, every other repo degrades to DEFAULT_TOOLCHAIN (pnpm, no gate) —
+  // i.e. pre-PR behavior, never an exception.
+  const missingPath = path.join(
+    os.tmpdir(),
+    `clawsweeper-missing-config-${Date.now()}-${Math.random().toString(36).slice(2)}.json`,
+  );
+  __resetTargetRepoToolchainCache();
+  try {
+    const openclaw = resolveTargetRepoToolchain("openclaw/openclaw", missingPath);
+    assert.deepEqual(openclaw.changedGate, {
+      command: "pnpm check:changed",
+      requiredScript: "check:changed",
+    });
+    const clawhub = resolveTargetRepoToolchain("openclaw/clawhub", missingPath);
+    assert.equal(clawhub.packageManager, "pnpm");
+    assert.deepEqual(clawhub.baseValidationCommands, []);
+    assert.equal(clawhub.changedGate, null);
+    const vendor = resolveTargetRepoToolchain("vendor/anything", missingPath);
+    assert.equal(vendor.packageManager, "pnpm");
+    assert.equal(vendor.changedGate, null);
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
+test("resolveTargetRepoToolchain stays total when the config file is malformed JSON", () => {
+  // P1 invariant: a corrupt config file must degrade to default behavior, not
+  // throw. Same fallback shape as the missing-file case above.
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-bad-config-"));
+  const configPath = path.join(tmpDir, "target-repositories.json");
+  fs.writeFileSync(configPath, "{not valid json,,,");
+  __resetTargetRepoToolchainCache();
+  try {
+    const warnings = captureWarnings(() => {
+      assert.doesNotThrow(() => resolveTargetRepoToolchain("openclaw/openclaw", configPath));
+      const openclaw = resolveTargetRepoToolchain("openclaw/openclaw", configPath);
+      assert.deepEqual(openclaw.changedGate, {
+        command: "pnpm check:changed",
+        requiredScript: "check:changed",
+      });
+      const vendor = resolveTargetRepoToolchain("vendor/anything", configPath);
+      assert.equal(vendor.packageManager, "pnpm");
+      assert.equal(vendor.changedGate, null);
+    });
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0], /target-toolchain-config: failed to load .*SyntaxError/);
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
 test("changed validation retries one transient check:changed failure", () => {
   const cwd = gitPackageFixture({
     "check:changed":
@@ -331,6 +609,61 @@ function packageFixture(scripts) {
   return cwd;
 }
 
+function bunPackageFixture(scripts) {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-bun-"));
+  fs.writeFileSync(
+    path.join(cwd, "package.json"),
+    `${JSON.stringify({ scripts, packageManager: "bun@1.1.0" }, null, 2)}\n`,
+  );
+  fs.writeFileSync(path.join(cwd, "bun.lock"), "");
+  return cwd;
+}
+
+function gitBunPackageFixture(scripts) {
+  const cwd = bunPackageFixture(scripts);
+  git(cwd, "init", "-b", "main");
+  git(cwd, "config", "user.email", "clawsweeper@example.invalid");
+  git(cwd, "config", "user.name", "ClawSweeper Test");
+  return cwd;
+}
+
+function fakeBunFixture(cwd) {
+  const binDir = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-fake-bun-bin-"));
+  const logPath = path.join(cwd, "fake-bun.log");
+  const bunPath = path.join(binDir, "bun");
+  fs.writeFileSync(
+    bunPath,
+    `#!/usr/bin/env node
+const fs = require("node:fs");
+fs.appendFileSync(${JSON.stringify(logPath)}, process.argv.slice(2).join(" ") + "\\n");
+if (process.argv[2] === "--version") console.log("1.3.10");
+`,
+  );
+  fs.chmodSync(bunPath, 0o755);
+  return { binDir, logPath };
+}
+
+function withPathPrefix(binDir, callback) {
+  const previousPath = process.env.PATH;
+  process.env.PATH = [binDir, previousPath].filter(Boolean).join(path.delimiter);
+  try {
+    callback();
+  } finally {
+    if (previousPath === undefined) delete process.env.PATH;
+    else process.env.PATH = previousPath;
+  }
+}
+
+function clawhubToolchain() {
+  return {
+    toolchain: {
+      packageManager: "bun",
+      baseValidationCommands: ["bun run check"],
+      changedGate: null,
+    },
+  };
+}
+
 function gitPackageFixture(scripts) {
   const cwd = packageFixture(scripts);
   git(cwd, "init", "-b", "main");
@@ -350,11 +683,26 @@ function git(cwd, ...args) {
   return execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
 }
 
-function validationOptions(targetRepo) {
+function captureWarnings(callback) {
+  const originalWarn = console.warn;
+  const warnings = [];
+  console.warn = (message) => {
+    warnings.push(String(message));
+  };
+  try {
+    callback();
+    return warnings;
+  } finally {
+    console.warn = originalWarn;
+  }
+}
+
+function validationOptions(targetRepo, extra = {}) {
   return {
     allowExpensiveValidation: false,
     installTargetDeps: false,
     strictTargetValidation: false,
     targetRepo,
+    ...extra,
   };
 }

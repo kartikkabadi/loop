@@ -105,7 +105,10 @@ must keep iterating until the checkout is merge-ready or an external blocker is
 proven. GitHub mutations still stay with the deterministic executor.
 
 The Codex prompt treats artifact validation commands as hints for automerge
-repair, with `pnpm check:changed` as the OpenClaw default local gate. Adopted
+repair, with the local gate driven by each target repository's
+`config/target-repositories.json#changed_gate`: `pnpm check:changed` for
+`openclaw/openclaw`, and the project's own commands (e.g. `bun run check` for
+`openclaw/clawhub`) when `changed_gate` is `null`. Adopted
 OpenClaw automerge repairs strengthen that local gate to strict validation and
 also require `pnpm lint` plus `pnpm check:test-types` before push, because
 maintainer automerge opt-in means ClawSweeper should keep fixing terminal CI

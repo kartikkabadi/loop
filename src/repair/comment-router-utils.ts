@@ -8,6 +8,7 @@ const DEFAULT_IGNORED_CHECKS = [
   "ClawSweeper Dispatch",
   "dispatch",
   "Labeler",
+  "notify",
   "Stale",
 ];
 

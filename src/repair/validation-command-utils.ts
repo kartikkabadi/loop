@@ -10,6 +10,9 @@ export function packageScriptRequirement(
   if (commandParts[0] === "npm" && commandParts[1] === "run" && commandParts[2]) {
     return { name: commandParts[2], command: commandParts.slice(0, 3).join(" ") };
   }
+  if (commandParts[0] === "bun" && commandParts[1] === "run" && commandParts[2]) {
+    return { name: commandParts[2], command: commandParts.slice(0, 3).join(" ") };
+  }
   if (commandParts[0] !== "pnpm") return null;
   let index = 1;
   if (commandParts[index] === "-s" || commandParts[index] === "--silent") index += 1;
@@ -85,7 +88,7 @@ function validationExecutable(parts: readonly string[]) {
 
 function isAllowedValidationExecutable(executable: string) {
   return (
-    ["pnpm", "npm", "node", "git"].includes(executable) ||
+    ["pnpm", "npm", "bun", "node", "git"].includes(executable) ||
     executable === "scripts/run-opengrep.sh" ||
     executable === "./scripts/run-opengrep.sh"
   );

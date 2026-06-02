@@ -10,6 +10,11 @@ import {
 } from "./git-repo-utils.js";
 import { parsePullRequestUrl } from "./github-ref.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
+import {
+  resolveTargetRepoToolchain,
+  type TargetChangedGate,
+  type TargetRepoToolchain,
+} from "./target-toolchain-config.js";
 import { compactText } from "./text-utils.js";
 import {
   isExpensivePnpmValidation,
@@ -36,6 +41,13 @@ export type TargetValidationOptions = {
   targetRepo: string;
   setupTimeoutMs?: number;
   validationTimeoutMs?: number;
+  /**
+   * Optional override of the per-repo toolchain (package manager, base validation
+   * commands, changed gate). If omitted, it is resolved from
+   * config/target-repositories.json via `resolveTargetRepoToolchain(targetRepo)`.
+   * Tests inject this directly to avoid touching the config file.
+   */
+  toolchain?: TargetRepoToolchain;
 };
 
 export type RepairDeltaValidationPlan = {
@@ -52,11 +64,7 @@ export function prepareTargetToolchain(cwd: string, options: TargetValidationOpt
   if (!fs.existsSync(packagePath)) return;
 
   const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-  const packageManager = String(packageJson.packageManager ?? "pnpm@10.33.0");
-  if (!packageManager.startsWith("pnpm@")) {
-    throw new Error(`unsupported target package manager: ${packageManager}`);
-  }
-
+  const toolchain = getToolchain(options);
   const validationEnv = targetValidationEnv();
   const setupTimeoutMs = targetValidationTimeoutMs(
     "CLAWSWEEPER_TARGET_SETUP_TIMEOUT_MS",
@@ -76,6 +84,41 @@ export function prepareTargetToolchain(cwd: string, options: TargetValidationOpt
     ],
     { cwd, env: validationEnv, timeoutMs: setupTimeoutMs },
   );
+
+  if (toolchain.packageManager === "bun") {
+    prepareBunToolchain({ cwd, validationEnv, setupTimeoutMs, installTimeoutMs });
+    return;
+  }
+  if (toolchain.packageManager === "npm") {
+    prepareNpmToolchain({ cwd, validationEnv, installTimeoutMs });
+    return;
+  }
+  preparePnpmToolchain({
+    cwd,
+    packageJson,
+    validationEnv,
+    setupTimeoutMs,
+    installTimeoutMs,
+  });
+}
+
+function preparePnpmToolchain({
+  cwd,
+  packageJson,
+  validationEnv,
+  setupTimeoutMs,
+  installTimeoutMs,
+}: {
+  cwd: string;
+  packageJson: LooseRecord;
+  validationEnv: NodeJS.ProcessEnv;
+  setupTimeoutMs: number;
+  installTimeoutMs: number;
+}) {
+  const packageManager = String(packageJson.packageManager ?? "pnpm@10.33.0");
+  if (!packageManager.startsWith("pnpm@")) {
+    throw new Error(`unsupported target package manager: ${packageManager}`);
+  }
   run("corepack", ["enable"], { cwd, env: validationEnv, timeoutMs: setupTimeoutMs });
   run("corepack", ["prepare", packageManager, "--activate"], {
     cwd,
@@ -102,8 +145,52 @@ export function prepareTargetToolchain(cwd: string, options: TargetValidationOpt
         timeoutMs: installTimeoutMs,
       },
     );
-    restoreTargetLockfile(cwd);
+    restoreTargetLockfile(cwd, "pnpm-lock.yaml");
   }
+}
+
+function prepareBunToolchain({
+  cwd,
+  validationEnv,
+  setupTimeoutMs,
+  installTimeoutMs,
+}: {
+  cwd: string;
+  validationEnv: NodeJS.ProcessEnv;
+  setupTimeoutMs: number;
+  installTimeoutMs: number;
+}) {
+  // The repair execution workflow provisions pinned Bun before this path runs.
+  // Keep a clear fail-fast probe so local/manual runners surface setup gaps early.
+  run("bun", ["--version"], { cwd, env: validationEnv, timeoutMs: setupTimeoutMs });
+  const installArgs = ["install", "--frozen-lockfile"];
+  try {
+    run("bun", installArgs, { cwd, env: validationEnv, timeoutMs: installTimeoutMs });
+  } catch (error) {
+    const message = String(error?.message ?? "");
+    if (!/lockfile|frozen|out of date|out-of-date/i.test(message)) throw error;
+    run("bun", ["install", "--no-frozen-lockfile"], {
+      cwd,
+      env: validationEnv,
+      timeoutMs: installTimeoutMs,
+    });
+    for (const lockfile of ["bun.lock", "bun.lockb"]) {
+      restoreTargetLockfile(cwd, lockfile);
+    }
+  }
+}
+
+function prepareNpmToolchain({
+  cwd,
+  validationEnv,
+  installTimeoutMs,
+}: {
+  cwd: string;
+  validationEnv: NodeJS.ProcessEnv;
+  installTimeoutMs: number;
+}) {
+  const installArgs = fs.existsSync(path.join(cwd, "package-lock.json")) ? ["ci"] : ["install"];
+  run("npm", installArgs, { cwd, env: validationEnv, timeoutMs: installTimeoutMs });
 }
 
 export function runAllowedValidationCommands(
@@ -227,11 +314,58 @@ export function requiredValidationCommands(
   cwd: string,
   options: TargetValidationOptions,
 ) {
-  const out = [...(commands ?? []), ...(options.additionalValidationCommands ?? [])];
-  if (!options.skipOpenClawChangedGate && requiresOpenClawChangedGate(cwd, options)) {
-    out.push("pnpm check:changed");
+  const toolchain = getToolchain(options);
+  const replacementCommands = [
+    ...(options.additionalValidationCommands ?? []),
+    ...toolchain.baseValidationCommands,
+  ];
+  const sanitized = sanitizeStaleChangedGateCommands(
+    commands ?? [],
+    toolchain,
+    replacementCommands,
+  );
+  const out = [...sanitized, ...replacementCommands];
+  const gate = toolchain.changedGate;
+  if (gate && !options.skipOpenClawChangedGate && requiresChangedGate(cwd, toolchain)) {
+    out.push(gate.command);
   }
   return uniqueStrings(out);
+}
+
+/**
+ * Drop validation commands that look like "some other repo's changed gate"
+ * when the current target repo does not have one. This protects against stale
+ * fixArtifacts (most notably deterministic automerge artifacts authored before
+ * per-repo toolchain config landed) that ship `pnpm check:changed` even when
+ * the target is bun-based and has no `check:changed` script. Without this
+ * guard preflight terminates with `validation_script_missing` and the
+ * executor never tries the project's real validation command.
+ *
+ * We are deliberately conservative: we only drop commands that match the
+ * fingerprint of a known changed-gate command and only when the active
+ * toolchain has no gate of its own. Other unrelated commands are passed
+ * through untouched so `validation_script_missing` still fires for genuinely
+ * missing scripts (e.g. a typo'd `pnpm test:repair-typo`).
+ */
+function sanitizeStaleChangedGateCommands(
+  commands: readonly LooseRecord[],
+  toolchain: TargetRepoToolchain,
+  replacementCommands: readonly string[],
+): LooseRecord[] {
+  if (toolchain.changedGate) return [...commands];
+  if (replacementCommands.length === 0) return [...commands];
+  return commands.filter((command) => !looksLikeStaleChangedGateCommand(command));
+}
+
+function looksLikeStaleChangedGateCommand(command: LooseRecord): boolean {
+  const text = String(command ?? "").trim();
+  if (!text) return false;
+  // Matches the canonical openclaw/openclaw changed gate verbatim, with or
+  // without a leading `env` wrapper. Kept narrow on purpose so we only
+  // discard things we are confident are the stale gate.
+  return /^(?:env\s+(?:[A-Za-z_][A-Za-z0-9_]*=\S+\s+)*)?pnpm\s+(?:-s\s+|--silent\s+)?(?:run\s+)?check:changed$/.test(
+    text,
+  );
 }
 
 export function repairDeltaValidationPlan(
@@ -271,15 +405,14 @@ export function canSkipInternalCodexReviewForRepairDelta(plan: LooseRecord) {
   return String(plan?.scope ?? "") === "repair-delta-docs";
 }
 
-function restoreTargetLockfile(cwd: string) {
-  const lockfile = "pnpm-lock.yaml";
+function restoreTargetLockfile(cwd: string, lockfile: string) {
   if (!fs.existsSync(path.join(cwd, lockfile))) return;
   run("git", ["checkout", "--", lockfile], { cwd });
 }
 
 function validationFallbackCommands({ parts, error, cwd, baseBranch, options }: LooseRecord) {
   if (options.strictTargetValidation) return [];
-  if (parts[0] !== "pnpm" || parts[1] !== "check:changed" || parts.length !== 2) return [];
+  if (!isChangedGateCommand(parts, options)) return [];
   if (/no merge base/i.test(String(error?.message ?? ""))) {
     ensureMergeBaseAvailable({ targetDir: cwd, baseBranch });
     return [parts];
@@ -300,7 +433,7 @@ function isChangedGateStall(error: JsonValue) {
 
 function shouldRetryValidationCommand({ parts, error, attempts, options }: LooseRecord) {
   if (options.strictTargetValidation) return false;
-  if (parts[0] !== "pnpm" || parts[1] !== "check:changed" || parts.length !== 2) return false;
+  if (!isChangedGateCommand(parts, options)) return false;
   if (isChangedGateStall(error)) return false;
 
   const configuredRetries = Number.parseInt(process.env.CLAWSWEEPER_VALIDATION_RETRIES ?? "1", 10);
@@ -338,19 +471,22 @@ function resolveAllowedValidationCommands(
   const commandParts = stripEnvPrefix(parts);
   const envPrefix = parts[0] === "env" ? parts.slice(0, parts.length - commandParts.length) : [];
   const scripts = readPackageScriptSet(cwd);
+  const toolchain = getToolchain(options);
+  const gate = toolchain.changedGate;
   if (
     !options.strictTargetValidation &&
-    scripts.has("check:changed") &&
+    gate &&
+    scripts.has(gate.requiredScript) &&
     commandParts[0] !== "git"
   ) {
-    return [["pnpm", "check:changed"]];
+    return [gate.command.split(" ")];
   }
   if (commandParts[0] === "npm" && commandParts[1] === "run" && commandParts[2] === "validate") {
-    if (!scripts.has("validate") && scripts.has("check:changed")) {
-      return [["pnpm", "check:changed"]];
+    if (!scripts.has("validate") && gate && scripts.has(gate.requiredScript)) {
+      return [gate.command.split(" ")];
     }
   }
-  if (commandParts[0] === "pnpm") {
+  if (toolchain.packageManager === "pnpm" && commandParts[0] === "pnpm") {
     const commandStart = commandParts[1] === "-s" || commandParts[1] === "--silent" ? 2 : 1;
     const pnpmScript = commandParts[commandStart];
     if (isExpensivePnpmValidation(commandParts, commandStart, options.allowExpensiveValidation)) {
@@ -460,10 +596,30 @@ function readPackageScriptSet(cwd: string) {
   }
 }
 
-function requiresOpenClawChangedGate(cwd: string, options: TargetValidationOptions) {
-  return (
-    options.targetRepo === "openclaw/openclaw" && readPackageScriptSet(cwd).has("check:changed")
-  );
+function requiresChangedGate(cwd: string, toolchain: TargetRepoToolchain) {
+  if (!toolchain.changedGate) return false;
+  return readPackageScriptSet(cwd).has(toolchain.changedGate.requiredScript);
+}
+
+function getToolchain(options: TargetValidationOptions): TargetRepoToolchain {
+  return options.toolchain ?? resolveTargetRepoToolchain(options.targetRepo);
+}
+
+function isChangedGateCommand(parts: readonly string[], options: TargetValidationOptions) {
+  return changedGateCommandParts(getToolchain(options).changedGate, parts) !== null;
+}
+
+function changedGateCommandParts(
+  gate: TargetChangedGate | null,
+  parts: readonly string[],
+): readonly string[] | null {
+  if (!gate) return null;
+  const gateParts = gate.command.split(/\s+/).filter(Boolean);
+  if (gateParts.length !== parts.length) return null;
+  for (let i = 0; i < gateParts.length; i += 1) {
+    if (gateParts[i] !== parts[i]) return null;
+  }
+  return gateParts;
 }
 
 function changedFilesSinceRef(cwd: string, sourceRef: string) {

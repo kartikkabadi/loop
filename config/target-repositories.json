@@ -10,7 +10,10 @@
       "apply_close_rules": {
         "issue": ["implemented_on_main"],
         "pull_request": ["implemented_on_main", "mostly_implemented_on_main"]
-      }
+      },
+      "package_manager": "bun",
+      "validation_commands": ["bun run check"],
+      "changed_gate": null
     },
     {
       "target_repo": "openclaw/clawsweeper",
@@ -20,6 +23,12 @@
       "apply_close_rules": {
         "issue": ["implemented_on_main"],
         "pull_request": ["implemented_on_main", "mostly_implemented_on_main"]
+      },
+      "package_manager": "pnpm",
+      "validation_commands": [],
+      "changed_gate": {
+        "command": "pnpm check:changed",
+        "required_script": "check:changed"
       }
     },
     {
@@ -30,7 +39,10 @@
       "apply_close_rules": {
         "issue": ["implemented_on_main"],
         "pull_request": ["implemented_on_main", "mostly_implemented_on_main"]
-      }
+      },
+      "package_manager": "pnpm",
+      "validation_commands": [],
+      "changed_gate": null
     }
   ],
   "generic_fallbacks": [
@@ -42,7 +54,10 @@
       "apply_close_rules": {
         "issue": ["implemented_on_main"],
         "pull_request": ["implemented_on_main", "mostly_implemented_on_main"]
-      }
+      },
+      "package_manager": "pnpm",
+      "validation_commands": [],
+      "changed_gate": null
     },
     {
       "owner": "steipete",
@@ -52,9 +67,22 @@
       "apply_close_rules": {
         "issue": [],
         "pull_request": []
-      }
+      },
+      "package_manager": "pnpm",
+      "validation_commands": [],
+      "changed_gate": null
     }
   ],
+  "core_target_overrides": {
+    "openclaw/openclaw": {
+      "package_manager": "pnpm",
+      "validation_commands": [],
+      "changed_gate": {
+        "command": "pnpm check:changed",
+        "required_script": "check:changed"
+      }
+    }
+  },
   "target_inventory": {
     "owners": ["openclaw", "steipete"],
     "deny_repositories": ["openclaw/clawsweeper-state", "openclaw/.github"],
