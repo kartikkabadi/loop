@@ -22,7 +22,7 @@ export interface TargetRepoToolchain {
 }
 
 interface ToolchainConfigEntry {
-  packageManager?: unknown;
+  package_manager?: unknown;
   validation_commands?: unknown;
   changed_gate?: unknown;
 }
