@@ -160,8 +160,8 @@ function prepareBunToolchain({
   setupTimeoutMs: number;
   installTimeoutMs: number;
 }) {
-  // Bun is expected to be on PATH (provided by the runner image / dev container).
-  // Surface a clear error when it isn't, instead of letting `bun install` fail later.
+  // The repair execution workflow provisions pinned Bun before this path runs.
+  // Keep a clear fail-fast probe so local/manual runners surface setup gaps early.
   run("bun", ["--version"], { cwd, env: validationEnv, timeoutMs: setupTimeoutMs });
   const installArgs = ["install", "--frozen-lockfile"];
   try {

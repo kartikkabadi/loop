@@ -8,6 +8,7 @@ import test from "node:test";
 import {
   canSkipInternalCodexReviewForRepairDelta,
   preflightTargetValidationPlan,
+  prepareTargetToolchain,
   repairDeltaValidationPlan,
   requiredValidationCommands,
   runAllowedValidationCommands,
@@ -368,6 +369,51 @@ test("bun-based target repos drop stale pnpm check:changed and pass on their rea
   assert.deepEqual(result.available_scripts, ["check"]);
 });
 
+test("repair execution provisions pinned Bun before target validation can invoke it", () => {
+  const workflow = fs.readFileSync(".github/workflows/repair-cluster-worker.yml", "utf8");
+  const setupBunIndex = workflow.indexOf("- name: Setup pinned Bun for target validation");
+  const executeFixIndex = workflow.indexOf("- name: Execute credited fix artifact");
+
+  assert.ok(setupBunIndex >= 0, "expected repair execution workflow to set up Bun");
+  assert.ok(executeFixIndex >= 0, "expected repair execution workflow to execute fix artifacts");
+  assert.ok(setupBunIndex < executeFixIndex, "expected Bun setup before repair:execute-fix");
+
+  const setupBunStep = workflow.slice(setupBunIndex, executeFixIndex);
+  assert.match(setupBunStep, /uses: oven-sh\/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6/);
+  assert.match(setupBunStep, /bun-version: 1\.3\.10/);
+});
+
+test("bun-based target toolchain installs deps and runs configured validation", () => {
+  const cwd = gitBunPackageFixture({ check: "bun x tsc --noEmit" });
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  attachOrigin(cwd);
+
+  const { binDir, logPath } = fakeBunFixture(cwd);
+  withPathPrefix(binDir, () => {
+    prepareTargetToolchain(cwd, {
+      ...validationOptions("openclaw/clawhub", clawhubToolchain()),
+      installTargetDeps: true,
+      installTimeoutMs: 5000,
+      setupTimeoutMs: 5000,
+    });
+    assert.deepEqual(
+      runAllowedValidationCommands(
+        ["bun run check"],
+        cwd,
+        validationOptions("openclaw/clawhub", clawhubToolchain()),
+      ),
+      ["bun run check"],
+    );
+  });
+
+  assert.deepEqual(fs.readFileSync(logPath, "utf8").trim().split(/\r?\n/), [
+    "--version",
+    "install --frozen-lockfile",
+    "run check",
+  ]);
+});
+
 test("bun-based target repos still report unrelated missing scripts as blocked", () => {
   // Sanitize is intentionally narrow: only the canonical `pnpm check:changed`
   // shape gets dropped. Any other genuinely missing script (e.g. a typo) must
@@ -547,6 +593,41 @@ function bunPackageFixture(scripts) {
   );
   fs.writeFileSync(path.join(cwd, "bun.lock"), "");
   return cwd;
+}
+
+function gitBunPackageFixture(scripts) {
+  const cwd = bunPackageFixture(scripts);
+  git(cwd, "init", "-b", "main");
+  git(cwd, "config", "user.email", "clawsweeper@example.invalid");
+  git(cwd, "config", "user.name", "ClawSweeper Test");
+  return cwd;
+}
+
+function fakeBunFixture(cwd) {
+  const binDir = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-fake-bun-bin-"));
+  const logPath = path.join(cwd, "fake-bun.log");
+  const bunPath = path.join(binDir, "bun");
+  fs.writeFileSync(
+    bunPath,
+    `#!/usr/bin/env node
+const fs = require("node:fs");
+fs.appendFileSync(${JSON.stringify(logPath)}, process.argv.slice(2).join(" ") + "\\n");
+if (process.argv[2] === "--version") console.log("1.3.10");
+`,
+  );
+  fs.chmodSync(bunPath, 0o755);
+  return { binDir, logPath };
+}
+
+function withPathPrefix(binDir, callback) {
+  const previousPath = process.env.PATH;
+  process.env.PATH = [binDir, previousPath].filter(Boolean).join(path.delimiter);
+  try {
+    callback();
+  } finally {
+    if (previousPath === undefined) delete process.env.PATH;
+    else process.env.PATH = previousPath;
+  }
 }
 
 function clawhubToolchain() {
