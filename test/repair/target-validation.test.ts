@@ -464,15 +464,19 @@ test("resolveTargetRepoToolchain stays total when the config file is malformed J
   fs.writeFileSync(configPath, "{not valid json,,,");
   __resetTargetRepoToolchainCache();
   try {
-    assert.doesNotThrow(() => resolveTargetRepoToolchain("openclaw/openclaw", configPath));
-    const openclaw = resolveTargetRepoToolchain("openclaw/openclaw", configPath);
-    assert.deepEqual(openclaw.changedGate, {
-      command: "pnpm check:changed",
-      requiredScript: "check:changed",
+    const warnings = captureWarnings(() => {
+      assert.doesNotThrow(() => resolveTargetRepoToolchain("openclaw/openclaw", configPath));
+      const openclaw = resolveTargetRepoToolchain("openclaw/openclaw", configPath);
+      assert.deepEqual(openclaw.changedGate, {
+        command: "pnpm check:changed",
+        requiredScript: "check:changed",
+      });
+      const vendor = resolveTargetRepoToolchain("vendor/anything", configPath);
+      assert.equal(vendor.packageManager, "pnpm");
+      assert.equal(vendor.changedGate, null);
     });
-    const vendor = resolveTargetRepoToolchain("vendor/anything", configPath);
-    assert.equal(vendor.packageManager, "pnpm");
-    assert.equal(vendor.changedGate, null);
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0], /target-toolchain-config: failed to load .*SyntaxError/);
   } finally {
     __resetTargetRepoToolchainCache();
   }
@@ -554,6 +558,20 @@ function attachOrigin(cwd) {
 
 function git(cwd, ...args) {
   return execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
+}
+
+function captureWarnings(callback) {
+  const originalWarn = console.warn;
+  const warnings = [];
+  console.warn = (message) => {
+    warnings.push(String(message));
+  };
+  try {
+    callback();
+    return warnings;
+  } finally {
+    console.warn = originalWarn;
+  }
 }
 
 function validationOptions(targetRepo, extra = {}) {

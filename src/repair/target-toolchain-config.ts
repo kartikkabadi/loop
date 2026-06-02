@@ -112,12 +112,7 @@ function readToolchainTable(filePath: string): ResolvedToolchainTable {
     return { byRepo, byOwner };
   }
 
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(readFileSync(filePath, "utf8"));
-  } catch {
-    return { byRepo, byOwner };
-  }
+  const parsed: unknown = JSON.parse(readFileSync(filePath, "utf8"));
 
   if (!isObject(parsed)) return { byRepo, byOwner };
 
