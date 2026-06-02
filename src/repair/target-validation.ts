@@ -315,12 +315,16 @@ export function requiredValidationCommands(
   options: TargetValidationOptions,
 ) {
   const toolchain = getToolchain(options);
-  const sanitized = sanitizeStaleChangedGateCommands(commands ?? [], toolchain);
-  const out = [
-    ...sanitized,
+  const replacementCommands = [
     ...(options.additionalValidationCommands ?? []),
     ...toolchain.baseValidationCommands,
   ];
+  const sanitized = sanitizeStaleChangedGateCommands(
+    commands ?? [],
+    toolchain,
+    replacementCommands,
+  );
+  const out = [...sanitized, ...replacementCommands];
   const gate = toolchain.changedGate;
   if (gate && !options.skipOpenClawChangedGate && requiresChangedGate(cwd, toolchain)) {
     out.push(gate.command);
@@ -346,8 +350,10 @@ export function requiredValidationCommands(
 function sanitizeStaleChangedGateCommands(
   commands: readonly LooseRecord[],
   toolchain: TargetRepoToolchain,
+  replacementCommands: readonly string[],
 ): LooseRecord[] {
   if (toolchain.changedGate) return [...commands];
+  if (replacementCommands.length === 0) return [...commands];
   return commands.filter((command) => !looksLikeStaleChangedGateCommand(command));
 }
 

@@ -369,6 +369,30 @@ test("bun-based target repos drop stale pnpm check:changed and pass on their rea
   assert.deepEqual(result.available_scripts, ["check"]);
 });
 
+test("non-gated target repos preserve fallback validation when no replacement exists", () => {
+  // A deterministic fallback `pnpm check:changed` is stale only when the active
+  // toolchain has a replacement command. For generic pnpm/no-base toolchains,
+  // preserving it makes preflight block on a missing script instead of silently
+  // passing with zero validation commands.
+  const cwd = packageFixture({ test: "node test.js" });
+
+  const result = preflightTargetValidationPlan(
+    { fixArtifact: { validation_commands: ["pnpm check:changed"] }, targetDir: cwd },
+    validationOptions("openclaw/fs-safe", {
+      toolchain: {
+        packageManager: "pnpm",
+        baseValidationCommands: [],
+        changedGate: null,
+      },
+    }),
+  );
+
+  assert.equal(result.status, "blocked");
+  assert.equal(result.code, "validation_script_missing");
+  assert.equal(result.missing_script, "check:changed");
+  assert.deepEqual(result.resolved_commands, ["pnpm check:changed"]);
+});
+
 test("repair execution provisions pinned Bun before target validation can invoke it", () => {
   const workflow = fs.readFileSync(".github/workflows/repair-cluster-worker.yml", "utf8");
   const setupBunIndex = workflow.indexOf("- name: Setup pinned Bun for target validation");
