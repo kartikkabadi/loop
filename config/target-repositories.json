@@ -26,7 +26,10 @@
       },
       "package_manager": "pnpm",
       "validation_commands": [],
-      "changed_gate": null
+      "changed_gate": {
+        "command": "pnpm check:changed",
+        "required_script": "check:changed"
+      }
     },
     {
       "target_repo": "openclaw/fs-safe",

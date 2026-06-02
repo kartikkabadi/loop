@@ -49,6 +49,24 @@ test("non-OpenClaw repairs do not get OpenClaw changed gate injection", () => {
   );
 });
 
+test("ClawSweeper repairs preserve their configured changed gate from the real config", () => {
+  const cwd = packageFixture({ "check:changed": "node check.js" });
+
+  __resetTargetRepoToolchainCache();
+  try {
+    assert.deepEqual(
+      requiredValidationCommands(
+        ["pnpm check:changed"],
+        cwd,
+        validationOptions("openclaw/clawsweeper"),
+      ),
+      ["pnpm check:changed"],
+    );
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
 test("validation preflight reports injected OpenClaw changed gate", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
 
