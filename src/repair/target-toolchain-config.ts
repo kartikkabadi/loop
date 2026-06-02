@@ -187,9 +187,7 @@ function parseChangedGate(value: unknown): TargetChangedGate | null {
   const command = stringOrEmpty(value.command);
   const requiredScript = stringOrEmpty(value.required_script);
   if (!command || !requiredScript) {
-    warnOnce(
-      `changed_gate is missing required fields (command, required_script); ignoring entry`,
-    );
+    warnOnce(`changed_gate is missing required fields (command, required_script); ignoring entry`);
     return null;
   }
   return { command, requiredScript };
