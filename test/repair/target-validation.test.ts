@@ -34,9 +34,19 @@ test("OpenClaw repairs require changed-surface validation even when omitted", ()
 });
 
 test("non-OpenClaw repairs do not get OpenClaw changed gate injection", () => {
+  // The target repo's checkout happens to expose a `check:changed` script,
+  // but the per-repo toolchain (resolved from config/target-repositories.json)
+  // declares ClawHub as bun-based with `changed_gate: null`, so the executor
+  // must NOT inject `pnpm check:changed`. It is fine — and expected — that
+  // ClawHub's own declared validation commands (e.g. `bun run check`) appear;
+  // the invariant under test here is purely "no pnpm check:changed leakage".
   const cwd = packageFixture({ "check:changed": "node check.js" });
 
-  assert.deepEqual(requiredValidationCommands([], cwd, validationOptions("openclaw/clawhub")), []);
+  const resolved = requiredValidationCommands([], cwd, validationOptions("openclaw/clawhub"));
+  assert.ok(
+    !resolved.includes("pnpm check:changed"),
+    `expected no pnpm check:changed leakage for non-OpenClaw repo, got ${JSON.stringify(resolved)}`,
+  );
 });
 
 test("validation preflight reports injected OpenClaw changed gate", () => {
