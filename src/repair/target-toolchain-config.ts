@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 
 import { normalizeRepo } from "../repository-profiles.js";
+import { repoRoot } from "./paths.js";
 
 export type TargetPackageManager = "pnpm" | "bun" | "npm";
 
@@ -62,11 +62,16 @@ export function resolveTargetRepoToolchain(
   const explicit = table.byRepo.get(normalized);
   if (explicit) return explicit;
 
+  // Hard safety net for the OpenClaw monorepo MUST be checked before the
+  // owner-level fallback. Otherwise removing `core_target_overrides.openclaw/openclaw`
+  // while keeping the generic `openclaw` fallback (which carries `changed_gate: null`)
+  // would silently drop the `pnpm check:changed` gate for the core repo.
+  if (normalized === "openclaw/openclaw") return OPENCLAW_OPENCLAW_FALLBACK_TOOLCHAIN;
+
   const [owner] = normalized.split("/");
   const ownerFallback = owner ? table.byOwner.get(owner) : undefined;
   if (ownerFallback) return ownerFallback;
 
-  if (normalized === "openclaw/openclaw") return OPENCLAW_OPENCLAW_FALLBACK_TOOLCHAIN;
   return DEFAULT_TOOLCHAIN;
 }
 
@@ -176,8 +181,4 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 function defaultConfigPath(): string {
   return join(repoRoot(), "config", "target-repositories.json");
-}
-
-function repoRoot(): string {
-  return dirname(dirname(fileURLToPath(import.meta.url)));
 }

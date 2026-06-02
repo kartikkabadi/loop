@@ -13,6 +13,10 @@ import {
   runAllowedValidationCommands,
 } from "../../dist/repair/target-validation.js";
 import { compactText } from "../../dist/repair/text-utils.js";
+import {
+  __resetTargetRepoToolchainCache,
+  resolveTargetRepoToolchain,
+} from "../../dist/repair/target-toolchain-config.js";
 import { parseAllowedValidationCommand } from "../../dist/repair/validation-command-utils.js";
 
 test("OpenClaw repairs require changed-surface validation even when omitted", () => {
@@ -329,6 +333,65 @@ test("bun-based target repos surface the real script gap instead of mapping to p
   assert.equal(result.code, "validation_script_missing");
   assert.equal(result.missing_script, "check:changed");
   assert.deepEqual(result.available_scripts, ["check"]);
+});
+
+test("resolveTargetRepoToolchain reads openclaw/clawhub from the real config without overrides", () => {
+  // Real-config integration test: prove that the compiled dist/ artifact still
+  // resolves config/target-repositories.json relative to the project root, so
+  // the worker actually picks up `bun` for ClawHub at runtime (not just under
+  // an injected toolchain in unit tests).
+  __resetTargetRepoToolchainCache();
+  try {
+    const toolchain = resolveTargetRepoToolchain("openclaw/clawhub");
+    assert.equal(toolchain.packageManager, "bun");
+    assert.deepEqual(toolchain.baseValidationCommands, ["bun run check"]);
+    assert.equal(toolchain.changedGate, null);
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
+test("resolveTargetRepoToolchain keeps the OpenClaw changed gate even without core_target_overrides", () => {
+  // Regression guard for the earlier ordering bug: if core_target_overrides is
+  // ever removed but a generic openclaw fallback is kept (changed_gate: null),
+  // openclaw/openclaw must still receive the pnpm check:changed gate.
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-toolchain-config-"));
+  const configPath = path.join(tmpDir, "target-repositories.json");
+  fs.writeFileSync(
+    configPath,
+    `${JSON.stringify(
+      {
+        schema_version: 2,
+        repositories: [],
+        generic_fallbacks: [
+          {
+            owner: "openclaw",
+            deny_repositories: [],
+            allow_repo_name_pattern: "^[A-Za-z0-9_.-]+$",
+            prompt_note: "generic",
+            apply_close_rules: { issue: [], pull_request: [] },
+            package_manager: "pnpm",
+            validation_commands: [],
+            changed_gate: null,
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
+  __resetTargetRepoToolchainCache();
+  try {
+    const toolchain = resolveTargetRepoToolchain("openclaw/openclaw", configPath);
+    assert.deepEqual(toolchain.changedGate, {
+      command: "pnpm check:changed",
+      requiredScript: "check:changed",
+    });
+    assert.equal(toolchain.packageManager, "pnpm");
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
 });
 
 test("changed validation retries one transient check:changed failure", () => {
