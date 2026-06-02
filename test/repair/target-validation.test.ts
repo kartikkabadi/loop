@@ -331,7 +331,13 @@ test("bun-based target repos pass preflight when their script exists", () => {
   );
 });
 
-test("bun-based target repos surface the real script gap instead of mapping to pnpm check:changed", () => {
+test("bun-based target repos drop stale pnpm check:changed and pass on their real validation command", () => {
+  // Regression guard for the stale-deterministic-artifact path: an automerge
+  // artifact authored before per-repo toolchain config (or any future caller
+  // that still ships `pnpm check:changed` for a non-pnpm target) must not be
+  // able to terminally preflight ClawHub on `validation_script_missing`.
+  // Instead the bun toolchain's baseValidationCommands (`bun run check`)
+  // should drive preflight to `passed`.
   const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
 
   const result = preflightTargetValidationPlan(
@@ -339,10 +345,26 @@ test("bun-based target repos surface the real script gap instead of mapping to p
     validationOptions("openclaw/clawhub", clawhubToolchain()),
   );
 
+  assert.equal(result.status, "passed");
+  assert.deepEqual(result.resolved_commands, ["bun run check"]);
+  assert.deepEqual(result.available_scripts, ["check"]);
+});
+
+test("bun-based target repos still report unrelated missing scripts as blocked", () => {
+  // Sanitize is intentionally narrow: only the canonical `pnpm check:changed`
+  // shape gets dropped. Any other genuinely missing script (e.g. a typo) must
+  // continue to surface as `validation_script_missing` so callers see real
+  // gaps instead of silent passes.
+  const cwd = bunPackageFixture({ check: "bun x tsc --noEmit" });
+
+  const result = preflightTargetValidationPlan(
+    { fixArtifact: { validation_commands: ["bun run nonexistent-script"] }, targetDir: cwd },
+    validationOptions("openclaw/clawhub", clawhubToolchain()),
+  );
+
   assert.equal(result.status, "blocked");
   assert.equal(result.code, "validation_script_missing");
-  assert.equal(result.missing_script, "check:changed");
-  assert.deepEqual(result.available_scripts, ["check"]);
+  assert.equal(result.missing_script, "nonexistent-script");
 });
 
 test("resolveTargetRepoToolchain reads openclaw/clawhub from the real config without overrides", () => {

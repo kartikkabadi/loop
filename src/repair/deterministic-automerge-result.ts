@@ -1,5 +1,6 @@
 import { automergeChangelogBlockReason } from "./comment-router-core.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
+import { resolveTargetRepoToolchain } from "./target-toolchain-config.js";
 import { sanitizeCheckLink, sanitizeEvidenceList } from "./url-safety.js";
 
 export function deterministicAutomergeResult({
@@ -57,7 +58,7 @@ export function deterministicAutomergeResult({
     affected_surfaces: affectedSurfaces(files),
     likely_files: likelyFiles,
     linked_refs: [ref],
-    validation_commands: ["pnpm check:changed"],
+    validation_commands: deterministicAutomergeValidationCommands(repo),
     changelog_required: false,
     credit_notes: [`Source PR: ${prUrl}`],
     pr_title: title,
@@ -175,6 +176,36 @@ function safeCheckHostHint(rawLink: string): string {
 
 function uniqueStrings(values: JsonValue[]): string[] {
   return [...new Set(values.map((value) => String(value ?? "").trim()).filter(Boolean))];
+}
+
+/**
+ * Pick the validation commands a deterministic automerge artifact should ship
+ * for the given target repo. Drives off the same per-repo toolchain config the
+ * runtime executor uses so we never hand the executor a command that does not
+ * exist in the target checkout.
+ *
+ * - Repos with a `changed_gate` (e.g. openclaw/openclaw → `pnpm check:changed`)
+ *   keep using that gate as the single canonical command.
+ * - Repos without a `changed_gate` (e.g. openclaw/clawhub → bun) get their
+ *   declared `validation_commands` instead (e.g. `["bun run check"]`), so the
+ *   executor can preflight against a script that actually exists.
+ * - As a last-resort fallback we still emit `pnpm check:changed` so legacy
+ *   pnpm consumers that have not been migrated keep working.
+ */
+function deterministicAutomergeValidationCommands(repo: string): string[] {
+  if (!repo) return ["pnpm check:changed"];
+  try {
+    const toolchain = resolveTargetRepoToolchain(repo);
+    if (toolchain.changedGate) return [toolchain.changedGate.command];
+    if (toolchain.baseValidationCommands.length > 0) {
+      return [...toolchain.baseValidationCommands];
+    }
+  } catch {
+    // resolveTargetRepoToolchain is total in practice (it has its own
+    // try/catch around config IO), but keep this guard so a future signature
+    // change can never brick deterministic artifact generation.
+  }
+  return ["pnpm check:changed"];
 }
 
 function firstCanonicalPullItem({ job, clusterPlan }: LooseRecord): LooseRecord | null {

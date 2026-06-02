@@ -124,3 +124,54 @@ test("deterministic automerge result leaves non-automerge jobs to Codex", () => 
     null,
   );
 });
+
+test("deterministic automerge result keeps the openclaw/openclaw pnpm changed gate", () => {
+  const result = deterministicAutomergeResult({
+    job: job(),
+    mode: "autonomous",
+    clusterPlan: clusterPlan(),
+  });
+  assert.deepEqual(result?.fix_artifact.validation_commands, ["pnpm check:changed"]);
+});
+
+test("deterministic automerge result emits bun run check for openclaw/clawhub", () => {
+  const clawhubJob = {
+    frontmatter: {
+      repo: "openclaw/clawhub",
+      cluster_id: "automerge-openclaw-clawhub-42",
+      source: "pr_automerge",
+      canonical: ["#42"],
+      allow_fix_pr: true,
+      allow_merge: false,
+    },
+  };
+  const clawhubPlan = {
+    repo: "openclaw/clawhub",
+    cluster_id: "automerge-openclaw-clawhub-42",
+    items: [
+      {
+        number: 42,
+        ref: "#42",
+        kind: "pull_request",
+        state: "open",
+        title: "fix: tighten clawhub renderer fallbacks",
+        updated_at: "2026-05-11T00:00:00Z",
+        pull_request: {
+          branch_writable: true,
+          files_truncated: 0,
+          checks: [],
+          files: [{ filename: "src/renderer/index.tsx" }],
+        },
+      },
+    ],
+  };
+
+  const result = deterministicAutomergeResult({
+    job: clawhubJob,
+    mode: "autonomous",
+    clusterPlan: clawhubPlan,
+  });
+
+  assert.equal(result?.repo, "openclaw/clawhub");
+  assert.deepEqual(result?.fix_artifact.validation_commands, ["bun run check"]);
+});

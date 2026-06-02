@@ -315,8 +315,9 @@ export function requiredValidationCommands(
   options: TargetValidationOptions,
 ) {
   const toolchain = getToolchain(options);
+  const sanitized = sanitizeStaleChangedGateCommands(commands ?? [], toolchain);
   const out = [
-    ...(commands ?? []),
+    ...sanitized,
     ...(options.additionalValidationCommands ?? []),
     ...toolchain.baseValidationCommands,
   ];
@@ -325,6 +326,40 @@ export function requiredValidationCommands(
     out.push(gate.command);
   }
   return uniqueStrings(out);
+}
+
+/**
+ * Drop validation commands that look like "some other repo's changed gate"
+ * when the current target repo does not have one. This protects against stale
+ * fixArtifacts (most notably deterministic automerge artifacts authored before
+ * per-repo toolchain config landed) that ship `pnpm check:changed` even when
+ * the target is bun-based and has no `check:changed` script. Without this
+ * guard preflight terminates with `validation_script_missing` and the
+ * executor never tries the project's real validation command.
+ *
+ * We are deliberately conservative: we only drop commands that match the
+ * fingerprint of a known changed-gate command and only when the active
+ * toolchain has no gate of its own. Other unrelated commands are passed
+ * through untouched so `validation_script_missing` still fires for genuinely
+ * missing scripts (e.g. a typo'd `pnpm test:repair-typo`).
+ */
+function sanitizeStaleChangedGateCommands(
+  commands: readonly LooseRecord[],
+  toolchain: TargetRepoToolchain,
+): LooseRecord[] {
+  if (toolchain.changedGate) return [...commands];
+  return commands.filter((command) => !looksLikeStaleChangedGateCommand(command));
+}
+
+function looksLikeStaleChangedGateCommand(command: LooseRecord): boolean {
+  const text = String(command ?? "").trim();
+  if (!text) return false;
+  // Matches the canonical openclaw/openclaw changed gate verbatim, with or
+  // without a leading `env` wrapper. Kept narrow on purpose so we only
+  // discard things we are confident are the stale gate.
+  return /^(?:env\s+(?:[A-Za-z_][A-Za-z0-9_]*=\S+\s+)*)?pnpm\s+(?:-s\s+|--silent\s+)?(?:run\s+)?check:changed$/.test(
+    text,
+  );
 }
 
 export function repairDeltaValidationPlan(
