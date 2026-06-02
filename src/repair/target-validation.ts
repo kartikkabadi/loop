@@ -162,22 +162,56 @@ function prepareBunToolchain({
 }) {
   // The repair execution workflow provisions pinned Bun before this path runs.
   // Keep a clear fail-fast probe so local/manual runners surface setup gaps early.
-  run("bun", ["--version"], { cwd, env: validationEnv, timeoutMs: setupTimeoutMs });
+  //
+  // ClawSweeper itself runs under pnpm (e.g. `pnpm run repair:execute-fix`), so
+  // process.env carries pnpm-injected `npm_config_user_agent=pnpm/...`. When we
+  // shell out to `bun install` for a target repo whose package.json has a
+  // preinstall hook like `bunx only-allow bun` (e.g. openclaw/clawhub), bun
+  // forwards the parent env to the preinstall script and `only-allow` reads the
+  // pnpm user-agent and refuses to run. Strip caller identity/lifecycle metadata
+  // from pnpm, but preserve npm-compatible install configuration such as
+  // registry, auth, proxy, userconfig, and cache settings for the target repo.
+  const bunEnv = sanitizeEnvForBun(validationEnv);
+  run("bun", ["--version"], { cwd, env: bunEnv, timeoutMs: setupTimeoutMs });
   const installArgs = ["install", "--frozen-lockfile"];
   try {
-    run("bun", installArgs, { cwd, env: validationEnv, timeoutMs: installTimeoutMs });
+    run("bun", installArgs, { cwd, env: bunEnv, timeoutMs: installTimeoutMs });
   } catch (error) {
     const message = String(error?.message ?? "");
     if (!/lockfile|frozen|out of date|out-of-date/i.test(message)) throw error;
     run("bun", ["install", "--no-frozen-lockfile"], {
       cwd,
-      env: validationEnv,
+      env: bunEnv,
       timeoutMs: installTimeoutMs,
     });
     for (const lockfile of ["bun.lock", "bun.lockb"]) {
       restoreTargetLockfile(cwd, lockfile);
     }
   }
+}
+
+function sanitizeEnvForBun(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const out: NodeJS.ProcessEnv = {};
+  for (const [key, value] of Object.entries(env)) {
+    if (value === undefined) continue;
+    if (shouldStripBunInstallEnv(key)) continue;
+    out[key] = value;
+  }
+  // Declare bun as the active package manager so target preinstall hooks
+  // such as `bunx only-allow bun` recognise the caller.
+  out.npm_config_user_agent = `bun/unknown npm/? node/${process.versions.node} ${process.platform} ${process.arch}`;
+  return out;
+}
+
+function shouldStripBunInstallEnv(key: string): boolean {
+  return (
+    /^PNPM_/i.test(key) ||
+    /^npm_config_user_agent$/i.test(key) ||
+    /^npm_execpath$/i.test(key) ||
+    /^npm_node_execpath$/i.test(key) ||
+    /^npm_lifecycle_/i.test(key) ||
+    /^npm_package_/i.test(key)
+  );
 }
 
 function prepareNpmToolchain({
