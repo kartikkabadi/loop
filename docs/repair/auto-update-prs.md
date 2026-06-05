@@ -259,6 +259,66 @@ state is enough to dispatch repair. That lets Codex rebase or resolve conflicts
 before the next exact-head review instead of waiting for a later pass marker or
 new maintainer comment.
 
+## ClawSweeper-Owned Conflict Self-Heal
+
+The conflict self-heal lane is for open pull requests that ClawSweeper itself
+owns. When enabled, it may dispatch a bounded repair for a PR only when all of these
+are true:
+
+- the author is the ClawSweeper GitHub App;
+- the head branch is in the base repository and starts with `clawsweeper/`;
+- the PR is open and the live merge state is `CONFLICTING`, `DIRTY`, or
+  `BEHIND`;
+- the exact head SHA is captured before dispatch and still matches when the
+  worker starts;
+- no waiting or dispatched self-heal attempt already covers that PR/head;
+- the self-heal per-head and per-PR caps still allow another attempt.
+
+Self-heal is repair-only. It does not add `clawsweeper:automerge`, it does not
+request a merge, and it does not treat a successful rebase as approval. After a
+successful push, the next required step is an exact-item ClawSweeper review for
+the new head. The PR can merge only through the normal automerge gates or a
+human maintainer path.
+
+The self-heal scanner has dedicated attempt caps:
+
+```bash
+--max-attempts-per-pr 10
+--max-attempts-per-head 2
+```
+
+The durable status comment records the detected merge state, targeted head SHA,
+job path, repair run URL, and current status. The generated job uses
+`job_intent: clawsweeper_self_rebase`, blocks close/merge/label actions, and
+pins `expected_head_sha` so stale jobs stop without mutating. For dashboard
+accounting, emit a `/api/events` payload whose event type, mode, stage, or
+status contains `clawsweeper_self_rebase` or `conflict_self_heal`.
+
+## Replacement Label Cleanup
+
+Replacement PR labels must describe the replacement PR, not stale lifecycle
+state from a source PR. Replacement creation filters source labels so it does
+not copy `close:*`, `stale`, `rating:*`, `status:*`, `proof:*`,
+`triage: needs-real-behavior-proof`, `merge-risk:*`, `size:*`, or `P*`
+priority labels.
+
+Use the cleanup command to inspect existing open ClawSweeper replacement PRs
+for inherited source labels:
+
+```bash
+pnpm run repair:cleanup-replacement-labels -- --repo openclaw/openclaw
+```
+
+The command writes `.artifacts/replacement-label-cleanup.json` by default. It
+is dry-run by default. To remove lifecycle labels from matching PRs, pass
+`--execute` with `CLAWSWEEPER_ALLOW_EXECUTE=1`; execute mode removes only
+`stale` and `close:*` labels.
+
+For dashboard accounting, publish the cleanup total through `pnpm run status`
+with `--inherited-label-cleanups`, or send a `/api/events` payload whose event
+type, mode, stage, or status contains `replacement_label_cleanup` or
+`inherited_label_cleanup`.
+
 ClawSweeper edits one durable review comment in place. The router keys its
 ledger by comment id plus `updated_at`, and response markers include the target
 PR head SHA, so an edited ClawSweeper comment can trigger a new repair after
