@@ -166,6 +166,7 @@ type PrStatusLabelKind =
   | "re_review_loop"
   | "actively_grinding"
   | "needs_proof"
+  | "needs_maintainer_proof_decision"
   | "waiting_on_author"
   | "ready_for_maintainer_look";
 type FeatureShowcaseStatus = "showcase" | "none";
@@ -783,6 +784,22 @@ type ProofNudgeAction =
   | "skipped_live_fetch_failed"
   | "skipped_runtime_budget";
 
+type BotProofAction =
+  | "bot_proof_mantis_request_posted"
+  | "bot_proof_mantis_request_planned"
+  | "bot_proof_decision_posted"
+  | "bot_proof_decision_planned"
+  | "skipped_not_pull_request"
+  | "skipped_not_open"
+  | "skipped_not_bot_authored"
+  | "skipped_draft"
+  | "skipped_policy_exempt"
+  | "skipped_stale_report_head"
+  | "skipped_no_live_head"
+  | "skipped_locked_conversation"
+  | "skipped_live_fetch_failed"
+  | "skipped_runtime_budget";
+
 interface ProofNudgeResult {
   repo?: string | undefined;
   number: number;
@@ -791,6 +808,25 @@ interface ProofNudgeResult {
   url?: string | undefined;
   headSha?: string | undefined;
   reviewedAt?: string | undefined;
+}
+
+interface BotProofResult {
+  repo?: string | undefined;
+  number: number;
+  action: BotProofAction;
+  reason: string;
+  url?: string | undefined;
+  headSha?: string | undefined;
+  reviewedAt?: string | undefined;
+}
+
+interface ProofLaneCandidate {
+  file: string;
+  markdown: string;
+  number: number;
+  likely: boolean;
+  reviewedAt?: string | undefined;
+  sortAt: number;
 }
 
 interface ProofNudgeComment {
@@ -840,6 +876,30 @@ interface ProofNudgeEligibility {
   reason: string;
   latestActivityAt?: string | undefined;
   latestNudgeAt?: string | undefined;
+}
+
+interface BotProofEligibilityOptions {
+  item: Pick<
+    Item,
+    "kind" | "number" | "title" | "author" | "labels" | "locked" | "activeLockReason"
+  >;
+  markdown: string;
+  headSha?: string | undefined;
+  draft?: boolean | undefined;
+}
+
+interface BotProofEligibility {
+  eligible: boolean;
+  action: Exclude<
+    BotProofAction,
+    | "bot_proof_mantis_request_posted"
+    | "bot_proof_decision_posted"
+    | "skipped_not_open"
+    | "skipped_runtime_budget"
+    | "skipped_live_fetch_failed"
+  >;
+  reason: string;
+  mantisRecommendation?: MantisRecommendation | undefined;
 }
 
 interface ProofNudgePullRequestDetails {
@@ -972,6 +1032,8 @@ const PROOF_SUPPLIED_LABEL = "proof: supplied";
 const REAL_BEHAVIOR_PROOF_REQUIRED_LABEL = "triage: needs-real-behavior-proof";
 const PROOF_NUDGE_MARKER_PREFIX = "<!-- clawsweeper-proof-nudge";
 const PROOF_NUDGE_MARKER_VERSION = "1";
+const BOT_PROOF_DECISION_MARKER_PREFIX = "<!-- clawsweeper-bot-proof-decision";
+const BOT_PROOF_DECISION_MARKER_VERSION = "1";
 const DEFAULT_PROOF_NUDGE_LIMIT = 10;
 const DEFAULT_PROOF_NUDGE_MIN_AGE_DAYS = 5;
 const DEFAULT_PROOF_NUDGE_COOLDOWN_DAYS = 7;
@@ -1076,6 +1138,12 @@ const PR_STATUS_LABELS = [
     color: "D93F0B",
     description:
       "The PR needs real behavior proof before ClawSweeper can clear the contributor ask.",
+  },
+  {
+    kind: "needs_maintainer_proof_decision",
+    name: "status: needs maintainer proof decision",
+    color: "D93F0B",
+    description: "A ClawSweeper-authored PR needs a maintainer proof capture or override decision.",
   },
   {
     kind: "waiting_on_author",
@@ -10010,6 +10078,21 @@ function realBehaviorProofNeedsContributorNudge(markdown: string): boolean {
   );
 }
 
+function realBehaviorProofBlocksBotOwnedMerge(markdown: string): boolean {
+  if (frontMatterValue(markdown, "review_status") !== "complete") return false;
+  if (frontMatterValue(markdown, "type") !== "pull_request") return false;
+  if (frontMatterStringArray(markdown, "labels").includes(PROOF_OVERRIDE_LABEL)) return false;
+  if (isDocsOnlyPullRequestReport(markdown)) return false;
+  const proof = reportRealBehaviorProof(markdown);
+  return (
+    proof.needsContributorAction ||
+    proof.status === "missing" ||
+    proof.status === "mock_only" ||
+    proof.status === "insufficient" ||
+    (proof.status !== "sufficient" && proof.status !== "override")
+  );
+}
+
 function normalizedLabelSet(labels: readonly string[]): Set<string> {
   return new Set(labels.map(normalizeLabelName));
 }
@@ -10395,6 +10478,161 @@ export function renderProofNudgeCommentForTest(options: {
     },
     headSha: options.headSha ?? "abc123def456",
     timestamp: options.timestamp ?? "2026-01-10T00:00:00.000Z",
+  });
+}
+
+function botProofDecisionMarker(options: { number: number; headSha: string }): string {
+  return `${BOT_PROOF_DECISION_MARKER_PREFIX} item="${options.number}" sha="${options.headSha}" v="${BOT_PROOF_DECISION_MARKER_VERSION}" -->`;
+}
+
+function isClawSweeperAppAuthor(author: string | undefined): boolean {
+  const normalized = author?.trim().toLowerCase();
+  return (
+    normalized === "app/clawsweeper" ||
+    normalized === "clawsweeper[bot]" ||
+    normalized === "openclaw-clawsweeper[bot]"
+  );
+}
+
+function hasDispatchableMantisScenario(recommendation: MantisRecommendation): boolean {
+  return (
+    recommendation.status === "recommended" &&
+    (recommendation.scenario === "telegram_live" ||
+      recommendation.scenario === "telegram_desktop_proof" ||
+      recommendation.scenario === "discord_status_reactions" ||
+      recommendation.scenario === "discord_thread_attachment" ||
+      recommendation.scenario === "slack_desktop_smoke")
+  );
+}
+
+function botProofEligibility(options: BotProofEligibilityOptions): BotProofEligibility {
+  if (options.item.kind !== "pull_request") {
+    return {
+      eligible: false,
+      action: "skipped_not_pull_request",
+      reason: `type is ${options.item.kind}`,
+    };
+  }
+  if (!isClawSweeperAppAuthor(options.item.author)) {
+    return {
+      eligible: false,
+      action: "skipped_not_bot_authored",
+      reason: `author is ${options.item.author ?? "unknown"}`,
+    };
+  }
+  if (options.draft) {
+    return { eligible: false, action: "skipped_draft", reason: "pull request is draft" };
+  }
+  const lockedReason = lockedConversationApplyReason(options.item);
+  if (lockedReason) {
+    return { eligible: false, action: "skipped_locked_conversation", reason: lockedReason };
+  }
+  if (
+    hasNormalizedLabel(options.item.labels, PROOF_OVERRIDE_LABEL) ||
+    hasNormalizedLabel(options.item.labels, PROOF_SUFFICIENT_LABEL) ||
+    hasNormalizedLabel(options.item.labels, PROOF_SUPPLIED_LABEL)
+  ) {
+    return {
+      eligible: false,
+      action: "skipped_policy_exempt",
+      reason: "proof is already supplied, sufficient, or overridden",
+    };
+  }
+  if (!realBehaviorProofBlocksBotOwnedMerge(options.markdown)) {
+    return {
+      eligible: false,
+      action: "skipped_policy_exempt",
+      reason: "latest ClawSweeper review does not block merge on real behavior proof",
+    };
+  }
+  if (!options.headSha) {
+    return {
+      eligible: false,
+      action: "skipped_no_live_head",
+      reason: "live PR head SHA could not be inspected",
+    };
+  }
+  if (staleProofNudgeReportHead(options.markdown, options.headSha)) {
+    return {
+      eligible: false,
+      action: "skipped_stale_report_head",
+      reason: "live PR head SHA differs from the reviewed report",
+    };
+  }
+  const mantisRecommendation = reportMantisRecommendation(options.markdown);
+  if (hasDispatchableMantisScenario(mantisRecommendation)) {
+    return {
+      eligible: true,
+      action: "bot_proof_mantis_request_planned",
+      reason: "bot-authored PR is blocked on real behavior proof and has a Mantis proof suggestion",
+      mantisRecommendation,
+    };
+  }
+  return {
+    eligible: true,
+    action: "bot_proof_decision_planned",
+    reason: "bot-authored PR is blocked on real behavior proof and needs a maintainer decision",
+    mantisRecommendation,
+  };
+}
+
+export function botProofEligibilityForTest(
+  options: BotProofEligibilityOptions,
+): BotProofEligibility {
+  return botProofEligibility(options);
+}
+
+function renderBotProofDecisionComment(options: {
+  item: Pick<Item, "number" | "title">;
+  headSha: string;
+  markdown: string;
+  timestamp: string;
+  mantisRecommendation?: MantisRecommendation | undefined;
+}): string {
+  const marker = botProofDecisionMarker({ number: options.item.number, headSha: options.headSha });
+  const proof = reportRealBehaviorProof(options.markdown);
+  const lines = [
+    "ClawSweeper status: this ClawSweeper-authored replacement PR is blocked on real behavior proof.",
+    "",
+    `Reviewed head: \`${options.headSha}\``,
+    `Proof status: \`${proof.status}\``,
+    `Updated: ${options.timestamp}`,
+    "",
+    "Maintainer decision needed:",
+    "- capture real behavior proof for this head",
+    "- apply `proof: override` if the proof requirement should be waived",
+    "- pause or close the replacement if proof should not be pursued",
+  ];
+  const recommendation = options.mantisRecommendation;
+  if (
+    recommendation?.status === "recommended" &&
+    recommendation.scenario !== "none" &&
+    recommendation.maintainerComment.trim()
+  ) {
+    const heading = hasDispatchableMantisScenario(recommendation)
+      ? "Mantis proof suggestion:"
+      : "Possible manual Mantis/desktop proof suggestion:";
+    lines.push("", heading, "", "```text", recommendation.maintainerComment.trim(), "```");
+  }
+  lines.push("", marker);
+  return lines.join("\n");
+}
+
+export function renderBotProofDecisionCommentForTest(options: {
+  number: number;
+  title?: string;
+  headSha?: string;
+  timestamp?: string;
+  markdown?: string;
+}): string {
+  return renderBotProofDecisionComment({
+    item: { number: options.number, title: options.title ?? "Bot proof sample" },
+    headSha: options.headSha ?? "abc123def456",
+    timestamp: options.timestamp ?? "2026-01-10T00:00:00.000Z",
+    markdown: options.markdown ?? "",
+    mantisRecommendation: options.markdown
+      ? reportMantisRecommendation(options.markdown)
+      : undefined,
   });
 }
 
@@ -15788,17 +16026,80 @@ function postProofNudgeComment(number: number, body: string): Record<string, unk
   ]);
 }
 
-function proofNudgeCandidateRecords(
+function upsertBotProofDecisionComment(
+  number: number,
+  headSha: string,
+  body: string,
+): Record<string, unknown> {
+  const marker = botProofDecisionMarker({ number, headSha });
+  const existing = ghPaged<unknown>(`repos/${targetRepo()}/issues/${number}/comments?per_page=100`)
+    .map(asRecord)
+    .find((comment) => typeof comment.body === "string" && comment.body.includes(marker));
+  const payload = writeCommentPayload(number, body);
+  const existingId = commentId(existing);
+  if (existingId !== null && canPatchReviewComment(existing)) {
+    return ghJson<Record<string, unknown>>([
+      "api",
+      `repos/${targetRepo()}/issues/comments/${existingId}`,
+      "--method",
+      "PATCH",
+      "--input",
+      payload,
+      "--jq",
+      "{id,html_url}",
+    ]);
+  }
+  return ghJson<Record<string, unknown>>([
+    "api",
+    `repos/${targetRepo()}/issues/${number}/comments`,
+    "--method",
+    "POST",
+    "--input",
+    payload,
+    "--jq",
+    "{id,html_url}",
+  ]);
+}
+
+function syncBotProofDecisionLabels(options: {
+  number: number;
+  labels: readonly string[];
+  dryRun: boolean;
+}): { labels: string[]; changed: boolean; reason: string } {
+  const statusResult = syncPrStatusLabel({
+    number: options.number,
+    labels: options.labels,
+    statusKind: "needs_maintainer_proof_decision",
+    dryRun: options.dryRun,
+  });
+  const staleLabels = statusResult.labels.filter((label) => normalizeLabelName(label) === "stale");
+  const nextLabels = statusResult.labels.filter((label) => normalizeLabelName(label) !== "stale");
+  if (!options.dryRun) {
+    for (const label of staleLabels) {
+      ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+    }
+  }
+  const changed = statusResult.changed || staleLabels.length > 0;
+  const reasons = [
+    statusResult.changed
+      ? options.dryRun
+        ? "would set maintainer proof decision status"
+        : "set maintainer proof decision status"
+      : null,
+    staleLabels.length > 0
+      ? options.dryRun
+        ? "would remove inherited stale label"
+        : "removed inherited stale label"
+      : null,
+  ].filter((reason): reason is string => Boolean(reason));
+  return { labels: nextLabels, changed, reason: reasons.join("; ") };
+}
+
+function proofLaneCandidateRecords(
   itemsDir: string,
   requestedItemNumbers: readonly number[],
-): {
-  file: string;
-  markdown: string;
-  number: number;
-  likelyProofNudge: boolean;
-  reviewedAt?: string | undefined;
-  sortAt: number;
-}[] {
+  likely: (markdown: string) => boolean,
+): ProofLaneCandidate[] {
   const requested = new Set(requestedItemNumbers);
   return markdownFiles(itemsDir)
     .map((file) => {
@@ -15810,8 +16111,7 @@ function proofNudgeCandidateRecords(
         timestampMs(reviewedAt) ??
         timestampMs(frontMatterValue(markdown, "item_updated_at")) ??
         Number.NEGATIVE_INFINITY;
-      const likelyProofNudge = realBehaviorProofNeedsContributorNudge(markdown);
-      return { file, markdown, number, likelyProofNudge, reviewedAt, sortAt };
+      return { file, markdown, number, likely: likely(markdown), reviewedAt, sortAt };
     })
     .filter(({ file, markdown, number }) => {
       if (requested.size > 0 && !requested.has(number)) return false;
@@ -15821,10 +16121,35 @@ function proofNudgeCandidateRecords(
     })
     .sort(
       (left, right) =>
-        Number(right.likelyProofNudge) - Number(left.likelyProofNudge) ||
+        Number(right.likely) - Number(left.likely) ||
         left.sortAt - right.sortAt ||
         left.number - right.number,
     );
+}
+
+function proofNudgeCandidateRecords(
+  itemsDir: string,
+  requestedItemNumbers: readonly number[],
+): (ProofLaneCandidate & { likelyProofNudge: boolean })[] {
+  return proofLaneCandidateRecords(
+    itemsDir,
+    requestedItemNumbers,
+    realBehaviorProofNeedsContributorNudge,
+  ).map((candidate) => ({ ...candidate, likelyProofNudge: candidate.likely }));
+}
+
+function botProofCandidateRecords(
+  itemsDir: string,
+  requestedItemNumbers: readonly number[],
+): (ProofLaneCandidate & { likelyBotProof: boolean })[] {
+  return proofLaneCandidateRecords(itemsDir, requestedItemNumbers, (markdown) => {
+    return (
+      frontMatterValue(markdown, "review_status") === "complete" &&
+      frontMatterValue(markdown, "type") === "pull_request" &&
+      isClawSweeperAppAuthor(frontMatterValue(markdown, "author")) &&
+      realBehaviorProofBlocksBotOwnedMerge(markdown)
+    );
+  }).map((candidate) => ({ ...candidate, likelyBotProof: candidate.likely }));
 }
 
 function proofNudgeLiveFetchFailureReason(error: unknown): string {
@@ -15845,6 +16170,13 @@ export function proofNudgeCandidateRecordsForTest(
   return proofNudgeCandidateRecords(itemsDir, requestedItemNumbers);
 }
 
+export function botProofCandidateRecordsForTest(
+  itemsDir: string,
+  requestedItemNumbers: readonly number[] = [],
+): ReturnType<typeof botProofCandidateRecords> {
+  return botProofCandidateRecords(itemsDir, requestedItemNumbers);
+}
+
 function proofNudgesCommand(args: Args): void {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
@@ -15860,12 +16192,9 @@ function proofNudgesCommand(args: Args): void {
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
   const reportPath = resolve(stringArg(args.report_path, join(ROOT, "proof-nudge-report.json")));
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
-  const startedAtMs = Date.now();
-  const results: ProofNudgeResult[] = [];
-  let processedCount = 0;
-  let nudgeCount = 0;
 
   if (!existsSync(itemsDir)) {
+    const results: ProofNudgeResult[] = [];
     ensureDir(dirname(reportPath));
     writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
     console.log(JSON.stringify(results, null, 2));
@@ -15873,6 +16202,10 @@ function proofNudgesCommand(args: Args): void {
   }
 
   const candidates = proofNudgeCandidateRecords(itemsDir, requestedItemNumbers);
+  const startedAtMs = Date.now();
+  const results: ProofNudgeResult[] = [];
+  let processedCount = 0;
+  let nudgeCount = 0;
   const logProgress = (message: string): void => {
     const counts = results.reduce<Record<string, number>>((accumulator, result) => {
       accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
@@ -16018,6 +16351,163 @@ function proofNudgesCommand(args: Args): void {
   ensureDir(dirname(reportPath));
   writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
   logProgress("finished proof nudges");
+  console.log(JSON.stringify(results, null, 2));
+}
+
+function botProofCommand(args: Args): void {
+  repoFromArgs(args);
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
+  const limit = Math.max(0, numberArg(args.limit, DEFAULT_PROOF_NUDGE_LIMIT));
+  const processedLimit = Math.max(1, numberArg(args.processed_limit, Math.max(limit * 20, 50)));
+  const execute = boolArg(args.execute);
+  const dryRun = !execute;
+  const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
+  const reportPath = resolve(stringArg(args.report_path, join(ROOT, "bot-proof-report.json")));
+  const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
+
+  if (!existsSync(itemsDir)) {
+    const results: BotProofResult[] = [];
+    ensureDir(dirname(reportPath));
+    writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
+    console.log(JSON.stringify(results, null, 2));
+    return;
+  }
+
+  const candidates = botProofCandidateRecords(itemsDir, requestedItemNumbers);
+  const startedAtMs = Date.now();
+  const results: BotProofResult[] = [];
+  let processedCount = 0;
+  let actionCount = 0;
+  const logProgress = (message: string): void => {
+    const counts = results.reduce<Record<string, number>>((accumulator, result) => {
+      accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
+      return accumulator;
+    }, {});
+    console.error(
+      [
+        `[bot-proof] ${new Date().toISOString()} ${message}`,
+        `actions=${actionCount}/${limit}`,
+        `processed=${processedCount}/${processedLimit}`,
+        `dry_run=${dryRun}`,
+        `counts=${JSON.stringify(counts)}`,
+      ].join(" "),
+    );
+  };
+
+  logProgress(
+    `starting bot proof handling: candidates=${candidates.length} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+  );
+  for (const candidate of candidates) {
+    if (actionCount >= limit) break;
+    if (processedCount >= processedLimit) break;
+    if (runtimeBudgetExceeded(startedAtMs, maxRuntimeMs, Date.now())) {
+      results.push({
+        repo: targetRepo(),
+        number: 0,
+        action: "skipped_runtime_budget",
+        reason: `max runtime ${maxRuntimeMs}ms reached`,
+      });
+      logProgress(`stopping bot proof handling: max runtime ${maxRuntimeMs}ms reached`);
+      break;
+    }
+
+    const resultBase = {
+      repo: markdownRepository(candidate.markdown, join(itemsDir, candidate.file)),
+      number: candidate.number,
+      reviewedAt: candidate.reviewedAt,
+    };
+    let item: Item;
+    let state: string;
+    let pullDetails: Partial<ProofNudgePullRequestDetails> = {};
+    try {
+      const fetched = fetchItem(candidate.number);
+      item = fetched.item;
+      state = fetched.state;
+      pullDetails =
+        item.kind === "pull_request" ? fetchPullRequestProofNudgeDetails(candidate.number) : {};
+    } catch (error) {
+      results.push({
+        ...resultBase,
+        action: "skipped_live_fetch_failed",
+        reason: proofNudgeLiveFetchFailureReason(error),
+      });
+      processedCount += 1;
+      continue;
+    }
+    if (state !== "open") {
+      results.push({
+        ...resultBase,
+        action: "skipped_not_open",
+        reason: `state is ${state}`,
+      });
+      processedCount += 1;
+      continue;
+    }
+    const eligibility = botProofEligibility({
+      item,
+      markdown: candidate.markdown,
+      headSha: pullDetails.headSha,
+      draft: pullDetails.draft,
+    });
+    if (!eligibility.eligible) {
+      results.push({
+        ...resultBase,
+        action: eligibility.action,
+        reason: eligibility.reason,
+        headSha: pullDetails.headSha,
+      });
+      processedCount += 1;
+      continue;
+    }
+    const headSha = pullDetails.headSha;
+    if (!headSha) {
+      results.push({
+        ...resultBase,
+        action: "skipped_no_live_head",
+        reason: "live PR head SHA could not be inspected",
+      });
+      processedCount += 1;
+      continue;
+    }
+    const commentBody = renderBotProofDecisionComment({
+      item,
+      headSha,
+      markdown: candidate.markdown,
+      timestamp: new Date().toISOString(),
+      mantisRecommendation: eligibility.mantisRecommendation,
+    });
+    const labelResult = syncBotProofDecisionLabels({
+      number: candidate.number,
+      labels: item.labels,
+      dryRun,
+    });
+    if (dryRun) {
+      results.push({
+        ...resultBase,
+        action: eligibility.action,
+        reason: [eligibility.reason, labelResult.reason].filter(Boolean).join("; "),
+        headSha,
+      });
+    } else {
+      const comment = upsertBotProofDecisionComment(candidate.number, headSha, commentBody);
+      results.push({
+        ...resultBase,
+        action:
+          eligibility.action === "bot_proof_mantis_request_planned"
+            ? "bot_proof_mantis_request_posted"
+            : "bot_proof_decision_posted",
+        reason: [eligibility.reason, labelResult.reason].filter(Boolean).join("; "),
+        url: commentUrl(comment) ?? undefined,
+        headSha,
+      });
+    }
+    processedCount += 1;
+    actionCount += 1;
+    logProgress(`${dryRun ? "planned" : "posted"} bot proof handling #${candidate.number}`);
+  }
+  ensureDir(dirname(reportPath));
+  writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
+  logProgress("finished bot proof handling");
   console.log(JSON.stringify(results, null, 2));
 }
 
@@ -17400,6 +17890,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   else if (command === "apply-artifacts") applyArtifactsCommand(args);
   else if (command === "apply-decisions") await applyDecisionsCommand(args);
   else if (command === "proof-nudges") proofNudgesCommand(args);
+  else if (command === "bot-proof") botProofCommand(args);
   else if (command === "audit") auditCommand(args);
   else if (command === "reconcile") reconcileCommand(args);
   else if (command === "dashboard") {
