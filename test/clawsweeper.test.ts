@@ -16269,7 +16269,13 @@ test("proof nudge workflow is manual-first and scheduled behind repo vars", () =
   assert.doesNotMatch(job, /steps\.central-time\.outputs\.should_run == 'true'/);
   assert.match(job, /github\.event_name == 'workflow_dispatch'/);
   assert.match(job, /vars\.CLAWSWEEPER_PROOF_NUDGES_SCHEDULED == '1'/);
+  assert.match(job, /vars\.CLAWSWEEPER_BOT_PROOF_SCHEDULED == '1'/);
   assert.match(job, /vars\.CLAWSWEEPER_PROOF_NUDGES_EXECUTE == '1'/);
+  assert.match(job, /vars\.CLAWSWEEPER_BOT_PROOF_EXECUTE == '1'/);
+  assert.match(
+    job,
+    /github\.event_name == 'schedule' && \(vars\.CLAWSWEEPER_PROOF_NUDGES_SCHEDULED == '1' \|\| vars\.CLAWSWEEPER_BOT_PROOF_SCHEDULED == '1'\)/,
+  );
   assert.match(job, /TARGET_REPO_INPUT:/);
   assert.match(job, /target_repo must be owner\/repo/);
   assert.match(job, /PROOF_NUDGES_ITEM_NUMBERS:/);
