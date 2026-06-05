@@ -36,6 +36,7 @@ import {
   codexEnv,
   dashboardClosedAt,
   extractLatestClawSweeperReviewForTest,
+  failedReviewRetryEligibilityForTest,
   filterReviewContextCommentsForTest,
   fixedPullRequestFromCommitPullsForTest,
   featureShowcaseLabelsForTest,
@@ -48,6 +49,7 @@ import {
   ghRetryKind,
   hotIntakeRecencyMs,
   isCodexReviewCommentBody,
+  isInfrastructureFailedReviewForTest,
   isGitHubNotFoundError,
   isGitHubRequiresAuthenticationError,
   isLockedConversationCommentError,
@@ -4957,6 +4959,211 @@ function implementedCloseReport(overrides = {}) {
     ...overrides,
   })}\n\n## Evidence\n\n- **main fix:** git show confirms current main has the replacement implementation and it is not in the latest release yet\n  - file: [src/clawsweeper.ts](https://github.com/openclaw/clawsweeper/blob/1234567890abcdef1234567890abcdef12345678/src/clawsweeper.ts)\n  - sha: [1234567890ab](https://github.com/openclaw/clawsweeper/commit/1234567890abcdef1234567890abcdef12345678)\n\n## Close Comment\n\nClosing this because the requested behavior is already on main.\n`;
 }
+
+function failedReviewReport(overrides = {}) {
+  return `${workPlanCandidateReport({
+    repository: "openclaw/openclaw",
+    number: 4242,
+    type: "pull_request",
+    review_status: "failed",
+    pull_head_sha: "abc123def456",
+    decision: "keep_open",
+    confidence: "low",
+    action_taken: "kept_open",
+    work_candidate: "none",
+    ...overrides,
+  })}
+
+## Summary
+
+Codex review failed: timeout.
+
+## Evidence
+
+- **failure reason:** timeout
+- **codex failure detail:** Codex worker timed out after 600000ms with ETIMEDOUT.
+`;
+}
+
+test("failed review retry eligibility requires infrastructure failure and matching live head", () => {
+  const markdown = failedReviewReport();
+  const now = Date.parse("2026-06-05T20:00:00Z");
+
+  assert.equal(isInfrastructureFailedReviewForTest(markdown), true);
+  assert.deepEqual(
+    failedReviewRetryEligibilityForTest({
+      markdown,
+      liveState: "open",
+      liveHeadSha: "abc123def456",
+      now,
+      maxAttempts: 2,
+      cooldownMs: 45 * 60 * 1000,
+    }),
+    {
+      repo: "openclaw/openclaw",
+      number: 4242,
+      action: "planned_failed_review_retry",
+      reason: "eligible infrastructure failed review at head abc123def456",
+      headSha: "abc123def456",
+      attempts: 0,
+    },
+  );
+  assert.equal(
+    failedReviewRetryEligibilityForTest({
+      markdown,
+      liveState: "open",
+      liveHeadSha: "def456abc123",
+      now,
+      maxAttempts: 2,
+      cooldownMs: 45 * 60 * 1000,
+    }).action,
+    "skipped_stale_head",
+  );
+  assert.equal(
+    failedReviewRetryEligibilityForTest({
+      markdown: failedReviewReport({ review_status: "complete" }),
+      liveState: "open",
+      liveHeadSha: "abc123def456",
+      now,
+      maxAttempts: 2,
+      cooldownMs: 45 * 60 * 1000,
+    }).action,
+    "skipped_not_failed_review",
+  );
+});
+
+test("failed review retry eligibility enforces cooldown and max attempts per head", () => {
+  const now = Date.parse("2026-06-05T20:00:00Z");
+  const recent = failedReviewReport({
+    failed_review_retry_head_sha: "abc123def456",
+    failed_review_retry_count: 1,
+    failed_review_retry_last_at: "2026-06-05T19:30:00Z",
+  });
+  const exhausted = failedReviewReport({
+    failed_review_retry_head_sha: "abc123def456",
+    failed_review_retry_count: 2,
+    failed_review_retry_last_at: "2026-06-05T18:00:00Z",
+  });
+
+  assert.equal(
+    failedReviewRetryEligibilityForTest({
+      markdown: recent,
+      liveState: "open",
+      liveHeadSha: "abc123def456",
+      now,
+      maxAttempts: 2,
+      cooldownMs: 45 * 60 * 1000,
+    }).action,
+    "skipped_retry_cooldown",
+  );
+  assert.equal(
+    failedReviewRetryEligibilityForTest({
+      markdown: exhausted,
+      liveState: "open",
+      liveHeadSha: "abc123def456",
+      now,
+      maxAttempts: 2,
+      cooldownMs: 45 * 60 * 1000,
+    }).action,
+    "skipped_retry_exhausted",
+  );
+});
+
+test("failed review retry exhaustion is idempotent for the same head", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const reportPath = join(root, "failed-review-retry-report.json");
+    const itemPath = join(itemsDir, "4242.md");
+    mkdirSync(itemsDir, { recursive: true });
+    writeFileSync(
+      itemPath,
+      failedReviewReport({
+        failed_review_retry_head_sha: "abc123def456",
+        failed_review_retry_count: 2,
+        failed_review_retry_last_at: "2026-06-05T18:00:00Z",
+      }),
+      "utf8",
+    );
+
+    const ghMock = `#!/usr/bin/env node
+const args = process.argv.slice(2);
+const path = args.find((arg) => arg.startsWith("repos/")) || "";
+if (path.endsWith("/issues/4242")) {
+  console.log(JSON.stringify({
+    number: 4242,
+    title: "Failed review retry sample",
+    html_url: "https://github.com/openclaw/openclaw/pull/4242",
+    created_at: "2026-06-01T00:00:00Z",
+    updated_at: "2026-06-01T01:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "contributor" },
+    labels: [],
+    pull_request: {}
+  }));
+  process.exit(0);
+}
+if (path.endsWith("/pulls/4242")) {
+  console.log("abc123def456");
+  process.exit(0);
+}
+console.error("unexpected gh args: " + args.join(" "));
+process.exit(1);
+`;
+
+    const runRetry = () => {
+      execFileSync(process.execPath, [
+        "dist/clawsweeper.js",
+        "retry-failed-reviews",
+        "--target-repo",
+        "openclaw/openclaw",
+        "--items-dir",
+        itemsDir,
+        "--item-number",
+        "4242",
+        "--max-attempts",
+        "2",
+        "--cooldown-minutes",
+        "45",
+        "--report-path",
+        reportPath,
+      ]);
+    };
+
+    withMockGh(root, ghMock, () => {
+      runRetry();
+      const afterFirstRun = readFileSync(itemPath, "utf8");
+      assert.match(afterFirstRun, /^failed_review_retry_status: exhausted$/m);
+      assert.equal((afterFirstRun.match(/^## Failed Review Retry$/gm) ?? []).length, 1);
+
+      runRetry();
+      const afterSecondRun = readFileSync(itemPath, "utf8");
+      assert.equal(afterSecondRun, afterFirstRun);
+    });
+
+    const report = JSON.parse(readFileSync(reportPath, "utf8")) as Array<{
+      action: string;
+      number: number;
+    }>;
+    assert.deepEqual(report, [
+      {
+        repo: "openclaw/openclaw",
+        number: 4242,
+        action: "skipped_retry_already_exhausted",
+        reason: "retry attempts exhausted for head abc123def456: 2/2",
+        headSha: "abc123def456",
+        attempts: 2,
+        reportPath: itemPath,
+      },
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
 
 function lowSignalCloseReport(overrides = {}) {
   return `${workPlanCandidateReport({
@@ -16652,6 +16859,30 @@ test("sweep review recovery uses explicit failed shard artifacts", () => {
     workflow,
     /needs\.review\.result == 'failure' \|\| needs\.review\.result == 'cancelled'/,
   );
+});
+
+test("sweep failed-review retry lane defaults to dry-run exact-item dispatch", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const retryBlock = workflow.slice(
+    workflow.indexOf("retry-failed-reviews:"),
+    workflow.indexOf("\n\n  audit-dashboard:"),
+  );
+  const planHeader = workflow.slice(
+    workflow.indexOf("\n  plan:"),
+    workflow.indexOf("\n    runs-on:", workflow.indexOf("\n  plan:")),
+  );
+
+  assert.match(workflow, /cron: "13 8,20 \* \* \*"/);
+  assert.match(planHeader, /github\.event\.schedule == '13 8,20 \* \* \*'/);
+  assert.match(retryBlock, /pnpm run retry-failed-reviews --/);
+  assert.match(
+    retryBlock,
+    /DRY_RUN: \$\{\{ vars\.CLAWSWEEPER_FAILED_REVIEW_RETRY_ENABLED == '1' && 'false' \|\| 'true' \}\}/,
+  );
+  assert.match(retryBlock, /--dry-run/);
+  assert.match(retryBlock, /--workflow-repo "\$GITHUB_REPOSITORY"/);
+  assert.match(retryBlock, /--target-repo "\$TARGET_REPO"/);
+  assert.match(retryBlock, /--path records\/openclaw-openclaw/);
 });
 
 test("sweep dashboard status writes are scoped to the target repository", () => {
