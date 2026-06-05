@@ -231,7 +231,7 @@ test("publishMainCommit publishes generated paths to state branch when state roo
   assert.throws(() => run("git", ["--git-dir", origin, "show", "main:results/ledger.txt"], root));
 });
 
-test("publishMainCommit preserves state-only automerge jobs on broad jobs publishes", () => {
+test("publishMainCommit preserves state-only queued jobs on broad jobs publishes", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
   const origin = path.join(root, "origin.git");
   const work = path.join(root, "work");
@@ -242,6 +242,10 @@ test("publishMainCommit preserves state-only automerge jobs on broad jobs publis
   write(
     path.join(state, "jobs/openclaw/inbox/automerge-openclaw-openclaw-75589.md"),
     "state automerge job\n",
+  );
+  write(
+    path.join(state, "jobs/openclaw/inbox/self-heal-openclaw-openclaw-85116.md"),
+    "state self-heal job\n",
   );
   write(path.join(state, "jobs/openclaw/inbox/ordinary.md"), "state ordinary job\n");
   run("git", ["add", "."], state);
@@ -277,6 +281,19 @@ test("publishMainCommit preserves state-only automerge jobs on broad jobs publis
       root,
     ),
     "state automerge job\n",
+  );
+  assert.equal(
+    run(
+      "git",
+      [
+        "--git-dir",
+        origin,
+        "show",
+        "state:jobs/openclaw/inbox/self-heal-openclaw-openclaw-85116.md",
+      ],
+      root,
+    ),
+    "state self-heal job\n",
   );
   assert.equal(
     run("git", ["--git-dir", origin, "show", "state:jobs/openclaw/inbox/new.md"], root),

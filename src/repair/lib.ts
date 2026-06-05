@@ -193,6 +193,10 @@ export function validateJob(job: ParsedJob | LooseRecord) {
     "commit_sha",
     "clawsweeper_report_repo",
     "clawsweeper_report_path",
+    "expected_head_sha",
+    "self_heal_merge_state",
+    "self_heal_run_url",
+    "self_heal_target_pr",
   ]) {
     if (fm[key] !== undefined && typeof fm[key] !== "string") {
       errors.push(`${key} must be a string`);

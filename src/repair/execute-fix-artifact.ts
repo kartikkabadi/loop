@@ -823,7 +823,7 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   logProgress("preparing target toolchain", { source_head: sourceHead });
   prepareTargetToolchain(targetDir, currentTargetValidationOptions());
   const codexOwnsInitialRebase =
-    isAutomergeRepairJob() && fixArtifact.deterministic_rebase_only !== true;
+    isBranchRepairStatusJob() && fixArtifact.deterministic_rebase_only !== true;
   let rebaseResult = null;
   let fastRepair: LooseRecord = {
     status: "disabled",
@@ -2164,7 +2164,7 @@ function updateAutomergeProgressStatus({
   details = null,
   headSha = null,
 }: LooseRecord) {
-  if (!isAutomergeRepairJob() || dryRun) return false;
+  if (!isBranchRepairStatusJob() || dryRun) return false;
   const target = automergeOutcomeTargetPrNumber();
   if (!target) return false;
   try {
@@ -3616,7 +3616,7 @@ function updateAutomergeStatusCommentForBranchRepair({
   commit,
   fastRepair = null,
 }: LooseRecord) {
-  if (!isAutomergeRepairJob()) return false;
+  if (!isBranchRepairStatusJob()) return false;
   if (Number(target) !== Number(automergeOutcomeTargetPrNumber())) return false;
   const existingStatus = findAutomergeStatusComment(target);
   const runUrl = currentActionsRunUrl();
@@ -3849,6 +3849,18 @@ function isAutomergeRepairJob() {
   );
 }
 
+function isSelfHealRepairJob() {
+  return (
+    job.frontmatter.source === "clawsweeper_self_rebase" ||
+    job.frontmatter.job_intent === "clawsweeper_self_rebase" ||
+    String(result.cluster_id ?? "").startsWith("self-heal-")
+  );
+}
+
+function isBranchRepairStatusJob() {
+  return isAutomergeRepairJob() || isSelfHealRepairJob();
+}
+
 function hasSuccessfulFixMutation(report: LooseRecord) {
   return (report.actions ?? []).some((action: JsonValue) => {
     const name = String(action.action ?? "");
@@ -3958,7 +3970,7 @@ function hasAutomergeStatusMarker(body: JsonValue, number: JsonValue) {
   const prefix = `<!-- clawsweeper-command-status:${Number.isFinite(issueNumber) ? issueNumber : "unknown"}:`;
   return (
     String(body ?? "").includes(prefix) &&
-    /clawsweeper-command-status:\d+:(?:automerge|clawsweeper_auto_repair|clawsweeper_auto_merge|maintainer_approve_automerge):/i.test(
+    /clawsweeper-command-status:\d+:(?:automerge|clawsweeper_auto_repair|clawsweeper_auto_merge|maintainer_approve_automerge|clawsweeper_self_rebase):/i.test(
       String(body ?? ""),
     )
   );

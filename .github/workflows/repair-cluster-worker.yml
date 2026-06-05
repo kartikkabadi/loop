@@ -167,8 +167,16 @@ jobs:
           CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:validate-job -- "${{ inputs.job }}"
 
-      - name: Run worker
+      - name: Verify self-heal head
+        id: self_heal_head
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
+        run: pnpm run repair:conflict-self-heal -- --verify-job-head "${{ inputs.job }}"
+
+      - name: Run worker
+        if: ${{ steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
@@ -357,8 +365,16 @@ jobs:
           CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:validate-job -- "${{ inputs.job }}"
 
+      - name: Verify self-heal head
+        id: self_heal_head
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
+        run: pnpm run repair:conflict-self-heal -- --verify-job-head "${{ inputs.job }}"
+
       - name: Execute credited fix artifact
-        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
+        if: ${{ steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         timeout-minutes: 40
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -366,28 +382,28 @@ jobs:
         run: pnpm run repair:execute-fix -- "${{ inputs.job }}" --latest
 
       - name: Apply safe closure actions
-        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
+        if: ${{ steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Post-flight finalize fix PRs
-        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
+        if: ${{ steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:post-flight -- "${{ inputs.job }}" --latest
 
       - name: Apply post-flight closeouts
-        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
+        if: ${{ steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:apply-result -- "${{ inputs.job }}" --latest
 
       - name: Tag ClawSweeper targets
-        if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
         continue-on-error: true
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -396,7 +412,7 @@ jobs:
 
       - name: Detect repair requeue requests
         id: repair_requeue
-        if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' && env.CLAWSWEEPER_ALLOW_FIX_PR == '1' }}
         run: |
           set -euo pipefail
           count="$(pnpm run --silent workflow -- count-requeue-required --dir .clawsweeper-repair/runs)"

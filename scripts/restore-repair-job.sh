@@ -171,6 +171,71 @@ When code changes are appropriate, emit a fix artifact with \`repair_strategy: "
 EOF
 }
 
+restore_self_heal_job() {
+  case "$JOB_PATH" in
+    jobs/*/inbox/self-heal-*.md) ;;
+    *) return 1 ;;
+  esac
+  local filename stem rest number repo_slug owner repo_name repo ref branch
+  filename="${JOB_PATH##*/}"
+  stem="${filename%.md}"
+  rest="${stem#self-heal-}"
+  number="${rest##*-}"
+  repo_slug="${rest%-${number}}"
+  owner="${JOB_PATH#jobs/}"
+  owner="${owner%%/*}"
+  repo_name="${repo_slug#${owner}-}"
+  if [ -z "$number" ] || [ "$number" = "$rest" ] || [ -z "$repo_name" ] || [ "$repo_name" = "$repo_slug" ]; then
+    return 1
+  fi
+  repo="$owner/$repo_name"
+  ref="#$number"
+  branch="clawsweeper/self-heal-$repo_slug-$number"
+  mkdir -p "$(dirname "$JOB_PATH")"
+  cat > "$JOB_PATH" <<EOF
+---
+repo: $repo
+cluster_id: self-heal-$repo_slug-$number
+mode: autonomous
+job_intent: clawsweeper_self_rebase
+allowed_actions:
+  - comment
+  - fix
+blocked_actions:
+  - close
+  - merge
+  - label
+require_human_for:
+  - close
+  - merge
+canonical:
+  - $ref
+candidates:
+  - $ref
+cluster_refs:
+  - $ref
+allow_instant_close: false
+allow_fix_pr: true
+allow_merge: false
+allow_unmerged_fix_close: false
+allow_post_merge_close: false
+require_fix_before_close: true
+security_policy: central_security_only
+security_sensitive: false
+target_branch: $branch
+source: clawsweeper_self_rebase
+self_heal_target_pr: "$number"
+expected_head_sha: "unknown"
+self_heal_merge_state: "restored missing self-heal job"
+---
+
+# ClawSweeper self-heal PR rebase
+
+This restored placeholder cannot safely mutate because the original target head SHA is unavailable.
+The self-heal exact-head verifier will skip this job unless the durable state file is restored with a concrete expected_head_sha.
+EOF
+}
+
 if [ -f "$JOB_PATH" ]; then
   write_output job_exists 1
 elif restore_automerge_job; then
@@ -179,6 +244,9 @@ elif restore_automerge_job; then
 elif restore_issue_implementation_job; then
   write_output job_exists 1
   echo "::notice title=Restored issue implementation job::Job file '$JOB_PATH' was missing from the state checkout; reconstructed it from the workflow input."
+elif restore_self_heal_job; then
+  write_output job_exists 1
+  echo "::notice title=Restored self-heal repair job::Job file '$JOB_PATH' was missing from the state checkout; reconstructed a non-mutating placeholder from the workflow input."
 else
   write_output job_exists 0
   echo "::notice title=Stale repair dispatch::Job file '$JOB_PATH' no longer exists on the current state checkout; skipping $SKIP_TARGET."
