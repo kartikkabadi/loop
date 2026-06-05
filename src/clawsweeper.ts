@@ -657,6 +657,12 @@ interface DashboardActivityBucket {
   closes: number;
   commentSyncs: number;
   applySkips: number;
+  inheritedLabelCleanups: number;
+  selfHealConflictRepairs: number;
+  failedReviewRetries: number;
+  failedReviewRetryExhaustions: number;
+  botOwnedProofDecisionsRequested: number;
+  botOwnedProofDispatches: number;
 }
 
 interface DashboardActivityStats {
@@ -699,6 +705,12 @@ interface WorkflowStatusSummary {
   dueBacklog: number | undefined;
   oldestUnreviewedAt: string | undefined;
   capacityReason: string | undefined;
+  inheritedLabelCleanups: number | undefined;
+  selfHealConflictRepairs: number | undefined;
+  failedReviewRetries: number | undefined;
+  failedReviewRetryExhaustions: number | undefined;
+  botOwnedProofDecisionsRequested: number | undefined;
+  botOwnedProofDispatches: number | undefined;
 }
 
 interface RepoDashboardSnapshot {
@@ -1769,6 +1781,12 @@ function writeSweepStatus(options: {
   dueBacklog?: number;
   oldestUnreviewedAt?: string;
   capacityReason?: string;
+  inheritedLabelCleanups?: number;
+  selfHealConflictRepairs?: number;
+  failedReviewRetries?: number;
+  failedReviewRetryExhaustions?: number;
+  botOwnedProofDecisionsRequested?: number;
+  botOwnedProofDispatches?: number;
 }): void {
   const profile = options.profile ?? targetProfile();
   const updatedAt = new Date().toISOString();
@@ -1787,6 +1805,12 @@ function writeSweepStatus(options: {
     due_backlog: options.dueBacklog ?? null,
     oldest_unreviewed_at: options.oldestUnreviewedAt ?? null,
     capacity_reason: options.capacityReason ?? null,
+    inherited_label_cleanups: options.inheritedLabelCleanups ?? null,
+    self_heal_conflict_repairs: options.selfHealConflictRepairs ?? null,
+    failed_review_retries: options.failedReviewRetries ?? null,
+    failed_review_retry_exhaustions: options.failedReviewRetryExhaustions ?? null,
+    bot_owned_proof_decisions_requested: options.botOwnedProofDecisionsRequested ?? null,
+    bot_owned_proof_dispatches: options.botOwnedProofDispatches ?? null,
     updated_at: updatedAt,
   };
   const outputPath = sweepStatusPath(profile);
@@ -5242,6 +5266,12 @@ function emptyDashboardActivityBucket(): DashboardActivityBucket {
     closes: 0,
     commentSyncs: 0,
     applySkips: 0,
+    inheritedLabelCleanups: 0,
+    selfHealConflictRepairs: 0,
+    failedReviewRetries: 0,
+    failedReviewRetryExhaustions: 0,
+    botOwnedProofDecisionsRequested: 0,
+    botOwnedProofDispatches: 0,
   };
 }
 
@@ -5322,6 +5352,9 @@ function recordDashboardActivity(
   const applyCheckedAtMs = timestampMs(applyCheckedAt);
   const decision = frontMatterValue(markdown, "decision") ?? "unknown";
   const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
+  const failedReviewRetryStatus = frontMatterValue(markdown, "failed_review_retry_status");
+  const failedReviewRetryLastAt = frontMatterValue(markdown, "failed_review_retry_last_at");
+  const failedReviewRetryLastAtMs = timestampMs(failedReviewRetryLastAt);
   const reviewStatus = effectiveReviewStatus(markdown);
 
   activity.latestReviewAt = latestTimestamp(activity.latestReviewAt, reviewedAt);
@@ -5347,11 +5380,81 @@ function recordDashboardActivity(
     if (isWithinWindow(applyCheckedAtMs, now, windowMs) && action.startsWith("skipped_")) {
       bucket.applySkips += 1;
     }
+    if (isWithinWindow(applyCheckedAtMs ?? reviewedAtMs, now, windowMs)) {
+      recordOperationActivity(action, bucket);
+    }
+    if (
+      failedReviewRetryStatus &&
+      !normalizedOperationText(action).includes("failed_review_retry") &&
+      isWithinWindow(failedReviewRetryLastAtMs, now, windowMs)
+    ) {
+      recordFailedReviewRetryStatus(failedReviewRetryStatus, bucket);
+    }
   }
 }
 
 function formatActivityRow(label: string, bucket: DashboardActivityBucket): string {
   return `| ${label} | ${bucket.reviews} | ${bucket.closeDecisions} | ${bucket.keepOpenDecisions} | ${bucket.failedOrStaleReviews} | ${bucket.closes} | ${bucket.commentSyncs} | ${bucket.applySkips} |`;
+}
+
+function recordOperationActivity(action: string, bucket: DashboardActivityBucket): void {
+  const normalized = normalizedOperationText(action);
+  if (
+    normalized.includes("inherited_label_cleanup") ||
+    normalized.includes("replacement_label_cleanup") ||
+    normalized.includes("removed_inherited_labels")
+  ) {
+    bucket.inheritedLabelCleanups += 1;
+  }
+  if (
+    normalized.includes("self_heal_conflict") ||
+    normalized.includes("conflict_self_heal") ||
+    normalized.includes("clawsweeper_self_rebase")
+  ) {
+    bucket.selfHealConflictRepairs += 1;
+  }
+  if (
+    normalized.includes("failed_review_retry_exhausted") ||
+    normalized.includes("failed_review_retries_exhausted")
+  ) {
+    bucket.failedReviewRetryExhaustions += 1;
+  } else if (normalized.includes("failed_review_retry")) {
+    bucket.failedReviewRetries += 1;
+  }
+  if (
+    normalized.includes("bot_owned_proof_decision_requested") ||
+    normalized.includes("maintainer_proof_decision_requested") ||
+    normalized.includes("needs_maintainer_proof_decision") ||
+    normalized.includes("bot_proof_decision_planned") ||
+    normalized.includes("bot_proof_decision_posted")
+  ) {
+    bucket.botOwnedProofDecisionsRequested += 1;
+  }
+  if (
+    normalized.includes("bot_owned_proof_dispatched") ||
+    normalized.includes("bot_owned_proof_capture_dispatched") ||
+    normalized.includes("bot_proof_mantis_request_planned") ||
+    normalized.includes("bot_proof_mantis_request_posted")
+  ) {
+    bucket.botOwnedProofDispatches += 1;
+  }
+}
+
+function normalizedOperationText(value: string): string {
+  return value.toLowerCase().replaceAll("-", "_");
+}
+
+function recordFailedReviewRetryStatus(status: string, bucket: DashboardActivityBucket): void {
+  const normalized = normalizedOperationText(status);
+  if (normalized === "exhausted") {
+    bucket.failedReviewRetryExhaustions += 1;
+  } else if (normalized === "dispatched") {
+    bucket.failedReviewRetries += 1;
+  }
+}
+
+function formatOperationActivityRow(label: string, bucket: DashboardActivityBucket): string {
+  return `| ${label} | ${bucket.inheritedLabelCleanups} | ${bucket.selfHealConflictRepairs} | ${bucket.failedReviewRetries} | ${bucket.failedReviewRetryExhaustions} | ${bucket.botOwnedProofDecisionsRequested} | ${bucket.botOwnedProofDispatches} |`;
 }
 
 function selectCandidates(options: {
@@ -7050,6 +7153,12 @@ function workflowStatusBlock(options?: {
   dueBacklog?: number | undefined;
   oldestUnreviewedAt?: string | undefined;
   capacityReason?: string | undefined;
+  inheritedLabelCleanups?: number | undefined;
+  selfHealConflictRepairs?: number | undefined;
+  failedReviewRetries?: number | undefined;
+  failedReviewRetryExhaustions?: number | undefined;
+  botOwnedProofDecisionsRequested?: number | undefined;
+  botOwnedProofDispatches?: number | undefined;
 }): string {
   const profile = options?.profile ?? targetProfile();
   const updatedAt = formatTimestamp(options?.updatedAt ?? new Date().toISOString());
@@ -7079,6 +7188,12 @@ function workflowStatusMetricLines(options: {
   dueBacklog?: number | undefined;
   oldestUnreviewedAt?: string | undefined;
   capacityReason?: string | undefined;
+  inheritedLabelCleanups?: number | undefined;
+  selfHealConflictRepairs?: number | undefined;
+  failedReviewRetries?: number | undefined;
+  failedReviewRetryExhaustions?: number | undefined;
+  botOwnedProofDecisionsRequested?: number | undefined;
+  botOwnedProofDispatches?: number | undefined;
 }): string[] {
   const lines: string[] = [];
   if (
@@ -7104,6 +7219,32 @@ function workflowStatusMetricLines(options: {
   if (options.capacityReason) {
     lines.push(`Capacity reason: ${options.capacityReason}.`);
   }
+  if (options.inheritedLabelCleanups !== undefined) {
+    lines.push(`Inherited label cleanups: ${formatStatusNumber(options.inheritedLabelCleanups)}.`);
+  }
+  if (options.selfHealConflictRepairs !== undefined) {
+    lines.push(
+      `Self-heal conflict repairs: ${formatStatusNumber(options.selfHealConflictRepairs)}.`,
+    );
+  }
+  if (options.failedReviewRetries !== undefined) {
+    lines.push(`Failed-review retries: ${formatStatusNumber(options.failedReviewRetries)}.`);
+  }
+  if (options.failedReviewRetryExhaustions !== undefined) {
+    lines.push(
+      `Failed-review retry exhaustions: ${formatStatusNumber(options.failedReviewRetryExhaustions)}.`,
+    );
+  }
+  if (options.botOwnedProofDecisionsRequested !== undefined) {
+    lines.push(
+      `Bot-owned proof decisions requested: ${formatStatusNumber(options.botOwnedProofDecisionsRequested)}.`,
+    );
+  }
+  if (options.botOwnedProofDispatches !== undefined) {
+    lines.push(
+      `Bot-owned proof dispatches: ${formatStatusNumber(options.botOwnedProofDispatches)}.`,
+    );
+  }
   return lines;
 }
 
@@ -7128,6 +7269,14 @@ function readSweepStatusSummary(profile = targetProfile()): WorkflowStatusSummar
       dueBacklog: numberOrUndefined(parsed.due_backlog),
       oldestUnreviewedAt: stringOrUndefined(parsed.oldest_unreviewed_at),
       capacityReason: stringOrUndefined(parsed.capacity_reason),
+      inheritedLabelCleanups: numberOrUndefined(parsed.inherited_label_cleanups),
+      selfHealConflictRepairs: numberOrUndefined(parsed.self_heal_conflict_repairs),
+      failedReviewRetries: numberOrUndefined(parsed.failed_review_retries),
+      failedReviewRetryExhaustions: numberOrUndefined(parsed.failed_review_retry_exhaustions),
+      botOwnedProofDecisionsRequested: numberOrUndefined(
+        parsed.bot_owned_proof_decisions_requested,
+      ),
+      botOwnedProofDispatches: numberOrUndefined(parsed.bot_owned_proof_dispatches),
     };
   } catch {
     return null;
@@ -7169,7 +7318,7 @@ function workflowStatusSummary(block: string): WorkflowStatusSummary {
   const state = block.match(/^State: (.+)$/m)?.[1] ?? "Idle";
   const runUrl = block.match(/^Run: \[([^\]]+)\]\([^)]+\)$/m)?.[1];
   const detailMatch = block.match(
-    /^State: .+\n\n([\s\S]*?)(?:\n\nPlan: |\n\nActive Codex target: |\nRun: |\n<!-- clawsweeper-status)/m,
+    /^State: .+\n\n([\s\S]*?)(?:\n\nPlan: |\n\nActive Codex target: |\n\nDue backlog scanned: |\n\nOldest unreviewed: |\n\nCapacity reason: |\n\nInherited label cleanups: |\n\nSelf-heal conflict repairs: |\n\nFailed-review retries: |\n\nFailed-review retry exhaustions: |\n\nBot-owned proof decisions requested: |\n\nBot-owned proof dispatches: |\nRun: |\n<!-- clawsweeper-status)/m,
   );
   const detail = detailMatch?.[1]?.trim() || "No workflow status has been published yet.";
   const planMatch = block.match(/^Plan: (\d+) items across (\d+) shards \(capacity (\d+)\)\.$/m);
@@ -7177,6 +7326,24 @@ function workflowStatusSummary(block: string): WorkflowStatusSummary {
   const dueBacklog = numberOrUndefined(block.match(/^Due backlog scanned: (\d+)\.$/m)?.[1]);
   const oldestUnreviewedAt = block.match(/^Oldest unreviewed: (.+)\.$/m)?.[1];
   const capacityReason = block.match(/^Capacity reason: (.+)\.$/m)?.[1];
+  const inheritedLabelCleanups = numberOrUndefined(
+    block.match(/^Inherited label cleanups: (\d+)\.$/m)?.[1],
+  );
+  const selfHealConflictRepairs = numberOrUndefined(
+    block.match(/^Self-heal conflict repairs: (\d+)\.$/m)?.[1],
+  );
+  const failedReviewRetries = numberOrUndefined(
+    block.match(/^Failed-review retries: (\d+)\.$/m)?.[1],
+  );
+  const failedReviewRetryExhaustions = numberOrUndefined(
+    block.match(/^Failed-review retry exhaustions: (\d+)\.$/m)?.[1],
+  );
+  const botOwnedProofDecisionsRequested = numberOrUndefined(
+    block.match(/^Bot-owned proof decisions requested: (\d+)\.$/m)?.[1],
+  );
+  const botOwnedProofDispatches = numberOrUndefined(
+    block.match(/^Bot-owned proof dispatches: (\d+)\.$/m)?.[1],
+  );
   return {
     updatedAt,
     state,
@@ -7189,6 +7356,12 @@ function workflowStatusSummary(block: string): WorkflowStatusSummary {
     dueBacklog,
     oldestUnreviewedAt,
     capacityReason,
+    inheritedLabelCleanups,
+    selfHealConflictRepairs,
+    failedReviewRetries,
+    failedReviewRetryExhaustions,
+    botOwnedProofDecisionsRequested,
+    botOwnedProofDispatches,
   };
 }
 
@@ -17477,6 +17650,12 @@ function addActivityBucket(target: DashboardActivityBucket, source: DashboardAct
   target.closes += source.closes;
   target.commentSyncs += source.commentSyncs;
   target.applySkips += source.applySkips;
+  target.inheritedLabelCleanups += source.inheritedLabelCleanups;
+  target.selfHealConflictRepairs += source.selfHealConflictRepairs;
+  target.failedReviewRetries += source.failedReviewRetries;
+  target.failedReviewRetryExhaustions += source.failedReviewRetryExhaustions;
+  target.botOwnedProofDecisionsRequested += source.botOwnedProofDecisionsRequested;
+  target.botOwnedProofDispatches += source.botOwnedProofDispatches;
 }
 
 function aggregateActivity(snapshots: readonly RepoDashboardSnapshot[]): DashboardActivityStats {
@@ -17622,6 +17801,14 @@ ${formatActivityRow("Last 15 minutes", stats.activity.last15Minutes)}
 ${formatActivityRow("Last hour", stats.activity.lastHour)}
 ${formatActivityRow("Last 24 hours", stats.activity.last24Hours)}
 
+#### Operation Counters
+
+| Window | Inherited-label cleanups | Self-heal conflict repairs | Failed-review retries | Exhausted review retries | Bot proof decisions | Bot proof dispatches |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+${formatOperationActivityRow("Last 15 minutes", stats.activity.last15Minutes)}
+${formatOperationActivityRow("Last hour", stats.activity.lastHour)}
+${formatOperationActivityRow("Last 24 hours", stats.activity.last24Hours)}
+
 #### Recently Closed
 
 | Item | Title | Reason | Closed | Report |
@@ -17749,6 +17936,14 @@ ${formatActivityRow("Last 15 minutes", activity.last15Minutes)}
 ${formatActivityRow("Last hour", activity.lastHour)}
 ${formatActivityRow("Last 24 hours", activity.last24Hours)}
 
+### Fleet Operation Counters
+
+| Window | Inherited-label cleanups | Self-heal conflict repairs | Failed-review retries | Exhausted review retries | Bot proof decisions | Bot proof dispatches |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+${formatOperationActivityRow("Last 15 minutes", activity.last15Minutes)}
+${formatOperationActivityRow("Last hour", activity.lastHour)}
+${formatOperationActivityRow("Last 24 hours", activity.last24Hours)}
+
 ### Recently Closed Across Repos
 
 | Repository | Item | Title | Reason | Closed | Report |
@@ -17794,6 +17989,14 @@ function statusCommand(args: Args): void {
   const dueBacklog = optionalNumberArg(args.due_backlog);
   const oldestUnreviewedAt = stringArg(args.oldest_unreviewed_at, "");
   const capacityReason = stringArg(args.capacity_reason, "");
+  const inheritedLabelCleanups = optionalNumberArg(args.inherited_label_cleanups);
+  const selfHealConflictRepairs = optionalNumberArg(args.self_heal_conflict_repairs);
+  const failedReviewRetries = optionalNumberArg(args.failed_review_retries);
+  const failedReviewRetryExhaustions = optionalNumberArg(args.failed_review_retry_exhaustions);
+  const botOwnedProofDecisionsRequested = optionalNumberArg(
+    args.bot_owned_proof_decisions_requested,
+  );
+  const botOwnedProofDispatches = optionalNumberArg(args.bot_owned_proof_dispatches);
   const statusOptions: Parameters<typeof writeSweepStatus>[0] = {
     state,
     detail,
@@ -17807,6 +18010,17 @@ function statusCommand(args: Args): void {
   if (dueBacklog !== undefined) statusOptions.dueBacklog = dueBacklog;
   if (oldestUnreviewedAt) statusOptions.oldestUnreviewedAt = oldestUnreviewedAt;
   if (capacityReason) statusOptions.capacityReason = capacityReason;
+  if (inheritedLabelCleanups !== undefined)
+    statusOptions.inheritedLabelCleanups = inheritedLabelCleanups;
+  if (selfHealConflictRepairs !== undefined)
+    statusOptions.selfHealConflictRepairs = selfHealConflictRepairs;
+  if (failedReviewRetries !== undefined) statusOptions.failedReviewRetries = failedReviewRetries;
+  if (failedReviewRetryExhaustions !== undefined)
+    statusOptions.failedReviewRetryExhaustions = failedReviewRetryExhaustions;
+  if (botOwnedProofDecisionsRequested !== undefined)
+    statusOptions.botOwnedProofDecisionsRequested = botOwnedProofDecisionsRequested;
+  if (botOwnedProofDispatches !== undefined)
+    statusOptions.botOwnedProofDispatches = botOwnedProofDispatches;
   writeSweepStatus(statusOptions);
   console.log(JSON.stringify({ status_path: sweepStatusRelativePath(profile), state, detail }));
 }

@@ -1070,6 +1070,7 @@ async function statusSnapshot(env, ctx) {
       automerge: automerge.items,
       closed_items: closed.items,
       closed_stats: closed.stats,
+      operation_counts: operationEventCounts(storedEvents),
       events: recentActivityEvents(storedEvents, closed.items),
       failed_runs: failedRuns.slice(0, 10).map((run) => workflowRunSummary(run)),
     },
@@ -2349,6 +2350,70 @@ function recentActivityEvents(storedEvents, closedItems) {
         Date.parse(left.received_at || left.closed_at || ""),
     )
     .slice(0, 25);
+}
+
+function operationEventCounts(storedEvents) {
+  const counts = {
+    inherited_label_cleanups: 0,
+    self_heal_conflict_repairs: 0,
+    failed_review_retries: 0,
+    failed_review_retry_exhaustions: 0,
+    bot_owned_proof_decisions_requested: 0,
+    bot_owned_proof_dispatches: 0,
+  };
+  for (const event of Array.isArray(storedEvents) ? storedEvents : []) {
+    countOperationEvent(event, counts);
+  }
+  return counts;
+}
+
+function countOperationEvent(event, counts) {
+  const key = [event.event_type, event.mode, event.stage, event.status]
+    .map((value) =>
+      String(value || "")
+        .toLowerCase()
+        .replaceAll("-", "_"),
+    )
+    .join(" ");
+  if (
+    key.includes("inherited_label_cleanup") ||
+    key.includes("replacement_label_cleanup") ||
+    key.includes("removed_inherited_labels")
+  ) {
+    counts.inherited_label_cleanups += 1;
+  }
+  if (
+    key.includes("self_heal_conflict") ||
+    key.includes("conflict_self_heal") ||
+    key.includes("clawsweeper_self_rebase")
+  ) {
+    counts.self_heal_conflict_repairs += 1;
+  }
+  if (
+    key.includes("failed_review_retry_exhausted") ||
+    key.includes("failed_review_retries_exhausted")
+  ) {
+    counts.failed_review_retry_exhaustions += 1;
+  } else if (key.includes("failed_review_retry")) {
+    counts.failed_review_retries += 1;
+  }
+  if (
+    key.includes("bot_owned_proof_decision_requested") ||
+    key.includes("maintainer_proof_decision_requested") ||
+    key.includes("needs_maintainer_proof_decision") ||
+    key.includes("bot_proof_decision_planned") ||
+    key.includes("bot_proof_decision_posted")
+  ) {
+    counts.bot_owned_proof_decisions_requested += 1;
+  }
+  if (
+    key.includes("bot_owned_proof_dispatched") ||
+    key.includes("bot_owned_proof_capture_dispatched") ||
+    key.includes("bot_proof_mantis_request_planned") ||
+    key.includes("bot_proof_mantis_request_posted")
+  ) {
+    counts.bot_owned_proof_dispatches += 1;
+  }
 }
 
 function activityEventFromClosedItem(item) {
@@ -4100,6 +4165,8 @@ a:hover { color: #89c8ff; text-decoration: underline; }
       <h2>✅ Closed by ClawSweeper</h2>
       <div id="closed-stats"></div>
       <div id="closed"></div>
+      <h2>🧭 Operations</h2>
+      <div id="operations"></div>
       <h2>📡 Recent Activity</h2>
       <div id="events"></div>
     </aside>
@@ -4224,6 +4291,7 @@ function renderDashboard(data, note) {
   renderAutomerge(data.recent.automerge || []);
   renderClosedStats(data.recent.closed_stats);
   renderClosedItems(data.recent.closed_items || []);
+  renderOperations(data.recent.operation_counts);
   renderEvents(data.recent.events || []);
 }
 function renderPipeline(rows) {
@@ -4275,6 +4343,18 @@ function renderClosedItems(rows) {
 function renderClosedStats(stats) {
   const safe = stats || { total: 0, issues: 0, prs: 0, window_hours: 24 };
   document.getElementById("closed-stats").innerHTML = '<div class="closed-stats"><div class="closed-stat"><span>' + esc((safe.window_hours || 24) + "h total") + '</span><strong>' + fmt.format(safe.total || 0) + '</strong></div><div class="closed-stat"><span>Issues</span><strong>' + fmt.format(safe.issues || 0) + '</strong></div><div class="closed-stat"><span>PRs</span><strong>' + fmt.format(safe.prs || 0) + '</strong></div></div>';
+}
+function renderOperations(counts) {
+  const safe = counts || {};
+  const rows = [
+    ["Inherited labels", safe.inherited_label_cleanups || 0],
+    ["Conflict self-heal", safe.self_heal_conflict_repairs || 0],
+    ["Review retries", safe.failed_review_retries || 0],
+    ["Retry exhausted", safe.failed_review_retry_exhaustions || 0],
+    ["Proof decisions", safe.bot_owned_proof_decisions_requested || 0],
+    ["Proof dispatches", safe.bot_owned_proof_dispatches || 0]
+  ];
+  document.getElementById("operations").innerHTML = '<div class="closed-stats">' + rows.map(row => '<div class="closed-stat"><span>' + esc(row[0]) + '</span><strong>' + fmt.format(row[1]) + '</strong></div>').join("") + '</div>';
 }
 function renderEvents(rows) {
   if (!rows.length) {

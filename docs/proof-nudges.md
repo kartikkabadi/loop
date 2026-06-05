@@ -22,6 +22,31 @@ A pull request is eligible only when all of these are true:
 
 The lane skips maintainer-authored, bot-authored, security-sensitive, and release-style pull requests. It also skips pull requests with `proof: supplied`, `proof: sufficient`, or `proof: override`, because those need review or policy handling rather than another contributor reminder.
 
+## Bot-Owned Proof Handling
+
+Bot-owned replacement PRs are deliberately outside the contributor nudge lane.
+Do not make normal proof nudges comment on bot-authored PRs as if a contributor
+needs to respond. The `bot-proof` lane handles ClawSweeper-owned PRs that are
+blocked on real behavior proof.
+
+The bot-owned lane is status-only unless an approved Mantis proof suggestion is
+available. It is eligible only when the live PR is open and not draft, the
+author is the ClawSweeper GitHub App, the latest
+ClawSweeper review says real behavior proof blocks merge, and that review head
+SHA still matches the live head SHA. It must skip PRs with `proof: supplied`,
+`proof: sufficient`, or `proof: override`.
+
+When the review includes an approved Mantis-style proof suggestion, the lane
+posts a durable Mantis proof request comment. Otherwise it updates one durable
+status comment asking maintainers to choose proof capture, proof override, or
+pause. It does not post contributor reminders.
+
+For dashboard accounting, status-only maintainer requests use
+`bot_proof_decision_planned` or `bot_proof_decision_posted`. Mantis proof
+requests use `bot_proof_mantis_request_planned` or
+`bot_proof_mantis_request_posted`. Hosted dashboard events with those tokens are
+counted in the proof operation counters.
+
 ## Marker
 
 Cooldown state lives in the reminder comment body:
@@ -70,11 +95,16 @@ Scheduled operation uses repository variables:
 - `CLAWSWEEPER_PROOF_NUDGES_LIMIT`: optional scheduled batch size, default `10`.
 - `CLAWSWEEPER_PROOF_NUDGES_MIN_AGE_DAYS`: optional first-nudge age gate, default `5`.
 - `CLAWSWEEPER_PROOF_NUDGES_COOLDOWN_DAYS`: optional same-head cooldown, default `7`.
+- `CLAWSWEEPER_BOT_PROOF_SCHEDULED=1`: include the bot-owned proof lane in scheduled runs.
+- `CLAWSWEEPER_BOT_PROOF_EXECUTE=1`: allow scheduled bot-owned proof runs to post status comments and labels. Without this, scheduled bot-proof runs remain dry-run only.
 
 Suggested rollout:
 
 1. Run the proof-nudge workflow manually with `execute=false`.
 2. Set `CLAWSWEEPER_PROOF_NUDGES_SCHEDULED=1` to collect scheduled dry-run reports.
 3. Set `CLAWSWEEPER_PROOF_NUDGES_EXECUTE=1` only after the scheduled reports look correct.
+4. Run the bot-owned proof lane manually with `bot_proof=true` and `bot_proof_execute=false`.
+5. Set `CLAWSWEEPER_BOT_PROOF_SCHEDULED=1` only after dry-run reports look correct.
+6. Set `CLAWSWEEPER_BOT_PROOF_EXECUTE=1` only after generated comments and labels have been reviewed.
 
 This first version intentionally has no auto-close behavior. Any escalation after repeated proof nudges needs a separate maintainer policy decision.

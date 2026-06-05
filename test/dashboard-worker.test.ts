@@ -347,6 +347,77 @@ test("dashboard preserves repeated untargeted activity events", async () => {
   }
 });
 
+test("dashboard counts cluster-fixer operation events", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  globalThis.fetch = activePrFetch;
+
+  try {
+    const env = {
+      INGEST_TOKEN: "test-token",
+      STATUS_STORE: new MemoryKv(),
+      CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+      TARGET_REPOS: "openclaw/openclaw",
+      CACHE_TTL_SECONDS: "0",
+    };
+    const events = [
+      { event_type: "clawsweeper.replacement_label_cleanup", stage: "executed" },
+      { event_type: "clawsweeper.clawsweeper_self_rebase", stage: "dispatched" },
+      { event_type: "clawsweeper.dispatched_failed_review_retry", stage: "dispatched" },
+      { event_type: "clawsweeper.marked_failed_review_retry_exhausted", stage: "exhausted" },
+      { event_type: "clawsweeper.bot_proof_decision_posted", stage: "posted" },
+      { event_type: "clawsweeper.bot_proof_mantis_request_posted", stage: "posted" },
+    ];
+    for (const event of events) {
+      const ingest = await worker.fetch(
+        new Request("<private-ingest-endpoint>", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer test-token",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            mode: "operation",
+            status: "ok",
+            ...event,
+          }),
+        }),
+        env,
+      );
+      assert.equal(ingest.status, 200);
+    }
+
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      env,
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.deepEqual(status.recent.operation_counts, {
+      inherited_label_cleanups: 1,
+      self_heal_conflict_repairs: 1,
+      failed_review_retries: 1,
+      failed_review_retry_exhaustions: 1,
+      bot_owned_proof_decisions_requested: 1,
+      bot_owned_proof_dispatches: 1,
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
 test("dashboard keeps workflow CI status when live PR checks fail", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;

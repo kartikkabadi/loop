@@ -7,6 +7,45 @@ commands, finalizers, self-heal, gates, and ledgers, see
 For the trusted ClawSweeper-to-ClawSweeper PR repair loop, see
 [`docs/repair/auto-update-prs.md`](auto-update-prs.md).
 
+## Cluster Repair Operations Counters
+
+The README dashboard and hosted live dashboard expose passive counters for the
+cluster repair lanes. These counters are observational only; they do not
+enable repair, merge, close, proof dispatch, or label mutation.
+
+Record-backed dashboard counters read recent markdown records and count these
+signals:
+
+- `replacement_label_cleanup` or `inherited_label_cleanup` for replacement-label cleanup;
+- `clawsweeper_self_rebase` or `conflict_self_heal` for ClawSweeper-owned conflict repair;
+- `failed_review_retry_status: dispatched` or an action containing
+  `failed_review_retry` for an exact failed-review retry dispatch;
+- `failed_review_retry_status: exhausted` or an action containing
+  `failed_review_retry_exhausted` for retry cap exhaustion;
+- `bot_proof_decision_planned`, `bot_proof_decision_posted`, or
+  `needs_maintainer_proof_decision` for status-only maintainer proof decisions;
+- `bot_proof_mantis_request_planned` or `bot_proof_mantis_request_posted` for
+  approved Mantis proof requests.
+
+The hosted dashboard counts the same names from `/api/events` payloads when the
+event type, mode, stage, or status contains the matching token. Lanes that
+mutate GitHub or dispatch another workflow should emit a durable record or
+status comment and a hosted-dashboard event when that hook is available.
+
+Manual workflow status updates can publish the same counters directly:
+
+```bash
+pnpm run status -- \
+  --state "Working" \
+  --detail "Cluster repair dry-run completed." \
+  --inherited-label-cleanups 3 \
+  --self-heal-conflict-repairs 1 \
+  --failed-review-retries 2 \
+  --failed-review-retry-exhaustions 1 \
+  --bot-owned-proof-decisions-requested 1 \
+  --bot-owned-proof-dispatches 0
+```
+
 For commit-review findings, ClawSweeper dispatches
 `clawsweeper_commit_finding` to this repository. ClawSweeper fetches the latest
 markdown report, writes `results/commit-findings/<repo-slug>/<sha>.md`, and
