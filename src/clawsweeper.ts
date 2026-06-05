@@ -82,6 +82,21 @@ type ItemKind = "issue" | "pull_request";
 type ApplyKind = ItemKind | "all";
 type DecisionKind = "close" | "keep_open";
 type WorkCandidateKind = "none" | "manual_review" | "queue_fix_pr";
+type FailedReviewRetryAction =
+  | "dispatched_failed_review_retry"
+  | "planned_failed_review_retry"
+  | "marked_failed_review_retry_exhausted"
+  | "skipped_not_failed_review"
+  | "skipped_not_open"
+  | "skipped_not_pull_request"
+  | "skipped_missing_report_head"
+  | "skipped_missing_live_head"
+  | "skipped_stale_head"
+  | "skipped_non_infrastructure_failure"
+  | "skipped_retry_cooldown"
+  | "skipped_retry_exhausted"
+  | "skipped_live_fetch_failed"
+  | "skipped_dispatch_failed";
 type TriagePriority = "P0" | "P1" | "P2" | "P3" | "none";
 type ImpactLabelName =
   | "impact:data-loss"
@@ -735,6 +750,17 @@ interface ApplyResult {
   number: number;
   action: ActionTaken;
   reason: string;
+}
+
+interface FailedReviewRetryResult {
+  repo?: string | undefined;
+  number: number;
+  action: FailedReviewRetryAction;
+  reason: string;
+  headSha?: string | undefined;
+  attempts?: number | undefined;
+  reportPath?: string | undefined;
+  dispatchUrl?: string | undefined;
 }
 
 type ProofNudgeAction =
@@ -1891,6 +1917,25 @@ function ghWithRetry(args: string[], attempts = 12): string {
       if (retryKind === "throttle") {
         maybePublishThrottleHeartbeat({ args, attempt, attempts, waitMs });
       }
+      sleepMs(waitMs);
+    }
+  }
+  throw lastError;
+}
+
+function ghRawWithRetry(args: string[], attempts = 12): string {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return run("gh", args);
+    } catch (error) {
+      lastError = error;
+      const retryKind = ghRetryKind(error);
+      if (retryKind === "none" || attempt === attempts - 1) throw error;
+      const waitMs = ghRetryWaitMs(retryKind, attempt);
+      console.error(
+        `Transient GitHub workflow dispatch failure; retrying ${summarizeGhArgs(args)} in ${Math.round(waitMs / 1000)}s`,
+      );
       sleepMs(waitMs);
     }
   }
@@ -4351,6 +4396,12 @@ function replaceSectionValue(markdown: string, heading: string, value: string): 
   return `${markdown.trimEnd()}\n\n## ${heading}\n\n${value.trim()}\n`;
 }
 
+function appendSectionValue(markdown: string, heading: string, value: string): string {
+  const existing = sectionValue(markdown, heading);
+  const nextValue = existing ? `${existing.trimEnd()}\n\n${value.trim()}` : value.trim();
+  return replaceSectionValue(markdown, heading, nextValue);
+}
+
 function frontMatterStringArray(markdown: string, key: string): string[] {
   const value = frontMatterValue(markdown, key);
   if (!value || value === "none") return [];
@@ -4470,6 +4521,149 @@ function effectiveReviewStatus(markdown: string): string {
     if (!hasVerifiedLocalCheckoutAccess(markdown)) return "stale_local_checkout_unverified";
   }
   return status;
+}
+
+function failedReviewRetryCount(markdown: string, headSha: string): number {
+  const storedHead = frontMatterValue(markdown, "failed_review_retry_head_sha");
+  if (storedHead && storedHead !== headSha) return 0;
+  const value = frontMatterValue(markdown, "failed_review_retry_count");
+  if (!value) return 0;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
+}
+
+function failedReviewRetryLastAtMs(markdown: string, headSha: string): number | null {
+  const storedHead = frontMatterValue(markdown, "failed_review_retry_head_sha");
+  if (storedHead && storedHead !== headSha) return null;
+  return timestampMs(frontMatterValue(markdown, "failed_review_retry_last_at"));
+}
+
+function failedReviewFailureDetail(markdown: string): string {
+  return [
+    frontMatterValue(markdown, "review_status") ?? "",
+    frontMatterValue(markdown, "decision") ?? "",
+    reviewSectionValue(markdown, "summary"),
+    reviewSectionValue(markdown, "evidence"),
+    sectionValue(markdown, "Summary"),
+    sectionValue(markdown, "Evidence"),
+    markdown.slice(0, 8000),
+  ].join("\n");
+}
+
+export function isInfrastructureFailedReviewForTest(markdown: string): boolean {
+  return isInfrastructureFailedReview(markdown);
+}
+
+function isInfrastructureFailedReview(markdown: string): boolean {
+  const detail = failedReviewFailureDetail(markdown);
+  return /\b(?:ETIMEDOUT|ECONNRESET|EAI_AGAIN|ENOTFOUND|socket hang up|fetch failed|transport failure|codex transport|Codex worker timed out|Codex review failed: timeout|timed out after|shard timeout|workflow timeout|cancelledByParent)\b/i.test(
+    detail,
+  );
+}
+
+export function failedReviewRetryEligibilityForTest(options: {
+  markdown: string;
+  liveState: string;
+  liveHeadSha?: string | null;
+  now: number;
+  maxAttempts: number;
+  cooldownMs: number;
+}): FailedReviewRetryResult {
+  return failedReviewRetryEligibility(options);
+}
+
+function failedReviewRetryEligibility(options: {
+  markdown: string;
+  liveState: string;
+  liveHeadSha?: string | null;
+  now: number;
+  maxAttempts: number;
+  cooldownMs: number;
+}): FailedReviewRetryResult {
+  const number = Number(frontMatterValue(options.markdown, "number") ?? 0);
+  const repo = markdownRepository(options.markdown);
+  if (effectiveReviewStatus(options.markdown) !== "failed") {
+    return { repo, number, action: "skipped_not_failed_review", reason: "review is not failed" };
+  }
+  if (options.liveState !== "open") {
+    return { repo, number, action: "skipped_not_open", reason: `state is ${options.liveState}` };
+  }
+  if (frontMatterValue(options.markdown, "type") !== "pull_request") {
+    return {
+      repo,
+      number,
+      action: "skipped_not_pull_request",
+      reason: "failed-review retry requires a pull request head SHA",
+    };
+  }
+  const reportHeadSha = pullHeadShaFromReport(options.markdown);
+  if (!reportHeadSha) {
+    return {
+      repo,
+      number,
+      action: "skipped_missing_report_head",
+      reason: "report does not record a pull_head_sha",
+    };
+  }
+  const liveHeadSha = options.liveHeadSha?.trim() || null;
+  if (!liveHeadSha) {
+    return {
+      repo,
+      number,
+      action: "skipped_missing_live_head",
+      reason: "live pull request head SHA is unavailable",
+      headSha: reportHeadSha,
+    };
+  }
+  if (liveHeadSha !== reportHeadSha) {
+    return {
+      repo,
+      number,
+      action: "skipped_stale_head",
+      reason: `live head ${liveHeadSha} does not match failed report head ${reportHeadSha}`,
+      headSha: reportHeadSha,
+    };
+  }
+  if (!isInfrastructureFailedReview(options.markdown)) {
+    return {
+      repo,
+      number,
+      action: "skipped_non_infrastructure_failure",
+      reason: "failed review does not look like a Codex timeout or infrastructure failure",
+      headSha: reportHeadSha,
+    };
+  }
+  const attempts = failedReviewRetryCount(options.markdown, reportHeadSha);
+  if (attempts >= options.maxAttempts) {
+    return {
+      repo,
+      number,
+      action: "skipped_retry_exhausted",
+      reason: `retry attempts exhausted for head ${reportHeadSha}: ${attempts}/${options.maxAttempts}`,
+      headSha: reportHeadSha,
+      attempts,
+    };
+  }
+  const lastAtMs = failedReviewRetryLastAtMs(options.markdown, reportHeadSha);
+  if (lastAtMs !== null && options.now - lastAtMs < options.cooldownMs) {
+    const remainingMs = Math.max(0, options.cooldownMs - (options.now - lastAtMs));
+    return {
+      repo,
+      number,
+      action: "skipped_retry_cooldown",
+      reason: `retry cooldown has ${Math.ceil(remainingMs / 60000)} minute(s) remaining`,
+      headSha: reportHeadSha,
+      attempts,
+    };
+  }
+  return {
+    repo,
+    number,
+    action: "planned_failed_review_retry",
+    reason: `eligible infrastructure failed review at head ${reportHeadSha}`,
+    headSha: reportHeadSha,
+    attempts,
+  };
 }
 
 function isFresh(
@@ -13991,6 +14185,279 @@ function reviewCommand(args: Args): void {
   }
 }
 
+function livePullHeadSha(number: number): string | null {
+  const sha = ghWithRetry([
+    "api",
+    `repos/${targetRepo()}/pulls/${number}`,
+    "--jq",
+    ".head.sha // empty",
+  ]);
+  return sha.trim() || null;
+}
+
+function failedReviewRetryPrompt(options: {
+  number: number;
+  headSha: string;
+  reason: string;
+  attempts: number;
+  maxAttempts: number;
+}): string {
+  return [
+    "[clawsweeper-failed-review-retry=1]",
+    "",
+    "This is a bounded exact-item retry for a prior Codex timeout or infrastructure failure.",
+    `Retry item: #${options.number}`,
+    `Failed report head SHA: ${options.headSha}`,
+    `Prior failure: ${options.reason}`,
+    `Retry attempt: ${options.attempts + 1}/${options.maxAttempts}`,
+    "",
+    "Produce a normal fresh review from the live item and checkout context.",
+    "Do not infer any verdict from the failed review artifact; use it only as retry context.",
+  ].join("\n");
+}
+
+function failedReviewRetrySection(options: {
+  status: "dispatched" | "exhausted";
+  at: string;
+  headSha: string;
+  attempts: number;
+  maxAttempts: number;
+  reason: string;
+  dispatchUrl?: string;
+}): string {
+  const lines = [
+    `- status: ${options.status}`,
+    `- recorded at: ${options.at}`,
+    `- head SHA: ${options.headSha}`,
+    `- attempts: ${options.attempts}/${options.maxAttempts}`,
+    `- reason: ${options.reason}`,
+  ];
+  if (options.dispatchUrl) lines.push(`- retry run: ${options.dispatchUrl}`);
+  if (options.status === "exhausted") {
+    lines.push(
+      "- next step: needs human review; retry attempts for this exact head are exhausted.",
+    );
+  }
+  return lines.join("\n");
+}
+
+function markFailedReviewRetry(options: {
+  markdown: string;
+  status: "dispatched" | "exhausted";
+  at: string;
+  headSha: string;
+  attempts: number;
+  maxAttempts: number;
+  reason: string;
+  dispatchUrl?: string;
+}): string {
+  let next = options.markdown;
+  next = replaceFrontMatterValue(next, "failed_review_retry_status", options.status);
+  next = replaceFrontMatterValue(next, "failed_review_retry_count", String(options.attempts));
+  next = replaceFrontMatterValue(next, "failed_review_retry_last_at", options.at);
+  next = replaceFrontMatterValue(next, "failed_review_retry_head_sha", options.headSha);
+  next = replaceFrontMatterValue(
+    next,
+    "failed_review_retry_reason",
+    JSON.stringify(options.reason),
+  );
+  if (options.dispatchUrl) {
+    next = replaceFrontMatterValue(next, "failed_review_retry_dispatch_url", options.dispatchUrl);
+  }
+  return appendSectionValue(next, "Failed Review Retry", failedReviewRetrySection(options));
+}
+
+function dispatchFailedReviewRetry(options: {
+  workflowRepo: string;
+  workflowRef: string;
+  targetRepo: string;
+  number: number;
+  headSha: string;
+  reason: string;
+  attempts: number;
+  maxAttempts: number;
+  codexTimeoutMs: number;
+}): string {
+  const prompt = failedReviewRetryPrompt({
+    number: options.number,
+    headSha: options.headSha,
+    reason: options.reason,
+    attempts: options.attempts,
+    maxAttempts: options.maxAttempts,
+  });
+  ghRawWithRetry([
+    "workflow",
+    "run",
+    "sweep.yml",
+    "--repo",
+    options.workflowRepo,
+    "--ref",
+    options.workflowRef,
+    "-f",
+    "apply_existing=false",
+    "-f",
+    "hot_intake=false",
+    "-f",
+    `target_repo=${options.targetRepo}`,
+    "-f",
+    "batch_size=1",
+    "-f",
+    "shard_count=1",
+    "-f",
+    `codex_timeout_ms=${options.codexTimeoutMs}`,
+    "-f",
+    `item_number=${options.number}`,
+    "-f",
+    `additional_prompt=${prompt}`,
+  ]);
+  return `https://github.com/${options.workflowRepo}/actions/workflows/sweep.yml`;
+}
+
+function retryFailedReviewsCommand(args: Args): void {
+  repoFromArgs(args);
+  const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
+  const reportPath = resolve(
+    stringArg(args.report_path, join(ROOT, "artifacts", "failed-review-retry-report.json")),
+  );
+  const limit = numberArg(args.limit, 5);
+  const maxAttempts = Math.max(1, numberArg(args.max_attempts, 2));
+  const cooldownMs = Math.max(0, numberArg(args.cooldown_minutes, 45) * 60 * 1000);
+  const dryRun = boolArg(args.dry_run);
+  const workflowRepo = stringArg(
+    args.workflow_repo,
+    process.env.GITHUB_REPOSITORY ?? "openclaw/clawsweeper",
+  );
+  const workflowRef = stringArg(args.workflow_ref, "main");
+  const codexTimeoutMs = numberArg(args.codex_timeout_ms, 600_000);
+  const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
+  const requested = new Set(requestedItemNumbers);
+  const now = Date.now();
+  const nowIso = new Date(now).toISOString();
+  const results: FailedReviewRetryResult[] = [];
+  let dispatched = 0;
+  ensureDir(dirname(reportPath));
+  for (const file of markdownFiles(itemsDir)) {
+    const path = join(itemsDir, file);
+    let markdown = readFileSync(path, "utf8");
+    if (!isMarkdownForActiveRepo(markdown, path)) continue;
+    const number = numberForMarkdownFile(file);
+    if (requested.size > 0 && !requested.has(number)) continue;
+    if (results.some((result) => result.number === number)) continue;
+    if (effectiveReviewStatus(markdown) !== "failed") {
+      results.push({
+        repo: targetRepo(),
+        number,
+        action: "skipped_not_failed_review",
+        reason: "review is not failed",
+        reportPath: path,
+      });
+      continue;
+    }
+    let item: Item;
+    let state: string;
+    let liveHeadSha: string | null = null;
+    try {
+      ({ item, state } = fetchItem(number));
+      if (item.kind === "pull_request") liveHeadSha = livePullHeadSha(number);
+    } catch (error) {
+      results.push({
+        repo: targetRepo(),
+        number,
+        action: "skipped_live_fetch_failed",
+        reason: error instanceof Error ? error.message : String(error),
+        reportPath: path,
+      });
+      continue;
+    }
+    const eligibility = failedReviewRetryEligibility({
+      markdown,
+      liveState: state,
+      liveHeadSha,
+      now,
+      maxAttempts,
+      cooldownMs,
+    });
+    if (eligibility.action === "skipped_retry_exhausted" && eligibility.headSha) {
+      const attempts = eligibility.attempts ?? maxAttempts;
+      markdown = markFailedReviewRetry({
+        markdown,
+        status: "exhausted",
+        at: nowIso,
+        headSha: eligibility.headSha,
+        attempts,
+        maxAttempts,
+        reason: eligibility.reason,
+      });
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      results.push({
+        ...eligibility,
+        action: "marked_failed_review_retry_exhausted",
+        reportPath: path,
+      });
+      continue;
+    }
+    if (eligibility.action !== "planned_failed_review_retry" || !eligibility.headSha) {
+      results.push({ ...eligibility, reportPath: path });
+      continue;
+    }
+    if (dispatched >= limit) break;
+    const retryReason = codexFailureReason(failedReviewFailureDetail(markdown));
+    if (dryRun) {
+      results.push({ ...eligibility, reason: retryReason, reportPath: path });
+      dispatched += 1;
+      continue;
+    }
+    try {
+      const attempts = (eligibility.attempts ?? 0) + 1;
+      const dispatchUrl = dispatchFailedReviewRetry({
+        workflowRepo,
+        workflowRef,
+        targetRepo: targetRepo(),
+        number,
+        headSha: eligibility.headSha,
+        reason: retryReason,
+        attempts: eligibility.attempts ?? 0,
+        maxAttempts,
+        codexTimeoutMs,
+      });
+      markdown = markFailedReviewRetry({
+        markdown,
+        status: "dispatched",
+        at: nowIso,
+        headSha: eligibility.headSha,
+        attempts,
+        maxAttempts,
+        reason: retryReason,
+        dispatchUrl,
+      });
+      writeFileSync(path, markdown, "utf8");
+      results.push({
+        repo: targetRepo(),
+        number,
+        action: "dispatched_failed_review_retry",
+        reason: retryReason,
+        headSha: eligibility.headSha,
+        attempts,
+        reportPath: path,
+        dispatchUrl,
+      });
+      dispatched += 1;
+    } catch (error) {
+      results.push({
+        repo: targetRepo(),
+        number,
+        action: "skipped_dispatch_failed",
+        reason: error instanceof Error ? error.message : String(error),
+        headSha: eligibility.headSha,
+        attempts: eligibility.attempts,
+        reportPath: path,
+      });
+    }
+  }
+  writeFileSync(reportPath, `${JSON.stringify(results, null, 2)}\n`, "utf8");
+  console.log(JSON.stringify({ results, dryRun, dispatched }, null, 2));
+}
+
 async function applyDecisionsCommand(args: Args): Promise<void> {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
@@ -16913,6 +17380,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   const command = args._[0] ?? "review";
   if (command === "plan") planCommand(args);
   else if (command === "review") reviewCommand(args);
+  else if (command === "retry-failed-reviews") retryFailedReviewsCommand(args);
   else if (command === "apply-artifacts") applyArtifactsCommand(args);
   else if (command === "apply-decisions") await applyDecisionsCommand(args);
   else if (command === "proof-nudges") proofNudgesCommand(args);

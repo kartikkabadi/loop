@@ -1,6 +1,6 @@
 name: ClawSweeper
 
-run-name: ${{ (github.event_name == 'schedule' && (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')) && 'Fan out ClawSweeper targets' || (github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_target_sweep' && github.event.client_payload.hot_intake == 'true') && format('Review hot target repo {0}', github.event.client_payload.target_repo || 'openclaw/openclaw') || (github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_target_sweep') && format('Review target repo {0}', github.event.client_payload.target_repo || 'openclaw/openclaw') || github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'Audit ClawSweeper state' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
+run-name: ${{ (github.event_name == 'schedule' && (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')) && 'Fan out ClawSweeper targets' || (github.event_name == 'schedule' && github.event.schedule == '13,28,43,58 * * * *') && 'Retry failed Codex reviews' || (github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_target_sweep' && github.event.client_payload.hot_intake == 'true') && format('Review hot target repo {0}', github.event.client_payload.target_repo || 'openclaw/openclaw') || (github.event_name == 'repository_dispatch' && github.event.action == 'clawsweeper_target_sweep') && format('Review target repo {0}', github.event.client_payload.target_repo || 'openclaw/openclaw') || github.event_name == 'repository_dispatch' && format('Review event item {0}#{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || '?') || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'Sync Codex review comments' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'Apply ClawSweeper closures' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'Audit ClawSweeper state' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'Review hot ClawSweeper items' || 'Review ClawSweeper items' }}
 
 on:
   repository_dispatch:
@@ -125,6 +125,7 @@ on:
     - cron: "4/15 * * * *"
     - cron: "41 * * * *"
     - cron: "37 */6 * * *"
+    - cron: "13,28,43,58 * * * *"
 
 permissions:
   contents: write
@@ -137,7 +138,7 @@ env:
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
 
 concurrency:
-  group: ${{ (github.event_name == 'schedule' && (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')) && format('clawsweeper-target-fanout-{0}', github.event.schedule || github.run_id) || github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '')) && format('clawsweeper-intake-exact-{0}', github.event.inputs.item_number || github.event.inputs.item_numbers) || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake-v2' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '17 */6 * * *') && 'openclaw/clawsweeper' || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw'))) }}
+  group: ${{ (github.event_name == 'schedule' && (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')) && format('clawsweeper-target-fanout-{0}', github.event.schedule || github.run_id) || github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', (github.event_name == 'schedule' && github.event.schedule == '13,28,43,58 * * * *') && 'clawsweeper-failed-review-retry' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '')) && format('clawsweeper-intake-exact-{0}', github.event.inputs.item_number || github.event.inputs.item_numbers) || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake-v2' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '17 */6 * * *') && 'openclaw/clawsweeper' || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw'))) }}
   cancel-in-progress: ${{ github.event_name == 'repository_dispatch' }}
 
 jobs:
@@ -632,7 +633,7 @@ jobs:
 
   plan:
     name: Plan review candidates
-    if: ${{ (github.event_name != 'repository_dispatch' || github.event.action == 'clawsweeper_target_sweep') && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '6,21,36,51 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *') || (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')))) && !(github.event_name == 'schedule' && (github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *') && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') && !(github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
+    if: ${{ (github.event_name != 'repository_dispatch' || github.event.action == 'clawsweeper_target_sweep') && !((github.event_name == 'workflow_dispatch' && (github.event.inputs.apply_existing == 'true' || github.event.inputs.audit_dashboard == 'true')) || (github.event_name == 'schedule' && ((github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '6,21,36,51 * * * *') || (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *') || (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *') || github.event.schedule == '13,28,43,58 * * * *'))) && !(github.event_name == 'schedule' && (github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *') && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') && !(github.event_name == 'repository_dispatch' && github.event.client_payload.target_repo == 'openclaw/clawhub' && vars.CLAWSWEEPER_ENABLE_CLAWHUB != '1') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
@@ -1638,6 +1639,80 @@ jobs:
           )
           echo "Requeueing failed review shards $failed_shards with item numbers: $item_numbers"
           gh "${args[@]}"
+
+  retry-failed-reviews:
+    name: Retry failed Codex reviews
+    if: ${{ github.event_name == 'schedule' && github.event.schedule == '13,28,43,58 * * * *' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      actions: write
+      contents: write
+      issues: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          filter: blob:none
+          fetch-depth: 0
+
+      - name: Create state token
+        id: state-token
+        uses: ./.github/actions/create-state-token
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+
+      - uses: ./.github/actions/setup-state
+        with:
+          token: ${{ steps.state-token.outputs.token }}
+
+      - uses: ./.github/actions/setup-pnpm
+        with:
+          build-script: build:all
+
+      - name: Plan or dispatch failed-review retries
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_REPO: openclaw/openclaw
+          DRY_RUN: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_ENABLED == '1' && 'false' || 'true' }}
+          RETRY_LIMIT: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_LIMIT || '3' }}
+          RETRY_MAX_ATTEMPTS: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_MAX_ATTEMPTS || '2' }}
+          RETRY_COOLDOWN_MINUTES: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_COOLDOWN_MINUTES || '45' }}
+          CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_CODEX_TIMEOUT_MS || vars.CLAWSWEEPER_CODEX_TIMEOUT_MS || '600000' }}
+        run: |
+          set -euo pipefail
+          git pull --rebase
+          dry_run_arg=()
+          if [ "$DRY_RUN" = "true" ]; then
+            dry_run_arg=(--dry-run)
+            echo "::notice::Failed-review retry is running in dry-run mode. Set CLAWSWEEPER_FAILED_REVIEW_RETRY_ENABLED=1 to dispatch exact-item retries."
+          fi
+          pnpm run retry-failed-reviews -- \
+            --target-repo "$TARGET_REPO" \
+            --limit "$RETRY_LIMIT" \
+            --max-attempts "$RETRY_MAX_ATTEMPTS" \
+            --cooldown-minutes "$RETRY_COOLDOWN_MINUTES" \
+            --codex-timeout-ms "$CODEX_TIMEOUT_MS" \
+            --workflow-repo "$GITHUB_REPOSITORY" \
+            --workflow-ref main \
+            --report-path artifacts/failed-review-retry-report.json \
+            "${dry_run_arg[@]}"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: failed-review-retry-report
+          path: artifacts/failed-review-retry-report.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish failed-review retry state
+        if: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_ENABLED == '1' }}
+        run: |
+          pnpm run repair:publish-main -- \
+            --message "chore: update failed review retry state" \
+            --path records/openclaw-openclaw \
+            --rebase-strategy theirs
 
   audit-dashboard:
     name: Audit state
