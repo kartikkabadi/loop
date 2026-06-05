@@ -58,6 +58,7 @@
     "repair:dispatch": "node dist/repair/dispatch-jobs.js",
     "repair:requeue": "node dist/repair/requeue-job.js",
     "repair:self-heal": "node dist/repair/self-heal-failed-runs.js",
+    "repair:conflict-self-heal": "node dist/repair/conflict-self-heal.js",
     "repair:publish-result": "node dist/repair/publish-result.js",
     "repair:review-results": "node dist/repair/review-results.js",
     "repair:message-samples": "node dist/repair/render-message-samples.js",

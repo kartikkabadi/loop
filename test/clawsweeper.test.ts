@@ -16948,6 +16948,21 @@ test("cluster intake publishes generated repair state through state repo", () =>
   assert.match(workflow, /--path results\/cluster-repair-intake/);
 });
 
+test("conflict self-heal publishes exact-head jobs before worker dispatch", () => {
+  const source = readFileSync("src/repair/conflict-self-heal.ts", "utf8");
+  const writeIndex = source.indexOf("writeSelfHealJob(candidate);");
+  const publishIndex = source.indexOf("publishSelfHealJobs();");
+  const dispatchIndex = source.indexOf("dispatchRepair(candidate);");
+
+  assert.notEqual(writeIndex, -1);
+  assert.notEqual(publishIndex, -1);
+  assert.notEqual(dispatchIndex, -1);
+  assert.ok(writeIndex < publishIndex, "self-heal jobs must be written before state publish");
+  assert.ok(publishIndex < dispatchIndex, "self-heal jobs must be durable before worker dispatch");
+  assert.match(source, /CLAWSWEEPER_STATE_DIR is required/);
+  assert.match(source, /head SHA changed after state publish/);
+});
+
 test("review prompt asks for concise public review fields", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 
