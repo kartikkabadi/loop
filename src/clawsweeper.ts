@@ -793,6 +793,21 @@ interface BotProofResult {
   reviewedAt?: string | undefined;
 }
 
+interface ProofLaneCandidate {
+  file: string;
+  markdown: string;
+  number: number;
+  likely: boolean;
+  reviewedAt?: string | undefined;
+  sortAt: number;
+}
+
+interface ProofLaneProcessResult<Result> {
+  result: Result;
+  actionTaken: boolean;
+  progressMessage?: string | undefined;
+}
+
 interface ProofNudgeComment {
   author?: string | undefined;
   body?: string | undefined;
@@ -15596,17 +15611,11 @@ function syncBotProofDecisionLabels(options: {
   return { labels: nextLabels, changed, reason: reasons.join("; ") };
 }
 
-function proofNudgeCandidateRecords(
+function proofLaneCandidateRecords(
   itemsDir: string,
   requestedItemNumbers: readonly number[],
-): {
-  file: string;
-  markdown: string;
-  number: number;
-  likelyProofNudge: boolean;
-  reviewedAt?: string | undefined;
-  sortAt: number;
-}[] {
+  likely: (markdown: string) => boolean,
+): ProofLaneCandidate[] {
   const requested = new Set(requestedItemNumbers);
   return markdownFiles(itemsDir)
     .map((file) => {
@@ -15618,8 +15627,7 @@ function proofNudgeCandidateRecords(
         timestampMs(reviewedAt) ??
         timestampMs(frontMatterValue(markdown, "item_updated_at")) ??
         Number.NEGATIVE_INFINITY;
-      const likelyProofNudge = realBehaviorProofNeedsContributorNudge(markdown);
-      return { file, markdown, number, likelyProofNudge, reviewedAt, sortAt };
+      return { file, markdown, number, likely: likely(markdown), reviewedAt, sortAt };
     })
     .filter(({ file, markdown, number }) => {
       if (requested.size > 0 && !requested.has(number)) return false;
@@ -15629,53 +15637,35 @@ function proofNudgeCandidateRecords(
     })
     .sort(
       (left, right) =>
-        Number(right.likelyProofNudge) - Number(left.likelyProofNudge) ||
+        Number(right.likely) - Number(left.likely) ||
         left.sortAt - right.sortAt ||
         left.number - right.number,
     );
 }
 
+function proofNudgeCandidateRecords(
+  itemsDir: string,
+  requestedItemNumbers: readonly number[],
+): (ProofLaneCandidate & { likelyProofNudge: boolean })[] {
+  return proofLaneCandidateRecords(
+    itemsDir,
+    requestedItemNumbers,
+    realBehaviorProofNeedsContributorNudge,
+  ).map((candidate) => ({ ...candidate, likelyProofNudge: candidate.likely }));
+}
+
 function botProofCandidateRecords(
   itemsDir: string,
   requestedItemNumbers: readonly number[],
-): {
-  file: string;
-  markdown: string;
-  number: number;
-  likelyBotProof: boolean;
-  reviewedAt?: string | undefined;
-  sortAt: number;
-}[] {
-  const requested = new Set(requestedItemNumbers);
-  return markdownFiles(itemsDir)
-    .map((file) => {
-      const path = join(itemsDir, file);
-      const markdown = readFileSync(path, "utf8");
-      const number = numberForMarkdownFile(file);
-      const reviewedAt = frontMatterValue(markdown, "reviewed_at");
-      const sortAt =
-        timestampMs(reviewedAt) ??
-        timestampMs(frontMatterValue(markdown, "item_updated_at")) ??
-        Number.NEGATIVE_INFINITY;
-      const likelyBotProof =
-        frontMatterValue(markdown, "review_status") === "complete" &&
-        frontMatterValue(markdown, "type") === "pull_request" &&
-        isClawSweeperAppAuthor(frontMatterValue(markdown, "author")) &&
-        realBehaviorProofBlocksBotOwnedMerge(markdown);
-      return { file, markdown, number, likelyBotProof, reviewedAt, sortAt };
-    })
-    .filter(({ file, markdown, number }) => {
-      if (requested.size > 0 && !requested.has(number)) return false;
-      if (!isMarkdownForActiveRepo(markdown, join(itemsDir, file))) return false;
-      if (frontMatterValue(markdown, "type") !== "pull_request") return false;
-      return true;
-    })
-    .sort(
-      (left, right) =>
-        Number(right.likelyBotProof) - Number(left.likelyBotProof) ||
-        left.sortAt - right.sortAt ||
-        left.number - right.number,
+): (ProofLaneCandidate & { likelyBotProof: boolean })[] {
+  return proofLaneCandidateRecords(itemsDir, requestedItemNumbers, (markdown) => {
+    return (
+      frontMatterValue(markdown, "review_status") === "complete" &&
+      frontMatterValue(markdown, "type") === "pull_request" &&
+      isClawSweeperAppAuthor(frontMatterValue(markdown, "author")) &&
+      realBehaviorProofBlocksBotOwnedMerge(markdown)
     );
+  }).map((candidate) => ({ ...candidate, likelyBotProof: candidate.likely }));
 }
 
 function proofNudgeLiveFetchFailureReason(error: unknown): string {
@@ -15703,6 +15693,66 @@ export function botProofCandidateRecordsForTest(
   return botProofCandidateRecords(itemsDir, requestedItemNumbers);
 }
 
+function runProofLaneCommand<
+  Result extends { action: string; number: number; reason: string },
+>(options: {
+  laneName: string;
+  counterName: string;
+  limit: number;
+  processedLimit: number;
+  dryRun: boolean;
+  maxRuntimeMs: number;
+  reportPath: string;
+  candidates: readonly ProofLaneCandidate[];
+  startMessage: string;
+  stopMessage: string;
+  finishMessage: string;
+  makeRuntimeResult: (reason: string) => Result;
+  processCandidate: (candidate: ProofLaneCandidate) => ProofLaneProcessResult<Result>;
+}): void {
+  const startedAtMs = Date.now();
+  const results: Result[] = [];
+  let processedCount = 0;
+  let actionCount = 0;
+  const logProgress = (message: string): void => {
+    const counts = results.reduce<Record<string, number>>((accumulator, result) => {
+      accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
+      return accumulator;
+    }, {});
+    console.error(
+      [
+        `[${options.laneName}] ${new Date().toISOString()} ${message}`,
+        `${options.counterName}=${actionCount}/${options.limit}`,
+        `processed=${processedCount}/${options.processedLimit}`,
+        `dry_run=${options.dryRun}`,
+        `counts=${JSON.stringify(counts)}`,
+      ].join(" "),
+    );
+  };
+
+  logProgress(options.startMessage);
+  for (const candidate of options.candidates) {
+    if (actionCount >= options.limit) break;
+    if (processedCount >= options.processedLimit) break;
+    if (runtimeBudgetExceeded(startedAtMs, options.maxRuntimeMs, Date.now())) {
+      const reason = `max runtime ${options.maxRuntimeMs}ms reached`;
+      results.push(options.makeRuntimeResult(reason));
+      logProgress(`${options.stopMessage}: ${reason}`);
+      break;
+    }
+
+    const processed = options.processCandidate(candidate);
+    results.push(processed.result);
+    processedCount += 1;
+    if (processed.actionTaken) actionCount += 1;
+    if (processed.progressMessage) logProgress(processed.progressMessage);
+  }
+  ensureDir(dirname(options.reportPath));
+  writeFileSync(options.reportPath, JSON.stringify(results, null, 2), "utf8");
+  logProgress(options.finishMessage);
+  console.log(JSON.stringify(results, null, 2));
+}
+
 function proofNudgesCommand(args: Args): void {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
@@ -15718,12 +15768,9 @@ function proofNudgesCommand(args: Args): void {
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
   const reportPath = resolve(stringArg(args.report_path, join(ROOT, "proof-nudge-report.json")));
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
-  const startedAtMs = Date.now();
-  const results: ProofNudgeResult[] = [];
-  let processedCount = 0;
-  let nudgeCount = 0;
 
   if (!existsSync(itemsDir)) {
+    const results: ProofNudgeResult[] = [];
     ensureDir(dirname(reportPath));
     writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
     console.log(JSON.stringify(results, null, 2));
@@ -15731,152 +15778,144 @@ function proofNudgesCommand(args: Args): void {
   }
 
   const candidates = proofNudgeCandidateRecords(itemsDir, requestedItemNumbers);
-  const logProgress = (message: string): void => {
-    const counts = results.reduce<Record<string, number>>((accumulator, result) => {
-      accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
-      return accumulator;
-    }, {});
-    console.error(
-      [
-        `[proof-nudges] ${new Date().toISOString()} ${message}`,
-        `nudges=${nudgeCount}/${limit}`,
-        `processed=${processedCount}/${processedLimit}`,
-        `dry_run=${dryRun}`,
-        `counts=${JSON.stringify(counts)}`,
-      ].join(" "),
-    );
-  };
-
-  logProgress(
-    `starting proof nudges: candidates=${candidates.length} min_age_days=${minAgeDays} cooldown_days=${cooldownDays} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
-  );
-  for (const candidate of candidates) {
-    if (nudgeCount >= limit) break;
-    if (processedCount >= processedLimit) break;
-    if (runtimeBudgetExceeded(startedAtMs, maxRuntimeMs, Date.now())) {
-      results.push({
-        repo: targetRepo(),
-        number: 0,
-        action: "skipped_runtime_budget",
-        reason: `max runtime ${maxRuntimeMs}ms reached`,
-      });
-      logProgress(`stopping proof nudges: max runtime ${maxRuntimeMs}ms reached`);
-      break;
-    }
-
-    const resultBase = {
-      repo: markdownRepository(candidate.markdown, join(itemsDir, candidate.file)),
-      number: candidate.number,
-      reviewedAt: candidate.reviewedAt,
-    };
-    let item: Item;
-    let state: string;
-    try {
-      const fetched = fetchItem(candidate.number);
-      item = fetched.item;
-      state = fetched.state;
-    } catch (error) {
-      results.push({
-        ...resultBase,
-        action: "skipped_live_fetch_failed",
-        reason: proofNudgeLiveFetchFailureReason(error),
-      });
-      processedCount += 1;
-      continue;
-    }
-    if (state !== "open") {
-      results.push({
-        ...resultBase,
-        action: "skipped_not_open",
-        reason: `state is ${state}`,
-      });
-      processedCount += 1;
-      continue;
-    }
-    let pullDetails: Partial<ProofNudgePullRequestDetails> = {};
-    let comments: ProofNudgeComment[] = [];
-    let authorEditedAt: string | undefined;
-    let authorReviewActivityAt: string | undefined;
-    try {
-      pullDetails =
-        item.kind === "pull_request" ? fetchPullRequestProofNudgeDetails(candidate.number) : {};
-      comments = item.kind === "pull_request" ? proofNudgeComments(candidate.number) : [];
-      authorEditedAt =
-        item.kind === "pull_request"
-          ? latestAuthorPullRequestEditAt(candidate.number, item.author)
-          : undefined;
-      authorReviewActivityAt =
-        item.kind === "pull_request"
-          ? latestAuthorPullRequestReviewActivityAt(candidate.number, item.author)
-          : undefined;
-    } catch (error) {
-      results.push({
-        ...resultBase,
-        action: "skipped_live_fetch_failed",
-        reason: proofNudgeLiveFetchFailureReason(error),
-      });
-      processedCount += 1;
-      continue;
-    }
-    const eligibility = proofNudgeEligibility({
-      item,
-      markdown: candidate.markdown,
-      comments,
-      headSha: pullDetails.headSha,
-      headCommittedAt: pullDetails.headCommittedAt,
-      authorEditedAt,
-      authorReviewActivityAt,
-      minAgeDays,
-      cooldownDays,
-    });
-    if (!eligibility.eligible) {
-      results.push({
-        ...resultBase,
-        action: eligibility.action,
-        reason: eligibility.reason,
+  runProofLaneCommand<ProofNudgeResult>({
+    laneName: "proof-nudges",
+    counterName: "nudges",
+    limit,
+    processedLimit,
+    dryRun,
+    maxRuntimeMs,
+    reportPath,
+    candidates,
+    startMessage: `starting proof nudges: candidates=${candidates.length} min_age_days=${minAgeDays} cooldown_days=${cooldownDays} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+    stopMessage: "stopping proof nudges",
+    finishMessage: "finished proof nudges",
+    makeRuntimeResult: (reason) => ({
+      repo: targetRepo(),
+      number: 0,
+      action: "skipped_runtime_budget",
+      reason,
+    }),
+    processCandidate: (candidate) => {
+      const resultBase = {
+        repo: markdownRepository(candidate.markdown, join(itemsDir, candidate.file)),
+        number: candidate.number,
+        reviewedAt: candidate.reviewedAt,
+      };
+      let item: Item;
+      let state: string;
+      try {
+        const fetched = fetchItem(candidate.number);
+        item = fetched.item;
+        state = fetched.state;
+      } catch (error) {
+        return {
+          result: {
+            ...resultBase,
+            action: "skipped_live_fetch_failed",
+            reason: proofNudgeLiveFetchFailureReason(error),
+          },
+          actionTaken: false,
+        };
+      }
+      if (state !== "open") {
+        return {
+          result: {
+            ...resultBase,
+            action: "skipped_not_open",
+            reason: `state is ${state}`,
+          },
+          actionTaken: false,
+        };
+      }
+      let pullDetails: Partial<ProofNudgePullRequestDetails> = {};
+      let comments: ProofNudgeComment[] = [];
+      let authorEditedAt: string | undefined;
+      let authorReviewActivityAt: string | undefined;
+      try {
+        pullDetails =
+          item.kind === "pull_request" ? fetchPullRequestProofNudgeDetails(candidate.number) : {};
+        comments = item.kind === "pull_request" ? proofNudgeComments(candidate.number) : [];
+        authorEditedAt =
+          item.kind === "pull_request"
+            ? latestAuthorPullRequestEditAt(candidate.number, item.author)
+            : undefined;
+        authorReviewActivityAt =
+          item.kind === "pull_request"
+            ? latestAuthorPullRequestReviewActivityAt(candidate.number, item.author)
+            : undefined;
+      } catch (error) {
+        return {
+          result: {
+            ...resultBase,
+            action: "skipped_live_fetch_failed",
+            reason: proofNudgeLiveFetchFailureReason(error),
+          },
+          actionTaken: false,
+        };
+      }
+      const eligibility = proofNudgeEligibility({
+        item,
+        markdown: candidate.markdown,
+        comments,
         headSha: pullDetails.headSha,
+        headCommittedAt: pullDetails.headCommittedAt,
+        authorEditedAt,
+        authorReviewActivityAt,
+        minAgeDays,
+        cooldownDays,
       });
-      processedCount += 1;
-      continue;
-    }
+      if (!eligibility.eligible) {
+        return {
+          result: {
+            ...resultBase,
+            action: eligibility.action,
+            reason: eligibility.reason,
+            headSha: pullDetails.headSha,
+          },
+          actionTaken: false,
+        };
+      }
 
-    const timestamp = new Date().toISOString();
-    const headSha = pullDetails.headSha;
-    if (!headSha) {
-      results.push({
-        ...resultBase,
-        action: "skipped_no_live_head",
-        reason: "live PR head SHA could not be inspected",
-      });
-      processedCount += 1;
-      continue;
-    }
-    const body = renderProofNudgeComment({ item, headSha, timestamp });
-    if (dryRun) {
-      results.push({
-        ...resultBase,
-        action: "proof_nudge_planned",
-        reason: eligibility.reason,
-        headSha,
-      });
-    } else {
+      const timestamp = new Date().toISOString();
+      const headSha = pullDetails.headSha;
+      if (!headSha) {
+        return {
+          result: {
+            ...resultBase,
+            action: "skipped_no_live_head",
+            reason: "live PR head SHA could not be inspected",
+          },
+          actionTaken: false,
+        };
+      }
+      const body = renderProofNudgeComment({ item, headSha, timestamp });
+      if (dryRun) {
+        return {
+          result: {
+            ...resultBase,
+            action: "proof_nudge_planned",
+            reason: eligibility.reason,
+            headSha,
+          },
+          actionTaken: true,
+          progressMessage: `planned proof nudge #${candidate.number}`,
+        };
+      }
       const comment = postProofNudgeComment(candidate.number, body);
-      results.push({
-        ...resultBase,
-        action: "proof_nudge_posted",
-        reason: eligibility.reason,
-        url: commentUrl(comment) ?? undefined,
-        headSha,
-      });
-    }
-    processedCount += 1;
-    nudgeCount += 1;
-    logProgress(`${dryRun ? "planned" : "posted"} proof nudge #${candidate.number}`);
-  }
-  ensureDir(dirname(reportPath));
-  writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
-  logProgress("finished proof nudges");
-  console.log(JSON.stringify(results, null, 2));
+      return {
+        result: {
+          ...resultBase,
+          action: "proof_nudge_posted",
+          reason: eligibility.reason,
+          url: commentUrl(comment) ?? undefined,
+          headSha,
+        },
+        actionTaken: true,
+        progressMessage: `posted proof nudge #${candidate.number}`,
+      };
+    },
+  });
 }
 
 function botProofCommand(args: Args): void {
@@ -15889,12 +15928,9 @@ function botProofCommand(args: Args): void {
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
   const reportPath = resolve(stringArg(args.report_path, join(ROOT, "bot-proof-report.json")));
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
-  const startedAtMs = Date.now();
-  const results: BotProofResult[] = [];
-  let processedCount = 0;
-  let actionCount = 0;
 
   if (!existsSync(itemsDir)) {
+    const results: BotProofResult[] = [];
     ensureDir(dirname(reportPath));
     writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
     console.log(JSON.stringify(results, null, 2));
@@ -15902,137 +15938,128 @@ function botProofCommand(args: Args): void {
   }
 
   const candidates = botProofCandidateRecords(itemsDir, requestedItemNumbers);
-  const logProgress = (message: string): void => {
-    const counts = results.reduce<Record<string, number>>((accumulator, result) => {
-      accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
-      return accumulator;
-    }, {});
-    console.error(
-      [
-        `[bot-proof] ${new Date().toISOString()} ${message}`,
-        `actions=${actionCount}/${limit}`,
-        `processed=${processedCount}/${processedLimit}`,
-        `dry_run=${dryRun}`,
-        `counts=${JSON.stringify(counts)}`,
-      ].join(" "),
-    );
-  };
-
-  logProgress(
-    `starting bot proof handling: candidates=${candidates.length} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
-  );
-  for (const candidate of candidates) {
-    if (actionCount >= limit) break;
-    if (processedCount >= processedLimit) break;
-    if (runtimeBudgetExceeded(startedAtMs, maxRuntimeMs, Date.now())) {
-      results.push({
-        repo: targetRepo(),
-        number: 0,
-        action: "skipped_runtime_budget",
-        reason: `max runtime ${maxRuntimeMs}ms reached`,
-      });
-      logProgress(`stopping bot proof handling: max runtime ${maxRuntimeMs}ms reached`);
-      break;
-    }
-
-    const resultBase = {
-      repo: markdownRepository(candidate.markdown, join(itemsDir, candidate.file)),
-      number: candidate.number,
-      reviewedAt: candidate.reviewedAt,
-    };
-    let item: Item;
-    let state: string;
-    let pullDetails: Partial<ProofNudgePullRequestDetails> = {};
-    try {
-      const fetched = fetchItem(candidate.number);
-      item = fetched.item;
-      state = fetched.state;
-      pullDetails =
-        item.kind === "pull_request" ? fetchPullRequestProofNudgeDetails(candidate.number) : {};
-    } catch (error) {
-      results.push({
-        ...resultBase,
-        action: "skipped_live_fetch_failed",
-        reason: proofNudgeLiveFetchFailureReason(error),
-      });
-      processedCount += 1;
-      continue;
-    }
-    if (state !== "open") {
-      results.push({
-        ...resultBase,
-        action: "skipped_not_open",
-        reason: `state is ${state}`,
-      });
-      processedCount += 1;
-      continue;
-    }
-    const eligibility = botProofEligibility({
-      item,
-      markdown: candidate.markdown,
-      headSha: pullDetails.headSha,
-      draft: pullDetails.draft,
-    });
-    if (!eligibility.eligible) {
-      results.push({
-        ...resultBase,
-        action: eligibility.action,
-        reason: eligibility.reason,
+  runProofLaneCommand<BotProofResult>({
+    laneName: "bot-proof",
+    counterName: "actions",
+    limit,
+    processedLimit,
+    dryRun,
+    maxRuntimeMs,
+    reportPath,
+    candidates,
+    startMessage: `starting bot proof handling: candidates=${candidates.length} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+    stopMessage: "stopping bot proof handling",
+    finishMessage: "finished bot proof handling",
+    makeRuntimeResult: (reason) => ({
+      repo: targetRepo(),
+      number: 0,
+      action: "skipped_runtime_budget",
+      reason,
+    }),
+    processCandidate: (candidate) => {
+      const resultBase = {
+        repo: markdownRepository(candidate.markdown, join(itemsDir, candidate.file)),
+        number: candidate.number,
+        reviewedAt: candidate.reviewedAt,
+      };
+      let item: Item;
+      let state: string;
+      let pullDetails: Partial<ProofNudgePullRequestDetails> = {};
+      try {
+        const fetched = fetchItem(candidate.number);
+        item = fetched.item;
+        state = fetched.state;
+        pullDetails =
+          item.kind === "pull_request" ? fetchPullRequestProofNudgeDetails(candidate.number) : {};
+      } catch (error) {
+        return {
+          result: {
+            ...resultBase,
+            action: "skipped_live_fetch_failed",
+            reason: proofNudgeLiveFetchFailureReason(error),
+          },
+          actionTaken: false,
+        };
+      }
+      if (state !== "open") {
+        return {
+          result: {
+            ...resultBase,
+            action: "skipped_not_open",
+            reason: `state is ${state}`,
+          },
+          actionTaken: false,
+        };
+      }
+      const eligibility = botProofEligibility({
+        item,
+        markdown: candidate.markdown,
         headSha: pullDetails.headSha,
+        draft: pullDetails.draft,
       });
-      processedCount += 1;
-      continue;
-    }
-    const headSha = pullDetails.headSha;
-    if (!headSha) {
-      results.push({
-        ...resultBase,
-        action: "skipped_no_live_head",
-        reason: "live PR head SHA could not be inspected",
-      });
-      processedCount += 1;
-      continue;
-    }
-    const commentBody = renderBotProofDecisionComment({
-      item,
-      headSha,
-      markdown: candidate.markdown,
-      timestamp: new Date().toISOString(),
-      mantisRecommendation: eligibility.mantisRecommendation,
-    });
-    const labelResult = syncBotProofDecisionLabels({
-      number: candidate.number,
-      labels: item.labels,
-      dryRun,
-    });
-    if (dryRun) {
-      results.push({
-        ...resultBase,
-        action: eligibility.action,
-        reason: [eligibility.reason, labelResult.reason].filter(Boolean).join("; "),
+      if (!eligibility.eligible) {
+        return {
+          result: {
+            ...resultBase,
+            action: eligibility.action,
+            reason: eligibility.reason,
+            headSha: pullDetails.headSha,
+          },
+          actionTaken: false,
+        };
+      }
+      const headSha = pullDetails.headSha;
+      if (!headSha) {
+        return {
+          result: {
+            ...resultBase,
+            action: "skipped_no_live_head",
+            reason: "live PR head SHA could not be inspected",
+          },
+          actionTaken: false,
+        };
+      }
+      const commentBody = renderBotProofDecisionComment({
+        item,
         headSha,
+        markdown: candidate.markdown,
+        timestamp: new Date().toISOString(),
+        mantisRecommendation: eligibility.mantisRecommendation,
       });
-    } else {
+      const labelResult = syncBotProofDecisionLabels({
+        number: candidate.number,
+        labels: item.labels,
+        dryRun,
+      });
+      if (dryRun) {
+        return {
+          result: {
+            ...resultBase,
+            action: eligibility.action,
+            reason: [eligibility.reason, labelResult.reason].filter(Boolean).join("; "),
+            headSha,
+          },
+          actionTaken: true,
+          progressMessage: `planned bot proof handling #${candidate.number}`,
+        };
+      }
       const comment = upsertBotProofDecisionComment(candidate.number, headSha, commentBody);
-      results.push({
-        ...resultBase,
-        action:
-          eligibility.action === "bot_proof_mantis_request_planned"
-            ? "bot_proof_mantis_request_posted"
-            : "bot_proof_decision_posted",
-        reason: [eligibility.reason, labelResult.reason].filter(Boolean).join("; "),
-        url: commentUrl(comment) ?? undefined,
-        headSha,
-      });
-    }
-    processedCount += 1;
-    actionCount += 1;
-    logProgress(`${dryRun ? "planned" : "posted"} bot proof handling #${candidate.number}`);
-  }
-  ensureDir(dirname(reportPath));
-  writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
-  logProgress("finished bot proof handling");
-  console.log(JSON.stringify(results, null, 2));
+      return {
+        result: {
+          ...resultBase,
+          action:
+            eligibility.action === "bot_proof_mantis_request_planned"
+              ? "bot_proof_mantis_request_posted"
+              : "bot_proof_decision_posted",
+          reason: [eligibility.reason, labelResult.reason].filter(Boolean).join("; "),
+          url: commentUrl(comment) ?? undefined,
+          headSha,
+        },
+        actionTaken: true,
+        progressMessage: `posted bot proof handling #${candidate.number}`,
+      };
+    },
+  });
 }
 
 function applyArtifactsCommand(args: Args): void {
