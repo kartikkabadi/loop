@@ -5069,6 +5069,102 @@ test("failed review retry eligibility enforces cooldown and max attempts per hea
   );
 });
 
+test("failed review retry exhaustion is idempotent for the same head", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const reportPath = join(root, "failed-review-retry-report.json");
+    const itemPath = join(itemsDir, "4242.md");
+    mkdirSync(itemsDir, { recursive: true });
+    writeFileSync(
+      itemPath,
+      failedReviewReport({
+        failed_review_retry_head_sha: "abc123def456",
+        failed_review_retry_count: 2,
+        failed_review_retry_last_at: "2026-06-05T18:00:00Z",
+      }),
+      "utf8",
+    );
+
+    const ghMock = `#!/usr/bin/env node
+const args = process.argv.slice(2);
+const path = args.find((arg) => arg.startsWith("repos/")) || "";
+if (path.endsWith("/issues/4242")) {
+  console.log(JSON.stringify({
+    number: 4242,
+    title: "Failed review retry sample",
+    html_url: "https://github.com/openclaw/openclaw/pull/4242",
+    created_at: "2026-06-01T00:00:00Z",
+    updated_at: "2026-06-01T01:00:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "contributor" },
+    labels: [],
+    pull_request: {}
+  }));
+  process.exit(0);
+}
+if (path.endsWith("/pulls/4242")) {
+  console.log("abc123def456");
+  process.exit(0);
+}
+console.error("unexpected gh args: " + args.join(" "));
+process.exit(1);
+`;
+
+    const runRetry = () => {
+      execFileSync(process.execPath, [
+        "dist/clawsweeper.js",
+        "retry-failed-reviews",
+        "--target-repo",
+        "openclaw/openclaw",
+        "--items-dir",
+        itemsDir,
+        "--item-number",
+        "4242",
+        "--max-attempts",
+        "2",
+        "--cooldown-minutes",
+        "45",
+        "--report-path",
+        reportPath,
+      ]);
+    };
+
+    withMockGh(root, ghMock, () => {
+      runRetry();
+      const afterFirstRun = readFileSync(itemPath, "utf8");
+      assert.match(afterFirstRun, /^failed_review_retry_status: exhausted$/m);
+      assert.equal((afterFirstRun.match(/^## Failed Review Retry$/gm) ?? []).length, 1);
+
+      runRetry();
+      const afterSecondRun = readFileSync(itemPath, "utf8");
+      assert.equal(afterSecondRun, afterFirstRun);
+    });
+
+    const report = JSON.parse(readFileSync(reportPath, "utf8")) as Array<{
+      action: string;
+      number: number;
+    }>;
+    assert.deepEqual(report, [
+      {
+        repo: "openclaw/openclaw",
+        number: 4242,
+        action: "skipped_retry_already_exhausted",
+        reason: "retry attempts exhausted for head abc123def456: 2/2",
+        headSha: "abc123def456",
+        attempts: 2,
+        reportPath: itemPath,
+      },
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 function lowSignalCloseReport(overrides = {}) {
   return `${workPlanCandidateReport({
     repository: "openclaw/openclaw",

@@ -86,6 +86,7 @@ type FailedReviewRetryAction =
   | "dispatched_failed_review_retry"
   | "planned_failed_review_retry"
   | "marked_failed_review_retry_exhausted"
+  | "skipped_retry_already_exhausted"
   | "skipped_not_failed_review"
   | "skipped_not_open"
   | "skipped_not_pull_request"
@@ -4536,6 +4537,13 @@ function failedReviewRetryLastAtMs(markdown: string, headSha: string): number | 
   const storedHead = frontMatterValue(markdown, "failed_review_retry_head_sha");
   if (storedHead && storedHead !== headSha) return null;
   return timestampMs(frontMatterValue(markdown, "failed_review_retry_last_at"));
+}
+
+function isFailedReviewRetryAlreadyExhausted(markdown: string, headSha: string): boolean {
+  return (
+    frontMatterValue(markdown, "failed_review_retry_status") === "exhausted" &&
+    frontMatterValue(markdown, "failed_review_retry_head_sha") === headSha
+  );
 }
 
 function failedReviewFailureDetail(markdown: string): string {
@@ -14378,6 +14386,14 @@ function retryFailedReviewsCommand(args: Args): void {
       cooldownMs,
     });
     if (eligibility.action === "skipped_retry_exhausted" && eligibility.headSha) {
+      if (isFailedReviewRetryAlreadyExhausted(markdown, eligibility.headSha)) {
+        results.push({
+          ...eligibility,
+          action: "skipped_retry_already_exhausted",
+          reportPath: path,
+        });
+        continue;
+      }
       const attempts = eligibility.attempts ?? maxAttempts;
       markdown = markFailedReviewRetry({
         markdown,
