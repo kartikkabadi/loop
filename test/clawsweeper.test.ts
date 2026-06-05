@@ -14812,13 +14812,26 @@ test("bot proof handling selects maintainer or Mantis proof path for ClawSweeper
     markdown: proofNudgeReport({
       author: "app/clawsweeper",
       mantisStatus: "recommended",
+      mantisScenario: "telegram_desktop_proof",
+      mantisReason: "Native Telegram Desktop proof would show the visible topic behavior.",
+      mantisComment: "@openclaw-mantis telegram desktop proof: verify the topic behavior",
+    }),
+  });
+  assert.equal(mantis.eligible, true);
+  assert.equal(mantis.action, "bot_proof_mantis_request_planned");
+
+  const manualVisual = botProofEligibilityForTest({
+    ...baseOptions,
+    markdown: proofNudgeReport({
+      author: "app/clawsweeper",
+      mantisStatus: "recommended",
       mantisScenario: "visual_task",
       mantisReason: "A visual proof task would show the fixed Control UI behavior.",
       mantisComment: "@openclaw-mantis capture Control UI proof for this PR",
     }),
   });
-  assert.equal(mantis.eligible, true);
-  assert.equal(mantis.action, "bot_proof_mantis_request_planned");
+  assert.equal(manualVisual.eligible, true);
+  assert.equal(manualVisual.action, "bot_proof_decision_planned");
 
   assert.equal(
     botProofEligibilityForTest({
@@ -14894,6 +14907,7 @@ test("bot proof status comment asks maintainers without contributor nudge copy",
 
   assert.match(comment, /ClawSweeper-authored replacement PR is blocked on real behavior proof/);
   assert.match(comment, /proof: override/);
+  assert.match(comment, /Possible manual Mantis\/desktop proof suggestion/);
   assert.match(comment, /@openclaw-mantis capture Control UI proof/);
   assert.match(comment, /<!-- clawsweeper-bot-proof-decision item="42" sha="abc123def456"/);
   assert.doesNotMatch(comment, /thanks for the PR/);

@@ -10292,6 +10292,17 @@ function isClawSweeperAppAuthor(author: string | undefined): boolean {
   );
 }
 
+function hasDispatchableMantisScenario(recommendation: MantisRecommendation): boolean {
+  return (
+    recommendation.status === "recommended" &&
+    (recommendation.scenario === "telegram_live" ||
+      recommendation.scenario === "telegram_desktop_proof" ||
+      recommendation.scenario === "discord_status_reactions" ||
+      recommendation.scenario === "discord_thread_attachment" ||
+      recommendation.scenario === "slack_desktop_smoke")
+  );
+}
+
 function botProofEligibility(options: BotProofEligibilityOptions): BotProofEligibility {
   if (options.item.kind !== "pull_request") {
     return {
@@ -10347,7 +10358,7 @@ function botProofEligibility(options: BotProofEligibilityOptions): BotProofEligi
     };
   }
   const mantisRecommendation = reportMantisRecommendation(options.markdown);
-  if (mantisRecommendation.status === "recommended" && mantisRecommendation.scenario !== "none") {
+  if (hasDispatchableMantisScenario(mantisRecommendation)) {
     return {
       eligible: true,
       action: "bot_proof_mantis_request_planned",
@@ -10396,14 +10407,10 @@ function renderBotProofDecisionComment(options: {
     recommendation.scenario !== "none" &&
     recommendation.maintainerComment.trim()
   ) {
-    lines.push(
-      "",
-      "Mantis proof suggestion:",
-      "",
-      "```text",
-      recommendation.maintainerComment.trim(),
-      "```",
-    );
+    const heading = hasDispatchableMantisScenario(recommendation)
+      ? "Mantis proof suggestion:"
+      : "Possible manual Mantis/desktop proof suggestion:";
+    lines.push("", heading, "", "```text", recommendation.maintainerComment.trim(), "```");
   }
   lines.push("", marker);
   return lines.join("\n");
