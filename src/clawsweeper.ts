@@ -31,7 +31,6 @@ import {
   isGitHubNotFoundError,
   isGitHubRequiresAuthenticationError,
   isLockedConversationCommentError,
-  shouldRetryGh,
   summarizeGhArgs,
 } from "./github-retry.js";
 import { parseGhJson, parseGhJsonLines } from "./github-json.js";
