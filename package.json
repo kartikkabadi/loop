@@ -94,10 +94,10 @@
   },
   "devDependencies": {
     "@types/node": "^25.9.2",
-    "@typescript/native-preview": "7.0.0-dev.20260503.1",
-    "oxfmt": "^0.47.0",
+    "@typescript/native-preview": "7.0.0-dev.20260609.1",
+    "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",
-    "oxlint-tsgolint": "0.22.1"
+    "oxlint-tsgolint": "0.23.0"
   },
   "engines": {
     "node": ">=24"
