@@ -16810,6 +16810,10 @@ test("setup-state defaults to non-partial checkout for auth-safe hydration", () 
   assert.match(filterBlock, /default: ""/);
   assert.doesNotMatch(filterBlock, /default: blob:none/);
   assert.match(action, /filter: \$\{\{ inputs\.filter \}\}/);
+  assert.doesNotMatch(action, /state-repository:/);
+  assert.doesNotMatch(action, /state-ref:/);
+  assert.match(action, /repository: openclaw\/clawsweeper-state/);
+  assert.match(action, /ref: state/);
 });
 
 test("github activity workflow coalesces noisy observer runs", () => {

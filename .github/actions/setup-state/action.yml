@@ -4,14 +4,6 @@ inputs:
   token:
     description: GitHub token with contents read/write access to the state repo.
     required: true
-  state-repository:
-    description: Generated state repository.
-    required: false
-    default: openclaw/clawsweeper-state
-  state-ref:
-    description: Generated state branch.
-    required: false
-    default: state
   state-path:
     description: Checkout path for the generated state repository.
     required: false
@@ -37,8 +29,8 @@ runs:
   steps:
     - uses: actions/checkout@v6
       with:
-        repository: ${{ inputs.state-repository }}
-        ref: ${{ inputs.state-ref }}
+        repository: openclaw/clawsweeper-state
+        ref: state
         path: ${{ inputs.state-path }}
         token: ${{ inputs.token }}
         filter: ${{ inputs.filter }}
