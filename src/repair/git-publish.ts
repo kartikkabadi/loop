@@ -1,8 +1,16 @@
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+} from "node:fs";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 
 import { clawsweeperGitUserEmail, clawsweeperGitUserName } from "./process-env.js";
 
@@ -156,30 +164,42 @@ export function publishMainCommit(options: GitPublishOptions): PublishResult {
   const maxAttempts = positiveInt(options.maxAttempts, 8);
   const pushAttempts = positiveInt(options.pushAttempts, 3);
   const rebaseStrategy = options.rebaseStrategy ?? "normal";
+  const paths = stateDeltaPublishPaths(options.paths);
 
-  syncPublishPaths(options.paths);
+  if (paths.length === 0) {
+    console.log("No publish changes");
+    return "unchanged";
+  }
+
+  syncPublishPaths(paths);
   configureGitUser();
-  stagePaths(options.paths);
+  stagePaths(paths);
   if (!hasStagedChanges()) {
     console.log("No publish changes");
     return "unchanged";
   }
 
-  const commitMessage = commitMessageForPublishedPaths(options.message, options.paths);
+  const commitMessage = commitMessageForPublishedPaths(options.message, paths);
   runGit(["commit", "-m", commitMessage]);
   const sourceCommit = runGit(["rev-parse", "HEAD"]).trim();
   restoreWorktree(options.restorePaths ?? []);
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    if (pushCommit({ remote, branch, pushAttempts, rebaseStrategy })) return "committed";
+    if (pushCommit({ remote, branch, pushAttempts, rebaseStrategy })) {
+      refreshPublishedRecordRoots(options.paths);
+      return "committed";
+    }
     const rebuildResult = rebuildPublishCommit({
       remote,
       branch,
       message: commitMessage,
-      paths: options.paths,
+      paths,
       sourceCommit,
     });
-    if (rebuildResult === "unchanged") return "unchanged";
+    if (rebuildResult === "unchanged") {
+      refreshPublishedRecordRoots(options.paths);
+      return "unchanged";
+    }
     if (attempt === maxAttempts) break;
     const delaySeconds = attempt * 3 + Math.floor(Math.random() * 11);
     console.log(
@@ -188,7 +208,10 @@ export function publishMainCommit(options: GitPublishOptions): PublishResult {
     sleep(delaySeconds * 1000);
   }
 
-  if (pushCommit({ remote, branch, pushAttempts, rebaseStrategy })) return "committed";
+  if (pushCommit({ remote, branch, pushAttempts, rebaseStrategy })) {
+    refreshPublishedRecordRoots(options.paths);
+    return "committed";
+  }
   throw new Error(`Failed to publish commit after ${maxAttempts} attempts`);
 }
 
@@ -204,6 +227,120 @@ function publishDefaultBranch(): string {
 export function syncPublishPaths(paths: readonly string[]): void {
   const stateRoot = publishRoot();
   if (stateRoot) syncStatePublishPaths(paths, stateRoot);
+}
+
+export function stateDeltaPublishPaths(
+  paths: readonly string[],
+  stateRoot = publishRoot(),
+  sourceRoot = process.cwd(),
+): string[] {
+  if (!stateRoot) return uniqueNonEmpty(paths);
+
+  return uniqueNonEmpty(paths).flatMap((requestedPath) => {
+    const normalizedPath = normalizedPublishPath(requestedPath, sourceRoot);
+    if (normalizedPath !== "records" && !normalizedPath.startsWith("records/")) {
+      return [requestedPath];
+    }
+    return changedFilesUnder({
+      requestedPath: normalizedPath,
+      source: resolve(sourceRoot, normalizedPath),
+      destination: resolve(stateRoot, normalizedPath),
+      sourceRoot,
+      stateRoot,
+    });
+  });
+}
+
+function normalizedPublishPath(requestedPath: string, root: string): string {
+  const absolute = resolve(root, requestedPath);
+  const rel = relative(resolve(root), absolute);
+  if (!rel || rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) {
+    throw new Error(`Refusing invalid publish path: ${requestedPath}`);
+  }
+  return rel.split(sep).join("/");
+}
+
+function changedFilesUnder({
+  requestedPath,
+  source,
+  destination,
+  sourceRoot,
+  stateRoot,
+}: {
+  requestedPath: string;
+  source: string;
+  destination: string;
+  sourceRoot: string;
+  stateRoot: string;
+}): string[] {
+  assertPathInsideRoot(source, sourceRoot, requestedPath);
+  assertPathInsideRoot(destination, stateRoot, requestedPath);
+  assertMatchingPathKinds(source, destination, requestedPath);
+
+  const sourceFiles = indexedFiles(source);
+  const destinationFiles = indexedFiles(destination);
+  return [...new Set([...sourceFiles.keys(), ...destinationFiles.keys()])]
+    .sort()
+    .filter((rel) => !filesEqual(sourceFiles.get(rel), destinationFiles.get(rel)))
+    .map((rel) => (rel ? `${requestedPath}/${rel}` : requestedPath));
+}
+
+function assertPathInsideRoot(candidate: string, root: string, requestedPath: string): void {
+  const rel = relative(resolve(root), candidate);
+  if (rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) {
+    throw new Error(`Refusing to publish outside configured root: ${requestedPath}`);
+  }
+}
+
+function assertMatchingPathKinds(source: string, destination: string, requestedPath: string): void {
+  if (!existsSync(source) && existsSync(destination) && statSync(destination).isDirectory()) {
+    throw new Error(`Refusing broad state directory deletion: ${requestedPath}`);
+  }
+  if (!existsSync(source) || !existsSync(destination)) return;
+  const sourceStat = statSync(source);
+  const destinationStat = statSync(destination);
+  if (sourceStat.isDirectory() !== destinationStat.isDirectory()) {
+    throw new Error(`Refusing mismatched state path types: ${requestedPath}`);
+  }
+}
+
+function indexedFiles(root: string): Map<string, string> {
+  if (!existsSync(root)) return new Map();
+  const files = listFiles(root);
+  const rootIsFile = statSync(root).isFile();
+  return new Map(
+    files.map((file) => [rootIsFile ? "" : relative(root, file).split(sep).join("/"), file]),
+  );
+}
+
+function filesEqual(left: string | undefined, right: string | undefined): boolean {
+  if (!left || !right) return false;
+  const leftStat = statSync(left);
+  const rightStat = statSync(right);
+  return leftStat.size === rightStat.size && readFileSync(left).equals(readFileSync(right));
+}
+
+function refreshPublishedRecordRoots(paths: readonly string[]): void {
+  const stateRoot = publishRoot();
+  if (!stateRoot) return;
+
+  const sourceRoot = process.cwd();
+  const recordRoots = uniqueNonEmpty(
+    paths.flatMap((requestedPath) => {
+      const normalizedPath = normalizedPublishPath(requestedPath, sourceRoot);
+      if (normalizedPath === "records") return ["records"];
+      const match = normalizedPath.match(/^(records\/[^/]+)(?:\/|$)/);
+      return match?.[1] ? [match[1]] : [];
+    }),
+  );
+  for (const recordRoot of recordRoots) {
+    const source = resolve(sourceRoot, recordRoot);
+    const state = resolve(stateRoot, recordRoot);
+    rmSync(source, { force: true, recursive: true });
+    if (!existsSync(state)) continue;
+    mkdirSync(dirname(source), { recursive: true });
+    cpSync(state, source, { recursive: true });
+  }
 }
 
 function syncStatePublishPaths(paths: readonly string[], stateRoot: string): void {

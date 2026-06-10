@@ -231,6 +231,80 @@ test("publishMainCommit publishes generated paths to state branch when state roo
   assert.throws(() => run("git", ["--git-dir", origin, "show", "main:results/ledger.txt"], root));
 });
 
+test("broad record publishes preserve concurrent neighboring state updates", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
+  const origin = path.join(root, "origin.git");
+  const work = path.join(root, "work");
+  const state = path.join(root, "state");
+  const other = path.join(root, "other");
+  run("git", ["init", "--bare", origin], root);
+  run("git", ["clone", origin, state], root);
+  configureUser(state);
+  write(path.join(state, "records/openclaw-example/items/1.md"), "record one old\n");
+  write(path.join(state, "records/openclaw-example/items/2.md"), "record two old\n");
+  run("git", ["add", "."], state);
+  run("git", ["commit", "-m", "initial state"], state);
+  run("git", ["push", "origin", "HEAD:state"], state);
+  run("git", ["--git-dir", origin, "symbolic-ref", "HEAD", "refs/heads/state"], root);
+  run("git", ["checkout", "-B", "state", "origin/state"], state);
+
+  fs.cpSync(path.join(state, "records"), path.join(work, "records"), { recursive: true });
+  fs.rmSync(path.join(work, "records/openclaw-example/items/1.md"));
+  write(path.join(work, "records/openclaw-example/closed/1.md"), "record one closed\n");
+
+  run("git", ["clone", origin, other], root);
+  configureUser(other);
+  write(path.join(other, "records/openclaw-example/items/2.md"), "record two remote\n");
+  run("git", ["commit", "-am", "update neighboring record"], other);
+  run("git", ["push", "origin", "HEAD:state"], other);
+
+  const result = withEnv({ CLAWSWEEPER_STATE_DIR: state }, () =>
+    withCwd(work, () =>
+      publishMainCommit({
+        message: "chore: publish broad records",
+        paths: ["records/openclaw-example"],
+        maxAttempts: 1,
+        pushAttempts: 1,
+      }),
+    ),
+  );
+
+  assert.equal(result, "committed");
+  assert.throws(() =>
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-example/items/1.md"], root),
+  );
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-example/closed/1.md"], root),
+    "record one closed\n",
+  );
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-example/items/2.md"], root),
+    "record two remote\n",
+  );
+
+  write(path.join(work, "records/openclaw-example/closed/1.md"), "record one finalized\n");
+  const secondResult = withEnv({ CLAWSWEEPER_STATE_DIR: state }, () =>
+    withCwd(work, () =>
+      publishMainCommit({
+        message: "chore: publish broad records again",
+        paths: ["records/openclaw-example"],
+        maxAttempts: 1,
+        pushAttempts: 1,
+      }),
+    ),
+  );
+
+  assert.equal(secondResult, "committed");
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-example/closed/1.md"], root),
+    "record one finalized\n",
+  );
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-example/items/2.md"], root),
+    "record two remote\n",
+  );
+});
+
 test("publishMainCommit preserves state-only queued jobs on broad jobs publishes", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
   const origin = path.join(root, "origin.git");
