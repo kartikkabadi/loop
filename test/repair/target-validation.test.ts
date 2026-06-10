@@ -18,7 +18,10 @@ import {
   __resetTargetRepoToolchainCache,
   resolveTargetRepoToolchain,
 } from "../../dist/repair/target-toolchain-config.js";
-import { parseAllowedValidationCommand } from "../../dist/repair/validation-command-utils.js";
+import {
+  parseAllowedValidationCommand,
+  renderValidationCommand,
+} from "../../dist/repair/validation-command-utils.js";
 
 test("OpenClaw repairs require changed-surface validation even when omitted", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
@@ -204,6 +207,72 @@ test("validation parser requires env assignments before env command", () => {
   );
 });
 
+test("validation parser accepts quoted Go test filters without a shell", () => {
+  const parts = parseAllowedValidationCommand(
+    "go test ./internal/cmd -run 'TestParseMarkdown.*Table|TestDocsWrite.*Markdown'",
+  );
+  assert.deepEqual(parts, [
+    "go",
+    "test",
+    "./internal/cmd",
+    "-run",
+    "TestParseMarkdown.*Table|TestDocsWrite.*Markdown",
+  ]);
+  assert.equal(
+    renderValidationCommand(parts),
+    "go test ./internal/cmd -run 'TestParseMarkdown.*Table|TestDocsWrite.*Markdown'",
+  );
+  assert.throws(() => parseAllowedValidationCommand("go run ./cmd/tool"), /unsupported/);
+  assert.throws(
+    () => parseAllowedValidationCommand("go test -exec ./scripts/wrapper ./..."),
+    /unsupported/,
+  );
+  assert.throws(
+    () => parseAllowedValidationCommand("go test -toolexec ./scripts/wrapper ./..."),
+    /unsupported/,
+  );
+  assert.throws(
+    () => parseAllowedValidationCommand("go test -coverprofile=coverage.out ./..."),
+    /unsupported/,
+  );
+  assert.throws(
+    () => parseAllowedValidationCommand("go test -coverprofile coverage.out ./..."),
+    /unsupported/,
+  );
+  assert.throws(() => parseAllowedValidationCommand("go test ./...; git push"), /unsafe/);
+  assert.throws(
+    () => parseAllowedValidationCommand('node -e "process.env.GH_TOKEN"'),
+    /unsupported/,
+  );
+  assert.deepEqual(parseAllowedValidationCommand("node --test test/example.test.ts"), [
+    "node",
+    "--test",
+    "test/example.test.ts",
+  ]);
+});
+
+test("validation parser normalizes local PowerShell scripts for direct execution", () => {
+  assert.deepEqual(parseAllowedValidationCommand("./build.ps1 -Project WinUI"), [
+    "pwsh",
+    "-File",
+    "./build.ps1",
+    "-Project",
+    "WinUI",
+  ]);
+  assert.deepEqual(parseAllowedValidationCommand(".\\build.ps1 -Project WinUI"), [
+    "pwsh",
+    "-File",
+    ".\\build.ps1",
+    "-Project",
+    "WinUI",
+  ]);
+  assert.deepEqual(
+    parseAllowedValidationCommand('dotnet test ".\\tests\\OpenClaw.Shared.Tests.csproj"'),
+    ["dotnet", "test", ".\\tests\\OpenClaw.Shared.Tests.csproj"],
+  );
+  assert.throws(() => parseAllowedValidationCommand("pwsh -Command ./build.ps1"), /unsupported/);
+});
+
 test("validation preflight accepts scoped OpenGrep commands", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
   const command =
@@ -383,6 +452,9 @@ test("non-gated target repos preserve fallback validation when no replacement ex
         packageManager: "pnpm",
         baseValidationCommands: [],
         changedGate: null,
+        requiresFullHistory: false,
+        executionRunner: null,
+        baseBranch: null,
       },
     }),
   );
@@ -405,6 +477,21 @@ test("repair execution provisions pinned Bun before target validation can invoke
   const setupBunStep = workflow.slice(setupBunIndex, executeFixIndex);
   assert.match(setupBunStep, /uses: oven-sh\/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6/);
   assert.match(setupBunStep, /bun-version: 1\.3\.10/);
+});
+
+test("repair workflow resolves the execution runner from the restored target job", () => {
+  const workflow = fs.readFileSync(".github/workflows/repair-cluster-worker.yml", "utf8");
+
+  assert.match(workflow, /name: Resolve target execution runner/);
+  assert.match(workflow, /repair:resolve-execution-runner/);
+  assert.match(
+    workflow,
+    /runs-on: \$\{\{ needs\.cluster\.outputs\.execution_runner \|\| inputs\.execution_runner \}\}/,
+  );
+  assert.match(
+    workflow,
+    /--execution-runner "\$\{\{ needs\.cluster\.outputs\.execution_runner \|\| inputs\.execution_runner \}\}"/,
+  );
 });
 
 test("bun-based target toolchain installs deps and runs configured validation", () => {
@@ -572,6 +659,45 @@ test("resolveTargetRepoToolchain reads openclaw/clawhub from the real config wit
   }
 });
 
+test("Windows target toolchain selects a Windows execution runner", () => {
+  __resetTargetRepoToolchainCache();
+  try {
+    const toolchain = resolveTargetRepoToolchain("openclaw/openclaw-windows-node");
+    assert.equal(toolchain.packageManager, "npm");
+    assert.deepEqual(toolchain.baseValidationCommands, [
+      "./build.ps1",
+      "dotnet test ./tests/OpenClaw.Shared.Tests/OpenClaw.Shared.Tests.csproj",
+      "dotnet test ./tests/OpenClaw.Tray.Tests/OpenClaw.Tray.Tests.csproj",
+    ]);
+    assert.equal(toolchain.executionRunner, "windows-latest");
+    assert.equal(toolchain.baseBranch, "main");
+    assert.equal(toolchain.requiresFullHistory, true);
+  } finally {
+    __resetTargetRepoToolchainCache();
+  }
+});
+
+test("full-history target toolchains unshallow cached checkouts before setup", () => {
+  const cwd = shallowGitFixture();
+  assert.equal(git(cwd, "rev-parse", "--is-shallow-repository"), "true");
+
+  prepareTargetToolchain(cwd, {
+    ...validationOptions("openclaw/openclaw-windows-node", {
+      toolchain: {
+        packageManager: "npm",
+        baseValidationCommands: ["./build.ps1"],
+        changedGate: null,
+        requiresFullHistory: true,
+        executionRunner: "windows-latest",
+        baseBranch: "main",
+      },
+    }),
+    installTargetDeps: false,
+  });
+
+  assert.equal(git(cwd, "rev-parse", "--is-shallow-repository"), "false");
+});
+
 test("resolveTargetRepoToolchain keeps the OpenClaw changed gate even without core_target_overrides", () => {
   // Regression guard for the earlier ordering bug: if core_target_overrides is
   // ever removed but a generic openclaw fallback is kept (changed_gate: null),
@@ -717,6 +843,9 @@ test("target validation does not expose the internal model", () => {
             packageManager: "pnpm",
             baseValidationCommands: [],
             changedGate: null,
+            requiresFullHistory: false,
+            executionRunner: null,
+            baseBranch: null,
           },
         }),
       ),
@@ -815,6 +944,9 @@ function clawhubToolchain() {
       packageManager: "bun",
       baseValidationCommands: ["bun run check"],
       changedGate: null,
+      requiresFullHistory: false,
+      executionRunner: null,
+      baseBranch: null,
     },
   };
 }
@@ -825,6 +957,30 @@ function gitPackageFixture(scripts) {
   git(cwd, "config", "user.email", "clawsweeper@example.invalid");
   git(cwd, "config", "user.name", "ClawSweeper Test");
   return cwd;
+}
+
+function shallowGitFixture() {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-shallow-"));
+  const source = path.join(root, "source");
+  const origin = path.join(root, "origin.git");
+  const checkout = path.join(root, "checkout");
+  fs.mkdirSync(source);
+  git(source, "init", "-b", "main");
+  git(source, "config", "user.email", "clawsweeper@example.invalid");
+  git(source, "config", "user.name", "ClawSweeper Test");
+  fs.writeFileSync(path.join(source, "history.txt"), "first\n");
+  git(source, "add", ".");
+  git(source, "commit", "-m", "first");
+  fs.appendFileSync(path.join(source, "history.txt"), "second\n");
+  git(source, "commit", "-am", "second");
+  git(root, "init", "--bare", origin);
+  git(source, "remote", "add", "origin", origin);
+  git(source, "push", "origin", "main:main");
+  git(origin, "symbolic-ref", "HEAD", "refs/heads/main");
+  execFileSync("git", ["clone", "--depth=1", `file://${origin}`, checkout], {
+    encoding: "utf8",
+  });
+  return checkout;
 }
 
 function attachOrigin(cwd) {

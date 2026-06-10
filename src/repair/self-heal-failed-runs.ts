@@ -16,6 +16,7 @@ import {
 import { ghErrorText, ghJson, ghText } from "./github-cli.js";
 import { sleepMs } from "./timing.js";
 import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
+import { resolveTargetExecutionRunner } from "./target-toolchain-config.js";
 
 const DEFAULT_REPO = currentProjectRepo();
 const DEFAULT_WORKFLOW = REPAIR_CLUSTER_WORKFLOW;
@@ -91,7 +92,7 @@ const attempts: LooseRecord[] = candidates.map((candidate: JsonValue) => ({
   source_job: candidate.source_job,
   mode: candidate.mode,
   runner,
-  execution_runner: executionRunner,
+  execution_runner: candidateExecutionRunner(candidate),
   workflow,
   repo,
   dispatched_at: new Date().toISOString(),
@@ -254,6 +255,7 @@ function sourceJobFromRunTitle(title: string) {
 }
 
 function dispatchCandidate(candidate: LooseRecord) {
+  const targetExecutionRunner = candidateExecutionRunner(candidate);
   const result = spawnSync(
     "gh",
     [
@@ -269,7 +271,7 @@ function dispatchCandidate(candidate: LooseRecord) {
       "-f",
       `runner=${runner}`,
       "-f",
-      `execution_runner=${executionRunner}`,
+      `execution_runner=${targetExecutionRunner}`,
     ],
     { cwd: repoRoot(), encoding: "utf8", stdio: "pipe" },
   );
@@ -279,6 +281,15 @@ function dispatchCandidate(candidate: LooseRecord) {
     );
   }
   console.log(`dispatched ${candidate.source_job} from failed run ${candidate.run_id}`);
+}
+
+function candidateExecutionRunner(candidate: LooseRecord): string {
+  try {
+    const job = parseJob(String(candidate.source_job));
+    return resolveTargetExecutionRunner(String(job.frontmatter.repo), executionRunner);
+  } catch {
+    return executionRunner;
+  }
 }
 
 function waitForStartedRuns({ expectedCount, headSha, since }: LooseRecord) {

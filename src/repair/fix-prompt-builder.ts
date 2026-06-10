@@ -26,7 +26,9 @@ export function buildFixPrompt({
   maxEditAttempts,
   validationCommands,
   isAutomergeRepair = false,
+  baseBranch = "main",
 }: LooseRecord) {
+  const baseRef = `origin/${baseBranch}`;
   return [
     "You are editing the target repository for ClawSweeper Repair.",
     "",
@@ -36,15 +38,15 @@ export function buildFixPrompt({
     "- start by inspecting the repository paths below with rg/git ls-files/sed;",
     "- keep shell output bounded: prefer targeted rg/sed/git commands, add --max-count/head/tail where useful, and do not dump broad repo-wide matches or huge files into the transcript;",
     "- if likely_files are stale, missing, or glob-like, discover the real nearby files and edit those;",
-    "- always fetch latest origin/main and rebase or otherwise sync this branch onto that latest main before returning;",
-    "- run local git status/diff/log/rebase/merge commands needed to reconcile this branch with current origin/main;",
+    `- always fetch latest ${baseRef} and rebase or otherwise sync this branch onto that latest ${baseBranch} before returning;`,
+    `- run local git status/diff/log/rebase/merge commands needed to reconcile this branch with current ${baseRef};`,
     "- when git conflicts exist, resolve every conflict marker and leave the checkout in a normal non-rebasing state;",
-    "- use one repair loop: rebase to latest main, inspect review comments and failing checks, make the narrowest fix, run validation, and repeat until the branch is merge-ready or a concrete external blocker is proven;",
+    `- use one repair loop: rebase to latest ${baseBranch}, inspect review comments and failing checks, make the narrowest fix, run validation, and repeat until the branch is merge-ready or a concrete external blocker is proven;`,
     "- preserve contributor credit in changelog/docs when the fix is user-facing;",
     "- address review-bot concerns named in the artifact;",
     "- resolve actionable human review comments, bot comments, and requested changes named in the artifact;",
     "- fix relevant failing CI/check output named in the artifact; do not leave known changed-surface CI failures for a later pass;",
-    isAutomergeRepair ? renderAutomergeRepairGuidance() : "",
+    isAutomergeRepair ? renderAutomergeRepairGuidance(baseBranch) : "",
     renderChangelogRule(fixArtifact),
     "- prepare the PR so it can pass the ClawSweeper Repair merge_preflight gate;",
     renderGitHubToolRule(isAutomergeRepair),
@@ -64,7 +66,7 @@ export function buildFixPrompt({
       ? "Existing repair branch detected. Reconcile the existing branch diff with the deterministic pre-edit rebase result before touching new code."
       : "",
     sourceHead ? `Source head before edit: ${sourceHead}` : "",
-    rebaseResult ? renderRebaseResult(rebaseResult) : "",
+    rebaseResult ? renderRebaseResult(rebaseResult, baseBranch) : "",
     previousNoDiff
       ? "Previous attempt produced no target repo diff. This time make the smallest concrete code/test change that satisfies the artifact; do not return analysis only."
       : "",
@@ -204,14 +206,15 @@ function renderGitHubToolRule(isAutomergeRepair: boolean) {
   return "- do not push, open PRs, close PRs, comment, label, or merge; read-only `gh` commands are allowed for PR comments, review threads, check status, and check logs when available;";
 }
 
-function renderAutomergeRepairGuidance() {
+function renderAutomergeRepairGuidance(baseBranch: string) {
+  const baseRef = `origin/${baseBranch}`;
   return [
     "- automerge repair loop: treat this as direct PR repair work, not a planning exercise;",
     "- inspect the PR comments, review threads, ClawSweeper verdict, and failing check evidence already provided; if read-only `gh` is available, use it to inspect missing PR comments, reviews, checks, and logs;",
-    "- rebase this branch onto latest origin/main yourself and resolve conflicts;",
+    `- rebase this branch onto latest ${baseRef} yourself and resolve conflicts;`,
     "- address actionable PR comments and review findings;",
     "- fix failing CI/checks for this PR;",
-    "- failed exact-head checks are repair scope for automerge even when the failing file is outside likely_files; first rebase to latest main, then fix the narrow failure or prove it is an external blocker on current main;",
+    `- failed exact-head checks are repair scope for automerge even when the failing file is outside likely_files; first rebase to latest ${baseBranch}, then fix the narrow failure or prove it is an external blocker on current ${baseBranch};`,
     "- run the tests/checks needed to prove the PR should go green, then keep iterating until the checkout is merge-ready or a concrete external blocker is proven;",
   ].join("\n");
 }
@@ -271,9 +274,9 @@ function renderChangelogRule(fixArtifact: LooseRecord) {
   ].join("\n");
 }
 
-function renderRebaseResult(rebaseResult: LooseRecord) {
+function renderRebaseResult(rebaseResult: LooseRecord, baseBranch: string) {
   const status = String(rebaseResult.status ?? "unknown");
-  const baseRef = String(rebaseResult.base_ref ?? "origin/main");
+  const baseRef = String(rebaseResult.base_ref ?? `origin/${baseBranch}`);
   const baseSha = String(rebaseResult.base_sha ?? "unknown");
   const detail = compactText(String(rebaseResult.detail ?? "").trim(), 800);
   return [

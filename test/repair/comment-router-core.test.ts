@@ -784,6 +784,24 @@ test("renderIssueImplementationJob validates and opens one non-closing fix PR la
   assert.match(job.body, /Keep it scoped to the toolbar/);
 });
 
+test("generated repair jobs use the configured target base branch", () => {
+  const automergeJob = renderAutomergeJob({
+    repo: "openclaw/openclaw-windows-node",
+    issueNumber: 669,
+    title: "Fix Windows setup",
+  });
+  const issueJob = renderIssueImplementationJob({
+    repo: "openclaw/openclaw-windows-node",
+    issueNumber: 669,
+    title: "Fix Windows setup",
+    strictBugOnly: true,
+  });
+
+  assert.match(automergeJob, /rebase onto latest main/);
+  assert.match(issueJob, /openclaw\/openclaw-windows-node@main/);
+  assert.match(issueJob, /cannot be reproduced on latest main/);
+});
+
 test("renderIssueImplementationJob records maintainer build override metadata", () => {
   const raw = renderIssueImplementationJob({
     repo: "openclaw/openclaw",

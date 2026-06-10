@@ -19,7 +19,7 @@ import {
   replacementSourceCloseComment,
   replacementSourceLinkComment,
 } from "./external-messages.js";
-import { runCommand as run } from "./command-runner.js";
+import { resolveCommandInvocation, runCommand as run } from "./command-runner.js";
 import { isCodexContextLimitError, isRetryableCodexTransportError } from "./codex-transient.js";
 import {
   branchHasBaseDiff,
@@ -83,6 +83,7 @@ import {
 import { renderGeneratedIssueSourceMarker } from "./issue-snapshot.js";
 import { mergeAutomergeTimelineSection } from "./automerge-status-timeline.js";
 import { sleepMs } from "./timing.js";
+import { resolveTargetBaseBranch, resolveTargetRepoToolchain } from "./target-toolchain-config.js";
 import {
   isRepairBranchPushBlocked,
   isRepairBranchPushRace,
@@ -253,6 +254,9 @@ if (result.cluster_id !== job.frontmatter.cluster_id) {
 if (result.mode !== job.frontmatter.mode) {
   throw new Error(`result mode ${result.mode} does not match job mode ${job.frontmatter.mode}`);
 }
+const targetBaseBranch =
+  process.env.CLAWSWEEPER_FIX_BASE_BRANCH ??
+  resolveTargetBaseBranch(result.repo, DEFAULT_BASE_BRANCH);
 
 const automergeTargetValidation =
   String(job.frontmatter.source ?? "") === "pr_automerge" ||
@@ -312,7 +316,8 @@ function spawnCodexSyncWithHeartbeat(
 ) {
   const heartbeat = startCodexHeartbeat(label);
   try {
-    const result = spawnSync("codex", args, options);
+    const invocation = resolveCommandInvocation("codex", args, { env: options.env });
+    const result = spawnSync(invocation.command, invocation.args, options);
     result.stdout = sanitizeCodexOutput(result.stdout ?? "");
     result.stderr = sanitizeCodexOutput(result.stderr ?? "");
     if (result.error?.message) result.error.message = sanitizeCodexOutput(result.error.message);
@@ -525,7 +530,7 @@ const validationPreflight = preflightTargetValidationPlan(
   {
     fixArtifact,
     targetDir,
-    baseBranch: DEFAULT_BASE_BRANCH,
+    baseBranch: targetBaseBranch,
   },
   currentTargetValidationOptions(),
 );
@@ -802,7 +807,7 @@ function preflightRepairSourceBranchWrite(fixArtifact: LooseRecord) {
 }
 
 function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
-  const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
+  const baseBranch = targetBaseBranch;
   const sourcePr = firstSourcePullRequest(fixArtifact);
   logProgress("repairing contributor branch", { source_pr: sourcePr.url, base_branch: baseBranch });
   const pull = fetchPullRequest(result.repo, sourcePr.number);
@@ -1043,7 +1048,7 @@ function openReplacementPrFromPreparedRepairCheckout({
   prep,
   fallbackReason,
 }: LooseRecord) {
-  const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
+  const baseBranch = targetBaseBranch;
   const contributorCredits = sourceContributorCredits({
     fixArtifact,
     targetDir,
@@ -1391,7 +1396,7 @@ function executeReplacementBranch({
   supersedeSources,
   fallbackReason,
 }: LooseRecord) {
-  const baseBranch = String(process.env.CLAWSWEEPER_FIX_BASE_BRANCH ?? DEFAULT_BASE_BRANCH);
+  const baseBranch = targetBaseBranch;
   const contributorCredits = sourceContributorCredits({
     fixArtifact,
     targetDir,
@@ -1871,7 +1876,7 @@ function editValidatePrepareMerge({
   branch,
   mode,
   fallbackReason,
-  baseBranch = DEFAULT_BASE_BRANCH,
+  baseBranch = targetBaseBranch,
   contributorCredits = [],
   allowExistingChanges = false,
   reconcileWithBase = false,
@@ -1944,6 +1949,7 @@ function editValidatePrepareMerge({
         maxEditAttempts,
         validationCommands: validationPreflight.resolved_commands ?? [],
         isAutomergeRepair: isAutomergeRepairJob(),
+        baseBranch,
       });
       const summaryPath = path.join(workRoot, `${mode}-codex-summary-${attempt}.md`);
       const workerTimeoutMs = currentCodexTimeoutMs();
@@ -2149,7 +2155,7 @@ function editValidatePrepareMerge({
     if (sync.status === "already-current") break;
     const checkpoint = commitCheckpointIfNeeded({
       targetDir,
-      message: `fix(clawsweeper): reconcile ${result.cluster_id} with main (${attempt})`,
+      message: `fix(clawsweeper): reconcile ${result.cluster_id} with ${baseBranch} (${attempt})`,
       trailers: mode === "replacement" ? coAuthorTrailers(contributorCredits) : [],
     });
     if (checkpoint) {
@@ -2159,8 +2165,7 @@ function editValidatePrepareMerge({
     if (attempt === maxFinalBaseSyncAttempts) {
       codexReview.final_base_sync = {
         status: "accepted_after_final_sync",
-        reason:
-          "origin/main moved during final validation; pushed the branch after the last successful final-base sync and left review/CI/automerge to gate the exact head",
+        reason: `origin/${baseBranch} moved during final validation; pushed the branch after the last successful final-base sync and left review/CI/automerge to gate the exact head`,
         attempts: maxFinalBaseSyncAttempts,
         sync,
       };
@@ -2276,6 +2281,7 @@ function runCodexBaseReconcile({
   targetDir,
   branch,
   mode,
+  baseBranch,
   attempt,
   repositoryContext,
   sourceHead,
@@ -2287,8 +2293,7 @@ function runCodexBaseReconcile({
       fixArtifact,
       branch,
       mode,
-      fallbackReason:
-        "origin/main advanced after validation. Resolve this final rebase so the branch is mergeable on current main, then leave the checkout in a normal non-rebasing state.",
+      fallbackReason: `origin/${baseBranch} advanced after validation. Resolve this final rebase so the branch is mergeable on current ${baseBranch}, then leave the checkout in a normal non-rebasing state.`,
       attempt: codexAttempt,
       previousNoDiff: codexAttempt > 1,
       previousSummary,
@@ -2299,6 +2304,7 @@ function runCodexBaseReconcile({
       maxEditAttempts,
       validationCommands: validationPreflight.resolved_commands ?? [],
       isAutomergeRepair: isAutomergeRepairJob(),
+      baseBranch,
     });
     const summaryPath = path.join(
       workRoot,
@@ -2569,7 +2575,7 @@ function validateAndReviewLoop({
   fixArtifact,
   targetDir,
   mode,
-  baseBranch = DEFAULT_BASE_BRANCH,
+  baseBranch = targetBaseBranch,
   onReviewFix = null,
   sourceHead = null,
 }: LooseRecord) {
@@ -2731,7 +2737,7 @@ function runCodexReview({
   targetDir,
   mode,
   attempt,
-  baseBranch = DEFAULT_BASE_BRANCH,
+  baseBranch = targetBaseBranch,
   validationCommands = [],
   validationPlan = null,
 }: LooseRecord) {
@@ -3162,10 +3168,11 @@ function setupGitHubCredentialHelper() {
 }
 
 function bloblessCloneArgs(repo: string, targetDir: string) {
+  const historyArgs = resolveTargetRepoToolchain(repo).requiresFullHistory ? [] : ["--depth=1"];
   return [
     "clone",
     "--filter=blob:none",
-    "--depth=1",
+    ...historyArgs,
     "--single-branch",
     githubRepoCloneUrl(repo),
     targetDir,

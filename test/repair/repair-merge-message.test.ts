@@ -24,6 +24,6 @@ test("buildRepairSquashMergeMessage summarizes repair validation and fixups", ()
   assert.match(message.body, /Summary:/);
   assert.match(message.body, /Codex \/review passed/);
   assert.match(message.body, /ClawSweeper fixups:/);
-  assert.match(message.body, /Synced the branch with latest main before merge/);
+  assert.match(message.body, /Synced the branch with the latest base branch before merge/);
   assert.match(message.body, /Validated with pnpm check:changed/);
 });

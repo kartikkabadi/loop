@@ -43,6 +43,26 @@
       "package_manager": "pnpm",
       "validation_commands": [],
       "changed_gate": null
+    },
+    {
+      "target_repo": "openclaw/openclaw-windows-node",
+      "display_name": "OpenClaw Windows Node",
+      "checkout_dir": "openclaw-windows-node",
+      "prompt_note": "Use the Windows node source tree and current main branch. Keep fixes narrow and validate Windows-only build and test commands on a Windows runner.",
+      "apply_close_rules": {
+        "issue": ["implemented_on_main"],
+        "pull_request": ["implemented_on_main", "mostly_implemented_on_main"]
+      },
+      "package_manager": "npm",
+      "validation_commands": [
+        "./build.ps1",
+        "dotnet test ./tests/OpenClaw.Shared.Tests/OpenClaw.Shared.Tests.csproj",
+        "dotnet test ./tests/OpenClaw.Tray.Tests/OpenClaw.Tray.Tests.csproj"
+      ],
+      "changed_gate": null,
+      "requires_full_history": true,
+      "execution_runner": "windows-latest",
+      "base_branch": "main"
     }
   ],
   "generic_fallbacks": [

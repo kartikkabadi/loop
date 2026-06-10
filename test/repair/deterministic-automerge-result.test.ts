@@ -175,3 +175,48 @@ test("deterministic automerge result emits bun run check for openclaw/clawhub", 
   assert.equal(result?.repo, "openclaw/clawhub");
   assert.deepEqual(result?.fix_artifact.validation_commands, ["bun run check"]);
 });
+
+test("deterministic automerge result uses the Windows target branch and validation", () => {
+  const windowsJob = {
+    frontmatter: {
+      repo: "openclaw/openclaw-windows-node",
+      cluster_id: "automerge-openclaw-openclaw-windows-node-669",
+      source: "pr_automerge",
+      canonical: ["#669"],
+      allow_fix_pr: true,
+      allow_merge: false,
+    },
+  };
+  const windowsPlan = {
+    repo: "openclaw/openclaw-windows-node",
+    cluster_id: "automerge-openclaw-openclaw-windows-node-669",
+    items: [
+      {
+        number: 669,
+        ref: "#669",
+        kind: "pull_request",
+        state: "open",
+        title: "fix: repair Windows setup",
+        pull_request: {
+          branch_writable: true,
+          files_truncated: 0,
+          checks: [],
+          files: [{ filename: "build.ps1" }],
+        },
+      },
+    ],
+  };
+
+  const result = deterministicAutomergeResult({
+    job: windowsJob,
+    mode: "autonomous",
+    clusterPlan: windowsPlan,
+  });
+
+  assert.match(result?.fix_artifact.summary, /Rebase onto latest main/);
+  assert.deepEqual(result?.fix_artifact.validation_commands, [
+    "./build.ps1",
+    "dotnet test ./tests/OpenClaw.Shared.Tests/OpenClaw.Shared.Tests.csproj",
+    "dotnet test ./tests/OpenClaw.Tray.Tests/OpenClaw.Tray.Tests.csproj",
+  ]);
+});

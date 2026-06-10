@@ -18,6 +18,7 @@ import { ghJson, ghText } from "./github-cli.js";
 import { sleepMs } from "./timing.js";
 import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 import { AUTOMATION_LIMITS } from "./limits.js";
+import { resolveTargetExecutionRunner } from "./target-toolchain-config.js";
 
 const DEFAULT_REPO = currentProjectRepo();
 const DEFAULT_WORKFLOW = REPAIR_CLUSTER_WORKFLOW;
@@ -31,7 +32,7 @@ const args = parseArgs(process.argv.slice(2));
 const repo = String(args.repo ?? DEFAULT_REPO);
 const workflow = String(args.workflow ?? DEFAULT_WORKFLOW);
 const runner = String(args.runner ?? DEFAULT_RUNNER);
-const executionRunner = String(
+const requestedExecutionRunner = String(
   args["execution-runner"] ?? args.execution_runner ?? DEFAULT_EXECUTION_RUNNER,
 );
 const maxLiveWorkers = readMaxLiveWorkers(args);
@@ -67,6 +68,10 @@ if (errors.length > 0) {
 const restoreIssueImplementationJob = booleanArg(
   args["restore-issue-implementation-job"] ?? args.restore_issue_implementation_job,
   job.frontmatter.automerge_generated_pr !== true,
+);
+const executionRunner = resolveTargetExecutionRunner(
+  String(job.frontmatter.repo),
+  requestedExecutionRunner,
 );
 
 const mode = requestedMode ?? resolved.mode ?? job.frontmatter.mode;

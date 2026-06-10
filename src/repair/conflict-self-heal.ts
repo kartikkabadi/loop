@@ -27,6 +27,7 @@ import {
   selfHealJobPath,
   selfHealStatusMarkerPrefix,
 } from "./conflict-self-heal-core.js";
+import { resolveTargetExecutionRunner } from "./target-toolchain-config.js";
 
 const args = parseArgs(process.argv.slice(2));
 
@@ -44,11 +45,14 @@ const headPrefix = String(args["head-prefix"] ?? args.head_prefix ?? DEFAULT_SEL
 const runner = String(
   args.runner ?? process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404",
 );
-const executionRunner = String(
-  args["execution-runner"] ??
-    args.execution_runner ??
-    process.env.CLAWSWEEPER_EXECUTION_RUNNER ??
-    "blacksmith-16vcpu-ubuntu-2404",
+const executionRunner = resolveTargetExecutionRunner(
+  repo,
+  String(
+    args["execution-runner"] ??
+      args.execution_runner ??
+      process.env.CLAWSWEEPER_EXECUTION_RUNNER ??
+      "blacksmith-16vcpu-ubuntu-2404",
+  ),
 );
 const maxPrs = Number(args["max-prs"] ?? args.max_prs ?? args.limit ?? 5);
 const maxRepairsPerHead = Number(

@@ -63,6 +63,7 @@ Instant close actions:
 
 Fix artifact actions:
 
+- This phase is read-only by design. Never mark `fix_needed`, `build_fix_artifact`, or `open_fix_pr` blocked because the planner cannot write the checkout/cache or run installation, formatting, tests, or validation. Emit planned actions and the fix artifact; the writable executor performs that work.
 - If no viable canonical PR exists and the bug still appears real from the artifact, emit `fix_needed` plus `build_fix_artifact` even when the current job cannot open the fix PR. Do not escalate solely because `allow_fix_pr` is false.
 - If the best canonical PR is useful but not merge-ready because it is draft, unmergeable, stale, uneditable, has `maintainer_can_modify=false`, or has broad/unrelated churn, treat it as non-viable for automation and replace it with a narrow credited fix PR. This is not a `needs_human` decision when the job allows fix PRs; maintainers already chose the replacement policy.
 - Provider support gaps, missing model capability routing, and ordinary feature gaps reported as bugs should become a fix artifact when the artifact shows expected behavior and the patch can stay narrow.
@@ -73,7 +74,7 @@ Fix artifact actions:
 - Set `fix_artifact.allow_no_pr` to `false` for normal fix/replacement PRs. Use `true` only for an explicitly audited no-PR outcome.
 - The fix plan must be narrow: list only the files expected to change, focused tests, review-bot findings to address, and the exact branch/PR that could not be updated if applicable.
 - Do not emit an executable fix PR path for broad feature/config/docs rewrites. If the fix needs many implementation files plus config/schema/docs/tests, split it into narrower follow-up jobs or mark the implementation blocked with exact sub-scopes; ClawSweeper Repair should not spend a 30-minute executor window on a broad product feature.
-- If a target checkout is unavailable or unsafe, do not pretend to patch. Return the artifact and mark only implementation as blocked; keep classification decisions non-mutating when possible.
+- If a target checkout is absent, corrupt, or unsafe even for inspection, do not pretend to patch. Return the artifact and mark only implementation as blocked; keep classification decisions non-mutating when possible. A merely read-only checkout or cache is expected and is not such a blocker.
 
 Merge and post-merge close:
 

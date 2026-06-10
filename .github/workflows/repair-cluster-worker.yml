@@ -47,6 +47,10 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
@@ -64,6 +68,7 @@ jobs:
       allow_execute: ${{ steps.capture_gates.outputs.allow_execute }}
       allow_fix_pr: ${{ steps.capture_gates.outputs.allow_fix_pr }}
       allow_merge: ${{ steps.capture_gates.outputs.allow_merge }}
+      execution_runner: ${{ steps.resolve_execution_runner.outputs.execution_runner }}
       job_exists: ${{ steps.check_job.outputs.job_exists }}
     env:
       CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
@@ -147,6 +152,16 @@ jobs:
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
         with:
           build-script: build:repair
+
+      - name: Resolve target execution runner
+        id: resolve_execution_runner
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
+        run: |
+          set -euo pipefail
+          execution_runner="$(pnpm run --silent repair:resolve-execution-runner -- \
+            "${{ inputs.job }}" \
+            "${{ inputs.execution_runner }}")"
+          echo "execution_runner=$execution_runner" >> "$GITHUB_OUTPUT"
 
       - uses: ./.github/actions/setup-codex
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
@@ -247,7 +262,7 @@ jobs:
     name: Execute and apply cluster actions
     needs: cluster
     if: ${{ needs.cluster.result == 'success' && needs.cluster.outputs.job_exists == '1' && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
-    runs-on: ${{ inputs.execution_runner }}
+    runs-on: ${{ needs.cluster.outputs.execution_runner || inputs.execution_runner }}
     timeout-minutes: 45
     env:
       CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
@@ -341,6 +356,12 @@ jobs:
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
         with:
           build-script: build:repair
+
+      - name: Setup .NET 10 for Windows target validation
+        if: ${{ steps.check_job.outputs.job_exists == '1' && runner.os == 'Windows' }}
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
       - name: Setup pinned Bun for target validation
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
@@ -438,7 +459,7 @@ jobs:
             --restore-issue-implementation-job "${{ inputs.restore_issue_implementation_job }}" \
             --requeue-attempt "${{ inputs.requeue_attempt }}" \
             --runner "${{ inputs.runner }}" \
-            --execution-runner "${{ inputs.execution_runner }}"
+            --execution-runner "${{ needs.cluster.outputs.execution_runner || inputs.execution_runner }}"
 
       - name: Collect Codex debug logs
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}

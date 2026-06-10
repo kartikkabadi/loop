@@ -38,10 +38,16 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        npm config set prefix "$HOME/.clawsweeper-repair/codex"
+        codex_root="$HOME/.clawsweeper-repair/codex"
+        npm config set prefix "$codex_root"
         npm config set cache "$HOME/.npm"
-        echo "$HOME/.clawsweeper-repair/codex/bin" >> "$GITHUB_PATH"
-        export PATH="$HOME/.clawsweeper-repair/codex/bin:$PATH"
+        if [[ "${RUNNER_OS:-}" == "Windows" ]]; then
+          codex_bin="$codex_root"
+        else
+          codex_bin="$codex_root/bin"
+        fi
+        echo "$codex_bin" >> "$GITHUB_PATH"
+        export PATH="$codex_bin:$PATH"
 
         codex_version="$(npm view @openai/codex dist-tags.latest)"
         if [[ ! "$codex_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then

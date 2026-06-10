@@ -45,6 +45,11 @@ export function currentHead(targetDir: string): string {
   return run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
 }
 
+export function ensureFullHistory(targetDir: string): void {
+  if (!isShallowRepository(targetDir)) return;
+  gitFetch(targetDir, ["--unshallow", "--tags", "origin"]);
+}
+
 export function isAncestor({
   targetDir,
   ancestor,
@@ -239,17 +244,22 @@ export function unmergedPaths(targetDir: string): string[] {
 }
 
 function fetchDeeperHistory({ targetDir, baseBranch }: TargetBaseBranch): void {
-  const shallow = spawnSync("git", ["rev-parse", "--is-shallow-repository"], {
-    cwd: targetDir,
-    env: process.env,
-    encoding: "utf8",
-  }).stdout.trim();
-  if (shallow === "true" || fs.existsSync(path.join(targetDir, ".git", "shallow"))) {
-    gitFetch(targetDir, ["--unshallow", "origin"]);
+  if (isShallowRepository(targetDir)) {
+    ensureFullHistory(targetDir);
   } else {
     gitFetch(targetDir, ["origin", "--prune"]);
   }
   gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
+}
+
+function isShallowRepository(targetDir: string): boolean {
+  return (
+    spawnSync("git", ["rev-parse", "--is-shallow-repository"], {
+      cwd: targetDir,
+      env: process.env,
+      encoding: "utf8",
+    }).stdout.trim() === "true"
+  );
 }
 
 function gitFetch(targetDir: string, args: string[]): void {

@@ -22,6 +22,7 @@ import {
   repairJobUsesClusterLane,
   workerLaneForRepairJobIntent,
 } from "./job-intent.js";
+import { resolveTargetExecutionRunner } from "./target-toolchain-config.js";
 
 const args = parseArgs(process.argv.slice(2));
 const defaultRunner = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
@@ -29,7 +30,9 @@ const defaultExecutionRunner =
   process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
 const mode = String(args.mode ?? "plan");
 const runner = args.runner ?? defaultRunner;
-const executionRunner = args["execution-runner"] ?? args.execution_runner ?? defaultExecutionRunner;
+const executionRunner = String(
+  args["execution-runner"] ?? args.execution_runner ?? defaultExecutionRunner,
+);
 const workflow = args.workflow ?? REPAIR_CLUSTER_WORKFLOW;
 const repo = String(args.repo ?? currentProjectRepo());
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
@@ -41,6 +44,7 @@ const restoreIssueImplementationJob = booleanArg(
 const files = args._;
 const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 const jobWorkerLanes = new Map<string, WorkerLane>();
+const jobExecutionRunners = new Map<string, string>();
 
 if (files.length === 0) {
   console.error(
@@ -65,6 +69,10 @@ for (const file of files) {
   jobWorkerLanes.set(
     relative,
     workerLaneForRepairJobIntent(repairJobIntentForFrontmatter(job.frontmatter)),
+  );
+  jobExecutionRunners.set(
+    relative,
+    resolveTargetExecutionRunner(String(job.frontmatter.repo), executionRunner),
   );
   if (!fs.existsSync(path.join(repoRoot(), relative))) {
     failed = true;
@@ -117,6 +125,7 @@ while (!failed && index < jobs.length) {
 }
 
 function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue) {
+  const targetExecutionRunner = jobExecutionRunners.get(String(relative)) ?? executionRunner;
   const result = spawnSync(
     "gh",
     [
@@ -133,7 +142,7 @@ function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue)
       "-f",
       `runner=${runner}`,
       "-f",
-      `execution_runner=${executionRunner}`,
+      `execution_runner=${targetExecutionRunner}`,
       "-f",
       `restore_issue_implementation_job=${restoreIssueImplementationJob}`,
     ],
@@ -144,7 +153,7 @@ function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue)
     console.error(result.stderr || result.stdout);
   } else {
     console.log(
-      `dispatched ${position}/${total} ${relative} (${mode}) on ${runner}; execution on ${executionRunner}`,
+      `dispatched ${position}/${total} ${relative} (${mode}) on ${runner}; execution on ${targetExecutionRunner}`,
     );
   }
 }

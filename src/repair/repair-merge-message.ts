@@ -58,7 +58,7 @@ function repairFixupLines(preflight: LooseRecord): string[] {
     preflight?.bot_comments_status === "resolved"
       ? "Resolved ClawSweeper/review-bot findings before merge."
       : "",
-    preflight?.final_base_sync ? "Synced the branch with latest main before merge." : "",
+    preflight?.final_base_sync ? "Synced the branch with the latest base branch before merge." : "",
   ].filter(Boolean);
   return lines.length > 0 ? lines : ["No separate repair fixups were recorded."];
 }

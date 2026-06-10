@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   hasDeterministicSecuritySignal,
   hasSecuritySignalText,
+  normalizeRepoRelativePath,
   parseArgs,
   parseSimpleYaml,
   renderPrompt,
@@ -21,6 +22,13 @@ test("parseArgs ignores package-manager double dash separators", () => {
   });
 });
 
+test("job paths use portable workflow separators", () => {
+  assert.equal(
+    normalizeRepoRelativePath("jobs\\openclaw\\inbox\\issue-openclaw-example-1.md"),
+    "jobs/openclaw/inbox/issue-openclaw-example-1.md",
+  );
+});
+
 test("renderPrompt loads tracked repair prompt templates", () => {
   const prompt = renderPrompt(
     {
@@ -36,6 +44,25 @@ test("renderPrompt loads tracked repair prompt templates", () => {
   );
   assert.match(prompt, /## Job file/);
   assert.match(prompt, /Repair smoke\./);
+});
+
+test("renderPrompt explains the read-only planner and writable executor handoff", () => {
+  const prompt = renderPrompt(
+    {
+      raw: "---\nrepo: openclaw/example\ncluster_id: issue-example-1\nmode: autonomous\n---\nImplement issue.",
+      frontmatter: {
+        repo: "openclaw/example",
+        cluster_id: "issue-example-1",
+        mode: "autonomous",
+      },
+    },
+    "autonomous",
+    { targetCheckout: "/tmp/example" },
+  );
+
+  assert.match(prompt, /planning worker is intentionally read-only/i);
+  assert.match(prompt, /not an implementation blocker/i);
+  assert.match(prompt, /separate executor receives a writable checkout/i);
 });
 
 test("validateJob rejects unknown canonical job intents", () => {

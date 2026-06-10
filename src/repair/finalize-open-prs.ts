@@ -18,6 +18,10 @@ import { sleepMs } from "./timing.js";
 import { DEFAULT_TARGET_REPO, REPAIR_CLUSTER_WORKFLOW, REVIEW_BOTS } from "./constants.js";
 import { numberEnv } from "./env-utils.js";
 import { compactText, escapeRegExp } from "./text-utils.js";
+import {
+  resolveTargetBaseBranch,
+  resolveTargetExecutionRunner,
+} from "./target-toolchain-config.js";
 
 const DEFAULT_HEAD_PREFIX = "clawsweeper/";
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
@@ -41,12 +45,16 @@ const workflow = String(
 const runner = String(
   args.runner ?? process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404",
 );
-const executionRunner = String(
-  args["execution-runner"] ??
-    args.execution_runner ??
-    process.env.CLAWSWEEPER_EXECUTION_RUNNER ??
-    "blacksmith-16vcpu-ubuntu-2404",
+const executionRunner = resolveTargetExecutionRunner(
+  repo,
+  String(
+    args["execution-runner"] ??
+      args.execution_runner ??
+      process.env.CLAWSWEEPER_EXECUTION_RUNNER ??
+      "blacksmith-16vcpu-ubuntu-2404",
+  ),
 );
+const baseBranch = resolveTargetBaseBranch(repo, "main");
 const requestedMode = typeof args.mode === "string" ? args.mode : null;
 const maxPrs = Number(args["max-prs"] ?? args.limit ?? 5);
 const maxLiveWorkers = readMaxLiveWorkers(args);
@@ -170,7 +178,7 @@ function classifyPullRequest(pull: LooseRecord, publishedRecords: JsonValue) {
   const blockers: LooseRecord[] = [];
 
   if (pull.isDraft) blockers.push("draft");
-  if (String(pull.baseRefName ?? "") !== "main")
+  if (String(pull.baseRefName ?? "") !== baseBranch)
     blockers.push(`base is ${pull.baseRefName || "unknown"}`);
   if (hasDeterministicPullSecuritySignal(pull)) blockers.push("security_hold");
   if (isSecurityRoutedAction(latestApplyAction)) blockers.push("security_route");
@@ -230,13 +238,13 @@ function recommendedNextAction({ pull, checkState, blockers }: LooseRecord) {
     return "route to central security triage";
   if (pull.isDraft) return "undraft only after worker confirms the fix is complete";
   if (blockers.some((blocker: JsonValue) => blocker.startsWith("needs_rebase"))) {
-    return "resume branch, rebase onto current main, repair conflicts, run changed checks, rerun review";
+    return `resume branch, rebase onto current ${baseBranch}, repair conflicts, run changed checks, rerun review`;
   }
   if (blockers.includes("mergeability_unknown") || blockers.includes("merge_state_unknown")) {
     return "refresh exact PR mergeability before deciding; do not merge while GitHub reports unknown";
   }
   if (checkState.blockers.length > 0)
-    return "repair failing checks or document unrelated main flake with touched-surface proof";
+    return `repair failing checks or document unrelated ${baseBranch} flake with touched-surface proof`;
   if (
     blockers.some(
       (blocker: JsonValue) =>

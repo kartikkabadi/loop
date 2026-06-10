@@ -44,6 +44,7 @@ Execution guard:
 - In `plan` mode, do not mutate GitHub.
 - In `execute` mode, do not mutate GitHub directly; emit structured actions for the applicator.
 - In `autonomous` mode, do not mutate GitHub directly; emit structured actions and fix artifacts for ClawSweeper scripts to apply.
+- The planning worker intentionally runs with read-only checkout and cache access. This is not an implementation blocker and must never block `fix_needed`, `build_fix_artifact`, or `open_fix_pr`. Do not edit, install, test, or validate in this phase. Emit the executable plan; the separate executor receives a writable checkout and owns edits, dependency setup, validation, push, and PR creation.
 - Never mark the overall result or an action as `executed`; only the deterministic applicator may record executed mutations after replaying a `planned` action.
 - Closure actions are only valid for targets that are open in live GitHub state.
 - Already-closed refs must not receive `close_*` actions. Use `keep_closed` with `status: "skipped"` only if you must mention them in the action matrix.

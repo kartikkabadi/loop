@@ -32,6 +32,7 @@ import {
   buildRepairSquashMergeMessage,
   writeRepairSquashMergeBody,
 } from "./repair-merge-message.js";
+import { resolveTargetBaseBranch } from "./target-toolchain-config.js";
 import {
   compactPrCloseCoverageProofComment,
   compactPrCloseCoverageProofText,
@@ -131,6 +132,7 @@ const result = JSON.parse(fs.readFileSync(resultPath, "utf8"));
 if (result.repo !== job.frontmatter.repo) {
   throw new Error(`result repo ${result.repo} does not match job repo ${job.frontmatter.repo}`);
 }
+const targetBaseBranch = resolveTargetBaseBranch(result.repo, "main");
 if (result.cluster_id !== job.frontmatter.cluster_id) {
   throw new Error(
     `result cluster ${result.cluster_id} does not match job cluster ${job.frontmatter.cluster_id}`,
@@ -1393,8 +1395,8 @@ function prCloseCoverageProofModel() {
 function validateMergeablePullRequest({ pullRequest, view }: LooseRecord) {
   if (pullRequest.state !== "open") return `pull request is ${pullRequest.state}`;
   if (pullRequest.draft || view.isDraft) return "pull request is draft";
-  if (String(view.baseRefName ?? pullRequest.base?.ref ?? "") !== "main")
-    return "pull request base is not main";
+  if (String(view.baseRefName ?? pullRequest.base?.ref ?? "") !== targetBaseBranch)
+    return `pull request base is not ${targetBaseBranch}`;
   if (view.mergeable !== "MERGEABLE") return `mergeable state is ${view.mergeable || "unknown"}`;
   if (!CLEAN_MERGE_STATES.has(String(view.mergeStateStatus ?? ""))) {
     return `merge state status is ${view.mergeStateStatus || "unknown"}`;

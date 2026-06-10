@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { runCommand as run } from "./command-runner.js";
 import {
+  ensureFullHistory,
   ensureMergeBaseAvailable,
   gitChangedFiles,
   gitLsFiles,
@@ -22,6 +23,7 @@ import {
   looksLikePathArgument,
   packageScriptRequirement,
   parseAllowedValidationCommand,
+  renderValidationCommand,
   stripEnvPrefix,
   uniqueStrings,
 } from "./validation-command-utils.js";
@@ -59,12 +61,13 @@ export type RepairDeltaValidationPlan = {
 };
 
 export function prepareTargetToolchain(cwd: string, options: TargetValidationOptions) {
+  const toolchain = getToolchain(options);
+  if (toolchain.requiresFullHistory) ensureFullHistory(cwd);
   if (!options.installTargetDeps) return;
   const packagePath = path.join(cwd, "package.json");
   if (!fs.existsSync(packagePath)) return;
 
   const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-  const toolchain = getToolchain(options);
   const validationEnv = targetValidationEnv();
   const setupTimeoutMs = targetValidationTimeoutMs(
     "CLAWSWEEPER_TARGET_SETUP_TIMEOUT_MS",
@@ -246,7 +249,7 @@ export function runAllowedValidationCommands(
     const resolvedCommands = resolveAllowedValidationCommands(command, cwd, baseBranch, options);
     for (const parts of resolvedCommands) {
       const executable = parts[0]!;
-      const rendered = parts.join(" ");
+      const rendered = renderValidationCommand(parts);
       if (executed.includes(rendered)) continue;
       while (true) {
         try {
@@ -268,7 +271,7 @@ export function runAllowedValidationCommands(
           if (fallbackCommands.length > 0) {
             for (const fallbackParts of fallbackCommands) {
               const fallbackExecutable = fallbackParts[0]!;
-              const fallbackRendered = fallbackParts.join(" ");
+              const fallbackRendered = renderValidationCommand(fallbackParts);
               if (executed.includes(fallbackRendered)) continue;
               run(fallbackExecutable, fallbackParts.slice(1), {
                 cwd,
@@ -281,7 +284,7 @@ export function runAllowedValidationCommands(
           }
           if (shouldRetryValidationCommand({ parts, error, attempts, options })) continue;
           throw new Error(
-            `validation command failed (${parts.join(" ")}): ${compactText(error.message, 12000)}`,
+            `validation command failed (${rendered}): ${compactText(error.message, 12000)}`,
           );
         }
       }
@@ -310,7 +313,7 @@ export function preflightTargetValidationPlan(
       options,
     );
     for (const parts of resolvedCommands) {
-      const rendered = parts.join(" ");
+      const rendered = renderValidationCommand(parts);
       if (!resolved.includes(rendered)) resolved.push(rendered);
       const script = packageScriptRequirement(parts);
       if (script) requiredScripts.push(script);
@@ -472,7 +475,7 @@ function shouldRetryValidationCommand({ parts, error, attempts, options }: Loose
 
   const configuredRetries = Number.parseInt(process.env.CLAWSWEEPER_VALIDATION_RETRIES ?? "1", 10);
   const maxRetries = Number.isFinite(configuredRetries) ? Math.max(0, configuredRetries) : 1;
-  const rendered = parts.join(" ");
+  const rendered = renderValidationCommand(parts);
   const used = attempts.get(rendered) ?? 0;
   if (used >= maxRetries) return false;
   attempts.set(rendered, used + 1);

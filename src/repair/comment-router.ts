@@ -103,6 +103,10 @@ import {
   pullRequestsCrossReferencedByIssueTimeline,
   type GeneratedIssueSourceMetadata,
 } from "./issue-snapshot.js";
+import {
+  resolveTargetBaseBranch,
+  resolveTargetExecutionRunner,
+} from "./target-toolchain-config.js";
 
 const args = parseArgs(process.argv.slice(2));
 const config = readCommentRouterConfig(args);
@@ -135,6 +139,8 @@ const {
   allowedRepositoryPermissions,
   trustedBots,
 } = config;
+const targetExecutionRunner = resolveTargetExecutionRunner(targetRepo, executionRunner);
+const targetBaseBranch = resolveTargetBaseBranch(targetRepo, "main");
 
 const startedAtMs = Date.now();
 const timings: LooseRecord[] = [];
@@ -2052,7 +2058,7 @@ function dispatchRepair(command: LooseRecord) {
       job_path: command.target.job_path,
       mode: command.target.mode,
       runner,
-      execution_runner: executionRunner,
+      execution_runner: targetExecutionRunner,
       status: "already_running",
       reason: "repair worker already active for this job path",
       run_url: activeRun.url,
@@ -2074,7 +2080,7 @@ function dispatchRepair(command: LooseRecord) {
       "-f",
       `runner=${runner}`,
       "-f",
-      `execution_runner=${executionRunner}`,
+      `execution_runner=${targetExecutionRunner}`,
     ],
     { env: dispatchTokenEnv() },
   );
@@ -2090,7 +2096,7 @@ function dispatchRepair(command: LooseRecord) {
     job_path: command.target.job_path,
     mode: command.target.mode,
     runner,
-    execution_runner: executionRunner,
+    execution_runner: targetExecutionRunner,
     ...(runUrl ? { run_url: runUrl } : {}),
   };
 }
@@ -2648,7 +2654,8 @@ function validateAutomergeReadiness({ command, view, target }: LooseRecord) {
   if (view.state && view.state !== "OPEN")
     return `pull request is ${String(view.state).toLowerCase()}`;
   if (view.isDraft) return "pull request is draft";
-  if (String(view.baseRefName ?? "") !== "main") return "pull request base is not main";
+  if (String(view.baseRefName ?? "") !== targetBaseBranch)
+    return `pull request base is not ${targetBaseBranch}`;
   const headBlock = reviewedHeadShaBlockReason({
     expectedHeadSha: command.expected_head_sha,
     currentHeadSha: view.headRefOid,

@@ -108,6 +108,27 @@ test("automerge fix prompt makes Codex own PR repair, rebase, and CI discovery",
   assert.doesNotMatch(prompt, /do not push, open PRs, close PRs, or call gh/);
 });
 
+test("fix prompt uses the configured target base branch", () => {
+  const prompt = buildFixPrompt({
+    fixArtifact: {
+      summary: "Repair the Windows target.",
+      changelog_required: false,
+    },
+    branch: "clawsweeper/issue-openclaw-openclaw-windows-node-669",
+    mode: "repair",
+    attempt: 1,
+    maxEditAttempts: 3,
+    repositoryContext: "candidate_files (1):\nbuild.ps1 (100)",
+    isAutomergeRepair: true,
+    baseBranch: "master",
+  });
+
+  assert.match(prompt, /origin\/master/);
+  assert.match(prompt, /latest master/);
+  assert.doesNotMatch(prompt, /origin\/main/);
+  assert.doesNotMatch(prompt, /latest main/);
+});
+
 test("fix prompt includes rebase and previous no-diff recovery details", () => {
   const prompt = buildFixPrompt({
     fixArtifact: {

@@ -49,6 +49,50 @@ test("plan-cluster carries worker target checkout into artifacts", () => {
   assert.equal(fixArtifact.target_checkout, targetCheckout);
 });
 
+test("plan-cluster uses the configured target base branch", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-plan-base-branch-"));
+  const jobPath = path.join(tmp, "job.md");
+  const runDir = path.join(tmp, "run");
+
+  fs.writeFileSync(
+    jobPath,
+    [
+      "---",
+      "repo: openclaw/openclaw-windows-node",
+      "cluster_id: issue-openclaw-openclaw-windows-node-669",
+      "mode: autonomous",
+      "allowed_actions:",
+      "  - fix",
+      "  - raise_pr",
+      "source: issue_implementation",
+      "canonical:",
+      "  - #669",
+      "candidates:",
+      "  - #669",
+      "allow_fix_pr: true",
+      "security_policy: central_security_only",
+      "security_sensitive: false",
+      "---",
+      "Implement the viable issue.",
+      "",
+    ].join("\n"),
+  );
+
+  execFileSync(
+    process.execPath,
+    ["dist/repair/plan-cluster.js", jobPath, "--run-dir", runDir, "--offline"],
+    {
+      cwd: process.cwd(),
+      stdio: "pipe",
+    },
+  );
+
+  const clusterPlan = JSON.parse(fs.readFileSync(path.join(runDir, "cluster-plan.json"), "utf8"));
+
+  assert.equal(clusterPlan.main.name, "main");
+  assert.equal(clusterPlan.main.url, "https://github.com/openclaw/openclaw-windows-node/tree/main");
+});
+
 test("plan-cluster allows security repair for adopted PR autofix jobs", () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-plan-security-autofix-"));
   const jobPath = path.join(tmp, "job.md");

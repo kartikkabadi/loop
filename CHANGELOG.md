@@ -56,6 +56,7 @@ checkpoint, and status-only commits are intentionally omitted.
 ### Changed
 
 - Added autonomous implementation and bounded automerge for small high-confidence viable issues outside `openclaw/openclaw` and `openclaw/clawhub`, moved all runtime model selection behind the `CLAWSWEEPER_MODEL` secret without public model provenance, and made workflows install the latest Codex CLI.
+- Fixed autonomous issue planning so the expected read-only planner always emits executable fix artifacts for the separate writable PR executor, safely accepts quoted Go test commands, and routes Windows-only validation to a Windows runner.
 - Removed PR egg hatching, including the `@clawsweeper hatch` command, hatch dispatch path, generated PR egg comments, and `assets/pr-eggs` publishing (#210). Thanks @vincentkoc.
 
 ### Fixed

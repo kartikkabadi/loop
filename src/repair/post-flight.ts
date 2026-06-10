@@ -39,6 +39,7 @@ import {
   buildRepairSquashMergeMessage,
   writeRepairSquashMergeBody,
 } from "./repair-merge-message.js";
+import { resolveTargetBaseBranch } from "./target-toolchain-config.js";
 import { compactText as compactPlainText } from "./text-utils.js";
 
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
@@ -91,6 +92,7 @@ const result = JSON.parse(fs.readFileSync(resultPath, "utf8"));
 if (result.repo !== job.frontmatter.repo) {
   throw new Error(`result repo ${result.repo} does not match job repo ${job.frontmatter.repo}`);
 }
+const targetBaseBranch = resolveTargetBaseBranch(result.repo, "main");
 if (result.cluster_id !== job.frontmatter.cluster_id) {
   throw new Error(
     `result cluster ${result.cluster_id} does not match job cluster ${job.frontmatter.cluster_id}`,
@@ -766,8 +768,8 @@ function hasLiveSecuritySignal(number: JsonValue, labels: LooseRecord[]) {
 function validateMergeableFixPr({ pull, view, preflight }: LooseRecord) {
   if (pull.state !== "open") return `pull request is ${pull.state}`;
   if (pull.draft || view.isDraft) return "pull request is draft";
-  if (String(view.baseRefName ?? pull.base?.ref ?? "") !== "main")
-    return "pull request base is not main";
+  if (String(view.baseRefName ?? pull.base?.ref ?? "") !== targetBaseBranch)
+    return `pull request base is not ${targetBaseBranch}`;
   if (hasLiveSecuritySignal(pull.number, pull.labels ?? [])) {
     return "security-sensitive PR requires central security triage";
   }

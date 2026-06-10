@@ -19,12 +19,21 @@ export interface TargetRepoToolchain {
   baseValidationCommands: readonly string[];
   /** Optional incremental gate (e.g. OpenClaw's pnpm check:changed). */
   changedGate: TargetChangedGate | null;
+  /** Whether validation requires a non-shallow target checkout. */
+  requiresFullHistory: boolean;
+  /** Optional runner required for target-repository fix execution and validation. */
+  executionRunner: string | null;
+  /** Optional non-main base branch used for fix branches, validation, and PR creation. */
+  baseBranch: string | null;
 }
 
 interface ToolchainConfigEntry {
+  base_branch?: unknown;
   package_manager?: unknown;
   validation_commands?: unknown;
   changed_gate?: unknown;
+  requires_full_history?: unknown;
+  execution_runner?: unknown;
 }
 
 const SUPPORTED_PACKAGE_MANAGERS: ReadonlySet<TargetPackageManager> = new Set([
@@ -37,12 +46,18 @@ const DEFAULT_TOOLCHAIN: TargetRepoToolchain = {
   packageManager: "pnpm",
   baseValidationCommands: [],
   changedGate: null,
+  requiresFullHistory: false,
+  executionRunner: null,
+  baseBranch: null,
 };
 
 const OPENCLAW_OPENCLAW_FALLBACK_TOOLCHAIN: TargetRepoToolchain = {
   packageManager: "pnpm",
   baseValidationCommands: [],
   changedGate: { command: "pnpm check:changed", requiredScript: "check:changed" },
+  requiresFullHistory: false,
+  executionRunner: null,
+  baseBranch: null,
 };
 
 interface ResolvedToolchainTable {
@@ -73,6 +88,14 @@ export function resolveTargetRepoToolchain(
   if (ownerFallback) return ownerFallback;
 
   return DEFAULT_TOOLCHAIN;
+}
+
+export function resolveTargetExecutionRunner(targetRepo: string, fallbackRunner: string): string {
+  return resolveTargetRepoToolchain(targetRepo).executionRunner ?? fallbackRunner;
+}
+
+export function resolveTargetBaseBranch(targetRepo: string, fallbackBranch: string): string {
+  return resolveTargetRepoToolchain(targetRepo).baseBranch ?? fallbackBranch;
 }
 
 /** Test-only: drop the in-memory cache so a fresh config can be observed. */
@@ -150,10 +173,16 @@ function parseToolchainEntry(
   const packageManager = parsePackageManager(entry.package_manager) ?? defaults.packageManager;
   const baseValidationCommands = stringArray(entry.validation_commands);
   const changedGate = parseChangedGate(entry.changed_gate);
+  const requiresFullHistory = entry.requires_full_history === true;
+  const executionRunner = stringOrEmpty(entry.execution_runner) || null;
+  const baseBranch = stringOrEmpty(entry.base_branch) || null;
   return {
     packageManager,
     baseValidationCommands,
     changedGate,
+    requiresFullHistory,
+    executionRunner,
+    baseBranch,
   };
 }
 

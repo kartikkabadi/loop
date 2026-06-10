@@ -1,6 +1,6 @@
 import { automergeChangelogBlockReason } from "./comment-router-core.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
-import { resolveTargetRepoToolchain } from "./target-toolchain-config.js";
+import { resolveTargetBaseBranch, resolveTargetRepoToolchain } from "./target-toolchain-config.js";
 import { sanitizeCheckLink, sanitizeEvidenceList } from "./url-safety.js";
 
 export function deterministicAutomergeResult({
@@ -31,9 +31,10 @@ export function deterministicAutomergeResult({
   const prUrl = `https://github.com/${repo}/pull/${number}`;
   const title = String(canonical.title ?? `fix: update ${ref}`).trim();
   const repairMode = String(job?.frontmatter?.repair_mode ?? "automerge");
+  const baseBranch = resolveTargetBaseBranch(repo, "main");
   const summary = [
     `Make PR ${ref} merge-ready for ClawSweeper ${repairMode}.`,
-    "Rebase onto latest main, address PR comments and review findings, fix CI/check failures, preserve release-note context, and validate before returning.",
+    `Rebase onto latest ${baseBranch}, address PR comments and review findings, fix CI/check failures, preserve release-note context, and validate before returning.`,
   ].join(" ");
   const likelyFiles = likelyRepairFiles(files, Boolean(changelogReason));
   const failedChecks = failingCheckEvidence(canonical);

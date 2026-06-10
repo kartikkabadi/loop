@@ -2,6 +2,7 @@
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
+import { issueImplementationPlanningFailure } from "./issue-implementation-planning.js";
 import { parseArgs, parseJob, repoRoot } from "./lib.js";
 
 const CLOSE_ACTIONS = new Set([
@@ -269,8 +270,11 @@ function reviewResult(resultPath: string): JsonValue {
   if (plannedMergeActions.length > 0) {
     validateMergePreflight(result.merge_preflight, plannedMergeActions, failures);
   }
+  const sourceJob = readSourceJob(plan);
+  const issuePlanningFailure = issueImplementationPlanningFailure(sourceJob, result);
+  if (issuePlanningFailure) failures.push(issuePlanningFailure);
   validateCalibratedPrFinalization({
-    job: readSourceJob(plan),
+    job: sourceJob,
     result,
     itemByRef,
     fixActions,

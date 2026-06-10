@@ -104,3 +104,13 @@ test("Codex repair output redacts secrets without corrupting the public model al
   assert.match(source, /return redactSecrets\(String\(value \?\? ""\)\)/);
   assert.doesNotMatch(source, /redactSecrets\(String\(value \?\? ""\), model/);
 });
+
+test("explicit fix base branch overrides repository configuration", () => {
+  const sourcePath = path.join(process.cwd(), "src/repair/execute-fix-artifact.ts");
+  const source = fs.readFileSync(sourcePath, "utf8");
+
+  assert.match(
+    source,
+    /process\.env\.CLAWSWEEPER_FIX_BASE_BRANCH \?\?\s+resolveTargetBaseBranch\(result\.repo, DEFAULT_BASE_BRANCH\)/,
+  );
+});

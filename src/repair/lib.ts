@@ -52,6 +52,10 @@ export function resolveJobPath(filePath: string) {
   return path.resolve(filePath);
 }
 
+export function normalizeRepoRelativePath(relativePath: string) {
+  return relativePath.replaceAll("\\", "/");
+}
+
 export function parseJob(filePath: string): ParsedJob {
   const absolute = resolveJobPath(filePath);
   const raw = fs.readFileSync(absolute, "utf8");
@@ -61,7 +65,7 @@ export function parseJob(filePath: string): ParsedJob {
   }
   return {
     path: absolute,
-    relativePath: path.relative(repoRoot(), absolute),
+    relativePath: normalizeRepoRelativePath(path.relative(repoRoot(), absolute)),
     frontmatter: parseSimpleYaml(match[1] ?? "") as JobFrontmatter,
     body: (match[2] ?? "").trim(),
     raw,
@@ -283,7 +287,7 @@ export function renderPrompt(
   if (context.targetCheckout) {
     parts.push(
       "## Target checkout",
-      `The target repository checkout is \`${context.targetCheckout}\`. Run target-repo inspection commands from that checkout. The ClawSweeper repository is only the automation harness.`,
+      `The target repository checkout is \`${context.targetCheckout}\`. Run target-repo inspection commands from that checkout. The ClawSweeper repository is only the automation harness. This planning worker is intentionally read-only: do not edit, install, test, or validate here. Read-only checkout or cache access is not an implementation blocker. Emit planned fix actions and a fix artifact; the separate executor receives a writable checkout and owns edits, dependency setup, validation, push, and PR creation.`,
     );
   }
 
