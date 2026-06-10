@@ -111,14 +111,14 @@ for (const [limitPath, value] of Object.entries(flattenLimits(limits))) {
   expectations.push({
     file: "docs/limits.md",
     label: `${limitPath} documented current value`,
-    pattern: new RegExp(`\\| \`${escapeRegExp(limitPath)}\` \\| ${value} \\|`),
+    pattern: new RegExp(`\\| \`${escapeRegExp(limitPath)}\`\\s+\\|\\s+${value}\\s+\\|`),
   });
 }
 for (const [limitPath, value] of Object.entries(flattenLimits(config))) {
   expectations.push({
     file: "docs/limits.md",
     label: `${limitPath} documented worker config value`,
-    pattern: new RegExp(`\\| \`${escapeRegExp(limitPath)}\` \\| ${value} \\|`),
+    pattern: new RegExp(`\\| \`${escapeRegExp(limitPath)}\`\\s+\\|\\s+${value}\\s+\\|`),
   });
 }
 

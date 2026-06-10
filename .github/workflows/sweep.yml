@@ -74,7 +74,7 @@ on:
       shard_count:
         description: "Parallel shards (capped by config/automation-limits.json)"
         required: false
-        default: "39"
+        default: "7"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -159,8 +159,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     concurrency:
-      group: clawsweeper-event-review-${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}-${{ github.event.client_payload.item_number || github.run_id }}
-      cancel-in-progress: true
+      group: clawsweeper-event-review-global
+      cancel-in-progress: false
     permissions:
       actions: write
       contents: write
@@ -1016,6 +1016,7 @@ jobs:
       pull-requests: read
     strategy:
       fail-fast: false
+      max-parallel: 6
       matrix:
         include: ${{ fromJson(needs.plan.outputs.matrix) }}
     steps:

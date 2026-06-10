@@ -9,15 +9,24 @@ import {
   repairRunNameForJob,
   repairRunNamePrefixForJob,
 } from "../../dist/repair/live-worker-capacity.js";
+import { AUTOMATION_LIMITS } from "../../dist/repair/limits.js";
 
 test("live worker capacity refuses limits above the global Codex cap", () => {
-  assert.equal(MAX_LIVE_WORKERS, 57);
-  assert.equal(readMaxLiveWorkers(), 22);
+  assert.equal(MAX_LIVE_WORKERS, AUTOMATION_LIMITS.repair_live_runs.hard_cap);
+  assert.equal(readMaxLiveWorkers(), AUTOMATION_LIMITS.repair_live_runs.default);
   assert.equal(readMaxLiveWorkers({ "max-live-workers": "1" }), 1);
-  assert.equal(readMaxLiveWorkers({ "max-live-workers": "22" }), 22);
+  assert.equal(
+    readMaxLiveWorkers({
+      "max-live-workers": String(AUTOMATION_LIMITS.repair_live_runs.default),
+    }),
+    AUTOMATION_LIMITS.repair_live_runs.default,
+  );
   assert.throws(
-    () => readMaxLiveWorkers({ "max-live-workers": "58" }),
-    /max-live-workers must be <= 57/,
+    () =>
+      readMaxLiveWorkers({
+        "max-live-workers": String(AUTOMATION_LIMITS.repair_live_runs.hard_cap + 1),
+      }),
+    new RegExp(`max-live-workers must be <= ${AUTOMATION_LIMITS.repair_live_runs.hard_cap}`),
   );
 });
 

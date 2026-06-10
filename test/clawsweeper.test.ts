@@ -16835,12 +16835,9 @@ test("sweep event reviews and target fanout avoid storm amplification", () => {
   const fanoutBlock = workflow.slice(workflow.indexOf("target-fanout:"), workflow.indexOf("plan:"));
 
   assert.match(eventBlock, /concurrency:/);
-  assert.match(
-    eventBlock,
-    /clawsweeper-event-review-\$\{\{ github\.event\.client_payload\.target_repo/,
-  );
-  assert.match(eventBlock, /github\.event\.client_payload\.item_number/);
-  assert.match(eventBlock, /cancel-in-progress: true/);
+  assert.match(eventBlock, /group: clawsweeper-event-review-global/);
+  assert.match(eventBlock, /cancel-in-progress: false/);
+  assert.match(workflow, /max-parallel: 6/);
   assert.match(
     fanoutBlock,
     /FANOUT_LIMIT: \$\{\{ github\.event\.schedule == '41 \* \* \* \*' && '6' \|\| \(github\.event\.schedule == '37 \*\/6 \* \* \*' && '12' \|\| '6'\) \}\}/,
