@@ -28,11 +28,6 @@ on:
         required: false
         default: blacksmith-16vcpu-ubuntu-2404
         type: string
-      model:
-        description: "Codex model for repair worker"
-        required: false
-        default: gpt-5.5
-        type: string
       force_store:
         description: "Ignore the processed-store ledger and retry the current gitcrawl-store snapshot"
         required: false
@@ -52,7 +47,6 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
   CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
-  CLAWSWEEPER_MODEL: ${{ vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
   CLAWSWEEPER_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_GIT_USER_NAME || 'clawsweeper[bot]' }}
   CLAWSWEEPER_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_GIT_USER_EMAIL || '274271284+clawsweeper[bot]@users.noreply.github.com' }}
 
@@ -271,7 +265,6 @@ jobs:
           GH_TOKEN: ${{ steps.central-token.outputs.token }}
           RUNNER: ${{ github.event.inputs.runner || vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
           EXECUTION_RUNNER: ${{ github.event.inputs.execution_runner || vars.CLAWSWEEPER_EXECUTION_RUNNER || 'blacksmith-16vcpu-ubuntu-2404' }}
-          MODEL: ${{ github.event.inputs.model || vars.CLAWSWEEPER_MODEL || 'gpt-5.5' }}
         run: |
           set -euo pipefail
           mapfile -t jobs < .artifacts/cluster-repair-intake/generated-paths.txt
@@ -280,5 +273,4 @@ jobs:
             --wait-for-capacity \
             --runner "$RUNNER" \
             --execution-runner "$EXECUTION_RUNNER" \
-            --model "$MODEL" \
             --ref main

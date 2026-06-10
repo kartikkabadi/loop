@@ -91,3 +91,16 @@ test("merged source replacement skip runs before publishing replacement PRs", ()
     /reason: "source PR already merged and replacement branch has no changes versus base"/,
   );
 });
+
+test("Codex repair output redacts secrets without corrupting the public model alias", () => {
+  const sourcePath = path.join(process.cwd(), "src/repair/execute-fix-artifact.ts");
+  const source = fs.readFileSync(sourcePath, "utf8");
+
+  assert.match(source, /result\.stdout = sanitizeCodexOutput/);
+  assert.match(source, /result\.stderr = sanitizeCodexOutput/);
+  assert.match(source, /result\.error\.message = sanitizeCodexOutput/);
+  assert.match(source, /codexOutputLastMessagePath/);
+  assert.match(source, /sanitizeCodexOutput\(fs\.readFileSync\(source, "utf8"\)\)/);
+  assert.match(source, /return redactSecrets\(String\(value \?\? ""\)\)/);
+  assert.doesNotMatch(source, /redactSecrets\(String\(value \?\? ""\), model/);
+});

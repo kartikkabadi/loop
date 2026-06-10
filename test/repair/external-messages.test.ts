@@ -43,7 +43,8 @@ test("automergeRepairOutcomeComment explains no-op repair runs", () => {
     body,
     /(No branch push|No push|left the PR as-is|Nothing moved downstream|observational only)/i,
   );
-  assert.match(body, /model gpt-test, reasoning medium; reviewed against 0123456789ab/);
+  assert.match(body, /internal review, reasoning medium; reviewed against 0123456789ab/);
+  assert.doesNotMatch(body, /gpt-test/);
 });
 
 test("repairContributorBranchComment avoids self PR references", () => {
@@ -114,11 +115,14 @@ test("replacement PR body records replacement reason and co-author credit", () =
       author_id: 123456,
     },
     sourceClosingReferences: ["Closes #74124", "closes #74124", "Fixes openclaw/openclaw#81234"],
+    sourceIssueMarker:
+      "<!-- clawsweeper-source-issue repo=openclaw/openclaw number=74124 snapshot=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa updated=2026-06-10T00%3A00%3A00Z -->",
     provenance: { model: "gpt-test", reasoning: "medium", reviewedSha: "abcdef1234567890" },
   });
 
   assert.match(body, /Replacement reason: ClawSweeper could not update the source PR branch/);
   assert.match(body, /Repair fallback: source PR #12345 has maintainer_can_modify=false/);
+  assert.match(body, /clawsweeper-source-issue repo=openclaw\/openclaw number=74124/);
   assert.match(
     body,
     /@octocat: Co-authored-by: Mona Octocat <1\+octocat@users\.noreply\.github\.com>/,
@@ -210,6 +214,7 @@ test("external message provenance normalizes accidental xhigh reasoning", () => 
   });
 
   assert.equal(provenance.reasoning, "high");
-  assert.match(body, /model gpt-test, reasoning high/);
+  assert.match(body, /internal review, reasoning high/);
+  assert.doesNotMatch(body, /gpt-test/);
   assert.doesNotMatch(body, /reasoning xhigh/);
 });

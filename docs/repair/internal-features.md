@@ -306,6 +306,12 @@ security/protected signal, no product-decision blocker, and complete VISION.md
 evidence plus repair shape. This lane is for small VISION.md-aligned issue work;
 medium or broad aligned work stays manual.
 
+Other eligible repositories use a general viable-issue lane after review
+publish. It accepts only high-confidence, small `queue_fix_pr` issues with clear
+files and validation and no protected, security, product-decision, rejected-fit,
+or existing-PR blocker. Generated PRs are automatically opted into the bounded
+exact-head automerge loop.
+
 The intake re-fetches the live issue before writing a job. It skips protected,
 security-sensitive, locked, closed, stale, or already-PR-attached issues, and it
 also skips when the deterministic `clawsweeper/issue-<owner>-<repo>-<number>`
@@ -313,7 +319,8 @@ branch already has an open PR.
 
 Eligible jobs reuse `source: issue_implementation`,
 `trigger_source: review_reproducible_bug` or
-`trigger_source: review_vision_fit`, and the deterministic issue implementation
+`trigger_source: review_vision_fit`; general viable jobs use
+`trigger_source: review_viable_issue`. All use the deterministic issue implementation
 branch. Strict-bug worker prompts are bug-only: reproduce first, fix broken
 existing behavior only, and stop if implementation requires a feature, config
 option, product decision, or broad design change. Vision-fit worker prompts
@@ -606,7 +613,13 @@ Important gates:
 
 Important defaults:
 
-- `CLAWSWEEPER_MODEL`: default worker model, usually `gpt-5.5`.
+- `CLAWSWEEPER_MODEL`: required repository secret resolved by `setup-codex`
+  behind the localhost `internal` alias. Worker argv, environment, config, target
+  commands, workflow inputs, dispatch payloads, comments, reports, and generated
+  state never receive its value.
+- `CLAWSWEEPER_MODEL_POLICY_VERSION`: opaque repository variable rotated with
+  the model secret so old review policies invalidate without exposing model
+  identity.
 - `CLAWSWEEPER_CODEX_REASONING_EFFORT`: model reasoning effort. Repair workers
   default to `high` and normalize accidental `xhigh` overrides back to `high`
   to keep automerge repair latency predictable.

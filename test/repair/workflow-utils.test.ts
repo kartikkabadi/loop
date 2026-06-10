@@ -152,8 +152,14 @@ test("workflow utilities count repair results that require requeue", () => {
       actions: [{ action: "close_duplicate", status: "blocked", requeue_required: true }],
     }),
   );
+  write(
+    path.join(root, "runs/d/post-flight-report.json"),
+    JSON.stringify({
+      actions: [{ action: "generated_pr_review_dispatch", requeue_required: true }],
+    }),
+  );
 
-  assert.equal(countRequeueRequired(path.join(root, "runs")), 2);
+  assert.equal(countRequeueRequired(path.join(root, "runs")), 3);
 });
 
 test("workflow utilities merge checkpoint reports in numeric order", () => {

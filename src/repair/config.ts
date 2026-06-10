@@ -22,7 +22,6 @@ export type CommentRouterConfig = {
   reviewWorkflow: string;
   runner: string;
   executionRunner: string;
-  model: string;
   headPrefix: string;
   execute: boolean;
   forceReprocess: boolean;
@@ -75,7 +74,6 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     args["execution-runner"] ?? args.execution_runner ?? process.env.CLAWSWEEPER_EXECUTION_RUNNER,
     "blacksmith-16vcpu-ubuntu-2404",
   );
-  const model = stringSetting(args.model ?? process.env.CLAWSWEEPER_MODEL, "gpt-5.5");
   const headPrefix = stringSetting(
     args["head-prefix"] ?? process.env.CLAWSWEEPER_HEAD_PREFIX,
     DEFAULT_HEAD_PREFIX,
@@ -97,7 +95,6 @@ export function readCommentRouterConfig(args: LooseRecord): CommentRouterConfig 
     reviewWorkflow,
     runner,
     executionRunner,
-    model,
     headPrefix,
     execute: Boolean(args.execute),
     forceReprocess: Boolean(

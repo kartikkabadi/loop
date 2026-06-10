@@ -697,6 +697,37 @@ test("changed validation retries one transient check:changed failure", () => {
   }
 });
 
+test("target validation does not expose the internal model", () => {
+  const cwd = gitPackageFixture({
+    check: 'node -e "if (process.env.CLAWSWEEPER_MODEL) process.exit(1)"',
+  });
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  attachOrigin(cwd);
+
+  const previous = process.env.CLAWSWEEPER_MODEL;
+  process.env.CLAWSWEEPER_MODEL = "secret-model";
+  try {
+    assert.deepEqual(
+      runAllowedValidationCommands(
+        ["pnpm run check"],
+        cwd,
+        validationOptions("openclaw/fs-safe", {
+          toolchain: {
+            packageManager: "pnpm",
+            baseValidationCommands: [],
+            changedGate: null,
+          },
+        }),
+      ),
+      ["pnpm run check"],
+    );
+  } finally {
+    if (previous === undefined) delete process.env.CLAWSWEEPER_MODEL;
+    else process.env.CLAWSWEEPER_MODEL = previous;
+  }
+});
+
 test("compactText keeps both head and tail for long validation output", () => {
   assert.equal(
     compactText("head ".repeat(20) + "tail failure detail", 64).endsWith("failure detail"),

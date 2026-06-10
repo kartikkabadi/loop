@@ -19,13 +19,14 @@ import {
   repairCodexReasoningEffort,
   repairCodexServiceTier,
 } from "./process-env.js";
+import { redactSecrets } from "./collect-codex-debug.js";
 import { sanitizeResultEvidence } from "./url-safety.js";
 
 const args = parseArgs(process.argv.slice(2));
 const jobPath = args._[0];
 const mode = args.mode ?? "plan";
 const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_DRY_RUN === "1");
-const model = args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5";
+const model = args.model ?? "internal";
 const codexTimeoutMs = Number(process.env.CLAWSWEEPER_CODEX_TIMEOUT_MS ?? 30 * 60 * 1000);
 const resultRepairAttempts = Math.max(
   0,
@@ -283,9 +284,11 @@ function spawnCodexWithHeartbeat({
       settled = true;
       clearInterval(heartbeat);
       clearTimeout(timeout);
-      fs.writeFileSync(codexTranscriptPath, stdout);
-      if (stderr) fs.writeFileSync(stderrPath, stderr);
-      resolve(result);
+      const publicStdout = sanitizeCodexOutput(stdout);
+      const publicStderr = sanitizeCodexOutput(stderr);
+      fs.writeFileSync(codexTranscriptPath, publicStdout);
+      if (publicStderr) fs.writeFileSync(stderrPath, publicStderr);
+      resolve({ ...result, stdout: publicStdout, stderr: publicStderr });
     };
 
     const append = (stream: "stdout" | "stderr", chunk: JsonValue) => {
@@ -334,6 +337,10 @@ function codexConfigArgs() {
   ];
   if (codexServiceTier) configs.push(`service_tier=${JSON.stringify(codexServiceTier)}`);
   return configs.flatMap((config: JsonValue) => ["-c", config]);
+}
+
+function sanitizeCodexOutput(value: string) {
+  return redactSecrets(value);
 }
 
 async function repairResultIfNeeded() {
@@ -443,14 +450,15 @@ function runCommand(command: string, commandArgs: string[]) {
 
 function writeBlockedResult(summary: LooseRecord) {
   if (fs.existsSync(resultPath)) return;
+  const publicSummary = sanitizeCodexOutput(String(summary));
   const result = {
     status: "blocked",
     repo: job.frontmatter.repo,
     cluster_id: job.frontmatter.cluster_id,
     mode,
-    summary,
+    summary: publicSummary,
     actions: [],
-    needs_human: [summary],
+    needs_human: [publicSummary],
     canonical: null,
     canonical_issue: null,
     canonical_pr: null,

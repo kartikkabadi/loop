@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   buildSpamModelInput,
@@ -29,6 +30,14 @@ function comment(overrides: Partial<SpamScanComment> = {}): SpamScanComment {
     ...overrides,
   };
 }
+
+test("direct spam model requests require the secret-backed API model", () => {
+  const source = readFileSync("src/repair/spam-scanner.ts", "utf8");
+
+  assert.match(source, /stringSetting\(process\.env\.CLAWSWEEPER_MODEL, ""\)/);
+  assert.match(source, /apiKey && \(!model \|\| model === "internal"\)/);
+  assert.doesNotMatch(source, /args\.model/);
+});
 
 test("deterministic spam signals catch solicitation shortener comments", () => {
   const signals = deterministicSpamSignals(comment());

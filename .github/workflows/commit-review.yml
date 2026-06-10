@@ -372,10 +372,10 @@ jobs:
           build-script: build
 
       - uses: ./clawsweeper/.github/actions/setup-codex
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:
+          api-key: ${{ secrets.OPENAI_API_KEY }}
           login-status: "true"
+          model: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - name: Check out target main
         env:
@@ -414,7 +414,7 @@ jobs:
             --report-dir ../commit-artifacts \
             --artifact-mode \
             --work-dir ../commit-work \
-            --codex-model gpt-5.5 \
+            --codex-model internal \
             --codex-reasoning-effort high \
             --codex-sandbox danger-full-access \
             --codex-timeout-ms 1800000

@@ -361,11 +361,16 @@ The workflow needs:
 - optional `CLAWSWEEPER_CLUSTER_REPAIR_IMPORT_LIMIT` variable for the scheduled
   imported-cluster intake; default is `1` cluster per daily run.
 - merge is separately gated by `CLAWSWEEPER_ALLOW_MERGE`, which defaults to `0`; merge-ready PRs are labeled `clawsweeper:human-review` and `clawsweeper:merge-ready` for a maintainer to merge manually when the global gate is closed
-- optional `CLAWSWEEPER_CODEX_CLI_VERSION` variable to pin and refresh the cached Codex CLI
-- optional `CLAWSWEEPER_MODEL` override for dispatch scripts; default Codex
-  model is `gpt-5.5`; repair workers default to high reasoning on the fast
+- the setup action installs the latest Codex CLI on every run
+- required `CLAWSWEEPER_MODEL` repository secret, resolved by `setup-codex`
+  behind the localhost `internal` alias; its value must not appear in worker
+  argv, environment, config, workflow inputs, dispatch payloads, public comments,
+  reports, or generated state; repair workers default to high reasoning on the fast
   service tier, and accidental `xhigh` reasoning overrides are normalized back
   to `high`
+- `CLAWSWEEPER_MODEL_POLICY_VERSION` repository variable; rotate its opaque
+  value whenever `CLAWSWEEPER_MODEL` changes so existing reviews become stale
+  without publishing a model fingerprint
 - optional `CLAWSWEEPER_MAX_LIVE_WORKERS` variable for dispatch/requeue/self-heal worker fan-out; dispatch defaults are derived from `job_intent`, cluster-lane classification, `workers.max`, and `lanes.repair.cluster_max_live_runs`
 - optional `CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA` variable for replacement PR backpressure; default is `50` open ClawSweeper PRs per touched area, `0` disables the area cap, and common changelog/release-note files are ignored for this check
 - ClawSweeper commit-finding repair PRs are labeled `clawsweeper:commit-finding`

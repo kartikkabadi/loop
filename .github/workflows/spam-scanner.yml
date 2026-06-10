@@ -40,11 +40,6 @@ on:
         required: false
         default: ""
         type: string
-      model:
-        description: "Cheap spam scanner model"
-        required: true
-        default: gpt-4o-mini
-        type: string
   schedule:
     - cron: "17 * * * *"
 
@@ -119,6 +114,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLAWSWEEPER_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
         run: |
           set -euo pipefail
           target_repo="${{ github.event_name == 'workflow_dispatch' && inputs.target_repo || vars.CLAWSWEEPER_TARGET_REPO || 'openclaw/openclaw' }}"
@@ -127,7 +123,6 @@ jobs:
           max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_SPAM_MAX_COMMENTS || '100' }}"
           comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.comment_ids || '' }}"
           review_comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.review_comment_ids || '' }}"
-          model="${{ github.event_name == 'workflow_dispatch' && inputs.model || vars.CLAWSWEEPER_SPAM_MODEL || 'gpt-4o-mini' }}"
           force_reprocess="${{ github.event_name == 'workflow_dispatch' && inputs.force_reprocess || 'false' }}"
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
             target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
@@ -136,7 +131,6 @@ jobs:
             max_comments="${{ github.event.client_payload.max_comments || '1' }}"
             comment_ids="${{ github.event.client_payload.comment_id || '' }}"
             review_comment_ids="${{ github.event.client_payload.review_comment_id || '' }}"
-            model="${{ github.event.client_payload.model || vars.CLAWSWEEPER_SPAM_MODEL || 'gpt-4o-mini' }}"
             force_reprocess="${{ github.event.client_payload.force_reprocess || 'false' }}"
           fi
 
@@ -145,7 +139,6 @@ jobs:
             --repo "$target_repo"
             --lookback-minutes "$lookback_minutes"
             --max-comments "$max_comments"
-            --model "$model"
           )
           if [ -n "$since" ]; then
             args+=(--since "$since")

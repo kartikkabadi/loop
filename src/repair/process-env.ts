@@ -8,6 +8,7 @@ export function repairGhEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEn
 
 export function codexSubprocessEnv(): NodeJS.ProcessEnv {
   const env = { ...process.env, ...clawsweeperGitIdentityEnv() };
+  delete env.CLAWSWEEPER_MODEL;
   delete env.GH_TOKEN;
   delete env.GITHUB_TOKEN;
   for (const key of Object.keys(env)) {

@@ -263,18 +263,16 @@ export function normalizeModelResults(value: JsonValue): SpamModelResult[] {
 
 export function renderSpamAuditRecord({
   comment,
-  model,
   result,
 }: {
   comment: SpamScanComment;
-  model: string;
   result: SpamModelResult | null;
 }) {
   const deterministic = deterministicSpamSignals(comment);
   return {
     kind: "spam_scan_audit",
     generated_at: new Date().toISOString(),
-    model,
+    review_engine: "internal",
     status: "audit_only",
     action: "none",
     comment: {

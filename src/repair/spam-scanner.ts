@@ -25,7 +25,13 @@ const targetRepo = stringSetting(
   args.repo ?? process.env.CLAWSWEEPER_TARGET_REPO,
   "openclaw/openclaw",
 );
-const model = stringSetting(args.model ?? process.env.CLAWSWEEPER_SPAM_MODEL, "gpt-4o-mini");
+const apiKey = String(process.env.OPENAI_API_KEY ?? "").trim();
+const model = stringSetting(process.env.CLAWSWEEPER_MODEL, "");
+if (apiKey && (!model || model === "internal")) {
+  throw new Error(
+    "CLAWSWEEPER_MODEL must contain the secret-backed API model for direct Responses requests",
+  );
+}
 const lookbackMinutes = positiveInteger(
   args["lookback-minutes"] ?? process.env.CLAWSWEEPER_SPAM_LOOKBACK_MINUTES ?? 180,
   "lookback-minutes",
@@ -71,11 +77,17 @@ if (candidates.length > 0) {
   try {
     modelResults = await scanWithCheapModel(candidates, model);
   } catch (error) {
-    modelError = compactText(error instanceof Error ? error.message : String(error), 500);
+    modelError = redactInternalModel(
+      compactText(error instanceof Error ? error.message : String(error), 500),
+    );
     console.warn(
       `[spam-scanner] cheap model scan failed; writing deterministic audit only: ${modelError}`,
     );
   }
+}
+
+function redactInternalModel(value: string) {
+  return model ? value.replaceAll(model, "internal model") : value;
 }
 const audited = candidates.map((comment) => ({
   comment,
@@ -96,7 +108,7 @@ const report = {
   status: "audit_only",
   generated_at: new Date().toISOString(),
   repo: targetRepo,
-  model,
+  review_engine: "internal",
   since,
   max_comments: maxComments,
   scanned_comments: comments.length,
@@ -210,7 +222,6 @@ function hydrateMinimization(comments: SpamScanComment[]) {
 }
 
 async function scanWithCheapModel(comments: SpamScanComment[], scanModel: string) {
-  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     console.warn("[spam-scanner] OPENAI_API_KEY missing; writing deterministic audit only.");
     return new Map<string, SpamModelResult>();
@@ -351,7 +362,7 @@ function writeAuditRecord(
 ) {
   const file = auditRecordPath(comment);
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  const record: LooseRecord = renderSpamAuditRecord({ comment, model, result });
+  const record: LooseRecord = renderSpamAuditRecord({ comment, result });
   record.model_error = scanModelError;
   fs.writeFileSync(file, `${JSON.stringify(record, null, 2)}\n`);
 }

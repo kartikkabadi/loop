@@ -32,16 +32,19 @@ const runner = args.runner ?? defaultRunner;
 const executionRunner = args["execution-runner"] ?? args.execution_runner ?? defaultExecutionRunner;
 const workflow = args.workflow ?? REPAIR_CLUSTER_WORKFLOW;
 const repo = String(args.repo ?? currentProjectRepo());
-const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const ref = args.ref ? String(args.ref) : "";
+const restoreIssueImplementationJob = booleanArg(
+  args["restore-issue-implementation-job"] ?? args.restore_issue_implementation_job,
+  true,
+);
 const files = args._;
 const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 const jobWorkerLanes = new Map<string, WorkerLane>();
 
 if (files.length === 0) {
   console.error(
-    `usage: node scripts/dispatch-jobs.ts <job.md> [...] [--mode plan|execute|autonomous] [--runner label] [--execution-runner label] [--model model] [--max-live-workers ${AUTOMATION_LIMITS.repair_live_runs.default}] [--wait-for-capacity]`,
+    `usage: node scripts/dispatch-jobs.ts <job.md> [...] [--mode plan|execute|autonomous] [--runner label] [--execution-runner label] [--max-live-workers ${AUTOMATION_LIMITS.repair_live_runs.default}] [--wait-for-capacity]`,
   );
   process.exit(2);
 }
@@ -132,7 +135,7 @@ function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue)
       "-f",
       `execution_runner=${executionRunner}`,
       "-f",
-      `model=${model}`,
+      `restore_issue_implementation_job=${restoreIssueImplementationJob}`,
     ],
     { cwd: repoRoot(), encoding: "utf8", stdio: "pipe" },
   );
@@ -144,6 +147,13 @@ function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue)
       `dispatched ${position}/${total} ${relative} (${mode}) on ${runner}; execution on ${executionRunner}`,
     );
   }
+}
+
+function booleanArg(value: JsonValue, fallback: boolean): boolean {
+  if (value === undefined || value === null || value === "") return fallback;
+  if (value === true || value === "true" || value === "1") return true;
+  if (value === false || value === "false" || value === "0") return false;
+  throw new Error(`expected boolean value, got ${String(value)}`);
 }
 
 function shouldDispatchJob(relative: JsonValue) {

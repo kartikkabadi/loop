@@ -4,7 +4,8 @@ Read when changing ClawSweeper comment spam detection, audit records, or org
 blocking policy.
 
 The spam scanner is an audit-only intake lane. It watches new GitHub comments,
-applies cheap deterministic filters, sends likely candidates to `gpt-4o-mini`,
+applies cheap deterministic filters, sends likely candidates to the
+secret-selected internal model,
 and writes durable audit records. It does not block users, hide comments, label
 items, reply, or mutate target repositories.
 
@@ -14,7 +15,9 @@ Spam cost scales with new comments, not with the total open issue count.
 Default behavior:
 
 - target repo: `openclaw/openclaw`
-- model: `gpt-4o-mini`
+- model: secret-selected internal model
+- direct Responses API scans require `CLAWSWEEPER_MODEL`; the public `internal`
+  Codex alias is never sent to the API
 - schedule: hourly cron at minute 17
 - catch-up window: 3 hours
 - cap: 100 prioritized comments, selected from a bounded recent over-fetch
@@ -36,7 +39,6 @@ Inputs:
 - `max_comments`: cap for prioritized scanned comments
 - `comment_ids`: exact issue comment replay
 - `review_comment_ids`: exact PR review comment replay
-- `model`: cheap scanner model, default `gpt-4o-mini`
 - `force_reprocess`: ignore the processed-version ledger for replay
 
 The workflow checks out the live ClawSweeper repo plus hydrated generated state,
@@ -81,7 +83,7 @@ Outputs in `openclaw/clawsweeper-state`:
 - `results/spam-audit/<repo-slug>/<kind>-<comment-id>.json`: per-comment audit
 
 Audit records include the comment URL, author association, body hash, short body
-excerpt, deterministic signals, model, model result, and `action: none`.
+excerpt, deterministic signals, internal model result, and `action: none`.
 When a reprocessed comment no longer qualifies as a candidate, its stale
 per-comment audit file is removed from generated state.
 
@@ -103,7 +105,7 @@ Multiple non-GitHub external links and outside-author external links are
 recorded as supporting signals only. They do not make a comment a model
 candidate unless a stronger spam-shaped signal is also present.
 
-Only comments with deterministic signals are sent to `gpt-4o-mini`. The model
+Only comments with deterministic signals are sent to the secret-selected internal model. The model
 returns strict JSON:
 
 - `spam_signal`: `none`, `low`, `medium`, or `high`
@@ -172,6 +174,5 @@ gh workflow run spam-scanner.yml \
   -f target_repo=openclaw/openclaw \
   -f lookback_minutes=180 \
   -f max_comments=100 \
-  -f model=gpt-4o-mini \
   -f force_reprocess=false
 ```

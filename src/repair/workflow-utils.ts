@@ -582,7 +582,11 @@ function resultFiles(reportDir: string): string[] {
   return fs
     .readdirSync(reportDir, { recursive: true })
     .map((entry) => path.join(reportDir, String(entry)))
-    .filter((candidate) => ["apply-report.json", "result.json"].includes(path.basename(candidate)))
+    .filter((candidate) =>
+      ["apply-report.json", "post-flight-report.json", "result.json"].includes(
+        path.basename(candidate),
+      ),
+    )
     .filter((candidate) => fs.statSync(candidate).isFile());
 }
 

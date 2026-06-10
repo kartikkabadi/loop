@@ -15,10 +15,13 @@ test("collectCodexDebug copies recent Codex session logs and excludes auth files
 
   const sessionPath = path.join(codexHome, "sessions", "2026", "05", "02", "session.jsonl");
   const logPath = path.join(codexHome, "log", "codex-tui.log");
-  fs.writeFileSync(sessionPath, "prompt sk-proj-abcdefghijklmnopqrstuvwxyz\n");
+  fs.writeFileSync(
+    sessionPath,
+    'prompt sk-proj-abcdefghijklmnopqrstuvwxyz\n{"payload":{"model":"internal-test-model"}}\n',
+  );
   fs.writeFileSync(logPath, "GH_TOKEN=ghp_abcdefghijklmnopqrstuvwxyz123456\n");
   fs.writeFileSync(path.join(codexHome, "auth.json"), '{"OPENAI_API_KEY":"sk-secret"}\n');
-  fs.writeFileSync(path.join(codexHome, "config.toml"), "model = 'gpt-5.5'\n");
+  fs.writeFileSync(path.join(codexHome, "config.toml"), "model = 'internal-test-model'\n");
 
   try {
     const result = collectCodexDebug({
@@ -28,6 +31,7 @@ test("collectCodexDebug copies recent Codex session logs and excludes auth files
       maxBytes: 1024 * 1024,
       homeDir: tmp,
       codexHome,
+      redactValues: ["internal-test-model"],
     });
 
     assert.equal(result.manifest.length, 2);
@@ -41,6 +45,14 @@ test("collectCodexDebug copies recent Codex session logs and excludes auth files
     assert.match(
       fs.readFileSync(path.join(outDir, "sessions", "2026", "05", "02", "session.jsonl"), "utf8"),
       /\[REDACTED_OPENAI_KEY\]/,
+    );
+    assert.doesNotMatch(
+      fs.readFileSync(path.join(outDir, "sessions", "2026", "05", "02", "session.jsonl"), "utf8"),
+      /internal-test-model/,
+    );
+    assert.match(
+      fs.readFileSync(path.join(outDir, "sessions", "2026", "05", "02", "session.jsonl"), "utf8"),
+      /\[REDACTED_INTERNAL_MODEL\]/,
     );
     assert.match(
       fs.readFileSync(path.join(outDir, "log", "codex-tui.log"), "utf8"),

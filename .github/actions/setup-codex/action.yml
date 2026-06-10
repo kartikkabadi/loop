@@ -1,9 +1,9 @@
 name: Setup Codex CLI
 description: Cache, install, and authenticate the OpenAI Codex CLI.
 inputs:
-  version:
-    description: Codex CLI npm package version.
-    default: "0.128.0"
+  api-key:
+    description: OpenAI API key used only by the authentication step.
+    default: ""
   auth-mode:
     description: Authentication mode. Use proxy to keep OPENAI_API_KEY out of Codex subprocesses, or login for legacy codex login.
     default: "proxy"
@@ -16,6 +16,9 @@ inputs:
   login-status:
     description: Run `codex login status` after authentication.
     default: "false"
+  model:
+    description: Internal model resolved behind the local alias proxy.
+    default: ""
 runs:
   using: composite
   steps:
@@ -26,9 +29,9 @@ runs:
           ~/.npm
           ~/.cache/node/corepack
           ~/.clawsweeper-repair/codex
-        key: ${{ runner.os }}-node24-codex-${{ inputs.version }}-${{ inputs['cache-suffix'] || 'default' }}-v2
+        key: ${{ runner.os }}-node24-codex-latest-${{ inputs['cache-suffix'] || 'default' }}-v3
         restore-keys: |
-          ${{ runner.os }}-node24-codex-${{ inputs.version }}-
+          ${{ runner.os }}-node24-codex-latest-
           ${{ runner.os }}-node24-codex-
 
     - name: Install Codex CLI
@@ -40,11 +43,24 @@ runs:
         echo "$HOME/.clawsweeper-repair/codex/bin" >> "$GITHUB_PATH"
         export PATH="$HOME/.clawsweeper-repair/codex/bin:$PATH"
 
-        if ! command -v codex >/dev/null 2>&1 || ! codex --version | grep -Fq "${{ inputs.version }}"; then
-          npm install -g "@openai/codex@${{ inputs.version }}" --prefer-offline --no-audit --no-fund
+        codex_version="$(npm view @openai/codex dist-tags.latest)"
+        if [[ ! "$codex_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+          echo "Invalid latest Codex CLI version: $codex_version" >&2
+          exit 1
         fi
-        if [[ "${{ inputs['auth-mode'] }}" == "proxy" ]] && ! npm list -g --depth=0 "@openai/codex-responses-api-proxy@${{ inputs.version }}" >/dev/null 2>&1; then
-          npm install -g "@openai/codex-responses-api-proxy@${{ inputs.version }}" --prefer-offline --no-audit --no-fund
+        echo "Installing latest Codex CLI release: $codex_version"
+        # Product contract: resolve the latest official release once per run.
+        # Keep lifecycle scripts disabled because this step runs before authentication.
+        npm install -g "@openai/codex@$codex_version" --ignore-scripts --no-audit --no-fund
+        if [[ "${{ inputs['auth-mode'] }}" == "proxy" ]]; then
+          # The official proxy has an independent release cadence.
+          proxy_version="$(npm view @openai/codex-responses-api-proxy dist-tags.latest)"
+          if [[ ! "$proxy_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid latest Codex Responses proxy version: $proxy_version" >&2
+            exit 1
+          fi
+          echo "Installing latest Codex proxy release: $proxy_version"
+          npm install -g "@openai/codex-responses-api-proxy@$proxy_version" --ignore-scripts --no-audit --no-fund
         fi
         codex --version
 
@@ -55,7 +71,7 @@ runs:
         if [[ -n "${{ inputs['codex-home'] }}" ]]; then
           codex_home="${{ inputs['codex-home'] }}"
         else
-          codex_home="$HOME/.clawsweeper-repair/codex-home/${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}"
+          codex_home="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/clawsweeper-codex-home/${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}"
         fi
         mkdir -p "$codex_home"
         chmod 700 "$codex_home"
@@ -66,40 +82,69 @@ runs:
     - name: Authenticate Codex through Responses proxy
       if: ${{ inputs['auth-mode'] == 'proxy' }}
       shell: bash
+      env:
+        OPENAI_API_KEY: ${{ inputs['api-key'] }}
+        CLAWSWEEPER_INTERNAL_MODEL: ${{ inputs.model }}
       run: |
         set -euo pipefail
         export CODEX_HOME="${CODEX_HOME:?}"
         test -n "${OPENAI_API_KEY:-}"
-        server_info="$CODEX_HOME/responses-proxy.json"
-        if [[ ! -s "$server_info" ]]; then
-          (
-            printenv OPENAI_API_KEY | env -u OPENAI_API_KEY -u CODEX_API_KEY -u PROXY_API_KEY \
-              codex-responses-api-proxy --http-shutdown --server-info "$server_info"
-          ) &
-        fi
+        test -n "${CLAWSWEEPER_INTERNAL_MODEL:-}"
+        upstream_server_info="$CODEX_HOME/responses-upstream-proxy.json"
+        alias_server_info="$CODEX_HOME/responses-alias-proxy.json"
+        rm -f "$upstream_server_info" "$alias_server_info"
+        (
+          printenv OPENAI_API_KEY | env \
+            -u OPENAI_API_KEY \
+            -u CODEX_API_KEY \
+            -u PROXY_API_KEY \
+            -u CLAWSWEEPER_INTERNAL_MODEL \
+            codex-responses-api-proxy --http-shutdown --server-info "$upstream_server_info"
+        ) &
         for _ in {1..100}; do
-          [[ -s "$server_info" ]] && break
+          [[ -s "$upstream_server_info" ]] && break
           sleep 0.1
         done
-        if [[ ! -s "$server_info" ]]; then
+        if [[ ! -s "$upstream_server_info" ]]; then
           echo "codex-responses-api-proxy did not write server info" >&2
           exit 1
         fi
-        port="$(node -e 'const fs=require("fs"); const p=process.argv[1]; const data=JSON.parse(fs.readFileSync(p,"utf8")); if (!Number.isInteger(data.port)) process.exit(2); process.stdout.write(String(data.port));' "$server_info")"
+        upstream_port="$(node -e 'const fs=require("fs"); const p=process.argv[1]; const data=JSON.parse(fs.readFileSync(p,"utf8")); if (!Number.isInteger(data.port)) process.exit(2); process.stdout.write(String(data.port));' "$upstream_server_info")"
+        printf '%s' "$CLAWSWEEPER_INTERNAL_MODEL" | env \
+          -u OPENAI_API_KEY \
+          -u CODEX_API_KEY \
+          -u PROXY_API_KEY \
+          -u CLAWSWEEPER_INTERNAL_MODEL \
+          node "$GITHUB_ACTION_PATH/../../../scripts/codex-model-alias-proxy.mjs" \
+            --upstream "http://127.0.0.1:${upstream_port}" \
+            --server-info "$alias_server_info" &
+        unset CLAWSWEEPER_INTERNAL_MODEL
+        for _ in {1..100}; do
+          [[ -s "$alias_server_info" ]] && break
+          sleep 0.1
+        done
+        if [[ ! -s "$alias_server_info" ]]; then
+          echo "Codex model alias proxy did not write server info" >&2
+          exit 1
+        fi
+        alias_port="$(node -e 'const fs=require("fs"); const p=process.argv[1]; const data=JSON.parse(fs.readFileSync(p,"utf8")); if (!Number.isInteger(data.port)) process.exit(2); process.stdout.write(String(data.port));' "$alias_server_info")"
         cat > "$CODEX_HOME/config.toml" <<EOF
+        model = "internal"
         model_provider = "clawsweeper-responses-proxy"
 
         [model_providers.clawsweeper-responses-proxy]
         name = "ClawSweeper Responses Proxy"
-        base_url = "http://127.0.0.1:${port}/v1"
+        base_url = "http://127.0.0.1:${alias_port}/v1"
         wire_api = "responses"
         EOF
         chmod 600 "$CODEX_HOME/config.toml"
-        echo "Configured Codex Responses proxy on localhost."
+        echo "Configured Codex internal model alias."
 
     - name: Authenticate Codex with login
       if: ${{ inputs['auth-mode'] == 'login' }}
       shell: bash
+      env:
+        OPENAI_API_KEY: ${{ inputs['api-key'] }}
       run: |
         set -euo pipefail
         export CODEX_HOME="${CODEX_HOME:?}"

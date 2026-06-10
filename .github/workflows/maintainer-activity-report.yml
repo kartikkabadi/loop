@@ -42,7 +42,6 @@ env:
   CLOUDFLARE_ACCOUNT_ID: <cloudflare-account-id>
   REPORTS_DOMAIN: reports.openclaw.ai
   REPORTS_PROJECT: openclaw-maintainer-reports
-  CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_CODEX_CLI_VERSION || '0.128.0' }}
 
 concurrency:
   group: openclaw-maintainer-activity-report
@@ -96,10 +95,9 @@ jobs:
           persist-credentials: false
 
       - uses: ./clawsweeper/.github/actions/setup-codex
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:
-          version: ${{ env.CODEX_CLI_VERSION }}
+          api-key: ${{ secrets.OPENAI_API_KEY }}
+          model: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - name: Configure Cloudflare Access
         working-directory: maintainers

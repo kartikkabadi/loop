@@ -242,16 +242,15 @@ const postMergeCloseLines = [
 ];
 
 function fishNotes(provenance: LooseRecord) {
-  const model = provenance?.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5";
   const reasoning = repairCodexReasoningEffort(provenance?.reasoning);
   const reviewedSha = provenance?.reviewedSha ?? provenance?.reviewed_sha;
   const reviewed = reviewedSha ? `; reviewed against ${String(reviewedSha).slice(0, 12)}` : "";
-  return `fish notes: model ${model}, reasoning ${reasoning}${reviewed}.`;
+  return `fish notes: internal review, reasoning ${reasoning}${reviewed}.`;
 }
 
 export function externalMessageProvenance({ model, reasoning, reviewedSha }: LooseRecord = {}) {
+  void model;
   return {
-    model: model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5",
     reasoning: repairCodexReasoningEffort(reasoning),
     reviewedSha,
   };
@@ -427,6 +426,7 @@ export function replacementPrBody({
   contributorCredits,
   maintainerAttribution = null,
   sourceClosingReferences = [],
+  sourceIssueMarker = null,
 }: LooseRecord) {
   const lines = [
     fixArtifact.pr_body.trim(),
@@ -458,6 +458,7 @@ export function replacementPrBody({
   }
   const creditLines = contributorCreditLines(contributorCredits);
   if (creditLines.length > 0) lines.push("", ...creditLines);
+  if (sourceIssueMarker) lines.push("", String(sourceIssueMarker));
   lines.push("", fishNotes(provenance));
   return `${lines.join("\n")}\n`;
 }
@@ -549,7 +550,6 @@ export function postMergeCloseoutComment({ actionName, fixUrl, provenance }: Loo
 
 export function sampleExternalMessages() {
   const provenance = externalMessageProvenance({
-    model: "gpt-5.5",
     reasoning: "high",
     reviewedSha: "ba0f2e948fc0cafe1234567890abcdef12345678",
   });

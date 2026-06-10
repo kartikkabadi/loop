@@ -464,6 +464,7 @@ interface AgentsPolicyStatus {
 
 interface ItemContext {
   issue: unknown;
+  issueBodySha256?: string;
   comments: unknown[];
   timeline: unknown[];
   previousClawSweeperReview?: unknown;
@@ -478,6 +479,7 @@ interface ItemContext {
     comments: number;
     commentsHydrated?: number;
     commentsTruncated?: boolean;
+    commentBodiesTruncated?: boolean;
     commentsIncluded?: number;
     commentsFiltered?: number;
     timeline: number;
@@ -495,6 +497,7 @@ interface ItemContext {
     pullReviewComments?: number;
     pullReviewCommentsHydrated?: number;
     pullReviewCommentsTruncated?: boolean;
+    pullReviewCommentBodiesTruncated?: boolean;
     pullReviewCommentsIncluded?: number;
     pullReviewCommentsFiltered?: number;
   };
@@ -1021,9 +1024,11 @@ const WEEKLY_REVIEW_DAYS = 7;
 const STALE_INSUFFICIENT_INFO_MIN_AGE_DAYS = 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RECENT_MISSING_OPEN_MS = DAY_MS;
-const DEFAULT_CODEX_MODEL = "gpt-5.5";
+const DEFAULT_CODEX_MODEL = "internal";
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "";
+const INTERNAL_MODEL_POLICY_VERSION =
+  process.env.CLAWSWEEPER_MODEL_POLICY_VERSION ?? "2026-06-10-v1";
 const REVIEW_POLICY_VERSION = "2026-05-30-policy-v19";
 const REVIEW_ITEM_PROMPT_PATH = join(ROOT, "prompts", "review-item.md");
 const CLAWSWEEPER_DECISION_SCHEMA_PATH = join(ROOT, "schema", "clawsweeper-decision.schema.json");
@@ -2070,7 +2075,6 @@ function itemSnapshotHash(item: Item, context: ItemContext): string {
 }
 
 function reviewPolicyHash(options: {
-  model?: string;
   reasoningEffort?: string;
   sandboxMode?: string;
   serviceTier?: string;
@@ -2079,7 +2083,8 @@ function reviewPolicyHash(options: {
     stableJson({
       version: REVIEW_POLICY_VERSION,
       freshDays: FRESH_DAYS,
-      model: options.model ?? DEFAULT_CODEX_MODEL,
+      model: "internal",
+      modelPolicyVersion: INTERNAL_MODEL_POLICY_VERSION,
       reasoningEffort: options.reasoningEffort ?? DEFAULT_REASONING_EFFORT,
       sandboxMode: options.sandboxMode ?? "read-only",
       serviceTier: options.serviceTier ?? DEFAULT_SERVICE_TIER,
@@ -2908,6 +2913,17 @@ function compactComment(value: unknown): unknown {
     updatedAt: comment.updated_at,
     body: truncateText(comment.body, 6000),
   };
+}
+
+function commentBodiesTruncated(comments: readonly unknown[], maxLength = 6000): boolean {
+  return comments.some((value) => {
+    const body = asRecord(value).body;
+    return typeof body === "string" && body.length > maxLength;
+  });
+}
+
+export function commentBodiesTruncatedForTest(comments: readonly unknown[]): boolean {
+  return commentBodiesTruncated(comments);
 }
 
 const CLAWSWEEPER_BOT_AUTHORS = new Set(
@@ -5789,6 +5805,7 @@ function collectItemContext(
   );
   const comments = commentsWindow.items;
   const filteredComments = filterReviewContextComments(comments, item.number);
+  const commentBodiesWereTruncated = commentBodiesTruncated(filteredComments.included);
   const previousClawSweeperReview = extractLatestClawSweeperReview(comments, item.number);
   const timelineWindow = ghPagedLinkHeaderContextWindow<unknown>(
     `repos/${targetRepo()}/issues/${item.number}/timeline`,
@@ -5797,6 +5814,7 @@ function collectItemContext(
   const timeline = timelineWindow.items;
   const context: ItemContext = {
     issue: compactIssue(issue),
+    issueBodySha256: sha256(typeof issueRecord.body === "string" ? issueRecord.body : ""),
     comments: compactMappedWindow(
       filteredComments.included,
       filteredComments.included.length,
@@ -5807,7 +5825,8 @@ function collectItemContext(
     counts: {
       comments: commentsWindow.total,
       commentsHydrated: commentsWindow.hydrated,
-      commentsTruncated: commentsWindow.truncated,
+      commentsTruncated: commentsWindow.truncated || commentBodiesWereTruncated,
+      commentBodiesTruncated: commentBodiesWereTruncated,
       commentsIncluded: filteredComments.included.length,
       commentsFiltered: filteredComments.filtered,
       timeline: timelineWindow.total,
@@ -5827,7 +5846,8 @@ function collectItemContext(
         ...context.counts,
         comments: commentsWindow.total,
         commentsHydrated: commentsWindow.hydrated,
-        commentsTruncated: commentsWindow.truncated,
+        commentsTruncated: commentsWindow.truncated || commentBodiesWereTruncated,
+        commentBodiesTruncated: commentBodiesWereTruncated,
         commentsIncluded: filteredComments.included.length,
         commentsFiltered: filteredComments.filtered,
         timeline: timelineWindow.total,
@@ -5868,6 +5888,9 @@ function collectItemContext(
     );
     pullReviewComments = pullReviewCommentsWindow.items;
     filteredPullReviewComments = filterReviewContextComments(pullReviewComments, item.number);
+    const pullReviewCommentBodiesTruncated = commentBodiesTruncated(
+      filteredPullReviewComments.included,
+    );
     context.pullRequest = compactPullRequest(pullRequest);
     context.pullFiles = compactMappedWindow(pullFiles, pullFilesWindow.total, 80, compactPullFile);
     context.pullCommits = compactMappedWindow(
@@ -5886,7 +5909,8 @@ function collectItemContext(
       ...context.counts,
       comments: commentsWindow.total,
       commentsHydrated: commentsWindow.hydrated,
-      commentsTruncated: commentsWindow.truncated,
+      commentsTruncated: commentsWindow.truncated || commentBodiesWereTruncated,
+      commentBodiesTruncated: commentBodiesWereTruncated,
       commentsIncluded: filteredComments.included.length,
       commentsFiltered: filteredComments.filtered,
       timeline: timelineWindow.total,
@@ -5900,7 +5924,9 @@ function collectItemContext(
       pullCommitsTruncated: pullCommitsWindow.truncated,
       pullReviewComments: pullReviewCommentsWindow.total,
       pullReviewCommentsHydrated: pullReviewCommentsWindow.hydrated,
-      pullReviewCommentsTruncated: pullReviewCommentsWindow.truncated,
+      pullReviewCommentsTruncated:
+        pullReviewCommentsWindow.truncated || pullReviewCommentBodiesTruncated,
+      pullReviewCommentBodiesTruncated,
       pullReviewCommentsIncluded: filteredPullReviewComments.included.length,
       pullReviewCommentsFiltered: filteredPullReviewComments.filtered,
     };
@@ -6347,6 +6373,12 @@ function codexFailureReason(detail: string): string {
   return "codex execution failed";
 }
 
+function redactInternalModel(value: string, model?: string): string {
+  const selectedModel = model?.trim();
+  if (!selectedModel) return value;
+  return value.replaceAll(selectedModel, "internal model");
+}
+
 function codexFailureDecision(status: number | null, stderr: string, stdout = ""): Decision {
   const detail = stderr || "No stderr.";
   const reason = codexFailureReason(detail);
@@ -6604,7 +6636,9 @@ function runCodex(options: {
         console.error(
           `[review] ${new Date().toISOString()} codex-exit-nonzero-output-accepted #${
             options.item.number
-          } status=${result.status ?? "unknown"} stderr=${JSON.stringify(safeOutputTail(result.stderr))}`,
+          } status=${result.status ?? "unknown"} stderr=${JSON.stringify(
+            redactInternalModel(safeOutputTail(result.stderr), options.model),
+          )}`,
         );
         return decision;
       } catch (error) {
@@ -6832,12 +6866,14 @@ function runCodexAssist(options: {
     },
   );
   if (result.error || result.status !== 0 || !existsSync(outputPath)) {
-    const detail =
+    const detail = redactInternalModel(
       result.error instanceof Error
         ? result.error.message
         : `exit ${result.status ?? "unknown"}: ${
             safeOutputTail(result.stderr) || safeOutputTail(result.stdout) || "No output."
-          }`;
+          }`,
+      options.model,
+    );
     throw new Error(`Codex assist failed for #${options.item.number}: ${detail}`);
   }
   return stripTextFence(readFileSync(outputPath, "utf8"));
@@ -6909,7 +6945,7 @@ function renderAssistComment(options: {
     "",
     "---",
     `${sourceLine}`,
-    `Assist model: ${options.model}, reasoning ${options.reasoningEffort}.`,
+    `Assist reasoning: ${options.reasoningEffort}.`,
     assistCommentMarker(options.sourceCommentId),
   ].join("\n");
 }
@@ -6934,7 +6970,7 @@ function renderVisualComment(options: {
   return [
     visualCommentMarker(options.item.number, options.lens, headSha),
     `${sourceLine}`,
-    `Visual model: ${options.model}, reasoning ${options.reasoningEffort}.`,
+    `Visual reasoning: ${options.reasoningEffort}.`,
     "",
     body,
   ].join("\n");
@@ -11805,9 +11841,10 @@ function prCloseCoverageProofGateResult(options: {
         status: "blocked",
         block: {
           actionTaken: "retry_pr_close_coverage_proof",
-          reason: `PR close coverage proof failed for linked canonical PR #${linkedNumber}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
+          reason: `PR close coverage proof failed for linked canonical PR #${linkedNumber}: ${redactInternalModel(
+            error instanceof Error ? error.message : String(error),
+            options.runtime.model,
+          )}`,
         },
       };
     }
@@ -12366,12 +12403,9 @@ function runtimeReviewText(runtime?: {
   model?: string | undefined;
   reasoningEffort?: string | undefined;
 }): string {
-  const model = runtime?.model?.trim();
   const reasoningEffort = runtime?.reasoningEffort?.trim();
-  if (model && reasoningEffort) return `model ${model}, reasoning ${reasoningEffort}`;
-  if (model) return `model ${model}`;
   if (reasoningEffort) return `reasoning ${reasoningEffort}`;
-  return "";
+  return "internal model";
 }
 
 function reviewTelemetryNumber(value: number | undefined): string {
@@ -14131,6 +14165,11 @@ function markdownFor(options: {
   const repairWorkPromptSection = renderRepairWorkPromptReportSection(options.decision);
   const pullFiles = pullRequestFilePathsFromContext(options.context);
   const pullFilesTruncated = Boolean(options.context.counts?.pullFilesTruncated);
+  const reviewIssueBody = asRecord(options.context.issue).body;
+  const reviewIssueBodyTruncated =
+    typeof reviewIssueBody === "string" && /\n\n\[truncated \d+ chars\]$/.test(reviewIssueBody);
+  const reviewCommentsTruncated = options.context.counts?.commentsTruncated !== false;
+  const reviewTimelineTruncated = options.context.counts?.timelineTruncated !== false;
   const configSurfaceChange = configSurfaceChangeFromContext(options.item.repo, options.context);
   const prSurfaceFiles = prSurfaceFilesFromContext(options.context);
   return `---
@@ -14142,6 +14181,7 @@ url: ${options.item.url}
 state_at_review: open
 item_created_at: ${options.item.createdAt}
 item_updated_at: ${options.item.updatedAt}
+item_body_sha256: ${options.context.issueBodySha256 ?? "unknown"}
 author: ${options.item.author}
 author_association: ${options.item.authorAssociation}
 labels: ${JSON.stringify(options.item.labels)}
@@ -14161,7 +14201,7 @@ fixed_pr_sha: ${fixedPullRequest?.sha ?? "unknown"}
 fixed_pr_confidence: ${fixedPullRequest?.confidence ?? "unknown"}
 fixed_pr_source: ${fixedPullRequest ? JSON.stringify(fixedPullRequest.source) : "unknown"}
 review_policy: ${options.reviewPolicy}
-review_model: ${options.runtime.model}
+review_model: internal
 review_reasoning_effort: ${options.runtime.reasoningEffort}
 review_sandbox: ${options.runtime.sandboxMode ?? "unknown"}
 review_service_tier: ${options.runtime.serviceTier || "default"}
@@ -14172,6 +14212,9 @@ review_schema_chars: ${reviewTelemetryNumber(options.runtime.schemaChars)}
 review_additional_prompt_chars: ${reviewTelemetryNumber(options.runtime.additionalPromptChars)}
 review_context_elapsed_ms: ${reviewTelemetryNumber(options.runtime.contextElapsedMs)}
 review_codex_elapsed_ms: ${reviewTelemetryNumber(options.runtime.codexElapsedMs)}
+review_issue_body_truncated: ${reviewIssueBodyTruncated}
+review_comments_truncated: ${reviewCommentsTruncated}
+review_timeline_truncated: ${reviewTimelineTruncated}
 review_mode: ${options.reviewMode}
 review_status: ${options.decision.summary.startsWith("Codex review failed") ? "failed" : "complete"}
 local_checkout_access: verified
@@ -14408,11 +14451,10 @@ function planCommand(args: Args): void {
   const itemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const hasItemNumbersInput = typeof args.item_numbers === "string" && args.item_numbers.trim();
   const hotIntake = boolArg(args.hot_intake);
-  const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
   const sandboxMode = stringArg(args.codex_sandbox, "read-only");
   const serviceTier = stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER);
-  const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, sandboxMode, serviceTier });
+  const reviewPolicy = reviewPolicyHash({ reasoningEffort, sandboxMode, serviceTier });
   const planOptions: Parameters<typeof planCandidates>[0] = {
     batchSize,
     maxPages,
@@ -14470,7 +14512,7 @@ function reviewCommand(args: Args): void {
   const readonlyOpenclaw = boolArg(args.readonly_openclaw);
   ensureDir(artifactDir);
   const git = gitInfo(openclawDir);
-  const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, sandboxMode, serviceTier });
+  const reviewPolicy = reviewPolicyHash({ reasoningEffort, sandboxMode, serviceTier });
   const readonlyModeSnapshots = readonlyOpenclaw ? makeTreeReadOnly(openclawDir) : [];
   try {
     const selectionOptions: Parameters<typeof selectCandidates>[0] = {
@@ -14553,7 +14595,7 @@ function reviewCommand(args: Args): void {
         codexFailures += 1;
         decision = codexFailureDecision(
           null,
-          error instanceof Error ? error.message : String(error),
+          redactInternalModel(error instanceof Error ? error.message : String(error), model),
           "Per-item Codex failure; continuing with the rest of the shard.",
         );
       } finally {
@@ -18030,7 +18072,7 @@ function assistCommand(args: Args): void {
   if (!itemNumber) throw new Error("--item-number is required for assist");
   const question = stringArg(args.question, "").trim();
   if (!question) throw new Error("--question is required for assist");
-  const model = stringArg(args.codex_model, "gpt-5.5");
+  const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, "low");
   const sandboxMode = stringArg(args.codex_sandbox, "read-only");
   const timeoutMs = numberArg(args.codex_timeout_ms, 120_000);
@@ -18071,9 +18113,7 @@ function assistCommand(args: Args): void {
       sourceCommentId,
     });
     postOrUpdateVisualComment(item.number, lens, itemHeadSha(item, context), comment);
-    console.log(
-      JSON.stringify({ posted: true, mode, item: item.number, lens, model, reasoningEffort }),
-    );
+    console.log(JSON.stringify({ posted: true, mode, item: item.number, lens, reasoningEffort }));
     return;
   }
   const comment = renderAssistComment({
@@ -18084,7 +18124,7 @@ function assistCommand(args: Args): void {
     sourceCommentId,
   });
   postAssistComment(item.number, comment);
-  console.log(JSON.stringify({ posted: true, mode, item: item.number, model, reasoningEffort }));
+  console.log(JSON.stringify({ posted: true, mode, item: item.number, reasoningEffort }));
 }
 
 function checkCommand(): void {

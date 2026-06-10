@@ -48,7 +48,6 @@ const executionRunner = String(
     "blacksmith-16vcpu-ubuntu-2404",
 );
 const requestedMode = typeof args.mode === "string" ? args.mode : null;
-const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const maxPrs = Number(args["max-prs"] ?? args.limit ?? 5);
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
@@ -81,7 +80,6 @@ const report: LooseRecord = {
     workflow,
     runner,
     execution_runner: executionRunner,
-    model,
     max_prs: maxPrs,
     candidates: dispatchCandidates.map(summarizeDispatchCandidate),
   },
@@ -635,7 +633,6 @@ function executeDispatches(candidates: LooseRecord[], dispatchSummary: JsonValue
       workflow,
       runner,
       execution_runner: executionRunner,
-      model,
       blockers: candidate.blockers,
       dispatched_at: new Date().toISOString(),
       status: "pending",
@@ -674,8 +671,6 @@ function dispatchRepair(candidate: LooseRecord) {
     `runner=${runner}`,
     "-f",
     `execution_runner=${executionRunner}`,
-    "-f",
-    `model=${model}`,
   ]);
 }
 

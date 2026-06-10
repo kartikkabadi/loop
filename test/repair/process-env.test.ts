@@ -20,6 +20,7 @@ test("codexSubprocessEnv forces ClawSweeper git identity and strips tokens", () 
       GITHUB_ACTIONS: "true",
       OPENAI_API_KEY: "secret",
       CODEX_API_KEY: "secret",
+      CLAWSWEEPER_MODEL: "secret",
     },
     () => {
       const env = codexSubprocessEnv();
@@ -33,6 +34,7 @@ test("codexSubprocessEnv forces ClawSweeper git identity and strips tokens", () 
       assert.equal(env.CLAWSWEEPER_TARGET_GH_TOKEN, undefined);
       assert.equal(env.OPENAI_API_KEY, undefined);
       assert.equal(env.CODEX_API_KEY, undefined);
+      assert.equal(env.CLAWSWEEPER_MODEL, undefined);
     },
   );
 });

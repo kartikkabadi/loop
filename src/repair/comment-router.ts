@@ -63,6 +63,7 @@ import {
   renderAutomergeJob,
   renderIssueImplementationJob,
   renderResponse,
+  repoSlug,
   sharedAutomergeStatusMarkerPrefix,
   staleClosedItemCommandReason,
   shouldClearMaintainerCommandReaction,
@@ -95,6 +96,13 @@ import {
   ghTextWithRetry as ghText,
 } from "./github-cli.js";
 import { compactText, escapeRegExp } from "./text-utils.js";
+import {
+  generatedIssueClosingReferenceBlockReason,
+  generatedIssueSourceBlockReason,
+  parseGeneratedIssueSourceMarker,
+  pullRequestsCrossReferencedByIssueTimeline,
+  type GeneratedIssueSourceMetadata,
+} from "./issue-snapshot.js";
 
 const args = parseArgs(process.argv.slice(2));
 const config = readCommentRouterConfig(args);
@@ -106,7 +114,6 @@ const {
   reviewWorkflow,
   runner,
   executionRunner,
-  model,
   headPrefix,
   execute,
   forceReprocess,
@@ -1742,6 +1749,7 @@ function ensureAutomergeJob(command: LooseRecord) {
   const relative =
     command.target.automerge_job_path ?? automergeJobPath(command.repo, command.issue_number);
   const absolute = path.join(repoRoot(), relative);
+  const sourceMetadata = generatedIssueAutomergeSourceMetadata(command);
   let statusDetail = "existing";
   if (!fs.existsSync(absolute)) {
     fs.mkdirSync(path.dirname(absolute), { recursive: true });
@@ -1756,6 +1764,10 @@ function ensureAutomergeJob(command: LooseRecord) {
         authorId: command.author_id,
         commentUrl: command.comment_url,
         automergeInstructions: command.automerge_instructions,
+        sourceIssueRepo: sourceMetadata?.repo,
+        sourceIssueNumber: sourceMetadata?.issueNumber,
+        sourceIssueSnapshotSha256: sourceMetadata?.snapshotSha256,
+        sourceIssueUpdatedAt: sourceMetadata?.updatedAt,
       }),
     );
     statusDetail = "written";
@@ -2041,7 +2053,6 @@ function dispatchRepair(command: LooseRecord) {
       mode: command.target.mode,
       runner,
       execution_runner: executionRunner,
-      model,
       status: "already_running",
       reason: "repair worker already active for this job path",
       run_url: activeRun.url,
@@ -2064,8 +2075,6 @@ function dispatchRepair(command: LooseRecord) {
       `runner=${runner}`,
       "-f",
       `execution_runner=${executionRunner}`,
-      "-f",
-      `model=${model}`,
     ],
     { env: dispatchTokenEnv() },
   );
@@ -2082,7 +2091,6 @@ function dispatchRepair(command: LooseRecord) {
     mode: command.target.mode,
     runner,
     execution_runner: executionRunner,
-    model,
     ...(runUrl ? { run_url: runUrl } : {}),
   };
 }
@@ -2327,6 +2335,15 @@ function executeAutomerge(command: LooseRecord) {
     }
     return { action: "merge", status: "blocked", reason: block, merge_method: "squash" };
   }
+  const sourceIssueBlock = generatedIssueSourceMergeBlockReason(command, view);
+  if (sourceIssueBlock) {
+    return {
+      action: "merge",
+      status: "blocked",
+      reason: sourceIssueBlock,
+      merge_method: "squash",
+    };
+  }
   const gateBlock = automergeGateBlockReason(process.env);
   if (gateBlock) {
     ensureHumanReviewLabel(command.repo);
@@ -2407,6 +2424,171 @@ function executeAutomerge(command: LooseRecord) {
     transient_wait_ms: waitedMs,
     transient_observations: transientObservations,
   };
+}
+
+function generatedIssueSourceMergeBlockReason(command: LooseRecord, view: LooseRecord): string {
+  const markerPresent = String(view.body ?? "").includes("clawsweeper-source-issue");
+  const markerMetadata = parseGeneratedIssueSourceMarker(view.body);
+  let jobSource;
+  try {
+    const sourceJobPath = command.target?.source_issue_job_path;
+    const effectiveJobPath =
+      sourceJobPath && fs.existsSync(path.join(repoRoot(), String(sourceJobPath)))
+        ? sourceJobPath
+        : command.target?.job_path;
+    jobSource = generatedIssueSourceFromJob(effectiveJobPath);
+  } catch (error) {
+    return `source issue final validation failed: ${compactGhError(error)}`;
+  }
+  if (
+    !markerPresent &&
+    !jobSource.isGeneratedIssueJob &&
+    command.target?.generated_issue_branch !== true
+  ) {
+    return "";
+  }
+  if (markerPresent && !markerMetadata) return "generated PR source issue marker is malformed";
+  if (jobSource.reason) return jobSource.reason;
+  if (
+    markerMetadata &&
+    jobSource.metadata &&
+    !sameGeneratedIssueSource(markerMetadata, jobSource.metadata)
+  ) {
+    return "generated PR source issue metadata does not match its repair job";
+  }
+  const metadata = markerMetadata ?? jobSource.metadata;
+  if (!metadata) return "generated PR source issue metadata is unavailable";
+  if (metadata.repo !== String(command.repo ?? "").toLowerCase()) {
+    return "generated PR source issue repository does not match the target repository";
+  }
+  const closingReferenceBlock = generatedIssueClosingReferenceBlockReason({
+    body: view.body,
+    closingIssuesReferences: view.closingIssuesReferences,
+    metadata,
+  });
+  if (closingReferenceBlock) return closingReferenceBlock;
+
+  try {
+    const issue = fetchIssue(metadata.issueNumber);
+    const comments = ghPaged<LooseRecord>(
+      `repos/${targetRepo}/issues/${metadata.issueNumber}/comments?per_page=100`,
+    );
+    const competingPullRequests = openPullRequestsMentioningSourceIssue(metadata.issueNumber);
+    return generatedIssueSourceBlockReason({
+      metadata,
+      issue,
+      comments,
+      competingPullRequests,
+      currentPullNumber: Number(command.issue_number),
+    });
+  } catch (error) {
+    return `source issue final validation failed: ${compactGhError(error)}`;
+  }
+}
+
+function generatedIssueAutomergeSourceMetadata(
+  command: LooseRecord,
+): GeneratedIssueSourceMetadata | null {
+  const markerMetadata = parseGeneratedIssueSourceMarker(command.target?.body);
+  const sourceJob = generatedIssueSourceFromJob(command.target?.source_issue_job_path);
+  if (sourceJob.reason) throw new Error(sourceJob.reason);
+  if (
+    markerMetadata &&
+    sourceJob.metadata &&
+    !sameGeneratedIssueSource(markerMetadata, sourceJob.metadata)
+  ) {
+    throw new Error("generated PR source issue metadata does not match its implementation job");
+  }
+  const metadata = markerMetadata ?? sourceJob.metadata;
+  if (!metadata && command.target?.generated_issue_branch === true) {
+    throw new Error("generated PR source issue metadata is unavailable");
+  }
+  return metadata;
+}
+
+function generatedIssueSourceFromJob(jobPath: JsonValue): {
+  isGeneratedIssueJob: boolean;
+  metadata: GeneratedIssueSourceMetadata | null;
+  reason: string;
+} {
+  if (!jobPath) return { isGeneratedIssueJob: false, metadata: null, reason: "" };
+  const job = parseJob(String(jobPath));
+  const frontmatter = job.frontmatter;
+  const isGeneratedIssueJob =
+    String(frontmatter.source ?? "") === "issue_implementation" ||
+    Boolean(frontmatter.source_issue_repo || frontmatter.source_issue_number);
+  if (!isGeneratedIssueJob) return { isGeneratedIssueJob: false, metadata: null, reason: "" };
+
+  const repo = String(frontmatter.source_issue_repo ?? frontmatter.repo ?? "")
+    .trim()
+    .toLowerCase();
+  const issueNumber =
+    Number(frontmatter.source_issue_number) || sourceIssueNumberFromJob(frontmatter);
+  const snapshotSha256 = String(frontmatter.source_issue_snapshot_sha256 ?? "")
+    .trim()
+    .toLowerCase();
+  const updatedAt = String(frontmatter.source_issue_updated_at ?? "").trim();
+  if (!repo || !Number.isInteger(issueNumber) || issueNumber <= 0) {
+    return {
+      isGeneratedIssueJob: true,
+      metadata: null,
+      reason: "generated PR repair job is missing source issue identity",
+    };
+  }
+  if (!/^[a-f0-9]{64}$/.test(snapshotSha256)) {
+    return {
+      isGeneratedIssueJob: true,
+      metadata: null,
+      reason: "generated PR repair job is missing source issue review snapshot",
+    };
+  }
+  if (!Number.isFinite(Date.parse(updatedAt))) {
+    return {
+      isGeneratedIssueJob: true,
+      metadata: null,
+      reason: "generated PR repair job is missing source issue revision",
+    };
+  }
+  return {
+    isGeneratedIssueJob: true,
+    metadata: { repo, issueNumber, snapshotSha256, updatedAt },
+    reason: "",
+  };
+}
+
+function sourceIssueNumberFromJob(frontmatter: LooseRecord): number {
+  for (const ref of [
+    ...(frontmatter.canonical ?? []),
+    ...(frontmatter.candidates ?? []),
+    ...(frontmatter.cluster_refs ?? []),
+  ]) {
+    const match = String(ref).match(/#(\d+)\b/);
+    if (match) return Number(match[1]);
+  }
+  return 0;
+}
+
+function sameGeneratedIssueSource(
+  left: GeneratedIssueSourceMetadata,
+  right: GeneratedIssueSourceMetadata,
+) {
+  return (
+    left.repo === right.repo &&
+    left.issueNumber === right.issueNumber &&
+    left.snapshotSha256 === right.snapshotSha256 &&
+    left.updatedAt === right.updatedAt
+  );
+}
+
+function openPullRequestsMentioningSourceIssue(sourceNumber: number): LooseRecord[] {
+  const timeline = ghPaged<LooseRecord>(
+    `repos/${targetRepo}/issues/${sourceNumber}/timeline?per_page=100`,
+  );
+  return pullRequestsCrossReferencedByIssueTimeline(timeline, targetRepo)
+    .map((pull) => fetchIssue(pull.number))
+    .filter(
+      (pull) => Boolean(pull.pull_request) && String(pull.state ?? "").toLowerCase() === "open",
+    );
 }
 
 function latestAutomergeTarget(command: LooseRecord, view: LooseRecord) {
@@ -2598,11 +2780,17 @@ function classifyPullTarget(pull: LooseRecord, issueNumber: JsonValue): JsonValu
   const labels = (pull.labels ?? []).map((item: JsonValue) => item.name ?? item);
   const author = String(pull.author?.login ?? pull.author?.name ?? "").toLowerCase();
   const clusterId = branch.startsWith(headPrefix) ? branch.slice(headPrefix.length) : null;
+  const generatedIssueBranch = Boolean(clusterId?.startsWith(`issue-${repoSlug(targetRepo)}-`));
   const automergeCluster = automergeClusterId(targetRepo, issueNumber);
   const automergePath = automergeJobPath(targetRepo, issueNumber);
   const clawsweeperJobPath = clusterId ? existingJobPath(clusterId, targetRepo) : null;
   const adoptedJobPath = existingJobPath(automergeCluster, targetRepo);
-  const jobPath = clawsweeperJobPath ?? adoptedJobPath;
+  const generatedIssueAutomerge =
+    hasLabel({ labels }, AUTOMERGE_LABEL) &&
+    (Boolean(parseGeneratedIssueSourceMarker(pull.body)) ||
+      isGeneratedIssueImplementationJob(clawsweeperJobPath) ||
+      generatedIssueBranch);
+  const jobPath = generatedIssueAutomerge ? adoptedJobPath : (clawsweeperJobPath ?? adoptedJobPath);
   return {
     kind: "pull_request",
     title: pull.title ?? null,
@@ -2613,8 +2801,12 @@ function classifyPullTarget(pull: LooseRecord, issueNumber: JsonValue): JsonValu
     labels,
     files: pull.files ?? [],
     is_clawsweeper_pr: branch.startsWith(headPrefix),
-    cluster_id: clusterId ?? (adoptedJobPath ? automergeCluster : null),
+    generated_issue_branch: generatedIssueBranch,
+    cluster_id: generatedIssueAutomerge
+      ? automergeCluster
+      : (clusterId ?? (adoptedJobPath ? automergeCluster : null)),
     job_path: jobPath,
+    source_issue_job_path: generatedIssueAutomerge ? clawsweeperJobPath : null,
     automerge_cluster_id: automergeCluster,
     automerge_job_path: adoptedJobPath ?? automergePath,
     mode: jobPath ? dispatchMode(jobPath) : "autonomous",
@@ -2623,6 +2815,24 @@ function classifyPullTarget(pull: LooseRecord, issueNumber: JsonValue): JsonValu
     review_decision: pull.reviewDecision ?? null,
     checks: summarizeChecks(pull.statusCheckRollup ?? []),
   };
+}
+
+function isGeneratedIssueImplementationJob(jobPath: JsonValue): boolean {
+  if (!jobPath) return false;
+  try {
+    const frontmatter = parseJob(String(jobPath)).frontmatter;
+    return (
+      String(frontmatter.source ?? "") === "issue_implementation" &&
+      frontmatter.automerge_generated_pr === true &&
+      /^[a-f0-9]{64}$/.test(
+        String(frontmatter.source_issue_snapshot_sha256 ?? "")
+          .trim()
+          .toLowerCase(),
+      )
+    );
+  } catch {
+    return false;
+  }
 }
 
 function dispatchMode(jobPath: string) {

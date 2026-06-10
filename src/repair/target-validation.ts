@@ -480,11 +480,13 @@ function shouldRetryValidationCommand({ parts, error, attempts, options }: Loose
 }
 
 function targetValidationEnv() {
-  return {
+  const env: NodeJS.ProcessEnv = {
     ...process.env,
     CI: process.env.CI ?? "true",
     OPENCLAW_LOCAL_CHECK: process.env.OPENCLAW_LOCAL_CHECK ?? "0",
   };
+  delete env.CLAWSWEEPER_MODEL;
+  return env;
 }
 
 function targetValidationTimeoutMs(name: string, fallback: number, cap?: number) {

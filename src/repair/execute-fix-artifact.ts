@@ -68,6 +68,7 @@ import { canTreatRebaseAsCompleteRepair } from "./fix-edit-policy.js";
 import { applyMechanicalChangelogFix } from "./mechanical-changelog.js";
 import { tryResolveMechanicalRebaseConflicts } from "./mechanical-rebase-conflicts.js";
 import { compactText, escapeRegExp } from "./text-utils.js";
+import { redactSecrets } from "./collect-codex-debug.js";
 import {
   shouldCloseSupersededSourcePrs,
   shouldSeedReplacementBranchFromSource,
@@ -79,6 +80,7 @@ import {
   fetchSourcePullRequestHead,
   firstTargetSourcePullRequest,
 } from "./source-pr-checkout.js";
+import { renderGeneratedIssueSourceMarker } from "./issue-snapshot.js";
 import { mergeAutomergeTimelineSection } from "./automerge-status-timeline.js";
 import { sleepMs } from "./timing.js";
 import {
@@ -123,7 +125,7 @@ const jobPath = args._[0];
 const resultPathArg = args._[1];
 const latest = Boolean(args.latest);
 const dryRun = Boolean(args["dry-run"] || process.env.CLAWSWEEPER_FIX_DRY_RUN === "1");
-const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
+const model = String(args.model ?? "internal");
 const requestedCodexTimeoutMs = Number(
   process.env.CLAWSWEEPER_FIX_CODEX_TIMEOUT_MS ?? 25 * 60 * 1000,
 );
@@ -310,10 +312,27 @@ function spawnCodexSyncWithHeartbeat(
 ) {
   const heartbeat = startCodexHeartbeat(label);
   try {
-    return spawnSync("codex", args, options);
+    const result = spawnSync("codex", args, options);
+    result.stdout = sanitizeCodexOutput(result.stdout ?? "");
+    result.stderr = sanitizeCodexOutput(result.stderr ?? "");
+    if (result.error?.message) result.error.message = sanitizeCodexOutput(result.error.message);
+    const outputPath = codexOutputLastMessagePath(args);
+    if (outputPath && fs.existsSync(outputPath)) {
+      fs.writeFileSync(outputPath, sanitizeCodexOutput(fs.readFileSync(outputPath, "utf8")));
+    }
+    return result;
   } finally {
     stopCodexHeartbeat(heartbeat);
   }
+}
+
+function codexOutputLastMessagePath(args: string[]): string {
+  const index = args.indexOf("--output-last-message");
+  return index >= 0 ? String(args[index + 1] ?? "") : "";
+}
+
+function sanitizeCodexOutput(value: JsonValue): string {
+  return redactSecrets(String(value ?? ""));
 }
 
 function startCodexHeartbeat(label: string) {
@@ -381,7 +400,6 @@ logProgress("starting fix execution", {
   repo: result.repo,
   cluster_id: result.cluster_id,
   result_path: path.relative(repoRoot(), resultPath),
-  model,
   reasoning: codexReasoningEffort,
 });
 updateAutomergeProgressStatus({
@@ -1107,6 +1125,7 @@ function openReplacementPrFromPreparedRepairCheckout({
       targetDir,
       repo: result.repo,
     }),
+    sourceIssueMarker: generatedIssueSourceMarker(),
   });
   const bodyPath = path.join(workRoot, "replacement-pr-body.md");
   fs.writeFileSync(bodyPath, body);
@@ -1444,6 +1463,7 @@ function executeReplacementBranch({
       targetDir,
       repo: result.repo,
     }),
+    sourceIssueMarker: generatedIssueSourceMarker(),
   });
   if (dryRun) {
     return {
@@ -1492,8 +1512,20 @@ function executeReplacementBranch({
   pushRecoverableBranch({ targetDir, branch });
   const bodyPath = path.join(workRoot, "replacement-pr-body.md");
   fs.writeFileSync(bodyPath, body);
+  const existingPrUrl = findOpenPullRequestForBranch(branch, targetDir);
+  if (existingPrUrl && job.frontmatter.automerge_generated_pr === true) {
+    const existingPrNumber = pullRequestNumberFromUrl(existingPrUrl);
+    if (!existingPrNumber) {
+      throw new Error(`existing generated PR URL did not include a PR number: ${existingPrUrl}`);
+    }
+    run(
+      "gh",
+      ["pr", "edit", String(existingPrNumber), "--repo", result.repo, "--body-file", bodyPath],
+      { cwd: targetDir, env: ghEnv(), timeoutMs: currentNetworkCommandTimeoutMs() },
+    );
+  }
   const prUrl =
-    findOpenPullRequestForBranch(branch, targetDir) ||
+    existingPrUrl ||
     run(
       "gh",
       [
@@ -3426,6 +3458,29 @@ function issueImplementationTargetIssueNumber() {
   return clusterMatch ? Number(clusterMatch[1]) : 0;
 }
 
+function generatedIssueSourceMarker(): string {
+  if (job.frontmatter.automerge_generated_pr !== true) return "";
+  const repo = String(job.frontmatter.source_issue_repo ?? result.repo)
+    .trim()
+    .toLowerCase();
+  const issueNumber =
+    Number(job.frontmatter.source_issue_number) || issueImplementationTargetIssueNumber();
+  const snapshotSha256 = String(job.frontmatter.source_issue_snapshot_sha256 ?? "")
+    .trim()
+    .toLowerCase();
+  const updatedAt = String(job.frontmatter.source_issue_updated_at ?? "").trim();
+  if (
+    !repo ||
+    !Number.isInteger(issueNumber) ||
+    issueNumber <= 0 ||
+    !/^[a-f0-9]{64}$/.test(snapshotSha256) ||
+    !Number.isFinite(Date.parse(updatedAt))
+  ) {
+    throw new Error("generated issue PR is missing valid source issue metadata");
+  }
+  return renderGeneratedIssueSourceMarker({ repo, issueNumber, snapshotSha256, updatedAt });
+}
+
 function findIssueImplementationStatusComment(number: JsonValue) {
   const issueNumber = Number(number);
   const marker = `<!-- clawsweeper-command-status:${Number.isFinite(issueNumber) ? issueNumber : "unknown"}:implement_issue:`;
@@ -4072,7 +4127,7 @@ function copyFixDebugArtifacts(reportDir: JsonValue) {
 function copyDebugFileWithTailCap(source: string, destination: string) {
   const size = fs.statSync(source).size;
   if (size <= fixDebugMaxBytes) {
-    fs.copyFileSync(source, destination);
+    fs.writeFileSync(destination, sanitizeCodexOutput(fs.readFileSync(source, "utf8")));
     return;
   }
 
@@ -4088,7 +4143,7 @@ function copyDebugFileWithTailCap(source: string, destination: string) {
     destination,
     `[clawsweeper] debug file truncated from ${size} bytes to last ${readSize} bytes for final repair artifact; see dedicated Codex debug artifact when available.\n`,
   );
-  fs.appendFileSync(destination, buffer);
+  fs.appendFileSync(destination, sanitizeCodexOutput(buffer.toString("utf8")));
 }
 
 function ghAuthSetupGit(cwd: JsonValue) {

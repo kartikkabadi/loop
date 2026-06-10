@@ -54,7 +54,6 @@ permissions:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
-  CODEX_CLI_VERSION: ${{ vars.CLAWSWEEPER_CODEX_CLI_VERSION || '0.128.0' }}
 
 concurrency:
   group: ${{ format('clawsweeper-assist-{0}-{1}-{2}', github.event.client_payload.target_repo || inputs.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || inputs.item_number || github.run_id, github.event.client_payload.comment_id || inputs.comment_id || github.run_id) }}
@@ -127,8 +126,6 @@ jobs:
     if: ${{ needs.capacity.outputs.proceed == 'true' }}
     runs-on: ${{ vars.CLAWSWEEPER_WORKER_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
     timeout-minutes: 8
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -150,7 +147,8 @@ jobs:
 
       - uses: ./.github/actions/setup-codex
         with:
-          version: ${{ env.CODEX_CLI_VERSION }}
+          api-key: ${{ secrets.OPENAI_API_KEY }}
+          model: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - name: Answer maintainer question
         env:
@@ -163,7 +161,6 @@ jobs:
           COMMENT_ID: ${{ github.event.client_payload.comment_id || inputs.comment_id || '' }}
           COMMENT_URL: ${{ github.event.client_payload.comment_url || inputs.comment_url || '' }}
           AUTHOR: ${{ github.event.client_payload.author || inputs.author || '' }}
-          MODEL: ${{ github.event.client_payload.assist.model || github.event.client_payload.model || 'gpt-5.5' }}
           REASONING_EFFORT: ${{ github.event.client_payload.assist.reasoning_effort || github.event.client_payload.reasoning_effort || 'low' }}
           TIMEOUT_MS: ${{ github.event.client_payload.assist.timeout_ms || github.event.client_payload.timeout_ms || '120000' }}
         run: |
@@ -177,7 +174,7 @@ jobs:
             --comment-id "$COMMENT_ID" \
             --comment-url "$COMMENT_URL" \
             --author "$AUTHOR" \
-            --codex-model "$MODEL" \
+            --codex-model internal \
             --codex-reasoning-effort "$REASONING_EFFORT" \
             --codex-sandbox read-only \
             --codex-timeout-ms "$TIMEOUT_MS"

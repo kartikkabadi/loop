@@ -26,6 +26,7 @@ import {
   closeReasonApplyAgeSkipReason,
   closeReasonsArg,
   closingPullRequestReferenceTarget,
+  commentBodiesTruncatedForTest,
   compactMappedSlice,
   compactMappedWindow,
   compactPullRequestForTest,
@@ -1037,6 +1038,11 @@ test("review context ledger records ordered section budgets", () => {
   assert.match(renderReviewContextBudgetForTest(context), /- previous ClawSweeper review: 1 entry/);
 });
 
+test("individual oversized comments mark review context truncated", () => {
+  assert.equal(commentBodiesTruncatedForTest([{ body: "x".repeat(6000) }]), false);
+  assert.equal(commentBodiesTruncatedForTest([{ body: "x".repeat(6001) }]), true);
+});
+
 test("protected labels are normalized and only maintainer-only items stay plannable", () => {
   assert.deepEqual(protectedLabels(["Security", "bug", "maintainer", "SECURITY"]), [
     "security",
@@ -1201,7 +1207,7 @@ test("review actions only propose valid closes and never apply directly", () => 
     item: item(),
     decision: closeDecision(),
     git,
-    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
+    runtime: { model: "internal-test-model", reasoningEffort: "high" },
   });
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /Thanks for the context here/);
@@ -1225,7 +1231,8 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.match(action.closeComment, /@bob/);
   assert.doesNotMatch(action.closeComment, /role: recent maintainer/);
   assert.match(action.closeComment, /role: recent area contributor/);
-  assert.match(action.closeComment, /Codex review notes: model gpt-5\.5, reasoning high;/);
+  assert.match(action.closeComment, /Codex review notes: reasoning high;/);
+  assert.doesNotMatch(action.closeComment, /internal-test-model/);
 });
 
 test("review actions render deterministic close comments when model close comment is empty", () => {
@@ -1234,7 +1241,7 @@ test("review actions render deterministic close comments when model close commen
     item: item(),
     decision,
     git,
-    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
+    runtime: { model: "internal-test-model", reasoningEffort: "high" },
   });
 
   assert.equal(action.actionTaken, "proposed_close");
@@ -1262,7 +1269,7 @@ test("close comments reference high-confidence merged fixing PRs", () => {
       },
     }),
     git,
-    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
+    runtime: { model: "internal-test-model", reasoningEffort: "high" },
   });
 
   assert.equal(action.actionTaken, "proposed_close");
@@ -1313,6 +1320,43 @@ test("commit PR lookup selects the newest merged pull request", () => {
   });
 });
 
+test("public review evidence cannot fingerprint the selected internal model", () => {
+  const source = readFileSync("src/clawsweeper.ts", "utf8");
+  const policyHash = source.slice(
+    source.indexOf("function reviewPolicyHash"),
+    source.indexOf("function asRecord"),
+  );
+
+  assert.match(policyHash, /model: "internal"/);
+  assert.match(policyHash, /modelPolicyVersion: INTERNAL_MODEL_POLICY_VERSION/);
+  assert.match(source, /CLAWSWEEPER_MODEL_POLICY_VERSION/);
+  assert.doesNotMatch(policyHash, /options\.model|DEFAULT_CODEX_MODEL/);
+  assert.match(source, /redactInternalModel\(error instanceof Error \? error\.message/);
+  assert.doesNotMatch(source, /posted: true, mode, item: item\.number, model/);
+});
+
+test("Codex proxy runtime metadata is never restored from the CLI cache", () => {
+  const action = readFileSync(".github/actions/setup-codex/action.yml", "utf8");
+
+  assert.match(action, /\$\{RUNNER_TEMP:-\$\{TMPDIR:-\/tmp\}\}\/clawsweeper-codex-home/);
+  assert.match(action, /npm view @openai\/codex-responses-api-proxy dist-tags\.latest/);
+  assert.match(action, /"@openai\/codex-responses-api-proxy@\$proxy_version"/);
+  assert.match(action, /rm -f "\$upstream_server_info" "\$alias_server_info"/);
+  assert.doesNotMatch(action, /if \[\[ ! -s "\$upstream_server_info" \]\]; then\s*\(/);
+  assert.doesNotMatch(action, /if \[\[ ! -s "\$alias_server_info" \]\]; then\s*printf/);
+});
+
+test("PR close coverage proof always uses the private model alias", () => {
+  const source = readFileSync("src/repair/apply-result.ts", "utf8");
+  const start = source.indexOf("function prCloseCoverageProofModel()");
+  const end = source.indexOf("function validateMergeablePullRequest", start);
+  const modelResolver = source.slice(start, end);
+
+  assert.match(modelResolver, /return "internal"/);
+  assert.doesNotMatch(modelResolver, /PR_CLOSE_COVERAGE_PROOF_MODEL/);
+  assert.doesNotMatch(modelResolver, /pr-close-coverage-proof-model/);
+});
+
 test("report-rendered close comments keep merged fixing PR provenance", () => {
   const comment = renderReviewCommentFromReport(
     `${reportFrontMatter({
@@ -1332,7 +1376,7 @@ test("report-rendered close comments keep merged fixing PR provenance", () => {
       fixed_sha: "abcdef1234567890",
       fixed_at: "2026-04-28T12:00:00Z",
       main_sha: "abcdef1234567890",
-      review_model: "gpt-5.5",
+      review_model: "internal",
       review_reasoning_effort: "high",
     })}
 
@@ -16877,6 +16921,17 @@ test("spam scanner exact dispatches publish only per-comment audit records", () 
 test("issue implementation workflow lets job intent choose dispatch capacity", () => {
   const workflow = readFileSync(".github/workflows/repair-issue-implementation-intake.yml", "utf8");
 
+  assert.match(workflow, /name: Resolve target repository/);
+  assert.match(workflow, /owner: \$\{\{ steps\.target\.outputs\.target_owner \}\}/);
+  assert.match(workflow, /repositories: \$\{\{ steps\.target\.outputs\.target_name \}\}/);
+  assert.match(workflow, /name: Create central dispatch token/);
+  assert.match(workflow, /default: "openclaw\/clawsweeper-state"/);
+  assert.match(workflow, /REPORT_REPO: .*'openclaw\/clawsweeper-state'/);
+  assert.match(
+    workflow,
+    /CLAWSWEEPER_REPORT_GH_TOKEN: \$\{\{ steps\.state-token\.outputs\.token \}\}/,
+  );
+  assert.match(workflow, /GH_TOKEN: \$\{\{ steps\.dispatch_token\.outputs\.token \}\}/);
   assert.match(workflow, /cap_args=\(\)/);
   assert.match(workflow, /--max-live-workers "\$MAX_LIVE_WORKERS"/);
   assert.match(workflow, /"\$\{cap_args\[@\]\}"/);
@@ -17118,6 +17173,7 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN = "codex-target";
     process.env.CLAWSWEEPER_APP_ID = "123";
     process.env.CLAWSWEEPER_APP_PRIVATE_KEY = "private";
+    process.env.CLAWSWEEPER_MODEL = "secret-model";
     process.env.OPENAI_API_KEY = "openai";
     process.env.CODEX_API_KEY = "codex";
 
@@ -17129,6 +17185,7 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     assert.equal(env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN, undefined);
     assert.equal(env.CLAWSWEEPER_APP_ID, undefined);
     assert.equal(env.CLAWSWEEPER_APP_PRIVATE_KEY, undefined);
+    assert.equal(env.CLAWSWEEPER_MODEL, undefined);
     assert.equal(env.OPENAI_API_KEY, undefined);
     assert.equal(env.CODEX_API_KEY, undefined);
     assert.equal(env.GIT_OPTIONAL_LOCKS, "0");

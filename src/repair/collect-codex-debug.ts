@@ -13,6 +13,7 @@ type CollectOptions = {
   homeDir: string;
   codexHome?: string;
   repairRunsDir?: string;
+  redactValues?: string[];
 };
 
 type ManifestEntry = {
@@ -62,7 +63,7 @@ export function collectCodexDebug(options: CollectOptions) {
       const artifactPath = path.join(options.outDir, root.name, relative);
       fs.mkdirSync(path.dirname(artifactPath), { recursive: true });
       const raw = fs.readFileSync(filePath, "utf8");
-      const redacted = redactSecrets(raw);
+      const redacted = redactSecrets(raw, options.redactValues);
       fs.writeFileSync(artifactPath, redacted);
       manifest.push({
         source: path.join(root.name, relative),
@@ -94,8 +95,12 @@ export function collectCodexDebug(options: CollectOptions) {
   return { manifest, skipped, manifestPath };
 }
 
-export function redactSecrets(text: string) {
-  return text
+export function redactSecrets(text: string, redactValues: string[] = []) {
+  let redacted = text;
+  for (const value of redactValues.filter(Boolean)) {
+    redacted = redacted.replaceAll(value, "[REDACTED_INTERNAL_MODEL]");
+  }
+  return redacted
     .replace(/\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b/g, "[REDACTED_OPENAI_KEY]")
     .replace(/\bgithub_pat_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
     .replace(/\bgh[pousr]_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
@@ -178,6 +183,7 @@ if (isMain()) {
     typeof args["codex-home"] === "string" ? args["codex-home"] : process.env.CODEX_HOME;
   const repairRunsDir =
     typeof args["repair-runs-dir"] === "string" ? args["repair-runs-dir"] : undefined;
+  const internalModel = String(process.env.CLAWSWEEPER_MODEL ?? "").trim();
   const result = collectCodexDebug({
     outDir,
     label: stringArg(args.label, "codex"),
@@ -186,6 +192,7 @@ if (isMain()) {
     homeDir: os.homedir(),
     ...(codexHome ? { codexHome } : {}),
     ...(repairRunsDir ? { repairRunsDir } : {}),
+    ...(internalModel ? { redactValues: [internalModel] } : {}),
   });
   console.log(
     JSON.stringify({

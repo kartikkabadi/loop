@@ -32,7 +32,6 @@ const runner = String(args.runner ?? DEFAULT_RUNNER);
 const executionRunner = String(
   args["execution-runner"] ?? args.execution_runner ?? DEFAULT_EXECUTION_RUNNER,
 );
-const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "gpt-5.5");
 const maxJobs = Number(args["max-jobs"] ?? args.limit ?? 5);
 const maxAgeHours = Number(
   args["max-age-hours"] ??
@@ -62,7 +61,6 @@ const summary: LooseRecord = {
   workflow,
   runner,
   execution_runner: executionRunner,
-  model,
   max_jobs: maxJobs,
   max_age_hours: maxAgeHours,
   max_live_workers: maxLiveWorkers,
@@ -94,7 +92,6 @@ const attempts: LooseRecord[] = candidates.map((candidate: JsonValue) => ({
   mode: candidate.mode,
   runner,
   execution_runner: executionRunner,
-  model,
   workflow,
   repo,
   dispatched_at: new Date().toISOString(),
@@ -273,8 +270,6 @@ function dispatchCandidate(candidate: LooseRecord) {
       `runner=${runner}`,
       "-f",
       `execution_runner=${executionRunner}`,
-      "-f",
-      `model=${model}`,
     ],
     { cwd: repoRoot(), encoding: "utf8", stdio: "pipe" },
   );

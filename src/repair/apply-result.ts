@@ -1074,7 +1074,11 @@ function validatePrCloseCoverageCoveringRefSafety({
 }
 
 function prCloseCoverageProofFailureReason(error: unknown): string {
-  return `PR close coverage proof failed: ${error instanceof Error ? error.message : String(error)}`;
+  const detail = error instanceof Error ? error.message : String(error);
+  return `PR close coverage proof failed: ${detail.replaceAll(
+    prCloseCoverageProofModel(),
+    "internal model",
+  )}`;
 }
 
 function prCloseCoverageCoveringUpdatedAt(repo: string, number: JsonValue): string | null {
@@ -1350,12 +1354,7 @@ function prCloseCoverageProofRelationshipSignals({ action, actionName, coveringR
 function prCloseCoverageProofRuntime() {
   const ghToken = stringSetting(process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN, "");
   const runtime = {
-    model: stringSetting(
-      args["pr-close-coverage-proof-model"] ??
-        process.env.CLAWSWEEPER_PR_CLOSE_COVERAGE_PROOF_MODEL ??
-        process.env.CLAWSWEEPER_MODEL,
-      "gpt-5.5",
-    ),
+    model: prCloseCoverageProofModel(),
     reasoningEffort: stringSetting(
       args["pr-close-coverage-proof-reasoning-effort"] ??
         process.env.CLAWSWEEPER_PR_CLOSE_COVERAGE_PROOF_REASONING_EFFORT,
@@ -1385,6 +1384,10 @@ function prCloseCoverageProofRuntime() {
     ),
   };
   return ghToken ? { ...runtime, ghToken } : runtime;
+}
+
+function prCloseCoverageProofModel() {
+  return "internal";
 }
 
 function validateMergeablePullRequest({ pullRequest, view }: LooseRecord) {
