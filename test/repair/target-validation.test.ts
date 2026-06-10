@@ -251,6 +251,32 @@ test("validation parser accepts quoted Go test filters without a shell", () => {
   ]);
 });
 
+test("validation parser accepts Make targets without Make execution overrides", () => {
+  assert.deepEqual(parseAllowedValidationCommand("make fmt"), ["make", "fmt"]);
+  assert.deepEqual(parseAllowedValidationCommand("make fmt-check test docs-check"), [
+    "make",
+    "fmt-check",
+    "test",
+    "docs-check",
+  ]);
+  assert.throws(() => parseAllowedValidationCommand("make"), /unsupported/);
+  assert.throws(() => parseAllowedValidationCommand("make -f scripts/Makefile fmt"), /unsupported/);
+  assert.throws(
+    () => parseAllowedValidationCommand("make SHELL=./scripts/run.sh fmt"),
+    /unsupported/,
+  );
+  assert.throws(() => parseAllowedValidationCommand("make ../deploy"), /unsupported/);
+  assert.throws(() => parseAllowedValidationCommand("make deploy"), /unsupported/);
+  assert.throws(() => parseAllowedValidationCommand("make publish"), /unsupported/);
+  assert.throws(() => parseAllowedValidationCommand("make install"), /unsupported/);
+  assert.throws(() => parseAllowedValidationCommand("make clean"), /unsupported/);
+  assert.throws(() => parseAllowedValidationCommand("MAKEFLAGS=-i make test"), /unsupported/);
+  assert.throws(
+    () => parseAllowedValidationCommand("env MAKEFILES=./scripts/Makefile make test"),
+    /unsupported/,
+  );
+});
+
 test("validation parser normalizes local PowerShell scripts for direct execution", () => {
   assert.deepEqual(parseAllowedValidationCommand("./build.ps1 -Project WinUI"), [
     "pwsh",

@@ -100,6 +100,9 @@ function isAllowedValidationCommand(parts: readonly string[], executable: string
     return commandParts[1] === "diff" && commandParts.includes("--check");
   }
   if (executable === "go") return isAllowedGoTestCommand(commandParts);
+  if (executable === "make") {
+    return parts.length === commandParts.length && isAllowedMakeCommand(commandParts);
+  }
   if (executable === "dotnet") {
     return ["build", "restore", "test"].includes(commandParts[1] ?? "");
   }
@@ -206,6 +209,17 @@ function isAllowedGoTestCommand(parts: readonly string[]): boolean {
     if (!parts[index]) return false;
   }
   return true;
+}
+
+function isAllowedMakeCommand(parts: readonly string[]): boolean {
+  if (parts.length < 2) return false;
+  return parts
+    .slice(1)
+    .every((target) =>
+      /^(?:build|check|ci|docs-check|fmt|fmt-check|format|format-check|lint|test|tests|typecheck|validate|verify|vet)(?:[-_:][A-Za-z0-9_.+-]+)?$/.test(
+        target,
+      ),
+    );
 }
 
 function isGoPackagePattern(value: string): boolean {

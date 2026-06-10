@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 
 import {
@@ -6,6 +9,7 @@ import {
   hasSecuritySignalText,
   normalizeRepoRelativePath,
   parseArgs,
+  parseJob,
   parseSimpleYaml,
   renderPrompt,
   validateJob,
@@ -27,6 +31,21 @@ test("job paths use portable workflow separators", () => {
     normalizeRepoRelativePath("jobs\\openclaw\\inbox\\issue-openclaw-example-1.md"),
     "jobs/openclaw/inbox/issue-openclaw-example-1.md",
   );
+});
+
+test("parseJob accepts Windows line endings and an optional UTF-8 BOM", (t) => {
+  const directory = mkdtempSync(join(tmpdir(), "clawsweeper-job-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const filePath = join(directory, "job.md");
+  writeFileSync(
+    filePath,
+    "\uFEFF---\r\nrepo: openclaw/example\r\ncluster_id: smoke\r\nmode: autonomous\r\n---\r\nRepair smoke.\r\n",
+  );
+
+  const job = parseJob(filePath);
+
+  assert.equal(job.frontmatter.repo, "openclaw/example");
+  assert.equal(job.body, "Repair smoke.");
 });
 
 test("renderPrompt loads tracked repair prompt templates", () => {

@@ -59,7 +59,7 @@ export function normalizeRepoRelativePath(relativePath: string) {
 export function parseJob(filePath: string): ParsedJob {
   const absolute = resolveJobPath(filePath);
   const raw = fs.readFileSync(absolute, "utf8");
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  const match = raw.match(/^\uFEFF?---\r?\n([\s\S]*?)\r?\n---(?:\r?\n)?([\s\S]*)$/);
   if (!match) {
     throw new Error(`missing YAML frontmatter: ${filePath}`);
   }
