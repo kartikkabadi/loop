@@ -158,8 +158,25 @@ test("workflow utilities count repair results that require requeue", () => {
       actions: [{ action: "generated_pr_review_dispatch", requeue_required: true }],
     }),
   );
+  write(
+    path.join(root, "runs/e/worker-requeue.json"),
+    JSON.stringify({
+      requeue_required: true,
+      reason: "codex_transport_failure",
+    }),
+  );
+  write(
+    path.join(root, "runs/f/result.json"),
+    JSON.stringify({
+      status: "blocked",
+      summary: "Issue #429 discusses HTTP 429 behavior.",
+      needs_human: ["Issue #429 discusses HTTP 429 behavior."],
+      actions: [],
+      requeue_required: true,
+    }),
+  );
 
-  assert.equal(countRequeueRequired(path.join(root, "runs")), 3);
+  assert.equal(countRequeueRequired(path.join(root, "runs")), 4);
 });
 
 test("workflow utilities merge checkpoint reports in numeric order", () => {

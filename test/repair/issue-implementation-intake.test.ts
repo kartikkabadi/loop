@@ -656,6 +656,9 @@ test("missing issue implementation recovery is disabled for viable jobs only", (
     /restore_issue_implementation_job=\$\{restoreIssueImplementationJob\}/,
   );
   assert.match(requeueSource, /DEFAULT_MAX_REQUEUE_ATTEMPTS = 3/);
-  assert.match(requeueSource, /status = "retry_limit_reached"/);
+  assert.match(
+    requeueSource,
+    /status = "retry_limit_reached"[\s\S]*?repair requeue limit reached[\s\S]*?process\.exit\(1\)/,
+  );
   assert.match(requeueSource, /requeue_attempt=\$\{requeueAttempt \+ 1\}/);
 });

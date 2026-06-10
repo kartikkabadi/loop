@@ -1,6 +1,6 @@
 export function isRetryableCodexTransportError(value: unknown): boolean {
   const message = String(value ?? "");
-  return /write_stdin failed: stdin is closed|stdin is closed for this session|rate limit reached|tokens per min|\bTPM\b|requests per min|\b429\b|temporarily unavailable|overloaded|please try again in \d+(?:ms|s)/i.test(
+  return /write_stdin failed: stdin is closed|stdin is closed for this session|rate limit reached|tokens per min|\bTPM\b|requests per min|(?:status|code|http|error)\s*[:=]?\s*429\b|429\s+(?:too many requests|rate limit)|temporarily unavailable|overloaded|please try again in \d+(?:ms|s)/i.test(
     message,
   );
 }

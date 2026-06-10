@@ -16,6 +16,7 @@ test("Codex closed-stdin tool transport errors are retryable", () => {
 
 test("ordinary Codex failures are not classified as transient transport", () => {
   assert.equal(isRetryableCodexTransportError("Codex /review found an actionable bug"), false);
+  assert.equal(isRetryableCodexTransportError("Issue #429 discusses HTTP retry behavior"), false);
   assert.equal(
     isRetryableCodexTransportError("validation command failed: pnpm check:changed"),
     false,
@@ -26,6 +27,7 @@ test("Codex TPM rate-limit errors are retryable transport failures", () => {
   const message =
     "stream disconnected before completion: Rate limit reached for internal-test-model on tokens per min (TPM): Limit 40000000, Used 40000000, Requested 126092. Please try again in 189ms.";
   assert.equal(isRetryableCodexTransportError(message), true);
+  assert.equal(isRetryableCodexTransportError("HTTP 429 Too Many Requests"), true);
   assert.equal(isCodexContextLimitError(message), false);
 });
 

@@ -114,3 +114,19 @@ test("explicit fix base branch overrides repository configuration", () => {
     /process\.env\.CLAWSWEEPER_FIX_BASE_BRANCH \?\?\s+resolveTargetBaseBranch\(result\.repo, DEFAULT_BASE_BRANCH\)/,
   );
 });
+
+test("executor requeues only transport failures tagged by a Codex subprocess", () => {
+  const sourcePath = path.join(process.cwd(), "src/repair/execute-fix-artifact.ts");
+  const source = fs.readFileSync(sourcePath, "utf8");
+
+  assert.match(source, /const retryableTransport = isRetryableCodexExecutionError\(error\);/);
+  assert.match(source, /codexTransportFailure = true;/);
+  assert.doesNotMatch(
+    source,
+    /const retryableTransport = isRetryableCodexTransportError\(String\(error\?\.message/,
+  );
+  assert.match(
+    source,
+    /"retryable_transport" in writePreflight &&\s+writePreflight\.retryable_transport === true/,
+  );
+});

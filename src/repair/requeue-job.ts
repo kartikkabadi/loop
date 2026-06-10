@@ -102,7 +102,10 @@ if (!execute) {
 if (requeueAttempt >= maxRequeueAttempts) {
   summary.status = "retry_limit_reached";
   console.log(JSON.stringify(summary, null, 2));
-  process.exit(0);
+  console.error(
+    `repair requeue limit reached for ${job.relativePath}: ${requeueAttempt}/${maxRequeueAttempts}`,
+  );
+  process.exit(1);
 }
 
 const gateRestores: JsonValue[] = [];

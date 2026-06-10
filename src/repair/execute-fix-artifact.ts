@@ -584,6 +584,9 @@ if (writePreflight.status === "blocked") {
     repair_strategy: fixArtifact.repair_strategy,
     reason: writePreflight.reason,
     evidence: writePreflight.evidence,
+    ...("retryable_transport" in writePreflight && writePreflight.retryable_transport === true
+      ? { requeue_required: true }
+      : {}),
   });
   writeReport(report, resultPath);
   process.exit(0);
@@ -659,11 +662,13 @@ try {
       });
       throw error;
     }
+    const retryableTransport = isRetryableCodexExecutionError(error);
     outcome = {
       action: "execute_fix",
       status: "blocked",
       repair_strategy: fixArtifact.repair_strategy,
       reason: error.message,
+      ...(retryableTransport ? { requeue_required: true } : {}),
     };
   }
 }
@@ -683,7 +688,7 @@ updateAutomergeProgressStatus({
 function isBlockedFixError(error: JsonValue) {
   if (isRepairBranchPushRace(error)) return true;
   if (isRepairBranchPushBlocked(error)) return true;
-  if (isRetryableCodexTransportError(String(error?.message ?? error))) return true;
+  if (isRetryableCodexExecutionError(error)) return true;
   if (isCodexContextLimitError(String(error?.message ?? error))) return true;
   return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed|command timed out after \d+ms: git (?:fetch|push)|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
     String(error?.message ?? error),
@@ -2030,7 +2035,7 @@ function editValidatePrepareMerge({
           sleepMs(retryDelayMs);
           continue;
         }
-        throw new Error(codexFailureMessage("Codex fix worker failed", errorDetail));
+        throw codexExecutionFailure("Codex fix worker failed", errorDetail);
       }
       if (codexResult.status !== 0) {
         const errorDetail = codexFailureDetail(codexResult, "Codex fix worker failed");
@@ -2053,7 +2058,7 @@ function editValidatePrepareMerge({
           sleepMs(retryDelayMs);
           continue;
         }
-        throw new Error(codexFailureMessage("Codex fix worker failed", errorDetail));
+        throw codexExecutionFailure("Codex fix worker failed", errorDetail);
       }
       logProgress("Codex edit pass finished", { mode, attempt, status: codexResult.status });
       updateAutomergeProgressStatus({
@@ -2351,11 +2356,16 @@ function runCodexBaseReconcile({
       throw new Error(`Codex final rebase worker timed out after ${reconcileTimeoutMs}ms`);
     }
     if (codexResult.error) {
-      throw new Error(codexResult.error.message || String(codexResult.error));
+      const detail = codexFailureDetail(
+        codexResult,
+        codexResult.error.message || String(codexResult.error),
+      );
+      throw codexExecutionFailure("Codex final rebase worker failed", detail);
     }
     if (codexResult.status !== 0) {
-      throw new Error(
-        codexResult.stderr || codexResult.stdout || "Codex final rebase worker failed",
+      throw codexExecutionFailure(
+        "Codex final rebase worker failed",
+        codexFailureDetail(codexResult, "Codex final rebase worker failed"),
       );
     }
     try {
@@ -2434,7 +2444,10 @@ function runCodexWritePreflight() {
     );
   }
   if (child.status !== 0) {
-    return blockedCodexWritePreflight("Codex write preflight failed", child.stderr || child.stdout);
+    const detail = codexFailureDetail(child, "Codex write preflight failed");
+    return blockedCodexWritePreflight("Codex write preflight failed", detail, {
+      retryableTransport: isRetryableCodexTransportError(detail),
+    });
   }
   const written = readTextIfExists(expectedPath).trim();
   if (written !== "ok") {
@@ -2451,7 +2464,11 @@ function runCodexWritePreflight() {
   };
 }
 
-function blockedCodexWritePreflight(reason: string, detail: string) {
+function blockedCodexWritePreflight(
+  reason: string,
+  detail: string,
+  { retryableTransport = false }: { retryableTransport?: boolean } = {},
+) {
   const failureClass = classifyCodexFailure(detail);
   return {
     status: "blocked",
@@ -2460,6 +2477,7 @@ function blockedCodexWritePreflight(reason: string, detail: string) {
     sandbox: codexWriteSandbox,
     timeout_ms: codexPreflightTimeoutMs,
     evidence: [`Codex write preflight failed before target repo mutation; class=${failureClass}`],
+    ...(retryableTransport ? { retryable_transport: true } : {}),
   };
 }
 
@@ -2516,8 +2534,8 @@ function stripAnsi(value: string) {
 
 function codexRetryDelayMs(message: string, attempt: number) {
   const parsed = parseCodexRetryAfterMs(message);
-  const fallback = Number(process.env.CLAWSWEEPER_CODEX_RETRY_DELAY_MS ?? 15_000);
-  const base = Number.isFinite(fallback) && fallback > 0 ? fallback : 15_000;
+  const fallback = Number(process.env.CLAWSWEEPER_CODEX_RETRY_DELAY_MS ?? 30_000);
+  const base = Number.isFinite(fallback) && fallback > 0 ? fallback : 30_000;
   return Math.min(120_000, Math.max(parsed ?? 0, base * attempt));
 }
 
@@ -2721,8 +2739,11 @@ function isFixableValidationError(error: JsonValue) {
 }
 
 function isRetryableCodexReviewError(error: JsonValue) {
-  return /structured output was not written|invalid structured output/i.test(
-    String(error?.message ?? error),
+  return (
+    isRetryableCodexExecutionError(error) ||
+    /structured output was not written|invalid structured output/i.test(
+      String(error?.message ?? error),
+    )
   );
 }
 
@@ -2815,8 +2836,18 @@ function runCodexReview({
     );
   if ((child.error as JsonValue)?.code === "ETIMEDOUT")
     throw new Error(`Codex /review timed out after ${reviewTimeoutMs}ms`);
-  if (child.error) throw new Error(child.error.message || String(child.error));
-  if (child.status !== 0) throw new Error(child.stderr || child.stdout || "Codex /review failed");
+  if (child.error) {
+    throw codexExecutionFailure(
+      "Codex /review failed",
+      codexFailureDetail(child, child.error.message || String(child.error)),
+    );
+  }
+  if (child.status !== 0) {
+    throw codexExecutionFailure(
+      "Codex /review failed",
+      codexFailureDetail(child, "Codex /review failed"),
+    );
+  }
   if (!fs.existsSync(outputPath)) {
     const fallbackReview = extractCodexReviewFromJsonl(child.stdout);
     if (fallbackReview) {
@@ -2937,9 +2968,18 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
     );
   if ((child.error as JsonValue)?.code === "ETIMEDOUT")
     throw new Error(`Codex review-fix worker timed out after ${reviewFixTimeoutMs}ms`);
-  if (child.error) throw new Error(child.error.message || String(child.error));
-  if (child.status !== 0)
-    throw new Error(child.stderr || child.stdout || "Codex review-fix worker failed");
+  if (child.error) {
+    throw codexExecutionFailure(
+      "Codex review-fix worker failed",
+      codexFailureDetail(child, child.error.message || String(child.error)),
+    );
+  }
+  if (child.status !== 0) {
+    throw codexExecutionFailure(
+      "Codex review-fix worker failed",
+      codexFailureDetail(child, "Codex review-fix worker failed"),
+    );
+  }
 }
 
 function runCodexValidationFix({
@@ -3025,9 +3065,30 @@ function runCodexValidationFix({
     );
   if ((child.error as JsonValue)?.code === "ETIMEDOUT")
     throw new Error(`Codex validation-fix worker timed out after ${validationFixTimeoutMs}ms`);
-  if (child.error) throw new Error(child.error.message || String(child.error));
-  if (child.status !== 0)
-    throw new Error(child.stderr || child.stdout || "Codex validation-fix worker failed");
+  if (child.error) {
+    throw codexExecutionFailure(
+      "Codex validation-fix worker failed",
+      codexFailureDetail(child, child.error.message || String(child.error)),
+    );
+  }
+  if (child.status !== 0) {
+    throw codexExecutionFailure(
+      "Codex validation-fix worker failed",
+      codexFailureDetail(child, "Codex validation-fix worker failed"),
+    );
+  }
+}
+
+function codexExecutionFailure(label: string, detail: string): Error {
+  const error = new Error(codexFailureMessage(label, detail));
+  if (isRetryableCodexTransportError(detail)) {
+    (error as LooseRecord).codexTransportFailure = true;
+  }
+  return error;
+}
+
+function isRetryableCodexExecutionError(error: JsonValue): boolean {
+  return (error as LooseRecord | undefined)?.codexTransportFailure === true;
 }
 
 function isCleanCodexReview(review: LooseRecord) {

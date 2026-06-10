@@ -20,6 +20,8 @@ import {
   repairCodexServiceTier,
 } from "./process-env.js";
 import { redactSecrets } from "./collect-codex-debug.js";
+import { isRetryableCodexTransportError } from "./codex-transient.js";
+import { sleepMs } from "./timing.js";
 import { sanitizeResultEvidence } from "./url-safety.js";
 
 const args = parseArgs(process.argv.slice(2));
@@ -43,6 +45,27 @@ const codexHeartbeatMs = Math.max(
   10_000,
   Number(process.env.CLAWSWEEPER_CODEX_HEARTBEAT_MS ?? 60_000),
 );
+const codexTransportAttempts = Math.max(
+  1,
+  Number(process.env.CLAWSWEEPER_CODEX_TRANSPORT_ATTEMPTS ?? 4),
+);
+const codexRetryBaseDelayMs = Math.max(
+  1,
+  Number(process.env.CLAWSWEEPER_CODEX_RETRY_DELAY_MS ?? 30_000),
+);
+const codexRetryJitterMs = Math.max(
+  0,
+  Number(process.env.CLAWSWEEPER_CODEX_RETRY_JITTER_MS ?? 10_000),
+);
+const codexTotalTimeoutMs = Math.max(
+  1,
+  Number(process.env.CLAWSWEEPER_CODEX_TOTAL_TIMEOUT_MS ?? 75 * 60 * 1000),
+);
+const codexDeadlineReserveMs = Math.max(
+  0,
+  Number(process.env.CLAWSWEEPER_CODEX_DEADLINE_RESERVE_MS ?? 5 * 60 * 1000),
+);
+const codexDeadlineAt = Date.now() + codexTotalTimeoutMs;
 
 if (!jobPath) {
   console.error(
@@ -76,6 +99,7 @@ if ((mode === "execute" || mode === "autonomous") && !dryRun) {
 const runDir = makeRunDir(job, mode);
 const promptPath = path.join(runDir, "prompt.md");
 const resultPath = path.join(runDir, "result.json");
+const requeueMarkerPath = path.join(runDir, "worker-requeue.json");
 const transcriptPath = path.join(runDir, "codex.jsonl");
 const promptContext: Record<string, string> = {};
 const targetCheckout = dryRun ? "" : prepareTargetCheckout(job);
@@ -154,7 +178,7 @@ if (dryRun) {
   process.exit(0);
 }
 
-const child = await runCodex({
+const child = await runCodexWithRetry({
   input: prompt,
   outputPath: resultPath,
   transcriptPath,
@@ -169,15 +193,19 @@ if ((child.error as JsonValue)?.code === "ETIMEDOUT") {
 }
 
 if (child.error) {
-  const detail = child.error.message || String(child.error);
-  writeBlockedResult(`Codex worker failed: ${detail}`);
+  const detail = codexChildFailureDetail(child);
+  writeBlockedResult(compactCodexFailure(detail), {
+    requeueRequired: isRetryableCodexTransportError(codexTransportFailureDetail(child)),
+  });
   console.error(detail);
   process.exit(0);
 }
 
 if (child.status !== 0) {
-  const detail = child.stderr || child.stdout || `Codex worker exited ${child.status}`;
-  writeBlockedResult(detail.trim());
+  const detail = codexChildFailureDetail(child);
+  writeBlockedResult(compactCodexFailure(detail), {
+    requeueRequired: isRetryableCodexTransportError(codexTransportFailureDetail(child)),
+  });
   console.error(detail);
   process.exit(0);
 }
@@ -235,6 +263,133 @@ function runCodex({
     stderrPath,
     timeoutMs: Number(timeoutMs),
   });
+}
+
+async function runCodexWithRetry(options: LooseRecord): Promise<LooseRecord> {
+  let child: LooseRecord = {};
+  const outputPath = String(options.outputPath);
+  for (let attempt = 1; attempt <= codexTransportAttempts; attempt += 1) {
+    const requestedTimeoutMs = Math.max(1, Number(options.timeoutMs));
+    const remainingTimeoutMs = codexDeadlineAt - Date.now() - codexDeadlineReserveMs;
+    if (remainingTimeoutMs < requestedTimeoutMs) {
+      return Object.keys(child).length > 0 ? child : codexBudgetExhaustedChild();
+    }
+    // Every attempt uses an isolated result; only a successful attempt becomes canonical.
+    const attemptOutputPath = suffixedAttemptPath(outputPath, attempt);
+    fs.rmSync(attemptOutputPath, { force: true });
+    child = await runCodex({
+      ...options,
+      outputPath: attemptOutputPath,
+      transcriptPath: attemptPath(String(options.transcriptPath), attempt),
+      stderrPath: attemptPath(String(options.stderrPath), attempt),
+    });
+    const transportDetail = codexTransportFailureDetail(child);
+    if (child.status === 0 && !child.error) {
+      if (fs.existsSync(attemptOutputPath)) {
+        fs.copyFileSync(attemptOutputPath, outputPath);
+      }
+      return child;
+    }
+    if (
+      (child.error as JsonValue)?.code === "ETIMEDOUT" ||
+      !isRetryableCodexTransportError(transportDetail) ||
+      attempt === codexTransportAttempts
+    ) {
+      return child;
+    }
+
+    const delayMs = codexRetryDelayMs(transportDetail, attempt);
+    console.warn(
+      `Codex transport failure on attempt ${attempt}/${codexTransportAttempts}; retrying in ${delayMs}ms`,
+    );
+    sleepMs(delayMs);
+  }
+  return child;
+}
+
+function codexBudgetExhaustedChild(): LooseRecord {
+  return {
+    status: 1,
+    stderr:
+      "Codex transport retry budget exhausted before the workflow deadline; service temporarily unavailable.",
+  };
+}
+
+function attemptPath(filePath: string, attempt: number): string {
+  if (attempt === 1) return filePath;
+  return suffixedAttemptPath(filePath, attempt);
+}
+
+function suffixedAttemptPath(filePath: string, attempt: number): string {
+  const extension = path.extname(filePath);
+  if (!extension) return `${filePath}-attempt-${attempt}`;
+  return `${filePath.slice(0, -extension.length)}-attempt-${attempt}${extension}`;
+}
+
+function codexChildFailureDetail(child: LooseRecord): string {
+  return [
+    (child.error as LooseRecord | undefined)?.message,
+    child.stderr,
+    child.stdout,
+    child.status === null || child.status === undefined ? "" : `exit code ${child.status}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function codexTransportFailureDetail(child: LooseRecord): string {
+  return [
+    (child.error as LooseRecord | undefined)?.message,
+    child.stderr,
+    extractCodexJsonlFailure(child.stdout),
+    extractCodexJsonlFailure(child.stderr),
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function extractCodexJsonlFailure(value: JsonValue): string | null {
+  const messages: string[] = [];
+  for (const line of String(value ?? "").split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    let event: LooseRecord;
+    try {
+      event = JSON.parse(line);
+    } catch {
+      continue;
+    }
+    if (event.type === "error" && typeof event.message === "string") {
+      messages.push(event.message);
+    }
+    if (
+      event.type === "turn.failed" &&
+      typeof (event.error as LooseRecord | undefined)?.message === "string"
+    ) {
+      messages.push(String((event.error as LooseRecord).message));
+    }
+  }
+  return messages.length > 0 ? (messages.at(-1) ?? null) : null;
+}
+
+function codexRetryDelayMs(detail: string, attempt: number): number {
+  const retryAfterMatch = detail.match(
+    /(?:retry|try again)(?: after| in)?\s*(\d+(?:\.\d+)?)\s*(ms|milliseconds?|s|seconds?)/i,
+  );
+  const parsedRetryMs = retryAfterMatch
+    ? Number(retryAfterMatch[1]) * (retryAfterMatch[2]?.toLowerCase().startsWith("m") ? 1 : 1_000)
+    : 0;
+  const jitterMs = codexRetryJitterMs > 0 ? Math.floor(Math.random() * codexRetryJitterMs) : 0;
+  return Math.min(120_000, Math.max(parsedRetryMs, codexRetryBaseDelayMs * attempt + jitterMs));
+}
+
+function compactCodexFailure(detail: string): string {
+  const publicDetail = sanitizeCodexOutput(detail);
+  const maxLength = 4_000;
+  const tail =
+    publicDetail.length > maxLength
+      ? publicDetail.slice(publicDetail.length - maxLength)
+      : publicDetail;
+  return `Codex worker failed:\n${tail}`;
 }
 
 function spawnCodexWithHeartbeat({
@@ -378,7 +533,7 @@ async function repairResultIfNeeded() {
       "```",
     ].join("\n");
 
-    const repair = await runCodex({
+    const repair = await runCodexWithRetry({
       input: repairPrompt,
       outputPath: resultPath,
       transcriptPath: path.join(runDir, `codex-repair-${attempt}.jsonl`),
@@ -390,9 +545,12 @@ async function repairResultIfNeeded() {
       return;
     }
     if (repair.status !== 0) {
-      console.error(
-        repair.stderr || repair.stdout || `Codex result repair exited ${repair.status}`,
-      );
+      const detail = codexChildFailureDetail(repair);
+      console.error(detail || `Codex result repair exited ${repair.status}`);
+      if (isRetryableCodexTransportError(codexTransportFailureDetail(repair))) {
+        fs.rmSync(resultPath, { force: true });
+        writeBlockedResult(compactCodexFailure(detail), { requeueRequired: true });
+      }
       return;
     }
     sanitizeResultFile(resultPath);
@@ -448,7 +606,10 @@ function runCommand(command: string, commandArgs: string[]) {
   }
 }
 
-function writeBlockedResult(summary: LooseRecord) {
+function writeBlockedResult(
+  summary: LooseRecord,
+  { requeueRequired = false }: { requeueRequired?: boolean } = {},
+) {
   if (fs.existsSync(resultPath)) return;
   const publicSummary = sanitizeCodexOutput(String(summary));
   const result = {
@@ -458,14 +619,21 @@ function writeBlockedResult(summary: LooseRecord) {
     mode,
     summary: publicSummary,
     actions: [],
-    needs_human: [publicSummary],
+    needs_human: requeueRequired ? [] : [publicSummary],
     canonical: null,
     canonical_issue: null,
     canonical_pr: null,
+    merge_preflight: [],
     fix_artifact: null,
   };
   sanitizeResultEvidence(result);
   fs.writeFileSync(resultPath, `${JSON.stringify(result, null, 2)}\n`);
+  if (requeueRequired) {
+    fs.writeFileSync(
+      requeueMarkerPath,
+      `${JSON.stringify({ requeue_required: true, reason: "codex_transport_failure" }, null, 2)}\n`,
+    );
+  }
 }
 
 function sanitizeResultFile(filePath: string) {

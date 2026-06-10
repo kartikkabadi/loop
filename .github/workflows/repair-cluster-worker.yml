@@ -56,7 +56,7 @@ env:
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
 
 concurrency:
-  group: clawsweeper-repair-${{ inputs.job }}-${{ inputs.mode }}
+  group: clawsweeper-repair-${{ inputs.job }}-${{ inputs.mode }}-${{ inputs.requeue_attempt }}
   cancel-in-progress: false
 
 jobs:
@@ -70,6 +70,7 @@ jobs:
       allow_merge: ${{ steps.capture_gates.outputs.allow_merge }}
       execution_runner: ${{ steps.resolve_execution_runner.outputs.execution_runner }}
       job_exists: ${{ steps.check_job.outputs.job_exists }}
+      worker_requeue_count: ${{ steps.worker_requeue.outputs.count }}
     env:
       CLAWSWEEPER_ALLOWED_OWNER: ${{ vars.CLAWSWEEPER_ALLOWED_OWNER || 'openclaw' }}
       CLAWSWEEPER_ALLOW_EXECUTE: ${{ (inputs.mode == 'execute' || inputs.mode == 'autonomous') && vars.CLAWSWEEPER_ALLOW_EXECUTE == '1' && '1' || '0' }}
@@ -195,6 +196,7 @@ jobs:
         run: pnpm run repair:conflict-self-heal -- --verify-job-head "${{ inputs.job }}"
 
       - name: Run worker
+        id: run_worker
         if: ${{ steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' }}
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -205,6 +207,7 @@ jobs:
             echo "CLAWSWEEPER_ALLOW_EXECUTE is not explicitly 1; rendering plan-only output for requested $worker_mode run"
             worker_mode="plan"
           fi
+          echo "mode=$worker_mode" >> "$GITHUB_OUTPUT"
           args=("${{ inputs.job }}" --mode "$worker_mode")
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             args+=(--dry-run)
@@ -217,6 +220,44 @@ jobs:
           if find .clawsweeper-repair/runs -name result.json -print -quit | grep -q .; then
             pnpm run repair:review-results -- .clawsweeper-repair/runs
           fi
+
+      - name: Detect worker requeue requests
+        id: worker_requeue
+        if: ${{ always() && !inputs.dry_run && steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' }}
+        run: |
+          set -euo pipefail
+          count="$(pnpm run --silent workflow -- count-requeue-required --dir .clawsweeper-repair/runs)"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Create central worker requeue token
+        id: worker-requeue-token
+        if: ${{ always() && steps.worker_requeue.outputs.count != '' && steps.worker_requeue.outputs.count != '0' }}
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: openclaw
+          repositories: clawsweeper
+          permission-actions: write
+          permission-contents: write
+
+      - name: Requeue transient worker failures
+        if: ${{ always() && steps.worker_requeue.outputs.count != '' && steps.worker_requeue.outputs.count != '0' }}
+        env:
+          GH_TOKEN: ${{ steps.worker-requeue-token.outputs.token }}
+          CLAWSWEEPER_MUTATION_TOKEN_SOURCE: clawsweeper-app
+        run: |
+          set -euo pipefail
+          echo "Requeueing ${{ steps.worker_requeue.outputs.count }} transient worker failure(s)."
+          pnpm run repair:requeue -- "${{ inputs.job }}" \
+            --mode "${{ steps.run_worker.outputs.mode || inputs.mode }}" \
+            --execute \
+            --open-execute-window \
+            --wait-for-capacity \
+            --restore-issue-implementation-job "${{ inputs.restore_issue_implementation_job }}" \
+            --requeue-attempt "${{ inputs.requeue_attempt }}" \
+            --runner "${{ inputs.runner }}" \
+            --execution-runner "${{ steps.resolve_execution_runner.outputs.execution_runner || inputs.execution_runner }}"
 
       - name: Collect Codex debug logs
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}
@@ -261,7 +302,7 @@ jobs:
   execute:
     name: Execute and apply cluster actions
     needs: cluster
-    if: ${{ needs.cluster.result == 'success' && needs.cluster.outputs.job_exists == '1' && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
+    if: ${{ needs.cluster.result == 'success' && needs.cluster.outputs.job_exists == '1' && needs.cluster.outputs.worker_requeue_count == '0' && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
     runs-on: ${{ needs.cluster.outputs.execution_runner || inputs.execution_runner }}
     timeout-minutes: 45
     env:

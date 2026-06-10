@@ -16990,6 +16990,16 @@ test("repair workflows preserve existing dispatch while scheduled cluster intake
   ].join("\n");
 
   assert.doesNotMatch(existingRepairWorkflows, /CLAWSWEEPER_FEATURE_REPAIR_ENABLED/);
+  assert.match(cluster, /name: Detect worker requeue requests/);
+  assert.match(cluster, /name: Create central worker requeue token/);
+  assert.match(cluster, /name: Requeue transient worker failures/);
+  assert.match(cluster, /worker_requeue_count: \$\{\{ steps\.worker_requeue\.outputs\.count \}\}/);
+  assert.match(cluster, /needs\.cluster\.outputs\.worker_requeue_count == '0'/);
+  assert.match(cluster, /--mode "\$\{\{ steps\.run_worker\.outputs\.mode \|\| inputs\.mode \}\}"/);
+  assert.match(
+    cluster,
+    /group: clawsweeper-repair-\$\{\{ inputs\.job \}\}-\$\{\{ inputs\.mode \}\}-\$\{\{ inputs\.requeue_attempt \}\}/,
+  );
   assert.match(sweep, /pnpm run repair:comment-router -- \\\n[\s\S]*--execute/);
   assert.match(router, /\{ \[ "\$\{\{ github\.event_name \}\}" = "repository_dispatch" \]; \}/);
   assert.match(issueImplementation, /ENABLED: \$\{\{ github\.event\.inputs\.enabled/);
