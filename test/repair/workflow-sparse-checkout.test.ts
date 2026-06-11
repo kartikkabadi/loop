@@ -8,6 +8,7 @@ const REPAIR_PROOF_RUNTIME_PATHS = [
   "schema/clawsweeper-pr-close-coverage-proof.schema.json",
   "src/clawsweeper-text.ts",
   "src/codex-env.ts",
+  "src/codex-transient.ts",
   "src/pr-close-coverage-proof.ts",
 ] as const;
 

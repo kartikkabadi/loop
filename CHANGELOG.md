@@ -63,6 +63,7 @@ checkpoint, and status-only commits are intentionally omitted.
 ### Fixed
 
 - Retried transient Codex review failures in fresh bounded sessions and redacted the internal model identifier from review failures and debug artifacts.
+- Kept sparse repair workflows building after the shared Codex transient helper moved outside the repair subtree.
 - Kept ordinary auth-provider and token terminology from being misclassified as a security-sensitive issue implementation blocker.
 - Fixed issue implementation duplicate-PR searches to use GitHub's GET endpoint, restoring automatic and explicit issue-build intake.
 - Allowed viable issue implementation intake to treat merged or closed pull requests as historical context while retaining live blockers for open matching and generated pull requests.
