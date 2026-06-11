@@ -19,6 +19,7 @@ import {
   type TargetRepoToolchain,
 } from "./target-toolchain-config.js";
 import { compactText } from "./text-utils.js";
+import { sleepMs } from "./timing.js";
 import {
   isExpensivePnpmValidation,
   isTestFile,
@@ -274,7 +275,7 @@ export function prepareTrustedTargetDependencies(
         sandboxHome,
         timeoutMs: installTimeoutMs,
       });
-      runTargetSandboxCommand(["go", "mod", "download", "all"], {
+      prepareGoModules({
         cwd,
         env: validationEnv,
         sandboxHome,
@@ -476,6 +477,45 @@ export function prepareBranchTargetDependencies(
   if (prepareError) {
     throw new Error(`validation_dependency_prepare_failed: ${prepareError.message}`);
   }
+}
+
+function prepareGoModules({
+  cwd,
+  env,
+  sandboxHome,
+  timeoutMs,
+}: {
+  cwd: string;
+  env: NodeJS.ProcessEnv;
+  sandboxHome: string | null;
+  timeoutMs: number;
+}) {
+  const attempts = 3;
+  const configuredDelayMs = Number.parseInt(
+    process.env.CLAWSWEEPER_GO_DEPENDENCY_RETRY_DELAY_MS ?? "1000",
+    10,
+  );
+  const baseDelayMs = Number.isFinite(configuredDelayMs) ? Math.max(0, configuredDelayMs) : 1000;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      runTargetSandboxCommand(["go", "mod", "download", "all"], {
+        cwd,
+        env,
+        sandboxHome,
+        timeoutMs,
+      });
+      return;
+    } catch (error) {
+      if (attempt === attempts || !isTransientGoDependencyError(error)) throw error;
+      sleepMs(baseDelayMs * 2 ** (attempt - 1));
+    }
+  }
+}
+
+function isTransientGoDependencyError(error: unknown) {
+  return /\b(?:429|500|502|503|504|ECONNRESET|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN)\b|connection reset|connection refused|unexpected EOF|i\/o timeout|network is unreachable|proxyconnect tcp|TLS handshake timeout|stream error|temporar(?:y|ily)|timeout/i.test(
+    String(error instanceof Error ? error.message : error),
+  );
 }
 
 function preparePnpmToolchain({

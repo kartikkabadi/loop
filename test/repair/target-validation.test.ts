@@ -4019,6 +4019,70 @@ test("trusted base preparation keeps the Go module cache outside the checkout", 
   assert.equal(fs.existsSync(path.join(cwd, ".clawsweeper-validation-cache")), false);
 });
 
+test("trusted base preparation retries transient Go module download failures", () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-go-retry-"));
+  git(cwd, "init", "-b", "main");
+  git(cwd, "config", "user.email", "clawsweeper@example.invalid");
+  git(cwd, "config", "user.name", "ClawSweeper Test");
+  fs.writeFileSync(path.join(cwd, "go.mod"), "module example.invalid/project\n\ngo 1.24\n");
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  attachOrigin(cwd);
+  const { binDir, logPath } = fakeGoFixture(cwd, {
+    downloadFailures: 2,
+    failureMessage: "read: connection reset by peer",
+  });
+
+  withTemporaryEnv({ CLAWSWEEPER_GO_DEPENDENCY_RETRY_DELAY_MS: "0" }, () =>
+    withPathPrefix(binDir, () => {
+      prepareTrustedTargetDependencies(
+        cwd,
+        validationOptions("openclaw/gogcli", { installTargetDeps: true }),
+        "main",
+      );
+    }),
+  );
+
+  assert.deepEqual(fs.readFileSync(logPath, "utf8").trim().split(/\r?\n/), [
+    "version",
+    "mod download all",
+    "mod download all",
+    "mod download all",
+  ]);
+});
+
+test("trusted base preparation does not retry deterministic Go module failures", () => {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-go-fail-fast-"));
+  git(cwd, "init", "-b", "main");
+  git(cwd, "config", "user.email", "clawsweeper@example.invalid");
+  git(cwd, "config", "user.name", "ClawSweeper Test");
+  fs.writeFileSync(path.join(cwd, "go.mod"), "module example.invalid/project\n\ngo 1.24\n");
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  attachOrigin(cwd);
+  const { binDir, logPath } = fakeGoFixture(cwd, {
+    downloadFailures: 3,
+    failureMessage: "verifying module: checksum mismatch",
+  });
+
+  withPathPrefix(binDir, () => {
+    assert.throws(
+      () =>
+        prepareTrustedTargetDependencies(
+          cwd,
+          validationOptions("openclaw/gogcli", { installTargetDeps: true }),
+          "main",
+        ),
+      /validation_dependency_prepare_failed.*checksum mismatch/,
+    );
+  });
+
+  assert.deepEqual(fs.readFileSync(logPath, "utf8").trim().split(/\r?\n/), [
+    "version",
+    "mod download all",
+  ]);
+});
+
 test("repair branch preparation rejects changed Go dependency manifests before network access", () => {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-validation-go-branch-"));
   git(cwd, "init", "-b", "main");
@@ -4731,15 +4795,27 @@ process.exit(1);
   return { binDir, logPath };
 }
 
-function fakeGoFixture(cwd) {
+function fakeGoFixture(cwd, { downloadFailures = 0, failureMessage = "" } = {}) {
   const binDir = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-fake-go-bin-"));
   const logPath = path.join(cwd, ".git", "fake-go.log");
+  const attemptsPath = path.join(cwd, ".git", "fake-go-attempts");
   const executablePath = path.join(binDir, "go");
   fs.writeFileSync(
     executablePath,
     `#!/usr/bin/env node
 const fs = require("node:fs");
-fs.appendFileSync(${JSON.stringify(logPath)}, process.argv.slice(2).join(" ") + "\\n");
+const args = process.argv.slice(2);
+fs.appendFileSync(${JSON.stringify(logPath)}, args.join(" ") + "\\n");
+if (args.join(" ") === "mod download all") {
+  const attempts = fs.existsSync(${JSON.stringify(attemptsPath)})
+    ? Number(fs.readFileSync(${JSON.stringify(attemptsPath)}, "utf8"))
+    : 0;
+  fs.writeFileSync(${JSON.stringify(attemptsPath)}, String(attempts + 1));
+  if (attempts < ${JSON.stringify(downloadFailures)}) {
+    console.error(${JSON.stringify(failureMessage)});
+    process.exit(1);
+  }
+}
 `,
   );
   fs.chmodSync(executablePath, 0o755);
