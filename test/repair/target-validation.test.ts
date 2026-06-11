@@ -3721,6 +3721,37 @@ test("target validation uses an isolated loopback-only Codex sandbox", () => {
 });
 
 test(
+  "target validation grants npm-installed Codex package files sandbox read access",
+  { skip: process.platform === "win32" },
+  () => {
+    const cwd = gitPackageFixture({ check: 'node -e ""' });
+    git(cwd, "add", ".");
+    git(cwd, "commit", "-m", "initial");
+    attachOrigin(cwd);
+    markPackageDependenciesPrepared(cwd);
+    const { binDir, logPath, packageRoot } = packagedCodexSandboxFixture(cwd);
+
+    withPathPrefix(binDir, () => {
+      assert.deepEqual(
+        runAllowedValidationCommands(
+          ["pnpm run check"],
+          cwd,
+          validationOptions("openclaw/fs-safe", {
+            allowExpensiveValidation: true,
+            sandboxTargetCommands: true,
+          }),
+        ),
+        ["pnpm run check"],
+      );
+    });
+
+    const invocation = JSON.parse(fs.readFileSync(logPath, "utf8"));
+    const realPackageRoot = fs.realpathSync(packageRoot).split(path.sep).join("/");
+    assert.ok(invocation.config.includes(`${JSON.stringify(`${realPackageRoot}/**`)} = "read"`));
+  },
+);
+
+test(
   "target validation does not resolve Codex from the writable validation cache",
   { skip: process.platform === "win32" },
   () => {
@@ -4603,6 +4634,41 @@ process.exit(child.status ?? 1);
   );
   fs.chmodSync(executablePath, 0o755);
   return { binDir, logPath };
+}
+
+function packagedCodexSandboxFixture(cwd) {
+  const installRoot = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-packaged-codex-"));
+  const binDir = path.join(installRoot, "bin");
+  const packageRoot = path.join(installRoot, "lib", "node_modules", "@openai", "codex");
+  const packageBinDir = path.join(packageRoot, "bin");
+  const logPath = path.join(cwd, ".git", "packaged-codex-sandbox.json");
+  const executablePath = path.join(packageBinDir, "codex.js");
+  fs.mkdirSync(binDir, { recursive: true });
+  fs.mkdirSync(packageBinDir, { recursive: true });
+  fs.writeFileSync(
+    executablePath,
+    `#!/usr/bin/env node
+const fs = require("node:fs");
+const { spawnSync } = require("node:child_process");
+const args = process.argv.slice(2);
+const separator = args.indexOf("--");
+fs.writeFileSync(${JSON.stringify(logPath)}, JSON.stringify({
+  args,
+  config: fs.readFileSync(process.env.CODEX_HOME + "/config.toml", "utf8"),
+}));
+const child = spawnSync(args[separator + 1], args.slice(separator + 2), {
+  cwd: ${JSON.stringify(cwd)},
+  env: process.env,
+  encoding: "utf8",
+});
+process.stdout.write(child.stdout || "");
+process.stderr.write(child.stderr || "");
+process.exit(child.status ?? 1);
+`,
+  );
+  fs.chmodSync(executablePath, 0o755);
+  fs.symlinkSync(path.relative(binDir, executablePath), path.join(binDir, "codex"));
+  return { binDir, logPath, packageRoot };
 }
 
 function failingCodexSandboxFixture(cwd) {

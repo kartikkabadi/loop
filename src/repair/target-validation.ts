@@ -4224,6 +4224,7 @@ function resolvedTargetToolRoots() {
     "powershell",
     "make",
     "git",
+    "codex",
   ].flatMap((command) => {
     const executable = findPathExecutable(command);
     if (!executable) return [];
