@@ -37,6 +37,7 @@ export function deterministicAutomergeResult({
   ].join(" ");
   const likelyFiles = likelyRepairFiles(files, Boolean(changelogReason));
   const failedChecks = failingCheckEvidence(canonical);
+  const reviewFindings = reviewFindingEvidence(canonical);
   const evidence = sanitizeEvidenceList(
     [
       `Source PR: ${prUrl}`,
@@ -57,6 +58,7 @@ export function deterministicAutomergeResult({
     summary,
     affected_surfaces: affectedSurfaces(files),
     likely_files: likelyFiles,
+    review_findings: reviewFindings,
     linked_refs: [ref],
     validation_commands: deterministicAutomergeValidationCommands(repo),
     changelog_required: false,
@@ -161,6 +163,20 @@ function failingCheckEvidence(item: LooseRecord): string[] {
     })
     .filter(Boolean)
     .slice(0, 12);
+}
+
+function reviewFindingEvidence(item: LooseRecord): string[] {
+  return uniqueStrings([
+    ...(item.bot_comments ?? []).map(
+      (comment: JsonValue) => comment?.body_excerpt ?? comment?.body,
+    ),
+    ...(item.maintainer_comments ?? []).map(
+      (comment: JsonValue) => comment?.body_excerpt ?? comment?.body,
+    ),
+    ...(item.pull_request?.review_bot_comments ?? []).map(
+      (comment: JsonValue) => comment?.body_excerpt ?? comment?.body,
+    ),
+  ]).slice(0, 24);
 }
 
 function safeCheckHostHint(rawLink: string): string {

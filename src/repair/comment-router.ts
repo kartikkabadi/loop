@@ -63,6 +63,7 @@ import {
   renderAutomergeJob,
   renderIssueImplementationJob,
   renderResponse,
+  selectPullRepairJob,
   sharedAutomergeStatusMarkerPrefix,
   staleClosedItemCommandReason,
   shouldClearMaintainerCommandReaction,
@@ -576,7 +577,7 @@ function classifyCommand(command: LooseRecord): JsonValue {
       !activationRepairReason &&
       existingModeStatusBlocksReplay({
         hasModeLabel: hasLabel(target, modeLabel),
-        hasJobPath: Boolean(target.job_path),
+        hasJobPath: Boolean(target.has_automerge_job),
         hasPauseLabels: pauseLabels.length > 0,
         hasOppositeModeLabel: hasLabel(target, oppositeModeLabel),
         hasExistingModeStatusResponse: hasExistingModeStatusResponse(
@@ -610,7 +611,7 @@ function classifyCommand(command: LooseRecord): JsonValue {
       };
     }
     const actions: LooseRecord[] = [];
-    if (!target.job_path) {
+    if (!target.has_automerge_job) {
       actions.push({
         action: "ensure_automerge_job",
         job_path: target.automerge_job_path,
@@ -651,8 +652,8 @@ function classifyCommand(command: LooseRecord): JsonValue {
                 {
                   action: "dispatch_repair",
                   workflow,
-                  job_path: target.job_path ?? target.automerge_job_path,
-                  mode: target.mode ?? "autonomous",
+                  job_path: target.automerge_job_path,
+                  mode: target.has_automerge_job ? target.mode : "autonomous",
                   status: execute ? "pending" : "planned",
                 },
               ]
@@ -745,8 +746,8 @@ function classifyCommand(command: LooseRecord): JsonValue {
     if (alreadyPlanned) return { ...next, status: "skipped", reason: alreadyPlanned };
   }
   const actions: LooseRecord[] = [];
-  const repairJobPath = target.job_path ?? target.automerge_job_path;
-  if (!target.job_path) {
+  const repairJobPath = target.automerge_job_path;
+  if (!target.has_automerge_job) {
     actions.push({
       action: "ensure_automerge_job",
       job_path: repairJobPath,
@@ -772,7 +773,7 @@ function classifyCommand(command: LooseRecord): JsonValue {
         action: "dispatch_repair",
         workflow,
         job_path: repairJobPath,
-        mode: target.mode,
+        mode: target.has_automerge_job ? target.mode : "autonomous",
         status: execute ? "pending" : "planned",
       },
       { action: "comment", status: execute ? "pending" : "planned" },
@@ -893,14 +894,14 @@ function classifyPassedAutomergeRepair(
 ): JsonValue {
   const alreadyPlanned = autoRepairAlreadyPlanned(command);
   if (alreadyPlanned) return { ...command, status: "skipped", reason: alreadyPlanned };
-  const repairJobPath = command.target?.job_path ?? command.target?.automerge_job_path;
+  const repairJobPath = command.target?.automerge_job_path;
   return {
     ...command,
     repair_reason: repairReason,
     status: "ready",
     actions: [
       ...pauseLabelActions,
-      ...(command.target?.job_path
+      ...(command.target?.has_automerge_job
         ? []
         : [
             {
@@ -913,7 +914,7 @@ function classifyPassedAutomergeRepair(
         action: "dispatch_repair",
         workflow,
         job_path: repairJobPath,
-        mode: command.target?.mode,
+        mode: command.target?.has_automerge_job ? command.target?.mode : "autonomous",
         status: execute ? "pending" : "planned",
       },
       { action: "comment", status: execute ? "pending" : "planned" },
@@ -1754,7 +1755,7 @@ function acknowledgeSkippedMaintainerCommand(command: LooseRecord) {
 }
 
 function ensureAutomergeJob(command: LooseRecord) {
-  if (command.target?.job_path) {
+  if (command.target?.has_automerge_job && command.target?.job_path) {
     return {
       job_path: command.target.job_path,
       mode: command.target.mode ?? dispatchMode(command.target.job_path),
@@ -1794,6 +1795,7 @@ function ensureAutomergeJob(command: LooseRecord) {
     ...command.target,
     cluster_id: job.frontmatter.cluster_id,
     job_path: job.relativePath,
+    has_automerge_job: true,
     mode: dispatchMode(job.relativePath),
   };
   return {
@@ -2450,7 +2452,7 @@ function executeAutomerge(command: LooseRecord) {
 }
 
 function generatedIssueSourceMergeBlockReason(command: LooseRecord, view: LooseRecord) {
-  const jobPath = String(command.target?.job_path ?? "").trim();
+  const jobPath = String(command.target?.source_job_path ?? command.target?.job_path ?? "").trim();
   if (!jobPath) return "";
 
   let frontmatter: LooseRecord;
@@ -2740,7 +2742,11 @@ function classifyPullTarget(pull: LooseRecord, issueNumber: JsonValue): JsonValu
   const automergePath = automergeJobPath(targetRepo, issueNumber);
   const clawsweeperJobPath = clusterId ? existingJobPath(clusterId, targetRepo) : null;
   const adoptedJobPath = existingJobPath(automergeCluster, targetRepo);
-  const jobPath = clawsweeperJobPath ?? adoptedJobPath;
+  const repairJob = selectPullRepairJob({
+    sourceJobPath: clawsweeperJobPath,
+    adoptedJobPath,
+    automergePath,
+  });
   return {
     kind: "pull_request",
     title: pull.title ?? null,
@@ -2751,11 +2757,13 @@ function classifyPullTarget(pull: LooseRecord, issueNumber: JsonValue): JsonValu
     labels,
     files: pull.files ?? [],
     is_clawsweeper_pr: branch.startsWith(headPrefix),
-    cluster_id: clusterId ?? (adoptedJobPath ? automergeCluster : null),
-    job_path: jobPath,
+    cluster_id: adoptedJobPath ? automergeCluster : clusterId,
+    job_path: repairJob.jobPath,
+    source_job_path: repairJob.sourceJobPath,
+    has_automerge_job: repairJob.hasAutomergeJob,
     automerge_cluster_id: automergeCluster,
-    automerge_job_path: adoptedJobPath ?? automergePath,
-    mode: jobPath ? dispatchMode(jobPath) : "autonomous",
+    automerge_job_path: repairJob.automergeJobPath,
+    mode: repairJob.jobPath ? dispatchMode(repairJob.jobPath) : "autonomous",
     mergeable: pull.mergeable ?? null,
     merge_state_status: pull.mergeStateStatus ?? null,
     review_decision: pull.reviewDecision ?? null,

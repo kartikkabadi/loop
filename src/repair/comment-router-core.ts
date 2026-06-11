@@ -120,6 +120,19 @@ export function automergeJobPath(repo: string, issueNumber: JsonValue) {
   return `jobs/${owner}/inbox/${automergeClusterId(repo, issueNumber)}.md`;
 }
 
+export function selectPullRepairJob({
+  sourceJobPath = null,
+  adoptedJobPath = null,
+  automergePath = null,
+}: LooseRecord) {
+  return {
+    jobPath: adoptedJobPath ?? sourceJobPath,
+    sourceJobPath,
+    automergeJobPath: adoptedJobPath ?? automergePath,
+    hasAutomergeJob: Boolean(adoptedJobPath),
+  };
+}
+
 export function issueImplementationClusterId(repo: string, issueNumber: JsonValue) {
   return `issue-${repoSlug(repo)}-${Number(issueNumber)}`;
 }

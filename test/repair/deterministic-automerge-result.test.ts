@@ -30,6 +30,13 @@ function clusterPlan(overrides = {}) {
         updated_at: "2026-05-11T00:00:00Z",
         security_sensitive: false,
         security_repair_allowed: false,
+        bot_comments: [
+          {
+            author: "openclaw-clawsweeper[bot]",
+            body_excerpt:
+              "Codex review: needs changes before merge. [P1] Detect conflict and upsert data-model changes.",
+          },
+        ],
         pull_request: {
           branch_writable: true,
           files_truncated: 0,
@@ -49,6 +56,12 @@ function clusterPlan(overrides = {}) {
           files: [
             { filename: "extensions/memory-core/src/tools.ts" },
             { filename: "extensions/memory-core/src/tools.test.ts" },
+          ],
+          review_bot_comments: [
+            {
+              author: "coderabbitai[bot]",
+              body_excerpt: "[P1] Reject pending compatibility proof before pass.",
+            },
           ],
         },
         ...overrides,
@@ -77,6 +90,10 @@ test("deterministic automerge result emits generic direct-Codex repair artifact"
   assert.equal(result?.fix_artifact.changelog_required, false);
   assert.deepEqual(result?.fix_artifact.source_prs, [
     "https://github.com/openclaw/openclaw/pull/71898",
+  ]);
+  assert.deepEqual(result?.fix_artifact.review_findings, [
+    "Codex review: needs changes before merge. [P1] Detect conflict and upsert data-model changes.",
+    "[P1] Reject pending compatibility proof before pass.",
   ]);
   assert.match(result?.actions[0].evidence.join("\n"), /Failing check: checks-node-core-fast/);
   assert.match(

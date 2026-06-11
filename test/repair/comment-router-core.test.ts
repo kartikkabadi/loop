@@ -55,6 +55,7 @@ import {
   renderAutomergeJob,
   renderIssueImplementationJob,
   renderResponse,
+  selectPullRepairJob,
   sharedAutomergeStatusMarkerPrefix,
   staleAutomergeActivationReason,
   staleClosedItemCommandReason,
@@ -709,6 +710,35 @@ test("issue implementation job helpers create stable issue PR job identity", () 
   assert.equal(
     issueImplementationJobPath("openclaw/openclaw", 74112),
     "jobs/openclaw/inbox/issue-openclaw-openclaw-74112.md",
+  );
+});
+
+test("generated PR repairs adopt a PR-specific job without losing the source job", () => {
+  assert.deepEqual(
+    selectPullRepairJob({
+      sourceJobPath: "jobs/openclaw/inbox/issue-openclaw-clawsweeper-225.md",
+      automergePath: "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-279.md",
+    }),
+    {
+      jobPath: "jobs/openclaw/inbox/issue-openclaw-clawsweeper-225.md",
+      sourceJobPath: "jobs/openclaw/inbox/issue-openclaw-clawsweeper-225.md",
+      automergeJobPath: "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-279.md",
+      hasAutomergeJob: false,
+    },
+  );
+
+  assert.deepEqual(
+    selectPullRepairJob({
+      sourceJobPath: "jobs/openclaw/inbox/issue-openclaw-clawsweeper-225.md",
+      adoptedJobPath: "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-279.md",
+      automergePath: "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-279.md",
+    }),
+    {
+      jobPath: "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-279.md",
+      sourceJobPath: "jobs/openclaw/inbox/issue-openclaw-clawsweeper-225.md",
+      automergeJobPath: "jobs/openclaw/inbox/automerge-openclaw-clawsweeper-279.md",
+      hasAutomergeJob: true,
+    },
   );
 });
 
