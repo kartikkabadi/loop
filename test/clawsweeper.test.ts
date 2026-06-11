@@ -17071,6 +17071,7 @@ test("setup-state defaults to an auth-safe shallow checkout", () => {
   assert.match(fetchDepthBlock, /default: "1"/);
   assert.doesNotMatch(fetchDepthBlock, /default: "0"/);
   assert.match(action, /fetch-depth: \$\{\{ inputs\.fetch-depth \}\}/);
+  assert.match(action, /sparse-checkout: \$\{\{ inputs\.sparse-checkout \}\}/);
   assert.doesNotMatch(action, /state-repository:/);
   assert.doesNotMatch(action, /state-ref:/);
   assert.match(action, /repository: openclaw\/clawsweeper-state/);
@@ -17163,6 +17164,22 @@ test("issue implementation workflow lets job intent choose dispatch capacity", (
   assert.match(workflow, /id: dispatch-token/);
   assert.match(workflow, /GH_TOKEN: \$\{\{ steps\.dispatch-token\.outputs\.token \}\}/);
   assert.match(workflow, /MODEL: internal/);
+  assert.match(workflow, /echo "target_slug=\$target_slug"/);
+  assert.match(workflow, /sed -E 's\/\[\^a-z0-9_\.-\]\+\/-\/g;/);
+  assert.match(
+    workflow,
+    /sparse-checkout: \|\n\s+records\/\$\{\{ steps\.target\.outputs\.target_slug \}\}\n\s+jobs\n\s+results/,
+  );
+});
+
+test("repair workers hydrate only durable jobs from generated state", () => {
+  const workflow = readFileSync(".github/workflows/repair-cluster-worker.yml", "utf8");
+
+  assert.equal(
+    workflow.match(/uses: \.\/\.github\/actions\/setup-state[\s\S]*?sparse-checkout: jobs/g)
+      ?.length,
+    2,
+  );
 });
 
 test("reviewed viable issues dispatch the existing implementation and automerge lanes", () => {

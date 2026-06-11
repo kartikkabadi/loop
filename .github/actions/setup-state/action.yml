@@ -24,6 +24,10 @@ inputs:
     description: Git fetch depth for the generated state repository. Publish retries fetch the remote tip before rebasing.
     required: false
     default: "1"
+  sparse-checkout:
+    description: Optional newline-separated state paths to hydrate.
+    required: false
+    default: ""
 runs:
   using: composite
   steps:
@@ -35,6 +39,7 @@ runs:
         token: ${{ inputs.token }}
         filter: ${{ inputs.filter }}
         fetch-depth: ${{ inputs.fetch-depth }}
+        sparse-checkout: ${{ inputs.sparse-checkout }}
 
     - name: Export state root
       shell: bash

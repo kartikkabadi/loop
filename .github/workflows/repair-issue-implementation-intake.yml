@@ -108,9 +108,15 @@ jobs:
             echo "Invalid target repository: $TARGET_REPO" >&2
             exit 1
           fi
+          target_slug="$(
+            printf '%s-%s' "$target_owner" "$target_name" |
+              tr '[:upper:]' '[:lower:]' |
+              sed -E 's/[^a-z0-9_.-]+/-/g; s/^-+//; s/-+$//'
+          )"
           {
             echo "target_owner=$target_owner"
             echo "target_name=$target_name"
+            echo "target_slug=$target_slug"
           } >> "$GITHUB_OUTPUT"
 
       - name: Create target read token
@@ -147,6 +153,10 @@ jobs:
         with:
           token: ${{ steps.state-token.outputs.token }}
           fetch-depth: 1
+          sparse-checkout: |
+            records/${{ steps.target.outputs.target_slug }}
+            jobs
+            results
 
       - name: Prepare issue implementation intake
         id: prepare
