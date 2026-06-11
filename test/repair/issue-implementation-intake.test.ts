@@ -262,6 +262,77 @@ test("viable review routing resolves full and shorthand pull request references"
   );
 });
 
+test("viable live intake allows auth-provider prose but blocks explicit security signals", () => {
+  const markdown = report({
+    number: "241",
+    repository: "steipete/oracle",
+    labels: JSON.stringify(["impact:auth-provider"]),
+  });
+  const live = {
+    issue: {
+      state: "open",
+      locked: false,
+      labels: [{ name: "impact:auth-provider" }],
+      title: "Bearer-token login probe rejects authenticated users",
+      body: "The access token is attached by the browser SPA.",
+    },
+    comments: [],
+    existingPrs: [],
+    existingBranchPrs: [],
+    referencedPrs: [],
+  };
+  const viable = reportOnlyDecision({
+    targetRepo: "steipete/oracle",
+    itemNumber: 241,
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    candidateKind: "viable",
+    live,
+  });
+  const security = reportOnlyDecision({
+    targetRepo: "steipete/oracle",
+    itemNumber: 241,
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    candidateKind: "viable",
+    live: {
+      ...live,
+      issue: { ...live.issue, labels: [{ name: "security:sensitive" }] },
+    },
+  });
+  const vulnerability = reportOnlyDecision({
+    targetRepo: "steipete/oracle",
+    itemNumber: 241,
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    candidateKind: "viable",
+    live: {
+      ...live,
+      issue: { ...live.issue, title: "Stored XSS in browser output", body: "" },
+    },
+  });
+  const credentialExposure = reportOnlyDecision({
+    targetRepo: "steipete/oracle",
+    itemNumber: 241,
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    candidateKind: "viable",
+    live: {
+      ...live,
+      issue: { ...live.issue, title: "Leaked access token in browser output", body: "" },
+    },
+  });
+
+  assert.equal(viable.shouldRepair, true);
+  assert.equal(viable.status, "queued_for_repair");
+  assert.equal(security.shouldRepair, false);
+  assert.match(security.reason, /security-sensitive signal/);
+  assert.equal(vulnerability.shouldRepair, false);
+  assert.match(vulnerability.reason, /security-sensitive signal/);
+  assert.equal(credentialExposure.shouldRepair, false);
+  assert.match(credentialExposure.reason, /security-sensitive signal/);
+});
+
 test("viable review routing excludes protected repositories and weak verdicts", () => {
   const base = {
     number: "244",

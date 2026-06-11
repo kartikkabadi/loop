@@ -16,6 +16,7 @@ import {
   REVIEW_VISION_FIT_TRIGGER_SOURCE,
 } from "./comment-router-core.js";
 import { issueSourceRevisionSha256 } from "./issue-source-guard.js";
+import { hasSecuritySignal } from "./security-signals.js";
 
 type CandidateKind = "strict_bug" | "vision_fit" | "viable";
 
@@ -358,7 +359,14 @@ function eligibilityDecision({
     if (issue.state !== "open") blockers.push(`live issue state is ${issue.state || "unknown"}`);
     if (issue.locked === true) blockers.push("live issue is locked");
     if (labels.some(isProtectedLabel)) blockers.push("live issue has protected label");
-    if (securitySensitiveText([issue.title, issue.body, labels.join("\n")].join("\n"))) {
+    if (
+      hasSecuritySignal({
+        labels: Array.isArray(issue.labels) ? issue.labels : [],
+        comments: Array.isArray(live.comments) ? live.comments : [],
+        text: [issue.title, issue.body],
+      }) ||
+      liveSecuritySensitiveText([issue.title, issue.body].join("\n"))
+    ) {
       blockers.push("live issue has security-sensitive signal");
     }
     if (Array.isArray(live.existingPrs) && live.existingPrs.length > 0) {
@@ -812,6 +820,18 @@ function visionFitItemCategoryAllowed(value: string | undefined): boolean {
 function securitySensitiveText(text: string): boolean {
   return /\b(?:security|vulnerability|cve|ghsa|secret|credential|token|exploit|xss|csrf|ssrf|rce)\b/i.test(
     text,
+  );
+}
+
+function liveSecuritySensitiveText(text: string): boolean {
+  return (
+    /\b(?:vulnerability|exploit|xss|csrf|ssrf|rce)\b/i.test(text) ||
+    /\b(?:secret|credential|token)s?\b.{0,40}\b(?:exfiltrat(?:e|ed|ion)|expos(?:e|ed|ure)|leak(?:ed|age)?|steal|stolen|theft)\b/i.test(
+      text,
+    ) ||
+    /\b(?:exfiltrat(?:e|ed|ion)|expos(?:e|ed|ure)|leak(?:ed|age)?|steal|stolen|theft)\b.{0,40}\b(?:secret|credential|token)s?\b/i.test(
+      text,
+    )
   );
 }
 
