@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CLOUDFLARE_ACCOUNT_ID: <cloudflare-account-id>
+      CLOUDFLARE_WORKER_NAME: clawsweeper-status
       CLOUDFLARE_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN || secrets.OPENCLAW_CLOUDFLARE_API_TOKEN }}
       CF_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN || secrets.OPENCLAW_CLOUDFLARE_API_TOKEN }}
       CLAWSWEEPER_STATUS_URL: https://clawsweeper.openclaw.ai
@@ -54,15 +55,35 @@ jobs:
           test -n "$CLAWSWEEPER_APP_PRIVATE_KEY"
           test -n "$CLAWSWEEPER_WEBHOOK_SECRET"
           secrets_file="$RUNNER_TEMP/clawsweeper-worker-secrets.json"
+          response_file="$RUNNER_TEMP/clawsweeper-worker-secrets-response.json"
+          trap 'rm -f "$secrets_file" "$response_file"' EXIT
           node -e '
             const fs = require("node:fs");
             const names = ["CLAWSWEEPER_APP_PRIVATE_KEY", "CLAWSWEEPER_WEBHOOK_SECRET"];
-            const secrets = Object.fromEntries(names.map((name) => [name, process.env[name] || ""]));
-            if (Object.values(secrets).some((value) => !value)) process.exit(2);
-            fs.writeFileSync(process.argv[1], JSON.stringify(secrets));
+            const secrets = Object.fromEntries(
+              names.map((name) => {
+                const text = process.env[name] || "";
+                if (!text) process.exit(2);
+                return [name, { name, text, type: "secret_text" }];
+              }),
+            );
+            fs.writeFileSync(process.argv[1], JSON.stringify({ secrets }));
           ' "$secrets_file"
-          npx wrangler@4.90.0 secret bulk "$secrets_file" --config "${{ steps.dashboard-config.outputs.config }}"
-          rm -f "$secrets_file"
+          http_status="$(
+            curl --silent --show-error \
+              --output "$response_file" \
+              --write-out "%{http_code}" \
+              --request PATCH \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --header "Content-Type: application/merge-patch+json" \
+              --data-binary @"$secrets_file" \
+              "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$CLOUDFLARE_WORKER_NAME/secrets-bulk"
+          )"
+          if [[ "$http_status" != 2* ]] || ! jq -e '.success == true' "$response_file" >/dev/null; then
+            echo "Cloudflare secret sync failed with HTTP $http_status" >&2
+            jq '{errors, messages}' "$response_file" >&2 || true
+            exit 1
+          fi
 
       - name: Deploy Worker
         run: npx wrangler@4.90.0 deploy --config "${{ steps.dashboard-config.outputs.config }}"

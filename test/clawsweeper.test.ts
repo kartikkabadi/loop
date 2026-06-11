@@ -16355,6 +16355,15 @@ test("review workflow gives Codex a read-only inspection token", () => {
   assert.doesNotMatch(reviewJob, /uses: \.\/\.github\/actions\/setup-codex/);
 });
 
+test("dashboard syncs Worker secrets without rewriting KV-backed settings", () => {
+  const workflow = readFileSync(".github/workflows/dashboard.yml", "utf8");
+
+  assert.match(workflow, /workers\/scripts\/\$CLOUDFLARE_WORKER_NAME\/secrets-bulk/);
+  assert.match(workflow, /Content-Type: application\/merge-patch\+json/);
+  assert.match(workflow, /jq -e '\.success == true'/);
+  assert.doesNotMatch(workflow, /wrangler@4\.90\.0 secret bulk/);
+});
+
 test("publish workflow installs Codex from the root checkout path", () => {
   const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
   const publishJobStart = workflow.indexOf("\n  publish:");
