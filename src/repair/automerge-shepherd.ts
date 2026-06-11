@@ -1,7 +1,13 @@
 import type { JsonValue, LooseRecord } from "./json-types.js";
+import { parseTrustedAutomation } from "./comment-router-core.js";
 
 const DEFAULT_WAIT_MS = 10 * 60 * 1000;
 const DEFAULT_POLL_MS = 15 * 1000;
+const TRUSTED_REVIEW_AUTHORS = new Set([
+  "clawsweeper",
+  "clawsweeper[bot]",
+  "openclaw-clawsweeper[bot]",
+]);
 
 export function automergeShepherdWaitConfig(env: LooseRecord = process.env) {
   const maxWaitMs = positiveInt(env.CLAWSWEEPER_AUTOMERGE_SHEPHERD_WAIT_MS, DEFAULT_WAIT_MS);
@@ -44,6 +50,18 @@ export function automergeShepherdReadiness({
       reason: `head changed from ${headSha} to ${view.headRefOid}`,
     };
   }
+  if (hasTrustedHumanReviewForHead(comments, headSha)) {
+    return {
+      status: "human",
+      reason: "exact-head ClawSweeper review requires human handling",
+    };
+  }
+  if (hasTrustedRepairRequestForHead(comments, headSha)) {
+    return {
+      status: "blocked",
+      reason: "exact-head ClawSweeper review requires another repair",
+    };
+  }
   const checkBlock = checkBlockReason(view.statusCheckRollup ?? []);
   if (checkBlock.status === "blocked") return checkBlock;
   if (!hasTrustedPassForHead(comments, headSha)) {
@@ -65,18 +83,29 @@ export function automergeShepherdReadiness({
 }
 
 export function hasTrustedPassForHead(comments: JsonValue[], headSha: string) {
-  const escaped = headSha.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const pass = new RegExp(
-    `clawsweeper-verdict:(?:pass|approved|no-changes)[^>]*\\bsha=${escaped}\\b`,
-    "i",
-  );
-  return comments.some((comment: JsonValue) => {
-    const author = String(comment?.user?.login ?? "").toLowerCase();
-    if (!["clawsweeper", "clawsweeper[bot]", "openclaw-clawsweeper[bot]"].includes(author)) {
-      return false;
-    }
-    return pass.test(String(comment?.body ?? ""));
-  });
+  return trustedReviewDecisionForHead(comments, headSha) === "pass";
+}
+
+export function hasTrustedRepairRequestForHead(comments: JsonValue[], headSha: string) {
+  return trustedReviewDecisionForHead(comments, headSha) === "repair";
+}
+
+export function hasTrustedHumanReviewForHead(comments: JsonValue[], headSha: string) {
+  return trustedReviewDecisionForHead(comments, headSha) === "human";
+}
+
+function trustedReviewDecisionForHead(comments: JsonValue[], headSha: string) {
+  let latest: "human" | "pass" | "repair" | null = null;
+  for (const comment of comments) {
+    const command = parseTrustedAutomation(comment, {
+      trustedAuthors: TRUSTED_REVIEW_AUTHORS,
+    });
+    if (String(command?.expected_head_sha ?? "") !== headSha) continue;
+    if (command?.intent === "clawsweeper_auto_merge") latest = "pass";
+    if (command?.intent === "clawsweeper_auto_repair") latest = "repair";
+    if (command?.intent === "clawsweeper_needs_human") latest = "human";
+  }
+  return latest;
 }
 
 function checkBlockReason(checks: JsonValue[]) {

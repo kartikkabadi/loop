@@ -3557,7 +3557,7 @@ function continueAutomergeAfterNoopRepair({ target }: LooseRecord) {
       head_sha: commit,
     };
   }
-  if (String(readiness.status) === "waiting") {
+  if (String(readiness.status) === "human") {
     const approvedNeedsHuman = maintainerApprovedNeedsHumanComment({
       comments,
       headSha: commit,
@@ -3576,6 +3576,9 @@ function continueAutomergeAfterNoopRepair({ target }: LooseRecord) {
         head_sha: commit,
       };
     }
+    return { status: readiness.status, reason: readiness.reason, head_sha: commit };
+  }
+  if (String(readiness.status) === "waiting") {
     return {
       status: readiness.status,
       reason: readiness.reason,
@@ -3726,7 +3729,7 @@ function waitForAutomergeAfterBranchRepair({ target, commit }: LooseRecord) {
       headSha: String(commit),
     });
     lastReason = readiness.reason;
-    if (["ready", "merged", "stopped", "blocked"].includes(String(readiness.status))) {
+    if (["ready", "merged", "stopped", "blocked", "human"].includes(String(readiness.status))) {
       const dispatch =
         readiness.status === "ready" || readiness.status === "blocked"
           ? dispatchAutomergeCommentRouter({ target, reason: readiness.reason })

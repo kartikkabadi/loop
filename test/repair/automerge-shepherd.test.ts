@@ -4,7 +4,9 @@ import {
   automergeShepherdReadiness,
   automergeShepherdWaitConfig,
   canUseAutomergeFastRebase,
+  hasTrustedHumanReviewForHead,
   hasTrustedPassForHead,
+  hasTrustedRepairRequestForHead,
 } from "../../dist/repair/automerge-shepherd.js";
 
 test("automerge fast rebase is limited to adopted branch repairs", () => {
@@ -98,6 +100,107 @@ test("automerge shepherd treats head movement as terminal for the current repair
     }),
     { status: "stopped", reason: "head changed from abc123 to def456" },
   );
+});
+
+test("automerge shepherd releases the worker when exact-head review requests another repair", () => {
+  const headSha = "abc123";
+  const comments = [
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: [
+        "needs changes",
+        "<!-- clawsweeper-verdict:needs-changes item=1 sha=abc123 confidence=high -->",
+        "<!-- clawsweeper-action:fix-required item=1 sha=abc123 confidence=high -->",
+      ].join("\n"),
+    },
+  ];
+  assert.equal(hasTrustedRepairRequestForHead(comments, headSha), true);
+  assert.deepEqual(
+    automergeShepherdReadiness({
+      view: {
+        state: "OPEN",
+        headRefOid: headSha,
+        statusCheckRollup: [{ name: "check", status: "IN_PROGRESS", conclusion: "" }],
+      },
+      comments,
+      headSha,
+    }),
+    {
+      status: "blocked",
+      reason: "exact-head ClawSweeper review requires another repair",
+    },
+  );
+});
+
+test("automerge shepherd ignores stale and untrusted repair requests", () => {
+  const comments = [
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: "<!-- clawsweeper-action:fix-required item=1 sha=oldhead confidence=high -->",
+    },
+    {
+      user: { login: "contributor" },
+      body: "<!-- clawsweeper-action:fix-required item=1 sha=abc123 confidence=high -->",
+    },
+  ];
+  assert.equal(hasTrustedRepairRequestForHead(comments, "abc123"), false);
+});
+
+test("automerge shepherd uses the latest trusted exact-head review decision", () => {
+  const repair = {
+    user: { login: "clawsweeper[bot]" },
+    body: "<!-- clawsweeper-action:fix-required item=1 sha=abc123 confidence=high -->",
+  };
+  const pass = {
+    user: { login: "clawsweeper[bot]" },
+    body: "<!-- clawsweeper-verdict:pass item=1 sha=abc123 confidence=high -->",
+  };
+  assert.equal(hasTrustedRepairRequestForHead([repair, pass], "abc123"), false);
+  assert.equal(hasTrustedPassForHead([repair, pass], "abc123"), true);
+  assert.equal(hasTrustedRepairRequestForHead([pass, repair], "abc123"), true);
+  assert.equal(hasTrustedPassForHead([pass, repair], "abc123"), false);
+});
+
+test("automerge shepherd stops when latest exact-head review requires human handling", () => {
+  const pass = {
+    user: { login: "clawsweeper[bot]" },
+    body: "<!-- clawsweeper-verdict:pass item=1 sha=abc123 confidence=high -->",
+  };
+  const human = {
+    user: { login: "clawsweeper[bot]" },
+    body: "<!-- clawsweeper-verdict:needs-human item=1 sha=abc123 confidence=high -->",
+  };
+  assert.equal(hasTrustedHumanReviewForHead([pass, human], "abc123"), true);
+  assert.equal(hasTrustedPassForHead([pass, human], "abc123"), false);
+  assert.equal(hasTrustedHumanReviewForHead([human, pass], "abc123"), false);
+  assert.equal(hasTrustedPassForHead([human, pass], "abc123"), true);
+  assert.deepEqual(
+    automergeShepherdReadiness({
+      view: { state: "OPEN", headRefOid: "abc123" },
+      comments: [pass, human],
+      headSha: "abc123",
+    }),
+    {
+      status: "human",
+      reason: "exact-head ClawSweeper review requires human handling",
+    },
+  );
+});
+
+test("automerge shepherd routes repairable needs-human findings back to repair", () => {
+  const comments = [
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: [
+        "**Review findings**",
+        "- [P1] Fix the exact-head regression.",
+        "",
+        "<!-- clawsweeper-verdict:needs-human item=1 sha=abc123 confidence=high -->",
+      ].join("\n"),
+    },
+  ];
+  assert.equal(hasTrustedHumanReviewForHead(comments, "abc123"), false);
+  assert.equal(hasTrustedRepairRequestForHead(comments, "abc123"), true);
 });
 
 test("automerge shepherd stops on terminal check failures before review pass", () => {
