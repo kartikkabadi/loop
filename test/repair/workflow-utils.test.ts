@@ -60,17 +60,13 @@ test("worker scheduler lets background lanes yield to active work", () => {
   assert.equal(workerLimit("commit_review"), AUTOMATION_LIMITS.commit_review.page_size_default);
   assert.equal(workerLimit("commit_review", { activeCritical: 49 }), 1);
   assert.equal(workerLimit("repair"), AUTOMATION_LIMITS.repair_live_runs.default);
-  assert.equal(
-    workerLimit("automerge_repair"),
-    AUTOMATION_LIMITS.repair_live_runs.automerge_default,
-  );
-  assert.equal(
-    workerLimit("issue_implementation"),
-    AUTOMATION_LIMITS.repair_live_runs.issue_implementation_default,
-  );
-  assert.equal(workerLimit("cluster_repair"), AUTOMATION_LIMITS.repair_live_runs.cluster_default);
-  assert.equal(workerLimit("assist"), AUTOMATION_LIMITS.assist.default);
-  assert.equal(workerLimit("assist", { activeCritical: WORKER_CONFIG.workers.max - 2 }), 2);
+  assert.equal(workerLimit("repair"), 22);
+  assert.equal(workerLimit("automerge_repair"), 22);
+  assert.equal(workerLimit("issue_implementation"), 22);
+  assert.equal(workerLimit("cluster_repair"), 1);
+  assert.equal(AUTOMATION_LIMITS.assist.default, 5);
+  assert.equal(workerLimit("assist"), 5);
+  assert.equal(workerLimit("assist", { activeCritical: 55 }), 2);
 });
 
 test("worker config defaults imported cluster repair capacity for older configs", () => {
@@ -156,31 +152,8 @@ test("workflow utilities count repair results that require requeue", () => {
       actions: [{ action: "close_duplicate", status: "blocked", requeue_required: true }],
     }),
   );
-  write(
-    path.join(root, "runs/d/post-flight-report.json"),
-    JSON.stringify({
-      actions: [{ action: "generated_pr_review_dispatch", requeue_required: true }],
-    }),
-  );
-  write(
-    path.join(root, "runs/e/worker-requeue.json"),
-    JSON.stringify({
-      requeue_required: true,
-      reason: "codex_transport_failure",
-    }),
-  );
-  write(
-    path.join(root, "runs/f/result.json"),
-    JSON.stringify({
-      status: "blocked",
-      summary: "Issue #429 discusses HTTP 429 behavior.",
-      needs_human: ["Issue #429 discusses HTTP 429 behavior."],
-      actions: [],
-      requeue_required: true,
-    }),
-  );
 
-  assert.equal(countRequeueRequired(path.join(root, "runs")), 4);
+  assert.equal(countRequeueRequired(path.join(root, "runs")), 2);
 });
 
 test("workflow utilities merge checkpoint reports in numeric order", () => {

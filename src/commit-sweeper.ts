@@ -11,7 +11,7 @@ import {
 import { publishCheckFromReport, splitFrontMatter } from "./commit-checks.js";
 import { argBool, argNumber, argString, parseArgs, type Args } from "./clawsweeper-args.js";
 import { safeOutputTail } from "./clawsweeper-text.js";
-import { codexEnv } from "./codex-env.js";
+import { codexEnv, codexModelArgs, PUBLIC_CODEX_MODEL } from "./codex-env.js";
 import { runText } from "./command.js";
 import { ghRetryKind, ghRetryWaitMs } from "./github-retry.js";
 import { DEFAULT_TARGET_REPO, repositoryProfileFor } from "./repository-profiles.js";
@@ -34,7 +34,7 @@ interface CommitMetadata {
 }
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const DEFAULT_CODEX_MODEL = "internal";
+const DEFAULT_CODEX_MODEL = PUBLIC_CODEX_MODEL;
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "";
 const COMMIT_REVIEW_CHECK_NAME = "ClawSweeper Commit Review";
@@ -304,8 +304,7 @@ function runCodex(options: {
     "codex",
     [
       "exec",
-      "-m",
-      options.model,
+      ...codexModelArgs(options.model),
       ...codexConfig.flatMap((config) => ["-c", config]),
       "-C",
       options.targetDir,
@@ -341,7 +340,7 @@ function runCodex(options: {
       sha: options.sha,
       baseSha: options.baseSha,
       metadata: options.metadata,
-      detail: detail.trim().replaceAll(options.model, "internal model"),
+      detail: detail.trim(),
       timeout,
     });
   }

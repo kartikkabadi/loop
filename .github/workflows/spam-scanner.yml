@@ -40,6 +40,11 @@ on:
         required: false
         default: ""
         type: string
+      model:
+        description: "Internal Codex model alias"
+        required: true
+        default: internal
+        type: string
   schedule:
     - cron: "17 * * * *"
 
@@ -51,6 +56,7 @@ permissions:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+  CLAWSWEEPER_MODEL: internal
 
 concurrency:
   group: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.comment_id && format('spam-scanner-{0}-issue-comment-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.comment_id) || github.event_name == 'repository_dispatch' && github.event.client_payload.review_comment_id && format('spam-scanner-{0}-review-comment-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.review_comment_id) || format('spam-scanner-{0}', github.event.inputs.target_repo || github.event.client_payload.target_repo || vars.CLAWSWEEPER_TARGET_REPO || 'openclaw/openclaw') }}
@@ -114,7 +120,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CLAWSWEEPER_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
+          CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
         run: |
           set -euo pipefail
           target_repo="${{ github.event_name == 'workflow_dispatch' && inputs.target_repo || vars.CLAWSWEEPER_TARGET_REPO || 'openclaw/openclaw' }}"
@@ -123,6 +129,7 @@ jobs:
           max_comments="${{ github.event_name == 'workflow_dispatch' && inputs.max_comments || vars.CLAWSWEEPER_SPAM_MAX_COMMENTS || '100' }}"
           comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.comment_ids || '' }}"
           review_comment_ids="${{ github.event_name == 'workflow_dispatch' && inputs.review_comment_ids || '' }}"
+          model="internal"
           force_reprocess="${{ github.event_name == 'workflow_dispatch' && inputs.force_reprocess || 'false' }}"
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
             target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
@@ -131,6 +138,7 @@ jobs:
             max_comments="${{ github.event.client_payload.max_comments || '1' }}"
             comment_ids="${{ github.event.client_payload.comment_id || '' }}"
             review_comment_ids="${{ github.event.client_payload.review_comment_id || '' }}"
+            model="internal"
             force_reprocess="${{ github.event.client_payload.force_reprocess || 'false' }}"
           fi
 
@@ -139,6 +147,7 @@ jobs:
             --repo "$target_repo"
             --lookback-minutes "$lookback_minutes"
             --max-comments "$max_comments"
+            --model "$model"
           )
           if [ -n "$since" ]; then
             args+=(--since "$since")

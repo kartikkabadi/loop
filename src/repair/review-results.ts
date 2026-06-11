@@ -2,7 +2,6 @@
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
-import { issueImplementationPlanningFailure } from "./issue-implementation-planning.js";
 import { parseArgs, parseJob, repoRoot } from "./lib.js";
 
 const CLOSE_ACTIONS = new Set([
@@ -270,11 +269,8 @@ function reviewResult(resultPath: string): JsonValue {
   if (plannedMergeActions.length > 0) {
     validateMergePreflight(result.merge_preflight, plannedMergeActions, failures);
   }
-  const sourceJob = readSourceJob(plan);
-  const issuePlanningFailure = issueImplementationPlanningFailure(sourceJob, result);
-  if (issuePlanningFailure) failures.push(issuePlanningFailure);
   validateCalibratedPrFinalization({
-    job: sourceJob,
+    job: readSourceJob(plan),
     result,
     itemByRef,
     fixActions,
@@ -516,13 +512,16 @@ function validateFixArtifact(fixArtifact: LooseRecord, failures: LooseRecord[]) 
       failures.push(`fix_artifact.${key} is required`);
     }
   }
-  for (const key of ["affected_surfaces", "likely_files", "linked_refs", "credit_notes"]) {
+  for (const key of [
+    "affected_surfaces",
+    "likely_files",
+    "linked_refs",
+    "validation_commands",
+    "credit_notes",
+  ]) {
     if (!Array.isArray(fixArtifact[key]) || fixArtifact[key].length === 0) {
       failures.push(`fix_artifact.${key} must be a non-empty list`);
     }
-  }
-  if (!Array.isArray(fixArtifact.validation_commands)) {
-    failures.push("fix_artifact.validation_commands must be a list");
   }
   if (typeof fixArtifact.changelog_required !== "boolean") {
     failures.push("fix_artifact.changelog_required must be boolean");

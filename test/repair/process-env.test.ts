@@ -4,7 +4,9 @@ import test from "node:test";
 import {
   clawsweeperGitIdentityEnv,
   clawsweeperGitUserName,
+  codexModelArgs,
   codexSubprocessEnv,
+  internalCodexModel,
   repairCodexReasoningEffort,
   repairCodexServiceTier,
 } from "../../dist/repair/process-env.js";
@@ -20,7 +22,7 @@ test("codexSubprocessEnv forces ClawSweeper git identity and strips tokens", () 
       GITHUB_ACTIONS: "true",
       OPENAI_API_KEY: "secret",
       CODEX_API_KEY: "secret",
-      CLAWSWEEPER_MODEL: "secret",
+      CLAWSWEEPER_INTERNAL_MODEL: "secret-model",
     },
     () => {
       const env = codexSubprocessEnv();
@@ -34,7 +36,14 @@ test("codexSubprocessEnv forces ClawSweeper git identity and strips tokens", () 
       assert.equal(env.CLAWSWEEPER_TARGET_GH_TOKEN, undefined);
       assert.equal(env.OPENAI_API_KEY, undefined);
       assert.equal(env.CODEX_API_KEY, undefined);
-      assert.equal(env.CLAWSWEEPER_MODEL, undefined);
+      assert.equal(env.CLAWSWEEPER_INTERNAL_MODEL, undefined);
+      assert.equal(internalCodexModel("internal"), "secret-model");
+      assert.deepEqual(codexModelArgs("internal"), []);
+      assert.deepEqual(codexModelArgs("secret-model"), []);
+      assert.deepEqual(codexModelArgs("explicit-public-model"), [
+        "--model",
+        "explicit-public-model",
+      ]);
     },
   );
 });

@@ -18,7 +18,6 @@ import { ghJson, ghText } from "./github-cli.js";
 import { sleepMs } from "./timing.js";
 import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
 import { AUTOMATION_LIMITS } from "./limits.js";
-import { resolveTargetExecutionRunner } from "./target-toolchain-config.js";
 
 const DEFAULT_REPO = currentProjectRepo();
 const DEFAULT_WORKFLOW = REPAIR_CLUSTER_WORKFLOW;
@@ -26,26 +25,21 @@ const DEFAULT_RUNNER = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcp
 const DEFAULT_EXECUTION_RUNNER =
   process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
 const QUEUED_STATUSES = new Set(["queued", "requested", "waiting", "pending"]);
-const DEFAULT_MAX_REQUEUE_ATTEMPTS = 3;
 
 const args = parseArgs(process.argv.slice(2));
 const repo = String(args.repo ?? DEFAULT_REPO);
 const workflow = String(args.workflow ?? DEFAULT_WORKFLOW);
 const runner = String(args.runner ?? DEFAULT_RUNNER);
-const requestedExecutionRunner = String(
+const executionRunner = String(
   args["execution-runner"] ?? args.execution_runner ?? DEFAULT_EXECUTION_RUNNER,
 );
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "internal");
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const execute = Boolean(args.execute || args.live);
 const openExecuteWindow = Boolean(args["open-execute-window"] || args.live);
 const requestedMode = typeof args.mode === "string" ? args.mode : null;
 const requestedRunId = args["run-id"] ?? (looksLikeRunId(args._[0]) ? args._[0] : null);
-const requeueAttempt = nonNegativeIntegerArg(args["requeue-attempt"] ?? args.requeue_attempt, 0);
-const maxRequeueAttempts = positiveIntegerArg(
-  args["max-requeue-attempts"] ?? args.max_requeue_attempts,
-  DEFAULT_MAX_REQUEUE_ATTEMPTS,
-);
 
 const resolved = requestedRunId
   ? resolveFromRunId(String(requestedRunId))
@@ -53,7 +47,7 @@ const resolved = requestedRunId
 
 if (!resolved.source_job) {
   console.error(
-    `usage: node scripts/requeue-job.ts <job.md|run-id> [--mode plan|execute|autonomous] [--execute] [--open-execute-window] [--runner label] [--execution-runner label] [--max-live-workers ${AUTOMATION_LIMITS.repair_live_runs.default}] [--wait-for-capacity]`,
+    `usage: node scripts/requeue-job.ts <job.md|run-id> [--mode plan|execute|autonomous] [--execute] [--open-execute-window] [--runner label] [--execution-runner label] [--model model] [--max-live-workers ${AUTOMATION_LIMITS.repair_live_runs.default}] [--wait-for-capacity]`,
   );
   process.exit(2);
 }
@@ -65,14 +59,6 @@ if (errors.length > 0) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-const restoreIssueImplementationJob = booleanArg(
-  args["restore-issue-implementation-job"] ?? args.restore_issue_implementation_job,
-  job.frontmatter.automerge_generated_pr !== true,
-);
-const executionRunner = resolveTargetExecutionRunner(
-  String(job.frontmatter.repo),
-  requestedExecutionRunner,
-);
 
 const mode = requestedMode ?? resolved.mode ?? job.frontmatter.mode;
 if (!["plan", "execute", "autonomous"].includes(mode)) {
@@ -88,24 +74,13 @@ const summary: LooseRecord = {
   mode,
   runner,
   execution_runner: executionRunner,
-  restore_issue_implementation_job: restoreIssueImplementationJob,
+  model,
   max_live_workers: maxLiveWorkers,
-  requeue_attempt: requeueAttempt,
-  max_requeue_attempts: maxRequeueAttempts,
 };
 
 if (!execute) {
   console.log(JSON.stringify(summary, null, 2));
   process.exit(0);
-}
-
-if (requeueAttempt >= maxRequeueAttempts) {
-  summary.status = "retry_limit_reached";
-  console.log(JSON.stringify(summary, null, 2));
-  console.error(
-    `repair requeue limit reached for ${job.relativePath}: ${requeueAttempt}/${maxRequeueAttempts}`,
-  );
-  process.exit(1);
 }
 
 const gateRestores: JsonValue[] = [];
@@ -199,22 +174,13 @@ function dispatchJob(jobPath: string, mode: string) {
       "-f",
       `execution_runner=${executionRunner}`,
       "-f",
-      `restore_issue_implementation_job=${restoreIssueImplementationJob}`,
-      "-f",
-      `requeue_attempt=${requeueAttempt + 1}`,
+      `model=${model}`,
     ],
     { cwd: repoRoot(), encoding: "utf8", stdio: "pipe" },
   );
   if (result.status !== 0) {
     throw new Error(`failed to dispatch ${jobPath}: ${result.stderr || result.stdout}`);
   }
-}
-
-function booleanArg(value: JsonValue, fallback: boolean): boolean {
-  if (value === undefined || value === null || value === "") return fallback;
-  if (value === true || value === "true" || value === "1") return true;
-  if (value === false || value === "false" || value === "0") return false;
-  throw new Error(`expected boolean value, got ${String(value)}`);
 }
 
 function waitForStartedRuns({ expectedCount, headSha, since }: LooseRecord) {
@@ -293,22 +259,4 @@ function currentHeadSha() {
 
 function looksLikeRunId(value: JsonValue) {
   return /^[0-9]{6,}$/.test(String(value ?? ""));
-}
-
-function positiveIntegerArg(value: JsonValue, fallback: number): number {
-  if (value === undefined || value === null || value === "") return fallback;
-  const parsed = Number(value);
-  if (!Number.isInteger(parsed) || parsed <= 0) {
-    throw new Error(`expected positive integer value, got ${String(value)}`);
-  }
-  return parsed;
-}
-
-function nonNegativeIntegerArg(value: JsonValue, fallback: number): number {
-  if (value === undefined || value === null || value === "") return fallback;
-  const parsed = Number(value);
-  if (!Number.isInteger(parsed) || parsed < 0) {
-    throw new Error(`expected non-negative integer value, got ${String(value)}`);
-  }
-  return parsed;
 }

@@ -18,6 +18,7 @@ import {
   type SpamModelResult,
   type SpamScanComment,
 } from "./spam-scanner-core.js";
+import { internalCodexModel, PUBLIC_CODEX_MODEL } from "../codex-env.js";
 import { compactText } from "./text-utils.js";
 
 const args = parseArgs(process.argv.slice(2));
@@ -25,13 +26,7 @@ const targetRepo = stringSetting(
   args.repo ?? process.env.CLAWSWEEPER_TARGET_REPO,
   "openclaw/openclaw",
 );
-const apiKey = String(process.env.OPENAI_API_KEY ?? "").trim();
-const model = stringSetting(process.env.CLAWSWEEPER_MODEL, "");
-if (apiKey && (!model || model === "internal")) {
-  throw new Error(
-    "CLAWSWEEPER_MODEL must contain the secret-backed API model for direct Responses requests",
-  );
-}
+const model = stringSetting(args.model ?? process.env.CLAWSWEEPER_SPAM_MODEL, "internal");
 const lookbackMinutes = positiveInteger(
   args["lookback-minutes"] ?? process.env.CLAWSWEEPER_SPAM_LOOKBACK_MINUTES ?? 180,
   "lookback-minutes",
@@ -77,17 +72,11 @@ if (candidates.length > 0) {
   try {
     modelResults = await scanWithCheapModel(candidates, model);
   } catch (error) {
-    modelError = redactInternalModel(
-      compactText(error instanceof Error ? error.message : String(error), 500),
-    );
+    modelError = compactText(error instanceof Error ? error.message : String(error), 500);
     console.warn(
       `[spam-scanner] cheap model scan failed; writing deterministic audit only: ${modelError}`,
     );
   }
-}
-
-function redactInternalModel(value: string) {
-  return model ? value.replaceAll(model, "internal model") : value;
 }
 const audited = candidates.map((comment) => ({
   comment,
@@ -108,7 +97,7 @@ const report = {
   status: "audit_only",
   generated_at: new Date().toISOString(),
   repo: targetRepo,
-  review_engine: "internal",
+  model: PUBLIC_CODEX_MODEL,
   since,
   max_comments: maxComments,
   scanned_comments: comments.length,
@@ -222,12 +211,13 @@ function hydrateMinimization(comments: SpamScanComment[]) {
 }
 
 async function scanWithCheapModel(comments: SpamScanComment[], scanModel: string) {
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     console.warn("[spam-scanner] OPENAI_API_KEY missing; writing deterministic audit only.");
     return new Map<string, SpamModelResult>();
   }
   const payload = {
-    model: scanModel,
+    model: internalCodexModel(scanModel),
     input: [
       {
         role: "system",
@@ -362,7 +352,11 @@ function writeAuditRecord(
 ) {
   const file = auditRecordPath(comment);
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  const record: LooseRecord = renderSpamAuditRecord({ comment, result });
+  const record: LooseRecord = renderSpamAuditRecord({
+    comment,
+    model: PUBLIC_CODEX_MODEL,
+    result,
+  });
   record.model_error = scanModelError;
   fs.writeFileSync(file, `${JSON.stringify(record, null, 2)}\n`);
 }

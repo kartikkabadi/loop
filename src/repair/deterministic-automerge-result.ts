@@ -1,6 +1,6 @@
 import { automergeChangelogBlockReason } from "./comment-router-core.js";
 import type { JsonValue, LooseRecord } from "./json-types.js";
-import { resolveTargetBaseBranch, resolveTargetRepoToolchain } from "./target-toolchain-config.js";
+import { resolveTargetRepoToolchain } from "./target-toolchain-config.js";
 import { sanitizeCheckLink, sanitizeEvidenceList } from "./url-safety.js";
 
 export function deterministicAutomergeResult({
@@ -31,10 +31,9 @@ export function deterministicAutomergeResult({
   const prUrl = `https://github.com/${repo}/pull/${number}`;
   const title = String(canonical.title ?? `fix: update ${ref}`).trim();
   const repairMode = String(job?.frontmatter?.repair_mode ?? "automerge");
-  const baseBranch = resolveTargetBaseBranch(repo, "main");
   const summary = [
     `Make PR ${ref} merge-ready for ClawSweeper ${repairMode}.`,
-    `Rebase onto latest ${baseBranch}, address PR comments and review findings, fix CI/check failures, preserve release-note context, and validate before returning.`,
+    "Rebase onto latest main, address PR comments and review findings, fix CI/check failures, preserve release-note context, and validate before returning.",
   ].join(" ");
   const likelyFiles = likelyRepairFiles(files, Boolean(changelogReason));
   const failedChecks = failingCheckEvidence(canonical);
@@ -190,11 +189,11 @@ function uniqueStrings(values: JsonValue[]): string[] {
  * - Repos without a `changed_gate` (e.g. openclaw/clawhub → bun) get their
  *   declared `validation_commands` instead (e.g. `["bun run check"]`), so the
  *   executor can preflight against a script that actually exists.
- * - Repos without declared validation leave the artifact empty. The executor
- *   inspects the checked-out repository and selects a repository-native gate.
+ * - As a last-resort fallback we still emit `pnpm check:changed` so legacy
+ *   pnpm consumers that have not been migrated keep working.
  */
 function deterministicAutomergeValidationCommands(repo: string): string[] {
-  if (!repo) return [];
+  if (!repo) return ["pnpm check:changed"];
   try {
     const toolchain = resolveTargetRepoToolchain(repo);
     if (toolchain.changedGate) return [toolchain.changedGate.command];
@@ -206,7 +205,7 @@ function deterministicAutomergeValidationCommands(repo: string): string[] {
     // try/catch around config IO), but keep this guard so a future signature
     // change can never brick deterministic artifact generation.
   }
-  return [];
+  return ["pnpm check:changed"];
 }
 
 function firstCanonicalPullItem({ job, clusterPlan }: LooseRecord): LooseRecord | null {

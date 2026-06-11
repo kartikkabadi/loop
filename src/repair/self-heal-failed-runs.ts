@@ -16,7 +16,6 @@ import {
 import { ghErrorText, ghJson, ghText } from "./github-cli.js";
 import { sleepMs } from "./timing.js";
 import { REPAIR_CLUSTER_WORKFLOW } from "./constants.js";
-import { resolveTargetExecutionRunner } from "./target-toolchain-config.js";
 
 const DEFAULT_REPO = currentProjectRepo();
 const DEFAULT_WORKFLOW = REPAIR_CLUSTER_WORKFLOW;
@@ -33,6 +32,7 @@ const runner = String(args.runner ?? DEFAULT_RUNNER);
 const executionRunner = String(
   args["execution-runner"] ?? args.execution_runner ?? DEFAULT_EXECUTION_RUNNER,
 );
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "internal");
 const maxJobs = Number(args["max-jobs"] ?? args.limit ?? 5);
 const maxAgeHours = Number(
   args["max-age-hours"] ??
@@ -40,6 +40,7 @@ const maxAgeHours = Number(
     process.env.CLAWSWEEPER_SELF_HEAL_MAX_AGE_HOURS ??
     6,
 );
+const maxAttemptsPerJob = Number(process.env.CLAWSWEEPER_SELF_HEAL_MAX_ATTEMPTS_PER_JOB ?? 3);
 const maxLiveWorkers = readMaxLiveWorkers(args);
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const execute = Boolean(args.execute);
@@ -54,6 +55,9 @@ if (!Number.isInteger(maxJobs) || maxJobs < 1) {
 if (!Number.isFinite(maxAgeHours) || maxAgeHours <= 0) {
   throw new Error("--max-age-hours must be a positive number");
 }
+if (!Number.isInteger(maxAttemptsPerJob) || maxAttemptsPerJob < 1) {
+  throw new Error("CLAWSWEEPER_SELF_HEAL_MAX_ATTEMPTS_PER_JOB must be a positive integer");
+}
 
 const candidates = selectCandidates().slice(0, maxJobs);
 const summary: LooseRecord = {
@@ -62,8 +66,10 @@ const summary: LooseRecord = {
   workflow,
   runner,
   execution_runner: executionRunner,
+  model,
   max_jobs: maxJobs,
   max_age_hours: maxAgeHours,
+  max_attempts_per_job: maxAttemptsPerJob,
   max_live_workers: maxLiveWorkers,
   candidates: candidates.map((candidate: JsonValue) => summarizeCandidate(candidate)),
   skipped_candidates: skippedCandidates,
@@ -92,7 +98,8 @@ const attempts: LooseRecord[] = candidates.map((candidate: JsonValue) => ({
   source_job: candidate.source_job,
   mode: candidate.mode,
   runner,
-  execution_runner: candidateExecutionRunner(candidate),
+  execution_runner: executionRunner,
+  model,
   workflow,
   repo,
   dispatched_at: new Date().toISOString(),
@@ -154,9 +161,14 @@ function selectCandidates() {
   const attempts = readSelfHealLedger().attempts ?? [];
   const activeSourceJobs = execute ? activeRepairSourceJobs() : new Map<string, string[]>();
   const cutoffMs = Date.now() - maxAgeHours * 60 * 60 * 1000;
-  const attemptedJobs = new Set(
-    attempts.map((attempt: JsonValue) => attempt.source_job).filter(Boolean),
+  const attemptedRunIds = new Set(
+    attempts.map((attempt: JsonValue) => String(attempt.source_run_id ?? "")).filter(Boolean),
   );
+  const attemptCountsByJob = new Map<string, number>();
+  for (const attempt of attempts) {
+    const sourceJob = String(attempt.source_job ?? "");
+    if (sourceJob) attemptCountsByJob.set(sourceJob, (attemptCountsByJob.get(sourceJob) ?? 0) + 1);
+  }
   const latestByJob = new Map();
 
   for (const record of records) {
@@ -198,7 +210,20 @@ function selectCandidates() {
       });
       return false;
     })
-    .filter((record: JsonValue) => allowRepeat || !attemptedJobs.has(record.source_job))
+    .filter((record: JsonValue) => {
+      if (allowRepeat) return true;
+      const sourceJob = String(record.source_job ?? "");
+      const runId = String(record.run_id ?? "");
+      if (runId && attemptedRunIds.has(runId)) return false;
+      if ((attemptCountsByJob.get(sourceJob) ?? 0) < maxAttemptsPerJob) return true;
+      skippedCandidates.push({
+        reason: "retry_limit_reached",
+        run_id: runId || null,
+        source_job: sourceJob,
+        attempts: attemptCountsByJob.get(sourceJob) ?? 0,
+      });
+      return false;
+    })
     .map((record: JsonValue) => {
       const sourceJob = String(record.source_job ?? "");
       const jobPath = sourceJobPath(sourceJob);
@@ -255,7 +280,6 @@ function sourceJobFromRunTitle(title: string) {
 }
 
 function dispatchCandidate(candidate: LooseRecord) {
-  const targetExecutionRunner = candidateExecutionRunner(candidate);
   const result = spawnSync(
     "gh",
     [
@@ -271,7 +295,9 @@ function dispatchCandidate(candidate: LooseRecord) {
       "-f",
       `runner=${runner}`,
       "-f",
-      `execution_runner=${targetExecutionRunner}`,
+      `execution_runner=${executionRunner}`,
+      "-f",
+      `model=${model}`,
     ],
     { cwd: repoRoot(), encoding: "utf8", stdio: "pipe" },
   );
@@ -281,15 +307,6 @@ function dispatchCandidate(candidate: LooseRecord) {
     );
   }
   console.log(`dispatched ${candidate.source_job} from failed run ${candidate.run_id}`);
-}
-
-function candidateExecutionRunner(candidate: LooseRecord): string {
-  try {
-    const job = parseJob(String(candidate.source_job));
-    return resolveTargetExecutionRunner(String(job.frontmatter.repo), executionRunner);
-  } catch {
-    return executionRunner;
-  }
 }
 
 function waitForStartedRuns({ expectedCount, headSha, since }: LooseRecord) {

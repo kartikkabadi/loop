@@ -17,11 +17,11 @@ test("collectCodexDebug copies recent Codex session logs and excludes auth files
   const logPath = path.join(codexHome, "log", "codex-tui.log");
   fs.writeFileSync(
     sessionPath,
-    'prompt sk-proj-abcdefghijklmnopqrstuvwxyz\n{"payload":{"model":"internal-test-model"}}\n',
+    'prompt sk-proj-abcdefghijklmnopqrstuvwxyz\n{"model":"secret-model-for-test"}\n',
   );
   fs.writeFileSync(logPath, "GH_TOKEN=ghp_abcdefghijklmnopqrstuvwxyz123456\n");
   fs.writeFileSync(path.join(codexHome, "auth.json"), '{"OPENAI_API_KEY":"sk-secret"}\n');
-  fs.writeFileSync(path.join(codexHome, "config.toml"), "model = 'internal-test-model'\n");
+  fs.writeFileSync(path.join(codexHome, "config.toml"), "model = 'gpt-5.5'\n");
 
   try {
     const result = collectCodexDebug({
@@ -31,7 +31,7 @@ test("collectCodexDebug copies recent Codex session logs and excludes auth files
       maxBytes: 1024 * 1024,
       homeDir: tmp,
       codexHome,
-      redactValues: ["internal-test-model"],
+      redactValues: ["secret-model-for-test"],
     });
 
     assert.equal(result.manifest.length, 2);
@@ -48,7 +48,7 @@ test("collectCodexDebug copies recent Codex session logs and excludes auth files
     );
     assert.doesNotMatch(
       fs.readFileSync(path.join(outDir, "sessions", "2026", "05", "02", "session.jsonl"), "utf8"),
-      /internal-test-model/,
+      /secret-model-for-test/,
     );
     assert.match(
       fs.readFileSync(path.join(outDir, "sessions", "2026", "05", "02", "session.jsonl"), "utf8"),
@@ -164,4 +164,36 @@ test("redactSecrets masks common token shapes", () => {
       "token [REDACTED_GITHUB_TOKEN]",
     ].join("\n"),
   );
+});
+
+test("collectCodexDebug redacts the internal model from its environment", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-codex-debug-model-"));
+  const codexHome = path.join(tmp, ".codex");
+  const outDir = path.join(tmp, "out");
+  const previous = process.env.CLAWSWEEPER_INTERNAL_MODEL;
+  fs.mkdirSync(path.join(codexHome, "sessions"), { recursive: true });
+  fs.writeFileSync(
+    path.join(codexHome, "sessions", "run.jsonl"),
+    '{"model":"environment-secret-model"}\n',
+  );
+
+  try {
+    process.env.CLAWSWEEPER_INTERNAL_MODEL = "environment-secret-model";
+    collectCodexDebug({
+      outDir,
+      label: "model",
+      sinceMinutes: 60,
+      maxBytes: 1024 * 1024,
+      homeDir: tmp,
+      codexHome,
+    });
+
+    const artifact = fs.readFileSync(path.join(outDir, "sessions", "run.jsonl"), "utf8");
+    assert.doesNotMatch(artifact, /environment-secret-model/);
+    assert.match(artifact, /\[REDACTED_INTERNAL_MODEL\]/);
+  } finally {
+    if (previous === undefined) delete process.env.CLAWSWEEPER_INTERNAL_MODEL;
+    else process.env.CLAWSWEEPER_INTERNAL_MODEL = previous;
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });

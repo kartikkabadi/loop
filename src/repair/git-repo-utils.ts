@@ -23,7 +23,6 @@ type TargetBranch = TargetDir & {
 
 type TargetBaseBranch = TargetDir & {
   baseBranch: string;
-  fetchBase?: boolean;
 };
 
 export type RebaseOntoBaseResult = {
@@ -44,11 +43,6 @@ export type CompleteRebaseResult = {
 
 export function currentHead(targetDir: string): string {
   return run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
-}
-
-export function ensureFullHistory(targetDir: string): void {
-  if (!isShallowRepository(targetDir)) return;
-  gitFetch(targetDir, ["--unshallow", "--tags", "origin"]);
 }
 
 export function isAncestor({
@@ -103,14 +97,8 @@ export function branchHasBaseDiff({ targetDir, baseBranch }: TargetBaseBranch): 
   throw new Error(retryDetail.trim());
 }
 
-export function ensureMergeBaseAvailable({
-  targetDir,
-  baseBranch,
-  fetchBase = true,
-}: TargetBaseBranch): string {
-  if (fetchBase) {
-    gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
-  }
+export function ensureMergeBaseAvailable({ targetDir, baseBranch }: TargetBaseBranch): string {
+  gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
   const baseRef = `origin/${baseBranch}`;
   const first = spawnSync("git", ["merge-base", baseRef, "HEAD"], {
     cwd: targetDir,
@@ -119,7 +107,7 @@ export function ensureMergeBaseAvailable({
   });
   if (first.status === 0 && first.stdout.trim()) return first.stdout.trim();
 
-  fetchDeeperHistory({ targetDir, baseBranch, fetchBase });
+  fetchDeeperHistory({ targetDir, baseBranch });
   const retry = spawnSync("git", ["merge-base", baseRef, "HEAD"], {
     cwd: targetDir,
     env: process.env,
@@ -131,12 +119,8 @@ export function ensureMergeBaseAvailable({
   throw new Error(detail || `no merge base between ${baseRef} and HEAD`);
 }
 
-export function rebaseOntoBase({
-  targetDir,
-  baseBranch,
-  fetchBase = true,
-}: TargetBaseBranch): RebaseOntoBaseResult {
-  ensureMergeBaseAvailable({ targetDir, baseBranch, fetchBase });
+export function rebaseOntoBase({ targetDir, baseBranch }: TargetBaseBranch): RebaseOntoBaseResult {
+  ensureMergeBaseAvailable({ targetDir, baseBranch });
   const baseRef = `origin/${baseBranch}`;
   const baseSha = run("git", ["rev-parse", baseRef], { cwd: targetDir }).trim();
   const previousHead = currentHead(targetDir);
@@ -254,39 +238,18 @@ export function unmergedPaths(targetDir: string): string[] {
     .filter(Boolean);
 }
 
-function fetchDeeperHistory({ targetDir, baseBranch, fetchBase = true }: TargetBaseBranch): void {
-  if (isShallowRepository(targetDir)) {
-    if (fetchBase) {
-      ensureFullHistory(targetDir);
-    } else {
-      ensureFullHistoryPreservingBase(targetDir, baseBranch);
-    }
-  } else if (fetchBase) {
+function fetchDeeperHistory({ targetDir, baseBranch }: TargetBaseBranch): void {
+  const shallow = spawnSync("git", ["rev-parse", "--is-shallow-repository"], {
+    cwd: targetDir,
+    env: process.env,
+    encoding: "utf8",
+  }).stdout.trim();
+  if (shallow === "true" || fs.existsSync(path.join(targetDir, ".git", "shallow"))) {
+    gitFetch(targetDir, ["--unshallow", "origin"]);
+  } else {
     gitFetch(targetDir, ["origin", "--prune"]);
   }
-  if (fetchBase) {
-    gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
-  }
-}
-
-function ensureFullHistoryPreservingBase(targetDir: string, baseBranch: string): void {
-  const baseRef = `refs/remotes/origin/${baseBranch}`;
-  const pinnedBase = run("git", ["rev-parse", baseRef], { cwd: targetDir }).trim();
-  try {
-    ensureFullHistory(targetDir);
-  } finally {
-    run("git", ["update-ref", baseRef, pinnedBase], { cwd: targetDir });
-  }
-}
-
-function isShallowRepository(targetDir: string): boolean {
-  return (
-    spawnSync("git", ["rev-parse", "--is-shallow-repository"], {
-      cwd: targetDir,
-      env: process.env,
-      encoding: "utf8",
-    }).stdout.trim() === "true"
-  );
+  gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
 }
 
 function gitFetch(targetDir: string, args: string[]): void {

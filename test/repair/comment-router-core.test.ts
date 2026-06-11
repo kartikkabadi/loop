@@ -547,7 +547,7 @@ test("command response markers can match across head changes", () => {
         workflow: "repair cluster worker",
         job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-75423.md",
         mode: "maintainer-command",
-        model: "internal-test-model",
+        model: "gpt-5.5",
       },
     },
   );
@@ -713,10 +713,6 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
     authorId: 123456,
     commentUrl: "https://github.com/openclaw/openclaw/pull/74112#issuecomment-1",
     automergeInstructions: "Special instructions: preserve existing behavior by default.",
-    sourceIssueRepo: "openclaw/openclaw",
-    sourceIssueNumber: 70001,
-    sourceIssueSnapshotSha256: "a".repeat(64),
-    sourceIssueUpdatedAt: "2026-06-10T00:00:00Z",
   });
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
   assert.ok(match);
@@ -728,10 +724,6 @@ test("renderAutomergeJob validates and keeps merge owned by router", () => {
   assert.deepEqual(validateJob(job), []);
   assert.equal(job.frontmatter.job_intent, "automerge_pr");
   assert.equal(job.frontmatter.source, "pr_automerge");
-  assert.equal(job.frontmatter.source_issue_repo, "openclaw/openclaw");
-  assert.equal(job.frontmatter.source_issue_number, "70001");
-  assert.equal(job.frontmatter.source_issue_snapshot_sha256, "a".repeat(64));
-  assert.equal(job.frontmatter.source_issue_updated_at, "2026-06-10T00:00:00Z");
   assert.equal(job.frontmatter.requested_by, "maintainer-user");
   assert.equal(job.frontmatter.requested_by_id, "123456");
   assert.equal(
@@ -782,24 +774,6 @@ test("renderIssueImplementationJob validates and opens one non-closing fix PR la
   assert.match(job.body, /repair_strategy: "new_fix_pr"/);
   assert.match(job.body, /Do not close the issue from this lane/);
   assert.match(job.body, /Keep it scoped to the toolbar/);
-});
-
-test("generated repair jobs use the configured target base branch", () => {
-  const automergeJob = renderAutomergeJob({
-    repo: "openclaw/openclaw-windows-node",
-    issueNumber: 669,
-    title: "Fix Windows setup",
-  });
-  const issueJob = renderIssueImplementationJob({
-    repo: "openclaw/openclaw-windows-node",
-    issueNumber: 669,
-    title: "Fix Windows setup",
-    strictBugOnly: true,
-  });
-
-  assert.match(automergeJob, /rebase onto latest main/);
-  assert.match(issueJob, /openclaw\/openclaw-windows-node@main/);
-  assert.match(issueJob, /cannot be reproduced on latest main/);
 });
 
 test("renderIssueImplementationJob records maintainer build override metadata", () => {
@@ -1699,7 +1673,7 @@ test("renderResponse reports trusted repair dispatches without losing guardrails
       workflow: "repair-cluster-worker.yml",
       job_path: "jobs/openclaw/inbox/example.md",
       mode: "autonomous",
-      model: "internal-test-model",
+      model: "gpt-5.5",
       run_url: "https://github.com/openclaw/clawsweeper/actions/runs/123456789",
     },
   );
@@ -1726,7 +1700,7 @@ test("renderResponse gives command replies stateful lobster badges", () => {
   );
   const repairBody = renderResponse(
     { comment_id: "458", intent: "implement_issue", target: {} },
-    { model: "internal-test-model" },
+    { model: "gpt-5.5" },
   );
   const doneBody = renderResponse(
     {
@@ -1842,7 +1816,7 @@ test("renderResponse reports automerge repair dispatches as enabled", () => {
         workflow: "repair cluster worker",
         job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-75401.md",
         mode: "autonomous",
-        model: "internal-test-model",
+        model: "gpt-5.5",
         run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25242426838",
       },
     },
@@ -1913,7 +1887,7 @@ test("renderResponse reports issue implementation repair dispatches", () => {
       workflow: "repair cluster worker",
       job_path: "jobs/openclaw/inbox/issue-openclaw-openclaw-74113.md",
       mode: "autonomous",
-      model: "internal-test-model",
+      model: "gpt-5.5",
       run_url: "https://github.com/openclaw/clawsweeper/actions/runs/25242426839",
     },
   );
@@ -2013,7 +1987,7 @@ test("visualize assist dispatch payload stays within repository_dispatch key lim
   assert.equal(clientPayload.question, "visualize state");
   assert.equal(clientPayload.assist.mode, "visual");
   assert.equal(clientPayload.assist.lens, "state");
-  assert.equal("model" in clientPayload.assist, false);
+  assert.equal(clientPayload.assist.model, "internal");
   assert.equal(clientPayload.assist.reasoning_effort, "low");
   assert.equal(clientPayload.assist.timeout_ms, "120000");
   assert.equal("mode" in clientPayload, false);
@@ -2060,9 +2034,8 @@ test("assist workflow preserves flat field fallbacks after nested dispatch field
     workflow,
     /LENS: \$\{\{ github\.event\.client_payload\.assist\.lens \|\| github\.event\.client_payload\.lens \|\| inputs\.lens \|\| 'auto' \}\}/,
   );
-  assert.match(workflow, /model: \$\{\{ secrets\.CLAWSWEEPER_MODEL \}\}/);
-  assert.match(workflow, /--codex-model internal/);
-  assert.doesNotMatch(workflow, /client_payload\.assist\.model/);
+  assert.match(workflow, /MODEL: internal/);
+  assert.match(workflow, /CLAWSWEEPER_INTERNAL_MODEL: \$\{\{ secrets\.CLAWSWEEPER_MODEL \}\}/);
   assert.match(
     workflow,
     /REASONING_EFFORT: \$\{\{ github\.event\.client_payload\.assist\.reasoning_effort \|\| github\.event\.client_payload\.reasoning_effort \|\| 'low' \}\}/,
@@ -2123,7 +2096,7 @@ test("renderResponse reports automerge repair dispatches", () => {
       workflow: "repair-cluster-worker.yml",
       job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-74156.md",
       mode: "autonomous",
-      model: "internal-test-model",
+      model: "gpt-5.5",
     },
   );
 
@@ -2149,7 +2122,7 @@ test("renderResponse reports automerge pass with failing checks as repair dispat
         workflow: "repair cluster worker",
         job_path: "jobs/openclaw/inbox/automerge-openclaw-openclaw-74506.md",
         mode: "autonomous",
-        model: "internal-test-model",
+        model: "gpt-5.5",
       },
     },
   );

@@ -57,6 +57,7 @@ env:
   CLAWSWEEPER_FIX_STEP_TIMEOUT_MS: "2400000"
   CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS: ${{ vars.CLAWSWEEPER_FIX_TIMEOUT_RESERVE_MS || '300000' }}
   CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_FIX_PREFLIGHT_TIMEOUT_MS || '120000' }}
+  CLAWSWEEPER_MODEL: internal
   CLAWSWEEPER_TARGET_VALIDATION_MODE: ${{ vars.CLAWSWEEPER_TARGET_VALIDATION_MODE || 'changed-only' }}
   CLAWSWEEPER_RESOLVE_REVIEW_THREADS: ${{ vars.CLAWSWEEPER_RESOLVE_REVIEW_THREADS || '1' }}
   CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA: ${{ vars.CLAWSWEEPER_MAX_ACTIVE_PRS_PER_AREA || '50' }}
@@ -148,9 +149,10 @@ jobs:
       - uses: ./.github/actions/setup-codex
         if: ${{ steps.prepare.outputs.should_repair == 'true' }}
         with:
-          api-key: ${{ secrets.OPENAI_API_KEY }}
           cache-suffix: target-pnpm
-          model: ${{ secrets.CLAWSWEEPER_MODEL }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - name: Review synthetic result
         if: ${{ steps.prepare.outputs.should_repair == 'true' }}
@@ -162,7 +164,6 @@ jobs:
         continue-on-error: true
         timeout-minutes: 40
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: pnpm run repair:execute-fix -- "${{ steps.prepare.outputs.job_path }}" "${{ steps.prepare.outputs.result_path }}"
 

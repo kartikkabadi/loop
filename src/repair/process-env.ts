@@ -1,3 +1,7 @@
+import { codexModelArgs, internalCodexModel } from "../codex-env.js";
+
+export { codexModelArgs, internalCodexModel };
+
 export function ghCliEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
   return withoutColor({ ...process.env, ...overrides });
 }
@@ -8,7 +12,6 @@ export function repairGhEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEn
 
 export function codexSubprocessEnv(): NodeJS.ProcessEnv {
   const env = { ...process.env, ...clawsweeperGitIdentityEnv() };
-  delete env.CLAWSWEEPER_MODEL;
   delete env.GH_TOKEN;
   delete env.GITHUB_TOKEN;
   for (const key of Object.keys(env)) {
@@ -18,6 +21,7 @@ export function codexSubprocessEnv(): NodeJS.ProcessEnv {
     delete env.OPENAI_API_KEY;
     delete env.CODEX_API_KEY;
   }
+  delete env.CLAWSWEEPER_INTERNAL_MODEL;
   return withoutColor(env);
 }
 

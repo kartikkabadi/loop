@@ -245,12 +245,12 @@ function fishNotes(provenance: LooseRecord) {
   const reasoning = repairCodexReasoningEffort(provenance?.reasoning);
   const reviewedSha = provenance?.reviewedSha ?? provenance?.reviewed_sha;
   const reviewed = reviewedSha ? `; reviewed against ${String(reviewedSha).slice(0, 12)}` : "";
-  return `fish notes: internal review, reasoning ${reasoning}${reviewed}.`;
+  return `fish notes: reasoning ${reasoning}${reviewed}.`;
 }
 
 export function externalMessageProvenance({ model, reasoning, reviewedSha }: LooseRecord = {}) {
-  void model;
   return {
+    model: model ?? process.env.CLAWSWEEPER_MODEL ?? "internal",
     reasoning: repairCodexReasoningEffort(reasoning),
     reviewedSha,
   };
@@ -426,7 +426,6 @@ export function replacementPrBody({
   contributorCredits,
   maintainerAttribution = null,
   sourceClosingReferences = [],
-  sourceIssueMarker = null,
 }: LooseRecord) {
   const lines = [
     fixArtifact.pr_body.trim(),
@@ -458,7 +457,6 @@ export function replacementPrBody({
   }
   const creditLines = contributorCreditLines(contributorCredits);
   if (creditLines.length > 0) lines.push("", ...creditLines);
-  if (sourceIssueMarker) lines.push("", String(sourceIssueMarker));
   lines.push("", fishNotes(provenance));
   return `${lines.join("\n")}\n`;
 }
@@ -550,6 +548,7 @@ export function postMergeCloseoutComment({ actionName, fixUrl, provenance }: Loo
 
 export function sampleExternalMessages() {
   const provenance = externalMessageProvenance({
+    model: "internal",
     reasoning: "high",
     reviewedSha: "ba0f2e948fc0cafe1234567890abcdef12345678",
   });

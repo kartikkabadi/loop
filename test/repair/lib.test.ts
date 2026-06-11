@@ -1,15 +1,10 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import test from "node:test";
 
 import {
   hasDeterministicSecuritySignal,
   hasSecuritySignalText,
-  normalizeRepoRelativePath,
   parseArgs,
-  parseJob,
   parseSimpleYaml,
   renderPrompt,
   validateJob,
@@ -24,28 +19,6 @@ test("parseArgs ignores package-manager double dash separators", () => {
     latest: true,
     mode: "autonomous",
   });
-});
-
-test("job paths use portable workflow separators", () => {
-  assert.equal(
-    normalizeRepoRelativePath("jobs\\openclaw\\inbox\\issue-openclaw-example-1.md"),
-    "jobs/openclaw/inbox/issue-openclaw-example-1.md",
-  );
-});
-
-test("parseJob accepts Windows line endings and an optional UTF-8 BOM", (t) => {
-  const directory = mkdtempSync(join(tmpdir(), "clawsweeper-job-"));
-  t.after(() => rmSync(directory, { recursive: true, force: true }));
-  const filePath = join(directory, "job.md");
-  writeFileSync(
-    filePath,
-    "\uFEFF---\r\nrepo: openclaw/example\r\ncluster_id: smoke\r\nmode: autonomous\r\n---\r\nRepair smoke.\r\n",
-  );
-
-  const job = parseJob(filePath);
-
-  assert.equal(job.frontmatter.repo, "openclaw/example");
-  assert.equal(job.body, "Repair smoke.");
 });
 
 test("renderPrompt loads tracked repair prompt templates", () => {
@@ -63,25 +36,6 @@ test("renderPrompt loads tracked repair prompt templates", () => {
   );
   assert.match(prompt, /## Job file/);
   assert.match(prompt, /Repair smoke\./);
-});
-
-test("renderPrompt explains the read-only planner and writable executor handoff", () => {
-  const prompt = renderPrompt(
-    {
-      raw: "---\nrepo: openclaw/example\ncluster_id: issue-example-1\nmode: autonomous\n---\nImplement issue.",
-      frontmatter: {
-        repo: "openclaw/example",
-        cluster_id: "issue-example-1",
-        mode: "autonomous",
-      },
-    },
-    "autonomous",
-    { targetCheckout: "/tmp/example" },
-  );
-
-  assert.match(prompt, /planning worker is intentionally read-only/i);
-  assert.match(prompt, /not an implementation blocker/i);
-  assert.match(prompt, /separate executor receives a writable checkout/i);
 });
 
 test("validateJob rejects unknown canonical job intents", () => {

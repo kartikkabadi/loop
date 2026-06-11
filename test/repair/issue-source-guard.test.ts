@@ -1,0 +1,80 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import {
+  issueSourceRevisionSha256,
+  issueSourceStateBlockReason,
+} from "../../dist/repair/issue-source-guard.js";
+
+const issue = {
+  number: 244,
+  state: "open",
+  locked: false,
+  title: "Add reviewed behavior",
+  body: "Implement the narrow reviewed request.",
+  labels: [{ name: "enhancement" }],
+};
+
+test("source issue revision ignores ClawSweeper comments but tracks human edits", () => {
+  const botComment = {
+    id: 1,
+    user: { login: "clawsweeper[bot]" },
+    body: "review v1",
+    updated_at: "2026-06-11T10:00:00Z",
+  };
+  const humanComment = {
+    id: 2,
+    user: { login: "maintainer" },
+    body: "keep this narrow",
+    updated_at: "2026-06-11T10:01:00Z",
+  };
+  const revision = issueSourceRevisionSha256(issue, [botComment, humanComment]);
+
+  assert.equal(
+    issueSourceRevisionSha256(issue, [
+      { ...botComment, body: "review v2", updated_at: "2026-06-11T10:02:00Z" },
+      humanComment,
+    ]),
+    revision,
+  );
+  assert.notEqual(
+    issueSourceRevisionSha256(issue, [
+      botComment,
+      { ...humanComment, body: "expanded request", updated_at: "2026-06-11T10:03:00Z" },
+    ]),
+    revision,
+  );
+});
+
+test("source issue state blocks drift and protected signals", () => {
+  const revision = issueSourceRevisionSha256(issue, []);
+
+  assert.equal(
+    issueSourceStateBlockReason({ issue, comments: [], expectedRevision: revision }),
+    "",
+  );
+  assert.equal(
+    issueSourceStateBlockReason({
+      issue: { ...issue, locked: true },
+      comments: [],
+      expectedRevision: revision,
+    }),
+    "source issue is locked",
+  );
+  assert.equal(
+    issueSourceStateBlockReason({
+      issue: { ...issue, body: "Changed request" },
+      comments: [],
+      expectedRevision: revision,
+    }),
+    "source issue changed since ClawSweeper queued implementation",
+  );
+  assert.equal(
+    issueSourceStateBlockReason({
+      issue: { ...issue, labels: [{ name: "security" }] },
+      comments: [],
+      expectedRevision: revision,
+    }),
+    "source issue has protected label: security",
+  );
+});

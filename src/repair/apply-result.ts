@@ -32,7 +32,6 @@ import {
   buildRepairSquashMergeMessage,
   writeRepairSquashMergeBody,
 } from "./repair-merge-message.js";
-import { resolveTargetBaseBranch } from "./target-toolchain-config.js";
 import {
   compactPrCloseCoverageProofComment,
   compactPrCloseCoverageProofText,
@@ -132,7 +131,6 @@ const result = JSON.parse(fs.readFileSync(resultPath, "utf8"));
 if (result.repo !== job.frontmatter.repo) {
   throw new Error(`result repo ${result.repo} does not match job repo ${job.frontmatter.repo}`);
 }
-const targetBaseBranch = resolveTargetBaseBranch(result.repo, "main");
 if (result.cluster_id !== job.frontmatter.cluster_id) {
   throw new Error(
     `result cluster ${result.cluster_id} does not match job cluster ${job.frontmatter.cluster_id}`,
@@ -1076,11 +1074,7 @@ function validatePrCloseCoverageCoveringRefSafety({
 }
 
 function prCloseCoverageProofFailureReason(error: unknown): string {
-  const detail = error instanceof Error ? error.message : String(error);
-  return `PR close coverage proof failed: ${detail.replaceAll(
-    prCloseCoverageProofModel(),
-    "internal model",
-  )}`;
+  return `PR close coverage proof failed: ${error instanceof Error ? error.message : String(error)}`;
 }
 
 function prCloseCoverageCoveringUpdatedAt(repo: string, number: JsonValue): string | null {
@@ -1356,7 +1350,12 @@ function prCloseCoverageProofRelationshipSignals({ action, actionName, coveringR
 function prCloseCoverageProofRuntime() {
   const ghToken = stringSetting(process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN, "");
   const runtime = {
-    model: prCloseCoverageProofModel(),
+    model: stringSetting(
+      args["pr-close-coverage-proof-model"] ??
+        process.env.CLAWSWEEPER_PR_CLOSE_COVERAGE_PROOF_MODEL ??
+        process.env.CLAWSWEEPER_MODEL,
+      "internal",
+    ),
     reasoningEffort: stringSetting(
       args["pr-close-coverage-proof-reasoning-effort"] ??
         process.env.CLAWSWEEPER_PR_CLOSE_COVERAGE_PROOF_REASONING_EFFORT,
@@ -1388,15 +1387,11 @@ function prCloseCoverageProofRuntime() {
   return ghToken ? { ...runtime, ghToken } : runtime;
 }
 
-function prCloseCoverageProofModel() {
-  return "internal";
-}
-
 function validateMergeablePullRequest({ pullRequest, view }: LooseRecord) {
   if (pullRequest.state !== "open") return `pull request is ${pullRequest.state}`;
   if (pullRequest.draft || view.isDraft) return "pull request is draft";
-  if (String(view.baseRefName ?? pullRequest.base?.ref ?? "") !== targetBaseBranch)
-    return `pull request base is not ${targetBaseBranch}`;
+  if (String(view.baseRefName ?? pullRequest.base?.ref ?? "") !== "main")
+    return "pull request base is not main";
   if (view.mergeable !== "MERGEABLE") return `mergeable state is ${view.mergeable || "unknown"}`;
   if (!CLEAN_MERGE_STATES.has(String(view.mergeStateStatus ?? ""))) {
     return `merge state status is ${view.mergeStateStatus || "unknown"}`;

@@ -28,8 +28,9 @@ checkpoint, and status-only commits are intentionally omitted.
   automerge, issue implementation, commit finding, low-signal cleanup, and
   ordinary repair jobs share one routing surface.
 - Added an audit-only spam scanner lane for new GitHub issue comments and PR
-  review comments. It uses deterministic prefilters plus an internal model to write
-  durable spam audit records without blocking users or mutating repositories.
+  review comments. It uses deterministic prefilters plus the internal model to
+  write durable spam audit records without blocking users or mutating
+  repositories.
 - Added a light privacy reminder and stronger screenshot-or-video nudge to real behavior proof review guidance.
 - Added agent-led real behavior proof judgement so ClawSweeper can inspect linked screenshots, videos, logs, and terminal output with a read-only GitHub token, explain the proof verdict in the review comment, tell contributors how to trigger a fresh review after adding proof, and sync `proof: sufficient` when the evidence is convincing.
 - Added a durable review-context budget ledger to generated reports so prompt section sizes, hydrated counts, and truncation state are visible after each run, thanks @stainlu.
@@ -55,16 +56,12 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
-- Temporarily reduced the shared Codex worker budget to 10, capped review matrix expansion at 6 concurrent shards, and serialized exact event reviews to avoid exceeding the OpenAI `gpt-5.5` TPM limit.
-- Added autonomous implementation and bounded automerge for small high-confidence viable issues outside `openclaw/openclaw` and `openclaw/clawhub`, moved all runtime model selection behind the `CLAWSWEEPER_MODEL` secret without public model provenance, and made workflows install the latest Codex CLI.
-- Fixed autonomous issue planning so the expected read-only planner always emits executable fix artifacts for the separate writable PR executor, safely accepts quoted Go test commands, and routes Windows-only validation to a Windows runner.
+- Automatically dispatch high-confidence `queue_fix_pr` issue reviews outside `openclaw/openclaw` and `openclaw/clawhub` into the existing implementation worker, then opt generated PRs into the existing review, autofix, and automerge loop. Retryable Codex worker failures now requeue through the bounded repair self-heal path.
+- Install the latest Codex CLI for every worker run and keep the actual model name in the `CLAWSWEEPER_MODEL` GitHub Actions secret, exposing only the `internal` alias in workflows, reports, and comments.
 - Removed PR egg hatching, including the `@clawsweeper hatch` command, hatch dispatch path, generated PR egg comments, and `assets/pr-eggs` publishing (#210). Thanks @vincentkoc.
 
 ### Fixed
 
-- Replaced the stale generic `pnpm check:changed` automerge fallback with Codex-sandboxed repository-native validation discovery for Go, package-script, Make, and .NET targets while failing closed after branch checkout for unknown layouts.
-- Prevented concurrent exact-item review publishes from restoring stale neighboring reports, plans, and public model metadata in the durable state repository.
-- Prevented broad review, audit, and apply publishes from overwriting neighboring durable records changed by concurrent workflows.
 - Added merged PRs that reference an issue to issue review context when GitHub has no formal closing link, so implemented-on-main decisions can see relevant fix provenance. Thanks @openperf.
 - Skipped open-but-locked repair apply targets before close or merge mutations and converted GitHub locked-conversation write denials into terminal skipped records. Thanks @AsishKumarDalal.
 - Kept stale queued workflow ghosts out of commit-review capacity probes after GitHub refuses to cancel old queued runs.

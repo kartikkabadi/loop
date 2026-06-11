@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { codexModelArgs } from "./codex-env.js";
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { codexEnv } from "./codex-env.js";
@@ -262,8 +263,7 @@ export function runPrCloseCoverageProofModel(options: {
     "codex",
     [
       "exec",
-      "-m",
-      options.runtime.model,
+      ...codexModelArgs(options.runtime.model),
       ...codexConfig.flatMap((config) => ["-c", config]),
       "-C",
       options.runtime.rootDir,

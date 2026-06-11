@@ -26,7 +26,6 @@ import {
   closeReasonApplyAgeSkipReason,
   closeReasonsArg,
   closingPullRequestReferenceTarget,
-  commentBodiesTruncatedForTest,
   compactMappedSlice,
   compactMappedWindow,
   compactPullRequestForTest,
@@ -1038,11 +1037,6 @@ test("review context ledger records ordered section budgets", () => {
   assert.match(renderReviewContextBudgetForTest(context), /- previous ClawSweeper review: 1 entry/);
 });
 
-test("individual oversized comments mark review context truncated", () => {
-  assert.equal(commentBodiesTruncatedForTest([{ body: "x".repeat(6000) }]), false);
-  assert.equal(commentBodiesTruncatedForTest([{ body: "x".repeat(6001) }]), true);
-});
-
 test("protected labels are normalized and only maintainer-only items stay plannable", () => {
   assert.deepEqual(protectedLabels(["Security", "bug", "maintainer", "SECURITY"]), [
     "security",
@@ -1207,7 +1201,7 @@ test("review actions only propose valid closes and never apply directly", () => 
     item: item(),
     decision: closeDecision(),
     git,
-    runtime: { model: "internal-test-model", reasoningEffort: "high" },
+    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
   });
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /Thanks for the context here/);
@@ -1231,8 +1225,7 @@ test("review actions only propose valid closes and never apply directly", () => 
   assert.match(action.closeComment, /@bob/);
   assert.doesNotMatch(action.closeComment, /role: recent maintainer/);
   assert.match(action.closeComment, /role: recent area contributor/);
-  assert.match(action.closeComment, /Codex review notes: reasoning high;/);
-  assert.doesNotMatch(action.closeComment, /internal-test-model/);
+  assert.match(action.closeComment, /Codex review notes: model gpt-5\.5, reasoning high;/);
 });
 
 test("review actions render deterministic close comments when model close comment is empty", () => {
@@ -1241,7 +1234,7 @@ test("review actions render deterministic close comments when model close commen
     item: item(),
     decision,
     git,
-    runtime: { model: "internal-test-model", reasoningEffort: "high" },
+    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
   });
 
   assert.equal(action.actionTaken, "proposed_close");
@@ -1269,7 +1262,7 @@ test("close comments reference high-confidence merged fixing PRs", () => {
       },
     }),
     git,
-    runtime: { model: "internal-test-model", reasoningEffort: "high" },
+    runtime: { model: "gpt-5.5", reasoningEffort: "high" },
   });
 
   assert.equal(action.actionTaken, "proposed_close");
@@ -1320,43 +1313,6 @@ test("commit PR lookup selects the newest merged pull request", () => {
   });
 });
 
-test("public review evidence cannot fingerprint the selected internal model", () => {
-  const source = readFileSync("src/clawsweeper.ts", "utf8");
-  const policyHash = source.slice(
-    source.indexOf("function reviewPolicyHash"),
-    source.indexOf("function asRecord"),
-  );
-
-  assert.match(policyHash, /model: "internal"/);
-  assert.match(policyHash, /modelPolicyVersion: INTERNAL_MODEL_POLICY_VERSION/);
-  assert.match(source, /CLAWSWEEPER_MODEL_POLICY_VERSION/);
-  assert.doesNotMatch(policyHash, /options\.model|DEFAULT_CODEX_MODEL/);
-  assert.match(source, /redactInternalModel\(error instanceof Error \? error\.message/);
-  assert.doesNotMatch(source, /posted: true, mode, item: item\.number, model/);
-});
-
-test("Codex proxy runtime metadata is never restored from the CLI cache", () => {
-  const action = readFileSync(".github/actions/setup-codex/action.yml", "utf8");
-
-  assert.match(action, /\$\{RUNNER_TEMP:-\$\{TMPDIR:-\/tmp\}\}\/clawsweeper-codex-home/);
-  assert.match(action, /npm view @openai\/codex-responses-api-proxy dist-tags\.latest/);
-  assert.match(action, /"@openai\/codex-responses-api-proxy@\$proxy_version"/);
-  assert.match(action, /rm -f "\$upstream_server_info" "\$alias_server_info"/);
-  assert.doesNotMatch(action, /if \[\[ ! -s "\$upstream_server_info" \]\]; then\s*\(/);
-  assert.doesNotMatch(action, /if \[\[ ! -s "\$alias_server_info" \]\]; then\s*printf/);
-});
-
-test("PR close coverage proof always uses the private model alias", () => {
-  const source = readFileSync("src/repair/apply-result.ts", "utf8");
-  const start = source.indexOf("function prCloseCoverageProofModel()");
-  const end = source.indexOf("function validateMergeablePullRequest", start);
-  const modelResolver = source.slice(start, end);
-
-  assert.match(modelResolver, /return "internal"/);
-  assert.doesNotMatch(modelResolver, /PR_CLOSE_COVERAGE_PROOF_MODEL/);
-  assert.doesNotMatch(modelResolver, /pr-close-coverage-proof-model/);
-});
-
 test("report-rendered close comments keep merged fixing PR provenance", () => {
   const comment = renderReviewCommentFromReport(
     `${reportFrontMatter({
@@ -1376,7 +1332,7 @@ test("report-rendered close comments keep merged fixing PR provenance", () => {
       fixed_sha: "abcdef1234567890",
       fixed_at: "2026-04-28T12:00:00Z",
       main_sha: "abcdef1234567890",
-      review_model: "internal",
+      review_model: "gpt-5.5",
       review_reasoning_effort: "high",
     })}
 
@@ -16835,9 +16791,12 @@ test("sweep event reviews and target fanout avoid storm amplification", () => {
   const fanoutBlock = workflow.slice(workflow.indexOf("target-fanout:"), workflow.indexOf("plan:"));
 
   assert.match(eventBlock, /concurrency:/);
-  assert.match(eventBlock, /group: clawsweeper-event-review-global/);
-  assert.match(eventBlock, /cancel-in-progress: false/);
-  assert.match(workflow, /max-parallel: 6/);
+  assert.match(
+    eventBlock,
+    /clawsweeper-event-review-\$\{\{ github\.event\.client_payload\.target_repo/,
+  );
+  assert.match(eventBlock, /github\.event\.client_payload\.item_number/);
+  assert.match(eventBlock, /cancel-in-progress: true/);
   assert.match(
     fanoutBlock,
     /FANOUT_LIMIT: \$\{\{ github\.event\.schedule == '41 \* \* \* \*' && '6' \|\| \(github\.event\.schedule == '37 \*\/6 \* \* \*' && '12' \|\| '6'\) \}\}/,
@@ -16855,32 +16814,6 @@ test("setup-state defaults to non-partial checkout for auth-safe hydration", () 
   assert.doesNotMatch(action, /state-ref:/);
   assert.match(action, /repository: openclaw\/clawsweeper-state/);
   assert.match(action, /ref: state/);
-});
-
-test("exact review publishes cannot overwrite neighboring durable records", () => {
-  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
-  const commitBlock = workflow.slice(
-    workflow.indexOf("- name: Commit review records"),
-    workflow.indexOf("- name: Dispatch reproducible bug implementation candidates"),
-  );
-  const syncBlock = workflow.slice(
-    workflow.indexOf("- name: Sync selected review comments"),
-    workflow.indexOf("- name: Apply selected safe close proposals"),
-  );
-  const applyBlock = workflow.slice(
-    workflow.indexOf("- name: Apply selected safe close proposals"),
-    workflow.indexOf("- name: Continue sweep"),
-  );
-
-  assert.match(commitBlock, /if \[ -n "\$EXACT_ITEM" \]; then/);
-  for (const block of [commitBlock, syncBlock, applyBlock]) {
-    assert.match(block, /artifact-item-numbers --artifact-dir artifacts/);
-    assert.match(block, /records\/\$\{target_slug\}\/items\/\$\{item_number\}\.md/);
-    assert.match(block, /records\/\$\{target_slug\}\/closed\/\$\{item_number\}\.md/);
-    assert.match(block, /records\/\$\{target_slug\}\/plans\/\$\{item_number\}\.md/);
-  }
-  assert.doesNotMatch(syncBlock, /--path "records\/\$\{target_slug\}"/);
-  assert.doesNotMatch(applyBlock, /--path "records\/\$\{target_slug\}"/);
 });
 
 test("github activity workflow coalesces noisy observer runs", () => {
@@ -16944,21 +16877,70 @@ test("spam scanner exact dispatches publish only per-comment audit records", () 
 test("issue implementation workflow lets job intent choose dispatch capacity", () => {
   const workflow = readFileSync(".github/workflows/repair-issue-implementation-intake.yml", "utf8");
 
-  assert.match(workflow, /name: Resolve target repository/);
-  assert.match(workflow, /owner: \$\{\{ steps\.target\.outputs\.target_owner \}\}/);
-  assert.match(workflow, /repositories: \$\{\{ steps\.target\.outputs\.target_name \}\}/);
-  assert.match(workflow, /name: Create central dispatch token/);
-  assert.match(workflow, /default: "openclaw\/clawsweeper-state"/);
-  assert.match(workflow, /REPORT_REPO: .*'openclaw\/clawsweeper-state'/);
-  assert.match(
-    workflow,
-    /CLAWSWEEPER_REPORT_GH_TOKEN: \$\{\{ steps\.state-token\.outputs\.token \}\}/,
-  );
-  assert.match(workflow, /GH_TOKEN: \$\{\{ steps\.dispatch_token\.outputs\.token \}\}/);
   assert.match(workflow, /cap_args=\(\)/);
   assert.match(workflow, /--max-live-workers "\$MAX_LIVE_WORKERS"/);
   assert.match(workflow, /"\$\{cap_args\[@\]\}"/);
   assert.doesNotMatch(workflow, /worker-limit issue_implementation/);
+  assert.match(workflow, /owner: \$\{\{ steps\.target\.outputs\.target_owner \}\}/);
+  assert.match(workflow, /id: dispatch-token/);
+  assert.match(workflow, /GH_TOKEN: \$\{\{ steps\.dispatch-token\.outputs\.token \}\}/);
+  assert.match(workflow, /MODEL: internal/);
+});
+
+test("reviewed viable issues dispatch the existing implementation and automerge lanes", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+
+  assert.match(workflow, /name: Dispatch viable issue implementation/);
+  assert.match(workflow, /--candidate-kind viable/);
+  assert.match(workflow, /repair-issue-implementation-intake\.yml/);
+  assert.match(workflow, /-f candidate_kind=viable/);
+  assert.match(workflow, /-f report_repo=openclaw\/clawsweeper-state/);
+  assert.match(workflow, /steps\.target\.outputs\.target_repo != 'openclaw\/openclaw'/);
+  assert.match(workflow, /steps\.target\.outputs\.target_repo != 'openclaw\/clawhub'/);
+});
+
+test("Codex workflows install latest CLI and keep the actual model secret", () => {
+  const action = readFileSync(".github/actions/setup-codex/action.yml", "utf8");
+  const workflows = [
+    ".github/workflows/assist.yml",
+    ".github/workflows/commit-review.yml",
+    ".github/workflows/maintainer-activity-report.yml",
+    ".github/workflows/repair-cluster-worker.yml",
+    ".github/workflows/repair-commit-finding-intake.yml",
+    ".github/workflows/sweep.yml",
+  ].map((file) => readFileSync(file, "utf8"));
+
+  assert.match(action, /@openai\/codex@latest/);
+  assert.match(action, /@openai\/codex-responses-api-proxy@latest/);
+  assert.match(action, /env -u OPENAI_API_KEY[\s\S]*-u CLAWSWEEPER_INTERNAL_MODEL/);
+  assert.equal(action.match(/--ignore-scripts/g)?.length, 2);
+  assert.doesNotMatch(action, /inputs\['version'\]/);
+  for (const workflow of workflows) {
+    assert.match(workflow, /CLAWSWEEPER_MODEL: internal/);
+    assert.match(workflow, /CLAWSWEEPER_INTERNAL_MODEL: \$\{\{ secrets\.CLAWSWEEPER_MODEL \}\}/);
+    assert.doesNotMatch(workflow, /CLAWSWEEPER_CODEX_CLI_VERSION/);
+    for (const line of workflow
+      .split("\n")
+      .filter((candidate) => /(?:OPENAI_API_KEY|CLAWSWEEPER_INTERNAL_MODEL):/.test(candidate))) {
+      assert.match(line, /^\s{10,}/);
+    }
+  }
+});
+
+test("failed Codex workers use bounded automatic retry paths", () => {
+  const worker = readFileSync("src/repair/run-worker.ts", "utf8");
+  const executor = readFileSync("src/repair/execute-fix-artifact.ts", "utf8");
+  const selfHeal = readFileSync("src/repair/self-heal-failed-runs.ts", "utf8");
+
+  assert.match(worker, /Codex worker timed out[\s\S]*process\.exit\(1\)/);
+  assert.match(
+    worker,
+    /Codex worker completed without a structured result\.json artifact[\s\S]*process\.exit\(1\)/,
+  );
+  assert.match(executor, /requeue_required: true/);
+  assert.match(executor, /if \(outcome\.requeue_required === true\) process\.exitCode = 1/);
+  assert.match(selfHeal, /CLAWSWEEPER_SELF_HEAL_MAX_ATTEMPTS_PER_JOB \?\? 3/);
+  assert.match(selfHeal, /reason: "retry_limit_reached"/);
 });
 
 test("repair workflows preserve existing dispatch while scheduled cluster intake stays gated", () => {
@@ -16987,16 +16969,6 @@ test("repair workflows preserve existing dispatch while scheduled cluster intake
   ].join("\n");
 
   assert.doesNotMatch(existingRepairWorkflows, /CLAWSWEEPER_FEATURE_REPAIR_ENABLED/);
-  assert.match(cluster, /name: Detect worker requeue requests/);
-  assert.match(cluster, /name: Create central worker requeue token/);
-  assert.match(cluster, /name: Requeue transient worker failures/);
-  assert.match(cluster, /worker_requeue_count: \$\{\{ steps\.worker_requeue\.outputs\.count \}\}/);
-  assert.match(cluster, /needs\.cluster\.outputs\.worker_requeue_count == '0'/);
-  assert.match(cluster, /--mode "\$\{\{ steps\.run_worker\.outputs\.mode \|\| inputs\.mode \}\}"/);
-  assert.match(
-    cluster,
-    /group: clawsweeper-repair-\$\{\{ inputs\.job \}\}-\$\{\{ inputs\.mode \}\}-\$\{\{ inputs\.requeue_attempt \}\}/,
-  );
   assert.match(sweep, /pnpm run repair:comment-router -- \\\n[\s\S]*--execute/);
   assert.match(router, /\{ \[ "\$\{\{ github\.event_name \}\}" = "repository_dispatch" \]; \}/);
   assert.match(issueImplementation, /ENABLED: \$\{\{ github\.event\.inputs\.enabled/);
@@ -17206,7 +17178,6 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN = "codex-target";
     process.env.CLAWSWEEPER_APP_ID = "123";
     process.env.CLAWSWEEPER_APP_PRIVATE_KEY = "private";
-    process.env.CLAWSWEEPER_MODEL = "secret-model";
     process.env.OPENAI_API_KEY = "openai";
     process.env.CODEX_API_KEY = "codex";
 
@@ -17218,7 +17189,6 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     assert.equal(env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN, undefined);
     assert.equal(env.CLAWSWEEPER_APP_ID, undefined);
     assert.equal(env.CLAWSWEEPER_APP_PRIVATE_KEY, undefined);
-    assert.equal(env.CLAWSWEEPER_MODEL, undefined);
     assert.equal(env.OPENAI_API_KEY, undefined);
     assert.equal(env.CODEX_API_KEY, undefined);
     assert.equal(env.GIT_OPTIONAL_LOCKS, "0");

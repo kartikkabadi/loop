@@ -16,7 +16,6 @@ import {
   ghBestEffortWithRetry as ghBestEffort,
   ghErrorText,
   ghJsonWithRetry as ghJson,
-  ghPagedWithRetry,
   ghTextWithRetry as ghWithRetry,
 } from "./github-cli.js";
 import { issueNumberFromRef, parsePullRequestUrl } from "./github-ref.js";
@@ -29,17 +28,9 @@ import {
 import { AUTOMERGE_LABEL } from "./comment-router-core.js";
 import { numberEnv } from "./env-utils.js";
 import {
-  generatedIssueSourceBlockReason,
-  hasStandaloneIssueClosingReference,
-  parseGeneratedIssueSourceMarker,
-  pullRequestsCrossReferencedByIssueTimeline,
-  type GeneratedIssueSourceMetadata,
-} from "./issue-snapshot.js";
-import {
   buildRepairSquashMergeMessage,
   writeRepairSquashMergeBody,
 } from "./repair-merge-message.js";
-import { resolveTargetBaseBranch } from "./target-toolchain-config.js";
 import { compactText as compactPlainText } from "./text-utils.js";
 
 const PASSING_CHECK_CONCLUSIONS = new Set(["SUCCESS", "SKIPPED", "NEUTRAL"]);
@@ -92,7 +83,6 @@ const result = JSON.parse(fs.readFileSync(resultPath, "utf8"));
 if (result.repo !== job.frontmatter.repo) {
   throw new Error(`result repo ${result.repo} does not match job repo ${job.frontmatter.repo}`);
 }
-const targetBaseBranch = resolveTargetBaseBranch(result.repo, "main");
 if (result.cluster_id !== job.frontmatter.cluster_id) {
   throw new Error(
     `result cluster ${result.cluster_id} does not match job cluster ${job.frontmatter.cluster_id}`,
@@ -265,7 +255,6 @@ function finalizeFixPr(action: LooseRecord) {
         merge_state_status: latestView.mergeStateStatus ?? null,
         review_decision: latestView.reviewDecision ?? null,
         retry_recommended: true,
-        requeue_required: true,
         waited_ms: waitedMs,
       };
     }
@@ -287,10 +276,6 @@ function finalizeFixPr(action: LooseRecord) {
 }
 
 function finalizeIssueImplementationPr({ base, parsed }: LooseRecord) {
-  if (job.frontmatter.automerge_generated_pr === true) {
-    return queueIssueImplementationAutomerge({ base, parsed });
-  }
-
   const deadline = Date.now() + POST_FLIGHT_WAIT_MS;
   let waitedMs = 0;
   for (;;) {
@@ -341,263 +326,6 @@ function finalizeIssueImplementationPr({ base, parsed }: LooseRecord) {
     sleepMs(sleepFor);
     waitedMs += sleepFor;
   }
-}
-
-function queueIssueImplementationAutomerge({ base, parsed }: LooseRecord) {
-  const pull = fetchPullRequest(result.repo, parsed.number);
-  const view = fetchPullRequestView(result.repo, parsed.number);
-  const prBase = {
-    ...base,
-    pr: `#${parsed.number}`,
-    title: view.title ?? pull.title ?? null,
-  };
-  if (pull.state !== "open") {
-    return { ...prBase, status: "blocked", reason: `pull request is ${pull.state}` };
-  }
-  if (dryRun) {
-    return {
-      ...prBase,
-      status: "planned",
-      reason: "would arm generated PR for exact-head ClawSweeper automerge",
-    };
-  }
-
-  const sourceValidation = validateGeneratedPrSourceIssue(parsed.number);
-  if (sourceValidation.status !== "verified") {
-    return {
-      ...prBase,
-      status: "blocked",
-      reason: sourceValidation.reason,
-      retry_recommended: false,
-    };
-  }
-
-  const closingReference = ensureGeneratedPrClosesSourceIssue(pull, parsed.number);
-  if (closingReference.status !== "verified") {
-    return {
-      ...prBase,
-      status: "blocked",
-      reason: closingReference.reason,
-      retry_recommended: true,
-      requeue_required: true,
-    };
-  }
-
-  const headSha = String(pull.head?.sha ?? view.headRefOid ?? "").trim();
-  if (!headSha) {
-    return {
-      ...prBase,
-      status: "blocked",
-      reason: "generated PR head SHA is unavailable for exact-head review",
-      retry_recommended: true,
-      requeue_required: true,
-    };
-  }
-
-  ensureLabel(
-    result.repo,
-    AUTOMERGE_LABEL,
-    "1A7F37",
-    "ClawSweeper generated this PR and armed bounded exact-head automerge",
-  );
-  ghWithRetry([
-    "issue",
-    "edit",
-    String(parsed.number),
-    "--repo",
-    result.repo,
-    "--add-label",
-    AUTOMERGE_LABEL,
-  ]);
-
-  const reviewDispatch = dispatchGeneratedPrReview({
-    target: parsed.number,
-    headSha,
-  });
-  if (reviewDispatch.status !== "executed") {
-    return {
-      ...prBase,
-      status: "blocked",
-      reason: reviewDispatch.reason,
-      head_sha: headSha,
-      source_issue_url: closingReference.issueUrl,
-      source_issue_snapshot: "verified",
-      source_issue_closing_reference: closingReference.changed ? "appended" : "verified",
-      review_dispatch: reviewDispatch,
-      retry_recommended: reviewDispatch.retryable === true,
-      ...(reviewDispatch.retryable === true ? { requeue_required: true } : {}),
-    };
-  }
-
-  return {
-    ...prBase,
-    status: "automerge_queued",
-    reason: "generated PR armed for exact-head ClawSweeper review and automerge",
-    head_sha: headSha,
-    source_issue_url: closingReference.issueUrl,
-    source_issue_snapshot: "verified",
-    source_issue_closing_reference: closingReference.changed ? "appended" : "verified",
-    review_dispatch: reviewDispatch,
-    retry_recommended: false,
-  };
-}
-
-function validateGeneratedPrSourceIssue(pullNumber: number) {
-  const metadata = issueImplementationSourceMetadata();
-  if (!metadata) {
-    return {
-      status: "blocked",
-      reason: "source issue review snapshot is unavailable; refusing to arm automerge",
-    };
-  }
-
-  const issue = fetchIssue(result.repo, metadata.issueNumber);
-  const comments = fetchIssueComments(result.repo, metadata.issueNumber);
-  const competingPrs = openPullRequestsMentioningIssue(metadata.issueNumber);
-  const reason = generatedIssueSourceBlockReason({
-    metadata,
-    issue,
-    comments,
-    competingPullRequests: competingPrs,
-    currentPullNumber: pullNumber,
-  });
-  if (reason) return { status: "blocked", reason };
-  return { status: "verified" };
-}
-
-function openPullRequestsMentioningIssue(sourceNumber: number): LooseRecord[] {
-  const timeline = ghPagedWithRetry<LooseRecord>(
-    `repos/${result.repo}/issues/${sourceNumber}/timeline?per_page=100`,
-  );
-  return pullRequestsCrossReferencedByIssueTimeline(timeline, result.repo)
-    .map((pull) => fetchPullRequest(result.repo, pull.number))
-    .filter((pull) => String(pull.state ?? "").toLowerCase() === "open");
-}
-
-function ensureGeneratedPrClosesSourceIssue(pull: LooseRecord, pullNumber: JsonValue) {
-  const metadata = issueImplementationSourceMetadata();
-  if (!metadata) {
-    return {
-      status: "blocked",
-      reason: "source issue metadata is unavailable; refusing to arm generated PR automerge",
-    };
-  }
-  const issueUrl = `https://github.com/${metadata.repo}/issues/${metadata.issueNumber}`;
-  const refreshedPull = fetchPullRequest(result.repo, Number(pullNumber));
-  if (
-    String(refreshedPull.body ?? "") !== String(pull.body ?? "") ||
-    String(refreshedPull.head?.sha ?? "") !== String(pull.head?.sha ?? "")
-  ) {
-    return {
-      status: "blocked",
-      reason: "generated PR changed while source metadata was being validated; retry required",
-    };
-  }
-  const body = String(refreshedPull.body ?? "").trim();
-  const marker = parseGeneratedIssueSourceMarker(body);
-  if (
-    !marker ||
-    marker.repo !== metadata.repo ||
-    marker.issueNumber !== metadata.issueNumber ||
-    marker.snapshotSha256 !== metadata.snapshotSha256 ||
-    marker.updatedAt !== metadata.updatedAt
-  ) {
-    return {
-      status: "blocked",
-      reason: "generated PR must contain source issue metadata matching its repair job",
-    };
-  }
-  if (!hasStandaloneIssueClosingReference(body, issueUrl)) {
-    return {
-      status: "blocked",
-      reason: `generated PR must contain a standalone closing reference: Closes ${issueUrl}`,
-    };
-  }
-  return { status: "verified", changed: false, issueUrl };
-}
-
-function issueImplementationSourceNumber(): number {
-  for (const ref of [
-    ...(job.frontmatter.canonical ?? []),
-    ...(job.frontmatter.candidates ?? []),
-    ...(job.frontmatter.cluster_refs ?? []),
-  ]) {
-    const number = issueNumberFromRef(ref, result.repo);
-    if (number > 0) return number;
-  }
-  return 0;
-}
-
-function issueImplementationSourceMetadata(): GeneratedIssueSourceMetadata | null {
-  const issueNumber = issueImplementationSourceNumber();
-  const snapshotSha256 = String(job.frontmatter.source_issue_snapshot_sha256 ?? "")
-    .trim()
-    .toLowerCase();
-  const updatedAt = String(job.frontmatter.source_issue_updated_at ?? "").trim();
-  if (
-    !issueNumber ||
-    !/^[a-f0-9]{64}$/.test(snapshotSha256) ||
-    !Number.isFinite(Date.parse(updatedAt))
-  ) {
-    return null;
-  }
-  return {
-    repo: String(result.repo).toLowerCase(),
-    issueNumber,
-    snapshotSha256,
-    updatedAt,
-  };
-}
-
-function dispatchGeneratedPrReview({ target, headSha }: LooseRecord) {
-  const reviewRepo = String(process.env.CLAWSWEEPER_REVIEW_REPO ?? "openclaw/clawsweeper").trim();
-  const dispatchToken = String(process.env.CLAWSWEEPER_DISPATCH_TOKEN ?? "").trim();
-  if (!dispatchToken) {
-    return {
-      status: "failed",
-      repo: reviewRepo,
-      reason: "CLAWSWEEPER_DISPATCH_TOKEN is required for generated PR review dispatch",
-      retryable: false,
-    };
-  }
-  const payload = {
-    event_type: "clawsweeper_item",
-    client_payload: {
-      target_repo: result.repo,
-      item_number: String(target),
-      item_kind: "pull_request",
-      source_event: "issue_implementation",
-      source_action: "generated_pr_opened",
-      expected_head_sha: String(headSha),
-      supersedes_in_progress: true,
-    },
-  };
-  try {
-    ghWithRetry(["api", `repos/${reviewRepo}/dispatches`, "--method", "POST", "--input", "-"], {
-      env: { GH_TOKEN: dispatchToken },
-      input: JSON.stringify(payload),
-    });
-    return {
-      status: "executed",
-      repo: reviewRepo,
-      dispatched_at: new Date().toISOString(),
-      retryable: false,
-    };
-  } catch (error) {
-    const detail = compactText(ghErrorText(error), 500);
-    return {
-      status: "failed",
-      repo: reviewRepo,
-      reason: detail,
-      retryable: isTransientReviewDispatchError(detail),
-    };
-  }
-}
-
-function isTransientReviewDispatchError(detail: string): boolean {
-  return /\b(?:HTTP\s*)?(?:408|409|425|429|500|502|503|504)\b|ECONNRESET|ETIMEDOUT|EAI_AGAIN|socket hang up|temporar(?:y|ily)|timeout/i.test(
-    detail,
-  );
 }
 
 function finalizePostMergeCloseouts(fixAction: LooseRecord, finalized: LooseRecord) {
@@ -768,8 +496,8 @@ function hasLiveSecuritySignal(number: JsonValue, labels: LooseRecord[]) {
 function validateMergeableFixPr({ pull, view, preflight }: LooseRecord) {
   if (pull.state !== "open") return `pull request is ${pull.state}`;
   if (pull.draft || view.isDraft) return "pull request is draft";
-  if (String(view.baseRefName ?? pull.base?.ref ?? "") !== targetBaseBranch)
-    return `pull request base is not ${targetBaseBranch}`;
+  if (String(view.baseRefName ?? pull.base?.ref ?? "") !== "main")
+    return "pull request base is not main";
   if (hasLiveSecuritySignal(pull.number, pull.labels ?? [])) {
     return "security-sensitive PR requires central security triage";
   }
@@ -995,10 +723,6 @@ function fetchPullRequest(repo: string, number: JsonValue) {
 
 function fetchIssue(repo: string, number: JsonValue) {
   return ghJson(["api", `repos/${repo}/issues/${number}`]);
-}
-
-function fetchIssueComments(repo: string, number: JsonValue): LooseRecord[] {
-  return ghPagedWithRetry<LooseRecord>(`repos/${repo}/issues/${number}/comments`);
 }
 
 function fetchPullRequestView(repo: string, number: JsonValue) {

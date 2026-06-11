@@ -39,6 +39,7 @@ permissions:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+  CLAWSWEEPER_MODEL: internal
   CLOUDFLARE_ACCOUNT_ID: <cloudflare-account-id>
   REPORTS_DOMAIN: reports.openclaw.ai
   REPORTS_PROJECT: openclaw-maintainer-reports
@@ -95,9 +96,9 @@ jobs:
           persist-credentials: false
 
       - uses: ./clawsweeper/.github/actions/setup-codex
-        with:
-          api-key: ${{ secrets.OPENAI_API_KEY }}
-          model: ${{ secrets.CLAWSWEEPER_MODEL }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - name: Configure Cloudflare Access
         working-directory: maintainers

@@ -74,7 +74,7 @@ on:
       shard_count:
         description: "Parallel shards (capped by config/automation-limits.json)"
         required: false
-        default: "7"
+        default: "39"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -135,8 +135,8 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-  CLAWSWEEPER_MODEL_POLICY_VERSION: ${{ vars.CLAWSWEEPER_MODEL_POLICY_VERSION || '2026-06-10-v1' }}
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
+  CLAWSWEEPER_MODEL: internal
 
 concurrency:
   group: ${{ (github.event_name == 'schedule' && (github.event.schedule == '4/15 * * * *' || github.event.schedule == '41 * * * *' || github.event.schedule == '37 */6 * * *')) && format('clawsweeper-target-fanout-{0}', github.event.schedule || github.run_id) || github.event_name == 'repository_dispatch' && format('clawsweeper-event-{0}-{1}', github.event.client_payload.target_repo || 'openclaw/openclaw', github.event.client_payload.item_number || github.run_id) || format('{0}-{1}', (github.event_name == 'schedule' && github.event.schedule == '13 8,20 * * *') && 'clawsweeper-failed-review-retry' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true' && github.event.inputs.apply_sync_comments_only == 'true') || (github.event_name == 'schedule' && github.event.schedule == '6,21,36,51 * * * *')) && 'clawsweeper-comment-sync' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.apply_existing == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '3 * * * *' || github.event.schedule == '18 * * * *' || github.event.schedule == '33 * * * *' || github.event.schedule == '48 * * * *' || github.event.schedule == '8,23,38,53 * * * *'))) && 'clawsweeper-apply' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '')) && format('clawsweeper-intake-exact-{0}', github.event.inputs.item_number || github.event.inputs.item_numbers) || ((github.event_name == 'workflow_dispatch' && github.event.inputs.hot_intake == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '*/5 * * * *' || github.event.schedule == '2/5 * * * *'))) && 'clawsweeper-intake-v2' || ((github.event_name == 'workflow_dispatch' && github.event.inputs.audit_dashboard == 'true') || (github.event_name == 'schedule' && (github.event.schedule == '7 */6 * * *' || github.event.schedule == '12 */6 * * *' || github.event.schedule == '17 */6 * * *'))) && 'clawsweeper-audit' || 'clawsweeper-review', github.event.inputs.target_repo || github.event.client_payload.target_repo || ((github.event.schedule == '17 */6 * * *') && 'openclaw/clawsweeper' || ((github.event.schedule == '2/5 * * * *' || github.event.schedule == '22 * * * *' || github.event.schedule == '8,23,38,53 * * * *' || github.event.schedule == '12 */6 * * *') && 'openclaw/clawhub' || 'openclaw/openclaw'))) }}
@@ -159,8 +159,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     concurrency:
-      group: clawsweeper-event-review-global
-      cancel-in-progress: false
+      group: clawsweeper-event-review-${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}-${{ github.event.client_payload.item_number || github.run_id }}
+      cancel-in-progress: true
     permissions:
       actions: write
       contents: write
@@ -213,7 +213,6 @@ jobs:
             echo "target_branch=$target_branch"
             echo "target_checkout_dir=$target_checkout_dir"
             echo "item_number=$item_number"
-            echo "item_kind=$item_kind"
           } >> "$GITHUB_OUTPUT"
 
       - name: Create target read token
@@ -298,10 +297,11 @@ jobs:
             --wait-ms 120000
 
       - uses: ./.github/actions/setup-codex
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
         with:
-          api-key: ${{ secrets.OPENAI_API_KEY }}
           login-status: "true"
-          model: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - uses: actions/cache@v5
         with:
@@ -397,44 +397,41 @@ jobs:
         run: pnpm run repair:publish-event-result
 
       - name: Dispatch viable issue implementation
-        if: ${{ success() && steps.target-write-token.outputs.token != '' && steps.target.outputs.item_kind != 'pull_request' }}
+        if: ${{ success() && steps.target-write-token.outputs.token != '' && steps.target.outputs.target_repo != 'openclaw/openclaw' && steps.target.outputs.target_repo != 'openclaw/clawhub' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
         run: |
           set -euo pipefail
-          normalized_target_repo="$(printf '%s' "$TARGET_REPO" | tr '[:upper:]' '[:lower:]')"
-          if [ "$normalized_target_repo" = "openclaw/openclaw" ] || [ "$normalized_target_repo" = "openclaw/clawhub" ]; then
-            echo "General viable implementation is disabled for protected repository $TARGET_REPO."
-            exit 0
-          fi
           candidate_output="$(pnpm run --silent repair:issue-implementation-intake -- candidates \
             --enabled true \
             --candidate-kind viable \
             --target-repo "$TARGET_REPO" \
-            --artifact-dir artifacts/event)"
+            --artifact-dir artifacts/event \
+            --report-repo openclaw/clawsweeper-state)"
           echo "$candidate_output"
-          CANDIDATE_OUTPUT="$candidate_output" node <<'NODE' > /tmp/event-viable-implementation-candidates.tsv
+          CANDIDATE_OUTPUT="$candidate_output" node <<'NODE' > /tmp/viable-event-candidate.tsv
           const output = JSON.parse(process.env.CANDIDATE_OUTPUT || "{}");
-          for (const candidate of output.candidates || []) {
-            console.log([
-              candidate.item_number,
-              candidate.report_path,
-              candidate.report_url,
-            ].join("\t"));
+          const candidate = (output.candidates || [])[0];
+          if (candidate) {
+            console.log([candidate.item_number, candidate.report_path, candidate.report_url].join("\t"));
           }
           NODE
-          while IFS=$'\t' read -r item_number report_path report_url; do
-            [ -n "$item_number" ] || continue
-            gh workflow run repair-issue-implementation-intake.yml \
-              --ref main \
-              -f enabled=true \
-              -f target_repo="$TARGET_REPO" \
-              -f item_number="$item_number" \
-              -f candidate_kind=viable \
-              -f report_path="$report_path" \
-              -f report_url="$report_url"
-          done < /tmp/event-viable-implementation-candidates.tsv
+          if [ ! -s /tmp/viable-event-candidate.tsv ]; then
+            echo "Review did not approve this issue for autonomous implementation."
+            exit 0
+          fi
+          IFS=$'\t' read -r item_number report_path report_url < /tmp/viable-event-candidate.tsv
+          gh workflow run repair-issue-implementation-intake.yml \
+            --ref main \
+            -f enabled=true \
+            -f target_repo="$TARGET_REPO" \
+            -f item_number="$item_number" \
+            -f candidate_kind=viable \
+            -f report_repo=openclaw/clawsweeper-state \
+            -f report_path="$report_path" \
+            -f report_url="$report_url" \
+            -f model=internal
 
       - name: Route synced ClawSweeper verdict
         id: route-synced-verdict
@@ -1016,7 +1013,6 @@ jobs:
       pull-requests: read
     strategy:
       fail-fast: false
-      max-parallel: 6
       matrix:
         include: ${{ fromJson(needs.plan.outputs.matrix) }}
     steps:
@@ -1063,10 +1059,11 @@ jobs:
           path: clawsweeper/dist
 
       - uses: ./clawsweeper/.github/actions/setup-codex
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
         with:
-          api-key: ${{ secrets.OPENAI_API_KEY }}
           login-status: "true"
-          model: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - uses: ./clawsweeper/.github/actions/setup-media-proof-tools
 
@@ -1318,31 +1315,11 @@ jobs:
           else
             pnpm run reconcile -- --target-repo "$TARGET_REPO" --skip-closed-at
           fi
-          publish_args=(
-            --message "chore: update sweep records"
-            --path "results/sweep-status/${target_slug}.json"
+          pnpm run repair:publish-main -- \
+            --message "chore: update sweep records" \
+            --path "records/${target_slug}" \
+            --path "results/sweep-status/${target_slug}.json" \
             --rebase-strategy theirs
-          )
-          if [ -n "$EXACT_ITEM" ]; then
-            item_numbers="$(pnpm run --silent workflow -- artifact-item-numbers --artifact-dir artifacts)"
-            while IFS= read -r item_number; do
-              [ -n "$item_number" ] || continue
-              case "$item_number" in
-                *[!0-9]*)
-                  echo "Invalid artifact item number: $item_number" >&2
-                  exit 1
-                  ;;
-              esac
-              publish_args+=(
-                --path "records/${target_slug}/items/${item_number}.md"
-                --path "records/${target_slug}/closed/${item_number}.md"
-                --path "records/${target_slug}/plans/${item_number}.md"
-              )
-            done < <(tr ',' '\n' <<<"$item_numbers")
-          else
-            publish_args+=(--path "records/${target_slug}")
-          fi
-          pnpm run repair:publish-main -- "${publish_args[@]}"
 
       - name: Dispatch reproducible bug implementation candidates
         if: ${{ success() && needs.plan.outputs.target_repo == 'openclaw/openclaw' && vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS == '1' }}
@@ -1452,19 +1429,14 @@ jobs:
               -f report_url="$report_url"
           done < /tmp/vision-fit-implementation-candidates.tsv
 
-      - name: Dispatch viable implementation candidates
-        if: ${{ success() && steps.target-write-token.outputs.token != '' }}
+      - name: Dispatch viable issue implementation candidates
+        if: ${{ success() && steps.target-write-token.outputs.token != '' && needs.plan.outputs.target_repo != 'openclaw/openclaw' && needs.plan.outputs.target_repo != 'openclaw/clawhub' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
           MAX_DISPATCH: ${{ vars.CLAWSWEEPER_AUTO_IMPLEMENT_MAX_DISPATCH_PER_SWEEP || '' }}
         run: |
           set -euo pipefail
-          normalized_target_repo="$(printf '%s' "$TARGET_REPO" | tr '[:upper:]' '[:lower:]')"
-          if [ "$normalized_target_repo" = "openclaw/openclaw" ] || [ "$normalized_target_repo" = "openclaw/clawhub" ]; then
-            echo "General viable implementation is disabled for protected repository $TARGET_REPO."
-            exit 0
-          fi
           if [ -z "$MAX_DISPATCH" ]; then
             MAX_DISPATCH="$(pnpm run --silent workflow -- limit issue_implementation.dispatches_per_sweep_default)"
           fi
@@ -1472,26 +1444,21 @@ jobs:
             --enabled true \
             --candidate-kind viable \
             --target-repo "$TARGET_REPO" \
-            --artifact-dir artifacts)"
+            --artifact-dir artifacts \
+            --report-repo openclaw/clawsweeper-state)"
           echo "$candidate_output"
-          candidates_json="$(CANDIDATE_OUTPUT="$candidate_output" node <<'NODE'
+          CANDIDATE_OUTPUT="$candidate_output" MAX_DISPATCH="$MAX_DISPATCH" node <<'NODE' > /tmp/viable-implementation-candidates.tsv
           const output = JSON.parse(process.env.CANDIDATE_OUTPUT || "{}");
-          console.log(JSON.stringify(output.candidates || []));
-          NODE
-          )"
-          CANDIDATES_JSON="$candidates_json" MAX_DISPATCH="$MAX_DISPATCH" node <<'NODE' > /tmp/viable-implementation-candidates.tsv
-          const candidates = JSON.parse(process.env.CANDIDATES_JSON || "[]");
           const limit = Math.max(0, Number(process.env.MAX_DISPATCH || "0"));
-          for (const candidate of candidates.slice(0, limit)) {
-            console.log([
-              candidate.item_number,
-              candidate.report_path,
-              candidate.report_url,
-            ].join("\t"));
+          for (const candidate of (output.candidates || []).slice(0, limit)) {
+            console.log([candidate.item_number, candidate.report_path, candidate.report_url].join("\t"));
           }
           NODE
+          if [ ! -s /tmp/viable-implementation-candidates.tsv ]; then
+            echo "No viable issue implementation candidates."
+            exit 0
+          fi
           while IFS=$'\t' read -r item_number report_path report_url; do
-            [ -n "$item_number" ] || continue
             echo "Dispatching viable issue implementation intake for $TARGET_REPO#$item_number"
             gh workflow run repair-issue-implementation-intake.yml \
               --ref main \
@@ -1499,8 +1466,10 @@ jobs:
               -f target_repo="$TARGET_REPO" \
               -f item_number="$item_number" \
               -f candidate_kind=viable \
+              -f report_repo=openclaw/clawsweeper-state \
               -f report_path="$report_path" \
-              -f report_url="$report_url"
+              -f report_url="$report_url" \
+              -f model=internal
           done < /tmp/viable-implementation-candidates.tsv
 
       - name: Dispatch background review comment sync
@@ -1534,16 +1503,15 @@ jobs:
 
       - uses: ./.github/actions/setup-codex
         if: ${{ success() && steps.target-write-token.outputs.token != '' && (((github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_target_sweep') || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') || github.event.inputs.apply_after_review == 'true') }}
-        with:
-          api-key: ${{ secrets.OPENAI_API_KEY }}
-          model: ${{ secrets.CLAWSWEEPER_MODEL }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - name: Sync selected review comments
         if: ${{ success() && steps.target-write-token.outputs.token != '' && ((github.event_name == 'repository_dispatch' && github.event.action != 'clawsweeper_target_sweep') || github.event.inputs.item_number != '' || github.event.inputs.item_numbers != '') }}
         timeout-minutes: 15
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           set -euo pipefail
@@ -1580,34 +1548,18 @@ jobs:
             --due-backlog "${{ needs.plan.outputs.due_backlog }}" \
             --oldest-unreviewed-at "${{ needs.plan.outputs.oldest_unreviewed_at }}" \
             --capacity-reason "${{ needs.plan.outputs.capacity_reason }}"
-          publish_args=(
-            --message "chore: sync selected review comments"
-            --path apply-report.json
-            --path "results/sweep-status/${target_slug}.json"
+          pnpm run repair:publish-main -- \
+            --message "chore: sync selected review comments" \
+            --path "records/${target_slug}" \
+            --path apply-report.json \
+            --path "results/sweep-status/${target_slug}.json" \
             --rebase-strategy theirs
-          )
-          while IFS= read -r item_number; do
-            [ -n "$item_number" ] || continue
-            case "$item_number" in
-              *[!0-9]*)
-                echo "Invalid artifact item number: $item_number" >&2
-                exit 1
-                ;;
-            esac
-            publish_args+=(
-              --path "records/${target_slug}/items/${item_number}.md"
-              --path "records/${target_slug}/closed/${item_number}.md"
-              --path "records/${target_slug}/plans/${item_number}.md"
-            )
-          done < <(tr ',' '\n' <<<"$item_numbers")
-          pnpm run repair:publish-main -- "${publish_args[@]}"
 
       - name: Apply selected safe close proposals
         if: ${{ success() && steps.target-write-token.outputs.token != '' && github.event.inputs.apply_after_review == 'true' }}
         timeout-minutes: 30
         env:
           GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
         run: |
           set -euo pipefail
@@ -1649,27 +1601,12 @@ jobs:
             --due-backlog "${{ needs.plan.outputs.due_backlog }}" \
             --oldest-unreviewed-at "${{ needs.plan.outputs.oldest_unreviewed_at }}" \
             --capacity-reason "${{ needs.plan.outputs.capacity_reason }}"
-          publish_args=(
-            --message "chore: apply selected sweep decisions"
-            --path apply-report.json
-            --path "results/sweep-status/${target_slug}.json"
+          pnpm run repair:publish-main -- \
+            --message "chore: apply selected sweep decisions" \
+            --path "records/${target_slug}" \
+            --path apply-report.json \
+            --path "results/sweep-status/${target_slug}.json" \
             --rebase-strategy theirs
-          )
-          while IFS= read -r item_number; do
-            [ -n "$item_number" ] || continue
-            case "$item_number" in
-              *[!0-9]*)
-                echo "Invalid artifact item number: $item_number" >&2
-                exit 1
-                ;;
-            esac
-            publish_args+=(
-              --path "records/${target_slug}/items/${item_number}.md"
-              --path "records/${target_slug}/closed/${item_number}.md"
-              --path "records/${target_slug}/plans/${item_number}.md"
-            )
-          done < <(tr ',' '\n' <<<"$item_numbers")
-          pnpm run repair:publish-main -- "${publish_args[@]}"
 
       - name: Continue sweep
         if: ${{ success() && needs.plan.outputs.planned_count == needs.plan.outputs.planned_capacity && github.event_name != 'repository_dispatch' && (github.event_name != 'workflow_dispatch' || (github.event.inputs.item_number == '' && github.event.inputs.item_numbers == '')) }}
@@ -2118,9 +2055,9 @@ jobs:
 
       - uses: ./.github/actions/setup-codex
         if: ${{ steps.apply-preselect.outputs.needs_codex == 'true' }}
-        with:
-          api-key: ${{ secrets.OPENAI_API_KEY }}
-          model: ${{ secrets.CLAWSWEEPER_MODEL }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
 
       - name: Apply unchanged proposed decisions with checkpoints
         env:

@@ -22,7 +22,6 @@ import {
   repairJobUsesClusterLane,
   workerLaneForRepairJobIntent,
 } from "./job-intent.js";
-import { resolveTargetExecutionRunner } from "./target-toolchain-config.js";
 
 const args = parseArgs(process.argv.slice(2));
 const defaultRunner = process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404";
@@ -30,25 +29,19 @@ const defaultExecutionRunner =
   process.env.CLAWSWEEPER_EXECUTION_RUNNER ?? "blacksmith-16vcpu-ubuntu-2404";
 const mode = String(args.mode ?? "plan");
 const runner = args.runner ?? defaultRunner;
-const executionRunner = String(
-  args["execution-runner"] ?? args.execution_runner ?? defaultExecutionRunner,
-);
+const executionRunner = args["execution-runner"] ?? args.execution_runner ?? defaultExecutionRunner;
 const workflow = args.workflow ?? REPAIR_CLUSTER_WORKFLOW;
 const repo = String(args.repo ?? currentProjectRepo());
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "internal");
 const waitForCapacity = Boolean(args["wait-for-capacity"]);
 const ref = args.ref ? String(args.ref) : "";
-const restoreIssueImplementationJob = booleanArg(
-  args["restore-issue-implementation-job"] ?? args.restore_issue_implementation_job,
-  true,
-);
 const files = args._;
 const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 const jobWorkerLanes = new Map<string, WorkerLane>();
-const jobExecutionRunners = new Map<string, string>();
 
 if (files.length === 0) {
   console.error(
-    `usage: node scripts/dispatch-jobs.ts <job.md> [...] [--mode plan|execute|autonomous] [--runner label] [--execution-runner label] [--max-live-workers ${AUTOMATION_LIMITS.repair_live_runs.default}] [--wait-for-capacity]`,
+    `usage: node scripts/dispatch-jobs.ts <job.md> [...] [--mode plan|execute|autonomous] [--runner label] [--execution-runner label] [--model model] [--max-live-workers ${AUTOMATION_LIMITS.repair_live_runs.default}] [--wait-for-capacity]`,
   );
   process.exit(2);
 }
@@ -69,10 +62,6 @@ for (const file of files) {
   jobWorkerLanes.set(
     relative,
     workerLaneForRepairJobIntent(repairJobIntentForFrontmatter(job.frontmatter)),
-  );
-  jobExecutionRunners.set(
-    relative,
-    resolveTargetExecutionRunner(String(job.frontmatter.repo), executionRunner),
   );
   if (!fs.existsSync(path.join(repoRoot(), relative))) {
     failed = true;
@@ -125,7 +114,6 @@ while (!failed && index < jobs.length) {
 }
 
 function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue) {
-  const targetExecutionRunner = jobExecutionRunners.get(String(relative)) ?? executionRunner;
   const result = spawnSync(
     "gh",
     [
@@ -142,9 +130,9 @@ function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue)
       "-f",
       `runner=${runner}`,
       "-f",
-      `execution_runner=${targetExecutionRunner}`,
+      `execution_runner=${executionRunner}`,
       "-f",
-      `restore_issue_implementation_job=${restoreIssueImplementationJob}`,
+      `model=${model}`,
     ],
     { cwd: repoRoot(), encoding: "utf8", stdio: "pipe" },
   );
@@ -153,16 +141,9 @@ function dispatchJob(relative: JsonValue, position: JsonValue, total: JsonValue)
     console.error(result.stderr || result.stdout);
   } else {
     console.log(
-      `dispatched ${position}/${total} ${relative} (${mode}) on ${runner}; execution on ${targetExecutionRunner}`,
+      `dispatched ${position}/${total} ${relative} (${mode}) on ${runner}; execution on ${executionRunner}`,
     );
   }
-}
-
-function booleanArg(value: JsonValue, fallback: boolean): boolean {
-  if (value === undefined || value === null || value === "") return fallback;
-  if (value === true || value === "true" || value === "1") return true;
-  if (value === false || value === "false" || value === "0") return false;
-  throw new Error(`expected boolean value, got ${String(value)}`);
 }
 
 function shouldDispatchJob(relative: JsonValue) {

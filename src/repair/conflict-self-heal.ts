@@ -27,7 +27,6 @@ import {
   selfHealJobPath,
   selfHealStatusMarkerPrefix,
 } from "./conflict-self-heal-core.js";
-import { resolveTargetExecutionRunner } from "./target-toolchain-config.js";
 
 const args = parseArgs(process.argv.slice(2));
 
@@ -45,15 +44,13 @@ const headPrefix = String(args["head-prefix"] ?? args.head_prefix ?? DEFAULT_SEL
 const runner = String(
   args.runner ?? process.env.CLAWSWEEPER_WORKER_RUNNER ?? "blacksmith-4vcpu-ubuntu-2404",
 );
-const executionRunner = resolveTargetExecutionRunner(
-  repo,
-  String(
-    args["execution-runner"] ??
-      args.execution_runner ??
-      process.env.CLAWSWEEPER_EXECUTION_RUNNER ??
-      "blacksmith-16vcpu-ubuntu-2404",
-  ),
+const executionRunner = String(
+  args["execution-runner"] ??
+    args.execution_runner ??
+    process.env.CLAWSWEEPER_EXECUTION_RUNNER ??
+    "blacksmith-16vcpu-ubuntu-2404",
 );
+const model = String(args.model ?? process.env.CLAWSWEEPER_MODEL ?? "internal");
 const maxPrs = Number(args["max-prs"] ?? args.max_prs ?? args.limit ?? 5);
 const maxRepairsPerHead = Number(
   args["max-repairs-per-head"] ??
@@ -98,6 +95,7 @@ const dispatchSummary = {
   repair_repo: repairRepo,
   runner,
   execution_runner: executionRunner,
+  model,
   max_prs: maxPrs,
   max_repairs_per_head: maxRepairsPerHead,
   max_repairs_per_pr: maxRepairsPerPr,
@@ -307,6 +305,7 @@ function executeDispatches(
       workflow,
       runner,
       execution_runner: executionRunner,
+      model,
       dispatched_at: new Date().toISOString(),
       status: "pending",
     };
@@ -432,6 +431,8 @@ function dispatchRepair(candidate: LooseRecord) {
       `runner=${runner}`,
       "-f",
       `execution_runner=${executionRunner}`,
+      "-f",
+      `model=${model}`,
     ],
     { cwd: repoRoot(), encoding: "utf8", stdio: "pipe" },
   );

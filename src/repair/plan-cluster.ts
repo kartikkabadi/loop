@@ -13,7 +13,6 @@ import {
 } from "./lib.js";
 import { ghJson, ghPaged, ghPagedLimit, ghText } from "./github-cli.js";
 import { hasSecurityRepairOptInLabel } from "./security-boundary.js";
-import { resolveTargetBaseBranch } from "./target-toolchain-config.js";
 
 function readNonNegativeIntegerEnv(name: string, fallback: number): number {
   const raw = process.env[name];
@@ -82,10 +81,9 @@ const items = new Map();
 const linkedRefs = new Map();
 const pending = [...new Set(seedNumbers)].map((number: string) => ({ number, depth: 0 }));
 let linkedHydrateCount = 0;
-const baseBranch = resolveTargetBaseBranch(job.frontmatter.repo, "main");
 const branch = offline
-  ? offlineBaseBranch(job.frontmatter.repo, baseBranch)
-  : fetchBaseBranch(job.frontmatter.repo, baseBranch);
+  ? offlineMainBranch(job.frontmatter.repo)
+  : fetchMainBranch(job.frontmatter.repo);
 
 while (pending.length > 0) {
   const next = pending.shift();
@@ -483,7 +481,7 @@ function buildFixArtifact(plan: LooseRecord, job: LooseRecord) {
         ? "security-sensitive refs listed in security_repair_allowed_items may receive bounded fix actions, but merge and close remain blocked until later human/router gates clear"
         : "route security-sensitive refs with route_security and keep processing unrelated non-security items",
       "use OpenClaw SECURITY.md posture: trusted-operator exec behavior, provider gaps, feature gaps, and hardening-only parity drift are not vulnerabilities without a boundary bypass",
-      "prove current base-branch behavior before fix, merge, fixed-by-candidate, or post-merge closeout actions",
+      "prove current main behavior before fix, merge, fixed-by-candidate, or post-merge closeout actions",
       "for pure issue-dedupe closeout, prove the canonical issue and duplicate targets are live and current",
       "hydrate every provided and linked item before classification",
       "emit one action per GitHub issue/PR ref; never use comma-separated targets",
@@ -716,21 +714,21 @@ function branchWriteReason(repo: string, pullRequest: LooseRecord) {
   return "fork branch does not allow maintainer edits";
 }
 
-function fetchBaseBranch(repo: string, branchName: string) {
-  const branch = ghJson(["api", `repos/${repo}/branches/${branchName}`]);
+function fetchMainBranch(repo: string) {
+  const branch = ghJson(["api", `repos/${repo}/branches/main`]);
   return {
-    name: branchName,
+    name: "main",
     sha: branch.commit?.sha,
     url: branch._links?.html,
   };
 }
 
-function offlineBaseBranch(repo: string, branchName: string) {
+function offlineMainBranch(repo: string) {
   return {
-    name: branchName,
+    name: "main",
     sha: null,
-    url: `https://github.com/${repo}/tree/${branchName}`,
-    note: `offline mode did not fetch current ${branchName}`,
+    url: `https://github.com/${repo}/tree/main`,
+    note: "offline mode did not fetch current main",
   };
 }
 

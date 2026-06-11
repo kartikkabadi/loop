@@ -233,26 +233,9 @@ export function countCommandActions(reportPath: string, action: string, status =
 }
 
 export function countRequeueRequired(reportDir: string): number {
-  const actionCount = resultFiles(reportDir).reduce((count, file) => {
-    const result = readJsonObject(file);
-    return (
-      count + resultActions(result).filter((action) => action.requeue_required === true).length
-    );
-  }, 0);
-  const workerMarkerCount = workerRequeueFiles(reportDir).filter((file) => {
-    const marker = readJsonObject(file);
-    return marker.requeue_required === true;
-  }).length;
-  return actionCount + workerMarkerCount;
-}
-
-function workerRequeueFiles(reportDir: string): string[] {
-  if (!fs.existsSync(reportDir)) return [];
-  return fs
-    .readdirSync(reportDir, { recursive: true })
-    .map((entry) => path.join(reportDir, String(entry)))
-    .filter((candidate) => path.basename(candidate) === "worker-requeue.json")
-    .filter((candidate) => fs.statSync(candidate).isFile());
+  return resultFiles(reportDir)
+    .flatMap((file) => resultActions(file))
+    .filter((action) => action.requeue_required === true).length;
 }
 
 export function mergeApplyReports(reportDir: string, outputPath: string): void {
@@ -599,15 +582,12 @@ function resultFiles(reportDir: string): string[] {
   return fs
     .readdirSync(reportDir, { recursive: true })
     .map((entry) => path.join(reportDir, String(entry)))
-    .filter((candidate) =>
-      ["apply-report.json", "post-flight-report.json", "result.json"].includes(
-        path.basename(candidate),
-      ),
-    )
+    .filter((candidate) => ["apply-report.json", "result.json"].includes(path.basename(candidate)))
     .filter((candidate) => fs.statSync(candidate).isFile());
 }
 
-function resultActions(parsed: LooseRecord): LooseRecord[] {
+function resultActions(reportPath: string): LooseRecord[] {
+  const parsed = readJsonObject(reportPath);
   const actions: JsonValue[] = Array.isArray(parsed.actions) ? parsed.actions : [];
   return actions.filter((action): action is LooseRecord => isJsonObject(action));
 }

@@ -35,6 +35,10 @@ const DEFAULT_MAX_BYTES = 100 * 1024 * 1024;
 
 export function collectCodexDebug(options: CollectOptions) {
   const roots = codexDebugRoots(options);
+  const redactValues = [
+    ...(options.redactValues ?? []),
+    process.env.CLAWSWEEPER_INTERNAL_MODEL ?? "",
+  ];
   const since = Date.now() - options.sinceMinutes * 60 * 1000;
   const manifest: ManifestEntry[] = [];
   const skipped: SkippedEntry[] = [];
@@ -63,7 +67,7 @@ export function collectCodexDebug(options: CollectOptions) {
       const artifactPath = path.join(options.outDir, root.name, relative);
       fs.mkdirSync(path.dirname(artifactPath), { recursive: true });
       const raw = fs.readFileSync(filePath, "utf8");
-      const redacted = redactSecrets(raw, options.redactValues);
+      const redacted = redactSecrets(raw, redactValues);
       fs.writeFileSync(artifactPath, redacted);
       manifest.push({
         source: path.join(root.name, relative),
@@ -97,7 +101,7 @@ export function collectCodexDebug(options: CollectOptions) {
 
 export function redactSecrets(text: string, redactValues: string[] = []) {
   let redacted = text;
-  for (const value of redactValues.filter(Boolean)) {
+  for (const value of redactValues.map((entry) => entry.trim()).filter(Boolean)) {
     redacted = redacted.replaceAll(value, "[REDACTED_INTERNAL_MODEL]");
   }
   return redacted
@@ -183,7 +187,6 @@ if (isMain()) {
     typeof args["codex-home"] === "string" ? args["codex-home"] : process.env.CODEX_HOME;
   const repairRunsDir =
     typeof args["repair-runs-dir"] === "string" ? args["repair-runs-dir"] : undefined;
-  const internalModel = String(process.env.CLAWSWEEPER_MODEL ?? "").trim();
   const result = collectCodexDebug({
     outDir,
     label: stringArg(args.label, "codex"),
@@ -192,7 +195,6 @@ if (isMain()) {
     homeDir: os.homedir(),
     ...(codexHome ? { codexHome } : {}),
     ...(repairRunsDir ? { repairRunsDir } : {}),
-    ...(internalModel ? { redactValues: [internalModel] } : {}),
   });
   console.log(
     JSON.stringify({

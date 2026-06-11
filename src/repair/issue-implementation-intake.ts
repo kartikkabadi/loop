@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 import type { JsonValue, LooseRecord } from "./json-types.js";
-import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs, parseJob, repoRoot, validateJob } from "./lib.js";
-import { ghErrorText, ghJsonWithRetry, ghPagedWithRetry } from "./github-cli.js";
+import { ghErrorText, ghJsonWithRetry } from "./github-cli.js";
 import {
   issueImplementationJobBranch,
   issueImplementationJobPath,
@@ -16,11 +15,7 @@ import {
   REVIEW_VIABLE_ISSUE_TRIGGER_SOURCE,
   REVIEW_VISION_FIT_TRIGGER_SOURCE,
 } from "./comment-router-core.js";
-import {
-  isClawSweeperAutomationComment,
-  issueImplementationSnapshotSha256,
-  sourceIssueHasSecuritySignal,
-} from "./issue-snapshot.js";
+import { issueSourceRevisionSha256 } from "./issue-source-guard.js";
 
 type CandidateKind = "strict_bug" | "vision_fit" | "viable";
 
@@ -183,7 +178,7 @@ export function parseReviewReport(markdown: string): ReviewReport {
     for (const line of (match[1] ?? "").split(/\r?\n/)) {
       const kv = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
       if (!kv) continue;
-      frontmatter[kv[1] ?? ""] = parseFrontmatterScalar(kv[2] ?? "");
+      frontmatter[kv[1] ?? ""] = stripQuotes(kv[2] ?? "");
     }
   }
   return { frontmatter, body: match ? markdown.slice(match[0].length) : markdown };
@@ -266,10 +261,10 @@ function eligibilityDecision({
   live: LooseRecord | null;
   operatorOverride?: boolean;
 }): IntakeDecision {
-  const normalizedTargetRepo = targetRepo.trim().toLowerCase();
   if (!truthy(enabled)) {
     return decision("disabled", false, "issue implementation intake disabled");
   }
+  const normalizedTargetRepo = targetRepo.trim().toLowerCase();
   if (
     candidateKind === "viable" &&
     (normalizedTargetRepo === "openclaw/openclaw" || normalizedTargetRepo === "openclaw/clawhub")
@@ -282,9 +277,8 @@ function eligibilityDecision({
   }
   const fm = report.frontmatter;
   const blockers: string[] = [];
-  if (Number(fm.number) !== itemNumber) {
+  if (Number(fm.number) !== itemNumber)
     blockers.push(`report item number is ${fm.number || "unknown"}`);
-  }
   if (
     String(fm.repository ?? "")
       .trim()
@@ -302,6 +296,13 @@ function eligibilityDecision({
     blockers.push(`work candidate is ${fm.work_candidate || "unknown"}`);
   if (fm.work_confidence !== "high")
     blockers.push(`work confidence is ${fm.work_confidence || "unknown"}`);
+  if (
+    frontMatterStringArray(fm.work_cluster_refs).some((reference) =>
+      /(?:^|\/)pull\/\d+(?:\b|$)/i.test(reference),
+    )
+  ) {
+    blockers.push("review report already references a pull request");
+  }
   if (candidateKind === "strict_bug") {
     if (fm.auto_implementation_candidate && fm.auto_implementation_candidate !== "strict_bug")
       blockers.push(`auto implementation candidate is ${fm.auto_implementation_candidate}`);
@@ -328,20 +329,7 @@ function eligibilityDecision({
     if (frontMatterStringArray(fm.vision_fit_evidence).length === 0)
       blockers.push("missing vision-fit evidence");
   } else {
-    if (!visionFitItemCategoryAllowed(fm.item_category))
-      blockers.push(`item category is ${fm.item_category || "unknown"}`);
-    if (fm.implementation_complexity !== "small")
-      blockers.push(`implementation complexity is ${fm.implementation_complexity || "unknown"}`);
     if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
-    if (fm.vision_fit === "rejected") blockers.push("repository fit was rejected");
-    if (frontMatterStringArray(fm.work_likely_files).length === 0)
-      blockers.push("missing likely implementation files");
-    if (fm.review_issue_body_truncated !== "false")
-      blockers.push("issue body was truncated during review");
-    if (fm.review_comments_truncated !== "false")
-      blockers.push("issue comments were truncated during review");
-    if (fm.review_timeline_truncated !== "false")
-      blockers.push("issue timeline was truncated during review");
   }
   if (frontMatterStringArray(fm.labels).some(isProtectedLabel))
     blockers.push("protected label present");
@@ -351,38 +339,15 @@ function eligibilityDecision({
     blockers.push("missing repair work prompt");
   if (frontMatterStringArray(fm.work_validation).length === 0)
     blockers.push("missing validation commands");
-  if (
-    frontMatterStringArray(fm.work_cluster_refs).some((ref) =>
-      /\/pull\/\d+|^pr[#:\s-]*\d+$/i.test(ref),
-    )
-  )
-    blockers.push("work cluster references a PR");
-
   if (live) {
     const issue = asRecord(live.issue);
     const labels = (issue.labels ?? []).map((label: JsonValue) => String(label?.name ?? label));
-    if (candidateKind === "viable") {
-      blockers.push(
-        ...viableReviewedStateBlockers({
-          report,
-          issue,
-          comments: Array.isArray(live.comments) ? live.comments : [],
-          itemNumber: Number(fm.number),
-        }),
-      );
-    }
     if (issue.state !== "open") blockers.push(`live issue state is ${issue.state || "unknown"}`);
     if (issue.locked === true) blockers.push("live issue is locked");
     if (labels.some(isProtectedLabel)) blockers.push("live issue has protected label");
-    if (
-      sourceIssueHasSecuritySignal(
-        issue,
-        Array.isArray(live.comments) ? live.comments.map(asRecord) : [],
-      )
-    ) {
+    if (securitySensitiveText([issue.title, issue.body, labels.join("\n")].join("\n"))) {
       blockers.push("live issue has security-sensitive signal");
     }
-    if (attachedPrText(live)) blockers.push("issue already has a PR reference attached");
     if (Array.isArray(live.existingPrs) && live.existingPrs.length > 0) {
       blockers.push("open PR already mentions this issue");
     }
@@ -417,7 +382,7 @@ function eligibilityDecision({
     candidateKind === "vision_fit"
       ? "vision-fit issue is eligible for ClawSweeper implementation"
       : candidateKind === "viable"
-        ? "viable issue is eligible for autonomous ClawSweeper implementation"
+        ? "review approved this issue for ClawSweeper implementation"
         : "strict reproducible bug is eligible for ClawSweeper implementation",
   );
 }
@@ -425,7 +390,6 @@ function eligibilityDecision({
 function writeJob(context: LooseRecord) {
   const fm = context.report.frontmatter as Record<string, string>;
   const issue = asRecord(context.live.issue);
-  const comments = Array.isArray(context.live.comments) ? context.live.comments : [];
   const candidateKind = context.candidateKind as CandidateKind;
   const body = renderIssueImplementationJob({
     repo: context.targetRepo,
@@ -447,11 +411,7 @@ function writeJob(context: LooseRecord) {
     reviewReportPath: context.reportPath,
     strictBugOnly: candidateKind === "strict_bug",
     visionFit: candidateKind === "vision_fit",
-    generalViable: candidateKind === "viable",
-    automergeGeneratedPr: candidateKind === "viable",
-    sourceIssueSnapshotSha256:
-      candidateKind === "viable" ? issueImplementationSnapshotSha256(issue, comments) : null,
-    sourceIssueUpdatedAt: candidateKind === "viable" ? issue.updated_at : null,
+    automerge: candidateKind === "viable",
     operatorOverride: context.operatorOverride === true,
     overrideRequestedBy: context.overrideRequestedBy,
     overrideReason:
@@ -461,6 +421,10 @@ function writeJob(context: LooseRecord) {
       context.operatorOverride === true
         ? issueImplementationOverrideAction(context.decision.reason)
         : null,
+    sourceIssueRevision: issueSourceRevisionSha256(
+      issue,
+      Array.isArray(context.live.comments) ? context.live.comments : [],
+    ),
   });
   fs.mkdirSync(path.dirname(context.jobPath), { recursive: true });
   fs.writeFileSync(context.jobPath, body, "utf8");
@@ -469,37 +433,17 @@ function writeJob(context: LooseRecord) {
 }
 
 function viableImplementationPrompt(context: LooseRecord) {
-  const fm = context.report.frontmatter as Record<string, string>;
-  const validation = frontMatterStringArray(fm.work_validation);
-  const likelyFiles = frontMatterStringArray(fm.work_likely_files);
   const workPrompt = section(context.report.body, "Repair Work Prompt");
   return [
-    "This was selected by ClawSweeper's general viable-issue lane.",
+    "ClawSweeper review approved this issue for autonomous implementation.",
     "",
     `Review report: ${context.reportUrl}`,
-    `Category: ${fm.item_category}`,
-    `Implementation complexity: ${fm.implementation_complexity}`,
     "",
-    "Implementation boundary:",
+    workPrompt.trim() || "Implement the issue as one focused pull request.",
     "",
-    "- verify the issue is coherent, useful, and still applicable on the latest default branch",
-    "- keep one small focused PR",
-    "- stop for nonsense, security-sensitive work, product decisions, or broad scope",
-    "- follow the repository's AGENTS.md and contribution rules",
-    "- include the source issue closing reference in the PR body",
-    "- leave merge to the exact-head ClawSweeper automerge loop",
-    "",
-    "Review work prompt:",
-    "",
-    workPrompt.trim() || fm.work_reason_sha256 || "Implement the narrow viable issue.",
-    "",
-    "Likely files:",
-    "",
-    ...likelyFiles.map((file) => `- ${file}`),
-    "",
-    "Validation:",
-    "",
-    ...validation.map((command) => `- ${command}`),
+    "Inspect the repository and choose the appropriate implementation and validation.",
+    "Stop without a PR if the request is no longer viable, already fixed, security-sensitive, or needs a product decision.",
+    "Use a closing reference for the source issue in the PR body.",
   ].join("\n");
 }
 
@@ -520,7 +464,7 @@ function strictImplementationPrompt(context: LooseRecord) {
     "",
     "- fix broken existing behavior only",
     "- do not add config options, feature modes, providers, broad UX changes, or product policy",
-    "- reproduce first; if reproduction fails on the latest default branch, stop and report that blocker",
+    "- reproduce first; if reproduction fails on latest main, stop and report that blocker",
     "",
     "Review work prompt:",
     "",
@@ -615,9 +559,10 @@ function liveIssueContext({ repo, number }: { repo: string; number: number }) {
     "--method",
     "GET",
   ]);
-  const comments = ghPagedWithRetry<LooseRecord>(
-    `repos/${owner}/${name}/issues/${number}/comments`,
-  );
+  const comments = ghJsonWithRetry([
+    "api",
+    `repos/${owner}/${name}/issues/${number}/comments?per_page=100`,
+  ]);
   const branch = issueImplementationJobBranch(repo, number);
   const existingBranchPrs = ghJsonWithRetry(
     [
@@ -641,16 +586,7 @@ function liveIssueContext({ repo, number }: { repo: string; number: number }) {
 function searchOpenPullRequestsMentioningIssue(repo: string, number: number): LooseRecord[] {
   try {
     const result = ghJsonWithRetry(
-      [
-        "api",
-        "search/issues",
-        "--method",
-        "GET",
-        "-f",
-        `q=repo:${repo} is:pr is:open "${number}"`,
-        "--jq",
-        ".items",
-      ],
+      ["api", "search/issues", "-f", `q=repo:${repo} is:pr is:open "${number}"`, "--jq", ".items"],
       { attempts: 3 },
     );
     return Array.isArray(result) ? result : [];
@@ -659,106 +595,17 @@ function searchOpenPullRequestsMentioningIssue(repo: string, number: number): Lo
   }
 }
 
-function attachedPrText(live: LooseRecord): boolean {
-  const issue = asRecord(live.issue);
-  const comments = Array.isArray(live.comments) ? live.comments : [];
-  const text = [issue.body, ...comments.map((comment: JsonValue) => asRecord(comment).body)]
-    .map((part) => String(part ?? ""))
-    .join("\n");
-  return /\/pull\/\d+\b|\b(?:PR|pull request)\s+#?\d+\b/i.test(text);
-}
-
-export function viableReviewedStateBlockers({
-  report,
-  issue,
-  comments,
-  itemNumber,
-}: {
-  report: ReviewReport;
-  issue: Record<string, JsonValue>;
-  comments: LooseRecord[];
-  itemNumber: number;
-}): string[] {
-  const blockers: string[] = [];
-  const reviewedUpdatedAt = report.frontmatter.item_updated_at ?? "";
-  const reviewedAt = report.frontmatter.reviewed_at ?? "";
-  const reviewedBodySha256 = report.frontmatter.item_body_sha256 ?? "";
-  if (!reviewedUpdatedAt) blockers.push("review report is missing item_updated_at");
-  if (!reviewedAt) blockers.push("review report is missing reviewed_at");
-  if (!/^[a-f0-9]{64}$/i.test(reviewedBodySha256)) {
-    blockers.push("review report is missing item_body_sha256");
-  } else if (
-    sha256(typeof issue.body === "string" ? issue.body : "") !== reviewedBodySha256.toLowerCase()
-  ) {
-    blockers.push("live issue body changed since review");
-  }
-
-  const reviewedLabels = frontMatterStringArray(report.frontmatter.labels)
-    .map(normalizedLabel)
-    .sort();
-  const liveLabels = (issue.labels ?? [])
-    .map((label: JsonValue) => normalizedLabel(String(label?.name ?? label)))
-    .sort();
-  if (JSON.stringify(reviewedLabels) !== JSON.stringify(liveLabels)) {
-    blockers.push("live issue labels changed since review");
-  }
-  if (displayTitle(report.frontmatter.title ?? "") !== String(issue.title ?? "")) {
-    blockers.push("live issue title changed since review");
-  }
-
-  const liveUpdatedAt = String(issue.updated_at ?? "");
-  if (reviewedUpdatedAt && liveUpdatedAt && liveUpdatedAt !== reviewedUpdatedAt) {
-    const durableReviewUpdate = comments.some((comment) => {
-      const record = asRecord(comment);
-      return (
-        isClawSweeperAutomationComment(record) &&
-        String(record.body ?? "").includes(`<!-- clawsweeper-review item=${itemNumber} -->`) &&
-        String(record.updated_at ?? record.created_at ?? "") === liveUpdatedAt
-      );
-    });
-    if (!durableReviewUpdate) blockers.push("live issue updated_at changed since review");
-  }
-
-  const reviewedUpdatedAtMs = Date.parse(reviewedUpdatedAt);
-  const reviewedAtMs = Date.parse(reviewedAt);
-  for (const comment of comments) {
-    if (isClawSweeperAutomationComment(comment)) continue;
-    const timestamp = Date.parse(String(comment.updated_at ?? comment.created_at ?? ""));
-    if (
-      Number.isFinite(timestamp) &&
-      ((Number.isFinite(reviewedUpdatedAtMs) && timestamp > reviewedUpdatedAtMs) ||
-        (Number.isFinite(reviewedAtMs) && timestamp > reviewedAtMs))
-    ) {
-      blockers.push("non-automation issue comment changed since review");
-      break;
-    }
-  }
-  return blockers;
-}
-
-function normalizedLabel(value: string) {
-  return value.trim().toLowerCase();
-}
-
-function sha256(value: string) {
-  return createHash("sha256").update(value).digest("hex");
-}
-
 function readReport({ reportRepo, reportPath }: { reportRepo: string; reportPath: string }) {
   const local = args["report-file"] ?? args.report_file;
   if (typeof local === "string") return fs.readFileSync(path.resolve(local), "utf8");
-  const reportToken = String(process.env.CLAWSWEEPER_REPORT_GH_TOKEN ?? "").trim();
-  const content = ghJsonWithRetry<{ content?: string }>(
-    [
-      "api",
-      `repos/${reportRepo}/contents/${reportPath}`,
-      "--method",
-      "GET",
-      "-f",
-      `ref=${reportBranch(reportRepo)}`,
-    ],
-    reportToken ? { env: { GH_TOKEN: reportToken } } : {},
-  );
+  const content = ghJsonWithRetry<{ content?: string }>([
+    "api",
+    `repos/${reportRepo}/contents/${reportPath}`,
+    "--method",
+    "GET",
+    "-f",
+    `ref=${reportBranch(reportRepo)}`,
+  ]);
   return Buffer.from(String(content.content ?? "").replace(/\s+/g, ""), "base64").toString("utf8");
 }
 
@@ -874,26 +721,25 @@ function repoSlug(repo: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function displayTitle(value: string) {
+  try {
+    return JSON.parse(value) as string;
+  } catch {
+    return value;
+  }
+}
+
 function reportBranch(reportRepo: string) {
   return reportRepo.trim().toLowerCase() === "openclaw/clawsweeper-state" ? "state" : "main";
 }
 
-function displayTitle(value: string) {
-  return value;
-}
-
-function parseFrontmatterScalar(value: string) {
+function stripQuotes(value: string) {
   const trimmed = value.trim();
-  if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
-    try {
-      const parsed = JSON.parse(trimmed);
-      return typeof parsed === "string" ? parsed : trimmed;
-    } catch {
-      return trimmed;
-    }
-  }
-  if (trimmed.startsWith("'") && trimmed.endsWith("'")) {
-    return trimmed.slice(1, -1).replaceAll("''", "'");
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
   }
   return trimmed;
 }
