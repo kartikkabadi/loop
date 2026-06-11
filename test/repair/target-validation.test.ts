@@ -20,6 +20,8 @@ import {
 } from "../../dist/repair/target-toolchain-config.js";
 import { parseAllowedValidationCommand } from "../../dist/repair/validation-command-utils.js";
 
+const FAKE_TOOLCHAIN_TIMEOUT_MS = 15_000;
+
 test("OpenClaw repairs require changed-surface validation even when omitted", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
   const options = validationOptions("openclaw/openclaw");
@@ -213,6 +215,179 @@ test("validation preflight accepts leading env assignment commands", () => {
       available_scripts: ["test:serial"],
     },
   );
+});
+
+test("validation preflight preserves direct Vitest commands without requiring a package script", () => {
+  const cwd = gitPackageFixture({
+    check: "node check.js",
+    typecheck: "node typecheck.js",
+  });
+  fs.mkdirSync(path.join(cwd, "tests", "browser"), { recursive: true });
+  fs.writeFileSync(path.join(cwd, "tests", "browser", "pageActions.test.ts"), "");
+  fs.writeFileSync(path.join(cwd, "tests", "browser", "ignored.test.ts"), "");
+  fs.writeFileSync(path.join(cwd, "vitest.browser.config.ts"), "");
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+
+  assert.deepEqual(
+    preflightTargetValidationPlan(
+      {
+        fixArtifact: {
+          validation_commands: [
+            "pnpm vitest run --passWithNoTests --coverage --config vitest.browser.config.ts --pool threads --exclude tests/browser/ignored.test.ts tests/browser/pageActions.test.ts",
+            "pnpm run typecheck",
+            "pnpm run check",
+          ],
+        },
+        targetDir: cwd,
+      },
+      validationOptions("steipete/oracle", {
+        toolchain: {
+          packageManager: "pnpm",
+          baseValidationCommands: [],
+          changedGate: null,
+        },
+      }),
+    ),
+    {
+      status: "passed",
+      resolved_commands: [
+        "pnpm exec vitest run --passWithNoTests --coverage --config vitest.browser.config.ts --pool threads --exclude tests/browser/ignored.test.ts tests/browser/pageActions.test.ts",
+        "pnpm run typecheck",
+        "pnpm run check",
+      ],
+      available_scripts: ["check", "typecheck"],
+    },
+  );
+});
+
+test("validation preflight preserves directory-scoped direct Vitest commands", () => {
+  const cwd = gitPackageFixture({});
+  fs.mkdirSync(path.join(cwd, "tests", "browser"), { recursive: true });
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+
+  assert.deepEqual(
+    preflightTargetValidationPlan(
+      {
+        fixArtifact: {
+          validation_commands: ["pnpm vitest run tests/browser"],
+        },
+        targetDir: cwd,
+      },
+      validationOptions("steipete/oracle", {
+        toolchain: {
+          packageManager: "pnpm",
+          baseValidationCommands: [],
+          changedGate: null,
+        },
+      }),
+    ),
+    {
+      status: "passed",
+      resolved_commands: ["pnpm exec vitest run tests/browser"],
+      available_scripts: [],
+    },
+  );
+});
+
+test("validation preflight blocks unscoped direct Vitest commands", () => {
+  const cwd = packageFixture({});
+  fs.writeFileSync(path.join(cwd, "vitest.browser.config.ts"), "");
+  const options = validationOptions("steipete/oracle", {
+    toolchain: {
+      packageManager: "pnpm",
+      baseValidationCommands: [],
+      changedGate: null,
+    },
+  });
+
+  for (const command of [
+    "pnpm vitest run --config vitest.browser.config.ts",
+    "pnpm exec vitest run --config vitest.browser.config.ts",
+    "pnpm vitest run --exclude tests/browser/pageActions.test.ts",
+    "pnpm vitest run --update tests/browser/pageActions.test.ts",
+    "pnpm vitest run -u tests/browser/pageActions.test.ts",
+    "pnpm vitest run login",
+    "pnpm exec vitest run src",
+  ]) {
+    const result = preflightTargetValidationPlan(
+      {
+        fixArtifact: {
+          validation_commands: [command],
+        },
+        targetDir: cwd,
+      },
+      options,
+    );
+
+    assert.equal(result.status, "blocked");
+    assert.equal(result.code, "validation_script_missing");
+    assert.equal(result.missing_script, "check:changed");
+    assert.deepEqual(result.resolved_commands, ["pnpm check:changed"]);
+  }
+});
+
+test("validation preflight blocks direct Vitest commands with missing test paths", () => {
+  const cwd = gitPackageFixture({});
+  fs.writeFileSync(path.join(cwd, "vitest.browser.config.ts"), "");
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  attachOrigin(cwd);
+
+  for (const command of [
+    "pnpm vitest run --config vitest.browser.config.ts tests/browser/deleted.test.ts",
+    "pnpm exec vitest run --config vitest.browser.config.ts tests/browser/deleted.test.ts",
+  ]) {
+    const result = preflightTargetValidationPlan(
+      {
+        fixArtifact: {
+          validation_commands: [command],
+        },
+        targetDir: cwd,
+      },
+      validationOptions("steipete/oracle", {
+        toolchain: {
+          packageManager: "pnpm",
+          baseValidationCommands: [],
+          changedGate: null,
+        },
+      }),
+    );
+
+    assert.equal(result.status, "blocked");
+    assert.equal(result.code, "validation_script_missing");
+    assert.equal(result.missing_script, "check:changed");
+    assert.deepEqual(result.resolved_commands, ["pnpm check:changed"]);
+  }
+});
+
+test("validation preflight blocks package test commands with missing directory paths", () => {
+  const cwd = gitPackageFixture({ "test:serial": "node test.js" });
+  git(cwd, "add", ".");
+  git(cwd, "commit", "-m", "initial");
+  attachOrigin(cwd);
+
+  const result = preflightTargetValidationPlan(
+    {
+      fixArtifact: {
+        validation_commands: ["pnpm test:serial tests/deleted"],
+      },
+      targetDir: cwd,
+    },
+    validationOptions("steipete/oracle", {
+      toolchain: {
+        packageManager: "pnpm",
+        baseValidationCommands: [],
+        changedGate: null,
+      },
+    }),
+  );
+
+  assert.equal(result.status, "blocked");
+  assert.equal(result.code, "validation_script_missing");
+  assert.equal(result.missing_script, "check:changed");
+  assert.deepEqual(result.resolved_commands, ["pnpm check:changed"]);
 });
 
 test("validation parser requires env assignments before env command", () => {
@@ -443,8 +618,8 @@ test("bun-based target toolchain installs deps and runs configured validation", 
     prepareTargetToolchain(cwd, {
       ...validationOptions("openclaw/clawhub", clawhubToolchain()),
       installTargetDeps: true,
-      installTimeoutMs: 5000,
-      setupTimeoutMs: 5000,
+      installTimeoutMs: FAKE_TOOLCHAIN_TIMEOUT_MS,
+      setupTimeoutMs: FAKE_TOOLCHAIN_TIMEOUT_MS,
     });
     assert.deepEqual(
       runAllowedValidationCommands(
@@ -502,8 +677,8 @@ test("bun-based target toolchain hides pnpm-injected npm_config_user_agent from 
       prepareTargetToolchain(cwd, {
         ...validationOptions("openclaw/clawhub", clawhubToolchain()),
         installTargetDeps: true,
-        installTimeoutMs: 5000,
-        setupTimeoutMs: 5000,
+        installTimeoutMs: FAKE_TOOLCHAIN_TIMEOUT_MS,
+        setupTimeoutMs: FAKE_TOOLCHAIN_TIMEOUT_MS,
       });
     });
   } finally {

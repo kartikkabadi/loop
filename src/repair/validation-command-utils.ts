@@ -3,6 +3,37 @@ export type PackageScriptRequirement = {
   name: string;
 };
 
+const VITEST_BOOLEAN_OPTIONS = new Set([
+  "-h",
+  "-w",
+  "--allowOnly",
+  "--cache",
+  "--clearCache",
+  "--clearScreen",
+  "--coverage",
+  "--dangerouslyIgnoreUnhandledErrors",
+  "--detectAsyncLeaks",
+  "--disableConsoleIntercept",
+  "--dom",
+  "--expandSnapshotDiff",
+  "--fileParallelism",
+  "--globals",
+  "--help",
+  "--hideSkippedTests",
+  "--includeTaskLocation",
+  "--isolate",
+  "--logHeapUsage",
+  "--open",
+  "--passWithNoTests",
+  "--printConsoleTrace",
+  "--run",
+  "--standalone",
+  "--strictTags",
+  "--typecheck",
+  "--ui",
+  "--watch",
+]);
+
 export function packageScriptRequirement(
   parts: readonly string[],
 ): PackageScriptRequirement | null {
@@ -31,6 +62,16 @@ export function isExpensivePnpmValidation(
   const script = String(parts[commandStart] ?? "");
   if (script === "check" || script === "test:all") return true;
   if (script === "openclaw" && parts[commandStart + 1] === "qa") return true;
+  if (script === "vitest" && parts[commandStart + 1] === "run") {
+    return vitestPathFilterIndexes(parts.slice(commandStart + 2)).length === 0;
+  }
+  if (
+    script === "exec" &&
+    parts[commandStart + 1] === "vitest" &&
+    parts[commandStart + 2] === "run"
+  ) {
+    return vitestPathFilterIndexes(parts.slice(commandStart + 3)).length === 0;
+  }
   if (script === "test" || script === "test:serial") {
     return !parts.slice(commandStart + 1).some(looksLikePathArgument);
   }
@@ -49,6 +90,36 @@ export function looksLikePathArgument(value: unknown): boolean {
 
 export function isTestFile(value: unknown): boolean {
   return /(?:^|\/)[^/]*(?:test|spec|e2e)\.[cm]?[jt]sx?$/.test(String(value));
+}
+
+export function vitestPositionalFilterIndexes(args: readonly string[]): number[] {
+  const indexes: number[] = [];
+  let optionValue = false;
+  let positionalOnly = false;
+  for (const [index, arg] of args.entries()) {
+    if (optionValue) {
+      optionValue = false;
+      continue;
+    }
+    if (!positionalOnly && arg === "--") {
+      positionalOnly = true;
+      continue;
+    }
+    if (!positionalOnly && arg.startsWith("-")) {
+      const option = arg.split("=", 1)[0]!;
+      // Vitest optional-value flags such as --update consume the following
+      // token too. Only documented boolean flags leave it positional.
+      optionValue =
+        !arg.includes("=") && !option.startsWith("--no-") && !VITEST_BOOLEAN_OPTIONS.has(option);
+      continue;
+    }
+    indexes.push(index);
+  }
+  return indexes;
+}
+
+export function vitestPathFilterIndexes(args: readonly string[]): number[] {
+  return vitestPositionalFilterIndexes(args).filter((index) => looksLikePathArgument(args[index]));
 }
 
 export function uniqueStrings(values: Iterable<unknown>): string[] {

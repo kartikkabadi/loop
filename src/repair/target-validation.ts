@@ -24,6 +24,7 @@ import {
   parseAllowedValidationCommand,
   stripEnvPrefix,
   uniqueStrings,
+  vitestPathFilterIndexes,
 } from "./validation-command-utils.js";
 
 const DEFAULT_BASE_BRANCH = "main";
@@ -548,13 +549,25 @@ function resolveAllowedValidationCommands(
     if (isExpensivePnpmValidation(commandParts, commandStart, options.allowExpensiveValidation)) {
       return [["pnpm", "check:changed"]];
     }
-    if (pnpmScript === "vitest" && commandParts[commandStart + 1] === "run") {
+    const vitestArgsStart =
+      pnpmScript === "vitest" && commandParts[commandStart + 1] === "run"
+        ? commandStart + 2
+        : pnpmScript === "exec" &&
+            commandParts[commandStart + 1] === "vitest" &&
+            commandParts[commandStart + 2] === "run"
+          ? commandStart + 3
+          : -1;
+    if (vitestArgsStart >= 0) {
+      const vitestArgs = commandParts.slice(vitestArgsStart);
+      const pathIndexes = vitestPathFilterIndexes(vitestArgs);
       return withEnvPrefix(
         envPrefix,
         normalizePathValidationCommand(
-          ["pnpm", "test:serial", ...commandParts.slice(commandStart + 2)],
+          ["pnpm", "exec", "vitest", "run", ...vitestArgs],
           cwd,
           baseBranch,
+          4,
+          new Set(pathIndexes),
         ),
       );
     }
@@ -581,34 +594,36 @@ function normalizePathValidationCommand(
   parts: string[],
   cwd: string,
   baseBranch: string = DEFAULT_BASE_BRANCH,
+  pathArgStart: number = 2,
+  testPathIndexes?: ReadonlySet<number>,
 ) {
-  const pathArgStart = 2;
-  const pathArgs = parts.slice(pathArgStart).filter(looksLikePathArgument);
-  if (pathArgs.length === 0) return [parts];
+  const args = parts.slice(pathArgStart);
+  const shouldNormalize = (arg: string, index: number) =>
+    testPathIndexes ? testPathIndexes.has(index) : looksLikePathArgument(arg);
+  if (!args.some(shouldNormalize)) return [parts];
 
-  const normalized: string[] = [];
+  const normalizedArgs: string[] = [];
   const missing: string[] = [];
-  for (const arg of pathArgs) {
+  for (const [index, arg] of args.entries()) {
+    if (!shouldNormalize(arg, index)) {
+      normalizedArgs.push(arg);
+      continue;
+    }
     const mapped = resolveRepoPathArgument(arg, cwd);
-    if (mapped) normalized.push(mapped);
+    if (mapped) normalizedArgs.push(mapped);
     else missing.push(arg);
   }
 
   if (missing.length === 0) {
-    return [[...parts.slice(0, pathArgStart), ...uniqueStrings(normalized)]];
+    return [[...parts.slice(0, pathArgStart), ...normalizedArgs]];
   }
 
   const changedTests = changedTestFiles(cwd, baseBranch);
   if (changedTests.length > 0) {
-    return [["pnpm", "test:serial", ...changedTests]];
+    return [[...parts.slice(0, pathArgStart), ...normalizedArgs, ...changedTests]];
   }
 
-  const scripts = readPackageScriptSet(cwd);
-  if (scripts.has("check:changed")) {
-    return [["pnpm", "check:changed"]];
-  }
-
-  return [[...parts.slice(0, pathArgStart), ...uniqueStrings(normalized)]];
+  return [["pnpm", "check:changed"]];
 }
 
 function resolveRepoPathArgument(arg: JsonValue, cwd: string): string {
