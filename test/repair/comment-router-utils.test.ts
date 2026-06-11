@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  SUPERSEDED_RE_REVIEW_REASON,
   appendLedger,
   isGitHubAppIntegrationAuthError,
   isAllowedMutationActor,
@@ -9,8 +10,68 @@ import {
   selectCommentsForRouting,
   shouldSuppressProcessedCommentVersion,
   sortCommentsForRouting,
+  supersededReReviewCommentVersions,
   summarizeChecks,
 } from "../../dist/repair/comment-router-utils.js";
+
+test("newer re-review commands supersede older retries from the same requester", () => {
+  const commands = [
+    {
+      repo: "openclaw/gogcli",
+      issue_number: 749,
+      author_id: 58493,
+      intent: "re_review",
+      comment_id: "4679061453",
+      comment_version_key: "4679061453:2026-06-11T09:20:23Z",
+      comment_updated_at: "2026-06-11T09:20:23Z",
+    },
+    {
+      repo: "openclaw/gogcli",
+      issue_number: 749,
+      author_id: 58493,
+      intent: "re_review",
+      comment_id: "4679167308",
+      comment_version_key: "4679167308:2026-06-11T09:33:21Z",
+      comment_updated_at: "2026-06-11T09:33:21Z",
+    },
+    {
+      repo: "openclaw/gogcli",
+      issue_number: 749,
+      author_id: 999,
+      intent: "re_review",
+      comment_id: "4679167400",
+      comment_version_key: "4679167400:2026-06-11T09:34:00Z",
+      comment_updated_at: "2026-06-11T09:34:00Z",
+    },
+  ];
+
+  assert.deepEqual(
+    [...supersededReReviewCommentVersions(commands)],
+    ["4679061453:2026-06-11T09:20:23Z"],
+  );
+});
+
+test("superseded re-review commands become terminal ledger entries", () => {
+  const ledger = { updated_at: null, commands: [] };
+
+  assert.equal(
+    appendLedger(ledger, [
+      {
+        idempotency_key: "superseded",
+        comment_id: "4679061453",
+        comment_version_key: "4679061453:2026-06-11T09:20:23Z",
+        comment_updated_at: "2026-06-11T09:20:23Z",
+        status: "skipped",
+        reason: SUPERSEDED_RE_REVIEW_REASON,
+        intent: "re_review",
+        issue_number: 749,
+        repo: "openclaw/gogcli",
+      },
+    ]),
+    true,
+  );
+  assert.equal(ledger.commands.length, 1);
+});
 
 test("appendLedger keeps edited comment versions separate", () => {
   const ledger = { updated_at: null, commands: [] };

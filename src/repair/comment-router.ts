@@ -70,6 +70,7 @@ import {
 } from "./comment-router-core.js";
 import { mergeAutomergeTimelineSection } from "./automerge-status-timeline.js";
 import {
+  SUPERSEDED_RE_REVIEW_REASON,
   appendLedger,
   issueNumberFromUrl,
   isAllowedMutationActor,
@@ -78,6 +79,7 @@ import {
   selectCommentsForRouting,
   shouldSuppressProcessedCommentVersion,
   stripAnsi,
+  supersededReReviewCommentVersions,
   summarizeChecks,
   writeLedger,
   writePayload,
@@ -219,6 +221,7 @@ for (const comment of comments) {
 for (const command of listRepairLoopSweepCommands(rawCommands)) {
   rawCommands.push(command);
 }
+const supersededReReviewVersions = supersededReReviewCommentVersions(rawCommands);
 
 await measureAsync("prehydrate_command_lookups", () => prehydrateCommandLookups(rawCommands));
 const commands = measure("classify_commands", () =>
@@ -320,7 +323,11 @@ async function prehydrateCommandLookups(commands: LooseRecord[]) {
   const pending = commands.filter(
     (command) =>
       command.issue_number &&
-      !(command.comment_version_key && processedCommentVersions.has(command.comment_version_key)),
+      !(
+        command.comment_version_key &&
+        (processedCommentVersions.has(command.comment_version_key) ||
+          supersededReReviewVersions.has(command.comment_version_key))
+      ),
   );
   const logins = unique(
     pending
@@ -348,6 +355,9 @@ async function prehydrateCommandLookups(commands: LooseRecord[]) {
 function classifyCommand(command: LooseRecord): JsonValue {
   if (command.comment_version_key && processedCommentVersions.has(command.comment_version_key)) {
     return { ...command, status: "skipped", reason: "comment version already processed in ledger" };
+  }
+  if (command.comment_version_key && supersededReReviewVersions.has(command.comment_version_key)) {
+    return { ...command, status: "skipped", reason: SUPERSEDED_RE_REVIEW_REASON };
   }
   let authorization: LooseRecord | null = null;
   if (command.trusted_bot) {
@@ -1718,6 +1728,10 @@ function applyRepairLoopOptIn(command: LooseRecord) {
 function acknowledgeSkippedMaintainerCommand(command: LooseRecord) {
   if (command.trusted_bot || command.status !== "skipped") return;
   const reason = String(command.reason ?? "");
+  if (reason === SUPERSEDED_RE_REVIEW_REASON) {
+    clearTerminalMaintainerCommandReaction(command);
+    return;
+  }
   const targetedProcessedComment =
     itemNumbers.size > 0 && reason === "comment version already processed in ledger";
   if (!targetedProcessedComment && !/already enabled for this PR/i.test(reason)) return;

@@ -62,6 +62,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Prevented an older failed re-review command from starting another Codex review after the same requester submitted a newer re-review for the item.
 - Retried transient Codex review failures in fresh bounded sessions and redacted the internal model identifier from review failures and debug artifacts.
 - Kept sparse repair workflows building after the shared Codex transient helper moved outside the repair subtree.
 - Kept ordinary auth-provider and token terminology from being misclassified as a security-sensitive issue implementation blocker.

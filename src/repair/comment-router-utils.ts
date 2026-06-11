@@ -127,6 +127,35 @@ export function selectCommentsForRouting({
   return sortCommentsForRouting(uniqueCommentsById([...cappedRecent, ...durableComments]));
 }
 
+export const SUPERSEDED_RE_REVIEW_REASON = "newer re-review command supersedes this request";
+
+export function supersededReReviewCommentVersions(commands: LooseRecord[]) {
+  const latestByRequester = new Set<string>();
+  const superseded = new Set<string>();
+  const newestFirst = [...commands].sort((left, right) => {
+    const leftTime = commandRoutingTime(left);
+    const rightTime = commandRoutingTime(right);
+    if (rightTime !== leftTime) return rightTime - leftTime;
+    return Number(right.comment_id ?? 0) - Number(left.comment_id ?? 0);
+  });
+
+  for (const command of newestFirst) {
+    if (command.intent !== "re_review") continue;
+    const version = String(command.comment_version_key ?? "");
+    const repo = String(command.repo ?? "").toLowerCase();
+    const issueNumber = Number(command.issue_number);
+    const requester = command.author_id
+      ? `id:${command.author_id}`
+      : `login:${normalizeGitHubActor(command.author)}`;
+    if (!version || !repo || !issueNumber || requester === "login:") continue;
+    const key = `${repo}:${issueNumber}:${requester}`;
+    if (latestByRequester.has(key)) superseded.add(version);
+    else latestByRequester.add(key);
+  }
+
+  return superseded;
+}
+
 export function isAllowedMutationActor(login: JsonValue, trustedBots: Iterable<string>) {
   const actor = String(login ?? "")
     .trim()
@@ -174,6 +203,13 @@ function commentRoutingTime(comment: LooseRecord) {
   const updated = Date.parse(String(comment.updated_at ?? ""));
   if (Number.isFinite(updated)) return updated;
   const created = Date.parse(String(comment.created_at ?? ""));
+  return Number.isFinite(created) ? created : 0;
+}
+
+function commandRoutingTime(command: LooseRecord) {
+  const updated = Date.parse(String(command.comment_updated_at ?? ""));
+  if (Number.isFinite(updated)) return updated;
+  const created = Date.parse(String(command.comment_created_at ?? ""));
   return Number.isFinite(created) ? created : 0;
 }
 
