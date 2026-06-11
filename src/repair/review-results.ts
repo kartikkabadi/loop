@@ -516,16 +516,13 @@ function validateFixArtifact(fixArtifact: LooseRecord, failures: LooseRecord[]) 
       failures.push(`fix_artifact.${key} is required`);
     }
   }
-  for (const key of [
-    "affected_surfaces",
-    "likely_files",
-    "linked_refs",
-    "validation_commands",
-    "credit_notes",
-  ]) {
+  for (const key of ["affected_surfaces", "likely_files", "linked_refs", "credit_notes"]) {
     if (!Array.isArray(fixArtifact[key]) || fixArtifact[key].length === 0) {
       failures.push(`fix_artifact.${key} must be a non-empty list`);
     }
+  }
+  if (!Array.isArray(fixArtifact.validation_commands)) {
+    failures.push("fix_artifact.validation_commands must be a list");
   }
   if (typeof fixArtifact.changelog_required !== "boolean") {
     failures.push("fix_artifact.changelog_required must be boolean");

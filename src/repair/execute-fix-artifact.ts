@@ -25,6 +25,7 @@ import {
   branchHasBaseDiff,
   completeRebaseIfResolved,
   currentHead,
+  ensureFullHistory,
   ensureMergeBaseAvailable,
   isAncestor,
   rebaseOntoBase,
@@ -92,9 +93,12 @@ import {
 } from "./repair-branch-push-errors.js";
 import {
   canSkipInternalCodexReviewForRepairDelta,
-  prepareTargetToolchain,
+  invalidatePreparedTargetDependencies,
+  prepareBranchTargetDependencies,
+  prepareTrustedTargetDependencies,
   preflightTargetValidationPlan,
   repairDeltaValidationPlan,
+  requiredValidationCommands,
   runAllowedValidationCommands,
   type TargetValidationOptions,
 } from "./target-validation.js";
@@ -152,6 +156,12 @@ const codexHeartbeatMs = Math.max(
 );
 const maxEditAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_FIX_EDIT_ATTEMPTS ?? 3));
 const maxReviewAttempts = Math.max(1, Number(process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS ?? 4));
+const configuredFinalBaseSyncAttempts = Number(
+  process.env.CLAWSWEEPER_FINAL_BASE_SYNC_ATTEMPTS ?? 3,
+);
+const maxFinalBaseSyncAttempts = Number.isFinite(configuredFinalBaseSyncAttempts)
+  ? Math.max(2, Math.floor(configuredFinalBaseSyncAttempts))
+  : 3;
 const resolveReviewThreads = process.env.CLAWSWEEPER_RESOLVE_REVIEW_THREADS !== "0";
 const skipCodexWritePreflight = process.env.CLAWSWEEPER_SKIP_CODEX_WRITE_PREFLIGHT === "1";
 const allowExpensiveValidation = process.env.CLAWSWEEPER_ALLOW_EXPENSIVE_VALIDATION === "1";
@@ -193,13 +203,11 @@ const fixDebugMaxBytes = Math.max(
 const configuredStrictTargetValidation =
   process.env.CLAWSWEEPER_STRICT_TARGET_VALIDATION === "1" ||
   String(process.env.CLAWSWEEPER_TARGET_VALIDATION_MODE ?? "changed-only") === "strict";
-const defaultCodexWriteSandbox =
-  process.env.GITHUB_ACTIONS === "true" ? "danger-full-access" : "workspace-write";
+const defaultCodexWriteSandbox = "workspace-write";
 const codexWriteSandbox = String(
   process.env.CLAWSWEEPER_CODEX_WRITE_SANDBOX ?? defaultCodexWriteSandbox,
 );
-const defaultCodexReviewSandbox =
-  process.env.GITHUB_ACTIONS === "true" ? "danger-full-access" : "read-only";
+const defaultCodexReviewSandbox = "read-only";
 const codexReviewSandbox = String(
   process.env.CLAWSWEEPER_CODEX_REVIEW_SANDBOX ?? defaultCodexReviewSandbox,
 );
@@ -213,6 +221,8 @@ const codexReviewNetworkAccess = parseBooleanEnv(
 );
 let workRoot = "";
 let targetDir = "";
+let requestedValidationCommands: LooseRecord[] = [];
+const preparedTrustedBaseShas = new Map<string, string>();
 
 if (!jobPath) {
   console.error(
@@ -266,7 +276,7 @@ const targetValidationOptions: TargetValidationOptions = {
     automergeTargetValidation && result.repo === "openclaw/openclaw"
       ? ["pnpm lint", "pnpm check:test-types"]
       : [],
-  allowExpensiveValidation,
+  allowExpensiveValidation: allowExpensiveValidation || result.repo !== "openclaw/openclaw",
   installTargetDeps,
   strictTargetValidation: configuredStrictTargetValidation || automergeTargetValidation,
   targetRepo: result.repo,
@@ -510,6 +520,7 @@ if (sourceBranchPreflight.status === "replace_uneditable_branch") {
 } else if (sourceBranchPreflight.status !== "not_applicable") {
   report.source_branch_preflight = sourceBranchPreflight;
 }
+requestedValidationCommands = [...(fixArtifact.validation_commands ?? [])];
 
 workRoot =
   typeof args["work-dir"] === "string"
@@ -524,6 +535,38 @@ fs.mkdirSync(workRoot, { recursive: true });
 
 ensureTargetCheckout(result.repo, targetDir);
 setupGitIdentity(targetDir);
+checkoutTrustedTargetBase(targetDir, targetBaseBranch);
+fixArtifact = {
+  ...fixArtifact,
+  validation_commands: requiredValidationCommands(
+    requestedValidationCommands,
+    targetDir,
+    currentTargetValidationOptions(),
+  ),
+};
+try {
+  prepareTrustedTargetDependencies(
+    targetDir,
+    currentTargetValidationOptions(),
+    targetBaseBranch,
+    fixArtifact.validation_commands ?? [],
+  );
+  rememberPreparedTrustedTargetBase(targetDir, currentHead(targetDir));
+} catch (error) {
+  if (!isBlockedFixError(error)) throw error;
+  const reason = String(error?.message ?? error);
+  report.status = "blocked";
+  report.reason = reason;
+  report.actions.push({
+    action: "execute_fix",
+    status: "blocked",
+    code: reason.split(":", 1)[0],
+    repair_strategy: fixArtifact.repair_strategy,
+    reason,
+  });
+  writeReport(report, resultPath);
+  process.exit(0);
+}
 
 logProgress("checking target validation plan", { target_dir: targetDir });
 const validationPreflight = preflightTargetValidationPlan(
@@ -623,7 +666,7 @@ try {
           reason: error.message,
         });
         if (!shouldFallbackToReplacementAfterRepairError(error)) throw error;
-        const fallbackTargetDir = prepareFallbackReplacementCheckout(targetDir);
+        const fallbackTargetDir = prepareFallbackReplacementCheckout(targetDir, fixArtifact);
         outcome = executeReplacementBranch({
           fixArtifact,
           targetDir: fallbackTargetDir,
@@ -690,7 +733,7 @@ function isBlockedFixError(error: JsonValue) {
   if (isRepairBranchPushBlocked(error)) return true;
   if (isRetryableCodexExecutionError(error)) return true;
   if (isCodexContextLimitError(String(error?.message ?? error))) return true;
-  return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation command failed|command timed out after \d+ms: git (?:fetch|push)|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
+  return /Codex produced no target repo changes|Codex \/review did not pass|Codex (?:fix worker|review-fix worker|\/review) timed out|Codex (?:fix worker|review-fix worker|\/review) failed|validation_(?:command_missing|script_missing|package_manager_unsupported|side_effect_detected|setup_side_effect_detected|dependency_prepare_failed|dependency_state_changed|dependency_base_changed|definition_changed|definition_untrusted|cache_path_untrusted|path_untrusted|path_invalid|sandbox_unavailable|snapshot_budget_exceeded|base_sync_exhausted)|validation command failed|command timed out after \d+ms: git (?:fetch|push)|rebase (?:conflicts remain unresolved|produced additional conflicts)/i.test(
     String(error?.message ?? error),
   );
 }
@@ -832,8 +875,6 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
   const branch = safeBranchName(
     `clawsweeper-repair/repair-${result.cluster_id}-${sourcePr.number}`,
   );
-  logProgress("fetching latest base for contributor repair", { base_branch: baseBranch });
-  runGitNetwork(["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], targetDir);
   logProgress("fetching contributor PR head", {
     source_pr: sourcePr.url,
     head_repo: pull.head.repo.full_name,
@@ -846,10 +887,13 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     sourcePr,
     pull,
   });
-  ensureMergeBaseAvailable({ targetDir, baseBranch });
+  const preparedBaseSha = preparePinnedTrustedTargetBase({
+    fixArtifact,
+    targetDir,
+    baseBranch,
+  });
+  ensureMergeBaseAvailable({ targetDir, baseBranch, fetchBase: false });
   const sourceHead = currentHead(targetDir);
-  logProgress("preparing target toolchain", { source_head: sourceHead });
-  prepareTargetToolchain(targetDir, currentTargetValidationOptions());
   const codexOwnsInitialRebase =
     isBranchRepairStatusJob() && fixArtifact.deterministic_rebase_only !== true;
   let rebaseResult = null;
@@ -867,7 +911,12 @@ function executeRepairBranch({ fixArtifact, targetDir }: LooseRecord) {
     });
   } else {
     logProgress("rebasing source branch", { branch, base_branch: baseBranch });
-    rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
+    rebaseResult = rebaseOntoBase({ targetDir, baseBranch, fetchBase: false });
+    if (rebaseResult.base_sha !== preparedBaseSha) {
+      throw new Error(
+        `validation_dependency_prepare_failed: prepared base ${preparedBaseSha} does not match rebase base ${rebaseResult.base_sha}`,
+      );
+    }
     logProgress("source branch rebase result", {
       status: rebaseResult.status,
       previous_head: rebaseResult.previous_head,
@@ -1385,14 +1434,91 @@ function assertRepairBranchWritable({ targetDir, pull, rewritten }: LooseRecord)
   runGitNetwork(["push", "--dry-run", ...args.slice(1)], targetDir);
 }
 
-function prepareFallbackReplacementCheckout(sourceTargetDir: string) {
+function prepareFallbackReplacementCheckout(sourceTargetDir: string, fixArtifact: LooseRecord) {
   const fallbackTargetDir = path.join(
     workRoot,
     `${path.basename(sourceTargetDir)}-replacement-${Date.now()}`,
   );
   ensureTargetCheckout(result.repo, fallbackTargetDir);
   setupGitIdentity(fallbackTargetDir);
+  checkoutTrustedTargetBase(fallbackTargetDir, targetBaseBranch);
+  fixArtifact.validation_commands = requiredValidationCommands(
+    requestedValidationCommands,
+    fallbackTargetDir,
+    currentTargetValidationOptions(),
+  );
+  prepareTrustedTargetDependencies(
+    fallbackTargetDir,
+    currentTargetValidationOptions(),
+    targetBaseBranch,
+    fixArtifact.validation_commands,
+  );
+  rememberPreparedTrustedTargetBase(fallbackTargetDir, currentHead(fallbackTargetDir));
   return fallbackTargetDir;
+}
+
+function preparePinnedTrustedTargetBase({
+  fixArtifact,
+  targetDir,
+  baseBranch,
+  fetchBase = true,
+}: LooseRecord) {
+  const status = run("git", ["status", "--porcelain"], { cwd: targetDir }).trim();
+  if (status) {
+    throw new Error(
+      "validation_dependency_prepare_failed: target checkout must be clean before trusted base preparation",
+    );
+  }
+  if (resolveTargetRepoToolchain(result.repo).requiresFullHistory) {
+    ensureFullHistory(targetDir);
+  }
+  if (fetchBase) {
+    runGitNetwork(
+      ["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`],
+      targetDir,
+    );
+  }
+  const preparedBaseSha = run("git", ["rev-parse", `origin/${baseBranch}`], {
+    cwd: targetDir,
+  }).trim();
+  if (preparedTrustedBaseShas.get(path.resolve(targetDir)) === preparedBaseSha) {
+    return preparedBaseSha;
+  }
+  let restoreRef = currentHead(targetDir);
+  try {
+    restoreRef =
+      run("git", ["symbolic-ref", "--quiet", "--short", "HEAD"], { cwd: targetDir }).trim() ||
+      restoreRef;
+  } catch {
+    // Detached checkouts restore by exact SHA.
+  }
+  run("git", ["checkout", "--detach", preparedBaseSha], { cwd: targetDir });
+  try {
+    fixArtifact.validation_commands = requiredValidationCommands(
+      requestedValidationCommands,
+      targetDir,
+      currentTargetValidationOptions(),
+    );
+    prepareTrustedTargetDependencies(
+      targetDir,
+      currentTargetValidationOptions(),
+      baseBranch,
+      fixArtifact.validation_commands,
+    );
+    rememberPreparedTrustedTargetBase(targetDir, preparedBaseSha);
+  } finally {
+    run("git", ["checkout", restoreRef], { cwd: targetDir });
+  }
+  return preparedBaseSha;
+}
+
+function rememberPreparedTrustedTargetBase(targetDir: string, baseSha: string) {
+  preparedTrustedBaseShas.set(path.resolve(targetDir), baseSha);
+}
+
+function invalidatePreparedTrustedTargetBase(targetDir: string) {
+  invalidatePreparedTargetDependencies(targetDir);
+  preparedTrustedBaseShas.delete(path.resolve(targetDir));
 }
 
 function executeReplacementBranch({
@@ -1425,15 +1551,23 @@ function executeReplacementBranch({
       ...areaCapacityBlock,
     };
   }
-  runGitNetwork(["fetch", "origin", baseBranch], targetDir);
   const branchState = checkoutRecoverableReplacementBranch({
     targetDir,
     branch,
     baseBranch,
     fixArtifact,
   });
-  prepareTargetToolchain(targetDir, currentTargetValidationOptions());
-  const rebaseResult = rebaseOntoBase({ targetDir, baseBranch });
+  const preparedBaseSha = preparePinnedTrustedTargetBase({
+    fixArtifact,
+    targetDir,
+    baseBranch,
+  });
+  const rebaseResult = rebaseOntoBase({ targetDir, baseBranch, fetchBase: false });
+  if (rebaseResult.base_sha !== preparedBaseSha) {
+    throw new Error(
+      `validation_dependency_prepare_failed: prepared base ${preparedBaseSha} does not match rebase base ${rebaseResult.base_sha}`,
+    );
+  }
   const mechanicalConflictResolution = tryResolveMechanicalRebaseConflicts({
     targetDir,
     rebaseResult,
@@ -1972,6 +2106,7 @@ function editValidatePrepareMerge({
         details: reconcileWithBase ? "reconciling latest base" : "repairing branch",
         headSha: headBeforeAttempt,
       });
+      invalidatePreparedTrustedTargetBase(targetDir);
       const codexResult = spawnCodexSyncWithHeartbeat(
         `Codex fix worker ${mode} attempt ${attempt}`,
         [
@@ -2107,10 +2242,6 @@ function editValidatePrepareMerge({
   }
 
   let codexReview = null;
-  const maxFinalBaseSyncAttempts = Math.max(
-    1,
-    Number(process.env.CLAWSWEEPER_FINAL_BASE_SYNC_ATTEMPTS ?? 1),
-  );
   for (let attempt = 1; attempt <= maxFinalBaseSyncAttempts; attempt += 1) {
     logProgress("starting validation/review loop", { mode, attempt });
     updateAutomergeProgressStatus({
@@ -2158,6 +2289,11 @@ function editValidatePrepareMerge({
       headSha: currentHead(targetDir),
     });
     if (sync.status === "already-current") break;
+    if (attempt === maxFinalBaseSyncAttempts) {
+      throw new Error(
+        `validation_base_sync_exhausted: origin/${baseBranch} moved during every final validation pass; refusing to push an unvalidated head after ${maxFinalBaseSyncAttempts} attempts`,
+      );
+    }
     const checkpoint = commitCheckpointIfNeeded({
       targetDir,
       message: `fix(clawsweeper): reconcile ${result.cluster_id} with ${baseBranch} (${attempt})`,
@@ -2167,15 +2303,12 @@ function editValidatePrepareMerge({
       checkpointCommits.push(checkpoint);
       pushCheckpoint?.();
     }
-    if (attempt === maxFinalBaseSyncAttempts) {
-      codexReview.final_base_sync = {
-        status: "accepted_after_final_sync",
-        reason: `origin/${baseBranch} moved during final validation; pushed the branch after the last successful final-base sync and left review/CI/automerge to gate the exact head`,
-        attempts: maxFinalBaseSyncAttempts,
-        sync,
-      };
-      break;
-    }
+    preparePinnedTrustedTargetBase({
+      fixArtifact,
+      targetDir,
+      baseBranch,
+      fetchBase: false,
+    });
   }
   const finalCheckpoint = commitCheckpointIfNeeded({
     targetDir,
@@ -2316,6 +2449,7 @@ function runCodexBaseReconcile({
       `${mode}-final-base-reconcile-summary-${attempt}-${codexAttempt}.md`,
     );
     const reconcileTimeoutMs = currentCodexTimeoutMs();
+    invalidatePreparedTrustedTargetBase(targetDir);
     const codexResult = spawnCodexSyncWithHeartbeat(
       `Codex final rebase worker ${mode} attempt ${attempt}.${codexAttempt}`,
       [
@@ -2600,11 +2734,23 @@ function validateAndReviewLoop({
   let lastReview = null;
   let validationCommands: LooseRecord[] = [];
   for (let attempt = 1; attempt <= maxReviewAttempts; attempt += 1) {
+    preparePinnedTrustedTargetBase({
+      fixArtifact,
+      targetDir,
+      baseBranch,
+      fetchBase: false,
+    });
     const validationPlan = repairDeltaValidationPlan(
       { fixArtifact, targetDir, sourceHead },
       currentTargetValidationOptions(),
     );
     try {
+      prepareBranchTargetDependencies(
+        targetDir,
+        validationPlan.options,
+        baseBranch,
+        validationPlan.commands,
+      );
       validationCommands = runAllowedValidationCommands(
         validationPlan.commands,
         targetDir,
@@ -2687,9 +2833,21 @@ function validateAndReviewLoop({
         attempt: `${attempt}-final`,
       });
       onReviewFix?.(`${attempt}-final`);
+      preparePinnedTrustedTargetBase({
+        fixArtifact,
+        targetDir,
+        baseBranch,
+        fetchBase: false,
+      });
       const finalValidationPlan = repairDeltaValidationPlan(
         { fixArtifact, targetDir, sourceHead },
         currentTargetValidationOptions(),
+      );
+      prepareBranchTargetDependencies(
+        targetDir,
+        finalValidationPlan.options,
+        baseBranch,
+        finalValidationPlan.commands,
       );
       validationCommands = runAllowedValidationCommands(
         finalValidationPlan.commands,
@@ -2748,7 +2906,7 @@ function isRetryableCodexReviewError(error: JsonValue) {
 }
 
 function runDiffCheck({ targetDir, baseBranch }: LooseRecord) {
-  ensureMergeBaseAvailable({ targetDir, baseBranch });
+  ensureMergeBaseAvailable({ targetDir, baseBranch, fetchBase: false });
   run("git", ["diff", "--check", `origin/${baseBranch}...HEAD`], { cwd: targetDir });
   run("git", ["diff", "--check"], { cwd: targetDir });
 }
@@ -2930,6 +3088,7 @@ function runCodexReviewFix({ fixArtifact, targetDir, mode, review, attempt }: Lo
     "```",
   ].join("\n");
   const reviewFixTimeoutMs = currentCodexTimeoutMs();
+  invalidatePreparedTrustedTargetBase(targetDir);
   const child = spawnCodexSyncWithHeartbeat(
     `Codex review-fix worker ${mode} attempt ${attempt}`,
     [
@@ -3027,6 +3186,7 @@ function runCodexValidationFix({
     "```",
   ].join("\n");
   const validationFixTimeoutMs = currentCodexTimeoutMs();
+  invalidatePreparedTrustedTargetBase(targetDir);
   const child = spawnCodexSyncWithHeartbeat(
     `Codex validation-fix worker ${mode} attempt ${attempt}`,
     [
@@ -3180,6 +3340,11 @@ function ensureTargetCheckout(repo: string, targetDir: string) {
   }
   const status = run("git", ["status", "--porcelain"], { cwd: targetDir }).trim();
   if (status) throw new Error(`target checkout has uncommitted changes: ${targetDir}`);
+}
+
+function checkoutTrustedTargetBase(targetDir: string, baseBranch: string) {
+  runGitNetwork(["fetch", "origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`], targetDir);
+  run("git", ["checkout", "--detach", `origin/${baseBranch}`], { cwd: targetDir });
 }
 
 function cloneTargetCheckout(repo: string, targetDir: string) {

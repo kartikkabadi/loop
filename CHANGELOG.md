@@ -62,6 +62,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Replaced the stale generic `pnpm check:changed` automerge fallback with Codex-sandboxed repository-native validation discovery for Go, package-script, Make, and .NET targets while failing closed after branch checkout for unknown layouts.
 - Prevented concurrent exact-item review publishes from restoring stale neighboring reports, plans, and public model metadata in the durable state repository.
 - Prevented broad review, audit, and apply publishes from overwriting neighboring durable records changed by concurrent workflows.
 - Added merged PRs that reference an issue to issue review context when GitHub has no formal closing link, so implemented-on-main decisions can see relevant fix provenance. Thanks @openperf.

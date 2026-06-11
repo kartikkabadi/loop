@@ -176,6 +176,43 @@ test("deterministic automerge result emits bun run check for openclaw/clawhub", 
   assert.deepEqual(result?.fix_artifact.validation_commands, ["bun run check"]);
 });
 
+test("deterministic automerge result defers generic validation to the target checkout", () => {
+  const result = deterministicAutomergeResult({
+    job: {
+      frontmatter: {
+        repo: "openclaw/gogcli",
+        cluster_id: "automerge-openclaw-gogcli-737",
+        source: "pr_automerge",
+        canonical: ["#737"],
+        allow_fix_pr: true,
+        allow_merge: false,
+      },
+    },
+    mode: "autonomous",
+    clusterPlan: {
+      repo: "openclaw/gogcli",
+      cluster_id: "automerge-openclaw-gogcli-737",
+      items: [
+        {
+          number: 737,
+          ref: "#737",
+          kind: "pull_request",
+          state: "open",
+          title: "fix: preserve code-span breaks",
+          pull_request: {
+            branch_writable: true,
+            files_truncated: 0,
+            checks: [],
+            files: [{ filename: "internal/markdown/render.go" }],
+          },
+        },
+      ],
+    },
+  });
+
+  assert.deepEqual(result?.fix_artifact.validation_commands, []);
+});
+
 test("deterministic automerge result uses the Windows target branch and validation", () => {
   const windowsJob = {
     frontmatter: {

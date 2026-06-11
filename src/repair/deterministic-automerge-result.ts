@@ -190,11 +190,11 @@ function uniqueStrings(values: JsonValue[]): string[] {
  * - Repos without a `changed_gate` (e.g. openclaw/clawhub → bun) get their
  *   declared `validation_commands` instead (e.g. `["bun run check"]`), so the
  *   executor can preflight against a script that actually exists.
- * - As a last-resort fallback we still emit `pnpm check:changed` so legacy
- *   pnpm consumers that have not been migrated keep working.
+ * - Repos without declared validation leave the artifact empty. The executor
+ *   inspects the checked-out repository and selects a repository-native gate.
  */
 function deterministicAutomergeValidationCommands(repo: string): string[] {
-  if (!repo) return ["pnpm check:changed"];
+  if (!repo) return [];
   try {
     const toolchain = resolveTargetRepoToolchain(repo);
     if (toolchain.changedGate) return [toolchain.changedGate.command];
@@ -206,7 +206,7 @@ function deterministicAutomergeValidationCommands(repo: string): string[] {
     // try/catch around config IO), but keep this guard so a future signature
     // change can never brick deterministic artifact generation.
   }
-  return ["pnpm check:changed"];
+  return [];
 }
 
 function firstCanonicalPullItem({ job, clusterPlan }: LooseRecord): LooseRecord | null {

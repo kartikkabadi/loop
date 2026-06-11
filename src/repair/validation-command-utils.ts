@@ -10,6 +10,9 @@ export function packageScriptRequirement(
   if (commandParts[0] === "npm" && commandParts[1] === "run" && commandParts[2]) {
     return { name: commandParts[2], command: commandParts.slice(0, 3).join(" ") };
   }
+  if (commandParts[0] === "npm" && commandParts[1] === "test") {
+    return { name: "test", command: "npm test" };
+  }
   if (commandParts[0] === "bun" && commandParts[1] === "run" && commandParts[2]) {
     return { name: commandParts[2], command: commandParts.slice(0, 3).join(" ") };
   }
@@ -18,7 +21,13 @@ export function packageScriptRequirement(
   if (commandParts[index] === "-s" || commandParts[index] === "--silent") index += 1;
   if (commandParts[index] === "run") index += 1;
   const script = commandParts[index];
-  if (!script || ["exec", "dlx", "install", "add", "remove"].includes(script)) return null;
+  if (
+    !script ||
+    script.startsWith("-") ||
+    ["exec", "dlx", "install", "add", "remove"].includes(script)
+  ) {
+    return null;
+  }
   return { name: script, command: ["pnpm", script].join(" ") };
 }
 
@@ -143,7 +152,9 @@ function isAllowedPnpmCommand(parts: readonly string[]): boolean {
   if (parts[index] === "run") index += 1;
   const script = parts[index] ?? "";
   return (
-    Boolean(script) && !["exec", "dlx", "install", "add", "remove", "publish"].includes(script)
+    Boolean(script) &&
+    !script.startsWith("-") &&
+    !["exec", "dlx", "install", "add", "remove", "publish"].includes(script)
   );
 }
 

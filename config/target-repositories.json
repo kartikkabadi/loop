@@ -60,6 +60,7 @@
         "dotnet test ./tests/OpenClaw.Tray.Tests/OpenClaw.Tray.Tests.csproj"
       ],
       "changed_gate": null,
+      "prepare_package_dependencies": true,
       "requires_full_history": true,
       "execution_runner": "windows-latest",
       "base_branch": "main"

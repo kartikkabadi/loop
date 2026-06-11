@@ -60,3 +60,21 @@ test("fix artifact validation rejects titles past the GitHub ceiling", () => {
     /fix_artifact\.pr_title must be 256 characters or fewer/,
   );
 });
+
+test("fix artifact validation allows checkout-inferred validation commands", () => {
+  assert.doesNotThrow(() =>
+    validateFixArtifact({
+      summary: "summary",
+      pr_title: "fix: infer target validation",
+      pr_body: "body",
+      affected_surfaces: ["src"],
+      likely_files: ["src/example.ts"],
+      linked_refs: ["#1"],
+      validation_commands: [],
+      credit_notes: ["ClawSweeper"],
+      changelog_required: false,
+      repair_strategy: "new_fix_pr",
+      source_prs: [],
+    }),
+  );
+});

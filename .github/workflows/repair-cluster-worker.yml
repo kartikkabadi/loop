@@ -398,11 +398,21 @@ jobs:
         with:
           build-script: build:repair
 
-      - name: Setup .NET 10 for Windows target validation
-        if: ${{ steps.check_job.outputs.job_exists == '1' && runner.os == 'Windows' }}
+      - name: Setup Go for target validation
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          cache: false
+
+      - name: Setup supported .NET SDKs for target validation
+        if: ${{ steps.check_job.outputs.job_exists == '1' }}
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
 
       - name: Setup pinned Bun for target validation
         if: ${{ steps.check_job.outputs.job_exists == '1' }}

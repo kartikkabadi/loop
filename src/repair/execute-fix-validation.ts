@@ -35,16 +35,13 @@ export function validateFixArtifact(fixArtifact: LooseRecord): LooseRecord {
       `fix_artifact.pr_title must be ${GITHUB_PR_TITLE_MAX_LENGTH} characters or fewer`,
     );
   }
-  for (const key of [
-    "affected_surfaces",
-    "likely_files",
-    "linked_refs",
-    "validation_commands",
-    "credit_notes",
-  ]) {
+  for (const key of ["affected_surfaces", "likely_files", "linked_refs", "credit_notes"]) {
     if (!Array.isArray(fixArtifact[key]) || fixArtifact[key].length === 0) {
       throw new Error(`fix_artifact.${key} must be a non-empty list`);
     }
+  }
+  if (!Array.isArray(fixArtifact.validation_commands)) {
+    throw new Error("fix_artifact.validation_commands must be a list");
   }
   if (typeof fixArtifact.changelog_required !== "boolean") {
     throw new Error("fix_artifact.changelog_required must be boolean");

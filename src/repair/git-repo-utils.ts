@@ -23,6 +23,7 @@ type TargetBranch = TargetDir & {
 
 type TargetBaseBranch = TargetDir & {
   baseBranch: string;
+  fetchBase?: boolean;
 };
 
 export type RebaseOntoBaseResult = {
@@ -102,8 +103,14 @@ export function branchHasBaseDiff({ targetDir, baseBranch }: TargetBaseBranch): 
   throw new Error(retryDetail.trim());
 }
 
-export function ensureMergeBaseAvailable({ targetDir, baseBranch }: TargetBaseBranch): string {
-  gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
+export function ensureMergeBaseAvailable({
+  targetDir,
+  baseBranch,
+  fetchBase = true,
+}: TargetBaseBranch): string {
+  if (fetchBase) {
+    gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
+  }
   const baseRef = `origin/${baseBranch}`;
   const first = spawnSync("git", ["merge-base", baseRef, "HEAD"], {
     cwd: targetDir,
@@ -112,7 +119,7 @@ export function ensureMergeBaseAvailable({ targetDir, baseBranch }: TargetBaseBr
   });
   if (first.status === 0 && first.stdout.trim()) return first.stdout.trim();
 
-  fetchDeeperHistory({ targetDir, baseBranch });
+  fetchDeeperHistory({ targetDir, baseBranch, fetchBase });
   const retry = spawnSync("git", ["merge-base", baseRef, "HEAD"], {
     cwd: targetDir,
     env: process.env,
@@ -124,8 +131,12 @@ export function ensureMergeBaseAvailable({ targetDir, baseBranch }: TargetBaseBr
   throw new Error(detail || `no merge base between ${baseRef} and HEAD`);
 }
 
-export function rebaseOntoBase({ targetDir, baseBranch }: TargetBaseBranch): RebaseOntoBaseResult {
-  ensureMergeBaseAvailable({ targetDir, baseBranch });
+export function rebaseOntoBase({
+  targetDir,
+  baseBranch,
+  fetchBase = true,
+}: TargetBaseBranch): RebaseOntoBaseResult {
+  ensureMergeBaseAvailable({ targetDir, baseBranch, fetchBase });
   const baseRef = `origin/${baseBranch}`;
   const baseSha = run("git", ["rev-parse", baseRef], { cwd: targetDir }).trim();
   const previousHead = currentHead(targetDir);
@@ -243,13 +254,29 @@ export function unmergedPaths(targetDir: string): string[] {
     .filter(Boolean);
 }
 
-function fetchDeeperHistory({ targetDir, baseBranch }: TargetBaseBranch): void {
+function fetchDeeperHistory({ targetDir, baseBranch, fetchBase = true }: TargetBaseBranch): void {
   if (isShallowRepository(targetDir)) {
-    ensureFullHistory(targetDir);
-  } else {
+    if (fetchBase) {
+      ensureFullHistory(targetDir);
+    } else {
+      ensureFullHistoryPreservingBase(targetDir, baseBranch);
+    }
+  } else if (fetchBase) {
     gitFetch(targetDir, ["origin", "--prune"]);
   }
-  gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
+  if (fetchBase) {
+    gitFetch(targetDir, ["origin", `${baseBranch}:refs/remotes/origin/${baseBranch}`]);
+  }
+}
+
+function ensureFullHistoryPreservingBase(targetDir: string, baseBranch: string): void {
+  const baseRef = `refs/remotes/origin/${baseBranch}`;
+  const pinnedBase = run("git", ["rev-parse", baseRef], { cwd: targetDir }).trim();
+  try {
+    ensureFullHistory(targetDir);
+  } finally {
+    run("git", ["update-ref", baseRef, pinnedBase], { cwd: targetDir });
+  }
 }
 
 function isShallowRepository(targetDir: string): boolean {

@@ -15,6 +15,10 @@ export interface TargetChangedGate {
 
 export interface TargetRepoToolchain {
   packageManager: TargetPackageManager;
+  /** True for repository-specific profiles; checkout metadata cannot override it. */
+  packageManagerExplicit: boolean;
+  /** Prepare package dependencies even when validation invokes them through another script. */
+  preparePackageDependencies?: boolean;
   /** Base validation commands to always include before fixArtifact-supplied ones. */
   baseValidationCommands: readonly string[];
   /** Optional incremental gate (e.g. OpenClaw's pnpm check:changed). */
@@ -32,6 +36,7 @@ interface ToolchainConfigEntry {
   package_manager?: unknown;
   validation_commands?: unknown;
   changed_gate?: unknown;
+  prepare_package_dependencies?: unknown;
   requires_full_history?: unknown;
   execution_runner?: unknown;
 }
@@ -44,6 +49,8 @@ const SUPPORTED_PACKAGE_MANAGERS: ReadonlySet<TargetPackageManager> = new Set([
 
 const DEFAULT_TOOLCHAIN: TargetRepoToolchain = {
   packageManager: "pnpm",
+  packageManagerExplicit: false,
+  preparePackageDependencies: false,
   baseValidationCommands: [],
   changedGate: null,
   requiresFullHistory: false,
@@ -53,6 +60,8 @@ const DEFAULT_TOOLCHAIN: TargetRepoToolchain = {
 
 const OPENCLAW_OPENCLAW_FALLBACK_TOOLCHAIN: TargetRepoToolchain = {
   packageManager: "pnpm",
+  packageManagerExplicit: true,
+  preparePackageDependencies: false,
   baseValidationCommands: [],
   changedGate: { command: "pnpm check:changed", requiredScript: "check:changed" },
   requiresFullHistory: false,
@@ -144,7 +153,7 @@ function readToolchainTable(filePath: string): ResolvedToolchainTable {
     if (!isObject(entry)) continue;
     const repo = stringOrEmpty(entry.target_repo);
     if (!repo) continue;
-    const toolchain = parseToolchainEntry(entry, DEFAULT_TOOLCHAIN);
+    const toolchain = parseToolchainEntry(entry, DEFAULT_TOOLCHAIN, true);
     byRepo.set(normalizeRepo(repo), toolchain);
   }
 
@@ -153,13 +162,13 @@ function readToolchainTable(filePath: string): ResolvedToolchainTable {
     if (!isObject(entry)) continue;
     const owner = stringOrEmpty(entry.owner);
     if (!owner) continue;
-    byOwner.set(owner.toLowerCase(), parseToolchainEntry(entry, DEFAULT_TOOLCHAIN));
+    byOwner.set(owner.toLowerCase(), parseToolchainEntry(entry, DEFAULT_TOOLCHAIN, false));
   }
 
   if (isObject(parsed.core_target_overrides)) {
     for (const [repo, value] of Object.entries(parsed.core_target_overrides)) {
       if (!isObject(value)) continue;
-      byRepo.set(normalizeRepo(repo), parseToolchainEntry(value, DEFAULT_TOOLCHAIN));
+      byRepo.set(normalizeRepo(repo), parseToolchainEntry(value, DEFAULT_TOOLCHAIN, true));
     }
   }
 
@@ -169,15 +178,20 @@ function readToolchainTable(filePath: string): ResolvedToolchainTable {
 function parseToolchainEntry(
   entry: ToolchainConfigEntry,
   defaults: TargetRepoToolchain,
+  repositorySpecific: boolean,
 ): TargetRepoToolchain {
-  const packageManager = parsePackageManager(entry.package_manager) ?? defaults.packageManager;
+  const parsedPackageManager = parsePackageManager(entry.package_manager);
+  const packageManager = parsedPackageManager ?? defaults.packageManager;
   const baseValidationCommands = stringArray(entry.validation_commands);
   const changedGate = parseChangedGate(entry.changed_gate);
+  const preparePackageDependencies = entry.prepare_package_dependencies === true;
   const requiresFullHistory = entry.requires_full_history === true;
   const executionRunner = stringOrEmpty(entry.execution_runner) || null;
   const baseBranch = stringOrEmpty(entry.base_branch) || null;
   return {
     packageManager,
+    packageManagerExplicit: repositorySpecific && parsedPackageManager !== null,
+    preparePackageDependencies,
     baseValidationCommands,
     changedGate,
     requiresFullHistory,
