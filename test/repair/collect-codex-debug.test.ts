@@ -149,6 +149,38 @@ test("collectCodexDebug defaults to CODEX_HOME when set", () => {
   }
 });
 
+test("collectCodexDebug redacts config model from the default home directory", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-codex-debug-default-home-"));
+  const codexHome = path.join(tmp, ".codex");
+  const outDir = path.join(tmp, "out");
+  const previous = process.env.CODEX_HOME;
+  fs.mkdirSync(path.join(codexHome, "sessions"), { recursive: true });
+  fs.writeFileSync(path.join(codexHome, "config.toml"), 'model = "default-secret-model"\n');
+  fs.writeFileSync(
+    path.join(codexHome, "sessions", "run.jsonl"),
+    '{"model":"default-secret-model"}\n',
+  );
+
+  try {
+    delete process.env.CODEX_HOME;
+    collectCodexDebug({
+      outDir,
+      label: "default-home",
+      sinceMinutes: 60,
+      maxBytes: 1024 * 1024,
+      homeDir: tmp,
+    });
+
+    const artifact = fs.readFileSync(path.join(outDir, "sessions", "run.jsonl"), "utf8");
+    assert.doesNotMatch(artifact, /default-secret-model/);
+    assert.match(artifact, /\[REDACTED_INTERNAL_MODEL\]/);
+  } finally {
+    if (previous === undefined) delete process.env.CODEX_HOME;
+    else process.env.CODEX_HOME = previous;
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("redactSecrets masks common token shapes", () => {
   assert.equal(
     redactSecrets(
@@ -194,6 +226,35 @@ test("collectCodexDebug redacts the internal model from its environment", () => 
   } finally {
     if (previous === undefined) delete process.env.CLAWSWEEPER_INTERNAL_MODEL;
     else process.env.CLAWSWEEPER_INTERNAL_MODEL = previous;
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("collectCodexDebug redacts the internal model from Codex config", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-codex-debug-config-model-"));
+  const codexHome = path.join(tmp, ".codex");
+  const outDir = path.join(tmp, "out");
+  fs.mkdirSync(path.join(codexHome, "sessions"), { recursive: true });
+  fs.writeFileSync(path.join(codexHome, "config.toml"), 'model = "config-secret-model"\n');
+  fs.writeFileSync(
+    path.join(codexHome, "sessions", "run.jsonl"),
+    '{"model":"config-secret-model"}\n',
+  );
+
+  try {
+    collectCodexDebug({
+      outDir,
+      label: "model",
+      sinceMinutes: 60,
+      maxBytes: 1024 * 1024,
+      homeDir: tmp,
+      codexHome,
+    });
+
+    const artifact = fs.readFileSync(path.join(outDir, "sessions", "run.jsonl"), "utf8");
+    assert.doesNotMatch(artifact, /config-secret-model/);
+    assert.match(artifact, /\[REDACTED_INTERNAL_MODEL\]/);
+  } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });

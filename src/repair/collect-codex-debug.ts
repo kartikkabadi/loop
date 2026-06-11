@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { redactInternalCodexModel } from "../codex-env.js";
 
 type CollectOptions = {
   outDir: string;
@@ -34,7 +35,8 @@ const DEFAULT_SINCE_MINUTES = 240;
 const DEFAULT_MAX_BYTES = 100 * 1024 * 1024;
 
 export function collectCodexDebug(options: CollectOptions) {
-  const roots = codexDebugRoots(options);
+  const codexHome = resolveCodexHome(options);
+  const roots = codexDebugRoots(options, codexHome);
   const redactValues = [
     ...(options.redactValues ?? []),
     process.env.CLAWSWEEPER_INTERNAL_MODEL ?? "",
@@ -67,7 +69,7 @@ export function collectCodexDebug(options: CollectOptions) {
       const artifactPath = path.join(options.outDir, root.name, relative);
       fs.mkdirSync(path.dirname(artifactPath), { recursive: true });
       const raw = fs.readFileSync(filePath, "utf8");
-      const redacted = redactSecrets(raw, redactValues);
+      const redacted = redactSecrets(raw, redactValues, codexHome);
       fs.writeFileSync(artifactPath, redacted);
       manifest.push({
         source: path.join(root.name, relative),
@@ -99,8 +101,8 @@ export function collectCodexDebug(options: CollectOptions) {
   return { manifest, skipped, manifestPath };
 }
 
-export function redactSecrets(text: string, redactValues: string[] = []) {
-  let redacted = text;
+export function redactSecrets(text: string, redactValues: string[] = [], codexHome?: string) {
+  let redacted = redactInternalCodexModel(text, codexHome);
   for (const value of redactValues.map((entry) => entry.trim()).filter(Boolean)) {
     redacted = redacted.replaceAll(value, "[REDACTED_INTERNAL_MODEL]");
   }
@@ -115,9 +117,13 @@ export function redactSecrets(text: string, redactValues: string[] = []) {
     );
 }
 
-function codexDebugRoots(options: CollectOptions) {
-  const codexHome =
-    options.codexHome || process.env.CODEX_HOME?.trim() || path.join(options.homeDir, ".codex");
+function resolveCodexHome(options: CollectOptions): string {
+  return (
+    options.codexHome || process.env.CODEX_HOME?.trim() || path.join(options.homeDir, ".codex")
+  );
+}
+
+function codexDebugRoots(options: CollectOptions, codexHome = resolveCodexHome(options)) {
   const repairRunsDir =
     options.repairRunsDir || path.join(process.cwd(), ".clawsweeper-repair", "runs");
   return [

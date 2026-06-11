@@ -104,6 +104,7 @@ import {
   impactLabelSchemeForTest,
   runtimeBudgetExceeded,
   safeOutputTail,
+  redactInternalCodexModel,
   sameAuthorCounterpartApplyReason,
   sanitizePublicSelfReferences,
   appendFloorBackfillCandidateNumbersForTest,
@@ -5034,6 +5035,18 @@ test("failed review retry eligibility requires infrastructure failure and matchi
     }).action,
     "skipped_not_failed_review",
   );
+});
+
+test("failed review retry eligibility treats Codex rate limits as infrastructure failures", () => {
+  const markdown = failedReviewReport({
+    repository: "steipete/oracle",
+    number: 250,
+  }).replace(
+    "Codex worker timed out after 600000ms with ETIMEDOUT.",
+    "stream disconnected: Rate limit reached for hidden-model (for limit test) on tokens per min (TPM). Please try again in 581ms.",
+  );
+
+  assert.equal(isInfrastructureFailedReviewForTest(markdown), true);
 });
 
 test("failed review retry eligibility enforces cooldown and max attempts per head", () => {
@@ -14103,7 +14116,9 @@ process.exit(1);
   );
   chmodSync(codexPath, 0o755);
   const originalPath = process.env.PATH;
+  const originalAttempts = process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS;
   process.env.PATH = `${binDir}${delimiter}${process.env.PATH ?? ""}`;
+  process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS = "1";
   try {
     assert.throws(
       () =>
@@ -14139,6 +14154,8 @@ process.exit(1);
   } finally {
     if (originalPath === undefined) delete process.env.PATH;
     else process.env.PATH = originalPath;
+    if (originalAttempts === undefined) delete process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS;
+    else process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS = originalAttempts;
     rmSync(root, { recursive: true, force: true });
   }
 });
@@ -14157,12 +14174,133 @@ test("codex failure decisions expose stderr and stdout separately", () => {
   );
   assert.equal(
     decision.evidence.find((entry) => entry.label === "codex stderr")?.detail,
-    "Rate limit reached for gpt-test on tokens per min (TPM)",
+    "Rate limit reached for [REDACTED_INTERNAL_MODEL] on tokens per min (TPM)",
   );
   assert.equal(
     decision.evidence.find((entry) => entry.label === "codex stdout")?.detail,
     "startup banner",
   );
+});
+
+test("runCodex retries a transient failure in a fresh process", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const openclawDir = join(root, "openclaw");
+  const workDir = join(root, "codex-work");
+  const binDir = join(root, "bin");
+  const codexHome = join(root, "codex-home");
+  const attemptsPath = join(root, "attempts");
+  mkdirSync(openclawDir, { recursive: true });
+  mkdirSync(binDir, { recursive: true });
+  mkdirSync(codexHome, { recursive: true });
+  execFileSync("git", ["init"], { cwd: openclawDir, stdio: "ignore" });
+  writeFileSync(join(codexHome, "config.toml"), 'model = "secret-model-for-test"\n');
+  const codexPath = join(binDir, "codex");
+  writeFileSync(
+    codexPath,
+    `#!/usr/bin/env node
+const fs = require("node:fs");
+const attemptsPath = process.env.CODEX_ATTEMPTS_PATH;
+const attempt = fs.existsSync(attemptsPath) ? Number(fs.readFileSync(attemptsPath, "utf8")) + 1 : 1;
+fs.writeFileSync(attemptsPath, String(attempt));
+if (attempt === 1) {
+  process.stderr.write("stream disconnected: Rate limit reached for secret-model-for-test (for limit test) on tokens per min (TPM). Please try again in 1ms.\\n");
+  process.exit(1);
+}
+const outputIndex = process.argv.indexOf("--output-last-message");
+fs.writeFileSync(process.argv[outputIndex + 1], process.env.CODEX_DECISION_JSON);
+`,
+  );
+  chmodSync(codexPath, 0o755);
+  const previous = {
+    PATH: process.env.PATH,
+    CODEX_ATTEMPTS_PATH: process.env.CODEX_ATTEMPTS_PATH,
+    CODEX_DECISION_JSON: process.env.CODEX_DECISION_JSON,
+    CODEX_HOME: process.env.CODEX_HOME,
+    CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS: process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS,
+    CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS: process.env.CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS,
+  };
+  process.env.PATH = `${binDir}${delimiter}${process.env.PATH ?? ""}`;
+  process.env.CODEX_ATTEMPTS_PATH = attemptsPath;
+  process.env.CODEX_DECISION_JSON = JSON.stringify(
+    closeDecision({
+      decision: "keep_open",
+      closeReason: "none",
+      confidence: "medium",
+      summary: "Review completed after a fresh Codex process.",
+      bestSolution: "Continue the existing review loop.",
+      closeComment: "",
+      workReason: "No additional implementation is required.",
+    }),
+  );
+  process.env.CODEX_HOME = codexHome;
+  process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS = "2";
+  process.env.CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS = "1";
+  try {
+    const decision = runCodexForTest({
+      item: item({ number: 83394 }),
+      context: { issue: {}, comments: [], timeline: [] },
+      git: { mainSha: "abc123", latestRelease: null },
+      model: "internal",
+      openclawDir,
+      reasoningEffort: "high",
+      sandboxMode: "read-only",
+      serviceTier: "",
+      timeoutMs: 10_000,
+      workDir,
+      prompt: "Return a review decision.",
+    });
+
+    assert.equal(readFileSync(attemptsPath, "utf8"), "2");
+    assert.equal(decision.summary, "Review completed after a fresh Codex process.");
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("Codex failure redaction hides the configured internal model", () => {
+  const root = mkdtempSync(tmpPrefix);
+  writeFileSync(join(root, "config.toml"), 'model = "secret-model-for-test"\n');
+  try {
+    const redacted = redactInternalCodexModel(
+      "selected secret-model-for-test; Rate limit reached for unknown-model (for limit test)",
+      root,
+    );
+    assert.doesNotMatch(redacted, /secret-model-for-test|unknown-model/);
+    assert.equal(redacted.match(/\[REDACTED_INTERNAL_MODEL\]/g)?.length, 2);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("Codex failure redaction reads the default home configuration", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const codexHome = join(root, ".codex");
+  mkdirSync(codexHome, { recursive: true });
+  writeFileSync(join(codexHome, "config.toml"), 'model = "default-secret-model"\n');
+  const previous = {
+    HOME: process.env.HOME,
+    CODEX_HOME: process.env.CODEX_HOME,
+    CLAWSWEEPER_INTERNAL_MODEL: process.env.CLAWSWEEPER_INTERNAL_MODEL,
+  };
+  try {
+    process.env.HOME = root;
+    delete process.env.CODEX_HOME;
+    delete process.env.CLAWSWEEPER_INTERNAL_MODEL;
+    assert.equal(
+      redactInternalCodexModel("selected default-secret-model"),
+      "selected [REDACTED_INTERNAL_MODEL]",
+    );
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test("decision parser enforces required schema-shaped evidence", () => {

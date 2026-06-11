@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  codexRetryDelayMs,
   isCodexContextLimitError,
   isRetryableCodexTransportError,
-} from "../../dist/repair/codex-transient.js";
+} from "../../dist/codex-transient.js";
 
 test("Codex closed-stdin tool transport errors are retryable", () => {
   assert.equal(
@@ -36,4 +37,25 @@ test("Codex context-limit errors are blocked automation outcomes", () => {
   );
   assert.equal(isCodexContextLimitError("maximum context length exceeded"), true);
   assert.equal(isCodexContextLimitError("validation command failed: pnpm check:changed"), false);
+});
+
+test("Codex retry delay ignores blank and non-positive environment settings", () => {
+  const previous = {
+    CLAWSWEEPER_CODEX_RETRY_DELAY_MS: process.env.CLAWSWEEPER_CODEX_RETRY_DELAY_MS,
+    CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS: process.env.CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS,
+  };
+  try {
+    process.env.CLAWSWEEPER_CODEX_RETRY_DELAY_MS = "";
+    process.env.CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS = "7";
+    assert.equal(codexRetryDelayMs("", 1), 7);
+
+    process.env.CLAWSWEEPER_CODEX_RETRY_DELAY_MS = "0";
+    process.env.CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS = "";
+    assert.equal(codexRetryDelayMs("", 1), 15_000);
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
 });

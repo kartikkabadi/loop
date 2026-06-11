@@ -1,3 +1,7 @@
+import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
 export type CodexEnvOptions = {
   ghToken?: string | undefined;
 };
@@ -14,6 +18,34 @@ export function codexModelArgs(requestedModel: string): string[] {
   if (!model || model === PUBLIC_CODEX_MODEL || (internalModel && model === internalModel))
     return [];
   return ["--model", model];
+}
+
+export function redactInternalCodexModel(
+  value: string | null | undefined,
+  codexHome = process.env.CODEX_HOME?.trim() || join(homedir(), ".codex"),
+): string {
+  let redacted = value ?? "";
+  const configuredModels = [process.env.CLAWSWEEPER_INTERNAL_MODEL?.trim() ?? ""];
+  const configPath = codexHome ? join(codexHome, "config.toml") : "";
+  if (configPath && existsSync(configPath)) {
+    const match = readFileSync(configPath, "utf8").match(
+      /^\s*model\s*=\s*("(?:\\.|[^"\\])*")\s*$/m,
+    );
+    if (match?.[1]) {
+      try {
+        configuredModels.push(String(JSON.parse(match[1])).trim());
+      } catch {
+        // Malformed config is a Codex setup failure, not a reason to expose its contents.
+      }
+    }
+  }
+  for (const model of configuredModels.filter(Boolean)) {
+    redacted = redacted.replaceAll(model, "[REDACTED_INTERNAL_MODEL]");
+  }
+  return redacted.replace(
+    /(Rate limit reached for\s+)\S+(?=\s+(?:\(for limit\b|on (?:tokens|requests) per min\b))/gi,
+    "$1[REDACTED_INTERNAL_MODEL]",
+  );
 }
 
 export function codexEnv(options: CodexEnvOptions = {}): NodeJS.ProcessEnv {

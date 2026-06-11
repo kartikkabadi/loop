@@ -20,7 +20,11 @@ import {
   replacementSourceLinkComment,
 } from "./external-messages.js";
 import { runCommand as run } from "./command-runner.js";
-import { isCodexContextLimitError, isRetryableCodexTransportError } from "./codex-transient.js";
+import {
+  codexRetryDelayMs,
+  isCodexContextLimitError,
+  isRetryableCodexTransportError,
+} from "../codex-transient.js";
 import {
   branchHasBaseDiff,
   completeRebaseIfResolved,
@@ -2497,21 +2501,6 @@ function stripAnsi(value: string) {
     }
   }
   return out;
-}
-
-function codexRetryDelayMs(message: string, attempt: number) {
-  const parsed = parseCodexRetryAfterMs(message);
-  const fallback = Number(process.env.CLAWSWEEPER_CODEX_RETRY_DELAY_MS ?? 15_000);
-  const base = Number.isFinite(fallback) && fallback > 0 ? fallback : 15_000;
-  return Math.min(120_000, Math.max(parsed ?? 0, base * attempt));
-}
-
-function parseCodexRetryAfterMs(message: string) {
-  const match = String(message ?? "").match(/try again in\s+(\d+(?:\.\d+)?)(ms|s)\b/i);
-  if (!match) return null;
-  const value = Number(match[1]);
-  if (!Number.isFinite(value) || value < 0) return null;
-  return match[2]?.toLowerCase() === "s" ? Math.ceil(value * 1000) : Math.ceil(value);
 }
 
 function classifyCodexFailure(detail: string) {

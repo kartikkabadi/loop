@@ -24,7 +24,13 @@ import {
   repositoryProfileForSlug,
   type RepositoryProfile,
 } from "./repository-profiles.js";
-import { codexEnv, codexModelArgs, PUBLIC_CODEX_MODEL } from "./codex-env.js";
+import {
+  codexEnv,
+  codexModelArgs,
+  PUBLIC_CODEX_MODEL,
+  redactInternalCodexModel,
+} from "./codex-env.js";
+import { codexRetryDelayMs, isRetryableCodexTransportError } from "./codex-transient.js";
 import {
   ghRetryKind,
   ghRetryWaitMs,
@@ -65,7 +71,7 @@ import {
 } from "./clawsweeper-args.js";
 import { escapeRegExp, safeOutputTail, trimMiddle, truncateText } from "./clawsweeper-text.js";
 
-export { codexEnv } from "./codex-env.js";
+export { codexEnv, redactInternalCodexModel } from "./codex-env.js";
 export { parseGhJson, parseGhJsonLines } from "./github-json.js";
 export { itemNumbersArg } from "./clawsweeper-args.js";
 export { safeOutputTail } from "./clawsweeper-text.js";
@@ -4655,8 +4661,11 @@ export function isInfrastructureFailedReviewForTest(markdown: string): boolean {
 
 function isInfrastructureFailedReview(markdown: string): boolean {
   const detail = failedReviewFailureDetail(markdown);
-  return /\b(?:ETIMEDOUT|ECONNRESET|EAI_AGAIN|ENOTFOUND|socket hang up|fetch failed|transport failure|codex transport|Codex worker timed out|Codex review failed: timeout|timed out after|shard timeout|workflow timeout|cancelledByParent)\b/i.test(
-    detail,
+  return (
+    isRetryableCodexTransportError(detail) ||
+    /\b(?:ETIMEDOUT|ECONNRESET|EAI_AGAIN|ENOTFOUND|socket hang up|fetch failed|transport failure|codex transport|Codex worker timed out|Codex review failed: timeout|timed out after|shard timeout|workflow timeout|cancelledByParent)\b/i.test(
+      detail,
+    )
   );
 }
 
@@ -6365,8 +6374,10 @@ function codexFailureDecision(
   stdout = "",
   stderr = "",
 ): Decision {
-  const failureDetail = detail || "No failure detail.";
-  const reason = codexFailureReason(`${failureDetail}\n${stderr}\n${stdout}`);
+  const failureDetail = redactInternalCodexModel(detail || "No failure detail.");
+  const safeStdout = redactedOutputTail(stdout || "No stdout captured.");
+  const safeStderr = redactedOutputTail(stderr || "No stderr captured.");
+  const reason = codexFailureReason(`${failureDetail}\n${safeStderr}\n${safeStdout}`);
   return {
     decision: "keep_open",
     closeReason: "none",
@@ -6378,11 +6389,11 @@ function codexFailureDecision(
       evidenceEntry({ label: "codex failure detail", detail: trimMiddle(failureDetail, 4000) }),
       evidenceEntry({
         label: "codex stderr",
-        detail: trimMiddle(stderr || "No stderr captured.", 3000),
+        detail: trimMiddle(safeStderr, 3000),
       }),
       evidenceEntry({
         label: "codex stdout",
-        detail: trimMiddle(stdout || "No stdout captured.", 2000),
+        detail: trimMiddle(safeStdout, 2000),
       }),
     ],
     likelyOwners: [
@@ -6486,15 +6497,20 @@ export function codexFailureDecisionForTest(
 }
 
 function redactedOutputTail(value: string | Buffer | null | undefined, maxLength = 6000): string {
-  return safeOutputTail(value, maxLength)
-    .replace(/\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b/g, "[REDACTED_OPENAI_KEY]")
-    .replace(/\bgithub_pat_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
-    .replace(/\bgh[pousr]_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
-    .replace(/\b(OPENAI_API_KEY|CODEX_API_KEY|GH_TOKEN|GITHUB_TOKEN)=([^\s"']+)/g, "$1=[REDACTED]")
-    .replace(
-      /"((?:OPENAI_API_KEY|CODEX_API_KEY|GH_TOKEN|GITHUB_TOKEN))"\s*:\s*"[^"]*"/g,
-      '"$1":"[REDACTED]"',
-    );
+  return redactInternalCodexModel(
+    safeOutputTail(value, maxLength)
+      .replace(/\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b/g, "[REDACTED_OPENAI_KEY]")
+      .replace(/\bgithub_pat_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
+      .replace(/\bgh[pousr]_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
+      .replace(
+        /\b(OPENAI_API_KEY|CODEX_API_KEY|GH_TOKEN|GITHUB_TOKEN)=([^\s"']+)/g,
+        "$1=[REDACTED]",
+      )
+      .replace(
+        /"((?:OPENAI_API_KEY|CODEX_API_KEY|GH_TOKEN|GITHUB_TOKEN))"\s*:\s*"[^"]*"/g,
+        '"$1":"[REDACTED]"',
+      ),
+  );
 }
 
 class CodexReviewError extends Error {
@@ -6614,111 +6630,118 @@ function runCodex(options: {
     'approval_policy="never"',
   ];
   if (options.serviceTier) codexConfig.splice(1, 0, `service_tier="${options.serviceTier}"`);
-  const result = spawnSync(
-    "codex",
-    [
-      "exec",
-      ...codexModelArgs(options.model),
-      ...codexConfig.flatMap((config) => ["-c", config]),
-      "-C",
-      options.openclawDir,
-      "--output-schema",
-      CLAWSWEEPER_DECISION_SCHEMA_PATH,
-      "--output-last-message",
-      outputPath,
-      "--sandbox",
-      options.sandboxMode,
-      "--add-dir",
-      proofScratchDir,
-      "-",
-    ],
-    {
-      cwd: options.openclawDir,
-      encoding: "utf8",
-      env: {
-        ...codexEnv({ ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN }),
-        CLAWSWEEPER_PROOF_SCRATCH_DIR: proofScratchDir,
-      },
-      input: prompt,
-      maxBuffer: 128 * 1024 * 1024,
-      timeout: options.timeoutMs,
-    },
+  const configuredAttempts = Number(process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS ?? 3);
+  const maxAttempts = Math.min(
+    5,
+    Math.max(1, Number.isFinite(configuredAttempts) ? Math.floor(configuredAttempts) : 3),
   );
-  const dirtyAfter = openclawDirtyStatus(options.openclawDir);
-  if (dirtyAfter) {
-    throw new Error(
-      `Codex dirtied the OpenClaw checkout while reviewing #${options.item.number}:\n${dirtyAfter}`,
+  const startedAt = Date.now();
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    if (existsSync(outputPath)) unlinkSync(outputPath);
+    const remainingMs = options.timeoutMs - (Date.now() - startedAt);
+    if (remainingMs <= 0) {
+      throw new Error(
+        `Codex review timed out for #${options.item.number} after ${options.timeoutMs}ms.`,
+      );
+    }
+    const result = spawnSync(
+      "codex",
+      [
+        "exec",
+        ...codexModelArgs(options.model),
+        ...codexConfig.flatMap((config) => ["-c", config]),
+        "-C",
+        options.openclawDir,
+        "--output-schema",
+        CLAWSWEEPER_DECISION_SCHEMA_PATH,
+        "--output-last-message",
+        outputPath,
+        "--sandbox",
+        options.sandboxMode,
+        "--add-dir",
+        proofScratchDir,
+        "-",
+      ],
+      {
+        cwd: options.openclawDir,
+        encoding: "utf8",
+        env: {
+          ...codexEnv({ ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN }),
+          CLAWSWEEPER_PROOF_SCRATCH_DIR: proofScratchDir,
+        },
+        input: prompt,
+        maxBuffer: 128 * 1024 * 1024,
+        timeout: remainingMs,
+      },
     );
-  }
-  if (result.error) {
-    throw new CodexReviewError({
-      message: `Codex review failed for #${options.item.number}: ${result.error.message}`,
-      status: result.status,
-      stdout: redactedOutputTail(result.stdout),
-      stderr: redactedOutputTail(result.stderr),
-    });
-  }
-  if (result.status !== 0) {
-    if (existsSync(outputPath)) {
+    const dirtyAfter = openclawDirtyStatus(options.openclawDir);
+    if (dirtyAfter) {
+      throw new Error(
+        `Codex dirtied the OpenClaw checkout while reviewing #${options.item.number}:\n${dirtyAfter}`,
+      );
+    }
+    const stderr = redactedOutputTail(result.stderr);
+    const stdout = redactedOutputTail(result.stdout);
+    let failureDetail = "";
+    if (result.error) {
+      failureDetail = `Codex review failed for #${options.item.number}: ${redactInternalCodexModel(result.error.message)}`;
+    }
+    const hasOutput = existsSync(outputPath);
+    if (!result.error && hasOutput) {
       try {
         const decision = parseDecision(
           JSON.parse(readFileSync(outputPath, "utf8").trim()),
           options.item,
         );
-        console.error(
-          `[review] ${new Date().toISOString()} codex-exit-nonzero-output-accepted #${
-            options.item.number
-          } status=${result.status ?? "unknown"} stderr=${JSON.stringify(safeOutputTail(result.stderr))}`,
-        );
+        if (result.status !== 0) {
+          console.error(
+            `[review] ${new Date().toISOString()} codex-exit-nonzero-output-accepted #${
+              options.item.number
+            } status=${result.status ?? "unknown"} stderr=${JSON.stringify(stderr)}`,
+          );
+        }
         return decision;
       } catch (error) {
-        throw new CodexReviewError({
-          message: `Codex review failed for #${options.item.number} with exit ${
-            result.status ?? "unknown"
-          } and wrote invalid JSON or schema-invalid output to ${outputPath}: ${
-            error instanceof Error ? error.message : String(error)
-          }.`,
-          status: result.status,
-          stdout: redactedOutputTail(result.stdout),
-          stderr: redactedOutputTail(result.stderr),
-        });
+        failureDetail = `Codex review failed for #${options.item.number} with exit ${
+          result.status ?? "unknown"
+        } and wrote invalid JSON or schema-invalid output to ${outputPath}: ${
+          error instanceof Error ? error.message : String(error)
+        }.`;
+      }
+    } else if (!result.error) {
+      failureDetail =
+        result.status === 0
+          ? `Codex review did not produce output for #${options.item.number}: Codex exited successfully but did not write ${outputPath}.\n${stdout || "No stdout."}`
+          : `Codex review failed for #${options.item.number} with exit ${result.status ?? "unknown"}.`;
+    }
+    const diagnosticDetail = `${failureDetail}\n${stderr}\n${stdout}`;
+    const retryable =
+      result.signal !== null ||
+      (result.status === 0 && !hasOutput) ||
+      isRetryableCodexTransportError(diagnosticDetail) ||
+      /\b(?:ETIMEDOUT|ECONNRESET|EAI_AGAIN|ENOTFOUND|socket hang up|fetch failed|transport failure)\b/i.test(
+        diagnosticDetail,
+      );
+    if (retryable && attempt < maxAttempts) {
+      const delayMs = codexRetryDelayMs(diagnosticDetail, attempt);
+      if (Date.now() - startedAt + delayMs < options.timeoutMs) {
+        console.error(
+          `[review] ${new Date().toISOString()} codex-retry #${options.item.number} attempt=${
+            attempt + 1
+          }/${maxAttempts} delay_ms=${delayMs} reason=transient_transport`,
+        );
+        sleepMs(delayMs);
+        continue;
       }
     }
     throw new CodexReviewError({
-      message: `Codex review failed for #${options.item.number} with exit ${result.status ?? "unknown"}.`,
+      message: failureDetail,
       status: result.status,
-      stdout: redactedOutputTail(result.stdout),
-      stderr: redactedOutputTail(result.stderr),
+      stdout,
+      stderr,
     });
   }
-  if (!existsSync(outputPath)) {
-    throw new CodexReviewError({
-      message: `Codex exited successfully but did not write ${outputPath}.`,
-      status: result.status,
-      stdout: redactedOutputTail(result.stdout),
-      stderr: redactedOutputTail(result.stderr),
-    });
-  }
-  try {
-    return parseDecision(JSON.parse(readFileSync(outputPath, "utf8").trim()), options.item);
-  } catch (error) {
-    const decision = codexFailureDecision(
-      result.status,
-      `Codex wrote invalid JSON or schema-invalid output to ${outputPath}: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-      redactedOutputTail(result.stdout),
-      redactedOutputTail(result.stderr),
-    );
-    throw new CodexReviewError({
-      message: `Codex review wrote invalid JSON for #${options.item.number}: ${decision.evidence
-        .map((entry) => entry.detail)
-        .join("\n")}`,
-      status: result.status,
-      stdout: redactedOutputTail(result.stdout),
-      stderr: redactedOutputTail(result.stderr),
-    });
-  }
+  throw new Error(`Codex review failed for #${options.item.number}.`);
 }
 
 function stripTextFence(markdown: string): string {
