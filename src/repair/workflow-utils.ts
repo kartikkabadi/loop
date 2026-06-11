@@ -3,6 +3,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { ghJson, githubPaginatedPath } from "./github-cli.js";
 import { parseArgs } from "./lib.js";
 import { isJsonObject } from "./json-types.js";
 import { AUTOMATION_LIMITS, WORKER_CONFIG, workerLimit, type WorkerLane } from "./limits.js";
@@ -62,6 +63,15 @@ function runCli(): void {
           }),
         ),
       );
+      break;
+    case "wait-exact-event-capacity":
+      waitExactEventCapacity({
+        repo: requiredString("repo"),
+        runId: requiredString("run-id"),
+        limit: numberArg("limit", workerLimit("exact_item")),
+        attempts: numberArg("attempts", 120),
+        sleepMs: numberArg("sleep-ms", 15_000),
+      });
       break;
     case "worker-config":
       process.stdout.write(JSON.stringify(WORKER_CONFIG, null, 2));
@@ -243,6 +253,159 @@ export function countRequeueRequired(reportDir: string): number {
   return resultFiles(reportDir)
     .flatMap((file) => resultActions(file))
     .filter((action) => action.requeue_required === true).length;
+}
+
+export type ExactEventReviewRun = {
+  id: string;
+  createdAt: string;
+  displayTitle: string;
+};
+
+export type ExactEventReviewCapacityState = {
+  activeCount: number;
+  acquired: boolean;
+  limit: number;
+  rank: number;
+};
+
+export function exactEventReviewCapacityState(
+  runs: readonly ExactEventReviewRun[],
+  options: { runId: string; limit: number },
+): ExactEventReviewCapacityState {
+  const limit = positiveIntegerValue(options.limit, 1);
+  const orderedRuns = [...runs].sort(compareExactEventReviewRuns);
+  const rankIndex = orderedRuns.findIndex((run) => run.id === options.runId);
+  const rank = rankIndex >= 0 ? rankIndex + 1 : orderedRuns.length + 1;
+  return {
+    activeCount: orderedRuns.length,
+    acquired: rankIndex >= 0 && rank <= limit,
+    limit,
+    rank,
+  };
+}
+
+function waitExactEventCapacity(options: {
+  repo: string;
+  runId: string;
+  limit: number;
+  attempts: number;
+  sleepMs: number;
+}): void {
+  const limit = positiveIntegerValue(options.limit, 1);
+  const attempts = positiveIntegerValue(options.attempts, 1);
+  const sleepMs = Math.max(0, Math.floor(options.sleepMs));
+  console.log(`Waiting for exact event review capacity: limit=${limit}`);
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const state = exactEventReviewCapacityState(
+        fetchActiveExactEventReviewRuns(options.repo, options.runId),
+        {
+          runId: options.runId,
+          limit,
+        },
+      );
+      if (state.acquired) {
+        console.log(
+          `Exact event review capacity acquired: rank=${state.rank} active=${state.activeCount} limit=${state.limit}`,
+        );
+        return;
+      }
+      console.log(
+        `::notice::Exact event review capacity full: rank=${state.rank} active=${state.activeCount} limit=${state.limit} attempt=${attempt}/${attempts}`,
+      );
+    } catch (error) {
+      lastError = error;
+      console.log(
+        `::notice::Exact event review capacity check failed: ${errorMessage(error)} attempt=${attempt}/${attempts}`,
+      );
+    }
+    if (attempt < attempts && sleepMs > 0) sleepSync(sleepMs);
+  }
+  throw new Error(
+    `timed out waiting for exact event review capacity${
+      lastError ? `; last error: ${errorMessage(lastError)}` : ""
+    }`,
+  );
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function fetchActiveExactEventReviewRuns(repo: string, runId: string): ExactEventReviewRun[] {
+  const runs = parseExactEventReviewRuns(
+    ghJson([
+      "api",
+      githubPaginatedPath(`repos/${repo}/actions/runs?status=in_progress`),
+      "--paginate",
+      "--slurp",
+      "--jq",
+      [
+        "[.[]",
+        "| .workflow_runs[]",
+        '| select(.name == "ClawSweeper")',
+        '| select(.display_title | startswith("Review event item "))',
+        "| {id: (.id | tostring), createdAt: .created_at, displayTitle: .display_title}]",
+      ].join(" "),
+    ]),
+  );
+  if (runs.some((run) => run.id === runId)) return runs;
+  const currentRun = fetchCurrentExactEventReviewRun(repo, runId);
+  if (currentRun) runs.push(currentRun);
+  return runs;
+}
+
+function fetchCurrentExactEventReviewRun(
+  repo: string,
+  runId: string,
+): ExactEventReviewRun | undefined {
+  const parsed = ghJson([
+    "api",
+    `repos/${repo}/actions/runs/${runId}`,
+    "--jq",
+    [
+      "{",
+      "id: (.id | tostring),",
+      "createdAt: .created_at,",
+      "displayTitle: .display_title,",
+      "name: .name,",
+      "status: .status",
+      "}",
+    ].join(" "),
+  ]);
+  if (!isJsonObject(parsed)) return undefined;
+  if (String(parsed.name ?? "") !== "ClawSweeper") return undefined;
+  if (String(parsed.status ?? "") !== "in_progress") return undefined;
+  if (!String(parsed.displayTitle ?? "").startsWith("Review event item ")) return undefined;
+  return parseExactEventReviewRuns([parsed])[0];
+}
+
+function parseExactEventReviewRuns(value: unknown): ExactEventReviewRun[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry): ExactEventReviewRun[] => {
+    if (!isJsonObject(entry)) return [];
+    const id = String(entry.id ?? "").trim();
+    const createdAt = String(entry.createdAt ?? "").trim();
+    const displayTitle = String(entry.displayTitle ?? "").trim();
+    return id && createdAt && displayTitle ? [{ id, createdAt, displayTitle }] : [];
+  });
+}
+
+function compareExactEventReviewRuns(
+  left: ExactEventReviewRun,
+  right: ExactEventReviewRun,
+): number {
+  const byCreatedAt = left.createdAt.localeCompare(right.createdAt);
+  if (byCreatedAt !== 0) return byCreatedAt;
+  const leftId = Number(left.id);
+  const rightId = Number(right.id);
+  if (Number.isFinite(leftId) && Number.isFinite(rightId)) return leftId - rightId;
+  return left.id.localeCompare(right.id);
+}
+
+function sleepSync(milliseconds: number): void {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds);
 }
 
 export function mergeApplyReports(reportDir: string, outputPath: string): void {
@@ -636,6 +799,10 @@ function numberArg(name: string, fallback: number): number {
 function positiveNumber(value: string, fallback: number): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function positiveIntegerValue(value: number, fallback: number): number {
+  return Number.isFinite(value) && value >= 1 ? Math.floor(value) : fallback;
 }
 
 function stringArray(value: JsonValue): string[] {

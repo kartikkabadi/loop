@@ -17729,6 +17729,35 @@ test("reviewed viable issues dispatch the existing implementation and automerge 
   assert.match(workflow, /steps\.target\.outputs\.target_repo != 'openclaw\/clawhub'/);
 });
 
+test("sweep workflow gates exact event Codex reviews with the worker budget", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8").replace(/\r\n/g, "\n");
+  const eventReviewBlock = workflow.slice(
+    workflow.indexOf("\n  event-review-apply:"),
+    workflow.indexOf("\n  plan:"),
+  );
+  const setupPnpmIndex = eventReviewBlock.indexOf("- uses: ./.github/actions/setup-pnpm");
+  const capacityIndex = eventReviewBlock.indexOf("- name: Wait for exact event review capacity");
+  const readTokenIndex = eventReviewBlock.indexOf("- name: Create target read token");
+  const writeTokenIndex = eventReviewBlock.indexOf("- name: Create target write token");
+  const setupCodexIndex = eventReviewBlock.indexOf("- uses: ./.github/actions/setup-codex");
+  const capacityStep = eventReviewBlock.slice(capacityIndex, readTokenIndex);
+
+  assert.match(
+    eventReviewBlock,
+    /group: clawsweeper-event-review-\$\{\{ github\.event\.client_payload\.target_repo/,
+  );
+  assert.match(eventReviewBlock, /cancel-in-progress: true/);
+  assert.ok(setupPnpmIndex >= 0);
+  assert.ok(capacityIndex > setupPnpmIndex);
+  assert.ok(readTokenIndex > capacityIndex);
+  assert.ok(writeTokenIndex > capacityIndex);
+  assert.ok(setupCodexIndex > capacityIndex);
+  assert.match(capacityStep, /GH_TOKEN: \$\{\{ github\.token \}\}/);
+  assert.match(capacityStep, /pnpm run workflow -- wait-exact-event-capacity/);
+  assert.match(capacityStep, /--repo "\$\{\{ github\.repository \}\}"/);
+  assert.match(capacityStep, /--run-id "\$\{\{ github\.run_id \}\}"/);
+});
+
 test("Codex workflows install latest CLI and keep the actual model secret", () => {
   const action = readFileSync(".github/actions/setup-codex/action.yml", "utf8");
   const workflows = [

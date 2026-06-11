@@ -12,6 +12,7 @@ import {
   countActions,
   countCommandActions,
   countRequeueRequired,
+  exactEventReviewCapacityState,
   mergeApplyReports,
   planOutputFields,
   plannedItemNumberCsv,
@@ -90,6 +91,66 @@ test("worker config defaults imported cluster repair capacity for older configs"
   );
 
   assert.equal(readWorkerConfig(configPath).lanes.repair.cluster_max_live_runs, 1);
+});
+
+test("exact event capacity admits only the oldest active review runs", () => {
+  const runs = [
+    {
+      id: "300",
+      createdAt: "2026-06-11T00:00:30Z",
+      displayTitle: "Review event item openclaw/openclaw#3",
+    },
+    {
+      id: "100",
+      createdAt: "2026-06-11T00:00:00Z",
+      displayTitle: "Review event item openclaw/openclaw#1",
+    },
+    {
+      id: "200",
+      createdAt: "2026-06-11T00:00:00Z",
+      displayTitle: "Review event item openclaw/openclaw#2",
+    },
+  ];
+
+  assert.deepEqual(exactEventReviewCapacityState(runs, { runId: "100", limit: 2 }), {
+    activeCount: 3,
+    acquired: true,
+    limit: 2,
+    rank: 1,
+  });
+  assert.deepEqual(exactEventReviewCapacityState(runs, { runId: "200", limit: 2 }), {
+    activeCount: 3,
+    acquired: true,
+    limit: 2,
+    rank: 2,
+  });
+  assert.deepEqual(exactEventReviewCapacityState(runs, { runId: "300", limit: 2 }), {
+    activeCount: 3,
+    acquired: false,
+    limit: 2,
+    rank: 3,
+  });
+});
+
+test("exact event capacity waits when the current run is absent", () => {
+  assert.deepEqual(
+    exactEventReviewCapacityState(
+      [
+        {
+          id: "100",
+          createdAt: "2026-06-11T00:00:00Z",
+          displayTitle: "Review event item openclaw/openclaw#1",
+        },
+      ],
+      { runId: "missing", limit: 0 },
+    ),
+    {
+      activeCount: 1,
+      acquired: false,
+      limit: 1,
+      rank: 2,
+    },
+  );
 });
 
 test("workflow utilities derive artifact item numbers and action counts", () => {

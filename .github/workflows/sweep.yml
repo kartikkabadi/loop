@@ -215,6 +215,21 @@ jobs:
             echo "item_number=$item_number"
           } >> "$GITHUB_OUTPUT"
 
+      - uses: ./.github/actions/setup-pnpm
+        id: setup-pnpm
+        with:
+          build-script: build:all
+
+      - name: Wait for exact event review capacity
+        timeout-minutes: 30
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          pnpm run workflow -- wait-exact-event-capacity \
+            --repo "${{ github.repository }}" \
+            --run-id "${{ github.run_id }}"
+
       - name: Create target read token
         id: target-read-token
         continue-on-error: true
@@ -268,11 +283,6 @@ jobs:
             rm -f "$err"
           }
           react "eyes"
-
-      - uses: ./.github/actions/setup-pnpm
-        id: setup-pnpm
-        with:
-          build-script: build:all
 
       - uses: ./.github/actions/setup-media-proof-tools
 
