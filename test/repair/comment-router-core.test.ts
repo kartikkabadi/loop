@@ -2299,6 +2299,16 @@ test("repairable check blockers only include completed failures", () => {
   );
 });
 
+test("repairable check blockers exclude external action-required checks", () => {
+  assert.deepEqual(
+    repairableCheckBlockers({
+      blockers: ["Vercel – clawhub:ACTION_REQUIRED", "checks-node-core:FAILURE"],
+      externalBlockers: ["Vercel – clawhub:ACTION_REQUIRED"],
+    }),
+    ["checks-node-core:FAILURE"],
+  );
+});
+
 test("automerge failed checks become repair reasons", () => {
   assert.equal(
     automergeFailedChecksRepairReason({
