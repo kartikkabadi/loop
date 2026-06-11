@@ -374,6 +374,7 @@ test("issue implementation intake checks generated branches through REST", () =>
   assert.match(source, /existing ClawSweeper issue implementation PR is open/);
   assert.match(source, /review report references an open or unverifiable pull request/);
   assert.match(source, /repos\/\$\{owner\}\/\$\{name\}\/issues\/\$\{number\}/);
+  assert.match(source, /"search\/issues",\s+"--method",\s+"GET"/);
   assert.doesNotMatch(source, /"pr", "list"/);
 });
 
@@ -411,6 +412,7 @@ test("comment router classifies protected issue build overrides as hard", () => 
   assert.match(source, /open_prs: linkedOpenPrs/);
   assert.match(source, /addPullRequestReferenceNumbersFromText/);
   assert.match(source, /searchOpenPullRequestsMentioningIssue\(Number\(issueNumber\)\)/);
+  assert.match(source, /"search\/issues",\s+"--method",\s+"GET"/);
   assert.match(source, /target\.body/);
   assert.match(source, /target\.locked === true/);
   assert.match(source, /labels\.some\(isIssueImplementationProtectedLabel\)/);

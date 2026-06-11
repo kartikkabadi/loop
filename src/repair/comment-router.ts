@@ -2677,6 +2677,8 @@ function searchOpenPullRequestsMentioningIssue(issueNumber: number) {
       [
         "api",
         "search/issues",
+        "--method",
+        "GET",
         "-f",
         `q=repo:${targetRepo} is:pr is:open "${issueNumber}"`,
         "--jq",

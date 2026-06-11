@@ -62,6 +62,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Fixed issue implementation duplicate-PR searches to use GitHub's GET endpoint, restoring automatic and explicit issue-build intake.
 - Allowed viable issue implementation intake to treat merged or closed pull requests as historical context while retaining live blockers for open matching and generated pull requests.
 - Made generated-state checkouts shallow by default so publish, audit, and apply jobs do not download the multi-gigabyte state history before their existing fetch/rebase retry loop.
 - Added merged PRs that reference an issue to issue review context when GitHub has no formal closing link, so implemented-on-main decisions can see relevant fix provenance. Thanks @openperf.

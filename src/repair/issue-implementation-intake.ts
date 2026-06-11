@@ -619,7 +619,16 @@ function liveIssueContext({
 function searchOpenPullRequestsMentioningIssue(repo: string, number: number): LooseRecord[] {
   try {
     const result = ghJsonWithRetry(
-      ["api", "search/issues", "-f", `q=repo:${repo} is:pr is:open "${number}"`, "--jq", ".items"],
+      [
+        "api",
+        "search/issues",
+        "--method",
+        "GET",
+        "-f",
+        `q=repo:${repo} is:pr is:open "${number}"`,
+        "--jq",
+        ".items",
+      ],
       { attempts: 3 },
     );
     return Array.isArray(result) ? result : [];
