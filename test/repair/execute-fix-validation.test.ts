@@ -74,6 +74,79 @@ test("autonomous scope validation allows trusted adopted PR branch refreshes", (
   assert.equal(block, null);
 });
 
+test("autonomous scope validation allows reviewed issue implementations", () => {
+  const block = validate(
+    {
+      frontmatter: {
+        repo: "steipete/oracle",
+        source: "issue_implementation",
+        trigger_source: "review_viable_issue",
+        source_issue_repo: "steipete/oracle",
+        source_issue_number: 241,
+        source_issue_revision_sha256: "a".repeat(64),
+        allow_fix_pr: true,
+        allowed_actions: ["fix", "raise_pr"],
+        target_branch: "clawsweeper/issue-steipete-oracle-241",
+      },
+    },
+    {
+      ...broadBranchRepairArtifact(),
+      repair_strategy: "new_fix_pr",
+      source_prs: [],
+    },
+  );
+
+  assert.equal(block, null);
+});
+
+test("autonomous scope validation blocks incomplete issue review metadata", () => {
+  const block = validate(
+    {
+      frontmatter: {
+        repo: "steipete/oracle",
+        source: "issue_implementation",
+        trigger_source: "review_viable_issue",
+        source_issue_revision_sha256: "abc123",
+        allow_fix_pr: true,
+        allowed_actions: ["fix", "raise_pr"],
+        target_branch: "clawsweeper/issue-steipete-oracle-241",
+      },
+    },
+    {
+      ...broadBranchRepairArtifact(),
+      repair_strategy: "new_fix_pr",
+      source_prs: [],
+    },
+  );
+
+  assert.match(block.reason, /too broad for autonomous execution/);
+});
+
+test("autonomous scope validation blocks issue implementations outside their dedicated branch", () => {
+  const block = validate(
+    {
+      frontmatter: {
+        repo: "steipete/oracle",
+        source: "issue_implementation",
+        trigger_source: "review_viable_issue",
+        source_issue_repo: "steipete/oracle",
+        source_issue_number: 241,
+        source_issue_revision_sha256: "a".repeat(64),
+        allow_fix_pr: true,
+        allowed_actions: ["fix", "raise_pr"],
+        target_branch: "feature/oracle-241",
+      },
+    },
+    {
+      ...broadBranchRepairArtifact(),
+      repair_strategy: "new_fix_pr",
+      source_prs: [],
+    },
+  );
+
+  assert.match(block.reason, /too broad for autonomous execution/);
+});
+
 test("autonomous scope validation still blocks adopted repairs outside ClawSweeper branches", () => {
   const block = validate({
     frontmatter: {

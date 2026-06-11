@@ -115,6 +115,7 @@ export function validateAutonomousFixScope({
 }: LooseRecord): LooseRecord | null {
   if (allowBroadFixArtifacts || job.frontmatter.allow_broad_fix_artifacts === true) return null;
   if (isTrustedAdoptedBranchRepair({ job, fixArtifact })) return null;
+  if (isTrustedIssueImplementation({ job, fixArtifact })) return null;
 
   const likelyFiles = fixArtifact.likely_files ?? [];
   const affectedSurfaces = fixArtifact.affected_surfaces ?? [];
@@ -156,6 +157,30 @@ export function validateAutonomousFixScope({
       `sample_files=${likelyFiles.slice(0, 8).join(", ")}`,
     ],
   };
+}
+
+function isTrustedIssueImplementation({ job, fixArtifact }: LooseRecord): boolean {
+  const frontmatter = job.frontmatter ?? {};
+  if (frontmatter.source !== "issue_implementation") return false;
+  if (fixArtifact.repair_strategy !== "new_fix_pr") return false;
+  if (frontmatter.allow_fix_pr !== true) return false;
+  if (!Array.isArray(frontmatter.allowed_actions) || !frontmatter.allowed_actions.includes("fix")) {
+    return false;
+  }
+  if (frontmatter.trigger_source !== "review_viable_issue") return false;
+  const repo = String(frontmatter.repo ?? "")
+    .trim()
+    .toLowerCase();
+  const sourceRepo = String(frontmatter.source_issue_repo ?? "")
+    .trim()
+    .toLowerCase();
+  const sourceNumber = Number(frontmatter.source_issue_number);
+  const sourceRevision = String(frontmatter.source_issue_revision_sha256 ?? "").trim();
+  if (!/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/.test(sourceRepo) || sourceRepo !== repo) return false;
+  if (!Number.isInteger(sourceNumber) || sourceNumber <= 0) return false;
+  if (!/^[a-f0-9]{64}$/i.test(sourceRevision)) return false;
+  const sourceSlug = sourceRepo.replace(/[^a-z0-9_.-]+/g, "-").replace(/^-+|-+$/g, "");
+  return frontmatter.target_branch === `clawsweeper/issue-${sourceSlug}-${sourceNumber}`;
 }
 
 function isTrustedAdoptedBranchRepair({ job, fixArtifact }: LooseRecord): boolean {

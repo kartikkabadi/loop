@@ -253,7 +253,7 @@ function preserveStateOnlyFiles({
 }
 
 function shouldPreserveStateOnlyFile(path: string, rel: string): boolean {
-  if (path === "jobs") return /^[^/]+\/inbox\/(?:automerge|self-heal)-.+\.md$/.test(rel);
+  if (path === "jobs") return /^[^/]+\/inbox\/(?:automerge|issue|self-heal)-.+\.md$/.test(rel);
   return false;
 }
 
