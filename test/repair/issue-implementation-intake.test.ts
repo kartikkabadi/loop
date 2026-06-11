@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 
 import {
   parseReviewReport,
+  referencedPullRequestCoordinates,
   reportOnlyDecision,
 } from "../../dist/repair/issue-implementation-intake.js";
 import {
@@ -187,7 +188,7 @@ test("viable reviews queue autonomous implementation outside protected repositor
   assert.equal(decision.status, "queued_for_repair");
 });
 
-test("viable review routing rejects reports already tied to pull requests", () => {
+test("viable review routing resolves pull request context during live intake", () => {
   const markdown = report({
     number: "244",
     repository: "steipete/summarize",
@@ -203,9 +204,62 @@ test("viable review routing rejects reports already tied to pull requests", () =
     reportMarkdown: markdown,
     candidateKind: "viable",
   });
+  const openDecision = reportOnlyDecision({
+    targetRepo: "steipete/summarize",
+    itemNumber: 244,
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    candidateKind: "viable",
+    live: {
+      issue: { state: "open", locked: false, labels: [], title: "Feature", body: "" },
+      existingPrs: [],
+      existingBranchPrs: [],
+      referencedPrs: [{ state: "open" }],
+    },
+  });
+  const closedDecision = reportOnlyDecision({
+    targetRepo: "steipete/summarize",
+    itemNumber: 244,
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    candidateKind: "viable",
+    live: {
+      issue: { state: "open", locked: false, labels: [], title: "Feature", body: "" },
+      existingPrs: [],
+      existingBranchPrs: [],
+      referencedPrs: [{ state: "closed" }],
+    },
+  });
 
-  assert.equal(decision.shouldRepair, false);
-  assert.match(decision.reason, /already references a pull request/);
+  assert.equal(decision.shouldRepair, true);
+  assert.equal(decision.status, "queued_for_repair");
+  assert.equal(openDecision.shouldRepair, false);
+  assert.match(openDecision.reason, /references an open or unverifiable pull request/);
+  assert.equal(closedDecision.shouldRepair, true);
+  assert.equal(closedDecision.status, "queued_for_repair");
+});
+
+test("viable review routing resolves full and shorthand pull request references", () => {
+  assert.deepEqual(
+    referencedPullRequestCoordinates({
+      targetRepo: "steipete/oracle",
+      itemNumber: 241,
+      references: [
+        "#241",
+        "Superseded by #216",
+        "See steipete/oracle#217",
+        "https://github.com/other/project/pull/12",
+        "https://github.com/steipete/oracle/issues/218",
+        "Superseded by [PR #13](https://github.com/other/project/pull/13)",
+      ],
+    }),
+    [
+      { owner: "steipete", name: "oracle", number: 216, knownPullRequest: false },
+      { owner: "steipete", name: "oracle", number: 217, knownPullRequest: false },
+      { owner: "other", name: "project", number: 12, knownPullRequest: true },
+      { owner: "other", name: "project", number: 13, knownPullRequest: true },
+    ],
+  );
 });
 
 test("viable review routing excludes protected repositories and weak verdicts", () => {
@@ -316,6 +370,10 @@ test("issue implementation intake checks generated branches through REST", () =>
 
   assert.match(source, /repos\/\$\{owner\}\/\$\{name\}\/pulls/);
   assert.match(source, /head=\$\{owner\}:\$\{branch\}/);
+  assert.match(source, /open PR already mentions this issue/);
+  assert.match(source, /existing ClawSweeper issue implementation PR is open/);
+  assert.match(source, /review report references an open or unverifiable pull request/);
+  assert.match(source, /repos\/\$\{owner\}\/\$\{name\}\/issues\/\$\{number\}/);
   assert.doesNotMatch(source, /"pr", "list"/);
 });
 

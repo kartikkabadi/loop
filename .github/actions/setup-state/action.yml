@@ -21,9 +21,9 @@ inputs:
     required: false
     default: ""
   fetch-depth:
-    description: Git fetch depth for the generated state repository. Keep 0 for publish jobs that may rebase.
+    description: Git fetch depth for the generated state repository. Publish retries fetch the remote tip before rebasing.
     required: false
-    default: "0"
+    default: "1"
 runs:
   using: composite
   steps:

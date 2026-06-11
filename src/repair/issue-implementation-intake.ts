@@ -71,8 +71,18 @@ function prepare() {
   const reportMarkdown = readReport({ reportRepo, reportPath });
   const report = parseReviewReport(reportMarkdown);
   const live = truthy(enabled)
-    ? liveIssueContext({ repo: targetRepo, number: itemNumber })
-    : { issue: null, comments: [], existingPrs: [], existingBranchPrs: [] };
+    ? liveIssueContext({
+        repo: targetRepo,
+        number: itemNumber,
+        references: frontMatterStringArray(report.frontmatter.work_cluster_refs),
+      })
+    : {
+        issue: null,
+        comments: [],
+        existingPrs: [],
+        existingBranchPrs: [],
+        referencedPrs: [],
+      };
   const decision = intakeDecision({
     enabled,
     targetRepo,
@@ -191,6 +201,7 @@ export function reportOnlyDecision({
   candidateKind = "strict_bug",
   operatorOverride = false,
   itemNumber = Number(report.frontmatter.number),
+  live = null,
 }: {
   targetRepo: string;
   report: ReviewReport;
@@ -198,12 +209,13 @@ export function reportOnlyDecision({
   candidateKind?: CandidateKind;
   operatorOverride?: boolean;
   itemNumber?: number;
+  live?: LooseRecord | null;
 }): IntakeDecision {
   return eligibilityDecision({
     targetRepo,
     report,
     reportMarkdown,
-    live: null,
+    live,
     enabled: "true",
     candidateKind,
     operatorOverride,
@@ -297,6 +309,7 @@ function eligibilityDecision({
   if (fm.work_confidence !== "high")
     blockers.push(`work confidence is ${fm.work_confidence || "unknown"}`);
   if (
+    candidateKind !== "viable" &&
     frontMatterStringArray(fm.work_cluster_refs).some((reference) =>
       /(?:^|\/)pull\/\d+(?:\b|$)/i.test(reference),
     )
@@ -353,6 +366,13 @@ function eligibilityDecision({
     }
     if (Array.isArray(live.existingBranchPrs) && live.existingBranchPrs.length > 0) {
       blockers.push("existing ClawSweeper issue implementation PR is open");
+    }
+    if (
+      candidateKind === "viable" &&
+      Array.isArray(live.referencedPrs) &&
+      live.referencedPrs.some((pullRequest: JsonValue) => asRecord(pullRequest).state !== "closed")
+    ) {
+      blockers.push("review report references an open or unverifiable pull request");
     }
   }
 
@@ -551,7 +571,15 @@ ${context.decision.blockers.length ? context.decision.blockers.map((blocker: str
   fs.writeFileSync(context.auditPath, body, "utf8");
 }
 
-function liveIssueContext({ repo, number }: { repo: string; number: number }) {
+function liveIssueContext({
+  repo,
+  number,
+  references,
+}: {
+  repo: string;
+  number: number;
+  references: string[];
+}) {
   const [owner, name] = repo.split("/");
   const issue = ghJsonWithRetry([
     "api",
@@ -580,7 +608,12 @@ function liveIssueContext({ repo, number }: { repo: string; number: number }) {
     { attempts: 3 },
   );
   const existingPrs = searchOpenPullRequestsMentioningIssue(repo, number);
-  return { issue, comments, existingPrs, existingBranchPrs };
+  const referencedPrs = inspectReferencedPullRequests({
+    targetRepo: repo,
+    itemNumber: number,
+    references,
+  });
+  return { issue, comments, existingPrs, existingBranchPrs, referencedPrs };
 }
 
 function searchOpenPullRequestsMentioningIssue(repo: string, number: number): LooseRecord[] {
@@ -593,6 +626,101 @@ function searchOpenPullRequestsMentioningIssue(repo: string, number: number): Lo
   } catch (error) {
     throw new Error(`failed to search open PRs mentioning issue: ${ghErrorText(error)}`);
   }
+}
+
+export function referencedPullRequestCoordinates({
+  targetRepo,
+  itemNumber,
+  references,
+}: {
+  targetRepo: string;
+  itemNumber: number;
+  references: string[];
+}) {
+  const [targetOwner = "", targetName = ""] = targetRepo.split("/");
+  const pulls = new Map<
+    string,
+    { owner: string; name: string; number: number; knownPullRequest: boolean }
+  >();
+  const add = (owner: string, name: string, number: number, knownPullRequest: boolean) => {
+    if (!owner || !name || !Number.isSafeInteger(number) || number <= 0) return;
+    if (
+      !knownPullRequest &&
+      owner.toLowerCase() === targetOwner.toLowerCase() &&
+      name.toLowerCase() === targetName.toLowerCase() &&
+      number === itemNumber
+    ) {
+      return;
+    }
+    const key = `${owner.toLowerCase()}/${name.toLowerCase()}#${number}`;
+    const existing = pulls.get(key);
+    pulls.set(key, {
+      owner,
+      name,
+      number,
+      knownPullRequest: knownPullRequest || existing?.knownPullRequest === true,
+    });
+  };
+  for (const reference of references) {
+    for (const match of reference.matchAll(
+      /(?:https?:\/\/)?github\.com\/([^/\s]+)\/([^/\s]+)\/pull\/(\d+)/gi,
+    )) {
+      add(match[1] ?? "", match[2] ?? "", Number(match[3]), true);
+    }
+    const shorthandReference = reference.replace(
+      /\[[^\]]*\]\((?:https?:\/\/)?github\.com\/[^)\s]+\)/gi,
+      " ",
+    );
+    for (const match of shorthandReference.matchAll(
+      /\b([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)#(\d+)\b/g,
+    )) {
+      add(match[1] ?? "", match[2] ?? "", Number(match[3]), false);
+    }
+    for (const match of shorthandReference.matchAll(/(?:^|[^\w/])#(\d+)\b/g)) {
+      add(targetOwner, targetName, Number(match[1]), false);
+    }
+  }
+  return [...pulls.values()];
+}
+
+function inspectReferencedPullRequests({
+  targetRepo,
+  itemNumber,
+  references,
+}: {
+  targetRepo: string;
+  itemNumber: number;
+  references: string[];
+}): LooseRecord[] {
+  return referencedPullRequestCoordinates({ targetRepo, itemNumber, references }).flatMap(
+    ({ owner, name, number, knownPullRequest }) => {
+      try {
+        const item = asRecord(
+          ghJsonWithRetry(
+            [
+              "api",
+              `repos/${owner}/${name}/issues/${number}`,
+              "--method",
+              "GET",
+              "--jq",
+              "{number, state, url: .html_url, is_pull: (.pull_request != null)}",
+            ],
+            { attempts: 3 },
+          ),
+        );
+        return item.is_pull === true || knownPullRequest ? [item] : [];
+      } catch (error) {
+        return [
+          {
+            number,
+            state: "unknown",
+            url: `https://github.com/${owner}/${name}/pull/${number}`,
+            lookup_error: ghErrorText(error),
+          },
+        ];
+      }
+    },
+  );
 }
 
 function readReport({ reportRepo, reportPath }: { reportRepo: string; reportPath: string }) {

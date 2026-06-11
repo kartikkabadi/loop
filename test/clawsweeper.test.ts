@@ -16812,13 +16812,17 @@ test("sweep event reviews and target fanout avoid storm amplification", () => {
   );
 });
 
-test("setup-state defaults to non-partial checkout for auth-safe hydration", () => {
+test("setup-state defaults to an auth-safe shallow checkout", () => {
   const action = readFileSync(".github/actions/setup-state/action.yml", "utf8");
   const filterBlock = action.slice(action.indexOf("filter:"), action.indexOf("fetch-depth:"));
+  const fetchDepthBlock = action.slice(action.indexOf("fetch-depth:"), action.indexOf("runs:"));
 
   assert.match(filterBlock, /default: ""/);
   assert.doesNotMatch(filterBlock, /default: blob:none/);
   assert.match(action, /filter: \$\{\{ inputs\.filter \}\}/);
+  assert.match(fetchDepthBlock, /default: "1"/);
+  assert.doesNotMatch(fetchDepthBlock, /default: "0"/);
+  assert.match(action, /fetch-depth: \$\{\{ inputs\.fetch-depth \}\}/);
   assert.doesNotMatch(action, /state-repository:/);
   assert.doesNotMatch(action, /state-ref:/);
   assert.match(action, /repository: openclaw\/clawsweeper-state/);
