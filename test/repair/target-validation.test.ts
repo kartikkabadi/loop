@@ -4002,21 +4002,36 @@ test("trusted base preparation keeps the Go module cache outside the checkout", 
   git(cwd, "add", ".");
   git(cwd, "commit", "-m", "initial");
   attachOrigin(cwd);
-  const { binDir, logPath } = fakeGoFixture(cwd);
+  const { binDir: goBinDir, logPath } = fakeGoFixture(cwd);
+  const { binDir: codexBinDir, logPath: sandboxLogPath } = fakeCodexSandboxFixture(cwd);
 
-  withPathPrefix(binDir, () => {
-    prepareTrustedTargetDependencies(
-      cwd,
-      validationOptions("openclaw/discrawl", { installTargetDeps: true }),
-      "main",
-    );
-  });
+  withTemporaryEnv(
+    {
+      PATH: [codexBinDir, goBinDir, process.env.PATH].filter(Boolean).join(path.delimiter),
+    },
+    () => {
+      prepareTrustedTargetDependencies(
+        cwd,
+        validationOptions("openclaw/discrawl", {
+          installTargetDeps: true,
+          sandboxTargetCommands: true,
+        }),
+        "main",
+      );
+    },
+  );
 
   assert.deepEqual(fs.readFileSync(logPath, "utf8").trim().split(/\r?\n/), [
     "version",
     "mod download all",
   ]);
   assert.equal(fs.existsSync(path.join(cwd, ".clawsweeper-validation-cache")), false);
+  const invocation = JSON.parse(fs.readFileSync(sandboxLogPath, "utf8"));
+  assert.match(invocation.config, /\[features\]\s+network_proxy = false/);
+  assert.match(
+    invocation.config,
+    /\[permissions\.clawsweeper-target\.network\]\s+enabled = true\s+mode = "full"/,
+  );
 });
 
 test("trusted base preparation retries transient Go module download failures", () => {

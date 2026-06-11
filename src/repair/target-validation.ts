@@ -4153,6 +4153,10 @@ sandbox = "elevated"
 `
       : "";
   const validationReadOnlyRules = externalNetworkEnabled ? "" : targetSandboxNodeModulesRules(cwd);
+  // Trusted dependency preparation already grants full network access. Keep it
+  // direct so high-concurrency installers do not overload the experimental
+  // managed proxy; restricted validation still uses that proxy for allowlisting.
+  const networkProxyEnabled = !externalNetworkEnabled;
   const networkRules = externalNetworkEnabled
     ? `enabled = true
 mode = "full"`
@@ -4169,7 +4173,7 @@ allow_local_binding = true
     `default_permissions = "${TARGET_SANDBOX_PROFILE}"
 
 [features]
-network_proxy = true
+network_proxy = ${networkProxyEnabled}
 
 [permissions.${TARGET_SANDBOX_PROFILE}]
 extends = ":workspace"
