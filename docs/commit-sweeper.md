@@ -95,7 +95,7 @@ the effective page size before dispatching the matrix. Active repair,
 exact-item review, and sweep work can lower commit review to keep capacity
 available for maintainer-visible work. The checked-in default lives in
 `config/automation-limits.json`. The receiver clamps
-`CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` between 1 and 32, then pages large ranges:
+`CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE` between 1 and 24, then pages large ranges:
 
 - select up to the configured page size
 - classify them cheaply

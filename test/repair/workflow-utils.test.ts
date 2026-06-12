@@ -60,13 +60,13 @@ test("worker scheduler lets background lanes yield to active work", () => {
   assert.equal(workerLimit("commit_review"), AUTOMATION_LIMITS.commit_review.page_size_default);
   assert.equal(workerLimit("commit_review", { activeCritical: 49 }), 1);
   assert.equal(workerLimit("repair"), AUTOMATION_LIMITS.repair_live_runs.default);
-  assert.equal(workerLimit("repair"), 12);
-  assert.equal(workerLimit("automerge_repair"), 12);
-  assert.equal(workerLimit("issue_implementation"), 12);
+  assert.equal(workerLimit("repair"), 9);
+  assert.equal(workerLimit("automerge_repair"), 9);
+  assert.equal(workerLimit("issue_implementation"), 9);
   assert.equal(workerLimit("cluster_repair"), 1);
   assert.equal(AUTOMATION_LIMITS.assist.default, 5);
   assert.equal(workerLimit("assist"), 5);
-  assert.equal(workerLimit("assist", { activeCritical: 30 }), 2);
+  assert.equal(workerLimit("assist", { activeCritical: 22 }), 2);
 });
 
 test("worker config defaults imported cluster repair capacity for older configs", () => {
