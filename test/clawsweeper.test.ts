@@ -17088,13 +17088,23 @@ test("ClawSweeper issue advisory labels do not apply to pull requests", () => {
 
 test("review workflow gives Codex a read-only inspection token", () => {
   const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const eventReviewJobStart = workflow.indexOf("\n  event-review-apply:");
+  const planJobStart = workflow.indexOf("\n  plan:", eventReviewJobStart);
+  const eventReviewJob = workflow.slice(eventReviewJobStart, planJobStart);
   const reviewJobStart = workflow.indexOf("\n  review:");
   const publishJobStart = workflow.indexOf("\n  publish:", reviewJobStart);
   const reviewJob = workflow.slice(reviewJobStart, publishJobStart);
+  const exactReviewStart = eventReviewJob.indexOf("- name: Review exact event item");
+  const stateTokenStart = eventReviewJob.indexOf("- name: Create state token", exactReviewStart);
+  const exactReviewStep = eventReviewJob.slice(exactReviewStart, stateTokenStart);
 
   assert.match(workflow, /id: codex-inspection-token/);
   assert.match(workflow, /permission-issues: read/);
   assert.match(workflow, /CLAWSWEEPER_PROOF_INSPECTION_TOKEN/);
+  assert.match(
+    exactReviewStep,
+    /CLAWSWEEPER_PROOF_INSPECTION_TOKEN: \$\{\{ steps\.target-read-token\.outputs\.token \|\| github\.token \}\}/,
+  );
   assert.match(reviewJob, /uses: \.\/clawsweeper\/\.github\/actions\/setup-codex/);
   assert.doesNotMatch(reviewJob, /uses: \.\/\.github\/actions\/setup-codex/);
 });
