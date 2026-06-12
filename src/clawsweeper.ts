@@ -6358,12 +6358,12 @@ function codexFailureReason(detail: string): string {
       detail,
     )
   ) {
-    return "retryable codex transport failure";
+    return "retryable codex transport failure (capacity)";
   }
   if (
     /ECONNRESET|EAI_AGAIN|ENOTFOUND|socket hang up|fetch failed|transport failure/i.test(detail)
   ) {
-    return "retryable codex transport failure";
+    return "retryable codex transport failure (network)";
   }
   return "codex execution failed";
 }

@@ -14680,7 +14680,7 @@ test("codex failure decisions expose stderr and stdout separately", () => {
 
   assert.equal(
     decision.summary,
-    "Codex review failed: retryable codex transport failure (exit 1).",
+    "Codex review failed: retryable codex transport failure (capacity) (exit 1).",
   );
   assert.equal(
     decision.evidence.find((entry) => entry.label === "codex stderr")?.detail,
