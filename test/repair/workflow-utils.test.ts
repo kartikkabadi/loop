@@ -12,8 +12,6 @@ import {
   countActions,
   countCommandActions,
   countRequeueRequired,
-  exactEventReviewCapacityState,
-  exactEventReviewRunsFromGithubPages,
   mergeApplyReports,
   planOutputFields,
   plannedItemNumberCsv,
@@ -92,120 +90,6 @@ test("worker config defaults imported cluster repair capacity for older configs"
   );
 
   assert.equal(readWorkerConfig(configPath).lanes.repair.cluster_max_live_runs, 1);
-});
-
-test("exact event capacity admits only the oldest active review runs", () => {
-  const runs = [
-    {
-      id: "300",
-      createdAt: "2026-06-11T00:00:30Z",
-      displayTitle: "Review event item openclaw/openclaw#3",
-    },
-    {
-      id: "100",
-      createdAt: "2026-06-11T00:00:00Z",
-      displayTitle: "Review event item openclaw/openclaw#1",
-    },
-    {
-      id: "200",
-      createdAt: "2026-06-11T00:00:00Z",
-      displayTitle: "Review event item openclaw/openclaw#2",
-    },
-  ];
-
-  assert.deepEqual(exactEventReviewCapacityState(runs, { runId: "100", limit: 2 }), {
-    activeCount: 3,
-    acquired: true,
-    limit: 2,
-    rank: 1,
-  });
-  assert.deepEqual(exactEventReviewCapacityState(runs, { runId: "200", limit: 2 }), {
-    activeCount: 3,
-    acquired: true,
-    limit: 2,
-    rank: 2,
-  });
-  assert.deepEqual(exactEventReviewCapacityState(runs, { runId: "300", limit: 2 }), {
-    activeCount: 3,
-    acquired: false,
-    limit: 2,
-    rank: 3,
-  });
-});
-
-test("exact event capacity waits when the current run is absent", () => {
-  assert.deepEqual(
-    exactEventReviewCapacityState(
-      [
-        {
-          id: "100",
-          createdAt: "2026-06-11T00:00:00Z",
-          displayTitle: "Review event item openclaw/openclaw#1",
-        },
-      ],
-      { runId: "missing", limit: 0 },
-    ),
-    {
-      activeCount: 1,
-      acquired: false,
-      limit: 1,
-      rank: 2,
-    },
-  );
-});
-
-test("exact event run parsing accepts raw GitHub Actions API fields", () => {
-  assert.deepEqual(
-    exactEventReviewRunsFromGithubPages([
-      {
-        workflow_runs: [
-          {
-            id: 27384499636,
-            name: "Review event item openclaw/openclaw#92225",
-            display_title: "Review event item openclaw/openclaw#92225",
-            event: "repository_dispatch",
-            status: "in_progress",
-            created_at: "2026-06-11T23:40:28Z",
-          },
-          {
-            id: 27384499637,
-            name: "Review event item openclaw/openclaw#92226",
-            display_title: "Review event item openclaw/openclaw#92226",
-            event: "repository_dispatch",
-            status: "completed",
-            created_at: "2026-06-11T23:40:29Z",
-          },
-          {
-            id: 27384499638,
-            name: "Review event item openclaw/openclaw#92227",
-            display_title: "Review event item openclaw/openclaw#92227",
-            event: "pull_request",
-            status: "in_progress",
-            created_at: "2026-06-11T23:40:30Z",
-          },
-        ],
-      },
-      {
-        workflow_runs: [
-          {
-            id: 27384499639,
-            name: "ClawSweeper",
-            display_title: "Audit state",
-            event: "repository_dispatch",
-            status: "in_progress",
-            created_at: "2026-06-11T23:40:31Z",
-          },
-        ],
-      },
-    ]),
-    [
-      {
-        id: "27384499636",
-        createdAt: "2026-06-11T23:40:28Z",
-        displayTitle: "Review event item openclaw/openclaw#92225",
-      },
-    ],
-  );
 });
 
 test("workflow utilities derive artifact item numbers and action counts", () => {
