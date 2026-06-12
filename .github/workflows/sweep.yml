@@ -290,7 +290,7 @@ jobs:
             --marker "$COMMAND_STATUS_MARKER" \
             --status-comment-id "$STATUS_COMMENT_ID" \
             --state "Waiting for review capacity" \
-            --detail "Targeted re-review run started and is waiting for the exact-item review capacity gate." \
+            --detail "Targeted re-review run started and is waiting for review capacity." \
             --run-url "$RUN_URL" \
             --wait-ms 120000
 
@@ -506,7 +506,7 @@ jobs:
           detail="The targeted re-review did not finish cleanly. Check the workflow run for details."
           if [ "$CAPACITY_OUTCOME" = "failure" ]; then
             state="Capacity wait timed out"
-            detail="The targeted re-review did not start because exact-item review capacity stayed full for 30 minutes. Trigger a fresh re-review after the exact-event queue drains."
+            detail="The targeted re-review did not start because review capacity stayed full for 30 minutes. Trigger a fresh re-review."
           elif [ "$REVIEW_OUTCOME" = "cancelled" ]; then
             state="Superseded"
             detail="A newer re-review for this item started before this run finished, so GitHub cancelled this older run. Check the latest ClawSweeper run for the current result."
