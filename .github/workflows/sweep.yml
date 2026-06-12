@@ -220,16 +220,6 @@ jobs:
         with:
           build-script: build:all
 
-      - name: Wait for exact event review capacity
-        timeout-minutes: 30
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          pnpm run workflow -- wait-exact-event-capacity \
-            --repo "${{ github.repository }}" \
-            --run-id "${{ github.run_id }}"
-
       - name: Create target read token
         id: target-read-token
         continue-on-error: true
@@ -283,6 +273,37 @@ jobs:
             rm -f "$err"
           }
           react "eyes"
+
+      - name: Mark re-review waiting for capacity
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+          COMMAND_STATUS_MARKER: ${{ github.event.client_payload.command_status_marker || '' }}
+          STATUS_COMMENT_ID: ${{ github.event.client_payload.status_comment_id || '' }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          pnpm run repair:update-command-status -- \
+            --repo "$TARGET_REPO" \
+            --item-number "$ITEM_NUMBER" \
+            --marker "$COMMAND_STATUS_MARKER" \
+            --status-comment-id "$STATUS_COMMENT_ID" \
+            --state "Waiting for review capacity" \
+            --detail "Targeted re-review run started and is waiting for the exact-item review capacity gate." \
+            --run-url "$RUN_URL" \
+            --wait-ms 120000
+
+      - name: Wait for exact event review capacity
+        id: exact-event-capacity
+        timeout-minutes: 30
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          pnpm run workflow -- wait-exact-event-capacity \
+            --repo "${{ github.repository }}" \
+            --run-id "${{ github.run_id }}"
 
       - uses: ./.github/actions/setup-media-proof-tools
 
@@ -475,13 +496,17 @@ jobs:
           COMMAND_STATUS_MARKER: ${{ github.event.client_payload.command_status_marker || '' }}
           STATUS_COMMENT_ID: ${{ github.event.client_payload.status_comment_id || '' }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CAPACITY_OUTCOME: ${{ steps.exact-event-capacity.outcome }}
           REVIEW_OUTCOME: ${{ steps.review-exact-event-item.outcome }}
           PUBLISH_OUTCOME: ${{ steps.publish-event-result.outcome }}
           ROUTE_OUTCOME: ${{ steps.route-synced-verdict.outcome }}
         run: |
           state="Failed"
           detail="The targeted re-review did not finish cleanly. Check the workflow run for details."
-          if [ "$REVIEW_OUTCOME" = "cancelled" ]; then
+          if [ "$CAPACITY_OUTCOME" = "failure" ]; then
+            state="Capacity wait timed out"
+            detail="The targeted re-review did not start because exact-item review capacity stayed full for 30 minutes. Trigger a fresh re-review after the exact-event queue drains."
+          elif [ "$REVIEW_OUTCOME" = "cancelled" ]; then
             state="Superseded"
             detail="A newer re-review for this item started before this run finished, so GitHub cancelled this older run. Check the latest ClawSweeper run for the current result."
           fi

@@ -17323,6 +17323,9 @@ test("event re-review status explains superseded cancellations", () => {
     workflow.indexOf("- name: Commit event comment router ledger"),
   );
 
+  assert.match(block, /CAPACITY_OUTCOME: \$\{\{ steps\.exact-event-capacity\.outcome \}\}/);
+  assert.match(block, /\[ "\$CAPACITY_OUTCOME" = "failure" \]/);
+  assert.match(block, /state="Capacity wait timed out"/);
   assert.match(block, /\[ "\$REVIEW_OUTCOME" = "cancelled" \]/);
   assert.match(block, /state="Superseded"/);
   assert.match(block, /A newer re-review for this item started before this run finished/);
@@ -17739,8 +17742,14 @@ test("sweep workflow gates exact event Codex reviews with the worker budget", ()
   const capacityIndex = eventReviewBlock.indexOf("- name: Wait for exact event review capacity");
   const readTokenIndex = eventReviewBlock.indexOf("- name: Create target read token");
   const writeTokenIndex = eventReviewBlock.indexOf("- name: Create target write token");
+  const waitingStatusIndex = eventReviewBlock.indexOf(
+    "- name: Mark re-review waiting for capacity",
+  );
   const setupCodexIndex = eventReviewBlock.indexOf("- uses: ./.github/actions/setup-codex");
-  const capacityStep = eventReviewBlock.slice(capacityIndex, readTokenIndex);
+  const capacityStep = eventReviewBlock.slice(
+    capacityIndex,
+    eventReviewBlock.indexOf("- uses: ./.github/actions/setup-media-proof-tools"),
+  );
 
   assert.match(
     eventReviewBlock,
@@ -17748,10 +17757,12 @@ test("sweep workflow gates exact event Codex reviews with the worker budget", ()
   );
   assert.match(eventReviewBlock, /cancel-in-progress: true/);
   assert.ok(setupPnpmIndex >= 0);
-  assert.ok(capacityIndex > setupPnpmIndex);
-  assert.ok(readTokenIndex > capacityIndex);
-  assert.ok(writeTokenIndex > capacityIndex);
+  assert.ok(readTokenIndex > setupPnpmIndex);
+  assert.ok(writeTokenIndex > readTokenIndex);
+  assert.ok(waitingStatusIndex > writeTokenIndex);
+  assert.ok(capacityIndex > waitingStatusIndex);
   assert.ok(setupCodexIndex > capacityIndex);
+  assert.match(eventReviewBlock, /--state "Waiting for review capacity"/);
   assert.match(capacityStep, /GH_TOKEN: \$\{\{ github\.token \}\}/);
   assert.match(capacityStep, /pnpm run workflow -- wait-exact-event-capacity/);
   assert.match(capacityStep, /--repo "\$\{\{ github\.repository \}\}"/);
